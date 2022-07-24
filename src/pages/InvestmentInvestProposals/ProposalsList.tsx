@@ -13,14 +13,14 @@ const poolsClient = createClient({
 
 interface IProps {
   activePools: string[]
-  invested?: boolean
+  invested: boolean
 }
 
 const InvestmentInvestProposalsList: FC<IProps> = ({
   activePools,
   invested,
 }) => {
-  const [data, fetched] = useInvestorInvestProposals(activePools)
+  const [data, fetched] = useInvestorInvestProposals(activePools, invested)
 
   if (!fetched) {
     return (

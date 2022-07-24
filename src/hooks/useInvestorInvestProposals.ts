@@ -11,16 +11,26 @@ interface IProposalData {
 }
 
 function useInvestorInvestProposals(
-  activePools?: string[]
+  activePools: string[],
+  invested: boolean
 ): [IProposalData[], boolean] {
   const { library, account } = useActiveWeb3React()
   const [proposals, setProposals] = useState<any[]>([])
   const [fetched, setFetched] = useState<boolean>(false)
+  const [isInvest, setIsInvest] = useState<boolean>(invested)
 
   const lastPool = useMemo(() => {
     if (!activePools) return ""
     return activePools[activePools.length - 1]
   }, [activePools])
+
+  useEffect(() => {
+    setIsInvest(invested)
+    return () => {
+      setFetched(false)
+      setProposals([])
+    }
+  }, [invested])
 
   useEffect(() => {
     if (
@@ -56,7 +66,20 @@ function useInvestorInvestProposals(
           const data = await proposalPool.getProposalInfos(0, 100)
 
           if (data && data.length > 0) {
-            const dataWithPoolAddress = data.map((proposal) => ({
+            const filtered: any[] = []
+
+            for (const [i, p] of data.entries()) {
+              const balance = await proposalPool.balanceOf(account, i)
+
+              if (isInvest && balance.gt("0")) {
+                filtered.push(p)
+              }
+              if (!isInvest && !balance.gt("0")) {
+                filtered.push(p)
+              }
+            }
+
+            const dataWithPoolAddress = filtered.map((proposal) => ({
               poolAddress,
               proposal,
             }))
@@ -69,7 +92,7 @@ function useInvestorInvestProposals(
         console.error(e)
       }
     })()
-  }, [account, activePools, fetched, lastPool, library, proposals])
+  }, [account, activePools, fetched, isInvest, lastPool, library, proposals])
 
   return [proposals, fetched]
 }
