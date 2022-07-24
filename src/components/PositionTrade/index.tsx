@@ -4,7 +4,7 @@ import { format } from "date-fns"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 
 import { useActiveWeb3React } from "hooks"
-import { useERC20 } from "hooks/useContract"
+import { SupportedChainId } from "constants/chains"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
@@ -14,7 +14,6 @@ import externalLinkIcon from "assets/icons/external-link.svg"
 
 interface Props {
   data: any
-  id?: string
   baseTokenSymbol?: string
   timestamp?: string
   isBuy?: boolean
@@ -25,7 +24,6 @@ interface Props {
 
 const PositionTrade: React.FC<Props> = ({
   data,
-  id,
   baseTokenSymbol,
   timestamp,
   isBuy,
@@ -35,16 +33,14 @@ const PositionTrade: React.FC<Props> = ({
   ...rest
 }) => {
   const { chainId } = useActiveWeb3React()
-  const [, fromTokenData] = useERC20(data.fromToken)
-  const [, toTokenData] = useERC20(data.toToken)
 
   const href = useMemo(() => {
-    if (!id || !data.id || !chainId) {
-      return ""
+    if (!data || !data.hash || !chainId) {
+      return getExplorerLink(chainId ?? SupportedChainId.BINANCE_SMART_CHAIN)
     }
 
-    return getExplorerLink(chainId, id ?? data.id, ExplorerDataType.TRANSACTION)
-  }, [chainId, data.id, id])
+    return getExplorerLink(chainId, data.hash, ExplorerDataType.TRANSACTION)
+  }, [chainId, data])
 
   const date = useMemo(() => {
     if (!timestamp) return "0"
@@ -103,7 +99,7 @@ const PositionTrade: React.FC<Props> = ({
   }, [data, isBuy, priceUsd])
 
   const PositionDirection = (
-    <S.Direction isBuy={isBuy}>{isBuy ? <>&uarr;</> : <>&darr;</>}</S.Direction>
+    <S.Direction isBuy={isBuy}>{isBuy ? "Buy" : "Sell"}</S.Direction>
   )
 
   return (

@@ -10,9 +10,9 @@ import S from "./styled"
 
 const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
   const { poolAddress } = useParams()
-  const data = usePoolPositions(poolAddress, closed)
+  const positions = usePoolPositions(poolAddress, closed)
 
-  if (!data || !data.positions) {
+  if (!positions) {
     return (
       <S.Content>
         <PulseSpinner />
@@ -20,7 +20,7 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
     )
   }
 
-  if (data.positions && data.positions.length === 0) {
+  if (positions && positions.length === 0) {
     return (
       <S.Content>
         <S.WithoutData>No {closed ? "closed" : "open"} positions</S.WithoutData>
@@ -31,7 +31,7 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
   return (
     <>
       <S.List>
-        {(data?.positions || []).map((position) => (
+        {positions.map((position) => (
           <PoolPositionCard key={position.id} position={position} />
         ))}
       </S.List>

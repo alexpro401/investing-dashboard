@@ -39,15 +39,21 @@ const RiskyPositionPoolCard: React.FC<Props> = ({ position }) => {
 
   const [openExtra, setOpenExtra] = useState<boolean>(false)
   const [showPositions, setShowPositions] = useState<boolean>(false)
-  const toggleExtraContent = useCallback(() => {
-    if (showPositions) {
-      setShowPositions(false)
-    }
-    setOpenExtra(!openExtra)
-  }, [openExtra, showPositions])
+
   const togglePositions = useCallback(() => {
     setShowPositions(!showPositions)
   }, [showPositions])
+
+  const toggleExtraContent = useCallback(() => {
+    if (position.isClosed) {
+      togglePositions()
+    } else {
+      if (showPositions) {
+        setShowPositions(false)
+      }
+      setOpenExtra(!openExtra)
+    }
+  }, [openExtra, position.isClosed, showPositions, togglePositions])
 
   const baseTokenSymbol = useMemo(() => {
     if (!baseTokenData || !baseTokenData?.symbol) return ""
@@ -227,9 +233,10 @@ const RiskyPositionPoolCard: React.FC<Props> = ({ position }) => {
               <PositionTrade
                 data={e}
                 key={e.id}
-                timestamp={ethers.utils.formatEther(e.timestamp)}
+                timestamp={e.timestamp}
                 isBuy={false}
                 amount={!false ? e.toVolume : e.fromVolume}
+                baseTokenSymbol={baseTokenSymbol}
               />
             ))
           ) : (

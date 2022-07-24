@@ -496,7 +496,6 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
             position.vest.map((v) => (
               <PositionTrade
                 key={v.id}
-                id={v.id}
                 isBuy={v.isInvest}
                 timestamp={v.timestamp}
                 amount={v.volumeBase}

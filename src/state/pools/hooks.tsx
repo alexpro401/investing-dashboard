@@ -202,5 +202,5 @@ export function usePoolPositions(address?: string, closed = false) {
     variables: { address, closed },
   })
 
-  return response.data?.traderPool
+  return response.data?.traderPool.positions
 }

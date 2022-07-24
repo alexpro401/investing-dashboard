@@ -6,7 +6,6 @@ import { BodyItem } from "components/cards/proposal/styled"
 interface Props {
   ticker: string
 
-  proposalSize: string
   fullness: string
   supply: string
   expirationDate: string
@@ -19,7 +18,6 @@ interface Props {
 
 const BodyInvestor: FC<Props> = ({
   ticker,
-  proposalSize,
   fullness,
   supply,
   invested,
@@ -61,7 +59,7 @@ const BodyInvestor: FC<Props> = ({
         </>
       ) : (
         <>
-          <BodyItem label={"Proposal size " + ticker} amount={proposalSize} />
+          <BodyItem label={"Proposal size " + ticker} amount={totalDividends} />
           <BodyItem label="Fulness" amount={`${fullness}%`} />
           <BodyItem
             label="Expiration date"
@@ -76,7 +74,10 @@ const BodyInvestor: FC<Props> = ({
               full
               size="small"
               br="10px"
-              onClick={() => console.log("Stake LP")}
+              onClick={(e) => {
+                e?.stopPropagation()
+                console.log("Stake LP")
+              }}
             >
               Stake LP
             </Button>

@@ -156,7 +156,7 @@ export const BodyItem: FC<IBodyItemProps> = ({
         <Amount
           value={
             <>
-              {pnl && getAmountSymbol(Number(stablePrice))}
+              {pnl && getAmountSymbol(Number(amount))}
               {Math.abs(Number(normalizeBigNumber(amount, 18, 4)))}
             </>
           }

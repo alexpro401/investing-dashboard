@@ -112,6 +112,7 @@ const PoolsQueryByTypeWithSort = `
 // Basic pool positions
 const POSITION_EXCHANGE = `
   id
+  hash
   fromToken
   toToken
   fromVolume

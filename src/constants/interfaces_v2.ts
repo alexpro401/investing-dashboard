@@ -180,9 +180,9 @@ export interface IRiskyPositionCard extends IRiskyPosition {
   }
 }
 
-export interface IRiskyPositionExchanges {
+export interface IRiskyPositionExchange {
   id: string
-  timestamp: BigNumber
+  timestamp: string
   fromToken: string
   toToken: string
   fromVolume: BigNumber
@@ -374,6 +374,7 @@ export interface OwnedPools {
 
 export interface IExchange {
   id: string
+  hash: string
   fromToken: string
   toToken: string
   fromVolume: BigNumber

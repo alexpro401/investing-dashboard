@@ -368,7 +368,6 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
             ) : (
               <BodyInvestor
                 ticker={ticker}
-                proposalSize={normalizeBigNumber(totalDividendsAmount, 18, 6)}
                 fullness={normalizeBigNumber(fullness, 18, 2)}
                 yourBalance={normalizeBigNumber(yourBalance, 18, 6)}
                 supply={supply}

@@ -1,14 +1,15 @@
 import { FC, useMemo, useCallback, useState, useEffect } from "react"
 import { format } from "date-fns"
 import { useNavigate } from "react-router-dom"
-import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
+import { BigNumber } from "@ethersproject/bignumber"
 
 import { useActiveWeb3React } from "hooks"
-import { useERC20, useRiskyProposalContract } from "hooks/useContract"
 import { usePoolContract } from "hooks/usePool"
 import { RiskyProposal } from "constants/interfaces_v2"
+import { percentageOfBignumbers } from "utils/formulas"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { expandTimestamp, normalizeBigNumber } from "utils"
+import { useERC20, useRiskyProposalContract } from "hooks/useContract"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
 import { Flex } from "theme"
@@ -44,26 +45,21 @@ const RiskyProposalInvestorCard: FC<Props> = ({
   )
 
   const [youSizeLP, setYouSizeLP] = useState<BigNumber>(BigNumber.from("0"))
+  const [traderSizeLP, setTraderSizeLP] = useState<BigNumber>(
+    BigNumber.from("0")
+  )
 
   const proposalSymbol = useMemo(() => {
     if (!proposalTokenData || !proposalTokenData.symbol) return ""
     return proposalTokenData.symbol
   }, [proposalTokenData])
 
-  const lpPercentage = useMemo(() => {
-    return 76
-  }, [])
-
   const maxSizeLP = useMemo(() => {
     if (!proposal || !proposal?.proposalInfo.proposalLimits.investLPLimit) {
-      return "0"
+      return BigNumber.from("0")
     }
 
-    return normalizeBigNumber(
-      proposal.proposalInfo.proposalLimits.investLPLimit,
-      18,
-      2
-    )
+    return proposal.proposalInfo.proposalLimits.investLPLimit
   }, [proposal])
 
   const fullness = useMemo(() => {
@@ -143,6 +139,13 @@ const RiskyProposalInvestorCard: FC<Props> = ({
     return normalizeBigNumber(proposal.proposalInfo.balancePosition, 18, 6)
   }, [proposal])
 
+  const traderSizePercentage = useMemo(() => {
+    if (traderSizeLP.isZero()) {
+      return BigNumber.from("0")
+    }
+    return percentageOfBignumbers(maxSizeLP, traderSizeLP)
+  }, [maxSizeLP, traderSizeLP])
+
   const active = useMemo(() => {
     return !expirationDate.completed
   }, [expirationDate])
@@ -159,13 +162,30 @@ const RiskyProposalInvestorCard: FC<Props> = ({
   }
 
   useEffect(() => {
-    if (!proposalPool) return
+    if (!proposalPool || !account) {
+      return
+    }
     ;(async () => {
       const balance = await proposalPool?.balanceOf(account, proposalId)
 
       setYouSizeLP(balance)
     })()
   }, [account, proposalId, proposalPool])
+
+  useEffect(() => {
+    if (!proposalPool || !poolInfo || proposalId === undefined) {
+      return
+    }
+
+    ;(async () => {
+      const balance = await proposalPool.balanceOf(
+        poolInfo.parameters.trader,
+        proposalId
+      )
+
+      setTraderSizeLP(balance)
+    })()
+  }, [poolInfo, proposalId, proposalPool])
 
   const InvestButton = active ? (
     <Button full size="small" onClick={onInvest}>
@@ -203,31 +223,28 @@ const RiskyProposalInvestorCard: FC<Props> = ({
           </Flex>
         </SharedS.Head>
         <SharedS.Body>
-          <BodyItem label="Proposal size" amount={`${maxSizeLP} LP`} />
           <BodyItem
-            label="Your size"
-            amount={`${normalizeBigNumber(
-              BigNumber.from(youSizeLP),
-              18,
-              2
-            )} LP`}
+            label="Proposal size  LP"
+            amount={normalizeBigNumber(maxSizeLP, 18, 2)}
           />
           <BodyItem
-            label="Fullness"
-            amount={`${fullness.value} LP`}
+            label="Your size LP"
+            amount={normalizeBigNumber(BigNumber.from(youSizeLP), 18, 2)}
+          />
+          <BodyItem
+            label="Fullness LP"
+            amount={fullness.value}
             completed={fullness.completed}
             ai="flex-end"
           />
           <BodyItem
-            label="Max. Invest Price"
+            label={`Max. Invest Price (${proposalSymbol})`}
             amount={maxInvestPrice.value}
             completed={maxInvestPrice.completed}
-            symbol={proposalSymbol}
           />
           <BodyItem
-            label="Current price"
+            label={`Current price (${proposalSymbol})`}
             amount={currentPrice}
-            symbol={proposalSymbol}
           />
           <BodyItem
             fz={"11px"}
@@ -238,9 +255,8 @@ const RiskyProposalInvestorCard: FC<Props> = ({
           />
           <BodyItem label="Investors" amount={investors} symbol={"/ 1000"} />
           <BodyItem
-            label="Position size"
+            label={`Position size (${proposalSymbol})`}
             amount={positionSize}
-            symbol={proposalSymbol}
           />
           <Flex full>{InvestButton}</Flex>
         </SharedS.Body>
@@ -255,9 +271,14 @@ const RiskyProposalInvestorCard: FC<Props> = ({
               />
             </S.FundIconContainer>
             <Flex dir="column" ai="flex-start" m="0 0 0 4px">
-              <S.SizeTitle>Trader size: 30 LP ({lpPercentage}%)</S.SizeTitle>
+              <S.SizeTitle>
+                Trader size: {normalizeBigNumber(traderSizeLP, 18, 6)} LP (
+                {normalizeBigNumber(traderSizePercentage, 18, 2)}%)
+              </S.SizeTitle>
               <S.LPSizeContainer>
-                <TraderLPSize size={lpPercentage} />
+                <TraderLPSize
+                  size={Number(normalizeBigNumber(traderSizePercentage, 18, 2))}
+                />
               </S.LPSizeContainer>
             </Flex>
           </Flex>

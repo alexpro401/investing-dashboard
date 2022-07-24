@@ -56,16 +56,19 @@ const RiskyPositionCard: React.FC<Props> = ({ position }) => {
 
   const [openExtra, setOpenExtra] = useState<boolean>(false)
   const [showPositions, setShowPositions] = useState<boolean>(false)
+  const togglePositions = useCallback(() => {
+    setShowPositions(!showPositions)
+  }, [showPositions])
+
   const toggleExtraContent = useCallback(() => {
+    if (position.isClosed) {
+      setShowPositions(!showPositions)
+    }
     if (showPositions) {
       setShowPositions(false)
     }
     setOpenExtra(!openExtra)
-  }, [openExtra, showPositions])
-
-  const togglePositions = useCallback(() => {
-    setShowPositions(!showPositions)
-  }, [showPositions])
+  }, [openExtra, position.isClosed, showPositions])
 
   const [poolBaseShare, setPoolBaseShare] = useState<BigNumber>(
     BigNumber.from("0")
@@ -130,17 +133,13 @@ const RiskyPositionCard: React.FC<Props> = ({ position }) => {
     }
 
     if (position.isClosed) {
-      const totalBaseDivestVolumeFixed = FixedNumber.fromValue(
-        position.totalBaseCloseVolume,
+      const totalUSD = FixedNumber.fromValue(position.totalUSDCloseVolume, 18)
+      const totalPosition = FixedNumber.fromValue(
+        position.totalPositionCloseVolume,
         18
       )
-      const totalLPInvestVolumeFixed = FixedNumber.fromValue(
-        position.totalBaseOpenVolume,
-        18
-      )
-      const resFixed = totalBaseDivestVolumeFixed.divUnsafe(
-        totalLPInvestVolumeFixed
-      )
+
+      const resFixed = totalUSD.divUnsafe(totalPosition)
 
       return ethers.utils.parseEther(resFixed._value)
     }
@@ -154,17 +153,12 @@ const RiskyPositionCard: React.FC<Props> = ({ position }) => {
     }
 
     if (position.isClosed) {
-      const totalUSDDivestVolumeFixed = FixedNumber.fromValue(
-        position.totalUSDCloseVolume,
+      const totalBase = FixedNumber.fromValue(position.totalBaseCloseVolume, 18)
+      const totalPosition = FixedNumber.fromValue(
+        position.totalPositionCloseVolume,
         18
       )
-      const totalLPInvestVolumeFixed = FixedNumber.fromValue(
-        position.totalBaseOpenVolume,
-        18
-      )
-      const resFixed = totalUSDDivestVolumeFixed.divUnsafe(
-        totalLPInvestVolumeFixed
-      )
+      const resFixed = totalBase.divUnsafe(totalPosition)
 
       return ethers.utils.parseEther(resFixed._value)
     }
@@ -364,7 +358,7 @@ const RiskyPositionCard: React.FC<Props> = ({ position }) => {
               {position.isClosed ? (
                 <Icon
                   m="0"
-                  size={24}
+                  size={26}
                   source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
                   address={position.pool.id}
                 />
