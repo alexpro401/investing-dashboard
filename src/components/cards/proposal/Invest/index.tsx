@@ -21,7 +21,10 @@ import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 import useInvestProposalData from "hooks/useInvestProposalData"
 import { selectPriceFeedAddress } from "state/contracts/selectors"
-import useContract, { useInvestProposalContract } from "hooks/useContract"
+import useContract, {
+  useERC20,
+  useInvestProposalContract,
+} from "hooks/useContract"
 
 import { Flex } from "theme"
 import Icon from "components/Icon"
@@ -50,6 +53,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
 
   const [, poolInfo] = usePoolContract(poolAddress)
   const [proposalPool, proposalAddress] = useInvestProposalContract(poolAddress)
+  const [, baseTokenData] = useERC20(poolInfo?.parameters.baseToken)
 
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
@@ -73,18 +77,24 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   )
 
   // Proposal data from IPFS
-  const [ticker, setTicker] = useState<string>("") // TODO: вместо тикера пропозала нужно писать тикер пула - ?
+  const [ticker, setTicker] = useState<string>("")
   const [description, setDescription] = useState<string>("")
   // Proposal data from proposals contract
   const [proposalId, setProposalId] = useState<string>("0")
   const [youSizeLP, setYouSizeLP] = useState<string>("0")
   const [yourBalance, setYourBalance] = useState<BigNumber>(BigNumber.from("0"))
 
-  // Check that investor already invested in proposal
-  const invested = useMemo(() => {
-    if (!isTrader) return false
-    return yourBalance.gte(BigNumber.from("0"))
-  }, [isTrader, yourBalance])
+  // Pool base token ticker
+  const baseTokenTicker = useMemo(() => {
+    if (!baseTokenData || !baseTokenData.symbol) {
+      return ""
+    }
+
+    return baseTokenData.symbol
+  }, [baseTokenData])
+
+  // Check that user already invested in proposal
+  const invested = useMemo(() => yourBalance.gt(0), [yourBalance])
 
   // Proposal data from Graph
   const proposalInfo = useInvestProposalData(
@@ -259,7 +269,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
 
   // Actions
   const actions = useMemo(() => {
-    if (isTrader)
+    if (isTrader) {
       return [
         {
           label: "Withdraw",
@@ -286,6 +296,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
           },
         },
       ]
+    }
     return [
       {
         label: "Stake LP",
@@ -368,6 +379,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
             ) : (
               <BodyInvestor
                 ticker={ticker}
+                baseTokenTicker={baseTokenTicker}
                 fullness={normalizeBigNumber(fullness, 18, 2)}
                 yourBalance={normalizeBigNumber(yourBalance, 18, 6)}
                 supply={supply}

@@ -5,6 +5,7 @@ import { BodyItem } from "components/cards/proposal/styled"
 
 interface Props {
   ticker: string
+  baseTokenTicker: string
 
   fullness: string
   supply: string
@@ -18,6 +19,7 @@ interface Props {
 
 const BodyInvestor: FC<Props> = ({
   ticker,
+  baseTokenTicker,
   fullness,
   supply,
   invested,
@@ -31,10 +33,10 @@ const BodyInvestor: FC<Props> = ({
     <>
       {invested ? (
         <>
-          <BodyItem label={"Supply " + ticker} amount={supply} />
+          <BodyItem label={`Supply (${ticker})`} amount={supply} />
           <BodyItem label="Fulness" amount={`${fullness}%`} />
           <BodyItem
-            label={"Your balance " + ticker}
+            label={"Your balance " + baseTokenTicker}
             amount={yourBalance}
             ai="flex-end"
           />
