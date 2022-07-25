@@ -396,6 +396,7 @@ export interface IPosition {
   totalPositionCloseVolume: BigNumber
   exchanges: IExchange[]
   traderPool: {
+    id: string
     ticker: string
     trader: string
     baseToken: string

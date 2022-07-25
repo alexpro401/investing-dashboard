@@ -136,6 +136,7 @@ const POSITION = `
     ${POSITION_EXCHANGE}
   }
   traderPool {
+    id
     trader
     ticker
     baseToken

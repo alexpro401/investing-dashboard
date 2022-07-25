@@ -42,11 +42,11 @@ const Styled = {
   `,
   Body: styled.div`
     width: 100%;
-    padding: 12px 16px 16px;
+    padding: 12px 16px;
     display: grid;
     grid-template-columns: repeat(3, minmax(max-content, 1fr));
     grid-template-rows: 1fr;
-    grid-column-gap: 4px;
+    grid-column-gap: 12px;
   `,
   ExtraItem: styled(GradientBorder)<{ p?: string }>`
     width: 100%;
@@ -91,7 +91,7 @@ export const BodyItemStyled = {
     font-size: 12px;
     line-height: 100%;
     letter-spacing: 0.03em;
-    color: #616d8b;
+    color: #788ab4;
     margin-bottom: 8px;
   `,
 
@@ -112,7 +112,7 @@ export const BodyItemStyled = {
     font-weight: 500;
     font-size: 12px;
     line-height: 100%;
-    color: #616d8b;
+    color: #788ab4;
     margin-top: 8px;
   `,
 }
@@ -197,7 +197,7 @@ const ActionsStyled = {
 interface IAction {
   label: string
   active?: boolean
-  onClick: (e?: MouseEvent<HTMLElement>) => void
+  onClick: (e: MouseEvent<HTMLElement>) => void
 }
 
 interface IActionsProps {

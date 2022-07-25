@@ -1,8 +1,8 @@
-import { useState, useCallback, useEffect, useMemo } from "react"
+import { MouseEvent, useState, useCallback, useEffect, useMemo } from "react"
 import { useSelector } from "react-redux"
 import { ethers } from "ethers"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
-import { AnimatePresence } from "framer-motion"
+import { useNavigate } from "react-router-dom"
 
 import { PriceFeed } from "abi"
 import { normalizeBigNumber } from "utils"
@@ -26,81 +26,146 @@ interface Props {
 }
 
 const PoolPositionCard: React.FC<Props> = ({ position }) => {
+  const navigate = useNavigate()
   const { account } = useActiveWeb3React()
   const [, baseToken] = useERC20(position.traderPool.baseToken)
-  const [, positionTokenData] = useERC20(position.positionToken)
+  const [, positionToken] = useERC20(position.positionToken)
 
   const priceFeedAddress = useSelector(selectPriceFeedAddress)
   const priceFeed = useContract(priceFeedAddress, PriceFeed)
+  const isTrader = useMemo<boolean>(() => {
+    if (!account || !position) {
+      return false
+    }
 
-  const isTrader = useMemo(() => {
-    if (!account || !position) return false
-    return account === position.traderPool.trader
+    return String(account).toLowerCase() === position.traderPool.trader
   }, [account, position])
 
-  const [markPriceBase, setMarkPriceBase] = useState(BigNumber.from(0))
-  const markPriceUSD = useTokenPriceOutUSD({
+  const [markPrice, setMarkPriceBase] = useState<BigNumber>(BigNumber.from("0"))
+  const currentPriceUSD = useTokenPriceOutUSD({
     tokenAddress: position.positionToken,
   })
 
   const [openExtra, setOpenExtra] = useState<boolean>(false)
   const [showPositions, setShowPositions] = useState<boolean>(false)
-  const toggleExtraContent = useCallback(() => {
-    if (!isTrader || position.closed) {
-      setShowPositions(!showPositions)
-    } else {
-      if (showPositions) {
-        setShowPositions(false)
-      }
-    }
-    setOpenExtra(!openExtra)
-  }, [isTrader, openExtra, position.closed, showPositions])
 
   const togglePositions = useCallback(() => {
     setShowPositions(!showPositions)
   }, [showPositions])
 
-  const baseTokenSymbol = useMemo(() => {
+  const toggleExtraContent = useCallback(() => {
+    if (isTrader && !position.closed) {
+      if (openExtra) {
+        setShowPositions(false)
+      }
+      setOpenExtra(!openExtra)
+    } else {
+      togglePositions()
+    }
+  }, [isTrader, openExtra, position.closed, togglePositions])
+
+  const baseTokenSymbol = useMemo<string>(() => {
     if (!baseToken || !baseToken?.symbol) return ""
 
     return baseToken.symbol
   }, [baseToken])
 
-  const positionOpenBaseAmount = useMemo(() => {
-    if (!position || !position.totalPositionOpenVolume) return "0"
+  /**
+   * Position amount
+   * if position.closed return totalPositionOpenVolume
+   * otherwise return current position volume
+   */
+  const positionOpenBaseAmount = useMemo<string>(() => {
+    if (
+      !position ||
+      !position.totalPositionOpenVolume ||
+      !position.totalPositionCloseVolume
+    ) {
+      return "0"
+    }
 
-    return normalizeBigNumber(position.totalPositionOpenVolume, 18, 6)
+    if (position.closed) {
+      return normalizeBigNumber(position.totalPositionOpenVolume, 18, 6)
+    } else {
+      const open = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
+      const close = FixedNumber.fromValue(position.totalPositionCloseVolume, 18)
+      const resFixed = open.subUnsafe(close)
+
+      return normalizeBigNumber(ethers.utils.parseEther(resFixed._value), 18, 6)
+    }
   }, [position])
 
-  const entryPriceBase = useMemo(() => {
-    if (!position || !position.exchanges) return BigNumber.from("0")
+  /**
+   * Entry price (in fund base token)
+   * totalUSDOpenVolume/totalPositionOpenVolume
+   */
+  const entryPriceBase = useMemo<BigNumber>(() => {
+    if (!position) return BigNumber.from("0")
 
-    const sumBaseFixed = position.exchanges.reduce((acc, e) => {
-      return acc.addUnsafe(FixedNumber.fromValue(e.fromVolume, 18))
-    }, FixedNumber.from("0", 18))
+    const usdOpen = FixedNumber.fromValue(position.totalUSDOpenVolume, 18)
+    const posOpen = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
+    const resFixed = usdOpen.divUnsafe(posOpen)
 
-    const sumPositionFixed = position.exchanges.reduce((acc, e) => {
-      return acc.addUnsafe(FixedNumber.fromValue(e.toVolume, 18))
-    }, FixedNumber.from("0", 18))
-
-    return BigNumber.from(sumBaseFixed.divUnsafe(sumPositionFixed))
+    return ethers.utils.parseEther(resFixed._value)
   }, [position])
 
-  const entryPriceUSD = useMemo(() => {
-    if (!position || !position.exchanges) return BigNumber.from("0")
+  /**
+   * Entry price (in USD)
+   * totalBaseOpenVolume/totalPositionOpenVolume
+   */
+  const entryPriceUSD = useMemo<BigNumber>(() => {
+    if (!position) return BigNumber.from("0")
 
-    const sumUsdFixed = position.exchanges.reduce((acc, e) => {
-      return acc.addUnsafe(FixedNumber.fromValue(e.usdVolume, 18))
-    }, FixedNumber.from("0", 18))
+    const baseOpen = FixedNumber.fromValue(position.totalBaseOpenVolume, 18)
+    const posOpen = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
+    const resFixed = baseOpen.divUnsafe(posOpen)
 
-    const sumPositionFixed = position.exchanges.reduce((acc, e) => {
-      return acc.addUnsafe(FixedNumber.fromValue(e.toVolume, 18))
-    }, FixedNumber.from("0", 18))
-
-    return BigNumber.from(sumUsdFixed.divUnsafe(sumPositionFixed))
+    return ethers.utils.parseEther(resFixed._value)
   }, [position])
 
-  const pnlBase = useMemo(() => {
+  /**
+   * Mark price (in fund base token)
+   * if position open return markPriceBase (price for 1 position token)
+   * otherwise return totalBaseCloseVolume/totalPositionCloseVolume
+   */
+  const markPriceBase = useMemo<BigNumber>(() => {
+    if (!position) return BigNumber.from("0")
+
+    if (!position.closed) {
+      return markPrice
+    } else {
+      const base = FixedNumber.fromValue(position.totalUSDCloseVolume, 18)
+      const pos = FixedNumber.fromValue(position.totalPositionCloseVolume, 18)
+      const resFixed = base.divUnsafe(pos)
+
+      return ethers.utils.parseEther(resFixed._value)
+    }
+  }, [markPrice, position])
+
+  /**
+   * Mark price (in USD)
+   * if position open return markPriceBase (price for 1 position token)
+   * otherwise return totalUSDCloseVolume/totalPositionCloseVolume
+   */
+  const markPriceUSD = useMemo<BigNumber>(() => {
+    if (!position) return BigNumber.from("0")
+
+    if (!position.closed) {
+      return currentPriceUSD
+    } else {
+      const usd = FixedNumber.fromValue(position.totalBaseCloseVolume, 18)
+      const pos = FixedNumber.fromValue(position.totalPositionCloseVolume, 18)
+      const resFixed = usd.divUnsafe(pos)
+
+      return ethers.utils.parseEther(resFixed._value)
+    }
+  }, [currentPriceUSD, position])
+
+  /**
+   * P&L (in USD)
+   * markPriceBase - entryPriceBase
+   */
+  const pnlBase = useMemo<BigNumber>(() => {
     if (!markPriceBase || !entryPriceBase) return BigNumber.from("0")
 
     const _markPriceFixed = FixedNumber.fromValue(markPriceBase, 18)
@@ -111,9 +176,17 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     return ethers.utils.parseEther(res._value)
   }, [markPriceBase, entryPriceBase])
 
-  const pnlPercentage = useMemo(() => {
-    if (!markPriceBase || !entryPriceBase)
+  interface IPnlPercentage {
+    value: BigNumber
+    normalized: string
+  }
+  /**
+   * P&L (in %)
+   */
+  const pnlPercentage = useMemo<IPnlPercentage>(() => {
+    if (!markPriceBase || !entryPriceBase) {
       return { value: BigNumber.from("0"), normalized: "0" }
+    }
 
     const percentage = percentageOfBignumbers(markPriceBase, entryPriceBase)
 
@@ -129,7 +202,10 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     }
   }, [markPriceBase, entryPriceBase])
 
-  const pnlUSD = useMemo(() => {
+  /**
+   * P&L (in USD)
+   */
+  const pnlUSD = useMemo<BigNumber>(() => {
     if (!markPriceUSD || !entryPriceUSD) return BigNumber.from("0")
 
     const _markPriceFixed = FixedNumber.fromValue(markPriceUSD, 18)
@@ -140,7 +216,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     return ethers.utils.parseEther(res._value)
   }, [markPriceUSD, entryPriceUSD])
 
-  // get mark price base
+  // get mark price of posiiton token in fund base token
   useEffect(() => {
     if (!priceFeed || !position || !position.traderPool) return
     ;(async () => {
@@ -169,14 +245,31 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     position,
   ])
 
-  const onBuyMore = (e) => {
-    e.stopPropagation()
-    console.log("onBuyMore")
-  }
-  const onClosePosition = (e) => {
-    e.stopPropagation()
-    console.log("onClosePosition")
-  }
+  /**
+   * Navigate to terminal
+   * @param e - click event
+   * @param invest - terminal type (true = invest, false = divest)
+   */
+  const onTerminalNavigate = useCallback(
+    (e: MouseEvent<HTMLElement>, invest = true) => {
+      e.stopPropagation()
+
+      if (!position || !baseToken || !positionToken) {
+        return
+      }
+
+      let url = `/pool/swap/BASIC_POOL/${position.traderPool.id}`
+
+      if (invest) {
+        url += `/${baseToken.address}/${positionToken.address}`
+      } else {
+        url += `/${positionToken.address}/${baseToken.address}`
+      }
+
+      navigate(url)
+    },
+    [baseToken, navigate, position, positionToken]
+  )
 
   const actions = [
     {
@@ -186,11 +279,11 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     },
     {
       label: "Buy more",
-      onClick: onBuyMore,
+      onClick: (e: MouseEvent<HTMLElement>) => onTerminalNavigate(e, true),
     },
     {
       label: "Close Position",
-      onClick: onClosePosition,
+      onClick: (e: MouseEvent<HTMLElement>) => onTerminalNavigate(e, false),
     },
   ]
 
@@ -202,9 +295,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
             <Flex>
               <TokenIcon address={position.positionToken} m="0" size={24} />
               <S.Amount>{positionOpenBaseAmount}</S.Amount>
-              <S.PositionSymbol>
-                {positionTokenData?.symbol ?? ""}
-              </S.PositionSymbol>
+              <S.PositionSymbol>{positionToken?.symbol ?? ""}</S.PositionSymbol>
             </Flex>
             <Flex>
               <SharedS.PNL amount={+pnlPercentage.normalized}>
@@ -237,11 +328,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
           </SharedS.Body>
         </SharedS.Card>
 
-        <AnimatePresence>
-          {isTrader && !position.closed && (
-            <Actions actions={actions} visible={openExtra} />
-          )}
-        </AnimatePresence>
+        <Actions actions={actions} visible={openExtra} />
 
         <SharedS.ExtraItem
           initial="hidden"
@@ -254,7 +341,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
                 key={e.id}
                 data={e}
                 baseTokenSymbol={baseTokenSymbol}
-                timestamp={ethers.utils.formatEther(e.timestamp)}
+                timestamp={e.timestamp.toString()}
                 isBuy={e.opening}
                 amount={e.opening ? e.toVolume : e.fromVolume}
               />
