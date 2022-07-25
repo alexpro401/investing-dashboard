@@ -359,23 +359,35 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
 
   // get mark price
   useEffect(() => {
-    if (!priceFeed) return
-
-    const getmarkPriceOpen = async () => {
-      const amount = ethers.utils.parseUnits("1", 18)
-
-      // without extended
-      const price = await priceFeed.getNormalizedExtendedPriceOut(
-        position.pool.token,
-        baseTokenData?.address,
-        amount,
-        []
-      )
-      setMarkPriceOpenOpen(price.amountOut)
+    if (
+      !priceFeed ||
+      !position ||
+      !position.pool ||
+      !baseTokenData ||
+      !baseTokenData.address
+    ) {
+      return
     }
 
-    getmarkPriceOpen().catch(console.error)
-  }, [priceFeed, baseTokenData, position.pool.token])
+    ;(async () => {
+      try {
+        const amount = ethers.utils.parseUnits("1", 18)
+
+        // without extended
+        const price = await priceFeed.getNormalizedExtendedPriceOut(
+          position.pool.token,
+          baseTokenData.address,
+          amount,
+          []
+        )
+        if (price && price.amountOut) {
+          setMarkPriceOpenOpen(price.amountOut)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [priceFeed, baseTokenData, position.pool.token, position])
 
   useEffect(() => {
     if (!traderPool || !account) {

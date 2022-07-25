@@ -246,23 +246,29 @@ const RiskyPositionCard: React.FC<Props> = ({ position }) => {
 
   // get open mark price
   useEffect(() => {
-    if (!priceFeed) return
-
-    const getMarkPrice = async () => {
-      const amount = ethers.utils.parseUnits("1", 18)
-
-      // without extended
-      const price = await priceFeed.getNormalizedExtendedPriceOut(
-        position.token,
-        position.pool.baseToken,
-        amount,
-        []
-      )
-      setMarkPriceOpen(price.amountOut)
+    if (!priceFeed || !position || !position.token || !position.pool) {
+      return
     }
 
-    getMarkPrice().catch(console.error)
-  }, [priceFeed, position.pool.baseToken, position.token])
+    ;(async () => {
+      try {
+        const amount = ethers.utils.parseUnits("1", 18)
+
+        // without extended
+        const price = await priceFeed.getNormalizedExtendedPriceOut(
+          position.token,
+          position.pool.baseToken,
+          amount,
+          []
+        )
+        if (price && price.amountOut) {
+          setMarkPriceOpen(price.amountOut)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [priceFeed, position, position.pool.baseToken, position.token])
 
   useEffect(() => {
     if (!traderPool || !account) {

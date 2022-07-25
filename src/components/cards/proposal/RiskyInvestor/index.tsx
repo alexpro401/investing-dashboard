@@ -22,6 +22,8 @@ import Button, { SecondaryButton } from "components/Button"
 import S, { TraderLPSize, TraderRating } from "./styled"
 import SharedS, { BodyItem } from "components/cards/proposal/styled"
 
+const MAX_INVESTORS_COUNT = 1000
+
 interface Props {
   proposal: RiskyProposal
   poolAddress: string
@@ -125,10 +127,12 @@ const RiskyProposalInvestorCard: FC<Props> = ({
 
   const investors = useMemo(() => {
     if (!proposal || !proposal?.totalInvestors) {
-      return "0"
+      return { value: "0", completed: false }
     }
 
-    return proposal?.totalInvestors.toString()
+    const result = proposal.totalInvestors.toString()
+
+    return { value: result, completed: Number(result) === MAX_INVESTORS_COUNT }
   }, [proposal])
 
   const positionSize = useMemo(() => {
@@ -166,9 +170,15 @@ const RiskyProposalInvestorCard: FC<Props> = ({
       return
     }
     ;(async () => {
-      const balance = await proposalPool?.balanceOf(account, proposalId)
+      try {
+        const balance = await proposalPool?.balanceOf(account, proposalId)
 
-      setYouSizeLP(balance)
+        if (balance) {
+          setYouSizeLP(balance)
+        }
+      } catch (error) {
+        console.error(error)
+      }
     })()
   }, [account, proposalId, proposalPool])
 
@@ -178,12 +188,18 @@ const RiskyProposalInvestorCard: FC<Props> = ({
     }
 
     ;(async () => {
-      const balance = await proposalPool.balanceOf(
-        poolInfo.parameters.trader,
-        proposalId
-      )
+      try {
+        const balance = await proposalPool.balanceOf(
+          poolInfo.parameters.trader,
+          proposalId
+        )
 
-      setTraderSizeLP(balance)
+        if (balance) {
+          setTraderSizeLP(balance)
+        }
+      } catch (error) {
+        console.error(error)
+      }
     })()
   }, [poolInfo, proposalId, proposalPool])
 
@@ -253,7 +269,12 @@ const RiskyProposalInvestorCard: FC<Props> = ({
             completed={expirationDate.completed}
             ai="flex-end"
           />
-          <BodyItem label="Investors" amount={investors} symbol={"/ 1000"} />
+          <BodyItem
+            label="Investors"
+            amount={investors.value}
+            completed={investors.completed}
+            symbol={`/ ${MAX_INVESTORS_COUNT}`}
+          />
           <BodyItem
             label={`Position size (${proposalSymbol})`}
             amount={positionSize}

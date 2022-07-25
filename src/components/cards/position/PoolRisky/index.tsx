@@ -137,31 +137,34 @@ const RiskyPositionPoolCard: React.FC<Props> = ({ position }) => {
 
   // get mark price
   useEffect(() => {
-    if (!priceFeed) return
+    if (!priceFeed || !position || !position.token || !position.pool) return
+    ;(async () => {
+      try {
+        const amount = ethers.utils.parseUnits("1", 18)
 
-    const getMarkPrice = async () => {
-      const amount = ethers.utils.parseUnits("1", 18)
-
-      // without extended
-      const price = await priceFeed.getNormalizedExtendedPriceOut(
-        position.token,
-        position.pool.baseToken,
-        amount,
-        []
-      )
-      setMarkPriceBase(price.amountOut)
-    }
-
-    getMarkPrice().catch(console.error)
-  }, [priceFeed, position.pool.baseToken, position.token])
+        // without extended
+        const price = await priceFeed.getNormalizedExtendedPriceOut(
+          position.token,
+          position.pool.baseToken,
+          amount,
+          []
+        )
+        if (price && price.amountOut) {
+          setMarkPriceBase(price.amountOut)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [priceFeed, position, position.pool.baseToken, position.token])
 
   const onBuyMore = (e) => {
-    e.preventDefault()
+    e.stopPropagation()
     console.log("onBuyMore")
   }
 
   const onClosePosition = (e) => {
-    e.preventDefault()
+    e.stopPropagation()
     console.log("onClose")
   }
 

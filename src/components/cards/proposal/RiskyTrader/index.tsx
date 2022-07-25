@@ -155,9 +155,14 @@ const RiskyProposalTraderCard: FC<Props> = ({
   useEffect(() => {
     if (!proposalPool) return
     ;(async () => {
-      const balance = await proposalPool?.balanceOf(account, proposalId + 1)
-
-      setTraderSizeLP(balance)
+      try {
+        const balance = await proposalPool?.balanceOf(account, proposalId + 1)
+        if (balance) {
+          setTraderSizeLP(balance)
+        }
+      } catch (error) {
+        console.error(error)
+      }
     })()
   }, [account, proposalId, proposalPool])
 

@@ -8,6 +8,7 @@ import { PriceFeed } from "abi"
 import { normalizeBigNumber } from "utils"
 import { useActiveWeb3React } from "hooks"
 import { IPosition } from "constants/interfaces_v2"
+import { percentageOfBignumbers } from "utils/formulas"
 import useContract, { useERC20 } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { selectPriceFeedAddress } from "state/contracts/selectors"
@@ -19,7 +20,6 @@ import TokenIcon from "components/TokenIcon"
 import { accordionSummaryVariants } from "motion/variants"
 import SharedS, { BodyItem, Actions } from "components/cards/position/styled"
 import S from "./styled"
-import { percentageOfBignumbers } from "utils/formulas"
 
 interface Props {
   position: IPosition
@@ -142,20 +142,26 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
 
   // get mark price base
   useEffect(() => {
-    if (!priceFeed || !position) return
+    if (!priceFeed || !position || !position.traderPool) return
+    ;(async () => {
+      try {
+        const amount = ethers.utils.parseUnits("1", 18)
 
-    const getMarkPrice = async () => {
-      // without extended
-      const price = await priceFeed.getNormalizedExtendedPriceOut(
-        position.positionToken,
-        position.traderPool.baseToken,
-        ethers.utils.parseEther("1"),
-        []
-      )
-      setMarkPriceBase(price.amountOut)
-    }
+        // without extended
+        const price = await priceFeed.getNormalizedExtendedPriceOut(
+          position.positionToken,
+          position.traderPool.baseToken,
+          amount,
+          []
+        )
 
-    getMarkPrice().catch(console.error)
+        if (price && price.amountOut) {
+          setMarkPriceBase(price.amountOut)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })()
   }, [
     priceFeed,
     position.traderPool.baseToken,
@@ -164,11 +170,11 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
   ])
 
   const onBuyMore = (e) => {
-    e.preventDefault()
+    e.stopPropagation()
     console.log("onBuyMore")
   }
   const onClosePosition = (e) => {
-    e.preventDefault()
+    e.stopPropagation()
     console.log("onClosePosition")
   }
 
