@@ -100,7 +100,15 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
    * totalUSDOpenVolume/totalPositionOpenVolume
    */
   const entryPriceBase = useMemo<BigNumber>(() => {
-    if (!position) return BigNumber.from("0")
+    if (
+      !position ||
+      !position.totalUSDOpenVolume ||
+      BigNumber.from(position.totalUSDOpenVolume).isZero() ||
+      !position.totalPositionOpenVolume ||
+      BigNumber.from(position.totalPositionOpenVolume).isZero()
+    ) {
+      return BigNumber.from("0")
+    }
 
     const usdOpen = FixedNumber.fromValue(position.totalUSDOpenVolume, 18)
     const posOpen = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
@@ -114,7 +122,15 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
    * totalBaseOpenVolume/totalPositionOpenVolume
    */
   const entryPriceUSD = useMemo<BigNumber>(() => {
-    if (!position) return BigNumber.from("0")
+    if (
+      !position ||
+      !position.totalBaseOpenVolume ||
+      BigNumber.from(position.totalBaseOpenVolume).isZero() ||
+      !position.totalPositionOpenVolume ||
+      BigNumber.from(position.totalPositionOpenVolume).isZero()
+    ) {
+      return BigNumber.from("0")
+    }
 
     const baseOpen = FixedNumber.fromValue(position.totalBaseOpenVolume, 18)
     const posOpen = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
@@ -184,7 +200,12 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
    * P&L (in %)
    */
   const pnlPercentage = useMemo<IPnlPercentage>(() => {
-    if (!markPriceBase || !entryPriceBase) {
+    if (
+      !markPriceBase ||
+      !entryPriceBase ||
+      markPriceBase.isZero() ||
+      entryPriceBase.isZero()
+    ) {
       return { value: BigNumber.from("0"), normalized: "0" }
     }
 
