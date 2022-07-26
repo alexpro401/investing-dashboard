@@ -1,16 +1,28 @@
-import { useNavigate } from "react-router-dom"
+import { useMemo } from "react"
 import { PulseSpinner } from "react-spinners-kit"
 
-import RiskyProposalTraderCard from "components/cards/proposal/RiskyTrader"
+import { useActiveWeb3React } from "hooks"
 import { usePoolContract } from "hooks/usePool"
+import { useRiskyProposalContract } from "hooks/useContract"
+
+import RiskyProposalCard from "components/cards/proposal/Risky"
 
 import S from "./styled"
 
 const FundProposalsRisky = ({ data, poolAddress }) => {
-  const navigate = useNavigate()
+  const { account } = useActiveWeb3React()
+  const [proposalPool] = useRiskyProposalContract(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
 
-  if (!poolInfo) {
+  const isTrader = useMemo<boolean>(() => {
+    if (!account || !poolInfo) {
+      return false
+    }
+
+    return account === poolInfo.parameters.trader
+  }, [account, poolInfo])
+
+  if (!proposalPool || !poolInfo) {
     return (
       <S.ListLoading full ai="center" jc="center">
         <PulseSpinner />
@@ -21,12 +33,14 @@ const FundProposalsRisky = ({ data, poolAddress }) => {
   return (
     <>
       {data.map((proposal, index) => (
-        <RiskyProposalTraderCard
-          key={proposal.token}
+        <RiskyProposalCard
+          key={index}
+          proposalId={index + 1}
           proposal={proposal}
-          proposalId={index}
-          poolAddress={poolAddress}
           poolInfo={poolInfo}
+          poolAddress={poolAddress}
+          proposalPool={proposalPool}
+          isTrader={isTrader}
         />
       ))}
     </>

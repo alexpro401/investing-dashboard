@@ -69,6 +69,7 @@ const Styled = {
     }
   `,
   AddButton: styled.div`
+    margin-left: 0.5px;
     font-family: "Gilroy";
     font-style: normal;
     font-weight: 600;
