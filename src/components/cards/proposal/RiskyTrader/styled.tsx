@@ -76,7 +76,7 @@ const Styled = {
     line-height: 100%;
     color: #2680eb;
     white-space: nowrap;
-    cursor: poiner;
+    cursor: pointer;
   `,
 }
 
