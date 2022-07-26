@@ -35,11 +35,15 @@ const PositionTrade: React.FC<Props> = ({
   const { chainId } = useActiveWeb3React()
 
   const href = useMemo(() => {
-    if (!data || !data.hash || !chainId) {
-      return getExplorerLink(chainId ?? SupportedChainId.BINANCE_SMART_CHAIN)
+    if (data && chainId) {
+      return getExplorerLink(
+        chainId,
+        data.hash ?? `0x${data.id}`,
+        ExplorerDataType.TRANSACTION
+      )
     }
 
-    return getExplorerLink(chainId, data.hash, ExplorerDataType.TRANSACTION)
+    return getExplorerLink(chainId ?? SupportedChainId.BINANCE_SMART_CHAIN)
   }, [chainId, data])
 
   const date = useMemo(() => {
