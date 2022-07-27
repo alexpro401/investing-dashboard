@@ -21,17 +21,15 @@ import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
 import { Flex } from "theme"
 import Icon from "components/Icon"
+import Tooltip from "components/Tooltip"
 import TokenIcon from "components/TokenIcon"
 import IconButton from "components/IconButton"
 import ExternalLink from "components/ExternalLink"
 import Button, { SecondaryButton } from "components/Button"
 
-import S from "./styled"
+import S, { TraderRating, TraderLPSize } from "./styled"
 import RiskyCardSettings from "./Settings"
-import SharedS, {
-  BodyItem,
-  TraderLPSize,
-} from "components/cards/proposal/styled"
+import SharedS, { BodyItem } from "components/cards/proposal/styled"
 
 import settingsIcon from "assets/icons/settings.svg"
 import settingsGreenIcon from "assets/icons/settings-green.svg"
@@ -308,7 +306,20 @@ const RiskyProposalCard: FC<Props> = ({
         <SharedS.Head p={isTrader ? "8px 8px 7px 16px" : undefined}>
           <Flex>
             <TokenIcon address={proposal.proposalInfo.token} m="0" size={24} />
-            <SharedS.Title>{proposalSymbol}</SharedS.Title>
+
+            {isTrader ? (
+              <SharedS.Title>{proposalSymbol}</SharedS.Title>
+            ) : (
+              <Flex ai="center">
+                <SharedS.Title>{proposalSymbol}</SharedS.Title>
+                <TraderRating rating={20} />
+                <Flex m="0 0 -5px">
+                  <Tooltip id="risky-proposal-rating-info" size="small">
+                    Risky proposal rating info
+                  </Tooltip>
+                </Flex>
+              </Flex>
+            )}
           </Flex>
 
           <Flex>
