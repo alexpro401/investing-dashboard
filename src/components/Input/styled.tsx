@@ -25,6 +25,7 @@ const borderRadius = {
 export const Container = styled(GradientBorder)<{
   theme: "grey" | "black"
   size?: string
+  error?: boolean
 }>`
   position: relative;
   width: 100%;
@@ -36,6 +37,13 @@ export const Container = styled(GradientBorder)<{
   &:after {
     background: ${({ theme }) => background[theme]};
   }
+  ${(props) =>
+    props.error &&
+    `
+      &:before {
+        background: #db6d6d;
+      }
+  `}
 `
 
 export const Label = styled(Flex)`

@@ -40,7 +40,7 @@ interface Props {
   proposal: RiskyProposal
   proposalId: number
   poolAddress: string
-  proposalPool: Contract | null
+  proposalPool: Contract
   isTrader: boolean
   poolInfo: PoolInfo
 }
@@ -70,6 +70,42 @@ const RiskyProposalCard: FC<Props> = ({
   )
 
   /**
+   * Date of proposal expiration
+   * @returns value - expiration date
+   * @returns completed - true if expiration date greater that current
+   * @returns initial - expiration date in short format
+   */
+  const [expirationDate, setExpirationDate] = useState<{
+    value: string
+    completed: boolean
+    initial: string
+  }>({
+    value: "0",
+    completed: false,
+    initial: "0",
+  })
+
+  /**
+   * Proposal limit in LP's
+   */
+  const [maxSizeLP, setMaxSizeLP] = useState<{
+    value: BigNumber
+    normalized: string
+  }>({ value: BigNumber.from("0"), normalized: "0" })
+
+  /**
+   * Maximum price of proposal token
+   * @returns value - maximum price
+   * @returns completed - true if positionTokenPrice >= maxTokenPriceLimit
+   * @returns initial - maximum price in BigNumber
+   */
+  const [maxInvestPrice, setMaxInvestPrice] = useState<{
+    value: string
+    completed: boolean
+    initial: BigNumber
+  }>({ value: "0", completed: false, initial: BigNumber.from("0") })
+
+  /**
    * Symbol of proposal
    */
   const proposalSymbol = useMemo<string>(() => {
@@ -78,30 +114,21 @@ const RiskyProposalCard: FC<Props> = ({
   }, [proposalToken])
 
   /**
-   * Proposal limit in LP's
-   */
-  const maxSizeLP = useMemo<{ value: BigNumber; normalized: string }>(() => {
-    if (!proposal || !proposal?.proposalInfo.proposalLimits.investLPLimit) {
-      return { value: BigNumber.from("0"), normalized: "0" }
-    }
-
-    const { investLPLimit } = proposal.proposalInfo.proposalLimits
-
-    return {
-      value: investLPLimit,
-      normalized: normalizeBigNumber(investLPLimit, 18, 6),
-    }
-  }, [proposal])
-
-  /**
    * Proposal fullness in LP's
+   * @returns value - fullness
+   * @returns completed - true if lpLocked >= investLPLimit
+   * @returns initial - fullness in BigNumber
    */
-  const fullness = useMemo<{ value: string; completed: boolean }>(() => {
+  const fullness = useMemo<{
+    value: string
+    completed: boolean
+    initial: BigNumber
+  }>(() => {
     if (
       !proposal?.proposalInfo?.proposalLimits?.investLPLimit ||
       !proposal.proposalInfo.lpLocked
     ) {
-      return { value: "0", completed: false }
+      return { value: "0", completed: false, initial: BigNumber.from("0") }
     }
 
     const { lpLocked, proposalLimits } = proposal.proposalInfo
@@ -109,42 +136,24 @@ const RiskyProposalCard: FC<Props> = ({
     return {
       value: normalizeBigNumber(lpLocked, 18, 6),
       completed: lpLocked.gte(proposalLimits.investLPLimit),
-    }
-  }, [proposal])
-
-  /**
-   * Maximum price of proposal token
-   * @returns value - maximum price
-   * @returns completed - true if positionTokenPrice >= maxTokenPriceLimit
-   */
-  const maxInvestPrice = useMemo<{ value: string; completed: boolean }>(() => {
-    if (
-      !proposal ||
-      !proposal?.proposalInfo.proposalLimits.maxTokenPriceLimit
-    ) {
-      return { value: "0", completed: false }
-    }
-
-    const {
-      positionTokenPrice,
-      proposalInfo: { proposalLimits },
-    } = proposal
-
-    return {
-      value: normalizeBigNumber(proposalLimits.maxTokenPriceLimit, 18, 2),
-      completed: positionTokenPrice.gte(proposalLimits.maxTokenPriceLimit),
+      initial: lpLocked,
     }
   }, [proposal])
 
   /**
    * Exact price on 1 position token in base tokens
    */
-  const currentPrice = useMemo<string>(() => {
+  const currentPrice = useMemo<{ value: string; initial: BigNumber }>(() => {
     if (!proposal || !proposal?.positionTokenPrice) {
-      return "0"
+      return { value: "0", initial: BigNumber.from("0") }
     }
 
-    return normalizeBigNumber(proposal.positionTokenPrice, 18, 2)
+    const { positionTokenPrice } = proposal
+
+    return {
+      value: normalizeBigNumber(positionTokenPrice, 18, 2),
+      initial: positionTokenPrice,
+    }
   }, [proposal])
 
   /**
@@ -160,29 +169,6 @@ const RiskyProposalCard: FC<Props> = ({
     const result = proposal.totalInvestors.toString()
 
     return { value: result, completed: Number(result) === MAX_INVESTORS_COUNT }
-  }, [proposal])
-
-  /**
-   * Date of proposal expiration
-   * @returns value - expiration date
-   * @returns completed - true if expiration date greater that current
-   */
-  const expirationDate = useMemo<{ value: string; completed: boolean }>(() => {
-    if (!proposal || !proposal?.proposalInfo.proposalLimits.timestampLimit) {
-      return { value: "0", completed: false }
-    }
-
-    const { timestampLimit } = proposal.proposalInfo.proposalLimits
-
-    const expandedTimestampLimit = expandTimestamp(
-      Number(timestampLimit.toString())
-    )
-    const currentTimestamp = new Date().valueOf()
-
-    return {
-      value: format(expandedTimestampLimit, "MMM dd, y HH:mm"),
-      completed: currentTimestamp - expandedTimestampLimit >= 0,
-    }
   }, [proposal])
 
   /**
@@ -213,6 +199,61 @@ const RiskyProposalCard: FC<Props> = ({
   const canInvest = useMemo<boolean>(() => {
     return !expirationDate.completed && !maxInvestPrice.completed
   }, [expirationDate.completed, maxInvestPrice.completed])
+
+  // Set expiration date
+  useEffect(() => {
+    if (!proposal || !proposal?.proposalInfo.proposalLimits.timestampLimit) {
+      return
+    }
+
+    const { timestampLimit } = proposal.proposalInfo.proposalLimits
+
+    const expandedTimestampLimit = expandTimestamp(
+      Number(timestampLimit.toString())
+    )
+    const currentTimestamp = new Date().valueOf()
+
+    setExpirationDate({
+      value: format(expandedTimestampLimit, "MMM dd, y HH:mm"),
+      completed: currentTimestamp - expandedTimestampLimit >= 0,
+      initial: timestampLimit.toString(),
+    })
+  }, [proposal])
+
+  // Set investing limit
+  useEffect(() => {
+    if (!proposal || !proposal?.proposalInfo.proposalLimits.investLPLimit) {
+      return
+    }
+
+    const { investLPLimit } = proposal.proposalInfo.proposalLimits
+
+    setMaxSizeLP({
+      value: investLPLimit,
+      normalized: normalizeBigNumber(investLPLimit, 18, 6),
+    })
+  }, [proposal])
+
+  // Set maximum invest price
+  useEffect(() => {
+    if (
+      !proposal ||
+      !proposal?.proposalInfo.proposalLimits.maxTokenPriceLimit
+    ) {
+      return
+    }
+
+    const {
+      positionTokenPrice,
+      proposalInfo: { proposalLimits },
+    } = proposal
+
+    setMaxInvestPrice({
+      value: normalizeBigNumber(proposalLimits.maxTokenPriceLimit, 18, 2),
+      completed: positionTokenPrice.gte(proposalLimits.maxTokenPriceLimit),
+      initial: proposalLimits.maxTokenPriceLimit,
+    })
+  }, [proposal])
 
   // Fetch current user locked funds in proposal
   useEffect(() => {
@@ -290,6 +331,40 @@ const RiskyProposalCard: FC<Props> = ({
     [navigate, poolAddress, proposalId]
   )
 
+  const onUpdateRestrictions = (
+    timestamp: number,
+    maxSize: BigNumber,
+    maxInvest: BigNumber
+  ) => {
+    if (timestamp) {
+      const expanded = expandTimestamp(Number(timestamp.toString()))
+      const currentTimestamp = new Date().valueOf()
+
+      setExpirationDate({
+        value: format(expanded, "MMM dd, y HH:mm"),
+        completed: currentTimestamp - expanded >= 0,
+        initial: expanded.toString(),
+      })
+    }
+
+    if (maxSize) {
+      setMaxSizeLP({
+        value: maxSize,
+        normalized: normalizeBigNumber(maxSize, 18, 6),
+      })
+    }
+
+    if (maxInvest) {
+      const { positionTokenPrice } = proposal
+
+      setMaxInvestPrice({
+        value: normalizeBigNumber(maxInvest, 18, 2),
+        completed: positionTokenPrice.gte(maxInvest),
+        initial: maxInvest,
+      })
+    }
+  }
+
   const InvestButton = canInvest ? (
     <Button full size="small" br="12px" onClick={onInvest}>
       {isTrader ? "Terminal" : "Stake LP"}
@@ -349,10 +424,20 @@ const RiskyProposalCard: FC<Props> = ({
               </Flex>
             )}
           </Flex>
-          <RiskyCardSettings
-            visible={isSettingsOpen}
-            setVisible={setIsSettingsOpen}
-          />
+          {isSettingsOpen && (
+            <RiskyCardSettings
+              visible={isSettingsOpen}
+              setVisible={setIsSettingsOpen}
+              timestamp={expirationDate.initial}
+              maxSizeLP={maxSizeLP.value}
+              maxInvestPrice={maxInvestPrice.initial}
+              proposalPool={proposalPool}
+              fullness={fullness.initial}
+              currentPrice={currentPrice.initial}
+              proposalId={proposalId}
+              successCallback={onUpdateRestrictions}
+            />
+          )}
         </SharedS.Head>
         <SharedS.Body>
           <BodyItem
@@ -383,7 +468,7 @@ const RiskyProposalCard: FC<Props> = ({
           />
           <BodyItem
             label={`Current price (${proposalSymbol})`}
-            amount={currentPrice}
+            amount={currentPrice.value}
           />
           <BodyItem
             fz={"11px"}
