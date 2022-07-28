@@ -36,11 +36,8 @@ const PositionTrade: React.FC<Props> = ({
 
   const href = useMemo(() => {
     if (data && chainId) {
-      return getExplorerLink(
-        chainId,
-        data.hash ?? `0x${data.id}`,
-        ExplorerDataType.TRANSACTION
-      )
+      const hash = data.hash ?? data.id
+      return getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)
     }
 
     return getExplorerLink(chainId ?? SupportedChainId.BINANCE_SMART_CHAIN)
