@@ -15,14 +15,14 @@ interface IProps {
   activePools: string[]
 }
 
-interface IRiskyCardInializer {
+interface IRiskyCardInitializer {
   index: number
   account: string
   poolAddress: string
   proposal: RiskyProposal
 }
 
-const RiskyProposalCardInializer: FC<IRiskyCardInializer> = ({
+const RiskyProposalCardInitializer: FC<IRiskyCardInitializer> = ({
   index,
   account,
   poolAddress,
@@ -79,7 +79,7 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
     <>
       <S.List>
         {proposals.map((p, i) => (
-          <RiskyProposalCardInializer
+          <RiskyProposalCardInitializer
             key={p.poolAddress + i}
             index={i + 1}
             account={account}
