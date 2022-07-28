@@ -30,7 +30,6 @@ const Styled = {
     transform: translateY(2px);
     margin-right: 4px;
   `,
-
   Symbols: styled.div`
     position: relative;
     width: 41px;

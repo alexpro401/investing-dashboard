@@ -288,7 +288,7 @@ export interface IInvestorRiskyPositions {
     id: string
     baseToken: string
   }
-  positions: IInvestorRiskyPosition[]
+  positions: IRiskyPosition[]
 }
 
 export interface IInvestorInvestProposal {

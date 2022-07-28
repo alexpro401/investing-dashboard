@@ -2,9 +2,13 @@ import { FC, useMemo } from "react"
 import { PulseSpinner } from "react-spinners-kit"
 import { createClient, Provider as GraphProvider } from "urql"
 
+import { useActiveWeb3React } from "hooks"
+import { usePoolContract } from "hooks/usePool"
 import useRiskyPositions from "hooks/useRiskyPositions"
-import RiskyPositionPoolCard from "components/cards/position/PoolRisky"
-import { IRiskyPositionCard } from "constants/interfaces_v2"
+import { usePoolMetadata } from "state/ipfsMetadata/hooks"
+
+import RiskyPositionCard from "components/cards/position/Risky"
+
 import S from "./styled"
 
 const poolClient = createClient({
@@ -17,25 +21,25 @@ interface IProps {
 }
 
 const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
-  const proposals = useRiskyPositions(poolAddress, closed)
+  const { account } = useActiveWeb3React()
+  const [, poolInfo] = usePoolContract(poolAddress)
 
-  const positions = useMemo<IRiskyPositionCard[] | null>(() => {
-    if (!proposals) return null
+  const [{ poolMetadata }] = usePoolMetadata(
+    poolAddress,
+    poolInfo?.parameters.descriptionURL
+  )
 
-    return proposals.reduce<IRiskyPositionCard[]>((acc, p) => {
-      if (p.positions && p.positions.length) {
-        const positions = p?.positions.map((_p) => ({
-          ..._p,
-          token: p.token,
-          pool: p.basicPool,
-        }))
-        return [...acc, ...positions]
-      }
-      return acc
-    }, [])
-  }, [proposals])
+  const positions = useRiskyPositions(poolAddress, closed)
 
-  if (!positions) {
+  const isTrader = useMemo<boolean>(() => {
+    if (!account || !poolInfo) {
+      return false
+    }
+
+    return account === poolInfo.parameters.trader
+  }, [account, poolInfo])
+
+  if (!positions || !poolInfo || !poolMetadata) {
     return (
       <S.ListLoading full ai="center" jc="center">
         <PulseSpinner />
@@ -54,7 +58,13 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
   return (
     <>
       {positions.map((p) => (
-        <RiskyPositionPoolCard key={p.id} position={p} />
+        <RiskyPositionCard
+          key={p.id}
+          position={p}
+          isTrader={isTrader}
+          poolInfo={poolInfo}
+          poolMetadata={poolMetadata}
+        />
       ))}
     </>
   )

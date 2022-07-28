@@ -8,6 +8,8 @@ import { Flex, GradientBorder } from "theme"
 import { accordionSummaryVariants } from "motion/variants"
 import Amount from "components/Amount"
 
+import shareIcon from "assets/icons/share.svg"
+
 const getPnlColor = (amount) => {
   if (amount > 0) {
     return "#83e5ca"
@@ -223,5 +225,31 @@ export const Actions: FC<IActionsProps> = ({ actions, visible, ...rest }) => {
         ))}
       </ActionsStyled.Content>
     </motion.div>
+  )
+}
+
+const ShareStyled = {
+  Container: styled(Flex)`
+    width: 26px;
+    height: 26px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  `,
+  Icon: styled.img`
+    width: 12px;
+    height: 13px;
+  `,
+}
+
+interface IShare {
+  onClick: (e: MouseEvent<HTMLElement>) => void
+}
+
+export const Share: FC<IShare> = ({ onClick }) => {
+  return (
+    <ShareStyled.Container onClick={onClick}>
+      <ShareStyled.Icon src={shareIcon} />
+    </ShareStyled.Container>
   )
 }
