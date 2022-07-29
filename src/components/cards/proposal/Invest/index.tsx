@@ -1,15 +1,17 @@
-/**
- * InvestProposalCard
- * The card used at "My investment" and "invest pool positions" pages
- * @variable isTrader - check if user is Trader (if false - current user is investor)
- */
-
-import { FC, useCallback, useEffect, useMemo, useState } from "react"
-import { AnimatePresence } from "framer-motion"
-import { useSelector } from "react-redux"
-import { format } from "date-fns"
-import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
+import {
+  FC,
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import { ethers } from "ethers"
+import { format } from "date-fns"
+import { useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom"
+import { AnimatePresence } from "framer-motion"
+import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 
 import { PriceFeed } from "abi"
 import { useActiveWeb3React } from "hooks"
@@ -47,6 +49,7 @@ interface Props {
 }
 
 const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
+  const navigate = useNavigate()
   const { account } = useActiveWeb3React()
   const priceFeedAddress = useSelector(selectPriceFeedAddress)
   const priceFeed = useContract(priceFeedAddress, PriceFeed)
@@ -104,6 +107,9 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     BigNumber.from("0")
   )
 
+  /**
+   * Supply
+   */
   const supply = useMemo(() => {
     if (!proposal || !proposal.proposalInfo.investedBase) {
       return "0"
@@ -111,7 +117,10 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     return normalizeBigNumber(proposal.proposalInfo.investedBase, 18, 6)
   }, [proposal])
 
-  const maxSizeLP = useMemo(() => {
+  /**
+   * Max proposal size
+   */
+  const maxSizeLP = useMemo<string>(() => {
     if (!proposal || !proposal.proposalInfo.proposalLimits.investLPLimit) {
       return "0"
     }
@@ -122,25 +131,37 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     )
   }, [proposal])
 
-  const totalInvestors = useMemo(() => {
+  /**
+   * Count of proposal investors
+   */
+  const totalInvestors = useMemo<string>(() => {
     if (!proposal || !proposal.totalInvestors) return "0"
 
     return normalizeBigNumber(proposal.totalInvestors, 18, 0)
   }, [proposal])
 
-  const APR = useMemo(() => {
+  /**
+   * APR
+   */
+  const APR = useMemo<string>(() => {
     if (!proposalInfo || !proposalInfo.APR) return "0"
     return normalizeBigNumber(proposalInfo.APR, 4, 2)
   }, [proposalInfo])
 
-  const dividendsAvailable = useMemo(() => {
+  /**
+   * Available dividends
+   */
+  const dividendsAvailable = useMemo<string>(() => {
     if (!proposalInfo || !proposalInfo.totalUSDSupply) {
       return "0"
     }
     return normalizeBigNumber(proposalInfo.totalUSDSupply, 18, 6)
   }, [proposalInfo])
 
-  const expirationDate = useMemo(() => {
+  /**
+   * End of investing
+   */
+  const expirationDate = useMemo<string>(() => {
     if (!proposal || !proposal.proposalInfo.proposalLimits.timestampLimit) {
       return "0"
     }
@@ -153,7 +174,10 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     )
   }, [proposal])
 
-  const fullness = useMemo(() => {
+  /**
+   * Fullness in %
+   */
+  const fullness = useMemo<BigNumber>(() => {
     if (
       !proposal ||
       !proposal.proposalInfo.proposalLimits.investLPLimit ||
@@ -319,6 +343,18 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     ]
   }, [isTrader])
 
+  /**
+   * Navigate to pool page
+   * @param e - click event
+   */
+  const navigateToPool = useCallback(
+    (e: MouseEvent<HTMLElement>): void => {
+      e.stopPropagation()
+      navigate(`/pool/profile/BASIC_POOL/${poolAddress}`)
+    },
+    [navigate, poolAddress]
+  )
+
   return (
     <>
       <S.Container>
@@ -353,7 +389,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
                 />
               </>
             ) : (
-              <Flex>
+              <Flex onClick={navigateToPool}>
                 <S.FundSymbol>{poolInfo?.ticker}</S.FundSymbol>
                 <TokenIcon
                   address={poolInfo?.parameters.baseToken}
