@@ -27,7 +27,7 @@ import IconButton from "components/IconButton"
 import ExternalLink from "components/ExternalLink"
 import Button, { SecondaryButton } from "components/Button"
 
-import S, { TraderRating, TraderLPSize } from "./styled"
+import S, { TraderRating, TraderLPSize, TraderInfoBadge } from "./styled"
 import RiskyCardSettings from "./Settings"
 import SharedS, { BodyItem } from "components/cards/proposal/styled"
 
@@ -492,13 +492,17 @@ const RiskyProposalCard: FC<Props> = ({
 
         {!isTrader && (
           <SharedS.Footer>
-            <Flex>
+            <Flex data-tip data-for={proposalId}>
               <SharedS.FundIconContainer>
                 <Icon
                   size={24}
                   m="0"
                   source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
                   address={poolAddress}
+                />
+                <TraderInfoBadge
+                  id={String(proposalId)}
+                  content="This is more than the average investment at risk proposals. Check on xxxxx what kind of token it is before trusting it."
                 />
               </SharedS.FundIconContainer>
               <Flex dir="column" ai="flex-start" m="0 0 0 4px">

@@ -59,6 +59,8 @@ const Styled = {
   `,
   FundIconContainer: styled.div`
     position: relative;
+    width: 24px;
+    height: 24px;
   `,
   SizeTitle: styled.div`
     font-family: "Gilroy";
