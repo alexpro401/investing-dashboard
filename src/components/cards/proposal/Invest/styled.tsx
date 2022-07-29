@@ -85,7 +85,9 @@ export default Styled
 
 // Settings popup styled
 export const SettingsStyled = {
-  Container: styled(GradientBorder)`
+  Container: styled(GradientBorder).attrs(() => ({
+    ["data-id"]: "invest-proposal-limits-form",
+  }))`
     width: 100%;
     position: absolute;
     top: 38px;
@@ -115,6 +117,7 @@ export const SettingsStyled = {
     padding: 16px 16px 13px;
   `,
   Row: styled.div<{ minInputW?: string }>`
+    width: 100%;
     display: grid;
     grid-template-columns:
       max-content
@@ -124,7 +127,6 @@ export const SettingsStyled = {
     grid-template-rows: 1fr;
     align-items: center;
     gap: 4.5px;
-    margin: 0 0 12px 0;
   `,
   Label: styled.div`
     font-family: "Gilroy";
@@ -142,6 +144,16 @@ export const SettingsStyled = {
     line-height: 15px;
     color: #788ab4;
     text-align: right;
+  `,
+  ErrorMessage: styled.div`
+    width: 100%;
+    margin: 4px 0;
+    font-family: "Gilroy";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 15px;
+    color: #db6d6d;
   `,
   ButtonGroup: styled.div`
     width: 100%;

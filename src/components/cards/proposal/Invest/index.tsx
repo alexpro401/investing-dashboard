@@ -71,8 +71,15 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
 
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false)
   const [openExtra, setOpenExtra] = useState<boolean>(false)
+  const toggleExtra = useCallback(
+    (e: MouseEvent<HTMLElement>) => {
+      e.stopPropagation()
+      setOpenExtra(!openExtra)
+    },
+    [openExtra]
+  )
   const toggleSettings = useCallback(
-    (e) => {
+    (e: MouseEvent<HTMLElement>) => {
       e.stopPropagation()
       setIsSettingsOpen(!isSettingsOpen)
     },
@@ -108,6 +115,30 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   )
 
   /**
+   * Date of proposal expiration
+   * @returns value - expiration date
+   * @returns completed - true if expiration date greater that current
+   * @returns initial - expiration date in short format
+   */
+  const [expirationDate, setExpirationDate] = useState<{
+    value: string
+    completed: boolean
+    initial: string
+  }>({
+    value: "0",
+    completed: false,
+    initial: "0",
+  })
+
+  /**
+   * Proposal limit in LP's
+   */
+  const [maxSizeLP, setMaxSizeLP] = useState<{
+    value: BigNumber
+    normalized: string
+  }>({ value: BigNumber.from("0"), normalized: "0" })
+
+  /**
    * Supply
    */
   const supply = useMemo(() => {
@@ -115,20 +146,6 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
       return "0"
     }
     return normalizeBigNumber(proposal.proposalInfo.investedBase, 18, 6)
-  }, [proposal])
-
-  /**
-   * Max proposal size
-   */
-  const maxSizeLP = useMemo<string>(() => {
-    if (!proposal || !proposal.proposalInfo.proposalLimits.investLPLimit) {
-      return "0"
-    }
-    return normalizeBigNumber(
-      proposal.proposalInfo.proposalLimits.investLPLimit,
-      18,
-      6
-    )
   }, [proposal])
 
   /**
@@ -159,22 +176,6 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   }, [proposalInfo])
 
   /**
-   * End of investing
-   */
-  const expirationDate = useMemo<string>(() => {
-    if (!proposal || !proposal.proposalInfo.proposalLimits.timestampLimit) {
-      return "0"
-    }
-
-    return format(
-      expandTimestamp(
-        +proposal.proposalInfo.proposalLimits.timestampLimit.toString()
-      ),
-      "MMM dd, y HH:mm"
-    )
-  }, [proposal])
-
-  /**
    * Fullness in %
    */
   const fullness = useMemo<BigNumber>(() => {
@@ -193,6 +194,40 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
       totalDividendsAmount
     )
   }, [proposal, totalDividendsAmount])
+
+  // Set expiration date
+  useEffect(() => {
+    if (!proposal || !proposal?.proposalInfo.proposalLimits.timestampLimit) {
+      return
+    }
+
+    const { timestampLimit } = proposal.proposalInfo.proposalLimits
+
+    const expandedTimestampLimit = expandTimestamp(
+      Number(timestampLimit.toString())
+    )
+    const currentTimestamp = new Date().valueOf()
+
+    setExpirationDate({
+      value: format(expandedTimestampLimit, "MMM dd, y HH:mm"),
+      completed: currentTimestamp - expandedTimestampLimit >= 0,
+      initial: timestampLimit.toString(),
+    })
+  }, [proposal])
+
+  // Set investing limit
+  useEffect(() => {
+    if (!proposal || !proposal?.proposalInfo.proposalLimits.investLPLimit) {
+      return
+    }
+
+    const { investLPLimit } = proposal.proposalInfo.proposalLimits
+
+    setMaxSizeLP({
+      value: investLPLimit,
+      normalized: normalizeBigNumber(investLPLimit, 18, 6),
+    })
+  }, [proposal])
 
   // Get proposal data from IPFS
   useEffect(() => {
@@ -355,10 +390,30 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     [navigate, poolAddress]
   )
 
+  const onUpdateRestrictions = (timestamp: number, maxSize: BigNumber) => {
+    if (timestamp) {
+      const expanded = expandTimestamp(Number(timestamp.toString()))
+      const currentTimestamp = new Date().valueOf()
+
+      setExpirationDate({
+        value: format(expanded, "MMM dd, y HH:mm"),
+        completed: currentTimestamp - expanded >= 0,
+        initial: expanded.toString(),
+      })
+    }
+
+    if (maxSize) {
+      setMaxSizeLP({
+        value: maxSize,
+        normalized: normalizeBigNumber(maxSize, 18, 6),
+      })
+    }
+  }
+
   return (
     <>
       <S.Container>
-        <S.Card onClick={() => setOpenExtra(!openExtra)}>
+        <S.Card onClick={toggleExtra}>
           <S.Head isTrader={isTrader}>
             <Flex>
               <Icon
@@ -384,8 +439,15 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
                   </Flex>
                 </Flex>
                 <InvestCardSettings
+                  ticker={ticker}
                   visible={isSettingsOpen}
                   setVisible={setIsSettingsOpen}
+                  proposalPool={proposalPool}
+                  proposalId={proposalId}
+                  successCallback={onUpdateRestrictions}
+                  timestamp={expirationDate.initial}
+                  maxSizeLP={maxSizeLP.value}
+                  fullness={fullness}
                 />
               </>
             ) : (
@@ -405,12 +467,12 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
                 ticker={ticker}
                 supply={supply}
                 youSizeLP={youSizeLP}
-                maxSizeLP={maxSizeLP}
+                maxSizeLP={maxSizeLP.normalized}
                 apr={APR}
                 dividendsAvailable={dividendsAvailable}
                 totalDividends={normalizeBigNumber(totalDividendsAmount, 18, 6)}
                 totalInvestors={totalInvestors}
-                expirationDate={expirationDate}
+                expirationDate={expirationDate.value}
               />
             ) : (
               <BodyInvestor
@@ -423,7 +485,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
                 apr={APR}
                 dividendsAvailable={dividendsAvailable}
                 totalDividends={normalizeBigNumber(totalDividendsAmount, 18, 6)}
-                expirationDate={expirationDate}
+                expirationDate={expirationDate.value}
               />
             )}
           </S.Body>
