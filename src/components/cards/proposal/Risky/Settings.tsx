@@ -144,13 +144,13 @@ const RiskyCardSettings: FC<Props> = ({
     _maxTokenPriceLimit
   ): boolean => {
     if (
-      _timestamp === timestamp ||
-      _investLPLimit.eq(maxSizeLP) ||
+      _timestamp === timestamp &&
+      _investLPLimit.eq(maxSizeLP) &&
       _maxTokenPriceLimit.eq(maxInvestPrice)
     ) {
-      return true
+      return false
     }
-    return false
+    return true
   }
 
   const handleSubmit = async (e?: MouseEvent<HTMLButtonElement>) => {
@@ -161,7 +161,7 @@ const RiskyCardSettings: FC<Props> = ({
     }
 
     if (
-      isValuesChanged(
+      !isValuesChanged(
         timestampLimit,
         ethers.utils.parseUnits(investLPLimit, 18),
         ethers.utils.parseUnits(maxTokenPriceLimit, 18)
