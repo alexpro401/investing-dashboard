@@ -46,7 +46,7 @@ const Styled = {
     width: 100%;
     padding: 12px 16px;
     display: grid;
-    grid-template-columns: repeat(3, minmax(max-content, 1fr));
+    grid-template-columns: repeat(3, minmax(min-content, 0.33fr));
     grid-template-rows: 1fr;
     grid-column-gap: 12px;
   `,
