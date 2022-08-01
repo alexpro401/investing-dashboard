@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { ethers } from "ethers"
-import { parseTransactionError } from "utils"
+import { isTxMined, parseTransactionError } from "utils"
 
 import { useWeb3React } from "@web3-react/core"
 import { BigNumber } from "@ethersproject/bignumber"
@@ -317,15 +317,14 @@ const useInvestRiskyProposal = (
       invests.positionAmount
     )
 
-    addTransaction(investReceipt, {
+    // TODO: type RISKY_PROPOSAL_INVEST
+    return await addTransaction(investReceipt, {
       type: TransactionType.DEPOSIT_RISKY_PROPOSAL,
       inputCurrencyAmountRaw: invests.lp2Amount.toString(),
       inputCurrencySymbol: exchangeForm.deposit.to.symbol,
       expectedOutputCurrencyAmountRaw: amount.toString(),
       expectedOutputCurrencySymbol: exchangeForm.deposit.from.symbol,
     })
-
-    return investReceipt
   }, [
     addTransaction,
     basicPool,
@@ -341,22 +340,21 @@ const useInvestRiskyProposal = (
 
     const [divests, invests] = await getDivestTokens(amount)
 
-    const withdrawReceipt = await basicPool?.reinvestProposal(
+    const withdrawResponse = await basicPool?.reinvestProposal(
       Number(proposalId) + 1,
       amount,
       invests.receivedAmounts,
       divests.receivedAmounts[0]
     )
 
-    addTransaction(withdrawReceipt, {
+    // TODO: type RISKY_PROPOSAL_DIVEST
+    return await addTransaction(withdrawResponse, {
       type: TransactionType.WITHDRAW_RISKY_PROPOSAL,
       outputCurrencyAmountRaw: amount.toString(),
       outputCurrencySymbol: exchangeForm.withdraw.from.symbol,
       expectedInputCurrencyAmountRaw: invests.lpAmount.toString(),
       expectedInputCurrencySymbol: exchangeForm.withdraw.to.symbol,
     })
-
-    return withdrawReceipt
   }, [
     addTransaction,
     basicPool,
@@ -369,14 +367,13 @@ const useInvestRiskyProposal = (
 
   const handleSubmit = useCallback(async () => {
     try {
-      if (direction === "deposit") {
-        const investReceipt = await handleDeposit()
-        // TODO: add transaction toast
-      }
+      const sendTransaction =
+        direction === "deposit" ? handleDeposit : handleWithdraw
 
-      if (direction === "withdraw") {
-        const withdrawReceipt = await handleWithdraw()
-        // TODO: add transaction toast
+      const receipt = await sendTransaction()
+
+      if (isTxMined(receipt)) {
+        // TODO: run update
       }
     } catch (error: any) {
       const errorMessage = parseTransactionError(error)
@@ -443,6 +440,7 @@ const useInvestRiskyProposal = (
     [fromBalance, handleFromChange]
   )
 
+  // estimate gas price
   useEffect(() => {
     ;(async () => {
       try {
@@ -455,6 +453,7 @@ const useInvestRiskyProposal = (
     })()
   }, [estimateGas, getGasPrice])
 
+  // update "from" input on direction change
   useEffect(() => {
     handleFromChange(fromAmount)
   }, [direction])

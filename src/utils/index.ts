@@ -245,7 +245,17 @@ export const parseTransactionError = (str: any) => {
       return
     }
 
-    // parse string error
+    // parse string error reason
+    if (typeof str === "string") {
+      const position = str.search(`reason=`)
+
+      const cutString = str.substring(position + 7)
+
+      const matches = cutString.match(/"(.*?)"/)
+      return matches ? matches[1] : DEFAULT_TRANSACTION_ERROR
+    }
+
+    // parse string error message
     if (typeof str === "string") {
       const position = str.search(`"message":`)
 

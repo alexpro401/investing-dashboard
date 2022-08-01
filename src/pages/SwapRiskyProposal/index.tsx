@@ -34,6 +34,7 @@ import { AddButton } from "./styled"
 import useSwapRiskyProposal, {
   UseSwapRiskyParams,
 } from "./useSwapRiskyProposal"
+import { normalizeBigNumber } from "utils"
 
 const SwapRiskyProposal = () => {
   const params: UseSwapRiskyParams = useParams()
@@ -43,6 +44,7 @@ const SwapRiskyProposal = () => {
   const [
     { from, to },
     {
+      lpBalance,
       gasPrice,
       oneTokenCost,
       oneUSDCost,
@@ -79,6 +81,12 @@ const SwapRiskyProposal = () => {
       )
     }
   }, [location, navigate, params])
+
+  const handleInvestRedirect = () => {
+    navigate(
+      `/invest-risky-proposal/${params.poolAddress}/${params.proposalId}`
+    )
+  }
 
   const button = useMemo(() => {
     if (from.amount === "0" || to.amount === "0") {
@@ -123,14 +131,14 @@ const SwapRiskyProposal = () => {
     return (
       <InfoRow>
         <InfoGrey>Your share:</InfoGrey>
-        <Flex gap="4">
+        <Flex onClick={handleInvestRedirect} gap="4">
           <AddButton>+ Add</AddButton>
-          <InfoWhite>0</InfoWhite>
+          <InfoWhite>{normalizeBigNumber(lpBalance)}</InfoWhite>
           <InfoGrey>ISDX</InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [lpBalance])
 
   const baseInPosition = useMemo(() => {
     return (

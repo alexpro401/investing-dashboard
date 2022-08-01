@@ -14,6 +14,9 @@ import { usePoolContract } from "hooks/usePool"
 import { useERC20, usePriceFeedContract } from "hooks/useContract"
 import { multiplyBignumbers } from "utils/formulas"
 import useGasTracker from "state/gas/hooks"
+import { useWeb3React } from "@web3-react/core"
+import { isTxMined, parseTransactionError } from "utils"
+import { useTransactionAdder } from "state/transactions/hooks"
 
 export interface UseSwapRiskyParams {
   poolAddress?: string
@@ -24,6 +27,7 @@ export interface UseSwapRiskyParams {
 interface UseSwapRiskyResponse {
   gasPrice: string
   error: string
+  lpBalance: BigNumber
   oneTokenCost: BigNumber
   oneUSDCost: BigNumber
   slippage: string
@@ -44,12 +48,15 @@ const useSwapRiskyProposal = ({
   proposalId,
   direction,
 }: UseSwapRiskyParams): [ExchangeForm, UseSwapRiskyResponse] => {
+  const { account } = useWeb3React()
+
   const [gasPrice, setGasPrice] = useState("0.00")
   const [error, setError] = useState("")
   const [slippage, setSlippage] = useState("0.10")
   const [isSlippageOpen, setSlippageOpen] = useState(false)
   const [isWalletPrompting, setWalletPrompting] = useState(false)
 
+  const [lpBalance, setLpBalance] = useState(BigNumber.from("0"))
   const [fromAmount, setFromAmount] = useState("0")
   const [toAmount, setToAmount] = useState("0")
   const [toBalance, setToBalance] = useState(BigNumber.from("0"))
@@ -62,7 +69,12 @@ const useSwapRiskyProposal = ({
     "from"
   )
 
-  const [proposalInfo, proposalPool] = useRiskyProposal(poolAddress, proposalId)
+  const [proposalInfo, proposalPool, updateProposalData] = useRiskyProposal(
+    poolAddress,
+    proposalId
+  )
+
+  const addTransaction = useTransactionAdder()
   const [, poolInfo] = usePoolContract(poolAddress)
   const priceFeed = usePriceFeedContract()
 
@@ -289,50 +301,6 @@ const useSwapRiskyProposal = ({
     toAmount,
   ])
 
-  const handleSubmit = useCallback(async () => {
-    if (!proposalPool) return
-
-    if (lastChangedField === "from") {
-      const amount = BigNumber.from(fromAmount)
-      const amountOut = await getExchangeAmount(
-        form.from.address,
-        amount,
-        ExchangeType.FROM_EXACT
-      )
-      await proposalPool.exchange(
-        Number(proposalId) + 1,
-        form.from.address,
-        amount,
-        amountOut,
-        [],
-        ExchangeType.FROM_EXACT
-      )
-    } else {
-      const amount = BigNumber.from(toAmount)
-      const amountOut = await getExchangeAmount(
-        form.from.address,
-        amount,
-        ExchangeType.TO_EXACT
-      )
-      await proposalPool.exchange(
-        Number(proposalId) + 1,
-        form.from.address,
-        amount,
-        amountOut,
-        [],
-        ExchangeType.TO_EXACT
-      )
-    }
-  }, [
-    form.from.address,
-    fromAmount,
-    getExchangeAmount,
-    lastChangedField,
-    proposalId,
-    proposalPool,
-    toAmount,
-  ])
-
   const updateSwapPrice = useCallback(
     async (address, amount) => {
       const amountOut = await getExchangeAmount(
@@ -351,6 +319,70 @@ const useSwapRiskyProposal = ({
     [getExchangeAmount, priceFeed]
   )
 
+  const updateRPBalance = useCallback(async () => {
+    const balance = await proposalPool?.balanceOf(account, 1)
+    setLpBalance(balance)
+  }, [proposalPool, account])
+
+  const runUpdate = useCallback(async () => {
+    updateProposalData()
+    await updateSwapPrice(form.to.address, ethers.utils.parseEther("1"))
+    await updateRPBalance()
+  }, [form.to.address, updateProposalData, updateSwapPrice, updateRPBalance])
+
+  const handleSubmit = useCallback(async () => {
+    if (!proposalPool) return
+    setWalletPrompting(true)
+
+    const params = {
+      from: {
+        amount: BigNumber.from(fromAmount),
+        type: ExchangeType.FROM_EXACT,
+      },
+      to: {
+        amount: BigNumber.from(toAmount),
+        type: ExchangeType.TO_EXACT,
+      },
+    }
+
+    try {
+      const transactionResponse = await exchange(
+        form.from.address,
+        params[lastChangedField].amount,
+        params[lastChangedField].type
+      )
+
+      setWalletPrompting(false)
+
+      // TODO: handle receipt with transactionType: RISKY_PROPOSAL_SWAP
+
+      // const receipt = await addTransaction(transactionResponse, {
+      //   type: TransactionType.SWAP,
+      //   tradeType: TradeType.EXACT_INPUT,
+      //   inputCurrencyId: from,
+      //   inputCurrencyAmountRaw: amount.toHexString(),
+      //   expectedOutputCurrencyAmountRaw: exchange[0].toHexString(),
+      //   outputCurrencyId: to,
+      //   minimumOutputCurrencyAmountRaw: exchangeWithSlippage.toHexString(),
+      // })
+
+      // if (isTxMined(receipt)) {
+      //   runUpdate()
+      // }
+    } catch (error: any) {
+      setWalletPrompting(false)
+      const errorMessage = parseTransactionError(error.toString())
+      !!errorMessage && setError(errorMessage)
+    }
+  }, [
+    exchange,
+    form.from.address,
+    fromAmount,
+    lastChangedField,
+    proposalPool,
+    toAmount,
+  ])
+
   // set balances
   useEffect(() => {
     if (!proposalInfo) return
@@ -366,6 +398,13 @@ const useSwapRiskyProposal = ({
     }
   }, [proposalInfo, direction])
 
+  // set your share
+  useEffect(() => {
+    if (!proposalPool) return
+
+    updateRPBalance().catch(console.error)
+  }, [proposalPool, updateRPBalance])
+
   // fetch swap price
   useEffect(() => {
     if (!form.to.address) return
@@ -373,7 +412,7 @@ const useSwapRiskyProposal = ({
     updateSwapPrice(form.to.address, ethers.utils.parseEther("1")).catch(
       console.log
     )
-  }, [direction, form.from.address, form.to.address, updateSwapPrice])
+  }, [form.from.address, form.to.address, updateSwapPrice])
 
   // estimate gas price
   useEffect(() => {
@@ -391,9 +430,19 @@ const useSwapRiskyProposal = ({
     })()
   }, [estimateGas, fromAmount, getGasPrice])
 
+  // global updater
+  useEffect(() => {
+    const interval = setInterval(() => {
+      runUpdate().catch(console.error)
+    }, Number(process.env.REACT_APP_UPDATE_INTERVAL))
+
+    return () => clearInterval(interval)
+  }, [runUpdate])
+
   return [
     form,
     {
+      lpBalance,
       gasPrice,
       oneTokenCost,
       oneUSDCost,

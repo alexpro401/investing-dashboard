@@ -125,7 +125,7 @@ const useCreateRiskyProposal = (
       )
       setSubmiting(false)
 
-      // TODO: add transaction toast
+      // TODO: add transaction toast with type RISKY_PROPOSAL_CREATE
     }
 
     createRiskyProposal().catch((error) => {
