@@ -28,15 +28,23 @@ export enum TransactionType {
   EDIT_RISKY_PROPOSAL = 10,
   DEPOSIT_RISKY_PROPOSAL = 11,
   WITHDRAW_RISKY_PROPOSAL = 12,
+  SWAP_RISKY_PROPOSAL = 13,
 
-  CREATE_INVEST_PROPOSAL = 13,
-  EDIT_INVEST_PROPOSAL = 14,
+  CREATE_INVEST_PROPOSAL = 14,
+  EDIT_INVEST_PROPOSAL = 15,
+  TRADER_WITHDRAW_INVEST_PROPOSAL = 16,
+  TRADER_SUPPLY_INVEST_PROPOSAL = 17,
+  TRADER_DIVEST_INVEST_PROPOSAL = 18,
 
-  STAKE_INSURANCE = 15,
-  UNSTAKE_INSURANCE = 16,
+  STAKE_INSURANCE = 19,
+  UNSTAKE_INSURANCE = 20,
 
-  CREATE_INSURANCE_PROPOSAL = 17,
-  VOTE_INSURANCE_PROPOSAL = 18,
+  CREATE_INSURANCE_PROPOSAL = 21,
+  VOTE_INSURANCE_PROPOSAL = 22,
+  REGISTER_INSURANCE_PROPOSAL_CLAIM = 22,
+
+  TRADER_GET_PERFORMANCE_FEE = 23,
+  AGREE_TO_TERMS_AND_CONDITIONS = 24,
 }
 
 export interface ApproveTransactionInfo {
@@ -126,6 +134,15 @@ export interface WithdrawRiskyProposalTransactionInfo {
   expectedInputCurrencyAmountRaw: string
   expectedInputCurrencySymbol: string
 }
+export interface SwapRiskyProposalTransactionInfo {
+  type: TransactionType.SWAP_RISKY_PROPOSAL
+  tradeType: TradeType
+  inputCurrencyId: string
+  inputCurrencyAmountRaw: string
+  expectedOutputCurrencyAmountRaw: string
+  outputCurrencyId: string
+  minimumOutputCurrencyAmountRaw: string
+}
 
 export interface CreateInvestmentProposalTransactionInfo {
   type: TransactionType.CREATE_INVEST_PROPOSAL
@@ -165,6 +182,7 @@ export type TransactionInfo =
   | EditRiskyProposalTransactionInfo
   | DepositRiskyProposalTransactionInfo
   | WithdrawRiskyProposalTransactionInfo
+  | SwapRiskyProposalTransactionInfo
   | CreateInvestmentProposalTransactionInfo
   | EditInvestProposalTransactionInfo
   | StakeInsuranceTransactionInfo

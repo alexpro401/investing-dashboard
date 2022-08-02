@@ -11,6 +11,9 @@ import {
   useRiskyProposalContract,
 } from "hooks/useContract"
 
+import { useTransactionAdder } from "state/transactions/hooks"
+import { TransactionType } from "state/transactions/types"
+
 import getReceipt from "utils/getReceipt"
 
 import { shortTimestamp, parseTransactionError } from "utils"
@@ -41,6 +44,7 @@ const useCreateRiskyProposal = (
     handleSubmit: () => void
   }
 ] => {
+  const addTransaction = useTransactionAdder()
   const { account, library } = useWeb3React()
   const initialTimeLimit = shortTimestamp(getTime(addDays(new Date(), 30)))
   const [riskyProposal] = useRiskyProposalContract(poolAddress)
@@ -125,7 +129,10 @@ const useCreateRiskyProposal = (
       )
       setSubmiting(false)
 
-      // TODO: add transaction toast with type RISKY_PROPOSAL_CREATE
+      await addTransaction(createReceipt, {
+        type: TransactionType.CREATE_RISKY_PROPOSAL,
+        poolId: poolAddress,
+      })
     }
 
     createRiskyProposal().catch((error) => {
@@ -136,11 +143,13 @@ const useCreateRiskyProposal = (
     })
   }, [
     account,
+    addTransaction,
     basicTraderPool,
     instantTradePercentage,
     investLPLimit,
     lpAmount,
     maxTokenPriceLimit,
+    poolAddress,
     riskyProposal,
     timestampLimit,
     tokenAddress,

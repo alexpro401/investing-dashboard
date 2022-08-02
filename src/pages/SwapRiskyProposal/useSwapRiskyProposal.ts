@@ -7,8 +7,9 @@ import {
   useEffect,
 } from "react"
 import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
-import { SwapDirection } from "constants/types"
-import { BigNumber, ethers } from "ethers"
+import { SwapDirection, TradeType } from "constants/types"
+import { ethers } from "ethers"
+import { BigNumber } from "@ethersproject/bignumber"
 import { useRiskyProposal } from "hooks/useRiskyProposals"
 import { usePoolContract } from "hooks/usePool"
 import { useERC20, usePriceFeedContract } from "hooks/useContract"
@@ -17,6 +18,7 @@ import useGasTracker from "state/gas/hooks"
 import { useWeb3React } from "@web3-react/core"
 import { isTxMined, parseTransactionError } from "utils"
 import { useTransactionAdder } from "state/transactions/hooks"
+import { TransactionType } from "state/transactions/types"
 
 export interface UseSwapRiskyParams {
   poolAddress?: string
@@ -151,9 +153,9 @@ const useSwapRiskyProposal = ({
 
   const exchange = useCallback(
     async (from, amount, field) => {
-      const amountOut = getExchangeAmount(from, amount, field)
+      const amountOut = await getExchangeAmount(from, amount, field)
 
-      return await proposalPool?.exchange(
+      return proposalPool?.exchange(
         Number(proposalId) + 1,
         from,
         amount,
@@ -354,32 +356,39 @@ const useSwapRiskyProposal = ({
 
       setWalletPrompting(false)
 
-      // TODO: handle receipt with transactionType: RISKY_PROPOSAL_SWAP
+      const tradeType = {
+        deposit: TradeType.EXACT_INPUT,
+        withdraw: TradeType.EXACT_OUTPUT,
+      }
 
-      // const receipt = await addTransaction(transactionResponse, {
-      //   type: TransactionType.SWAP,
-      //   tradeType: TradeType.EXACT_INPUT,
-      //   inputCurrencyId: from,
-      //   inputCurrencyAmountRaw: amount.toHexString(),
-      //   expectedOutputCurrencyAmountRaw: exchange[0].toHexString(),
-      //   outputCurrencyId: to,
-      //   minimumOutputCurrencyAmountRaw: exchangeWithSlippage.toHexString(),
-      // })
+      const tx = await addTransaction(transactionResponse, {
+        type: TransactionType.SWAP_RISKY_PROPOSAL,
+        tradeType: tradeType[direction!],
+        inputCurrencyId: form.from.address,
+        inputCurrencyAmountRaw: form.from.amount,
+        outputCurrencyId: form.to.address,
+        expectedOutputCurrencyAmountRaw: form.to.amount,
+        // TODO: add slippage amount
+        minimumOutputCurrencyAmountRaw: BigNumber.from("0").toHexString(),
+      })
 
-      // if (isTxMined(receipt)) {
-      //   runUpdate()
-      // }
+      if (isTxMined(tx)) {
+        runUpdate()
+      }
     } catch (error: any) {
       setWalletPrompting(false)
       const errorMessage = parseTransactionError(error.toString())
       !!errorMessage && setError(errorMessage)
     }
   }, [
+    addTransaction,
+    direction,
     exchange,
-    form.from.address,
+    form,
     fromAmount,
     lastChangedField,
     proposalPool,
+    runUpdate,
     toAmount,
   ])
 
