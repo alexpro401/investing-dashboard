@@ -1178,6 +1178,11 @@ export default [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+      {
         internalType: "uint256",
         name: "offset",
         type: "uint256",
