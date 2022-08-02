@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { Flex } from "theme"
 import { useWeb3React } from "@web3-react/core"
 import { CubeSpinner } from "react-spinners-kit"
@@ -39,6 +39,10 @@ enum LoginPathMapper {
   wallet = "/wallet",
 }
 
+interface routerStateType {
+  from: { pathname: string }
+}
+
 const Welcome: React.FC = () => {
   const [isLoading, setLoading] = useState(true)
   const [loginPath, setLoginPath] = useState<LoginPathMapper | string | null>(
@@ -49,6 +53,8 @@ const Welcome: React.FC = () => {
   const { account } = useWeb3React()
   const ownedPools = useSelector(selectOwnedPools)
   const redirectPath = getRedirectedPoolAddress(ownedPools)
+  const location = useLocation()
+  const state = location.state as routerStateType
 
   const getTraderPath = useCallback(() => {
     if (!redirectPath) return LoginPathMapper.investor
@@ -58,8 +64,8 @@ const Welcome: React.FC = () => {
   useEffect(() => {
     if (!account) return
 
-    navigate("/", { replace: true })
-  }, [account, navigate])
+    navigate(state.from.pathname, { replace: true })
+  }, [account, navigate, state.from.pathname])
 
   useEffect(() => {
     const loadingTimeout = setTimeout(() => {
@@ -71,6 +77,14 @@ const Welcome: React.FC = () => {
       clearTimeout(loadingTimeout)
     }
   }, [])
+
+  const handleConnect = () => {
+    if (loginPath === LoginPathMapper.wallet && !!state.from.pathname) {
+      navigate(state.from.pathname, { replace: true })
+    }
+
+    navigate(loginPath ?? "/", { replace: true })
+  }
 
   return (
     <>
@@ -181,7 +195,7 @@ const Welcome: React.FC = () => {
           toggleConnectWallet(false)
           setLoginPath(null)
         }}
-        onConnect={() => navigate(loginPath ?? "/", { replace: true })}
+        onConnect={handleConnect}
       />
     </>
   )
