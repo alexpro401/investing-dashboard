@@ -144,6 +144,11 @@ export default [
                     type: "bool",
                   },
                   {
+                    internalType: "bool",
+                    name: "delegatedVotingAllowed",
+                    type: "bool",
+                  },
+                  {
                     internalType: "uint64",
                     name: "duration",
                     type: "uint64",
@@ -183,6 +188,11 @@ export default [
                   {
                     internalType: "bool",
                     name: "earlyCompletion",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "delegatedVotingAllowed",
                     type: "bool",
                   },
                   {
