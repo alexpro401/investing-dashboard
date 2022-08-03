@@ -149,7 +149,7 @@ function Trader(props: Props) {
       const investors = await traderPool?.totalInvestors()
 
       const limit = +formatEther(investors) + 1
-      const res = await traderPool?.getUsersInfo(0, limit)
+      const res = await traderPool?.getUsersInfo(account, 0, limit)
 
       const commisionTime = formatEther(res[0].commissionUnlockTimestamp)
       setCommisionUnlockTime(Number(commisionTime))
@@ -162,7 +162,7 @@ function Trader(props: Props) {
       const investors = await traderPool?.totalInvestors()
 
       const limit = +formatEther(investors) + 1
-      const fees = await traderPool?.getReinvestCommissions(0, limit)
+      const fees = await traderPool?.getReinvestCommissions([0, limit])
 
       const commission = formatBigNumber(fees.traderBaseCommission, 18, 0)
       setPerformanceFeeExist(Number(commission) > 0)
