@@ -46,69 +46,34 @@ export default [
         name: "user",
         type: "address",
       },
-      {
-        indexed: false,
-        internalType: "string",
-        name: "url",
-        type: "string",
-      },
+      { indexed: false, internalType: "string", name: "url", type: "string" },
     ],
     name: "UpdatedProfile",
     type: "event",
   },
   {
-    inputs: [
-      {
-        internalType: "string",
-        name: "name",
-        type: "string",
-      },
-    ],
+    inputs: [{ internalType: "string", name: "name", type: "string" }],
     name: "__UserRegistry_init",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes",
-        name: "signature",
-        type: "bytes",
-      },
-    ],
+    inputs: [{ internalType: "bytes", name: "signature", type: "bytes" }],
     name: "agreeToPrivacyPolicy",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "user", type: "address" }],
     name: "agreed",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "string",
-        name: "url",
-        type: "string",
-      },
-    ],
+    inputs: [{ internalType: "string", name: "url", type: "string" }],
     name: "changeProfile",
     outputs: [],
     stateMutability: "nonpayable",
@@ -116,16 +81,8 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "string",
-        name: "url",
-        type: "string",
-      },
-      {
-        internalType: "bytes",
-        name: "signature",
-        type: "bytes",
-      },
+      { internalType: "string", name: "url", type: "string" },
+      { internalType: "bytes", name: "signature", type: "bytes" },
     ],
     name: "changeProfileAndAgreeToPrivacyPolicy",
     outputs: [],
@@ -135,26 +92,14 @@ export default [
   {
     inputs: [],
     name: "documentHash",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
+    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
@@ -166,51 +111,25 @@ export default [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "hash",
-        type: "bytes32",
-      },
-    ],
+    inputs: [{ internalType: "bytes32", name: "hash", type: "bytes32" }],
     name: "setPrivacyPolicyDocumentHash",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
     name: "transferOwnership",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "", type: "address" }],
     name: "userInfos",
     outputs: [
-      {
-        internalType: "string",
-        name: "profileURL",
-        type: "string",
-      },
-      {
-        internalType: "bytes32",
-        name: "signatureHash",
-        type: "bytes32",
-      },
+      { internalType: "string", name: "profileURL", type: "string" },
+      { internalType: "bytes32", name: "signatureHash", type: "bytes32" },
     ],
     stateMutability: "view",
     type: "function",
