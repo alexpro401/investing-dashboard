@@ -14,18 +14,8 @@ export default [
         name: "symbol",
         type: "string",
       },
-      {
-        indexed: false,
-        internalType: "string",
-        name: "name",
-        type: "string",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "at",
-        type: "address",
-      },
+      { indexed: false, internalType: "string", name: "name", type: "string" },
+      { indexed: false, internalType: "address", name: "at", type: "address" },
       {
         indexed: false,
         internalType: "address",
@@ -62,43 +52,15 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "string",
-        name: "name",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "symbol",
-        type: "string",
-      },
+      { internalType: "string", name: "name", type: "string" },
+      { internalType: "string", name: "symbol", type: "string" },
       {
         components: [
-          {
-            internalType: "string",
-            name: "descriptionURL",
-            type: "string",
-          },
-          {
-            internalType: "address",
-            name: "trader",
-            type: "address",
-          },
-          {
-            internalType: "bool",
-            name: "privatePool",
-            type: "bool",
-          },
-          {
-            internalType: "uint256",
-            name: "totalLPEmission",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "baseToken",
-            type: "address",
-          },
+          { internalType: "string", name: "descriptionURL", type: "string" },
+          { internalType: "address", name: "trader", type: "address" },
+          { internalType: "bool", name: "privatePool", type: "bool" },
+          { internalType: "uint256", name: "totalLPEmission", type: "uint256" },
+          { internalType: "address", name: "baseToken", type: "address" },
           {
             internalType: "uint256",
             name: "minimalInvestment",
@@ -127,6 +89,7 @@ export default [
   },
   {
     inputs: [
+      { internalType: "bool", name: "withValidators", type: "bool" },
       {
         components: [
           {
@@ -139,20 +102,17 @@ export default [
                     type: "bool",
                   },
                   {
-                    internalType: "uint64",
-                    name: "duration",
-                    type: "uint64",
+                    internalType: "bool",
+                    name: "delegatedVotingAllowed",
+                    type: "bool",
                   },
+                  { internalType: "uint64", name: "duration", type: "uint64" },
                   {
                     internalType: "uint64",
                     name: "durationValidators",
                     type: "uint64",
                   },
-                  {
-                    internalType: "uint128",
-                    name: "quorum",
-                    type: "uint128",
-                  },
+                  { internalType: "uint128", name: "quorum", type: "uint128" },
                   {
                     internalType: "uint128",
                     name: "quorumValidators",
@@ -181,20 +141,17 @@ export default [
                     type: "bool",
                   },
                   {
-                    internalType: "uint64",
-                    name: "duration",
-                    type: "uint64",
+                    internalType: "bool",
+                    name: "delegatedVotingAllowed",
+                    type: "bool",
                   },
+                  { internalType: "uint64", name: "duration", type: "uint64" },
                   {
                     internalType: "uint64",
                     name: "durationValidators",
                     type: "uint64",
                   },
-                  {
-                    internalType: "uint128",
-                    name: "quorum",
-                    type: "uint128",
-                  },
+                  { internalType: "uint128", name: "quorum", type: "uint128" },
                   {
                     internalType: "uint128",
                     name: "quorumValidators",
@@ -222,26 +179,10 @@ export default [
           },
           {
             components: [
-              {
-                internalType: "string",
-                name: "name",
-                type: "string",
-              },
-              {
-                internalType: "string",
-                name: "symbol",
-                type: "string",
-              },
-              {
-                internalType: "uint64",
-                name: "duration",
-                type: "uint64",
-              },
-              {
-                internalType: "uint128",
-                name: "quorum",
-                type: "uint128",
-              },
+              { internalType: "string", name: "name", type: "string" },
+              { internalType: "string", name: "symbol", type: "string" },
+              { internalType: "uint64", name: "duration", type: "uint64" },
+              { internalType: "uint128", name: "quorum", type: "uint128" },
               {
                 internalType: "address[]",
                 name: "validators",
@@ -264,11 +205,7 @@ export default [
                 name: "tokenAddress",
                 type: "address",
               },
-              {
-                internalType: "address",
-                name: "nftAddress",
-                type: "address",
-              },
+              { internalType: "address", name: "nftAddress", type: "address" },
               {
                 internalType: "uint256",
                 name: "totalPowerInTokens",
@@ -284,21 +221,10 @@ export default [
             name: "userKeeperParams",
             type: "tuple",
           },
-          {
-            internalType: "address",
-            name: "owner",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "votesLimit",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "feePercentage",
-            type: "uint256",
-          },
+          { internalType: "address", name: "owner", type: "address" },
+          { internalType: "uint256", name: "votesLimit", type: "uint256" },
+          { internalType: "uint256", name: "feePercentage", type: "uint256" },
+          { internalType: "string", name: "descriptionURL", type: "string" },
         ],
         internalType: "struct IPoolFactory.GovPoolDeployParams",
         name: "parameters",
@@ -312,43 +238,15 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "string",
-        name: "name",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "symbol",
-        type: "string",
-      },
+      { internalType: "string", name: "name", type: "string" },
+      { internalType: "string", name: "symbol", type: "string" },
       {
         components: [
-          {
-            internalType: "string",
-            name: "descriptionURL",
-            type: "string",
-          },
-          {
-            internalType: "address",
-            name: "trader",
-            type: "address",
-          },
-          {
-            internalType: "bool",
-            name: "privatePool",
-            type: "bool",
-          },
-          {
-            internalType: "uint256",
-            name: "totalLPEmission",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "baseToken",
-            type: "address",
-          },
+          { internalType: "string", name: "descriptionURL", type: "string" },
+          { internalType: "address", name: "trader", type: "address" },
+          { internalType: "bool", name: "privatePool", type: "bool" },
+          { internalType: "uint256", name: "totalLPEmission", type: "uint256" },
+          { internalType: "address", name: "baseToken", type: "address" },
           {
             internalType: "uint256",
             name: "minimalInvestment",
@@ -378,23 +276,13 @@ export default [
   {
     inputs: [],
     name: "getInjector",
-    outputs: [
-      {
-        internalType: "address",
-        name: "_injector",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "_injector", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "contractsRegistry",
-        type: "address",
-      },
+      { internalType: "address", name: "contractsRegistry", type: "address" },
     ],
     name: "setDependencies",
     outputs: [],
@@ -402,13 +290,7 @@ export default [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_injector",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "_injector", type: "address" }],
     name: "setInjector",
     outputs: [],
     stateMutability: "nonpayable",

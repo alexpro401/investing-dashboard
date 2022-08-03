@@ -144,7 +144,7 @@ function Trader(props: Props) {
   }, [traderPool, account, redirectToInvestor])
 
   useEffect((): void => {
-    if (!traderPool) return
+    if (!traderPool || !account) return
     ;(async () => {
       const investors = await traderPool?.totalInvestors()
 
@@ -154,7 +154,7 @@ function Trader(props: Props) {
       const commisionTime = formatEther(res[0].commissionUnlockTimestamp)
       setCommisionUnlockTime(Number(commisionTime))
     })()
-  }, [traderPool])
+  }, [traderPool, account])
 
   useEffect((): void => {
     if (!traderPool) return
