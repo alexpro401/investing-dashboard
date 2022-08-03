@@ -317,7 +317,6 @@ const useInvestRiskyProposal = (
       invests.positionAmount
     )
 
-    // TODO: type RISKY_PROPOSAL_INVEST
     return await addTransaction(investReceipt, {
       type: TransactionType.DEPOSIT_RISKY_PROPOSAL,
       inputCurrencyAmountRaw: invests.lp2Amount.toString(),
@@ -347,7 +346,6 @@ const useInvestRiskyProposal = (
       divests.receivedAmounts[0]
     )
 
-    // TODO: type RISKY_PROPOSAL_DIVEST
     return await addTransaction(withdrawResponse, {
       type: TransactionType.WITHDRAW_RISKY_PROPOSAL,
       outputCurrencyAmountRaw: amount.toString(),
