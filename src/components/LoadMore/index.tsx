@@ -25,7 +25,10 @@ const LoadMore: React.FC<{
   const scrollableDistance = r?.current?.scrollHeight - r?.current?.clientHeight
 
   const getAnimation = () => {
-    // const isBottom = scrollableDistance - y <= 0
+    const isBottom = scrollableDistance - y <= 0
+    if (isBottom && !isLoading) {
+      handleMore()
+    }
     if (scrollableDistance - y <= -100) {
       handleMore()
     }
