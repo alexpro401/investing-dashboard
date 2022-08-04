@@ -1,21 +1,52 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
+import debounce from "lodash.debounce"
+
 import { InvestProposal } from "constants/interfaces_v2"
 import { useInvestProposalContract } from "hooks/useContract"
+import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
 
-function useInvestProposals(poolAddress?: string): InvestProposal[] {
+interface IPayload {
+  data: InvestProposal[]
+  loading: boolean
+}
+
+function useInvestProposals(poolAddress?: string): [IPayload, () => void] {
   const [proposals, setProposals] = useState<InvestProposal[]>([])
+  const [offset, setOffset] = useState<number>(0)
+  const [fetching, setFetching] = useState<boolean>(true)
+  const [allFetched, setAllFetched] = useState<boolean>(false)
 
   const [traderPoolInvestProposal] = useInvestProposalContract(poolAddress)
 
+  const fetchProposals = useCallback(async () => {
+    if (traderPoolInvestProposal !== null && !allFetched) {
+      setFetching(true)
+      try {
+        const data = await traderPoolInvestProposal.getProposalInfos(
+          offset,
+          DEFAULT_PAGINATION_COUNT
+        )
+        if (data && !!data.length) {
+          setProposals((prev) => [...prev, ...data])
+          setOffset((prev) => prev + data.length)
+        }
+        if (data.length < DEFAULT_PAGINATION_COUNT || data.length === 0) {
+          setAllFetched(true)
+        }
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setFetching(false)
+      }
+    }
+  }, [allFetched, offset, traderPoolInvestProposal])
+
   useEffect(() => {
-    if (!traderPoolInvestProposal) return
-    ;(async () => {
-      const data = await traderPoolInvestProposal.getProposalInfos(0, 100)
-      setProposals(data)
-    })()
+    if (!traderPoolInvestProposal || proposals.length > 0) return
+    fetchProposals()
   }, [traderPoolInvestProposal])
 
-  return proposals
+  return [{ data: proposals, loading: fetching }, debounce(fetchProposals, 100)]
 }
 
 export function useInvestProposal(

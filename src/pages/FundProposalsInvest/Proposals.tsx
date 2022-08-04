@@ -1,9 +1,14 @@
+import { useEffect, useRef } from "react"
 import { useParams } from "react-router-dom"
 import { PulseSpinner } from "react-spinners-kit"
 import { createClient, Provider as GraphProvider } from "urql"
+import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import useInvestProposals from "hooks/useInvestmentProposals"
+
+import LoadMore from "components/LoadMore"
 import InvestProposalCard from "components/cards/proposal/Invest"
+
 import S from "./styled"
 
 const poolsClient = createClient({
@@ -13,9 +18,18 @@ const poolsClient = createClient({
 const FundProposalsInvest = () => {
   const { poolAddress } = useParams()
 
-  const proposals = useInvestProposals(poolAddress)
+  const [{ data, loading }, fetchMore] = useInvestProposals(poolAddress)
 
-  if (!poolAddress || !proposals) {
+  const loader = useRef<any>()
+
+  useEffect(() => {
+    if (!loader.current) return
+    disableBodyScroll(loader.current)
+
+    return () => clearAllBodyScrollLocks()
+  }, [loader, loading])
+
+  if (!poolAddress || !data) {
     return (
       <S.Content>
         <PulseSpinner />
@@ -23,7 +37,7 @@ const FundProposalsInvest = () => {
     )
   }
 
-  if (proposals && proposals.length === 0) {
+  if (data && data.length === 0) {
     return (
       <S.Content>
         <S.WithoutData>No proposals</S.WithoutData>
@@ -32,14 +46,15 @@ const FundProposalsInvest = () => {
   }
 
   return (
-    <S.Container>
-      {proposals.map((proposal, index) => (
+    <S.Container ref={loader}>
+      {data.map((proposal, index) => (
         <InvestProposalCard
           key={index}
           proposal={proposal}
           poolAddress={poolAddress}
         />
       ))}
+      <LoadMore isLoading={loading} handleMore={fetchMore} r={loader} />
     </S.Container>
   )
 }
