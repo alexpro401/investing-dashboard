@@ -31,7 +31,7 @@ const FundProposalsRisky = ({ data, poolAddress }) => {
   }
 
   return (
-    <>
+    <S.List>
       {data.map((proposal, index) => (
         <RiskyProposalCard
           key={index}
@@ -43,7 +43,7 @@ const FundProposalsRisky = ({ data, poolAddress }) => {
           isTrader={isTrader}
         />
       ))}
-    </>
+    </S.List>
   )
 }
 

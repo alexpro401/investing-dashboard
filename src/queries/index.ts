@@ -186,15 +186,15 @@ const RISKY_PROPOSAL = `
     id
     baseToken
   }
-  positions(first: 100, where: {isClosed: $closed}) {
+  positions(skip: $offset, first: $limit, where: { isClosed: $closed }) {
     ${RISKY_PROPOSAL_POSITION}
   }
 `
 
 const RiskyProposalsQuery = `
-  query ($address: String!, $closed: Boolean!) {
+  query ($address: String!, $closed: Boolean!, $offset: Int!, $limit: Int!,) {
     basicPool(id: $address) {
-      proposals(first: 100) {
+      proposals {
         ${RISKY_PROPOSAL}
       }
     }
