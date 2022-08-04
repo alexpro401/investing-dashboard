@@ -10,22 +10,11 @@ import S from "./styled"
 
 const AllPoolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
+  requestPolicy: "network-only", // disable urql cache
 })
 
 const FundPositions = () => {
   const { poolAddress } = useParams()
-
-  const open = (
-    <GraphProvider value={AllPoolsClient}>
-      <FundPositionsList closed={false} />
-    </GraphProvider>
-  )
-
-  const closed = (
-    <GraphProvider value={AllPoolsClient}>
-      <FundPositionsList closed={true} />
-    </GraphProvider>
-  )
 
   return (
     <>
@@ -54,13 +43,19 @@ const FundPositions = () => {
       </Header>
       <S.Container>
         <Routes>
-          <Route path="open" element={open}></Route>
-          <Route path="proposals/*" element={<FundProposals />}></Route>
-          <Route path="closed" element={closed}></Route>
+          <Route path="open" element={<FundPositionsList closed={false} />} />
+          <Route path="proposals/*" element={<FundProposals />} />
+          <Route path="closed" element={<FundPositionsList closed={true} />} />
         </Routes>
       </S.Container>
     </>
   )
 }
 
-export default FundPositions
+const FundPositionsWithProvider = () => (
+  <GraphProvider value={AllPoolsClient}>
+    <FundPositions />
+  </GraphProvider>
+)
+
+export default FundPositionsWithProvider

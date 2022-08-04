@@ -17,10 +17,10 @@ const Styled = {
   `,
   List: styled.div`
     ${ContainerBase}
-    height: fill-content;
     padding: 16px;
     position: relative;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   `,
   Content: styled(Flex)`
     ${ContainerBase}

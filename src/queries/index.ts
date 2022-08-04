@@ -145,13 +145,18 @@ const POSITION = `
 `
 
 const BasicPositionsQuery = `
-  query ($address: String!, $closed: Boolean!) {
-    traderPool(id: $address) {
-      positions(first: 100, where: { closed: $closed }) {
-        ${POSITION}
-      }
+query ($offset: Int!, $limit: Int!, $address: String!, $closed: Boolean!) {
+  positions(
+    skip: $offset, 
+    first: $limit, 
+    where: { 
+      closed: $closed, 
+      traderPool_: { id: $address }
     }
+  ) {
+    ${POSITION}
   }
+}
 `
 
 // Pool risky proposals
