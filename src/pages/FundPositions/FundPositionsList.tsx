@@ -22,7 +22,7 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
     [closed, poolAddress]
   )
 
-  const prepareNewData = (d) => [d.positions]
+  const prepareNewData = (d) => d.positions
 
   const [{ data, error, loading }, fetchMore] = useQueryPagination(
     BasicPositionsQuery,

@@ -27,7 +27,7 @@ const useQueryPagination = (
         (data !== undefined && prevFetching === undefined)) &&
       !error
     ) {
-      const [newPieceOfData] = prepareNewData(data)
+      const newPieceOfData = prepareNewData(data)
       if (newPieceOfData.length > 0) {
         setResult((d) => [...d, ...newPieceOfData])
       }
