@@ -9,12 +9,9 @@ import Proposals from "./Proposals"
 import Positions from "./Positions"
 
 import S from "./styled"
-import useRiskyProposals from "hooks/useRiskyProposals"
 
 const FundProposalsRisky: FC = () => {
   const { poolAddress } = useParams()
-
-  const data = useRiskyProposals(poolAddress)
 
   const tabs: ITab[] = [
     {
@@ -31,7 +28,7 @@ const FundProposalsRisky: FC = () => {
     },
   ]
 
-  if (!data) {
+  if (!poolAddress) {
     return (
       <S.Content full ai="center" jc="center">
         <PulseSpinner />
@@ -39,26 +36,23 @@ const FundProposalsRisky: FC = () => {
     )
   }
 
-  if (data && data.length === 0) {
-    return (
-      <S.Content full ai="center" jc="center">
-        <S.WithoutData>No proposals</S.WithoutData>
-      </S.Content>
-    )
-  }
-
-  const open = <Proposals data={data} poolAddress={poolAddress} />
-  const positions = <Positions closed={false} poolAddress={poolAddress} />
-  const closed = <Positions closed={true} poolAddress={poolAddress} />
-
   return (
     <>
       <RouteTabs tabs={tabs} />
       <S.Container>
         <Routes>
-          <Route path="open" element={open}></Route>
-          <Route path="positions" element={positions}></Route>
-          <Route path="closed" element={closed}></Route>
+          <Route
+            path="open"
+            element={<Proposals poolAddress={poolAddress} />}
+          />
+          <Route
+            path="positions"
+            element={<Positions closed={false} poolAddress={poolAddress} />}
+          />
+          <Route
+            path="closed"
+            element={<Positions closed={true} poolAddress={poolAddress} />}
+          />
         </Routes>
       </S.Container>
     </>
