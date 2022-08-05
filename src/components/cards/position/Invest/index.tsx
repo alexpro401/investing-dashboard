@@ -396,8 +396,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
 
     ;(async () => {
       try {
-        //TODO: const userData = traderPool.getUsersInfo(account, 0, 0)
-        const userData = await traderPool.getUsersInfo(0, 0)
+        const userData = await traderPool.getUsersInfo(account, 0, 0)
 
         if (userData && userData.length > 0) {
           setPoolBaseShare(userData[0].poolBaseShare)
