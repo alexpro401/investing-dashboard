@@ -46,7 +46,7 @@ const FundProposalsRisky: FC<IProps> = ({ poolAddress }) => {
     )
   }
 
-  if (data && data.length === 0) {
+  if (data && data.length === 0 && !loading) {
     return (
       <S.Content full ai="center" jc="center">
         <S.WithoutData>No proposals</S.WithoutData>

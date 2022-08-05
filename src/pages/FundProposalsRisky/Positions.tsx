@@ -77,7 +77,7 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
     return account === poolInfo.parameters.trader
   }, [account, poolInfo])
 
-  if (!data || !poolInfo || !poolMetadata) {
+  if (!data || !poolInfo || !poolMetadata || (data.length === 0 && loading)) {
     return (
       <S.ListLoading full ai="center" jc="center">
         <PulseSpinner />
@@ -85,7 +85,7 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
     )
   }
 
-  if (data && data.length === 0) {
+  if (data && data.length === 0 && !loading) {
     return (
       <S.ListLoading full ai="center" jc="center">
         <S.WithoutData>No positions</S.WithoutData>

@@ -41,7 +41,7 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
     return () => clearAllBodyScrollLocks()
   }, [loader, loading])
 
-  if (!data) {
+  if (!data || (data.length === 0 && loading)) {
     return (
       <S.Content>
         <PulseSpinner />
@@ -49,7 +49,7 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
     )
   }
 
-  if (data && data.length === 0) {
+  if (data && data.length === 0 && !loading) {
     return (
       <S.Content>
         <S.WithoutData>
