@@ -12,6 +12,7 @@ import S from "./styled"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
+  requestPolicy: "network-only", // disable urql cache
 })
 
 const InvestmentPositions = () => {

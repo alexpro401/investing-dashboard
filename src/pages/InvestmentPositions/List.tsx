@@ -1,8 +1,11 @@
-import { FC } from "react"
+import { FC, useMemo, useEffect, useRef } from "react"
 import { PulseSpinner } from "react-spinners-kit"
+import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
-import useInvestorPositions from "hooks/useInvestorPositions"
+import { InvestorPositionsQuery } from "queries"
+import useQueryPagination from "hooks/useQueryPagination"
 
+import LoadMore from "components/LoadMore"
 import InvestPositionCard from "components/cards/position/Invest"
 import S from "./styled"
 
@@ -12,7 +15,31 @@ interface IProps {
 }
 
 const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
-  const data = useInvestorPositions(String(account).toLowerCase(), closed)
+  const variables = useMemo(
+    () => ({
+      address: String(account).toLowerCase(),
+      closed,
+    }),
+    [closed, account]
+  )
+
+  const prepareNewData = (d) => d.investorPoolPositions
+
+  const [{ data, error, loading }, fetchMore] = useQueryPagination(
+    InvestorPositionsQuery,
+    variables,
+    prepareNewData
+  )
+
+  const loader = useRef<any>()
+
+  // manually disable scrolling *refresh this effect when ref container dissapeared from DOM
+  useEffect(() => {
+    if (!loader.current) return
+    disableBodyScroll(loader.current)
+
+    return () => clearAllBodyScrollLocks()
+  }, [loader, loading])
 
   if (!data) {
     return (
@@ -34,10 +61,15 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
 
   return (
     <>
-      <S.List>
+      <S.List ref={loader}>
         {data.map((p) => (
           <InvestPositionCard key={p.id} position={p} />
         ))}
+        <LoadMore
+          isLoading={loading && !!data.length}
+          handleMore={fetchMore}
+          r={loader}
+        />
       </S.List>
     </>
   )

@@ -192,7 +192,7 @@ const RISKY_PROPOSAL = `
 `
 
 const RiskyProposalsQuery = `
-  query ($address: String!, $closed: Boolean!, $offset: Int!, $limit: Int!,) {
+  query ($address: String!, $closed: Boolean!, $offset: Int!, $limit: Int!) {
     basicPool(id: $address) {
       proposals {
         ${RISKY_PROPOSAL}
@@ -256,8 +256,8 @@ const INVESTOR_POSITION_VEST = `
 `
 
 const InvestorPositionsQuery = `
-  query ($address: String!, $closed: Boolean!) {
-    investorPoolPositions(where: {investor: $address, isClosed: $closed}) {
+  query ($address: String!, $closed: Boolean!, $offset: Int!, $limit: Int!) {
+    investorPoolPositions(skip: $offset, first: $limit, where: {investor: $address, isClosed: $closed}) {
       id
       isClosed
       totalBaseInvestVolume
