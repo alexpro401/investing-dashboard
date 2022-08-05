@@ -15,6 +15,7 @@ import S from "./styled"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
+  requestPolicy: "network-only", // disable urql cache
 })
 
 // TODO: better components naming
@@ -43,7 +44,7 @@ const InvestmentRiskyProposals = () => {
     },
   ]
 
-  if (!activePools) {
+  if (!account || !activePools) {
     return (
       <S.Content>
         <PulseSpinner />

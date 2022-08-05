@@ -1,19 +1,23 @@
-import { FC, useMemo } from "react"
+import { FC, useMemo, useEffect, useRef } from "react"
 import { PulseSpinner } from "react-spinners-kit"
 import { createClient, Provider as GraphProvider } from "urql"
+import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { useActiveWeb3React } from "hooks"
 import { usePoolContract } from "hooks/usePool"
+import { InvestorRiskyPositionsQuery } from "queries"
+import useQueryPagination from "hooks/useQueryPagination"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { IRiskyPositionCard } from "constants/interfaces_v2"
-import useInvestorRiskyPositions from "hooks/useInvestorRiskyPositions"
 
+import LoadMore from "components/LoadMore"
 import RiskyPositionCard from "components/cards/position/Risky"
 
 import S from "./styled"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
+  requestPolicy: "network-only",
 })
 
 interface IRiskyCardInitializer {
@@ -63,9 +67,48 @@ interface IProps {
 
 const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
   const { account } = useActiveWeb3React()
-  const positions = useInvestorRiskyPositions(activePools, closed)
 
-  if (!positions || !account) {
+  const variables = useMemo(
+    () => ({
+      poolAddressList: activePools,
+      closed,
+    }),
+    [activePools, closed]
+  )
+
+  const prepareNewData = (d) =>
+    d.proposals.reduce((acc, p) => {
+      if (p.positions.length) {
+        const positionBase = {
+          proposal: p.id,
+          token: p.token,
+          pool: p.basicPool,
+        }
+
+        const positions = p.positions.map((_p) => ({ ...positionBase, ..._p }))
+
+        return [...acc, ...positions]
+      }
+      return acc
+    }, [] as IRiskyPositionCard[])
+
+  const [{ data, error, loading }, fetchMore] = useQueryPagination(
+    InvestorRiskyPositionsQuery,
+    variables,
+    prepareNewData
+  )
+
+  const loader = useRef<any>()
+
+  // manually disable scrolling *refresh this effect when ref container dissapeared from DOM
+  useEffect(() => {
+    if (!loader.current) return
+    disableBodyScroll(loader.current)
+
+    return () => clearAllBodyScrollLocks()
+  }, [loader, loading])
+
+  if (!data || !account || (data.length === 0 && loading)) {
     return (
       <S.Content>
         <PulseSpinner />
@@ -73,7 +116,7 @@ const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
     )
   }
 
-  if (positions && positions.length === 0) {
+  if (data && data.length === 0 && !loading) {
     return (
       <S.Content>
         <S.WithoutData>
@@ -85,8 +128,8 @@ const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
 
   return (
     <>
-      <S.List>
-        {positions.map((p) => (
+      <S.List ref={loader}>
+        {data.map((p) => (
           <RiskyPositionCardInitializer
             key={p.id}
             position={p}
@@ -94,6 +137,11 @@ const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
             poolAddress={p.pool.id}
           />
         ))}
+        <LoadMore
+          isLoading={loading && !!data.length}
+          handleMore={fetchMore}
+          r={loader}
+        />
       </S.List>
     </>
   )

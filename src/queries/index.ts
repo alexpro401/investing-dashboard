@@ -313,8 +313,9 @@ const INVESTOR_RISKY_POSITION = `
   totalUSDOpenVolume
   totalUSDCloseVolume
 `
+
 const InvestorRiskyPositionsQuery = `
-  query ($poolAddressList: [String]!, $closed: Boolean!) {
+  query ($poolAddressList: [String]!, $closed: Boolean!, $offset: Int!, $limit: Int!) {
     proposals(where: { basicPool_in: $poolAddressList }){
       id
       token
@@ -322,7 +323,7 @@ const InvestorRiskyPositionsQuery = `
         id
         baseToken
       }
-      positions(where: { isClosed: $closed }) {
+      positions(skip: $offset, first: $limit, where: { isClosed: $closed }) {
         ${INVESTOR_RISKY_POSITION}
       }
     }
