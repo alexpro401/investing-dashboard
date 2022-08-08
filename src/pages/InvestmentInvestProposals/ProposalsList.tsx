@@ -58,7 +58,7 @@ interface IProps {
 
 const InvestmentInvestProposalsList: FC<IProps> = ({
   activePools,
-  invested, // TODO: paginate with `invested` flag for current account ( see how to get balance in proposal - src/hooks/useInvestorInvestProposals.ts (72))
+  invested,
 }) => {
   const variables = useMemo(() => ({ activePools }), [activePools])
 
@@ -69,7 +69,7 @@ const InvestmentInvestProposalsList: FC<IProps> = ({
     }))
 
   const [{ data, error, loading }, fetchMore] = useQueryPagination(
-    InvestorInvestProposalsQuery,
+    InvestorInvestProposalsQuery(invested),
     variables,
     normalizeCollection
   )

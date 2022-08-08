@@ -352,13 +352,16 @@ const INVESTOR_INVEST_PROPOSAL = `
     baseToken
   }
 `
-const InvestorInvestProposalsQuery = `
+const InvestorInvestProposalsQuery = (invested) => {
+  const condition = invested ? "investPool_in" : "investPool_not_in"
+  return `
   query ($activePools: [String]!, $offset: Int!, $limit: Int!) {
-    proposals(skip: $offset, first: $limit, where: { investPool_in: $activePools }){
+    proposals(skip: $offset, first: $limit, where: { ${condition}: $activePools }){
       ${INVESTOR_INVEST_PROPOSAL}
     }
   }
 `
+}
 
 // Fund fee history
 const FundFeeHistoryQuery = `
