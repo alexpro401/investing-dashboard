@@ -427,16 +427,18 @@ const RiskyPositionCard: React.FC<Props> = ({
           variants={accordionSummaryVariants}
         >
           {exchanges && exchanges.length ? (
-            exchanges.map((e) => (
-              <PositionTrade
-                data={e}
-                key={e.id}
-                timestamp={e.timestamp}
-                isBuy={false}
-                amount={!false ? e.toVolume : e.fromVolume}
-                baseTokenSymbol={baseTokenSymbol}
-              />
-            ))
+            <SharedS.TradesList>
+              {exchanges.map((e) => (
+                <PositionTrade
+                  data={e}
+                  key={e.id}
+                  timestamp={e.timestamp}
+                  isBuy={false}
+                  amount={!false ? e.toVolume : e.fromVolume}
+                  baseTokenSymbol={baseTokenSymbol}
+                />
+              ))}
+            </SharedS.TradesList>
           ) : (
             <Flex full jc="center" p="12px 0">
               <SharedS.WitoutData>No trades</SharedS.WitoutData>

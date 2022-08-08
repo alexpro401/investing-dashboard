@@ -50,6 +50,15 @@ const Styled = {
     grid-template-rows: 1fr;
     grid-column-gap: 12px;
   `,
+  TradesList: styled.div`
+    max-height: 180px;
+    overflow-y: auto;
+
+    -webkit-overflow-scrolling: touch;
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  `,
   ExtraItem: styled(GradientBorder)<{ p?: string }>`
     width: 100%;
     flex-direction: column;

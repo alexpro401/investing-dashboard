@@ -500,18 +500,20 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
           variants={accordionSummaryVariants}
         >
           {position.vest && position.vest.length > 0 ? (
-            position.vest.map((v) => (
-              <PositionTrade
-                key={v.id}
-                isBuy={v.isInvest}
-                timestamp={v.timestamp}
-                amount={v.volumeBase}
-                priceBase={v.volumeLP}
-                priceUsd={v.volumeUSD}
-                baseTokenSymbol={baseTokenSymbol}
-                data={v}
-              />
-            ))
+            <SharedS.TradesList>
+              {position.vest.map((v) => (
+                <PositionTrade
+                  key={v.id}
+                  isBuy={v.isInvest}
+                  timestamp={v.timestamp}
+                  amount={v.volumeBase}
+                  priceBase={v.volumeLP}
+                  priceUsd={v.volumeUSD}
+                  baseTokenSymbol={baseTokenSymbol}
+                  data={v}
+                />
+              ))}
+            </SharedS.TradesList>
           ) : (
             <Flex full jc="center" p="12px 0">
               <SharedS.WitoutData>No trades</SharedS.WitoutData>

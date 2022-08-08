@@ -357,16 +357,18 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
           animate={showPositions ? "visible" : "hidden"}
         >
           {position.exchanges && position.exchanges.length > 0 ? (
-            position.exchanges.map((e) => (
-              <PositionTrade
-                key={e.id}
-                data={e}
-                baseTokenSymbol={baseTokenSymbol}
-                timestamp={e.timestamp.toString()}
-                isBuy={e.opening}
-                amount={e.opening ? e.toVolume : e.fromVolume}
-              />
-            ))
+            <SharedS.TradesList>
+              {position.exchanges.map((e) => (
+                <PositionTrade
+                  key={e.id}
+                  data={e}
+                  baseTokenSymbol={baseTokenSymbol}
+                  timestamp={e.timestamp.toString()}
+                  isBuy={e.opening}
+                  amount={e.opening ? e.toVolume : e.fromVolume}
+                />
+              ))}
+            </SharedS.TradesList>
           ) : (
             <Flex full jc="center" p="12px 0">
               <SharedS.WitoutData>No trades</SharedS.WitoutData>
