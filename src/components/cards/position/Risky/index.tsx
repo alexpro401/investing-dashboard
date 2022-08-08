@@ -433,7 +433,7 @@ const RiskyPositionCard: React.FC<Props> = ({
                   data={e}
                   key={e.id}
                   timestamp={e.timestamp}
-                  isBuy={false}
+                  isBuy={e.fromToken === positionToken?.address}
                   amount={!false ? e.toVolume : e.fromVolume}
                   baseTokenSymbol={baseTokenSymbol}
                 />
