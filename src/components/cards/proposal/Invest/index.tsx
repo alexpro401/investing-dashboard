@@ -20,7 +20,7 @@ import { parseInvestProposalData } from "utils/ipfs"
 import { percentageOfBignumbers } from "utils/formulas"
 import { InvestProposal } from "constants/interfaces_v2"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-import { expandTimestamp, normalizeBigNumber } from "utils"
+import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import useInvestProposalData from "hooks/useInvestProposalData"
 import { selectPriceFeedAddress } from "state/contracts/selectors"
 import useContract, {
@@ -225,7 +225,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
 
     setMaxSizeLP({
       value: investLPLimit,
-      normalized: normalizeBigNumber(investLPLimit, 18, 6),
+      normalized: formatBigNumber(investLPLimit, 18, 6),
     })
   }, [proposal])
 
@@ -259,7 +259,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
         if (activeInvestmentsInfo && activeInvestmentsInfo[0]) {
           setProposalId(activeInvestmentsInfo[0].proposalId.toString())
           setYouSizeLP(
-            normalizeBigNumber(activeInvestmentsInfo[0].lpInvested, 18, 6)
+            formatBigNumber(activeInvestmentsInfo[0].lpInvested, 18, 6)
           )
         }
       } catch (error) {

@@ -5,7 +5,7 @@ import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 
 import { useActiveWeb3React } from "hooks"
 import { SupportedChainId } from "constants/chains"
-import { expandTimestamp, normalizeBigNumber } from "utils"
+import { expandTimestamp, formatBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
 import S from "./styled"
@@ -50,12 +50,12 @@ const PositionTrade: React.FC<Props> = ({
 
   const volume = useMemo(() => {
     if (!amount) return "0"
-    return normalizeBigNumber(amount, 18, 5)
+    return formatBigNumber(amount, 18, 5)
   }, [amount])
 
   const priceBaseToken = useMemo(() => {
     if (priceBase) {
-      return normalizeBigNumber(priceBase, 18, 5)
+      return formatBigNumber(priceBase, 18, 5)
     }
     if (!data.toVolume || !data.fromVolume) return "0"
 
@@ -63,13 +63,13 @@ const PositionTrade: React.FC<Props> = ({
     const fromFixed = FixedNumber.fromValue(data.fromVolume, 18)
 
     if (isBuy) {
-      return normalizeBigNumber(
+      return formatBigNumber(
         parseEther(fromFixed.divUnsafe(toFixed)._value),
         18,
         5
       )
     }
-    return normalizeBigNumber(
+    return formatBigNumber(
       parseEther(toFixed.divUnsafe(fromFixed)._value),
       18,
       5
@@ -77,7 +77,7 @@ const PositionTrade: React.FC<Props> = ({
   }, [data.fromVolume, data.toVolume, isBuy, priceBase])
 
   const _priceUsd = useMemo(() => {
-    if (priceUsd) return normalizeBigNumber(priceUsd, 18, 2)
+    if (priceUsd) return formatBigNumber(priceUsd, 18, 2)
     if (!data || !data.usdVolume) return "0"
 
     const usdVolumeFixed = FixedNumber.fromValue(data.usdVolume, 18)
@@ -96,7 +96,7 @@ const PositionTrade: React.FC<Props> = ({
       )
     }
 
-    return normalizeBigNumber(res, 18, 2)
+    return formatBigNumber(res, 18, 2)
   }, [data, isBuy, priceUsd])
 
   const PositionDirection = (
