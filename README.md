@@ -3,6 +3,13 @@
 
 ## Development
 ---
+### Configuration
+check `.env.local.example` and provide those values to your `.env.local` file:
+1. Infura id
+2. Etherscan api key
+3. Infura ipfs id
+3. Infura ipfs secret
+
 ### Install Dependencies
 install node_modules
 ```bash
