@@ -1,6 +1,6 @@
 import { useMemo } from "react"
-import { ethers } from "ethers"
 import { format } from "date-fns"
+import { parseEther } from "@ethersproject/units"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 
 import { useActiveWeb3React } from "hooks"
@@ -64,13 +64,13 @@ const PositionTrade: React.FC<Props> = ({
 
     if (isBuy) {
       return normalizeBigNumber(
-        ethers.utils.parseEther(fromFixed.divUnsafe(toFixed)._value),
+        parseEther(fromFixed.divUnsafe(toFixed)._value),
         18,
         5
       )
     }
     return normalizeBigNumber(
-      ethers.utils.parseEther(toFixed.divUnsafe(fromFixed)._value),
+      parseEther(toFixed.divUnsafe(fromFixed)._value),
       18,
       5
     )
@@ -85,12 +85,12 @@ const PositionTrade: React.FC<Props> = ({
     let res
 
     if (isBuy) {
-      res = ethers.utils.parseEther(
+      res = parseEther(
         usdVolumeFixed.divUnsafe(FixedNumber.fromValue(data.toVolume, 18))
           ._value
       )
     } else {
-      res = ethers.utils.parseEther(
+      res = parseEther(
         usdVolumeFixed.divUnsafe(FixedNumber.fromValue(data.fromVolume, 18))
           ._value
       )

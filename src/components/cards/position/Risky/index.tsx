@@ -1,9 +1,9 @@
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react"
 import { useSelector } from "react-redux"
-import { BigNumber, ethers } from "ethers"
+import { parseEther, parseUnits } from "@ethersproject/units"
+import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
-import { FixedNumber } from "@ethersproject/bignumber"
 
 import { PriceFeed } from "abi"
 import { IRiskyPositionCard, PoolInfo } from "constants/interfaces_v2"
@@ -104,7 +104,7 @@ const RiskyPositionCard: React.FC<Props> = ({
       const close = FixedNumber.fromValue(position.totalPositionCloseVolume, 18)
       const resFixed = open.subUnsafe(close)
 
-      return normalizeBigNumber(ethers.utils.parseEther(resFixed._value), 18, 6)
+      return normalizeBigNumber(parseEther(resFixed._value), 18, 6)
     }
   }, [position])
 
@@ -127,7 +127,7 @@ const RiskyPositionCard: React.FC<Props> = ({
     const posOpen = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
     const resFixed = usdOpen.divUnsafe(posOpen)
 
-    return ethers.utils.parseEther(resFixed._value)
+    return parseEther(resFixed._value)
   }, [position])
 
   /**
@@ -149,7 +149,7 @@ const RiskyPositionCard: React.FC<Props> = ({
     const posOpen = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
     const resFixed = baseOpen.divUnsafe(posOpen)
 
-    return ethers.utils.parseEther(resFixed._value)
+    return parseEther(resFixed._value)
   }, [position])
 
   /**
@@ -164,7 +164,7 @@ const RiskyPositionCard: React.FC<Props> = ({
 
     const res = _markPriceFixed.subUnsafe(_entryPriceBaseFixed)
 
-    return ethers.utils.parseEther(res._value)
+    return parseEther(res._value)
   }, [markPriceBase, entryPriceBase])
 
   interface IPnlPercentage {
@@ -194,7 +194,7 @@ const RiskyPositionCard: React.FC<Props> = ({
       FixedNumber.from("100", 18)
     )
 
-    const resultBig = ethers.utils.parseEther(resultFixed._value)
+    const resultBig = parseEther(resultFixed._value)
 
     return {
       value: resultBig,
@@ -213,7 +213,7 @@ const RiskyPositionCard: React.FC<Props> = ({
 
     const res = _markPriceFixed.subUnsafe(_entryPriceUSDFixed)
 
-    return ethers.utils.parseEther(res._value)
+    return parseEther(res._value)
   }, [markPriceUSD, entryPriceUSD])
 
   // get mark price
@@ -221,7 +221,7 @@ const RiskyPositionCard: React.FC<Props> = ({
     if (!priceFeed || !position || !position.token || !position.pool) return
     ;(async () => {
       try {
-        const amount = ethers.utils.parseUnits("1", 18)
+        const amount = parseUnits("1", 18)
 
         // without extended
         const price = await priceFeed.getNormalizedExtendedPriceOut(

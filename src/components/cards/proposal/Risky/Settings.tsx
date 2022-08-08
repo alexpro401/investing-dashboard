@@ -7,10 +7,10 @@ import {
   useCallback,
   SetStateAction,
 } from "react"
-import { ethers } from "ethers"
 import { format } from "date-fns"
 import { BigNumber } from "@ethersproject/bignumber"
 import { Contract } from "@ethersproject/contracts"
+import { parseEther, parseUnits } from "@ethersproject/units"
 
 import { useAddToast } from "state/application/hooks"
 import { TransactionType } from "state/transactions/types"
@@ -121,10 +121,10 @@ const RiskyCardSettings: FC<Props> = ({
   const validate = useCallback((): boolean => {
     const errors = {} as IErrorsState
 
-    if (ethers.utils.parseEther(investLPLimit).lt(fullness)) {
+    if (parseEther(investLPLimit).lt(fullness)) {
       errors.investLPLimit = "Max size can't be less than fullness"
     }
-    if (ethers.utils.parseEther(maxTokenPriceLimit).lt(currentPrice)) {
+    if (parseEther(maxTokenPriceLimit).lt(currentPrice)) {
       errors.maxTokenPriceLimit =
         "Max token price can't be less than current price"
     }
@@ -163,8 +163,8 @@ const RiskyCardSettings: FC<Props> = ({
     if (
       !isValuesChanged(
         timestampLimit,
-        ethers.utils.parseUnits(investLPLimit, 18),
-        ethers.utils.parseUnits(maxTokenPriceLimit, 18)
+        parseUnits(investLPLimit, 18),
+        parseUnits(maxTokenPriceLimit, 18)
       )
     ) {
       addToast(
@@ -186,8 +186,8 @@ const RiskyCardSettings: FC<Props> = ({
       try {
         const proposalLimits = [
           timestampLimit,
-          ethers.utils.parseUnits(investLPLimit, 18).toHexString(),
-          ethers.utils.parseUnits(maxTokenPriceLimit, 18).toHexString(),
+          parseUnits(investLPLimit, 18).toHexString(),
+          parseUnits(maxTokenPriceLimit, 18).toHexString(),
         ]
 
         const receipt = await proposalPool.changeProposalRestrictions(
@@ -203,8 +203,8 @@ const RiskyCardSettings: FC<Props> = ({
           // Update data in card
           successCallback(
             timestampLimit,
-            ethers.utils.parseUnits(investLPLimit, 18),
-            ethers.utils.parseUnits(maxTokenPriceLimit, 18)
+            parseUnits(investLPLimit, 18),
+            parseUnits(maxTokenPriceLimit, 18)
           )
           onCancel()
         }

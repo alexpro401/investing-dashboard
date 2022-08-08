@@ -1,5 +1,5 @@
 import { FC, MouseEvent, useMemo } from "react"
-import { BigNumber } from "ethers"
+import { BigNumber } from "@ethersproject/bignumber"
 import { normalizeBigNumber } from "utils"
 import styled from "styled-components"
 import { motion } from "framer-motion"

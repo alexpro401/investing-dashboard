@@ -1,6 +1,6 @@
 import { MouseEvent, useState, useCallback, useEffect, useMemo } from "react"
 import { useSelector } from "react-redux"
-import { ethers } from "ethers"
+import { parseEther, parseUnits } from "@ethersproject/units"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { useNavigate } from "react-router-dom"
 
@@ -91,7 +91,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
       const close = FixedNumber.fromValue(position.totalPositionCloseVolume, 18)
       const resFixed = open.subUnsafe(close)
 
-      return normalizeBigNumber(ethers.utils.parseEther(resFixed._value), 18, 6)
+      return normalizeBigNumber(parseEther(resFixed._value), 18, 6)
     }
   }, [position])
 
@@ -114,7 +114,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     const posOpen = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
     const resFixed = usdOpen.divUnsafe(posOpen)
 
-    return ethers.utils.parseEther(resFixed._value)
+    return parseEther(resFixed._value)
   }, [position])
 
   /**
@@ -136,7 +136,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     const posOpen = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
     const resFixed = baseOpen.divUnsafe(posOpen)
 
-    return ethers.utils.parseEther(resFixed._value)
+    return parseEther(resFixed._value)
   }, [position])
 
   /**
@@ -154,7 +154,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
       const pos = FixedNumber.fromValue(position.totalPositionCloseVolume, 18)
       const resFixed = base.divUnsafe(pos)
 
-      return ethers.utils.parseEther(resFixed._value)
+      return parseEther(resFixed._value)
     }
   }, [markPrice, position])
 
@@ -173,7 +173,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
       const pos = FixedNumber.fromValue(position.totalPositionCloseVolume, 18)
       const resFixed = usd.divUnsafe(pos)
 
-      return ethers.utils.parseEther(resFixed._value)
+      return parseEther(resFixed._value)
     }
   }, [currentPriceUSD, position])
 
@@ -189,7 +189,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
 
     const res = _markPriceFixed.subUnsafe(_entryPriceBaseFixed)
 
-    return ethers.utils.parseEther(res._value)
+    return parseEther(res._value)
   }, [markPriceBase, entryPriceBase])
 
   interface IPnlPercentage {
@@ -215,7 +215,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
       FixedNumber.from("100", 18)
     )
 
-    const resultBig = ethers.utils.parseEther(resultFixed._value)
+    const resultBig = parseEther(resultFixed._value)
 
     return {
       value: resultBig,
@@ -234,7 +234,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
 
     const res = _markPriceFixed.subUnsafe(_entryPriceUSDFixed)
 
-    return ethers.utils.parseEther(res._value)
+    return parseEther(res._value)
   }, [markPriceUSD, entryPriceUSD])
 
   // get mark price of posiiton token in fund base token
@@ -242,7 +242,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     if (!priceFeed || !position || !position.traderPool) return
     ;(async () => {
       try {
-        const amount = ethers.utils.parseUnits("1", 18)
+        const amount = parseUnits("1", 18)
 
         // without extended
         const price = await priceFeed.getNormalizedExtendedPriceOut(

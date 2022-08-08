@@ -6,11 +6,11 @@ import {
   useMemo,
   useState,
 } from "react"
-import { ethers } from "ethers"
 import { format } from "date-fns"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
+import { parseEther } from "@ethersproject/units"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 
 import { PriceFeed } from "abi"
@@ -298,7 +298,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
             const amountOutFixed = FixedNumber.from(amountPrice.amountOut)
             const resFixed = totalDividendsAmountFixed.addUnsafe(amountOutFixed)
 
-            setTotalDividendsAmount(ethers.utils.parseEther(resFixed._value))
+            setTotalDividendsAmount(parseEther(resFixed._value))
           }
         }
       } catch (error) {

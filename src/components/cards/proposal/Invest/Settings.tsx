@@ -7,10 +7,10 @@ import {
   useState,
   useCallback,
 } from "react"
-import { ethers } from "ethers"
 import { format } from "date-fns"
 import { Contract } from "@ethersproject/contracts"
 import { BigNumber } from "@ethersproject/bignumber"
+import { parseEther, parseUnits } from "@ethersproject/units"
 
 import { useAddToast } from "state/application/hooks"
 import { TransactionType } from "state/transactions/types"
@@ -103,7 +103,7 @@ const InvestCardSettings: FC<Props> = ({
   const validate = useCallback((): boolean => {
     const errors = {} as IErrorsState
 
-    if (ethers.utils.parseEther(investLPLimit).lt(fullness)) {
+    if (parseEther(investLPLimit).lt(fullness)) {
       errors.investLPLimit = "Invest limit can't be less than fullness"
       setErrors(errors)
 
@@ -129,12 +129,7 @@ const InvestCardSettings: FC<Props> = ({
       return
     }
 
-    if (
-      !isValuesChanged(
-        timestampLimit,
-        ethers.utils.parseUnits(investLPLimit, 18)
-      )
-    ) {
+    if (!isValuesChanged(timestampLimit, parseUnits(investLPLimit, 18))) {
       addToast(
         {
           type: "warning",
@@ -152,9 +147,7 @@ const InvestCardSettings: FC<Props> = ({
 
     if (!hasError) {
       try {
-        const limitHex = ethers.utils
-          .parseUnits(investLPLimit, 18)
-          .toHexString()
+        const limitHex = parseUnits(investLPLimit, 18).toHexString()
         const proposalLimits = [timestampLimit, limitHex]
 
         const receipt = await proposalPool.changeProposalRestrictions(
@@ -169,10 +162,7 @@ const InvestCardSettings: FC<Props> = ({
 
         if (isTxMined(tx)) {
           // Update data in card
-          successCallback(
-            timestampLimit,
-            ethers.utils.parseUnits(investLPLimit, 18)
-          )
+          successCallback(timestampLimit, parseUnits(investLPLimit, 18))
           onCancel()
         }
       } catch (error) {

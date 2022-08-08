@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState, MouseEvent } from "react"
-import { ethers } from "ethers"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
+import { parseEther, parseUnits } from "@ethersproject/units"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { createClient, Provider as GraphProvider } from "urql"
 
@@ -119,7 +119,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
       )
       const res = investFixed.subUnsafe(divestFixed)
 
-      return normalizeBigNumber(ethers.utils.parseEther(res._value), 18, 6)
+      return normalizeBigNumber(parseEther(res._value), 18, 6)
     }
   }, [position])
 
@@ -142,7 +142,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     )
     const resFixed = totalUsdInvestFixed.divUnsafe(totalLpInvestFixed)
 
-    return ethers.utils.parseEther(resFixed._value)
+    return parseEther(resFixed._value)
   }, [position])
 
   const entryPriceUSD = useMemo<BigNumber>(() => {
@@ -164,7 +164,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     )
     const resFixed = totalBaseInvestFixed.divUnsafe(totalLpInvestFixed)
 
-    return ethers.utils.parseEther(resFixed._value)
+    return parseEther(resFixed._value)
   }, [position])
 
   const markPrice = useMemo(() => {
@@ -185,7 +185,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
         totalLPInvestVolumeFixed
       )
 
-      return ethers.utils.parseEther(resFixed._value)
+      return parseEther(resFixed._value)
     }
 
     return markPriceOpen
@@ -209,7 +209,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
         totalLPInvestVolumeFixed
       )
 
-      return ethers.utils.parseEther(resFixed._value)
+      return parseEther(resFixed._value)
     }
 
     return markPriceOpenUSD
@@ -233,14 +233,14 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
       const resFixed = totalBaseDivestVolumeFixed.subUnsafe(
         totalBaseInvestVolumeFixed
       )
-      return ethers.utils.parseEther(resFixed._value)
+      return parseEther(resFixed._value)
     } else {
       const poolBaseShareFixed = FixedNumber.fromValue(poolBaseShare, 18)
 
       const resFixed = totalBaseDivestVolumeFixed
         .addUnsafe(poolBaseShareFixed)
         .subUnsafe(totalBaseInvestVolumeFixed)
-      return ethers.utils.parseEther(resFixed._value)
+      return parseEther(resFixed._value)
     }
   }, [poolBaseShare, position])
 
@@ -255,12 +255,8 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     )
 
     return {
-      value: ethers.utils.parseEther(resultFixed._value),
-      normalized: normalizeBigNumber(
-        ethers.utils.parseEther(resultFixed._value),
-        18,
-        2
-      ),
+      value: parseEther(resultFixed._value),
+      normalized: normalizeBigNumber(parseEther(resultFixed._value), 18, 2),
     }
   }, [markPrice, entryPriceBase])
 
@@ -282,14 +278,14 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
       const resFixed = totalUSDDivestVolumeFixed.subUnsafe(
         totalUSDInvestVolumeFixed
       )
-      return ethers.utils.parseEther(resFixed._value)
+      return parseEther(resFixed._value)
     } else {
       const poolUSDShareFixed = FixedNumber.fromValue(poolUSDShare, 18)
 
       const resFixed = totalUSDDivestVolumeFixed
         .addUnsafe(poolUSDShareFixed)
         .subUnsafe(totalUSDInvestVolumeFixed)
-      return ethers.utils.parseEther(resFixed._value)
+      return parseEther(resFixed._value)
     }
   }, [poolUSDShare, position])
 
@@ -348,7 +344,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
 
     const resFixed = lpSupplyFixed.addUnsafe(lpLockedInProposalsFixed)
 
-    return normalizeBigNumber(ethers.utils.parseEther(resFixed._value), 18, 2)
+    return normalizeBigNumber(parseEther(resFixed._value), 18, 2)
   }, [poolInfo])
 
   const fundsLockedInvestor = useMemo(() => {
@@ -371,7 +367,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
 
     ;(async () => {
       try {
-        const amount = ethers.utils.parseUnits("1", 18)
+        const amount = parseUnits("1", 18)
 
         // without extended
         const price = await priceFeed.getNormalizedExtendedPriceOut(
