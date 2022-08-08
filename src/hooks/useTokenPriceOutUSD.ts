@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
-import { BigNumber, ethers } from "ethers"
+import { parseUnits } from "@ethersproject/units"
+import { BigNumber } from "@ethersproject/bignumber"
 
 import { usePriceFeedContract } from "hooks/useContract"
 
@@ -19,7 +20,7 @@ export default function useTokenPriceOutUSD({
   useEffect(() => {
     if (!priceFeed || !tokenAddress || tokenAddress.length !== 42) return
     ;(async () => {
-      const _amount = amount ?? ethers.utils.parseUnits("1", 18)
+      const _amount = amount ?? parseUnits("1", 18)
 
       const priceUSD = await priceFeed
         ?.getNormalizedPriceOutUSD(tokenAddress, _amount.toHexString())
