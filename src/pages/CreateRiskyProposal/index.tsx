@@ -23,6 +23,7 @@ import Tooltip from "components/Tooltip"
 import DatePicker from "components/DatePicker"
 import Payload from "components/Payload"
 import TransactionError from "modals/TransactionError"
+import TransactionSent from "modals/TransactionSent"
 
 import { usePoolContract } from "hooks/usePool"
 import { Token } from "constants/interfaces"
@@ -329,6 +330,16 @@ const CreateRiskyProposal: FC = () => {
       <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
         {error}
       </TransactionError>
+      {/* <TransactionSent
+        isOpen
+        toggle={() => {}}
+        title="Success"
+        description="You have successfully created a risk proposal. Deposit LP and trade your token"
+      >
+        <Button size="large" theme="primary" fz={22} full>
+          Deposit in Risk Proposal
+        </Button>
+      </TransactionSent> */}
       <Header>Create risky proposal</Header>
       <Container>
         <Card>

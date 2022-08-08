@@ -5,9 +5,10 @@ import { poolTypes, stableCoins } from "constants/index"
 import { ethers, FixedNumber } from "ethers"
 import { ERC20 } from "abi"
 import { useEffect, useState } from "react"
-import { OwnedPools } from "constants/interfaces_v2"
+import { ExchangeType, OwnedPools } from "constants/interfaces_v2"
 import { getTime, setHours, setMinutes } from "date-fns"
 import { TransactionReceipt } from "@ethersproject/providers"
+import { Token } from "constants/types"
 
 export const useUpdate = (ms: number) => {
   const [updator, setUpdate] = useState(0)
@@ -224,17 +225,22 @@ export const fixFractionalDecimals = (
 }
 
 export const calcSlippage = (
-  amount: BigNumber,
-  decimals: number,
-  slippage: number
+  token: Token,
+  slippage: string,
+  swapDirection: ExchangeType
 ) => {
-  const a = FixedNumber.fromValue(amount, decimals)
-  const sl = FixedNumber.fromValue(
-    ethers.utils.parseEther(slippage.toString()),
+  const sl =
+    swapDirection === ExchangeType.FROM_EXACT
+      ? 1 - parseFloat(slippage) / 100
+      : 1 + parseFloat(slippage) / 100
+
+  const a = FixedNumber.fromValue(token[0], token[1])
+  const multiplier = FixedNumber.fromValue(
+    ethers.utils.parseEther(sl.toString()),
     18
   )
 
-  return BigNumber.from(a.mulUnsafe(sl)._hex)
+  return BigNumber.from(a.mulUnsafe(multiplier)._hex)
 }
 
 export const parseTransactionError = (str: any) => {

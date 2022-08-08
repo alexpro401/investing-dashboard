@@ -14,9 +14,7 @@ import {
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 
-import getReceipt from "utils/getReceipt"
-
-import { shortTimestamp, parseTransactionError } from "utils"
+import { shortTimestamp, parseTransactionError, isTxMined } from "utils"
 
 const useCreateRiskyProposal = (
   poolAddress?: string,
@@ -45,7 +43,7 @@ const useCreateRiskyProposal = (
   }
 ] => {
   const addTransaction = useTransactionAdder()
-  const { account, library } = useWeb3React()
+  const { account } = useWeb3React()
   const initialTimeLimit = shortTimestamp(getTime(addDays(new Date(), 30)))
   const [riskyProposal] = useRiskyProposalContract(poolAddress)
 
@@ -114,7 +112,7 @@ const useCreateRiskyProposal = (
         []
       )
 
-      const createReceipt = await basicTraderPool.createProposal(
+      const createResponse = await basicTraderPool.createProposal(
         tokenAddress,
         amount,
         [
@@ -129,10 +127,14 @@ const useCreateRiskyProposal = (
       )
       setSubmiting(false)
 
-      await addTransaction(createReceipt, {
+      const receipt = await addTransaction(createResponse, {
         type: TransactionType.CREATE_RISKY_PROPOSAL,
         poolId: poolAddress,
       })
+
+      if (isTxMined(receipt)) {
+        // TODO: show modal
+      }
     }
 
     createRiskyProposal().catch((error) => {

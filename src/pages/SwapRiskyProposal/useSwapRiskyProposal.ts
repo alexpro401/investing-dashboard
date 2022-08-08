@@ -16,7 +16,7 @@ import { useERC20, usePriceFeedContract } from "hooks/useContract"
 import { multiplyBignumbers } from "utils/formulas"
 import useGasTracker from "state/gas/hooks"
 import { useWeb3React } from "@web3-react/core"
-import { isTxMined, parseTransactionError } from "utils"
+import { calcSlippage, isTxMined, parseTransactionError } from "utils"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 
@@ -138,28 +138,37 @@ const useSwapRiskyProposal = ({
 
   const getExchangeAmount = useCallback(
     async (from, amount, field) => {
-      return (
-        await proposalPool?.getExchangeAmount(
-          Number(proposalId) + 1,
-          from,
-          amount,
-          [],
-          field
-        )
-      )[0]
+      const exchange = await proposalPool?.getExchangeAmount(
+        Number(proposalId) + 1,
+        from,
+        amount,
+        [],
+        field
+      )
+
+      const exchangeWithSlippage = calcSlippage(
+        [exchange[0], 18],
+        slippage,
+        field
+      )
+      return [exchange, exchangeWithSlippage]
     },
-    [proposalPool, proposalId]
+    [proposalPool, proposalId, slippage]
   )
 
   const exchange = useCallback(
     async (from, amount, field) => {
-      const amountOut = await getExchangeAmount(from, amount, field)
+      const [, amountWithSlippage] = await getExchangeAmount(
+        from,
+        amount,
+        field
+      )
 
       return proposalPool?.exchange(
         Number(proposalId) + 1,
         from,
         amount,
-        amountOut,
+        amountWithSlippage,
         [],
         field
       )
@@ -175,7 +184,7 @@ const useSwapRiskyProposal = ({
       setLastChangedField("from")
       setFromAmount(v)
       try {
-        const amountOut = await getExchangeAmount(
+        const [exchange] = await getExchangeAmount(
           form.from.address,
           amount,
           ExchangeType.FROM_EXACT
@@ -187,10 +196,10 @@ const useSwapRiskyProposal = ({
         )
         const toPrice = await priceFeed.getNormalizedPriceOutUSD(
           form.to.address,
-          amountOut
+          exchange[0]
         )
 
-        setToAmount(amountOut.toString())
+        setToAmount(exchange[0].toString())
         setFromPrice(fromPrice[0])
         setToPrice(toPrice[0])
       } catch (e) {
@@ -214,7 +223,7 @@ const useSwapRiskyProposal = ({
       setLastChangedField("to")
       setToAmount(v)
       try {
-        const amountOut = await getExchangeAmount(
+        const [exchange] = await getExchangeAmount(
           form.from.address,
           amount,
           ExchangeType.TO_EXACT
@@ -222,7 +231,7 @@ const useSwapRiskyProposal = ({
 
         const fromPrice = await priceFeed.getNormalizedPriceOutUSD(
           form.from.address,
-          amountOut
+          exchange[0]
         )
         console.log(fromPrice[0].toString())
         const toPrice = await priceFeed.getNormalizedPriceOutUSD(
@@ -230,7 +239,7 @@ const useSwapRiskyProposal = ({
           amount
         )
 
-        setFromAmount(amountOut.toString())
+        setFromAmount(exchange[0].toString())
         setFromPrice(fromPrice[0])
         setToPrice(toPrice[0])
       } catch (e) {
@@ -264,7 +273,7 @@ const useSwapRiskyProposal = ({
 
     if (lastChangedField === "from") {
       const amount = BigNumber.from(fromAmount)
-      const amountOut = await getExchangeAmount(
+      const [exchange] = await getExchangeAmount(
         form.from.address,
         amount,
         ExchangeType.FROM_EXACT
@@ -273,14 +282,14 @@ const useSwapRiskyProposal = ({
         Number(proposalId) + 1,
         form.from.address,
         amount,
-        amountOut,
+        exchange[0],
         [],
         ExchangeType.FROM_EXACT
       )
     }
 
     const amount = BigNumber.from(toAmount)
-    const amountOut = await getExchangeAmount(
+    const [, exchangeWithSlippage] = await getExchangeAmount(
       form.from.address,
       amount,
       ExchangeType.TO_EXACT
@@ -289,7 +298,7 @@ const useSwapRiskyProposal = ({
       Number(proposalId) + 1,
       form.from.address,
       amount,
-      amountOut,
+      exchangeWithSlippage,
       [],
       ExchangeType.TO_EXACT
     )
@@ -305,7 +314,7 @@ const useSwapRiskyProposal = ({
 
   const updateSwapPrice = useCallback(
     async (address, amount) => {
-      const amountOut = await getExchangeAmount(
+      const [exchange] = await getExchangeAmount(
         address,
         amount,
         ExchangeType.FROM_EXACT
@@ -315,7 +324,7 @@ const useSwapRiskyProposal = ({
         address,
         amount
       )
-      setTokenCost(amountOut)
+      setTokenCost(exchange[0])
       setUSDCost(fromPrice[0])
     },
     [getExchangeAmount, priceFeed]

@@ -32,7 +32,7 @@ import {
 import usePoolPrice from "hooks/usePoolPrice"
 import { SwapDirection } from "constants/types"
 import useAlert, { AlertType } from "hooks/useAlert"
-import { ExchangeForm } from "constants/interfaces_v2"
+import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
 import useGasTracker from "state/gas/hooks"
 import { IAlert } from "context/AlertContext"
 
@@ -525,10 +525,8 @@ const useInvest = ({
 
       const invest = await traderPool.getInvestTokens(amount.toHexString())
 
-      const sl = 1 - parseFloat(slippage) / 100
-
       const amountsWithSlippage = invest.receivedAmounts.map((position) =>
-        calcSlippage(position, 18, sl)
+        calcSlippage([position, 18], slippage, ExchangeType.FROM_EXACT)
       )
 
       return [invest, amountsWithSlippage]
