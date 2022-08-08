@@ -353,15 +353,8 @@ const INVESTOR_INVEST_PROPOSAL = `
   }
 `
 const InvestorInvestProposalsQuery = `
-  query ($poolAddressList: [String]!) {
-    proposals(where: { investPool_in: $poolAddressList }){
-      ${INVESTOR_INVEST_PROPOSAL}
-    }
-  }
-`
-const InvestorNewInvestProposalsQuery = `
-  query ($poolAddressList: [String]!) {
-    proposals(where: { investPool_not_in: $poolAddressList }){
+  query ($activePools: [String]!, $offset: Int!, $limit: Int!) {
+    proposals(skip: $offset, first: $limit, where: { investPool_in: $activePools }){
       ${INVESTOR_INVEST_PROPOSAL}
     }
   }
@@ -443,7 +436,6 @@ export {
   InvestorRiskyProposalsQuery,
   InvestorRiskyPositionsQuery,
   InvestorInvestProposalsQuery,
-  InvestorNewInvestProposalsQuery,
   RiskyProposalExchangesQuery,
   FundFeeHistoryQuery,
   getPoolsQueryVariables,
