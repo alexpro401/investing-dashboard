@@ -49,6 +49,7 @@ const Styled = {
     grid-template-columns: repeat(3, minmax(min-content, 0.33fr));
     grid-template-rows: 1fr;
     grid-column-gap: 12px;
+    overflow-x: auto;
   `,
   TradesList: styled.div`
     max-height: 180px;
@@ -168,7 +169,7 @@ export const BodyItem: FC<IBodyItemProps> = ({
           value={
             <>
               {pnl && getAmountSymbol(Number(amount))}
-              {Math.abs(Number(normalizeBigNumber(amount, 18, 4)))}
+              {normalizeBigNumber(amount, 18, 4)}
             </>
           }
           symbol={symbol}
