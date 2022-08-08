@@ -288,16 +288,11 @@ const InvestorPoolsInvestedForQuery = `
 `
 
 const InvestorRiskyProposalsQuery = `
-  query ($poolAddressList: [String]!) {
-    proposals(where: { basicPool_in: $poolAddressList }){
+  query ($offset: Int!, $limit: Int!, $activePools: [String]!) {
+    proposals(skip: $offset, first: $limit, where: { basicPool_in: $activePools }){
       id
-      token
-      timestampLimit
-      investLPLimit
-      maxTokenPriceLimit
       basicPool {
-        id
-        baseToken
+        id 
       }
     }
   }

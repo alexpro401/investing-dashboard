@@ -1,35 +1,39 @@
-import { FC, useMemo } from "react"
+import { FC, useMemo, useState, useEffect, useRef } from "react"
 import { PulseSpinner } from "react-spinners-kit"
+import { createClient, Provider as GraphProvider } from "urql"
+import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { useActiveWeb3React } from "hooks"
 import { usePoolContract } from "hooks/usePool"
+import { InvestorRiskyProposalsQuery } from "queries"
 import { RiskyProposal } from "constants/interfaces_v2"
+import useQueryPagination from "hooks/useQueryPagination"
 import { useRiskyProposalContract } from "hooks/useContract"
-import useInvestorRiskyProposals from "hooks/useInvestorRiskyProposals"
 
+import LoadMore from "components/LoadMore"
 import RiskyProposalCard from "components/cards/proposal/Risky"
 
 import S from "./styled"
 
-interface IProps {
-  activePools: string[]
-}
+const poolsClient = createClient({
+  url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
+  requestPolicy: "network-only", // disable urql cache
+})
 
 interface IRiskyCardInitializer {
-  index: number
   account: string
   poolAddress: string
-  proposal: RiskyProposal
+  proposalId: number
 }
 
-const RiskyProposalCardInitializer: FC<IRiskyCardInitializer> = ({
-  index,
+function RiskyProposalCardInitializer({
   account,
   poolAddress,
-  proposal,
-}) => {
+  proposalId,
+}: IRiskyCardInitializer) {
   const [proposalPool] = useRiskyProposalContract(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
+  const [proposal, setProposal] = useState<RiskyProposal | null>(null)
 
   const isTrader = useMemo<boolean>(() => {
     if (!account || !poolInfo) {
@@ -39,13 +43,27 @@ const RiskyProposalCardInitializer: FC<IRiskyCardInitializer> = ({
     return account === poolInfo.parameters.trader
   }, [account, poolInfo])
 
-  if (!proposal || !poolInfo || !proposalPool) {
+  useEffect(() => {
+    if (!proposalPool || !poolAddress) return
+    ;(async () => {
+      try {
+        const data = await proposalPool.getProposalInfos(proposalId, 1)
+        if (data && data[0]) {
+          setProposal({ ...data[0], poolAddress })
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    })()
+  }, [poolAddress, proposalId, proposalPool])
+
+  if (proposal === null || !poolInfo || !proposalPool) {
     return null
   }
 
   return (
     <RiskyProposalCard
-      proposalId={index}
+      proposalId={proposalId}
       poolInfo={poolInfo}
       isTrader={isTrader}
       proposal={proposal}
@@ -55,11 +73,38 @@ const RiskyProposalCardInitializer: FC<IRiskyCardInitializer> = ({
   )
 }
 
+interface IProps {
+  activePools: string[]
+}
+
 const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
   const { account } = useActiveWeb3React()
-  const [proposals, fetched] = useInvestorRiskyProposals(activePools)
 
-  if (!fetched || !account) {
+  const variables = useMemo(() => ({ activePools }), [activePools])
+
+  const prepareNewData = (d) =>
+    d.proposals.map((p) => ({
+      id: String(p.id).slice(42),
+      poolAddress: p.basicPool.id,
+    }))
+
+  const [{ data, error, loading }, fetchMore] = useQueryPagination(
+    InvestorRiskyProposalsQuery,
+    variables,
+    prepareNewData
+  )
+
+  const loader = useRef<any>()
+
+  // manually disable scrolling *refresh this effect when ref container dissapeared from DOM
+  useEffect(() => {
+    if (!loader.current) return
+    disableBodyScroll(loader.current)
+
+    return () => clearAllBodyScrollLocks()
+  }, [loader, loading])
+
+  if (!account || !data || (data.length === 0 && loading)) {
     return (
       <S.Content>
         <PulseSpinner />
@@ -67,7 +112,7 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
     )
   }
 
-  if (fetched && proposals && proposals.length === 0) {
+  if (data && data.length === 0 && !loading) {
     return (
       <S.Content>
         <S.WithoutData>No proposal yet</S.WithoutData>
@@ -77,19 +122,31 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
 
   return (
     <>
-      <S.List>
-        {proposals.map((p, i) => (
+      <S.List ref={loader}>
+        {data.map((p) => (
           <RiskyProposalCardInitializer
-            key={p.poolAddress + i}
-            index={i + 1}
+            key={p.poolAddress + p.id}
             account={account}
-            proposal={p.proposal}
+            proposalId={Number(p.id) - 1}
             poolAddress={p.poolAddress}
           />
         ))}
+        <LoadMore
+          isLoading={loading && !!data.length}
+          handleMore={fetchMore}
+          r={loader}
+        />
       </S.List>
     </>
   )
 }
 
-export default InvestmentRiskyProposalsList
+const InvestmentRiskyProposalsListWithProvider = (props) => {
+  return (
+    <GraphProvider value={poolsClient}>
+      <InvestmentRiskyProposalsList {...props} />
+    </GraphProvider>
+  )
+}
+
+export default InvestmentRiskyProposalsListWithProvider

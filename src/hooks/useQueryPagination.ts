@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react"
 import { useQuery } from "urql"
+import debounce from "lodash.debounce"
 import { usePrevious } from "react-use"
 
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
@@ -43,7 +44,7 @@ const useQueryPagination = (
     setOffset(result.length)
   }, [result])
 
-  return [{ data: result, error, loading: fetching }, fetchMore]
+  return [{ data: result, error, loading: fetching }, debounce(fetchMore, 100)]
 }
 
 export default useQueryPagination
