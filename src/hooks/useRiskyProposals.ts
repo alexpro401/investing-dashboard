@@ -3,10 +3,17 @@ import { RiskyProposal } from "constants/interfaces_v2"
 import { useRiskyProposalContract } from "hooks/useContract"
 import { Contract } from "ethers"
 
-function useRiskyProposals(poolAddress?: string): RiskyProposal[] {
+function useRiskyProposals(
+  poolAddress?: string
+): [RiskyProposal[], Contract | null, () => void] {
   const [proposals, setProposals] = useState<RiskyProposal[]>([])
+  const [update, setUpdate] = useState(false)
 
   const [traderPoolRiskyProposal] = useRiskyProposalContract(poolAddress)
+
+  const refresh = useCallback(() => {
+    setUpdate(!update)
+  }, [update])
 
   useEffect(() => {
     if (!traderPoolRiskyProposal) return
@@ -14,9 +21,9 @@ function useRiskyProposals(poolAddress?: string): RiskyProposal[] {
       const data = await traderPoolRiskyProposal.getProposalInfos(0, 100)
       setProposals(data)
     })()
-  }, [traderPoolRiskyProposal])
+  }, [traderPoolRiskyProposal, update])
 
-  return proposals
+  return [proposals, traderPoolRiskyProposal, refresh]
 }
 
 export function useRiskyProposal(

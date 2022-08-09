@@ -11,18 +11,21 @@ import {
   useRiskyProposalContract,
 } from "hooks/useContract"
 
+import { SubmitState } from "constants/types"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 
 import { shortTimestamp, parseTransactionError, isTxMined } from "utils"
+import useRiskyProposals from "hooks/useRiskyProposals"
 
 const useCreateRiskyProposal = (
   poolAddress?: string,
   tokenAddress?: string
 ): [
   {
+    proposalCount: number
     error: string
-    isSubmiting: boolean
+    isSubmiting: SubmitState
     baseTokenPrice?: BigNumber
     lpAvailable?: BigNumber
     lpAmount: string
@@ -32,7 +35,7 @@ const useCreateRiskyProposal = (
     instantTradePercentage: number
   },
   {
-    setSubmiting: (value: boolean) => void
+    setSubmiting: (value: SubmitState) => void
     setError: (value: string) => void
     setLpAmount: (value: string) => void
     setTimestampLimit: (timestamp: number) => void
@@ -45,13 +48,13 @@ const useCreateRiskyProposal = (
   const addTransaction = useTransactionAdder()
   const { account } = useWeb3React()
   const initialTimeLimit = shortTimestamp(getTime(addDays(new Date(), 30)))
-  const [riskyProposal] = useRiskyProposalContract(poolAddress)
+  const [proposals, riskyProposal, updateRPs] = useRiskyProposals(poolAddress)
 
   const basicTraderPool = useBasicPoolContract(poolAddress)
   const traderPool = useTraderPool(poolAddress)
 
   const [error, setError] = useState("")
-  const [isSubmiting, setSubmiting] = useState(false)
+  const [isSubmiting, setSubmiting] = useState(SubmitState.IDLE)
   const [lpAmount, setLpAmount] = useState("")
   const [timestampLimit, setTimestampLimit] = useState(initialTimeLimit)
   const [investLPLimit, setInvestLPLimit] = useState("")
@@ -77,6 +80,18 @@ const useCreateRiskyProposal = (
     getCreatingTokensInfo().catch(console.error)
   }, [riskyProposal, tokenAddress])
 
+  // watch for transaction confirm
+  useEffect(() => {
+    if (isSubmiting === SubmitState.SUCESS) {
+      updateRPs()
+    }
+  }, [isSubmiting])
+
+  // watch for proposals length
+  useEffect(() => {
+    console.log(proposals.length)
+  }, [proposals.length])
+
   // fetch LP balance
   useEffect(() => {
     if (!traderPool || !account) return
@@ -93,9 +108,9 @@ const useCreateRiskyProposal = (
     if (!basicTraderPool || !traderPool || !riskyProposal || !account) return
 
     const createRiskyProposal = async () => {
-      setSubmiting(true)
+      setSubmiting(SubmitState.SIGN)
       setError("")
-      const amount = ethers.utils.parseEther(lpAmount).toHexString()
+      const amount = ethers.utils.parseEther(lpAmount || "0").toHexString()
       const percentage = ethers.utils
         .parseUnits(instantTradePercentage.toString(), 25)
         .toHexString()
@@ -125,7 +140,7 @@ const useCreateRiskyProposal = (
         tokens[0],
         []
       )
-      setSubmiting(false)
+      setSubmiting(SubmitState.WAIT_CONFIRM)
 
       const receipt = await addTransaction(createResponse, {
         type: TransactionType.CREATE_RISKY_PROPOSAL,
@@ -134,11 +149,13 @@ const useCreateRiskyProposal = (
 
       if (isTxMined(receipt)) {
         // TODO: show modal
+        setSubmiting(SubmitState.SUCESS)
       }
     }
 
     createRiskyProposal().catch((error) => {
-      setSubmiting(false)
+      setSubmiting(SubmitState.IDLE)
+      console.log(error)
 
       const errorMessage = parseTransactionError(error)
       !!errorMessage && setError(errorMessage)
@@ -160,6 +177,7 @@ const useCreateRiskyProposal = (
 
   return [
     {
+      proposalCount: proposals.length,
       lpAmount,
       error,
       isSubmiting,

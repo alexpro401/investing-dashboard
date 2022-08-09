@@ -25,6 +25,8 @@ import Payload from "components/Payload"
 import TransactionError from "modals/TransactionError"
 import TransactionSent from "modals/TransactionSent"
 
+import { SubmitState } from "constants/types"
+
 import { usePoolContract } from "hooks/usePool"
 import { Token } from "constants/interfaces"
 import { selectWhitelist } from "state/pricefeed/selectors"
@@ -32,6 +34,7 @@ import { useERC20 } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
+import { dropdownVariants } from "motion/variants"
 
 import back from "assets/icons/angle-left.svg"
 import close from "assets/icons/close-big.svg"
@@ -76,6 +79,7 @@ const CreateRiskyProposal: FC = () => {
   const [
     {
       error,
+      proposalCount,
       isSubmiting,
       lpAvailable,
       baseTokenPrice,
@@ -121,6 +125,11 @@ const CreateRiskyProposal: FC = () => {
 
   const handleRiskyTokenSelect = (token: Token) => {
     navigate(`/create-risky-proposal/${poolAddress}/${token.address}/3`)
+  }
+
+  const handleSwapRedirect = () => {
+    navigate(`swap-risky-proposal/${poolAddress}/${proposalCount - 1}/deposit`)
+    setSubmiting(SubmitState.IDLE)
   }
 
   const stepComponents = {
@@ -300,7 +309,11 @@ const CreateRiskyProposal: FC = () => {
                 }
               />
             </Row>
-            <Row>
+            <Row
+              initial="hidden"
+              variants={dropdownVariants}
+              animate={lpAmount ? "visible" : "hidden"}
+            >
               <Label
                 icon={<Tooltip id="risky-position-fill">Lorem ipsum</Tooltip>}
               >
@@ -324,22 +337,39 @@ const CreateRiskyProposal: FC = () => {
     },
   }
 
+  const tradeModal = (
+    <TransactionSent
+      isOpen={SubmitState.SUCESS === isSubmiting}
+      toggle={() => setSubmiting(SubmitState.IDLE)}
+      title="Success"
+      description="You have successfully created a risk proposal. Deposit LP or trade your token"
+    >
+      <Button
+        onClick={handleSwapRedirect}
+        size="large"
+        theme="primary"
+        fz={22}
+        full
+      >
+        Open new trade
+      </Button>
+    </TransactionSent>
+  )
+
   return (
     <>
-      <Payload isOpen={isSubmiting} toggle={() => setSubmiting(false)} />
+      <Payload
+        isOpen={isSubmiting !== SubmitState.IDLE}
+        toggle={() => setSubmiting(SubmitState.IDLE)}
+      >
+        {SubmitState.SIGN === isSubmiting &&
+          "Open your wallet and sign transaction"}
+        {SubmitState.WAIT_CONFIRM === isSubmiting && "Waiting for confirmation"}
+      </Payload>
       <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
         {error}
       </TransactionError>
-      {/* <TransactionSent
-        isOpen
-        toggle={() => {}}
-        title="Success"
-        description="You have successfully created a risk proposal. Deposit LP and trade your token"
-      >
-        <Button size="large" theme="primary" fz={22} full>
-          Deposit in Risk Proposal
-        </Button>
-      </TransactionSent> */}
+      {tradeModal}
       <Header>Create risky proposal</Header>
       <Container>
         <Card>

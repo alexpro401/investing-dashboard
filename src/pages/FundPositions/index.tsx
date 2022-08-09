@@ -41,7 +41,7 @@ const Proposals = () => {
   const { poolAddress } = useParams()
   const [, poolInfo] = usePoolContract(poolAddress)
   const navigate = useNavigate()
-  const proposals = useRiskyProposals(poolAddress)
+  const [proposals] = useRiskyProposals(poolAddress)
 
   const handleCardClick = (index) => {
     navigate(`/swap-risky-proposal/${poolAddress}/${index}/deposit`)
