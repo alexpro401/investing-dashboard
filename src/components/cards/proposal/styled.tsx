@@ -15,6 +15,7 @@ const Styled = {
     border-radius: 16px;
     flex-direction: column;
     margin-bottom: 18px;
+    z-index: initial;
 
     &:after {
       background: #181e2c;
