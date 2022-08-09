@@ -20,7 +20,7 @@ const poolClient = createClient({
 })
 
 interface IProps {
-  poolAddress: string
+  poolAddress?: string
   closed: boolean
 }
 
@@ -77,7 +77,13 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
     return account === poolInfo.parameters.trader
   }, [account, poolInfo])
 
-  if (!data || !poolInfo || !poolMetadata || (data.length === 0 && loading)) {
+  if (
+    !poolAddress ||
+    !data ||
+    !poolInfo ||
+    !poolMetadata ||
+    (data.length === 0 && loading)
+  ) {
     return (
       <S.ListLoading full ai="center" jc="center">
         <PulseSpinner />

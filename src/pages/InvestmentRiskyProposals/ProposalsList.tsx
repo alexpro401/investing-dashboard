@@ -74,7 +74,7 @@ function RiskyProposalCardInitializer({
 }
 
 interface IProps {
-  activePools: string[]
+  activePools?: string[]
 }
 
 const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
@@ -104,7 +104,7 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
     return () => clearAllBodyScrollLocks()
   }, [loader, loading])
 
-  if (!account || !data || (data.length === 0 && loading)) {
+  if (!account || !activePools || !data || (data.length === 0 && loading)) {
     return (
       <S.Content>
         <PulseSpinner />

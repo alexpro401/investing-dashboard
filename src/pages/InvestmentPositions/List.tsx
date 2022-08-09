@@ -10,7 +10,7 @@ import InvestPositionCard from "components/cards/position/Invest"
 import S from "./styled"
 
 interface IProps {
-  account: string
+  account?: string | null
   closed: boolean
 }
 
@@ -41,7 +41,7 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
     return () => clearAllBodyScrollLocks()
   }, [loader, loading])
 
-  if (!data || (data.length === 0 && loading)) {
+  if (!account || !data || (data.length === 0 && loading)) {
     return (
       <S.Content>
         <PulseSpinner />

@@ -1,6 +1,5 @@
 import { FC } from "react"
 import { Routes, Route, useParams } from "react-router-dom"
-import { PulseSpinner } from "react-spinners-kit"
 
 import { ITab } from "constants/interfaces"
 
@@ -27,14 +26,6 @@ const FundProposalsRisky: FC = () => {
       source: `/fund-positions/${poolAddress}/proposals/closed`,
     },
   ]
-
-  if (!poolAddress) {
-    return (
-      <S.Content full ai="center" jc="center">
-        <PulseSpinner />
-      </S.Content>
-    )
-  }
 
   return (
     <>

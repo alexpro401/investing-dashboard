@@ -1,7 +1,6 @@
 import { useMemo } from "react"
 import { Routes, Route } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
-import { PulseSpinner } from "react-spinners-kit"
 
 import RouteTabs from "components/RouteTabs"
 import InvestProposalsList from "./ProposalsList"
@@ -9,8 +8,6 @@ import InvestProposalsList from "./ProposalsList"
 import { ITab } from "constants/interfaces"
 import { useActiveWeb3React } from "hooks"
 import useInvestorProposalPools from "hooks/useInvestorProposalPools"
-
-import S from "./styled"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -36,22 +33,6 @@ const InvestmentInvestProposals = () => {
       source: `/investment/invest-proposals/invested`,
     },
   ]
-
-  if (!activePools) {
-    return (
-      <S.Content>
-        <PulseSpinner />
-      </S.Content>
-    )
-  }
-
-  if (activePools && activePools.length === 0) {
-    return (
-      <S.Content>
-        <S.WithoutData>There are no invest proposals</S.WithoutData>
-      </S.Content>
-    )
-  }
 
   return (
     <>

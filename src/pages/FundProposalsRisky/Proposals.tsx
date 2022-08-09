@@ -13,7 +13,7 @@ import RiskyProposalCard from "components/cards/proposal/Risky"
 import S from "./styled"
 
 interface IProps {
-  poolAddress: string
+  poolAddress?: string
 }
 
 const FundProposalsRisky: FC<IProps> = ({ poolAddress }) => {
@@ -38,7 +38,12 @@ const FundProposalsRisky: FC<IProps> = ({ poolAddress }) => {
     return account === poolInfo.parameters.trader
   }, [account, poolInfo])
 
-  if (!proposalPool || !poolInfo || (data.length === 0 && loading)) {
+  if (
+    !poolAddress ||
+    !proposalPool ||
+    !poolInfo ||
+    (data.length === 0 && loading)
+  ) {
     return (
       <S.ListLoading full ai="center" jc="center">
         <PulseSpinner />

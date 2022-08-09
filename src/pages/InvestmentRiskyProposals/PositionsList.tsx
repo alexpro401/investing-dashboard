@@ -61,7 +61,7 @@ const RiskyPositionCardInitializer: FC<IRiskyCardInitializer> = ({
 }
 
 interface IProps {
-  activePools: string[]
+  activePools?: string[]
   closed: boolean
 }
 
@@ -108,7 +108,7 @@ const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
     return () => clearAllBodyScrollLocks()
   }, [loader, loading])
 
-  if (!data || !account || (data.length === 0 && loading)) {
+  if (!activePools || !data || !account || (data.length === 0 && loading)) {
     return (
       <S.Content>
         <PulseSpinner />

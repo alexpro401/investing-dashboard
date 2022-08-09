@@ -19,7 +19,7 @@ const poolsClient = createClient({
 })
 
 interface IInvestProposalCardInitializer {
-  poolAddress: string
+  poolAddress?: string
   proposalId: number
 }
 
@@ -44,7 +44,7 @@ function InvestProposalCardInitializer({
     })()
   }, [poolAddress, proposalId, proposalPool])
 
-  if (proposal === null || !proposalPool) {
+  if (!poolAddress || proposal === null || !proposalPool) {
     return null
   }
 
@@ -84,7 +84,7 @@ const InvestmentInvestProposalsList: FC<IProps> = ({
     return () => clearAllBodyScrollLocks()
   }, [loader, loading])
 
-  if (!data || (data.length === 0 && loading)) {
+  if (!activePools || !data || (data.length === 0 && loading)) {
     return (
       <S.Content>
         <PulseSpinner />
