@@ -168,7 +168,7 @@ export const BasicCard = styled(Flex)`
   border-radius: 10px;
 `
 
-const GradientBorderBase = css`
+export const GradientBorderBase = css`
   position: relative;
   z-index: 5;
 

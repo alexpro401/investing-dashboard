@@ -2,6 +2,7 @@ import ReactTooltip from "react-tooltip"
 import TooltipIcon from "assets/icons/TooltipIcon"
 import styled, { createGlobalStyle } from "styled-components"
 import TooltipSmall from "assets/icons/TooltipSmall"
+import { GradientBorderBase } from "theme"
 
 const TooltipStyles = createGlobalStyle`
   button {
@@ -23,6 +24,49 @@ const TooltipStyles = createGlobalStyle`
     }
     &:after {
       display: none!important;
+    }
+  }
+  .gradient-border-tooltip {
+    border-radius: 16px!important;
+    border: none!important;
+    padding: 12px!important;
+    display: block!important;
+    width: 300px;
+    opacity: 1!important;
+
+    ${GradientBorderBase}
+    
+    &:before {
+      background-image: linear-gradient(
+        to bottom right,
+        #2680eb 0%,
+        #7fffd4 40%,
+        #2680eb 60%,
+        #2680eb 100%
+      );
+      border: none !important;
+      width: initial !important;
+      height: initial !important;
+      margin-top: initial !important;
+      margin-right: initial !important;
+      margin-bottom: initial !important;
+      margin-left: initial !important;
+      left: -1px !important;
+      top:  -1px !important;
+    }
+    &:after {
+      background: #181E2C;
+      border: none !important;
+      width: 100% !important;
+      height: inherit !important;
+      left: 0 !important;
+      top:  0 !important;
+      right:0;
+      bottom:0;
+      margin-top: initial !important;
+      margin-right: initial !important;
+      margin-bottom: initial !important;
+      margin-left: initial !important;
     }
   }
 `

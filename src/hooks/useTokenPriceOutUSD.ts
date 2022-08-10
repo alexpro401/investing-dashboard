@@ -6,10 +6,12 @@ import { usePriceFeedContract } from "hooks/useContract"
 
 interface IParams {
   tokenAddress: string | undefined
+  amount?: BigNumber
 }
 
 export default function useTokenPriceOutUSD({
   tokenAddress,
+  amount,
 }: IParams): BigNumber {
   const priceFeed = usePriceFeedContract()
 
@@ -18,17 +20,17 @@ export default function useTokenPriceOutUSD({
   useEffect(() => {
     if (!priceFeed || !tokenAddress || tokenAddress.length !== 42) return
     ;(async () => {
-      const amount = parseUnits("1", 18)
+      const _amount = amount ?? parseUnits("1", 18)
 
       const priceUSD = await priceFeed
-        ?.getNormalizedPriceOutUSD(tokenAddress, amount.toHexString())
+        ?.getNormalizedPriceOutUSD(tokenAddress, _amount.toHexString())
         .catch(console.error)
 
       if (!!priceUSD) {
         setMarkPriceUSD(priceUSD?.amountOut.toString())
       }
     })()
-  }, [tokenAddress, priceFeed])
+  }, [tokenAddress, priceFeed, amount])
 
   return markPriceUSD
 }

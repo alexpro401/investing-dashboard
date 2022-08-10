@@ -20,16 +20,15 @@ import {
   PoolType,
   IPriceHistoryQuery,
   IPriceHistory,
-  IPositionQuery,
 } from "constants/interfaces_v2"
 
 import {
   OwnedPoolsQuery,
   PriceHistoryQuery,
-  BasicPositionsQuery,
   getPoolsQueryVariables,
 } from "queries"
-import { useTraderPool } from "hooks/usePool"
+
+import { usePoolContract, useTraderPool } from "hooks/usePool"
 
 /**
  * Returns top members filter state variables and setter
@@ -193,15 +192,4 @@ export function usePools(poolType: PoolType): [boolean, () => void] {
   }
 
   return [loading, handleMore]
-}
-
-export function usePoolPositions(address?: string, closed = false) {
-  const [response, executeQuery] = useQuery<{
-    basicPool: IPositionQuery
-  }>({
-    query: BasicPositionsQuery,
-    variables: { address, closed },
-  })
-
-  return response.data?.basicPool
 }
