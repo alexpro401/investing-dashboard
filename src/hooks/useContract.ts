@@ -1,5 +1,7 @@
 import { useMemo, useEffect, useState, useCallback } from "react"
 import { Contract } from "@ethersproject/contracts"
+import { BigNumber } from "@ethersproject/bignumber"
+import { JsonRpcProvider } from "@ethersproject/providers"
 import {
   ERC20,
   TraderPool,
@@ -13,10 +15,8 @@ import {
 } from "abi"
 import { getContract } from "utils/getContract"
 import { useActiveWeb3React } from "hooks"
-import { BigNumber } from "@ethersproject/bignumber"
 import { ITokenBase } from "constants/interfaces"
 import { isAddress } from "utils"
-import { ethers } from "ethers"
 import { useSelector } from "react-redux"
 import {
   selectPriceFeedAddress,
@@ -24,7 +24,7 @@ import {
   selectUserRegistryAddress,
 } from "state/contracts/selectors"
 
-const provider = new ethers.providers.JsonRpcProvider(
+const provider = new JsonRpcProvider(
   "https://data-seed-prebsc-1-s1.binance.org:8545/"
 )
 

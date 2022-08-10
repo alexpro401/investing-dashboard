@@ -31,7 +31,8 @@
   "exclude": [
     "node_modules",
     "build",
-    "public"
+    "public",
+    "updateABI.js"
   ],
   "include": ["src"]
 }

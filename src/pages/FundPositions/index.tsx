@@ -1,108 +1,20 @@
-import Header from "components/Header/Layout"
-import { Routes, Route, useParams, useNavigate } from "react-router-dom"
+import { Routes, Route, useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
 
-import PositionCard from "components/PositionCard"
-import RiskyCard from "components/RiskyCard"
+import Header from "components/Header/Layout"
 
-import { usePoolPositions } from "state/pools/hooks"
-import { useERC20 } from "hooks/useContract"
-import useRiskyProposals from "hooks/useRiskyProposals"
-import { usePoolContract } from "hooks/usePool"
+import FundProposals from "pages/FundProposals"
+import FundPositionsList from "./FundPositionsList"
 
-import { Container, List } from "./styled"
+import S from "./styled"
 
-const poolsClient = createClient({
-  url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
+const AllPoolsClient = createClient({
+  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
+  requestPolicy: "network-only", // disable urql cache
 })
-
-const Open = () => {
-  const { poolAddress } = useParams()
-  const data = usePoolPositions(poolAddress, false)
-  const [, baseData] = useERC20(data?.baseToken)
-
-  return (
-    <>
-      {(data?.positions || []).map((position) => (
-        <PositionCard
-          baseSymbol={baseData?.symbol}
-          baseToken={data?.baseToken}
-          ticker={data?.ticker}
-          description={data?.descriptionURL}
-          key={position.id}
-          position={position}
-        />
-      ))}
-    </>
-  )
-}
-
-const Proposals = () => {
-  const { poolAddress } = useParams()
-  const [, poolInfo] = usePoolContract(poolAddress)
-  const navigate = useNavigate()
-  const [proposals] = useRiskyProposals(poolAddress)
-
-  const handleCardClick = (index) => {
-    navigate(`/swap-risky-proposal/${poolAddress}/${index}/deposit`)
-  }
-
-  return (
-    <>
-      {proposals.map((position, index) => (
-        <RiskyCard
-          onClick={() => handleCardClick(index)}
-          baseTokenAddress={poolInfo?.parameters.baseToken}
-          fundSymbol={poolInfo?.ticker}
-          description={poolInfo?.parameters.descriptionURL}
-          positionAddress={position.proposalInfo.token}
-          key={position.proposalInfo.token}
-        />
-      ))}
-    </>
-  )
-}
-
-const Closed = () => {
-  const { poolAddress } = useParams()
-  const data = usePoolPositions(poolAddress, true)
-
-  return (
-    <>
-      {(data?.positions || []).map((position) => (
-        <PositionCard
-          baseToken={data?.baseToken}
-          ticker={data?.ticker}
-          description={data?.descriptionURL}
-          poolAddress={poolAddress}
-          key={position.id}
-          position={position}
-        />
-      ))}
-    </>
-  )
-}
 
 const FundPositions = () => {
   const { poolAddress } = useParams()
-
-  const open = (
-    <GraphProvider value={poolsClient}>
-      <Open />
-    </GraphProvider>
-  )
-
-  const proposals = (
-    <GraphProvider value={poolsClient}>
-      <Proposals />
-    </GraphProvider>
-  )
-
-  const closed = (
-    <GraphProvider value={poolsClient}>
-      <Closed />
-    </GraphProvider>
-  )
 
   return (
     <>
@@ -114,7 +26,12 @@ const FundPositions = () => {
           },
           {
             title: "Proposals",
-            source: `/fund-positions/${poolAddress}/proposals`,
+            source: `/fund-positions/${poolAddress}/proposals/open`,
+            activeSource: [
+              `/fund-positions/${poolAddress}/proposals/open`,
+              `/fund-positions/${poolAddress}/proposals/positions`,
+              `/fund-positions/${poolAddress}/proposals/closed`,
+            ],
           },
           {
             title: "Closed positions",
@@ -124,15 +41,21 @@ const FundPositions = () => {
       >
         Fund Positions
       </Header>
-      <Container>
+      <S.Container>
         <Routes>
-          <Route path="open" element={open}></Route>
-          <Route path="proposals" element={proposals}></Route>
-          <Route path="closed" element={closed}></Route>
+          <Route path="open" element={<FundPositionsList closed={false} />} />
+          <Route path="proposals/*" element={<FundProposals />} />
+          <Route path="closed" element={<FundPositionsList closed={true} />} />
         </Routes>
-      </Container>
+      </S.Container>
     </>
   )
 }
 
-export default FundPositions
+const FundPositionsWithProvider = () => (
+  <GraphProvider value={AllPoolsClient}>
+    <FundPositions />
+  </GraphProvider>
+)
+
+export default FundPositionsWithProvider

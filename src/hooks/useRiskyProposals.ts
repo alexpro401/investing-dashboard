@@ -1,29 +1,50 @@
 import { useCallback, useEffect, useState } from "react"
-import { RiskyProposal } from "constants/interfaces_v2"
 import { useRiskyProposalContract } from "hooks/useContract"
 import { Contract } from "ethers"
+import debounce from "lodash.debounce"
 
-function useRiskyProposals(
+import { RiskyProposal } from "constants/interfaces_v2"
+import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
+
+export function useRiskyProposals(
   poolAddress?: string
-): [RiskyProposal[], Contract | null, () => void] {
+): [{ data: RiskyProposal[]; loading: boolean }, () => void] {
   const [proposals, setProposals] = useState<RiskyProposal[]>([])
-  const [update, setUpdate] = useState(false)
+  const [offset, setOffset] = useState<number>(0)
+  const [fetching, setFetching] = useState<boolean>(true)
+  const [allFetched, setAllFetched] = useState<boolean>(false)
 
   const [traderPoolRiskyProposal] = useRiskyProposalContract(poolAddress)
 
-  const refresh = useCallback(() => {
-    setUpdate(!update)
-  }, [update])
+  const fetchProposals = useCallback(async () => {
+    if (traderPoolRiskyProposal !== null && !allFetched) {
+      setFetching(true)
+      try {
+        const data = await traderPoolRiskyProposal.getProposalInfos(
+          offset,
+          DEFAULT_PAGINATION_COUNT
+        )
+        if (data && !!data.length) {
+          setProposals((prev) => [...prev, ...data])
+          setOffset((prev) => prev + data.length)
+        }
+        if (data.length < DEFAULT_PAGINATION_COUNT || data.length === 0) {
+          setAllFetched(true)
+        }
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setFetching(false)
+      }
+    }
+  }, [allFetched, offset, traderPoolRiskyProposal])
 
   useEffect(() => {
-    if (!traderPoolRiskyProposal) return
-    ;(async () => {
-      const data = await traderPoolRiskyProposal.getProposalInfos(0, 100)
-      setProposals(data)
-    })()
-  }, [traderPoolRiskyProposal, update])
+    if (!traderPoolRiskyProposal || proposals.length > 0) return
+    fetchProposals()
+  }, [traderPoolRiskyProposal])
 
-  return [proposals, traderPoolRiskyProposal, refresh]
+  return [{ data: proposals, loading: fetching }, debounce(fetchProposals, 100)]
 }
 
 export function useRiskyProposal(

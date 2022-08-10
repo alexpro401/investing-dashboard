@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { TraderPoolRegistry } from "abi"
 import { useQuery } from "urql"
+import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
+import { parseEther } from "@ethersproject/units"
 
 import useContract from "hooks/useContract"
 import { AppDispatch, AppState } from "state"
@@ -18,15 +20,15 @@ import {
   PoolType,
   IPriceHistoryQuery,
   IPriceHistory,
-  IPositionQuery,
 } from "constants/interfaces_v2"
 
 import {
   OwnedPoolsQuery,
   PriceHistoryQuery,
-  BasicPositionsQuery,
   getPoolsQueryVariables,
 } from "queries"
+
+import { useTraderPool } from "hooks/usePool"
 
 /**
  * Returns top members filter state variables and setter
@@ -94,6 +96,31 @@ export function usePriceHistory(
   }, [pool])
 
   return history
+}
+
+export function usePoolPrice(address: string | undefined) {
+  const traderPool = useTraderPool(address)
+  const [priceUSD, setPriceUSD] = useState(parseEther("1"))
+  const [priceBase, setPriceBase] = useState(parseEther("1"))
+
+  useEffect(() => {
+    if (!traderPool) return
+    ;(async () => {
+      const poolInfo = await traderPool.getPoolInfo()
+      if (poolInfo.lpSupply.gt("0")) {
+        const base = FixedNumber.fromValue(poolInfo.totalPoolBase, 18)
+        const usd = FixedNumber.fromValue(poolInfo.totalPoolUSD, 18)
+        const supply = FixedNumber.fromValue(poolInfo.lpSupply, 18)
+
+        const usdPrice = usd.divUnsafe(supply)
+        const basePrice = base.divUnsafe(supply)
+        setPriceUSD(BigNumber.from(usdPrice._hex))
+        setPriceBase(BigNumber.from(basePrice._hex))
+      }
+    })()
+  }, [traderPool])
+
+  return { priceUSD, priceBase }
 }
 
 // Hook that handles fetching and storing pools
@@ -165,15 +192,4 @@ export function usePools(poolType: PoolType): [boolean, () => void] {
   }
 
   return [loading, handleMore]
-}
-
-export function usePoolPositions(address?: string, closed = false) {
-  const [response, executeQuery] = useQuery<{
-    basicPool: IPositionQuery
-  }>({
-    query: BasicPositionsQuery,
-    variables: { address, closed },
-  })
-
-  return response.data?.basicPool
 }

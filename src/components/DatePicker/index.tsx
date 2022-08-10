@@ -12,6 +12,7 @@ interface Props {
   timestamp: number
   toggle: () => void
   onChange: (timestamp: number) => void
+  minDate?: Date
 }
 
 const DatePicker: React.FC<Props> = ({
@@ -19,6 +20,7 @@ const DatePicker: React.FC<Props> = ({
   timestamp,
   onChange,
   toggle,
+  minDate,
 }) => {
   const handleDateChange = (date: Date) => {
     const hh = getHours(timestamp)
@@ -59,7 +61,11 @@ const DatePicker: React.FC<Props> = ({
         animate={isOpen ? "visible" : "hidden"}
         variants={modalContainerVariants}
       >
-        <Calendar onChange={handleDateChange} value={new Date(timestamp)} />
+        <Calendar
+          onChange={handleDateChange}
+          value={new Date(timestamp)}
+          minDate={minDate}
+        />
         <Flex p="17px 0 0 4px" full>
           <TimeLabel>Time: </TimeLabel>
           <TimeInput

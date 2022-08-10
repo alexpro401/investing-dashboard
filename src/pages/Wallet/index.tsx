@@ -2,15 +2,16 @@ import { useCallback, useEffect, useState } from "react"
 import { Navigate, useNavigate } from "react-router-dom"
 import { useWeb3React } from "@web3-react/core"
 import { useSelector } from "react-redux"
-import { Insurance } from "abi"
-
+import { BigNumber } from "@ethersproject/bignumber"
 import { PulseSpinner } from "react-spinners-kit"
+
 import Avatar from "components/Avatar"
 import { EHeaderTitles } from "components/Header"
 import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
 import TransactionHistory from "components/TransactionHistory"
 
+import { Insurance } from "abi"
 import { selectInsuranceAddress } from "state/contracts/selectors"
 import useContract, { useUserRegistryContract } from "hooks/useContract"
 import useCopyClipboard from "hooks/useCopyClipboard"
@@ -56,7 +57,6 @@ import {
   Network,
   NetworkIcon,
 } from "./styled"
-import { BigNumber } from "ethers"
 
 import useTransactionHistory from "./useTransactionHistory"
 

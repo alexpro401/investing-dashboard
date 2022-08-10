@@ -82,6 +82,10 @@
     width: 24px;
     color: #E4F2FF;
 }
+.react-calendar__tile:disabled {
+    color: #53575c;
+    cursor: not-allowed;
+}
 
 .react-calendar__tile--active abbr {
     background: linear-gradient(266.2deg, rgba(169, 221, 251, 0) 2.35%, rgba(193, 218, 255, 0.04) 96.05%);

@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
-import { ethers } from "ethers"
 import { isTxMined, parseTransactionError } from "utils"
 
 import { useWeb3React } from "@web3-react/core"

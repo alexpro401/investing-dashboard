@@ -27,11 +27,7 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "address[]",
-        name: "pathTokens",
-        type: "address[]",
-      },
+      { internalType: "address[]", name: "pathTokens", type: "address[]" },
     ],
     name: "addPathTokens",
     outputs: [],
@@ -40,156 +36,56 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "inToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "outToken",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amountIn",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "optionalPath",
-        type: "address[]",
-      },
-      {
-        internalType: "uint256",
-        name: "minAmountOut",
-        type: "uint256",
-      },
+      { internalType: "address", name: "inToken", type: "address" },
+      { internalType: "address", name: "outToken", type: "address" },
+      { internalType: "uint256", name: "amountIn", type: "uint256" },
+      { internalType: "address[]", name: "optionalPath", type: "address[]" },
+      { internalType: "uint256", name: "minAmountOut", type: "uint256" },
     ],
     name: "exchangeFromExact",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "inToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "outToken",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amountOut",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "optionalPath",
-        type: "address[]",
-      },
-      {
-        internalType: "uint256",
-        name: "maxAmountIn",
-        type: "uint256",
-      },
+      { internalType: "address", name: "inToken", type: "address" },
+      { internalType: "address", name: "outToken", type: "address" },
+      { internalType: "uint256", name: "amountOut", type: "uint256" },
+      { internalType: "address[]", name: "optionalPath", type: "address[]" },
+      { internalType: "uint256", name: "maxAmountIn", type: "uint256" },
     ],
     name: "exchangeToExact",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "inToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "outToken",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amountOut",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "optionalPath",
-        type: "address[]",
-      },
+      { internalType: "address", name: "inToken", type: "address" },
+      { internalType: "address", name: "outToken", type: "address" },
+      { internalType: "uint256", name: "amountOut", type: "uint256" },
+      { internalType: "address[]", name: "optionalPath", type: "address[]" },
     ],
     name: "getExtendedPriceIn",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "amountIn",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "path",
-        type: "address[]",
-      },
+      { internalType: "uint256", name: "amountIn", type: "uint256" },
+      { internalType: "address[]", name: "path", type: "address[]" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "inToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "outToken",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amountIn",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "optionalPath",
-        type: "address[]",
-      },
+      { internalType: "address", name: "inToken", type: "address" },
+      { internalType: "address", name: "outToken", type: "address" },
+      { internalType: "uint256", name: "amountIn", type: "uint256" },
+      { internalType: "address[]", name: "optionalPath", type: "address[]" },
     ],
     name: "getExtendedPriceOut",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "amountOut",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "path",
-        type: "address[]",
-      },
+      { internalType: "uint256", name: "amountOut", type: "uint256" },
+      { internalType: "address[]", name: "path", type: "address[]" },
     ],
     stateMutability: "view",
     type: "function",
@@ -197,274 +93,116 @@ export default [
   {
     inputs: [],
     name: "getInjector",
-    outputs: [
-      {
-        internalType: "address",
-        name: "_injector",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "_injector", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "inToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "outToken",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amountOut",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "optionalPath",
-        type: "address[]",
-      },
+      { internalType: "address", name: "inToken", type: "address" },
+      { internalType: "address", name: "outToken", type: "address" },
+      { internalType: "uint256", name: "amountOut", type: "uint256" },
+      { internalType: "address[]", name: "optionalPath", type: "address[]" },
     ],
     name: "getNormalizedExtendedPriceIn",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "amountIn",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "path",
-        type: "address[]",
-      },
+      { internalType: "uint256", name: "amountIn", type: "uint256" },
+      { internalType: "address[]", name: "path", type: "address[]" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "inToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "outToken",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amountIn",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "optionalPath",
-        type: "address[]",
-      },
+      { internalType: "address", name: "inToken", type: "address" },
+      { internalType: "address", name: "outToken", type: "address" },
+      { internalType: "uint256", name: "amountIn", type: "uint256" },
+      { internalType: "address[]", name: "optionalPath", type: "address[]" },
     ],
     name: "getNormalizedExtendedPriceOut",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "amountOut",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "path",
-        type: "address[]",
-      },
+      { internalType: "uint256", name: "amountOut", type: "uint256" },
+      { internalType: "address[]", name: "path", type: "address[]" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "inToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "outToken",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amountOut",
-        type: "uint256",
-      },
+      { internalType: "address", name: "inToken", type: "address" },
+      { internalType: "address", name: "outToken", type: "address" },
+      { internalType: "uint256", name: "amountOut", type: "uint256" },
     ],
     name: "getNormalizedPriceIn",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "amountIn",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "path",
-        type: "address[]",
-      },
+      { internalType: "uint256", name: "amountIn", type: "uint256" },
+      { internalType: "address[]", name: "path", type: "address[]" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "inToken",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amountOut",
-        type: "uint256",
-      },
+      { internalType: "address", name: "inToken", type: "address" },
+      { internalType: "uint256", name: "amountOut", type: "uint256" },
     ],
     name: "getNormalizedPriceInDEXE",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "amountIn",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "path",
-        type: "address[]",
-      },
+      { internalType: "uint256", name: "amountIn", type: "uint256" },
+      { internalType: "address[]", name: "path", type: "address[]" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "inToken",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amountOut",
-        type: "uint256",
-      },
+      { internalType: "address", name: "inToken", type: "address" },
+      { internalType: "uint256", name: "amountOut", type: "uint256" },
     ],
     name: "getNormalizedPriceInUSD",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "amountIn",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "path",
-        type: "address[]",
-      },
+      { internalType: "uint256", name: "amountIn", type: "uint256" },
+      { internalType: "address[]", name: "path", type: "address[]" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "inToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "outToken",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amountIn",
-        type: "uint256",
-      },
+      { internalType: "address", name: "inToken", type: "address" },
+      { internalType: "address", name: "outToken", type: "address" },
+      { internalType: "uint256", name: "amountIn", type: "uint256" },
     ],
     name: "getNormalizedPriceOut",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "amountOut",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "path",
-        type: "address[]",
-      },
+      { internalType: "uint256", name: "amountOut", type: "uint256" },
+      { internalType: "address[]", name: "path", type: "address[]" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "inToken",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amountIn",
-        type: "uint256",
-      },
+      { internalType: "address", name: "inToken", type: "address" },
+      { internalType: "uint256", name: "amountIn", type: "uint256" },
     ],
     name: "getNormalizedPriceOutDEXE",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "amountOut",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "path",
-        type: "address[]",
-      },
+      { internalType: "uint256", name: "amountOut", type: "uint256" },
+      { internalType: "address[]", name: "path", type: "address[]" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "inToken",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amountIn",
-        type: "uint256",
-      },
+      { internalType: "address", name: "inToken", type: "address" },
+      { internalType: "uint256", name: "amountIn", type: "uint256" },
     ],
     name: "getNormalizedPriceOutUSD",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "amountOut",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "path",
-        type: "address[]",
-      },
+      { internalType: "uint256", name: "amountOut", type: "uint256" },
+      { internalType: "address[]", name: "path", type: "address[]" },
     ],
     stateMutability: "view",
     type: "function",
@@ -472,162 +210,64 @@ export default [
   {
     inputs: [],
     name: "getPathTokens",
-    outputs: [
-      {
-        internalType: "address[]",
-        name: "",
-        type: "address[]",
-      },
-    ],
+    outputs: [{ internalType: "address[]", name: "", type: "address[]" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "pool",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
+      { internalType: "address", name: "pool", type: "address" },
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
     ],
     name: "getSavedPaths",
-    outputs: [
-      {
-        internalType: "address[]",
-        name: "",
-        type: "address[]",
-      },
-    ],
+    outputs: [{ internalType: "address[]", name: "", type: "address[]" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "token", type: "address" }],
     name: "isSupportedPathToken",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "inToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "outToken",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amountIn",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "optionalPath",
-        type: "address[]",
-      },
-      {
-        internalType: "uint256",
-        name: "minAmountOut",
-        type: "uint256",
-      },
+      { internalType: "address", name: "inToken", type: "address" },
+      { internalType: "address", name: "outToken", type: "address" },
+      { internalType: "uint256", name: "amountIn", type: "uint256" },
+      { internalType: "address[]", name: "optionalPath", type: "address[]" },
+      { internalType: "uint256", name: "minAmountOut", type: "uint256" },
     ],
     name: "normalizedExchangeFromExact",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "inToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "outToken",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amountOut",
-        type: "uint256",
-      },
-      {
-        internalType: "address[]",
-        name: "optionalPath",
-        type: "address[]",
-      },
-      {
-        internalType: "uint256",
-        name: "maxAmountIn",
-        type: "uint256",
-      },
+      { internalType: "address", name: "inToken", type: "address" },
+      { internalType: "address", name: "outToken", type: "address" },
+      { internalType: "uint256", name: "amountOut", type: "uint256" },
+      { internalType: "address[]", name: "optionalPath", type: "address[]" },
+      { internalType: "uint256", name: "maxAmountIn", type: "uint256" },
     ],
     name: "normalizedExchangeToExact",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [],
     name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address[]",
-        name: "pathTokens",
-        type: "address[]",
-      },
+      { internalType: "address[]", name: "pathTokens", type: "address[]" },
     ],
     name: "removePathTokens",
     outputs: [],
@@ -643,11 +283,7 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "contractsRegistry",
-        type: "address",
-      },
+      { internalType: "address", name: "contractsRegistry", type: "address" },
     ],
     name: "setDependencies",
     outputs: [],
@@ -655,13 +291,7 @@ export default [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_injector",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "_injector", type: "address" }],
     name: "setInjector",
     outputs: [],
     stateMutability: "nonpayable",
@@ -670,24 +300,12 @@ export default [
   {
     inputs: [],
     name: "totalPathTokens",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
     name: "transferOwnership",
     outputs: [],
     stateMutability: "nonpayable",
@@ -697,11 +315,7 @@ export default [
     inputs: [],
     name: "uniswapFactory",
     outputs: [
-      {
-        internalType: "contract IUniswapV2Factory",
-        name: "",
-        type: "address",
-      },
+      { internalType: "contract IUniswapV2Factory", name: "", type: "address" },
     ],
     stateMutability: "view",
     type: "function",

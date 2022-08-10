@@ -48,7 +48,9 @@ const useCreateRiskyProposal = (
   const addTransaction = useTransactionAdder()
   const { account } = useWeb3React()
   const initialTimeLimit = shortTimestamp(getTime(addDays(new Date(), 30)))
-  const [proposals, riskyProposal, updateRPs] = useRiskyProposals(poolAddress)
+  const [riskyProposal] = useRiskyProposalContract(poolAddress)
+  const [{ data: proposals }, updateRiskyProposals] =
+    useRiskyProposals(poolAddress)
 
   const basicTraderPool = useBasicPoolContract(poolAddress)
   const traderPool = useTraderPool(poolAddress)
@@ -83,9 +85,9 @@ const useCreateRiskyProposal = (
   // watch for transaction confirm
   useEffect(() => {
     if (isSubmiting === SubmitState.SUCESS) {
-      updateRPs()
+      updateRiskyProposals()
     }
-  }, [isSubmiting])
+  }, [isSubmiting, updateRiskyProposals])
 
   // watch for proposals length
   useEffect(() => {

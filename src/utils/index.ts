@@ -1,8 +1,8 @@
 import { getAddress } from "@ethersproject/address"
 import { Contract } from "@ethersproject/contracts"
-import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
+import { BigNumber, BigNumberish, FixedNumber } from "@ethersproject/bignumber"
 import { poolTypes, stableCoins } from "constants/index"
-import { ethers, FixedNumber } from "ethers"
+import { formatUnits, parseUnits, parseEther } from "@ethersproject/units"
 import { ERC20 } from "abi"
 import { useEffect, useState } from "react"
 import { ExchangeType, OwnedPools } from "constants/interfaces_v2"
@@ -148,7 +148,7 @@ export const calcPrice = (price, amount) => {
 export const formatBigNumber = (value?: BigNumber, decimals = 18, fix = 6) => {
   if (!value) return formatNumber("0", fix)
 
-  const amount = ethers.utils.formatUnits(value, decimals).toString()
+  const amount = formatUnits(value, decimals).toString()
 
   return formatNumber(amount, fix)
 }
@@ -158,7 +158,7 @@ export const normalizeBigNumber = (
   decimals = 18,
   fix?: number
 ) => {
-  const amount = ethers.utils.formatUnits(value, decimals).toString()
+  const amount = formatUnits(value, decimals).toString()
 
   return humanizeBigNumber(amount, fix)
 }
@@ -235,10 +235,7 @@ export const calcSlippage = (
       : 1 + parseFloat(slippage) / 100
 
   const a = FixedNumber.fromValue(token[0], token[1])
-  const multiplier = FixedNumber.fromValue(
-    ethers.utils.parseEther(sl.toString()),
-    18
-  )
+  const multiplier = FixedNumber.fromValue(parseEther(sl.toString()), 18)
 
   return BigNumber.from(a.mulUnsafe(multiplier)._hex)
 }
@@ -322,14 +319,14 @@ export const cutDecimalPlaces = (
   roundUp = true,
   fix = 6
 ) => {
-  const number = ethers.utils.formatUnits(value, decimals)
+  const number = formatUnits(value, decimals)
 
   const pow = Math.pow(10, fix)
 
   const parsed =
     Math[roundUp ? "round" : "floor"](parseFloat(number) * pow) / pow
 
-  return ethers.utils.parseUnits(parsed.toString(), decimals)
+  return parseUnits(parsed.toString(), decimals)
 }
 
 export const getMaxLPInvestAmount = (
@@ -349,17 +346,17 @@ export function fromBig(value: BigNumber | undefined, decimals = 18) {
     return "0"
   }
 
-  const formatedNumber = ethers.utils.formatUnits(value, decimals)
+  const formatedNumber = formatUnits(value, decimals)
   if (formatedNumber.split(".")[1] === "0") return formatedNumber.split(".")[0]
   return formatedNumber
 }
 
 export function bigify(value: string, decimals: number) {
   if (!value) {
-    return ethers.utils.parseUnits("0", decimals)
+    return parseUnits("0", decimals)
   }
 
-  return ethers.utils.parseUnits(value, decimals)
+  return parseUnits(value, decimals)
 }
 
 /**
