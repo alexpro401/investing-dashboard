@@ -44,6 +44,7 @@ const SwapRiskyProposal = () => {
   const [
     { from, to },
     {
+      info,
       lpBalance,
       gasPrice,
       oneTokenCost,
@@ -134,70 +135,73 @@ const SwapRiskyProposal = () => {
         <Flex onClick={handleInvestRedirect} gap="4">
           <AddButton>+ Add</AddButton>
           <InfoWhite>{normalizeBigNumber(lpBalance)}</InfoWhite>
-          <InfoGrey>ISDX</InfoGrey>
+          <InfoGrey>{info.pool.symbol}</InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [lpBalance])
+  }, [handleInvestRedirect, info, lpBalance])
 
   const baseInPosition = useMemo(() => {
     return (
       <InfoRow>
-        <InfoGrey>DEXE in position</InfoGrey>
+        <InfoGrey>{info.baseToken.symbol} in position</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>0</InfoWhite>
-          <InfoGrey>DEXE</InfoGrey>
+          <InfoWhite>{info.lpInPosition}</InfoWhite>
+          <InfoGrey>{info.pool.symbol}</InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [info])
 
   const lpComplete = useMemo(() => {
     return (
       <InfoRow>
         <InfoGrey>LP complete</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>0</InfoWhite>
-          <InfoGrey>ISDX</InfoGrey>
+          <InfoWhite>{info.lpComplete}</InfoWhite>
+          <InfoGrey>{info.pool.symbol}</InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [info])
+
   const lpLimit = useMemo(() => {
     return (
       <InfoRow>
         <InfoGrey>LP max size</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>0</InfoWhite>
-          <InfoGrey>ISDX</InfoGrey>
+          <InfoWhite>{info.maxLPLimit}</InfoWhite>
+          <InfoGrey>{info.pool.symbol}</InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [info])
 
   const expirationDate = useMemo(() => {
     return (
       <InfoRow>
         <InfoGrey>Expiration date:</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>21.JUN.2022 12:00</InfoWhite>
-          <InfoGrey>GTM</InfoGrey>
+          <InfoWhite>{info.expirationDate.amount}</InfoWhite>
+          <InfoGrey>{info.expirationDate.label}</InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [info])
 
   const maxBuyingPrice = useMemo(() => {
     return (
       <InfoRow>
         <InfoGrey>Maximum buying price</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>0.1212</InfoWhite>
-          <InfoGrey>ISDX</InfoGrey>
+          <InfoWhite>{info.maxPrice}</InfoWhite>
+          <InfoGrey>
+            {info.positionToken.symbol}/{info.baseToken.symbol}
+          </InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [info])
 
   const positionPNLContent = useMemo(() => {
     return (
@@ -310,7 +314,7 @@ const SwapRiskyProposal = () => {
         {lpComplete}
         {lpLimit}
         {averagePositionPrice}
-        {positionPNL}
+        {/* {positionPNL} */}
         {expirationDate}
         {maxBuyingPrice}
       </InfoCard>

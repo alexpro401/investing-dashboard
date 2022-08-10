@@ -6,19 +6,32 @@ import {
   SetStateAction,
   useEffect,
 } from "react"
-import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
+import {
+  ExchangeForm,
+  ExchangeType,
+  RiskyProposal,
+} from "constants/interfaces_v2"
 import { SwapDirection, TradeType } from "constants/types"
 import { ethers } from "ethers"
 import { BigNumber } from "@ethersproject/bignumber"
 import { useRiskyProposal } from "hooks/useRiskyProposals"
 import { usePoolContract } from "hooks/usePool"
 import { useERC20, usePriceFeedContract } from "hooks/useContract"
-import { multiplyBignumbers } from "utils/formulas"
+import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 import useGasTracker from "state/gas/hooks"
 import { useWeb3React } from "@web3-react/core"
-import { calcSlippage, isTxMined, parseTransactionError } from "utils"
+import {
+  calcSlippage,
+  isTxMined,
+  normalizeBigNumber,
+  parseTransactionError,
+} from "utils"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
+import { format } from "date-fns"
+import usePoolPrice from "hooks/usePoolPrice"
+
+const ZERO = BigNumber.from("0")
 
 export interface UseSwapRiskyParams {
   poolAddress?: string
@@ -27,6 +40,7 @@ export interface UseSwapRiskyParams {
 }
 
 interface UseSwapRiskyResponse {
+  info: any
   gasPrice: string
   error: string
   lpBalance: BigNumber
@@ -58,23 +72,23 @@ const useSwapRiskyProposal = ({
   const [isSlippageOpen, setSlippageOpen] = useState(false)
   const [isWalletPrompting, setWalletPrompting] = useState(false)
 
-  const [lpBalance, setLpBalance] = useState(BigNumber.from("0"))
+  const [positionAmountLP, setPositionAmountLP] = useState(ZERO)
+  const [lpBalance, setLpBalance] = useState(ZERO)
   const [fromAmount, setFromAmount] = useState("0")
   const [toAmount, setToAmount] = useState("0")
-  const [toBalance, setToBalance] = useState(BigNumber.from("0"))
-  const [fromBalance, setFromBalance] = useState(BigNumber.from("0"))
-  const [fromPrice, setFromPrice] = useState(BigNumber.from("0"))
-  const [toPrice, setToPrice] = useState(BigNumber.from("0"))
-  const [oneTokenCost, setTokenCost] = useState(BigNumber.from("0"))
-  const [oneUSDCost, setUSDCost] = useState(BigNumber.from("0"))
+  const [toBalance, setToBalance] = useState(ZERO)
+  const [fromBalance, setFromBalance] = useState(ZERO)
+  const [fromPrice, setFromPrice] = useState(ZERO)
+  const [toPrice, setToPrice] = useState(ZERO)
+  const [oneTokenCost, setTokenCost] = useState(ZERO)
+  const [oneUSDCost, setUSDCost] = useState(ZERO)
   const [lastChangedField, setLastChangedField] = useState<"from" | "to">(
     "from"
   )
 
-  const [proposalInfo, proposalPool, updateProposalData] = useRiskyProposal(
-    poolAddress,
-    proposalId
-  )
+  const [proposalInfo, proposalPool, proposalAddress, updateProposalData] =
+    useRiskyProposal(poolAddress, proposalId)
+  const { priceBase } = usePoolPrice(poolAddress)
 
   const addTransaction = useTransactionAdder()
   const [, poolInfo] = usePoolContract(poolAddress)
@@ -84,6 +98,36 @@ const useSwapRiskyProposal = ({
   const [, positionToken] = useERC20(proposalInfo?.proposalInfo.token)
 
   const [gasTrackerResponse, getGasPrice] = useGasTracker()
+
+  const info = useMemo(() => {
+    const TIMESTAMP_LIMIT =
+      (proposalInfo?.proposalInfo.proposalLimits.timestampLimit.toNumber() ||
+        0) * 1000
+
+    return {
+      pool: {
+        symbol: poolInfo?.ticker,
+      },
+      positionToken: {
+        symbol: positionToken?.symbol,
+      },
+      baseToken: {
+        symbol: baseToken?.symbol,
+      },
+      lpInPosition: normalizeBigNumber(positionAmountLP || ZERO),
+      lpComplete: normalizeBigNumber(proposalInfo?.lp2Supply || ZERO),
+      maxLPLimit: normalizeBigNumber(
+        proposalInfo?.proposalInfo.proposalLimits.investLPLimit || ZERO
+      ),
+      expirationDate: {
+        amount: format(TIMESTAMP_LIMIT, "MMM.dd.yy hh:mm"),
+        label: format(TIMESTAMP_LIMIT, "O"),
+      },
+      maxPrice: normalizeBigNumber(
+        proposalInfo?.proposalInfo.proposalLimits.maxTokenPriceLimit || ZERO
+      ),
+    }
+  }, [baseToken, positionToken, proposalInfo, poolInfo, positionAmountLP])
 
   const form = useMemo(() => {
     if (direction === "withdraw") {
@@ -335,11 +379,36 @@ const useSwapRiskyProposal = ({
     setLpBalance(balance)
   }, [proposalPool, account])
 
+  const updatePositionAmountLP = useCallback(async () => {
+    if (!proposalInfo || !baseToken) return
+
+    try {
+      const [exchange] = await getExchangeAmount(
+        baseToken.address,
+        proposalInfo.proposalInfo.balancePosition,
+        ExchangeType.TO_EXACT
+      )
+
+      const lpAmount = divideBignumbers([exchange[0], 18], [priceBase, 18])
+
+      setPositionAmountLP(lpAmount)
+    } catch (e) {
+      console.log(e)
+    }
+  }, [proposalInfo, baseToken, getExchangeAmount, priceBase])
+
   const runUpdate = useCallback(async () => {
     updateProposalData()
     await updateSwapPrice(form.to.address, ethers.utils.parseEther("1"))
     await updateRPBalance()
-  }, [form.to.address, updateProposalData, updateSwapPrice, updateRPBalance])
+    await updatePositionAmountLP()
+  }, [
+    form.to.address,
+    updateProposalData,
+    updateSwapPrice,
+    updateRPBalance,
+    updatePositionAmountLP,
+  ])
 
   const handleSubmit = useCallback(async () => {
     if (!proposalPool) return
@@ -378,7 +447,7 @@ const useSwapRiskyProposal = ({
         outputCurrencyId: form.to.address,
         expectedOutputCurrencyAmountRaw: form.to.amount,
         // TODO: add slippage amount
-        minimumOutputCurrencyAmountRaw: BigNumber.from("0").toHexString(),
+        minimumOutputCurrencyAmountRaw: ZERO.toHexString(),
       })
 
       if (isTxMined(tx)) {
@@ -460,6 +529,7 @@ const useSwapRiskyProposal = ({
   return [
     form,
     {
+      info,
       lpBalance,
       gasPrice,
       oneTokenCost,

@@ -29,10 +29,11 @@ function useRiskyProposals(
 export function useRiskyProposal(
   poolAddress?: string,
   index?: string
-): [RiskyProposal | undefined, Contract | null, () => void] {
+): [RiskyProposal | undefined, Contract | null, string, () => void] {
   const [proposal, setProposal] = useState<RiskyProposal | undefined>()
   const [update, setUpdate] = useState(false)
-  const [traderPoolRiskyProposal] = useRiskyProposalContract(poolAddress)
+  const [traderPoolRiskyProposal, proposalAddress] =
+    useRiskyProposalContract(poolAddress)
 
   const refresh = useCallback(() => {
     setUpdate(!update)
@@ -49,7 +50,7 @@ export function useRiskyProposal(
     })()
   }, [index, traderPoolRiskyProposal, update])
 
-  return [proposal, traderPoolRiskyProposal, refresh]
+  return [proposal, traderPoolRiskyProposal, proposalAddress, refresh]
 }
 
 export default useRiskyProposals
