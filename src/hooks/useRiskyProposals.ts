@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 import { useRiskyProposalContract } from "hooks/useContract"
-import { Contract } from "ethers"
+import { Contract } from "@ethersproject/contracts"
 import debounce from "lodash.debounce"
 
 import { RiskyProposal } from "constants/interfaces_v2"

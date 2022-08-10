@@ -10,7 +10,7 @@ import { IRiskyPositionCard, PoolInfo } from "constants/interfaces_v2"
 import useContract, { useERC20 } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { selectPriceFeedAddress } from "state/contracts/selectors"
-import { normalizeBigNumber } from "utils"
+import { getProposalId, normalizeBigNumber } from "utils"
 import useRiskyPositionExchanges from "hooks/useRiskyPositionExchanges"
 import { percentageOfBignumbers } from "utils/formulas"
 
@@ -267,9 +267,9 @@ const RiskyPositionCard: React.FC<Props> = ({
   const onBuyMore = useCallback(
     (e: MouseEvent<HTMLElement>): void => {
       e.stopPropagation()
-      navigate(
-        `/invest-risky-proposal/${position.pool.id}/${position.proposal}`
-      )
+      const proposalId = getProposalId(position.id)
+      if (proposalId < 0) return
+      navigate(`/invest-risky-proposal/${position.pool.id}/${proposalId + 1}`)
     },
     [navigate, position]
   )
@@ -281,9 +281,9 @@ const RiskyPositionCard: React.FC<Props> = ({
   const onClosePosition = useCallback(
     (e: MouseEvent<HTMLElement>): void => {
       e.stopPropagation()
-      navigate(
-        `/invest-risky-proposal/${position.pool.id}/${position.proposal}`
-      )
+      const proposalId = getProposalId(position.id)
+      if (proposalId < 0) return
+      navigate(`/invest-risky-proposal/${position.pool.id}/${proposalId + 1}`)
     },
     [navigate, position]
   )

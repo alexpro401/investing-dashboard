@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react"
-import { BigNumber, ethers, FixedNumber } from "ethers"
+import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
+import { parseEther } from "@ethersproject/units"
 import { useRiskyProposal } from "hooks/useRiskyProposals"
 
 function useRiskyPrice(address?: string, index?: string) {
-  const [priceUSD, setPriceUSD] = useState(ethers.utils.parseEther("1"))
-  const [priceBase, setPriceBase] = useState(ethers.utils.parseEther("1"))
+  const [priceUSD, setPriceUSD] = useState(parseEther("1"))
+  const [priceBase, setPriceBase] = useState(parseEther("1"))
   const [proposalInfo] = useRiskyProposal(address, index)
 
   useEffect(() => {

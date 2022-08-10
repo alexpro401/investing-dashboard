@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
-import { BigNumber, ethers, FixedNumber } from "ethers"
+import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
+import { parseEther } from "@ethersproject/units"
 import { useTraderPool } from "hooks/usePool"
 
 function usePoolPrice(address: string | undefined) {
   const traderPool = useTraderPool(address)
-  const [priceUSD, setPriceUSD] = useState(ethers.utils.parseEther("1"))
-  const [priceBase, setPriceBase] = useState(ethers.utils.parseEther("1"))
+  const [priceUSD, setPriceUSD] = useState(parseEther("1"))
+  const [priceBase, setPriceBase] = useState(parseEther("1"))
 
   useEffect(() => {
     if (!traderPool) return

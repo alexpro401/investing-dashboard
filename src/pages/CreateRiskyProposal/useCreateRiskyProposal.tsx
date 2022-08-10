@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react"
 import { useWeb3React } from "@web3-react/core"
 
-import { BigNumber, ethers } from "ethers"
+import { BigNumber } from "@ethersproject/bignumber"
+import { parseEther, parseUnits } from "@ethersproject/units"
 import getTime from "date-fns/getTime"
 import { addDays } from "date-fns/esm"
 
@@ -72,8 +73,8 @@ const useCreateRiskyProposal = (
     const getCreatingTokensInfo = async () => {
       const tokens = await riskyProposal.getCreationTokens(
         tokenAddress,
-        ethers.utils.parseEther("1").toHexString(),
-        ethers.utils.parseUnits("100", 27).toHexString(),
+        parseEther("1").toHexString(),
+        parseUnits("100", 27).toHexString(),
         []
       )
       setBaseTokenPrice(tokens.positionTokenPrice)
@@ -112,10 +113,11 @@ const useCreateRiskyProposal = (
     const createRiskyProposal = async () => {
       setSubmiting(SubmitState.SIGN)
       setError("")
-      const amount = ethers.utils.parseEther(lpAmount || "0").toHexString()
-      const percentage = ethers.utils
-        .parseUnits(instantTradePercentage.toString(), 25)
-        .toHexString()
+      const amount = parseEther(lpAmount || "0").toHexString()
+      const percentage = parseUnits(
+        instantTradePercentage.toString(),
+        25
+      ).toHexString()
 
       const divests = await traderPool.getDivestAmountsAndCommissions(
         account,
@@ -134,8 +136,8 @@ const useCreateRiskyProposal = (
         amount,
         [
           timestampLimit,
-          ethers.utils.parseUnits(investLPLimit, 18).toHexString(),
-          ethers.utils.parseUnits(maxTokenPriceLimit, 18).toHexString(),
+          parseUnits(investLPLimit, 18).toHexString(),
+          parseUnits(maxTokenPriceLimit, 18).toHexString(),
         ],
         percentage,
         divests.receptions.receivedAmounts,

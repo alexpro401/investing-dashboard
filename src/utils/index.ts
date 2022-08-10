@@ -369,3 +369,8 @@ export const convertBigToFixed = (
   recepient: BigNumber,
   decimals?: number
 ): FixedNumber => FixedNumber.fromValue(recepient, decimals ?? 18)
+
+export const getProposalId = (id?: string) => {
+  const proposalId = Number(id?.substring(42, 43))
+  return isNaN(proposalId) ? -1 : proposalId
+}

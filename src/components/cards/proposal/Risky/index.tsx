@@ -314,7 +314,7 @@ const RiskyProposalCard: FC<Props> = ({
   const onAddMore = useCallback(
     (e: MouseEvent<HTMLElement>): void => {
       e.stopPropagation()
-      navigate(`/invest-risky-proposal/${poolAddress}/${proposalId}`)
+      navigate(`/invest-risky-proposal/${poolAddress}/${proposalId - 1}`)
     },
     [navigate, poolAddress, proposalId]
   )
@@ -326,9 +326,13 @@ const RiskyProposalCard: FC<Props> = ({
   const onInvest = useCallback(
     (e?: MouseEvent<HTMLButtonElement | MouseEvent>): void => {
       if (e) e.stopPropagation()
-      navigate(`/invest-risky-proposal/${poolAddress}/${proposalId}`)
+      if (isTrader) {
+        navigate(`/swap-risky-proposal/${poolAddress}/${proposalId - 1}/invest`)
+      } else {
+        navigate(`/invest-risky-proposal/${poolAddress}/${proposalId - 1}`)
+      }
     },
-    [navigate, poolAddress, proposalId]
+    [navigate, poolAddress, proposalId, isTrader]
   )
 
   const onUpdateRestrictions = (

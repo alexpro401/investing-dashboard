@@ -12,8 +12,8 @@ import {
   RiskyProposal,
 } from "constants/interfaces_v2"
 import { SwapDirection, TradeType } from "constants/types"
-import { ethers } from "ethers"
 import { BigNumber } from "@ethersproject/bignumber"
+import { parseEther } from "@ethersproject/units"
 import { useRiskyProposal } from "hooks/useRiskyProposals"
 import { usePoolContract } from "hooks/usePool"
 import { useERC20, usePriceFeedContract } from "hooks/useContract"
@@ -399,7 +399,7 @@ const useSwapRiskyProposal = ({
 
   const runUpdate = useCallback(async () => {
     updateProposalData()
-    await updateSwapPrice(form.to.address, ethers.utils.parseEther("1"))
+    await updateSwapPrice(form.to.address, parseEther("1"))
     await updateRPBalance()
     await updatePositionAmountLP()
   }, [
@@ -496,9 +496,7 @@ const useSwapRiskyProposal = ({
   useEffect(() => {
     if (!form.to.address) return
 
-    updateSwapPrice(form.to.address, ethers.utils.parseEther("1")).catch(
-      console.log
-    )
+    updateSwapPrice(form.to.address, parseEther("1")).catch(console.log)
   }, [form.from.address, form.to.address, updateSwapPrice])
 
   // estimate gas price
