@@ -38,7 +38,7 @@ import MinInvestIcon from "assets/icons/MinInvestAmount"
 
 import { bigify, formatBigNumber, shortenAddress, isTxMined } from "utils"
 import { arrayDifference } from "utils/array"
-import { parsePoolData, addFundMetadata } from "utils/ipfs"
+import { getIpfsData, addFundMetadata } from "utils/ipfs"
 import { useUpdateFundContext } from "context/UpdateFundContext"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"
 import useContract, { useERC20 } from "hooks/useContract"
@@ -442,7 +442,7 @@ const FundDetailsEdit: FC = () => {
   useEffect(() => {
     if (!poolData || !poolInfoData) return
     ;(async () => {
-      const parsedIpfs = await parsePoolData(poolData.descriptionURL)
+      const parsedIpfs = await getIpfsData(poolData.descriptionURL)
 
       if (!!parsedIpfs) {
         setInitialIpfs({
