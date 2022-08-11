@@ -47,6 +47,7 @@ import {
   OwnInvestingValue,
   OwnInvestingLink,
 } from "./styled"
+import { useProposalAddress } from "hooks/useContract"
 
 const pnlNew: IDetailedChart[] = [
   {

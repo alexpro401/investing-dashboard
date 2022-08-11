@@ -6,10 +6,12 @@ import {
   ERC20,
   TraderPool,
   TraderPoolRiskyProposal,
+  TraderPoolInvestProposal,
   BasicTraderPool,
   PriceFeed,
   TraderPoolRegistry,
-  TraderPoolInvestProposal,
+  InvestTraderPool,
+  UserRegistry,
 } from "abi"
 import { getContract } from "utils/getContract"
 import { useActiveWeb3React } from "hooks"
@@ -19,6 +21,7 @@ import { useSelector } from "react-redux"
 import {
   selectPriceFeedAddress,
   selectTraderPoolRegistryAddress,
+  selectUserRegistryAddress,
 } from "state/contracts/selectors"
 
 const provider = new JsonRpcProvider(
@@ -137,6 +140,12 @@ export function useBasicPoolContract(
   return useContract(poolAddress, BasicTraderPool)
 }
 
+export function useInvestPoolContract(
+  poolAddress: string | undefined
+): Contract | null {
+  return useContract(poolAddress, InvestTraderPool)
+}
+
 export function usePriceFeedContract(): Contract | null {
   const priceFeedAddress = useSelector(selectPriceFeedAddress)
 
@@ -168,23 +177,11 @@ export function useProposalAddress(poolAddress) {
 export function useRiskyProposalContract(
   poolAddress: string | undefined
 ): [Contract | null, string] {
-  const [riskyProposalAddress, setRiskyProposalAddress] = useState("")
+  const proposalAddress = useProposalAddress(poolAddress)
 
-  const traderPool = useTraderPoolContract(poolAddress)
-  const proposalPool = useContract(
-    riskyProposalAddress,
-    TraderPoolRiskyProposal
-  )
+  const proposalPool = useContract(proposalAddress, TraderPoolRiskyProposal)
 
-  useEffect(() => {
-    if (!traderPool) return
-    ;(async () => {
-      const proposalAddress = await traderPool.proposalPoolAddress()
-      setRiskyProposalAddress(proposalAddress)
-    })()
-  }, [traderPool])
-
-  return [proposalPool, riskyProposalAddress]
+  return [proposalPool, proposalAddress]
 }
 
 export function useInvestProposalContract(
@@ -195,4 +192,11 @@ export function useInvestProposalContract(
   const proposalPool = useContract(proposalAddress, TraderPoolInvestProposal)
 
   return [proposalPool, proposalAddress]
+}
+
+export function useUserRegistryContract(): Contract | null {
+  const userRegistryAddress = useSelector(selectUserRegistryAddress)
+  const userRegistry = useContract(userRegistryAddress, UserRegistry)
+
+  return userRegistry
 }

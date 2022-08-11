@@ -56,7 +56,7 @@ const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
 })
 
-const useCreateInvestProposal = (): [
+const useCreateInvestmentProposal = (): [
   {
     lpAmount: string
     ticker: string
@@ -92,7 +92,7 @@ const useCreateInvestProposal = (): [
   ]
 }
 
-const CreateInvestProposal: FC = () => {
+const CreateInvestmentProposal: FC = () => {
   const [
     { lpAmount, ticker, description, timestampLimit, investLPLimit },
     {
@@ -102,7 +102,7 @@ const CreateInvestProposal: FC = () => {
       setTimestampLimit,
       setInvestLPLimit,
     },
-  ] = useCreateInvestProposal()
+  ] = useCreateInvestmentProposal()
 
   const { poolAddress } = useParams()
   const navigate = useNavigate()
@@ -312,12 +312,12 @@ const CreateInvestProposal: FC = () => {
   )
 }
 
-const CreateInvestProposalWithProvider = () => {
+const CreateInvestmentProposalWithProvider = () => {
   return (
     <GraphProvider value={poolsClient}>
-      <CreateInvestProposal />
+      <CreateInvestmentProposal />
     </GraphProvider>
   )
 }
 
-export default CreateInvestProposalWithProvider
+export default CreateInvestmentProposalWithProvider

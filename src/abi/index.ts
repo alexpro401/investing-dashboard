@@ -18,10 +18,10 @@ export {
   PoolFactory,
   TraderPoolRegistry,
   TraderPoolRiskyProposal,
+  TraderPoolInvestProposal,
   TraderPool,
   BasicTraderPool,
   InvestTraderPool,
   UserRegistry,
   Insurance,
-  TraderPoolInvestProposal,
 }

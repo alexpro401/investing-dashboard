@@ -343,6 +343,26 @@ export interface InvestProposal {
   totalInvestors: BigNumber
 }
 
+interface InvestProposalLimits {
+  timestampLimit: BigNumber
+  investLPLimit: BigNumber
+}
+
+interface InvestProposalInfo {
+  descriptionURL: string
+  proposalLimits: InvestProposalLimits
+  lpLocked: BigNumber
+  investedBase: BigNumber
+  newInvestedBase: BigNumber
+}
+
+export interface InvestProposal {
+  id: any
+  closed: any
+  proposalInfo: InvestProposalInfo
+  totalInvestors: BigNumber
+}
+
 /// @notice The struct that is returned from the TraderPoolView contract and stores information about the trader leverage
 /// @param totalPoolUSDWithProposals the total USD value of the pool
 /// @param traderLeverageUSDTokens the maximal amount of USD that the trader is allowed to own
@@ -407,7 +427,7 @@ export enum ExchangeType {
 }
 
 // used to display the exchange data
-interface FormElement {
+interface FormElement<T = void> {
   address: string | undefined
   amount: string
   balance: BigNumber
@@ -415,6 +435,18 @@ interface FormElement {
   decimals?: number
   icon?: ReactNode
   price: BigNumber
+  info?: T
+}
+
+export interface RiskyInvestInfo {
+  stakeLimit?: BigNumber
+  tokens?: Array<string>
+  amounts?: BigNumber[]
+}
+
+export interface RiskyForm {
+  from: FormElement<RiskyInvestInfo>
+  to: FormElement<RiskyInvestInfo>
 }
 
 export interface ExchangeForm {

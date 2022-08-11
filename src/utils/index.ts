@@ -5,9 +5,10 @@ import { poolTypes, stableCoins } from "constants/index"
 import { formatUnits, parseUnits, parseEther } from "@ethersproject/units"
 import { ERC20 } from "abi"
 import { useEffect, useState } from "react"
-import { OwnedPools } from "constants/interfaces_v2"
+import { ExchangeType, OwnedPools } from "constants/interfaces_v2"
 import { getTime, setHours, setMinutes } from "date-fns"
 import { TransactionReceipt } from "@ethersproject/providers"
+import { Token } from "constants/types"
 
 export const useUpdate = (ms: number) => {
   const [updator, setUpdate] = useState(0)
@@ -224,14 +225,19 @@ export const fixFractionalDecimals = (
 }
 
 export const calcSlippage = (
-  amount: BigNumber,
-  decimals: number,
-  slippage: number
+  token: Token,
+  slippage: string,
+  swapDirection: ExchangeType
 ) => {
-  const a = FixedNumber.fromValue(amount, decimals)
-  const sl = FixedNumber.fromValue(parseEther(slippage.toString()), 18)
+  const sl =
+    swapDirection === ExchangeType.FROM_EXACT
+      ? 1 - parseFloat(slippage) / 100
+      : 1 + parseFloat(slippage) / 100
 
-  return BigNumber.from(a.mulUnsafe(sl)._hex)
+  const a = FixedNumber.fromValue(token[0], token[1])
+  const multiplier = FixedNumber.fromValue(parseEther(sl.toString()), 18)
+
+  return BigNumber.from(a.mulUnsafe(multiplier)._hex)
 }
 
 export const parseTransactionError = (str: any) => {
@@ -242,7 +248,17 @@ export const parseTransactionError = (str: any) => {
       return
     }
 
-    // parse string error
+    // parse string error reason
+    if (typeof str === "string") {
+      const position = str.search(`reason=`)
+
+      const cutString = str.substring(position + 7)
+
+      const matches = cutString.match(/"(.*?)"/)
+      return matches ? matches[1] : DEFAULT_TRANSACTION_ERROR
+    }
+
+    // parse string error message
     if (typeof str === "string") {
       const position = str.search(`"message":`)
 
@@ -353,3 +369,8 @@ export const convertBigToFixed = (
   recepient: BigNumber,
   decimals?: number
 ): FixedNumber => FixedNumber.fromValue(recepient, decimals ?? 18)
+
+export const getProposalId = (id?: string) => {
+  const proposalId = Number(id?.substring(42, 43))
+  return isNaN(proposalId) ? -1 : proposalId
+}

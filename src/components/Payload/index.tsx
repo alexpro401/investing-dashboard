@@ -7,7 +7,7 @@ import { Text } from "./styled"
 const Payload: FC<{
   isOpen: boolean
   toggle: () => void
-}> = ({ isOpen, toggle }) => {
+}> = ({ children, isOpen, toggle }) => {
   return (
     <Confirm isOpen={isOpen} toggle={toggle} title="Waiting">
       <SpinnerCircularFixed
@@ -21,7 +21,7 @@ const Payload: FC<{
         color="#8DEED3"
         secondaryColor="#0D1320"
       />
-      <Text>Open your wallet and sign transactions</Text>
+      <Text>{children || "Open your wallet and sign transaction"}</Text>
     </Confirm>
   )
 }

@@ -158,8 +158,11 @@ const useSwap = ({
         ExchangeType.FROM_EXACT
       )
 
-      const sl = 1 - parseFloat(slippage) / 100
-      const exchangeWithSlippage = calcSlippage(exchange[0], 18, sl)
+      const exchangeWithSlippage = calcSlippage(
+        [exchange[0], 18],
+        slippage,
+        ExchangeType.FROM_EXACT
+      )
       return [exchange, exchangeWithSlippage]
     },
     [from, slippage, to, traderPool]
@@ -174,8 +177,11 @@ const useSwap = ({
         ExchangeType.TO_EXACT
       )
 
-      const sl = 1 + parseFloat(slippage) / 100
-      const exchangeWithSlippage = calcSlippage(exchange[0], 18, sl)
+      const exchangeWithSlippage = calcSlippage(
+        [exchange[0], 18],
+        slippage,
+        ExchangeType.TO_EXACT
+      )
       return [exchange, exchangeWithSlippage]
     },
     [from, slippage, to, traderPool]

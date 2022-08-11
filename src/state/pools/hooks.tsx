@@ -28,7 +28,7 @@ import {
   getPoolsQueryVariables,
 } from "queries"
 
-import { usePoolContract, useTraderPool } from "hooks/usePool"
+import { useTraderPool } from "hooks/usePool"
 
 /**
  * Returns top members filter state variables and setter

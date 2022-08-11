@@ -14,7 +14,10 @@ import {
   FundUpdateManagersTransactionInfo,
   CreateRiskyProposalTransactionInfo,
   EditRiskyProposalTransactionInfo,
-  CreateInvestProposalTransactionInfo,
+  DepositRiskyProposalTransactionInfo,
+  WithdrawRiskyProposalTransactionInfo,
+  SwapRiskyProposalTransactionInfo,
+  CreateInvestmentProposalTransactionInfo,
   EditInvestProposalTransactionInfo,
   StakeInsuranceTransactionInfo,
   UnstakeInsuranceTransactionInfo,
@@ -47,12 +50,12 @@ const SwapSummaryInput: React.FC<{ info: ExactInputSwapTransactionInfo }> = ({
       Swap from{" "}
       <FormattedCurrencyAmount
         rawAmount={info.inputCurrencyAmountRaw}
-        rawCurrency={info.inputCurrencyId}
+        rawCurrencyId={info.inputCurrencyId}
       />{" "}
       to{" "}
       <FormattedCurrencyAmount
         rawAmount={info.expectedOutputCurrencyAmountRaw}
-        rawCurrency={info.outputCurrencyId}
+        rawCurrencyId={info.outputCurrencyId}
       />
     </>
   )
@@ -65,12 +68,12 @@ const SwapSummaryOutput: React.FC<{ info: ExactOutputSwapTransactionInfo }> = ({
       Swap from{" "}
       <FormattedCurrencyAmount
         rawAmount={info.outputCurrencyAmountRaw}
-        rawCurrency={info.inputCurrencyId}
+        rawCurrencyId={info.inputCurrencyId}
       />{" "}
       to{" "}
       <FormattedCurrencyAmount
         rawAmount={info.expectedInputCurrencyAmountRaw}
-        rawCurrency={info.outputCurrencyId}
+        rawCurrencyId={info.outputCurrencyId}
       />
     </>
   )
@@ -92,7 +95,7 @@ const DepositLiquiditySummary: React.FC<{
   return (
     <>
       Deposit liquidity{" "}
-      <FormattedCurrencyAmount rawAmount={amount} rawCurrency={currencyId} />
+      <FormattedCurrencyAmount rawAmount={amount} rawCurrencyId={currencyId} />
     </>
   )
 }
@@ -103,7 +106,7 @@ const WithdrawLiquiditySummary: React.FC<{
   return (
     <>
       Withdraw liquidity{" "}
-      <FormattedCurrencyAmount rawAmount={amount} rawCurrency={currencyId} />
+      <FormattedCurrencyAmount rawAmount={amount} rawCurrencyId={currencyId} />
     </>
   )
 }
@@ -154,17 +157,71 @@ const CredentialsUpdateSummary: React.FC = () => {
 
 const CreateRiskyProposalSummary: React.FC<{
   info: CreateRiskyProposalTransactionInfo
-}> = ({ info }) => {
-  return <>Create Risky Proposal</>
+}> = () => {
+  return <>Successfully create Risky Proposal</>
 }
 const EditRiskyProposalSummary: React.FC<{
   info: EditRiskyProposalTransactionInfo
+}> = () => {
+  return <>Successfully update Risky Proposal</>
+}
+const DepositRiskyProposalSummary: React.FC<{
+  info: DepositRiskyProposalTransactionInfo
 }> = ({ info }) => {
-  return <>Update Risky Proposal</>
+  return (
+    <>
+      Deposit in risky proposal from{" "}
+      <FormattedCurrencyAmount
+        rawAmount={info.inputCurrencyAmountRaw}
+        rawCurrencySymbol={info.inputCurrencySymbol}
+      />{" "}
+      to{" "}
+      <FormattedCurrencyAmount
+        rawAmount={info.expectedOutputCurrencyAmountRaw}
+        rawCurrencySymbol={info.expectedOutputCurrencySymbol}
+      />
+    </>
+  )
+}
+const WithdrawRiskyProposalSummary: React.FC<{
+  info: WithdrawRiskyProposalTransactionInfo
+}> = ({ info }) => {
+  return (
+    <>
+      Withdraw from risky proposal from{" "}
+      <FormattedCurrencyAmount
+        rawAmount={info.outputCurrencyAmountRaw}
+        rawCurrencySymbol={info.outputCurrencySymbol}
+      />{" "}
+      to{" "}
+      <FormattedCurrencyAmount
+        rawAmount={info.expectedInputCurrencyAmountRaw}
+        rawCurrencySymbol={info.expectedInputCurrencySymbol}
+      />
+    </>
+  )
+}
+const SwapRiskyProposalSummary: React.FC<{
+  info: SwapRiskyProposalTransactionInfo
+}> = ({ info }) => {
+  return (
+    <>
+      Swap in risky proposal from{" "}
+      <FormattedCurrencyAmount
+        rawAmount={info.inputCurrencyAmountRaw}
+        rawCurrencyId={info.inputCurrencyId}
+      />{" "}
+      to{" "}
+      <FormattedCurrencyAmount
+        rawAmount={info.expectedOutputCurrencyAmountRaw}
+        rawCurrencyId={info.outputCurrencyId}
+      />
+    </>
+  )
 }
 
-const CreateInvestProposalSummary: React.FC<{
-  info: CreateInvestProposalTransactionInfo
+const CreateInvestmentProposalSummary: React.FC<{
+  info: CreateInvestmentProposalTransactionInfo
 }> = ({ info: { investLpAmountRaw } }) => {
   const amount = formatBigNumber(BigNumber.from(investLpAmountRaw))
   return <>Create Invest Proposal for {amount} LP tokens</>
@@ -216,8 +273,14 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <CreateRiskyProposalSummary info={info} />
     case TransactionType.EDIT_RISKY_PROPOSAL:
       return <EditRiskyProposalSummary info={info} />
+    case TransactionType.DEPOSIT_RISKY_PROPOSAL:
+      return <DepositRiskyProposalSummary info={info} />
+    case TransactionType.WITHDRAW_RISKY_PROPOSAL:
+      return <WithdrawRiskyProposalSummary info={info} />
+    case TransactionType.SWAP_RISKY_PROPOSAL:
+      return <SwapRiskyProposalSummary info={info} />
     case TransactionType.CREATE_INVEST_PROPOSAL:
-      return <CreateInvestProposalSummary info={info} />
+      return <CreateInvestmentProposalSummary info={info} />
     case TransactionType.EDIT_INVEST_PROPOSAL:
       return <EditInvestProposalSummary info={info} />
     case TransactionType.STAKE_INSURANCE:
