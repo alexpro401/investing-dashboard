@@ -58,8 +58,6 @@ import {
   NetworkIcon,
 } from "./styled"
 
-import useTransactionHistory from "./useTransactionHistory"
-
 const useUserSettings = (): [
   {
     isUserEditing: boolean
@@ -194,10 +192,7 @@ export default function Wallet() {
   const insuranceAddress = useSelector(selectInsuranceAddress)
   const insurance = useContract(insuranceAddress, Insurance)
 
-  const [
-    { txList, txFilter, FilterTypes, txListExpanded },
-    { setTxFiler, setTxListExpanded },
-  ] = useTransactionHistory()
+  const [txHistoryOpen, setTxHistoryOpen] = useState<boolean>(false)
 
   const fetchInsuranceBalance = useCallback(async () => {
     const userInsurance = await insurance?.getInsurance(account)
@@ -250,7 +245,7 @@ export default function Wallet() {
   return (
     <>
       <Header>
-        {txListExpanded ? "Transactions History" : EHeaderTitles.myWallet}
+        {txHistoryOpen ? "Transactions History" : EHeaderTitles.myWallet}
       </Header>
       <Container
         initial={{ opacity: 0, y: -15 }}
@@ -260,8 +255,8 @@ export default function Wallet() {
       >
         <Cards
           animate={{
-            opacity: txListExpanded ? 0 : 1,
-            transition: { duration: txListExpanded ? 0.2 : 0.4 },
+            opacity: txHistoryOpen ? 0 : 1,
+            transition: { duration: txHistoryOpen ? 0.2 : 0.4 },
           }}
         >
           <User>
@@ -347,14 +342,7 @@ export default function Wallet() {
           </Card>
         </Cards>
 
-        <TransactionHistory
-          list={txList}
-          filterTypes={FilterTypes}
-          filter={txFilter}
-          setFilter={setTxFiler}
-          expanded={txListExpanded}
-          setExpanded={setTxListExpanded}
-        />
+        <TransactionHistory open={txHistoryOpen} setOpen={setTxHistoryOpen} />
       </Container>
     </>
   )

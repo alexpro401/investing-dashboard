@@ -1,32 +1,32 @@
-import { TransactionDetails, TransactionType } from "state/transactions/types"
+import { TransactionType } from "state/transactions/types"
 
 import CardSwap from "./CardSwap"
 import CardLiquidity from "./CardLiquidity"
 
 interface IProps {
-  payload: TransactionDetails
+  payload: any
   chainId?: number
 }
 
 const TransactionHistoryCard: React.FC<IProps> = ({ payload, chainId }) => {
-  switch (payload.info.type) {
+  switch (Number(payload.type[0])) {
     case TransactionType.SWAP:
       return (
         <CardSwap
-          hash={payload.hash}
-          info={payload.info}
+          hash={payload.id}
+          info={payload.exchange[0]}
           chainId={chainId}
-          confirmedTime={payload.confirmedTime}
+          timestamp={payload.timestamp}
         />
       )
     case TransactionType.INVEST:
     case TransactionType.DIVEST:
       return (
         <CardLiquidity
-          hash={payload.hash}
-          info={payload.info}
+          hash={payload.id}
+          info={payload.vest[0]}
           chainId={chainId}
-          confirmedTime={payload.confirmedTime}
+          timestamp={payload.timestamp}
         />
       )
     default:

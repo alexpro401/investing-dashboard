@@ -1,17 +1,14 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react"
-import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
+import { Dispatch, SetStateAction, useCallback, useMemo, useRef } from "react"
+import { createClient, Provider as GraphProvider } from "urql"
+import { PulseSpinner } from "react-spinners-kit"
+
+import useTransactionHistoryUI from "./useTransactionHistoryUI"
 
 import { useActiveWeb3React } from "hooks"
-import { TransactionDetails, TransactionType } from "state/transactions/types"
+import { UserTransactionsQuery } from "queries"
+import useQueryPagination from "hooks/useQueryPagination"
+import { TransactionType } from "state/transactions/types"
 
-import { getSlideTopVariants } from "motion/variants"
 import Invest from "assets/icons/Invest"
 import Withdraw from "assets/icons/Withdraw"
 import Swap from "assets/icons/Swap"
@@ -29,103 +26,86 @@ import {
 } from "./styled"
 
 import Card from "./Card"
+import LoadMore from "components/LoadMore"
+
+const poolsClient = createClient({
+  url: process.env.REACT_APP_INTERACTIONS_API_URL || "",
+  requestPolicy: "network-only",
+})
 
 interface IProps {
-  list: TransactionDetails[]
-  filter: TransactionType
-  filterTypes: any
-  expanded: boolean
-  setFilter: Dispatch<SetStateAction<TransactionType>>
-  setExpanded: Dispatch<SetStateAction<boolean>>
+  open: boolean
+  setOpen: Dispatch<SetStateAction<boolean>>
 }
 
-const barH = 52
-const titleMB = 24
-
-const TransactionHistory: React.FC<IProps> = ({
-  list,
-  filter,
-  filterTypes,
-  expanded,
-  setExpanded,
-  setFilter,
-}) => {
-  const { chainId } = useActiveWeb3React()
+const TransactionHistory: React.FC<IProps> = ({ open, setOpen }) => {
+  const { chainId, account } = useActiveWeb3React()
 
   const scrollRef = useRef<any>(null)
   const titleRef = useRef<any>(null)
 
-  const [scrollH, setScrollH] = useState<number>(0)
-  const [initialTop, setInitialTop] = useState<number>(0)
-  const toggleExpanded = () => setExpanded(!expanded)
+  const toggleOpen = useCallback(() => {
+    setOpen((prev) => !prev)
+  }, [setOpen])
 
-  const variants = useMemo(() => {
-    return getSlideTopVariants(window.innerHeight - initialTop)
-  }, [initialTop])
+  const [{ filter, scrollH, variants }, { setFilter }] =
+    useTransactionHistoryUI(scrollRef, titleRef, open)
 
-  useEffect(() => {
-    if (!scrollRef.current) return
-    disableBodyScroll(scrollRef.current)
+  const variables = useMemo<{
+    address: string | null | undefined
+    transactionTypes: TransactionType[]
+  }>(
+    () => ({
+      address: account,
+      transactionTypes: [filter],
+    }),
+    [account, filter]
+  )
 
-    return () => clearAllBodyScrollLocks()
-  }, [])
-
-  useEffect(() => {
-    if (!titleRef.current) return
-
-    const titleRect = titleRef.current.getBoundingClientRect()
-    setInitialTop(titleRect.bottom + titleMB)
-  }, [titleRef])
-
-  useEffect(() => {
-    if (expanded) {
-      setScrollH(window.innerHeight - barH * 2)
-    } else {
-      const t = setTimeout(() => {
-        setScrollH(window.innerHeight - initialTop - barH * 2)
-        clearTimeout(t)
-      }, 400)
-    }
-  }, [expanded, initialTop])
+  const [{ data, error, loading }, fetchMore] = useQueryPagination(
+    UserTransactionsQuery,
+    variables,
+    (d) => d.transactions
+  )
 
   return (
     <Container>
       <Heading
         animate={{
-          opacity: expanded ? 0 : 1,
-          transition: { duration: expanded ? 0.1 : 0.4 },
+          opacity: open ? 0 : 1,
+          transition: { duration: open ? 0.1 : 0.4 },
         }}
         ref={titleRef}
       >
         Transactions History
       </Heading>
       <Content
-        animate={expanded ? "visible" : "hidden"}
+        animate={open ? "visible" : "hidden"}
         initial="hidden"
         transition={{ duration: 0.2 }}
         variants={variants}
       >
         <Header>
           <HeaderButton
-            onClick={() => setFilter(filterTypes.DEPOSIT)}
-            focused={filter === filterTypes.DEPOSIT}
+            onClick={() => setFilter(TransactionType.INVEST)}
+            focused={filter === TransactionType.INVEST}
           >
-            Investing <Invest active={filter === filterTypes.DEPOSIT} />
+            Investing <Invest active={filter === TransactionType.INVEST} />
           </HeaderButton>
           <HeaderButton
-            onClick={() => setFilter(filterTypes.SWAP)}
-            focused={filter === filterTypes.SWAP}
+            onClick={() => setFilter(TransactionType.SWAP)}
+            focused={filter === TransactionType.SWAP}
           >
-            Swap <Swap active={filter === filterTypes.SWAP} />
+            Swap <Swap active={filter === TransactionType.SWAP} />
           </HeaderButton>
           <HeaderButton
-            onClick={() => setFilter(filterTypes.WITHDRAW)}
-            focused={filter === filterTypes.WITHDRAW}
+            onClick={() => setFilter(TransactionType.DIVEST)}
+            focused={filter === TransactionType.DIVEST}
           >
-            Withdraw <Withdraw active={filter === filterTypes.WITHDRAW} />
+            Withdraw <Withdraw active={filter === TransactionType.DIVEST} />
           </HeaderButton>
-          <HeaderButton onClick={toggleExpanded}>
-            {expanded ? <Shrink /> : <Expand />}
+          <HeaderButton onClick={toggleOpen}>
+            {open ? <Shrink /> : <Expand />}
           </HeaderButton>
         </Header>
         <List
@@ -134,19 +114,37 @@ const TransactionHistory: React.FC<IProps> = ({
             height: scrollH,
           }}
         >
-          {list.length ? (
-            list.map((tx) => (
-              <Card key={tx.hash} payload={tx} chainId={chainId} />
-            ))
-          ) : (
+          {data.length &&
+            data.map((tx) => (
+              <Card key={tx.id} payload={tx} chainId={chainId} />
+            ))}
+
+          {(!data || (data.length === 0 && loading)) && (
             <ListPlaceholder>
-              Your transactions will appear here....
+              <PulseSpinner />
             </ListPlaceholder>
           )}
+
+          {(!data || (!data.length && !loading)) && (
+            <ListPlaceholder>No transactions</ListPlaceholder>
+          )}
+          <LoadMore
+            isLoading={loading && !!data.length}
+            handleMore={fetchMore}
+            r={scrollRef}
+          />
         </List>
       </Content>
     </Container>
   )
 }
 
-export default TransactionHistory
+const TransactionHistoryWithProvider = (props) => {
+  return (
+    <GraphProvider value={poolsClient}>
+      <TransactionHistory {...props} />
+    </GraphProvider>
+  )
+}
+
+export default TransactionHistoryWithProvider

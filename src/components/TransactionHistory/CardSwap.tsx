@@ -1,51 +1,57 @@
+import { useMemo } from "react"
 import { format } from "date-fns/esm"
 
 import { Flex } from "theme"
-import ExternalLink from "components/ExternalLink"
 import TokenIcon from "components/TokenIcon"
+import ExternalLink from "components/ExternalLink"
 
+import { expandTimestamp } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import {
-  ExactInputSwapTransactionInfo,
-  ExactOutputSwapTransactionInfo,
-} from "state/transactions/types"
 
 import { CardContainer, CardIcons, CardTime } from "./styled"
 
+interface ITransactionSwap {
+  id: string
+  fromToken: string
+  toToken: string
+}
+
 interface IProps {
   hash: string
-  info: ExactInputSwapTransactionInfo | ExactOutputSwapTransactionInfo
+  info: ITransactionSwap
   chainId?: number
-  confirmedTime?: number
+  timestamp?: number
 }
 
 const TransactionHistoryCardSwap: React.FC<IProps> = ({
   hash,
-  info: { inputCurrencyId, outputCurrencyId },
+  info,
   chainId,
-  confirmedTime,
+  timestamp,
 }) => {
+  const explorerUrl = useMemo<string>(() => {
+    if (!chainId || !hash) return ""
+    return getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)
+  }, [chainId, hash])
+
+  const datetime = useMemo<string>(() => {
+    if (!timestamp) return ""
+    return format(expandTimestamp(timestamp), "MMM dd, y, HH:mm")
+  }, [timestamp])
+
   return (
     <CardContainer>
       <Flex>
         <CardIcons>
-          <TokenIcon m="0" address={inputCurrencyId} size={20} />
-          <TokenIcon m="0" address={outputCurrencyId} size={20} />
+          <TokenIcon m="0" address={info?.toToken} size={20} />
+          <TokenIcon m="0" address={info?.fromToken} size={20} />
         </CardIcons>
-        {chainId && (
-          <ExternalLink
-            fz="13px"
-            fw="500"
-            color="#2680EB"
-            href={getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)}
-          >
-            View on bscscan
-          </ExternalLink>
-        )}
+
+        <ExternalLink fz="13px" fw="500" color="#2680EB" href={explorerUrl}>
+          View on bscscan
+        </ExternalLink>
       </Flex>
-      <CardTime>
-        {confirmedTime && format(confirmedTime, "MMM dd, y, HH:mm")}
-      </CardTime>
+      <CardTime>{datetime}</CardTime>
     </CardContainer>
   )
 }
