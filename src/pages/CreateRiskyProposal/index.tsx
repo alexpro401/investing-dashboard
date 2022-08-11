@@ -128,7 +128,7 @@ const CreateRiskyProposal: FC = () => {
   }
 
   const handleSwapRedirect = () => {
-    navigate(`swap-risky-proposal/${poolAddress}/${proposalCount - 1}/deposit`)
+    navigate(`/swap-risky-proposal/${poolAddress}/${proposalCount - 1}/deposit`)
     setSubmiting(SubmitState.IDLE)
   }
 

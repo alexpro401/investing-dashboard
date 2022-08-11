@@ -50,12 +50,11 @@ const useCreateRiskyProposal = (
   const { account } = useWeb3React()
   const initialTimeLimit = shortTimestamp(getTime(addDays(new Date(), 30)))
   const [riskyProposal] = useRiskyProposalContract(poolAddress)
-  const [{ data: proposals }, updateRiskyProposals] =
-    useRiskyProposals(poolAddress)
 
   const basicTraderPool = useBasicPoolContract(poolAddress)
   const traderPool = useTraderPool(poolAddress)
 
+  const [totalProposals, setTotalProposals] = useState<number>(0)
   const [error, setError] = useState("")
   const [isSubmiting, setSubmiting] = useState(SubmitState.IDLE)
   const [lpAmount, setLpAmount] = useState("")
@@ -66,46 +65,12 @@ const useCreateRiskyProposal = (
   const [baseTokenPrice, setBaseTokenPrice] = useState<BigNumber | undefined>()
   const [lpAvailable, setLpAvailable] = useState<BigNumber | undefined>()
 
-  // fetch base token price
-  useEffect(() => {
-    if (!riskyProposal || !tokenAddress || tokenAddress.length !== 42) return
+  const updateRiskyProposals = useCallback(async () => {
+    if (!riskyProposal) return
 
-    const getCreatingTokensInfo = async () => {
-      const tokens = await riskyProposal.getCreationTokens(
-        tokenAddress,
-        parseEther("1").toHexString(),
-        parseUnits("100", 27).toHexString(),
-        []
-      )
-      setBaseTokenPrice(tokens.positionTokenPrice)
-    }
-
-    getCreatingTokensInfo().catch(console.error)
-  }, [riskyProposal, tokenAddress])
-
-  // watch for transaction confirm
-  useEffect(() => {
-    if (isSubmiting === SubmitState.SUCESS) {
-      updateRiskyProposals()
-    }
-  }, [isSubmiting, updateRiskyProposals])
-
-  // watch for proposals length
-  useEffect(() => {
-    console.log(proposals.length)
-  }, [proposals.length])
-
-  // fetch LP balance
-  useEffect(() => {
-    if (!traderPool || !account) return
-
-    const getBalance = async () => {
-      const lpAvailable: BigNumber = await traderPool.balanceOf(account)
-      setLpAvailable(lpAvailable)
-    }
-
-    getBalance().catch(console.error)
-  }, [traderPool, account])
+    const total = await riskyProposal.proposalsTotalNum()
+    setTotalProposals(total.toNumber())
+  }, [riskyProposal])
 
   const handleSubmit = useCallback(() => {
     if (!basicTraderPool || !traderPool || !riskyProposal || !account) return
@@ -179,9 +144,50 @@ const useCreateRiskyProposal = (
     traderPool,
   ])
 
+  // fetch base token price
+  useEffect(() => {
+    if (!riskyProposal || !tokenAddress || tokenAddress.length !== 42) return
+
+    const getCreatingTokensInfo = async () => {
+      const tokens = await riskyProposal.getCreationTokens(
+        tokenAddress,
+        parseEther("1").toHexString(),
+        parseUnits("100", 27).toHexString(),
+        []
+      )
+      setBaseTokenPrice(tokens.positionTokenPrice)
+    }
+
+    getCreatingTokensInfo().catch(console.error)
+  }, [riskyProposal, tokenAddress])
+
+  // watch for transaction confirm
+  useEffect(() => {
+    if (isSubmiting === SubmitState.SUCESS) {
+      updateRiskyProposals()
+    }
+  }, [isSubmiting, updateRiskyProposals])
+
+  // watch for proposals length
+  useEffect(() => {
+    updateRiskyProposals()
+  }, [updateRiskyProposals])
+
+  // fetch LP balance
+  useEffect(() => {
+    if (!traderPool || !account) return
+
+    const getBalance = async () => {
+      const lpAvailable: BigNumber = await traderPool.balanceOf(account)
+      setLpAvailable(lpAvailable)
+    }
+
+    getBalance().catch(console.error)
+  }, [traderPool, account])
+
   return [
     {
-      proposalCount: proposals.length,
+      proposalCount: totalProposals,
       lpAmount,
       error,
       isSubmiting,
