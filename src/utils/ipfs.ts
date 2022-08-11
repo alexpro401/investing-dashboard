@@ -55,7 +55,7 @@ const stringify = (json) => {
   }
 }
 
-const getIpfsData = async (hash) => {
+export const getIpfsData = async (hash) => {
   try {
     if (!!hash && hash.length === 46) {
       const res = await axios.post(
@@ -74,12 +74,6 @@ const getIpfsData = async (hash) => {
     return false
   }
 }
-
-export const parsePoolData = getIpfsData
-
-export const parseUserData = getIpfsData
-
-export const parseInvestProposalData = getIpfsData
 
 export const addFundMetadata: FundMetadataAdder = (
   assets,

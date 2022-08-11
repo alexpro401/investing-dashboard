@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 
-import { parsePoolData } from "utils/ipfs"
+import { getIpfsData } from "utils/ipfs"
 
 import { Icon } from "./styled"
 
@@ -27,7 +27,7 @@ const IpfsIcon: React.FC<IProps> = ({ size, hash, m }) => {
     }
 
     ;(async () => {
-      const data = await parsePoolData(hash)
+      const data = await getIpfsData(hash)
       if (
         data &&
         data.assets &&

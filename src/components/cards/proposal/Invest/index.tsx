@@ -16,7 +16,7 @@ import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { PriceFeed } from "abi"
 import { useActiveWeb3React } from "hooks"
 import { usePoolContract } from "hooks/usePool"
-import { parseInvestProposalData } from "utils/ipfs"
+import { getIpfsData } from "utils/ipfs"
 import { percentageOfBignumbers } from "utils/formulas"
 import { InvestProposal } from "constants/interfaces_v2"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
@@ -234,7 +234,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     if (!proposal) return
     ;(async () => {
       try {
-        const ipfsMetadata = await parseInvestProposalData(
+        const ipfsMetadata = await getIpfsData(
           proposal.proposalInfo.descriptionURL
         )
 

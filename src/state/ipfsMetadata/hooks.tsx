@@ -1,11 +1,7 @@
 import { useEffect, useState, useCallback } from "react"
 import { useSelector, useDispatch } from "react-redux"
 
-import {
-  parseInvestProposalData,
-  parsePoolData,
-  parseUserData,
-} from "utils/ipfs"
+import { getIpfsData } from "utils/ipfs"
 
 import {
   selectinvestProposalMetadata,
@@ -23,7 +19,7 @@ export function usePoolMetadata(poolId, hash) {
   const fetchPoolMetadata = useCallback(async () => {
     try {
       setLoading(true)
-      const data = await parsePoolData(hash)
+      const data = await getIpfsData(hash)
       if (data) {
         dispatch(addPool({ params: { poolId, hash, ...data } }))
       }
@@ -57,7 +53,7 @@ export function useUserMetadata(
   const fetchUserMetadata = useCallback(async () => {
     try {
       setLoading(true)
-      const data = await parseUserData(hash)
+      const data = await getIpfsData(hash)
       if (data) {
         dispatch(addUser({ params: { hash, ...data } }))
       }
@@ -94,7 +90,7 @@ export function useInvestProposalMetadata(
   const fetchInvestProposalMetadata = useCallback(async () => {
     try {
       setLoading(true)
-      const data = await parseInvestProposalData(hash)
+      const data = await getIpfsData(hash)
       if (data) {
         dispatch(addProposal({ params: { hash, poolId, data } }))
       }
