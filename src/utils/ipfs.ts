@@ -55,11 +55,17 @@ const stringify = (json) => {
   }
 }
 
-const getIpfsData = async (hash) => {
+export const getIpfsData = async (hash) => {
   try {
     if (!!hash && hash.length === 46) {
       const res = await axios.post(
-        `https://ipfs.infura.io:5001/api/v0/cat?arg=${hash}`
+        `https://ipfs.infura.io:5001/api/v0/cat?arg=${hash}`,
+        {},
+        {
+          headers: {
+            authorization: auth,
+          },
+        }
       )
       return res.data
     }
@@ -68,12 +74,6 @@ const getIpfsData = async (hash) => {
     return false
   }
 }
-
-export const parsePoolData = getIpfsData
-
-export const parseUserData = getIpfsData
-
-export const parseInvestProposalData = getIpfsData
 
 export const addFundMetadata: FundMetadataAdder = (
   assets,
