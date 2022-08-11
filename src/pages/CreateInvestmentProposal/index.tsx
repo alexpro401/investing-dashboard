@@ -158,7 +158,7 @@ const CreateInvestmentProposal: FC = () => {
       )
 
       const receipt = await addTransaction(createReceipt, {
-        type: TransactionType.CREATE_INVEST_PROPOSAL,
+        type: TransactionType.INVEST_PROPOSAL_CREATE,
         amount,
         ipfsPath: ipfsReceipt.path,
         investLpAmountRaw: investLPLimitHex,

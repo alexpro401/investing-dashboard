@@ -4,8 +4,8 @@ import { TransactionType } from "state/transactions/types"
 
 const FilterTypes = {
   SWAP: TransactionType.SWAP,
-  DEPOSIT: TransactionType.DEPOSIT_LIQUIDITY_STAKING,
-  WITHDRAW: TransactionType.WITHDRAW_LIQUIDITY_STAKING,
+  DEPOSIT: TransactionType.INVEST,
+  WITHDRAW: TransactionType.DIVEST,
 }
 
 interface IResult {

@@ -19,8 +19,8 @@ const TransactionHistoryCard: React.FC<IProps> = ({ payload, chainId }) => {
           confirmedTime={payload.confirmedTime}
         />
       )
-    case TransactionType.DEPOSIT_LIQUIDITY_STAKING:
-    case TransactionType.WITHDRAW_LIQUIDITY_STAKING:
+    case TransactionType.INVEST:
+    case TransactionType.DIVEST:
       return (
         <CardLiquidity
           hash={payload.hash}

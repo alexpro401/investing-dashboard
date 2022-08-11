@@ -550,7 +550,7 @@ const useInvest = ({
     setWalletPrompting(false)
 
     const receipt = await addTransaction(depositResponse, {
-      type: TransactionType.DEPOSIT_LIQUIDITY_STAKING,
+      type: TransactionType.INVEST,
       poolAddress: poolAddress,
       currencyId: poolInfo?.parameters.baseToken,
       amount: amount.toHexString(),
@@ -595,7 +595,7 @@ const useInvest = ({
     )
     setWalletPrompting(false)
     const receipt = await addTransaction(withdrawResponse, {
-      type: TransactionType.WITHDRAW_LIQUIDITY_STAKING,
+      type: TransactionType.DIVEST,
       poolAddress: poolAddress,
       currencyId: poolInfo?.parameters.baseToken,
       amount: amount.toHexString(),

@@ -109,7 +109,7 @@ const useUserSettings = (): [
     setProfileURL(ipfsReceipt.path)
 
     const receipt = await addTransaction(trx, {
-      type: TransactionType.UPDATE_USER_CREDENTIALS,
+      type: TransactionType.UPDATED_USER_CREDENTIALS,
     })
 
     if (isTxMined(receipt)) {

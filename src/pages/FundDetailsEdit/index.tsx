@@ -170,7 +170,7 @@ const FundDetailsEdit: FC = () => {
     )
 
     return addTransaction(receipt, {
-      type: TransactionType.FUND_EDIT,
+      type: TransactionType.POOL_EDIT,
       baseCurrencyId: poolData.baseToken,
       fundName: poolData.name,
     })
@@ -195,7 +195,7 @@ const FundDetailsEdit: FC = () => {
     const receipt = await traderPool?.modifyAdmins(managersRemoved, false)
 
     return addTransaction(receipt, {
-      type: TransactionType.FUND_UPDATE_MANAGERS,
+      type: TransactionType.POOL_UPDATE_MANAGERS,
       editType: UpdateListType.REMOVE,
       poolId: poolAddress,
     })
@@ -205,7 +205,7 @@ const FundDetailsEdit: FC = () => {
     const receipt = await traderPool?.modifyAdmins(managersAdded, true)
 
     return addTransaction(receipt, {
-      type: TransactionType.FUND_UPDATE_MANAGERS,
+      type: TransactionType.POOL_UPDATE_MANAGERS,
       editType: UpdateListType.ADD,
       poolId: poolAddress,
     })
@@ -218,7 +218,7 @@ const FundDetailsEdit: FC = () => {
     )
 
     return addTransaction(receipt, {
-      type: TransactionType.FUND_UPDATE_INVESTORS,
+      type: TransactionType.POOL_UPDATE_INVESTORS,
       editType: UpdateListType.REMOVE,
       poolId: poolAddress,
     })
@@ -231,7 +231,7 @@ const FundDetailsEdit: FC = () => {
     )
 
     return addTransaction(receipt, {
-      type: TransactionType.FUND_UPDATE_INVESTORS,
+      type: TransactionType.POOL_UPDATE_INVESTORS,
       editType: UpdateListType.ADD,
       poolId: poolAddress,
     })

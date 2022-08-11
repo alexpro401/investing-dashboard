@@ -196,7 +196,7 @@ const RiskyCardSettings: FC<Props> = ({
         )
 
         const tx = await addTransaction(receipt, {
-          type: TransactionType.EDIT_RISKY_PROPOSAL,
+          type: TransactionType.RISKY_PROPOSAL_EDIT,
         })
 
         if (isTxMined(tx)) {
