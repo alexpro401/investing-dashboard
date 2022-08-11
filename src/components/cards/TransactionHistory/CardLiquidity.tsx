@@ -2,33 +2,40 @@ import { useMemo } from "react"
 import { format } from "date-fns/esm"
 
 import { Flex } from "theme"
-import TokenIcon from "components/TokenIcon"
 import ExternalLink from "components/ExternalLink"
+import TokenIcon from "components/TokenIcon"
 
 import { expandTimestamp } from "utils"
+import { usePoolContract } from "hooks/usePool"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
-import { CardContainer, CardIcons, CardTime } from "./styled"
+import S from "./styled"
 
-interface ITransactionSwap {
+interface IVest {
   id: string
-  fromToken: string
-  toToken: string
+  pool: string
 }
 
 interface IProps {
   hash: string
-  info: ITransactionSwap
+  info: IVest
   chainId?: number
   timestamp?: number
 }
 
-const TransactionHistoryCardSwap: React.FC<IProps> = ({
+const TransactionHistoryCardLiquidity: React.FC<IProps> = ({
   hash,
-  info,
+  info: { pool },
   chainId,
   timestamp,
 }) => {
+  const [, poolInfo] = usePoolContract(pool)
+
+  const poolBaseToken = useMemo<string>(() => {
+    if (!poolInfo) return ""
+    return poolInfo.parameters.baseToken
+  }, [poolInfo])
+
   const explorerUrl = useMemo<string>(() => {
     if (!chainId || !hash) return ""
     return getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)
@@ -40,20 +47,19 @@ const TransactionHistoryCardSwap: React.FC<IProps> = ({
   }, [timestamp])
 
   return (
-    <CardContainer>
+    <S.Container>
       <Flex>
-        <CardIcons>
-          <TokenIcon m="0" address={info?.toToken} size={20} />
-          <TokenIcon m="0" address={info?.fromToken} size={20} />
-        </CardIcons>
+        <S.CardIcons relative={false}>
+          <TokenIcon m="0" address={poolBaseToken} size={30} />
+        </S.CardIcons>
 
         <ExternalLink fz="13px" fw="500" color="#2680EB" href={explorerUrl}>
           View on bscscan
         </ExternalLink>
       </Flex>
-      <CardTime>{datetime}</CardTime>
-    </CardContainer>
+      <S.CardTime>{datetime}</S.CardTime>
+    </S.Container>
   )
 }
 
-export default TransactionHistoryCardSwap
+export default TransactionHistoryCardLiquidity

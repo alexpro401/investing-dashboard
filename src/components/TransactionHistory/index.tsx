@@ -9,24 +9,16 @@ import { UserTransactionsQuery } from "queries"
 import useQueryPagination from "hooks/useQueryPagination"
 import { TransactionType } from "state/transactions/types"
 
+import LoadMore from "components/LoadMore"
+import TransactionHistoryCard from "components/cards/TransactionHistory"
+
+import S from "./styled"
+
 import Invest from "assets/icons/Invest"
 import Withdraw from "assets/icons/Withdraw"
 import Swap from "assets/icons/Swap"
 import Expand from "assets/icons/Expand"
 import Shrink from "assets/icons/Shrink"
-
-import {
-  Container,
-  Heading,
-  Content,
-  Header,
-  HeaderButton,
-  List,
-  ListPlaceholder,
-} from "./styled"
-
-import Card from "./Card"
-import LoadMore from "components/LoadMore"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_INTERACTIONS_API_URL || "",
@@ -69,8 +61,8 @@ const TransactionHistory: React.FC<IProps> = ({ open, setOpen }) => {
   )
 
   return (
-    <Container>
-      <Heading
+    <S.Container>
+      <S.Heading
         animate={{
           opacity: open ? 0 : 1,
           transition: { duration: open ? 0.1 : 0.4 },
@@ -78,37 +70,37 @@ const TransactionHistory: React.FC<IProps> = ({ open, setOpen }) => {
         ref={titleRef}
       >
         Transactions History
-      </Heading>
-      <Content
+      </S.Heading>
+      <S.Content
         animate={open ? "visible" : "hidden"}
         initial="hidden"
         transition={{ duration: 0.2 }}
         variants={variants}
       >
-        <Header>
-          <HeaderButton
+        <S.Header>
+          <S.HeaderButton
             onClick={() => setFilter(TransactionType.INVEST)}
             focused={filter === TransactionType.INVEST}
           >
             Investing <Invest active={filter === TransactionType.INVEST} />
-          </HeaderButton>
-          <HeaderButton
+          </S.HeaderButton>
+          <S.HeaderButton
             onClick={() => setFilter(TransactionType.SWAP)}
             focused={filter === TransactionType.SWAP}
           >
             Swap <Swap active={filter === TransactionType.SWAP} />
-          </HeaderButton>
-          <HeaderButton
+          </S.HeaderButton>
+          <S.HeaderButton
             onClick={() => setFilter(TransactionType.DIVEST)}
             focused={filter === TransactionType.DIVEST}
           >
             Withdraw <Withdraw active={filter === TransactionType.DIVEST} />
-          </HeaderButton>
-          <HeaderButton onClick={toggleOpen}>
+          </S.HeaderButton>
+          <S.HeaderButton onClick={toggleOpen}>
             {open ? <Shrink /> : <Expand />}
-          </HeaderButton>
-        </Header>
-        <List
+          </S.HeaderButton>
+        </S.Header>
+        <S.List
           ref={scrollRef}
           style={{
             height: scrollH,
@@ -116,26 +108,30 @@ const TransactionHistory: React.FC<IProps> = ({ open, setOpen }) => {
         >
           {data.length &&
             data.map((tx) => (
-              <Card key={tx.id} payload={tx} chainId={chainId} />
+              <TransactionHistoryCard
+                key={tx.id}
+                payload={tx}
+                chainId={chainId}
+              />
             ))}
 
           {(!data || (data.length === 0 && loading)) && (
-            <ListPlaceholder>
+            <S.ListPlaceholder>
               <PulseSpinner />
-            </ListPlaceholder>
+            </S.ListPlaceholder>
           )}
 
           {(!data || (!data.length && !loading)) && (
-            <ListPlaceholder>No transactions</ListPlaceholder>
+            <S.ListPlaceholder>No transactions</S.ListPlaceholder>
           )}
           <LoadMore
             isLoading={loading && !!data.length}
             handleMore={fetchMore}
             r={scrollRef}
           />
-        </List>
-      </Content>
-    </Container>
+        </S.List>
+      </S.Content>
+    </S.Container>
   )
 }
 
