@@ -83,11 +83,11 @@ const SwapRiskyProposal = () => {
     }
   }, [location, navigate, params])
 
-  const handleInvestRedirect = () => {
+  const handleInvestRedirect = useCallback(() => {
     navigate(
       `/invest-risky-proposal/${params.poolAddress}/${params.proposalId}`
     )
-  }
+  }, [navigate, params])
 
   const button = useMemo(() => {
     if (from.amount === "0" || to.amount === "0") {
@@ -213,7 +213,7 @@ const SwapRiskyProposal = () => {
         <InfoRow>
           <InfoGrey>Trader P&L</InfoGrey>
           <Flex gap="4">
-            <InfoWhite>2.11 ISDX </InfoWhite>
+            <InfoWhite>2.11 {info.pool.symbol} </InfoWhite>
             <InfoGrey>(+14%)</InfoGrey>
           </Flex>
         </InfoRow>
@@ -223,7 +223,7 @@ const SwapRiskyProposal = () => {
         </InfoRow>
       </>
     )
-  }, [])
+  }, [info])
 
   const positionPNL = useMemo(() => {
     return (
@@ -231,7 +231,7 @@ const SwapRiskyProposal = () => {
         left={<InfoGrey>Position P&L</InfoGrey>}
         right={
           <Flex gap="4">
-            <InfoWhite>+12.72 ISDX</InfoWhite>
+            <InfoWhite>+12.72 {info.pool.symbol}</InfoWhite>
             <InfoGrey>(+37.18%)</InfoGrey>
           </Flex>
         }
@@ -239,7 +239,7 @@ const SwapRiskyProposal = () => {
         {positionPNLContent}
       </InfoDropdown>
     )
-  }, [positionPNLContent])
+  }, [positionPNLContent, info])
 
   const averagePositionPrice = useMemo(() => {
     return (
@@ -247,11 +247,13 @@ const SwapRiskyProposal = () => {
         <InfoGrey>Average position price</InfoGrey>
         <Flex gap="4">
           <InfoWhite>0.01289 </InfoWhite>
-          <InfoGrey>WBNB</InfoGrey>
+          <InfoGrey>
+            {info.positionToken.symbol}/{info.baseToken.symbol}
+          </InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [info])
 
   const form = (
     <Card>
@@ -314,7 +316,7 @@ const SwapRiskyProposal = () => {
         {lpComplete}
         {lpLimit}
         {averagePositionPrice}
-        {/* {positionPNL} */}
+        {positionPNL}
         {expirationDate}
         {maxBuyingPrice}
       </InfoCard>
