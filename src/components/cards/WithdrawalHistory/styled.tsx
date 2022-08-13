@@ -25,6 +25,12 @@ const Styled = {
     line-height: 16px;
     color: #9ae2cb;
   `,
+  Link: styled.a`
+    display: block;
+    width: 100%;
+    text-decoration: none;
+    color: initial;
+  `,
 }
 
 export default Styled

@@ -380,6 +380,32 @@ const FundFeeHistoryQuery = `
   }
 `
 
+const UserTransactionsQuery = `
+  query($offset: Int!, $limit: Int!, $address: String!, $transactionTypes: [Int]!) {
+    transactions(skip: $offset, first: $limit, where: {user: $address, type_contains: $transactionTypes}) {
+      id
+      timestamp
+      type
+      user
+      interactionsCount
+
+      exchange { id fromToken toToken }
+      vest { id pool }
+      poolCreate { id }
+      proposalEdit { id }
+      riskyProposalCreate { id }
+      riskyProposalExchange { id }
+      riskyProposalVest { id }
+      investProposalClaimSupply { id }
+      investProposalCreate { id }
+      investProposalWithdraw { id }
+      insuranceStake { id }
+      getPerfomanceFee { id baseAmount lpAmount }
+      onlyPool { id }
+    }
+  }
+`
+
 const getPoolsQueryVariables = (
   isAllPools: boolean,
   filters: ITopMembersFilters,
@@ -441,5 +467,6 @@ export {
   InvestorInvestProposalsQuery,
   RiskyProposalExchangesQuery,
   FundFeeHistoryQuery,
+  UserTransactionsQuery,
   getPoolsQueryVariables,
 }

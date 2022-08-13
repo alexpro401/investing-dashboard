@@ -22,7 +22,7 @@ import Button from "components/Button"
 import FeeChart from "components/FeeChart"
 import Accordion from "components/Accordion"
 import AmountRow from "components/Amount/Row"
-import WithdrawalHistory from "./WithdrawalHistory"
+import WithdrawalsHistory from "components/WithdrawalsHistory"
 
 import S, { PageLoading } from "./styled"
 
@@ -497,7 +497,7 @@ const FundDetailsFee: FC = () => {
         </S.MainCard>
 
         <Flex dir="column" full m="40px 0 0">
-          <WithdrawalHistory
+          <WithdrawalsHistory
             payload={withdrawalHistory}
             unlockDate={unlockDate}
           />
