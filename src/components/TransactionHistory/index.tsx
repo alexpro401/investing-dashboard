@@ -106,7 +106,7 @@ const TransactionHistory: React.FC<IProps> = ({ open, setOpen }) => {
             height: scrollH,
           }}
         >
-          {data.length &&
+          {!!data.length &&
             data.map((tx) => (
               <TransactionHistoryCard
                 key={tx.id}

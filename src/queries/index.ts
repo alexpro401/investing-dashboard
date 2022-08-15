@@ -390,7 +390,7 @@ const UserTransactionsQuery = `
       interactionsCount
 
       exchange { id fromToken toToken }
-      vest { id pool }
+      vest { id pool baseAmount }
       poolCreate { id }
       proposalEdit { id }
       riskyProposalCreate { id }

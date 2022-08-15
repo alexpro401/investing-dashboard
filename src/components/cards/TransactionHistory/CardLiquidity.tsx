@@ -1,12 +1,14 @@
 import { useMemo } from "react"
 import { format } from "date-fns/esm"
+import { BigNumber } from "@ethersproject/bignumber"
 
 import { Flex } from "theme"
-import ExternalLink from "components/ExternalLink"
 import TokenIcon from "components/TokenIcon"
+import ExternalLink from "components/ExternalLink"
 
-import { expandTimestamp } from "utils"
+import { useERC20 } from "hooks/useContract"
 import { usePoolContract } from "hooks/usePool"
+import { expandTimestamp, formatBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
 import S from "./styled"
@@ -14,6 +16,7 @@ import S from "./styled"
 interface IVest {
   id: string
   pool: string
+  baseAmount: BigNumber
 }
 
 interface IProps {
@@ -21,25 +24,28 @@ interface IProps {
   info: IVest
   chainId?: number
   timestamp?: number
+  isInvest: boolean
 }
 
 const TransactionHistoryCardLiquidity: React.FC<IProps> = ({
   hash,
-  info: { pool },
+  info: { pool, baseAmount },
   chainId,
   timestamp,
+  isInvest,
 }) => {
   const [, poolInfo] = usePoolContract(pool)
-
-  const poolBaseToken = useMemo<string>(() => {
-    if (!poolInfo) return ""
-    return poolInfo.parameters.baseToken
-  }, [poolInfo])
+  const [, baseToken] = useERC20(poolInfo?.parameters.baseToken)
 
   const explorerUrl = useMemo<string>(() => {
     if (!chainId || !hash) return ""
     return getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)
   }, [chainId, hash])
+
+  const amount = useMemo<string>(() => {
+    if (!baseAmount) return ""
+    return formatBigNumber(baseAmount)
+  }, [baseAmount])
 
   const datetime = useMemo<string>(() => {
     if (!timestamp) return ""
@@ -50,11 +56,11 @@ const TransactionHistoryCardLiquidity: React.FC<IProps> = ({
     <S.Container>
       <Flex>
         <S.CardIcons relative={false}>
-          <TokenIcon m="0" address={poolBaseToken} size={30} />
+          <TokenIcon m="0" size={30} address={baseToken?.address} />
         </S.CardIcons>
 
         <ExternalLink fz="13px" fw="500" color="#2680EB" href={explorerUrl}>
-          View on bscscan
+          {isInvest ? "Invest" : "Divest"} {amount} {baseToken?.symbol}{" "}
         </ExternalLink>
       </Flex>
       <S.CardTime>{datetime}</S.CardTime>

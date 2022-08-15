@@ -27,6 +27,7 @@ const TransactionHistoryCard: React.FC<IProps> = ({ payload, chainId }) => {
           info={payload.vest[0]}
           chainId={chainId}
           timestamp={payload.timestamp}
+          isInvest={payload.type.includes(String(TransactionType.INVEST))}
         />
       )
     default:
