@@ -441,7 +441,7 @@ const useSwapRiskyProposal = ({
       }
 
       const tx = await addTransaction(transactionResponse, {
-        type: TransactionType.SWAP_RISKY_PROPOSAL,
+        type: TransactionType.RISKY_PROPOSAL_SWAP,
         tradeType: tradeType[direction!],
         inputCurrencyId: form.from.address,
         inputCurrencyAmountRaw: form.from.amount,
