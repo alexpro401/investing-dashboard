@@ -12,6 +12,7 @@ import {
   RiskyProposal,
 } from "constants/interfaces_v2"
 import { SwapDirection, TradeType } from "constants/types"
+import { DATE_TIME_FORMAT } from "constants/time"
 import { BigNumber } from "@ethersproject/bignumber"
 import { parseEther } from "@ethersproject/units"
 import { useRiskyProposal } from "hooks/useRiskyProposals"
@@ -120,7 +121,7 @@ const useSwapRiskyProposal = ({
         proposalInfo?.proposalInfo.proposalLimits.investLPLimit || ZERO
       ),
       expirationDate: {
-        amount: format(TIMESTAMP_LIMIT, "MMM.dd.yy hh:mm"),
+        amount: format(TIMESTAMP_LIMIT, DATE_TIME_FORMAT),
         label: format(TIMESTAMP_LIMIT, "O"),
       },
       maxPrice: normalizeBigNumber(
