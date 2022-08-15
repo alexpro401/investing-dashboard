@@ -47,6 +47,9 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
   const currentPriceUSD = useTokenPriceOutUSD({
     tokenAddress: position.positionToken,
   })
+  const [pnlUSDCurrent, setPnlUSDCurrent] = useState<BigNumber>(
+    BigNumber.from("0")
+  )
 
   const [poolType, setPoolType] = useState<string | undefined>(undefined)
 
@@ -145,7 +148,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
 
   /**
    * Mark price (in fund base token)
-   * if position open return markPriceBase (price for 1 position token)
+   * if position open return markPrice (price for 1 position token)
    * otherwise return totalBaseCloseVolume/totalPositionCloseVolume
    */
   const markPriceBase = useMemo<BigNumber>(() => {
@@ -181,21 +184,6 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     }
   }, [currentPriceUSD, position])
 
-  /**
-   * P&L (in USD)
-   * markPriceBase - entryPriceBase
-   */
-  const pnlBase = useMemo<BigNumber>(() => {
-    if (!markPriceBase || !entryPriceBase) return BigNumber.from("0")
-
-    const _markPriceFixed = FixedNumber.fromValue(markPriceBase, 18)
-    const _entryPriceBaseFixed = FixedNumber.fromValue(entryPriceBase, 18)
-
-    const res = _markPriceFixed.subUnsafe(_entryPriceBaseFixed)
-
-    return parseEther(res._value)
-  }, [markPriceBase, entryPriceBase])
-
   interface IPnlPercentage {
     value: BigNumber
     normalized: string
@@ -228,10 +216,43 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
   }, [markPriceBase, entryPriceBase])
 
   /**
+   * P&L (in base token)
+   * markPriceBase - entryPriceBase
+   */
+  const pnlBase = useMemo<BigNumber>(() => {
+    if (!position || !pnlPercentage || !positionToken) {
+      return BigNumber.from("0")
+    }
+
+    const _pnlPercentageFixed = FixedNumber.fromValue(pnlPercentage.value, 18)
+    const _totalBaseOpenVolumeFixed = FixedNumber.fromValue(
+      position.totalBaseOpenVolume,
+      18
+    )
+    const _totalBaseCloseVolumeFixed = FixedNumber.fromValue(
+      position.totalBaseCloseVolume,
+      18
+    )
+
+    const _totalBaseVolumeFixed = position.closed
+      ? FixedNumber.fromValue(position.totalBaseCloseVolume, 18)
+      : _totalBaseOpenVolumeFixed.subUnsafe(_totalBaseCloseVolumeFixed) // current base open volume
+
+    const _pnlBaseFixed = _totalBaseVolumeFixed.mulUnsafe(_pnlPercentageFixed)
+    const res = _totalBaseVolumeFixed.addUnsafe(_pnlBaseFixed)
+
+    return parseEther(res._value)
+  }, [position, pnlPercentage, positionToken])
+
+  /**
    * P&L (in USD)
    */
   const pnlUSD = useMemo<BigNumber>(() => {
     if (!markPriceUSD || !entryPriceUSD) return BigNumber.from("0")
+
+    if (!position.closed) {
+      return pnlUSDCurrent
+    }
 
     const _markPriceFixed = FixedNumber.fromValue(markPriceUSD, 18)
     const _entryPriceUSDFixed = FixedNumber.fromValue(entryPriceUSD, 18)
@@ -239,7 +260,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     const res = _markPriceFixed.subUnsafe(_entryPriceUSDFixed)
 
     return parseEther(res._value)
-  }, [markPriceUSD, entryPriceUSD])
+  }, [markPriceUSD, entryPriceUSD, position.closed, pnlUSDCurrent])
 
   // get mark price of position token in fund base token
   useEffect(() => {
@@ -268,6 +289,32 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     position.positionToken,
     position,
   ])
+
+  // fetch pnl price in USD
+  useEffect(() => {
+    if (!priceFeed || !pnlBase || !baseToken) return
+    ;(async () => {
+      try {
+        const price = await priceFeed.getNormalizedPriceOutUSD(
+          baseToken.address,
+          pnlBase.abs().toHexString()
+        )
+
+        if (price?.amountOut) {
+          if (pnlBase.lt(BigNumber.from("0"))) {
+            const res = FixedNumber.fromValue(price.amountOut, 18).mulUnsafe(
+              FixedNumber.from("-1")
+            )
+            setPnlUSDCurrent(parseEther(res._value))
+          } else {
+            setPnlUSDCurrent(price.amountOut)
+          }
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [baseToken, pnlBase, priceFeed])
 
   // check pool type
   useEffect(() => {
