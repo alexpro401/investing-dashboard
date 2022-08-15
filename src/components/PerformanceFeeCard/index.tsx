@@ -1,12 +1,13 @@
+import { useNavigate } from "react-router-dom"
 import { FC, useMemo } from "react"
 import { format } from "date-fns"
 
 import { expandTimestamp } from "utils"
+import { DATE_FORMAT } from "constants/time"
 
 import Button, { SecondaryButton } from "components/Button"
 
 import { Container, ValueLabel, ArrowIcon } from "./styled"
-import { useNavigate } from "react-router-dom"
 
 interface Props {
   performanceFeePercent: number | string
@@ -28,7 +29,7 @@ const PerformanceFeeCard: FC<Props> = ({
   // TODO: can't use this because we have commission for every unique investor
   const commisionUnlockDate = useMemo(() => {
     if (!!commisionUnlockTime) {
-      return format(expandTimestamp(commisionUnlockTime), "MMM dd, y")
+      return format(expandTimestamp(commisionUnlockTime), DATE_FORMAT)
     }
     return "-"
   }, [commisionUnlockTime])

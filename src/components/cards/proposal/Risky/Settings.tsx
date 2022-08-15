@@ -23,8 +23,9 @@ import DatePicker from "components/DatePicker"
 import Button, { SecondaryButton } from "components/Button"
 
 import { Flex } from "theme"
-import { SettingsStyled as S } from "./styled"
 import { accordionSummaryVariants } from "motion/variants"
+import { DATE_TIME_FORMAT } from "constants/time"
+import { SettingsStyled as S } from "./styled"
 
 interface Values {
   timestampLimit: number
@@ -237,13 +238,10 @@ const RiskyCardSettings: FC<Props> = ({
               disabled
               theme="grey"
               size="small"
-              value={format(
-                expandTimestamp(timestampLimit),
-                "MMM.dd.yyyy, HH:mm"
-              )}
+              value={format(expandTimestamp(timestampLimit), DATE_TIME_FORMAT)}
               placeholder={format(
                 expandTimestamp(timestampLimit),
-                "MMM.dd.yyyy, HH:mm"
+                DATE_TIME_FORMAT
               )}
               onClick={() => setDateOpen(!isDateOpen)}
             />
