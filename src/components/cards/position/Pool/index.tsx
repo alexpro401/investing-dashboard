@@ -11,6 +11,7 @@ import { IPosition } from "constants/interfaces_v2"
 import { percentageOfBignumbers } from "utils/formulas"
 import useContract, { useERC20 } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
+import { useTraderPoolRegistryContract } from "hooks/useContract"
 import { selectPriceFeedAddress } from "state/contracts/selectors"
 
 import { Flex } from "theme"
@@ -28,6 +29,7 @@ interface Props {
 const PoolPositionCard: React.FC<Props> = ({ position }) => {
   const navigate = useNavigate()
   const { account } = useActiveWeb3React()
+  const traderPoolRegistry = useTraderPoolRegistryContract()
   const [, baseToken] = useERC20(position.traderPool.baseToken)
   const [, positionToken] = useERC20(position.positionToken)
 
@@ -45,6 +47,8 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
   const currentPriceUSD = useTokenPriceOutUSD({
     tokenAddress: position.positionToken,
   })
+
+  const [poolType, setPoolType] = useState<string | undefined>(undefined)
 
   const [openExtra, setOpenExtra] = useState<boolean>(false)
   const [showPositions, setShowPositions] = useState<boolean>(false)
@@ -237,14 +241,13 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     return parseEther(res._value)
   }, [markPriceUSD, entryPriceUSD])
 
-  // get mark price of posiiton token in fund base token
+  // get mark price of position token in fund base token
   useEffect(() => {
     if (!priceFeed || !position || !position.traderPool) return
     ;(async () => {
       try {
         const amount = parseUnits("1", 18)
 
-        // without extended
         const price = await priceFeed.getNormalizedExtendedPriceOut(
           position.positionToken,
           position.traderPool.baseToken,
@@ -266,6 +269,25 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     position,
   ])
 
+  // check pool type
+  useEffect(() => {
+    if (!traderPoolRegistry || !position) return
+    ;(async () => {
+      try {
+        const isBasePool = await traderPoolRegistry.isBasicPool(
+          position.traderPool.id
+        )
+        if (isBasePool) {
+          setPoolType("BASIC_POOL")
+        } else {
+          setPoolType("INVEST_POOL")
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [position, traderPoolRegistry])
+
   /**
    * Navigate to terminal
    * @param e - click event
@@ -275,11 +297,11 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     (e: MouseEvent<HTMLElement>, invest = true) => {
       e.stopPropagation()
 
-      if (!position || !baseToken || !positionToken) {
+      if (!position || !baseToken || !positionToken || !poolType) {
         return
       }
 
-      let url = `/pool/swap/BASIC_POOL/${position.traderPool.id}`
+      let url = `/pool/swap/${poolType}/${position.traderPool.id}`
 
       if (invest) {
         url += `/${baseToken.address}/${positionToken.address}`
@@ -289,7 +311,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
 
       navigate(url)
     },
-    [baseToken, navigate, position, positionToken]
+    [baseToken, navigate, poolType, position, positionToken]
   )
 
   const actions = [
