@@ -27,6 +27,7 @@ import useContract, {
   useERC20,
   useInvestProposalContract,
 } from "hooks/useContract"
+import { DATE_TIME_FORMAT } from "constants/time"
 
 import { Flex } from "theme"
 import Icon from "components/Icon"
@@ -209,7 +210,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     const currentTimestamp = new Date().valueOf()
 
     setExpirationDate({
-      value: format(expandedTimestampLimit, "MMM dd, y HH:mm"),
+      value: format(expandedTimestampLimit, DATE_TIME_FORMAT),
       completed: currentTimestamp - expandedTimestampLimit >= 0,
       initial: timestampLimit.toString(),
     })
@@ -396,7 +397,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
       const currentTimestamp = new Date().valueOf()
 
       setExpirationDate({
-        value: format(expanded, "MMM dd, y HH:mm"),
+        value: format(expanded, DATE_TIME_FORMAT),
         completed: currentTimestamp - expanded >= 0,
         initial: expanded.toString(),
       })
