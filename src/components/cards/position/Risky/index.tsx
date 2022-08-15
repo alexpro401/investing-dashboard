@@ -88,7 +88,7 @@ const RiskyPositionCard: React.FC<Props> = ({
    * if position.closed return totalPositionOpenVolume
    * otherwise return current position volume
    */
-  const positionOpenBaseAmount = useMemo<string>(() => {
+  const positionOpenAmount = useMemo<string>(() => {
     if (
       !position ||
       !position.totalPositionOpenVolume ||
@@ -317,7 +317,7 @@ const RiskyPositionCard: React.FC<Props> = ({
                     m="0"
                     size={24}
                   />
-                  <S.Amount>{positionOpenBaseAmount}</S.Amount>
+                  <S.Amount>{positionOpenAmount}</S.Amount>
                   <S.PositionSymbol>{positionTokenSymbol}</S.PositionSymbol>
                   <S.FundSymbol>/{baseTokenSymbol}</S.FundSymbol>
                 </>
@@ -330,7 +330,7 @@ const RiskyPositionCard: React.FC<Props> = ({
                         m="0"
                         size={24}
                       />
-                      <S.Amount>{positionOpenBaseAmount}</S.Amount>
+                      <S.Amount>{positionOpenAmount}</S.Amount>
                       <S.PositionSymbol>{positionTokenSymbol}</S.PositionSymbol>
                     </>
                   ) : (
