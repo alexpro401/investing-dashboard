@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useMemo } from "react"
+import { FC, useState, useEffect, useMemo, useCallback } from "react"
 import { useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
 import { useWeb3React } from "@web3-react/core"
@@ -11,7 +11,6 @@ import useCoreProperties from "hooks/useCoreProperties"
 import { expandTimestamp, formatBigNumber } from "utils"
 import useContract, { useERC20 } from "hooks/useContract"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-import useWithdrawalHistory from "hooks/useWithdrawalHistory"
 import { selectPriceFeedAddress } from "state/contracts/selectors"
 import { usePoolContract, usePoolQuery, useTraderPool } from "hooks/usePool"
 
@@ -58,6 +57,27 @@ const FundDetailsFee: FC = () => {
     poolInfoData?.parameters.descriptionURL
   )
 
+  const getBaseTokensNormalizedPriceOutUSD = useCallback(
+    async (amount: BigNumber) => {
+      if (!priceFeed || !baseToken) return BigNumber.from("0")
+
+      try {
+        const price = await priceFeed.getNormalizedPriceOutUSD(
+          baseToken.address,
+          amount.toHexString()
+        )
+        if (price && price.amountOut) {
+          return price.amountOut
+        }
+
+        return BigNumber.from("0")
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    [priceFeed, baseToken]
+  )
+
   const [traderDexeManagementAmount, setTraderDexeManagementAmount] =
     useState<IAmount>(defaultAmountState)
   const [traderUSDCommission, setTraderUSDCommission] =
@@ -72,14 +92,13 @@ const FundDetailsFee: FC = () => {
   const [platformPercentageCommission, setPlatformPercentageCommission] =
     useState<IAmount>(defaultAmountState)
 
+  // TODO: how to fetch this amount in rigth way?
   const [netInvestorProfitDEXE, setNetInvestorProfitDEXE] =
     useState<IAmount>(defaultAmountState)
 
   const [unlockTimestamp, setUnlockTimestamp] = useState<BigNumber>(
     BigNumber.from("0")
   )
-
-  const withdrawalHistory = useWithdrawalHistory()
 
   /**
    * Next commission epoch start date
@@ -202,6 +221,7 @@ const FundDetailsFee: FC = () => {
    * (netInvestorProfitUSD / (totalPoolUSD - traderUSDCommission) ) / 100
    */
   const netInvestorProfitPercentage = useMemo<IAmount>(() => {
+    // TODO: how to calculate it in rigth way when several variables can be 0?
     if (
       !netInvestorProfitUSD.big ||
       !totalPoolUSD.big ||
@@ -248,7 +268,12 @@ const FundDetailsFee: FC = () => {
     if (!traderPool) return
     ;(async () => {
       try {
-        const commissions = await traderPool.getReinvestCommissions([0, 1000])
+        const InvestorsLimit = 1000
+        // TODO: must fetch commissions from all investors?
+        const commissions = await traderPool.getReinvestCommissions([
+          0,
+          InvestorsLimit,
+        ])
 
         if (commissions.dexeLPCommission) {
           const { dexeLPCommission } = commissions
@@ -365,6 +390,9 @@ const FundDetailsFee: FC = () => {
     if (!priceFeed) return
     ;(async () => {
       try {
+        // - get price of 1 dexe in usd
+        // - divide (netInvestorProfitUSD / price of 1 dexe in usd)
+        // - done
         const priceDexe = await priceFeed.getNormalizedPriceOutDEXE(
           "0x8a9424745056Eb399FD19a0EC26A14316684e274",
           netInvestorProfitUSD.big.toString()
@@ -498,8 +526,8 @@ const FundDetailsFee: FC = () => {
 
         <Flex dir="column" full m="40px 0 0">
           <WithdrawalsHistory
-            payload={withdrawalHistory}
             unlockDate={unlockDate}
+            getBaseInUSD={getBaseTokensNormalizedPriceOutUSD}
           />
         </Flex>
       </S.Container>

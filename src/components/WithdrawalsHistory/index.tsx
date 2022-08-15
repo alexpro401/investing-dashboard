@@ -20,9 +20,10 @@ const poolsClient = createClient({
 
 interface IProps {
   unlockDate: string
+  getBaseInUSD: any
 }
 
-const WithdrawalsHistory: FC<IProps> = ({ unlockDate }) => {
+const WithdrawalsHistory: FC<IProps> = ({ unlockDate, getBaseInUSD }) => {
   const { account } = useActiveWeb3React()
 
   const variables = useMemo<{
@@ -92,6 +93,7 @@ const WithdrawalsHistory: FC<IProps> = ({ unlockDate }) => {
                 payload={t.getPerfomanceFee}
                 timestamp={t.timestamp}
                 m="16px 0 0"
+                getBaseInUSD={getBaseInUSD}
               />
             ))}
             <LoadMore

@@ -1,69 +1,92 @@
-import { FC, useMemo } from "react"
+import { FC, useEffect, useMemo, useState } from "react"
 import { format } from "date-fns"
 import { BigNumber } from "@ethersproject/bignumber"
 
+import { useActiveWeb3React } from "hooks"
 import { expandTimestamp, formatBigNumber } from "utils"
+import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
 import Amount from "components/Amount"
 import S from "./styled"
-import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { useActiveWeb3React } from "hooks"
 
 interface IWithdrawal {
   id: string
-  pnl: BigNumber
-  profit: BigNumber
-  fee: BigNumber
+  lpAmount: BigNumber
+  baseAmount: BigNumber
 }
 
 interface IProps {
   payload: IWithdrawal
   timestamp: string
+  getBaseInUSD: any
   m?: string
 }
 
-const WithdrawalHistory: FC<IProps> = ({ payload, timestamp, ...rest }) => {
+function getPnlSymbol(amount: number): string {
+  if (amount > 0) {
+    return "+"
+  }
+  return ""
+}
+
+const WithdrawalHistory: FC<IProps> = ({
+  payload,
+  timestamp,
+  getBaseInUSD,
+  ...rest
+}) => {
   const { chainId } = useActiveWeb3React()
 
+  const [profitUSD, setProfitUSD] = useState<string>("0")
+
+  /**
+   * URL to page with transaction details on explorer
+   */
   const url = useMemo<string>(() => {
     if (!payload || !payload.id || !chainId) return ""
 
     return getExplorerLink(chainId, payload.id, ExplorerDataType.TRANSACTION)
   }, [chainId, payload])
 
-  const creationTime = useMemo<string>(() => {
-    if (!timestamp) return ""
+  /**
+   * Withdrawal date
+   */
+  const creationDate = useMemo<string>(() => {
+    if (!timestamp) return "⌚️"
 
     return format(expandTimestamp(Number(timestamp)), "MMM dd, y")
   }, [timestamp])
 
-  const pnl = useMemo(() => {
-    if (!payload || !payload.pnl) return null
+  const pnl = useMemo<string>(() => "0", [])
+  const fee = useMemo<string>(() => "-", [])
 
-    return formatBigNumber(payload.pnl, 18, 2)
-  }, [payload])
-
-  const profit = useMemo(() => {
-    if (!payload || !payload.profit) return null
-
-    return formatBigNumber(payload.profit, 18, 2)
-  }, [payload])
-
-  const fee = useMemo(() => {
-    if (!payload || !payload.fee) return null
-
-    return formatBigNumber(payload.fee, 18, 2)
-  }, [payload])
+  // Calculate withdrawal amount in USD
+  useEffect(() => {
+    if (!payload || !payload.baseAmount) return
+    ;(async () => {
+      try {
+        const amount = await getBaseInUSD(payload.baseAmount)
+        if (amount) {
+          setProfitUSD(formatBigNumber(amount, 18, 2))
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [getBaseInUSD, payload])
 
   return (
     <>
       <S.Link href={url} target="_blank" rel="noopener noreferrer">
         <S.Container {...rest}>
           <div>
-            <S.Time>{creationTime}</S.Time>
-            <S.Percentage>{pnl} %</S.Percentage>
+            <S.Date>{creationDate}</S.Date>
+            <S.PNL amount={Number(pnl)}>
+              {getPnlSymbol(Number(pnl))}
+              {pnl} %
+            </S.PNL>
           </div>
-          <Amount value={profit} symbol="USD" full />
+          <Amount value={profitUSD} symbol="USD" full />
           <Amount value={fee} symbol="USD" jc="flex-end" full />
         </S.Container>
       </S.Link>
