@@ -213,19 +213,6 @@ const RiskyProposalExchangesQuery = `
 
 // Pool invnest proposals
 
-// lastSupply {
-//   id
-//   timestamp
-//   dividendsTokens
-//   amountDividendsTokens
-// }
-// lastWithdraw {
-//   id
-//   timestamp
-//   amountBase
-// }
-
-// TODO: Add lastSupply and lastWithdraw fields (declared above)
 const INVEST_PROPOSAL = `
   id
   timestampLimit
@@ -297,18 +284,6 @@ const InvestorRiskyProposalsQuery = `
     }
   }
 `
-
-// lastSupply(first: 100) {
-//   id
-//   timestamp
-//   dividendsTokens
-//   amountDividendsTokens
-// }
-// lastWithdraw(first: 100) {
-//   id
-//   timestamp
-//   amountBase
-// }
 
 const INVESTOR_INVEST_PROPOSAL = `
   id
