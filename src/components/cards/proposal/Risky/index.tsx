@@ -264,9 +264,13 @@ const RiskyProposalCard: FC<Props> = ({
 
     ;(async () => {
       try {
-        const balance = await proposalPool?.balanceOf(account, proposalId)
-        if (balance) {
-          setYourSizeLP(balance)
+        const balance = await proposalPool.getActiveInvestmentsInfo(
+          account,
+          0,
+          1
+        )
+        if (balance && balance[0]) {
+          setYourSizeLP(balance[0].lpInvested)
         }
       } catch (error) {
         console.error(error)
@@ -282,13 +286,14 @@ const RiskyProposalCard: FC<Props> = ({
 
     ;(async () => {
       try {
-        const balance = await proposalPool.balanceOf(
+        const balance = await proposalPool.getActiveInvestmentsInfo(
           poolInfo.parameters.trader,
-          proposalId
+          0,
+          1
         )
 
-        if (balance) {
-          setTraderSizeLP(balance)
+        if (balance && balance[0]) {
+          setTraderSizeLP(balance[0].lpInvested)
         }
       } catch (error) {
         console.error(error)
