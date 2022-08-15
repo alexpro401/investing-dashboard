@@ -132,11 +132,9 @@ export const BodyItemStyled = {
 const getAmountSymbol = (amount) => {
   if (amount > 0) {
     return "+"
-  } else if (amount < 0) {
-    return "-"
-  } else {
-    return null
   }
+
+  return ""
 }
 
 interface IBodyItemProps {
