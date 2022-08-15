@@ -178,25 +178,25 @@ const RISKY_PROPOSAL_POSITION = `
   totalPositionCloseVolume
   totalUSDOpenVolume
   totalUSDCloseVolume
-`
-const RISKY_PROPOSAL = `
-  id
-  token
-  basicPool {
-    id
-    baseToken
-  }
-  positions(skip: $offset, first: $limit, where: { isClosed: $closed }) {
-    ${RISKY_PROPOSAL_POSITION}
+  proposal {
+    token
+    basicPool {
+      id
+      baseToken
+    }
   }
 `
 
-const RiskyProposalsQuery = `
-  query ($address: String!, $closed: Boolean!, $offset: Int!, $limit: Int!) {
-    basicPool(id: $address) {
-      proposals {
-        ${RISKY_PROPOSAL}
+const RiskyPositionsQuery = `
+  query ($poolAddressList: [String]!, $closed: Boolean!, $offset: Int!, $limit: Int!) {
+    proposalPositions(
+      skip: $offset, first: $limit, 
+      where: { 
+        isClosed: $closed, 
+        proposal_: { basicPool_in: $poolAddressList }
       }
+    ) {
+      ${RISKY_PROPOSAL_POSITION}
     }
   }
 `
@@ -293,33 +293,6 @@ const InvestorRiskyProposalsQuery = `
       id
       basicPool {
         id 
-      }
-    }
-  }
-`
-
-const INVESTOR_RISKY_POSITION = `
-  id
-  isClosed
-  totalBaseOpenVolume
-  totalBaseCloseVolume
-  totalPositionOpenVolume
-  totalPositionCloseVolume
-  totalUSDOpenVolume
-  totalUSDCloseVolume
-`
-
-const InvestorRiskyPositionsQuery = `
-  query ($poolAddressList: [String]!, $closed: Boolean!, $offset: Int!, $limit: Int!) {
-    proposals(where: { basicPool_in: $poolAddressList }){
-      id
-      token
-      basicPool {
-        id
-        baseToken
-      }
-      positions(skip: $offset, first: $limit, where: { isClosed: $closed }) {
-        ${INVESTOR_RISKY_POSITION}
       }
     }
   }
@@ -462,13 +435,12 @@ export {
   BasicPositionsQuery,
   PoolsQueryWithSort,
   PoolsQueryByTypeWithSort,
-  RiskyProposalsQuery,
   InvestProposalQuery,
   InvestorPositionsQuery,
   InvestorPoolsInvestedForQuery,
   InvestorRiskyProposalsQuery,
-  InvestorRiskyPositionsQuery,
   InvestorInvestProposalsQuery,
+  RiskyPositionsQuery,
   RiskyProposalExchangesQuery,
   FundFeeHistoryQuery,
   UserTransactionsQuery,

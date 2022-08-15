@@ -4,10 +4,11 @@ import { createClient, Provider as GraphProvider } from "urql"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { useActiveWeb3React } from "hooks"
-import { RiskyProposalsQuery } from "queries"
+import { RiskyPositionsQuery } from "queries"
 import { usePoolContract } from "hooks/usePool"
 import useQueryPagination from "hooks/useQueryPagination"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
+import { IRiskyPositionCard } from "constants/interfaces_v2"
 
 import LoadMore from "components/LoadMore"
 import RiskyPositionCard from "components/cards/position/Risky"
@@ -35,27 +36,26 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
 
   const variables = useMemo(
     () => ({
-      address: poolAddress,
+      poolAddressList: [poolAddress],
       closed,
     }),
     [closed, poolAddress]
   )
 
-  const prepareNewData = (d) =>
-    d.basicPool.proposals.reduce((acc, p) => {
-      if (p.positions && p.positions.length) {
-        const positions = p?.positions.map((_p) => ({
-          ..._p,
-          token: p.token,
-          pool: p.basicPool,
-        }))
-        return [...acc, ...positions]
+  const prepareNewData = (d): IRiskyPositionCard[] =>
+    d.proposalPositions.map((p) => {
+      const position = {
+        ...p,
+        token: p.proposal.token,
+        pool: p.proposal.basicPool,
       }
-      return acc
-    }, [])
+      delete position.proposal
+
+      return position
+    })
 
   const [{ data, error, loading }, fetchMore] = useQueryPagination(
-    RiskyProposalsQuery,
+    RiskyPositionsQuery,
     variables,
     prepareNewData
   )
