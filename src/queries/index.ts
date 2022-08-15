@@ -382,7 +382,11 @@ const FundFeeHistoryQuery = `
 
 const UserTransactionsQuery = `
   query($offset: Int!, $limit: Int!, $address: String!, $transactionTypes: [Int]!) {
-    transactions(skip: $offset, first: $limit, where: {user: $address, type_contains: $transactionTypes}) {
+    transactions(
+      skip: $offset, first: $limit, 
+      where: {user: $address, type_contains: $transactionTypes}, 
+      orderBy: timestamp, orderDirection: desc
+    ) {
       id
       timestamp
       type
