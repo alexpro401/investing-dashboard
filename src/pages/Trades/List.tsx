@@ -6,6 +6,7 @@ import { formatUnits } from "@ethersproject/units"
 import { IPoolPosition, IPoolTransaction } from "constants/interfaces"
 import { CircleSpinner } from "react-spinners-kit"
 import { format } from "date-fns"
+import { DATE_TIME_FORMAT } from "constants/time"
 
 import {
   gradients,
@@ -268,7 +269,7 @@ const TradesListItem: React.FC<{ data: IPoolTransaction }> = ({ data }) => {
 
         <div></div>
         <div></div>
-        <Date>{format(data.timestamp, "MMM d, yyyy kk:mm")}</Date>
+        <Date>{format(data.timestamp, DATE_TIME_FORMAT)}</Date>
       </Container>
     </Wrapper>
   )

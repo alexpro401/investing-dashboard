@@ -9,6 +9,7 @@ import {
   DepositLiquidityTransactionInfo,
   WithdrawLiquidityTransactionInfo,
 } from "state/transactions/types"
+import { DATE_TIME_FORMAT } from "constants/time"
 
 import { CardContainer, CardIcons, CardTime } from "./styled"
 
@@ -43,7 +44,7 @@ const TransactionHistoryCardLiquidity: React.FC<IProps> = ({
         )}
       </Flex>
       <CardTime>
-        {confirmedTime && format(confirmedTime, "MMM dd, y, HH:mm")}
+        {confirmedTime && format(confirmedTime, DATE_TIME_FORMAT)}
       </CardTime>
     </CardContainer>
   )

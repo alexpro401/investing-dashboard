@@ -16,6 +16,7 @@ import { useActiveWeb3React } from "hooks"
 import { expandTimestamp, shortenAddress, formatBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { IPoolQuery } from "constants/interfaces_v2"
+import { DATE_TIME_FORMAT } from "constants/time"
 
 const fundTypes = {
   BASIC_POOL: "Basic",
@@ -39,7 +40,7 @@ const BasicSettings: FC<{
 
   const creationTime = useMemo(() => {
     if (!!poolData) {
-      return format(expandTimestamp(poolData.creationTime), "MM.dd.yy")
+      return format(expandTimestamp(poolData.creationTime), DATE_TIME_FORMAT)
     }
 
     return ""

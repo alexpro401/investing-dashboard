@@ -2,6 +2,7 @@ import { FC, useMemo } from "react"
 import { format } from "date-fns"
 import { BigNumber } from "@ethersproject/bignumber"
 
+import { DATE_FORMAT } from "constants/time"
 import { expandTimestamp, shortTimestamp, formatBigNumber } from "utils"
 
 import Amount from "components/Amount"
@@ -23,7 +24,7 @@ const WithdrawalHistoryRow: FC<IProps> = ({ payload, ...rest }) => {
   const creationTime = useMemo(() => {
     if (!payload || !payload.creationTime) return null
 
-    return format(shortTimestamp(payload.creationTime), "MMM dd, y")
+    return format(shortTimestamp(payload.creationTime), DATE_FORMAT)
   }, [payload])
 
   const pnl = useMemo(() => {
