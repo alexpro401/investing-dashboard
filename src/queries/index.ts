@@ -162,6 +162,7 @@ const BasicPositionsQuery = `
 // Pool risky proposals
 const RISKY_PROPOSAL_EXCHANGE = `
   id
+  hash
   timestamp
   fromToken
   toToken
@@ -184,6 +185,11 @@ const RISKY_PROPOSAL_POSITION = `
       id
       baseToken
     }
+    exchanges {
+      exchanges {
+        ${RISKY_PROPOSAL_EXCHANGE}
+      }
+    }
   }
 `
 
@@ -197,16 +203,6 @@ const RiskyPositionsQuery = `
       }
     ) {
       ${RISKY_PROPOSAL_POSITION}
-    }
-  }
-`
-
-const RiskyProposalExchangesQuery = `
-  query ($address: String!) {
-    proposalExchangeHistories(where: {proposal_: {basicPool: $address}}) {
-      exchanges(first: 100) {
-        ${RISKY_PROPOSAL_EXCHANGE}
-      }
     }
   }
 `
@@ -417,7 +413,6 @@ export {
   InvestorRiskyProposalsQuery,
   InvestorInvestProposalsQuery,
   RiskyPositionsQuery,
-  RiskyProposalExchangesQuery,
   FundFeeHistoryQuery,
   UserTransactionsQuery,
   getPoolsQueryVariables,

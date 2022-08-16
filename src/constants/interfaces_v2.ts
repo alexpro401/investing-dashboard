@@ -153,6 +153,16 @@ export interface IRiskyPosition {
   totalUSDCloseVolume: BigNumber
 }
 
+export interface IRiskyPositionExchange {
+  id: string
+  timestamp: string
+  fromToken: string
+  toToken: string
+  fromVolume: BigNumber
+  toVolume: BigNumber
+  usdVolume: BigNumber
+}
+
 export interface IRiskyProposal {
   token: string
   basicPool: {
@@ -173,16 +183,7 @@ export interface IRiskyPositionCard extends IRiskyPosition {
     id: string
     baseToken: string
   }
-}
-
-export interface IRiskyPositionExchange {
-  id: string
-  timestamp: string
-  fromToken: string
-  toToken: string
-  fromVolume: BigNumber
-  toVolume: BigNumber
-  usdVolume: BigNumber
+  exchanges: IRiskyPositionExchange[]
 }
 
 // Invest proposals

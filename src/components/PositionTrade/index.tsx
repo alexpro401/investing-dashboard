@@ -13,17 +13,6 @@ import S from "./styled"
 
 import externalLinkIcon from "assets/icons/external-link.svg"
 
-function getTxHash(data) {
-  if (data.hash) {
-    return data.hash
-  } else {
-    if (data.id.length > 42) {
-      return data.id.substring(0, 42)
-    }
-    return data.id
-  }
-}
-
 interface Props {
   data: any
   baseTokenSymbol?: string
@@ -48,7 +37,7 @@ const PositionTrade: React.FC<Props> = ({
 
   const href = useMemo(() => {
     if (data && chainId) {
-      const hash = getTxHash(data)
+      const hash = data.hash ?? data.id
 
       return getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)
     }

@@ -48,6 +48,12 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
         ...p,
         token: p.proposal.token,
         pool: p.proposal.basicPool,
+        exchanges: p.proposal.exchanges.reduce((acc, e) => {
+          if (e.exchanges && e.exchanges.length > 0) {
+            return [...acc, ...e.exchanges]
+          }
+          return acc
+        }, []),
       }
       delete position.proposal
 

@@ -78,10 +78,17 @@ const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
 
   const prepareNewData = (d): IRiskyPositionCard[] =>
     d.proposalPositions.map((p) => {
+      console.log(p)
       const position = {
         ...p,
         token: p.proposal.token,
         pool: p.proposal.basicPool,
+        exchanges: p.proposal.exchanges.reduce((acc, e) => {
+          if (e.exchanges && e.exchanges.length > 0) {
+            return [...acc, ...e.exchanges]
+          }
+          return acc
+        }, []),
       }
       delete position.proposal
 

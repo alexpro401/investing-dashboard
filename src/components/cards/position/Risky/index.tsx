@@ -11,7 +11,6 @@ import useContract, { useERC20 } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { selectPriceFeedAddress } from "state/contracts/selectors"
 import { getProposalId, normalizeBigNumber } from "utils"
-import useRiskyPositionExchanges from "hooks/useRiskyPositionExchanges"
 import { percentageOfBignumbers } from "utils/formulas"
 
 import { Flex } from "theme"
@@ -46,7 +45,7 @@ const RiskyPositionCard: React.FC<Props> = ({
   const [, baseToken] = useERC20(position.pool.baseToken)
   const priceFeedAddress = useSelector(selectPriceFeedAddress)
   const priceFeed = useContract(priceFeedAddress, PriceFeed)
-  const exchanges = useRiskyPositionExchanges(position.pool.id)
+  const exchanges = position.exchanges ?? []
 
   const [pnlUSDCurrent, setPnlUSDCurrent] = useState<BigNumber>(
     BigNumber.from("0")
