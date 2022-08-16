@@ -79,7 +79,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
 
   /**
    * Position amount
-   * if position.closed return totalPositionOpenVolume
+   * if position.closed return totalPositionCloseVolume
    * otherwise return current position volume
    */
   const positionOpenBaseAmount = useMemo<string>(() => {
@@ -92,7 +92,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     }
 
     if (position.closed) {
-      return normalizeBigNumber(position.totalPositionOpenVolume, 18, 6)
+      return normalizeBigNumber(position.totalPositionCloseVolume, 18, 6)
     } else {
       const open = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
       const close = FixedNumber.fromValue(position.totalPositionCloseVolume, 18)
