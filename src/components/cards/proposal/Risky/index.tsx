@@ -7,18 +7,22 @@ import {
   useCallback,
 } from "react"
 import { format } from "date-fns"
+import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
+import { parseUnits } from "@ethersproject/units"
 import { Contract } from "@ethersproject/contracts"
 import { BigNumber } from "@ethersproject/bignumber"
 
+import { PriceFeed } from "abi"
 import { useActiveWeb3React } from "hooks"
-import { useERC20 } from "hooks/useContract"
+import { DATE_TIME_FORMAT } from "constants/time"
 import { percentageOfBignumbers } from "utils/formulas"
+import useContract, { useERC20 } from "hooks/useContract"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 import { RiskyProposal, PoolInfo } from "constants/interfaces_v2"
+import { selectPriceFeedAddress } from "state/contracts/selectors"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { DATE_TIME_FORMAT } from "constants/time"
 
 import { Flex } from "theme"
 import Icon from "components/Icon"
@@ -57,6 +61,8 @@ const RiskyProposalCard: FC<Props> = ({
   const navigate = useNavigate()
   const { account, chainId } = useActiveWeb3React()
   const [, proposalToken] = useERC20(proposal.proposalInfo.token)
+  const priceFeedAddress = useSelector(selectPriceFeedAddress)
+  const priceFeed = useContract(priceFeedAddress, PriceFeed)
 
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
@@ -65,6 +71,7 @@ const RiskyProposalCard: FC<Props> = ({
 
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false)
 
+  const [markPriceOpen, setMarkPriceOpen] = useState(BigNumber.from(0))
   const [yourSizeLP, setYourSizeLP] = useState<BigNumber>(BigNumber.from("0"))
   const [traderSizeLP, setTraderSizeLP] = useState<BigNumber>(
     BigNumber.from("0")
@@ -145,17 +152,15 @@ const RiskyProposalCard: FC<Props> = ({
    * Exact price on 1 position token in base tokens
    */
   const currentPrice = useMemo<{ value: string; initial: BigNumber }>(() => {
-    if (!proposal || !proposal?.positionTokenPrice) {
+    if (!markPriceOpen) {
       return { value: "0", initial: BigNumber.from("0") }
     }
 
-    const { positionTokenPrice } = proposal
-
     return {
-      value: normalizeBigNumber(positionTokenPrice, 18, 2),
-      initial: positionTokenPrice,
+      value: normalizeBigNumber(markPriceOpen, 18, 2),
+      initial: markPriceOpen,
     }
-  }, [proposal])
+  }, [markPriceOpen])
 
   /**
    * Count of investors
@@ -300,6 +305,25 @@ const RiskyProposalCard: FC<Props> = ({
       }
     })()
   }, [poolInfo, proposalId, proposalPool])
+
+  // Fetch mark price from priceFeed when proposal is open
+  useEffect(() => {
+    if (!priceFeed || !proposalToken) return
+    ;(async () => {
+      try {
+        const amount = parseUnits("1", 18)
+        const price = await priceFeed.getNormalizedPriceOutUSD(
+          proposalToken.address,
+          amount.toHexString()
+        )
+        if (price && price.amountOut) {
+          setMarkPriceOpen(price.amountOut)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [priceFeed, proposalToken])
 
   /**
    * Navigate to pool page
