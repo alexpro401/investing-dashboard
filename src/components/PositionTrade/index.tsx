@@ -37,7 +37,9 @@ const PositionTrade: React.FC<Props> = ({
 
   const href = useMemo(() => {
     if (data && chainId) {
-      const hash = data.hash ?? data.id
+      const hash =
+        data.hash ?? data.id.length > 42 ? data.id.substring(0, 42) : data.id
+
       return getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)
     }
 
