@@ -543,7 +543,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
           <AmountRow
             m="14px 0 0"
             title="Investor funds locked (3%)"
-            value={`$${fundsLockedTotal}/$${fundsLockedInvestor}`}
+            value={`$${fundsLockedInvestor}/$${fundsLockedTotal}`}
           />
         </SharedS.ExtraItem>
       </SharedS.Container>
