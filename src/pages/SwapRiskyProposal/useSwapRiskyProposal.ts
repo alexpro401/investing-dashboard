@@ -6,11 +6,7 @@ import {
   SetStateAction,
   useEffect,
 } from "react"
-import {
-  ExchangeForm,
-  ExchangeType,
-  RiskyProposal,
-} from "constants/interfaces_v2"
+import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
 import { SwapDirection, TradeType } from "constants/types"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { BigNumber } from "@ethersproject/bignumber"
@@ -31,8 +27,7 @@ import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 import { format } from "date-fns"
 import usePoolPrice from "hooks/usePoolPrice"
-
-const ZERO = BigNumber.from("0")
+import { ZERO } from "constants/index"
 
 export interface UseSwapRiskyParams {
   poolAddress?: string

@@ -11,6 +11,11 @@ export interface IconProps {
   active?: boolean
 }
 
+export interface IValidationError {
+  message: string
+  field: string
+}
+
 export enum TradeType {
   EXACT_INPUT = 0,
   EXACT_OUTPUT = 1,

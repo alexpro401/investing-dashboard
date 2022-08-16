@@ -12,12 +12,12 @@ import {
   useRiskyProposalContract,
 } from "hooks/useContract"
 
-import { SubmitState } from "constants/types"
+import { ZERO } from "constants/index"
+import { IValidationError, SubmitState } from "constants/types"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 
 import { shortTimestamp, parseTransactionError, isTxMined } from "utils"
-import useRiskyProposals from "hooks/useRiskyProposals"
 
 const useCreateRiskyProposal = (
   poolAddress?: string,
@@ -27,13 +27,14 @@ const useCreateRiskyProposal = (
     proposalCount: number
     error: string
     isSubmiting: SubmitState
-    baseTokenPrice?: BigNumber
+    positionPrice?: BigNumber
     lpAvailable?: BigNumber
     lpAmount: string
     timestampLimit: number
     investLPLimit: string
     maxTokenPriceLimit: string
     instantTradePercentage: number
+    validationErrors: IValidationError[]
   },
   {
     setSubmiting: (value: SubmitState) => void
@@ -62,18 +63,71 @@ const useCreateRiskyProposal = (
   const [investLPLimit, setInvestLPLimit] = useState("")
   const [maxTokenPriceLimit, setMaxTokenPriceLimit] = useState("")
   const [instantTradePercentage, setInstantTradePercentage] = useState(0)
-  const [baseTokenPrice, setBaseTokenPrice] = useState<BigNumber | undefined>()
+  const [positionPrice, setPositionPrice] = useState<BigNumber | undefined>()
   const [lpAvailable, setLpAvailable] = useState<BigNumber | undefined>()
 
-  const updateRiskyProposals = useCallback(async () => {
+  const [validationErrors, setValidationErrors] = useState<IValidationError[]>(
+    []
+  )
+
+  const updateTotalProposals = useCallback(async () => {
     if (!riskyProposal) return
 
     const total = await riskyProposal.proposalsTotalNum()
     setTotalProposals(total.toNumber())
   }, [riskyProposal])
 
+  const handleValidate = useCallback(() => {
+    const errors: IValidationError[] = []
+
+    // LP allocated for RP
+    if (investLPLimit === "" || isNaN(parseFloat(investLPLimit))) {
+      errors.push({
+        message: "LP amount is required",
+        field: "investLPLimit",
+      })
+    } else if (parseEther(investLPLimit).lte(ZERO)) {
+      errors.push({
+        field: "investLPLimit",
+        message: "LP allocated for RP must be greater than 0",
+      })
+    }
+
+    // Max buying price
+    if (maxTokenPriceLimit === "" || isNaN(parseFloat(maxTokenPriceLimit))) {
+      errors.push({
+        message: "Max buying price is required",
+        field: "maxTokenPriceLimit",
+      })
+    } else if (parseEther(maxTokenPriceLimit).lte(positionPrice || ZERO)) {
+      errors.push({
+        field: "maxTokenPriceLimit",
+        message: "Max buying price must be greater than current price",
+      })
+    }
+
+    // deposit LP amount
+    if (lpAmount === "" || isNaN(parseFloat(lpAmount))) {
+      errors.push({
+        message: "LP amount is required",
+        field: "lpAmount",
+      })
+    } else if (parseEther(lpAmount).lte(ZERO)) {
+      errors.push({
+        field: "lpAmount",
+        message: "LP allocation amount must be greater than 0",
+      })
+    }
+
+    setValidationErrors(errors)
+
+    return !errors.length
+  }, [investLPLimit, lpAmount, maxTokenPriceLimit, positionPrice])
+
   const handleSubmit = useCallback(() => {
     if (!basicTraderPool || !traderPool || !riskyProposal || !account) return
+
+    if (!handleValidate()) return
 
     const createRiskyProposal = async () => {
       setSubmiting(SubmitState.SIGN)
@@ -142,36 +196,41 @@ const useCreateRiskyProposal = (
     timestampLimit,
     tokenAddress,
     traderPool,
+    handleValidate,
   ])
+
+  const getCreatingTokensInfo = useCallback(async () => {
+    const tokens = await riskyProposal?.getCreationTokens(
+      tokenAddress,
+      parseEther("1").toHexString(),
+      parseUnits("100", 27).toHexString(),
+      []
+    )
+    setPositionPrice(tokens.positionTokenPrice)
+  }, [riskyProposal, tokenAddress])
 
   // fetch base token price
   useEffect(() => {
     if (!riskyProposal || !tokenAddress || tokenAddress.length !== 42) return
 
-    const getCreatingTokensInfo = async () => {
-      const tokens = await riskyProposal.getCreationTokens(
-        tokenAddress,
-        parseEther("1").toHexString(),
-        parseUnits("100", 27).toHexString(),
-        []
+    getCreatingTokensInfo().catch(() => {
+      setError(
+        "Token price is not available, please try again or select another token"
       )
-      setBaseTokenPrice(tokens.positionTokenPrice)
-    }
+    })
+  }, [riskyProposal, tokenAddress, getCreatingTokensInfo])
 
-    getCreatingTokensInfo().catch(console.error)
-  }, [riskyProposal, tokenAddress])
-
-  // watch for transaction confirm
+  // watch for transaction confirm & check proposals count
   useEffect(() => {
     if (isSubmiting === SubmitState.SUCESS) {
-      updateRiskyProposals()
+      updateTotalProposals()
     }
-  }, [isSubmiting, updateRiskyProposals])
+  }, [isSubmiting, updateTotalProposals])
 
   // watch for proposals length
   useEffect(() => {
-    updateRiskyProposals()
-  }, [updateRiskyProposals])
+    updateTotalProposals()
+  }, [updateTotalProposals])
 
   // fetch LP balance
   useEffect(() => {
@@ -188,11 +247,12 @@ const useCreateRiskyProposal = (
   return [
     {
       proposalCount: totalProposals,
+      validationErrors,
       lpAmount,
       error,
       isSubmiting,
       lpAvailable,
-      baseTokenPrice,
+      positionPrice,
       timestampLimit,
       investLPLimit,
       maxTokenPriceLimit,
