@@ -86,11 +86,11 @@ const RiskyProposalCard: FC<Props> = ({
   const [expirationDate, setExpirationDate] = useState<{
     value: string
     completed: boolean
-    initial: string
+    initial: BigNumber
   }>({
     value: "0",
     completed: false,
-    initial: "0",
+    initial: BigNumber.from("0"),
   })
 
   /**
@@ -222,7 +222,7 @@ const RiskyProposalCard: FC<Props> = ({
     setExpirationDate({
       value: format(expandedTimestampLimit, DATE_TIME_FORMAT),
       completed: currentTimestamp - expandedTimestampLimit >= 0,
-      initial: timestampLimit.toString(),
+      initial: timestampLimit,
     })
   }, [proposal])
 
@@ -371,13 +371,13 @@ const RiskyProposalCard: FC<Props> = ({
     maxInvest: BigNumber
   ) => {
     if (timestamp) {
-      const expanded = expandTimestamp(Number(timestamp.toString()))
+      const expanded = expandTimestamp(timestamp)
       const currentTimestamp = new Date().valueOf()
 
       setExpirationDate({
         value: format(expanded, DATE_TIME_FORMAT),
         completed: currentTimestamp - expanded >= 0,
-        initial: expanded.toString(),
+        initial: BigNumber.from(String(timestamp)),
       })
     }
 
@@ -470,6 +470,7 @@ const RiskyProposalCard: FC<Props> = ({
               currentPrice={currentPrice.initial}
               proposalId={proposalId}
               successCallback={onUpdateRestrictions}
+              proposalSymbol={proposalToken?.symbol}
             />
           )}
         </SharedS.Head>
