@@ -12,10 +12,9 @@ import useContract, { useERC20 } from "hooks/useContract"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { selectPriceFeedAddress } from "state/contracts/selectors"
-import { usePoolContract, useTraderPool } from "hooks/usePool"
+import { usePoolContract } from "hooks/usePool"
 import { normalizeBigNumber } from "utils"
 import { percentageOfBignumbers } from "utils/formulas"
-import { useActiveWeb3React } from "hooks"
 import useFundFeeHistory from "hooks/useFundFeeHistory"
 
 import { Flex } from "theme"
@@ -37,12 +36,11 @@ const poolsClient = createClient({
 })
 
 const InvestPositionCard: React.FC<Props> = ({ position }) => {
+  console.log(position)
   const navigate = useNavigate()
-  const { account } = useActiveWeb3React()
   const [, poolInfo] = usePoolContract(position.pool.id)
-  const traderPool = useTraderPool(position.pool.id)
   const fundFeeHistories = useFundFeeHistory(position.pool.id)
-  const [, baseTokenData] = useERC20(position.pool.token)
+  const [, baseToken] = useERC20(position.pool.token)
   const priceFeedAddress = useSelector(selectPriceFeedAddress)
   const priceFeed = useContract(priceFeedAddress, PriceFeed)
 
@@ -55,6 +53,9 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   const markPriceOpenUSD = useTokenPriceOutUSD({
     tokenAddress: position.pool.token,
   })
+  const [pnlUSDCurrent, setPnlUSDCurrent] = useState<BigNumber>(
+    BigNumber.from("0")
+  )
 
   const [showExtra, setShowExtra] = useState<boolean>(false)
   const [showPositions, setShowPositions] = useState<boolean>(false)
@@ -87,19 +88,12 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     setShowComission(!showComission)
   }, [showComission, showPositions])
 
-  const [poolBaseShare, setPoolBaseShare] = useState<BigNumber>(
-    BigNumber.from("0")
-  )
-  const [poolUSDShare, setPoolUSDShare] = useState<BigNumber>(
-    BigNumber.from("0")
-  )
-
   const baseTokenSymbol = useMemo<string>(() => {
-    if (!baseTokenData || !baseTokenData.symbol) {
+    if (!baseToken || !baseToken.symbol) {
       return ""
     }
-    return baseTokenData.symbol
-  }, [baseTokenData])
+    return baseToken.symbol
+  }, [baseToken])
 
   const positionOpenLPAmount = useMemo<string>(() => {
     if (!position.totalLPInvestVolume || !position.totalLPDivestVolume) {
@@ -124,66 +118,34 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   }, [position])
 
   const entryPriceBase = useMemo<BigNumber>(() => {
-    if (
-      !position ||
-      !position.totalUSDInvestVolume ||
-      !position.totalLPInvestVolume
-    ) {
-      return BigNumber.from("0")
-    }
+    if (!position) return BigNumber.from("0")
 
-    const totalUsdInvestFixed = FixedNumber.fromValue(
-      position.totalUSDInvestVolume,
-      18
-    )
-    const totalLpInvestFixed = FixedNumber.fromValue(
-      position.totalLPInvestVolume,
-      18
-    )
-    const resFixed = totalUsdInvestFixed.divUnsafe(totalLpInvestFixed)
+    const baseFixed = FixedNumber.fromValue(position.totalBaseInvestVolume, 18)
+    const lpFixed = FixedNumber.fromValue(position.totalLPInvestVolume, 18)
+    const resFixed = baseFixed.divUnsafe(lpFixed)
 
     return parseEther(resFixed._value)
   }, [position])
 
   const entryPriceUSD = useMemo<BigNumber>(() => {
-    if (
-      !position ||
-      !position.totalBaseInvestVolume ||
-      !position.totalLPInvestVolume
-    ) {
-      return BigNumber.from("0")
-    }
+    if (!position) return BigNumber.from("0")
 
-    const totalBaseInvestFixed = FixedNumber.fromValue(
-      position.totalBaseInvestVolume,
-      18
-    )
-    const totalLpInvestFixed = FixedNumber.fromValue(
-      position.totalLPInvestVolume,
-      18
-    )
-    const resFixed = totalBaseInvestFixed.divUnsafe(totalLpInvestFixed)
+    const usdFixed = FixedNumber.fromValue(position.totalUSDInvestVolume, 18)
+    const lpFixed = FixedNumber.fromValue(position.totalLPInvestVolume, 18)
+    const resFixed = usdFixed.divUnsafe(lpFixed)
 
     return parseEther(resFixed._value)
   }, [position])
 
-  const markPrice = useMemo(() => {
-    if (!position) {
-      return BigNumber.from("0")
-    }
+  const markPriceBase = useMemo(() => {
+    if (!position) BigNumber.from("0")
 
-    if (position.isClosed) {
-      const totalBaseDivestVolumeFixed = FixedNumber.fromValue(
-        position.totalBaseDivestVolume,
-        18
-      )
-      const totalLPInvestVolumeFixed = FixedNumber.fromValue(
-        position.totalLPInvestVolume,
-        18
-      )
-      const resFixed = totalBaseDivestVolumeFixed.divUnsafe(
-        totalLPInvestVolumeFixed
-      )
+    const { isClosed, totalBaseDivestVolume, totalLPDivestVolume } = position
+
+    if (isClosed) {
+      const baseDivestFixed = FixedNumber.fromValue(totalBaseDivestVolume, 18)
+      const lpDivestFixed = FixedNumber.fromValue(totalLPDivestVolume, 18)
+      const resFixed = baseDivestFixed.divUnsafe(lpDivestFixed)
 
       return parseEther(resFixed._value)
     }
@@ -196,18 +158,12 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
       return BigNumber.from("0")
     }
 
-    if (position.isClosed) {
-      const totalUSDDivestVolumeFixed = FixedNumber.fromValue(
-        position.totalUSDDivestVolume,
-        18
-      )
-      const totalLPInvestVolumeFixed = FixedNumber.fromValue(
-        position.totalLPInvestVolume,
-        18
-      )
-      const resFixed = totalUSDDivestVolumeFixed.divUnsafe(
-        totalLPInvestVolumeFixed
-      )
+    const { isClosed, totalUSDDivestVolume, totalLPDivestVolume } = position
+
+    if (isClosed) {
+      const usdFixed = FixedNumber.fromValue(totalUSDDivestVolume, 18)
+      const lpFixed = FixedNumber.fromValue(totalLPDivestVolume, 18)
+      const resFixed = usdFixed.divUnsafe(lpFixed)
 
       return parseEther(resFixed._value)
     }
@@ -215,41 +171,11 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     return markPriceOpenUSD
   }, [markPriceOpenUSD, position])
 
-  const pnlBase = useMemo(() => {
-    if (!position) {
-      return BigNumber.from("0")
-    }
-
-    const totalBaseDivestVolumeFixed = FixedNumber.fromValue(
-      position.totalBaseDivestVolume,
-      18
-    )
-    const totalBaseInvestVolumeFixed = FixedNumber.fromValue(
-      position.totalBaseInvestVolume,
-      18
-    )
-
-    if (position.isClosed) {
-      const resFixed = totalBaseDivestVolumeFixed.subUnsafe(
-        totalBaseInvestVolumeFixed
-      )
-      return parseEther(resFixed._value)
-    } else {
-      const poolBaseShareFixed = FixedNumber.fromValue(poolBaseShare, 18)
-
-      const resFixed = totalBaseDivestVolumeFixed
-        .addUnsafe(poolBaseShareFixed)
-        .subUnsafe(totalBaseInvestVolumeFixed)
-      return parseEther(resFixed._value)
-    }
-  }, [poolBaseShare, position])
-
   const pnlPercentage = useMemo(() => {
-    if (!markPrice || !entryPriceBase)
+    if (!markPriceBase || !entryPriceBase)
       return { value: BigNumber.from("0"), normalized: "0" }
 
-    const percentage = percentageOfBignumbers(markPrice, entryPriceBase)
-
+    const percentage = percentageOfBignumbers(markPriceBase, entryPriceBase)
     const resultFixed = FixedNumber.fromValue(percentage, 18).subUnsafe(
       FixedNumber.from("100", 18)
     )
@@ -258,36 +184,48 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
       value: parseEther(resultFixed._value),
       normalized: normalizeBigNumber(parseEther(resultFixed._value), 18, 2),
     }
-  }, [markPrice, entryPriceBase])
+  }, [markPriceBase, entryPriceBase])
 
-  const pnlUSD = useMemo(() => {
-    if (!position) {
+  const pnlBase = useMemo(() => {
+    if (!position || !pnlPercentage) {
       return BigNumber.from("0")
     }
 
-    const totalUSDDivestVolumeFixed = FixedNumber.fromValue(
-      position.totalUSDDivestVolume,
+    const _pnlPercentage = FixedNumber.fromValue(pnlPercentage.value, 18)
+
+    const _totalBaseInvestVolume = FixedNumber.fromValue(
+      position.totalBaseInvestVolume,
       18
     )
-    const totalUSDInvestVolumeFixed = FixedNumber.fromValue(
-      position.totalUSDInvestVolume,
+    const _totalBaseDivestVolume = FixedNumber.fromValue(
+      position.totalBaseDivestVolume,
       18
     )
 
-    if (position.isClosed) {
-      const resFixed = totalUSDDivestVolumeFixed.subUnsafe(
-        totalUSDInvestVolumeFixed
-      )
-      return parseEther(resFixed._value)
-    } else {
-      const poolUSDShareFixed = FixedNumber.fromValue(poolUSDShare, 18)
+    const _totalBaseVolumeFixed = position.isClosed
+      ? _totalBaseDivestVolume
+      : _totalBaseInvestVolume.subUnsafe(_totalBaseDivestVolume) // current base open volume
 
-      const resFixed = totalUSDDivestVolumeFixed
-        .addUnsafe(poolUSDShareFixed)
-        .subUnsafe(totalUSDInvestVolumeFixed)
-      return parseEther(resFixed._value)
+    const _pnlBaseFixed = _totalBaseVolumeFixed.mulUnsafe(_pnlPercentage)
+    const res = _totalBaseVolumeFixed.addUnsafe(_pnlBaseFixed)
+
+    return parseEther(res._value)
+  }, [pnlPercentage, position])
+
+  const pnlUSD = useMemo(() => {
+    if (!position || !markPriceUSD || !entryPriceUSD) return BigNumber.from("0")
+
+    if (!position.isClosed) {
+      return pnlUSDCurrent
     }
-  }, [poolUSDShare, position])
+
+    const _markPriceFixed = FixedNumber.fromValue(markPriceUSD, 18)
+    const _entryPriceUSDFixed = FixedNumber.fromValue(entryPriceUSD, 18)
+
+    const res = _markPriceFixed.subUnsafe(_entryPriceUSDFixed)
+
+    return parseEther(res._value)
+  }, [entryPriceUSD, markPriceUSD, pnlUSDCurrent, position])
 
   // Commission data
   const commissionPercentage = useMemo(() => {
@@ -353,14 +291,14 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     return "0"
   }, [poolInfo])
 
-  // get mark price
+  // get mark price in base token
   useEffect(() => {
     if (
       !priceFeed ||
       !position ||
       !position.pool ||
-      !baseTokenData ||
-      !baseTokenData.address
+      !baseToken ||
+      !baseToken.address
     ) {
       return
     }
@@ -372,7 +310,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
         // without extended
         const price = await priceFeed.getNormalizedExtendedPriceOut(
           position.pool.token,
-          baseTokenData.address,
+          baseToken.address,
           amount,
           []
         )
@@ -383,26 +321,33 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
         console.error(error)
       }
     })()
-  }, [priceFeed, baseTokenData, position.pool.token, position])
+  }, [priceFeed, baseToken, position.pool.token, position])
 
+  // fetch pnl price in USD
   useEffect(() => {
-    if (!traderPool || !account) {
-      return
-    }
-
+    if (!priceFeed || !pnlBase || !baseToken) return
     ;(async () => {
       try {
-        const userData = await traderPool.getUsersInfo(account, 0, 0)
+        const price = await priceFeed.getNormalizedPriceOutUSD(
+          baseToken.address,
+          pnlBase.abs().toHexString()
+        )
 
-        if (userData && userData.length > 0) {
-          setPoolBaseShare(userData[0].poolBaseShare)
-          setPoolUSDShare(userData[0].poolUSDShare)
+        if (price?.amountOut) {
+          if (pnlBase.lt(BigNumber.from("0"))) {
+            const res = FixedNumber.fromValue(price.amountOut, 18).mulUnsafe(
+              FixedNumber.from("-1")
+            )
+            setPnlUSDCurrent(parseEther(res._value))
+          } else {
+            setPnlUSDCurrent(price.amountOut)
+          }
         }
       } catch (error) {
         console.error(error)
       }
     })()
-  }, [account, traderPool])
+  }, [baseToken, pnlBase, priceFeed])
 
   const onBuyMore = (e?: MouseEvent<HTMLElement>): void => {
     if (e) {
@@ -460,7 +405,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
             </Flex>
             <Flex>
               <S.FundSymbol>{baseTokenSymbol}</S.FundSymbol>
-              <TokenIcon address={baseTokenData?.address} m="0" size={24} />
+              <TokenIcon address={baseToken?.address} m="0" size={24} />
             </Flex>
           </SharedS.Head>
 
@@ -475,7 +420,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
                 (position.isClosed ? "Closed price " : "Current price ") +
                 baseTokenSymbol
               }
-              amount={markPrice}
+              amount={markPriceBase}
               amountUSD={markPriceUSD}
             />
             <BodyItem
