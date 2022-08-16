@@ -186,7 +186,7 @@ const RISKY_PROPOSAL_POSITION = `
       baseToken
     }
     exchanges {
-      exchanges {
+      exchanges(orderBy: timestamp, orderDirection: desc) {
         ${RISKY_PROPOSAL_EXCHANGE}
       }
     }
