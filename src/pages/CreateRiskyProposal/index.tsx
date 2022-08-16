@@ -35,6 +35,7 @@ import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import { dropdownVariants } from "motion/variants"
+import { DATE_TIME_FORMAT } from "constants/time"
 
 import back from "assets/icons/angle-left.svg"
 import close from "assets/icons/close-big.svg"
@@ -229,7 +230,7 @@ const CreateRiskyProposal: FC = () => {
                 value=""
                 placeholder={format(
                   expandTimestamp(timestampLimit),
-                  "MM.dd.yyyy, HH:mm"
+                  DATE_TIME_FORMAT
                 )}
                 onClick={() => setDateOpen(!isDateOpen)}
               />
