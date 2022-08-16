@@ -104,22 +104,14 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
 
   /**
    * Entry price (in fund base token)
-   * totalUSDOpenVolume/totalPositionOpenVolume
+   * totalBaseOpenVolume/totalPositionOpenVolume
    */
   const entryPriceBase = useMemo<BigNumber>(() => {
-    if (
-      !position ||
-      !position.totalUSDOpenVolume ||
-      BigNumber.from(position.totalUSDOpenVolume).isZero() ||
-      !position.totalPositionOpenVolume ||
-      BigNumber.from(position.totalPositionOpenVolume).isZero()
-    ) {
-      return BigNumber.from("0")
-    }
+    if (!position) return BigNumber.from("0")
 
-    const usdOpen = FixedNumber.fromValue(position.totalUSDOpenVolume, 18)
+    const baseOpen = FixedNumber.fromValue(position.totalBaseOpenVolume, 18)
     const posOpen = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
-    const resFixed = usdOpen.divUnsafe(posOpen)
+    const resFixed = baseOpen.divUnsafe(posOpen)
 
     return parseEther(resFixed._value)
   }, [position])
@@ -129,19 +121,11 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
    * totalBaseOpenVolume/totalPositionOpenVolume
    */
   const entryPriceUSD = useMemo<BigNumber>(() => {
-    if (
-      !position ||
-      !position.totalBaseOpenVolume ||
-      BigNumber.from(position.totalBaseOpenVolume).isZero() ||
-      !position.totalPositionOpenVolume ||
-      BigNumber.from(position.totalPositionOpenVolume).isZero()
-    ) {
-      return BigNumber.from("0")
-    }
+    if (!position) return BigNumber.from("0")
 
-    const baseOpen = FixedNumber.fromValue(position.totalBaseOpenVolume, 18)
+    const usdOpen = FixedNumber.fromValue(position.totalUSDOpenVolume, 18)
     const posOpen = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
-    const resFixed = baseOpen.divUnsafe(posOpen)
+    const resFixed = usdOpen.divUnsafe(posOpen)
 
     return parseEther(resFixed._value)
   }, [position])
@@ -157,7 +141,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     if (!position.closed) {
       return markPrice
     } else {
-      const base = FixedNumber.fromValue(position.totalUSDCloseVolume, 18)
+      const base = FixedNumber.fromValue(position.totalBaseCloseVolume, 18)
       const pos = FixedNumber.fromValue(position.totalPositionCloseVolume, 18)
       const resFixed = base.divUnsafe(pos)
 
@@ -176,7 +160,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     if (!position.closed) {
       return currentPriceUSD
     } else {
-      const usd = FixedNumber.fromValue(position.totalBaseCloseVolume, 18)
+      const usd = FixedNumber.fromValue(position.totalUSDCloseVolume, 18)
       const pos = FixedNumber.fromValue(position.totalPositionCloseVolume, 18)
       const resFixed = usd.divUnsafe(pos)
 
@@ -192,12 +176,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
    * P&L (in %)
    */
   const pnlPercentage = useMemo<IPnlPercentage>(() => {
-    if (
-      !markPriceBase ||
-      !entryPriceBase ||
-      markPriceBase.isZero() ||
-      entryPriceBase.isZero()
-    ) {
+    if (!markPriceBase || !entryPriceBase) {
       return { value: BigNumber.from("0"), normalized: "0" }
     }
 
