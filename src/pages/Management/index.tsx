@@ -261,7 +261,7 @@ function Management() {
       const amount = BigNumber.from(fromAmount)
       const response = await insurance?.buyInsurance(amount)
       const receipt = await addTransaction(response, {
-        type: TransactionType.STAKE_INSURANCE,
+        type: TransactionType.INSURANCE_STAKE,
         amount: fromAmount,
       })
       if (isTxMined(receipt)) {
@@ -275,7 +275,7 @@ function Management() {
       const amount = BigNumber.from(toAmount)
       const response = await insurance?.withdraw(amount)
       const receipt = await addTransaction(response, {
-        type: TransactionType.UNSTAKE_INSURANCE,
+        type: TransactionType.INSURANCE_UNSTAKE,
         amount: toAmount,
       })
       if (isTxMined(receipt)) {

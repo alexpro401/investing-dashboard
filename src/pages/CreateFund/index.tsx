@@ -155,7 +155,7 @@ const CreateFund: FC = () => {
     )
 
     return addTransaction(receipt, {
-      type: TransactionType.FUND_CREATE,
+      type: TransactionType.POOL_CREATE,
       baseCurrencyId: baseToken.address,
       fundName,
     })
@@ -182,7 +182,7 @@ const CreateFund: FC = () => {
     const receipt = await traderPool?.modifyAdmins(managers, true)
 
     return addTransaction(receipt, {
-      type: TransactionType.FUND_UPDATE_MANAGERS,
+      type: TransactionType.POOL_UPDATE_MANAGERS,
       editType: UpdateListType.ADD,
       poolId: contractAddress,
     })
@@ -192,7 +192,7 @@ const CreateFund: FC = () => {
     const receipt = await traderPool?.modifyPrivateInvestors(investors, true)
 
     return addTransaction(receipt, {
-      type: TransactionType.FUND_UPDATE_INVESTORS,
+      type: TransactionType.POOL_UPDATE_INVESTORS,
       editType: UpdateListType.ADD,
       poolId: contractAddress,
     })

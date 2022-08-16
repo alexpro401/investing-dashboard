@@ -166,7 +166,7 @@ const useCreateRiskyProposal = (
       setSubmiting(SubmitState.WAIT_CONFIRM)
 
       const receipt = await addTransaction(createResponse, {
-        type: TransactionType.CREATE_RISKY_PROPOSAL,
+        type: TransactionType.RISKY_PROPOSAL_CREATE,
         poolId: poolAddress,
       })
 

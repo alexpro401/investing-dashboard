@@ -17,6 +17,7 @@ declare global {
       REACT_APP_BASIC_POOLS_API_URL: string
       REACT_APP_INVEST_POOLS_API_URL: string
       REACT_APP_INVESTORS_API_URL: string
+      REACT_APP_INTERACTIONS_API_URL: string
 
       REACT_APP_IPFS_PROJECT_ID: string
       REACT_APP_IPFS_PROJECT_SECRET: string
@@ -130,6 +131,15 @@ interface RiskyProposalInfo {
   proposalLimits: RiskyProposalLimits
   token: string
   tokenDecimals: BigNumber
+}
+
+export interface RiskyProposalInvestmentsInfo {
+  baseInvested: BigNumber
+  baseShare: BigNumber
+  lp2Balance: BigNumber
+  lpInvested: BigNumber
+  positionShare: BigNumber
+  proposalId: BigNumber
 }
 
 export interface RiskyProposal {

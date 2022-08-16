@@ -255,37 +255,37 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <ApprovalSummary info={info} />
     case TransactionType.SWAP:
       return <SwapSummary info={info} />
-    case TransactionType.DEPOSIT_LIQUIDITY_STAKING:
+    case TransactionType.INVEST:
       return <DepositLiquiditySummary info={info} />
-    case TransactionType.WITHDRAW_LIQUIDITY_STAKING:
+    case TransactionType.DIVEST:
       return <WithdrawLiquiditySummary info={info} />
-    case TransactionType.FUND_CREATE:
+    case TransactionType.POOL_CREATE:
       return <FundCreateSummary info={info} />
-    case TransactionType.FUND_EDIT:
+    case TransactionType.POOL_EDIT:
       return <FundEditSummary info={info} />
-    case TransactionType.FUND_UPDATE_INVESTORS:
+    case TransactionType.POOL_UPDATE_INVESTORS:
       return <FundUpdateUnvestorsSummary info={info} />
-    case TransactionType.FUND_UPDATE_MANAGERS:
+    case TransactionType.POOL_UPDATE_MANAGERS:
       return <FundUpdateManagersSummary info={info} />
-    case TransactionType.UPDATE_USER_CREDENTIALS:
+    case TransactionType.UPDATED_USER_CREDENTIALS:
       return <CredentialsUpdateSummary />
-    case TransactionType.CREATE_RISKY_PROPOSAL:
+    case TransactionType.RISKY_PROPOSAL_CREATE:
       return <CreateRiskyProposalSummary info={info} />
-    case TransactionType.EDIT_RISKY_PROPOSAL:
+    case TransactionType.RISKY_PROPOSAL_EDIT:
       return <EditRiskyProposalSummary info={info} />
-    case TransactionType.DEPOSIT_RISKY_PROPOSAL:
+    case TransactionType.RISKY_PROPOSAL_INVEST:
       return <DepositRiskyProposalSummary info={info} />
-    case TransactionType.WITHDRAW_RISKY_PROPOSAL:
+    case TransactionType.RISKY_PROPOSAL_DIVEST:
       return <WithdrawRiskyProposalSummary info={info} />
-    case TransactionType.SWAP_RISKY_PROPOSAL:
+    case TransactionType.RISKY_PROPOSAL_SWAP:
       return <SwapRiskyProposalSummary info={info} />
-    case TransactionType.CREATE_INVEST_PROPOSAL:
+    case TransactionType.INVEST_PROPOSAL_CREATE:
       return <CreateInvestmentProposalSummary info={info} />
-    case TransactionType.EDIT_INVEST_PROPOSAL:
+    case TransactionType.INVEST_PROPOSAL_EDIT:
       return <EditInvestProposalSummary info={info} />
-    case TransactionType.STAKE_INSURANCE:
+    case TransactionType.INSURANCE_STAKE:
       return <StakeInsuranceSummary info={info} />
-    case TransactionType.UNSTAKE_INSURANCE:
+    case TransactionType.INSURANCE_UNSTAKE:
       return <UnstakeInsuranceSummary info={info} />
 
     default:

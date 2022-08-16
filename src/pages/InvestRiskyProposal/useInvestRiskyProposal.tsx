@@ -317,7 +317,7 @@ const useInvestRiskyProposal = (
     )
 
     return await addTransaction(investReceipt, {
-      type: TransactionType.DEPOSIT_RISKY_PROPOSAL,
+      type: TransactionType.RISKY_PROPOSAL_INVEST,
       inputCurrencyAmountRaw: invests.lp2Amount.toString(),
       inputCurrencySymbol: exchangeForm.deposit.to.symbol,
       expectedOutputCurrencyAmountRaw: amount.toString(),
@@ -346,7 +346,7 @@ const useInvestRiskyProposal = (
     )
 
     return await addTransaction(withdrawResponse, {
-      type: TransactionType.WITHDRAW_RISKY_PROPOSAL,
+      type: TransactionType.RISKY_PROPOSAL_DIVEST,
       outputCurrencyAmountRaw: amount.toString(),
       outputCurrencySymbol: exchangeForm.withdraw.from.symbol,
       expectedInputCurrencyAmountRaw: invests.lpAmount.toString(),

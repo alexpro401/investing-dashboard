@@ -35,16 +35,28 @@ const useQueryPagination = (
     }
   }, [fetching, data, error, prepareNewData, offset, prevFetching])
 
+  // Clear state when query or variables changed
   useEffect(() => {
-    setResult([])
-    setOffset(initialOffset)
-  }, [query, variables, initialOffset])
+    reset()
+  }, [query, variables])
 
+  // Change offset trigger useQuery hook to fetch new piese of data
+  // using actual variables
   const fetchMore = useCallback(() => {
     setOffset(result.length)
   }, [result])
 
-  return [{ data: result, error, loading: fetching }, debounce(fetchMore, 100)]
+  // Clear state helper
+  const reset = useCallback(() => {
+    setOffset(0)
+    setResult([])
+  }, [])
+
+  return [
+    { data: result, error, loading: fetching },
+    debounce(fetchMore, 100),
+    reset,
+  ]
 }
 
 export default useQueryPagination

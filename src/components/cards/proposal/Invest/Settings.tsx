@@ -157,7 +157,7 @@ const InvestCardSettings: FC<Props> = ({
         )
 
         const tx = await addTransaction(receipt, {
-          type: TransactionType.EDIT_INVEST_PROPOSAL,
+          type: TransactionType.INVEST_PROPOSAL_EDIT,
           investLpAmountRaw: limitHex,
         })
 
