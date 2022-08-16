@@ -271,10 +271,11 @@ const RiskyProposalCard: FC<Props> = ({
       try {
         const balance = await proposalPool.getActiveInvestmentsInfo(
           account,
-          0,
+          proposalId,
           1
         )
         if (balance && balance[0]) {
+          console.log(proposalId, balance[0].proposalId)
           setYourSizeLP(balance[0].lpInvested)
         }
       } catch (error) {
@@ -293,7 +294,7 @@ const RiskyProposalCard: FC<Props> = ({
       try {
         const balance = await proposalPool.getActiveInvestmentsInfo(
           poolInfo.parameters.trader,
-          0,
+          proposalId,
           1
         )
 
