@@ -99,11 +99,16 @@ function InvestRiskyProposal() {
   const myPNL = useMemo(() => {
     return (
       <Flex gap="4">
-        <InfoWhite>+12.72 ISDX</InfoWhite>
+        <InfoWhite>
+          +12.72{" "}
+          {direction === "deposit"
+            ? formWithDirection.from.symbol
+            : formWithDirection.to.symbol}
+        </InfoWhite>
         <InfoGrey>(+37.18%)</InfoGrey>
       </Flex>
     )
-  }, [])
+  }, [direction, formWithDirection.from.symbol, formWithDirection.to.symbol])
 
   const myPNLContent = useMemo(() => {
     return (
