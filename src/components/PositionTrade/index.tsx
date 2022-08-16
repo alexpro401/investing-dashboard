@@ -15,9 +15,7 @@ import externalLinkIcon from "assets/icons/external-link.svg"
 
 function getTxHash(data) {
   if (data.hash) {
-    if (data.hash.length > 42) {
-      return data.hash.substring(0, 42)
-    }
+    return data.hash
   } else {
     if (data.id.length > 42) {
       return data.id.substring(0, 42)
