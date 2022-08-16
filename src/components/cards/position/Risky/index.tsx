@@ -48,6 +48,9 @@ const RiskyPositionCard: React.FC<Props> = ({
   const priceFeed = useContract(priceFeedAddress, PriceFeed)
   const exchanges = useRiskyPositionExchanges(position.pool.id)
 
+  const [pnlUSDCurrent, setPnlUSDCurrent] = useState<BigNumber>(
+    BigNumber.from("0")
+  )
   const [markPriceBase, setMarkPriceBase] = useState(BigNumber.from(0))
   const markPriceUSD = useTokenPriceOutUSD({
     tokenAddress: position.token,
@@ -152,26 +155,10 @@ const RiskyPositionCard: React.FC<Props> = ({
     return parseEther(resFixed._value)
   }, [position])
 
-  /**
-   * P&L (in baseToken)
-   * markPriceBase - entryPriceBase
-   */
-  const pnlBase = useMemo<BigNumber>(() => {
-    if (!markPriceBase || !entryPriceBase) return BigNumber.from("0")
-
-    const _markPriceFixed = FixedNumber.fromValue(markPriceBase, 18)
-    const _entryPriceBaseFixed = FixedNumber.fromValue(entryPriceBase, 18)
-
-    const res = _markPriceFixed.subUnsafe(_entryPriceBaseFixed)
-
-    return parseEther(res._value)
-  }, [markPriceBase, entryPriceBase])
-
   interface IPnlPercentage {
     value: BigNumber
     normalized: string
   }
-
   /**
    * P&L (in %)
    */
@@ -203,10 +190,43 @@ const RiskyPositionCard: React.FC<Props> = ({
   }, [markPriceBase, entryPriceBase])
 
   /**
+   * P&L (in baseToken)
+   * markPriceBase - entryPriceBase
+   */
+  const pnlBase = useMemo<BigNumber>(() => {
+    if (!position || !pnlPercentage || !positionToken) {
+      return BigNumber.from("0")
+    }
+
+    const _pnlPercentageFixed = FixedNumber.fromValue(pnlPercentage.value, 18)
+    const _totalBaseOpenVolumeFixed = FixedNumber.fromValue(
+      position.totalBaseOpenVolume,
+      18
+    )
+    const _totalBaseCloseVolumeFixed = FixedNumber.fromValue(
+      position.totalBaseCloseVolume,
+      18
+    )
+
+    const _totalBaseVolumeFixed = position.isClosed
+      ? FixedNumber.fromValue(position.totalBaseCloseVolume, 18)
+      : _totalBaseOpenVolumeFixed.subUnsafe(_totalBaseCloseVolumeFixed) // current base open volume
+
+    const _pnlBaseFixed = _totalBaseVolumeFixed.mulUnsafe(_pnlPercentageFixed)
+    const res = _totalBaseVolumeFixed.addUnsafe(_pnlBaseFixed)
+
+    return parseEther(res._value)
+  }, [position, pnlPercentage, positionToken])
+
+  /**
    * P&L (in USD)
    */
   const pnlUSD = useMemo<BigNumber>(() => {
     if (!markPriceUSD || !entryPriceUSD) return BigNumber.from("0")
+
+    if (!position.isClosed) {
+      return pnlUSDCurrent
+    }
 
     const _markPriceFixed = FixedNumber.fromValue(markPriceUSD, 18)
     const _entryPriceUSDFixed = FixedNumber.fromValue(entryPriceUSD, 18)
@@ -214,7 +234,33 @@ const RiskyPositionCard: React.FC<Props> = ({
     const res = _markPriceFixed.subUnsafe(_entryPriceUSDFixed)
 
     return parseEther(res._value)
-  }, [markPriceUSD, entryPriceUSD])
+  }, [markPriceUSD, entryPriceUSD, position.isClosed, pnlUSDCurrent])
+
+  // fetch pnl price in USD
+  useEffect(() => {
+    if (!priceFeed || !pnlBase || !baseToken) return
+    ;(async () => {
+      try {
+        const price = await priceFeed.getNormalizedPriceOutUSD(
+          baseToken.address,
+          pnlBase.abs().toHexString()
+        )
+
+        if (price?.amountOut) {
+          if (pnlBase.lt(BigNumber.from("0"))) {
+            const res = FixedNumber.fromValue(price.amountOut, 18).mulUnsafe(
+              FixedNumber.from("-1")
+            )
+            setPnlUSDCurrent(parseEther(res._value))
+          } else {
+            setPnlUSDCurrent(price.amountOut)
+          }
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [baseToken, pnlBase, priceFeed])
 
   // get mark price
   useEffect(() => {
