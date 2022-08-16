@@ -235,6 +235,7 @@ const InvestProposalQuery = `
 // Investor positions
 const INVESTOR_POSITION_VEST = `
   id
+  hash
   isInvest
   timestamp
   volumeBase
