@@ -36,7 +36,6 @@ const poolsClient = createClient({
 })
 
 const InvestPositionCard: React.FC<Props> = ({ position }) => {
-  console.log(position)
   const navigate = useNavigate()
   const [, poolInfo] = usePoolContract(position.pool.id)
   const fundFeeHistories = useFundFeeHistory(position.pool.id)
