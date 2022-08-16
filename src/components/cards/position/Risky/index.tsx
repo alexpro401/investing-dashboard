@@ -51,8 +51,10 @@ const RiskyPositionCard: React.FC<Props> = ({
   const [pnlUSDCurrent, setPnlUSDCurrent] = useState<BigNumber>(
     BigNumber.from("0")
   )
-  const [markPriceBase, setMarkPriceBase] = useState(BigNumber.from(0))
-  const markPriceUSD = useTokenPriceOutUSD({
+  const [currentPositionPriceBase, setCurrentPositionPriceBase] = useState(
+    BigNumber.from(0)
+  )
+  const currentPositionPriceUSD = useTokenPriceOutUSD({
     tokenAddress: position.token,
   })
 
@@ -88,20 +90,14 @@ const RiskyPositionCard: React.FC<Props> = ({
 
   /**
    * Position amount
-   * if position.closed return totalPositionOpenVolume
+   * if position.closed return totalPositionCloseVolume
    * otherwise return current position volume
    */
   const positionOpenAmount = useMemo<string>(() => {
-    if (
-      !position ||
-      !position.totalPositionOpenVolume ||
-      !position.totalPositionCloseVolume
-    ) {
-      return "0"
-    }
+    if (!position) return "0"
 
     if (position.isClosed) {
-      return normalizeBigNumber(position.totalPositionOpenVolume, 18, 6)
+      return normalizeBigNumber(position.totalPositionCloseVolume, 18, 6)
     } else {
       const open = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
       const close = FixedNumber.fromValue(position.totalPositionCloseVolume, 18)
@@ -113,18 +109,24 @@ const RiskyPositionCard: React.FC<Props> = ({
 
   /**
    * Entry price (in fund base token)
-   * totalUSDOpenVolume/totalPositionOpenVolume
+   * totalBaseOpenVolume/totalPositionOpenVolume
    */
   const entryPriceBase = useMemo<BigNumber>(() => {
-    if (
-      !position ||
-      !position.totalUSDOpenVolume ||
-      BigNumber.from(position.totalUSDOpenVolume).isZero() ||
-      !position.totalPositionOpenVolume ||
-      BigNumber.from(position.totalPositionOpenVolume).isZero()
-    ) {
-      return BigNumber.from("0")
-    }
+    if (!position) return BigNumber.from("0")
+
+    const baseOpen = FixedNumber.fromValue(position.totalBaseOpenVolume, 18)
+    const posOpen = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
+    const resFixed = baseOpen.divUnsafe(posOpen)
+
+    return parseEther(resFixed._value)
+  }, [position])
+
+  /**
+   * Entry price (in USD)
+   * totalUSDOpenVolume/totalPositionOpenVolume
+   */
+  const entryPriceUSD = useMemo<BigNumber>(() => {
+    if (!position) return BigNumber.from("0")
 
     const usdOpen = FixedNumber.fromValue(position.totalUSDOpenVolume, 18)
     const posOpen = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
@@ -134,26 +136,42 @@ const RiskyPositionCard: React.FC<Props> = ({
   }, [position])
 
   /**
-   * Entry price (in USD)
-   * totalBaseOpenVolume/totalPositionOpenVolume
+   * Mark price (in fund base token)
+   * if position open return currentPositionPriceBase (price for 1 position token)
+   * otherwise return totalBaseCloseVolume/totalPositionCloseVolume
    */
-  const entryPriceUSD = useMemo<BigNumber>(() => {
-    if (
-      !position ||
-      !position.totalBaseOpenVolume ||
-      BigNumber.from(position.totalBaseOpenVolume).isZero() ||
-      !position.totalPositionOpenVolume ||
-      BigNumber.from(position.totalPositionOpenVolume).isZero()
-    ) {
-      return BigNumber.from("0")
+  const markPriceBase = useMemo<BigNumber>(() => {
+    if (!position) return BigNumber.from("0")
+
+    if (!position.isClosed) {
+      return currentPositionPriceBase
+    } else {
+      const base = FixedNumber.fromValue(position.totalBaseCloseVolume, 18)
+      const pos = FixedNumber.fromValue(position.totalPositionCloseVolume, 18)
+      const resFixed = base.divUnsafe(pos)
+
+      return parseEther(resFixed._value)
     }
+  }, [currentPositionPriceBase, position])
 
-    const baseOpen = FixedNumber.fromValue(position.totalBaseOpenVolume, 18)
-    const posOpen = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
-    const resFixed = baseOpen.divUnsafe(posOpen)
+  /**
+   * Mark price (in USD)
+   * if position open return markPriceBase (price for 1 position token)
+   * otherwise return totalUSDCloseVolume/totalPositionCloseVolume
+   */
+  const markPriceUSD = useMemo<BigNumber>(() => {
+    if (!position) return BigNumber.from("0")
 
-    return parseEther(resFixed._value)
-  }, [position])
+    if (!position.isClosed) {
+      return currentPositionPriceUSD
+    } else {
+      const usd = FixedNumber.fromValue(position.totalUSDCloseVolume, 18)
+      const pos = FixedNumber.fromValue(position.totalPositionCloseVolume, 18)
+      const resFixed = usd.divUnsafe(pos)
+
+      return parseEther(resFixed._value)
+    }
+  }, [currentPositionPriceUSD, position])
 
   interface IPnlPercentage {
     value: BigNumber
@@ -163,16 +181,8 @@ const RiskyPositionCard: React.FC<Props> = ({
    * P&L (in %)
    */
   const pnlPercentage = useMemo<IPnlPercentage>(() => {
-    if (
-      !markPriceBase ||
-      !entryPriceBase ||
-      markPriceBase.isZero() ||
-      entryPriceBase.isZero()
-    ) {
-      return {
-        value: BigNumber.from("0"),
-        normalized: "0",
-      }
+    if (!markPriceBase || !entryPriceBase) {
+      return { value: BigNumber.from("0"), normalized: "0" }
     }
 
     const percentage = percentageOfBignumbers(markPriceBase, entryPriceBase)
@@ -277,7 +287,7 @@ const RiskyPositionCard: React.FC<Props> = ({
           []
         )
         if (price && price.amountOut) {
-          setMarkPriceBase(price.amountOut)
+          setCurrentPositionPriceBase(price.amountOut)
         }
       } catch (error) {
         console.error(error)
