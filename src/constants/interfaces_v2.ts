@@ -345,26 +345,6 @@ export interface InvestProposal {
   totalInvestors: BigNumber
 }
 
-interface InvestProposalLimits {
-  timestampLimit: BigNumber
-  investLPLimit: BigNumber
-}
-
-interface InvestProposalInfo {
-  descriptionURL: string
-  proposalLimits: InvestProposalLimits
-  lpLocked: BigNumber
-  investedBase: BigNumber
-  newInvestedBase: BigNumber
-}
-
-export interface InvestProposal {
-  id: any
-  closed: any
-  proposalInfo: InvestProposalInfo
-  totalInvestors: BigNumber
-}
-
 /// @notice The struct that is returned from the TraderPoolView contract and stores information about the trader leverage
 /// @param totalPoolUSDWithProposals the total USD value of the pool
 /// @param traderLeverageUSDTokens the maximal amount of USD that the trader is allowed to own
