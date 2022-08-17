@@ -1,9 +1,12 @@
-import { AreaChart, Area, Tooltip, ResponsiveContainer, XAxis } from "recharts"
+import { useState } from "react"
 import { PulseSpinner } from "react-spinners-kit"
-import { usePriceHistory } from "state/pools/hooks"
-import { formateChartData } from "utils/formulas"
-import { Center } from "theme"
+import { AreaChart, Area, Tooltip, ResponsiveContainer, XAxis } from "recharts"
 
+import { formateChartData } from "utils/formulas"
+import { usePriceHistory } from "state/pools/hooks"
+import { AGREGATION_CODES, TIMEFRAMES } from "constants/history"
+
+import { Center } from "theme"
 import { Container, Body, ChartPeriods, Period, NoData } from "./styled"
 
 interface Props {
@@ -58,20 +61,52 @@ const Chart = ({ data }) => {
   )
 }
 
+// Mapping timeframes to agregation codes
+const TIMEFRAME_MIN_CODE = {
+  ["D"]: AGREGATION_CODES["15min"],
+  ["W"]: AGREGATION_CODES["30min"] + AGREGATION_CODES["1h"],
+  ["M"]: AGREGATION_CODES["6h"],
+  ["3M"]: AGREGATION_CODES["24h"],
+  ["6M"]: AGREGATION_CODES["12h"] + AGREGATION_CODES["24h"],
+  ["1Y"]: AGREGATION_CODES["24h"] * 3,
+  ["ALL"]: AGREGATION_CODES["1m"],
+}
+
+/**
+ * Mapping timeframes to collection length limits
+ */
+const TIMEFRAME_LIMIT_CODE = {
+  ["D"]: 96, // 24h * (1h / TIMEFRAME_MIN_CODE["D"])
+  ["W"]: 112, // (24h * 7d) / TIMEFRAME_MIN_CODE["W"]
+  ["M"]: 124, // (24h * 31d) / TIMEFRAME_MIN_CODE["M"]
+  ["3M"]: 93,
+  ["6M"]: 124,
+  ["1Y"]: 124,
+  ["ALL"]: 1000,
+}
+
 const ProfitLossChart: React.FC<Props> = ({ address }) => {
-  const history = usePriceHistory(address)
+  const [timeframe, setTimeframe] = useState(TIMEFRAMES["D"])
+
+  const history = usePriceHistory(
+    address,
+    TIMEFRAME_MIN_CODE[timeframe],
+    TIMEFRAME_LIMIT_CODE[timeframe]
+  )
   const historyFormated = formateChartData(history)
 
   return (
     <Container>
       <ChartPeriods>
-        <Period active>D</Period>
-        <Period>W</Period>
-        <Period>M</Period>
-        <Period>3M</Period>
-        <Period>6M</Period>
-        <Period>1Y</Period>
-        <Period>ALL</Period>
+        {Object.values(TIMEFRAMES).map((value) => (
+          <Period
+            key={value}
+            onClick={() => setTimeframe(value)}
+            active={timeframe === value}
+          >
+            {value}
+          </Period>
+        ))}
       </ChartPeriods>
 
       <Body>

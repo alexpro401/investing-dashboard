@@ -73,14 +73,17 @@ export function useOwnedPools(
  * Returns map of pool price history
  */
 export function usePriceHistory(
-  address: string | undefined
+  address: string | undefined,
+  timeframe: number,
+  limit = 1000
 ): IPriceHistory[] | undefined {
   const [history, setHistory] = useState<IPriceHistory[] | undefined>(undefined)
   const [pool] = useQuery<{
     traderPool: IPriceHistoryQuery
   }>({
     query: PriceHistoryQuery,
-    variables: { address },
+    variables: { address, timeframe, limit },
+    requestPolicy: "network-only",
   })
 
   useEffect(() => {

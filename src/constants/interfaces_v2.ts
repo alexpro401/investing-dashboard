@@ -49,6 +49,7 @@ export interface IPriceHistory {
   absPNL: number
   percPNL: number
   timestamp: number
+  aggregationType: number
 }
 
 export interface IPoolQuery {

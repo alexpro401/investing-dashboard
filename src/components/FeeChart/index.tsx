@@ -78,7 +78,7 @@ const Chart = ({ data }) => {
 }
 
 const FeeChart: React.FC<Props> = ({ address }) => {
-  const history = usePriceHistory(address)
+  const history = usePriceHistory(address, 0)
   const historyFormated = formateChartData(history)
 
   return (
