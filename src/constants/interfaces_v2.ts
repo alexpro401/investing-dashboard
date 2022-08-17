@@ -135,6 +135,15 @@ interface RiskyProposalInfo {
   tokenDecimals: BigNumber
 }
 
+export interface RiskyProposalInvestmentsInfo {
+  baseInvested: BigNumber
+  baseShare: BigNumber
+  lp2Balance: BigNumber
+  lpInvested: BigNumber
+  positionShare: BigNumber
+  proposalId: BigNumber
+}
+
 export interface RiskyProposal {
   lp2Supply: BigNumber
   proposalInfo: RiskyProposalInfo
