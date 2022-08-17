@@ -2,20 +2,24 @@ import { useCallback, useEffect, useMemo, useState, MouseEvent } from "react"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
-import { parseEther, parseUnits } from "@ethersproject/units"
+import { formatEther, parseEther, parseUnits } from "@ethersproject/units"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { createClient, Provider as GraphProvider } from "urql"
+import { format } from "date-fns/esm"
 
 import { PriceFeed } from "abi"
-import { IInvestorProposal } from "constants/interfaces_v2"
-import useContract, { useERC20 } from "hooks/useContract"
-import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import { selectPriceFeedAddress } from "state/contracts/selectors"
-import { usePoolContract } from "hooks/usePool"
-import { normalizeBigNumber } from "utils"
+import { useActiveWeb3React } from "hooks"
+import { DATE_FORMAT } from "constants/time"
+import usePoolPrice from "hooks/usePoolPrice"
 import { percentageOfBignumbers } from "utils/formulas"
 import useFundFeeHistory from "hooks/useFundFeeHistory"
+import useContract, { useERC20 } from "hooks/useContract"
+import { usePoolMetadata } from "state/ipfsMetadata/hooks"
+import { IInvestorProposal } from "constants/interfaces_v2"
+import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
+import { usePoolContract, useTraderPool } from "hooks/usePool"
+import { selectPriceFeedAddress } from "state/contracts/selectors"
+import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 
 import { Flex } from "theme"
 import Icon from "components/Icon"
@@ -37,8 +41,10 @@ const poolsClient = createClient({
 
 const InvestPositionCard: React.FC<Props> = ({ position }) => {
   const navigate = useNavigate()
+  const { account } = useActiveWeb3React()
+  const traderPool = useTraderPool(position.pool.id)
   const [, poolInfo] = usePoolContract(position.pool.id)
-  const fundFeeHistories = useFundFeeHistory(position.pool.id)
+  const { priceBase, priceUSD } = usePoolPrice(position.pool.id)
   const [, baseToken] = useERC20(position.pool.token)
   const priceFeedAddress = useSelector(selectPriceFeedAddress)
   const priceFeed = useContract(priceFeedAddress, PriceFeed)
@@ -55,6 +61,19 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   const [pnlUSDCurrent, setPnlUSDCurrent] = useState<BigNumber>(
     BigNumber.from("0")
   )
+  const [commissionUnlockTimestamp, setCommissionUnlockTimestamp] =
+    useState<BigNumber>(BigNumber.from("0"))
+
+  const [owedBaseCommission, setOwedBaseCommission] = useState<BigNumber>(
+    BigNumber.from("0")
+  )
+  const [commissionAmountUSD, setCommissionAmountUSD] = useState<{
+    big: BigNumber
+    format: string
+  }>({ big: BigNumber.from("0"), format: "0" })
+
+  const [_totalAccountInvestedLP, _setTotalAccountInvestedLP] =
+    useState<BigNumber>(BigNumber.from("0"))
 
   const [showExtra, setShowExtra] = useState<boolean>(false)
   const [showPositions, setShowPositions] = useState<boolean>(false)
@@ -227,6 +246,10 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   }, [entryPriceUSD, markPriceUSD, pnlUSDCurrent, position])
 
   // Commission data
+
+  /**
+   * Pool commission percentage
+   */
   const commissionPercentage = useMemo(() => {
     if (!poolInfo || !poolInfo.parameters) {
       return "0"
@@ -235,6 +258,20 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     return normalizeBigNumber(poolInfo.parameters.commissionPercentage, 25, 0)
   }, [poolInfo])
 
+  /**
+   * Next commission epoch starts
+   */
+  const commissionUnlockDate = useMemo<string>(() => {
+    if (commissionUnlockTimestamp.isZero()) return "-"
+    return format(
+      expandTimestamp(+commissionUnlockTimestamp.toString()),
+      DATE_FORMAT
+    )
+  }, [commissionUnlockTimestamp])
+
+  /**
+   * Commission period (show in month)
+   */
   const commissionPeriod = useMemo(() => {
     if (!poolInfo || !poolInfo.parameters) {
       return ""
@@ -252,43 +289,69 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     }
   }, [poolInfo])
 
-  const commissionAmount = useMemo(() => {
-    if (!fundFeeHistories || fundFeeHistories.length === 0) {
-      return "0"
+  /**
+   * Total account locked in pool amount in baseToken
+   */
+  const fundsLockedInvestorUSD = useMemo(() => {
+    if (
+      !priceUSD ||
+      !_totalAccountInvestedLP ||
+      priceUSD.isZero() ||
+      _totalAccountInvestedLP.isZero()
+    ) {
+      return { big: BigNumber.from("0"), format: "0" }
     }
 
-    return normalizeBigNumber(fundFeeHistories[0].fundProfit, 18, 6)
-  }, [fundFeeHistories])
+    const usd = FixedNumber.fromValue(priceUSD, 18)
+    const lp = FixedNumber.fromValue(_totalAccountInvestedLP, 18)
+    const res = usd.mulUnsafe(lp)
 
-  const commissionNextEpoch = useMemo(() => {
-    if (!fundFeeHistories || fundFeeHistories.length === 0) {
+    return {
+      big: parseEther(res._value),
+      format: formatBigNumber(parseEther(res._value), 18, 2),
+    }
+  }, [_totalAccountInvestedLP, priceUSD])
+
+  /**
+   * Total investments in pool (in baseToken)
+   */
+  const totalPoolInvestmentsUSD = useMemo<{
+    big: BigNumber
+    format: string
+  }>(() => {
+    if (!poolInfo || !priceUSD || priceUSD.isZero()) {
+      return { big: BigNumber.from("0"), format: "0" }
+    }
+    const usd = FixedNumber.fromValue(priceUSD, 18)
+    const supply = FixedNumber.fromValue(poolInfo.lpSupply, 18)
+    const traderLP = FixedNumber.fromValue(poolInfo.traderLPBalance, 18)
+
+    const res = usd.mulUnsafe(supply.subUnsafe(traderLP))
+
+    return {
+      big: parseEther(res._value),
+      format: formatBigNumber(parseEther(res._value), 18, 2),
+    }
+  }, [poolInfo, priceUSD])
+
+  /**
+   * Total account locked in pool amount in percents
+   */
+  const fundsLockedInvestorPercentage = useMemo(() => {
+    if (
+      !fundsLockedInvestorUSD ||
+      fundsLockedInvestorUSD.big.isZero() ||
+      !totalPoolInvestmentsUSD ||
+      totalPoolInvestmentsUSD.big.isZero()
+    ) {
       return "0"
     }
-
-    return normalizeBigNumber(fundFeeHistories[0].day, 18, 6)
-  }, [fundFeeHistories])
-
-  const fundsLockedTotal = useMemo(() => {
-    if (!poolInfo || !poolInfo.lpSupply || !poolInfo.lpLockedInProposals) {
-      return "0"
-    }
-
-    const lpSupplyFixed = FixedNumber.fromValue(poolInfo.lpSupply, 18)
-    const lpLockedInProposalsFixed = FixedNumber.fromValue(
-      poolInfo.lpLockedInProposals,
-      18
+    const percent = percentageOfBignumbers(
+      fundsLockedInvestorUSD.big,
+      totalPoolInvestmentsUSD.big
     )
-
-    const resFixed = lpSupplyFixed.addUnsafe(lpLockedInProposalsFixed)
-
-    return normalizeBigNumber(parseEther(resFixed._value), 18, 2)
-  }, [poolInfo])
-
-  const fundsLockedInvestor = useMemo(() => {
-    if (!poolInfo) return "0"
-
-    return "0"
-  }, [poolInfo])
+    return formatBigNumber(percent, 18, 2)
+  }, [fundsLockedInvestorUSD, totalPoolInvestmentsUSD])
 
   // get mark price in base token
   useEffect(() => {
@@ -347,6 +410,45 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
       }
     })()
   }, [baseToken, pnlBase, priceFeed])
+
+  // Fetch users info
+  useEffect(() => {
+    if (!traderPool || !position || !account) return
+    ;(async () => {
+      try {
+        const usersData = await traderPool.getUsersInfo(account, 0, 0)
+        if (usersData && !!usersData.length) {
+          console.log(usersData[0])
+          setCommissionUnlockTimestamp(usersData[0].commissionUnlockTimestamp)
+          setOwedBaseCommission(usersData[0].owedBaseCommission)
+          _setTotalAccountInvestedLP(usersData[0].poolLPBalance)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [traderPool, position, account])
+
+  // fetch investor commission amount is usd
+  useEffect(() => {
+    if (!priceFeed || owedBaseCommission.isZero() || !baseToken) return
+    ;(async () => {
+      try {
+        const price = await priceFeed.getNormalizedPriceOutUSD(
+          baseToken.address,
+          owedBaseCommission.toHexString()
+        )
+        if (price && price.amountOut) {
+          setCommissionAmountUSD({
+            big: price.amountOut,
+            format: formatBigNumber(price.amountOut, 18, 2),
+          })
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [baseToken, owedBaseCommission, priceFeed])
 
   const onBuyMore = (e?: MouseEvent<HTMLElement>): void => {
     if (e) {
@@ -476,18 +578,19 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
           />
           <AmountRow
             m="14px 0 0"
-            title="Performance Fee"
-            value={`${commissionAmount}`}
+            title="Paid Performance Fee  "
+            value={`$${commissionAmountUSD.format}`}
           />
           <AmountRow
+            full
             m="14px 0 0"
             title="Date of withdrawal"
-            value={commissionNextEpoch}
+            value={commissionUnlockDate}
           />
           <AmountRow
             m="14px 0 0"
-            title="Investor funds locked (3%)"
-            value={`$${fundsLockedInvestor}/$${fundsLockedTotal}`}
+            title={`Investor funds locked (${fundsLockedInvestorPercentage}%)`}
+            value={`$${fundsLockedInvestorUSD.format}/$${totalPoolInvestmentsUSD.format}`}
           />
         </SharedS.ExtraItem>
       </SharedS.Container>
