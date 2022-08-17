@@ -418,7 +418,6 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
       try {
         const usersData = await traderPool.getUsersInfo(account, 0, 0)
         if (usersData && !!usersData.length) {
-          console.log(usersData[0])
           setCommissionUnlockTimestamp(usersData[0].commissionUnlockTimestamp)
           setOwedBaseCommission(usersData[0].owedBaseCommission)
           _setTotalAccountInvestedLP(usersData[0].poolLPBalance)
