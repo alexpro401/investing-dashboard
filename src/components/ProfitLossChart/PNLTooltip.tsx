@@ -9,18 +9,19 @@ import { expandTimestamp, normalizeBigNumber } from "utils"
 import { Flex } from "theme"
 import { TooltipStyled as TS } from "./styled"
 
-function getAmountSymbol(amount: number): string {
+function getAmountSymbol(amount: number, withMinus = false): string {
   if (amount > 0) return "+"
+  else if (withMinus && amount < 0) return "-"
   return ""
 }
 
 const PNLTooltip = (props) => {
   const { active, payload, baseToken } = props
-  const history = payload[0]?.payload ?? null
+  const history = (payload && payload[0]?.payload) ?? null
 
   const usd = useTokenPriceOutUSD({
     tokenAddress: baseToken?.address,
-    amount: parseUnits(history?.absPNL ?? "1", 25),
+    amount: parseUnits(history?.absPNL ?? "1", 25).abs(),
   })
 
   const date = useMemo<string>(() => {
@@ -43,8 +44,10 @@ const PNLTooltip = (props) => {
       return { format: "0.00", number: 0 }
     }
 
+    const isNegative = parseUnits(history?.absPNL ?? "1", 25).isNegative()
+
     const res = normalizeBigNumber(usd, 25, 6)
-    return { format: res, number: Number(res) }
+    return { format: res, number: isNegative ? Number(res) * -1 : Number(res) }
   }, [history, usd])
 
   if (active && payload && payload.length && baseToken) {
@@ -62,7 +65,7 @@ const PNLTooltip = (props) => {
           <Flex full m="4px 0 0" jc="space-between">
             <TS.Label>USD</TS.Label>
             <TS.Value amount={absPnlUsd.number}>
-              {getAmountSymbol(absPnlUsd.number)}${absPnlUsd.format}
+              {getAmountSymbol(absPnlUsd.number, true)}${absPnlUsd.format}
             </TS.Value>
           </Flex>
         </TS.Content>
