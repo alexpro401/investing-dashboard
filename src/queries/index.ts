@@ -207,6 +207,16 @@ const RiskyPositionsQuery = `
   }
 `
 
+const RiskyProposalPositionQuery = `
+  query ($proposalAddress: String!, $closed: Boolean!) {
+    proposal(id: $proposalAddress) {
+      positions (where: { isClosed: $closed }) {
+        ${RISKY_PROPOSAL_POSITION}
+      }
+    }
+  }
+`
+
 // Pool invnest proposals
 
 const INVEST_PROPOSAL = `
@@ -416,4 +426,5 @@ export {
   FundFeeHistoryQuery,
   UserTransactionsQuery,
   getPoolsQueryVariables,
+  RiskyProposalPositionQuery,
 }

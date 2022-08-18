@@ -1,7 +1,7 @@
 import { getAddress } from "@ethersproject/address"
 import { Contract } from "@ethersproject/contracts"
 import { BigNumber, BigNumberish, FixedNumber } from "@ethersproject/bignumber"
-import { poolTypes, stableCoins } from "constants/index"
+import { poolTypes, stableCoins, ZERO } from "constants/index"
 import { formatUnits, parseUnits, parseEther } from "@ethersproject/units"
 import { ERC20 } from "abi"
 import { useEffect, useState } from "react"
@@ -154,11 +154,11 @@ export const formatBigNumber = (value?: BigNumber, decimals = 18, fix = 6) => {
 }
 
 export const normalizeBigNumber = (
-  value: BigNumber,
+  value?: BigNumber,
   decimals = 18,
   fix?: number
 ) => {
-  const amount = formatUnits(value, decimals).toString()
+  const amount = formatUnits(value || ZERO, decimals).toString()
 
   return humanizeBigNumber(amount, fix)
 }

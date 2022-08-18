@@ -269,3 +269,13 @@ export const White = styled(TextBase)`
 export const Grey = styled(TextBase)`
   color: #5e6d8e;
 `
+
+export const ValidationError = styled.div`
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 12px;
+  color: #fc6d6d;
+  margin: 12px 0 0 3px;
+`
