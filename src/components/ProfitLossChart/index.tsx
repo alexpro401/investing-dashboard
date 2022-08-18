@@ -12,9 +12,10 @@ import {
   TIMEFRAME_FROM_DATE,
 } from "constants/history"
 
+import S from "./styled"
 import { Center } from "theme"
 import PNLTooltip from "./PNLTooltip"
-import S from "./styled"
+import TimeframeList from "components/TimeframeList"
 
 const Chart = ({ data, baseToken }) => {
   // show loading animation
@@ -87,18 +88,7 @@ const ProfitLossChart: React.FC<Props> = ({ address, baseToken }) => {
 
   return (
     <S.Container>
-      <S.ChartPeriods>
-        {Object.values(TIMEFRAMES).map((value) => (
-          <S.Period
-            key={value}
-            onClick={() => setTimeframe(value)}
-            active={timeframe === value}
-          >
-            {value}
-          </S.Period>
-        ))}
-      </S.ChartPeriods>
-
+      <TimeframeList current={timeframe} set={setTimeframe} />
       <S.Body>
         <Chart data={historyFormated} baseToken={baseTokenData} />
       </S.Body>
