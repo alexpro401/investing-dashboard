@@ -2,6 +2,9 @@ import { addDays, addMonths, addYears } from "date-fns"
 import { parseEther } from "@ethersproject/units"
 import { createStaticRanges } from "react-date-range"
 import { ISortItem } from "./interfaces"
+import { BigNumber } from "@ethersproject/bignumber"
+
+export const ZERO = BigNumber.from("0")
 
 export const poolTypes: {
   all: "ALL_POOL"

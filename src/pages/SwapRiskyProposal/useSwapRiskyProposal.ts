@@ -6,19 +6,22 @@ import {
   SetStateAction,
   useEffect,
 } from "react"
-import {
-  ExchangeForm,
-  ExchangeType,
-  RiskyProposal,
-} from "constants/interfaces_v2"
+import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
 import { SwapDirection, TradeType } from "constants/types"
 import { DATE_TIME_FORMAT } from "constants/time"
-import { BigNumber } from "@ethersproject/bignumber"
-import { parseEther } from "@ethersproject/units"
-import { useRiskyProposal } from "hooks/useRiskyProposals"
+import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
+import { parseEther, parseUnits } from "@ethersproject/units"
+import {
+  useActiveInvestmentsInfo,
+  useRiskyProposal,
+} from "hooks/useRiskyProposals"
 import { usePoolContract } from "hooks/usePool"
 import { useERC20, usePriceFeedContract } from "hooks/useContract"
-import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
+import {
+  divideBignumbers,
+  multiplyBignumbers,
+  percentageOfBignumbers,
+} from "utils/formulas"
 import useGasTracker from "state/gas/hooks"
 import { useWeb3React } from "@web3-react/core"
 import {
@@ -31,8 +34,8 @@ import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 import { format } from "date-fns"
 import usePoolPrice from "hooks/usePoolPrice"
-
-const ZERO = BigNumber.from("0")
+import { ZERO } from "constants/index"
+import useRiskyPosition from "hooks/useRiskyPosition"
 
 export interface UseSwapRiskyParams {
   poolAddress?: string
@@ -73,6 +76,14 @@ const useSwapRiskyProposal = ({
   const [isSlippageOpen, setSlippageOpen] = useState(false)
   const [isWalletPrompting, setWalletPrompting] = useState(false)
 
+  const [positionPnlLP, setPositionPnlLP] = useState(ZERO)
+  const [positionPnlUSD, setPositionPnlUSD] = useState(ZERO)
+  const [traderPnlLP, setTraderPnlLP] = useState(ZERO)
+  const [traderPnlUSD, setTraderPnlUSD] = useState(ZERO)
+  const [traderShare, setTraderShare] = useState(ZERO)
+  const [positionPnl, setPositionPnl] = useState(ZERO)
+  const [positionTokenPrice, setPositionTokenPrice] = useState(ZERO)
+  const [avgBuyingPrice, setAvgBuyingPrice] = useState(ZERO)
   const [positionAmountLP, setPositionAmountLP] = useState(ZERO)
   const [lpBalance, setLpBalance] = useState(ZERO)
   const [fromAmount, setFromAmount] = useState("0")
@@ -89,7 +100,9 @@ const useSwapRiskyProposal = ({
 
   const [proposalInfo, proposalPool, proposalAddress, updateProposalData] =
     useRiskyProposal(poolAddress, proposalId)
-  const { priceBase } = usePoolPrice(poolAddress)
+
+  const { priceUSD: poolPriceUSD, priceBase: poolPriceBase } =
+    usePoolPrice(poolAddress)
 
   const addTransaction = useTransactionAdder()
   const [, poolInfo] = usePoolContract(poolAddress)
@@ -100,12 +113,29 @@ const useSwapRiskyProposal = ({
 
   const [gasTrackerResponse, getGasPrice] = useGasTracker()
 
+  const position = useRiskyPosition({
+    proposalAddress,
+    proposalId,
+    closed: false,
+  })
+
+  const investmentsInfo = useActiveInvestmentsInfo(
+    poolAddress,
+    account,
+    proposalId
+  )
+
   const info = useMemo(() => {
     const TIMESTAMP_LIMIT =
       (proposalInfo?.proposalInfo.proposalLimits.timestampLimit.toNumber() ||
         0) * 1000
 
     return {
+      positionPnl,
+      positionPnlLP,
+      positionPnlUSD,
+      traderPnlLP,
+      traderPnlUSD,
       pool: {
         symbol: poolInfo?.ticker,
       },
@@ -120,6 +150,7 @@ const useSwapRiskyProposal = ({
       maxLPLimit: normalizeBigNumber(
         proposalInfo?.proposalInfo.proposalLimits.investLPLimit || ZERO
       ),
+      avgBuyingPrice,
       expirationDate: {
         amount: format(TIMESTAMP_LIMIT, DATE_TIME_FORMAT),
         label: format(TIMESTAMP_LIMIT, "O"),
@@ -128,7 +159,19 @@ const useSwapRiskyProposal = ({
         proposalInfo?.proposalInfo.proposalLimits.maxTokenPriceLimit || ZERO
       ),
     }
-  }, [baseToken, positionToken, proposalInfo, poolInfo, positionAmountLP])
+  }, [
+    positionPnl,
+    positionPnlLP,
+    positionPnlUSD,
+    traderPnlLP,
+    traderPnlUSD,
+    baseToken,
+    positionToken,
+    proposalInfo,
+    poolInfo,
+    positionAmountLP,
+    avgBuyingPrice,
+  ])
 
   const form = useMemo(() => {
     if (direction === "withdraw") {
@@ -375,11 +418,6 @@ const useSwapRiskyProposal = ({
     [getExchangeAmount, priceFeed]
   )
 
-  const updateRPBalance = useCallback(async () => {
-    const balance = await proposalPool?.balanceOf(account, 1)
-    setLpBalance(balance)
-  }, [proposalPool, account])
-
   const updatePositionAmountLP = useCallback(async () => {
     if (!proposalInfo || !baseToken) return
 
@@ -390,24 +428,22 @@ const useSwapRiskyProposal = ({
         ExchangeType.TO_EXACT
       )
 
-      const lpAmount = divideBignumbers([exchange[0], 18], [priceBase, 18])
+      const lpAmount = divideBignumbers([exchange[0], 18], [poolPriceBase, 18])
 
       setPositionAmountLP(lpAmount)
     } catch (e) {
       console.log(e)
     }
-  }, [proposalInfo, baseToken, getExchangeAmount, priceBase])
+  }, [proposalInfo, baseToken, getExchangeAmount, poolPriceBase])
 
   const runUpdate = useCallback(async () => {
     updateProposalData()
     await updateSwapPrice(form.to.address, parseEther("1"))
-    await updateRPBalance()
     await updatePositionAmountLP()
   }, [
     form.to.address,
     updateProposalData,
     updateSwapPrice,
-    updateRPBalance,
     updatePositionAmountLP,
   ])
 
@@ -488,10 +524,111 @@ const useSwapRiskyProposal = ({
 
   // set your share
   useEffect(() => {
-    if (!proposalPool) return
+    if (!investmentsInfo) return
+    setLpBalance(investmentsInfo.lpInvested)
+  }, [investmentsInfo])
 
-    updateRPBalance().catch(console.error)
-  }, [proposalPool, updateRPBalance])
+  useEffect(() => {
+    if (!proposalInfo) return
+
+    try {
+      const lpLocked = FixedNumber.fromValue(
+        proposalInfo.proposalInfo.lpLocked,
+        18
+      )
+      const share = FixedNumber.fromValue(traderShare, 18)
+      const pnlPercent = FixedNumber.fromValue(positionPnl, 18)
+      const oneHundredPercents = FixedNumber.from("100")
+      const priceUSD = FixedNumber.fromValue(poolPriceUSD, 18)
+
+      const shareLP = lpLocked.mulUnsafe(share)
+
+      const sharePnlLP = shareLP
+        .divUnsafe(oneHundredPercents)
+        .mulUnsafe(pnlPercent)
+      const sharePnlUSD = sharePnlLP.mulUnsafe(priceUSD)
+
+      const proposalPnlLP = lpLocked
+        .divUnsafe(oneHundredPercents)
+        .mulUnsafe(pnlPercent)
+      const proposalPnlUSD = proposalPnlLP.mulUnsafe(priceUSD)
+
+      setPositionPnlLP(parseEther(proposalPnlLP._value))
+      setPositionPnlUSD(parseEther(proposalPnlUSD._value))
+
+      setTraderPnlLP(parseEther(sharePnlLP._value))
+      setTraderPnlUSD(parseEther(sharePnlUSD._value))
+    } catch (e) {
+      console.log(e)
+    }
+  }, [proposalInfo, traderShare, positionPnl, poolPriceUSD])
+
+  /**
+   * calculate average buying price
+   */
+  useEffect(() => {
+    if (!position) return
+
+    const openBaseVolume = BigNumber.from(position.totalBaseOpenVolume)
+    const openPositionVolume = BigNumber.from(position.totalPositionOpenVolume)
+
+    const price = divideBignumbers(
+      [openBaseVolume, 18],
+      [openPositionVolume, 18]
+    )
+
+    setAvgBuyingPrice(price)
+  }, [position])
+
+  /**
+   * calculate investor share percentage
+   */
+  useEffect(() => {
+    if (!proposalInfo || !investmentsInfo) return
+
+    const share = divideBignumbers(
+      [investmentsInfo.lp2Balance, 18],
+      [proposalInfo.lp2Supply, 18]
+    )
+
+    setTraderShare(share)
+  }, [investmentsInfo, proposalInfo])
+
+  /**
+   * get position token market price
+   */
+  useEffect(() => {
+    if (!priceFeed || !proposalInfo || !poolInfo) return
+    ;(async () => {
+      try {
+        const amount = parseUnits("1", 18)
+
+        // without extended
+        const price = await priceFeed.getNormalizedExtendedPriceOut(
+          proposalInfo.proposalInfo.token,
+          poolInfo.parameters.baseToken,
+          amount,
+          []
+        )
+        if (price && price.amountOut) {
+          setPositionTokenPrice(price.amountOut)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [priceFeed, proposalInfo, poolInfo])
+
+  /**
+   * calculate position pnl percentage
+   */
+  useEffect(() => {
+    if (avgBuyingPrice.isZero() || positionTokenPrice.isZero()) return
+
+    const percent = percentageOfBignumbers(positionTokenPrice, avgBuyingPrice)
+
+    setPositionPnl(percent.sub(parseEther("100")))
+  }, [avgBuyingPrice, positionTokenPrice])
 
   // fetch swap price
   useEffect(() => {
