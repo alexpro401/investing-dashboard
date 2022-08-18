@@ -53,6 +53,11 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     poolInfo?.parameters.descriptionURL
   )
 
+  const isTrader = useMemo<boolean>(() => {
+    if (!account || !poolInfo) return false
+    return account === poolInfo.parameters.trader
+  }, [account, poolInfo])
+
   const [markPriceOpen, setMarkPriceOpenOpen] = useState(BigNumber.from(0))
   const markPriceOpenUSD = useTokenPriceOutUSD({
     tokenAddress: position.pool.token,
@@ -261,7 +266,6 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
    * Next commission epoch starts
    */
   const commissionUnlockDate = useMemo<string>(() => {
-    if (commissionUnlockTimestamp.isZero()) return "-"
     return format(
       expandTimestamp(+commissionUnlockTimestamp.toString()),
       DATE_FORMAT
@@ -321,6 +325,11 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     if (!poolInfo || !priceUSD || priceUSD.isZero()) {
       return { big: BigNumber.from("0"), format: "0" }
     }
+
+    if (isTrader) {
+      return fundsLockedInvestorUSD
+    }
+
     const usd = FixedNumber.fromValue(priceUSD, 18)
     const supply = FixedNumber.fromValue(poolInfo.lpSupply, 18)
     const traderLP = FixedNumber.fromValue(poolInfo.traderLPBalance, 18)
@@ -331,7 +340,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
       big: parseEther(res._value),
       format: formatBigNumber(parseEther(res._value), 18, 2),
     }
-  }, [poolInfo, priceUSD])
+  }, [fundsLockedInvestorUSD, isTrader, poolInfo, priceUSD])
 
   /**
    * Total account locked in pool amount in percents
@@ -417,15 +426,17 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
       try {
         const usersData = await traderPool.getUsersInfo(account, 0, 0)
         if (usersData && !!usersData.length) {
-          setCommissionUnlockTimestamp(usersData[0].commissionUnlockTimestamp)
-          setOwedBaseCommission(usersData[0].owedBaseCommission)
-          _setTotalAccountInvestedLP(usersData[0].poolLPBalance)
+          setCommissionUnlockTimestamp(
+            usersData[isTrader ? 1 : 0].commissionUnlockTimestamp
+          )
+          setOwedBaseCommission(usersData[isTrader ? 1 : 0].owedBaseCommission)
+          _setTotalAccountInvestedLP(usersData[isTrader ? 1 : 0].poolLPBalance)
         }
       } catch (error) {
         console.error(error)
       }
     })()
-  }, [traderPool, position, account])
+  }, [isTrader, traderPool, position, account])
 
   // fetch investor commission amount is usd
   useEffect(() => {
