@@ -85,6 +85,7 @@ export interface IPriceHistoryQuery {
 /// @param baseAndPositionBalances the array of balances. [0] is the balance of base tokens (array is normalized)
 /// @param totalPoolUSD is the current USD TVL in this pool
 /// @param traderBase is amount of trader base tokens in this pool
+/// @param traderLPBalance is amount of trader LP tokens in this pool
 /// @param lpEmission is the current number of LP tokens
 export interface PoolInfo {
   baseAndPositionBalances: BigNumber[]
@@ -97,6 +98,7 @@ export interface PoolInfo {
   totalPoolBase: BigNumber
   totalPoolUSD: BigNumber
   traderBase: BigNumber
+  traderLPBalance: BigNumber
   parameters: PoolParameters
 }
 
@@ -163,6 +165,16 @@ export interface IRiskyPosition {
   totalUSDCloseVolume: BigNumber
 }
 
+export interface IRiskyPositionExchange {
+  id: string
+  timestamp: string
+  fromToken: string
+  toToken: string
+  fromVolume: BigNumber
+  toVolume: BigNumber
+  usdVolume: BigNumber
+}
+
 export interface IRiskyProposal {
   token: string
   basicPool: {
@@ -183,16 +195,7 @@ export interface IRiskyPositionCard extends IRiskyPosition {
     id: string
     baseToken: string
   }
-}
-
-export interface IRiskyPositionExchange {
-  id: string
-  timestamp: string
-  fromToken: string
-  toToken: string
-  fromVolume: BigNumber
-  toVolume: BigNumber
-  usdVolume: BigNumber
+  exchanges: IRiskyPositionExchange[]
 }
 
 // Invest proposals
@@ -332,26 +335,6 @@ export interface IFundFeeHistory {
     id: string
     baseToken: string
   }
-}
-
-interface InvestProposalLimits {
-  timestampLimit: BigNumber
-  investLPLimit: BigNumber
-}
-
-interface InvestProposalInfo {
-  descriptionURL: string
-  proposalLimits: InvestProposalLimits
-  lpLocked: BigNumber
-  investedBase: BigNumber
-  newInvestedBase: BigNumber
-}
-
-export interface InvestProposal {
-  id: any
-  closed: any
-  proposalInfo: InvestProposalInfo
-  totalInvestors: BigNumber
 }
 
 interface InvestProposalLimits {

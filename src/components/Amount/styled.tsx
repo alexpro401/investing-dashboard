@@ -31,5 +31,4 @@ export const Title = styled.div`
   line-height: 16px;
   color: #788ab4;
   margin-right: 8px;
-  width: 100%;
 `

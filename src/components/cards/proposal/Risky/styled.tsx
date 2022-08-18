@@ -108,6 +108,7 @@ export const SettingsStyled = {
     }
   `,
   Row: styled.div<{ minInputW?: string }>`
+    width: 100%;
     display: grid;
     grid-template-columns:
       max-content
