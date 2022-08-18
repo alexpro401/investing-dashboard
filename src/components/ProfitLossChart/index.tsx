@@ -3,10 +3,14 @@ import { PulseSpinner } from "react-spinners-kit"
 import { AreaChart, Area, Tooltip, ResponsiveContainer } from "recharts"
 import { useERC20 } from "hooks/useContract"
 
-import { daysAgoTimestamp } from "utils"
 import { formateChartData } from "utils/formulas"
 import { usePriceHistory } from "state/pools/hooks"
-import { AGREGATION_CODES, TIMEFRAMES } from "constants/history"
+import {
+  TIMEFRAMES,
+  TIMEFRAME_AGREGATION_CODES,
+  TIMEFRAME_LIMIT_CODE,
+  TIMEFRAME_FROM_DATE,
+} from "constants/history"
 
 import { Center } from "theme"
 import PNLTooltip from "./PNLTooltip"
@@ -62,51 +66,6 @@ const Chart = ({ data, baseToken }) => {
       </AreaChart>
     </ResponsiveContainer>
   )
-}
-
-// Mapping timeframes to agregation codes
-const TIMEFRAME_AGREGATION_CODES = {
-  ["D"]: [AGREGATION_CODES["5min"], AGREGATION_CODES["15min"]],
-  ["W"]: [AGREGATION_CODES["1h"], AGREGATION_CODES["2h"]],
-  ["M"]: [AGREGATION_CODES["4h"], AGREGATION_CODES["6h"]],
-  ["3M"]: [
-    AGREGATION_CODES["12h"] - AGREGATION_CODES["2h"],
-    AGREGATION_CODES["24h"],
-  ],
-  ["6M"]: [
-    AGREGATION_CODES["12h"] - AGREGATION_CODES["2h"],
-    AGREGATION_CODES["12h"] + AGREGATION_CODES["24h"],
-  ],
-  ["1Y"]: [
-    AGREGATION_CODES["12h"] + AGREGATION_CODES["2h"],
-    AGREGATION_CODES["24h"] + AGREGATION_CODES["12h"],
-  ],
-  ["ALL"]: [AGREGATION_CODES["24h"], AGREGATION_CODES["1m"]],
-}
-
-/**
- * Mapping timeframes to collection length limits
- */
-const TIMEFRAME_LIMIT_CODE = {
-  ["D"]: 96, // 24h * (1h / TIMEFRAME_MIN_CODE["D"])
-  ["W"]: 112, // (24h * 7d) / TIMEFRAME_MIN_CODE["W"]
-  ["M"]: 124, // (24h * 31d) / TIMEFRAME_MIN_CODE["M"]
-  ["3M"]: 93,
-  ["6M"]: 124,
-  ["1Y"]: 124,
-  ["ALL"]: 1000,
-}
-/**
- * Mapping timeframes to fromDate value
- */
-const TIMEFRAME_FROM_DATE = {
-  ["D"]: daysAgoTimestamp(1),
-  ["W"]: daysAgoTimestamp(7),
-  ["M"]: daysAgoTimestamp(31),
-  ["3M"]: daysAgoTimestamp(93),
-  ["6M"]: daysAgoTimestamp(186),
-  ["1Y"]: daysAgoTimestamp(365),
-  ["ALL"]: null,
 }
 
 interface Props {

@@ -27,7 +27,7 @@ const PRICE_HISTORY_FULL = (startDate) => `
     where: { 
       aggregationType_gte: $minTimeframe,
       aggregationType_lte: $maxTimeframe,
-      ${startDate !== null ? "timestamp_gte: $startDate" : ""}
+      ${startDate !== 0 ? "timestamp_gte: $startDate" : ""}
     }
   ) {
     ${PRICE_HISTORY}
