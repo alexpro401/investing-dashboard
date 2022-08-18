@@ -328,7 +328,9 @@ const RiskyProposalCard: FC<Props> = ({
     (e?: MouseEvent<HTMLButtonElement | MouseEvent>): void => {
       if (e) e.stopPropagation()
       if (isTrader) {
-        navigate(`/swap-risky-proposal/${poolAddress}/${proposalId - 1}/invest`)
+        navigate(
+          `/swap-risky-proposal/${poolAddress}/${proposalId - 1}/deposit`
+        )
       } else {
         navigate(`/invest-risky-proposal/${poolAddress}/${proposalId - 1}`)
       }

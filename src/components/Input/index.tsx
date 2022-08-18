@@ -136,6 +136,7 @@ const Input: FC<Props> = ({
         variants={inputVariants}
         onFocus={() => setLabelActive(true)}
         onBlur={onBlur}
+        onWheel={(e: any) => e.target.blur()}
         ref={fieldRef}
         placeholder={placeholder}
       />

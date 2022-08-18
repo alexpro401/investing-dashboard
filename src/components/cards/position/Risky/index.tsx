@@ -269,7 +269,9 @@ const RiskyPositionCard: React.FC<Props> = ({
       e.stopPropagation()
       const proposalId = getProposalId(position.id)
       if (proposalId < 0) return
-      navigate(`/invest-risky-proposal/${position.pool.id}/${proposalId + 1}`)
+      navigate(
+        `/swap-risky-proposal/${position.pool.id}/${proposalId - 1}/deposit`
+      )
     },
     [navigate, position]
   )
@@ -283,7 +285,9 @@ const RiskyPositionCard: React.FC<Props> = ({
       e.stopPropagation()
       const proposalId = getProposalId(position.id)
       if (proposalId < 0) return
-      navigate(`/invest-risky-proposal/${position.pool.id}/${proposalId + 1}`)
+      navigate(
+        `/swap-risky-proposal/${position.pool.id}/${proposalId - 1}/withdraw`
+      )
     },
     [navigate, position]
   )

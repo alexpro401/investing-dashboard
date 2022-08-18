@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { BigNumber } from "@ethersproject/bignumber"
 import { ReactNode } from "react"
+import { TokenData } from "constants/types"
 
 declare global {
   namespace NodeJS {
@@ -446,18 +447,25 @@ interface FormElement<T = void> {
   decimals?: number
   icon?: ReactNode
   price: BigNumber
-  info?: T
 }
 
 export interface RiskyInvestInfo {
-  stakeLimit?: BigNumber
-  tokens?: Array<string>
-  amounts?: BigNumber[]
+  stakeLimit: BigNumber | undefined
+  tokens: {
+    base: TokenData | null
+    position: TokenData | null
+  }
+  amounts: BigNumber[]
+  avgBuyingPrice: BigNumber
+  avgSellingPrice: BigNumber
+  positionPnl: BigNumber
+  investorPnlLP: BigNumber
+  investorPnlUSD: BigNumber
 }
 
 export interface RiskyForm {
-  from: FormElement<RiskyInvestInfo>
-  to: FormElement<RiskyInvestInfo>
+  from: FormElement
+  to: FormElement
 }
 
 export interface ExchangeForm {
