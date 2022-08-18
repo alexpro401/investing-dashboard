@@ -13,6 +13,7 @@ import { useTraderPool } from "hooks/usePool"
 import { addInvestProposalMetadata } from "utils/ipfs"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
+import { DATE_TIME_FORMAT } from "constants/time"
 import {
   shortTimestamp,
   expandTimestamp,
@@ -158,7 +159,7 @@ const CreateInvestmentProposal: FC = () => {
       )
 
       const receipt = await addTransaction(createReceipt, {
-        type: TransactionType.CREATE_INVEST_PROPOSAL,
+        type: TransactionType.INVEST_PROPOSAL_CREATE,
         amount,
         ipfsPath: ipfsReceipt.path,
         investLpAmountRaw: investLPLimitHex,
@@ -253,7 +254,7 @@ const CreateInvestmentProposal: FC = () => {
                   value=""
                   placeholder={format(
                     expandTimestamp(timestampLimit),
-                    "MM.dd.yyyy, HH:mm"
+                    DATE_TIME_FORMAT
                   )}
                   onClick={() => setDateOpen(!isDateOpen)}
                 />

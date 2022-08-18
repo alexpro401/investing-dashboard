@@ -7,6 +7,7 @@ import { useActiveWeb3React } from "hooks"
 import { SupportedChainId } from "constants/chains"
 import { expandTimestamp, formatBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
+import { DATE_TIME_FORMAT } from "constants/time"
 
 import S from "./styled"
 
@@ -37,6 +38,7 @@ const PositionTrade: React.FC<Props> = ({
   const href = useMemo(() => {
     if (data && chainId) {
       const hash = data.hash ?? data.id
+
       return getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)
     }
 
@@ -45,12 +47,12 @@ const PositionTrade: React.FC<Props> = ({
 
   const date = useMemo(() => {
     if (!timestamp) return "0"
-    return format(expandTimestamp(Number(timestamp)), "MMM dd, y HH:mm")
+    return format(expandTimestamp(Number(timestamp)), DATE_TIME_FORMAT)
   }, [timestamp])
 
   const volume = useMemo(() => {
     if (!amount) return "0"
-    return formatBigNumber(amount, 18, 5)
+    return formatBigNumber(amount, 18, 6)
   }, [amount])
 
   const priceBaseToken = useMemo(() => {

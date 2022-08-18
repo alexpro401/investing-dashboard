@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { BigNumber } from "@ethersproject/bignumber"
 import { ReactNode } from "react"
+import { TokenData } from "constants/types"
 
 declare global {
   namespace NodeJS {
@@ -17,6 +18,7 @@ declare global {
       REACT_APP_BASIC_POOLS_API_URL: string
       REACT_APP_INVEST_POOLS_API_URL: string
       REACT_APP_INVESTORS_API_URL: string
+      REACT_APP_INTERACTIONS_API_URL: string
 
       REACT_APP_IPFS_PROJECT_ID: string
       REACT_APP_IPFS_PROJECT_SECRET: string
@@ -83,6 +85,7 @@ export interface IPriceHistoryQuery {
 /// @param baseAndPositionBalances the array of balances. [0] is the balance of base tokens (array is normalized)
 /// @param totalPoolUSD is the current USD TVL in this pool
 /// @param traderBase is amount of trader base tokens in this pool
+/// @param traderLPBalance is amount of trader LP tokens in this pool
 /// @param lpEmission is the current number of LP tokens
 export interface PoolInfo {
   baseAndPositionBalances: BigNumber[]
@@ -95,6 +98,7 @@ export interface PoolInfo {
   totalPoolBase: BigNumber
   totalPoolUSD: BigNumber
   traderBase: BigNumber
+  traderLPBalance: BigNumber
   parameters: PoolParameters
 }
 
@@ -132,6 +136,15 @@ interface RiskyProposalInfo {
   tokenDecimals: BigNumber
 }
 
+export interface RiskyProposalInvestmentsInfo {
+  baseInvested: BigNumber
+  baseShare: BigNumber
+  lp2Balance: BigNumber
+  lpInvested: BigNumber
+  positionShare: BigNumber
+  proposalId: BigNumber
+}
+
 export interface RiskyProposal {
   lp2Supply: BigNumber
   proposalInfo: RiskyProposalInfo
@@ -150,6 +163,16 @@ export interface IRiskyPosition {
   totalPositionCloseVolume: BigNumber
   totalUSDOpenVolume: BigNumber
   totalUSDCloseVolume: BigNumber
+}
+
+export interface IRiskyPositionExchange {
+  id: string
+  timestamp: string
+  fromToken: string
+  toToken: string
+  fromVolume: BigNumber
+  toVolume: BigNumber
+  usdVolume: BigNumber
 }
 
 export interface IRiskyProposal {
@@ -172,16 +195,7 @@ export interface IRiskyPositionCard extends IRiskyPosition {
     id: string
     baseToken: string
   }
-}
-
-export interface IRiskyPositionExchange {
-  id: string
-  timestamp: string
-  fromToken: string
-  toToken: string
-  fromVolume: BigNumber
-  toVolume: BigNumber
-  usdVolume: BigNumber
+  exchanges: IRiskyPositionExchange[]
 }
 
 // Invest proposals
@@ -343,26 +357,6 @@ export interface InvestProposal {
   totalInvestors: BigNumber
 }
 
-interface InvestProposalLimits {
-  timestampLimit: BigNumber
-  investLPLimit: BigNumber
-}
-
-interface InvestProposalInfo {
-  descriptionURL: string
-  proposalLimits: InvestProposalLimits
-  lpLocked: BigNumber
-  investedBase: BigNumber
-  newInvestedBase: BigNumber
-}
-
-export interface InvestProposal {
-  id: any
-  closed: any
-  proposalInfo: InvestProposalInfo
-  totalInvestors: BigNumber
-}
-
 /// @notice The struct that is returned from the TraderPoolView contract and stores information about the trader leverage
 /// @param totalPoolUSDWithProposals the total USD value of the pool
 /// @param traderLeverageUSDTokens the maximal amount of USD that the trader is allowed to own
@@ -435,18 +429,25 @@ interface FormElement<T = void> {
   decimals?: number
   icon?: ReactNode
   price: BigNumber
-  info?: T
 }
 
 export interface RiskyInvestInfo {
-  stakeLimit?: BigNumber
-  tokens?: Array<string>
-  amounts?: BigNumber[]
+  stakeLimit: BigNumber | undefined
+  tokens: {
+    base: TokenData | null
+    position: TokenData | null
+  }
+  amounts: BigNumber[]
+  avgBuyingPrice: BigNumber
+  avgSellingPrice: BigNumber
+  positionPnl: BigNumber
+  investorPnlLP: BigNumber
+  investorPnlUSD: BigNumber
 }
 
 export interface RiskyForm {
-  from: FormElement<RiskyInvestInfo>
-  to: FormElement<RiskyInvestInfo>
+  from: FormElement
+  to: FormElement
 }
 
 export interface ExchangeForm {

@@ -35,6 +35,7 @@ import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import { dropdownVariants } from "motion/variants"
+import { DATE_TIME_FORMAT } from "constants/time"
 
 import back from "assets/icons/angle-left.svg"
 import close from "assets/icons/close-big.svg"
@@ -65,6 +66,7 @@ import {
   Label,
   White,
   Grey,
+  ValidationError,
 } from "./styled"
 
 const poolsClient = createClient({
@@ -79,10 +81,11 @@ const CreateRiskyProposal: FC = () => {
   const [
     {
       error,
+      validationErrors,
       proposalCount,
       isSubmiting,
       lpAvailable,
-      baseTokenPrice,
+      positionPrice,
       lpAmount,
       timestampLimit,
       investLPLimit,
@@ -128,8 +131,16 @@ const CreateRiskyProposal: FC = () => {
   }
 
   const handleSwapRedirect = () => {
-    navigate(`swap-risky-proposal/${poolAddress}/${proposalCount - 1}/deposit`)
+    navigate(`/swap-risky-proposal/${poolAddress}/${proposalCount - 1}/deposit`)
     setSubmiting(SubmitState.IDLE)
+  }
+
+  const getFieldErrors = (name: string) => {
+    return validationErrors
+      .filter((error) => error.field === name)
+      .map((error) => (
+        <ValidationError key={error.field}>{error.message}</ValidationError>
+      ))
   }
 
   const stepComponents = {
@@ -229,7 +240,7 @@ const CreateRiskyProposal: FC = () => {
                 value=""
                 placeholder={format(
                   expandTimestamp(timestampLimit),
-                  "MM.dd.yyyy, HH:mm"
+                  DATE_TIME_FORMAT
                 )}
                 onClick={() => setDateOpen(!isDateOpen)}
               />
@@ -256,6 +267,7 @@ const CreateRiskyProposal: FC = () => {
                   </Flex>
                 }
               />
+              {getFieldErrors("investLPLimit")}
             </Row>
             <Row>
               <Label
@@ -273,9 +285,9 @@ const CreateRiskyProposal: FC = () => {
                 rightIcon={
                   <Flex>
                     <White>
-                      {baseTokenPrice &&
+                      {positionPrice &&
                         normalizeBigNumber(
-                          baseTokenPrice,
+                          positionPrice,
                           baseTokenData?.decimals,
                           4
                         )}
@@ -284,6 +296,7 @@ const CreateRiskyProposal: FC = () => {
                   </Flex>
                 }
               />
+              {getFieldErrors("maxTokenPriceLimit")}
             </Row>
             <Flex full p="53px 0 0">
               <SubTitle>Own investing settings</SubTitle>
@@ -308,6 +321,7 @@ const CreateRiskyProposal: FC = () => {
                   </Flex>
                 }
               />
+              {getFieldErrors("lpAmount")}
             </Row>
             <Row
               initial="hidden"

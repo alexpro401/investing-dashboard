@@ -46,7 +46,7 @@ const Styled = {
     width: 100%;
     padding: 12px 16px;
     display: grid;
-    grid-template-columns: repeat(3, minmax(min-content, 0.33fr));
+    grid-template-columns: 0.34fr 0.38fr 0.28fr;
     grid-template-rows: 1fr;
     grid-column-gap: 12px;
     overflow-x: auto;
@@ -132,11 +132,9 @@ export const BodyItemStyled = {
 const getAmountSymbol = (amount) => {
   if (amount > 0) {
     return "+"
-  } else if (amount < 0) {
-    return "-"
-  } else {
-    return null
   }
+
+  return ""
 }
 
 interface IBodyItemProps {

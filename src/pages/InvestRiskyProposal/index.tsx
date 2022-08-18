@@ -30,15 +30,17 @@ import {
 import useInvestRiskyProposal from "./useInvestRiskyProposal"
 import { useMemo } from "react"
 import SwapPrice from "components/SwapPrice"
+import { normalizeBigNumber } from "utils"
 
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
+const basicClient = createClient({
+  url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
 })
 
 function InvestRiskyProposal() {
   const { poolAddress, proposalId } = useParams()
   const [
     {
+      info,
       formWithDirection,
       isSlippageOpen,
       oneTokenCost,
@@ -99,33 +101,35 @@ function InvestRiskyProposal() {
   const myPNL = useMemo(() => {
     return (
       <Flex gap="4">
-        <InfoWhite>+12.72 ISDX</InfoWhite>
-        <InfoGrey>(+37.18%)</InfoGrey>
+        <InfoWhite>
+          {normalizeBigNumber(info.investorPnlLP, 18, 4)}{" "}
+          {direction === "deposit"
+            ? formWithDirection.from.symbol
+            : formWithDirection.to.symbol}
+        </InfoWhite>
+        <InfoGrey>({normalizeBigNumber(info.positionPnl, 18, 2)}%)</InfoGrey>
       </Flex>
     )
-  }, [])
+  }, [
+    direction,
+    formWithDirection.from.symbol,
+    formWithDirection.to.symbol,
+    info,
+  ])
 
   const myPNLContent = useMemo(() => {
     return (
       <>
         <InfoRow>
           <InfoGrey>in USD</InfoGrey>
-          <InfoGrey>+1260 USD (+27.18%) </InfoGrey>
-        </InfoRow>
-        <InfoRow>
-          <InfoGrey>Trader P&L</InfoGrey>
-          <Flex gap="4">
-            <InfoWhite>2.11 ISDX </InfoWhite>
-            <InfoGrey>(+14%)</InfoGrey>
-          </Flex>
-        </InfoRow>
-        <InfoRow>
-          <InfoGrey>in USD</InfoGrey>
-          <InfoGrey>+1260 USD (+27.18%) </InfoGrey>
+          <InfoGrey>
+            {normalizeBigNumber(info.investorPnlUSD, 18, 2)} USD (
+            {normalizeBigNumber(info.positionPnl, 18, 2)}%){" "}
+          </InfoGrey>
         </InfoRow>
       </>
     )
-  }, [])
+  }, [info.investorPnlUSD, info.positionPnl])
 
   const averagePrice = useMemo(() => {
     if (direction === "deposit") {
@@ -133,8 +137,10 @@ function InvestRiskyProposal() {
         <InfoRow>
           <InfoGrey>Average buying price</InfoGrey>
           <Flex gap="4">
-            <InfoWhite>0.01289</InfoWhite>
-            <InfoGrey>WBNB</InfoGrey>
+            <InfoWhite>{normalizeBigNumber(info.avgBuyingPrice)}</InfoWhite>
+            <InfoGrey>
+              {info.tokens.position?.symbol}/{info.tokens.base?.symbol}
+            </InfoGrey>
           </Flex>
         </InfoRow>
       )
@@ -144,12 +150,14 @@ function InvestRiskyProposal() {
       <InfoRow>
         <InfoGrey>Average selling price</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>0.01289 </InfoWhite>
-          <InfoGrey>WBNB</InfoGrey>
+          <InfoWhite>{normalizeBigNumber(info.avgSellingPrice)}</InfoWhite>
+          <InfoGrey>
+            {info.tokens.position?.symbol}/{info.tokens.base?.symbol}
+          </InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [direction])
+  }, [direction, info])
 
   const form = (
     <Card>
@@ -183,7 +191,7 @@ function InvestRiskyProposal() {
       ) : (
         <RiskyInvestInput
           price={formWithDirection.from.price}
-          info={formWithDirection.from.info}
+          info={info}
           amount={formWithDirection.from.amount}
           address={formWithDirection.from.address}
           balance={formWithDirection.from.balance}
@@ -202,7 +210,7 @@ function InvestRiskyProposal() {
       {direction === "deposit" ? (
         <RiskyInvestInput
           price={formWithDirection.to.price}
-          info={formWithDirection.to.info}
+          info={info}
           amount={formWithDirection.to.amount}
           address={formWithDirection.to.address}
           balance={formWithDirection.to.balance}
@@ -267,7 +275,7 @@ function InvestRiskyProposal() {
 
 const InvestRiskyProposalWithProvider = () => {
   return (
-    <GraphProvider value={poolsClient}>
+    <GraphProvider value={basicClient}>
       <InvestRiskyProposal />
     </GraphProvider>
   )

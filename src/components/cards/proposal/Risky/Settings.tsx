@@ -23,8 +23,9 @@ import DatePicker from "components/DatePicker"
 import Button, { SecondaryButton } from "components/Button"
 
 import { Flex } from "theme"
-import { SettingsStyled as S } from "./styled"
 import { accordionSummaryVariants } from "motion/variants"
+import { DATE_TIME_FORMAT } from "constants/time"
+import { SettingsStyled as S } from "./styled"
 
 interface Values {
   timestampLimit: number
@@ -43,7 +44,10 @@ const useUpdateRiskyProposal = ({
   maxSizeLP,
   maxInvestPrice,
 }): [Values, Handlers] => {
-  const [timestampLimit, setTimestampLimit] = useState<number>(timestamp)
+  const [timestampLimit, setTimestampLimit] = useState<number>(
+    timestamp.toString()
+  )
+
   const [investLPLimit, setInvestLPLimit] = useState<string>(
     normalizeBigNumber(maxSizeLP, 18, 6)
   )
@@ -61,13 +65,14 @@ interface Props {
   visible: boolean
   setVisible: Dispatch<SetStateAction<boolean>>
 
-  timestamp: string
+  timestamp: BigNumber
   maxSizeLP: BigNumber
   maxInvestPrice: BigNumber
   fullness: BigNumber
   currentPrice: BigNumber
   proposalPool: Contract
   proposalId: number
+  proposalSymbol?: string
   successCallback: (
     timestamp: number,
     maxSize: BigNumber,
@@ -94,6 +99,7 @@ const RiskyCardSettings: FC<Props> = ({
   currentPrice,
   proposalPool,
   proposalId,
+  proposalSymbol,
   successCallback,
 }) => {
   const addTransaction = useTransactionAdder()
@@ -196,7 +202,7 @@ const RiskyCardSettings: FC<Props> = ({
         )
 
         const tx = await addTransaction(receipt, {
-          type: TransactionType.EDIT_RISKY_PROPOSAL,
+          type: TransactionType.RISKY_PROPOSAL_EDIT,
         })
 
         if (isTxMined(tx)) {
@@ -237,13 +243,10 @@ const RiskyCardSettings: FC<Props> = ({
               disabled
               theme="grey"
               size="small"
-              value={format(
-                expandTimestamp(timestampLimit),
-                "MMM.dd.yyyy, HH:mm"
-              )}
+              value={format(expandTimestamp(timestampLimit), DATE_TIME_FORMAT)}
               placeholder={format(
                 expandTimestamp(timestampLimit),
-                "MMM.dd.yyyy, HH:mm"
+                DATE_TIME_FORMAT
               )}
               onClick={() => setDateOpen(!isDateOpen)}
             />
@@ -257,7 +260,7 @@ const RiskyCardSettings: FC<Props> = ({
           </div>
           <S.InputType>GMT</S.InputType>
         </S.Row>
-        <Flex dir="column" m="12px 0">
+        <Flex full dir="column" m="12px 0">
           <S.Row minInputW="79px">
             <Tooltip id="rp-available-staking">Staking</Tooltip>
             <S.Title>LPs available for staking</S.Title>
@@ -271,13 +274,13 @@ const RiskyCardSettings: FC<Props> = ({
               onChange={(v) => setInvestLPLimit(v)}
               error={errors.investLPLimit !== null}
             />
-            <S.InputType>TRX</S.InputType>
+            <S.InputType>LP</S.InputType>
           </S.Row>
           {errors.investLPLimit !== null && (
             <S.ErrorMessage>{errors.investLPLimit}</S.ErrorMessage>
           )}
         </Flex>
-        <Flex dir="column" m="12px 0">
+        <Flex full dir="column" m="12px 0">
           <S.Row>
             <Tooltip id="rp-max-invest">Maximum invest price</Tooltip>
             <S.Title>Maximum invest price</S.Title>
@@ -291,7 +294,7 @@ const RiskyCardSettings: FC<Props> = ({
               onChange={(v) => setMaxTokenPriceLimit(v)}
               error={errors.maxTokenPriceLimit !== null}
             />
-            <S.InputType>TRX</S.InputType>
+            <S.InputType>{proposalSymbol}</S.InputType>
           </S.Row>
           {errors.maxTokenPriceLimit !== null && (
             <S.ErrorMessage>{errors.maxTokenPriceLimit}</S.ErrorMessage>

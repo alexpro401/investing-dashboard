@@ -3,7 +3,10 @@ import { useRiskyProposalContract } from "hooks/useContract"
 import { Contract } from "@ethersproject/contracts"
 import debounce from "lodash.debounce"
 
-import { RiskyProposal } from "constants/interfaces_v2"
+import {
+  RiskyProposal,
+  RiskyProposalInvestmentsInfo,
+} from "constants/interfaces_v2"
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
 
 export function useRiskyProposals(
@@ -14,13 +17,13 @@ export function useRiskyProposals(
   const [fetching, setFetching] = useState<boolean>(true)
   const [allFetched, setAllFetched] = useState<boolean>(false)
 
-  const [traderPoolRiskyProposal] = useRiskyProposalContract(poolAddress)
+  const [riskyProposal] = useRiskyProposalContract(poolAddress)
 
   const fetchProposals = useCallback(async () => {
-    if (traderPoolRiskyProposal !== null && !allFetched) {
+    if (riskyProposal !== null && !allFetched) {
       setFetching(true)
       try {
-        const data = await traderPoolRiskyProposal.getProposalInfos(
+        const data = await riskyProposal.getProposalInfos(
           offset,
           DEFAULT_PAGINATION_COUNT
         )
@@ -37,12 +40,12 @@ export function useRiskyProposals(
         setFetching(false)
       }
     }
-  }, [allFetched, offset, traderPoolRiskyProposal])
+  }, [allFetched, offset, riskyProposal])
 
   useEffect(() => {
-    if (!traderPoolRiskyProposal || proposals.length > 0) return
+    if (!riskyProposal || proposals.length > 0) return
     fetchProposals()
-  }, [traderPoolRiskyProposal])
+  }, [riskyProposal])
 
   return [{ data: proposals, loading: fetching }, debounce(fetchProposals, 100)]
 }
@@ -53,25 +56,51 @@ export function useRiskyProposal(
 ): [RiskyProposal | undefined, Contract | null, string, () => void] {
   const [proposal, setProposal] = useState<RiskyProposal | undefined>()
   const [update, setUpdate] = useState(false)
-  const [traderPoolRiskyProposal, proposalAddress] =
-    useRiskyProposalContract(poolAddress)
+  const [riskyProposal, proposalAddress] = useRiskyProposalContract(poolAddress)
 
   const refresh = useCallback(() => {
     setUpdate(!update)
   }, [update])
 
   useEffect(() => {
-    if (!traderPoolRiskyProposal || !index) return
+    if (!riskyProposal || !index) return
     ;(async () => {
-      const data = await traderPoolRiskyProposal.getProposalInfos(
+      const data = await riskyProposal.getProposalInfos(
         index,
         parseFloat(index) + 1
       )
       setProposal(data[0])
     })()
-  }, [index, traderPoolRiskyProposal, update])
+  }, [index, riskyProposal, update])
 
-  return [proposal, traderPoolRiskyProposal, proposalAddress, refresh]
+  return [proposal, riskyProposal, proposalAddress, refresh]
+}
+
+export function useActiveInvestmentsInfo(
+  poolAddress?: string,
+  account?: string | null | undefined,
+  index?: string
+) {
+  const [info, setInfo] = useState<RiskyProposalInvestmentsInfo | undefined>()
+  const [riskyProposal] = useRiskyProposalContract(poolAddress)
+
+  useEffect(() => {
+    if (!riskyProposal || !index || !account) return
+    ;(async () => {
+      try {
+        const data = await riskyProposal.getActiveInvestmentsInfo(
+          account,
+          index,
+          1
+        )
+        if (data.length) {
+          setInfo(data[0])
+        }
+      } catch {}
+    })()
+  }, [riskyProposal, index, account])
+
+  return info
 }
 
 export default useRiskyProposals

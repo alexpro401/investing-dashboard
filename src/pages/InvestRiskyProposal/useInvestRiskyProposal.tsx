@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react"
 import { isTxMined, parseTransactionError } from "utils"
 
 import { useWeb3React } from "@web3-react/core"
-import { BigNumber } from "@ethersproject/bignumber"
+import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 
 import Icon from "components/Icon"
 
@@ -11,7 +11,11 @@ import { TransactionType } from "state/transactions/types"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { SwapDirection } from "constants/types"
 
-import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
+import {
+  divideBignumbers,
+  multiplyBignumbers,
+  percentageOfBignumbers,
+} from "utils/formulas"
 
 import {
   IDivestAmounts,
@@ -23,24 +27,32 @@ import {
 } from "interfaces/ITraderPool"
 
 import useAlert, { AlertType } from "hooks/useAlert"
-import { useRiskyProposal } from "hooks/useRiskyProposals"
+import {
+  useActiveInvestmentsInfo,
+  useRiskyProposal,
+} from "hooks/useRiskyProposals"
 import { usePoolContract } from "hooks/usePool"
 import {
   useBasicPoolContract,
   useERC20,
+  usePriceFeedContract,
   useRiskyProposalContract,
   useTraderPoolContract,
 } from "hooks/useContract"
-import { RiskyForm } from "constants/interfaces_v2"
+import { RiskyForm, RiskyInvestInfo } from "constants/interfaces_v2"
 import usePoolPrice from "hooks/usePoolPrice"
 import useRiskyPrice from "hooks/useRiskyPrice"
 import useGasTracker from "state/gas/hooks"
+import { parseEther, parseUnits } from "@ethersproject/units"
+import { ZERO } from "constants/index"
+import useRiskyPosition from "hooks/useRiskyPosition"
 
 const useInvestRiskyProposal = (
   poolAddress?: string,
   proposalId?: string
 ): [
   {
+    info: RiskyInvestInfo
     formWithDirection: RiskyForm
     isSlippageOpen: boolean
     fromBalance: BigNumber
@@ -78,10 +90,17 @@ const useInvestRiskyProposal = (
   const [showAlert] = useAlert()
   const [, getGasPrice] = useGasTracker()
 
-  const [toBalance, setToBalance] = useState(BigNumber.from("0"))
-  const [fromBalance, setFromBalance] = useState(BigNumber.from("0"))
-  const [inPrice, setInPrice] = useState(BigNumber.from("0"))
-  const [outPrice, setOutPrice] = useState(BigNumber.from("0"))
+  const [investorPnlUSD, setInvestorPnlUSD] = useState(ZERO)
+  const [investorPnlLP, setInvestorPnlLP] = useState(ZERO)
+  const [investorShare, setInvestorShare] = useState(ZERO)
+  const [positionPnl, setPositionPnl] = useState(ZERO)
+  const [positionTokenPrice, setPositionTokenPrice] = useState(ZERO)
+  const [avgBuyingPrice, setAvgBuyingPrice] = useState(ZERO)
+  const [avgSellingPrice, setAvgSellingPrice] = useState(ZERO)
+  const [toBalance, setToBalance] = useState(ZERO)
+  const [fromBalance, setFromBalance] = useState(ZERO)
+  const [inPrice, setInPrice] = useState(ZERO)
+  const [outPrice, setOutPrice] = useState(ZERO)
   const [fromAmount, setFromAmount] = useState("0")
   const [toAmount, setToAmount] = useState("0")
   const [slippage, setSlippage] = useState("0.10")
@@ -89,16 +108,12 @@ const useInvestRiskyProposal = (
   const [toSelectorOpened, setToSelector] = useState(false)
   const [fromSelectorOpened, setFromSelector] = useState(false)
   const [direction, setDirection] = useState<SwapDirection>("deposit")
-  const [oneTokenCost, setOneTokenCost] = useState(BigNumber.from("0"))
-  const [usdTokenCost, setUSDTokenCost] = useState(BigNumber.from("0"))
+  const [oneTokenCost, setOneTokenCost] = useState(ZERO)
+  const [usdTokenCost, setUSDTokenCost] = useState(ZERO)
   const [gasPrice, setGasPrice] = useState("0.00")
 
-  const [baseAmountReceived, setBaseAmountReceived] = useState(
-    BigNumber.from("0")
-  )
-  const [positionAmountReceived, setPositionAmountReceived] = useState(
-    BigNumber.from("0")
-  )
+  const [baseAmountReceived, setBaseAmountReceived] = useState(ZERO)
+  const [positionAmountReceived, setPositionAmountReceived] = useState(ZERO)
 
   const [toAddress, setToAddress] = useState("")
   const [fromAddress, setFromAddress] = useState("")
@@ -109,14 +124,28 @@ const useInvestRiskyProposal = (
 
   const traderPool = useTraderPoolContract(poolAddress)
   const basicPool = useBasicPoolContract(poolAddress)
-  const [proposalPool] = useRiskyProposalContract(poolAddress)
+  const [proposalPool, proposalAddress] = useRiskyProposalContract(poolAddress)
   const [proposal] = useRiskyProposal(poolAddress, proposalId)
   const [, poolInfo] = usePoolContract(poolAddress)
+  const priceFeed = usePriceFeedContract()
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
     poolInfo?.parameters.descriptionURL
   )
 
+  const position = useRiskyPosition({
+    proposalAddress,
+    proposalId,
+    closed: false,
+  })
+
+  const investmentsInfo = useActiveInvestmentsInfo(
+    poolAddress,
+    account,
+    proposalId
+  )
+
+  const [, fromData] = useERC20(poolInfo?.parameters.baseToken)
   const [, toData] = useERC20(proposal?.proposalInfo.token)
 
   const { priceUSD: poolPriceUSD, priceBase: poolPriceBase } =
@@ -135,6 +164,33 @@ const useInvestRiskyProposal = (
       address={poolAddress}
     />
   )
+
+  const info = useMemo(() => {
+    return {
+      stakeLimit: proposal?.proposalInfo.proposalLimits.investLPLimit,
+      tokens: {
+        base: fromData,
+        position: toData,
+      },
+      amounts: [baseAmountReceived, positionAmountReceived],
+      avgBuyingPrice,
+      avgSellingPrice,
+      positionPnl,
+      investorPnlLP,
+      investorPnlUSD,
+    }
+  }, [
+    investorPnlUSD,
+    avgBuyingPrice,
+    avgSellingPrice,
+    baseAmountReceived,
+    fromData,
+    investorPnlLP,
+    positionAmountReceived,
+    positionPnl,
+    proposal,
+    toData,
+  ])
 
   const exchangeForm = useMemo(() => {
     return {
@@ -156,14 +212,6 @@ const useInvestRiskyProposal = (
           symbol: `${toData?.symbol}-LP`,
           decimals: toData?.decimals,
           icon: undefined,
-          info: {
-            stakeLimit: proposal?.proposalInfo.proposalLimits.investLPLimit,
-            tokens: [
-              poolInfo?.parameters.baseToken || "",
-              proposal?.proposalInfo.token || "",
-            ],
-            amounts: [baseAmountReceived, positionAmountReceived],
-          },
         },
       },
       withdraw: {
@@ -175,9 +223,6 @@ const useInvestRiskyProposal = (
           symbol: `${toData?.symbol}-LP`,
           decimals: toData?.decimals,
           icon: undefined,
-          info: {
-            stakeLimit: proposal?.proposalInfo.proposalLimits.investLPLimit,
-          },
         },
         to: {
           address: undefined,
@@ -191,8 +236,6 @@ const useInvestRiskyProposal = (
       },
     }
   }, [
-    baseAmountReceived,
-    positionAmountReceived,
     fromAmount,
     toAmount,
     fromBalance,
@@ -200,12 +243,122 @@ const useInvestRiskyProposal = (
     inPrice,
     outPrice,
     poolIcon,
+    toData,
     poolInfo,
     proposal,
-    toData,
   ])
 
   const formWithDirection = exchangeForm[direction]
+
+  useEffect(() => {
+    if (!proposal) return
+
+    try {
+      const lpLocked = FixedNumber.fromValue(proposal.proposalInfo.lpLocked, 18)
+      const share = FixedNumber.fromValue(investorShare, 18)
+      const pnlPercent = FixedNumber.fromValue(positionPnl, 18)
+      const oneHundredPercents = FixedNumber.from("100")
+      const priceUSD = FixedNumber.fromValue(poolPriceUSD, 18)
+
+      const shareLP = lpLocked.mulUnsafe(share)
+
+      const pnlLP = shareLP.divUnsafe(oneHundredPercents).mulUnsafe(pnlPercent)
+      const pnlUSD = pnlLP.mulUnsafe(priceUSD)
+
+      setInvestorPnlLP(parseEther(pnlLP._value))
+      setInvestorPnlUSD(parseEther(pnlUSD._value))
+    } catch (e) {
+      console.log(e)
+    }
+  }, [proposal, investorShare, positionPnl, poolPriceUSD])
+
+  /**
+   * calculate investor share percentage
+   */
+  useEffect(() => {
+    if (!proposal || !investmentsInfo) return
+
+    const share = divideBignumbers(
+      [investmentsInfo.lp2Balance, 18],
+      [proposal.lp2Supply, 18]
+    )
+
+    setInvestorShare(share)
+  }, [investmentsInfo, proposal])
+
+  /**
+   * calculate average buying price
+   */
+  useEffect(() => {
+    if (!position) return
+
+    const openBaseVolume = BigNumber.from(position.totalBaseOpenVolume)
+    const openPositionVolume = BigNumber.from(position.totalPositionOpenVolume)
+
+    const price = divideBignumbers(
+      [openBaseVolume, 18],
+      [openPositionVolume, 18]
+    )
+
+    setAvgBuyingPrice(price)
+  }, [position])
+
+  /**
+   * calculate average selling price
+   */
+  useEffect(() => {
+    if (!position) return
+
+    const closeBaseVolume = BigNumber.from(position.totalBaseCloseVolume)
+    const closePositionVolume = BigNumber.from(
+      position.totalPositionCloseVolume
+    )
+
+    if (closeBaseVolume.isZero() || closePositionVolume.isZero()) return
+
+    const price = divideBignumbers(
+      [closeBaseVolume, 18],
+      [closePositionVolume, 18]
+    )
+
+    setAvgSellingPrice(price)
+  }, [position])
+
+  /**
+   * get position token market price
+   */
+  useEffect(() => {
+    if (!priceFeed || !proposal || !poolInfo) return
+    ;(async () => {
+      try {
+        const amount = parseUnits("1", 18)
+
+        // without extended
+        const price = await priceFeed.getNormalizedExtendedPriceOut(
+          proposal.proposalInfo.token,
+          poolInfo.parameters.baseToken,
+          amount,
+          []
+        )
+        if (price && price.amountOut) {
+          setPositionTokenPrice(price.amountOut)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [priceFeed, proposal, poolInfo])
+
+  /**
+   * calculate position pnl percentage
+   */
+  useEffect(() => {
+    if (avgBuyingPrice.isZero() || positionTokenPrice.isZero()) return
+
+    const percent = percentageOfBignumbers(positionTokenPrice, avgBuyingPrice)
+
+    setPositionPnl(percent.sub(parseEther("100")))
+  }, [avgBuyingPrice, positionTokenPrice])
 
   const getLPBalance = useCallback(async () => {
     if (!traderPool || !account) return
@@ -220,19 +373,16 @@ const useInvestRiskyProposal = (
   }, [account, direction, traderPool])
 
   const getLP2Balance = useCallback(async () => {
-    if (!proposalPool || !account) return
+    if (!investmentsInfo) return
 
-    const balance = await proposalPool?.balanceOf(
-      account,
-      Number(proposalId) + 1
-    )
+    const balance = investmentsInfo.lp2Balance
 
     if (direction === "deposit") {
       setToBalance(balance)
     } else {
       setFromBalance(balance)
     }
-  }, [account, direction, proposalId, proposalPool])
+  }, [direction, investmentsInfo])
 
   const getInvestTokens = useCallback(
     async (
@@ -317,7 +467,7 @@ const useInvestRiskyProposal = (
     )
 
     return await addTransaction(investReceipt, {
-      type: TransactionType.DEPOSIT_RISKY_PROPOSAL,
+      type: TransactionType.RISKY_PROPOSAL_INVEST,
       inputCurrencyAmountRaw: invests.lp2Amount.toString(),
       inputCurrencySymbol: exchangeForm.deposit.to.symbol,
       expectedOutputCurrencyAmountRaw: amount.toString(),
@@ -346,7 +496,7 @@ const useInvestRiskyProposal = (
     )
 
     return await addTransaction(withdrawResponse, {
-      type: TransactionType.WITHDRAW_RISKY_PROPOSAL,
+      type: TransactionType.RISKY_PROPOSAL_DIVEST,
       outputCurrencyAmountRaw: amount.toString(),
       outputCurrencySymbol: exchangeForm.withdraw.from.symbol,
       expectedInputCurrencyAmountRaw: invests.lpAmount.toString(),
@@ -490,6 +640,7 @@ const useInvestRiskyProposal = (
 
   return [
     {
+      info,
       formWithDirection,
       isSlippageOpen,
       fromBalance,

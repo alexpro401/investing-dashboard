@@ -6,6 +6,7 @@ import { useERC20 } from "hooks/useContract"
 import { IPoolQuery, PoolInfo } from "constants/interfaces_v2"
 import { expandTimestamp, formatBigNumber } from "utils"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
+import { DATE_FORMAT } from "constants/time"
 
 import Emission from "components/Emission"
 import ReadMore from "components/ReadMore"
@@ -42,7 +43,7 @@ const FundDetailsCard: FC<Props> = ({ data, poolInfo, children = null }) => {
 
   const creationTime = useMemo(() => {
     if (!!data) {
-      return format(expandTimestamp(data.creationTime), "MMM dd, y")
+      return format(expandTimestamp(data.creationTime), DATE_FORMAT)
     }
 
     return "-"

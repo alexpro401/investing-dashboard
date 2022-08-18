@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react"
 import { Flex } from "theme"
 import { useParams, useNavigate, useLocation } from "react-router-dom"
+import { createClient, Provider as GraphProvider } from "urql"
 
 import SwapPrice from "components/SwapPrice"
 import IconButton from "components/IconButton"
@@ -15,6 +16,8 @@ import TransactionError from "modals/TransactionError"
 
 import settings from "assets/icons/settings.svg"
 import close from "assets/icons/close-big.svg"
+
+import { normalizeBigNumber } from "utils"
 
 import {
   Container,
@@ -34,7 +37,10 @@ import { AddButton } from "./styled"
 import useSwapRiskyProposal, {
   UseSwapRiskyParams,
 } from "./useSwapRiskyProposal"
-import { normalizeBigNumber } from "utils"
+
+const basicClient = createClient({
+  url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
+})
 
 const SwapRiskyProposal = () => {
   const params: UseSwapRiskyParams = useParams()
@@ -83,11 +89,11 @@ const SwapRiskyProposal = () => {
     }
   }, [location, navigate, params])
 
-  const handleInvestRedirect = () => {
+  const handleInvestRedirect = useCallback(() => {
     navigate(
       `/invest-risky-proposal/${params.poolAddress}/${params.proposalId}`
     )
-  }
+  }, [navigate, params])
 
   const button = useMemo(() => {
     if (from.amount === "0" || to.amount === "0") {
@@ -208,22 +214,30 @@ const SwapRiskyProposal = () => {
       <>
         <InfoRow>
           <InfoGrey>in USD</InfoGrey>
-          <InfoGrey>+1260 USD (+27.18%) </InfoGrey>
+          <InfoGrey>
+            {normalizeBigNumber(info.positionPnlUSD)} USD (
+            {normalizeBigNumber(info.positionPnl)}%){" "}
+          </InfoGrey>
         </InfoRow>
         <InfoRow>
           <InfoGrey>Trader P&L</InfoGrey>
           <Flex gap="4">
-            <InfoWhite>2.11 ISDX </InfoWhite>
-            <InfoGrey>(+14%)</InfoGrey>
+            <InfoWhite>
+              {normalizeBigNumber(info.traderPnlLP)} {info.pool.symbol}{" "}
+            </InfoWhite>
+            <InfoGrey>({normalizeBigNumber(info.positionPnl)}%)</InfoGrey>
           </Flex>
         </InfoRow>
         <InfoRow>
           <InfoGrey>in USD</InfoGrey>
-          <InfoGrey>+1260 USD (+27.18%) </InfoGrey>
+          <InfoGrey>
+            {normalizeBigNumber(info.traderPnlUSD)} USD (
+            {normalizeBigNumber(info.positionPnl)}%){" "}
+          </InfoGrey>
         </InfoRow>
       </>
     )
-  }, [])
+  }, [info])
 
   const positionPNL = useMemo(() => {
     return (
@@ -231,27 +245,31 @@ const SwapRiskyProposal = () => {
         left={<InfoGrey>Position P&L</InfoGrey>}
         right={
           <Flex gap="4">
-            <InfoWhite>+12.72 ISDX</InfoWhite>
-            <InfoGrey>(+37.18%)</InfoGrey>
+            <InfoWhite>
+              {normalizeBigNumber(info.positionPnlLP)} {info.pool.symbol}
+            </InfoWhite>
+            <InfoGrey>({normalizeBigNumber(info.positionPnl)}%)</InfoGrey>
           </Flex>
         }
       >
         {positionPNLContent}
       </InfoDropdown>
     )
-  }, [positionPNLContent])
+  }, [positionPNLContent, info])
 
   const averagePositionPrice = useMemo(() => {
     return (
       <InfoRow>
         <InfoGrey>Average position price</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>0.01289 </InfoWhite>
-          <InfoGrey>WBNB</InfoGrey>
+          <InfoWhite>{normalizeBigNumber(info.avgBuyingPrice)}</InfoWhite>
+          <InfoGrey>
+            {info.positionToken.symbol}/{info.baseToken.symbol}
+          </InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [info])
 
   const form = (
     <Card>
@@ -314,7 +332,7 @@ const SwapRiskyProposal = () => {
         {lpComplete}
         {lpLimit}
         {averagePositionPrice}
-        {/* {positionPNL} */}
+        {positionPNL}
         {expirationDate}
         {maxBuyingPrice}
       </InfoCard>
@@ -350,4 +368,12 @@ const SwapRiskyProposal = () => {
   )
 }
 
-export default SwapRiskyProposal
+const SwapRiskyProposalWithProvider = () => {
+  return (
+    <GraphProvider value={basicClient}>
+      <SwapRiskyProposal />
+    </GraphProvider>
+  )
+}
+
+export default SwapRiskyProposalWithProvider

@@ -14,37 +14,36 @@ interface SerializableTransactionReceipt {
 export enum TransactionType {
   APPROVAL = 0,
   SWAP = 1,
-  DEPOSIT_LIQUIDITY_STAKING = 2, // invest
-  WITHDRAW_LIQUIDITY_STAKING = 3, // divest
+  INVEST = 2, // deposit liquidity staking
+  DIVEST = 3, // withdraw liquidity staking
 
-  FUND_CREATE = 4,
-  FUND_EDIT = 5,
-  FUND_UPDATE_MANAGERS = 6,
-  FUND_UPDATE_INVESTORS = 7,
+  POOL_CREATE = 4,
+  POOL_EDIT = 5,
+  POOL_UPDATE_MANAGERS = 6,
+  POOL_UPDATE_INVESTORS = 7,
 
-  UPDATE_USER_CREDENTIALS = 8,
+  UPDATED_USER_CREDENTIALS = 8,
 
-  CREATE_RISKY_PROPOSAL = 9,
-  EDIT_RISKY_PROPOSAL = 10,
-  DEPOSIT_RISKY_PROPOSAL = 11,
-  WITHDRAW_RISKY_PROPOSAL = 12,
-  SWAP_RISKY_PROPOSAL = 13,
+  RISKY_PROPOSAL_CREATE = 9,
+  RISKY_PROPOSAL_EDIT = 10,
+  RISKY_PROPOSAL_INVEST = 11,
+  RISKY_PROPOSAL_DIVEST = 12,
+  RISKY_PROPOSAL_SWAP = 13,
 
-  CREATE_INVEST_PROPOSAL = 14,
-  EDIT_INVEST_PROPOSAL = 15,
-  TRADER_WITHDRAW_INVEST_PROPOSAL = 16,
-  TRADER_SUPPLY_INVEST_PROPOSAL = 17,
-  TRADER_DIVEST_INVEST_PROPOSAL = 18,
+  INVEST_PROPOSAL_CREATE = 14,
+  INVEST_PROPOSAL_EDIT = 15,
+  INVEST_PROPOSAL_INVEST = 16,
+  INVEST_PROPOSAL_WITHDRAW = 17,
+  INVEST_PROPOSAL_SUPPLY = 18,
+  INVEST_PROPOSAL_CLAIM = 19,
 
-  STAKE_INSURANCE = 19,
-  UNSTAKE_INSURANCE = 20,
+  INSURANCE_STAKE = 20,
+  INSURANCE_UNSTAKE = 21,
 
-  CREATE_INSURANCE_PROPOSAL = 21,
-  VOTE_INSURANCE_PROPOSAL = 22,
-  REGISTER_INSURANCE_PROPOSAL_CLAIM = 22,
+  INSURANCE_REGISTER_PROPOSAL_CLAIM = 22,
 
   TRADER_GET_PERFORMANCE_FEE = 23,
-  AGREE_TO_TERMS_AND_CONDITIONS = 24,
+  USER_AGREED_TO_PRIVACY_POLICY = 24,
 }
 
 export interface ApproveTransactionInfo {
@@ -54,14 +53,14 @@ export interface ApproveTransactionInfo {
 }
 
 export interface DepositLiquidityTransactionInfo {
-  type: TransactionType.DEPOSIT_LIQUIDITY_STAKING
+  type: TransactionType.INVEST
   currencyId: string
   poolAddress: string
   amount: string
 }
 
 export interface WithdrawLiquidityTransactionInfo {
-  type: TransactionType.WITHDRAW_LIQUIDITY_STAKING
+  type: TransactionType.DIVEST
   currencyId: string
   poolAddress: string
   amount: string
@@ -89,53 +88,53 @@ export interface ExactOutputSwapTransactionInfo
 }
 
 export interface FundCreateTransactionInfo {
-  type: TransactionType.FUND_CREATE
+  type: TransactionType.POOL_CREATE
   baseCurrencyId: string
   fundName: string
 }
 
 export interface FundEditTransactionInfo {
-  type: TransactionType.FUND_EDIT
+  type: TransactionType.POOL_EDIT
   baseCurrencyId: string
   fundName: string
 }
 export interface FundUpdateManagersTransactionInfo {
-  type: TransactionType.FUND_UPDATE_MANAGERS
+  type: TransactionType.POOL_UPDATE_MANAGERS
   editType: UpdateListType
   poolId: string
 }
 export interface FundUpdateInvestorsTransactionInfo {
-  type: TransactionType.FUND_UPDATE_INVESTORS
+  type: TransactionType.POOL_UPDATE_INVESTORS
   editType: UpdateListType
   poolId: string
 }
 
 export interface UpdateCredentialsTransactionInfo {
-  type: TransactionType.UPDATE_USER_CREDENTIALS
+  type: TransactionType.UPDATED_USER_CREDENTIALS
 }
 
 export interface CreateRiskyProposalTransactionInfo {
-  type: TransactionType.CREATE_RISKY_PROPOSAL
+  type: TransactionType.RISKY_PROPOSAL_CREATE
 }
 export interface EditRiskyProposalTransactionInfo {
-  type: TransactionType.EDIT_RISKY_PROPOSAL
+  type: TransactionType.RISKY_PROPOSAL_EDIT
 }
 export interface DepositRiskyProposalTransactionInfo {
-  type: TransactionType.DEPOSIT_RISKY_PROPOSAL
+  type: TransactionType.RISKY_PROPOSAL_INVEST
   inputCurrencyAmountRaw: string
   inputCurrencySymbol: string
   expectedOutputCurrencyAmountRaw: string
   expectedOutputCurrencySymbol: string
 }
 export interface WithdrawRiskyProposalTransactionInfo {
-  type: TransactionType.WITHDRAW_RISKY_PROPOSAL
+  type: TransactionType.RISKY_PROPOSAL_DIVEST
   outputCurrencyAmountRaw: string
   outputCurrencySymbol: string
   expectedInputCurrencyAmountRaw: string
   expectedInputCurrencySymbol: string
 }
 export interface SwapRiskyProposalTransactionInfo {
-  type: TransactionType.SWAP_RISKY_PROPOSAL
+  type: TransactionType.RISKY_PROPOSAL_SWAP
   tradeType: TradeType
   inputCurrencyId: string
   inputCurrencyAmountRaw: string
@@ -145,25 +144,25 @@ export interface SwapRiskyProposalTransactionInfo {
 }
 
 export interface CreateInvestmentProposalTransactionInfo {
-  type: TransactionType.CREATE_INVEST_PROPOSAL
+  type: TransactionType.INVEST_PROPOSAL_CREATE
   amount: string
   ipfsPath: string
   investLpAmountRaw: string
 }
 export interface EditInvestProposalTransactionInfo {
-  type: TransactionType.EDIT_INVEST_PROPOSAL
+  type: TransactionType.INVEST_PROPOSAL_EDIT
   amount: string
   ipfsPath: string
   investLpAmountRaw: string
 }
 
 export interface StakeInsuranceTransactionInfo {
-  type: TransactionType.STAKE_INSURANCE
+  type: TransactionType.INSURANCE_STAKE
   amount: number
 }
 
 export interface UnstakeInsuranceTransactionInfo {
-  type: TransactionType.UNSTAKE_INSURANCE
+  type: TransactionType.INSURANCE_UNSTAKE
   amount: number
 }
 

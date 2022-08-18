@@ -22,9 +22,10 @@ import Tooltip from "components/Tooltip"
 import DatePicker from "components/DatePicker"
 import Button, { SecondaryButton } from "components/Button"
 
-import { SettingsStyled as S } from "./styled"
 import { accordionSummaryVariants } from "motion/variants"
 import { Flex } from "theme"
+import { DATE_TIME_FORMAT } from "constants/time"
+import { SettingsStyled as S } from "./styled"
 
 interface Values {
   timestampLimit: number
@@ -156,7 +157,7 @@ const InvestCardSettings: FC<Props> = ({
         )
 
         const tx = await addTransaction(receipt, {
-          type: TransactionType.EDIT_INVEST_PROPOSAL,
+          type: TransactionType.INVEST_PROPOSAL_EDIT,
           investLpAmountRaw: limitHex,
         })
 
@@ -198,13 +199,10 @@ const InvestCardSettings: FC<Props> = ({
               disabled
               theme="grey"
               size="small"
-              value={format(
-                expandTimestamp(timestampLimit),
-                "MMM.dd.yyyy, HH:mm"
-              )}
+              value={format(expandTimestamp(timestampLimit), DATE_TIME_FORMAT)}
               placeholder={format(
                 expandTimestamp(timestampLimit),
-                "MMM.dd.yyyy, HH:mm"
+                DATE_TIME_FORMAT
               )}
               onClick={() => setDateOpen(!isDateOpen)}
             />

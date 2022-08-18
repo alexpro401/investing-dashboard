@@ -30,18 +30,17 @@ import { dropdownVariants } from "motion/variants"
 
 interface ReceivedTokenProps {
   address: string
+  symbol: string
   amount: BigNumber
 }
 
-const ReceivedToken: FC<ReceivedTokenProps> = ({ address, amount }) => {
-  const [, token] = useERC20(address)
-
+const ReceivedToken: FC<ReceivedTokenProps> = ({ address, symbol, amount }) => {
   return (
     <TokenContainer>
       <TokenText>{formatBigNumber(amount)}</TokenText>
       <TokenInfo>
         <TokenIcon address={address} size={15} />
-        <TokenText>{token?.symbol}</TokenText>
+        <TokenText>{symbol}</TokenText>
       </TokenInfo>
     </TokenContainer>
   )
@@ -84,7 +83,7 @@ const RiskyInvestInput: React.FC<RiskyInvestProps> = ({
   const receivedTokens = useMemo(() => {
     if (!info) return
 
-    if (!info.amounts || !info.tokens) return
+    if (!info.amounts || !info.tokens?.base || !info.tokens?.position) return
 
     const isZero = info.amounts[0].isZero() && info.amounts[1].isZero()
 
@@ -94,8 +93,16 @@ const RiskyInvestInput: React.FC<RiskyInvestProps> = ({
         animate={isZero ? "hidden" : "visible"}
         variants={dropdownVariants}
       >
-        <ReceivedToken address={info.tokens[0]} amount={info.amounts[0]} />
-        <ReceivedToken address={info.tokens[1]} amount={info.amounts[1]} />
+        <ReceivedToken
+          symbol={info.tokens.base.symbol}
+          address={info.tokens.base.address}
+          amount={info.amounts[0]}
+        />
+        <ReceivedToken
+          symbol={info.tokens.position.symbol}
+          address={info.tokens.position.address}
+          amount={info.amounts[1]}
+        />
       </TokensContainer>
     )
   }, [info])
