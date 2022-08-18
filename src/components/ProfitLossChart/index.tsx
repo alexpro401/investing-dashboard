@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { PulseSpinner } from "react-spinners-kit"
 import { AreaChart, Area, Tooltip, ResponsiveContainer } from "recharts"
-import { useERC20 } from "hooks/useContract"
 
+import { useERC20 } from "hooks/useContract"
 import { formateChartData } from "utils/formulas"
 import { usePriceHistory } from "state/pools/hooks"
 import {
@@ -14,7 +14,7 @@ import {
 
 import { Center } from "theme"
 import PNLTooltip from "./PNLTooltip"
-import { Container, Body, ChartPeriods, Period, NoData } from "./styled"
+import S from "./styled"
 
 const Chart = ({ data, baseToken }) => {
   // show loading animation
@@ -29,7 +29,7 @@ const Chart = ({ data, baseToken }) => {
   if (!data.length)
     return (
       <Center>
-        <NoData>No data found.</NoData>
+        <S.NoData>No data found.</S.NoData>
       </Center>
     )
 
@@ -86,23 +86,23 @@ const ProfitLossChart: React.FC<Props> = ({ address, baseToken }) => {
   const historyFormated = formateChartData(history)
 
   return (
-    <Container>
-      <ChartPeriods>
+    <S.Container>
+      <S.ChartPeriods>
         {Object.values(TIMEFRAMES).map((value) => (
-          <Period
+          <S.Period
             key={value}
             onClick={() => setTimeframe(value)}
             active={timeframe === value}
           >
             {value}
-          </Period>
+          </S.Period>
         ))}
-      </ChartPeriods>
+      </S.ChartPeriods>
 
-      <Body>
+      <S.Body>
         <Chart data={historyFormated} baseToken={baseTokenData} />
-      </Body>
-    </Container>
+      </S.Body>
+    </S.Container>
   )
 }
 
