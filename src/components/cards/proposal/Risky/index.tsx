@@ -275,7 +275,6 @@ const RiskyProposalCard: FC<Props> = ({
           1
         )
         if (balance && balance[0]) {
-          console.log(proposalId, balance[0].proposalId)
           setYourSizeLP(balance[0].lpInvested)
         }
       } catch (error) {
