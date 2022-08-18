@@ -64,7 +64,7 @@ const FundProposalsRisky: FC<IProps> = ({ poolAddress }) => {
       {data.map((proposal, index) => (
         <RiskyProposalCard
           key={index}
-          proposalId={index + 1}
+          proposalId={index}
           proposal={proposal}
           poolInfo={poolInfo}
           poolAddress={poolAddress}

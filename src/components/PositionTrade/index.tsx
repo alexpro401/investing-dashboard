@@ -38,6 +38,7 @@ const PositionTrade: React.FC<Props> = ({
   const href = useMemo(() => {
     if (data && chainId) {
       const hash = data.hash ?? data.id
+
       return getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)
     }
 
@@ -51,7 +52,7 @@ const PositionTrade: React.FC<Props> = ({
 
   const volume = useMemo(() => {
     if (!amount) return "0"
-    return formatBigNumber(amount, 18, 5)
+    return formatBigNumber(amount, 18, 6)
   }, [amount])
 
   const priceBaseToken = useMemo(() => {
