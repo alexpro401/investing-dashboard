@@ -304,6 +304,12 @@ export const keepHoursAndMinutes = (timestamp: Date | number, h, m): number => {
   return shortTimestamp(getTime(minutes))
 }
 
+export function daysAgoTimestamp(days: number): number {
+  const d = new Date()
+  d.setDate(d.getDate() - days)
+  return shortTimestamp(d.getTime())
+}
+
 /**
  * Check that transaction is mined by the given receipt
  * @param tx transaction receipt

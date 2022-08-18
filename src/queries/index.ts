@@ -20,16 +20,23 @@ const PRICE_HISTORY_LAST = `
   }
 `
 
-const PRICE_HISTORY_FULL = `
-  priceHistory(first: $limit, orderBy: timestamp, orderDirection: desc, where: { aggregationType_gte: $timeframe }) {
+const PRICE_HISTORY_FULL = (startDate) => `
+  priceHistory(
+    first: $limit, 
+    orderBy: timestamp, orderDirection: asc, 
+    where: { 
+      aggregationType_lte: $timeframe,
+      ${startDate !== null ? "timestamp_gte: $startDate" : ""}
+    }
+  ) {
     ${PRICE_HISTORY}
   }
 `
 
-const PriceHistoryQuery = `
-  query ($address: String!, $timeframe: Int!, $limit: Int!) {
+const PriceHistoryQuery = (startDate) => `
+  query ($address: String!, $timeframe: Int!, $limit: Int!, $startDate: Int!) {
     traderPool(id: $address) {
-      ${PRICE_HISTORY_FULL}
+      ${PRICE_HISTORY_FULL(startDate)}
     }
   }
 `

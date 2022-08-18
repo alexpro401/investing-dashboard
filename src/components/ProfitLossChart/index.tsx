@@ -1,19 +1,18 @@
 import { useState } from "react"
 import { PulseSpinner } from "react-spinners-kit"
-import { AreaChart, Area, Tooltip, ResponsiveContainer, XAxis } from "recharts"
+import { AreaChart, Area, Tooltip, ResponsiveContainer } from "recharts"
+import { useERC20 } from "hooks/useContract"
 
+import { daysAgoTimestamp } from "utils"
 import { formateChartData } from "utils/formulas"
 import { usePriceHistory } from "state/pools/hooks"
 import { AGREGATION_CODES, TIMEFRAMES } from "constants/history"
 
 import { Center } from "theme"
+import PNLTooltip from "./PNLTooltip"
 import { Container, Body, ChartPeriods, Period, NoData } from "./styled"
 
-interface Props {
-  address: string | undefined
-}
-
-const Chart = ({ data }) => {
+const Chart = ({ data, baseToken }) => {
   // show loading animation
   if (!data)
     return (
@@ -44,7 +43,11 @@ const Chart = ({ data }) => {
             <stop offset="100%" stopColor="#9AE2CB05" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <Tooltip />
+        <Tooltip
+          content={(p) => {
+            return <PNLTooltip {...p} baseToken={baseToken} />
+          }}
+        />
         <Area
           legendType="triangle"
           isAnimationActive
@@ -84,14 +87,33 @@ const TIMEFRAME_LIMIT_CODE = {
   ["1Y"]: 124,
   ["ALL"]: 1000,
 }
+/**
+ * Mapping timeframes to fromDate value
+ */
+const TIMEFRAME_FROM_DATE = {
+  ["D"]: daysAgoTimestamp(1),
+  ["W"]: daysAgoTimestamp(7),
+  ["M"]: daysAgoTimestamp(31),
+  ["3M"]: daysAgoTimestamp(93),
+  ["6M"]: daysAgoTimestamp(186),
+  ["1Y"]: daysAgoTimestamp(365),
+  ["ALL"]: null,
+}
 
-const ProfitLossChart: React.FC<Props> = ({ address }) => {
+interface Props {
+  address: string | undefined
+  baseToken: string | undefined
+}
+
+const ProfitLossChart: React.FC<Props> = ({ address, baseToken }) => {
   const [timeframe, setTimeframe] = useState(TIMEFRAMES["D"])
+  const [, baseTokenData] = useERC20(baseToken)
 
   const history = usePriceHistory(
     address,
     TIMEFRAME_MIN_CODE[timeframe],
-    TIMEFRAME_LIMIT_CODE[timeframe]
+    TIMEFRAME_LIMIT_CODE[timeframe],
+    TIMEFRAME_FROM_DATE[timeframe]
   )
   const historyFormated = formateChartData(history)
 
@@ -110,7 +132,7 @@ const ProfitLossChart: React.FC<Props> = ({ address }) => {
       </ChartPeriods>
 
       <Body>
-        <Chart data={historyFormated} />
+        <Chart data={historyFormated} baseToken={baseTokenData} />
       </Body>
     </Container>
   )
