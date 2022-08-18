@@ -74,7 +74,7 @@ export function useOwnedPools(
  */
 export function usePriceHistory(
   address: string | undefined,
-  timeframe: number,
+  timeframes: [number, number],
   limit = 1000,
   startDate: number
 ): IPriceHistory[] | undefined {
@@ -83,7 +83,13 @@ export function usePriceHistory(
     traderPool: IPriceHistoryQuery
   }>({
     query: PriceHistoryQuery(startDate),
-    variables: { address, timeframe, limit, startDate },
+    variables: {
+      address,
+      minTimeframe: timeframes[0],
+      maxTimeframe: timeframes[1],
+      limit,
+      startDate,
+    },
     requestPolicy: "network-only",
   })
 

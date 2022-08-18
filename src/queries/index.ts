@@ -25,7 +25,8 @@ const PRICE_HISTORY_FULL = (startDate) => `
     first: $limit, 
     orderBy: timestamp, orderDirection: asc, 
     where: { 
-      aggregationType_lte: $timeframe,
+      aggregationType_gte: $minTimeframe,
+      aggregationType_lte: $maxTimeframe,
       ${startDate !== null ? "timestamp_gte: $startDate" : ""}
     }
   ) {
@@ -34,7 +35,7 @@ const PRICE_HISTORY_FULL = (startDate) => `
 `
 
 const PriceHistoryQuery = (startDate) => `
-  query ($address: String!, $timeframe: Int!, $limit: Int!, $startDate: Int!) {
+  query ($address: String!, $minTimeframe: Int!, $maxTimeframe: Int!, $limit: Int!, $startDate: Int!) {
     traderPool(id: $address) {
       ${PRICE_HISTORY_FULL(startDate)}
     }

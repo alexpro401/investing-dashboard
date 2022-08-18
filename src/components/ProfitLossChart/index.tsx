@@ -65,14 +65,23 @@ const Chart = ({ data, baseToken }) => {
 }
 
 // Mapping timeframes to agregation codes
-const TIMEFRAME_MIN_CODE = {
-  ["D"]: AGREGATION_CODES["15min"],
-  ["W"]: AGREGATION_CODES["30min"] + AGREGATION_CODES["1h"],
-  ["M"]: AGREGATION_CODES["6h"],
-  ["3M"]: AGREGATION_CODES["24h"],
-  ["6M"]: AGREGATION_CODES["12h"] + AGREGATION_CODES["24h"],
-  ["1Y"]: AGREGATION_CODES["24h"] * 3,
-  ["ALL"]: AGREGATION_CODES["1m"],
+const TIMEFRAME_AGREGATION_CODES = {
+  ["D"]: [AGREGATION_CODES["5min"], AGREGATION_CODES["15min"]],
+  ["W"]: [AGREGATION_CODES["1h"], AGREGATION_CODES["2h"]],
+  ["M"]: [AGREGATION_CODES["4h"], AGREGATION_CODES["6h"]],
+  ["3M"]: [
+    AGREGATION_CODES["12h"] - AGREGATION_CODES["2h"],
+    AGREGATION_CODES["24h"],
+  ],
+  ["6M"]: [
+    AGREGATION_CODES["12h"] - AGREGATION_CODES["2h"],
+    AGREGATION_CODES["12h"] + AGREGATION_CODES["24h"],
+  ],
+  ["1Y"]: [
+    AGREGATION_CODES["12h"] + AGREGATION_CODES["2h"],
+    AGREGATION_CODES["24h"] + AGREGATION_CODES["12h"],
+  ],
+  ["ALL"]: [AGREGATION_CODES["24h"], AGREGATION_CODES["1m"]],
 }
 
 /**
@@ -111,7 +120,7 @@ const ProfitLossChart: React.FC<Props> = ({ address, baseToken }) => {
 
   const history = usePriceHistory(
     address,
-    TIMEFRAME_MIN_CODE[timeframe],
+    TIMEFRAME_AGREGATION_CODES[timeframe],
     TIMEFRAME_LIMIT_CODE[timeframe],
     TIMEFRAME_FROM_DATE[timeframe]
   )
