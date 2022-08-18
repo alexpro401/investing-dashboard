@@ -23,21 +23,21 @@ import {
 } from "interfaces/ITraderPool"
 
 import useAlert, { AlertType } from "hooks/useAlert"
-import { useRiskyProposal } from "hooks/useRiskyProposals"
 import { usePoolContract } from "hooks/usePool"
 import {
   useBasicPoolContract,
   useERC20,
   useInvestPoolContract,
   useInvestProposalContract,
-  useRiskyProposalContract,
   useTraderPoolContract,
 } from "hooks/useContract"
 import { RiskyForm } from "constants/interfaces_v2"
 import usePoolPrice from "hooks/usePoolPrice"
-import useRiskyPrice from "hooks/useRiskyPrice"
 import useGasTracker from "state/gas/hooks"
-import { useInvestProposal } from "hooks/useInvestmentProposals"
+import {
+  useActiveInvestmentsInfo,
+  useInvestProposal,
+} from "hooks/useInvestmentProposals"
 import useInvestmentPrice from "hooks/useInvestmentPrice"
 
 const useInvestInvestmentProposal = (
@@ -115,6 +115,11 @@ const useInvestInvestmentProposal = (
   const investPool = useInvestPoolContract(poolAddress)
   const [proposalPool, proposalAddress] = useInvestProposalContract(poolAddress)
   const proposal = useInvestProposal(poolAddress, proposalId)
+  const investmentsInfo = useActiveInvestmentsInfo(
+    poolAddress,
+    account,
+    proposalId
+  )
   const [, poolInfo] = usePoolContract(poolAddress)
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,

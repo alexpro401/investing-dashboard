@@ -74,4 +74,27 @@ export function useInvestProposal(
   return proposal
 }
 
+export function useActiveInvestmentsInfo(
+  poolAddress?: string,
+  account?: string | null | undefined,
+  index?: string
+) {
+  const [info, setInfo] = useState()
+  const [proposal] = useInvestProposalContract(poolAddress)
+
+  useEffect(() => {
+    if (!proposal || !index || !account) return
+    ;(async () => {
+      try {
+        const data = await proposal.getActiveInvestmentsInfo(account, index, 1)
+        if (data.length) {
+          setInfo(data[0])
+        }
+      } catch {}
+    })()
+  }, [proposal, index, account])
+
+  return info
+}
+
 export default useInvestProposals

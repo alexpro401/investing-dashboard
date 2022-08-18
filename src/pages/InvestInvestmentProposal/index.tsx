@@ -4,7 +4,6 @@ import { createClient, Provider as GraphProvider } from "urql"
 
 import IconButton from "components/IconButton"
 import ExchangeInput from "components/Exchange/ExchangeInput"
-import RiskyInvestInput from "components/Exchange/RiskyInvestInput"
 import ExchangeDivider from "components/Exchange/Divider"
 import Button, { SecondaryButton } from "components/Button"
 import CircularProgress from "components/CircularProgress"
@@ -23,13 +22,11 @@ import {
   InfoCard,
   InfoRow,
   InfoGrey,
-  InfoDropdown,
   InfoWhite,
 } from "components/Exchange/styled"
 
 import useInvestInvestmentProposal from "./useInvestInvestmentProposal"
 import { useMemo } from "react"
-import SwapPrice from "components/SwapPrice"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -95,37 +92,6 @@ function InvestInvestmentProposal() {
     handleSubmit,
     toAmount,
   ])
-
-  const myPNL = useMemo(() => {
-    return (
-      <Flex gap="4">
-        <InfoWhite>+12.72 ISDX</InfoWhite>
-        <InfoGrey>(+37.18%)</InfoGrey>
-      </Flex>
-    )
-  }, [])
-
-  const myPNLContent = useMemo(() => {
-    return (
-      <>
-        <InfoRow>
-          <InfoGrey>in USD</InfoGrey>
-          <InfoGrey>+1260 USD (+27.18%) </InfoGrey>
-        </InfoRow>
-        <InfoRow>
-          <InfoGrey>Trader P&L</InfoGrey>
-          <Flex gap="4">
-            <InfoWhite>2.11 ISDX </InfoWhite>
-            <InfoGrey>(+14%)</InfoGrey>
-          </Flex>
-        </InfoRow>
-        <InfoRow>
-          <InfoGrey>in USD</InfoGrey>
-          <InfoGrey>+1260 USD (+27.18%) </InfoGrey>
-        </InfoRow>
-      </>
-    )
-  }, [])
 
   const proposalTVL = useMemo(() => {
     return (
