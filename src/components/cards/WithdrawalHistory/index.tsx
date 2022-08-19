@@ -1,9 +1,9 @@
-import { FC, useEffect, useMemo, useState } from "react"
+import { FC, useMemo } from "react"
 import { format } from "date-fns"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { useActiveWeb3React } from "hooks"
-import { expandTimestamp, formatBigNumber } from "utils"
+import { expandTimestamp, normalizeBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
 import Amount from "components/Amount"
@@ -11,14 +11,14 @@ import S from "./styled"
 
 interface IWithdrawal {
   id: string
-  lpAmount: BigNumber
-  baseAmount: BigNumber
+  PNL: BigNumber
+  day: BigNumber
+  fundProfit: BigNumber
+  perfomanceFee: BigNumber
 }
 
 interface IProps {
   payload: IWithdrawal
-  timestamp: string
-  getBaseInUSD: any
   m?: string
 }
 
@@ -29,51 +29,40 @@ function getPnlSymbol(amount: number): string {
   return ""
 }
 
-const WithdrawalHistory: FC<IProps> = ({
-  payload,
-  timestamp,
-  getBaseInUSD,
-  ...rest
-}) => {
+const WithdrawalHistory: FC<IProps> = ({ payload, ...rest }) => {
   const { chainId } = useActiveWeb3React()
 
-  const [profitUSD, setProfitUSD] = useState<string>("0")
-
-  /**
-   * URL to page with transaction details on explorer
-   */
+  // URL to page with transaction details on explorer
   const url = useMemo<string>(() => {
-    if (!payload || !payload.id || !chainId) return ""
+    if (!payload || !chainId) return ""
 
     return getExplorerLink(chainId, payload.id, ExplorerDataType.TRANSACTION)
   }, [chainId, payload])
 
-  /**
-   * Withdrawal date
-   */
+  // Withdrawal date
   const creationDate = useMemo<string>(() => {
-    if (!timestamp) return "⌚️"
+    if (!payload) return "⌚️"
 
-    return format(expandTimestamp(Number(timestamp)), "MMM dd, y")
-  }, [timestamp])
+    return format(expandTimestamp(Number(payload.day.toString())), "MMM dd, y")
+  }, [payload])
 
-  const pnl = useMemo<string>(() => "0", [])
-  const fee = useMemo<string>(() => "-", [])
+  // P&L
+  const pnl = useMemo<string>(() => {
+    if (!payload) return "0.00"
+    return normalizeBigNumber(payload.PNL, 4, 2)
+  }, [payload])
 
-  // Calculate withdrawal amount in USD
-  useEffect(() => {
-    if (!payload || !payload.baseAmount) return
-    ;(async () => {
-      try {
-        const amount = await getBaseInUSD(payload.baseAmount)
-        if (amount) {
-          setProfitUSD(formatBigNumber(amount, 18, 2))
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    })()
-  }, [getBaseInUSD, payload])
+  // Fund profit
+  const profitUSD = useMemo<string>(() => {
+    if (!payload) return "0.00"
+    return normalizeBigNumber(payload.fundProfit, 18, 2)
+  }, [payload])
+
+  // Performance fee
+  const fee = useMemo<string>(() => {
+    if (!payload) return "0.00"
+    return normalizeBigNumber(payload.perfomanceFee, 4, 2)
+  }, [payload])
 
   return (
     <>

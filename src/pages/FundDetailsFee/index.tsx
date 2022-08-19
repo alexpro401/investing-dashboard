@@ -1,13 +1,8 @@
-import { FC, useCallback } from "react"
+import { FC } from "react"
 import { useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
-import { BigNumber } from "@ethersproject/bignumber"
-import { useSelector } from "react-redux"
 
-import { PriceFeed } from "abi"
-import { selectPriceFeedAddress } from "state/contracts/selectors"
-
-import useContract, { useERC20 } from "hooks/useContract"
+import { useERC20 } from "hooks/useContract"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 
 import { Flex } from "theme"
@@ -24,6 +19,7 @@ import S, { PageLoading } from "./styled"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
+  requestPolicy: "network-only",
 })
 
 const FundDetailsFee: FC = () => {
@@ -58,33 +54,9 @@ const FundDetailsFee: FC = () => {
 
   const [, baseToken] = useERC20(poolData?.baseToken)
 
-  const priceFeedAddress = useSelector(selectPriceFeedAddress)
-  const priceFeed = useContract(priceFeedAddress, PriceFeed)
-
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
     poolInfo?.parameters.descriptionURL
-  )
-
-  const getBaseTokensNormalizedPriceOutUSD = useCallback(
-    async (amount: BigNumber) => {
-      if (!priceFeed || !baseToken) return BigNumber.from("0")
-
-      try {
-        const price = await priceFeed.getNormalizedPriceOutUSD(
-          baseToken.address,
-          amount.toHexString()
-        )
-        if (price && price.amountOut) {
-          return price.amountOut
-        }
-
-        return BigNumber.from("0")
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    [priceFeed, baseToken]
   )
 
   /**
@@ -213,12 +185,14 @@ const FundDetailsFee: FC = () => {
           </Flex>
         </S.MainCard>
 
-        <Flex dir="column" full m="40px 0 0">
-          <WithdrawalsHistory
-            unlockDate={unlockDate}
-            getBaseInUSD={getBaseTokensNormalizedPriceOutUSD}
-          />
-        </Flex>
+        {poolAddress && (
+          <Flex dir="column" full m="40px 0 0">
+            <WithdrawalsHistory
+              unlockDate={unlockDate}
+              poolAddress={poolAddress}
+            />
+          </Flex>
+        )}
       </S.Container>
     </>
   )

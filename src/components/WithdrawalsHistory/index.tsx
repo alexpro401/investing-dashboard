@@ -1,46 +1,30 @@
-import { FC, useMemo, useEffect, useRef } from "react"
-import { createClient, Provider as GraphProvider } from "urql"
 import { RotateSpinner } from "react-spinners-kit"
+import { FC, useMemo, useEffect, useRef } from "react"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
-import { useActiveWeb3React } from "hooks"
-import { UserTransactionsQuery } from "queries"
+import { FundFeeHistoryQuery } from "queries"
 import useQueryPagination from "hooks/useQueryPagination"
-import { TransactionType } from "state/transactions/types"
 
 import LoadMore from "components/LoadMore"
 import WithdrawalHistoryCard from "components/cards/WithdrawalHistory"
 
 import S from "./styled"
 
-const poolsClient = createClient({
-  url: process.env.REACT_APP_INTERACTIONS_API_URL || "",
-  requestPolicy: "network-only",
-})
-
 interface IProps {
   unlockDate: string
-  getBaseInUSD: any
+  poolAddress: string
 }
 
-const WithdrawalsHistory: FC<IProps> = ({ unlockDate, getBaseInUSD }) => {
-  const { account } = useActiveWeb3React()
-
-  const variables = useMemo<{
-    address: string | null | undefined
-    transactionTypes: TransactionType[]
-  }>(
-    () => ({
-      address: account,
-      transactionTypes: [TransactionType.TRADER_GET_PERFORMANCE_FEE],
-    }),
-    [account]
+const WithdrawalsHistory: FC<IProps> = ({ unlockDate, poolAddress }) => {
+  const variables = useMemo<{ address: string }>(
+    () => ({ address: poolAddress }),
+    [poolAddress]
   )
 
   const [{ data, error, loading }, fetchMore] = useQueryPagination(
-    UserTransactionsQuery,
+    FundFeeHistoryQuery,
     variables,
-    (d) => d.transactions
+    (d) => d.feeHistories
   )
 
   const loader = useRef<any>()
@@ -88,13 +72,7 @@ const WithdrawalsHistory: FC<IProps> = ({ unlockDate, getBaseInUSD }) => {
         {data.length > 0 && (
           <S.List ref={loader}>
             {data.map((t) => (
-              <WithdrawalHistoryCard
-                key={t.id}
-                payload={t.getPerfomanceFee}
-                timestamp={t.timestamp}
-                m="16px 0 0"
-                getBaseInUSD={getBaseInUSD}
-              />
+              <WithdrawalHistoryCard key={t.id} payload={t} m="16px 0 0" />
             ))}
             <LoadMore
               isLoading={loading && !!data.length}
@@ -108,12 +86,4 @@ const WithdrawalsHistory: FC<IProps> = ({ unlockDate, getBaseInUSD }) => {
   )
 }
 
-const WithdrawalsHistoryWithProvider = (props) => {
-  return (
-    <GraphProvider value={poolsClient}>
-      <WithdrawalsHistory {...props} />
-    </GraphProvider>
-  )
-}
-
-export default WithdrawalsHistoryWithProvider
+export default WithdrawalsHistory
