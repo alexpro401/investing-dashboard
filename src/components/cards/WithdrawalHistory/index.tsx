@@ -43,7 +43,10 @@ const WithdrawalHistory: FC<IProps> = ({ payload, ...rest }) => {
   const creationDate = useMemo<string>(() => {
     if (!payload) return "⌚️"
 
-    return format(expandTimestamp(Number(payload.day.toString())), "MMM dd, y")
+    return format(
+      expandTimestamp(Number(normalizeBigNumber(payload.day, 18, 0)) * 86400),
+      "MMM dd, y"
+    )
   }, [payload])
 
   // P&L
