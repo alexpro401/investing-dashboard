@@ -1,9 +1,8 @@
 import { useMemo } from "react"
 import { format } from "date-fns"
-import { parseEther, parseUnits } from "@ethersproject/units"
+import { parseEther } from "@ethersproject/units"
 
 import { DATE_FORMAT } from "constants/time"
-import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 
 import { Flex } from "theme"
@@ -19,13 +18,8 @@ const PNLTooltip = (props) => {
   const { active, payload, baseToken } = props
   const history = (payload && payload[0]?.payload) ?? null
 
-  const usd = useTokenPriceOutUSD({
-    tokenAddress: baseToken?.address,
-    amount: parseUnits(history?.absPNL ?? "1", 25).abs(),
-  })
-
   const date = useMemo<string>(() => {
-    if (!history) return "0"
+    if (!history) return ""
 
     return format(expandTimestamp(history.timestamp), DATE_FORMAT)
   }, [history])
@@ -35,20 +29,16 @@ const PNLTooltip = (props) => {
       return { format: "0.00", number: 0 }
     }
 
-    const res = normalizeBigNumber(history.percPNL, 18, 2)
+    const res = normalizeBigNumber(history.percPNL, 4, 2)
     return { format: res, number: Number(res) }
   }, [history])
 
   const absPnlUsd = useMemo<{ format: string; number: number }>(() => {
-    if (!history || !usd) {
-      return { format: "0.00", number: 0 }
-    }
+    if (!history) return { format: "0.00", number: 0 }
 
-    const isNegative = parseUnits(history?.absPNL ?? "1", 25).isNegative()
-
-    const res = normalizeBigNumber(usd, 25, 6)
-    return { format: res, number: isNegative ? Number(res) * -1 : Number(res) }
-  }, [history, usd])
+    const res = normalizeBigNumber(history.absPNL, 18, 2)
+    return { format: String(Math.abs(Number(res))), number: Number(res) }
+  }, [history])
 
   if (active && payload && payload.length && baseToken) {
     return (
