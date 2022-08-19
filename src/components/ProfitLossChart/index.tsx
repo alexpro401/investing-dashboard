@@ -1,16 +1,23 @@
-import { AreaChart, Area, Tooltip, ResponsiveContainer, XAxis } from "recharts"
+import { useState } from "react"
 import { PulseSpinner } from "react-spinners-kit"
-import { usePriceHistory } from "state/pools/hooks"
+import { AreaChart, Area, Tooltip, ResponsiveContainer } from "recharts"
+
+import { useERC20 } from "hooks/useContract"
 import { formateChartData } from "utils/formulas"
+import { usePriceHistory } from "state/pools/hooks"
+import {
+  TIMEFRAMES,
+  TIMEFRAME_AGREGATION_CODES,
+  TIMEFRAME_LIMIT_CODE,
+  TIMEFRAME_FROM_DATE,
+} from "constants/history"
+
+import S from "./styled"
 import { Center } from "theme"
+import PNLTooltip from "./PNLTooltip"
+import TimeframeList from "components/TimeframeList"
 
-import { Container, Body, ChartPeriods, Period, NoData } from "./styled"
-
-interface Props {
-  address: string | undefined
-}
-
-const Chart = ({ data }) => {
+const Chart = ({ data, baseToken }) => {
   // show loading animation
   if (!data)
     return (
@@ -23,7 +30,7 @@ const Chart = ({ data }) => {
   if (!data.length)
     return (
       <Center>
-        <NoData>No data found.</NoData>
+        <S.NoData>No data found.</S.NoData>
       </Center>
     )
 
@@ -41,7 +48,11 @@ const Chart = ({ data }) => {
             <stop offset="100%" stopColor="#9AE2CB05" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <Tooltip />
+        <Tooltip
+          content={(p) => {
+            return <PNLTooltip {...p} baseToken={baseToken} />
+          }}
+        />
         <Area
           legendType="triangle"
           isAnimationActive
@@ -58,26 +69,30 @@ const Chart = ({ data }) => {
   )
 }
 
-const ProfitLossChart: React.FC<Props> = ({ address }) => {
-  const history = usePriceHistory(address)
+interface Props {
+  address: string | undefined
+  baseToken: string | undefined
+}
+
+const ProfitLossChart: React.FC<Props> = ({ address, baseToken }) => {
+  const [timeframe, setTimeframe] = useState(TIMEFRAMES["D"])
+  const [, baseTokenData] = useERC20(baseToken)
+
+  const history = usePriceHistory(
+    address,
+    TIMEFRAME_AGREGATION_CODES[timeframe],
+    TIMEFRAME_LIMIT_CODE[timeframe],
+    TIMEFRAME_FROM_DATE[timeframe]
+  )
   const historyFormated = formateChartData(history)
 
   return (
-    <Container>
-      <ChartPeriods>
-        <Period active>D</Period>
-        <Period>W</Period>
-        <Period>M</Period>
-        <Period>3M</Period>
-        <Period>6M</Period>
-        <Period>1Y</Period>
-        <Period>ALL</Period>
-      </ChartPeriods>
-
-      <Body>
-        <Chart data={historyFormated} />
-      </Body>
-    </Container>
+    <S.Container>
+      <TimeframeList current={timeframe} set={setTimeframe} />
+      <S.Body>
+        <Chart data={historyFormated} baseToken={baseTokenData} />
+      </S.Body>
+    </S.Container>
   )
 }
 

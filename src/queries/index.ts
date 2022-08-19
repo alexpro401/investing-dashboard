@@ -11,6 +11,7 @@ const PRICE_HISTORY = `
   absPNL
   percPNL
   timestamp
+  aggregationType
 `
 
 const PRICE_HISTORY_LAST = `
@@ -19,16 +20,24 @@ const PRICE_HISTORY_LAST = `
   }
 `
 
-const PRICE_HISTORY_FULL = `
-  priceHistory(first: 1000, orderBy: timestamp, orderDirection: desc) {
+const PRICE_HISTORY_FULL = (startDate) => `
+  priceHistory(
+    first: $limit, 
+    orderBy: timestamp, orderDirection: asc, 
+    where: { 
+      aggregationType_gte: $minTimeframe,
+      aggregationType_lte: $maxTimeframe,
+      ${startDate !== 0 ? "timestamp_gte: $startDate" : ""}
+    }
+  ) {
     ${PRICE_HISTORY}
   }
 `
 
-const PriceHistoryQuery = `
-  query ($address: String!) {
+const PriceHistoryQuery = (startDate) => `
+  query ($address: String!, $minTimeframe: Int!, $maxTimeframe: Int!, $limit: Int!, $startDate: Int!) {
     traderPool(id: $address) {
-      ${PRICE_HISTORY_FULL}
+      ${PRICE_HISTORY_FULL(startDate)}
     }
   }
 `
