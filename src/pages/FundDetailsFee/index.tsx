@@ -7,11 +7,16 @@ import { useSelector } from "react-redux"
 import { format } from "date-fns"
 
 import { PriceFeed } from "abi"
+import {
+  selectDexeAddress,
+  selectPriceFeedAddress,
+} from "state/contracts/selectors"
+import { _divideBignumbers } from "utils/formulas"
 import useCoreProperties from "hooks/useCoreProperties"
 import { expandTimestamp, formatBigNumber } from "utils"
 import useContract, { useERC20 } from "hooks/useContract"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-import { selectPriceFeedAddress } from "state/contracts/selectors"
+import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { usePoolContract, usePoolQuery, useTraderPool } from "hooks/usePool"
 
 import { Flex } from "theme"
@@ -24,6 +29,7 @@ import AmountRow from "components/Amount/Row"
 import WithdrawalsHistory from "components/WithdrawalsHistory"
 
 import S, { PageLoading } from "./styled"
+import { parseEther } from "@ethersproject/units"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -51,6 +57,9 @@ const FundDetailsFee: FC = () => {
   const priceFeedAddress = useSelector(selectPriceFeedAddress)
   const priceFeed = useContract(priceFeedAddress, PriceFeed)
   const coreProperties = useCoreProperties()
+
+  const dexeAddress = useSelector(selectDexeAddress)
+  const dexePriceUSD = useTokenPriceOutUSD({ tokenAddress: dexeAddress })
 
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
@@ -269,7 +278,6 @@ const FundDetailsFee: FC = () => {
     ;(async () => {
       try {
         const InvestorsLimit = 1000
-        // TODO: must fetch commissions from all investors?
         const commissions = await traderPool.getReinvestCommissions([
           0,
           InvestorsLimit,
@@ -387,20 +395,28 @@ const FundDetailsFee: FC = () => {
 
   // Fetch price of funds under management in DEXE
   useEffect(() => {
-    if (!priceFeed) return
+    if (
+      !netInvestorProfitUSD ||
+      !dexePriceUSD ||
+      netInvestorProfitUSD.big.isZero() ||
+      parseEther(dexePriceUSD.toString()).isZero()
+    ) {
+      return
+    }
+
     ;(async () => {
       try {
         // - get price of 1 dexe in usd
         // - divide (netInvestorProfitUSD / price of 1 dexe in usd)
         // - done
-        const priceDexe = await priceFeed.getNormalizedPriceOutDEXE(
-          "0x8a9424745056Eb399FD19a0EC26A14316684e274",
-          netInvestorProfitUSD.big.toString()
+        const res = _divideBignumbers(
+          [netInvestorProfitUSD.big, 18],
+          [dexePriceUSD, 18]
         )
-        if (priceDexe && priceDexe.amountOut) {
+        if (res) {
           const prepared: IAmount = {
-            big: priceDexe.amountOut,
-            format: formatBigNumber(priceDexe.amountOut, 18, 6),
+            big: res,
+            format: formatBigNumber(res, 18, 6),
           }
           setNetInvestorProfitDEXE(prepared)
         }
@@ -408,7 +424,7 @@ const FundDetailsFee: FC = () => {
         console.error(error)
       }
     })()
-  }, [netInvestorProfitUSD.big, priceFeed])
+  }, [dexePriceUSD, netInvestorProfitUSD])
 
   if (!poolData || !poolInfoData || !poolMetadata) {
     return <PageLoading />
