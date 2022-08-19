@@ -4,7 +4,7 @@ import { BigNumber } from "@ethersproject/bignumber"
 
 import { usePriceHistory } from "state/pools/hooks"
 import { formateChartData } from "utils/formulas"
-import { formatBigNumber } from "utils"
+import { formatBigNumber, daysAgoTimestamp } from "utils"
 
 import { Center } from "theme"
 import S from "./styled"
@@ -78,7 +78,7 @@ const Chart = ({ data }) => {
 }
 
 const FeeChart: React.FC<Props> = ({ address }) => {
-  const history = usePriceHistory(address)
+  const history = usePriceHistory(address, [0, 15], 100, daysAgoTimestamp(1))
   const historyFormated = formateChartData(history)
 
   return (
