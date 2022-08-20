@@ -39,8 +39,8 @@ const FundDetailsFee: FC = () => {
       fundProfitWithoutTraderDEXE,
       fundProfitWithoutTraderPercentage,
 
-      platformCommissionLP,
       platformCommissionUSD,
+      platformCommissionBase,
       platformCommissionPercentage,
 
       traderCommissionUSD,
@@ -99,8 +99,7 @@ const FundDetailsFee: FC = () => {
             <S.MainCardHeaderRight>
               <S.MainCardTitle>${totalFundCommissionFeeUSD}</S.MainCardTitle>
               <S.MainCardDescription m="2px 0 0">
-                {totalFundCommissionFeeBase}
-                {baseToken?.symbol}
+                {totalFundCommissionFeeBase} {baseToken?.symbol}
               </S.MainCardDescription>
             </S.MainCardHeaderRight>
           </Flex>
@@ -115,7 +114,7 @@ const FundDetailsFee: FC = () => {
             />
             <Accordion
               title="Fund Profit (Without your funds)"
-              value={fundProfitWithoutTraderUSD}
+              value={fundProfitWithoutTraderUSD.format}
               symbol="USD"
               m="8px 0 0"
             >
@@ -135,7 +134,7 @@ const FundDetailsFee: FC = () => {
             >
               <Flex full dir="column" ai="flex-end">
                 <Amount
-                  value={platformCommissionLP}
+                  value={platformCommissionBase}
                   symbol={baseToken?.symbol}
                 />
                 <Amount
