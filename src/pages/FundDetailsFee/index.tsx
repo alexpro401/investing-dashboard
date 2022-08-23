@@ -9,9 +9,9 @@ import { Flex } from "theme"
 import Icon from "components/Icon"
 import Amount from "components/Amount"
 import Button from "components/Button"
-import FeeChart from "components/FeeChart"
 import Accordion from "components/Accordion"
 import AmountRow from "components/Amount/Row"
+import ProfitLossChart from "components/ProfitLossChart"
 import WithdrawalsHistory from "components/WithdrawalsHistory"
 
 import useFundFee from "./useFundFee"
@@ -50,6 +50,7 @@ const FundDetailsFee: FC = () => {
       netInvestorsProfitDEXE,
       netInvestorsProfitPercentage,
     },
+    { withdrawCommission },
   ] = useFundFee(poolAddress)
 
   const [, baseToken] = useERC20(poolData?.baseToken)
@@ -58,13 +59,6 @@ const FundDetailsFee: FC = () => {
     poolAddress,
     poolInfo?.parameters.descriptionURL
   )
-
-  /**
-   * Get the trader commission for the pool
-   */
-  const onPerformanceFeeRequest = () => {
-    console.log("Request Performance Fee")
-  }
 
   if (!poolData || !poolInfo || !poolMetadata) {
     return <PageLoading />
@@ -104,7 +98,10 @@ const FundDetailsFee: FC = () => {
             </S.MainCardHeaderRight>
           </Flex>
 
-          <FeeChart address={poolAddress} />
+          <ProfitLossChart
+            address={poolAddress}
+            baseToken={poolData?.baseToken}
+          />
 
           <Flex full dir="column">
             <AmountRow
@@ -178,7 +175,7 @@ const FundDetailsFee: FC = () => {
           </Flex>
 
           <Flex full m="24px 0 0">
-            <Button onClick={onPerformanceFeeRequest} full size="large">
+            <Button onClick={withdrawCommission} full size="large">
               Request Performance Fee
             </Button>
           </Flex>

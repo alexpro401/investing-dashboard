@@ -57,9 +57,13 @@ interface IPayload {
   netInvestorsProfitPercentage: string
 }
 
+interface IMethods {
+  withdrawCommission: () => void
+}
+
 function useFundFee(
   poolAddress?: string
-): [[IPoolQuery | undefined, PoolInfo | null], IPayload] {
+): [[IPoolQuery | undefined, PoolInfo | null], IPayload, IMethods] {
   const { account } = useActiveWeb3React()
 
   const priceFeed = usePriceFeedContract()
@@ -90,6 +94,8 @@ function useFundFee(
   const [_platformCommissionUSD, _setPlatformCommissionUSD] =
     useState<BigNumber>(BIG_ZERO)
   const [_platformCommissionPercentage, _setPlatformCommissionPercentage] =
+    useState<BigNumber>(BIG_ZERO)
+  const [_platformCommissionDexe, _setPlatformCommissionDexe] =
     useState<BigNumber>(BIG_ZERO)
 
   // Trader commissions
@@ -342,6 +348,11 @@ function useFundFee(
       try {
         const commissions = await traderPool.getReinvestCommissions([0, 1000])
 
+        if (commissions && commissions.dexeDexeCommission) {
+          const { dexeDexeCommission } = commissions
+
+          _setPlatformCommissionDexe(dexeDexeCommission)
+        }
         if (commissions && commissions.dexeBaseCommission) {
           const { dexeBaseCommission } = commissions
 
@@ -391,6 +402,21 @@ function useFundFee(
     })()
   }, [coreProperties])
 
+  // METHODS
+
+  /**
+   * Get the trader commission for the pool
+   */
+  const withdrawCommission = async () => {
+    if (!traderPool) return
+
+    try {
+      await traderPool.reinvestCommission([0, 1000], _platformCommissionDexe)
+    } catch (error) {
+      console.error({ error })
+    }
+  }
+
   return [
     [poolGraphData, poolInfo],
     {
@@ -417,6 +443,7 @@ function useFundFee(
       netInvestorsProfitDEXE,
       netInvestorsProfitPercentage,
     },
+    { withdrawCommission },
   ]
 }
 
