@@ -86,10 +86,17 @@ function useFundFee(
     return subtractBignumbers([totalPoolBase, 18], [traderBase, 18])
   }, [poolInfo])
 
+  // Fund TVL ( including traderTVL ) in USD
+  const _totalTvlUSD = useMemo<BigNumber>(() => {
+    if (!poolInfo) return BIG_ZERO
+
+    const { totalPoolUSD, traderUSD } = poolInfo
+
+    return addBignumbers([totalPoolUSD, 18], [traderUSD, 18])
+  }, [poolInfo])
+
   // Platform commision
   const [_platformCommissionUSD, _setPlatformCommissionUSD] =
-    useState<BigNumber>(BIG_ZERO)
-  const [_platformCommissionPercentage, _setPlatformCommissionPercentage] =
     useState<BigNumber>(BIG_ZERO)
   const [_platformCommissionDexe, _setPlatformCommissionDexe] =
     useState<BigNumber>(BIG_ZERO)
@@ -170,20 +177,20 @@ function useFundFee(
   }, [dexePriceUSD, fundProfitWithoutTraderUSD])
   const fundProfitWithoutTraderPercentage = useMemo<string>(() => {
     if (
-      !poolInfo ||
+      !_totalTvlUSD ||
       !fundProfitWithoutTraderUSD ||
       fundProfitWithoutTraderUSD.big.isZero()
     ) {
       return "0"
     }
 
-    const { totalPoolUSD, traderUSD } = poolInfo
-
-    const totalTVL = addBignumbers([totalPoolUSD, 18], [traderUSD, 18])
-    const res = percentageOfBignumbers(totalTVL, fundProfitWithoutTraderUSD.big)
+    const res = percentageOfBignumbers(
+      _totalTvlUSD,
+      fundProfitWithoutTraderUSD.big
+    )
 
     return formatBigNumber(res, 18, 0)
-  }, [poolInfo, fundProfitWithoutTraderUSD])
+  }, [_totalTvlUSD, fundProfitWithoutTraderUSD])
 
   // Platform commissions
   const [platformCommissionBase, setPlatformCommissionBase] =
@@ -242,26 +249,17 @@ function useFundFee(
   }, [dexePriceUSD, netInvestorsProfitUSD])
   /**
    * Investors profit percentage
-   * 100 - (fundCommissionPercentage + _platformCommissionPercentage)
+   * (netInvestorsProfit / (TVL - traderTVL)) * 100
    */
   const netInvestorsProfitPercentage = useMemo<string>(() => {
-    if (
-      fundCommissionPercentage.big.isZero() ||
-      _platformCommissionPercentage.isZero()
-    ) {
+    if (netInvestorsProfitUSD.big.isZero() || !_totalTvlUSD) {
       return "0.00"
     }
 
-    const _traderWithPlatformCommissionPercentage = addBignumbers(
-      [fundCommissionPercentage.big, 25],
-      [_platformCommissionPercentage, 25]
-    )
+    const res = percentageOfBignumbers(_totalTvlUSD, netInvestorsProfitUSD.big)
 
-    return String(
-      100 -
-        Number(formatBigNumber(_traderWithPlatformCommissionPercentage, 18, 0))
-    )
-  }, [_platformCommissionPercentage, fundCommissionPercentage.big])
+    return formatBigNumber(res, 18, 0)
+  }, [netInvestorsProfitUSD, _totalTvlUSD])
 
   // SIDE EFFECTS
 
@@ -379,7 +377,6 @@ function useFundFee(
           await coreProperties.getDEXECommissionPercentages()
 
         if (platformCommissionPercentages && platformCommissionPercentages[0]) {
-          _setPlatformCommissionPercentage(platformCommissionPercentages[0])
           setPlatformCommissionPercentage(
             formatBigNumber(platformCommissionPercentages[0], 25, 0)
           )
