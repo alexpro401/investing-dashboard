@@ -1,5 +1,6 @@
 import { PoolInfo } from "constants/interfaces_v2"
-import { BigNumber, ethers, FixedNumber } from "ethers"
+import { formatUnits, parseEther } from "@ethersproject/units"
+import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { cutDecimalPlaces, formatNumber, convertBigToFixed } from "utils"
 
 export const getPNL = (SP: string) => {
@@ -90,7 +91,7 @@ export const getPriceStable = (stable: string, emission: string): string => {
 }
 
 export const getUSDPrice = (value) => {
-  return formatNumber(ethers.utils.formatUnits(value, 18).toString(), 0)
+  return formatNumber(formatUnits(value, 18).toString(), 0)
 }
 
 export const getLastInArray = (array) =>
@@ -114,6 +115,46 @@ export const divideBignumbers = (
     FixedNumber.fromValue(bn2[0], bn2[1])
   )
   return BigNumber.from(fn._hex)
+}
+
+export const _multiplyBignumbers = (
+  bn1: [BigNumber, number],
+  bn2: [BigNumber, number]
+): BigNumber => {
+  const fn = FixedNumber.fromValue(bn1[0], bn1[1]).mulUnsafe(
+    FixedNumber.fromValue(bn2[0], bn2[1])
+  )
+  return parseEther(fn._value)
+}
+
+export const _divideBignumbers = (
+  bn1: [BigNumber, number],
+  bn2: [BigNumber, number]
+): BigNumber => {
+  const fn = FixedNumber.fromValue(bn1[0], bn1[1]).divUnsafe(
+    FixedNumber.fromValue(bn2[0], bn2[1])
+  )
+  return parseEther(fn._value)
+}
+
+export function addBignumbers(
+  bn1: [BigNumber, number],
+  bn2: [BigNumber, number]
+): BigNumber {
+  const fn = convertBigToFixed(bn1[0], bn1[1]).addUnsafe(
+    convertBigToFixed(bn2[0], bn2[1])
+  )
+  return parseEther(fn._value)
+}
+
+export function subtractBignumbers(
+  bn1: [BigNumber, number],
+  bn2: [BigNumber, number]
+): BigNumber {
+  const fn = convertBigToFixed(bn1[0], bn1[1]).subUnsafe(
+    convertBigToFixed(bn2[0], bn2[1])
+  )
+  return parseEther(fn._value)
 }
 
 export const getLP = (baseTVL: string, supply: string): string => {
@@ -204,4 +245,17 @@ export const getFundProfitWithoutTraderFunds = (
   const result = totalFee.divUnsafe(percentage.divUnsafe(HUNDRED))
 
   return BigNumber.from(result)
+}
+
+export function calcPositionPnlPercentage(
+  mp: BigNumber,
+  ep: BigNumber
+): BigNumber {
+  const percentage = percentageOfBignumbers(mp, ep)
+
+  const fn = FixedNumber.fromValue(percentage, 18).subUnsafe(
+    FixedNumber.from(100)
+  )
+
+  return parseEther(fn._value)
 }

@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { GuardSpinner } from "react-spinners-kit"
 import { useWeb3React } from "@web3-react/core"
 import { createClient, Provider as GraphProvider } from "urql"
-import { ethers } from "ethers"
+import { formatEther } from "@ethersproject/units"
 
 import { Flex, Center } from "theme"
 import Button, { SecondaryButton } from "components/Button"
@@ -47,6 +47,7 @@ import {
   OwnInvestingValue,
   OwnInvestingLink,
 } from "./styled"
+import { useProposalAddress } from "hooks/useContract"
 
 const pnlNew: IDetailedChart[] = [
   {
@@ -144,27 +145,25 @@ function Trader(props: Props) {
   }, [traderPool, account, redirectToInvestor])
 
   useEffect((): void => {
-    if (!traderPool) return
+    if (!traderPool || !account) return
     ;(async () => {
       const investors = await traderPool?.totalInvestors()
 
-      const limit = +ethers.utils.formatEther(investors) + 1
-      const res = await traderPool?.getUsersInfo(0, limit)
+      const limit = +formatEther(investors) + 1
+      const res = await traderPool?.getUsersInfo(account, 0, limit)
 
-      const commisionTime = ethers.utils.formatEther(
-        res[0].commissionUnlockTimestamp
-      )
+      const commisionTime = formatEther(res[0].commissionUnlockTimestamp)
       setCommisionUnlockTime(Number(commisionTime))
     })()
-  }, [traderPool])
+  }, [traderPool, account])
 
   useEffect((): void => {
     if (!traderPool) return
     ;(async () => {
       const investors = await traderPool?.totalInvestors()
 
-      const limit = +ethers.utils.formatEther(investors) + 1
-      const fees = await traderPool?.getReinvestCommissions(0, limit)
+      const limit = +formatEther(investors) + 1
+      const fees = await traderPool?.getReinvestCommissions([0, limit])
 
       const commission = formatBigNumber(fees.traderBaseCommission, 18, 0)
       setPerformanceFeeExist(Number(commission) > 0)
@@ -221,7 +220,10 @@ function Trader(props: Props) {
               name: "Profit & Loss",
               child: (
                 <>
-                  <ProfitLossChart address={poolAddress} />
+                  <ProfitLossChart
+                    address={poolAddress}
+                    baseToken={poolData?.baseToken}
+                  />
                   <BarChart />
                   <Row>
                     <TextGrey>P&L LP - $ETH</TextGrey>

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { BigNumber } from "@ethersproject/bignumber"
 import { ReactNode } from "react"
+import { TokenData } from "constants/types"
 
 declare global {
   namespace NodeJS {
@@ -11,17 +12,13 @@ declare global {
       REACT_APP_INFURA_ID: string
       REACT_APP_ETHERSCAN_API_KEY: string
 
-      REACT_APP_PANCAKE_EXCHANGE_TOOL: string
-      REACT_APP_UNISWAP_EXCHANGE_TOOL: string
-
       REACT_APP_CONTRACTS_REGISTRY_ADDRESS: string
-
-      REACT_APP_STATS_API_URL: string
-      REACT_APP_NOTIFICATIONS_API_URL: string
 
       REACT_APP_ALL_POOLS_API_URL: string
       REACT_APP_BASIC_POOLS_API_URL: string
       REACT_APP_INVEST_POOLS_API_URL: string
+      REACT_APP_INVESTORS_API_URL: string
+      REACT_APP_INTERACTIONS_API_URL: string
 
       REACT_APP_IPFS_PROJECT_ID: string
       REACT_APP_IPFS_PROJECT_SECRET: string
@@ -40,8 +37,6 @@ export interface User {
 
 export interface Investor {
   id: string
-  insurance: BigNumber
-  claimedAmount: BigNumber
   activePools: string[]
   allPools: string[]
 }
@@ -55,6 +50,7 @@ export interface IPriceHistory {
   absPNL: number
   percPNL: number
   timestamp: number
+  aggregationType: number
 }
 
 export interface IPoolQuery {
@@ -90,6 +86,8 @@ export interface IPriceHistoryQuery {
 /// @param baseAndPositionBalances the array of balances. [0] is the balance of base tokens (array is normalized)
 /// @param totalPoolUSD is the current USD TVL in this pool
 /// @param traderBase is amount of trader base tokens in this pool
+/// @param traderLPBalance is amount of trader LP tokens in this pool
+/// @param traderUSD is amount of trader USD in this pool
 /// @param lpEmission is the current number of LP tokens
 export interface PoolInfo {
   baseAndPositionBalances: BigNumber[]
@@ -102,6 +100,8 @@ export interface PoolInfo {
   totalPoolBase: BigNumber
   totalPoolUSD: BigNumber
   traderBase: BigNumber
+  traderLPBalance: BigNumber
+  traderUSD: BigNumber
   parameters: PoolParameters
 }
 
@@ -117,7 +117,7 @@ interface PoolParameters {
   trader: string
   baseTokenDecimals: BigNumber
   commissionPercentage: BigNumber
-  comissionPeriod: number
+  commissionPeriod: number
   descriptionURL: string
   minimalInvestment: BigNumber
   privatePool: boolean
@@ -134,16 +134,230 @@ interface RiskyProposalInfo {
   balanceBase: BigNumber
   balancePosition: BigNumber
   lpLocked: BigNumber
-  propoosalLimits: RiskyProposalLimits
+  proposalLimits: RiskyProposalLimits
   token: string
   tokenDecimals: BigNumber
+}
+
+export interface RiskyProposalInvestmentsInfo {
+  baseInvested: BigNumber
+  baseShare: BigNumber
+  lp2Balance: BigNumber
+  lpInvested: BigNumber
+  positionShare: BigNumber
+  proposalId: BigNumber
 }
 
 export interface RiskyProposal {
   lp2Supply: BigNumber
   proposalInfo: RiskyProposalInfo
+  positionTokenPrice: BigNumber
   totalProposalBase: BigNumber
-  totalProposalUSD
+  totalProposalUSD: BigNumber
+  totalInvestors: BigNumber
+}
+
+export interface IRiskyPosition {
+  id: string
+  isClosed: boolean
+  totalBaseOpenVolume: BigNumber
+  totalBaseCloseVolume: BigNumber
+  totalPositionOpenVolume: BigNumber
+  totalPositionCloseVolume: BigNumber
+  totalUSDOpenVolume: BigNumber
+  totalUSDCloseVolume: BigNumber
+}
+
+export interface IRiskyPositionExchange {
+  id: string
+  timestamp: string
+  fromToken: string
+  toToken: string
+  fromVolume: BigNumber
+  toVolume: BigNumber
+  usdVolume: BigNumber
+}
+
+export interface IRiskyProposal {
+  token: string
+  basicPool: {
+    id: string
+    baseToken: string
+  }
+  positions: IRiskyPosition[]
+}
+
+export interface IRiskyProposalQuery {
+  proposals: IRiskyProposal[]
+}
+
+export interface IRiskyPositionCard extends IRiskyPosition {
+  token?: string
+  proposal?: string
+  pool: {
+    id: string
+    baseToken: string
+  }
+  exchanges: IRiskyPositionExchange[]
+}
+
+// Invest proposals
+export interface IInvestProposal {
+  id: string
+  timestampLimit: BigNumber
+  investLPLimit: BigNumber
+  leftTokens: string[]
+  leftAmounts: BigNumber[]
+  totalUSDSupply: BigNumber
+  firstSupplyTimestamp: BigNumber
+  APR: BigNumber
+  lastSupply: {
+    id: string
+    timestamp: BigNumber
+    dividendsTokens: string[]
+    amountDividendsTokens: BigNumber[]
+  }
+  lastWithdraw: {
+    id: string
+    timestamp: BigNumber
+    amountBase: BigNumber
+  }
+  investPool: {
+    id: string
+  }
+}
+
+export interface IInvestProposalQuery {
+  id: string
+  baseToken: string
+  proposals: IInvestProposal[]
+}
+
+// Investor proposals
+export interface IInvestorProposalVest {
+  id: string
+  isInvest: boolean
+  timestamp: string
+  volumeBase: BigNumber
+  volumeLP: BigNumber
+  volumeUSD: BigNumber
+}
+
+export interface IInvestorProposal {
+  id: string
+  isClosed: boolean
+  totalBaseInvestVolume: BigNumber
+  totalBaseDivestVolume: BigNumber
+  totalLPInvestVolume: BigNumber
+  totalLPDivestVolume: BigNumber
+  totalUSDInvestVolume: BigNumber
+  totalUSDDivestVolume: BigNumber
+  pool: {
+    id: string
+    type: string
+    token: string
+  }
+  vest: IInvestorProposalVest[]
+}
+
+// Investor proposals
+interface IInvestorInvestedPool {
+  id: string
+}
+export interface IInvestorInvestedPools {
+  activePools: IInvestorInvestedPool[]
+}
+
+export interface IInvestorRiskyProposal {
+  id: string
+  token: string
+  timestampLimit: number
+  investLPLimit: BigNumber
+  maxTokenPriceLimit: BigNumber
+  basicPool: {
+    id: string
+    baseToken: string
+  }
+  positions?: any[]
+}
+
+export interface IInvestorRiskyPosition {
+  id: string
+  isClosed: boolean
+  totalBaseOpenVolume: BigNumber
+  totalBaseCloseVolume: BigNumber
+  totalPositionOpenVolume: BigNumber
+  totalPositionCloseVolume: BigNumber
+  totalUSDOpenVolume: BigNumber
+  totalUSDCloseVolume: BigNumber
+}
+
+export interface IInvestorRiskyPositions {
+  id: string
+  token: string
+  basicPool: {
+    id: string
+    baseToken: string
+  }
+  positions: IRiskyPosition[]
+}
+
+export interface IInvestorInvestProposal {
+  id: string
+  timestampLimit: BigNumber
+  investLPLimit: BigNumber
+  leftTokens: BigNumber
+  leftAmounts: string[]
+  totalUSDSupply: BigNumber
+  firstSupplyTimestamp: BigNumber
+  APR: BigNumber
+  lastSupply: {
+    id: string
+    timestamp: BigNumber
+    dividendsTokens: string[]
+    amountDividendsTokens: BigNumber[]
+  }
+  lastWithdraw: {
+    id: string
+    timestamp: BigNumber
+    amountBase: BigNumber
+  }
+  investPool: {
+    id: string
+    baseToken: string
+  }
+}
+
+export interface IFundFeeHistory {
+  id: string
+  PNL: BigNumber
+  day: BigNumber
+  fundProfit: BigNumber
+  perfomanceFee: BigNumber
+  traderPool: {
+    id: string
+    baseToken: string
+  }
+}
+
+interface InvestProposalLimits {
+  timestampLimit: BigNumber
+  investLPLimit: BigNumber
+}
+
+interface InvestProposalInfo {
+  descriptionURL: string
+  proposalLimits: InvestProposalLimits
+  lpLocked: BigNumber
+  investedBase: BigNumber
+  newInvestedBase: BigNumber
+}
+
+export interface InvestProposal {
+  id: any
+  closed: any
+  proposalInfo: InvestProposalInfo
+  totalInvestors: BigNumber
 }
 
 /// @notice The struct that is returned from the TraderPoolView contract and stores information about the trader leverage
@@ -170,27 +384,35 @@ export interface OwnedPools {
 }
 
 export interface IExchange {
+  id: string
+  hash: string
   fromToken: string
   toToken: string
-  fromVolume: string
-  toVolume: string
-  day: {
-    day: number
-  }
+  fromVolume: BigNumber
+  toVolume: BigNumber
+  usdVolume: BigNumber
+  timestamp: BigNumber
+  opening: boolean
 }
 
 export interface IPosition {
   closed: boolean
   id: string
   positionToken: string
+  totalUSDOpenVolume: BigNumber
+  totalUSDCloseVolume: BigNumber
+  totalBaseOpenVolume: BigNumber
+  totalBaseCloseVolume: BigNumber
+  totalPositionOpenVolume: BigNumber
+  totalPositionCloseVolume: BigNumber
   exchanges: IExchange[]
-}
-
-export interface IPositionQuery {
-  baseToken: string
-  ticker: string
-  descriptionURL: string
-  positions: IPosition[]
+  traderPool: {
+    id: string
+    ticker: string
+    trader: string
+    baseToken: string
+    descriptionURL: string
+  }
 }
 
 /// @notice The enum of exchange types
@@ -202,7 +424,7 @@ export enum ExchangeType {
 }
 
 // used to display the exchange data
-interface FormElement {
+interface FormElement<T = void> {
   address: string | undefined
   amount: string
   balance: BigNumber
@@ -210,6 +432,25 @@ interface FormElement {
   decimals?: number
   icon?: ReactNode
   price: BigNumber
+}
+
+export interface RiskyInvestInfo {
+  stakeLimit: BigNumber | undefined
+  tokens: {
+    base: TokenData | null
+    position: TokenData | null
+  }
+  amounts: BigNumber[]
+  avgBuyingPrice: BigNumber
+  avgSellingPrice: BigNumber
+  positionPnl: BigNumber
+  investorPnlLP: BigNumber
+  investorPnlUSD: BigNumber
+}
+
+export interface RiskyForm {
+  from: FormElement
+  to: FormElement
 }
 
 export interface ExchangeForm {

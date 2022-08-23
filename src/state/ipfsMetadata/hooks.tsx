@@ -1,11 +1,15 @@
 import { useEffect, useState, useCallback } from "react"
 import { useSelector, useDispatch } from "react-redux"
 
-import { parsePoolData, parseUserData } from "utils/ipfs"
+import { getIpfsData } from "utils/ipfs"
 
-import { selectPoolMetadata, selectUserMetadata } from "./selectors"
-import { addPool, addUser } from "./actions"
-import { IUserMetadata } from "./types"
+import {
+  selectinvestProposalMetadata,
+  selectPoolMetadata,
+  selectUserMetadata,
+} from "./selectors"
+import { addPool, addProposal, addUser } from "./actions"
+import { IInvestProposalMetadata, IUserMetadata } from "./types"
 
 export function usePoolMetadata(poolId, hash) {
   const dispatch = useDispatch()
@@ -15,7 +19,7 @@ export function usePoolMetadata(poolId, hash) {
   const fetchPoolMetadata = useCallback(async () => {
     try {
       setLoading(true)
-      const data = await parsePoolData(hash)
+      const data = await getIpfsData(hash)
       if (data) {
         dispatch(addPool({ params: { poolId, hash, ...data } }))
       }
@@ -49,7 +53,7 @@ export function useUserMetadata(
   const fetchUserMetadata = useCallback(async () => {
     try {
       setLoading(true)
-      const data = await parseUserData(hash)
+      const data = await getIpfsData(hash)
       if (data) {
         dispatch(addUser({ params: { hash, ...data } }))
       }
@@ -68,4 +72,41 @@ export function useUserMetadata(
   }, [hash, userMetadata, dispatch, fetchUserMetadata])
 
   return [{ userMetadata, loading }, { fetchUserMetadata }]
+}
+
+export function useInvestProposalMetadata(
+  poolId,
+  hash
+): [
+  { investProposalMetadata: IInvestProposalMetadata | null; loading: boolean },
+  { fetchInvestProposalMetadata: () => void }
+] {
+  const dispatch = useDispatch()
+  const investProposalMetadata = useSelector(
+    selectinvestProposalMetadata(poolId, hash)
+  )
+  const [loading, setLoading] = useState(false)
+
+  const fetchInvestProposalMetadata = useCallback(async () => {
+    try {
+      setLoading(true)
+      const data = await getIpfsData(hash)
+      if (data) {
+        dispatch(addProposal({ params: { hash, poolId, data } }))
+      }
+      setLoading(false)
+    } catch (error) {
+      console.error(error)
+      setLoading(false)
+    }
+  }, [dispatch, hash, poolId])
+
+  useEffect(() => {
+    if (!hash) return
+    if (investProposalMetadata === null) {
+      fetchInvestProposalMetadata()
+    }
+  }, [hash, investProposalMetadata, dispatch, fetchInvestProposalMetadata])
+
+  return [{ investProposalMetadata, loading }, { fetchInvestProposalMetadata }]
 }

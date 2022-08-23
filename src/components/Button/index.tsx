@@ -7,6 +7,7 @@ const Button: React.FC<MainButtonProps> = ({
   size = "normal",
   m,
   fz,
+  br,
   full,
   theme = "primary",
   children,
@@ -19,6 +20,7 @@ const Button: React.FC<MainButtonProps> = ({
       m={m}
       onClick={onClick}
       fz={fz}
+      br={br}
       full={full}
       color={theme}
       disabled={disabled}

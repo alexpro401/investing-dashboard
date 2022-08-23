@@ -1,10 +1,10 @@
 import { AreaChart, Area, Tooltip, ResponsiveContainer, YAxis } from "recharts"
 import { PulseSpinner } from "react-spinners-kit"
-import { ethers } from "ethers"
+import { BigNumber } from "@ethersproject/bignumber"
 
 import { usePriceHistory } from "state/pools/hooks"
 import { formateChartData } from "utils/formulas"
-import { formatBigNumber } from "utils"
+import { formatBigNumber, daysAgoTimestamp } from "utils"
 
 import { Center } from "theme"
 import S from "./styled"
@@ -14,7 +14,7 @@ interface Props {
 }
 
 const tickFormatter = (value: any) => {
-  if (ethers.BigNumber.isBigNumber(value)) {
+  if (BigNumber.isBigNumber(value)) {
     return formatBigNumber(value, 18, 6)
   }
   return value
@@ -78,7 +78,7 @@ const Chart = ({ data }) => {
 }
 
 const FeeChart: React.FC<Props> = ({ address }) => {
-  const history = usePriceHistory(address)
+  const history = usePriceHistory(address, [0, 15], 100, daysAgoTimestamp(1))
   const historyFormated = formateChartData(history)
 
   return (

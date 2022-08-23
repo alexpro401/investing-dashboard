@@ -3,8 +3,7 @@ import { useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
 import { useWeb3React } from "@web3-react/core"
 import { RotateSpinner, PulseSpinner } from "react-spinners-kit"
-import { ethers } from "ethers"
-import { TransactionReceipt } from "@ethersproject/providers"
+import { formatEther, parseEther } from "@ethersproject/units"
 import { useDispatch } from "react-redux"
 
 import {
@@ -39,7 +38,7 @@ import MinInvestIcon from "assets/icons/MinInvestAmount"
 
 import { bigify, formatBigNumber, shortenAddress, isTxMined } from "utils"
 import { arrayDifference } from "utils/array"
-import { parsePoolData, addFundMetadata } from "utils/ipfs"
+import { getIpfsData, addFundMetadata } from "utils/ipfs"
 import { useUpdateFundContext } from "context/UpdateFundContext"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"
 import useContract, { useERC20 } from "hooks/useContract"
@@ -171,7 +170,7 @@ const FundDetailsEdit: FC = () => {
     )
 
     return addTransaction(receipt, {
-      type: TransactionType.FUND_EDIT,
+      type: TransactionType.POOL_EDIT,
       baseCurrencyId: poolData.baseToken,
       fundName: poolData.name,
     })
@@ -196,7 +195,7 @@ const FundDetailsEdit: FC = () => {
     const receipt = await traderPool?.modifyAdmins(managersRemoved, false)
 
     return addTransaction(receipt, {
-      type: TransactionType.FUND_UPDATE_MANAGERS,
+      type: TransactionType.POOL_UPDATE_MANAGERS,
       editType: UpdateListType.REMOVE,
       poolId: poolAddress,
     })
@@ -206,7 +205,7 @@ const FundDetailsEdit: FC = () => {
     const receipt = await traderPool?.modifyAdmins(managersAdded, true)
 
     return addTransaction(receipt, {
-      type: TransactionType.FUND_UPDATE_MANAGERS,
+      type: TransactionType.POOL_UPDATE_MANAGERS,
       editType: UpdateListType.ADD,
       poolId: poolAddress,
     })
@@ -219,7 +218,7 @@ const FundDetailsEdit: FC = () => {
     )
 
     return addTransaction(receipt, {
-      type: TransactionType.FUND_UPDATE_INVESTORS,
+      type: TransactionType.POOL_UPDATE_INVESTORS,
       editType: UpdateListType.REMOVE,
       poolId: poolAddress,
     })
@@ -232,7 +231,7 @@ const FundDetailsEdit: FC = () => {
     )
 
     return addTransaction(receipt, {
-      type: TransactionType.FUND_UPDATE_INVESTORS,
+      type: TransactionType.POOL_UPDATE_INVESTORS,
       editType: UpdateListType.ADD,
       poolId: poolAddress,
     })
@@ -443,7 +442,7 @@ const FundDetailsEdit: FC = () => {
   useEffect(() => {
     if (!poolData || !poolInfoData) return
     ;(async () => {
-      const parsedIpfs = await parsePoolData(poolData.descriptionURL)
+      const parsedIpfs = await getIpfsData(poolData.descriptionURL)
 
       if (!!parsedIpfs) {
         setInitialIpfs({
@@ -454,11 +453,9 @@ const FundDetailsEdit: FC = () => {
       }
 
       const totalEmission =
-        poolInfoData &&
-        ethers.utils.formatEther(poolInfoData.parameters.totalLPEmission)
+        poolInfoData && formatEther(poolInfoData.parameters.totalLPEmission)
       const minInvestment =
-        poolInfoData &&
-        ethers.utils.formatEther(poolInfoData.parameters.minimalInvestment)
+        poolInfoData && formatEther(poolInfoData.parameters.minimalInvestment)
 
       const investors = poolData?.privateInvestors.map((m) => m.id)
       const managers = poolData?.admins
@@ -475,9 +472,7 @@ const FundDetailsEdit: FC = () => {
   // update emission switch state
   useEffect(() => {
     if (!poolInfoData) return
-    if (
-      !poolInfoData.parameters.totalLPEmission.eq(ethers.utils.parseEther("0"))
-    ) {
+    if (!poolInfoData.parameters.totalLPEmission.eq(parseEther("0"))) {
       setEmission(true)
     }
   }, [poolInfoData])
@@ -485,11 +480,7 @@ const FundDetailsEdit: FC = () => {
   // update min invest amount switch state
   useEffect(() => {
     if (!poolInfoData) return
-    if (
-      !poolInfoData.parameters.minimalInvestment.eq(
-        ethers.utils.parseEther("0")
-      )
-    ) {
+    if (!poolInfoData.parameters.minimalInvestment.eq(parseEther("0"))) {
       setMinimalInvest(true)
     }
   }, [poolInfoData])

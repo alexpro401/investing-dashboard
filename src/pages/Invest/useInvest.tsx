@@ -6,9 +6,12 @@ import {
   useMemo,
   useState,
 } from "react"
-import { BigNumber, ethers } from "ethers"
+import { parseUnits, parseEther } from "@ethersproject/units"
+import { BigNumber } from "@ethersproject/bignumber"
+import { useWeb3React } from "@web3-react/core"
+
 import { usePoolContract, useTraderPool } from "hooks/usePool"
-import Icon from "components/Icon"
+
 import {
   calcSlippage,
   getAllowance,
@@ -17,7 +20,6 @@ import {
   formatBigNumber,
   getMaxLPInvestAmount,
 } from "utils"
-import { useWeb3React } from "@web3-react/core"
 import { useERC20, usePriceFeedContract } from "hooks/useContract"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
@@ -29,12 +31,14 @@ import {
   percentageOfBignumbers,
   divideBignumbers,
 } from "utils/formulas"
-import { usePoolPrice } from "state/pools/hooks"
+import usePoolPrice from "hooks/usePoolPrice"
 import { SwapDirection } from "constants/types"
 import useAlert, { AlertType } from "hooks/useAlert"
-import { ExchangeForm } from "constants/interfaces_v2"
+import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
 import useGasTracker from "state/gas/hooks"
 import { IAlert } from "context/AlertContext"
+
+import Icon from "components/Icon"
 
 interface UseInvestProps {
   poolAddress: string | undefined
@@ -126,10 +130,7 @@ const useInvest = ({
   const transactionOptions = useMemo(() => {
     if (!gasTrackerResponse) return
     return {
-      gasPrice: ethers.utils.parseUnits(
-        gasTrackerResponse.ProposeGasPrice,
-        "gwei"
-      ),
+      gasPrice: parseUnits(gasTrackerResponse.ProposeGasPrice, "gwei"),
     }
   }, [gasTrackerResponse])
 
@@ -525,10 +526,8 @@ const useInvest = ({
 
       const invest = await traderPool.getInvestTokens(amount.toHexString())
 
-      const sl = 1 - parseFloat(slippage) / 100
-
       const amountsWithSlippage = invest.receivedAmounts.map((position) =>
-        calcSlippage(position, 18, sl)
+        calcSlippage([position, 18], slippage, ExchangeType.FROM_EXACT)
       )
 
       return [invest, amountsWithSlippage]
@@ -551,7 +550,7 @@ const useInvest = ({
     setWalletPrompting(false)
 
     const receipt = await addTransaction(depositResponse, {
-      type: TransactionType.DEPOSIT_LIQUIDITY_STAKING,
+      type: TransactionType.INVEST,
       poolAddress: poolAddress,
       currencyId: poolInfo?.parameters.baseToken,
       amount: amount.toHexString(),
@@ -596,7 +595,7 @@ const useInvest = ({
     )
     setWalletPrompting(false)
     const receipt = await addTransaction(withdrawResponse, {
-      type: TransactionType.WITHDRAW_LIQUIDITY_STAKING,
+      type: TransactionType.DIVEST,
       poolAddress: poolAddress,
       currencyId: poolInfo?.parameters.baseToken,
       amount: amount.toHexString(),
@@ -742,7 +741,7 @@ const useInvest = ({
       setSwapPrice(priceBase)
     }
     if (direction === "withdraw") {
-      const amount = ethers.utils.parseEther("1")
+      const amount = parseEther("1")
       setSwapPrice(divideBignumbers([amount, 18], [priceBase, 18]))
     }
   }, [direction, priceBase, priceUSD])

@@ -1,11 +1,12 @@
 import { FC, ReactNode, useState, useEffect, useMemo } from "react"
-import { ethers } from "ethers"
+import { formatEther } from "@ethersproject/units"
 import { format } from "date-fns"
 
 import { useERC20 } from "hooks/useContract"
 import { IPoolQuery, PoolInfo } from "constants/interfaces_v2"
 import { expandTimestamp, formatBigNumber } from "utils"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
+import { DATE_FORMAT } from "constants/time"
 
 import Emission from "components/Emission"
 import ReadMore from "components/ReadMore"
@@ -42,7 +43,7 @@ const FundDetailsCard: FC<Props> = ({ data, poolInfo, children = null }) => {
 
   const creationTime = useMemo(() => {
     if (!!data) {
-      return format(expandTimestamp(data.creationTime), "MMM dd, y")
+      return format(expandTimestamp(data.creationTime), DATE_FORMAT)
     }
 
     return "-"
@@ -51,7 +52,7 @@ const FundDetailsCard: FC<Props> = ({ data, poolInfo, children = null }) => {
   const minimalInvestment = useMemo(() => {
     if (!poolInfo || !baseData) return "-"
 
-    const res = ethers.utils.formatEther(poolInfo.parameters.minimalInvestment)
+    const res = formatEther(poolInfo.parameters.minimalInvestment)
 
     if (res === "0.0" || res === "0.00") {
       return "-"
@@ -81,8 +82,8 @@ const FundDetailsCard: FC<Props> = ({ data, poolInfo, children = null }) => {
     const dif = total.sub(used)
 
     const percent = percentage(
-      Number(ethers.utils.formatEther(used)).toFixed(2),
-      Number(ethers.utils.formatEther(total)).toFixed(2)
+      Number(formatEther(used)).toFixed(2),
+      Number(formatEther(total)).toFixed(2)
     )
 
     return {

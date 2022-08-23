@@ -55,29 +55,20 @@ const stringify = (json) => {
   }
 }
 
-export const parsePoolData = async (hash) => {
+export const getIpfsData = async (hash) => {
   try {
     if (!!hash && hash.length === 46) {
       const res = await axios.post(
-        `https://ipfs.infura.io:5001/api/v0/cat?arg=${hash}`
+        `https://ipfs.infura.io:5001/api/v0/cat?arg=${hash}`,
+        {},
+        {
+          headers: {
+            authorization: auth,
+          },
+        }
       )
       return res.data
     }
-  } catch (e) {
-    console.log(e)
-    return false
-  }
-}
-
-export const parseUserData = async (hash) => {
-  try {
-    if (!!hash && hash.length === 46) {
-      const res = await axios.post(
-        `https://ipfs.infura.io:5001/api/v0/cat?arg=${hash}`
-      )
-      return res.data
-    }
-    return false
   } catch (e) {
     console.log(e)
     return false

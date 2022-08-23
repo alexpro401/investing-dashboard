@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux"
 import { AppDispatch } from "state"
 import { updateGasData } from "./actions"
 
-const GasPriceUpdater: FC = () => {
+export const GasPriceUpdater: FC = () => {
   const { chainId } = useWeb3React()
   const dispatch = useDispatch<AppDispatch>()
 
@@ -38,7 +38,10 @@ const GasPriceUpdater: FC = () => {
     const result = await trackerByChain[chainId]()
 
     if (result) {
-      dispatch(updateGasData({ chainId, response: result }))
+      const gasData =
+        chainId === 97 ? { ...result, ProposeGasPrice: "10" } : result
+
+      dispatch(updateGasData({ chainId, response: gasData }))
     }
   }, [chainId, dispatch, trackerByChain])
 
@@ -52,5 +55,3 @@ const GasPriceUpdater: FC = () => {
 
   return null
 }
-
-export default GasPriceUpdater

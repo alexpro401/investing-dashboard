@@ -1,48 +1,106 @@
-import { useEffect, useState } from "react"
-import { RiskyProposal } from "constants/interfaces_v2"
-import { TraderPool, TraderPoolRiskyProposal } from "abi"
-import useContract from "hooks/useContract"
+import { useCallback, useEffect, useState } from "react"
+import { useRiskyProposalContract } from "hooks/useContract"
+import { Contract } from "@ethersproject/contracts"
+import debounce from "lodash.debounce"
 
-function useRiskyProposals(poolAddress?: string): RiskyProposal[] {
-  const [proposalAddress, setProposalAddress] = useState("")
+import {
+  RiskyProposal,
+  RiskyProposalInvestmentsInfo,
+} from "constants/interfaces_v2"
+import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
+
+export function useRiskyProposals(
+  poolAddress?: string
+): [{ data: RiskyProposal[]; loading: boolean }, () => void] {
   const [proposals, setProposals] = useState<RiskyProposal[]>([])
+  const [offset, setOffset] = useState<number>(0)
+  const [fetching, setFetching] = useState<boolean>(true)
+  const [allFetched, setAllFetched] = useState<boolean>(false)
 
-  const traderPool = useContract(poolAddress, TraderPool)
-  const traderPoolRiskyProposal = useContract(
-    proposalAddress,
-    TraderPoolRiskyProposal
-  )
+  const [riskyProposal] = useRiskyProposalContract(poolAddress)
+
+  const fetchProposals = useCallback(async () => {
+    if (riskyProposal !== null && !allFetched) {
+      setFetching(true)
+      try {
+        const data = await riskyProposal.getProposalInfos(
+          offset,
+          DEFAULT_PAGINATION_COUNT
+        )
+        if (data && !!data.length) {
+          setProposals((prev) => [...prev, ...data])
+          setOffset((prev) => prev + data.length)
+        }
+        if (data.length < DEFAULT_PAGINATION_COUNT || data.length === 0) {
+          setAllFetched(true)
+        }
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setFetching(false)
+      }
+    }
+  }, [allFetched, offset, riskyProposal])
 
   useEffect(() => {
-    if (!traderPool) return
-    ;(async () => {
-      const address = await traderPool.proposalPoolAddress()
-      setProposalAddress(address)
-    })()
-  }, [traderPool])
+    if (!riskyProposal || proposals.length > 0) return
+    fetchProposals()
+  }, [riskyProposal])
 
-  useEffect(() => {
-    if (!traderPoolRiskyProposal) return
-    ;(async () => {
-      const data = await traderPoolRiskyProposal.getProposalInfos(0, 100)
-      setProposals(data)
-    })()
-  }, [traderPoolRiskyProposal])
-
-  return proposals
+  return [{ data: proposals, loading: fetching }, debounce(fetchProposals, 100)]
 }
 
 export function useRiskyProposal(
   poolAddress?: string,
   index?: string
-): RiskyProposal | undefined {
-  const proposals = useRiskyProposals(poolAddress)
+): [RiskyProposal | undefined, Contract | null, string, () => void] {
+  const [proposal, setProposal] = useState<RiskyProposal | undefined>()
+  const [update, setUpdate] = useState(false)
+  const [riskyProposal, proposalAddress] = useRiskyProposalContract(poolAddress)
 
-  if (!index) {
-    return undefined
-  }
+  const refresh = useCallback(() => {
+    setUpdate(!update)
+  }, [update])
 
-  return proposals[index]
+  useEffect(() => {
+    if (!riskyProposal || !index) return
+    ;(async () => {
+      const data = await riskyProposal.getProposalInfos(
+        index,
+        parseFloat(index) + 1
+      )
+      setProposal(data[0])
+    })()
+  }, [index, riskyProposal, update])
+
+  return [proposal, riskyProposal, proposalAddress, refresh]
+}
+
+export function useActiveInvestmentsInfo(
+  poolAddress?: string,
+  account?: string | null | undefined,
+  index?: string
+) {
+  const [info, setInfo] = useState<RiskyProposalInvestmentsInfo | undefined>()
+  const [riskyProposal] = useRiskyProposalContract(poolAddress)
+
+  useEffect(() => {
+    if (!riskyProposal || !index || !account) return
+    ;(async () => {
+      try {
+        const data = await riskyProposal.getActiveInvestmentsInfo(
+          account,
+          index,
+          1
+        )
+        if (data.length) {
+          setInfo(data[0])
+        }
+      } catch {}
+    })()
+  }, [riskyProposal, index, account])
+
+  return info
 }
 
 export default useRiskyProposals

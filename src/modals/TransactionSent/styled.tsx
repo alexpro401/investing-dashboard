@@ -33,30 +33,3 @@ export const ButtonsContainer = styled.div`
   align-items: center;
   justify-content: space-between;
 `
-
-export const SecondaryButtonText = styled.div`
-  display: flex;
-  align-items: center;
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 16px;
-  text-align: center;
-  color: #616d8b;
-`
-
-export const ButtonContentContainer = styled.div`
-  display: flex;
-`
-
-export const ButtonText = styled.div`
-  margin-right: 4px;
-  display: flex;
-  align-items: center;
-`
-
-export const ButtonImg = styled.div`
-  display: flex;
-  align-items: center;
-`

@@ -1,6 +1,7 @@
+import { createContext, useContext, Component } from "react"
 import { Token } from "constants/interfaces"
 import { sliderPropsByPeriodType } from "constants/index"
-import React from "react"
+import { IValidationError } from "constants/types"
 
 interface IState {
   avatarBlobString: string
@@ -20,11 +21,6 @@ interface IState {
   managers: string[]
   investors: string[]
   validationErrors: IValidationError[]
-}
-
-interface IValidationError {
-  message: string
-  field: string
 }
 
 interface IContext extends IState {
@@ -63,11 +59,11 @@ const defaultContext = {
   handleValidate: () => false,
 }
 
-export const FundContext = React.createContext<IContext>(defaultContext)
+export const FundContext = createContext<IContext>(defaultContext)
 
-export const useCreateFundContext = () => React.useContext(FundContext)
+export const useCreateFundContext = () => useContext(FundContext)
 
-class CreateFundContext extends React.Component {
+class CreateFundContext extends Component {
   static contextType = FundContext
 
   state = {

@@ -14,8 +14,8 @@ export enum ExplorerDataType {
 
 export default function getExplorerLink(
   chainId: number,
-  data: string,
-  type: ExplorerDataType
+  data?: string,
+  type?: ExplorerDataType
 ) {
   const prefix = BSCSCAN_PREFIXES[chainId] ?? "https://bscscan.com"
 

@@ -3,9 +3,10 @@ import styled from "styled-components"
 import { GradientBorder, Flex } from "theme"
 
 export const ToastsContainer = styled.div<{ height: string | number }>`
-  position: fixed;
   width: 100%;
   height: ${({ height }) => height};
+  position: fixed;
+  top: 32px;
   z-index: 10;
 `
 export const ToastsInner = styled.div`
@@ -15,7 +16,6 @@ export const ToastsInner = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-end;
-  margin-top: 32px;
   padding-bottom: 1px;
   -webkit-overflow-scrolling: touch;
   ::-webkit-scrollbar {

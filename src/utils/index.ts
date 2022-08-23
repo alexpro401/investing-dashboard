@@ -1,13 +1,14 @@
 import { getAddress } from "@ethersproject/address"
 import { Contract } from "@ethersproject/contracts"
-import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
-import { poolTypes, stableCoins } from "constants/index"
-import { ethers, FixedNumber } from "ethers"
+import { BigNumber, BigNumberish, FixedNumber } from "@ethersproject/bignumber"
+import { poolTypes, stableCoins, ZERO } from "constants/index"
+import { formatUnits, parseUnits, parseEther } from "@ethersproject/units"
 import { ERC20 } from "abi"
 import { useEffect, useState } from "react"
-import { OwnedPools } from "constants/interfaces_v2"
+import { ExchangeType, OwnedPools } from "constants/interfaces_v2"
 import { getTime, setHours, setMinutes } from "date-fns"
 import { TransactionReceipt } from "@ethersproject/providers"
+import { Token } from "constants/types"
 
 export const useUpdate = (ms: number) => {
   const [updator, setUpdate] = useState(0)
@@ -147,17 +148,17 @@ export const calcPrice = (price, amount) => {
 export const formatBigNumber = (value?: BigNumber, decimals = 18, fix = 6) => {
   if (!value) return formatNumber("0", fix)
 
-  const amount = ethers.utils.formatUnits(value, decimals).toString()
+  const amount = formatUnits(value, decimals).toString()
 
   return formatNumber(amount, fix)
 }
 
 export const normalizeBigNumber = (
-  value: BigNumber,
+  value?: BigNumber,
   decimals = 18,
   fix?: number
 ) => {
-  const amount = ethers.utils.formatUnits(value, decimals).toString()
+  const amount = formatUnits(value || ZERO, decimals).toString()
 
   return humanizeBigNumber(amount, fix)
 }
@@ -224,17 +225,19 @@ export const fixFractionalDecimals = (
 }
 
 export const calcSlippage = (
-  amount: BigNumber,
-  decimals: number,
-  slippage: number
+  token: Token,
+  slippage: string,
+  swapDirection: ExchangeType
 ) => {
-  const a = FixedNumber.fromValue(amount, decimals)
-  const sl = FixedNumber.fromValue(
-    ethers.utils.parseEther(slippage.toString()),
-    18
-  )
+  const sl =
+    swapDirection === ExchangeType.FROM_EXACT
+      ? 1 - parseFloat(slippage) / 100
+      : 1 + parseFloat(slippage) / 100
 
-  return BigNumber.from(a.mulUnsafe(sl)._hex)
+  const a = FixedNumber.fromValue(token[0], token[1])
+  const multiplier = FixedNumber.fromValue(parseEther(sl.toString()), 18)
+
+  return BigNumber.from(a.mulUnsafe(multiplier)._hex)
 }
 
 export const parseTransactionError = (str: any) => {
@@ -245,7 +248,17 @@ export const parseTransactionError = (str: any) => {
       return
     }
 
-    // parse string error
+    // parse string error reason
+    if (typeof str === "string") {
+      const position = str.search(`reason=`)
+
+      const cutString = str.substring(position + 7)
+
+      const matches = cutString.match(/"(.*?)"/)
+      return matches ? matches[1] : DEFAULT_TRANSACTION_ERROR
+    }
+
+    // parse string error message
     if (typeof str === "string") {
       const position = str.search(`"message":`)
 
@@ -291,6 +304,12 @@ export const keepHoursAndMinutes = (timestamp: Date | number, h, m): number => {
   return shortTimestamp(getTime(minutes))
 }
 
+export function daysAgoTimestamp(days: number): number {
+  const d = new Date()
+  d.setDate(d.getDate() - days)
+  return shortTimestamp(d.getTime())
+}
+
 /**
  * Check that transaction is mined by the given receipt
  * @param tx transaction receipt
@@ -306,14 +325,14 @@ export const cutDecimalPlaces = (
   roundUp = true,
   fix = 6
 ) => {
-  const number = ethers.utils.formatUnits(value, decimals)
+  const number = formatUnits(value, decimals)
 
   const pow = Math.pow(10, fix)
 
   const parsed =
     Math[roundUp ? "round" : "floor"](parseFloat(number) * pow) / pow
 
-  return ethers.utils.parseUnits(parsed.toString(), decimals)
+  return parseUnits(parsed.toString(), decimals)
 }
 
 export const getMaxLPInvestAmount = (
@@ -333,17 +352,17 @@ export function fromBig(value: BigNumber | undefined, decimals = 18) {
     return "0"
   }
 
-  const formatedNumber = ethers.utils.formatUnits(value, decimals)
+  const formatedNumber = formatUnits(value, decimals)
   if (formatedNumber.split(".")[1] === "0") return formatedNumber.split(".")[0]
   return formatedNumber
 }
 
 export function bigify(value: string, decimals: number) {
   if (!value) {
-    return ethers.utils.parseUnits("0", decimals)
+    return parseUnits("0", decimals)
   }
 
-  return ethers.utils.parseUnits(value, decimals)
+  return parseUnits(value, decimals)
 }
 
 /**
@@ -356,3 +375,8 @@ export const convertBigToFixed = (
   recepient: BigNumber,
   decimals?: number
 ): FixedNumber => FixedNumber.fromValue(recepient, decimals ?? 18)
+
+export const getProposalId = (id?: string) => {
+  const proposalId = Number(id?.substring(42, 43))
+  return isNaN(proposalId) ? -1 : proposalId
+}

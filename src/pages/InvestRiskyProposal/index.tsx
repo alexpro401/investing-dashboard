@@ -1,42 +1,15 @@
-import { useState, useEffect, useCallback } from "react"
 import { Flex } from "theme"
-import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
-import { useWeb3React } from "@web3-react/core"
-import { BigNumber } from "@ethersproject/bignumber"
 import { createClient, Provider as GraphProvider } from "urql"
 
 import IconButton from "components/IconButton"
 import ExchangeInput from "components/Exchange/ExchangeInput"
+import RiskyInvestInput from "components/Exchange/RiskyInvestInput"
 import ExchangeDivider from "components/Exchange/Divider"
 import Button, { SecondaryButton } from "components/Button"
 import CircularProgress from "components/CircularProgress"
 import TransactionSlippage from "components/TransactionSlippage"
 import Header from "components/Header/Layout"
-import Icon from "components/Icon"
-
-import {
-  IDivestAmounts,
-  IProposalInvestTokens,
-} from "interfaces/ITraderPoolRiskyProposal"
-import {
-  IDivestAmountsAndCommissions,
-  IPoolInvestTokens,
-} from "interfaces/ITraderPool"
-
-import { selectPriceFeedAddress } from "state/contracts/selectors"
-import { useRiskyProposal } from "hooks/useRiskyProposals"
-import { usePoolContract, usePoolQuery } from "hooks/usePool"
-import useContract, {
-  useBasicPoolContract,
-  useERC20,
-  useRiskyProposalContract,
-  useTraderPoolContract,
-} from "hooks/useContract"
-
-import useAlert, { AlertType } from "hooks/useAlert"
-import { PriceFeed } from "abi"
-import { multiplyBignumbers, getPriceUSD } from "utils/formulas"
 
 import settings from "assets/icons/settings.svg"
 import close from "assets/icons/close-big.svg"
@@ -47,381 +20,48 @@ import {
   CardHeader,
   Title,
   IconsGroup,
+  InfoCard,
+  InfoRow,
+  InfoGrey,
+  InfoDropdown,
+  InfoWhite,
 } from "components/Exchange/styled"
-import { ethers } from "ethers"
-import { parseTransactionError } from "utils"
 
-import { useTransactionAdder } from "state/transactions/hooks"
-import { TransactionType } from "state/transactions/types"
-import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-import { SwapDirection } from "constants/types"
+import useInvestRiskyProposal from "./useInvestRiskyProposal"
+import { useMemo } from "react"
+import SwapPrice from "components/SwapPrice"
+import { normalizeBigNumber } from "utils"
 
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
+const basicClient = createClient({
+  url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
 })
 
-export const useRiskyInvest = (): [
-  {
-    fromAmount: string
-    toAmount: string
-    slippage: string
-    fromAddress: string
-    toAddress: string
-    toSelectorOpened: boolean
-    fromSelectorOpened: boolean
-    direction: SwapDirection
-  },
-  {
-    setFromAmount: (amount: string) => void
-    setToAmount: (amount: string) => void
-    setToAddress: (address: string) => void
-    setFromAddress: (address: string) => void
-    setDirection: () => void
-    setPercentage: (v: number) => void
-    setToSelector: (state: boolean) => void
-    setFromSelector: (state: boolean) => void
-    setSlippage: (slippage: string) => void
-  }
-] => {
-  const [fromAmount, setFromAmount] = useState("0")
-  const [toAmount, setToAmount] = useState("0")
-  const [slippage, setSlippage] = useState("0.10")
-  const [toSelectorOpened, setToSelector] = useState(false)
-  const [fromSelectorOpened, setFromSelector] = useState(false)
-  const [direction, setDirection] = useState<SwapDirection>("deposit")
-
-  const [toAddress, setToAddress] = useState("")
-  const [fromAddress, setFromAddress] = useState("")
-
-  const setFromAmountCallback = useCallback(
-    (amount: string): void => setFromAmount(amount),
-    []
-  )
-
-  const setToAmountCallback = useCallback(
-    (amount: string): void => setToAmount(amount),
-    []
-  )
-
-  const setSlippageCallback = useCallback(
-    (slippage: string): void => setSlippage(slippage),
-    []
-  )
-
-  const setToAddressCallback = useCallback(
-    (address: string): void => setToAddress(address),
-    []
-  )
-
-  const setFromAddressCallback = useCallback(
-    (address: string): void => setFromAddress(address),
-    []
-  )
-
-  const setToSelectorCallback = useCallback(
-    (v: boolean): void => setToSelector(v),
-    []
-  )
-
-  const setFromSelectorCallback = useCallback(
-    (v: boolean): void => setFromSelector(v),
-    []
-  )
-
-  const handleDirectionChange = useCallback(() => {
-    if (direction === "deposit") {
-      setDirection("withdraw")
-    } else {
-      setDirection("deposit")
-    }
-  }, [direction])
-
-  const handlePercentageChange = useCallback((v: number) => {
-    // TODO: decide how to know balance
-    console.log(v)
-  }, [])
-
-  return [
+function InvestRiskyProposal() {
+  const { poolAddress, proposalId } = useParams()
+  const [
     {
+      info,
+      formWithDirection,
+      isSlippageOpen,
+      oneTokenCost,
+      usdTokenCost,
+      gasPrice,
       fromAmount,
       toAmount,
-      fromAddress,
-      toAddress,
-      toSelectorOpened,
-      fromSelectorOpened,
       direction,
       slippage,
     },
     {
-      setFromAmount: setFromAmountCallback,
-      setToAmount: setToAmountCallback,
-      setToAddress: setToAddressCallback,
-      setFromAddress: setFromAddressCallback,
-      setDirection: handleDirectionChange,
-      setPercentage: handlePercentageChange,
-      setToSelector: setToSelectorCallback,
-      setFromSelector: setFromSelectorCallback,
-      setSlippage: setSlippageCallback,
+      setDirection,
+      setSlippageOpen,
+      setSlippage,
+      handleFromChange,
+      handleSubmit,
+      handlePercentageChange,
     },
-  ]
-}
+  ] = useInvestRiskyProposal(poolAddress, proposalId)
 
-function InvestRiskyProposal() {
-  const [
-    { fromAmount, toAmount, direction, slippage },
-    { setFromAmount, setToAmount, setDirection, setSlippage },
-  ] = useRiskyInvest()
-
-  const { account } = useWeb3React()
-
-  const [showAlert, hideAlert] = useAlert()
-
-  const [toBalance, setToBalance] = useState(BigNumber.from("0"))
-  const [fromBalance, setFromBalance] = useState(BigNumber.from("0"))
-  const [inPrice, setInPrice] = useState(BigNumber.from("0"))
-  const [outPrice, setOutPrice] = useState(BigNumber.from("0"))
-
-  const [isSlippageOpen, setSlippageOpen] = useState(false)
-
-  const { poolAddress, proposalId } = useParams()
-
-  const traderPool = useTraderPoolContract(poolAddress)
-  const basicPool = useBasicPoolContract(poolAddress)
-  const [poolData] = usePoolQuery(poolAddress)
-  const [proposalPool] = useRiskyProposalContract(poolAddress)
-  const proposal = useRiskyProposal(poolAddress, proposalId)
-  const [, poolInfo] = usePoolContract(poolAddress)
-  const [{ poolMetadata }] = usePoolMetadata(
-    poolAddress,
-    poolInfo?.parameters.descriptionURL
-  )
-
-  const priceFeedAddress = useSelector(selectPriceFeedAddress)
-
-  const priceFeed = useContract(priceFeedAddress, PriceFeed)
-
-  const [, toData] = useERC20(proposal?.proposalInfo.token)
-
-  const lpUSDPrice = getPriceUSD(poolData?.priceHistory)
-
-  const addTransaction = useTransactionAdder()
-
-  const poolIcon = (
-    <Icon
-      size={27}
-      source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
-      address={poolAddress}
-    />
-  )
-
-  const exchangeForm = {
-    deposit: {
-      from: {
-        address: undefined,
-        symbol: poolInfo?.ticker,
-        decimals: 18,
-        icon: poolIcon,
-      },
-      to: {
-        address: proposal?.proposalInfo.token,
-        symbol: toData?.symbol,
-        decimals: toData?.decimals,
-        icon: undefined,
-      },
-    },
-    withdraw: {
-      from: {
-        address: proposal?.proposalInfo.token,
-        symbol: toData?.symbol,
-        decimals: toData?.decimals,
-        icon: undefined,
-      },
-      to: {
-        address: undefined,
-        symbol: poolInfo?.ticker,
-        decimals: 18,
-        icon: poolIcon,
-      },
-    },
-  }
-
-  const getLPBalance = useCallback(async () => {
-    if (!traderPool || !account) return
-
-    const lpAvailable: BigNumber = await traderPool?.balanceOf(account)
-
-    if (direction === "deposit") {
-      setFromBalance(lpAvailable)
-    } else {
-      setToBalance(lpAvailable)
-    }
-  }, [account, direction, traderPool])
-
-  const getLP2Balance = useCallback(async () => {
-    if (!proposalPool || !account) return
-
-    const balance = await proposalPool?.balanceOf(
-      account,
-      Number(proposalId) + 1
-    )
-
-    if (direction === "deposit") {
-      setToBalance(balance)
-    } else {
-      setFromBalance(balance)
-    }
-  }, [account, direction, proposalId, proposalPool])
-
-  const getInvestTokens = async (
-    amount: BigNumber
-  ): Promise<[IDivestAmountsAndCommissions, IProposalInvestTokens]> => {
-    const divests: IDivestAmountsAndCommissions =
-      await traderPool?.getDivestAmountsAndCommissions(account, amount)
-
-    const invests: IProposalInvestTokens = await proposalPool?.getInvestTokens(
-      Number(proposalId) + 1,
-      divests.receptions.baseAmount
-    )
-    return [divests, invests]
-  }
-
-  const getDivestTokens = async (
-    amount: BigNumber
-  ): Promise<[IDivestAmounts, IPoolInvestTokens]> => {
-    const divests: IDivestAmounts = await proposalPool?.getDivestAmounts(
-      [Number(proposalId) + 1],
-      [amount]
-    )
-
-    const invests: IPoolInvestTokens = await traderPool?.getInvestTokens(
-      divests.baseAmount
-    )
-
-    return [divests, invests]
-  }
-
-  const handleDeposit = async () => {
-    const amount = BigNumber.from(fromAmount)
-    const [divests, invests] = await getInvestTokens(amount)
-
-    const investReceipt = await basicPool?.investProposal(
-      Number(proposalId) + 1,
-      amount,
-      divests.receptions.receivedAmounts,
-      invests.positionAmount
-    )
-
-    addTransaction(investReceipt, {
-      type: TransactionType.DEPOSIT_RISKY_PROPOSAL,
-      inputCurrencyAmountRaw: invests.lp2Amount.toString(),
-      inputCurrencySymbol: exchangeForm.deposit.to.symbol,
-      expectedOutputCurrencyAmountRaw: amount.toString(),
-      expectedOutputCurrencySymbol: exchangeForm.deposit.from.symbol,
-    })
-
-    return investReceipt
-  }
-
-  const handleWithdraw = async () => {
-    const amount = BigNumber.from(fromAmount)
-
-    const [divests, invests] = await getDivestTokens(amount)
-
-    const withdrawReceipt = await basicPool?.reinvestProposal(
-      Number(proposalId) + 1,
-      amount,
-      invests.receivedAmounts,
-      divests.receivedAmounts[0]
-    )
-
-    addTransaction(withdrawReceipt, {
-      type: TransactionType.WITHDRAW_RISKY_PROPOSAL,
-      outputCurrencyAmountRaw: amount.toString(),
-      outputCurrencySymbol: exchangeForm.withdraw.from.symbol,
-      expectedInputCurrencyAmountRaw: invests.lpAmount.toString(),
-      expectedInputCurrencySymbol: exchangeForm.withdraw.to.symbol,
-    })
-
-    return withdrawReceipt
-  }
-
-  const handleSubmit = async () => {
-    try {
-      if (direction === "deposit") {
-        const investReceipt = await handleDeposit()
-        // TODO: add transaction toast
-      }
-
-      if (direction === "withdraw") {
-        const withdrawReceipt = await handleWithdraw()
-        // TODO: add transaction toast
-      }
-    } catch (error: any) {
-      const errorMessage = parseTransactionError(error)
-      showAlert({
-        content: errorMessage,
-        type: AlertType.warning,
-        hideDuration: 10000,
-      })
-    }
-  }
-
-  const handlePercentageChange = (percent: BigNumber) => {
-    const from = multiplyBignumbers([fromBalance, 18], [percent, 18])
-    handleFromChange(from.toString())
-  }
-
-  const calculateFromPrice = (amount: string) => {
-    const amountNormalized = ethers.utils.formatUnits(amount, 18)
-    const resultNormalized =
-      parseFloat(amountNormalized) * parseFloat(lpUSDPrice)
-
-    if (isNaN(resultNormalized)) {
-      return ethers.utils.parseEther("0")
-    }
-
-    return ethers.utils.parseEther(resultNormalized.toString())
-  }
-
-  const handleFromChange = async (v: string) => {
-    setFromAmount(v)
-    const amount = BigNumber.from(v)
-
-    const fromPrice = calculateFromPrice(v)
-    setInPrice(fromPrice)
-
-    try {
-      const [, invests] = await getInvestTokens(amount)
-      setToAmount(invests.lp2Amount.toString())
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  // proposalPool.getDivestAmountsAndCommissions()
-  // proposalPool.getActiveInvestmentsInfo() -> активные пропозалы
-  // traderPool.getInvestTokens()
-  const handleToChange = (v: string) => {
-    setToAmount(v)
-
-    const fetchAndUpdateFrom = async () => {
-      const amount = BigNumber.from(v)
-
-      const divests = await traderPool?.getDivestAmountsAndCommissions(
-        account,
-        amount
-      )
-      const invests = await proposalPool?.getInvestTokens(
-        Number(proposalId) + 1,
-        divests.receptions.baseAmount
-      )
-      console.log(invests)
-    }
-
-    fetchAndUpdateFrom().catch(console.error)
-  }
-
-  const getButton = () => {
+  const button = useMemo(() => {
     if (fromAmount === "0" || toAmount === "0") {
       return (
         <SecondaryButton
@@ -444,38 +84,86 @@ function InvestRiskyProposal() {
         fz={22}
         full
       >
-        {direction === "deposit" ? `Buy ${toData?.symbol}` : `Sell Risky LP`}
+        {direction === "deposit"
+          ? `Stake ${formWithDirection.to.symbol}`
+          : `Unstake ${formWithDirection.from.symbol}`}
       </Button>
     )
-  }
+  }, [
+    direction,
+    formWithDirection.from.symbol,
+    formWithDirection.to.symbol,
+    fromAmount,
+    handleSubmit,
+    toAmount,
+  ])
 
-  // get LP balance
-  useEffect(() => {
-    getLPBalance().catch(console.error)
-  }, [direction, getLPBalance])
+  const myPNL = useMemo(() => {
+    return (
+      <Flex gap="4">
+        <InfoWhite>
+          {normalizeBigNumber(info.investorPnlLP, 18, 4)}{" "}
+          {direction === "deposit"
+            ? formWithDirection.from.symbol
+            : formWithDirection.to.symbol}
+        </InfoWhite>
+        <InfoGrey>({normalizeBigNumber(info.positionPnl, 18, 2)}%)</InfoGrey>
+      </Flex>
+    )
+  }, [
+    direction,
+    formWithDirection.from.symbol,
+    formWithDirection.to.symbol,
+    info,
+  ])
 
-  // get LP2 balance
-  useEffect(() => {
-    getLP2Balance().catch(console.error)
-  }, [direction, getLP2Balance])
+  const myPNLContent = useMemo(() => {
+    return (
+      <>
+        <InfoRow>
+          <InfoGrey>in USD</InfoGrey>
+          <InfoGrey>
+            {normalizeBigNumber(info.investorPnlUSD, 18, 2)} USD (
+            {normalizeBigNumber(info.positionPnl, 18, 2)}%){" "}
+          </InfoGrey>
+        </InfoRow>
+      </>
+    )
+  }, [info.investorPnlUSD, info.positionPnl])
 
-  // balance updater for both LP and LP2
-  useEffect(() => {
-    const interval = setInterval(() => {
-      getLPBalance().catch(console.error)
-      getLP2Balance().catch(console.error)
-    }, Number(process.env.REACT_APP_UPDATE_INTERVAL))
+  const averagePrice = useMemo(() => {
+    if (direction === "deposit") {
+      return (
+        <InfoRow>
+          <InfoGrey>Average buying price</InfoGrey>
+          <Flex gap="4">
+            <InfoWhite>{normalizeBigNumber(info.avgBuyingPrice)}</InfoWhite>
+            <InfoGrey>
+              {info.tokens.position?.symbol}/{info.tokens.base?.symbol}
+            </InfoGrey>
+          </Flex>
+        </InfoRow>
+      )
+    }
 
-    return () => clearInterval(interval)
-  }, [getLPBalance, getLP2Balance])
-
-  const button = getButton()
+    return (
+      <InfoRow>
+        <InfoGrey>Average selling price</InfoGrey>
+        <Flex gap="4">
+          <InfoWhite>{normalizeBigNumber(info.avgSellingPrice)}</InfoWhite>
+          <InfoGrey>
+            {info.tokens.position?.symbol}/{info.tokens.base?.symbol}
+          </InfoGrey>
+        </Flex>
+      </InfoRow>
+    )
+  }, [direction, info])
 
   const form = (
     <Card>
       <CardHeader>
         <Flex>
-          <Title active>Swap</Title>
+          <Title active>Stake</Title>
         </Flex>
         <IconsGroup>
           <CircularProgress />
@@ -489,37 +177,77 @@ function InvestRiskyProposal() {
         </IconsGroup>
       </CardHeader>
 
-      <ExchangeInput
-        price={inPrice}
-        amount={fromAmount}
-        balance={fromBalance}
-        address={exchangeForm[direction].from.address}
-        symbol={exchangeForm[direction].from.symbol}
-        customIcon={exchangeForm[direction].from.icon}
-        decimal={exchangeForm[direction].from.decimals}
-        onChange={handleFromChange}
-      />
+      {direction === "deposit" ? (
+        <ExchangeInput
+          price={formWithDirection.from.price}
+          amount={formWithDirection.from.amount}
+          balance={formWithDirection.from.balance}
+          address={formWithDirection.from.address}
+          symbol={formWithDirection.from.symbol}
+          customIcon={formWithDirection.from.icon}
+          decimal={formWithDirection.from.decimals}
+          onChange={handleFromChange}
+        />
+      ) : (
+        <RiskyInvestInput
+          price={formWithDirection.from.price}
+          info={info}
+          amount={formWithDirection.from.amount}
+          address={formWithDirection.from.address}
+          balance={formWithDirection.from.balance}
+          symbol={formWithDirection.from.symbol}
+          decimal={formWithDirection.from.decimals}
+          customIcon={formWithDirection.from.icon}
+          onChange={handleFromChange}
+        />
+      )}
 
       <ExchangeDivider
-        direction={direction}
         changeAmount={handlePercentageChange}
         changeDirection={setDirection}
       />
 
-      <ExchangeInput
-        price={outPrice}
-        amount={toAmount}
-        balance={toBalance}
-        address={exchangeForm[direction].to.address}
-        symbol={exchangeForm[direction].to.symbol}
-        customIcon={exchangeForm[direction].to.icon}
-        decimal={exchangeForm[direction].to.decimals}
-        onChange={handleToChange}
+      {direction === "deposit" ? (
+        <RiskyInvestInput
+          price={formWithDirection.to.price}
+          info={info}
+          amount={formWithDirection.to.amount}
+          address={formWithDirection.to.address}
+          balance={formWithDirection.to.balance}
+          symbol={formWithDirection.to.symbol}
+          decimal={formWithDirection.to.decimals}
+          customIcon={formWithDirection.to.icon}
+        />
+      ) : (
+        <ExchangeInput
+          price={formWithDirection.to.price}
+          amount={formWithDirection.to.amount}
+          balance={formWithDirection.to.balance}
+          address={formWithDirection.to.address}
+          symbol={formWithDirection.to.symbol}
+          customIcon={formWithDirection.to.icon}
+          decimal={formWithDirection.to.decimals}
+        />
+      )}
+
+      <SwapPrice
+        fromSymbol={formWithDirection.from.symbol}
+        toSymbol={formWithDirection.to.symbol}
+        gasPrice={gasPrice}
+        tokensCost={oneTokenCost}
+        usdCost={usdTokenCost}
       />
 
       <Flex full p="16px 0 0">
         {button}
       </Flex>
+
+      <InfoCard gap="12">
+        {averagePrice}
+        <InfoDropdown left={<InfoGrey>My P&L</InfoGrey>} right={myPNL}>
+          {myPNLContent}
+        </InfoDropdown>
+      </InfoCard>
 
       <TransactionSlippage
         slippage={slippage}
@@ -547,7 +275,7 @@ function InvestRiskyProposal() {
 
 const InvestRiskyProposalWithProvider = () => {
   return (
-    <GraphProvider value={poolsClient}>
+    <GraphProvider value={basicClient}>
       <InvestRiskyProposal />
     </GraphProvider>
   )

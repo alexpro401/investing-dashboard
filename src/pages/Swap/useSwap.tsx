@@ -12,7 +12,8 @@ import {
   usePriceFeedContract,
   useTraderPoolContract,
 } from "hooks/useContract"
-import { BigNumber, ethers } from "ethers"
+import { parseUnits } from "@ethersproject/units"
+import { BigNumber } from "@ethersproject/bignumber"
 import { usePoolContract } from "hooks/usePool"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
@@ -94,10 +95,7 @@ const useSwap = ({
   const transactionOptions = useMemo(() => {
     if (!gasTrackerResponse) return
     return {
-      gasPrice: ethers.utils.parseUnits(
-        gasTrackerResponse.ProposeGasPrice,
-        "gwei"
-      ),
+      gasPrice: parseUnits(gasTrackerResponse.ProposeGasPrice, "gwei"),
     }
   }, [gasTrackerResponse])
 
@@ -160,8 +158,11 @@ const useSwap = ({
         ExchangeType.FROM_EXACT
       )
 
-      const sl = 1 - parseFloat(slippage) / 100
-      const exchangeWithSlippage = calcSlippage(exchange[0], 18, sl)
+      const exchangeWithSlippage = calcSlippage(
+        [exchange[0], 18],
+        slippage,
+        ExchangeType.FROM_EXACT
+      )
       return [exchange, exchangeWithSlippage]
     },
     [from, slippage, to, traderPool]
@@ -176,8 +177,11 @@ const useSwap = ({
         ExchangeType.TO_EXACT
       )
 
-      const sl = 1 + parseFloat(slippage) / 100
-      const exchangeWithSlippage = calcSlippage(exchange[0], 18, sl)
+      const exchangeWithSlippage = calcSlippage(
+        [exchange[0], 18],
+        slippage,
+        ExchangeType.TO_EXACT
+      )
       return [exchange, exchangeWithSlippage]
     },
     [from, slippage, to, traderPool]
@@ -390,7 +394,7 @@ const useSwap = ({
   useEffect(() => {
     if (!traderPool || !priceFeed || !from || !to) return
 
-    const amount = ethers.utils.parseUnits("1", 18)
+    const amount = parseUnits("1", 18)
 
     const fetchAndUpdatePrices = async () => {
       const tokensCost = await traderPool?.getExchangeAmount(

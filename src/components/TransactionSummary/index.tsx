@@ -14,11 +14,13 @@ import {
   FundUpdateManagersTransactionInfo,
   CreateRiskyProposalTransactionInfo,
   EditRiskyProposalTransactionInfo,
-  CreateInvestProposalTransactionInfo,
+  DepositRiskyProposalTransactionInfo,
+  WithdrawRiskyProposalTransactionInfo,
+  SwapRiskyProposalTransactionInfo,
+  CreateInvestmentProposalTransactionInfo,
   EditInvestProposalTransactionInfo,
   StakeInsuranceTransactionInfo,
   UnstakeInsuranceTransactionInfo,
-  PrivacyPolicySetHashTransactionInfo,
   PrivacyPolicyAgreeTransactionInfo,
   TransactionInfo,
 } from "state/transactions/types"
@@ -49,12 +51,12 @@ const SwapSummaryInput: React.FC<{ info: ExactInputSwapTransactionInfo }> = ({
       Swap from{" "}
       <FormattedCurrencyAmount
         rawAmount={info.inputCurrencyAmountRaw}
-        rawCurrency={info.inputCurrencyId}
+        rawCurrencyId={info.inputCurrencyId}
       />{" "}
       to{" "}
       <FormattedCurrencyAmount
         rawAmount={info.expectedOutputCurrencyAmountRaw}
-        rawCurrency={info.outputCurrencyId}
+        rawCurrencyId={info.outputCurrencyId}
       />
     </>
   )
@@ -67,12 +69,12 @@ const SwapSummaryOutput: React.FC<{ info: ExactOutputSwapTransactionInfo }> = ({
       Swap from{" "}
       <FormattedCurrencyAmount
         rawAmount={info.outputCurrencyAmountRaw}
-        rawCurrency={info.inputCurrencyId}
+        rawCurrencyId={info.inputCurrencyId}
       />{" "}
       to{" "}
       <FormattedCurrencyAmount
         rawAmount={info.expectedInputCurrencyAmountRaw}
-        rawCurrency={info.outputCurrencyId}
+        rawCurrencyId={info.outputCurrencyId}
       />
     </>
   )
@@ -94,7 +96,7 @@ const DepositLiquiditySummary: React.FC<{
   return (
     <>
       Deposit liquidity{" "}
-      <FormattedCurrencyAmount rawAmount={amount} rawCurrency={currencyId} />
+      <FormattedCurrencyAmount rawAmount={amount} rawCurrencyId={currencyId} />
     </>
   )
 }
@@ -105,7 +107,7 @@ const WithdrawLiquiditySummary: React.FC<{
   return (
     <>
       Withdraw liquidity{" "}
-      <FormattedCurrencyAmount rawAmount={amount} rawCurrency={currencyId} />
+      <FormattedCurrencyAmount rawAmount={amount} rawCurrencyId={currencyId} />
     </>
   )
 }
@@ -156,17 +158,71 @@ const CredentialsUpdateSummary: React.FC = () => {
 
 const CreateRiskyProposalSummary: React.FC<{
   info: CreateRiskyProposalTransactionInfo
-}> = ({ info }) => {
-  return <>Create Risky Proposal</>
+}> = () => {
+  return <>Successfully create Risky Proposal</>
 }
 const EditRiskyProposalSummary: React.FC<{
   info: EditRiskyProposalTransactionInfo
+}> = () => {
+  return <>Successfully update Risky Proposal</>
+}
+const DepositRiskyProposalSummary: React.FC<{
+  info: DepositRiskyProposalTransactionInfo
 }> = ({ info }) => {
-  return <>Update Risky Proposal</>
+  return (
+    <>
+      Deposit in risky proposal from{" "}
+      <FormattedCurrencyAmount
+        rawAmount={info.inputCurrencyAmountRaw}
+        rawCurrencySymbol={info.inputCurrencySymbol}
+      />{" "}
+      to{" "}
+      <FormattedCurrencyAmount
+        rawAmount={info.expectedOutputCurrencyAmountRaw}
+        rawCurrencySymbol={info.expectedOutputCurrencySymbol}
+      />
+    </>
+  )
+}
+const WithdrawRiskyProposalSummary: React.FC<{
+  info: WithdrawRiskyProposalTransactionInfo
+}> = ({ info }) => {
+  return (
+    <>
+      Withdraw from risky proposal from{" "}
+      <FormattedCurrencyAmount
+        rawAmount={info.outputCurrencyAmountRaw}
+        rawCurrencySymbol={info.outputCurrencySymbol}
+      />{" "}
+      to{" "}
+      <FormattedCurrencyAmount
+        rawAmount={info.expectedInputCurrencyAmountRaw}
+        rawCurrencySymbol={info.expectedInputCurrencySymbol}
+      />
+    </>
+  )
+}
+const SwapRiskyProposalSummary: React.FC<{
+  info: SwapRiskyProposalTransactionInfo
+}> = ({ info }) => {
+  return (
+    <>
+      Swap in risky proposal from{" "}
+      <FormattedCurrencyAmount
+        rawAmount={info.inputCurrencyAmountRaw}
+        rawCurrencyId={info.inputCurrencyId}
+      />{" "}
+      to{" "}
+      <FormattedCurrencyAmount
+        rawAmount={info.expectedOutputCurrencyAmountRaw}
+        rawCurrencyId={info.outputCurrencyId}
+      />
+    </>
+  )
 }
 
-const CreateInvestProposalSummary: React.FC<{
-  info: CreateInvestProposalTransactionInfo
+const CreateInvestmentProposalSummary: React.FC<{
+  info: CreateInvestmentProposalTransactionInfo
 }> = ({ info: { investLpAmountRaw } }) => {
   const amount = formatBigNumber(BigNumber.from(investLpAmountRaw))
   return <>Create Invest Proposal for {amount} LP tokens</>
@@ -194,11 +250,6 @@ const UnstakeInsuranceSummary: React.FC<{
   return <>Unstake insurance {toAmount} DEXE-LP</>
 }
 
-const PrivacyPolicySetHashSummary: React.FC<{
-  info: PrivacyPolicySetHashTransactionInfo
-}> = () => {
-  return <>Successfully set privacy policy hash.</>
-}
 const PrivacyPolicyAgreeSummary: React.FC<{
   info: PrivacyPolicyAgreeTransactionInfo
 }> = () => {
@@ -211,35 +262,39 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <ApprovalSummary info={info} />
     case TransactionType.SWAP:
       return <SwapSummary info={info} />
-    case TransactionType.DEPOSIT_LIQUIDITY_STAKING:
+    case TransactionType.INVEST:
       return <DepositLiquiditySummary info={info} />
-    case TransactionType.WITHDRAW_LIQUIDITY_STAKING:
+    case TransactionType.DIVEST:
       return <WithdrawLiquiditySummary info={info} />
-    case TransactionType.FUND_CREATE:
+    case TransactionType.POOL_CREATE:
       return <FundCreateSummary info={info} />
-    case TransactionType.FUND_EDIT:
+    case TransactionType.POOL_EDIT:
       return <FundEditSummary info={info} />
-    case TransactionType.FUND_UPDATE_INVESTORS:
+    case TransactionType.POOL_UPDATE_INVESTORS:
       return <FundUpdateUnvestorsSummary info={info} />
-    case TransactionType.FUND_UPDATE_MANAGERS:
+    case TransactionType.POOL_UPDATE_MANAGERS:
       return <FundUpdateManagersSummary info={info} />
-    case TransactionType.UPDATE_USER_CREDENTIALS:
+    case TransactionType.UPDATED_USER_CREDENTIALS:
       return <CredentialsUpdateSummary />
-    case TransactionType.CREATE_RISKY_PROPOSAL:
+    case TransactionType.RISKY_PROPOSAL_CREATE:
       return <CreateRiskyProposalSummary info={info} />
-    case TransactionType.EDIT_RISKY_PROPOSAL:
+    case TransactionType.RISKY_PROPOSAL_EDIT:
       return <EditRiskyProposalSummary info={info} />
-    case TransactionType.CREATE_INVEST_PROPOSAL:
-      return <CreateInvestProposalSummary info={info} />
-    case TransactionType.EDIT_INVEST_PROPOSAL:
+    case TransactionType.RISKY_PROPOSAL_INVEST:
+      return <DepositRiskyProposalSummary info={info} />
+    case TransactionType.RISKY_PROPOSAL_DIVEST:
+      return <WithdrawRiskyProposalSummary info={info} />
+    case TransactionType.RISKY_PROPOSAL_SWAP:
+      return <SwapRiskyProposalSummary info={info} />
+    case TransactionType.INVEST_PROPOSAL_CREATE:
+      return <CreateInvestmentProposalSummary info={info} />
+    case TransactionType.INVEST_PROPOSAL_EDIT:
       return <EditInvestProposalSummary info={info} />
-    case TransactionType.STAKE_INSURANCE:
+    case TransactionType.INSURANCE_STAKE:
       return <StakeInsuranceSummary info={info} />
-    case TransactionType.UNSTAKE_INSURANCE:
+    case TransactionType.INSURANCE_UNSTAKE:
       return <UnstakeInsuranceSummary info={info} />
-    case TransactionType.PRIVACY_POLICY_SET_HASH:
-      return <PrivacyPolicySetHashSummary info={info} />
-    case TransactionType.PRIVACY_POLICY_AGREE:
+    case TransactionType.USER_AGREED_TO_PRIVACY_POLICY:
       return <PrivacyPolicyAgreeSummary info={info} />
 
     default:

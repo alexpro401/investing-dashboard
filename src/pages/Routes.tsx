@@ -23,7 +23,17 @@ const Notifications = lazy(() => import("pages/Notifications"))
 const TokenSelect = lazy(() => import("pages/TokenSelect")) // TODO: my trader profile
 const CreateRiskyProposal = lazy(() => import("pages/CreateRiskyProposal"))
 const InvestRiskyProposal = lazy(() => import("pages/InvestRiskyProposal"))
-const CreateInvestProposal = lazy(() => import("pages/CreateInvestProposal"))
+const SwapRiskyProposal = lazy(() => import("pages/SwapRiskyProposal"))
+const PayDividends = lazy(() => import("pages/PayDividends"))
+const CreateInvestmentProposal = lazy(
+  () => import("pages/CreateInvestmentProposal")
+)
+const InvestInvestmentProposal = lazy(
+  () => import("pages/InvestInvestmentProposal")
+)
+const WithdrawInvestmentProposal = lazy(
+  () => import("pages/WithdrawInvestmentProposal")
+)
 // const Insurance = lazy(() => import("pages/Insurance"))
 
 const PrivacyPolicy = lazy(() => import("pages/PrivacyPolicy"))
@@ -31,6 +41,7 @@ const ServiceTerms = lazy(() => import("pages/ServiceTerms"))
 const Insurance = lazy(() => import("pages/Insurance"))
 const FundPositions = lazy(() => import("pages/FundPositions"))
 const FundDetails = lazy(() => import("pages/FundDetails")) // TODO: my trader profile
+const Investment = lazy(() => import("pages/Investment"))
 
 function Layout() {
   return <Outlet />
@@ -99,8 +110,24 @@ export default function Routes() {
                       element={<InvestRiskyProposal />}
                     />
                     <Route
+                      path="swap-risky-proposal/:poolAddress/:proposalId/:direction"
+                      element={<SwapRiskyProposal />}
+                    />
+                    <Route
                       path="create-invest-proposal/:poolAddress"
-                      element={<CreateInvestProposal />}
+                      element={<CreateInvestmentProposal />}
+                    />
+                    <Route
+                      path="invest-investment-proposal/:poolAddress/:proposalId"
+                      element={<InvestInvestmentProposal />}
+                    />
+                    <Route
+                      path="withdraw-investment-proposal/:poolAddress/:proposalId"
+                      element={<WithdrawInvestmentProposal />}
+                    />
+                    <Route
+                      path="pay-dividends-investment-proposal/:poolAddress/:proposalId"
+                      element={<PayDividends />}
                     />
                     <Route path="create-fund" element={<CreateFund />} />
                     <Route path="success/:poolAddress" element={<Success />} />
@@ -114,6 +141,7 @@ export default function Routes() {
                       path="fund-details/:poolAddress/*"
                       element={<FundDetails />}
                     />
+                    <Route path="investment/*" element={<Investment />} />
 
                     <Route path="/*" element={<TopMembers />} />
                   </Route>

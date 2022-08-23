@@ -49,6 +49,8 @@ interface Props {
   rightIcon?: ReactNode
   limit?: number
   theme?: "grey" | "black"
+  size?: "normal" | "small"
+  error?: boolean
   onClick?: () => void
   onChange?: (value: string) => void
 }
@@ -64,6 +66,8 @@ const Input: FC<Props> = ({
   rightIcon,
   limit,
   theme = "black",
+  size = "normal",
+  error = false,
   onClick,
   onChange,
 }) => {
@@ -104,7 +108,7 @@ const Input: FC<Props> = ({
   }
 
   return (
-    <Container theme={theme} onClick={handleClick}>
+    <Container theme={theme} onClick={handleClick} size={size} error={error}>
       {!!label && (
         <Label
           onClick={handleClick}
@@ -132,6 +136,7 @@ const Input: FC<Props> = ({
         variants={inputVariants}
         onFocus={() => setLabelActive(true)}
         onBlur={onBlur}
+        onWheel={(e: any) => e.target.blur()}
         ref={fieldRef}
         placeholder={placeholder}
       />

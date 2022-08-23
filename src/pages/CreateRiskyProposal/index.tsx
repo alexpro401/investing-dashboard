@@ -1,8 +1,6 @@
-import { FC, useEffect, useState } from "react"
+import { FC, useState } from "react"
 import { Flex } from "theme"
-import { BigNumber, ethers } from "ethers"
-import getTime from "date-fns/getTime"
-import { addDays, format } from "date-fns/esm"
+import { format } from "date-fns/esm"
 import {
   Navigate,
   Route,
@@ -11,8 +9,6 @@ import {
   useParams,
 } from "react-router-dom"
 import { useSelector } from "react-redux"
-import { useWeb3React } from "@web3-react/core"
-import { TraderPoolRiskyProposal, BasicTraderPool } from "abi"
 import { createClient, Provider as GraphProvider } from "urql"
 
 import Header from "components/Header/Layout"
@@ -27,28 +23,26 @@ import Tooltip from "components/Tooltip"
 import DatePicker from "components/DatePicker"
 import Payload from "components/Payload"
 import TransactionError from "modals/TransactionError"
+import TransactionSent from "modals/TransactionSent"
 
-import { usePoolQuery, useTraderPool } from "hooks/usePool"
+import { SubmitState } from "constants/types"
+
+import { usePoolContract } from "hooks/usePool"
 import { Token } from "constants/interfaces"
 import { selectWhitelist } from "state/pricefeed/selectors"
-import useContract, { useERC20 } from "hooks/useContract"
+import { useERC20 } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 
-import {
-  expandTimestamp,
-  formatBigNumber,
-  normalizeBigNumber,
-  shortTimestamp,
-  parseTransactionError,
-} from "utils"
-
-import getReceipt from "utils/getReceipt"
+import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
+import { dropdownVariants } from "motion/variants"
+import { DATE_TIME_FORMAT } from "constants/time"
 
 import back from "assets/icons/angle-left.svg"
 import close from "assets/icons/close-big.svg"
 import calendar from "assets/icons/calendar.svg"
 
 import faqText from "./faq"
+import useCreateRiskyProposal from "./useCreateRiskyProposal"
 
 import {
   Container,
@@ -72,7 +66,7 @@ import {
   Label,
   White,
   Grey,
-  contentVariants,
+  ValidationError,
 } from "./styled"
 
 const poolsClient = createClient({
@@ -81,132 +75,46 @@ const poolsClient = createClient({
 
 const isFaqRead = localStorage.getItem("risky-proposal-faq-read") === "true"
 
-const useCreateRiskyProposal = (): [
-  {
-    lpAmount: string
-    timestampLimit: number
-    investLPLimit: string
-    maxTokenPriceLimit: string
-    instantTradePercentage: number
-  },
-  {
-    setLpAmount: (value: string) => void
-    setTimestampLimit: (timestamp: number) => void
-    setInvestLPLimit: (value: string) => void
-    setMaxTokenPriceLimit: (value: string) => void
-    setInstantTradePercentage: (percent: number) => void
-  }
-] => {
-  const initialTimeLimit = shortTimestamp(getTime(addDays(new Date(), 30)))
-
-  const [lpAmount, setLpAmount] = useState("")
-  const [timestampLimit, setTimestampLimit] = useState(initialTimeLimit)
-  const [investLPLimit, setInvestLPLimit] = useState("")
-  const [maxTokenPriceLimit, setMaxTokenPriceLimit] = useState("")
-  const [instantTradePercentage, setInstantTradePercentage] = useState(0)
-
-  return [
-    {
-      lpAmount,
-      timestampLimit,
-      investLPLimit,
-      maxTokenPriceLimit,
-      instantTradePercentage,
-    },
-    {
-      setLpAmount,
-      setTimestampLimit,
-      setInvestLPLimit,
-      setMaxTokenPriceLimit,
-      setInstantTradePercentage,
-    },
-  ]
-}
-
 const CreateRiskyProposal: FC = () => {
-  const [
-    {
-      lpAmount,
-      timestampLimit,
-      investLPLimit,
-      maxTokenPriceLimit,
-      instantTradePercentage,
-    },
-    {
-      setLpAmount,
-      setTimestampLimit,
-      setInvestLPLimit,
-      setMaxTokenPriceLimit,
-      setInstantTradePercentage,
-    },
-  ] = useCreateRiskyProposal()
-
   const { tokenAddress, poolAddress } = useParams()
 
-  const [error, setError] = useState("")
-  const [isSubmiting, setSubmiting] = useState(false)
-  const [riskyProposalAddress, setRiskyProposalAddress] = useState("")
+  const [
+    {
+      error,
+      validationErrors,
+      proposalCount,
+      isSubmiting,
+      lpAvailable,
+      positionPrice,
+      lpAmount,
+      timestampLimit,
+      investLPLimit,
+      maxTokenPriceLimit,
+      instantTradePercentage,
+    },
+    {
+      setError,
+      setSubmiting,
+      setLpAmount,
+      setTimestampLimit,
+      setInvestLPLimit,
+      setMaxTokenPriceLimit,
+      setInstantTradePercentage,
+      handleSubmit,
+    },
+  ] = useCreateRiskyProposal(poolAddress, tokenAddress)
+
   const [isChecked, setChecked] = useState(false)
   const [isDateOpen, setDateOpen] = useState(false)
-  const [baseTokenPrice, setBaseTokenPrice] = useState<BigNumber | undefined>()
-  const [lpAvailable, setLpAvailable] = useState<BigNumber | undefined>()
 
   const proposalTokenPrice = useTokenPriceOutUSD({ tokenAddress: tokenAddress })
+  const [, poolInfo] = usePoolContract(poolAddress)
+  const [, baseTokenData] = useERC20(poolInfo?.parameters.baseToken)
 
-  const { account, library } = useWeb3React()
   const [, tokenData] = useERC20(tokenAddress)
   const navigate = useNavigate()
 
   const whitelisted = useSelector(selectWhitelist)
-
-  const traderPool = useTraderPool(poolAddress)
-  const [poolQuery] = usePoolQuery(poolAddress)
-
-  const basicTraderPool = useContract(poolAddress, BasicTraderPool)
-  const [, baseTokenData] = useERC20(poolQuery?.baseToken)
-  const riskyProposal = useContract(
-    riskyProposalAddress,
-    TraderPoolRiskyProposal
-  )
-
-  useEffect(() => {
-    if (!riskyProposal || !tokenAddress || tokenAddress.length !== 42) return
-
-    const getCreatingTokensInfo = async () => {
-      const tokens = await riskyProposal.getCreationTokens(
-        tokenAddress,
-        ethers.utils.parseEther("1").toHexString(),
-        ethers.utils.parseUnits("100", 27).toHexString(),
-        []
-      )
-      setBaseTokenPrice(tokens.positionTokenPrice)
-    }
-
-    getCreatingTokensInfo().catch(console.error)
-  }, [riskyProposal, tokenAddress])
-
-  // get risky pool address
-  useEffect(() => {
-    if (!basicTraderPool) return
-
-    const getProposalPoolAddress = async () => {
-      const address = await basicTraderPool.proposalPoolAddress()
-      setRiskyProposalAddress(address)
-    }
-
-    getProposalPoolAddress().catch(console.error)
-  }, [basicTraderPool])
-
-  useEffect(() => {
-    if (!traderPool || !account) return
-
-    const getBalance = async () => {
-      const lpAvailable: BigNumber = await traderPool.balanceOf(account)
-      setLpAvailable(lpAvailable)
-    }
-
-    getBalance().catch(console.error)
-  }, [traderPool, account])
 
   const handleNextStep = () => {
     if (isChecked) {
@@ -222,58 +130,17 @@ const CreateRiskyProposal: FC = () => {
     navigate(`/create-risky-proposal/${poolAddress}/${token.address}/3`)
   }
 
-  const handleSubmit = () => {
-    if (!basicTraderPool || !traderPool || !riskyProposal) return
+  const handleSwapRedirect = () => {
+    navigate(`/swap-risky-proposal/${poolAddress}/${proposalCount - 1}/deposit`)
+    setSubmiting(SubmitState.IDLE)
+  }
 
-    const createRiskyProposal = async () => {
-      setSubmiting(true)
-      setError("")
-      const amount = ethers.utils.parseEther(lpAmount).toHexString()
-      const percentage = ethers.utils
-        .parseUnits(instantTradePercentage.toString(), 25)
-        .toHexString()
-
-      const divests = await traderPool.getDivestAmountsAndCommissions(
-        account,
-        amount
-      )
-
-      const tokens = await riskyProposal.getCreationTokens(
-        tokenAddress,
-        divests.receptions.baseAmount,
-        percentage,
-        []
-      )
-
-      const createReceipt = await basicTraderPool.createProposal(
-        tokenAddress,
-        amount,
-        [
-          timestampLimit,
-          ethers.utils.parseUnits(investLPLimit, 18).toHexString(),
-          ethers.utils.parseUnits(maxTokenPriceLimit, 18).toHexString(),
-        ],
-        percentage,
-        divests.receptions.receivedAmounts,
-        tokens[0],
-        []
-      )
-
-      await getReceipt(library, createReceipt.hash)
-      setSubmiting(false)
-    }
-
-    createRiskyProposal().catch((error) => {
-      setSubmiting(false)
-      console.error(error)
-
-      if (!!error && !!error.data && !!error.data.message) {
-        setError(error.data.message)
-      } else {
-        const errorMessage = parseTransactionError(error.toString())
-        !!errorMessage && setError(errorMessage)
-      }
-    })
+  const getFieldErrors = (name: string) => {
+    return validationErrors
+      .filter((error) => error.field === name)
+      .map((error) => (
+        <ValidationError key={error.field}>{error.message}</ValidationError>
+      ))
   }
 
   const stepComponents = {
@@ -373,7 +240,7 @@ const CreateRiskyProposal: FC = () => {
                 value=""
                 placeholder={format(
                   expandTimestamp(timestampLimit),
-                  "MM.dd.yyyy, HH:mm"
+                  DATE_TIME_FORMAT
                 )}
                 onClick={() => setDateOpen(!isDateOpen)}
               />
@@ -400,6 +267,7 @@ const CreateRiskyProposal: FC = () => {
                   </Flex>
                 }
               />
+              {getFieldErrors("investLPLimit")}
             </Row>
             <Row>
               <Label
@@ -417,9 +285,9 @@ const CreateRiskyProposal: FC = () => {
                 rightIcon={
                   <Flex>
                     <White>
-                      {baseTokenPrice &&
+                      {positionPrice &&
                         normalizeBigNumber(
-                          baseTokenPrice,
+                          positionPrice,
                           baseTokenData?.decimals,
                           4
                         )}
@@ -428,6 +296,7 @@ const CreateRiskyProposal: FC = () => {
                   </Flex>
                 }
               />
+              {getFieldErrors("maxTokenPriceLimit")}
             </Row>
             <Flex full p="53px 0 0">
               <SubTitle>Own investing settings</SubTitle>
@@ -452,8 +321,13 @@ const CreateRiskyProposal: FC = () => {
                   </Flex>
                 }
               />
+              {getFieldErrors("lpAmount")}
             </Row>
-            <Row>
+            <Row
+              initial="hidden"
+              variants={dropdownVariants}
+              animate={lpAmount ? "visible" : "hidden"}
+            >
               <Label
                 icon={<Tooltip id="risky-position-fill">Lorem ipsum</Tooltip>}
               >
@@ -477,12 +351,39 @@ const CreateRiskyProposal: FC = () => {
     },
   }
 
+  const tradeModal = (
+    <TransactionSent
+      isOpen={SubmitState.SUCESS === isSubmiting}
+      toggle={() => setSubmiting(SubmitState.IDLE)}
+      title="Success"
+      description="You have successfully created a risk proposal. Deposit LP or trade your token"
+    >
+      <Button
+        onClick={handleSwapRedirect}
+        size="large"
+        theme="primary"
+        fz={22}
+        full
+      >
+        Open new trade
+      </Button>
+    </TransactionSent>
+  )
+
   return (
     <>
-      <Payload isOpen={isSubmiting} toggle={() => setSubmiting(false)} />
+      <Payload
+        isOpen={isSubmiting !== SubmitState.IDLE}
+        toggle={() => setSubmiting(SubmitState.IDLE)}
+      >
+        {SubmitState.SIGN === isSubmiting &&
+          "Open your wallet and sign transaction"}
+        {SubmitState.WAIT_CONFIRM === isSubmiting && "Waiting for confirmation"}
+      </Payload>
       <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
         {error}
       </TransactionError>
+      {tradeModal}
       <Header>Create risky proposal</Header>
       <Container>
         <Card>
@@ -497,20 +398,8 @@ const CreateRiskyProposal: FC = () => {
                   />
                 ) : (
                   <>
-                    <CardHeader
-                      initial="hidden"
-                      animate="visible"
-                      variants={contentVariants}
-                    >
-                      {stepComponents["1"].header}
-                    </CardHeader>
-                    <Content
-                      initial="hidden"
-                      animate="visible"
-                      variants={contentVariants}
-                    >
-                      {stepComponents["1"].content}
-                    </Content>
+                    <CardHeader>{stepComponents["1"].header}</CardHeader>
+                    <Content>{stepComponents["1"].content}</Content>
                   </>
                 )
               }

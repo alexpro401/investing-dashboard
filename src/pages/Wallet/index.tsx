@@ -1,21 +1,19 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Navigate, useNavigate } from "react-router-dom"
 import { useWeb3React } from "@web3-react/core"
 import { useSelector } from "react-redux"
-import { Insurance, UserRegistry } from "abi"
-
+import { BigNumber } from "@ethersproject/bignumber"
 import { PulseSpinner } from "react-spinners-kit"
+
 import Avatar from "components/Avatar"
 import { EHeaderTitles } from "components/Header"
 import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
 import TransactionHistory from "components/TransactionHistory"
 
-import {
-  selectInsuranceAddress,
-  selectUserRegistryAddress,
-} from "state/contracts/selectors"
-import useContract from "hooks/useContract"
+import { Insurance } from "abi"
+import { selectInsuranceAddress } from "state/contracts/selectors"
+import useContract, { useUserRegistryContract } from "hooks/useContract"
 import useCopyClipboard from "hooks/useCopyClipboard"
 
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
@@ -59,9 +57,6 @@ import {
   Network,
   NetworkIcon,
 } from "./styled"
-import { BigNumber } from "ethers"
-
-import useTransactionHistory from "./useTransactionHistory"
 
 const useUserSettings = (): [
   {
@@ -89,8 +84,7 @@ const useUserSettings = (): [
   const [userAvatarInitial, setUserAvatarInitial] = useState("")
   const [assets, setAssets] = useState<string[]>([])
   const [profileURL, setProfileURL] = useState<string | null>(null)
-  const userRegistryAddress = useSelector(selectUserRegistryAddress)
-  const userRegistry = useContract(userRegistryAddress, UserRegistry)
+  const userRegistry = useUserRegistryContract()
 
   const [{ userMetadata }] = useUserMetadata(profileURL)
 
@@ -113,7 +107,7 @@ const useUserSettings = (): [
     setProfileURL(ipfsReceipt.path)
 
     const receipt = await addTransaction(trx, {
-      type: TransactionType.UPDATE_USER_CREDENTIALS,
+      type: TransactionType.UPDATED_USER_CREDENTIALS,
     })
 
     if (isTxMined(receipt)) {
@@ -198,21 +192,18 @@ export default function Wallet() {
   const insuranceAddress = useSelector(selectInsuranceAddress)
   const insurance = useContract(insuranceAddress, Insurance)
 
-  const [
-    { txList, txFilter, FilterTypes, txListExpanded },
-    { setTxFiler, setTxListExpanded },
-  ] = useTransactionHistory()
+  const [txHistoryOpen, setTxHistoryOpen] = useState<boolean>(false)
+
+  const fetchInsuranceBalance = useCallback(async () => {
+    const userInsurance = await insurance?.getInsurance(account)
+    setInsuranceAmount(userInsurance[1])
+  }, [account, insurance])
 
   useEffect(() => {
     if (!insurance) return
 
     fetchInsuranceBalance().catch(console.error)
-  }, [insurance])
-
-  const fetchInsuranceBalance = async () => {
-    const userInsurance = await insurance?.getInsurance(account)
-    setInsuranceAmount(userInsurance[1])
-  }
+  }, [insurance, fetchInsuranceBalance])
 
   const handleLogout = () => {
     deactivate()
@@ -254,7 +245,7 @@ export default function Wallet() {
   return (
     <>
       <Header>
-        {txListExpanded ? "Transactions History" : EHeaderTitles.myWallet}
+        {txHistoryOpen ? "Transactions History" : EHeaderTitles.myWallet}
       </Header>
       <Container
         initial={{ opacity: 0, y: -15 }}
@@ -264,8 +255,8 @@ export default function Wallet() {
       >
         <Cards
           animate={{
-            opacity: txListExpanded ? 0 : 1,
-            transition: { duration: txListExpanded ? 0.2 : 0.4 },
+            opacity: txHistoryOpen ? 0 : 1,
+            transition: { duration: txHistoryOpen ? 0.2 : 0.4 },
           }}
         >
           <User>
@@ -351,14 +342,7 @@ export default function Wallet() {
           </Card>
         </Cards>
 
-        <TransactionHistory
-          list={txList}
-          filterTypes={FilterTypes}
-          filter={txFilter}
-          setFilter={setTxFiler}
-          expanded={txListExpanded}
-          setExpanded={setTxListExpanded}
-        />
+        <TransactionHistory open={txHistoryOpen} setOpen={setTxHistoryOpen} />
       </Container>
     </>
   )

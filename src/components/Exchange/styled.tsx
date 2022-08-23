@@ -3,6 +3,7 @@ import { motion } from "framer-motion"
 import { Flex, Text, GradientBorder, BasicCard } from "theme"
 import { FC, ReactNode, useState } from "react"
 import angle from "assets/icons/angle-up.svg"
+import tokenLines from "assets/icons/risky-tokens.svg"
 import { dropdownVariants } from "motion/variants"
 
 export const InputContainer = styled(GradientBorder)`
@@ -18,12 +19,26 @@ export const InputContainer = styled(GradientBorder)`
   }
 `
 
+export const RiskyContainer = styled(GradientBorder)`
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px 16px 16px 16px;
+  border-radius: 20px;
+  width: 100%;
+  height: fit-content;
+
+  &:after {
+    background: #141926;
+  }
+`
+
 export const InputTop = styled(Flex)`
   width: 100%;
 `
 
 export const InputBottom = styled(Flex)`
   width: 100%;
+  padding-top: 18px;
 `
 
 export const FromContainer = styled(InputContainer)``
@@ -336,6 +351,14 @@ export const AngleIcon = styled(motion.img)`
   transform: translate(2px, -1px);
 `
 
+const DropdownContainer = styled(Flex)`
+  flex-direction: column;
+  padding: 0 16px 0 0;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 12px;
+`
+
 const iconVariants = {
   visible: {
     transform: `translate(2px, -1px) rotate(0deg)`,
@@ -367,17 +390,54 @@ export const InfoDropdown: FC<DropdownProps> = ({ left, right, children }) => {
           />
         </Flex>
       </InfoRow>
-      <Flex
+      <DropdownContainer
         initial="hidden"
         variants={dropdownVariants}
         animate={isOpen ? "visible" : "hidden"}
-        dir="column"
-        p="0 16px 0 0"
-        full
-        gap="12"
       >
         {children}
-      </Flex>
+      </DropdownContainer>
     </>
   )
 }
+
+// RECEIVED TOKEN
+
+export const TokensContainer = styled(Flex)`
+  width: 100%;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 0 0 12px;
+`
+
+export const TokenContainer = styled(Flex)`
+  position: relative;
+  width: 100%;
+
+  &:first-child {
+    &:before {
+      content: "";
+      position: absolute;
+      left: -23px;
+      top: -42px;
+      width: 17px;
+      height: 75px;
+      background: url(${tokenLines});
+      background-size: contain;
+    }
+  }
+`
+
+export const TokenInfo = styled(Flex)`
+  justify-content: flex-start;
+  width: fit-content;
+`
+
+export const TokenText = styled.div`
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 100%;
+  color: #788ab4;
+`

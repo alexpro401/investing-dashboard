@@ -32,6 +32,7 @@ export const Primary = styled(BaseButton)<{
   size?: string
   m?: string
   p?: string
+  br?: string
   fz?: number
   full?: boolean
   disabled?: boolean
@@ -44,7 +45,7 @@ export const Primary = styled(BaseButton)<{
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: ${(props) => props.br || "10px"};
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   width: ${(props) => (props.full ? "100%" : "fit-content")};
   box-sizing: border-box;

@@ -1,5 +1,11 @@
 import { BigNumber } from "@ethersproject/bignumber"
 
+export interface IPayload {
+  loading: boolean
+  error: string | null
+  updatedAt: number | null
+}
+
 export interface IPost {
   description: string
   comments: number[]
@@ -227,5 +233,6 @@ export interface IPoolPosition {
 export interface ITab {
   title: string
   source: string
+  activeSource?: string[]
   amount?: number
 }
