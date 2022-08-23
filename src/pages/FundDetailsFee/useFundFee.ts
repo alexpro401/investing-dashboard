@@ -15,12 +15,12 @@ import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import { usePoolContract, usePoolQuery, useTraderPool } from "hooks/usePool"
 import {
   addBignumbers,
+  percentageOfBignumbers,
   subtractBignumbers,
   _divideBignumbers,
 } from "utils/formulas"
 
 const BIG_ZERO = BigNumber.from(0)
-const BIG_HUNDRED = BigNumber.from(100)
 
 interface IAmount {
   big: BigNumber
@@ -78,10 +78,6 @@ function useFundFee(
 
   // TECHNICAL DATA (used for calculation purposes only)
 
-  // Total fund commissions in basetoken
-  const [_totalFundCommissionFeeBase, _setTotalFundCommissionFeeBase] =
-    useState<BigNumber>(BIG_ZERO)
-
   // Funds under pool management in baseToken (without trader funds)
   const _fundsUnderManagementBase = useMemo<BigNumber>(() => {
     if (!poolInfo) return BIG_ZERO
@@ -130,13 +126,14 @@ function useFundFee(
 
   /**
    * Fund profit (without trader funds)
-   * (_platformCommissionUSD + _traderCommissionUSD) / (100% - fundCommissionPercentage)
+   * (_platformCommissionUSD + _traderCommissionUSD) / fundCommissionPercentage
    */
   const fundProfitWithoutTraderUSD = useMemo<IAmount>(() => {
     if (
       !_platformCommissionUSD ||
       !_traderCommissionUSD ||
-      !fundCommissionPercentage
+      !fundCommissionPercentage ||
+      fundCommissionPercentage.big.isZero()
     ) {
       return defaultAmountState
     }
@@ -145,13 +142,10 @@ function useFundFee(
       [_platformCommissionUSD, 18],
       [_traderCommissionUSD, 18]
     )
-
-    const percent = subtractBignumbers(
-      [BIG_HUNDRED, 18],
+    const big = _divideBignumbers(
+      [commissionsSum, 18],
       [fundCommissionPercentage.big, 18]
     )
-
-    const big = _divideBignumbers([commissionsSum, 18], [percent, 18])
 
     return { big, format: formatBigNumber(big, 18, 6) }
   }, [fundCommissionPercentage, _platformCommissionUSD, _traderCommissionUSD])
@@ -174,7 +168,22 @@ function useFundFee(
 
     return " ? "
   }, [dexePriceUSD, fundProfitWithoutTraderUSD])
-  const fundProfitWithoutTraderPercentage = useMemo<string>(() => " ? ", [])
+  const fundProfitWithoutTraderPercentage = useMemo<string>(() => {
+    if (
+      !poolInfo ||
+      !fundProfitWithoutTraderUSD ||
+      fundProfitWithoutTraderUSD.big.isZero()
+    ) {
+      return "0"
+    }
+
+    const { totalPoolUSD, traderUSD } = poolInfo
+
+    const totalTVL = addBignumbers([totalPoolUSD, 18], [traderUSD, 18])
+    const res = percentageOfBignumbers(totalTVL, fundProfitWithoutTraderUSD.big)
+
+    return formatBigNumber(res, 18, 0)
+  }, [poolInfo, fundProfitWithoutTraderUSD])
 
   // Platform commissions
   const [platformCommissionBase, setPlatformCommissionBase] =
@@ -191,11 +200,11 @@ function useFundFee(
 
   /**
    * Net investors profit
-   * _fundsUnderManagementBase - (_platformCommissionUSD + _traderCommissionUSD)
+   * fundProfitWithoutTraderUSD - (_platformCommissionUSD + _traderCommissionUSD)
    */
   const netInvestorsProfitUSD = useMemo<IAmount>(() => {
     if (
-      !_fundsUnderManagementBase ||
+      !fundProfitWithoutTraderUSD.big ||
       !_platformCommissionUSD ||
       !_traderCommissionUSD
     ) {
@@ -208,12 +217,12 @@ function useFundFee(
     )
 
     const big = subtractBignumbers(
-      [_fundsUnderManagementBase, 18],
+      [fundProfitWithoutTraderUSD.big, 18],
       [platformAndTraderAmount, 18]
     )
 
     return { big, format: formatBigNumber(big, 18, 2) }
-  }, [_fundsUnderManagementBase, _platformCommissionUSD, _traderCommissionUSD])
+  }, [fundProfitWithoutTraderUSD, _platformCommissionUSD, _traderCommissionUSD])
   const netInvestorsProfitDEXE = useMemo<string>(() => {
     if (
       !dexePriceUSD ||
@@ -270,25 +279,6 @@ function useFundFee(
           )
           setUnlockDate(format(expanded, DATE_FORMAT))
         }
-
-        // Calculate total fund commissions from investors
-        if (usersInfo.length > 2) {
-          const [, , ...usersData] = usersInfo
-
-          if (usersData.length === 1) {
-            const { owedBaseCommission } = usersData[0]
-            _setTotalFundCommissionFeeBase(owedBaseCommission)
-            setTotalFundCommissionFeeBase(formatBigNumber(owedBaseCommission))
-          } else {
-            const res = usersData.reduce(
-              (acc, userInfo) =>
-                addBignumbers([acc, 18], [userInfo.owedBaseCommission, 18]),
-              BIG_ZERO
-            )
-            _setTotalFundCommissionFeeBase(res)
-            setTotalFundCommissionFeeBase(formatBigNumber(res))
-          }
-        }
       } catch (error) {
         console.error(error)
       }
@@ -318,35 +308,33 @@ function useFundFee(
     })()
   }, [baseToken, _fundsUnderManagementBase, priceFeed])
 
-  // Fetch total fund commissions from investors in USD
-  useEffect(() => {
-    if (!priceFeed) return
-    if (!baseToken || !baseToken.address) return
-    if (_totalFundCommissionFeeBase.isZero()) return
-    ;(async () => {
-      try {
-        const priceUSD = await priceFeed.getNormalizedPriceOutUSD(
-          baseToken.address,
-          _totalFundCommissionFeeBase.toString()
-        )
-
-        if (priceUSD && priceUSD.amountOut) {
-          setTotalFundCommissionFeeUSD(
-            normalizeBigNumber(priceUSD.amountOut, 18, 2)
-          )
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    })()
-  }, [baseToken, _totalFundCommissionFeeBase, priceFeed])
-
   // Fetch platform and trader commissions
   useEffect(() => {
     if (!traderPool) return
     ;(async () => {
       try {
         const commissions = await traderPool.getReinvestCommissions([0, 1000])
+
+        if (commissions) {
+          const {
+            dexeBaseCommission,
+            dexeUSDCommission,
+            traderBaseCommission,
+            traderUSDCommission,
+          } = commissions
+
+          const base = addBignumbers(
+            [dexeBaseCommission, 18],
+            [traderBaseCommission, 18]
+          )
+          setTotalFundCommissionFeeBase(formatBigNumber(base, 18, 6))
+
+          const usd = addBignumbers(
+            [dexeUSDCommission, 18],
+            [traderUSDCommission, 18]
+          )
+          setTotalFundCommissionFeeUSD(formatBigNumber(usd, 18, 6))
+        }
 
         if (commissions && commissions.dexeDexeCommission) {
           const { dexeDexeCommission } = commissions
