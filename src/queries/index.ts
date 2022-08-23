@@ -329,8 +329,12 @@ const InvestorInvestProposalsQuery = (invested) => {
 
 // Fund fee history
 const FundFeeHistoryQuery = `
-  query($address: String!) {
-    feeHistories(first: 100, where: {traderPool_: {id: $address}}) {
+  query($offset: Int!, $limit: Int!, $address: String!) {
+    feeHistories(
+      skip: $offset, first: $limit, 
+      orderBy: day, orderDirection: desc, 
+      where: { traderPool_: { id: $address }}
+    ) {
       id
       PNL
       day

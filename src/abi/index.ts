@@ -10,6 +10,7 @@ import BasicTraderPool from "./BasicTraderPool"
 import InvestTraderPool from "./InvestTraderPool"
 import UserRegistry from "./UserRegistry"
 import Insurance from "./Insurance"
+import CoreProperties from "./CoreProperties"
 
 export {
   ERC20,
@@ -24,4 +25,5 @@ export {
   InvestTraderPool,
   UserRegistry,
   Insurance,
+  CoreProperties,
 }
