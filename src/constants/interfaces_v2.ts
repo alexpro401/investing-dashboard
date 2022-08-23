@@ -87,6 +87,7 @@ export interface IPriceHistoryQuery {
 /// @param totalPoolUSD is the current USD TVL in this pool
 /// @param traderBase is amount of trader base tokens in this pool
 /// @param traderLPBalance is amount of trader LP tokens in this pool
+/// @param traderUSD is amount of trader USD in this pool
 /// @param lpEmission is the current number of LP tokens
 export interface PoolInfo {
   baseAndPositionBalances: BigNumber[]
@@ -100,6 +101,7 @@ export interface PoolInfo {
   totalPoolUSD: BigNumber
   traderBase: BigNumber
   traderLPBalance: BigNumber
+  traderUSD: BigNumber
   parameters: PoolParameters
 }
 
