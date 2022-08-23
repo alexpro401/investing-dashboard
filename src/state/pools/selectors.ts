@@ -45,3 +45,13 @@ export const selectInvestPoolByAddress = createSelector(
   (pools, address) =>
     pools[poolTypes.invest].filter((value) => value.id === address)[0]
 )
+
+export const selectActivePoolType = createSelector(
+  [selectPoolsState],
+  (pools) => pools.activePoolType
+)
+
+export const selectPayload = createSelector(
+  [selectPoolsState],
+  (pools) => pools.payload
+)

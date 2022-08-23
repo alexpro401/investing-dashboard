@@ -1,13 +1,26 @@
 import { createReducer } from "@reduxjs/toolkit"
-import { addPools, setFilter, setPagination } from "./actions"
 import { sortItemsList, currencies, poolTypes } from "constants/index"
-import { ITopMembersFilters, ITopMembersPagination } from "constants/interfaces"
-import { IPoolQuery } from "constants/interfaces_v2"
+import {
+  ITopMembersFilters,
+  ITopMembersPagination,
+  IPayload,
+} from "constants/interfaces"
+import { IPoolQuery, PoolType } from "constants/interfaces_v2"
 import { addDays } from "date-fns"
 import { calendarStaticRanges } from "constants/index"
 
+import {
+  addPools,
+  setActivePoolType,
+  setFilter,
+  setLoading,
+  setPagination,
+} from "./actions"
+
 export interface poolsState {
+  payload: IPayload
   filters: ITopMembersFilters
+  activePoolType: PoolType
   pagination: ITopMembersPagination
   ALL_POOL: IPoolQuery[]
   BASIC_POOL: IPoolQuery[]
@@ -22,12 +35,18 @@ const initialRange = [
 ]
 
 export const initialState: poolsState = {
+  payload: {
+    loading: true,
+    error: null,
+    updatedAt: null,
+  },
   filters: {
     sort: sortItemsList[0],
     period: initialRange,
     query: "",
     currency: currencies[0],
   },
+  activePoolType: "ALL_POOL",
   pagination: {
     ALL_POOL: {
       total: 0,
@@ -64,5 +83,13 @@ export default createReducer(initialState, (builder) =>
         ...v,
         id: v.id.toLocaleLowerCase(),
       }))
+
+      state.payload.updatedAt = new Date().getTime()
+    })
+    .addCase(setActivePoolType, (state, action) => {
+      state.activePoolType = action.payload.type
+    })
+    .addCase(setLoading, (state, action) => {
+      state.payload.loading = action.payload.loading
     })
 )

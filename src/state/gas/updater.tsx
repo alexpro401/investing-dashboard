@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux"
 import { AppDispatch } from "state"
 import { updateGasData } from "./actions"
 
-const GasPriceUpdater: FC = () => {
+export const GasPriceUpdater: FC = () => {
   const { chainId } = useWeb3React()
   const dispatch = useDispatch<AppDispatch>()
 
@@ -55,5 +55,3 @@ const GasPriceUpdater: FC = () => {
 
   return null
 }
-
-export default GasPriceUpdater

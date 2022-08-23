@@ -1,21 +1,20 @@
 import { Flex, Center, To } from "theme"
 import React, { useEffect } from "react"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { CubeSpinner } from "react-spinners-kit"
 import { Routes, Route } from "react-router-dom"
-import { createClient, Provider as GraphProvider } from "urql"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import TopMembersBar from "components/TopMembersBar"
 import MemberMobile from "components/MemberMobile"
 import LoadMore from "components/LoadMore"
 
-import { usePools } from "state/pools/hooks"
 import { PoolType } from "constants/interfaces_v2"
 
 import {
   selectBasicPools,
   selectInvestPools,
+  selectPayload,
   selectPools,
 } from "state/pools/selectors"
 
@@ -25,11 +24,8 @@ import {
   ListContainer,
   LoadingText,
 } from "./styled"
-
-// THE GRAPH CLIENT
-const AllPoolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-})
+import { AppDispatch } from "state"
+import { setActivePoolType } from "state/pools/actions"
 
 interface Props {
   poolType: PoolType
@@ -40,7 +36,10 @@ const List: React.FC<Props> = ({ poolType }) => {
   const ALL_POOL = useSelector(selectPools)
   const BASIC_POOL = useSelector(selectBasicPools)
   const INVEST_POOL = useSelector(selectInvestPools)
-  const [isLoading, loadMore] = usePools(poolType)
+  const dispatch = useDispatch<AppDispatch>()
+  const { loading } = useSelector(selectPayload)
+
+  const loadMore = () => {}
 
   const pools = {
     ALL_POOL,
@@ -48,15 +47,21 @@ const List: React.FC<Props> = ({ poolType }) => {
     INVEST_POOL,
   }
 
+  useEffect(() => {
+    if (!dispatch || !poolType) return
+
+    dispatch(setActivePoolType({ type: poolType }))
+  }, [dispatch, poolType])
+
   // manually disable scrolling *refresh this effect when ref container dissapeared from DOM
   useEffect(() => {
     if (!investScrollRef.current) return
     disableBodyScroll(investScrollRef.current)
 
     return () => clearAllBodyScrollLocks()
-  }, [investScrollRef, isLoading])
+  }, [investScrollRef, loading])
 
-  return isLoading && !pools[poolType].length ? (
+  return loading && !pools[poolType].length ? (
     <Center>
       <CubeSpinner size={40} loading />
       <Flex p="10px 0">
@@ -78,7 +83,7 @@ const List: React.FC<Props> = ({ poolType }) => {
         ))}
         {/* // TODO: make loading indicator stick to bottom of the list */}
         <LoadMore
-          isLoading={isLoading && !!pools[poolType].length}
+          isLoading={loading && !!pools[poolType].length}
           handleMore={loadMore}
           r={investScrollRef}
         />
@@ -91,16 +96,11 @@ function TopMembers() {
   return (
     <StyledTopMembers>
       <TopMembersBar />
-      <GraphProvider value={AllPoolsClient}>
-        <Routes>
-          <Route path="/" element={<List poolType="ALL_POOL" />}></Route>
-          <Route path="basic" element={<List poolType="BASIC_POOL" />}></Route>
-          <Route
-            path="invest"
-            element={<List poolType="INVEST_POOL" />}
-          ></Route>
-        </Routes>
-      </GraphProvider>
+      <Routes>
+        <Route path="/" element={<List poolType="ALL_POOL" />}></Route>
+        <Route path="basic" element={<List poolType="BASIC_POOL" />}></Route>
+        <Route path="invest" element={<List poolType="INVEST_POOL" />}></Route>
+      </Routes>
     </StyledTopMembers>
   )
 }
