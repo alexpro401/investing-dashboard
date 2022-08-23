@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useCallback, useMemo } from "react"
 import { Flex } from "theme"
 import { useParams } from "react-router-dom"
 
@@ -78,12 +78,20 @@ const Invest = () => {
     initialDirection: "deposit",
   })
 
-  const {
-    privacyPolicyAgreed,
-    showPrivacyAgreement,
-    setShowPrivacyAgreement,
-    agreePrivacyPolicy,
-  } = usePrivacyPolicyAgreed()
+  const [
+    {
+      isAgreed,
+      showAgreement,
+      error: termsAgreementError,
+      loading: termsAgreementLoading,
+    },
+    {
+      onAgree,
+      setShowAgreement,
+      setLoading: setAgreementLoading,
+      setError: setTermsAgreementError,
+    },
+  ] = usePrivacyPolicyAgreed()
 
   const isAllowanceNeeded =
     direction === "deposit" && !!allowance && allowance.lt(from.amount)
@@ -115,11 +123,7 @@ const Invest = () => {
       return (
         <SecondaryButton
           size="large"
-          onClick={
-            privacyPolicyAgreed
-              ? updateAllowance
-              : () => setShowPrivacyAgreement(true)
-          }
+          onClick={() => (isAgreed ? updateAllowance : setShowAgreement(true))}
           fz={22}
           full
         >
@@ -150,7 +154,9 @@ const Invest = () => {
     from.balance,
     from.symbol,
     handleSubmit,
+    isAgreed,
     isAllowanceNeeded,
+    setShowAgreement,
     to.symbol,
     updateAllowance,
   ])
@@ -299,6 +305,45 @@ const Invest = () => {
     </Card>
   )
 
+  const transactionErrorIsOpen = useMemo<boolean>(
+    () => !!error.length || !!termsAgreementError.length,
+    [error, termsAgreementError]
+  )
+
+  const toggleTransactionError = useCallback(() => {
+    if (!!error.length) {
+      return setError("")
+    }
+
+    if (!!termsAgreementError.length) {
+      return setTermsAgreementError("")
+    }
+  }, [
+    error.length,
+    setError,
+    setTermsAgreementError,
+    termsAgreementError.length,
+  ])
+
+  const walletPrompting = useMemo<boolean>(
+    () => isWalletPrompting || termsAgreementLoading,
+    [isWalletPrompting, termsAgreementLoading]
+  )
+
+  const toggleWalletPrompting = useCallback(() => {
+    if (termsAgreementLoading) {
+      return setAgreementLoading(false)
+    }
+    if (isWalletPrompting) {
+      return setWalletPrompting(false)
+    }
+  }, [
+    isWalletPrompting,
+    setAgreementLoading,
+    setWalletPrompting,
+    termsAgreementLoading,
+  ])
+
   return (
     <>
       <Header>{shortenAddress(poolAddress)}</Header>
@@ -309,18 +354,22 @@ const Invest = () => {
         transition={{ duration: 0.2 }}
       >
         <Payload
-          isOpen={isWalletPrompting}
-          toggle={() => setWalletPrompting(false)}
+          isOpen={walletPrompting}
+          toggle={() => toggleWalletPrompting()}
         />
-        <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
+        <TransactionError
+          isOpen={transactionErrorIsOpen}
+          toggle={() => toggleTransactionError()}
+        >
           {error}
         </TransactionError>
         {form}
       </Container>
       <TermsAndConditions
-        isOpen={showPrivacyAgreement}
-        toggle={() => setShowPrivacyAgreement(false)}
-        onAgree={() => agreePrivacyPolicy(updateAllowance)}
+        loading={termsAgreementLoading}
+        isOpen={showAgreement}
+        toggle={() => setShowAgreement(false)}
+        onAgree={() => onAgree(updateAllowance)}
       />
     </>
   )

@@ -13,12 +13,18 @@ import {
 } from "./styled"
 
 interface Props {
+  loading: boolean
   isOpen: boolean
   toggle: () => void
   onAgree: () => void
 }
 
-const TermsAndConditions: React.FC<Props> = ({ isOpen, toggle, onAgree }) => {
+const TermsAndConditions: React.FC<Props> = ({
+  loading,
+  isOpen,
+  toggle,
+  onAgree,
+}) => {
   const [agree, setAgree] = useState(false)
 
   const handleCheckbox = (value) => {
@@ -26,7 +32,7 @@ const TermsAndConditions: React.FC<Props> = ({ isOpen, toggle, onAgree }) => {
   }
 
   const button = useMemo(() => {
-    if (agree) {
+    if (agree && !loading) {
       return (
         <Button full onClick={onAgree}>
           Sing and proceed
@@ -39,7 +45,7 @@ const TermsAndConditions: React.FC<Props> = ({ isOpen, toggle, onAgree }) => {
         Sing and proceed
       </SecondaryButton>
     )
-  }, [agree, onAgree])
+  }, [agree, loading, onAgree])
 
   return (
     <Modal title="Terms & Conditions agreement" isOpen={isOpen} toggle={toggle}>
