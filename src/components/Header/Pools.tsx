@@ -16,6 +16,7 @@ import { PortraitsPlus, Funds, FundWrapper } from "./styled"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
+  requestPolicy: "network-only",
 })
 
 const FundItem = ({ pool }) => {

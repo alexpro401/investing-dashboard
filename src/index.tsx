@@ -18,15 +18,16 @@ import SideBarContext from "context/SideBarContext"
 import AlertContext from "context/AlertContext"
 
 import GlobalStyle from "theme/GlobalStyle"
-
 import getLibrary from "utils/getLibrary"
 
 import { ContractsRegistryUpdater } from "state/contracts/updater"
 import { PriceFeedUpdater } from "state/pricefeed/updater"
 import { UserPoolsUpdater } from "state/user/updater"
 import { TransactionUpdater } from "state/transactions/updater"
+import { GasPriceUpdater } from "state/gas/updater"
+import { PoolListUpdater } from "state/pools/updater"
+
 import "react-virtualized/styles.css"
-import GasPriceUpdater from "state/gas/updater"
 
 const Web3ProviderNetwork = createWeb3ReactRoot("NETWORK")
 
@@ -51,6 +52,7 @@ const GlobalComponents = () => (
   <>
     <ContractsRegistryUpdater />
     <UserPoolsUpdater />
+    <PoolListUpdater />
     <GasPriceUpdater />
     <PriceFeedUpdater />
     <TransactionUpdater />

@@ -15,3 +15,11 @@ export const addPools = createAction<{
   data: IPoolQuery[] | undefined
   type: PoolType
 }>("pools/add-pools")
+
+export const setActivePoolType = createAction<{ type: PoolType }>(
+  "pools/set-active-pool-type"
+)
+
+export const setLoading = createAction<{ loading: boolean }>(
+  "pools/set-loading"
+)

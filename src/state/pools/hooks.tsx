@@ -1,15 +1,18 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { TraderPoolRegistry } from "abi"
 import { useQuery } from "urql"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { parseEther } from "@ethersproject/units"
 
-import useContract from "hooks/useContract"
+import { useTraderPoolRegistryContract } from "hooks/useContract"
 import { AppDispatch, AppState } from "state"
-import { addPools, setFilter, setPagination } from "state/pools/actions"
-import { selectPoolsFilters } from "state/pools/selectors"
-import { selectTraderPoolRegistryAddress } from "state/contracts/selectors"
+import {
+  addPools,
+  setFilter,
+  setLoading,
+  setPagination,
+} from "state/pools/actions"
+import { selectActivePoolType, selectPoolsFilters } from "state/pools/selectors"
 
 import { poolTypes } from "constants/index"
 
@@ -17,7 +20,6 @@ import { isAddress } from "utils"
 
 import {
   IPoolQuery,
-  PoolType,
   IPriceHistoryQuery,
   IPriceHistory,
 } from "constants/interfaces_v2"
@@ -73,14 +75,24 @@ export function useOwnedPools(
  * Returns map of pool price history
  */
 export function usePriceHistory(
-  address: string | undefined
+  address: string | undefined,
+  timeframes: [number, number],
+  limit = 1000,
+  startDate: number
 ): IPriceHistory[] | undefined {
   const [history, setHistory] = useState<IPriceHistory[] | undefined>(undefined)
   const [pool] = useQuery<{
     traderPool: IPriceHistoryQuery
   }>({
-    query: PriceHistoryQuery,
-    variables: { address },
+    query: PriceHistoryQuery(startDate),
+    variables: {
+      address,
+      minTimeframe: timeframes[0],
+      maxTimeframe: timeframes[1],
+      limit,
+      startDate,
+    },
+    requestPolicy: "network-only",
   })
 
   useEffect(() => {
@@ -123,29 +135,16 @@ export function usePoolPrice(address: string | undefined) {
   return { priceUSD, priceBase }
 }
 
-// Hook that handles fetching and storing pools
-// @param poolType - type of pool to fetch (all, basic, invest)
-// @return loading indicator of pools
-// @return loadMore function to start fetching new batch of pools
-export function usePools(poolType: PoolType): [boolean, () => void] {
-  const [loading, setLoading] = useState(true)
+export function usePoolsCounter() {
+  const [, setUpdate] = useState(false)
+  const updateRef = useRef(false)
   const dispatch = useDispatch<AppDispatch>()
+  const traderPoolRegistry = useTraderPoolRegistryContract()
 
-  const isAll = poolType === "ALL_POOL"
-
-  const filters = useSelector(selectPoolsFilters)
-
-  const queryArgs = getPoolsQueryVariables(isAll, filters, poolType)
-
-  const traderPoolRegistryAddress = useSelector(selectTraderPoolRegistryAddress)
-  const traderPoolRegistry = useContract(
-    traderPoolRegistryAddress,
-    TraderPoolRegistry
-  )
-
-  const [response] = useQuery<{
-    traderPools: IPoolQuery[]
-  }>(queryArgs)
+  const handleUpdate = useCallback(() => {
+    updateRef.current = !updateRef.current
+    setUpdate(updateRef.current)
+  }, [])
 
   // Fetch total number of pools
   useEffect(() => {
@@ -174,22 +173,41 @@ export function usePools(poolType: PoolType): [boolean, () => void] {
     })()
   }, [traderPoolRegistry, dispatch])
 
+  return handleUpdate
+}
+
+// Hook that handles fetching and storing pools
+// @param poolType - type of pool to fetch (all, basic, invest)
+// @return loading indicator of pools
+// @return loadMore function to start fetching new batch of pools
+export function usePools(): () => void {
+  const poolType = useSelector(selectActivePoolType)
+  const dispatch = useDispatch<AppDispatch>()
+
+  const filters = useSelector(selectPoolsFilters)
+
+  const queryArgs = getPoolsQueryVariables(filters, poolType)
+
+  const [response, handleMore] = useQuery<{
+    traderPools: IPoolQuery[]
+  }>(queryArgs)
+
+  useEffect(() => {
+    if (!dispatch) return
+    dispatch(setLoading({ loading: response.fetching }))
+  }, [response.fetching, dispatch])
+
   // Store pools to redux
   useEffect(() => {
-    if (!response || !response.data || response.fetching || !dispatch) return
+    if (!dispatch || !response || !response.data || response.fetching) return
 
     dispatch(
       addPools({
-        data: response.data?.traderPools,
+        data: response.data.traderPools,
         type: poolType,
       })
     )
-    setLoading(false)
   }, [response, dispatch, poolType])
 
-  const handleMore = () => {
-    // TODO: handle more for current list
-  }
-
-  return [loading, handleMore]
+  return handleMore
 }

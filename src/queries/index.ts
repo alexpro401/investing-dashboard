@@ -11,6 +11,7 @@ const PRICE_HISTORY = `
   absPNL
   percPNL
   timestamp
+  aggregationType
 `
 
 const PRICE_HISTORY_LAST = `
@@ -19,16 +20,24 @@ const PRICE_HISTORY_LAST = `
   }
 `
 
-const PRICE_HISTORY_FULL = `
-  priceHistory(first: 1000, orderBy: timestamp, orderDirection: desc) {
+const PRICE_HISTORY_FULL = (startDate) => `
+  priceHistory(
+    first: $limit, 
+    orderBy: timestamp, orderDirection: asc, 
+    where: { 
+      aggregationType_gte: $minTimeframe,
+      aggregationType_lte: $maxTimeframe,
+      ${startDate !== 0 ? "timestamp_gte: $startDate" : ""}
+    }
+  ) {
     ${PRICE_HISTORY}
   }
 `
 
-const PriceHistoryQuery = `
-  query ($address: String!) {
+const PriceHistoryQuery = (startDate) => `
+  query ($address: String!, $minTimeframe: Int!, $maxTimeframe: Int!, $limit: Int!, $startDate: Int!) {
     traderPool(id: $address) {
-      ${PRICE_HISTORY_FULL}
+      ${PRICE_HISTORY_FULL(startDate)}
     }
   }
 `
@@ -132,7 +141,7 @@ const POSITION = `
   totalBaseCloseVolume
   totalPositionOpenVolume
   totalPositionCloseVolume
-  exchanges {
+  exchanges(orderBy: timestamp, orderDirection: desc) {
     ${POSITION_EXCHANGE}
   }
   traderPool {
@@ -145,23 +154,24 @@ const POSITION = `
 `
 
 const BasicPositionsQuery = `
-query ($offset: Int!, $limit: Int!, $address: String!, $closed: Boolean!) {
-  positions(
-    skip: $offset, 
-    first: $limit, 
-    where: { 
-      closed: $closed, 
-      traderPool_: { id: $address }
+  query ($offset: Int!, $limit: Int!, $address: String!, $closed: Boolean!) {
+    positions(
+      skip: $offset, first: $limit, 
+      where: { 
+        closed: $closed, 
+        traderPool_: { id: $address }
+      },
+      orderBy: startTimestamp, orderDirection: desc
+    ) {
+      ${POSITION}
     }
-  ) {
-    ${POSITION}
   }
-}
 `
 
 // Pool risky proposals
 const RISKY_PROPOSAL_EXCHANGE = `
   id
+  hash
   timestamp
   fromToken
   toToken
@@ -178,35 +188,30 @@ const RISKY_PROPOSAL_POSITION = `
   totalPositionCloseVolume
   totalUSDOpenVolume
   totalUSDCloseVolume
-`
-const RISKY_PROPOSAL = `
-  id
-  token
-  basicPool {
-    id
-    baseToken
-  }
-  positions(skip: $offset, first: $limit, where: { isClosed: $closed }) {
-    ${RISKY_PROPOSAL_POSITION}
-  }
-`
-
-const RiskyProposalsQuery = `
-  query ($address: String!, $closed: Boolean!, $offset: Int!, $limit: Int!) {
-    basicPool(id: $address) {
-      proposals {
-        ${RISKY_PROPOSAL}
+  proposal {
+    token
+    basicPool {
+      id
+      baseToken
+    }
+    exchanges {
+      exchanges(orderBy: timestamp, orderDirection: desc) {
+        ${RISKY_PROPOSAL_EXCHANGE}
       }
     }
   }
 `
 
-const RiskyProposalExchangesQuery = `
-  query ($address: String!) {
-    proposalExchangeHistories(where: {proposal_: {basicPool: $address}}) {
-      exchanges(first: 100) {
-        ${RISKY_PROPOSAL_EXCHANGE}
+const RiskyPositionsQuery = `
+  query ($poolAddressList: [String]!, $closed: Boolean!, $offset: Int!, $limit: Int!) {
+    proposalPositions(
+      skip: $offset, first: $limit, 
+      where: { 
+        isClosed: $closed, 
+        proposal_: { basicPool_in: $poolAddressList }
       }
+    ) {
+      ${RISKY_PROPOSAL_POSITION}
     }
   }
 `
@@ -223,19 +228,6 @@ const RiskyProposalPositionQuery = `
 
 // Pool invnest proposals
 
-// lastSupply {
-//   id
-//   timestamp
-//   dividendsTokens
-//   amountDividendsTokens
-// }
-// lastWithdraw {
-//   id
-//   timestamp
-//   amountBase
-// }
-
-// TODO: Add lastSupply and lastWithdraw fields (declared above)
 const INVEST_PROPOSAL = `
   id
   timestampLimit
@@ -258,6 +250,7 @@ const InvestProposalQuery = `
 // Investor positions
 const INVESTOR_POSITION_VEST = `
   id
+  hash
   isInvest
   timestamp
   volumeBase
@@ -307,45 +300,6 @@ const InvestorRiskyProposalsQuery = `
     }
   }
 `
-
-const INVESTOR_RISKY_POSITION = `
-  id
-  isClosed
-  totalBaseOpenVolume
-  totalBaseCloseVolume
-  totalPositionOpenVolume
-  totalPositionCloseVolume
-  totalUSDOpenVolume
-  totalUSDCloseVolume
-`
-
-const InvestorRiskyPositionsQuery = `
-  query ($poolAddressList: [String]!, $closed: Boolean!, $offset: Int!, $limit: Int!) {
-    proposals(where: { basicPool_in: $poolAddressList }){
-      id
-      token
-      basicPool {
-        id
-        baseToken
-      }
-      positions(skip: $offset, first: $limit, where: { isClosed: $closed }) {
-        ${INVESTOR_RISKY_POSITION}
-      }
-    }
-  }
-`
-
-// lastSupply(first: 100) {
-//   id
-//   timestamp
-//   dividendsTokens
-//   amountDividendsTokens
-// }
-// lastWithdraw(first: 100) {
-//   id
-//   timestamp
-//   amountBase
-// }
 
 const INVESTOR_INVEST_PROPOSAL = `
   id
@@ -421,10 +375,10 @@ const UserTransactionsQuery = `
 `
 
 const getPoolsQueryVariables = (
-  isAllPools: boolean,
   filters: ITopMembersFilters,
   poolType: PoolType
 ) => {
+  const isAllPools = poolType === "ALL_POOL"
   const isSorting = filters.sort.direction !== ""
 
   if (!isAllPools && !isSorting) {
@@ -472,14 +426,12 @@ export {
   BasicPositionsQuery,
   PoolsQueryWithSort,
   PoolsQueryByTypeWithSort,
-  RiskyProposalsQuery,
   InvestProposalQuery,
   InvestorPositionsQuery,
   InvestorPoolsInvestedForQuery,
   InvestorRiskyProposalsQuery,
-  InvestorRiskyPositionsQuery,
   InvestorInvestProposalsQuery,
-  RiskyProposalExchangesQuery,
+  RiskyPositionsQuery,
   FundFeeHistoryQuery,
   UserTransactionsQuery,
   getPoolsQueryVariables,

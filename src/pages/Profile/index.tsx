@@ -210,7 +210,10 @@ const Profile: React.FC<Props> = () => {
                 name: "Profit & Loss",
                 child: (
                   <>
-                    <ProfitLossChart address={poolAddress} />
+                    <ProfitLossChart
+                      address={poolAddress}
+                      baseToken={poolData?.baseToken}
+                    />
                     <BarChart />
                     <Row>
                       <TextGrey>P&L LP - $ETH</TextGrey>
