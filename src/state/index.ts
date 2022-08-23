@@ -10,6 +10,8 @@ import application from "./application/reducer"
 import ipfsMetadata from "./ipfsMetadata/reducer"
 import gas from "./gas/reducer"
 
+const RESET_KEY = "32312e30382e32303232"
+
 const PERSISTED_KEYS: string[] = [
   "user",
   "transactions",
@@ -19,22 +21,13 @@ const PERSISTED_KEYS: string[] = [
 ]
 
 const shouldReset = () => {
-  const isReseted =
-    localStorage.getItem("redux-reset-03-02-2022") === "true" &&
-    localStorage.getItem("redux-reset-25-04-2022") === "true" &&
-    localStorage.getItem("redux-reset-08-06-2022") === "true" &&
-    localStorage.getItem("redux-reset-27-06-2022") === "true" &&
-    localStorage.getItem("redux-reset-15-07-2022") === "true"
+  const isReseted = localStorage.getItem("redux-reset") === RESET_KEY
 
   if (!isReseted) {
     clear({
       namespace: process.env.REACT_APP_NAMESPACE || "DEXE",
     })
-    localStorage.setItem("redux-reset-03-02-2022", "true")
-    localStorage.setItem("redux-reset-25-04-2022", "true")
-    localStorage.setItem("redux-reset-08-06-2022", "true")
-    localStorage.setItem("redux-reset-27-06-2022", "true")
-    localStorage.setItem("redux-reset-15-07-2022", "true")
+    localStorage.setItem("redux-reset", RESET_KEY)
   }
 }
 

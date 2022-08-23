@@ -375,10 +375,10 @@ const UserTransactionsQuery = `
 `
 
 const getPoolsQueryVariables = (
-  isAllPools: boolean,
   filters: ITopMembersFilters,
   poolType: PoolType
 ) => {
+  const isAllPools = poolType === "ALL_POOL"
   const isSorting = filters.sort.direction !== ""
 
   if (!isAllPools && !isSorting) {
