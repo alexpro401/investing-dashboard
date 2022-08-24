@@ -1,11 +1,12 @@
-import { Dispatch, SetStateAction, useCallback, useMemo, useRef } from "react"
-import { createClient, Provider as GraphProvider } from "urql"
 import { PulseSpinner } from "react-spinners-kit"
+import { createClient, Provider as GraphProvider } from "urql"
+import { Dispatch, SetStateAction, useCallback, useMemo, useRef } from "react"
 
 import useTransactionHistoryUI from "./useTransactionHistoryUI"
 
 import { useActiveWeb3React } from "hooks"
 import { UserTransactionsQuery } from "queries"
+import { useERC20List } from "hooks/useContract"
 import useQueryPagination from "hooks/useQueryPagination"
 import { TransactionType } from "state/transactions/types"
 
@@ -60,6 +61,40 @@ const TransactionHistory: React.FC<IProps> = ({ open, setOpen }) => {
     (d) => d.transactions
   )
 
+  const getTokensList = useCallback(
+    (payload) => {
+      switch (filter) {
+        case TransactionType.SWAP:
+          const tokens = payload.reduce((acc, t) => {
+            return [
+              ...new Set([
+                ...acc,
+                t.exchange[0]?.fromToken,
+                t.exchange[0]?.toToken,
+              ]),
+            ]
+          }, [])
+          tokens["_isPools"] = false
+          return tokens
+        case TransactionType.INVEST:
+        case TransactionType.DIVEST:
+          const pools = [...new Set(payload.map((p) => p.vest[0]?.pool))]
+          pools["_isPools"] = true
+          return pools
+        default:
+          return []
+      }
+    },
+    [filter]
+  )
+
+  const tokensList = useMemo(() => {
+    const list = getTokensList(data)
+    return { list, _isPools: list._isPools }
+  }, [data, getTokensList])
+
+  const tokensData = useERC20List(tokensList)
+
   return (
     <S.Container>
       <S.Heading
@@ -112,10 +147,11 @@ const TransactionHistory: React.FC<IProps> = ({ open, setOpen }) => {
                 key={tx.id}
                 payload={tx}
                 chainId={chainId}
+                tokensData={tokensData}
               />
             ))}
 
-          {(!data || (data.length === 0 && loading)) && (
+          {(!data || (data.length === 0 && loading) || !tokensData) && (
             <S.ListPlaceholder>
               <PulseSpinner />
             </S.ListPlaceholder>
