@@ -7,7 +7,7 @@ import { createClient, Provider as GraphProvider } from "urql"
 import Icon from "components/Icon"
 import OwnedPoolsList from "modals/OwnedPoolsList"
 
-import { useOwnedPools } from "state/pools/hooks"
+import { useManagedPools, useOwnedPools } from "state/pools/hooks"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 
 import AddFund from "assets/icons/AddFund"
@@ -39,13 +39,14 @@ const Pools = ({}: IPortaitsProps) => {
   const { account } = useWeb3React()
 
   const [isModalOpen, setModal] = useState(false)
-  const [pools, isPoolsLoading] = useOwnedPools(account?.toLocaleLowerCase())
+  const [pools, isPoolsLoading] = useOwnedPools(account)
+  const [managedPools, isManagedPoolsLoading] = useManagedPools(account)
 
   const createFund = () => {
     navigate("/create-fund")
   }
 
-  if (isPoolsLoading) {
+  if (isPoolsLoading || isManagedPoolsLoading) {
     return (
       <PortraitsPlus>
         <CircleSpinner color="#A4EBD4" size={16} loading />
@@ -58,6 +59,7 @@ const Pools = ({}: IPortaitsProps) => {
       <>
         <OwnedPoolsList
           pools={pools}
+          managedPools={managedPools}
           isOpen={isModalOpen}
           toggle={() => setModal(false)}
         />

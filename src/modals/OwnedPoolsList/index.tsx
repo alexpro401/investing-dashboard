@@ -27,9 +27,10 @@ interface Props {
   isOpen: boolean
   toggle: () => void
   pools: IPoolQuery[]
+  managedPools: IPoolQuery[]
 }
 
-const OwnedPoolsList: FC<Props> = ({ isOpen, toggle, pools }) => {
+const OwnedPoolsList: FC<Props> = ({ isOpen, toggle, pools, managedPools }) => {
   const [isDragAlloved, setDragAllowed] = useState(true)
   const navigate = useNavigate()
   const scrollRef = useRef<any>(null)
@@ -70,6 +71,27 @@ const OwnedPoolsList: FC<Props> = ({ isOpen, toggle, pools }) => {
   })
 
   const investPoolsList = investPools.map((pool) => {
+    const priceLP = getPriceLP(pool.priceHistory)
+    const pnl = getPNL(priceLP)
+    const lastHistoryPoint = getLastInArray(pool.priceHistory)
+
+    return (
+      <Token
+        onClick={toggle}
+        descriptionURL={pool.descriptionURL}
+        baseAddress={pool.baseToken}
+        poolType="INVEST_POOL"
+        name={pool.name}
+        symbol={pool.ticker}
+        pnl={`${pnl}%`}
+        address={pool.id}
+        key={pool.id}
+        tvl={`$${getUSDPrice(lastHistoryPoint ? lastHistoryPoint.usdTVL : 0)}`}
+      />
+    )
+  })
+
+  const adminedPoolsList = managedPools.map((pool) => {
     const priceLP = getPriceLP(pool.priceHistory)
     const pnl = getPNL(priceLP)
     const lastHistoryPoint = getLastInArray(pool.priceHistory)
@@ -149,10 +171,14 @@ const OwnedPoolsList: FC<Props> = ({ isOpen, toggle, pools }) => {
           <SecondaryLabel>P&L</SecondaryLabel>
         </Header>
         <List>
-          <EmptyText>
-            <PlaceholderIcon src={dexe} />
-            You do not have open risk funds yet
-          </EmptyText>
+          {!managedPools.length ? (
+            <EmptyText>
+              <PlaceholderIcon src={dexe} />
+              You do not have admined funds yet
+            </EmptyText>
+          ) : (
+            adminedPoolsList
+          )}
         </List>
       </Container>
     </Popover>
