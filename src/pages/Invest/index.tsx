@@ -123,7 +123,9 @@ const Invest = () => {
       return (
         <SecondaryButton
           size="large"
-          onClick={() => (isAgreed ? updateAllowance : setShowAgreement(true))}
+          onClick={() =>
+            isAgreed ? updateAllowance() : setShowAgreement(true)
+          }
           fz={22}
           full
         >
