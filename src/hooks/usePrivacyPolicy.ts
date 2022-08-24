@@ -7,45 +7,28 @@ import {
 } from "react"
 import { useSelector } from "react-redux"
 import { useWeb3React } from "@web3-react/core"
-// import {
-//   signTypedData,
-//   SignTypedDataVersion,
-//   TypedMessage,
-// } from "@metamask/eth-sig-util"
 
-import { isTxMined, parseTransactionError } from "utils"
 import { UserRegistry } from "abi"
 import useContract from "hooks/useContract"
+import { isTxMined, parseTransactionError } from "utils"
 import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { selectUserRegistryAddress } from "state/contracts/selectors"
 
 const privacyHash = process.env.REACT_APP_PRIVACY_POLICY_HASH
-// const OWNER_PRIVATE_KEY =
-//   "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 
 const usePrivacyPolicySign = () => {
   const { account, library, chainId } = useWeb3React()
-  const userRegistryAddress = useSelector(selectUserRegistryAddress)
 
   return useCallback(
-    async (hash) => {
+    async (hash, userRegistryAddress) => {
       if (!account || !library) return
-
-      // const privateKey = Buffer.from(OWNER_PRIVATE_KEY, "hex")
-
-      // const EIP712Domain = [
-      //   { name: "name", type: "string" },
-      //   { name: "version", type: "string" },
-      //   { name: "chainId", type: "uint256" },
-      //   { name: "verifyingContract", type: "address" },
-      // ]
 
       const Agreement = [{ name: "documentHash", type: "bytes32" }]
 
       const domain = {
-        name: "USER_REGISTRY", // ASCII "85 83 69 82 95 82 69 71 73 83 84 82 89 "
-        version: "1", // ASCII "49 "
+        name: "USER_REGISTRY",
+        version: "1",
         chainId: chainId,
         verifyingContract: userRegistryAddress,
       }
@@ -54,23 +37,10 @@ const usePrivacyPolicySign = () => {
         documentHash: hash,
       }
 
-      // const data = {
-      //   types: { EIP712Domain, Agreement },
-      //   primaryType: "Agreement",
-      //   domain: domain,
-      //   message: message,
-      // } as unknown as TypedMessage<any>
-
       const signer = library.getSigner(account)
       return signer._signTypedData(domain, { Agreement }, message)
-
-      // return signTypedData({
-      //   privateKey,
-      //   data: data,
-      //   version: SignTypedDataVersion.V4,
-      // })
     },
-    [account, chainId, library, userRegistryAddress]
+    [account, chainId, library]
   )
 }
 
@@ -112,7 +82,7 @@ export default function usePrivacyPolicyAgreed(): [IPayload, IMethods] {
     try {
       setLoading(true)
       setError("")
-      const signature = await sign(privacyHash)
+      const signature = await sign(privacyHash, userRegistryAddress)
 
       const tx = await userRegistry.agreeToPrivacyPolicy(signature)
       const receipt = await addTransaction(tx, {
@@ -122,7 +92,7 @@ export default function usePrivacyPolicyAgreed(): [IPayload, IMethods] {
       if (isTxMined(receipt)) {
         setIsAgreed(true)
         setShowAgreement(false)
-        cb && cb()
+        cb && typeof cb === "function" && cb()
       }
     } catch (error: any) {
       if (!!error && !!error.data && !!error.data.message) {
@@ -136,6 +106,7 @@ export default function usePrivacyPolicyAgreed(): [IPayload, IMethods] {
     }
   }
 
+  // Fetch user agreed flag
   const getUserAgreed = async (user, userRegistry) => {
     if (!userRegistry || !user) return
 
