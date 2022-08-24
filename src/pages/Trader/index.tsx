@@ -94,6 +94,7 @@ const pnlNew: IDetailedChart[] = [
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
+  requestPolicy: "network-only",
 })
 
 interface Props {}

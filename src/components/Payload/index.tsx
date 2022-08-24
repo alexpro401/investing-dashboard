@@ -1,15 +1,25 @@
 import Confirm from "components/Confirm"
-import { FC } from "react"
+import { SubmitState } from "constants/types"
+import { Dispatch, FC, SetStateAction } from "react"
 import { SpinnerCircularFixed } from "spinners-react"
 
 import { Text } from "./styled"
 
-const Payload: FC<{
-  isOpen: boolean
-  toggle: () => void
-}> = ({ children, isOpen, toggle }) => {
+interface Props {
+  submitState: SubmitState
+  toggle: Dispatch<SetStateAction<SubmitState>>
+}
+
+const Payload: FC<Props> = ({ submitState, toggle }) => {
+  const isModalOpen =
+    SubmitState.SIGN === submitState || SubmitState.WAIT_CONFIRM === submitState
+
   return (
-    <Confirm isOpen={isOpen} toggle={toggle} title="Waiting">
+    <Confirm
+      isOpen={isModalOpen}
+      toggle={() => toggle(SubmitState.IDLE)}
+      title="Waiting"
+    >
       <SpinnerCircularFixed
         size={100}
         style={{
@@ -21,7 +31,12 @@ const Payload: FC<{
         color="#8DEED3"
         secondaryColor="#0D1320"
       />
-      <Text>{children || "Open your wallet and sign transaction"}</Text>
+      <Text>
+        {" "}
+        {SubmitState.SIGN === submitState &&
+          "Open your wallet and sign transaction"}
+        {SubmitState.WAIT_CONFIRM === submitState && "Waiting for confirmation"}
+      </Text>
     </Confirm>
   )
 }

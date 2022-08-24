@@ -353,7 +353,7 @@ const CreateRiskyProposal: FC = () => {
 
   const tradeModal = (
     <TransactionSent
-      isOpen={SubmitState.SUCESS === isSubmiting}
+      isOpen={SubmitState.SUCCESS === isSubmiting}
       toggle={() => setSubmiting(SubmitState.IDLE)}
       title="Success"
       description="You have successfully created a risk proposal. Deposit LP or trade your token"
@@ -372,14 +372,7 @@ const CreateRiskyProposal: FC = () => {
 
   return (
     <>
-      <Payload
-        isOpen={isSubmiting !== SubmitState.IDLE}
-        toggle={() => setSubmiting(SubmitState.IDLE)}
-      >
-        {SubmitState.SIGN === isSubmiting &&
-          "Open your wallet and sign transaction"}
-        {SubmitState.WAIT_CONFIRM === isSubmiting && "Waiting for confirmation"}
-      </Payload>
+      <Payload submitState={isSubmiting} toggle={setSubmiting} />
       <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
         {error}
       </TransactionError>

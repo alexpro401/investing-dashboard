@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useState } from "react"
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react"
 import { useWeb3React } from "@web3-react/core"
 
 import { BigNumber } from "@ethersproject/bignumber"
@@ -37,7 +43,7 @@ const useCreateRiskyProposal = (
     validationErrors: IValidationError[]
   },
   {
-    setSubmiting: (value: SubmitState) => void
+    setSubmiting: Dispatch<SetStateAction<SubmitState>>
     setError: (value: string) => void
     setLpAmount: (value: string) => void
     setTimestampLimit: (timestamp: number) => void
@@ -172,7 +178,7 @@ const useCreateRiskyProposal = (
 
       if (isTxMined(receipt)) {
         // TODO: show modal
-        setSubmiting(SubmitState.SUCESS)
+        setSubmiting(SubmitState.SUCCESS)
       }
     }
 
@@ -222,7 +228,7 @@ const useCreateRiskyProposal = (
 
   // watch for transaction confirm & check proposals count
   useEffect(() => {
-    if (isSubmiting === SubmitState.SUCESS) {
+    if (isSubmiting === SubmitState.SUCCESS) {
       updateTotalProposals()
     }
   }, [isSubmiting, updateTotalProposals])

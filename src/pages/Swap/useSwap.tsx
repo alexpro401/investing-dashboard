@@ -24,7 +24,7 @@ import {
   parseTransactionError,
 } from "utils"
 import { getPriceImpact, multiplyBignumbers } from "utils/formulas"
-import { SwapDirection, TradeType } from "constants/types"
+import { SubmitState, SwapDirection, TradeType } from "constants/types"
 import useGasTracker from "state/gas/hooks"
 
 interface UseSwapProps {
@@ -43,12 +43,12 @@ interface UseSwapResponse {
   priceImpact: string
   slippage: string
   isSlippageOpen: boolean
-  isWalletPrompting: boolean
+  isWalletPrompting: SubmitState
   baseToken: string | undefined
   swapPath: string[]
   setError: Dispatch<SetStateAction<string>>
   setSlippage: Dispatch<SetStateAction<string>>
-  setWalletPrompting: Dispatch<SetStateAction<boolean>>
+  setWalletPrompting: Dispatch<SetStateAction<SubmitState>>
   setSlippageOpen: Dispatch<SetStateAction<boolean>>
   handleFromChange: (v: string) => void
   handleToChange: (v: string) => void
@@ -78,7 +78,7 @@ const useSwap = ({
   const [error, setError] = useState("")
   const [slippage, setSlippage] = useState("0.10")
   const [isSlippageOpen, setSlippageOpen] = useState(false)
-  const [isWalletPrompting, setWalletPrompting] = useState(false)
+  const [isWalletPrompting, setWalletPrompting] = useState(SubmitState.IDLE)
   const [fromAmount, setFromAmount] = useState("0")
   const [toAmount, setToAmount] = useState("0")
   const [toBalance, setToBalance] = useState(BigNumber.from("0"))
@@ -338,7 +338,7 @@ const useSwap = ({
   const handleSubmit = useCallback(async () => {
     if (!traderPool) return
 
-    setWalletPrompting(true)
+    setWalletPrompting(SubmitState.SIGN)
     try {
       const amount = BigNumber.from(exchangeParams[lastChangedField].amount)
       const [exchange, exchangeWithSlippage] = await exchangeParams[
@@ -355,7 +355,7 @@ const useSwap = ({
         transactionOptions
       )
 
-      setWalletPrompting(false)
+      setWalletPrompting(SubmitState.WAIT_CONFIRM)
 
       const receipt = await addTransaction(transactionResponse, {
         type: TransactionType.SWAP,
@@ -369,9 +369,10 @@ const useSwap = ({
 
       if (isTxMined(receipt)) {
         runUpdate()
+        setWalletPrompting(SubmitState.SUCCESS)
       }
     } catch (error: any) {
-      setWalletPrompting(false)
+      setWalletPrompting(SubmitState.IDLE)
       if (!!error && !!error.data && !!error.data.message) {
         setError(error.data.message)
       } else {

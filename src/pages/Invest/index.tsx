@@ -290,10 +290,7 @@ const Invest = () => {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        <Payload
-          isOpen={isWalletPrompting}
-          toggle={() => setWalletPrompting(false)}
-        />
+        <Payload submitState={isWalletPrompting} toggle={setWalletPrompting} />
         <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
           {error}
         </TransactionError>

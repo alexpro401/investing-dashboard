@@ -35,7 +35,7 @@ import LockedIcon from "assets/icons/LockedIcon"
 import multiplier from "assets/icons/10x-staking.svg"
 
 import { Card, CardHeader, Title } from "components/Exchange/styled"
-import { SwapDirection } from "constants/types"
+import { SubmitState, SwapDirection } from "constants/types"
 import {
   Container,
   PriceCard,
@@ -201,7 +201,7 @@ function Management() {
   const [allowance, setAllowance] = useState("-1")
 
   const [isSlippageOpen, setSlippageOpen] = useState(false)
-  const [isLoading, setLoading] = useState(false)
+  const [isLoading, setLoading] = useState(SubmitState.IDLE)
 
   const priceFeedAddress = useSelector(selectPriceFeedAddress)
   const insuranceAddress = useSelector(selectInsuranceAddress)
@@ -255,20 +255,22 @@ function Management() {
   }, [insuranceAddress, dexeAddress, account, library])
 
   const handleSubmit = () => {
-    setLoading(true)
+    setLoading(SubmitState.SIGN)
 
     const handleBuy = async () => {
       const amount = BigNumber.from(fromAmount)
       const response = await insurance?.buyInsurance(amount)
+
+      setLoading(SubmitState.WAIT_CONFIRM)
       const receipt = await addTransaction(response, {
         type: TransactionType.INSURANCE_STAKE,
         amount: fromAmount,
       })
       if (isTxMined(receipt)) {
+        setLoading(SubmitState.SUCCESS)
         refetchBalance()
         await fetchInsuranceBalance()
       }
-      setLoading(false)
     }
 
     const handleSell = async () => {
@@ -279,14 +281,14 @@ function Management() {
         amount: toAmount,
       })
       if (isTxMined(receipt)) {
+        setLoading(SubmitState.SUCCESS)
         refetchBalance()
         await fetchInsuranceBalance()
       }
-      setLoading(false)
     }
 
     ;(direction === "deposit" ? handleBuy() : handleSell()).catch((error) => {
-      setLoading(false)
+      setLoading(SubmitState.IDLE)
       if (!!error && !!error.data && !!error.data.message) {
         setError(error.data.message)
       } else {
@@ -298,12 +300,12 @@ function Management() {
 
   const approve = () => {
     if (!dexeAddress || !insuranceAddress || !fromToken) return
-    setLoading(true)
+    setLoading(SubmitState.SIGN)
 
     const approveToken = async () => {
       const amount = BigNumber.from(fromAmount)
       const approveResponse = await fromToken.approve(insuranceAddress, amount)
-      setLoading(false)
+      setLoading(SubmitState.WAIT_CONFIRM)
 
       const receipt = await addTransaction(approveResponse, {
         type: TransactionType.APPROVAL,
@@ -312,11 +314,14 @@ function Management() {
       })
 
       if (isTxMined(receipt) && receipt!.logs.length) {
+        setLoading(SubmitState.SUCCESS)
         await fetchAndUpdateAllowance()
       }
     }
 
-    approveToken().catch(console.error)
+    approveToken().catch(() => {
+      setLoading(SubmitState.IDLE)
+    })
   }
 
   const handlePercentageChange = (percent: BigNumber) => {
@@ -504,7 +509,7 @@ function Management() {
       <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
         {error}
       </TransactionError>
-      <Payload isOpen={isLoading} toggle={() => setLoading(false)} />
+      <Payload submitState={isLoading} toggle={setLoading} />
     </>
   )
 }

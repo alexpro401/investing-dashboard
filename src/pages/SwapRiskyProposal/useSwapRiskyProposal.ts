@@ -7,7 +7,7 @@ import {
   useEffect,
 } from "react"
 import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
-import { SwapDirection, TradeType } from "constants/types"
+import { SubmitState, SwapDirection, TradeType } from "constants/types"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { parseEther, parseUnits } from "@ethersproject/units"
@@ -52,10 +52,10 @@ interface UseSwapRiskyResponse {
   oneUSDCost: BigNumber
   slippage: string
   isSlippageOpen: boolean
-  isWalletPrompting: boolean
+  isWalletPrompting: SubmitState
   setError: Dispatch<SetStateAction<string>>
   setSlippage: Dispatch<SetStateAction<string>>
-  setWalletPrompting: Dispatch<SetStateAction<boolean>>
+  setWalletPrompting: Dispatch<SetStateAction<SubmitState>>
   setSlippageOpen: Dispatch<SetStateAction<boolean>>
   handleFromChange: (v: string) => void
   handleToChange: (v: string) => void
@@ -74,7 +74,7 @@ const useSwapRiskyProposal = ({
   const [error, setError] = useState("")
   const [slippage, setSlippage] = useState("0.10")
   const [isSlippageOpen, setSlippageOpen] = useState(false)
-  const [isWalletPrompting, setWalletPrompting] = useState(false)
+  const [isWalletPrompting, setWalletPrompting] = useState(SubmitState.IDLE)
 
   const [positionPnlLP, setPositionPnlLP] = useState(ZERO)
   const [positionPnlUSD, setPositionPnlUSD] = useState(ZERO)
@@ -449,7 +449,7 @@ const useSwapRiskyProposal = ({
 
   const handleSubmit = useCallback(async () => {
     if (!proposalPool) return
-    setWalletPrompting(true)
+    setWalletPrompting(SubmitState.IDLE)
 
     const params = {
       from: {
@@ -469,7 +469,7 @@ const useSwapRiskyProposal = ({
         params[lastChangedField].type
       )
 
-      setWalletPrompting(false)
+      setWalletPrompting(SubmitState.WAIT_CONFIRM)
 
       const tradeType = {
         deposit: TradeType.EXACT_INPUT,
@@ -489,9 +489,10 @@ const useSwapRiskyProposal = ({
 
       if (isTxMined(tx)) {
         runUpdate()
+        setWalletPrompting(SubmitState.SUCCESS)
       }
     } catch (error: any) {
-      setWalletPrompting(false)
+      setWalletPrompting(SubmitState.IDLE)
       const errorMessage = parseTransactionError(error.toString())
       !!errorMessage && setError(errorMessage)
     }

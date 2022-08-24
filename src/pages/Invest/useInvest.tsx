@@ -32,7 +32,7 @@ import {
   divideBignumbers,
 } from "utils/formulas"
 import usePoolPrice from "hooks/usePoolPrice"
-import { SwapDirection } from "constants/types"
+import { SubmitState, SwapDirection } from "constants/types"
 import useAlert, { AlertType } from "hooks/useAlert"
 import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
 import useGasTracker from "state/gas/hooks"
@@ -66,7 +66,7 @@ interface InvestInfo {
 interface UseInvestResponse {
   info: InvestInfo
   error: string
-  isWalletPrompting: boolean
+  isWalletPrompting: SubmitState
   isSlippageOpen: boolean
   allowance?: BigNumber
   gasPrice: string
@@ -75,7 +75,7 @@ interface UseInvestResponse {
   slippage: string
   direction: SwapDirection
   updateAllowance: () => void
-  setWalletPrompting: Dispatch<SetStateAction<boolean>>
+  setWalletPrompting: Dispatch<SetStateAction<SubmitState>>
   setSlippageOpen: Dispatch<SetStateAction<boolean>>
   setSlippage: Dispatch<SetStateAction<string>>
   setError: Dispatch<SetStateAction<string>>
@@ -120,7 +120,7 @@ const useInvest = ({
   const [lpTokenPrice, setLpPrice] = useState(BigNumber.from("0"))
   const [lpTokenBalance, setLPBalance] = useState(BigNumber.from("0"))
   const [allowance, setAllowance] = useState<BigNumber | undefined>()
-  const [isWalletPrompting, setWalletPrompting] = useState(false)
+  const [isWalletPrompting, setWalletPrompting] = useState(SubmitState.IDLE)
   const [isSlippageOpen, setSlippageOpen] = useState(false)
   const [positions, setPositions] = useState<
     InvestInfo["fundPositions"]["positions"]
@@ -349,14 +349,14 @@ const useInvest = ({
     if (!handleValidate()) return
 
     try {
-      setWalletPrompting(true)
+      setWalletPrompting(SubmitState.SIGN)
       const amount = BigNumber.from(fromAmount)
       const approveResponse = await baseToken.approve(
         poolAddress,
         amount,
         transactionOptions
       )
-      setWalletPrompting(false)
+      setWalletPrompting(SubmitState.WAIT_CONFIRM)
 
       const receipt = await addTransaction(approveResponse, {
         type: TransactionType.APPROVAL,
@@ -366,9 +366,10 @@ const useInvest = ({
 
       if (isTxMined(receipt)) {
         fetchAndUpdateAllowance()
+        setWalletPrompting(SubmitState.SUCCESS)
       }
     } catch (e) {
-      setWalletPrompting(false)
+      setWalletPrompting(SubmitState.IDLE)
     }
   }, [
     account,
@@ -547,7 +548,7 @@ const useInvest = ({
       amountsWithSlippage,
       transactionOptions
     )
-    setWalletPrompting(false)
+    setWalletPrompting(SubmitState.WAIT_CONFIRM)
 
     const receipt = await addTransaction(depositResponse, {
       type: TransactionType.INVEST,
@@ -558,6 +559,7 @@ const useInvest = ({
 
     if (isTxMined(receipt)) {
       runUpdate()
+      setWalletPrompting(SubmitState.SUCCESS)
     }
   }, [
     poolAddress,
@@ -593,7 +595,7 @@ const useInvest = ({
       divest.commissions.dexeDexeCommission,
       transactionOptions
     )
-    setWalletPrompting(false)
+    setWalletPrompting(SubmitState.WAIT_CONFIRM)
     const receipt = await addTransaction(withdrawResponse, {
       type: TransactionType.DIVEST,
       poolAddress: poolAddress,
@@ -603,6 +605,7 @@ const useInvest = ({
 
     if (isTxMined(receipt)) {
       runUpdate()
+      setWalletPrompting(SubmitState.SUCCESS)
     }
   }, [
     account,
@@ -619,10 +622,10 @@ const useInvest = ({
   const handleSubmit = useCallback(async () => {
     if (!handleValidate()) return
 
-    setWalletPrompting(true)
+    setWalletPrompting(SubmitState.SIGN)
 
     const handleError = (error) => {
-      setWalletPrompting(false)
+      setWalletPrompting(SubmitState.IDLE)
 
       const errorMessage = parseTransactionError(error)
       !!errorMessage && setError(errorMessage)
