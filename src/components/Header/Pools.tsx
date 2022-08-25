@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState, ReactNode } from "react"
 import { useWeb3React } from "@web3-react/core"
 import { useNavigate } from "react-router-dom"
 import { CircleSpinner } from "react-spinners-kit"
@@ -46,6 +46,22 @@ const Pools = ({}: IPortaitsProps) => {
     navigate("/create-fund")
   }
 
+  const fundsPreview = useMemo<ReactNode>(() => {
+    if (pools && pools.length > 0) {
+      return pools
+        .slice(pools.length - 2)
+        .map((pool) => <FundItem key={pool.id} pool={pool} />)
+    }
+
+    if (managedPools && managedPools.length > 0) {
+      return managedPools
+        .slice(managedPools.length - 2)
+        .map((pool) => <FundItem key={pool.id} pool={pool} />)
+    }
+
+    return null
+  }, [pools, managedPools])
+
   if (isPoolsLoading || isManagedPoolsLoading) {
     return (
       <PortraitsPlus>
@@ -54,7 +70,7 @@ const Pools = ({}: IPortaitsProps) => {
     )
   }
 
-  if (pools.length > 0) {
+  if (pools.length > 0 || managedPools.length > 0) {
     return (
       <>
         <OwnedPoolsList
@@ -63,11 +79,7 @@ const Pools = ({}: IPortaitsProps) => {
           isOpen={isModalOpen}
           toggle={() => setModal(false)}
         />
-        <Funds onClick={() => setModal(true)}>
-          {pools.slice(pools.length - 2).map((pool) => (
-            <FundItem key={pool.id} pool={pool} />
-          ))}
-        </Funds>
+        <Funds onClick={() => setModal(true)}>{fundsPreview}</Funds>
       </>
     )
   }
