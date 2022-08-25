@@ -38,9 +38,6 @@ function InvestInvestmentProposal() {
     {
       formWithDirection,
       isSlippageOpen,
-      oneTokenCost,
-      usdTokenCost,
-      gasPrice,
       fromAmount,
       toAmount,
       direction,
@@ -57,7 +54,7 @@ function InvestInvestmentProposal() {
   ] = useInvestInvestmentProposal(poolAddress, proposalId)
 
   const button = useMemo(() => {
-    if (fromAmount === "0" || toAmount === "0") {
+    if (fromAmount.isZero() || toAmount.isZero()) {
       return (
         <SecondaryButton
           theme="disabled"

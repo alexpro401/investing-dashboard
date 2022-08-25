@@ -8,7 +8,10 @@ import Icon from "components/Icon"
 
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
-import { usePoolMetadata } from "state/ipfsMetadata/hooks"
+import {
+  useInvestProposalMetadata,
+  usePoolMetadata,
+} from "state/ipfsMetadata/hooks"
 import { SwapDirection } from "constants/types"
 
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
@@ -39,6 +42,8 @@ import {
   useInvestProposal,
 } from "hooks/useInvestmentProposals"
 import useInvestmentPrice from "hooks/useInvestmentPrice"
+import { ZERO } from "constants/index"
+import { formatEther } from "@ethersproject/units"
 
 const useInvestInvestmentProposal = (
   poolAddress?: string,
@@ -47,15 +52,10 @@ const useInvestInvestmentProposal = (
   {
     formWithDirection: RiskyForm
     isSlippageOpen: boolean
-    fromBalance: BigNumber
-    toBalance: BigNumber
     inPrice: BigNumber
     outPrice: BigNumber
-    oneTokenCost: BigNumber
-    usdTokenCost: BigNumber
-    gasPrice: string
-    fromAmount: string
-    toAmount: string
+    fromAmount: BigNumber
+    toAmount: BigNumber
     slippage: string
     fromAddress: string
     toAddress: string
@@ -64,9 +64,7 @@ const useInvestInvestmentProposal = (
     direction: SwapDirection
   },
   {
-    setFromAmount: (amount: string) => void
     setSlippageOpen: (state: boolean) => void
-    setToAmount: (amount: string) => void
     setToAddress: (address: string) => void
     setFromAddress: (address: string) => void
     setDirection: () => void
@@ -80,29 +78,18 @@ const useInvestInvestmentProposal = (
 ] => {
   const { account } = useWeb3React()
   const [showAlert] = useAlert()
-  const [, getGasPrice] = useGasTracker()
 
-  const [toBalance, setToBalance] = useState(BigNumber.from("0"))
-  const [fromBalance, setFromBalance] = useState(BigNumber.from("0"))
-  const [inPrice, setInPrice] = useState(BigNumber.from("0"))
-  const [outPrice, setOutPrice] = useState(BigNumber.from("0"))
-  const [fromAmount, setFromAmount] = useState("0")
-  const [toAmount, setToAmount] = useState("0")
+  const [lpBalance, setLPBalance] = useState(ZERO)
+  const [lp2Balance, setLP2Balance] = useState(ZERO)
+  const [inPrice, setInPrice] = useState(ZERO)
+  const [outPrice, setOutPrice] = useState(ZERO)
+  const [fromAmount, setFromAmount] = useState(ZERO)
+  const [toAmount, setToAmount] = useState(ZERO)
   const [slippage, setSlippage] = useState("0.10")
   const [isSlippageOpen, setSlippageOpen] = useState(false)
   const [toSelectorOpened, setToSelector] = useState(false)
   const [fromSelectorOpened, setFromSelector] = useState(false)
   const [direction, setDirection] = useState<SwapDirection>("deposit")
-  const [oneTokenCost, setOneTokenCost] = useState(BigNumber.from("0"))
-  const [usdTokenCost, setUSDTokenCost] = useState(BigNumber.from("0"))
-  const [gasPrice, setGasPrice] = useState("0.00")
-
-  const [baseAmountReceived, setBaseAmountReceived] = useState(
-    BigNumber.from("0")
-  )
-  const [positionAmountReceived, setPositionAmountReceived] = useState(
-    BigNumber.from("0")
-  )
 
   const [toAddress, setToAddress] = useState("")
   const [fromAddress, setFromAddress] = useState("")
@@ -113,7 +100,7 @@ const useInvestInvestmentProposal = (
 
   const traderPool = useTraderPoolContract(poolAddress)
   const investPool = useInvestPoolContract(poolAddress)
-  const [proposalPool, proposalAddress] = useInvestProposalContract(poolAddress)
+  const [proposalPool] = useInvestProposalContract(poolAddress)
   const proposal = useInvestProposal(poolAddress, proposalId)
   const investmentsInfo = useActiveInvestmentsInfo(
     poolAddress,
@@ -126,12 +113,18 @@ const useInvestInvestmentProposal = (
     poolInfo?.parameters.descriptionURL
   )
 
-  const { priceUSD: poolPriceUSD, priceBase: poolPriceBase } =
-    usePoolPrice(poolAddress)
-  const { priceUSD: riskyPriceUSD, priceBase: riskyPriceBase } =
-    useInvestmentPrice(poolAddress, proposalId)
+  const [{ investProposalMetadata }] = useInvestProposalMetadata(
+    poolAddress,
+    proposal?.proposalInfo.descriptionURL
+  )
+
+  const { priceUSD: poolPriceUSD } = usePoolPrice(poolAddress)
 
   const addTransaction = useTransactionAdder()
+
+  console.log("base Invested: ", investmentsInfo?.baseInvested.toString())
+  console.log("lp2 balance: ", investmentsInfo?.lp2Balance.toString())
+  console.log("lp invested: ", investmentsInfo?.lpInvested.toString())
 
   const poolIcon = (
     <Icon
@@ -146,8 +139,8 @@ const useInvestInvestmentProposal = (
       deposit: {
         from: {
           address: undefined,
-          amount: fromAmount,
-          balance: fromBalance,
+          amount: fromAmount.toString(),
+          balance: lpBalance,
           price: inPrice,
           symbol: poolInfo?.ticker,
           decimals: 18,
@@ -155,10 +148,10 @@ const useInvestInvestmentProposal = (
         },
         to: {
           address: undefined,
-          amount: toAmount,
-          balance: toBalance,
+          amount: toAmount.toString(),
+          balance: lp2Balance,
           price: outPrice,
-          symbol: `1/JBR-LP`,
+          symbol: investProposalMetadata?.ticker,
           decimals: 18,
           icon: poolIcon,
           info: {},
@@ -167,18 +160,18 @@ const useInvestInvestmentProposal = (
       withdraw: {
         from: {
           address: undefined,
-          amount: fromAmount,
-          balance: fromBalance,
+          amount: fromAmount.toString(),
+          balance: lp2Balance,
           price: inPrice,
-          symbol: `1/JBR-LP`,
+          symbol: investProposalMetadata?.ticker,
           decimals: 18,
           icon: poolIcon,
           info: {},
         },
         to: {
           address: undefined,
-          amount: toAmount,
-          balance: toBalance,
+          amount: toAmount.toString(),
+          balance: lpBalance,
           price: outPrice,
           symbol: poolInfo?.ticker,
           decimals: 18,
@@ -189,12 +182,13 @@ const useInvestInvestmentProposal = (
   }, [
     fromAmount,
     toAmount,
-    fromBalance,
-    toBalance,
+    lpBalance,
+    lp2Balance,
     inPrice,
     outPrice,
     poolIcon,
     poolInfo,
+    investProposalMetadata,
   ])
 
   const formWithDirection = exchangeForm[direction]
@@ -202,16 +196,16 @@ const useInvestInvestmentProposal = (
   const getLPBalance = useCallback(async () => {
     if (!traderPool || !account) return
 
-    const lpAvailable: BigNumber = await traderPool?.balanceOf(account)
+    const lpAvailable = await traderPool?.balanceOf(account)
 
-    if (direction === "deposit") {
-      setFromBalance(lpAvailable)
-    } else {
-      setToBalance(lpAvailable)
-    }
-  }, [account, direction, traderPool])
+    setLPBalance(lpAvailable)
+  }, [account, traderPool])
 
   const getLP2Balance = useCallback(async () => {
+    // if (!investmentsInfo) return
+
+    // const balance = investmentsInfo.lp2Balance
+
     if (!proposalPool || !account) return
 
     const balance = await proposalPool?.balanceOf(
@@ -219,74 +213,48 @@ const useInvestInvestmentProposal = (
       Number(proposalId) + 1
     )
 
-    if (direction === "deposit") {
-      setToBalance(balance)
-    } else {
-      setFromBalance(balance)
-    }
-  }, [account, direction, proposalId, proposalPool])
-
-  const getInvestTokens = useCallback(
-    async (
-      amount: BigNumber
-    ): Promise<[IDivestAmountsAndCommissions, IProposalInvestTokens]> => {
-      const divests: IDivestAmountsAndCommissions =
-        await traderPool?.getDivestAmountsAndCommissions(account, amount)
-
-      const invests: IProposalInvestTokens =
-        await proposalPool?.getInvestTokens(
-          Number(proposalId) + 1,
-          divests.receptions.baseAmount
-        )
-      return [divests, invests]
-    },
-    [account, proposalId, proposalPool, traderPool]
-  )
+    setLP2Balance(balance)
+  }, [account, proposalId, proposalPool])
 
   const getDivestTokens = useCallback(
-    async (amount: BigNumber): Promise<[IDivestAmounts, IPoolInvestTokens]> => {
-      const divests: IDivestAmounts = await proposalPool?.getDivestAmounts(
-        [Number(proposalId) + 1],
-        [amount]
-      )
-
-      const invests: IPoolInvestTokens = await traderPool?.getInvestTokens(
-        divests.baseAmount
-      )
-
-      return [divests, invests]
+    async (amount: BigNumber): Promise<IDivestAmountsAndCommissions> => {
+      const divests: IDivestAmountsAndCommissions =
+        await traderPool?.getDivestAmountsAndCommissions(account, amount)
+      return divests
     },
-    [proposalId, proposalPool, traderPool]
+    [account, traderPool]
   )
 
   const estimateDepositGasPrice = useCallback(async () => {}, [])
 
-  const estimateWithdrawGasPrice = useCallback(async () => {}, [])
-
   const estimateGas = useCallback(async () => {
-    if (direction === "deposit") {
-      return await estimateDepositGasPrice()
-    } else {
-      return await estimateWithdrawGasPrice()
-    }
-  }, [direction, estimateDepositGasPrice, estimateWithdrawGasPrice])
-
-  const handleDeposit = useCallback(async () => {}, [])
-
-  const handleWithdraw = useCallback(async () => {}, [])
+    return await estimateDepositGasPrice()
+  }, [estimateDepositGasPrice])
 
   const handleSubmit = useCallback(async () => {
-    try {
-      if (direction === "deposit") {
-        // const investReceipt = await handleDeposit()
-        // TODO: add transaction toast
-      }
+    if (!traderPool || !account || !proposalId || !investPool) return
 
-      if (direction === "withdraw") {
-        // const withdrawReceipt = await handleWithdraw()
-        // TODO: add transaction toast
-      }
+    try {
+      const divests = await getDivestTokens(fromAmount)
+
+      console.log(
+        "amounts: ",
+        divests.receptions.receivedAmounts
+          .reduce((prev, next) => prev.add(next), ZERO)
+          .toString()
+      )
+
+      console.log("lpAmount: ", divests.receptions.lpAmount.toString())
+
+      const investReceipt = await investPool.investProposal(
+        Number(proposalId) + 1,
+        fromAmount,
+        divests.receptions.receivedAmounts
+      )
+
+      console.log(investReceipt)
     } catch (error: any) {
+      console.log(error)
       // const errorMessage = parseTransactionError(error)
       // showAlert({
       //   content: errorMessage,
@@ -294,58 +262,38 @@ const useInvestInvestmentProposal = (
       //   hideDuration: 10000,
       // })
     }
-  }, [])
+  }, [account, fromAmount, getDivestTokens, proposalId, traderPool, investPool])
 
-  const getLpPrice = useCallback(
+  const getPriceUSD = useCallback(
     (amount: BigNumber) => {
       return multiplyBignumbers([amount, 18], [poolPriceUSD, 18])
     },
     [poolPriceUSD]
   )
 
-  const getLp2Price = useCallback(
-    (amount: BigNumber) => {
-      return multiplyBignumbers([amount, 18], [riskyPriceUSD, 18])
+  const handleFromChange = useCallback(
+    async (v: string) => {
+      const amount = BigNumber.from(v)
+      const priceUSD = getPriceUSD(amount)
+      setFromAmount(amount)
+      setToAmount(amount)
+      setInPrice(priceUSD)
+      setOutPrice(priceUSD)
+      try {
+      } catch (e) {
+        console.log(e)
+      }
     },
-    [riskyPriceUSD]
+    [getPriceUSD]
   )
-
-  const handleFromChange = useCallback(async (v: string) => {
-    setFromAmount(v)
-    const amount = BigNumber.from(v)
-
-    try {
-    } catch (e) {
-      console.log(e)
-    }
-  }, [])
 
   const handlePercentageChange = useCallback(
     (percent: BigNumber) => {
-      const from = multiplyBignumbers([fromBalance, 18], [percent, 18])
+      const from = multiplyBignumbers([lpBalance, 18], [percent, 18])
       handleFromChange(from.toString())
     },
-    [fromBalance, handleFromChange]
+    [lpBalance, handleFromChange]
   )
-
-  useEffect(() => {
-    handleFromChange(fromAmount)
-  }, [direction])
-
-  useEffect(() => {
-    if (direction === "deposit") {
-      setUSDTokenCost(riskyPriceUSD)
-      setOneTokenCost(
-        divideBignumbers([riskyPriceBase, 18], [poolPriceBase, 18])
-      )
-    }
-    if (direction === "withdraw") {
-      setUSDTokenCost(poolPriceUSD)
-      setOneTokenCost(
-        divideBignumbers([poolPriceBase, 18], [riskyPriceBase, 18])
-      )
-    }
-  }, [direction, poolPriceBase, poolPriceUSD, riskyPriceBase, riskyPriceUSD])
 
   // get LP balance
   // get LP2 balance
@@ -369,11 +317,6 @@ const useInvestInvestmentProposal = (
     {
       formWithDirection,
       isSlippageOpen,
-      fromBalance,
-      toBalance,
-      oneTokenCost,
-      usdTokenCost,
-      gasPrice,
       inPrice,
       outPrice,
       fromAmount,
@@ -387,8 +330,6 @@ const useInvestInvestmentProposal = (
     },
     {
       setSlippageOpen,
-      setFromAmount,
-      setToAmount,
       setToAddress,
       setFromAddress,
       setDirection: handleDirectionChange,

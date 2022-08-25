@@ -202,6 +202,13 @@ export interface IRiskyPositionCard extends IRiskyPosition {
 }
 
 // Invest proposals
+export interface InvestProposalInvestmentsInfo {
+  baseInvested: BigNumber
+  lp2Balance: BigNumber
+  lpInvested: BigNumber
+  proposalId: BigNumber
+}
+
 export interface IInvestProposal {
   id: string
   timestampLimit: BigNumber
