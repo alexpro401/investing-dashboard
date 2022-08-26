@@ -24,6 +24,7 @@ import {
   selectTraderPoolRegistryAddress,
   selectUserRegistryAddress,
 } from "state/contracts/selectors"
+import { arraysEqual } from "utils/array"
 
 const provider = new JsonRpcProvider(
   "https://data-seed-prebsc-1-s1.binance.org:8545/"
@@ -122,6 +123,103 @@ export function useERC20(
   }, [contract, account, storedAddress, library, init])
 
   return [contract, tokenData, balance, init]
+}
+
+interface IERC20ListPayload {
+  [n: string]: ITokenBase
+}
+
+interface IData {
+  list: string[]
+  _isPools: boolean
+}
+
+export function useERC20List(data: IData): IERC20ListPayload | null {
+  const { library, account } = useActiveWeb3React()
+
+  const [stop, setStop] = useState(false)
+  const [addressList, setAddressList] = useState<string[] | null>(null)
+  const [payload, setPayload] = useState<IERC20ListPayload | null>(null)
+
+  const initContract = useCallback(
+    async (address) => {
+      if (isAddress(address) && !!library && !!account) {
+        const c = await getContract(
+          address,
+          ERC20,
+          library || provider,
+          account ?? undefined
+        )
+        return c
+      }
+      return null
+    },
+    [account, library]
+  )
+
+  useEffect(() => {
+    if (!data || stop || !account || !library) return
+    ;(async () => {
+      try {
+        for (const a of data.list) {
+          let address: string
+
+          // Means that is pools addresses list or not
+          if (data._isPools) {
+            const traderPool = await getContract(
+              a,
+              TraderPool,
+              library || provider,
+              account ?? undefined
+            )
+            const poolInfo = await traderPool.getPoolInfo()
+
+            address = poolInfo.parameters.baseToken
+          } else {
+            address = a
+          }
+
+          const contract = await initContract(address)
+
+          if (contract) {
+            const symbol = await contract.symbol()
+            const decimals = await contract.decimals()
+            const name = await contract.name()
+
+            setPayload((prev) => ({
+              ...(prev ?? {}),
+              [data._isPools ? a : address]: {
+                address,
+                name,
+                symbol,
+                decimals,
+              },
+            }))
+
+            if (data.list[data.list.length - 1] === address) {
+              setStop(true)
+            }
+          }
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [account, data, initContract, library, stop])
+
+  useEffect(() => {
+    if (
+      data.list &&
+      data.list.length > 0 &&
+      !arraysEqual(data.list, addressList)
+    ) {
+      setAddressList(data.list)
+      setPayload(null)
+      setStop(false)
+    }
+  }, [addressList, data.list])
+
+  return payload
 }
 
 export function useTraderPoolContract(

@@ -47,7 +47,6 @@ import {
   OwnInvestingValue,
   OwnInvestingLink,
 } from "./styled"
-import { useProposalAddress } from "hooks/useContract"
 
 const pnlNew: IDetailedChart[] = [
   {
@@ -109,8 +108,7 @@ function Trader(props: Props) {
   }>()
 
   const [commisionUnlockTime, setCommisionUnlockTime] = useState<number>(0)
-  const [isPerformanceFeeExist, setPerformanceFeeExist] =
-    useState<boolean>(false)
+  const [hasFee, setHasFee] = useState<boolean>(false)
   const [ownInvestUsd, setOwnInvestUsd] = useState<string>("0")
 
   useEffect(() => {
@@ -130,7 +128,7 @@ function Trader(props: Props) {
     navigate(`/pool/invest/${poolData?.id}`)
   }
 
-  const commissionPercentage = useMemo((): number | string => {
+  const commissionPercentage = useMemo<string>(() => {
     if (!poolInfoData) return "0"
 
     return formatBigNumber(poolInfoData?.parameters.commissionPercentage, 25, 0)
@@ -152,7 +150,8 @@ function Trader(props: Props) {
       const limit = +formatEther(investors) + 1
       const res = await traderPool?.getUsersInfo(account, 0, limit)
 
-      const commisionTime = formatEther(res[0].commissionUnlockTimestamp)
+      const commisionTime = res[1].commissionUnlockTimestamp.toString()
+
       setCommisionUnlockTime(Number(commisionTime))
     })()
   }, [traderPool, account])
@@ -165,8 +164,7 @@ function Trader(props: Props) {
       const limit = +formatEther(investors) + 1
       const fees = await traderPool?.getReinvestCommissions([0, limit])
 
-      const commission = formatBigNumber(fees.traderBaseCommission, 18, 0)
-      setPerformanceFeeExist(Number(commission) > 0)
+      setHasFee(fees.traderBaseCommission.gt(0))
     })()
   }, [traderPool])
 
@@ -312,13 +310,13 @@ function Trader(props: Props) {
             {
               name: "Details",
               child: (
-                <FundDetailsCard poolInfo={poolInfoData} data={poolData}>
+                <FundDetailsCard poolInfo={poolInfoData} pool={poolData}>
                   <PerformanceFeeCard
-                    performanceFeePercent={commissionPercentage}
-                    commisionUnlockTime={commisionUnlockTime}
-                    isPerformanceFeeExist={isPerformanceFeeExist}
-                    poolAddress={poolAddress}
                     p="15px 0 0"
+                    hasFee={hasFee}
+                    poolAddress={poolAddress}
+                    commisionUnlockTime={commisionUnlockTime}
+                    performanceFeePercent={commissionPercentage}
                   />
                 </FundDetailsCard>
               ),

@@ -1,6 +1,7 @@
 import { Flex, To } from "theme"
 import { useWeb3React } from "@web3-react/core"
 import { useLocation, useNavigate } from "react-router-dom"
+import { createClient, Provider as GraphProvider } from "urql"
 
 import Button, { SecondaryButton } from "components/Button"
 import InvestorMobile from "components/InvestorMobile"
@@ -29,6 +30,11 @@ import { Profiles } from "components/Header/Components"
 import Pools from "components/Header/Pools"
 import { getRedirectedPoolAddress } from "utils"
 import { useEffect } from "react"
+
+const poolsClient = createClient({
+  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
+  requestPolicy: "network-only",
+})
 
 interface Props {}
 
@@ -213,4 +219,12 @@ function Investor(props: Props) {
   )
 }
 
-export default Investor
+const InvestorWithProvider = () => {
+  return (
+    <GraphProvider value={poolsClient}>
+      <Investor />
+    </GraphProvider>
+  )
+}
+
+export default InvestorWithProvider

@@ -85,6 +85,19 @@ const OwnedPoolsQuery = `
     }
   }
 `
+const ManagedPoolsQuery = `
+  query ($address: String!) {
+    traderPools(
+      orderBy: creationTime, first: 100, 
+      where: { 
+        admins_contains_nocase: [$address],
+        trader_not: $address
+      }
+    ) {
+      ${POOL}
+    }
+  }
+`
 
 const PoolsQuery = `
   query ($q: String!) {
@@ -427,6 +440,7 @@ export {
   PoolsQueryByType,
   PriceHistoryQuery,
   OwnedPoolsQuery,
+  ManagedPoolsQuery,
   BasicPositionsQuery,
   PoolsQueryWithSort,
   PoolsQueryByTypeWithSort,
