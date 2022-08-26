@@ -617,9 +617,7 @@ const CreateFund: FC = () => {
             <Button
               full
               size="large"
-              onClick={() =>
-                !agreed ? handleSubmit() : setShowAgreement(true)
-              }
+              onClick={() => (agreed ? handleSubmit() : setShowAgreement(true))}
             >
               {stepsFormating ? (
                 <PulseSpinner color="#34455F" size={20} loading />
