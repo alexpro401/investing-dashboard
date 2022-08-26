@@ -1,8 +1,12 @@
 import { useCallback } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
-import { AppDispatch, AppState } from "../index"
-import { updateUserProMode, showAgreementModal } from "../user/actions"
+import { AppDispatch, AppState } from "state"
+import {
+  updateUserProMode,
+  showAgreementModal,
+  processedAgreement,
+} from "state/user/actions"
 import { IUserTerms } from "./types"
 
 export function useUserProMode(): [boolean, () => void] {
@@ -22,7 +26,11 @@ export function useUserProMode(): [boolean, () => void] {
   return [userSlippageTolerance, setUserProMode]
 }
 
-export function useUserAgreement(): [IUserTerms, (s: boolean) => void] {
+interface IMethods {
+  setShowAgreementModal: (s: boolean) => void
+  setProcessed: (p: boolean) => void
+}
+export function useUserAgreement(): [IUserTerms, IMethods] {
   const dispatch = useDispatch<AppDispatch>()
 
   const userTermsAgreement = useSelector<AppState, AppState["user"]["terms"]>(
@@ -36,5 +44,12 @@ export function useUserAgreement(): [IUserTerms, (s: boolean) => void] {
     [dispatch]
   )
 
-  return [userTermsAgreement, setShowAgreementModal]
+  const setProcessed = useCallback(
+    (processed: boolean) => {
+      dispatch(processedAgreement({ processed }))
+    },
+    [dispatch]
+  )
+
+  return [userTermsAgreement, { setShowAgreementModal, setProcessed }]
 }
