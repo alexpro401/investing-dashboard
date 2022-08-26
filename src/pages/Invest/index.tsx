@@ -14,7 +14,6 @@ import Button, { SecondaryButton } from "components/Button"
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import TransactionSlippage from "components/TransactionSlippage"
 
-
 import { createClient, Provider as GraphProvider } from "urql"
 import { cutDecimalPlaces, fromBig, shortenAddress } from "utils"
 
