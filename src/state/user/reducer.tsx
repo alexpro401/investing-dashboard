@@ -7,6 +7,7 @@ import {
   changeTermsAgreed,
   showAgreementModal,
   processedAgreement,
+  setAgreementError,
 } from "./actions"
 import { IUserState } from "./types"
 
@@ -20,6 +21,7 @@ export const initialState: IUserState = {
     invest: [],
   },
   terms: {
+    error: "",
     agreed: false,
     processed: false,
     showAgreement: false,
@@ -48,5 +50,8 @@ export default createReducer(initialState, (builder) =>
     })
     .addCase(processedAgreement, (state, action) => {
       state.terms.processed = action.payload.processed
+    })
+    .addCase(setAgreementError, (state, action) => {
+      state.terms.error = action.payload.error
     })
 )
