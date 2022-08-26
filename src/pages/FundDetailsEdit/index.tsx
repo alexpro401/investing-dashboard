@@ -45,10 +45,11 @@ import useContract, { useERC20 } from "hooks/useContract"
 import { useAddToast } from "state/application/hooks"
 import { TraderPool } from "abi"
 
-import { useTransactionAdder } from "state/transactions/hooks"
-import { TransactionType } from "state/transactions/types"
 import { UpdateListType } from "constants/types"
+import { useUserAgreement } from "state/user/hooks"
 import { addPool } from "state/ipfsMetadata/actions"
+import { TransactionType } from "state/transactions/types"
+import { useTransactionAdder } from "state/transactions/hooks"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -118,9 +119,9 @@ const FundDetailsEdit: FC = () => {
   const [isCreating, setCreating] = useState(false)
   const [transactionFail, setTransactionFail] = useState(false)
 
-  const addTransaction = useTransactionAdder()
-
   const addToast = useAddToast()
+  const addTransaction = useTransactionAdder()
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
   const handleParametersUpdate = useCallback(async () => {
     if (!traderPool || !poolData || !account) return
@@ -671,7 +672,11 @@ const FundDetailsEdit: FC = () => {
           </Step>
         </Steps>
         <Flex full p="0 16px 61px">
-          <Button full size="large" onClick={handleSubmit}>
+          <Button
+            full
+            size="large"
+            onClick={() => (agreed ? handleSubmit() : setShowAgreement(true))}
+          >
             {stepsFormating ? (
               <PulseSpinner color="#34455F" size={20} loading />
             ) : (
