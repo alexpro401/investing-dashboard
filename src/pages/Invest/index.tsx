@@ -11,7 +11,7 @@ import Button, { SecondaryButton } from "components/Button"
 import TransactionSlippage from "components/TransactionSlippage"
 import Header from "components/Header/Layout"
 import TransactionError from "modals/TransactionError"
-import TermsAndConditions from "modals/TermsAndConditions"
+import TermsAndConditions from "modals/TermsAgreement"
 import TokenIcon from "components/TokenIcon"
 import SwapPrice from "components/SwapPrice"
 import Token from "components/Token"
@@ -39,7 +39,7 @@ import {
 } from "components/Exchange/styled"
 
 import useInvest from "./useInvest"
-import usePrivacyPolicyAgreed from "hooks/usePrivacyPolicy"
+import { useUserAgreement } from "state/user/hooks"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -79,19 +79,9 @@ const Invest = () => {
   })
 
   const [
-    {
-      isAgreed,
-      showAgreement,
-      error: termsAgreementError,
-      loading: termsAgreementLoading,
-    },
-    {
-      onAgree,
-      setShowAgreement,
-      setLoading: setAgreementLoading,
-      setError: setTermsAgreementError,
-    },
-  ] = usePrivacyPolicyAgreed()
+    { processed, agreed, error: termsAgreementError },
+    { setShowAgreement, setProcessed, setError: setTermsAgreementError },
+  ] = useUserAgreement()
 
   const isAllowanceNeeded =
     direction === "deposit" && !!allowance && allowance.lt(from.amount)
@@ -123,9 +113,7 @@ const Invest = () => {
       return (
         <SecondaryButton
           size="large"
-          onClick={() =>
-            isAgreed ? updateAllowance() : setShowAgreement(true)
-          }
+          onClick={() => (agreed ? updateAllowance() : setShowAgreement(true))}
           fz={22}
           full
         >
@@ -151,16 +139,14 @@ const Invest = () => {
       </Button>
     )
   }, [
-    direction,
-    from.amount,
-    from.balance,
-    from.symbol,
-    handleSubmit,
-    isAgreed,
+    from,
     isAllowanceNeeded,
-    setShowAgreement,
-    to.symbol,
+    direction,
+    handleSubmit,
+    to,
+    agreed,
     updateAllowance,
+    setShowAgreement,
   ])
 
   const freeLiquidity = useMemo(() => {
@@ -320,31 +306,21 @@ const Invest = () => {
     if (!!termsAgreementError.length) {
       return setTermsAgreementError("")
     }
-  }, [
-    error.length,
-    setError,
-    setTermsAgreementError,
-    termsAgreementError.length,
-  ])
+  }, [error.length, setError, setTermsAgreementError, termsAgreementError])
 
   const walletPrompting = useMemo<boolean>(
-    () => isWalletPrompting || termsAgreementLoading,
-    [isWalletPrompting, termsAgreementLoading]
+    () => isWalletPrompting || processed,
+    [isWalletPrompting, processed]
   )
 
   const toggleWalletPrompting = useCallback(() => {
-    if (termsAgreementLoading) {
-      return setAgreementLoading(false)
+    if (processed) {
+      return setProcessed(false)
     }
     if (isWalletPrompting) {
       return setWalletPrompting(false)
     }
-  }, [
-    isWalletPrompting,
-    setAgreementLoading,
-    setWalletPrompting,
-    termsAgreementLoading,
-  ])
+  }, [isWalletPrompting, setProcessed, setWalletPrompting, processed])
 
   return (
     <>
@@ -367,12 +343,6 @@ const Invest = () => {
         </TransactionError>
         {form}
       </Container>
-      <TermsAndConditions
-        loading={termsAgreementLoading}
-        isOpen={showAgreement}
-        toggle={() => setShowAgreement(false)}
-        onAgree={() => onAgree(updateAllowance)}
-      />
     </>
   )
 }

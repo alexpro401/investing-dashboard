@@ -1,4 +1,6 @@
-import { useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
+
+import { useUserAgreement } from "state/user/hooks"
 
 import Modal from "components/Modal"
 import Checkbox from "components/Checkbox"
@@ -12,19 +14,16 @@ import {
   ButtonContainer,
 } from "./styled"
 
-interface Props {
-  loading: boolean
-  isOpen: boolean
-  toggle: () => void
-  onAgree: () => void
-}
+interface Props {}
 
-const TermsAndConditions: React.FC<Props> = ({
-  loading,
-  isOpen,
-  toggle,
-  onAgree,
-}) => {
+const TermsAgreement: React.FC<Props> = () => {
+  const [{ processed, showAgreement }, { setShowAgreement, onAgree }] =
+    useUserAgreement()
+
+  const toggleView = useCallback(() => {
+    setShowAgreement(!showAgreement)
+  }, [setShowAgreement, showAgreement])
+
   const [agree, setAgree] = useState(false)
 
   const handleCheckbox = (value) => {
@@ -32,7 +31,7 @@ const TermsAndConditions: React.FC<Props> = ({
   }
 
   const button = useMemo(() => {
-    if (agree && !loading) {
+    if (agree && !processed) {
       return (
         <Button full onClick={onAgree}>
           Sing and proceed
@@ -45,10 +44,14 @@ const TermsAndConditions: React.FC<Props> = ({
         Sing and proceed
       </SecondaryButton>
     )
-  }, [agree, loading, onAgree])
+  }, [agree, processed, onAgree])
 
   return (
-    <Modal title="Terms & Conditions agreement" isOpen={isOpen} toggle={toggle}>
+    <Modal
+      title="Terms & Conditions agreement"
+      isOpen={showAgreement}
+      toggle={toggleView}
+    >
       <ModalText>
         <ul>
           <li>
@@ -102,4 +105,4 @@ const TermsAndConditions: React.FC<Props> = ({
   )
 }
 
-export default TermsAndConditions
+export default TermsAgreement
