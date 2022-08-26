@@ -100,6 +100,26 @@ const Styled = {
   MainCardHeaderRight: styled.div`
     text-align: right;
   `,
+  OptimizeWithdrawal: styled(GradientBorder)`
+    width: 100%;
+    margin-top: 16px;
+    padding: 16px 8px 16px 14px;
+    border-radius: 16px;
+    align-items: center;
+    justify-content: space-between;
+
+    &:after {
+      background: #0f1421;
+    }
+  `,
+  OptimizeWithdrawalTitle: styled.div`
+    font-family: "Gilroy";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 15px;
+    color: #ffffff;
+  `,
 }
 
 export default Styled
