@@ -6,13 +6,7 @@ import Modal from "components/Modal"
 import Checkbox from "components/Checkbox"
 import Button, { SecondaryButton } from "components/Button"
 
-import {
-  ModalText,
-  CheckBoxContent,
-  CheckboxText,
-  CheckboxLink,
-  ButtonContainer,
-} from "./styled"
+import S from "./styled"
 
 interface Props {}
 
@@ -52,7 +46,7 @@ const TermsAgreement: React.FC<Props> = () => {
       isOpen={showAgreement}
       toggle={toggleView}
     >
-      <ModalText>
+      <S.Text>
         <ul>
           <li>
             Lorem ipsum dolor sit amet, his cu zril habemus. Ex cum nostrud
@@ -82,25 +76,25 @@ const TermsAgreement: React.FC<Props> = () => {
             torquatos, et mei nobis invenire.
           </li>
         </ul>
-      </ModalText>
-      <CheckBoxContent>
+      </S.Text>
+      <S.CheckboxContainer>
         <Checkbox
           name="agree-terms"
           checked={agree}
           onChange={handleCheckbox}
         />
-        <CheckboxText>
+        <S.CheckboxText>
           I agree to the
-          <CheckboxLink>
+          <S.CheckboxLink>
             <span> Terms of Use </span>
-          </CheckboxLink>
+          </S.CheckboxLink>
           and
-          <CheckboxLink>
+          <S.CheckboxLink>
             <span> Privacy Police</span>
-          </CheckboxLink>
-        </CheckboxText>
-      </CheckBoxContent>
-      <ButtonContainer>{button}</ButtonContainer>
+          </S.CheckboxLink>
+        </S.CheckboxText>
+      </S.CheckboxContainer>
+      <S.ButtonContainer>{button}</S.ButtonContainer>
     </Modal>
   )
 }
