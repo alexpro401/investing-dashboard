@@ -1,28 +1,25 @@
 import { useCallback, useMemo } from "react"
-import { Flex } from "theme"
 import { useParams } from "react-router-dom"
 
+import { Flex } from "theme"
+import Token from "components/Token"
 import Payload from "components/Payload"
-import ExchangeInput from "components/Exchange/ExchangeInput"
+import SwapPrice from "components/SwapPrice"
+import Header from "components/Header/Layout"
+import IconButton from "components/IconButton"
+import TransactionError from "modals/TransactionError"
 import ExchangeDivider from "components/Exchange/Divider"
 import CircularProgress from "components/CircularProgress"
-import IconButton from "components/IconButton"
 import Button, { SecondaryButton } from "components/Button"
+import ExchangeInput from "components/Exchange/ExchangeInput"
 import TransactionSlippage from "components/TransactionSlippage"
-import Header from "components/Header/Layout"
-import TransactionError from "modals/TransactionError"
-import TermsAndConditions from "modals/TermsAgreement"
-import TokenIcon from "components/TokenIcon"
-import SwapPrice from "components/SwapPrice"
-import Token from "components/Token"
 
-import { useERC20 } from "hooks/useContract"
 
 import { createClient, Provider as GraphProvider } from "urql"
 import { cutDecimalPlaces, fromBig, shortenAddress } from "utils"
 
-import settings from "assets/icons/settings.svg"
 import close from "assets/icons/close-big.svg"
+import settings from "assets/icons/settings.svg"
 import LockedIcon from "assets/icons/LockedIcon"
 
 import {
