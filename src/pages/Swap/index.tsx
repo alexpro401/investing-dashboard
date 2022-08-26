@@ -45,6 +45,7 @@ import {
 
 import useSwap from "./useSwap"
 import { cutDecimalPlaces, fromBig } from "utils"
+import { useUserAgreement } from "state/user/hooks"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -82,6 +83,53 @@ const Swap = () => {
     to: outputToken,
   })
 
+  const [
+    { processed, agreed, error: termsAgreementError },
+    { setShowAgreement, setProcessed, setError: setTermsAgreementError },
+  ] = useUserAgreement()
+
+  const onSubmit = useCallback(() => {
+    agreed ? handleSubmit() : setShowAgreement(true)
+  }, [agreed, handleSubmit, setShowAgreement])
+
+  const errorIsOpen = useMemo<boolean>(
+    () => !!error.length || !!termsAgreementError.length,
+    [error, termsAgreementError]
+  )
+  const errorMessage = useMemo<string>(
+    () =>
+      error.length > 0
+        ? error
+        : termsAgreementError.length > 0
+        ? termsAgreementError
+        : "",
+    [error, termsAgreementError]
+  )
+
+  const toggleTransactionError = useCallback(() => {
+    if (!!error.length) {
+      return setError("")
+    }
+
+    if (!!termsAgreementError.length) {
+      return setTermsAgreementError("")
+    }
+  }, [error.length, setError, setTermsAgreementError, termsAgreementError])
+
+  const walletPrompting = useMemo<boolean>(
+    () => isWalletPrompting || processed,
+    [isWalletPrompting, processed]
+  )
+
+  const toggleWalletPrompting = useCallback(() => {
+    if (processed) {
+      return setProcessed(false)
+    }
+    if (isWalletPrompting) {
+      return setWalletPrompting(false)
+    }
+  }, [isWalletPrompting, setProcessed, setWalletPrompting, processed])
+
   const handleDirectionChange = useCallback(() => {
     navigate(
       `/pool/swap/${poolType}/${poolToken}/${to.address}/${from.address}`
@@ -118,7 +166,7 @@ const Swap = () => {
         <SecondaryButton
           theme="disabled"
           size="large"
-          onClick={handleSubmit}
+          onClick={onSubmit}
           fz={22}
           full
         >
@@ -131,7 +179,7 @@ const Swap = () => {
       <Button
         size="large"
         theme={direction === "deposit" ? "primary" : "warn"}
-        onClick={handleSubmit}
+        onClick={onSubmit}
         fz={22}
         full
       >
@@ -142,7 +190,7 @@ const Swap = () => {
         )}
       </Button>
     )
-  }, [from.amount, to.amount, direction, handleSubmit, symbol])
+  }, [from.amount, to.amount, direction, onSubmit, symbol])
 
   const fundPNL = useMemo(() => {
     return (
@@ -354,11 +402,14 @@ const Swap = () => {
         transition={{ duration: 0.2 }}
       >
         <Payload
-          isOpen={isWalletPrompting}
-          toggle={() => setWalletPrompting(false)}
+          isOpen={walletPrompting}
+          toggle={() => toggleWalletPrompting()}
         />
-        <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
-          {error}
+        <TransactionError
+          isOpen={errorIsOpen}
+          toggle={() => toggleTransactionError()}
+        >
+          {errorMessage}
         </TransactionError>
         {form}
       </Container>
