@@ -1,5 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
-import { parseTransactionError } from "utils"
+import {
+  expandTimestamp,
+  normalizeBigNumber,
+  parseTransactionError,
+} from "utils"
 
 import { useWeb3React } from "@web3-react/core"
 import { BigNumber } from "@ethersproject/bignumber"
@@ -16,19 +20,11 @@ import { SwapDirection } from "constants/types"
 
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 
-import {
-  IDivestAmounts,
-  IProposalInvestTokens,
-} from "interfaces/ITraderPoolRiskyProposal"
-import {
-  IDivestAmountsAndCommissions,
-  IPoolInvestTokens,
-} from "interfaces/ITraderPool"
+import { IDivestAmountsAndCommissions } from "interfaces/ITraderPool"
 
 import useAlert, { AlertType } from "hooks/useAlert"
 import { usePoolContract } from "hooks/usePool"
 import {
-  useBasicPoolContract,
   useERC20,
   useInvestPoolContract,
   useInvestProposalContract,
@@ -36,20 +32,31 @@ import {
 } from "hooks/useContract"
 import { RiskyForm } from "constants/interfaces_v2"
 import usePoolPrice from "hooks/usePoolPrice"
-import useGasTracker from "state/gas/hooks"
 import {
   useActiveInvestmentsInfo,
   useInvestProposal,
 } from "hooks/useInvestmentProposals"
-import useInvestmentPrice from "hooks/useInvestmentPrice"
 import { ZERO } from "constants/index"
-import { formatEther } from "@ethersproject/units"
+import { format } from "date-fns"
+import { DATE_TIME_FORMAT } from "constants/time"
+
+interface Info {
+  tvl: {
+    base: string
+    usd: string
+    ticker: string
+  }
+  fullness: string
+  avgPriceLP: string
+  expirationDate: string
+}
 
 const useInvestInvestmentProposal = (
   poolAddress?: string,
   proposalId?: string
 ): [
   {
+    info: Info
     formWithDirection: RiskyForm
     isSlippageOpen: boolean
     inPrice: BigNumber
@@ -94,20 +101,20 @@ const useInvestInvestmentProposal = (
   const [toAddress, setToAddress] = useState("")
   const [fromAddress, setFromAddress] = useState("")
 
-  const handleDirectionChange = useCallback(() => {
-    setDirection(direction === "deposit" ? "withdraw" : "deposit")
-  }, [direction])
+  const handleDirectionChange = useCallback(() => {}, [])
 
   const traderPool = useTraderPoolContract(poolAddress)
   const investPool = useInvestPoolContract(poolAddress)
   const [proposalPool] = useInvestProposalContract(poolAddress)
   const proposal = useInvestProposal(poolAddress, proposalId)
+
   const investmentsInfo = useActiveInvestmentsInfo(
     poolAddress,
     account,
     proposalId
   )
   const [, poolInfo] = usePoolContract(poolAddress)
+  const [, baseData] = useERC20(poolInfo?.parameters.baseToken)
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
     poolInfo?.parameters.descriptionURL
@@ -118,13 +125,10 @@ const useInvestInvestmentProposal = (
     proposal?.proposalInfo.descriptionURL
   )
 
-  const { priceUSD: poolPriceUSD } = usePoolPrice(poolAddress)
+  const { priceUSD: poolPriceUSD, priceBase: poolPriceBase } =
+    usePoolPrice(poolAddress)
 
   const addTransaction = useTransactionAdder()
-
-  console.log("base Invested: ", investmentsInfo?.baseInvested.toString())
-  console.log("lp2 balance: ", investmentsInfo?.lp2Balance.toString())
-  console.log("lp invested: ", investmentsInfo?.lpInvested.toString())
 
   const poolIcon = (
     <Icon
@@ -134,49 +138,67 @@ const useInvestInvestmentProposal = (
     />
   )
 
-  const exchangeForm = useMemo(() => {
+  const info = useMemo(() => {
+    const expandedTimestampLimit = expandTimestamp(
+      Number(proposal?.proposalInfo.proposalLimits.timestampLimit.toString())
+    )
     return {
-      deposit: {
-        from: {
-          address: undefined,
-          amount: fromAmount.toString(),
-          balance: lpBalance,
-          price: inPrice,
-          symbol: poolInfo?.ticker,
-          decimals: 18,
-          icon: poolIcon,
-        },
-        to: {
-          address: undefined,
-          amount: toAmount.toString(),
-          balance: lp2Balance,
-          price: outPrice,
-          symbol: investProposalMetadata?.ticker,
-          decimals: 18,
-          icon: poolIcon,
-          info: {},
-        },
+      tvl: {
+        base: proposal
+          ? normalizeBigNumber(
+              multiplyBignumbers(
+                [proposal.proposalInfo.lpLocked, 18],
+                [poolPriceBase, 18]
+              )
+            )
+          : "-",
+        usd: proposal
+          ? normalizeBigNumber(
+              multiplyBignumbers(
+                [proposal?.proposalInfo.lpLocked || ZERO, 18],
+                [poolPriceUSD, 18]
+              ),
+              18,
+              2
+            )
+          : "-",
+        ticker: baseData?.symbol || "",
       },
-      withdraw: {
-        from: {
-          address: undefined,
-          amount: fromAmount.toString(),
-          balance: lp2Balance,
-          price: inPrice,
-          symbol: investProposalMetadata?.ticker,
-          decimals: 18,
-          icon: poolIcon,
-          info: {},
-        },
-        to: {
-          address: undefined,
-          amount: toAmount.toString(),
-          balance: lpBalance,
-          price: outPrice,
-          symbol: poolInfo?.ticker,
-          decimals: 18,
-          icon: poolIcon,
-        },
+      fullness: proposal
+        ? normalizeBigNumber(
+            divideBignumbers(
+              [proposal.proposalInfo.lpLocked, 18],
+              [proposal.proposalInfo.proposalLimits.investLPLimit, 18]
+            ).mul(BigNumber.from("100"))
+          )
+        : "-",
+      avgPriceLP: normalizeBigNumber(poolPriceUSD, 18, 2),
+      expirationDate: proposal
+        ? format(expandedTimestampLimit, DATE_TIME_FORMAT)
+        : "-",
+    }
+  }, [poolPriceBase, poolPriceUSD, proposal, baseData])
+
+  const formWithDirection = useMemo(() => {
+    return {
+      from: {
+        address: undefined,
+        amount: fromAmount.toString(),
+        balance: lpBalance,
+        price: inPrice,
+        symbol: poolInfo?.ticker,
+        decimals: 18,
+        icon: poolIcon,
+      },
+      to: {
+        address: undefined,
+        amount: toAmount.toString(),
+        balance: lp2Balance,
+        price: outPrice,
+        symbol: investProposalMetadata?.ticker,
+        decimals: 18,
+        icon: poolIcon,
+        info: {},
       },
     }
   }, [
@@ -191,8 +213,6 @@ const useInvestInvestmentProposal = (
     investProposalMetadata,
   ])
 
-  const formWithDirection = exchangeForm[direction]
-
   const getLPBalance = useCallback(async () => {
     if (!traderPool || !account) return
 
@@ -202,10 +222,6 @@ const useInvestInvestmentProposal = (
   }, [account, traderPool])
 
   const getLP2Balance = useCallback(async () => {
-    // if (!investmentsInfo) return
-
-    // const balance = investmentsInfo.lp2Balance
-
     if (!proposalPool || !account) return
 
     const balance = await proposalPool?.balanceOf(
@@ -225,26 +241,11 @@ const useInvestInvestmentProposal = (
     [account, traderPool]
   )
 
-  const estimateDepositGasPrice = useCallback(async () => {}, [])
-
-  const estimateGas = useCallback(async () => {
-    return await estimateDepositGasPrice()
-  }, [estimateDepositGasPrice])
-
   const handleSubmit = useCallback(async () => {
     if (!traderPool || !account || !proposalId || !investPool) return
 
     try {
       const divests = await getDivestTokens(fromAmount)
-
-      console.log(
-        "amounts: ",
-        divests.receptions.receivedAmounts
-          .reduce((prev, next) => prev.add(next), ZERO)
-          .toString()
-      )
-
-      console.log("lpAmount: ", divests.receptions.lpAmount.toString())
 
       const investReceipt = await investPool.investProposal(
         Number(proposalId) + 1,
@@ -295,26 +296,25 @@ const useInvestInvestmentProposal = (
     [lpBalance, handleFromChange]
   )
 
-  // get LP balance
-  // get LP2 balance
-  // update amounts
-  useEffect(() => {
+  const runUpdate = useCallback(() => {
     getLPBalance().catch(console.error)
     getLP2Balance().catch(console.error)
-  }, [direction, getLP2Balance, getLPBalance])
+  }, [getLP2Balance, getLPBalance])
 
   // balance updater for both LP and LP2
   useEffect(() => {
+    runUpdate()
+
     const interval = setInterval(() => {
-      getLPBalance().catch(console.error)
-      getLP2Balance().catch(console.error)
+      runUpdate()
     }, Number(process.env.REACT_APP_UPDATE_INTERVAL))
 
     return () => clearInterval(interval)
-  }, [getLPBalance, getLP2Balance])
+  }, [runUpdate])
 
   return [
     {
+      info,
       formWithDirection,
       isSlippageOpen,
       inPrice,

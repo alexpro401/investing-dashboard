@@ -36,6 +36,7 @@ function InvestInvestmentProposal() {
   const { poolAddress, proposalId } = useParams()
   const [
     {
+      info,
       formWithDirection,
       isSlippageOpen,
       fromAmount,
@@ -95,45 +96,47 @@ function InvestInvestmentProposal() {
       <InfoRow>
         <InfoGrey>Proposal TVL:</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>100.000 WBNB</InfoWhite>
-          <InfoGrey>($800k)</InfoGrey>
+          <InfoWhite>
+            {info.tvl.base} {info.tvl.ticker}
+          </InfoWhite>
+          <InfoGrey>(${info.tvl.usd})</InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [info.tvl.base, info.tvl.ticker, info.tvl.usd])
 
   const fullness = useMemo(() => {
     return (
       <InfoRow>
         <InfoGrey>Fullness:</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>90%</InfoWhite>
+          <InfoWhite>{info.fullness}%</InfoWhite>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [info.fullness])
 
   const averagePrice = useMemo(() => {
     return (
       <InfoRow>
         <InfoGrey>Average LP price:</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>1 ISDX = 5.96 USD</InfoWhite>
+          <InfoWhite>1 ISDX = {info.avgPriceLP} USD</InfoWhite>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [info.avgPriceLP])
 
   const expirationDate = useMemo(() => {
     return (
       <InfoRow>
         <InfoGrey>Expiration date:</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>JUN 12,2022, 20:00</InfoWhite>
+          <InfoWhite>{info.expirationDate}</InfoWhite>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [info.expirationDate])
 
   const form = (
     <Card>
@@ -143,12 +146,6 @@ function InvestInvestmentProposal() {
         </Flex>
         <IconsGroup>
           <CircularProgress />
-          <IconButton
-            size={12}
-            filled
-            media={settings}
-            onClick={() => setSlippageOpen(!isSlippageOpen)}
-          />
           <IconButton size={10} filled media={close} onClick={() => {}} />
         </IconsGroup>
       </CardHeader>
