@@ -22,7 +22,7 @@ import getLibrary from "utils/getLibrary"
 
 import { ContractsRegistryUpdater } from "state/contracts/updater"
 import { PriceFeedUpdater } from "state/pricefeed/updater"
-import { UserPoolsUpdater } from "state/user/updater"
+import { UserPoolsUpdater, UserTermsUpdater } from "state/user/updater"
 import { TransactionUpdater } from "state/transactions/updater"
 import { GasPriceUpdater } from "state/gas/updater"
 import { PoolListUpdater } from "state/pools/updater"
@@ -52,6 +52,7 @@ const GlobalComponents = () => (
   <>
     <ContractsRegistryUpdater />
     <UserPoolsUpdater />
+    <UserTermsUpdater />
     <PoolListUpdater />
     <GasPriceUpdater />
     <PriceFeedUpdater />
