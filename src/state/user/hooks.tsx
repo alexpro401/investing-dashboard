@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback } from "react"
 import { useWeb3React } from "@web3-react/core"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -41,7 +41,6 @@ interface IMethods {
   setError: (p: string) => void
   setProcessed: (p: boolean) => void
   setShowAgreement: (s: boolean) => void
-  setupAgreement: (cb: () => any) => void
   onAgree: () => void
 }
 
@@ -56,8 +55,6 @@ export function useUserAgreement(): [IUserTerms, IMethods] {
   const userTermsAgreement = useSelector<AppState, AppState["user"]["terms"]>(
     (state) => state.user.terms
   )
-
-  const [callback, setCallback] = useState<any>(() => {})
 
   const setAgreed = useCallback(
     (agreed: boolean) => {
@@ -85,17 +82,6 @@ export function useUserAgreement(): [IUserTerms, IMethods] {
       dispatch(setAgreementError({ error }))
     },
     [dispatch]
-  )
-
-  // When start sign agreement we set callback function and show modal
-  const setupAgreement = useCallback(
-    (cb?) => {
-      if (!!cb && typeof cb === "function") {
-        setCallback(() => cb)
-      }
-      setShowAgreement(true)
-    },
-    [setShowAgreement]
   )
 
   const getSignature = useCallback(() => {
@@ -158,6 +144,6 @@ export function useUserAgreement(): [IUserTerms, IMethods] {
 
   return [
     userTermsAgreement,
-    { setShowAgreement, setProcessed, setupAgreement, setError, onAgree },
+    { setShowAgreement, setProcessed, setError, onAgree },
   ]
 }
