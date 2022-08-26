@@ -119,6 +119,7 @@ const Styled = {
     font-size: 13px;
     line-height: 15px;
     color: #ffffff;
+    margin-left: 8px;
   `,
 }
 

@@ -197,13 +197,15 @@ const FundDetailsFee: FC = () => {
           </Flex>
 
           <S.OptimizeWithdrawal>
-            <Tooltip id="optimize-withdrawal-info">
-              Get funds only from those investors <br /> whose commission covers
-              transaction costs.
-            </Tooltip>
-            <S.OptimizeWithdrawalTitle>
-              Optimization commission withdrawal
-            </S.OptimizeWithdrawalTitle>
+            <Flex ai="center" jc="flex-start">
+              <Tooltip id="optimize-withdrawal-info">
+                Get funds only from those investors <br /> whose commission
+                covers transaction costs.
+              </Tooltip>
+              <S.OptimizeWithdrawalTitle>
+                Optimization commission withdrawal
+              </S.OptimizeWithdrawalTitle>
+            </Flex>
             <Switch
               isOn={optimizeWithdrawal}
               name="optimize-withdrawal"
