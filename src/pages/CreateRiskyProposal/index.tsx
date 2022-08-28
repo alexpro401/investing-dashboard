@@ -1,4 +1,4 @@
-import { FC, useState } from "react"
+import { FC, useCallback, useMemo, useState } from "react"
 import { Flex } from "theme"
 import { format } from "date-fns/esm"
 import {
@@ -68,6 +68,7 @@ import {
   Grey,
   ValidationError,
 } from "./styled"
+import { useUserAgreement } from "state/user/hooks"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -104,6 +105,49 @@ const CreateRiskyProposal: FC = () => {
     },
   ] = useCreateRiskyProposal(poolAddress, tokenAddress)
 
+  const [
+    { processed, agreed, error: termsAgreementError },
+    { setShowAgreement, setProcessed, setError: setTermsAgreementError },
+  ] = useUserAgreement()
+
+  const errorIsOpen = useMemo<boolean>(
+    () => !!error.length || !!termsAgreementError.length,
+    [error, termsAgreementError]
+  )
+  const errorMessage = useMemo<string>(
+    () =>
+      error.length > 0
+        ? error
+        : termsAgreementError.length > 0
+        ? termsAgreementError
+        : "",
+    [error, termsAgreementError]
+  )
+
+  const toggleTransactionError = useCallback(() => {
+    if (!!error.length) {
+      return setError("")
+    }
+
+    if (!!termsAgreementError.length) {
+      return setTermsAgreementError("")
+    }
+  }, [error.length, setError, setTermsAgreementError, termsAgreementError])
+
+  const walletPrompting = useMemo<boolean>(
+    () => isSubmiting !== SubmitState.IDLE || processed,
+    [isSubmiting, processed]
+  )
+
+  const toggleWalletPrompting = useCallback(() => {
+    if (processed) {
+      return setProcessed(false)
+    }
+    if (isSubmiting) {
+      return setSubmiting(SubmitState.IDLE)
+    }
+  }, [isSubmiting, setProcessed, setSubmiting, processed])
+
   const [isChecked, setChecked] = useState(false)
   const [isDateOpen, setDateOpen] = useState(false)
 
@@ -117,6 +161,11 @@ const CreateRiskyProposal: FC = () => {
   const whitelisted = useSelector(selectWhitelist)
 
   const handleNextStep = () => {
+    if (!agreed) {
+      setShowAgreement(true)
+      return
+    }
+
     if (isChecked) {
       localStorage.setItem("risky-proposal-faq-read", "true")
     }
@@ -372,16 +421,16 @@ const CreateRiskyProposal: FC = () => {
 
   return (
     <>
-      <Payload
-        isOpen={isSubmiting !== SubmitState.IDLE}
-        toggle={() => setSubmiting(SubmitState.IDLE)}
-      >
-        {SubmitState.SIGN === isSubmiting &&
+      <Payload isOpen={walletPrompting} toggle={() => toggleWalletPrompting()}>
+        {(SubmitState.SIGN === isSubmiting || processed) &&
           "Open your wallet and sign transaction"}
         {SubmitState.WAIT_CONFIRM === isSubmiting && "Waiting for confirmation"}
       </Payload>
-      <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
-        {error}
+      <TransactionError
+        isOpen={errorIsOpen}
+        toggle={() => toggleTransactionError()}
+      >
+        {errorMessage}
       </TransactionError>
       {tradeModal}
       <Header>Create risky proposal</Header>
