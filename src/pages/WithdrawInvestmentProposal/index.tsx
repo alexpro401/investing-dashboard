@@ -28,8 +28,9 @@ import {
 } from "components/Exchange/styled"
 
 import useWithdrawInvestmentProposal from "./useWithdrawInvestmentProposal"
-import { useMemo } from "react"
+import { useCallback, useMemo } from "react"
 import SwapPrice from "components/SwapPrice"
+import { useUserAgreement } from "state/user/hooks"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -59,13 +60,22 @@ function WithdrawInvestmentProposal() {
     },
   ] = useWithdrawInvestmentProposal(poolAddress, proposalId)
 
+  const [
+    { processed, agreed, error: termsAgreementError },
+    { setShowAgreement, setProcessed, setError: setTermsAgreementError },
+  ] = useUserAgreement()
+
+  const onSubmit = useCallback(() => {
+    agreed ? handleSubmit() : setShowAgreement(true)
+  }, [agreed, handleSubmit, setShowAgreement])
+
   const button = useMemo(() => {
     if (fromAmount === "0" || toAmount === "0") {
       return (
         <SecondaryButton
           theme="disabled"
           size="large"
-          onClick={handleSubmit}
+          onClick={onSubmit}
           fz={22}
           full
         >
@@ -78,7 +88,7 @@ function WithdrawInvestmentProposal() {
       <Button
         size="large"
         theme={direction === "deposit" ? "primary" : "warn"}
-        onClick={handleSubmit}
+        onClick={onSubmit}
         fz={22}
         full
       >
