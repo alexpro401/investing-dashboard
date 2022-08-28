@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useCallback } from "react"
 import { useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
 
@@ -16,6 +16,7 @@ import WithdrawalsHistory from "components/WithdrawalsHistory"
 
 import useFundFee from "./useFundFee"
 import S, { PageLoading } from "./styled"
+import { useUserAgreement } from "state/user/hooks"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -52,6 +53,12 @@ const FundDetailsFee: FC = () => {
     },
     { withdrawCommission },
   ] = useFundFee(poolAddress)
+
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
+
+  const onSubmit = useCallback(() => {
+    agreed ? withdrawCommission() : setShowAgreement(true)
+  }, [agreed, withdrawCommission, setShowAgreement])
 
   const [, baseToken] = useERC20(poolData?.baseToken)
 
@@ -175,7 +182,7 @@ const FundDetailsFee: FC = () => {
           </Flex>
 
           <Flex full m="24px 0 0">
-            <Button onClick={withdrawCommission} full size="large">
+            <Button onClick={onSubmit} full size="large">
               Request Performance Fee
             </Button>
           </Flex>
