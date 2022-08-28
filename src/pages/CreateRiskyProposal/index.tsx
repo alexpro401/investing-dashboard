@@ -161,11 +161,6 @@ const CreateRiskyProposal: FC = () => {
   const whitelisted = useSelector(selectWhitelist)
 
   const handleNextStep = () => {
-    if (!agreed) {
-      setShowAgreement(true)
-      return
-    }
-
     if (isChecked) {
       localStorage.setItem("risky-proposal-faq-read", "true")
     }
@@ -390,7 +385,13 @@ const CreateRiskyProposal: FC = () => {
               />
             </Row>
             <Flex full p="20px 0 0">
-              <Button onClick={handleSubmit} full size="large">
+              <Button
+                onClick={() =>
+                  agreed ? handleSubmit() : setShowAgreement(true)
+                }
+                full
+                size="large"
+              >
                 Create risky proposal
               </Button>
             </Flex>
