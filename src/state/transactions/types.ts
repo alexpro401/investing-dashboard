@@ -115,6 +115,8 @@ export interface UpdateCredentialsTransactionInfo {
 
 export interface CreateRiskyProposalTransactionInfo {
   type: TransactionType.RISKY_PROPOSAL_CREATE
+  pool: string
+  token: string
 }
 export interface EditRiskyProposalTransactionInfo {
   type: TransactionType.RISKY_PROPOSAL_EDIT
