@@ -101,7 +101,7 @@ const useSwapRiskyProposal = ({
   const [proposalInfo, proposalPool, proposalAddress, updateProposalData] =
     useRiskyProposal(poolAddress, proposalId)
 
-  const { priceUSD: poolPriceUSD, priceBase: poolPriceBase } =
+  const [{ priceUSD: poolPriceUSD, priceBase: poolPriceBase }] =
     usePoolPrice(poolAddress)
 
   const addTransaction = useTransactionAdder()

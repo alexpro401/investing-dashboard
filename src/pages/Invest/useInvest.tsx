@@ -106,7 +106,7 @@ const useInvest = ({
   const [showAlert] = useAlert()
   const [gasTrackerResponse, getGasPrice] = useGasTracker()
 
-  const { priceBase, priceUSD } = usePoolPrice(poolAddress)
+  const [{ priceBase, priceUSD }] = usePoolPrice(poolAddress)
   const [gasPrice, setGasPrice] = useState("0.00")
   const [swapPriceUSD, setSwapPriceUSD] = useState(BigNumber.from("0"))
   const [swapPrice, setSwapPrice] = useState(BigNumber.from("0"))

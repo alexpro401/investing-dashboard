@@ -148,7 +148,7 @@ const useInvestRiskyProposal = (
   const [, fromData] = useERC20(poolInfo?.parameters.baseToken)
   const [, toData] = useERC20(proposal?.proposalInfo.token)
 
-  const { priceUSD: poolPriceUSD, priceBase: poolPriceBase } =
+  const [{ priceUSD: poolPriceUSD, priceBase: poolPriceBase }] =
     usePoolPrice(poolAddress)
   const { priceUSD: riskyPriceUSD, priceBase: riskyPriceBase } = useRiskyPrice(
     poolAddress,

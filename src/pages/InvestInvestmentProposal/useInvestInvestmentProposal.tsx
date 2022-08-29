@@ -111,7 +111,7 @@ const useInvestInvestmentProposal = (
   const traderPool = useTraderPoolContract(poolAddress)
   const investPool = useInvestPoolContract(poolAddress)
   const [proposalPool] = useInvestProposalContract(poolAddress)
-  const proposal = useInvestProposal(poolAddress, proposalId)
+  const [proposal, updateProposal] = useInvestProposal(poolAddress, proposalId)
 
   const [, poolInfo] = usePoolContract(poolAddress)
   const [, baseData] = useERC20(poolInfo?.parameters.baseToken)
@@ -125,8 +125,8 @@ const useInvestInvestmentProposal = (
     proposal?.proposalInfo.descriptionURL
   )
 
-  const { priceUSD: poolPriceUSD, priceBase: poolPriceBase } =
-    usePoolPrice(poolAddress)
+  const [poolPrice, updatePoolPrice] = usePoolPrice(poolAddress)
+  const { priceUSD: poolPriceUSD, priceBase: poolPriceBase } = poolPrice
 
   const addTransaction = useTransactionAdder()
 
@@ -233,9 +233,11 @@ const useInvestInvestmentProposal = (
   }, [account, proposalId, proposalPool])
 
   const runUpdate = useCallback(() => {
+    updatePoolPrice()
+    updateProposal()
     getLPBalance().catch(console.error)
     getLP2Balance().catch(console.error)
-  }, [getLP2Balance, getLPBalance])
+  }, [getLP2Balance, getLPBalance, updateProposal, updatePoolPrice])
 
   const getDivestTokens = useCallback(
     async (amount: BigNumber): Promise<IDivestAmountsAndCommissions> => {
@@ -322,7 +324,7 @@ const useInvestInvestmentProposal = (
     [lpBalance, handleFromChange]
   )
 
-  // balance updater for both LP and LP2
+  // balance updater interval for both LP and LP2
   useEffect(() => {
     runUpdate()
 

@@ -75,7 +75,7 @@ function InvestInvestmentProposal() {
 
     return (
       <Button size="large" theme="primary" onClick={handleSubmit} fz={22} full>
-        `Stake ${formData.to.symbol}`
+        {`Stake ${formData.to.symbol}`}
       </Button>
     )
   }, [formData.to.symbol, fromAmount, handleSubmit, toAmount])

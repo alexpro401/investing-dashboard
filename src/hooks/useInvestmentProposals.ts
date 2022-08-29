@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import debounce from "lodash.debounce"
 
 import {
@@ -7,6 +7,7 @@ import {
 } from "constants/interfaces_v2"
 import { useInvestProposalContract } from "hooks/useContract"
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
+import useForceUpdate from "./useForceUpdate"
 
 interface IPayload {
   data: InvestProposal[]
@@ -55,7 +56,8 @@ function useInvestProposals(poolAddress?: string): [IPayload, () => void] {
 export function useInvestProposal(
   poolAddress?: string,
   index?: string
-): InvestProposal | undefined {
+): [InvestProposal | undefined, () => void] {
+  const [updateObserver, update] = useForceUpdate()
   const [proposal, setProposal] = useState<InvestProposal | undefined>()
   const [traderPoolInvestProposal] = useInvestProposalContract(poolAddress)
 
@@ -72,9 +74,9 @@ export function useInvestProposal(
         console.log(e)
       }
     })()
-  }, [index, traderPoolInvestProposal])
+  }, [index, traderPoolInvestProposal, updateObserver])
 
-  return proposal
+  return [proposal, update]
 }
 
 export function useActiveInvestmentsInfo(
