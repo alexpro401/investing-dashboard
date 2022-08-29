@@ -445,9 +445,11 @@ function useFundFee(
   const _getInvestorsRanges = useCallback(
     async (investors: IUserFeeInfo[]) => {
       if (!priceFeed || !chainId || !gas || !poolGraphData) {
-        return []
+        return { ranges: [], amountBase: BIG_ZERO, amountLP: BIG_ZERO }
       }
 
+      let totalCommissionAmountBase: BigNumber = BIG_ZERO
+      let totalCommissionAmountLP: BigNumber = BIG_ZERO
       const result: number[] = []
       let currentRange: number[] = []
 
@@ -461,7 +463,7 @@ function useFundFee(
       }
 
       for (const [key, investor] of investors.entries()) {
-        const { owedBaseCommission } = investor
+        const { owedBaseCommission, owedLPCommission } = investor
 
         // If investor commission 0 - skip him
         if (owedBaseCommission.isZero()) {
@@ -496,6 +498,14 @@ function useFundFee(
           } else {
             // Otherwice add trader to current range
             currentRange.push(key)
+            totalCommissionAmountBase = addBignumbers(
+              [totalCommissionAmountBase, 18],
+              [owedBaseCommission, 18]
+            )
+            totalCommissionAmountLP = addBignumbers(
+              [totalCommissionAmountLP, 18],
+              [owedLPCommission, 18]
+            )
           }
 
           // List is end - time to save last range and clear temporary state
@@ -505,7 +515,11 @@ function useFundFee(
         }
       }
 
-      return result
+      return {
+        ranges: result,
+        amountBase: totalCommissionAmountBase,
+        amountLP: totalCommissionAmountLP,
+      }
     },
     [chainId, gas, poolGraphData, priceFeed]
   )
@@ -527,8 +541,16 @@ function useFundFee(
     }
     setSubmiting(SubmitState.SIGN)
     let investorsRanges
+    let investorsComissionAmountBase: BigNumber = BIG_ZERO
+    let investorsComissionAmountLP: BigNumber = BIG_ZERO
+
     if (optimizeWithdrawal) {
-      investorsRanges = await _getInvestorsRanges(_investorsInfo)
+      const { ranges, amountBase, amountLP } = await _getInvestorsRanges(
+        _investorsInfo
+      )
+      investorsRanges = ranges
+      investorsComissionAmountBase = amountBase
+      investorsComissionAmountLP = amountLP
 
       if (investorsRanges.length === 0) {
         addToast(
@@ -546,6 +568,22 @@ function useFundFee(
       }
     } else {
       investorsRanges = [0, 1000]
+      const { amountBase, amountLP } = _investorsInfo.reduce(
+        (acc, investor) => ({
+          amountBase: addBignumbers(
+            [acc.amountBase, 18],
+            [investor.owedBaseCommission, 18]
+          ),
+          amountLP: addBignumbers(
+            [acc.amountLP, 18],
+            [investor.owedLPCommission, 18]
+          ),
+        }),
+        { amountBase: BIG_ZERO, amountLP: BIG_ZERO }
+      )
+
+      investorsComissionAmountBase = amountBase
+      investorsComissionAmountLP = amountLP
     }
 
     try {
@@ -557,7 +595,9 @@ function useFundFee(
 
       const tx = await addTransaction(receipt, {
         type: TransactionType.TRADER_GET_PERFORMANCE_FEE,
-        poolId: poolAddress,
+        baseAmount: investorsComissionAmountBase,
+        lpAmount: investorsComissionAmountLP,
+        _baseTokenSymbol: baseToken?.symbol,
       })
 
       if (isTxMined(tx)) {
