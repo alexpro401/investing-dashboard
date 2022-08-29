@@ -448,14 +448,14 @@ function useFundFee(
         return []
       }
 
-      const result: number[][] = []
-
+      const result: number[] = []
       let currentRange: number[] = []
 
       // Save current range to result and clear it
       function saveResultBeforeNewRange() {
         if (currentRange.length > 0) {
-          result.push(currentRange)
+          result.push(currentRange[0])
+          result.push(currentRange.length)
           currentRange = []
         }
       }
@@ -552,7 +552,7 @@ function useFundFee(
       setSubmiting(SubmitState.WAIT_CONFIRM)
       const receipt = await traderPool.reinvestCommission(
         investorsRanges,
-        _platformCommissionDexe
+        _platformCommissionDexe.toHexString()
       )
 
       const tx = await addTransaction(receipt, {
