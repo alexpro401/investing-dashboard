@@ -354,9 +354,7 @@ const Swap = () => {
         transition={{ duration: 0.2 }}
       >
         <Payload submitState={isWalletPrompting} toggle={setWalletPrompting} />
-        <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
-          {error}
-        </TransactionError>
+        <TransactionError error={error} closeModal={() => setError("")} />
         {form}
       </Container>
     </>

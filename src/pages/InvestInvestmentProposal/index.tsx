@@ -41,22 +41,20 @@ function InvestInvestmentProposal() {
       error,
       payload,
       info,
-      formWithDirection,
+      formData,
       isSlippageOpen,
       fromAmount,
       toAmount,
-      direction,
       slippage,
     },
     {
-      setError,
       setPayload,
-      setDirection,
       setSlippageOpen,
       setSlippage,
       handleFromChange,
       handleSubmit,
       handlePercentageChange,
+      closeErrorModal,
     },
   ] = useInvestInvestmentProposal(poolAddress, proposalId)
 
@@ -76,26 +74,11 @@ function InvestInvestmentProposal() {
     }
 
     return (
-      <Button
-        size="large"
-        theme={direction === "deposit" ? "primary" : "warn"}
-        onClick={handleSubmit}
-        fz={22}
-        full
-      >
-        {direction === "deposit"
-          ? `Stake ${formWithDirection.to.symbol}`
-          : `Unstake ${formWithDirection.from.symbol}`}
+      <Button size="large" theme="primary" onClick={handleSubmit} fz={22} full>
+        `Stake ${formData.to.symbol}`
       </Button>
     )
-  }, [
-    direction,
-    formWithDirection.from.symbol,
-    formWithDirection.to.symbol,
-    fromAmount,
-    handleSubmit,
-    toAmount,
-  ])
+  }, [formData.to.symbol, fromAmount, handleSubmit, toAmount])
 
   const proposalTVL = useMemo(() => {
     return (
@@ -157,29 +140,26 @@ function InvestInvestmentProposal() {
       </CardHeader>
 
       <ExchangeInput
-        price={formWithDirection.from.price}
-        amount={formWithDirection.from.amount}
-        balance={formWithDirection.from.balance}
-        address={formWithDirection.from.address}
-        symbol={formWithDirection.from.symbol}
-        customIcon={formWithDirection.from.icon}
-        decimal={formWithDirection.from.decimals}
+        price={formData.from.price}
+        amount={formData.from.amount}
+        balance={formData.from.balance}
+        address={formData.from.address}
+        symbol={formData.from.symbol}
+        customIcon={formData.from.icon}
+        decimal={formData.from.decimals}
         onChange={handleFromChange}
       />
 
-      <ExchangeDivider
-        changeAmount={handlePercentageChange}
-        changeDirection={setDirection}
-      />
+      <ExchangeDivider changeAmount={handlePercentageChange} />
 
       <ExchangeInput
-        price={formWithDirection.to.price}
-        amount={formWithDirection.to.amount}
-        balance={formWithDirection.to.balance}
-        address={formWithDirection.to.address}
-        symbol={formWithDirection.to.symbol}
-        customIcon={formWithDirection.to.icon}
-        decimal={formWithDirection.to.decimals}
+        price={formData.to.price}
+        amount={formData.to.amount}
+        balance={formData.to.balance}
+        address={formData.to.address}
+        symbol={formData.to.symbol}
+        customIcon={formData.to.icon}
+        decimal={formData.to.decimals}
       />
 
       <Flex full p="16px 0 0">
@@ -194,9 +174,7 @@ function InvestInvestmentProposal() {
       </InfoCard>
 
       <Payload submitState={payload} toggle={setPayload} />
-      <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
-        {error}
-      </TransactionError>
+      <TransactionError error={error} closeModal={closeErrorModal} />
       <TransactionSlippage
         slippage={slippage}
         onChange={setSlippage}

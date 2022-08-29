@@ -3,13 +3,13 @@ import { BigNumber } from "@ethersproject/bignumber"
 
 import { EXCHANGE_DEFAULT_PERCENTS } from "constants/index"
 
-import { rotateVariants } from "theme"
 import { DividerContainer, PercentButton, SwapButton, Icon } from "./styled"
-import icon from "assets/icons/swap-arrow.svg"
+import DirectionIcon from "assets/icons/SwapDirectionIcon"
+import DirectionButton from "assets/icons/SwapDirectionButton"
 
 interface IDividerProps {
   changeAmount: (v: BigNumber) => void
-  changeDirection: () => void
+  changeDirection?: () => void
   points?: { id: string; label: string; percent: BigNumber }[]
 }
 
@@ -31,8 +31,8 @@ const ExchangeDivider: React.FC<IDividerProps> = ({
             {point.label}
           </PercentButton>
           {index + 1 === buttonsList.length / 2 && (
-            <SwapButton onClick={() => changeDirection()}>
-              <Icon src={icon} alt="change direction" />
+            <SwapButton onClick={() => !!changeDirection && changeDirection()}>
+              {!changeDirection ? <DirectionIcon /> : <DirectionButton />}
             </SwapButton>
           )}
         </Fragment>

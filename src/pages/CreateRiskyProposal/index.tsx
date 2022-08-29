@@ -373,9 +373,7 @@ const CreateRiskyProposal: FC = () => {
   return (
     <>
       <Payload submitState={isSubmiting} toggle={setSubmiting} />
-      <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
-        {error}
-      </TransactionError>
+      <TransactionError error={error} closeModal={() => setError("")} />
       {tradeModal}
       <Header>Create risky proposal</Header>
       <Container>

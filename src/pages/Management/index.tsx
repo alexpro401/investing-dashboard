@@ -506,9 +506,7 @@ function Management() {
   return (
     <>
       <Container>{form}</Container>
-      <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
-        {error}
-      </TransactionError>
+      <TransactionError error={error} closeModal={() => setError("")} />
       <Payload submitState={isLoading} toggle={setLoading} />
     </>
   )

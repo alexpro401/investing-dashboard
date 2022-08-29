@@ -8,16 +8,16 @@ import warn from "assets/icons/warn-big.svg"
 import { Icon, Text } from "./styled"
 
 interface Props {
-  isOpen: boolean
-  toggle: () => void
+  error: string
+  closeModal: () => void
 }
 
-const TransactionError: FC<Props> = ({ isOpen, children, toggle }) => {
+const TransactionError: FC<Props> = ({ error, closeModal }) => {
   return (
-    <Confirm title="Error" isOpen={isOpen} toggle={toggle}>
+    <Confirm title="Error" isOpen={!!error.length} toggle={closeModal}>
       <Icon src={warn} />
-      <Text>{children}</Text>
-      <Button m="24px 0 0" full onClick={toggle}>
+      <Text>{error}</Text>
+      <Button m="24px 0 0" full onClick={closeModal}>
         Dismiss
       </Button>
     </Confirm>

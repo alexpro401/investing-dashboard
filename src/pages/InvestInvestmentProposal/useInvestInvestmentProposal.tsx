@@ -6,13 +6,8 @@ import {
   Dispatch,
   SetStateAction,
 } from "react"
-import {
-  expandTimestamp,
-  isTxMined,
-  normalizeBigNumber,
-  parseTransactionError,
-} from "utils"
 
+import { format } from "date-fns"
 import { useWeb3React } from "@web3-react/core"
 import { BigNumber } from "@ethersproject/bignumber"
 
@@ -24,29 +19,31 @@ import {
   useInvestProposalMetadata,
   usePoolMetadata,
 } from "state/ipfsMetadata/hooks"
-import { SubmitState, SwapDirection } from "constants/types"
-
-import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 
 import { IDivestAmountsAndCommissions } from "interfaces/ITraderPool"
 
-import useAlert, { AlertType } from "hooks/useAlert"
-import { usePoolContract } from "hooks/usePool"
 import {
   useERC20,
   useInvestPoolContract,
   useInvestProposalContract,
   useTraderPoolContract,
 } from "hooks/useContract"
-import { RiskyForm } from "constants/interfaces_v2"
+import { usePoolContract } from "hooks/usePool"
 import usePoolPrice from "hooks/usePoolPrice"
-import {
-  useActiveInvestmentsInfo,
-  useInvestProposal,
-} from "hooks/useInvestmentProposals"
+import { useInvestProposal } from "hooks/useInvestmentProposals"
+
+import { RiskyForm } from "constants/interfaces_v2"
 import { ZERO } from "constants/index"
-import { format } from "date-fns"
+import { SubmitState } from "constants/types"
 import { DATE_TIME_FORMAT } from "constants/time"
+
+import {
+  expandTimestamp,
+  isTxMined,
+  normalizeBigNumber,
+  parseTransactionError,
+} from "utils"
+import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 
 interface Info {
   tvl: {
@@ -67,7 +64,7 @@ const useInvestInvestmentProposal = (
     error: string
     payload: SubmitState
     info: Info
-    formWithDirection: RiskyForm
+    formData: RiskyForm
     isSlippageOpen: boolean
     inPrice: BigNumber
     outPrice: BigNumber
@@ -78,25 +75,22 @@ const useInvestInvestmentProposal = (
     toAddress: string
     toSelectorOpened: boolean
     fromSelectorOpened: boolean
-    direction: SwapDirection
   },
   {
-    setError: Dispatch<SetStateAction<string>>
     setPayload: Dispatch<SetStateAction<SubmitState>>
     setSlippageOpen: (state: boolean) => void
     setToAddress: (address: string) => void
     setFromAddress: (address: string) => void
-    setDirection: () => void
     setToSelector: (state: boolean) => void
     setFromSelector: (state: boolean) => void
     setSlippage: (slippage: string) => void
+    closeErrorModal: () => void
     handlePercentageChange: (percentage: BigNumber) => void
     handleFromChange: (amount: string) => void
     handleSubmit: () => void
   }
 ] => {
   const { account } = useWeb3React()
-  const [showAlert] = useAlert()
 
   const [lpBalance, setLPBalance] = useState(ZERO)
   const [lp2Balance, setLP2Balance] = useState(ZERO)
@@ -108,25 +102,17 @@ const useInvestInvestmentProposal = (
   const [isSlippageOpen, setSlippageOpen] = useState(false)
   const [toSelectorOpened, setToSelector] = useState(false)
   const [fromSelectorOpened, setFromSelector] = useState(false)
-  const [direction] = useState<SwapDirection>("deposit")
   const [isWalletPrompting, setWalletPrompting] = useState(SubmitState.IDLE)
   const [error, setError] = useState("")
 
   const [toAddress, setToAddress] = useState("")
   const [fromAddress, setFromAddress] = useState("")
 
-  const handleDirectionChange = useCallback(() => {}, [])
-
   const traderPool = useTraderPoolContract(poolAddress)
   const investPool = useInvestPoolContract(poolAddress)
   const [proposalPool] = useInvestProposalContract(poolAddress)
   const proposal = useInvestProposal(poolAddress, proposalId)
 
-  const investmentsInfo = useActiveInvestmentsInfo(
-    poolAddress,
-    account,
-    proposalId
-  )
   const [, poolInfo] = usePoolContract(poolAddress)
   const [, baseData] = useERC20(poolInfo?.parameters.baseToken)
   const [{ poolMetadata }] = usePoolMetadata(
@@ -193,7 +179,7 @@ const useInvestInvestmentProposal = (
     }
   }, [poolPriceBase, poolPriceUSD, proposal, baseData])
 
-  const formWithDirection = useMemo(() => {
+  const formData = useMemo(() => {
     return {
       from: {
         address: undefined,
@@ -352,7 +338,7 @@ const useInvestInvestmentProposal = (
       error,
       payload: isWalletPrompting,
       info,
-      formWithDirection,
+      formData,
       isSlippageOpen,
       inPrice,
       outPrice,
@@ -362,19 +348,17 @@ const useInvestInvestmentProposal = (
       toAddress,
       toSelectorOpened,
       fromSelectorOpened,
-      direction,
       slippage,
     },
     {
-      setError,
       setPayload: setWalletPrompting,
       setSlippageOpen,
       setToAddress,
       setFromAddress,
-      setDirection: handleDirectionChange,
       setToSelector,
       setFromSelector,
       setSlippage,
+      closeErrorModal: () => setError(""),
       handlePercentageChange,
       handleFromChange,
       handleSubmit,
