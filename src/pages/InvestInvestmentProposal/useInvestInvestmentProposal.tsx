@@ -1,6 +1,14 @@
-import { useState, useEffect, useCallback, useMemo } from "react"
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  Dispatch,
+  SetStateAction,
+} from "react"
 import {
   expandTimestamp,
+  isTxMined,
   normalizeBigNumber,
   parseTransactionError,
 } from "utils"
@@ -16,7 +24,7 @@ import {
   useInvestProposalMetadata,
   usePoolMetadata,
 } from "state/ipfsMetadata/hooks"
-import { SwapDirection } from "constants/types"
+import { SubmitState, SwapDirection } from "constants/types"
 
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 
@@ -56,6 +64,8 @@ const useInvestInvestmentProposal = (
   proposalId?: string
 ): [
   {
+    error: string
+    payload: SubmitState
     info: Info
     formWithDirection: RiskyForm
     isSlippageOpen: boolean
@@ -71,6 +81,8 @@ const useInvestInvestmentProposal = (
     direction: SwapDirection
   },
   {
+    setError: Dispatch<SetStateAction<string>>
+    setPayload: Dispatch<SetStateAction<SubmitState>>
     setSlippageOpen: (state: boolean) => void
     setToAddress: (address: string) => void
     setFromAddress: (address: string) => void
@@ -96,7 +108,9 @@ const useInvestInvestmentProposal = (
   const [isSlippageOpen, setSlippageOpen] = useState(false)
   const [toSelectorOpened, setToSelector] = useState(false)
   const [fromSelectorOpened, setFromSelector] = useState(false)
-  const [direction, setDirection] = useState<SwapDirection>("deposit")
+  const [direction] = useState<SwapDirection>("deposit")
+  const [isWalletPrompting, setWalletPrompting] = useState(SubmitState.IDLE)
+  const [error, setError] = useState("")
 
   const [toAddress, setToAddress] = useState("")
   const [fromAddress, setFromAddress] = useState("")
@@ -232,6 +246,11 @@ const useInvestInvestmentProposal = (
     setLP2Balance(balance)
   }, [account, proposalId, proposalPool])
 
+  const runUpdate = useCallback(() => {
+    getLPBalance().catch(console.error)
+    getLP2Balance().catch(console.error)
+  }, [getLP2Balance, getLPBalance])
+
   const getDivestTokens = useCallback(
     async (amount: BigNumber): Promise<IDivestAmountsAndCommissions> => {
       const divests: IDivestAmountsAndCommissions =
@@ -244,26 +263,47 @@ const useInvestInvestmentProposal = (
   const handleSubmit = useCallback(async () => {
     if (!traderPool || !account || !proposalId || !investPool) return
 
+    setWalletPrompting(SubmitState.SIGN)
+
     try {
       const divests = await getDivestTokens(fromAmount)
 
-      const investReceipt = await investPool.investProposal(
+      const investResponse = await investPool.investProposal(
         Number(proposalId) + 1,
         fromAmount,
         divests.receptions.receivedAmounts
       )
 
-      console.log(investReceipt)
+      setWalletPrompting(SubmitState.WAIT_CONFIRM)
+
+      const receipt = await addTransaction(investResponse, {
+        type: TransactionType.INVEST_PROPOSAL_INVEST,
+        investLpAmountRaw: fromAmount.toString(),
+      })
+
+      if (isTxMined(receipt)) {
+        runUpdate()
+        setWalletPrompting(SubmitState.SUCCESS)
+      }
     } catch (error: any) {
-      console.log(error)
-      // const errorMessage = parseTransactionError(error)
-      // showAlert({
-      //   content: errorMessage,
-      //   type: AlertType.warning,
-      //   hideDuration: 10000,
-      // })
+      setWalletPrompting(SubmitState.IDLE)
+      if (!!error && !!error.data && !!error.data.message) {
+        setError(error.data.message)
+      } else {
+        const errorMessage = parseTransactionError(error.toString())
+        !!errorMessage && setError(errorMessage)
+      }
     }
-  }, [account, fromAmount, getDivestTokens, proposalId, traderPool, investPool])
+  }, [
+    traderPool,
+    account,
+    proposalId,
+    investPool,
+    getDivestTokens,
+    fromAmount,
+    addTransaction,
+    runUpdate,
+  ])
 
   const getPriceUSD = useCallback(
     (amount: BigNumber) => {
@@ -277,7 +317,7 @@ const useInvestInvestmentProposal = (
       const amount = BigNumber.from(v)
       const priceUSD = getPriceUSD(amount)
       setFromAmount(amount)
-      setToAmount(amount)
+      setToAmount(multiplyBignumbers([amount, 18], [poolPriceBase, 18]))
       setInPrice(priceUSD)
       setOutPrice(priceUSD)
       try {
@@ -285,7 +325,7 @@ const useInvestInvestmentProposal = (
         console.log(e)
       }
     },
-    [getPriceUSD]
+    [getPriceUSD, poolPriceBase]
   )
 
   const handlePercentageChange = useCallback(
@@ -295,11 +335,6 @@ const useInvestInvestmentProposal = (
     },
     [lpBalance, handleFromChange]
   )
-
-  const runUpdate = useCallback(() => {
-    getLPBalance().catch(console.error)
-    getLP2Balance().catch(console.error)
-  }, [getLP2Balance, getLPBalance])
 
   // balance updater for both LP and LP2
   useEffect(() => {
@@ -314,6 +349,8 @@ const useInvestInvestmentProposal = (
 
   return [
     {
+      error,
+      payload: isWalletPrompting,
       info,
       formWithDirection,
       isSlippageOpen,
@@ -329,6 +366,8 @@ const useInvestInvestmentProposal = (
       slippage,
     },
     {
+      setError,
+      setPayload: setWalletPrompting,
       setSlippageOpen,
       setToAddress,
       setFromAddress,

@@ -27,6 +27,8 @@ import {
 
 import useInvestInvestmentProposal from "./useInvestInvestmentProposal"
 import { useMemo } from "react"
+import Payload from "components/Payload"
+import TransactionError from "modals/TransactionError"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -36,6 +38,8 @@ function InvestInvestmentProposal() {
   const { poolAddress, proposalId } = useParams()
   const [
     {
+      error,
+      payload,
       info,
       formWithDirection,
       isSlippageOpen,
@@ -45,6 +49,8 @@ function InvestInvestmentProposal() {
       slippage,
     },
     {
+      setError,
+      setPayload,
       setDirection,
       setSlippageOpen,
       setSlippage,
@@ -187,6 +193,10 @@ function InvestInvestmentProposal() {
         {expirationDate}
       </InfoCard>
 
+      <Payload submitState={payload} toggle={setPayload} />
+      <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
+        {error}
+      </TransactionError>
       <TransactionSlippage
         slippage={slippage}
         onChange={setSlippage}
