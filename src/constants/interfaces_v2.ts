@@ -44,6 +44,7 @@ export interface Investor {
 export type PoolType = "ALL_POOL" | "INVEST_POOL" | "BASIC_POOL"
 
 export interface IPriceHistory {
+  APY: BigNumber
   usdTVL: number
   baseTVL: number
   supply: number

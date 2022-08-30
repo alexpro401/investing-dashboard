@@ -5,6 +5,7 @@ import { PoolType } from "constants/interfaces_v2"
 //-----------------------------------------------------------------------------
 
 const PRICE_HISTORY = `
+  APY
   usdTVL
   baseTVL
   supply
