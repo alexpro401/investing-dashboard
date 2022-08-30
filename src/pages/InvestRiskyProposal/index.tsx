@@ -1,4 +1,5 @@
 import { Flex } from "theme"
+import { useCallback, useMemo } from "react"
 import { useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
 
@@ -27,10 +28,10 @@ import {
   InfoWhite,
 } from "components/Exchange/styled"
 
-import useInvestRiskyProposal from "./useInvestRiskyProposal"
-import { useMemo } from "react"
-import SwapPrice from "components/SwapPrice"
 import { normalizeBigNumber } from "utils"
+import SwapPrice from "components/SwapPrice"
+import { useUserAgreement } from "state/user/hooks"
+import useInvestRiskyProposal from "./useInvestRiskyProposal"
 
 const basicClient = createClient({
   url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
@@ -61,13 +62,19 @@ function InvestRiskyProposal() {
     },
   ] = useInvestRiskyProposal(poolAddress, proposalId)
 
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
+
+  const onSubmit = useCallback(() => {
+    agreed ? handleSubmit() : setShowAgreement(true)
+  }, [agreed, handleSubmit, setShowAgreement])
+
   const button = useMemo(() => {
     if (fromAmount === "0" || toAmount === "0") {
       return (
         <SecondaryButton
           theme="disabled"
           size="large"
-          onClick={handleSubmit}
+          onClick={onSubmit}
           fz={22}
           full
         >
@@ -80,7 +87,7 @@ function InvestRiskyProposal() {
       <Button
         size="large"
         theme={direction === "deposit" ? "primary" : "warn"}
-        onClick={handleSubmit}
+        onClick={onSubmit}
         fz={22}
         full
       >
@@ -94,8 +101,8 @@ function InvestRiskyProposal() {
     formWithDirection.from.symbol,
     formWithDirection.to.symbol,
     fromAmount,
-    handleSubmit,
     toAmount,
+    onSubmit,
   ])
 
   const myPNL = useMemo(() => {

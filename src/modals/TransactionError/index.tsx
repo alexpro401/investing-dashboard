@@ -1,18 +1,21 @@
 import Confirm from "components/Confirm"
-import { FC } from "react"
+import { FC, useCallback } from "react"
 
 import Button from "components/Button"
+
+import useError from "hooks/useError"
 
 import warn from "assets/icons/warn-big.svg"
 
 import { Icon, Text } from "./styled"
 
-interface Props {
-  error: string
-  closeModal: () => void
-}
+const TransactionError: FC = () => {
+  const [error, updateError] = useError()
 
-const TransactionError: FC<Props> = ({ error, closeModal }) => {
+  const closeModal = useCallback(() => {
+    updateError("")
+  }, [updateError])
+
   return (
     <Confirm title="Error" isOpen={!!error.length} toggle={closeModal}>
       <Icon src={warn} />

@@ -44,6 +44,8 @@ import {
   parseTransactionError,
 } from "utils"
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
+import useError from "hooks/useError"
+import usePayload from "hooks/usePayload"
 
 interface Info {
   tvl: {
@@ -61,8 +63,6 @@ const useInvestInvestmentProposal = (
   proposalId?: string
 ): [
   {
-    error: string
-    payload: SubmitState
     info: Info
     formData: RiskyForm
     isSlippageOpen: boolean
@@ -77,14 +77,12 @@ const useInvestInvestmentProposal = (
     fromSelectorOpened: boolean
   },
   {
-    setPayload: Dispatch<SetStateAction<SubmitState>>
     setSlippageOpen: (state: boolean) => void
     setToAddress: (address: string) => void
     setFromAddress: (address: string) => void
     setToSelector: (state: boolean) => void
     setFromSelector: (state: boolean) => void
     setSlippage: (slippage: string) => void
-    closeErrorModal: () => void
     handlePercentageChange: (percentage: BigNumber) => void
     handleFromChange: (amount: string) => void
     handleSubmit: () => void
@@ -102,8 +100,8 @@ const useInvestInvestmentProposal = (
   const [isSlippageOpen, setSlippageOpen] = useState(false)
   const [toSelectorOpened, setToSelector] = useState(false)
   const [fromSelectorOpened, setFromSelector] = useState(false)
-  const [isWalletPrompting, setWalletPrompting] = useState(SubmitState.IDLE)
-  const [error, setError] = useState("")
+  const [isWalletPrompting, setWalletPrompting] = usePayload()
+  const [error, setError] = useError()
 
   const [toAddress, setToAddress] = useState("")
   const [fromAddress, setFromAddress] = useState("")
@@ -337,8 +335,6 @@ const useInvestInvestmentProposal = (
 
   return [
     {
-      error,
-      payload: isWalletPrompting,
       info,
       formData,
       isSlippageOpen,
@@ -353,14 +349,12 @@ const useInvestInvestmentProposal = (
       slippage,
     },
     {
-      setPayload: setWalletPrompting,
       setSlippageOpen,
       setToAddress,
       setFromAddress,
       setToSelector,
       setFromSelector,
       setSlippage,
-      closeErrorModal: () => setError(""),
       handlePercentageChange,
       handleFromChange,
       handleSubmit,

@@ -9,9 +9,7 @@ import { Insurance, PriceFeed } from "abi"
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import ExchangeDivider from "components/Exchange/Divider"
 import Button, { SecondaryButton } from "components/Button"
-import Payload from "components/Payload"
 import TransactionSlippage from "components/TransactionSlippage"
-import TransactionError from "modals/TransactionError"
 
 import useContract, { useERC20 } from "hooks/useContract"
 import {
@@ -45,6 +43,8 @@ import {
   InsuranceAmount,
   MultiplierIcon,
 } from "./styled"
+import useError from "hooks/useError"
+import usePayload from "hooks/usePayload"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -190,7 +190,7 @@ function Management() {
     { setFromAmount, setToAmount, setDirection, setSlippage },
   ] = useInsurance()
 
-  const [error, setError] = useState("")
+  const [, setError] = useError()
   const [stakeAmount, setStakeAmount] = useState(BigNumber.from("0"))
   const [insuranceAmount, setInsuranceAmount] = useState(BigNumber.from("0"))
   const [insuranceAmountUSD, setInsuranceAmountUSD] = useState(
@@ -201,7 +201,7 @@ function Management() {
   const [allowance, setAllowance] = useState("-1")
 
   const [isSlippageOpen, setSlippageOpen] = useState(false)
-  const [isLoading, setLoading] = useState(SubmitState.IDLE)
+  const [, setLoading] = usePayload()
 
   const priceFeedAddress = useSelector(selectPriceFeedAddress)
   const insuranceAddress = useSelector(selectInsuranceAddress)
@@ -506,8 +506,6 @@ function Management() {
   return (
     <>
       <Container>{form}</Container>
-      <TransactionError error={error} closeModal={() => setError("")} />
-      <Payload submitState={isLoading} toggle={setLoading} />
     </>
   )
 }

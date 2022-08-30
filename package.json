@@ -19,7 +19,6 @@
     "r": "./node_modules/.bin/generate-react redux"
   },
   "dependencies": {
-    "@binance-chain/bsc-connector": "^1.0.0",
     "@ethersproject/bignumber": "^5.6.0",
     "@ethersproject/contracts": "^5.6.2",
     "@ethersproject/providers": "^5.0.19",

@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createReducer } from "@reduxjs/toolkit"
-import { IFund, IUserData } from "constants/interfaces"
-import { OwnedPools } from "constants/interfaces_v2"
-import { addOwnedPools, updateUserProMode } from "./actions"
 
-export interface userState {
-  userProMode: boolean
-  loading: boolean
-  ownedPools: OwnedPools
-  data: IUserData | null | false
-}
+import {
+  addOwnedPools,
+  updateUserProMode,
+  changeTermsAgreed,
+  showAgreementModal,
+} from "./actions"
+import { IUserState } from "./types"
 
-export const initialState: userState = {
+export const initialState: IUserState = {
   data: null,
 
   userProMode: false,
@@ -19,6 +17,10 @@ export const initialState: userState = {
   ownedPools: {
     basic: [],
     invest: [],
+  },
+  terms: {
+    agreed: false,
+    showAgreement: false,
   },
 }
 
@@ -35,5 +37,11 @@ export default createReducer(initialState, (builder) =>
         v.toLocaleLowerCase()
       )
       state.loading = false
+    })
+    .addCase(changeTermsAgreed, (state, action) => {
+      state.terms.agreed = action.payload.agreed
+    })
+    .addCase(showAgreementModal, (state, action) => {
+      state.terms.showAgreement = action.payload.show
     })
 )

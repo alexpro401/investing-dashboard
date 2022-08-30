@@ -1,10 +1,4 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useWeb3React } from "@web3-react/core"
 
 import { BigNumber } from "@ethersproject/bignumber"
@@ -12,6 +6,8 @@ import { parseEther, parseUnits } from "@ethersproject/units"
 import getTime from "date-fns/getTime"
 import { addDays } from "date-fns/esm"
 
+import useError from "hooks/useError"
+import usePayload from "hooks/usePayload"
 import { useTraderPool } from "hooks/usePool"
 import {
   useBasicPoolContract,
@@ -31,8 +27,6 @@ const useCreateRiskyProposal = (
 ): [
   {
     proposalCount: number
-    error: string
-    isSubmiting: SubmitState
     positionPrice?: BigNumber
     lpAvailable?: BigNumber
     lpAmount: string
@@ -43,8 +37,6 @@ const useCreateRiskyProposal = (
     validationErrors: IValidationError[]
   },
   {
-    setSubmiting: Dispatch<SetStateAction<SubmitState>>
-    setError: (value: string) => void
     setLpAmount: (value: string) => void
     setTimestampLimit: (timestamp: number) => void
     setInvestLPLimit: (value: string) => void
@@ -60,10 +52,10 @@ const useCreateRiskyProposal = (
 
   const basicTraderPool = useBasicPoolContract(poolAddress)
   const traderPool = useTraderPool(poolAddress)
+  const [error, setError] = useError()
+  const [isSubmiting, setSubmiting] = usePayload()
 
   const [totalProposals, setTotalProposals] = useState<number>(0)
-  const [error, setError] = useState("")
-  const [isSubmiting, setSubmiting] = useState(SubmitState.IDLE)
   const [lpAmount, setLpAmount] = useState("")
   const [timestampLimit, setTimestampLimit] = useState(initialTimeLimit)
   const [investLPLimit, setInvestLPLimit] = useState("")
@@ -204,6 +196,8 @@ const useCreateRiskyProposal = (
     tokenAddress,
     traderPool,
     handleValidate,
+    setError,
+    setSubmiting,
   ])
 
   const getCreatingTokensInfo = useCallback(async () => {
@@ -256,8 +250,6 @@ const useCreateRiskyProposal = (
       proposalCount: totalProposals,
       validationErrors,
       lpAmount,
-      error,
-      isSubmiting,
       lpAvailable,
       positionPrice,
       timestampLimit,
@@ -266,8 +258,6 @@ const useCreateRiskyProposal = (
       instantTradePercentage,
     },
     {
-      setError,
-      setSubmiting,
       setLpAmount,
       setTimestampLimit,
       setInvestLPLimit,

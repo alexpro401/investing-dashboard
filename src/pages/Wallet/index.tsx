@@ -57,6 +57,7 @@ import {
   Network,
   NetworkIcon,
 } from "./styled"
+import { useUserAgreement } from "state/user/hooks"
 
 const useUserSettings = (): [
   {
@@ -187,6 +188,8 @@ export default function Wallet() {
     { setUserEditing, setUserName, setUserAvatar, handleUserSubmit },
   ] = useUserSettings()
 
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
+
   const [insuranceAmount, setInsuranceAmount] = useState(BigNumber.from("0"))
 
   const insuranceAddress = useSelector(selectInsuranceAddress)
@@ -232,7 +235,12 @@ export default function Wallet() {
   if (!account) return <Navigate to="/welcome" />
 
   const userIcon = isUserEditing ? (
-    <IconButton size={12} filled media={plus} onClick={handleUserSubmit} />
+    <IconButton
+      size={12}
+      filled
+      media={plus}
+      onClick={() => (agreed ? handleUserSubmit() : setShowAgreement(true))}
+    />
   ) : (
     <IconButton
       size={24}

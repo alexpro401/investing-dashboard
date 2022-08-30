@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useCallback } from "react"
 import { useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
 
@@ -22,6 +22,7 @@ import WithdrawalsHistory from "components/WithdrawalsHistory"
 import useFundFee from "./useFundFee"
 
 import S, { PageLoading } from "./styled"
+import { useUserAgreement } from "state/user/hooks"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -33,9 +34,6 @@ const FundDetailsFee: FC = () => {
   const [
     [poolData, poolInfo],
     {
-      error,
-      isSubmiting,
-
       optimizeWithdrawal,
 
       fundCommissionPercentage,
@@ -61,8 +59,14 @@ const FundDetailsFee: FC = () => {
       netInvestorsProfitDEXE,
       netInvestorsProfitPercentage,
     },
-    { setError, setSubmiting, setOptimizeWithdrawal, withdrawCommission },
+    { setOptimizeWithdrawal, withdrawCommission },
   ] = useFundFee(poolAddress)
+
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
+
+  const onSubmit = useCallback(() => {
+    agreed ? withdrawCommission() : setShowAgreement(true)
+  }, [agreed, withdrawCommission, setShowAgreement])
 
   const [, baseToken] = useERC20(poolData?.baseToken)
 
@@ -77,17 +81,6 @@ const FundDetailsFee: FC = () => {
 
   return (
     <>
-      <Payload
-        isOpen={isSubmiting !== SubmitState.IDLE}
-        toggle={() => setSubmiting(SubmitState.IDLE)}
-      >
-        {SubmitState.SIGN === isSubmiting &&
-          "Open your wallet and sign transaction"}
-        {SubmitState.WAIT_CONFIRM === isSubmiting && "Waiting for confirmation"}
-      </Payload>
-      <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
-        {error}
-      </TransactionError>
       <S.Container>
         <S.FeeDateCard>
           <S.FeeDateText>
@@ -214,7 +207,7 @@ const FundDetailsFee: FC = () => {
           </S.OptimizeWithdrawal>
 
           <Flex full m="24px 0 0">
-            <Button onClick={withdrawCommission} full size="large">
+            <Button onClick={onSubmit} full size="large">
               Request Performance Fee
             </Button>
           </Flex>

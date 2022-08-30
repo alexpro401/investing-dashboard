@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import InsuranceCard from "components/InsuranceCard"
 import {
   Body,
@@ -13,7 +13,6 @@ import {
 import Confirm from "components/Confirm"
 import Icon from "components/Icon"
 import Button, { SecondaryButton } from "components/Button"
-import Payload from "components/Payload"
 import TransactionSent from "modals/TransactionSent"
 import { SubmitState } from "constants/types"
 
@@ -59,8 +58,6 @@ const Voting = () => {
         <InsuranceCard startvoting={setVotingState} />
         <InsuranceCard startvoting={setVotingState} />
       </Body>
-
-      <Payload submitState={pendingState} toggle={setPendingState} />
 
       <TransactionSent
         title="Success"

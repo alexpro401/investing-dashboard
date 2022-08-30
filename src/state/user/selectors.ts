@@ -12,3 +12,8 @@ export const selectLoadingState = createSelector(
   [selectUser],
   (user) => user.loading
 )
+
+export const selectTermsState = createSelector(
+  [selectUser],
+  (user) => user.terms
+)

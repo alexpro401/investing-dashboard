@@ -14,8 +14,6 @@ import Input from "components/Input"
 import TextArea from "components/TextArea"
 import Tooltip from "components/Tooltip"
 import DatePicker from "components/DatePicker"
-import Payload from "components/Payload"
-import TransactionError from "modals/TransactionError"
 
 import close from "assets/icons/close-big.svg"
 import calendar from "assets/icons/calendar.svg"
@@ -56,7 +54,6 @@ const CreateInvestmentProposal: FC = () => {
       timestampLimit,
       investLPLimit,
       isSubmiting,
-      error,
       isDateOpen,
       lpAvailable,
       validationErrors,
@@ -69,9 +66,8 @@ const CreateInvestmentProposal: FC = () => {
       setDescription,
       setTimestampLimit,
       setInvestLPLimit,
-      handleSubmit,
       setSubmiting,
-      setError,
+      handleSubmit,
       setDateOpen,
     },
   ] = useCreateInvestmentProposal(poolAddress)
@@ -111,8 +107,6 @@ const CreateInvestmentProposal: FC = () => {
 
   return (
     <>
-      <Payload submitState={isSubmiting} toggle={setSubmiting} />
-      <TransactionError error={error} closeModal={() => setError("")} />
       {successModal}
       <Header>Create invest proposal</Header>
       <Container>

@@ -1,27 +1,24 @@
 import { useMemo } from "react"
-import { Flex } from "theme"
 import { useParams } from "react-router-dom"
 
-import Payload from "components/Payload"
-import ExchangeInput from "components/Exchange/ExchangeInput"
+import { Flex } from "theme"
+import Token from "components/Token"
+import SwapPrice from "components/SwapPrice"
+import Header from "components/Header/Layout"
+import IconButton from "components/IconButton"
 import ExchangeDivider from "components/Exchange/Divider"
 import CircularProgress from "components/CircularProgress"
-import IconButton from "components/IconButton"
 import Button, { SecondaryButton } from "components/Button"
+import ExchangeInput from "components/Exchange/ExchangeInput"
 import TransactionSlippage from "components/TransactionSlippage"
-import Header from "components/Header/Layout"
-import TransactionError from "modals/TransactionError"
-import TokenIcon from "components/TokenIcon"
-import SwapPrice from "components/SwapPrice"
-import Token from "components/Token"
 
-import { useERC20 } from "hooks/useContract"
+import { useUserAgreement } from "state/user/hooks"
 
 import { createClient, Provider as GraphProvider } from "urql"
 import { cutDecimalPlaces, fromBig, shortenAddress } from "utils"
 
-import settings from "assets/icons/settings.svg"
 import close from "assets/icons/close-big.svg"
+import settings from "assets/icons/settings.svg"
 import LockedIcon from "assets/icons/LockedIcon"
 
 import {
@@ -53,19 +50,15 @@ const Invest = () => {
     {
       info,
       allowance,
-      isWalletPrompting,
       isSlippageOpen,
       slippage,
       gasPrice,
       swapPrice,
       swapPriceUSD,
-      error,
       direction,
       updateAllowance,
       setSlippageOpen,
       setSlippage,
-      setError,
-      setWalletPrompting,
       handleDirectionChange,
       handlePercentageChange,
       handleFromChange,
@@ -75,6 +68,8 @@ const Invest = () => {
     poolAddress,
     initialDirection: "deposit",
   })
+
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
   const isAllowanceNeeded =
     direction === "deposit" && !!allowance && allowance.lt(from.amount)
@@ -104,7 +99,12 @@ const Invest = () => {
 
     if (isAllowanceNeeded) {
       return (
-        <SecondaryButton size="large" onClick={updateAllowance} fz={22} full>
+        <SecondaryButton
+          size="large"
+          onClick={() => (agreed ? updateAllowance() : setShowAgreement(true))}
+          fz={22}
+          full
+        >
           <Flex>
             <Flex ai="center">Unlock Token {from.symbol}</Flex>
             <Flex m="-3px 0 0 4px">
@@ -127,14 +127,14 @@ const Invest = () => {
       </Button>
     )
   }, [
-    direction,
-    from.amount,
-    from.balance,
-    from.symbol,
-    handleSubmit,
+    from,
     isAllowanceNeeded,
-    to.symbol,
+    direction,
+    handleSubmit,
+    to,
+    agreed,
     updateAllowance,
+    setShowAgreement,
   ])
 
   const freeLiquidity = useMemo(() => {
@@ -290,8 +290,6 @@ const Invest = () => {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        <Payload submitState={isWalletPrompting} toggle={setWalletPrompting} />
-        <TransactionError error={error} closeModal={() => setError("")} />
         {form}
       </Container>
     </>

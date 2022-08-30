@@ -36,6 +36,8 @@ import { format } from "date-fns"
 import usePoolPrice from "hooks/usePoolPrice"
 import { ZERO } from "constants/index"
 import useRiskyPosition from "hooks/useRiskyPosition"
+import useError from "hooks/useError"
+import usePayload from "hooks/usePayload"
 
 export interface UseSwapRiskyParams {
   poolAddress?: string
@@ -46,16 +48,12 @@ export interface UseSwapRiskyParams {
 interface UseSwapRiskyResponse {
   info: any
   gasPrice: string
-  error: string
   lpBalance: BigNumber
   oneTokenCost: BigNumber
   oneUSDCost: BigNumber
   slippage: string
   isSlippageOpen: boolean
-  isWalletPrompting: SubmitState
-  setError: Dispatch<SetStateAction<string>>
   setSlippage: Dispatch<SetStateAction<string>>
-  setWalletPrompting: Dispatch<SetStateAction<SubmitState>>
   setSlippageOpen: Dispatch<SetStateAction<boolean>>
   handleFromChange: (v: string) => void
   handleToChange: (v: string) => void
@@ -71,10 +69,10 @@ const useSwapRiskyProposal = ({
   const { account } = useWeb3React()
 
   const [gasPrice, setGasPrice] = useState("0.00")
-  const [error, setError] = useState("")
+  const [, setError] = useError()
   const [slippage, setSlippage] = useState("0.10")
   const [isSlippageOpen, setSlippageOpen] = useState(false)
-  const [isWalletPrompting, setWalletPrompting] = useState(SubmitState.IDLE)
+  const [, setWalletPrompting] = usePayload()
 
   const [positionPnlLP, setPositionPnlLP] = useState(ZERO)
   const [positionPnlUSD, setPositionPnlUSD] = useState(ZERO)
@@ -111,7 +109,7 @@ const useSwapRiskyProposal = ({
   const [, baseToken] = useERC20(poolInfo?.parameters.baseToken)
   const [, positionToken] = useERC20(proposalInfo?.proposalInfo.token)
 
-  const [gasTrackerResponse, getGasPrice] = useGasTracker()
+  const [, getGasPrice] = useGasTracker()
 
   const position = useRiskyPosition({
     proposalAddress,
@@ -506,6 +504,8 @@ const useSwapRiskyProposal = ({
     proposalPool,
     runUpdate,
     toAmount,
+    setError,
+    setWalletPrompting,
   ])
 
   // set balances
@@ -671,10 +671,6 @@ const useSwapRiskyProposal = ({
       gasPrice,
       oneTokenCost,
       oneUSDCost,
-      error,
-      setError,
-      isWalletPrompting,
-      setWalletPrompting,
       slippage,
       setSlippage,
       isSlippageOpen,

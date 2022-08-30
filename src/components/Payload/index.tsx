@@ -1,25 +1,23 @@
 import Confirm from "components/Confirm"
 import { SubmitState } from "constants/types"
-import { Dispatch, FC, SetStateAction } from "react"
+import usePayload from "hooks/usePayload"
+import { FC, useCallback } from "react"
 import { SpinnerCircularFixed } from "spinners-react"
 
 import { Text } from "./styled"
 
-interface Props {
-  submitState: SubmitState
-  toggle: Dispatch<SetStateAction<SubmitState>>
-}
+const Payload: FC = () => {
+  const [payload, updatePayload] = usePayload()
 
-const Payload: FC<Props> = ({ submitState, toggle }) => {
   const isModalOpen =
-    SubmitState.SIGN === submitState || SubmitState.WAIT_CONFIRM === submitState
+    SubmitState.SIGN === payload || SubmitState.WAIT_CONFIRM === payload
+
+  const toggle = useCallback(() => {
+    updatePayload(SubmitState.IDLE)
+  }, [updatePayload])
 
   return (
-    <Confirm
-      isOpen={isModalOpen}
-      toggle={() => toggle(SubmitState.IDLE)}
-      title="Waiting"
-    >
+    <Confirm isOpen={isModalOpen} toggle={toggle} title="Waiting">
       <SpinnerCircularFixed
         size={100}
         style={{
@@ -33,9 +31,9 @@ const Payload: FC<Props> = ({ submitState, toggle }) => {
       />
       <Text>
         {" "}
-        {SubmitState.SIGN === submitState &&
+        {SubmitState.SIGN === payload &&
           "Open your wallet and sign transaction"}
-        {SubmitState.WAIT_CONFIRM === submitState && "Waiting for confirmation"}
+        {SubmitState.WAIT_CONFIRM === payload && "Waiting for confirmation"}
       </Text>
     </Confirm>
   )

@@ -6,11 +6,28 @@ import {
   useMemo,
   useState,
 } from "react"
+
 import { parseUnits, parseEther } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 import { useWeb3React } from "@web3-react/core"
 
+import usePayload from "hooks/usePayload"
+import useError from "hooks/useError"
+import usePoolPrice from "hooks/usePoolPrice"
+import useAlert, { AlertType } from "hooks/useAlert"
 import { usePoolContract, useTraderPool } from "hooks/usePool"
+import { useERC20, usePriceFeedContract } from "hooks/useContract"
+
+import { useTransactionAdder } from "state/transactions/hooks"
+import { TransactionType } from "state/transactions/types"
+import { usePoolMetadata } from "state/ipfsMetadata/hooks"
+import useGasTracker from "state/gas/hooks"
+
+import { SubmitState, SwapDirection } from "constants/types"
+import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
+import { IAlert } from "context/AlertContext"
+
+import Icon from "components/Icon"
 
 import {
   calcSlippage,
@@ -20,10 +37,7 @@ import {
   formatBigNumber,
   getMaxLPInvestAmount,
 } from "utils"
-import { useERC20, usePriceFeedContract } from "hooks/useContract"
-import { useTransactionAdder } from "state/transactions/hooks"
-import { TransactionType } from "state/transactions/types"
-import { usePoolMetadata } from "state/ipfsMetadata/hooks"
+
 import {
   multiplyBignumbers,
   getFreeLiquidity,
@@ -31,14 +45,6 @@ import {
   percentageOfBignumbers,
   divideBignumbers,
 } from "utils/formulas"
-import usePoolPrice from "hooks/usePoolPrice"
-import { SubmitState, SwapDirection } from "constants/types"
-import useAlert, { AlertType } from "hooks/useAlert"
-import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
-import useGasTracker from "state/gas/hooks"
-import { IAlert } from "context/AlertContext"
-
-import Icon from "components/Icon"
 
 interface UseInvestProps {
   poolAddress: string | undefined
@@ -65,8 +71,6 @@ interface InvestInfo {
 
 interface UseInvestResponse {
   info: InvestInfo
-  error: string
-  isWalletPrompting: SubmitState
   isSlippageOpen: boolean
   allowance?: BigNumber
   gasPrice: string
@@ -75,10 +79,8 @@ interface UseInvestResponse {
   slippage: string
   direction: SwapDirection
   updateAllowance: () => void
-  setWalletPrompting: Dispatch<SetStateAction<SubmitState>>
   setSlippageOpen: Dispatch<SetStateAction<boolean>>
   setSlippage: Dispatch<SetStateAction<string>>
-  setError: Dispatch<SetStateAction<string>>
   handleDirectionChange: () => void
   handlePercentageChange: (percent: any) => void
   handleFromChange: (v: string) => void
@@ -120,12 +122,12 @@ const useInvest = ({
   const [lpTokenPrice, setLpPrice] = useState(BigNumber.from("0"))
   const [lpTokenBalance, setLPBalance] = useState(BigNumber.from("0"))
   const [allowance, setAllowance] = useState<BigNumber | undefined>()
-  const [isWalletPrompting, setWalletPrompting] = useState(SubmitState.IDLE)
+  const [, setWalletPrompting] = usePayload()
   const [isSlippageOpen, setSlippageOpen] = useState(false)
   const [positions, setPositions] = useState<
     InvestInfo["fundPositions"]["positions"]
   >([])
-  const [error, setError] = useState("")
+  const [, setError] = useError()
 
   const transactionOptions = useMemo(() => {
     if (!gasTrackerResponse) return
@@ -380,6 +382,7 @@ const useInvest = ({
     transactionOptions,
     addTransaction,
     fetchAndUpdateAllowance,
+    setWalletPrompting,
   ])
 
   const getPriceUSD = useCallback(
@@ -570,6 +573,7 @@ const useInvest = ({
     transactionOptions,
     addTransaction,
     runUpdate,
+    setWalletPrompting,
   ])
 
   const getDivestTokens = useCallback(
@@ -617,6 +621,7 @@ const useInvest = ({
     transactionOptions,
     addTransaction,
     runUpdate,
+    setWalletPrompting,
   ])
 
   const handleSubmit = useCallback(async () => {
@@ -636,7 +641,14 @@ const useInvest = ({
     } else {
       handleWithdraw().catch(handleError)
     }
-  }, [direction, handleDeposit, handleValidate, handleWithdraw])
+  }, [
+    direction,
+    handleDeposit,
+    handleValidate,
+    handleWithdraw,
+    setError,
+    setWalletPrompting,
+  ])
 
   const estimateApproveGas = useCallback(
     async (amount: BigNumber) => {
@@ -776,8 +788,6 @@ const useInvest = ({
     formWithDirection,
     {
       info,
-      error,
-      isWalletPrompting,
       isSlippageOpen,
       gasPrice,
       swapPrice,
@@ -786,10 +796,8 @@ const useInvest = ({
       slippage,
       direction,
       updateAllowance,
-      setWalletPrompting,
       setSlippageOpen,
       setSlippage,
-      setError,
       handleDirectionChange,
       handlePercentageChange,
       handleFromChange,

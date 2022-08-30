@@ -5,7 +5,6 @@ import { WalletConnectConnector } from "@web3-react/walletconnect-connector"
 import { RotateSpinner } from "react-spinners-kit"
 
 import metamask from "assets/wallets/metamask.svg"
-import bsc from "assets/wallets/bsc.svg"
 import walletconnect from "assets/wallets/walletconnect.svg"
 import closeIcon from "assets/icons/modal-close.svg"
 
@@ -132,14 +131,6 @@ export default function ConnectWallet({ isOpen, onRequestClose, onConnect }) {
                 <WalletIcon src={metamask} alt="metamask" />
               )}
               <WalletTitle>Metamask</WalletTitle>
-            </Wallet>
-            <Wallet onClick={() => activateProvider("bsc")}>
-              {isActivating === "bsc" ? (
-                <RotateSpinner size={33} loading />
-              ) : (
-                <WalletIcon src={bsc} alt="bsc" />
-              )}
-              <WalletTitle>Binance Smart Chain</WalletTitle>
             </Wallet>
           </Wallets>
         </Body>

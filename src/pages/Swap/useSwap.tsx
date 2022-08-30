@@ -6,26 +6,34 @@ import {
   useMemo,
   useState,
 } from "react"
+import { parseUnits } from "@ethersproject/units"
+import { BigNumber } from "@ethersproject/bignumber"
+
 import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
+import { SubmitState, SwapDirection, TradeType } from "constants/types"
+
+import { useTransactionAdder } from "state/transactions/hooks"
+import { TransactionType } from "state/transactions/types"
+import useGasTracker from "state/gas/hooks"
+
+import { usePoolContract } from "hooks/usePool"
+import useError from "hooks/useError"
+import usePayload from "hooks/usePayload"
+
 import {
   useERC20,
   usePriceFeedContract,
   useTraderPoolContract,
 } from "hooks/useContract"
-import { parseUnits } from "@ethersproject/units"
-import { BigNumber } from "@ethersproject/bignumber"
-import { usePoolContract } from "hooks/usePool"
-import { useTransactionAdder } from "state/transactions/hooks"
-import { TransactionType } from "state/transactions/types"
+
+import { getPriceImpact, multiplyBignumbers } from "utils/formulas"
+
 import {
   calcSlippage,
   isAddress,
   isTxMined,
   parseTransactionError,
 } from "utils"
-import { getPriceImpact, multiplyBignumbers } from "utils/formulas"
-import { SubmitState, SwapDirection, TradeType } from "constants/types"
-import useGasTracker from "state/gas/hooks"
 
 interface UseSwapProps {
   pool: string | undefined
@@ -36,19 +44,15 @@ interface UseSwapProps {
 interface UseSwapResponse {
   direction: SwapDirection
   gasPrice: string
-  error: string
   oneTokenCost: BigNumber
   oneUSDCost: BigNumber
   receivedAfterSlippage: BigNumber
   priceImpact: string
   slippage: string
   isSlippageOpen: boolean
-  isWalletPrompting: SubmitState
   baseToken: string | undefined
   swapPath: string[]
-  setError: Dispatch<SetStateAction<string>>
   setSlippage: Dispatch<SetStateAction<string>>
-  setWalletPrompting: Dispatch<SetStateAction<SubmitState>>
   setSlippageOpen: Dispatch<SetStateAction<boolean>>
   handleFromChange: (v: string) => void
   handleToChange: (v: string) => void
@@ -75,10 +79,10 @@ const useSwap = ({
   )
   const [priceImpact, setPriceImpact] = useState("0.00")
   const [gasPrice, setGasPrice] = useState("0.00")
-  const [error, setError] = useState("")
+  const [, setError] = useError()
   const [slippage, setSlippage] = useState("0.10")
   const [isSlippageOpen, setSlippageOpen] = useState(false)
-  const [isWalletPrompting, setWalletPrompting] = useState(SubmitState.IDLE)
+  const [, setWalletPrompting] = usePayload()
   const [fromAmount, setFromAmount] = useState("0")
   const [toAmount, setToAmount] = useState("0")
   const [toBalance, setToBalance] = useState(BigNumber.from("0"))
@@ -389,6 +393,8 @@ const useSwap = ({
     transactionOptions,
     addTransaction,
     runUpdate,
+    setError,
+    setWalletPrompting,
   ])
 
   // read and update prices
@@ -456,18 +462,14 @@ const useSwap = ({
     {
       direction,
       gasPrice,
-      error,
       receivedAfterSlippage,
       priceImpact,
       oneTokenCost,
       oneUSDCost,
-      isWalletPrompting,
       isSlippageOpen,
       slippage,
       baseToken: poolInfo?.parameters.baseToken,
       swapPath,
-      setError,
-      setWalletPrompting,
       setSlippage,
       setSlippageOpen,
       handleSubmit,

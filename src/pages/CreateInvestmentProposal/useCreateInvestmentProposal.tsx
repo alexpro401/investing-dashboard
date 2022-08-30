@@ -22,6 +22,8 @@ import { parseTransactionError, isTxMined } from "utils"
 import { BigNumber } from "@ethersproject/bignumber"
 import { IValidationError, SubmitState } from "constants/types"
 import { ZERO } from "constants/index"
+import useError from "hooks/useError"
+import usePayload from "hooks/usePayload"
 
 const useCreateInvestmentProposal = (
   poolAddress: string | undefined
@@ -46,9 +48,8 @@ const useCreateInvestmentProposal = (
     setDescription: (value: string) => void
     setTimestampLimit: (value: number) => void
     setInvestLPLimit: (value: string) => void
-    setSubmiting: Dispatch<SetStateAction<SubmitState>>
+    setSubmiting: (params: SubmitState) => void
     setDateOpen: Dispatch<SetStateAction<boolean>>
-    setError: Dispatch<SetStateAction<string>>
     handleSubmit: () => void
   }
 ] => {
@@ -57,8 +58,8 @@ const useCreateInvestmentProposal = (
 
   const [lpAvailable, setLpAvailable] = useState<BigNumber | undefined>()
   const [isDateOpen, setDateOpen] = useState(false)
-  const [error, setError] = useState("")
-  const [isSubmiting, setSubmiting] = useState(SubmitState.IDLE)
+  const [error, setError] = useError()
+  const [isSubmiting, setSubmiting] = usePayload()
   const [lpAmount, setLpAmount] = useState("")
   const [ticker, setTicker] = useState("")
   const [description, setDescription] = useState("")
@@ -218,10 +219,9 @@ const useCreateInvestmentProposal = (
       setDescription,
       setTimestampLimit,
       setInvestLPLimit,
-      setSubmiting,
       setDateOpen,
+      setSubmiting,
       handleSubmit,
-      setError,
     },
   ]
 }
