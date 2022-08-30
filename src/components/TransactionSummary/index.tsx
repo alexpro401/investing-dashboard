@@ -22,14 +22,15 @@ import {
   StakeInsuranceTransactionInfo,
   UnstakeInsuranceTransactionInfo,
   PrivacyPolicyAgreeTransactionInfo,
+  TraderGetPerformanceFeeTransactionInfo,
   TransactionInfo,
 } from "state/transactions/types"
+import { formatBigNumber } from "utils"
+import { useERC20 } from "hooks/useContract"
 import { TradeType, UpdateListType } from "constants/types"
+import { selectWhitelistItem } from "state/pricefeed/selectors"
 
 import FormattedCurrencyAmount from "./FormattedCurrencyAmount"
-
-import { selectWhitelistItem } from "state/pricefeed/selectors"
-import { formatBigNumber } from "utils"
 
 interface IProps {
   info: TransactionInfo
@@ -158,8 +159,9 @@ const CredentialsUpdateSummary: React.FC = () => {
 
 const CreateRiskyProposalSummary: React.FC<{
   info: CreateRiskyProposalTransactionInfo
-}> = () => {
-  return <>Successfully create Risky Proposal</>
+}> = ({ info }) => {
+  const [, token] = useERC20(info.token)
+  return <>Successfully create Risky Proposal for {token?.symbol}</>
 }
 const EditRiskyProposalSummary: React.FC<{
   info: EditRiskyProposalTransactionInfo
@@ -256,6 +258,17 @@ const PrivacyPolicyAgreeSummary: React.FC<{
   return <>Successfully sign privacy policy.</>
 }
 
+const TraderGetPerformanceFeeSummary: React.FC<{
+  info: TraderGetPerformanceFeeTransactionInfo
+}> = ({ info: { baseAmount, _baseTokenSymbol } }) => {
+  return (
+    <>
+      Withdraw commission {formatBigNumber(baseAmount, 18, 6)}{" "}
+      {_baseTokenSymbol}.
+    </>
+  )
+}
+
 const TransactionSummary: React.FC<IProps> = ({ info }) => {
   switch (info.type) {
     case TransactionType.APPROVAL:
@@ -296,6 +309,8 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <UnstakeInsuranceSummary info={info} />
     case TransactionType.USER_AGREED_TO_PRIVACY_POLICY:
       return <PrivacyPolicyAgreeSummary info={info} />
+    case TransactionType.TRADER_GET_PERFORMANCE_FEE:
+      return <TraderGetPerformanceFeeSummary info={info} />
 
     default:
       return null

@@ -1,3 +1,4 @@
+import { BigNumber } from "@ethersproject/bignumber"
 import { TradeType, UpdateListType } from "constants/types"
 
 interface SerializableTransactionReceipt {
@@ -115,9 +116,13 @@ export interface UpdateCredentialsTransactionInfo {
 
 export interface CreateRiskyProposalTransactionInfo {
   type: TransactionType.RISKY_PROPOSAL_CREATE
+  pool: string
+  token: string
 }
 export interface EditRiskyProposalTransactionInfo {
   type: TransactionType.RISKY_PROPOSAL_EDIT
+  proposalId: number
+  pool: string
 }
 export interface DepositRiskyProposalTransactionInfo {
   type: TransactionType.RISKY_PROPOSAL_INVEST
@@ -170,6 +175,19 @@ export interface PrivacyPolicyAgreeTransactionInfo {
   type: TransactionType.USER_AGREED_TO_PRIVACY_POLICY
 }
 
+interface TraderGetPerformanceFee_UI {
+  _baseTokenSymbol: string
+}
+export interface TraderGetPerformanceFee {
+  baseAmount: BigNumber
+  lpAmount: BigNumber
+}
+export interface TraderGetPerformanceFeeTransactionInfo
+  extends TraderGetPerformanceFee,
+    TraderGetPerformanceFee_UI {
+  type: TransactionType.TRADER_GET_PERFORMANCE_FEE
+}
+
 export type TransactionInfo =
   | ApproveTransactionInfo
   | DepositLiquidityTransactionInfo
@@ -191,6 +209,7 @@ export type TransactionInfo =
   | StakeInsuranceTransactionInfo
   | UnstakeInsuranceTransactionInfo
   | PrivacyPolicyAgreeTransactionInfo
+  | TraderGetPerformanceFeeTransactionInfo
 
 export interface TransactionDetails {
   hash: string
