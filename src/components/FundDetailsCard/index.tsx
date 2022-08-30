@@ -29,36 +29,36 @@ const fundTypes = {
 }
 
 interface Props {
-  data: IPoolQuery
+  pool: IPoolQuery
   poolInfo: PoolInfo | null
   children?: ReactNode | null
 }
 
-const FundDetailsCard: FC<Props> = ({ data, poolInfo, children = null }) => {
+const FundDetailsCard: FC<Props> = ({ pool, poolInfo, children = null }) => {
   const [description, setDescription] = useState("")
   const [strategy, setStrategy] = useState("")
-  const [, baseData] = useERC20(data.baseToken)
+  const [, baseToken] = useERC20(pool.baseToken)
 
-  const [{ poolMetadata }] = usePoolMetadata(data.id, data.descriptionURL)
+  const [{ poolMetadata }] = usePoolMetadata(pool.id, pool.descriptionURL)
 
   const creationTime = useMemo(() => {
-    if (!!data) {
-      return format(expandTimestamp(data.creationTime), DATE_FORMAT)
+    if (!!pool) {
+      return format(expandTimestamp(pool.creationTime), DATE_FORMAT)
     }
 
     return "-"
-  }, [data])
+  }, [pool])
 
   const minimalInvestment = useMemo(() => {
-    if (!poolInfo || !baseData) return "-"
+    if (!poolInfo || !baseToken) return "-"
 
     const res = formatEther(poolInfo.parameters.minimalInvestment)
 
     if (res === "0.0" || res === "0.00") {
       return "-"
     }
-    return `${res} ${baseData.symbol}`
-  }, [poolInfo, baseData])
+    return `${res} ${baseToken.symbol}`
+  }, [poolInfo, baseToken])
 
   const emission = useMemo(() => {
     if (!poolInfo) return { unlimited: true, value: "Unlimited" }
@@ -93,14 +93,14 @@ const FundDetailsCard: FC<Props> = ({ data, poolInfo, children = null }) => {
   }, [poolInfo, emission])
 
   const whitelistCount = useMemo(() => {
-    if (!data) return 0
-    return data.privateInvestors.length
-  }, [data])
+    if (!pool) return 0
+    return pool.privateInvestors.length
+  }, [pool])
 
   const adminsCount = useMemo(() => {
-    if (!data) return 0
-    return data.admins.length
-  }, [data])
+    if (!pool) return 0
+    return pool.admins.length
+  }, [pool])
 
   useEffect(() => {
     if (!poolMetadata) return
@@ -135,12 +135,12 @@ const FundDetailsCard: FC<Props> = ({ data, poolInfo, children = null }) => {
       {!emission.unlimited && (
         <Emission
           percent={emissionLeft.percentage}
-          total={`${emission.value} ${data.ticker}`}
-          current={`${emissionLeft.value} ${data.ticker}`}
+          total={`${emission.value} ${pool.ticker}`}
+          current={`${emissionLeft.value} ${pool.ticker}`}
         />
       )}
       <InfoRow label={"Creation date"} value={creationTime} />
-      <InfoRow label={"Type of fund"} value={fundTypes[data.type]} />
+      <InfoRow label={"Type of fund"} value={fundTypes[pool.type]} />
       <InfoRow label={"Min. investment amount"} value={minimalInvestment} />
       <InfoRow label={"Whitelist"} value={`${whitelistCount} adresess`} />
       <InfoRow label={"Fund manager"} value={`${adminsCount} managers`} />

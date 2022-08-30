@@ -8,8 +8,8 @@ import {
   SetStateAction,
 } from "react"
 import { format } from "date-fns"
-import { BigNumber } from "@ethersproject/bignumber"
 import { Contract } from "@ethersproject/contracts"
+import { BigNumber } from "@ethersproject/bignumber"
 import { parseEther, parseUnits } from "@ethersproject/units"
 
 import { useAddToast } from "state/application/hooks"
@@ -73,6 +73,7 @@ interface Props {
   proposalPool: Contract
   proposalId: number
   proposalSymbol?: string
+  poolAddress: string
   successCallback: (
     timestamp: number,
     maxSize: BigNumber,
@@ -100,6 +101,7 @@ const RiskyCardSettings: FC<Props> = ({
   proposalPool,
   proposalId,
   proposalSymbol,
+  poolAddress,
   successCallback,
 }) => {
   const addTransaction = useTransactionAdder()
@@ -203,6 +205,8 @@ const RiskyCardSettings: FC<Props> = ({
 
         const tx = await addTransaction(receipt, {
           type: TransactionType.RISKY_PROPOSAL_EDIT,
+          pool: poolAddress,
+          proposalId,
         })
 
         if (isTxMined(tx)) {

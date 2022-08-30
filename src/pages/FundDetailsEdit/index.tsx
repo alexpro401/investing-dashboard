@@ -527,7 +527,7 @@ const FundDetailsEdit: FC = () => {
           current={step}
           pending={stepPending}
           steps={steps}
-          title="Updatig of fund"
+          title="Updating of fund"
         >
           {baseData?.address && (
             <ModalIcons

@@ -6,7 +6,8 @@ import TokenIcon from "components/TokenIcon"
 import ExternalLink from "components/ExternalLink"
 
 import { expandTimestamp } from "utils"
-import { useERC20 } from "hooks/useContract"
+import { ITokenBase } from "constants/interfaces"
+import { DATE_TIME_FORMAT } from "constants/time"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
 import S from "./styled"
@@ -22,17 +23,17 @@ interface IProps {
   info: ITransactionSwap
   chainId?: number
   timestamp?: number
+  toToken?: ITokenBase
+  fromToken?: ITokenBase
 }
 
 const TransactionHistoryCardSwap: React.FC<IProps> = ({
   hash,
-  info,
   chainId,
   timestamp,
+  toToken,
+  fromToken,
 }) => {
-  const [, fromToken] = useERC20(info?.fromToken)
-  const [, toToken] = useERC20(info?.toToken)
-
   const explorerUrl = useMemo<string>(() => {
     if (!chainId || !hash) return ""
     return getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)
@@ -40,29 +41,19 @@ const TransactionHistoryCardSwap: React.FC<IProps> = ({
 
   const datetime = useMemo<string>(() => {
     if (!timestamp) return ""
-    return format(expandTimestamp(timestamp), "MMM dd, y, HH:mm")
+    return format(expandTimestamp(timestamp), DATE_TIME_FORMAT)
   }, [timestamp])
-
-  const fromTokenSymbol = useMemo<string>(() => {
-    if (!fromToken) return ""
-    return fromToken.symbol
-  }, [fromToken])
-
-  const toTokenSymbol = useMemo<string>(() => {
-    if (!toToken) return ""
-    return toToken.symbol
-  }, [toToken])
 
   return (
     <S.Container>
       <Flex>
         <S.CardIcons>
-          <TokenIcon m="0" address={info?.fromToken} size={20} />
-          <TokenIcon m="0" address={info?.toToken} size={20} />
+          <TokenIcon m="0" address={fromToken?.address} size={20} />
+          <TokenIcon m="0" address={toToken?.address} size={20} />
         </S.CardIcons>
 
         <ExternalLink fz="13px" fw="500" color="#2680EB" href={explorerUrl}>
-          Swap {fromTokenSymbol} for {toTokenSymbol}
+          Swap {fromToken?.symbol} for {toToken?.symbol}
         </ExternalLink>
       </Flex>
       <S.CardTime>{datetime}</S.CardTime>

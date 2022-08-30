@@ -472,3 +472,23 @@ export interface GasPriceResponse {
   FastGasPrice: string
   UsdPrice: string
 }
+
+/**
+ * @notice The struct that is returned from the TraderPoolView contract and stores information about the investor
+ * @param commissionUnlockTimestamp the timestamp after which the trader will be allowed to take the commission from this user
+ * @param poolLPBalance the LP token balance of this used excluding proposals balance. The same as calling .balanceOf() function
+ * @param investedBase the amount of base tokens invested into the pool (after commission calculation this might increase)
+ * @param poolUSDShare the equivalent amount of USD that represent the user's pool share
+ * @param poolUSDShare the equivalent amount of base tokens that represent the user's pool share
+ * @param owedBaseCommission the base commission the user will pay if the trader desides to claim commission now
+ * @param owedLPCommission the equivalent LP commission the user will pay if the trader desides to claim commission now
+ */
+export interface IUserFeeInfo {
+  commissionUnlockTimestamp: BigNumber
+  poolLPBalance: BigNumber
+  investedBase: BigNumber
+  poolUSDShare: BigNumber
+  poolBaseShare: BigNumber
+  owedBaseCommission: BigNumber
+  owedLPCommission: BigNumber
+}

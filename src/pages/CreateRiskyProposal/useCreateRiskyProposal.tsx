@@ -173,7 +173,8 @@ const useCreateRiskyProposal = (
 
       const receipt = await addTransaction(createResponse, {
         type: TransactionType.RISKY_PROPOSAL_CREATE,
-        poolId: poolAddress,
+        pool: poolAddress,
+        token: tokenAddress,
       })
 
       if (isTxMined(receipt)) {

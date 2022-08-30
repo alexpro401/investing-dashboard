@@ -284,7 +284,7 @@ const Profile: React.FC<Props> = () => {
               {
                 name: "Details",
                 child: (
-                  <FundDetailsCard poolInfo={poolInfoData} data={poolData} />
+                  <FundDetailsCard poolInfo={poolInfoData} pool={poolData} />
                 ),
               },
             ]}

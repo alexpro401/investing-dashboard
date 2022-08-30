@@ -1,32 +1,30 @@
-import { useNavigate } from "react-router-dom"
-import { FC, useMemo } from "react"
 import { format } from "date-fns"
+import { FC, useMemo } from "react"
+import { useNavigate } from "react-router-dom"
 
 import { expandTimestamp } from "utils"
 import { DATE_FORMAT } from "constants/time"
 
 import Button, { SecondaryButton } from "components/Button"
-
 import { Container, ValueLabel, ArrowIcon } from "./styled"
 
 interface Props {
-  performanceFeePercent: number | string
-  commisionUnlockTime?: number
-  isPerformanceFeeExist: boolean
-  poolAddress?: string
   p?: string
+  hasFee: boolean
+  poolAddress?: string
+  commisionUnlockTime?: number
+  performanceFeePercent: string
 }
 
 const PerformanceFeeCard: FC<Props> = ({
   performanceFeePercent,
   commisionUnlockTime,
-  isPerformanceFeeExist,
+  hasFee,
   poolAddress,
   p = "0",
 }) => {
   const navigate = useNavigate()
 
-  // TODO: can't use this because we have commission for every unique investor
   const commisionUnlockDate = useMemo(() => {
     if (!!commisionUnlockTime) {
       return format(expandTimestamp(commisionUnlockTime), DATE_FORMAT)
@@ -39,7 +37,7 @@ const PerformanceFeeCard: FC<Props> = ({
   }
 
   const button = () => {
-    if (isPerformanceFeeExist) {
+    if (hasFee) {
       return (
         <Button onClick={handleCommissionRedirect} m="0" size="small">
           Performance Fee {performanceFeePercent}%

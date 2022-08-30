@@ -26,6 +26,7 @@ import {
 
 import {
   OwnedPoolsQuery,
+  ManagedPoolsQuery,
   PriceHistoryQuery,
   getPoolsQueryVariables,
 } from "queries"
@@ -60,6 +61,30 @@ export function useOwnedPools(
   }>({
     pause: !isAddress(address),
     query: OwnedPoolsQuery,
+    variables: { address },
+  })
+
+  useEffect(() => {
+    if (pool.fetching || pool.error || !pool.data) return
+    setPools(pool.data.traderPools)
+  }, [pool])
+
+  return [pools, pool.fetching]
+}
+
+/**
+ * Returns managed pools data
+ */
+export function useManagedPools(
+  address: string | null | undefined
+): [IPoolQuery[], boolean] {
+  const [pools, setPools] = useState<IPoolQuery[]>([])
+
+  const [pool] = useQuery<{
+    traderPools: IPoolQuery[]
+  }>({
+    pause: !isAddress(address),
+    query: ManagedPoolsQuery,
     variables: { address },
   })
 
