@@ -12,6 +12,7 @@ const PRICE_HISTORY = `
   absPNL
   percPNL
   timestamp
+  traderUSD
   aggregationType
 `
 

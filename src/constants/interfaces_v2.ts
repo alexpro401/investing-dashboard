@@ -51,6 +51,7 @@ export interface IPriceHistory {
   absPNL: number
   percPNL: number
   timestamp: number
+  traderUSD: number
   aggregationType: number
 }
 

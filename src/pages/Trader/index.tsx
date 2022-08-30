@@ -12,10 +12,10 @@ import FundDetailsCard from "components/FundDetailsCard"
 import FundStatisticsCard from "components/FundStatisticsCard"
 import TabsLight from "components/TabsLight"
 import ProfitLossChart from "components/ProfitLossChart"
+import LockedFundsChart from "components/LockedFundsChart"
 import Header from "components/Header/Layout"
 import { Profiles } from "components/Header/Components"
 import Pools from "components/Header/Pools"
-import AreaChart from "components/AreaChart"
 import PerformanceFeeCard from "components/PerformanceFeeCard"
 import BarChart from "pages/Investor/Bar"
 import IconButton from "components/IconButton"
@@ -25,14 +25,7 @@ import { formatBigNumber } from "utils"
 import { IDetailedChart } from "constants/interfaces"
 import { usePoolQuery, usePoolContract, useTraderPool } from "hooks/usePool"
 
-import {
-  TabCard,
-  Row,
-  MainText,
-  MainValue,
-  Period,
-  ChartPeriods,
-} from "pages/Investor/styled"
+import { TabCard, Row, MainText, MainValue } from "pages/Investor/styled"
 
 import {
   Container,
@@ -47,49 +40,6 @@ import {
   OwnInvestingValue,
   OwnInvestingLink,
 } from "./styled"
-
-const pnlNew: IDetailedChart[] = [
-  {
-    x: "1",
-    y: 0,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "1",
-    y: 0,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "1",
-    y: 0,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "1",
-    y: 0,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "1",
-    y: 0,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-]
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -238,21 +188,7 @@ function Trader(props: Props) {
               name: "Locked funds",
               child: (
                 <>
-                  <AreaChart
-                    multiple
-                    tooltipSize="sm"
-                    height={163}
-                    data={pnlNew}
-                  />
-                  <ChartPeriods>
-                    <Period active>D</Period>
-                    <Period>W</Period>
-                    <Period>M</Period>
-                    <Period>3M</Period>
-                    <Period>6M</Period>
-                    <Period>1Y</Period>
-                    <Period>ALL</Period>
-                  </ChartPeriods>
+                  <LockedFundsChart address={poolAddress} />
                   <Flex full p="15px 0 0">
                     <Row>
                       <MainText>Locked out of investor funds</MainText>

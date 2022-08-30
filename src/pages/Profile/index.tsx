@@ -7,8 +7,8 @@ import MemberMobile from "components/MemberMobile"
 import Button, { SecondaryButton } from "components/Button"
 import FundDetailsCard from "components/FundDetailsCard"
 import FundStatisticsCard from "components/FundStatisticsCard"
-import AreaChart from "components/AreaChart"
 import ProfitLossChart from "components/ProfitLossChart"
+import LockedFundsChart from "components/LockedFundsChart"
 import TabsLight from "components/TabsLight"
 import Header from "components/Header/Layout"
 
@@ -230,21 +230,7 @@ const Profile: React.FC<Props> = () => {
                 name: "Locked funds",
                 child: (
                   <>
-                    <AreaChart
-                      multiple
-                      tooltipSize="lg"
-                      height={163}
-                      data={pnl}
-                    />
-                    <ChartPeriods>
-                      <Period active>D</Period>
-                      <Period>W</Period>
-                      <Period>M</Period>
-                      <Period>3M</Period>
-                      <Period>6M</Period>
-                      <Period>1Y</Period>
-                      <Period>ALL</Period>
-                    </ChartPeriods>
+                    <LockedFundsChart address={poolAddress} />
                     <Flex full p="15px 0 0">
                       <Row>
                         <TextGrey>Locked out of investor funds</TextGrey>
