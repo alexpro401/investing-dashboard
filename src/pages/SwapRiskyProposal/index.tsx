@@ -37,6 +37,7 @@ import { AddButton } from "./styled"
 import useSwapRiskyProposal, {
   UseSwapRiskyParams,
 } from "./useSwapRiskyProposal"
+import { useUserAgreement } from "state/user/hooks"
 
 const basicClient = createClient({
   url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
@@ -70,6 +71,53 @@ const SwapRiskyProposal = () => {
     },
   ] = useSwapRiskyProposal(params)
 
+  const [
+    { processed, agreed, error: termsAgreementError },
+    { setShowAgreement, setProcessed, setError: setTermsAgreementError },
+  ] = useUserAgreement()
+
+  const onSubmit = useCallback(() => {
+    agreed ? handleSubmit() : setShowAgreement(true)
+  }, [agreed, handleSubmit, setShowAgreement])
+
+  const errorIsOpen = useMemo<boolean>(
+    () => !!error.length || !!termsAgreementError.length,
+    [error, termsAgreementError]
+  )
+  const errorMessage = useMemo<string>(
+    () =>
+      error.length > 0
+        ? error
+        : termsAgreementError.length > 0
+        ? termsAgreementError
+        : "",
+    [error, termsAgreementError]
+  )
+
+  const toggleTransactionError = useCallback(() => {
+    if (!!error.length) {
+      return setError("")
+    }
+
+    if (!!termsAgreementError.length) {
+      return setTermsAgreementError("")
+    }
+  }, [error.length, setError, setTermsAgreementError, termsAgreementError])
+
+  const walletPrompting = useMemo<boolean>(
+    () => isWalletPrompting || processed,
+    [isWalletPrompting, processed]
+  )
+
+  const toggleWalletPrompting = useCallback(() => {
+    if (processed) {
+      return setProcessed(false)
+    }
+    if (isWalletPrompting) {
+      return setWalletPrompting(false)
+    }
+  }, [isWalletPrompting, setProcessed, setWalletPrompting, processed])
+
   const handleDirectionChange = useCallback(() => {
     if (!location || !navigate) return
 
@@ -101,7 +149,7 @@ const SwapRiskyProposal = () => {
         <SecondaryButton
           theme="disabled"
           size="large"
-          onClick={handleSubmit}
+          onClick={onSubmit}
           fz={22}
           full
         >
@@ -114,7 +162,7 @@ const SwapRiskyProposal = () => {
       <Button
         size="large"
         theme={params.direction === "deposit" ? "primary" : "warn"}
-        onClick={handleSubmit}
+        onClick={onSubmit}
         fz={22}
         full
       >
@@ -131,7 +179,7 @@ const SwapRiskyProposal = () => {
     to.amount,
     to.symbol,
     params.direction,
-    handleSubmit,
+    onSubmit,
   ])
 
   const yourShare = useMemo(() => {
@@ -356,11 +404,14 @@ const SwapRiskyProposal = () => {
         transition={{ duration: 0.2 }}
       >
         <Payload
-          isOpen={isWalletPrompting}
-          toggle={() => setWalletPrompting(false)}
+          isOpen={walletPrompting}
+          toggle={() => toggleWalletPrompting()}
         />
-        <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
-          {error}
+        <TransactionError
+          isOpen={errorIsOpen}
+          toggle={() => toggleTransactionError()}
+        >
+          {errorMessage}
         </TransactionError>
         {form}
       </Container>

@@ -171,6 +171,10 @@ export interface UnstakeInsuranceTransactionInfo {
   amount: number
 }
 
+export interface PrivacyPolicyAgreeTransactionInfo {
+  type: TransactionType.USER_AGREED_TO_PRIVACY_POLICY
+}
+
 interface TraderGetPerformanceFee_UI {
   _baseTokenSymbol: string
 }
@@ -204,6 +208,7 @@ export type TransactionInfo =
   | EditInvestProposalTransactionInfo
   | StakeInsuranceTransactionInfo
   | UnstakeInsuranceTransactionInfo
+  | PrivacyPolicyAgreeTransactionInfo
   | TraderGetPerformanceFeeTransactionInfo
 
 export interface TransactionDetails {

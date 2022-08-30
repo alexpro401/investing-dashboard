@@ -21,6 +21,7 @@ import {
   EditInvestProposalTransactionInfo,
   StakeInsuranceTransactionInfo,
   UnstakeInsuranceTransactionInfo,
+  PrivacyPolicyAgreeTransactionInfo,
   TraderGetPerformanceFeeTransactionInfo,
   TransactionInfo,
 } from "state/transactions/types"
@@ -251,6 +252,12 @@ const UnstakeInsuranceSummary: React.FC<{
   return <>Unstake insurance {toAmount} DEXE-LP</>
 }
 
+const PrivacyPolicyAgreeSummary: React.FC<{
+  info: PrivacyPolicyAgreeTransactionInfo
+}> = () => {
+  return <>Successfully sign privacy policy.</>
+}
+
 const TraderGetPerformanceFeeSummary: React.FC<{
   info: TraderGetPerformanceFeeTransactionInfo
 }> = ({ info: { baseAmount, _baseTokenSymbol } }) => {
@@ -300,6 +307,8 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <StakeInsuranceSummary info={info} />
     case TransactionType.INSURANCE_UNSTAKE:
       return <UnstakeInsuranceSummary info={info} />
+    case TransactionType.USER_AGREED_TO_PRIVACY_POLICY:
+      return <PrivacyPolicyAgreeSummary info={info} />
     case TransactionType.TRADER_GET_PERFORMANCE_FEE:
       return <TraderGetPerformanceFeeSummary info={info} />
 

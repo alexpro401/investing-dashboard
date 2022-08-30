@@ -26,6 +26,7 @@ import { Flex } from "theme"
 import { accordionSummaryVariants } from "motion/variants"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { SettingsStyled as S } from "./styled"
+import { useUserAgreement } from "state/user/hooks"
 
 interface Values {
   timestampLimit: number
@@ -120,6 +121,8 @@ const RiskyCardSettings: FC<Props> = ({
     maxInvestPrice,
   })
 
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
+
   const onCancel = (): void => {
     setVisible(false)
     setSubmiting(false)
@@ -163,8 +166,9 @@ const RiskyCardSettings: FC<Props> = ({
 
   const handleSubmit = async (e?: MouseEvent<HTMLButtonElement>) => {
     if (e) e.preventDefault()
-
-    if (!proposalPool) {
+    if (!proposalPool) return
+    if (!agreed) {
+      setShowAgreement(true)
       return
     }
 

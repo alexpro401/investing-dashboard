@@ -182,6 +182,13 @@ export function getSignature(nonce, address, lib) {
   return signer.signMessage(nonce)
 }
 
+export function getTypedSignature(address, lib, nonce) {
+  const signer = lib.getSigner(address)
+
+  const { domain, types, message } = nonce
+  return signer._signTypedData(domain, types, message)
+}
+
 export function checkMetamask() {
   //
 }

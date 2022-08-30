@@ -12,6 +12,7 @@ const Button: React.FC<MainButtonProps> = ({
   theme = "primary",
   children,
   onClick,
+  disabled,
 }) => {
   return (
     <Primary
@@ -22,6 +23,7 @@ const Button: React.FC<MainButtonProps> = ({
       br={br}
       full={full}
       color={theme}
+      disabled={disabled}
     >
       <ButtonText>{children}</ButtonText>
     </Primary>
@@ -37,6 +39,7 @@ export const SecondaryButton: React.FC<MainButtonProps> = ({
   full,
   theme = "primary",
   children,
+  disabled,
   onClick,
 }) => {
   const handleClick = () => {
@@ -54,6 +57,7 @@ export const SecondaryButton: React.FC<MainButtonProps> = ({
       fz={fz}
       full={full}
       color={theme}
+      disabled={disabled}
     >
       <ButtonText>{children}</ButtonText>
     </Secondary>
