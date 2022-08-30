@@ -82,17 +82,19 @@ const TermsAgreement: React.FC<Props> = () => {
           name="agree-terms"
           checked={agree}
           onChange={handleCheckbox}
+          label={
+            <S.CheckboxText>
+              I agree to the
+              <S.CheckboxLink>
+                <span> Terms of Use </span>
+              </S.CheckboxLink>
+              and
+              <S.CheckboxLink>
+                <span> Privacy Police </span>
+              </S.CheckboxLink>
+            </S.CheckboxText>
+          }
         />
-        <S.CheckboxText>
-          I agree to the
-          <S.CheckboxLink>
-            <span> Terms of Use </span>
-          </S.CheckboxLink>
-          and
-          <S.CheckboxLink>
-            <span> Privacy Police</span>
-          </S.CheckboxLink>
-        </S.CheckboxText>
       </S.CheckboxContainer>
       <S.ButtonContainer>{button}</S.ButtonContainer>
     </Modal>

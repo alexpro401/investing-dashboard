@@ -35,7 +35,6 @@ const Styled = {
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
-    line-height: 12px;
     letter-spacing: 0.03em;
     color: #e4f2ff;
   `,
