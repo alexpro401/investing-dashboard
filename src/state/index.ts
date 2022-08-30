@@ -10,7 +10,7 @@ import application from "./application/reducer"
 import ipfsMetadata from "./ipfsMetadata/reducer"
 import gas from "./gas/reducer"
 
-const RESET_KEY = "32312e30382e32303232"
+const RESET_KEY = "1661863862054"
 
 const PERSISTED_KEYS: string[] = [
   "user",
