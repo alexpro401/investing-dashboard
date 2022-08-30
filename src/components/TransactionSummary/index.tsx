@@ -23,12 +23,12 @@ import {
   UnstakeInsuranceTransactionInfo,
   TransactionInfo,
 } from "state/transactions/types"
+import { formatBigNumber } from "utils"
+import { useERC20 } from "hooks/useContract"
 import { TradeType, UpdateListType } from "constants/types"
+import { selectWhitelistItem } from "state/pricefeed/selectors"
 
 import FormattedCurrencyAmount from "./FormattedCurrencyAmount"
-
-import { selectWhitelistItem } from "state/pricefeed/selectors"
-import { formatBigNumber } from "utils"
 
 interface IProps {
   info: TransactionInfo
@@ -157,8 +157,9 @@ const CredentialsUpdateSummary: React.FC = () => {
 
 const CreateRiskyProposalSummary: React.FC<{
   info: CreateRiskyProposalTransactionInfo
-}> = () => {
-  return <>Successfully create Risky Proposal</>
+}> = ({ info }) => {
+  const [, token] = useERC20(info.token)
+  return <>Successfully create Risky Proposal for {token?.symbol}</>
 }
 const EditRiskyProposalSummary: React.FC<{
   info: EditRiskyProposalTransactionInfo
