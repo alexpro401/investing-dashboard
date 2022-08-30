@@ -120,6 +120,8 @@ export interface CreateRiskyProposalTransactionInfo {
 }
 export interface EditRiskyProposalTransactionInfo {
   type: TransactionType.RISKY_PROPOSAL_EDIT
+  proposalId: number
+  pool: string
 }
 export interface DepositRiskyProposalTransactionInfo {
   type: TransactionType.RISKY_PROPOSAL_INVEST
