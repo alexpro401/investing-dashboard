@@ -9,11 +9,11 @@ import {
   changeTermsAgreed,
   setAgreementError,
 } from "state/user/actions"
-import { UserRegistry } from "abi"
 import { IUserTerms } from "./types"
-import useContract from "hooks/useContract"
 import { AppDispatch, AppState } from "state"
+import { selectTermsState } from "./selectors"
 import { TransactionType } from "state/transactions/types"
+import { useUserRegistryContract } from "hooks/useContract"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { selectUserRegistryAddress } from "state/contracts/selectors"
 import { getTypedSignature, isTxMined, parseTransactionError } from "utils"
@@ -48,13 +48,11 @@ export function useUserAgreement(): [IUserTerms, IMethods] {
   const { account, library, chainId } = useWeb3React()
 
   const addTransaction = useTransactionAdder()
+  const userRegistry = useUserRegistryContract()
   const userRegistryAddress = useSelector(selectUserRegistryAddress)
-  const userRegistry = useContract(userRegistryAddress, UserRegistry)
 
   const dispatch = useDispatch<AppDispatch>()
-  const userTermsAgreement = useSelector<AppState, AppState["user"]["terms"]>(
-    (state) => state.user.terms
-  )
+  const userTermsAgreement = useSelector(selectTermsState)
 
   const setAgreed = useCallback(
     (agreed: boolean) => {
