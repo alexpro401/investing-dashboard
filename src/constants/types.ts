@@ -39,5 +39,5 @@ export enum SubmitState {
   IDLE = 0,
   SIGN = 1,
   WAIT_CONFIRM = 2,
-  SUCESS = 3,
+  SUCCESS = 3,
 }

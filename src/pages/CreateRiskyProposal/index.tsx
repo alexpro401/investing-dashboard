@@ -21,8 +21,6 @@ import TokenIcon from "components/TokenIcon"
 import Slider from "components/Slider"
 import Tooltip from "components/Tooltip"
 import DatePicker from "components/DatePicker"
-import Payload from "components/Payload"
-import TransactionError from "modals/TransactionError"
 import TransactionSent from "modals/TransactionSent"
 
 import { SubmitState } from "constants/types"
@@ -32,6 +30,8 @@ import { Token } from "constants/interfaces"
 import { selectWhitelist } from "state/pricefeed/selectors"
 import { useERC20 } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
+import { useUserAgreement } from "state/user/hooks"
+import usePayload from "hooks/usePayload"
 
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import { dropdownVariants } from "motion/variants"
@@ -68,7 +68,6 @@ import {
   Grey,
   ValidationError,
 } from "./styled"
-import { useUserAgreement } from "state/user/hooks"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -79,12 +78,12 @@ const isFaqRead = localStorage.getItem("risky-proposal-faq-read") === "true"
 const CreateRiskyProposal: FC = () => {
   const { tokenAddress, poolAddress } = useParams()
 
+  const [payload, updatePayload] = usePayload()
+
   const [
     {
-      error,
       validationErrors,
       proposalCount,
-      isSubmiting,
       lpAvailable,
       positionPrice,
       lpAmount,
@@ -94,8 +93,6 @@ const CreateRiskyProposal: FC = () => {
       instantTradePercentage,
     },
     {
-      setError,
-      setSubmiting,
       setLpAmount,
       setTimestampLimit,
       setInvestLPLimit,
@@ -105,48 +102,7 @@ const CreateRiskyProposal: FC = () => {
     },
   ] = useCreateRiskyProposal(poolAddress, tokenAddress)
 
-  const [
-    { processed, agreed, error: termsAgreementError },
-    { setShowAgreement, setProcessed, setError: setTermsAgreementError },
-  ] = useUserAgreement()
-
-  const errorIsOpen = useMemo<boolean>(
-    () => !!error.length || !!termsAgreementError.length,
-    [error, termsAgreementError]
-  )
-  const errorMessage = useMemo<string>(
-    () =>
-      error.length > 0
-        ? error
-        : termsAgreementError.length > 0
-        ? termsAgreementError
-        : "",
-    [error, termsAgreementError]
-  )
-
-  const toggleTransactionError = useCallback(() => {
-    if (!!error.length) {
-      return setError("")
-    }
-
-    if (!!termsAgreementError.length) {
-      return setTermsAgreementError("")
-    }
-  }, [error.length, setError, setTermsAgreementError, termsAgreementError])
-
-  const walletPrompting = useMemo<boolean>(
-    () => isSubmiting !== SubmitState.IDLE || processed,
-    [isSubmiting, processed]
-  )
-
-  const toggleWalletPrompting = useCallback(() => {
-    if (processed) {
-      return setProcessed(false)
-    }
-    if (isSubmiting) {
-      return setSubmiting(SubmitState.IDLE)
-    }
-  }, [isSubmiting, setProcessed, setSubmiting, processed])
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
   const [isChecked, setChecked] = useState(false)
   const [isDateOpen, setDateOpen] = useState(false)
@@ -176,7 +132,7 @@ const CreateRiskyProposal: FC = () => {
 
   const handleSwapRedirect = () => {
     navigate(`/swap-risky-proposal/${poolAddress}/${proposalCount - 1}/deposit`)
-    setSubmiting(SubmitState.IDLE)
+    updatePayload(SubmitState.IDLE)
   }
 
   const getFieldErrors = (name: string) => {
@@ -403,8 +359,8 @@ const CreateRiskyProposal: FC = () => {
 
   const tradeModal = (
     <TransactionSent
-      isOpen={SubmitState.SUCESS === isSubmiting}
-      toggle={() => setSubmiting(SubmitState.IDLE)}
+      isOpen={SubmitState.SUCCESS === payload}
+      toggle={() => updatePayload(SubmitState.IDLE)}
       title="Success"
       description="You have successfully created a risk proposal. Deposit LP or trade your token"
     >
@@ -422,17 +378,6 @@ const CreateRiskyProposal: FC = () => {
 
   return (
     <>
-      <Payload isOpen={walletPrompting} toggle={() => toggleWalletPrompting()}>
-        {(SubmitState.SIGN === isSubmiting || processed) &&
-          "Open your wallet and sign transaction"}
-        {SubmitState.WAIT_CONFIRM === isSubmiting && "Waiting for confirmation"}
-      </Payload>
-      <TransactionError
-        isOpen={errorIsOpen}
-        toggle={() => toggleTransactionError()}
-      >
-        {errorMessage}
-      </TransactionError>
       {tradeModal}
       <Header>Create risky proposal</Header>
       <Container>

@@ -1,15 +1,23 @@
 import Confirm from "components/Confirm"
-import { FC } from "react"
+import { SubmitState } from "constants/types"
+import usePayload from "hooks/usePayload"
+import { FC, useCallback } from "react"
 import { SpinnerCircularFixed } from "spinners-react"
 
 import { Text } from "./styled"
 
-const Payload: FC<{
-  isOpen: boolean
-  toggle: () => void
-}> = ({ children, isOpen, toggle }) => {
+const Payload: FC = () => {
+  const [payload, updatePayload] = usePayload()
+
+  const isModalOpen =
+    SubmitState.SIGN === payload || SubmitState.WAIT_CONFIRM === payload
+
+  const toggle = useCallback(() => {
+    updatePayload(SubmitState.IDLE)
+  }, [updatePayload])
+
   return (
-    <Confirm isOpen={isOpen} toggle={toggle} title="Waiting">
+    <Confirm isOpen={isModalOpen} toggle={toggle} title="Waiting">
       <SpinnerCircularFixed
         size={100}
         style={{
@@ -21,7 +29,12 @@ const Payload: FC<{
         color="#8DEED3"
         secondaryColor="#0D1320"
       />
-      <Text>{children || "Open your wallet and sign transaction"}</Text>
+      <Text>
+        {" "}
+        {SubmitState.SIGN === payload &&
+          "Open your wallet and sign transaction"}
+        {SubmitState.WAIT_CONFIRM === payload && "Waiting for confirmation"}
+      </Text>
     </Confirm>
   )
 }

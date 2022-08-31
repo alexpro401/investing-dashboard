@@ -160,6 +160,11 @@ export interface EditInvestProposalTransactionInfo {
   ipfsPath: string
   investLpAmountRaw: string
 }
+export interface DepositInvestProposalTransactionInfo {
+  type: TransactionType.INVEST_PROPOSAL_INVEST
+  amount: string
+  investLpAmountRaw: string
+}
 
 export interface StakeInsuranceTransactionInfo {
   type: TransactionType.INSURANCE_STAKE
@@ -206,6 +211,7 @@ export type TransactionInfo =
   | SwapRiskyProposalTransactionInfo
   | CreateInvestmentProposalTransactionInfo
   | EditInvestProposalTransactionInfo
+  | DepositInvestProposalTransactionInfo
   | StakeInsuranceTransactionInfo
   | UnstakeInsuranceTransactionInfo
   | PrivacyPolicyAgreeTransactionInfo

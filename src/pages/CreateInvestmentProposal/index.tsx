@@ -1,27 +1,11 @@
-import { FC, useEffect, useState } from "react"
+import { FC } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import getTime from "date-fns/getTime"
-import { addDays, format } from "date-fns/esm"
-import { useWeb3React } from "@web3-react/core"
-import { parseUnits, parseEther } from "@ethersproject/units"
-import { BigNumber } from "@ethersproject/bignumber"
+import { format } from "date-fns/esm"
 import { createClient, Provider as GraphProvider } from "urql"
 
-import { InvestTraderPool } from "abi"
-import useContract from "hooks/useContract"
-import { useTraderPool } from "hooks/usePool"
-import { addInvestProposalMetadata } from "utils/ipfs"
-import { useTransactionAdder } from "state/transactions/hooks"
-import { TransactionType } from "state/transactions/types"
-import { DATE_TIME_FORMAT } from "constants/time"
-import {
-  shortTimestamp,
-  expandTimestamp,
-  formatBigNumber,
-  parseTransactionError,
-  isTxMined,
-} from "utils"
+import { expandTimestamp, formatBigNumber } from "utils"
 
+import { DATE_TIME_FORMAT } from "constants/time"
 import { Flex } from "theme"
 import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
@@ -30,11 +14,11 @@ import Input from "components/Input"
 import TextArea from "components/TextArea"
 import Tooltip from "components/Tooltip"
 import DatePicker from "components/DatePicker"
-import Payload from "components/Payload"
-import TransactionError from "modals/TransactionError"
 
 import close from "assets/icons/close-big.svg"
 import calendar from "assets/icons/calendar.svg"
+
+import useCreateInvestmentProposal from "./useCreateInvestmentProposal"
 
 import {
   Container,
@@ -51,144 +35,79 @@ import {
   White,
   Grey,
   SymbolsLeft,
+  ValidationError,
 } from "./styled"
+import { SubmitState } from "constants/types"
+import TransactionSent from "modals/TransactionSent"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
 })
 
-const useCreateInvestmentProposal = (): [
-  {
-    lpAmount: string
-    ticker: string
-    description: string
-    timestampLimit: number
-    investLPLimit: string
-  },
-  {
-    setLpAmount: (value: string) => void
-    setTicker: (value: string) => void
-    setDescription: (value: string) => void
-    setTimestampLimit: (value: number) => void
-    setInvestLPLimit: (value: string) => void
-  }
-] => {
-  const initialTimeLimit = shortTimestamp(getTime(addDays(new Date(), 30)))
-
-  const [lpAmount, setLpAmount] = useState("")
-  const [ticker, setTicker] = useState("")
-  const [description, setDescription] = useState("")
-  const [timestampLimit, setTimestampLimit] = useState(initialTimeLimit)
-  const [investLPLimit, setInvestLPLimit] = useState("")
-
-  return [
-    { lpAmount, ticker, description, timestampLimit, investLPLimit },
-    {
-      setLpAmount,
-      setTicker,
-      setDescription,
-      setTimestampLimit,
-      setInvestLPLimit,
-    },
-  ]
-}
-
 const CreateInvestmentProposal: FC = () => {
+  const { poolAddress } = useParams()
   const [
-    { lpAmount, ticker, description, timestampLimit, investLPLimit },
+    {
+      lpAmount,
+      ticker,
+      description,
+      timestampLimit,
+      investLPLimit,
+      isSubmiting,
+      isDateOpen,
+      lpAvailable,
+      validationErrors,
+      totalProposals,
+      poolSymbol,
+    },
     {
       setLpAmount,
       setTicker,
       setDescription,
       setTimestampLimit,
       setInvestLPLimit,
+      setSubmiting,
+      handleSubmit,
+      setDateOpen,
     },
-  ] = useCreateInvestmentProposal()
+  ] = useCreateInvestmentProposal(poolAddress)
 
-  const { poolAddress } = useParams()
   const navigate = useNavigate()
-  const { account, library } = useWeb3React()
-  const traderPool = useTraderPool(poolAddress)
 
-  const [error, setError] = useState("")
-  const [isSubmiting, setSubmiting] = useState(false)
-  const [isDateOpen, setDateOpen] = useState(false)
-  const [lpAvailable, setLpAvailable] = useState<BigNumber | undefined>()
-
-  const investTraderPool = useContract(poolAddress, InvestTraderPool)
-
-  const addTransaction = useTransactionAdder()
-
-  useEffect(() => {
-    if (!traderPool || !account) return
-
-    const getBalance = async () => {
-      const lpAvailable: BigNumber = await traderPool.balanceOf(account)
-      setLpAvailable(lpAvailable)
-    }
-
-    getBalance().catch(console.error)
-  }, [traderPool, account])
-
-  const handleSubmit = () => {
-    if (!investTraderPool || !traderPool) return
-
-    const createInvestProposal = async () => {
-      setSubmiting(true)
-      setError("")
-      const amount = parseEther(lpAmount).toHexString()
-
-      const divests = await traderPool.getDivestAmountsAndCommissions(
-        account,
-        amount
-      )
-
-      const ipfsReceipt = await addInvestProposalMetadata(
-        ticker,
-        description,
-        account
-      )
-
-      const investLPLimitHex = parseUnits(investLPLimit, 18).toHexString()
-
-      const createReceipt = await investTraderPool.createProposal(
-        ipfsReceipt.path,
-        amount,
-        [timestampLimit, investLPLimitHex],
-        divests.receptions.receivedAmounts
-      )
-
-      const receipt = await addTransaction(createReceipt, {
-        type: TransactionType.INVEST_PROPOSAL_CREATE,
-        amount,
-        ipfsPath: ipfsReceipt.path,
-        investLpAmountRaw: investLPLimitHex,
-      })
-
-      if (isTxMined(receipt)) {
-        setSubmiting(false)
-      }
-    }
-
-    createInvestProposal().catch((error) => {
-      setSubmiting(false)
-      console.error(error)
-
-      if (!!error && !!error.data && !!error.data.message) {
-        setError(error.data.message)
-      } else {
-        const errorMessage = parseTransactionError(error.toString())
-        !!errorMessage && setError(errorMessage)
-      }
-    })
+  const handleInvestRedirect = () => {
+    navigate(`/invest-investment-proposal/${poolAddress}/${totalProposals - 1}`)
   }
+
+  const getFieldErrors = (name: string) => {
+    return validationErrors
+      .filter((error) => error.field === name)
+      .map((error) => (
+        <ValidationError key={error.field}>{error.message}</ValidationError>
+      ))
+  }
+
+  const successModal = (
+    <TransactionSent
+      isOpen={SubmitState.SUCCESS === isSubmiting}
+      toggle={() => setSubmiting(SubmitState.IDLE)}
+      title="Success"
+      description="You have successfully created an invest proposal."
+    >
+      <Button
+        onClick={handleInvestRedirect}
+        size="large"
+        theme="primary"
+        fz={22}
+        full
+      >
+        Invest in proposal
+      </Button>
+    </TransactionSent>
+  )
 
   return (
     <>
-      <Payload isOpen={isSubmiting} toggle={() => setSubmiting(false)} />
-      <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
-        {error}
-      </TransactionError>
+      {successModal}
       <Header>Create invest proposal</Header>
       <Container>
         <Card>
@@ -276,7 +195,13 @@ const CreateInvestmentProposal: FC = () => {
                   value={investLPLimit}
                   onChange={setInvestLPLimit}
                   placeholder="---"
+                  rightIcon={
+                    <Flex>
+                      <Grey>{poolSymbol}</Grey>
+                    </Flex>
+                  }
                 />
+                {getFieldErrors("investLPLimit")}
               </Row>
               <Row>
                 <Flex p="0 5px 0 0" full>
@@ -295,14 +220,15 @@ const CreateInvestmentProposal: FC = () => {
                   rightIcon={
                     <Flex>
                       <White>{formatBigNumber(lpAvailable)}</White>
-                      <Grey>LP</Grey>
+                      <Grey>{poolSymbol}</Grey>
                     </Flex>
                   }
                 />
+                {getFieldErrors("lpAmount")}
               </Row>
               <Flex full p="20px 0 0">
                 <Button onClick={handleSubmit} full size="large">
-                  Create risky proposal
+                  Create investment proposal
                 </Button>
               </Flex>
             </Body>

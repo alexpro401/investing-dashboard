@@ -34,9 +34,6 @@ const FundDetailsFee: FC = () => {
   const [
     [poolData, poolInfo],
     {
-      error,
-      isSubmiting,
-
       optimizeWithdrawal,
 
       fundCommissionPercentage,
@@ -62,7 +59,7 @@ const FundDetailsFee: FC = () => {
       netInvestorsProfitDEXE,
       netInvestorsProfitPercentage,
     },
-    { setError, setSubmiting, setOptimizeWithdrawal, withdrawCommission },
+    { setOptimizeWithdrawal, withdrawCommission },
   ] = useFundFee(poolAddress)
 
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()
@@ -84,17 +81,6 @@ const FundDetailsFee: FC = () => {
 
   return (
     <>
-      <Payload
-        isOpen={isSubmiting !== SubmitState.IDLE}
-        toggle={() => setSubmiting(SubmitState.IDLE)}
-      >
-        {SubmitState.SIGN === isSubmiting &&
-          "Open your wallet and sign transaction"}
-        {SubmitState.WAIT_CONFIRM === isSubmiting && "Waiting for confirmation"}
-      </Payload>
-      <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
-        {error}
-      </TransactionError>
       <S.Container>
         <S.FeeDateCard>
           <S.FeeDateText>

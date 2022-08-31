@@ -17,11 +17,3 @@ export const changeTermsAgreed = createAction<{
 export const showAgreementModal = createAction<{
   show: boolean
 }>("user/show-terms-agreement-modal")
-
-export const processedAgreement = createAction<{
-  processed: boolean
-}>("user/processed-terms-agreement-sign")
-
-export const setAgreementError = createAction<{
-  error: string
-}>("user/set-terms-agreement-error")

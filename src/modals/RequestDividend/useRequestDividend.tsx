@@ -11,7 +11,7 @@ export interface DividendToken {
 
 const useRequestDividend = (poolAddress: string, proposalId: string) => {
   const [poolIcon, poolInfo] = usePoolIcon(poolAddress, 38)
-  const proposal = useInvestProposal(poolAddress, proposalId)
+  const [proposal] = useInvestProposal(poolAddress, proposalId)
   const [{ investProposalMetadata }] = useInvestProposalMetadata(
     poolAddress,
     proposal?.proposalInfo.descriptionURL

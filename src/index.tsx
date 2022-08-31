@@ -13,6 +13,8 @@ import App from "pages/App"
 import SideBar from "components/Sidebar"
 import Alert from "components/Alert"
 import ToastContainer from "components/Toasts"
+import Payload from "components/Payload"
+import TransactionError from "modals/TransactionError"
 import TermsAgreement from "modals/TermsAgreement"
 
 import SideBarContext from "context/SideBarContext"
@@ -64,6 +66,8 @@ const GlobalComponents = () => (
     <Alert />
     <ToastContainer />
     <TermsAgreement />
+    <Payload />
+    <TransactionError />
   </>
 )
 

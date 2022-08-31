@@ -19,6 +19,7 @@ import {
   SwapRiskyProposalTransactionInfo,
   CreateInvestmentProposalTransactionInfo,
   EditInvestProposalTransactionInfo,
+  DepositInvestProposalTransactionInfo,
   StakeInsuranceTransactionInfo,
   UnstakeInsuranceTransactionInfo,
   PrivacyPolicyAgreeTransactionInfo,
@@ -235,6 +236,12 @@ const EditInvestProposalSummary: React.FC<{
   const amount = formatBigNumber(BigNumber.from(investLpAmountRaw))
   return <>Update Invest Proposal with {amount} of LP tokens</>
 }
+const DepositInvestProposalSummary: React.FC<{
+  info: DepositInvestProposalTransactionInfo
+}> = ({ info: { investLpAmountRaw } }) => {
+  const amount = formatBigNumber(BigNumber.from(investLpAmountRaw))
+  return <>Stake Invest Proposal LP2 tokens with {amount} LP tokens</>
+}
 
 const StakeInsuranceSummary: React.FC<{
   info: StakeInsuranceTransactionInfo
@@ -303,6 +310,8 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <CreateInvestmentProposalSummary info={info} />
     case TransactionType.INVEST_PROPOSAL_EDIT:
       return <EditInvestProposalSummary info={info} />
+    case TransactionType.INVEST_PROPOSAL_INVEST:
+      return <DepositInvestProposalSummary info={info} />
     case TransactionType.INSURANCE_STAKE:
       return <StakeInsuranceSummary info={info} />
     case TransactionType.INSURANCE_UNSTAKE:

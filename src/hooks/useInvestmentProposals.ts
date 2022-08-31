@@ -1,9 +1,13 @@
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import debounce from "lodash.debounce"
 
-import { InvestProposal } from "constants/interfaces_v2"
+import {
+  InvestProposal,
+  InvestProposalInvestmentsInfo,
+} from "constants/interfaces_v2"
 import { useInvestProposalContract } from "hooks/useContract"
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
+import useForceUpdate from "./useForceUpdate"
 
 interface IPayload {
   data: InvestProposal[]
@@ -52,7 +56,8 @@ function useInvestProposals(poolAddress?: string): [IPayload, () => void] {
 export function useInvestProposal(
   poolAddress?: string,
   index?: string
-): InvestProposal | undefined {
+): [InvestProposal | undefined, () => void] {
+  const [updateObserver, update] = useForceUpdate()
   const [proposal, setProposal] = useState<InvestProposal | undefined>()
   const [traderPoolInvestProposal] = useInvestProposalContract(poolAddress)
 
@@ -69,9 +74,32 @@ export function useInvestProposal(
         console.log(e)
       }
     })()
-  }, [index, traderPoolInvestProposal])
+  }, [index, traderPoolInvestProposal, updateObserver])
 
-  return proposal
+  return [proposal, update]
+}
+
+export function useActiveInvestmentsInfo(
+  poolAddress?: string,
+  account?: string | null | undefined,
+  index?: string
+) {
+  const [info, setInfo] = useState<InvestProposalInvestmentsInfo | undefined>()
+  const [proposal] = useInvestProposalContract(poolAddress)
+
+  useEffect(() => {
+    if (!proposal || !index || !account) return
+    ;(async () => {
+      try {
+        const data = await proposal.getActiveInvestmentsInfo(account, index, 1)
+        if (data.length) {
+          setInfo(data[0])
+        }
+      } catch {}
+    })()
+  }, [proposal, index, account])
+
+  return info
 }
 
 export default useInvestProposals

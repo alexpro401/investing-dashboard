@@ -39,6 +39,8 @@ import { useTransactionAdder } from "state/transactions/hooks"
 import { useERC20, usePriceFeedContract } from "hooks/useContract"
 import { IPoolQuery, PoolInfo, IUserFeeInfo } from "constants/interfaces_v2"
 import { usePoolContract, usePoolQuery, useTraderPool } from "hooks/usePool"
+import usePayload from "hooks/usePayload"
+import useError from "hooks/useError"
 
 const BIG_ZERO = BigNumber.from(0)
 const COMMISSION_MULTIPLIER = BigNumber.from(10)
@@ -54,9 +56,6 @@ const defaultAmountState: IAmount = {
 }
 
 interface IPayload {
-  error: string
-  isSubmiting: SubmitState
-
   optimizeWithdrawal: boolean
 
   fundCommissionPercentage: IAmount
@@ -84,8 +83,6 @@ interface IPayload {
 }
 
 interface IMethods {
-  setSubmiting: Dispatch<SetStateAction<SubmitState>>
-  setError: Dispatch<SetStateAction<string>>
   setOptimizeWithdrawal: Dispatch<SetStateAction<boolean>>
   withdrawCommission: () => void
 }
@@ -110,9 +107,9 @@ function useFundFee(
 
   // UI DATA
   // Submitting state
-  const [isSubmiting, setSubmiting] = useState(SubmitState.IDLE)
+  const [, setSubmiting] = usePayload()
   // Error message
-  const [error, setError] = useState("")
+  const [, setError] = useError()
 
   // TECHNICAL DATA (used for calculation purposes only)
 
@@ -601,7 +598,7 @@ function useFundFee(
       })
 
       if (isTxMined(tx)) {
-        setSubmiting(SubmitState.SUCESS)
+        setSubmiting(SubmitState.SUCCESS)
       }
     } catch (error) {
       const errorMessage = parseTransactionError(error)
@@ -614,9 +611,6 @@ function useFundFee(
   return [
     [poolGraphData, poolInfo],
     {
-      error,
-      isSubmiting,
-
       optimizeWithdrawal,
 
       fundCommissionPercentage,
@@ -642,7 +636,7 @@ function useFundFee(
       netInvestorsProfitDEXE,
       netInvestorsProfitPercentage,
     },
-    { setError, setSubmiting, setOptimizeWithdrawal, withdrawCommission },
+    { setOptimizeWithdrawal, withdrawCommission },
   ]
 }
 

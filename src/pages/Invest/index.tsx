@@ -1,18 +1,18 @@
-import { useCallback, useMemo } from "react"
+import { useMemo } from "react"
 import { useParams } from "react-router-dom"
 
 import { Flex } from "theme"
 import Token from "components/Token"
-import Payload from "components/Payload"
 import SwapPrice from "components/SwapPrice"
 import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
-import TransactionError from "modals/TransactionError"
 import ExchangeDivider from "components/Exchange/Divider"
 import CircularProgress from "components/CircularProgress"
 import Button, { SecondaryButton } from "components/Button"
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import TransactionSlippage from "components/TransactionSlippage"
+
+import { useUserAgreement } from "state/user/hooks"
 
 import { createClient, Provider as GraphProvider } from "urql"
 import { cutDecimalPlaces, fromBig, shortenAddress } from "utils"
@@ -35,7 +35,6 @@ import {
 } from "components/Exchange/styled"
 
 import useInvest from "./useInvest"
-import { useUserAgreement } from "state/user/hooks"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -51,19 +50,15 @@ const Invest = () => {
     {
       info,
       allowance,
-      isWalletPrompting,
       isSlippageOpen,
       slippage,
       gasPrice,
       swapPrice,
       swapPriceUSD,
-      error,
       direction,
       updateAllowance,
       setSlippageOpen,
       setSlippage,
-      setError,
-      setWalletPrompting,
       handleDirectionChange,
       handlePercentageChange,
       handleFromChange,
@@ -74,10 +69,7 @@ const Invest = () => {
     initialDirection: "deposit",
   })
 
-  const [
-    { processed, agreed, error: termsAgreementError },
-    { setShowAgreement, setProcessed, setError: setTermsAgreementError },
-  ] = useUserAgreement()
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
   const isAllowanceNeeded =
     direction === "deposit" && !!allowance && allowance.lt(from.amount)
@@ -289,35 +281,6 @@ const Invest = () => {
     </Card>
   )
 
-  const transactionErrorIsOpen = useMemo<boolean>(
-    () => !!error.length || !!termsAgreementError.length,
-    [error, termsAgreementError]
-  )
-
-  const toggleTransactionError = useCallback(() => {
-    if (!!error.length) {
-      return setError("")
-    }
-
-    if (!!termsAgreementError.length) {
-      return setTermsAgreementError("")
-    }
-  }, [error.length, setError, setTermsAgreementError, termsAgreementError])
-
-  const walletPrompting = useMemo<boolean>(
-    () => isWalletPrompting || processed,
-    [isWalletPrompting, processed]
-  )
-
-  const toggleWalletPrompting = useCallback(() => {
-    if (processed) {
-      return setProcessed(false)
-    }
-    if (isWalletPrompting) {
-      return setWalletPrompting(false)
-    }
-  }, [isWalletPrompting, setProcessed, setWalletPrompting, processed])
-
   return (
     <>
       <Header>{shortenAddress(poolAddress)}</Header>
@@ -327,16 +290,6 @@ const Invest = () => {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        <Payload
-          isOpen={walletPrompting}
-          toggle={() => toggleWalletPrompting()}
-        />
-        <TransactionError
-          isOpen={transactionErrorIsOpen}
-          toggle={() => toggleTransactionError()}
-        >
-          {error}
-        </TransactionError>
         {form}
       </Container>
     </>

@@ -12,8 +12,6 @@ import Button, { SecondaryButton } from "components/Button"
 import CircularProgress from "components/CircularProgress"
 import TransactionSlippage from "components/TransactionSlippage"
 import Header from "components/Header/Layout"
-import Payload from "components/Payload"
-import TransactionError from "modals/TransactionError"
 
 import { createClient, Provider as GraphProvider } from "urql"
 
@@ -59,17 +57,13 @@ const Swap = () => {
     {
       direction,
       gasPrice,
-      error,
       receivedAfterSlippage,
       priceImpact,
       oneTokenCost,
       oneUSDCost,
       isSlippageOpen,
-      isWalletPrompting,
       slippage,
       swapPath,
-      setError,
-      setWalletPrompting,
       setSlippage,
       setSlippageOpen,
       handleFromChange,
@@ -83,52 +77,11 @@ const Swap = () => {
     to: outputToken,
   })
 
-  const [
-    { processed, agreed, error: termsAgreementError },
-    { setShowAgreement, setProcessed, setError: setTermsAgreementError },
-  ] = useUserAgreement()
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
   const onSubmit = useCallback(() => {
     agreed ? handleSubmit() : setShowAgreement(true)
   }, [agreed, handleSubmit, setShowAgreement])
-
-  const errorIsOpen = useMemo<boolean>(
-    () => !!error.length || !!termsAgreementError.length,
-    [error, termsAgreementError]
-  )
-  const errorMessage = useMemo<string>(
-    () =>
-      error.length > 0
-        ? error
-        : termsAgreementError.length > 0
-        ? termsAgreementError
-        : "",
-    [error, termsAgreementError]
-  )
-
-  const toggleTransactionError = useCallback(() => {
-    if (!!error.length) {
-      return setError("")
-    }
-
-    if (!!termsAgreementError.length) {
-      return setTermsAgreementError("")
-    }
-  }, [error.length, setError, setTermsAgreementError, termsAgreementError])
-
-  const walletPrompting = useMemo<boolean>(
-    () => isWalletPrompting || processed,
-    [isWalletPrompting, processed]
-  )
-
-  const toggleWalletPrompting = useCallback(() => {
-    if (processed) {
-      return setProcessed(false)
-    }
-    if (isWalletPrompting) {
-      return setWalletPrompting(false)
-    }
-  }, [isWalletPrompting, setProcessed, setWalletPrompting, processed])
 
   const handleDirectionChange = useCallback(() => {
     navigate(
@@ -401,16 +354,6 @@ const Swap = () => {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        <Payload
-          isOpen={walletPrompting}
-          toggle={() => toggleWalletPrompting()}
-        />
-        <TransactionError
-          isOpen={errorIsOpen}
-          toggle={() => toggleTransactionError()}
-        >
-          {errorMessage}
-        </TransactionError>
         {form}
       </Container>
     </>

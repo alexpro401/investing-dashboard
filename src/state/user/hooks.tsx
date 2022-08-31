@@ -5,9 +5,7 @@ import { useDispatch, useSelector } from "react-redux"
 import {
   updateUserProMode,
   showAgreementModal,
-  processedAgreement,
   changeTermsAgreed,
-  setAgreementError,
 } from "state/user/actions"
 import { IUserTerms } from "./types"
 import { AppDispatch, AppState } from "state"
@@ -17,6 +15,9 @@ import { useUserRegistryContract } from "hooks/useContract"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { selectUserRegistryAddress } from "state/contracts/selectors"
 import { getTypedSignature, isTxMined, parseTransactionError } from "utils"
+import usePayload from "hooks/usePayload"
+import useError from "hooks/useError"
+import { SubmitState } from "constants/types"
 
 const privacyHash = process.env.REACT_APP_PRIVACY_POLICY_HASH
 
@@ -38,8 +39,6 @@ export function useUserProMode(): [boolean, () => void] {
 }
 
 interface IMethods {
-  setError: (p: string) => void
-  setProcessed: (p: boolean) => void
   setShowAgreement: (s: boolean) => void
   onAgree: () => void
 }
@@ -47,6 +46,8 @@ interface IMethods {
 export function useUserAgreement(): [IUserTerms, IMethods] {
   const { account, library, chainId } = useWeb3React()
 
+  const [, updatePayload] = usePayload()
+  const [, updateError] = useError()
   const addTransaction = useTransactionAdder()
   const userRegistry = useUserRegistryContract()
   const userRegistryAddress = useSelector(selectUserRegistryAddress)
@@ -64,20 +65,6 @@ export function useUserAgreement(): [IUserTerms, IMethods] {
   const setShowAgreement = useCallback(
     (show: boolean) => {
       dispatch(showAgreementModal({ show }))
-    },
-    [dispatch]
-  )
-
-  const setProcessed = useCallback(
-    (processed: boolean) => {
-      dispatch(processedAgreement({ processed }))
-    },
-    [dispatch]
-  )
-
-  const setError = useCallback(
-    (error: string) => {
-      dispatch(setAgreementError({ error }))
     },
     [dispatch]
   )
@@ -107,7 +94,7 @@ export function useUserAgreement(): [IUserTerms, IMethods] {
 
   const onAgree = useCallback(async () => {
     if (!userRegistry) return
-    setProcessed(true)
+    updatePayload(SubmitState.SIGN)
     try {
       const signature = await getSignature()
       const tx = await userRegistry.agreeToPrivacyPolicy(signature)
@@ -116,32 +103,30 @@ export function useUserAgreement(): [IUserTerms, IMethods] {
       })
 
       if (isTxMined(receipt)) {
-        setError("")
+        updateError("")
         setAgreed(true)
         setShowAgreement(false)
+        updatePayload(SubmitState.IDLE)
       }
     } catch (error: any) {
       if (!!error && !!error.data && !!error.data.message) {
-        setError(error.data.message)
+        updateError(error.data.message)
       } else {
         const errorMessage = parseTransactionError(error.toString())
-        !!errorMessage && setError(errorMessage)
+        !!errorMessage && updateError(errorMessage)
       }
     } finally {
-      setProcessed(false)
+      updatePayload(SubmitState.IDLE)
     }
   }, [
     addTransaction,
     getSignature,
     setAgreed,
-    setError,
-    setProcessed,
+    updateError,
+    updatePayload,
     setShowAgreement,
     userRegistry,
   ])
 
-  return [
-    userTermsAgreement,
-    { setShowAgreement, setProcessed, setError, onAgree },
-  ]
+  return [userTermsAgreement, { setShowAgreement, onAgree }]
 }

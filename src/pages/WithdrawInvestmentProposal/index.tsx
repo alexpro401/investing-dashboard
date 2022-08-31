@@ -60,10 +60,7 @@ function WithdrawInvestmentProposal() {
     },
   ] = useWithdrawInvestmentProposal(poolAddress, proposalId)
 
-  const [
-    { processed, agreed, error: termsAgreementError },
-    { setShowAgreement, setProcessed, setError: setTermsAgreementError },
-  ] = useUserAgreement()
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
   const onSubmit = useCallback(() => {
     agreed ? handleSubmit() : setShowAgreement(true)

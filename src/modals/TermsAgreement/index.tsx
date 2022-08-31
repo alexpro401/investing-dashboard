@@ -11,8 +11,7 @@ import S from "./styled"
 interface Props {}
 
 const TermsAgreement: React.FC<Props> = () => {
-  const [{ processed, showAgreement }, { setShowAgreement, onAgree }] =
-    useUserAgreement()
+  const [{ showAgreement }, { setShowAgreement, onAgree }] = useUserAgreement()
 
   const toggleView = useCallback(() => {
     setShowAgreement(!showAgreement)
@@ -25,7 +24,7 @@ const TermsAgreement: React.FC<Props> = () => {
   }
 
   const button = useMemo(() => {
-    if (agree && !processed) {
+    if (agree) {
       return (
         <Button full onClick={onAgree}>
           Sing and proceed
@@ -38,7 +37,7 @@ const TermsAgreement: React.FC<Props> = () => {
         Sing and proceed
       </SecondaryButton>
     )
-  }, [agree, processed, onAgree])
+  }, [agree, onAgree])
 
   return (
     <Modal
