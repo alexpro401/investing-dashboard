@@ -41,13 +41,6 @@ export default [
   },
   {
     inputs: [],
-    name: "GOV_POOL_REGISTRY_NAME",
-    outputs: [{ internalType: "string", name: "", type: "string" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "INSURANCE_NAME",
     outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
@@ -62,14 +55,14 @@ export default [
   },
   {
     inputs: [],
-    name: "PRICE_FEED_NAME",
+    name: "POOL_REGISTRY_NAME",
     outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
-    name: "TRADER_POOL_REGISTRY_NAME",
+    name: "PRICE_FEED_NAME",
     outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
@@ -111,7 +104,7 @@ export default [
   },
   {
     inputs: [],
-    name: "__ContractsRegistry_init",
+    name: "__OwnableContractsRegistry_init",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -165,13 +158,6 @@ export default [
     type: "function",
   },
   {
-    inputs: [],
-    name: "getGovPoolRegistryContract",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [{ internalType: "string", name: "name", type: "string" }],
     name: "getImplementation",
     outputs: [{ internalType: "address", name: "", type: "address" }],
@@ -194,6 +180,13 @@ export default [
   },
   {
     inputs: [],
+    name: "getPoolRegistryContract",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getPriceFeedContract",
     outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
@@ -202,13 +195,6 @@ export default [
   {
     inputs: [],
     name: "getProxyUpgrader",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getTraderPoolRegistryContract",
     outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",

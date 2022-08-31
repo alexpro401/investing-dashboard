@@ -89,7 +89,7 @@ export default [
   },
   {
     inputs: [
-      { internalType: "bool", name: "withValidators", type: "bool" },
+      { internalType: "bool", name: "withDistributionProposal", type: "bool" },
       {
         components: [
           {
@@ -104,6 +104,11 @@ export default [
                   {
                     internalType: "bool",
                     name: "delegatedVotingAllowed",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "validatorsVote",
                     type: "bool",
                   },
                   { internalType: "uint64", name: "duration", type: "uint64" },
@@ -126,6 +131,26 @@ export default [
                   {
                     internalType: "uint256",
                     name: "minNftBalance",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "address",
+                    name: "rewardToken",
+                    type: "address",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "creationRewards",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "executionReward",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "voteRewardsCoefficient",
                     type: "uint256",
                   },
                 ],
@@ -145,6 +170,11 @@ export default [
                     name: "delegatedVotingAllowed",
                     type: "bool",
                   },
+                  {
+                    internalType: "bool",
+                    name: "validatorsVote",
+                    type: "bool",
+                  },
                   { internalType: "uint64", name: "duration", type: "uint64" },
                   {
                     internalType: "uint64",
@@ -165,6 +195,154 @@ export default [
                   {
                     internalType: "uint256",
                     name: "minNftBalance",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "address",
+                    name: "rewardToken",
+                    type: "address",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "creationRewards",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "executionReward",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "voteRewardsCoefficient",
+                    type: "uint256",
+                  },
+                ],
+                internalType: "struct IGovSettings.ProposalSettings",
+                name: "distributionProposalSettings",
+                type: "tuple",
+              },
+              {
+                components: [
+                  {
+                    internalType: "bool",
+                    name: "earlyCompletion",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "delegatedVotingAllowed",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "validatorsVote",
+                    type: "bool",
+                  },
+                  { internalType: "uint64", name: "duration", type: "uint64" },
+                  {
+                    internalType: "uint64",
+                    name: "durationValidators",
+                    type: "uint64",
+                  },
+                  { internalType: "uint128", name: "quorum", type: "uint128" },
+                  {
+                    internalType: "uint128",
+                    name: "quorumValidators",
+                    type: "uint128",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "minTokenBalance",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "minNftBalance",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "address",
+                    name: "rewardToken",
+                    type: "address",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "creationRewards",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "executionReward",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "voteRewardsCoefficient",
+                    type: "uint256",
+                  },
+                ],
+                internalType: "struct IGovSettings.ProposalSettings",
+                name: "validatorsBalancesSettings",
+                type: "tuple",
+              },
+              {
+                components: [
+                  {
+                    internalType: "bool",
+                    name: "earlyCompletion",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "delegatedVotingAllowed",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "validatorsVote",
+                    type: "bool",
+                  },
+                  { internalType: "uint64", name: "duration", type: "uint64" },
+                  {
+                    internalType: "uint64",
+                    name: "durationValidators",
+                    type: "uint64",
+                  },
+                  { internalType: "uint128", name: "quorum", type: "uint128" },
+                  {
+                    internalType: "uint128",
+                    name: "quorumValidators",
+                    type: "uint128",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "minTokenBalance",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "minNftBalance",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "address",
+                    name: "rewardToken",
+                    type: "address",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "creationRewards",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "executionReward",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "voteRewardsCoefficient",
                     type: "uint256",
                   },
                 ],

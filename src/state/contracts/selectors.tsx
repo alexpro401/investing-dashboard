@@ -36,7 +36,7 @@ export const selectPoolFactoryAddress = createSelector(
 
 export const selectTraderPoolRegistryAddress = createSelector(
   [selectContracts],
-  (contracts) => contracts.TraderPoolRegistry || ""
+  (contracts) => contracts.PoolRegistry || ""
 )
 
 export const selectTreasuryAddress = createSelector(
