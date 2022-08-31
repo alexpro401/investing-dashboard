@@ -4,14 +4,11 @@ import { createClient, Provider as GraphProvider } from "urql"
 
 import IconButton from "components/IconButton"
 import ExchangeInput from "components/Exchange/ExchangeInput"
-import RiskyInvestInput from "components/Exchange/RiskyInvestInput"
 import ExchangeDivider from "components/Exchange/Divider"
 import Button, { SecondaryButton } from "components/Button"
 import CircularProgress from "components/CircularProgress"
-import TransactionSlippage from "components/TransactionSlippage"
 import Header from "components/Header/Layout"
 
-import settings from "assets/icons/settings.svg"
 import close from "assets/icons/close-big.svg"
 
 import {
@@ -31,6 +28,8 @@ import useWithdrawInvestmentProposal from "./useWithdrawInvestmentProposal"
 import { useCallback, useMemo } from "react"
 import SwapPrice from "components/SwapPrice"
 import { useUserAgreement } from "state/user/hooks"
+import { BigNumber } from "@ethersproject/bignumber"
+import { normalizeBigNumber } from "utils"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -40,24 +39,12 @@ function WithdrawInvestmentProposal() {
   const { poolAddress, proposalId } = useParams()
   const [
     {
+      info,
       form: { from, to },
-      isSlippageOpen,
-      oneTokenCost,
-      usdTokenCost,
       gasPrice,
-      fromAmount,
-      toAmount,
-      direction,
-      slippage,
+      baseTokenPrice,
     },
-    {
-      setDirection,
-      setSlippageOpen,
-      setSlippage,
-      handleFromChange,
-      handleSubmit,
-      handlePercentageChange,
-    },
+    { handleFromChange, handleSubmit, handlePercentageChange },
   ] = useWithdrawInvestmentProposal(poolAddress, proposalId)
 
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()
@@ -67,7 +54,7 @@ function WithdrawInvestmentProposal() {
   }, [agreed, handleSubmit, setShowAgreement])
 
   const button = useMemo(() => {
-    if (fromAmount === "0" || toAmount === "0") {
+    if (from.amount === "0") {
       return (
         <SecondaryButton
           theme="disabled"
@@ -81,20 +68,26 @@ function WithdrawInvestmentProposal() {
       )
     }
 
+    if (BigNumber.from(from.amount).gt(from.balance)) {
+      return (
+        <SecondaryButton
+          theme="disabled"
+          size="large"
+          onClick={() => {}}
+          fz={22}
+          full
+        >
+          Inuficient funds
+        </SecondaryButton>
+      )
+    }
+
     return (
-      <Button
-        size="large"
-        theme={direction === "deposit" ? "primary" : "warn"}
-        onClick={onSubmit}
-        fz={22}
-        full
-      >
-        {direction === "deposit"
-          ? `Stake ${to.symbol}`
-          : `Unstake ${from.symbol}`}
+      <Button size="large" theme="primary" onClick={onSubmit} fz={22} full>
+        Confirm withdraw
       </Button>
     )
-  }, [direction, from.symbol, to.symbol, fromAmount, handleSubmit, toAmount])
+  }, [onSubmit, from.amount, from.balance])
 
   const lastWithdraw = useMemo(() => {
     return (
@@ -123,34 +116,40 @@ function WithdrawInvestmentProposal() {
       <InfoRow>
         <InfoGrey>Fullness:</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>0 {from.symbol}</InfoWhite>
-          <InfoGrey>/0 {from.symbol}</InfoGrey>
+          <InfoWhite>
+            {info.tvl.current} {from.symbol}
+          </InfoWhite>
+          <InfoGrey>
+            /{info.tvl.max} {from.symbol}
+          </InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [from.symbol])
+  }, [from.symbol, info.tvl])
 
   const averageLpPrice = useMemo(() => {
     return (
       <InfoRow>
         <InfoGrey>Average LP price:</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>1 {from.symbol} = 5.96 USD</InfoWhite>
+          <InfoWhite>
+            {info.avgPriceLP.base} {from.symbol} = {info.avgPriceLP.usd} USD
+          </InfoWhite>
         </Flex>
       </InfoRow>
     )
-  }, [from.symbol])
+  }, [from.symbol, info.avgPriceLP.base, info.avgPriceLP.usd])
 
   const expirationDate = useMemo(() => {
     return (
       <InfoRow>
         <InfoGrey>Expiration date:</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>JUN 12,2022, 20:00</InfoWhite>
+          <InfoWhite>{info.expirationDate}</InfoWhite>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [info.expirationDate])
 
   const form = (
     <Card>
@@ -175,10 +174,7 @@ function WithdrawInvestmentProposal() {
         onChange={handleFromChange}
       />
 
-      <ExchangeDivider
-        changeAmount={handlePercentageChange}
-        changeDirection={setDirection}
-      />
+      <ExchangeDivider changeAmount={handlePercentageChange} />
 
       <ExchangeInput
         price={to.price}
@@ -188,6 +184,14 @@ function WithdrawInvestmentProposal() {
         symbol={to.symbol}
         customIcon={to.icon}
         decimal={to.decimals}
+        customBalance={<InfoGrey>My address wallet</InfoGrey>}
+      />
+
+      <SwapPrice
+        gasPrice={gasPrice}
+        toSymbol={from.symbol}
+        fromSymbol="USD"
+        tokensCost={baseTokenPrice}
       />
 
       <Flex full p="16px 0 0">
@@ -205,13 +209,6 @@ function WithdrawInvestmentProposal() {
           {lastWithdrawContent}
         </InfoDropdown>
       </InfoCard>
-
-      <TransactionSlippage
-        slippage={slippage}
-        onChange={setSlippage}
-        isOpen={isSlippageOpen}
-        toggle={(v) => setSlippageOpen(v)}
-      />
     </Card>
   )
 

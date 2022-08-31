@@ -334,13 +334,16 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
         {
           label: "Withdraw",
           onClick: () => {
-            console.log("Withdraw")
+            navigate(
+              `/withdraw-investment-proposal/${poolAddress}/${
+                Number(proposalId) - 1
+              }`
+            )
           },
         },
         {
           label: "Deposit",
           onClick: () => {
-            console.log(proposalId)
             navigate(
               `/invest-investment-proposal/${poolAddress}/${
                 Number(proposalId) - 1
