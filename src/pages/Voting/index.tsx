@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import InsuranceCard from "components/InsuranceCard"
 import {
   Body,
@@ -13,8 +13,8 @@ import {
 import Confirm from "components/Confirm"
 import Icon from "components/Icon"
 import Button, { SecondaryButton } from "components/Button"
-import Payload from "components/Payload"
 import TransactionSent from "modals/TransactionSent"
+import { SubmitState } from "constants/types"
 
 // confirm states
 const confirmStates = {
@@ -32,7 +32,7 @@ const confirmStates = {
 
 const Voting = () => {
   const [votingState, setVotingState] = useState<"" | "up" | "down">("")
-  const [pendingState, setPendingState] = useState(false)
+  const [pendingState, setPendingState] = useState(SubmitState.IDLE)
   const [successState, setSuccessState] = useState(false)
   const isOpen = votingState !== ""
 
@@ -40,10 +40,10 @@ const Voting = () => {
 
   const handleVote = () => {
     setVotingState("")
-    setPendingState(true)
+    setPendingState(SubmitState.SIGN)
 
     setTimeout(() => {
-      setPendingState(false)
+      setPendingState(SubmitState.IDLE)
       setSuccessState(true)
     }, 3 * 1000)
   }
@@ -58,8 +58,6 @@ const Voting = () => {
         <InsuranceCard startvoting={setVotingState} />
         <InsuranceCard startvoting={setVotingState} />
       </Body>
-
-      <Payload isOpen={pendingState} toggle={() => setPendingState(false)} />
 
       <TransactionSent
         title="Success"

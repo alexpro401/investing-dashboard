@@ -1,7 +1,14 @@
 import { createReducer, nanoid } from "@reduxjs/toolkit"
 
 import { DEFAULT_TXN_DISMISS_MS } from "constants/misc"
-import { addToast, hideToast, removeToast } from "./actions"
+import { SubmitState } from "constants/types"
+import {
+  addToast,
+  hideToast,
+  removeToast,
+  updateError,
+  updatePayload,
+} from "./actions"
 import { ToastContent } from "./types"
 
 type ToastList = Array<{
@@ -14,9 +21,15 @@ type ToastList = Array<{
 
 export interface ApplicationState {
   readonly toastList: ToastList
+  readonly payload: SubmitState
+  readonly error: string
 }
 
-export const initialState: ApplicationState = { toastList: [] }
+export const initialState: ApplicationState = {
+  toastList: [],
+  payload: SubmitState.IDLE,
+  error: "",
+}
 
 export default createReducer(initialState, (builder) =>
   builder
@@ -58,5 +71,11 @@ export default createReducer(initialState, (builder) =>
           t.show = false
         }
       })
+    })
+    .addCase(updatePayload, (state, { payload }) => {
+      state.payload = payload.params
+    })
+    .addCase(updateError, (state, { payload }) => {
+      state.error = payload.params
     })
 )

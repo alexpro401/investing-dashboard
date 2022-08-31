@@ -249,8 +249,8 @@ export const PercentButton = styled.div<{ active?: boolean }>`
 
 export const SwapButton = styled.div`
   cursor: pointer;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;

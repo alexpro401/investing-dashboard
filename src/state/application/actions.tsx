@@ -1,9 +1,18 @@
 import { createAction } from "@reduxjs/toolkit"
+import { SubmitState } from "constants/types"
 
-export const addToast = createAction<{ params: any }>("application/addToast")
+export const addToast = createAction<{ params: any }>("application/add-toast")
 
-export const hideToast = createAction<{ params: any }>("application/hideToast")
+export const hideToast = createAction<{ params: any }>("application/hide-toast")
 
 export const removeToast = createAction<{ params: any }>(
-  "application/removeToast"
+  "application/remove-toast"
+)
+
+export const updatePayload = createAction<{ params: SubmitState }>(
+  "application/update-payload"
+)
+
+export const updateError = createAction<{ params: string }>(
+  "application/update-error"
 )

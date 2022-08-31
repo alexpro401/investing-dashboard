@@ -5,4 +5,4 @@ import { GasPriceResponse } from "constants/interfaces_v2"
 export const updateGasData = createAction<{
   chainId: number
   response: GasPriceResponse
-}>("gas/updateGasData")
+}>("gas/update-gas-data")

@@ -13,6 +13,9 @@ import App from "pages/App"
 import SideBar from "components/Sidebar"
 import Alert from "components/Alert"
 import ToastContainer from "components/Toasts"
+import Payload from "components/Payload"
+import TransactionError from "modals/TransactionError"
+import TermsAgreement from "modals/TermsAgreement"
 
 import SideBarContext from "context/SideBarContext"
 import AlertContext from "context/AlertContext"
@@ -22,7 +25,7 @@ import getLibrary from "utils/getLibrary"
 
 import { ContractsRegistryUpdater } from "state/contracts/updater"
 import { PriceFeedUpdater } from "state/pricefeed/updater"
-import { UserPoolsUpdater } from "state/user/updater"
+import { UserPoolsUpdater, UserTermsUpdater } from "state/user/updater"
 import { TransactionUpdater } from "state/transactions/updater"
 import { GasPriceUpdater } from "state/gas/updater"
 import { PoolListUpdater } from "state/pools/updater"
@@ -52,6 +55,7 @@ const GlobalComponents = () => (
   <>
     <ContractsRegistryUpdater />
     <UserPoolsUpdater />
+    <UserTermsUpdater />
     <PoolListUpdater />
     <GasPriceUpdater />
     <PriceFeedUpdater />
@@ -61,6 +65,9 @@ const GlobalComponents = () => (
     <SideBar />
     <Alert />
     <ToastContainer />
+    <TermsAgreement />
+    <Payload />
+    <TransactionError />
   </>
 )
 

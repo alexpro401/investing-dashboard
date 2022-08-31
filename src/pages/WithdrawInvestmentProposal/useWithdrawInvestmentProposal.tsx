@@ -126,7 +126,7 @@ const useWithdrawInvestmentProposal = (
   const [, baseToken] = useERC20(poolInfo?.parameters.baseToken)
   const userRegistry = useUserRegistryContract()
 
-  const { priceUSD: poolPriceUSD, priceBase: poolPriceBase } =
+  const [{ priceUSD: poolPriceUSD, priceBase: poolPriceBase }] =
     usePoolPrice(poolAddress)
   const { priceUSD: riskyPriceUSD, priceBase: riskyPriceBase } =
     useInvestmentPrice(poolAddress, proposalId)

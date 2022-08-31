@@ -12,8 +12,6 @@ import Button, { SecondaryButton } from "components/Button"
 import CircularProgress from "components/CircularProgress"
 import TransactionSlippage from "components/TransactionSlippage"
 import Header from "components/Header/Layout"
-import Payload from "components/Payload"
-import TransactionError from "modals/TransactionError"
 
 import { createClient, Provider as GraphProvider } from "urql"
 
@@ -45,6 +43,7 @@ import {
 
 import useSwap from "./useSwap"
 import { cutDecimalPlaces, fromBig } from "utils"
+import { useUserAgreement } from "state/user/hooks"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -58,17 +57,13 @@ const Swap = () => {
     {
       direction,
       gasPrice,
-      error,
       receivedAfterSlippage,
       priceImpact,
       oneTokenCost,
       oneUSDCost,
       isSlippageOpen,
-      isWalletPrompting,
       slippage,
       swapPath,
-      setError,
-      setWalletPrompting,
       setSlippage,
       setSlippageOpen,
       handleFromChange,
@@ -81,6 +76,12 @@ const Swap = () => {
     from: inputToken,
     to: outputToken,
   })
+
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
+
+  const onSubmit = useCallback(() => {
+    agreed ? handleSubmit() : setShowAgreement(true)
+  }, [agreed, handleSubmit, setShowAgreement])
 
   const handleDirectionChange = useCallback(() => {
     navigate(
@@ -118,7 +119,7 @@ const Swap = () => {
         <SecondaryButton
           theme="disabled"
           size="large"
-          onClick={handleSubmit}
+          onClick={onSubmit}
           fz={22}
           full
         >
@@ -131,7 +132,7 @@ const Swap = () => {
       <Button
         size="large"
         theme={direction === "deposit" ? "primary" : "warn"}
-        onClick={handleSubmit}
+        onClick={onSubmit}
         fz={22}
         full
       >
@@ -142,7 +143,7 @@ const Swap = () => {
         )}
       </Button>
     )
-  }, [from.amount, to.amount, direction, handleSubmit, symbol])
+  }, [from.amount, to.amount, direction, onSubmit, symbol])
 
   const fundPNL = useMemo(() => {
     return (
@@ -353,13 +354,6 @@ const Swap = () => {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        <Payload
-          isOpen={isWalletPrompting}
-          toggle={() => setWalletPrompting(false)}
-        />
-        <TransactionError isOpen={!!error.length} toggle={() => setError("")}>
-          {error}
-        </TransactionError>
         {form}
       </Container>
     </>

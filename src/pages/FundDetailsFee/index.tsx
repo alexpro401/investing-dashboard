@@ -1,21 +1,28 @@
-import { FC } from "react"
+import { FC, useCallback } from "react"
 import { useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
 
 import { useERC20 } from "hooks/useContract"
+import { SubmitState } from "constants/types"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 
 import { Flex } from "theme"
 import Icon from "components/Icon"
 import Amount from "components/Amount"
 import Button from "components/Button"
+import Switch from "components/Switch"
+import Tooltip from "components/Tooltip"
+import Payload from "components/Payload"
 import Accordion from "components/Accordion"
 import AmountRow from "components/Amount/Row"
+import TransactionError from "modals/TransactionError"
 import ProfitLossChart from "components/ProfitLossChart"
 import WithdrawalsHistory from "components/WithdrawalsHistory"
 
 import useFundFee from "./useFundFee"
+
 import S, { PageLoading } from "./styled"
+import { useUserAgreement } from "state/user/hooks"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -27,6 +34,8 @@ const FundDetailsFee: FC = () => {
   const [
     [poolData, poolInfo],
     {
+      optimizeWithdrawal,
+
       fundCommissionPercentage,
       unlockDate,
 
@@ -50,8 +59,14 @@ const FundDetailsFee: FC = () => {
       netInvestorsProfitDEXE,
       netInvestorsProfitPercentage,
     },
-    { withdrawCommission },
+    { setOptimizeWithdrawal, withdrawCommission },
   ] = useFundFee(poolAddress)
+
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
+
+  const onSubmit = useCallback(() => {
+    agreed ? withdrawCommission() : setShowAgreement(true)
+  }, [agreed, withdrawCommission, setShowAgreement])
 
   const [, baseToken] = useERC20(poolData?.baseToken)
 
@@ -174,8 +189,25 @@ const FundDetailsFee: FC = () => {
             </Accordion>
           </Flex>
 
+          <S.OptimizeWithdrawal>
+            <Flex ai="center" jc="flex-start">
+              <Tooltip id="optimize-withdrawal-info">
+                Get funds only from those investors <br /> whose commission
+                covers transaction costs.
+              </Tooltip>
+              <S.OptimizeWithdrawalTitle>
+                Optimization commission withdrawal
+              </S.OptimizeWithdrawalTitle>
+            </Flex>
+            <Switch
+              isOn={optimizeWithdrawal}
+              name="optimize-withdrawal"
+              onChange={(n, s) => setOptimizeWithdrawal(s)}
+            />
+          </S.OptimizeWithdrawal>
+
           <Flex full m="24px 0 0">
-            <Button onClick={withdrawCommission} full size="large">
+            <Button onClick={onSubmit} full size="large">
               Request Performance Fee
             </Button>
           </Flex>

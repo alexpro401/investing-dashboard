@@ -473,6 +473,7 @@ const RiskyProposalCard: FC<Props> = ({
               proposalId={proposalId}
               successCallback={onUpdateRestrictions}
               proposalSymbol={proposalToken?.symbol}
+              poolAddress={poolAddress}
             />
           )}
         </SharedS.Head>

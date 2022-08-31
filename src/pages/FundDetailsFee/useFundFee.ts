@@ -1,26 +1,49 @@
+import {
+  useState,
+  useMemo,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+} from "react"
 import { format } from "date-fns"
 import { useSelector } from "react-redux"
-import { parseEther } from "@ethersproject/units"
-import { useState, useMemo, useEffect } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
+import { parseEther, parseUnits } from "@ethersproject/units"
 
-import { useActiveWeb3React } from "hooks"
-import { DATE_FORMAT } from "constants/time"
-import useCoreProperties from "hooks/useCoreProperties"
-import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import { selectDexeAddress } from "state/contracts/selectors"
-import { IPoolQuery, PoolInfo } from "constants/interfaces_v2"
-import { useERC20, usePriceFeedContract } from "hooks/useContract"
-import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
-import { usePoolContract, usePoolQuery, useTraderPool } from "hooks/usePool"
 import {
   addBignumbers,
   percentageOfBignumbers,
   subtractBignumbers,
   _divideBignumbers,
+  _multiplyBignumbers,
 } from "utils/formulas"
+import {
+  isTxMined,
+  expandTimestamp,
+  formatBigNumber,
+  normalizeBigNumber,
+  parseTransactionError,
+} from "utils"
+import { useActiveWeb3React } from "hooks"
+import { DATE_FORMAT } from "constants/time"
+import { SubmitState } from "constants/types"
+import { ChainMainToken } from "constants/chains"
+import { useAddToast } from "state/application/hooks"
+import { selectGasByChain } from "state/gas/selectors"
+import useCoreProperties from "hooks/useCoreProperties"
+import { TransactionType } from "state/transactions/types"
+import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
+import { selectDexeAddress } from "state/contracts/selectors"
+import { useTransactionAdder } from "state/transactions/hooks"
+import { useERC20, usePriceFeedContract } from "hooks/useContract"
+import { IPoolQuery, PoolInfo, IUserFeeInfo } from "constants/interfaces_v2"
+import { usePoolContract, usePoolQuery, useTraderPool } from "hooks/usePool"
+import usePayload from "hooks/usePayload"
+import useError from "hooks/useError"
 
 const BIG_ZERO = BigNumber.from(0)
+const COMMISSION_MULTIPLIER = BigNumber.from(10)
 
 interface IAmount {
   big: BigNumber
@@ -33,6 +56,8 @@ const defaultAmountState: IAmount = {
 }
 
 interface IPayload {
+  optimizeWithdrawal: boolean
+
   fundCommissionPercentage: IAmount
   unlockDate: string
 
@@ -58,25 +83,38 @@ interface IPayload {
 }
 
 interface IMethods {
+  setOptimizeWithdrawal: Dispatch<SetStateAction<boolean>>
   withdrawCommission: () => void
 }
 
 function useFundFee(
   poolAddress?: string
 ): [[IPoolQuery | undefined, PoolInfo | null], IPayload, IMethods] {
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
 
+  const addToast = useAddToast()
   const priceFeed = usePriceFeedContract()
   const coreProperties = useCoreProperties()
+  const addTransaction = useTransactionAdder()
   const traderPool = useTraderPool(poolAddress)
   const [poolGraphData] = usePoolQuery(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
   const [, baseToken] = useERC20(poolGraphData?.baseToken)
 
+  const gas = useSelector(selectGasByChain(chainId))
   const dexeAddress = useSelector(selectDexeAddress)
   const dexePriceUSD = useTokenPriceOutUSD({ tokenAddress: dexeAddress })
 
+  // UI DATA
+  // Submitting state
+  const [, setSubmiting] = usePayload()
+  // Error message
+  const [, setError] = useError()
+
   // TECHNICAL DATA (used for calculation purposes only)
+
+  // Investors commission info
+  const [_investorsInfo, _setInvestorsInfo] = useState<IUserFeeInfo[]>([])
 
   // Funds under pool management in baseToken (without trader funds)
   const _fundsUnderManagementBase = useMemo<BigNumber>(() => {
@@ -106,6 +144,9 @@ function useFundFee(
     useState<BigNumber>(BIG_ZERO)
 
   // DATA
+
+  // Withdrawal optimization flag
+  const [optimizeWithdrawal, setOptimizeWithdrawal] = useState<boolean>(true)
 
   // Pool commission percentage
   const fundCommissionPercentage = useMemo<IAmount>(() => {
@@ -172,8 +213,6 @@ function useFundFee(
     )
 
     return normalizeBigNumber(res, 18, 6)
-
-    return " ? "
   }, [dexePriceUSD, fundProfitWithoutTraderUSD])
   const fundProfitWithoutTraderPercentage = useMemo<string>(() => {
     if (
@@ -268,7 +307,11 @@ function useFundFee(
     if (!traderPool || !account) return
     ;(async () => {
       try {
-        const usersInfo = await traderPool.getUsersInfo(account, 0, 1000)
+        const usersInfo: IUserFeeInfo[] = await traderPool.getUsersInfo(
+          account,
+          0,
+          1000
+        )
 
         if (usersInfo && usersInfo[1]) {
           const { commissionUnlockTimestamp } = usersInfo[1]
@@ -276,6 +319,12 @@ function useFundFee(
             Number(commissionUnlockTimestamp.toString())
           )
           setUnlockDate(format(expanded, DATE_FORMAT))
+        }
+
+        if (usersInfo && usersInfo.length > 2) {
+          const [, , ...investors] = usersInfo
+
+          _setInvestorsInfo(investors)
         }
       } catch (error) {
         console.error(error)
@@ -389,22 +438,181 @@ function useFundFee(
 
   // METHODS
 
+  // Get ranges with investors
+  const _getInvestorsRanges = useCallback(
+    async (investors: IUserFeeInfo[]) => {
+      if (!priceFeed || !chainId || !gas || !poolGraphData) {
+        return { ranges: [], amountBase: BIG_ZERO, amountLP: BIG_ZERO }
+      }
+
+      let totalCommissionAmountBase: BigNumber = BIG_ZERO
+      let totalCommissionAmountLP: BigNumber = BIG_ZERO
+      const result: number[] = []
+      let currentRange: number[] = []
+
+      // Save current range to result and clear it
+      function saveResultBeforeNewRange() {
+        if (currentRange.length > 0) {
+          result.push(currentRange[0])
+          result.push(currentRange.length)
+          currentRange = []
+        }
+      }
+
+      for (const [key, investor] of investors.entries()) {
+        const { owedBaseCommission, owedLPCommission } = investor
+
+        // If investor commission 0 - skip him
+        if (owedBaseCommission.isZero()) {
+          if (currentRange.length > 0) {
+            saveResultBeforeNewRange()
+          }
+          break
+        } else {
+          // Otherwice get investor commission in chain token (ex: Binance chain -> BNB)
+          const price = await priceFeed.getNormalizedExtendedPriceOut(
+            poolGraphData?.baseToken,
+            ChainMainToken[chainId],
+            owedBaseCommission,
+            []
+          )
+
+          const { amountOut } = price
+
+          // Convert current gas price
+          const gasPriceEther = parseUnits(gas.FastGasPrice, "gwei")
+
+          // Calculate gas price with multiplier
+          const gasWithMultiplier = _multiplyBignumbers(
+            [COMMISSION_MULTIPLIER, 18],
+            [gasPriceEther, 18]
+          )
+
+          // If trader commission less then gas * 10(multiplier) skip this investor
+          if (amountOut.isZero() || amountOut.lt(gasWithMultiplier)) {
+            saveResultBeforeNewRange()
+            break
+          } else {
+            // Otherwice add trader to current range
+            currentRange.push(key)
+            totalCommissionAmountBase = addBignumbers(
+              [totalCommissionAmountBase, 18],
+              [owedBaseCommission, 18]
+            )
+            totalCommissionAmountLP = addBignumbers(
+              [totalCommissionAmountLP, 18],
+              [owedLPCommission, 18]
+            )
+          }
+
+          // List is end - time to save last range and clear temporary state
+          if (investors.length === key + 1) {
+            saveResultBeforeNewRange()
+          }
+        }
+      }
+
+      return {
+        ranges: result,
+        amountBase: totalCommissionAmountBase,
+        amountLP: totalCommissionAmountLP,
+      }
+    },
+    [chainId, gas, poolGraphData, priceFeed]
+  )
+
   /**
    * Get the trader commission for the pool
    */
   const withdrawCommission = async () => {
-    if (!traderPool) return
+    if (!traderPool || _investorsInfo.length === 0) {
+      addToast(
+        {
+          type: "warning",
+          content: "Can't withdraw, no investors in fund",
+        },
+        "withdrawal-fee-no-investors",
+        5000
+      )
+      return
+    }
+    setSubmiting(SubmitState.SIGN)
+    let investorsRanges
+    let investorsComissionAmountBase: BigNumber = BIG_ZERO
+    let investorsComissionAmountLP: BigNumber = BIG_ZERO
+
+    if (optimizeWithdrawal) {
+      const { ranges, amountBase, amountLP } = await _getInvestorsRanges(
+        _investorsInfo
+      )
+      investorsRanges = ranges
+      investorsComissionAmountBase = amountBase
+      investorsComissionAmountLP = amountLP
+
+      if (investorsRanges.length === 0) {
+        addToast(
+          {
+            type: "warning",
+            content:
+              "Can't withdraw, commissions from investors less than transaction fee",
+          },
+          "withdrawal-fee-no-investors-with-available-commission",
+          5000
+        )
+        setSubmiting(SubmitState.IDLE)
+
+        return
+      }
+    } else {
+      investorsRanges = [0, 1000]
+      const { amountBase, amountLP } = _investorsInfo.reduce(
+        (acc, investor) => ({
+          amountBase: addBignumbers(
+            [acc.amountBase, 18],
+            [investor.owedBaseCommission, 18]
+          ),
+          amountLP: addBignumbers(
+            [acc.amountLP, 18],
+            [investor.owedLPCommission, 18]
+          ),
+        }),
+        { amountBase: BIG_ZERO, amountLP: BIG_ZERO }
+      )
+
+      investorsComissionAmountBase = amountBase
+      investorsComissionAmountLP = amountLP
+    }
 
     try {
-      await traderPool.reinvestCommission([0, 1000], _platformCommissionDexe)
+      setSubmiting(SubmitState.WAIT_CONFIRM)
+      const receipt = await traderPool.reinvestCommission(
+        investorsRanges,
+        _platformCommissionDexe.toHexString()
+      )
+
+      const tx = await addTransaction(receipt, {
+        type: TransactionType.TRADER_GET_PERFORMANCE_FEE,
+        baseAmount: investorsComissionAmountBase,
+        lpAmount: investorsComissionAmountLP,
+        _baseTokenSymbol: baseToken?.symbol,
+      })
+
+      if (isTxMined(tx)) {
+        setSubmiting(SubmitState.SUCCESS)
+      }
     } catch (error) {
-      console.error({ error })
+      const errorMessage = parseTransactionError(error)
+      !!errorMessage && setError(errorMessage)
+    } finally {
+      setSubmiting(SubmitState.IDLE)
     }
   }
 
   return [
     [poolGraphData, poolInfo],
     {
+      optimizeWithdrawal,
+
       fundCommissionPercentage,
       unlockDate,
 
@@ -428,7 +636,7 @@ function useFundFee(
       netInvestorsProfitDEXE,
       netInvestorsProfitPercentage,
     },
-    { withdrawCommission },
+    { setOptimizeWithdrawal, withdrawCommission },
   ]
 }
 

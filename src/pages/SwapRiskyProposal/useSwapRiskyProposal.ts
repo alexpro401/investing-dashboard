@@ -7,7 +7,7 @@ import {
   useEffect,
 } from "react"
 import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
-import { SwapDirection, TradeType } from "constants/types"
+import { SubmitState, SwapDirection, TradeType } from "constants/types"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { parseEther, parseUnits } from "@ethersproject/units"
@@ -36,6 +36,8 @@ import { format } from "date-fns"
 import usePoolPrice from "hooks/usePoolPrice"
 import { ZERO } from "constants/index"
 import useRiskyPosition from "hooks/useRiskyPosition"
+import useError from "hooks/useError"
+import usePayload from "hooks/usePayload"
 
 export interface UseSwapRiskyParams {
   poolAddress?: string
@@ -46,16 +48,12 @@ export interface UseSwapRiskyParams {
 interface UseSwapRiskyResponse {
   info: any
   gasPrice: string
-  error: string
   lpBalance: BigNumber
   oneTokenCost: BigNumber
   oneUSDCost: BigNumber
   slippage: string
   isSlippageOpen: boolean
-  isWalletPrompting: boolean
-  setError: Dispatch<SetStateAction<string>>
   setSlippage: Dispatch<SetStateAction<string>>
-  setWalletPrompting: Dispatch<SetStateAction<boolean>>
   setSlippageOpen: Dispatch<SetStateAction<boolean>>
   handleFromChange: (v: string) => void
   handleToChange: (v: string) => void
@@ -71,10 +69,10 @@ const useSwapRiskyProposal = ({
   const { account } = useWeb3React()
 
   const [gasPrice, setGasPrice] = useState("0.00")
-  const [error, setError] = useState("")
+  const [, setError] = useError()
   const [slippage, setSlippage] = useState("0.10")
   const [isSlippageOpen, setSlippageOpen] = useState(false)
-  const [isWalletPrompting, setWalletPrompting] = useState(false)
+  const [, setWalletPrompting] = usePayload()
 
   const [positionPnlLP, setPositionPnlLP] = useState(ZERO)
   const [positionPnlUSD, setPositionPnlUSD] = useState(ZERO)
@@ -101,7 +99,7 @@ const useSwapRiskyProposal = ({
   const [proposalInfo, proposalPool, proposalAddress, updateProposalData] =
     useRiskyProposal(poolAddress, proposalId)
 
-  const { priceUSD: poolPriceUSD, priceBase: poolPriceBase } =
+  const [{ priceUSD: poolPriceUSD, priceBase: poolPriceBase }] =
     usePoolPrice(poolAddress)
 
   const addTransaction = useTransactionAdder()
@@ -111,7 +109,7 @@ const useSwapRiskyProposal = ({
   const [, baseToken] = useERC20(poolInfo?.parameters.baseToken)
   const [, positionToken] = useERC20(proposalInfo?.proposalInfo.token)
 
-  const [gasTrackerResponse, getGasPrice] = useGasTracker()
+  const [, getGasPrice] = useGasTracker()
 
   const position = useRiskyPosition({
     proposalAddress,
@@ -449,7 +447,7 @@ const useSwapRiskyProposal = ({
 
   const handleSubmit = useCallback(async () => {
     if (!proposalPool) return
-    setWalletPrompting(true)
+    setWalletPrompting(SubmitState.IDLE)
 
     const params = {
       from: {
@@ -469,7 +467,7 @@ const useSwapRiskyProposal = ({
         params[lastChangedField].type
       )
 
-      setWalletPrompting(false)
+      setWalletPrompting(SubmitState.WAIT_CONFIRM)
 
       const tradeType = {
         deposit: TradeType.EXACT_INPUT,
@@ -489,9 +487,10 @@ const useSwapRiskyProposal = ({
 
       if (isTxMined(tx)) {
         runUpdate()
+        setWalletPrompting(SubmitState.SUCCESS)
       }
     } catch (error: any) {
-      setWalletPrompting(false)
+      setWalletPrompting(SubmitState.IDLE)
       const errorMessage = parseTransactionError(error.toString())
       !!errorMessage && setError(errorMessage)
     }
@@ -505,6 +504,8 @@ const useSwapRiskyProposal = ({
     proposalPool,
     runUpdate,
     toAmount,
+    setError,
+    setWalletPrompting,
   ])
 
   // set balances
@@ -670,10 +671,6 @@ const useSwapRiskyProposal = ({
       gasPrice,
       oneTokenCost,
       oneUSDCost,
-      error,
-      setError,
-      isWalletPrompting,
-      setWalletPrompting,
       slippage,
       setSlippage,
       isSlippageOpen,

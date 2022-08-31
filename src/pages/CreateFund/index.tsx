@@ -21,20 +21,19 @@ import ExternalLink from "components/ExternalLink"
 
 import TokenSelect from "modals/TokenSelect"
 
+import { bigify, isTxMined } from "utils"
+import useContract from "hooks/useContract"
+import { Token } from "constants/interfaces"
+import { addFundMetadata } from "utils/ipfs"
+import { TraderPool, PoolFactory } from "abi"
+import { UpdateListType } from "constants/types"
+import { useUserAgreement } from "state/user/hooks"
+import { TransactionType } from "state/transactions/types"
+import { useTransactionAdder } from "state/transactions/hooks"
 import { useCreateFundContext } from "context/CreateFundContext"
 import { selectPoolFactoryAddress } from "state/contracts/selectors"
-import { Token } from "constants/interfaces"
-import { sliderPropsByPeriodType, performanceFees } from "constants/index"
-import { UpdateListType } from "constants/types"
-import useContract from "hooks/useContract"
-import { TraderPool, PoolFactory } from "abi"
-
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { addFundMetadata } from "utils/ipfs"
-import { bigify, isTxMined } from "utils"
-
-import { useTransactionAdder } from "state/transactions/hooks"
-import { TransactionType } from "state/transactions/types"
+import { sliderPropsByPeriodType, performanceFees } from "constants/index"
 
 import ManagersIcon from "assets/icons/Managers"
 import InvestorsIcon from "assets/icons/Investors"
@@ -109,6 +108,8 @@ const CreateFund: FC = () => {
   const poolFactoryAddress = useSelector(selectPoolFactoryAddress)
   const traderPoolFactory = useContract(poolFactoryAddress, PoolFactory)
   const traderPool = useContract(contractAddress, TraderPool)
+
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
   const hideModal = () => setModalState(false)
 
@@ -613,7 +614,11 @@ const CreateFund: FC = () => {
             </Step>
           </Steps>
           <Flex full p="0 16px 42px">
-            <Button full size="large" onClick={handleSubmit}>
+            <Button
+              full
+              size="large"
+              onClick={() => (agreed ? handleSubmit() : setShowAgreement(true))}
+            >
               {stepsFormating ? (
                 <PulseSpinner color="#34455F" size={20} loading />
               ) : (

@@ -8,8 +8,8 @@ import {
   SetStateAction,
 } from "react"
 import { format } from "date-fns"
-import { BigNumber } from "@ethersproject/bignumber"
 import { Contract } from "@ethersproject/contracts"
+import { BigNumber } from "@ethersproject/bignumber"
 import { parseEther, parseUnits } from "@ethersproject/units"
 
 import { useAddToast } from "state/application/hooks"
@@ -26,6 +26,7 @@ import { Flex } from "theme"
 import { accordionSummaryVariants } from "motion/variants"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { SettingsStyled as S } from "./styled"
+import { useUserAgreement } from "state/user/hooks"
 
 interface Values {
   timestampLimit: number
@@ -73,6 +74,7 @@ interface Props {
   proposalPool: Contract
   proposalId: number
   proposalSymbol?: string
+  poolAddress: string
   successCallback: (
     timestamp: number,
     maxSize: BigNumber,
@@ -100,6 +102,7 @@ const RiskyCardSettings: FC<Props> = ({
   proposalPool,
   proposalId,
   proposalSymbol,
+  poolAddress,
   successCallback,
 }) => {
   const addTransaction = useTransactionAdder()
@@ -117,6 +120,8 @@ const RiskyCardSettings: FC<Props> = ({
     maxSizeLP,
     maxInvestPrice,
   })
+
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
   const onCancel = (): void => {
     setVisible(false)
@@ -161,8 +166,9 @@ const RiskyCardSettings: FC<Props> = ({
 
   const handleSubmit = async (e?: MouseEvent<HTMLButtonElement>) => {
     if (e) e.preventDefault()
-
-    if (!proposalPool) {
+    if (!proposalPool) return
+    if (!agreed) {
+      setShowAgreement(true)
       return
     }
 
@@ -203,6 +209,8 @@ const RiskyCardSettings: FC<Props> = ({
 
         const tx = await addTransaction(receipt, {
           type: TransactionType.RISKY_PROPOSAL_EDIT,
+          pool: poolAddress,
+          proposalId,
         })
 
         if (isTxMined(tx)) {
