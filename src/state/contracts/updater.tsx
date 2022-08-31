@@ -8,7 +8,7 @@ import { updateContracts } from "./actions"
 
 const contractAddressGetters = [
   "getPoolFactoryContract",
-  "getTraderPoolRegistryContract",
+  "getPoolRegistryContract",
   "getDEXEContract",
   "getUSDContract",
   "getPriceFeedContract",

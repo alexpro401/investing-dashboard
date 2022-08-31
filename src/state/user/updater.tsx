@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux"
 
 import useContract from "hooks/useContract"
 import { AppState, AppDispatch } from "state"
-import { TraderPoolRegistry, UserRegistry } from "abi"
+import { PoolRegistry, UserRegistry } from "abi"
 import { ContractsState } from "state/contracts/reducer"
 import { addOwnedPools, changeTermsAgreed } from "state/user/actions"
 import { selectUserRegistryAddress } from "state/contracts/selectors"
@@ -16,14 +16,14 @@ export const UserPoolsUpdater: React.FC = () => {
 
   const traderPoolRegistryAddress = useSelector<
     AppState,
-    ContractsState["TraderPoolRegistry"]
+    ContractsState["PoolRegistry"]
   >((state) => {
-    return state.contracts.TraderPoolRegistry
+    return state.contracts.PoolRegistry
   })
 
   const traderPoolRegistry = useContract(
     traderPoolRegistryAddress,
-    TraderPoolRegistry
+    PoolRegistry
   )
 
   useEffect(() => {
