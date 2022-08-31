@@ -5,7 +5,7 @@ import { useWeb3React } from "@web3-react/core"
 import { createClient, Provider as GraphProvider } from "urql"
 import { formatEther } from "@ethersproject/units"
 
-import BarChart from "pages/Investor/Bar"
+import BarChart from "components/BarChart"
 import { TabCard, Row, MainValue } from "pages/Investor/styled"
 
 import { Flex, Center } from "theme"
@@ -173,7 +173,7 @@ function Trader(props: Props) {
                     address={poolAddress}
                     baseToken={poolData?.baseToken}
                   />
-                  <BarChart />
+                  <BarChart address={poolAddress} />
                   <Row>
                     <TextGrey>P&L LP - $ETH</TextGrey>
                     <MainValue>0% (0 ETH)</MainValue>

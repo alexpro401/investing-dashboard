@@ -1,36 +1,87 @@
-// import { motion } from "framer-motion"
-// import moment from "moment"
-import { IPool } from "constants/interfaces"
-import { useState, useEffect } from "react"
-import ReactTooltip from "react-tooltip"
+import { AGREGATION_CODES } from "constants/history"
+import { usePriceHistory } from "state/pools/hooks"
+import { daysAgoTimestamp, expandTimestamp } from "utils"
 
-import { StyledBarChart, TickContainer, TickUp, TickDown } from "./styled"
+import S, { Tip } from "./styled"
 
-const BarChart: React.FC<{ pnlList: IPool["pnl"]["monthly"] }> = (props) => {
-  const [data, setData] = useState<IPool["pnl"]["monthly"]>([])
+function getPassedDaysInTheYear() {
+  const currentYear = new Date().getFullYear()
 
-  useEffect(() => {
-    setTimeout(() => {
-      setData(props.pnlList)
-    }, 500)
-  }, [props.pnlList])
+  const start = new Date(`${currentYear}-01-01`)
+  const end = new Date()
+
+  const diffInTime = end.getTime() - start.getTime()
+
+  // One day in milliseconds
+  const oneDay = 1000 * 60 * 60 * 24
+
+  // Calculating the no. of days between two dates
+  const diffInDays = Math.round(diffInTime / oneDay)
+
+  return diffInDays
+}
+
+function prepareMonthlyHistory(payload) {
+  if (!payload) return null
+
+  const res = Array(12).fill(null)
+
+  payload.forEach((h) => {
+    const month = new Date(expandTimestamp(h.timestamp)).getMonth()
+    res[month - 1] = h
+  })
+
+  return res
+}
+
+interface IProps {
+  address: string | undefined
+  withTip?: boolean
+}
+
+const BarChart: React.FC<IProps> = ({ address, withTip }) => {
+  const history = usePriceHistory(
+    address,
+    [AGREGATION_CODES["1m"] - 1, AGREGATION_CODES["1m"]],
+    12,
+    daysAgoTimestamp(getPassedDaysInTheYear())
+  )
+
+  const data = prepareMonthlyHistory(history)
+
+  if (data) {
+    console.log("data", data)
+  }
+
+  if (!data) {
+    const fallbackData = Array(12).fill(null)
+    return (
+      <S.Container>
+        {fallbackData.map((v, i) => (
+          <S.Bar key={i} perc={v} />
+        ))}
+      </S.Container>
+    )
+  }
 
   return (
-    <StyledBarChart>
+    <S.Container>
       {data.map((v, i) => (
-        <TickContainer
+        <S.Bar
+          active={withTip}
           key={i}
-          // data-for={`barcharttooltip${i}`}
-          // data-tip={`${v}%`}
-          // data-text-color={v >= 0 ? "#7FFFD4" : "#ff7f7f"}
-          // data-arrow-color={v >= 0 ? "#7FFFD4" : "#ff7f7f"}
+          perc={v && v.percPNL ? Number(v.percPNL) : null}
         >
-          {/* <ReactTooltip id={`barcharttooltip${i}`} backgroundColor="#353749" /> */}
-          <TickUp pnl={v} />
-          <TickDown pnl={v} />
-        </TickContainer>
+          {v && v.percPNL && (
+            <Tip
+              id={i}
+              timestamp={expandTimestamp(v.timestamp)}
+              pnl={Number(v.percPNL)}
+            />
+          )}
+        </S.Bar>
       ))}
-    </StyledBarChart>
+    </S.Container>
   )
 }
 

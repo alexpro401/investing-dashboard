@@ -14,7 +14,7 @@ import Header from "components/Header/Layout"
 import { Center } from "theme"
 import { Container, ButtonContainer, Details, TextGrey } from "./styled"
 
-import BarChart from "pages/Investor/Bar"
+import BarChart from "components/BarChart"
 import { TabCard, Row, MainValue } from "pages/Investor/styled"
 
 import { shortenAddress } from "utils"
@@ -101,7 +101,7 @@ const Profile: React.FC<Props> = () => {
                       address={poolAddress}
                       baseToken={poolData?.baseToken}
                     />
-                    <BarChart />
+                    <BarChart address={poolAddress} />
                     <Row>
                       <TextGrey>P&L LP - $ETH</TextGrey>
                       <MainValue>+ 13.1% (+112.132 ETH)</MainValue>
