@@ -189,7 +189,7 @@ export const formatLockedFundsChartData = (data) => {
   if (!data) return undefined
 
   return data.reverse().map((v) => {
-    const investorsUSD = _divideBignumbers([v.usdTVL, 18], [v.traderUSD, 18])
+    const investorsUSD = subtractBignumbers([v.usdTVL, 18], [v.traderUSD, 18])
     return {
       ...v,
       investorsUSD: Number(normalizeBigNumber(investorsUSD, 18, 2)),
