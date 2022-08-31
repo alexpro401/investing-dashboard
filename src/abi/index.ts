@@ -2,7 +2,7 @@ import ERC20 from "./ERC20"
 import ContractsRegistry from "./ContractsRegistry"
 import PriceFeed from "./PriceFeed"
 import PoolFactory from "./PoolFactory"
-import TraderPoolRegistry from "./TraderPoolRegistry"
+import PoolRegistry from "./PoolRegistry"
 import TraderPool from "./TraderPool"
 import TraderPoolRiskyProposal from "./TraderPoolRiskyProposal"
 import TraderPoolInvestProposal from "./TraderPoolInvestProposal"
@@ -17,7 +17,7 @@ export {
   ContractsRegistry,
   PriceFeed,
   PoolFactory,
-  TraderPoolRegistry,
+  PoolRegistry,
   TraderPoolRiskyProposal,
   TraderPoolInvestProposal,
   TraderPool,
