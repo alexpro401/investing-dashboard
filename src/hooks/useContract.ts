@@ -9,7 +9,7 @@ import {
   TraderPoolInvestProposal,
   BasicTraderPool,
   PriceFeed,
-  TraderPoolRegistry,
+  PoolRegistry,
   InvestTraderPool,
   UserRegistry,
 } from "abi"
@@ -249,7 +249,7 @@ export function usePriceFeedContract(): Contract | null {
 export function useTraderPoolRegistryContract(): Contract | null {
   const traderPoolRegistryAddress = useSelector(selectTraderPoolRegistryAddress)
 
-  return useContract(traderPoolRegistryAddress, TraderPoolRegistry)
+  return useContract(traderPoolRegistryAddress, PoolRegistry)
 }
 
 export function useProposalAddress(poolAddress) {

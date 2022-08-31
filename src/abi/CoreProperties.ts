@@ -37,11 +37,7 @@ export default [
             name: "leverageThreshold",
             type: "uint256",
           },
-          {
-            internalType: "uint256",
-            name: "leverageSlope",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "leverageSlope", type: "uint256" },
           {
             internalType: "uint256",
             name: "commissionInitTimestamp",
@@ -77,11 +73,7 @@ export default [
             name: "delayForRiskyPool",
             type: "uint256",
           },
-          {
-            internalType: "uint256",
-            name: "insuranceFactor",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "insuranceFactor", type: "uint256" },
           {
             internalType: "uint256",
             name: "maxInsurancePoolShare",
@@ -114,26 +106,14 @@ export default [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address[]",
-        name: "tokens",
-        type: "address[]",
-      },
-    ],
+    inputs: [{ internalType: "address[]", name: "tokens", type: "address[]" }],
     name: "addBlacklistTokens",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address[]",
-        name: "tokens",
-        type: "address[]",
-      },
-    ],
+    inputs: [{ internalType: "address[]", name: "tokens", type: "address[]" }],
     name: "addWhitelistTokens",
     outputs: [],
     stateMutability: "nonpayable",
@@ -143,26 +123,10 @@ export default [
     inputs: [],
     name: "coreParameters",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "maxPoolInvestors",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "maxOpenPositions",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "leverageThreshold",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "leverageSlope",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "maxPoolInvestors", type: "uint256" },
+      { internalType: "uint256", name: "maxOpenPositions", type: "uint256" },
+      { internalType: "uint256", name: "leverageThreshold", type: "uint256" },
+      { internalType: "uint256", name: "leverageSlope", type: "uint256" },
       {
         internalType: "uint256",
         name: "commissionInitTimestamp",
@@ -173,31 +137,15 @@ export default [
         name: "dexeCommissionPercentage",
         type: "uint256",
       },
-      {
-        internalType: "uint256",
-        name: "minTraderCommission",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "delayForRiskyPool",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "insuranceFactor",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "minTraderCommission", type: "uint256" },
+      { internalType: "uint256", name: "delayForRiskyPool", type: "uint256" },
+      { internalType: "uint256", name: "insuranceFactor", type: "uint256" },
       {
         internalType: "uint256",
         name: "maxInsurancePoolShare",
         type: "uint256",
       },
-      {
-        internalType: "uint256",
-        name: "minInsuranceDeposit",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "minInsuranceDeposit", type: "uint256" },
       {
         internalType: "uint256",
         name: "minInsuranceProposalAmount",
@@ -214,25 +162,11 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "offset",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "limit",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "offset", type: "uint256" },
+      { internalType: "uint256", name: "limit", type: "uint256" },
     ],
     name: "getBlacklistTokens",
-    outputs: [
-      {
-        internalType: "address[]",
-        name: "tokens",
-        type: "address[]",
-      },
-    ],
+    outputs: [{ internalType: "address[]", name: "tokens", type: "address[]" }],
     stateMutability: "view",
     type: "function",
   },
@@ -245,23 +179,13 @@ export default [
       },
     ],
     name: "getCommissionDuration",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "timestamp",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "timestamp", type: "uint256" },
       {
         internalType: "enum ICoreProperties.CommissionPeriod",
         name: "commissionPeriod",
@@ -269,36 +193,20 @@ export default [
       },
     ],
     name: "getCommissionEpochByTimestamp",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "getCommissionInitTimestamp",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "epoch",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "epoch", type: "uint256" },
       {
         internalType: "enum ICoreProperties.CommissionPeriod",
         name: "commissionPeriod",
@@ -306,13 +214,7 @@ export default [
       },
     ],
     name: "getCommissionTimestampByEpoch",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
@@ -320,21 +222,9 @@ export default [
     inputs: [],
     name: "getDEXECommissionPercentages",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256[]",
-        name: "",
-        type: "uint256[]",
-      },
-      {
-        internalType: "address[3]",
-        name: "",
-        type: "address[3]",
-      },
+      { internalType: "uint256", name: "", type: "uint256" },
+      { internalType: "uint256[]", name: "", type: "uint256[]" },
+      { internalType: "address[3]", name: "", type: "address[3]" },
     ],
     stateMutability: "view",
     type: "function",
@@ -342,23 +232,13 @@ export default [
   {
     inputs: [],
     name: "getDelayForRiskyPool",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address[]",
-        name: "positions",
-        type: "address[]",
-      },
+      { internalType: "address[]", name: "positions", type: "address[]" },
     ],
     name: "getFilteredPositions",
     outputs: [
@@ -374,104 +254,56 @@ export default [
   {
     inputs: [],
     name: "getInjector",
-    outputs: [
-      {
-        internalType: "address",
-        name: "_injector",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "_injector", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "getInsuranceFactor",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "getInsuranceWithdrawalLock",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "getMaxInsurancePoolShare",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "getMaximumOpenPositions",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "getMaximumPoolInvestors",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "getMinInsuranceDeposit",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "getMinInsuranceProposalAmount",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
@@ -479,16 +311,8 @@ export default [
     inputs: [],
     name: "getTraderCommissions",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256[]",
-        name: "",
-        type: "uint256[]",
-      },
+      { internalType: "uint256", name: "", type: "uint256" },
+      { internalType: "uint256[]", name: "", type: "uint256[]" },
     ],
     stateMutability: "view",
     type: "function",
@@ -497,116 +321,52 @@ export default [
     inputs: [],
     name: "getTraderLeverageParams",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "", type: "uint256" },
+      { internalType: "uint256", name: "", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "offset",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "limit",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "offset", type: "uint256" },
+      { internalType: "uint256", name: "limit", type: "uint256" },
     ],
     name: "getWhitelistTokens",
-    outputs: [
-      {
-        internalType: "address[]",
-        name: "tokens",
-        type: "address[]",
-      },
-    ],
+    outputs: [{ internalType: "address[]", name: "tokens", type: "address[]" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "token", type: "address" }],
     name: "isBlacklistedToken",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "token", type: "address" }],
     name: "isWhitelistedToken",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address[]",
-        name: "tokens",
-        type: "address[]",
-      },
-    ],
+    inputs: [{ internalType: "address[]", name: "tokens", type: "address[]" }],
     name: "removeBlacklistTokens",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address[]",
-        name: "tokens",
-        type: "address[]",
-      },
-    ],
+    inputs: [{ internalType: "address[]", name: "tokens", type: "address[]" }],
     name: "removeWhitelistTokens",
     outputs: [],
     stateMutability: "nonpayable",
@@ -621,11 +381,7 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "uint256[]",
-        name: "durations",
-        type: "uint256[]",
-      },
+      { internalType: "uint256[]", name: "durations", type: "uint256[]" },
     ],
     name: "setCommissionDurations",
     outputs: [],
@@ -633,13 +389,7 @@ export default [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "timestamp",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "timestamp", type: "uint256" }],
     name: "setCommissionInitTimestamp",
     outputs: [],
     stateMutability: "nonpayable",
@@ -664,11 +414,7 @@ export default [
             name: "leverageThreshold",
             type: "uint256",
           },
-          {
-            internalType: "uint256",
-            name: "leverageSlope",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "leverageSlope", type: "uint256" },
           {
             internalType: "uint256",
             name: "commissionInitTimestamp",
@@ -704,11 +450,7 @@ export default [
             name: "delayForRiskyPool",
             type: "uint256",
           },
-          {
-            internalType: "uint256",
-            name: "insuranceFactor",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "insuranceFactor", type: "uint256" },
           {
             internalType: "uint256",
             name: "maxInsurancePoolShare",
@@ -742,11 +484,7 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "dexeCommission",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "dexeCommission", type: "uint256" },
       {
         internalType: "uint256[]",
         name: "distributionPercentages",
@@ -760,11 +498,7 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "delayForRiskyPool",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "delayForRiskyPool", type: "uint256" },
     ],
     name: "setDelayForRiskyPool",
     outputs: [],
@@ -773,11 +507,7 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "contractsRegistry",
-        type: "address",
-      },
+      { internalType: "address", name: "contractsRegistry", type: "address" },
     ],
     name: "setDependencies",
     outputs: [],
@@ -785,13 +515,7 @@ export default [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_injector",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "_injector", type: "address" }],
     name: "setInjector",
     outputs: [],
     stateMutability: "nonpayable",
@@ -799,21 +523,13 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "insuranceFactor",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "insuranceFactor", type: "uint256" },
       {
         internalType: "uint256",
         name: "maxInsurancePoolShare",
         type: "uint256",
       },
-      {
-        internalType: "uint256",
-        name: "minInsuranceDeposit",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "minInsuranceDeposit", type: "uint256" },
       {
         internalType: "uint256",
         name: "minInsuranceProposalAmount",
@@ -831,26 +547,14 @@ export default [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "count",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "count", type: "uint256" }],
     name: "setMaximumOpenPositions",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "count",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "count", type: "uint256" }],
     name: "setMaximumPoolInvestors",
     outputs: [],
     stateMutability: "nonpayable",
@@ -858,11 +562,7 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "minTraderCommission",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "minTraderCommission", type: "uint256" },
       {
         internalType: "uint256[]",
         name: "maxTraderCommissions",
@@ -876,16 +576,8 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "threshold",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "slope",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "threshold", type: "uint256" },
+      { internalType: "uint256", name: "slope", type: "uint256" },
     ],
     name: "setTraderLeverageParams",
     outputs: [],
@@ -895,37 +587,19 @@ export default [
   {
     inputs: [],
     name: "totalBlacklistTokens",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "totalWhitelistTokens",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
     name: "transferOwnership",
     outputs: [],
     stateMutability: "nonpayable",

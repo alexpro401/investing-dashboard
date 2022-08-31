@@ -14,12 +14,7 @@ export default [
         name: "operator",
         type: "address",
       },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "approved",
-        type: "bool",
-      },
+      { indexed: false, internalType: "bool", name: "approved", type: "bool" },
     ],
     name: "ApprovalForAll",
     type: "event",
@@ -66,16 +61,8 @@ export default [
       },
       {
         components: [
-          {
-            internalType: "uint256",
-            name: "timestampLimit",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "investLPLimit",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "timestampLimit", type: "uint256" },
+          { internalType: "uint256", name: "investLPLimit", type: "uint256" },
         ],
         indexed: false,
         internalType: "struct ITraderPoolInvestProposal.ProposalLimits",
@@ -209,6 +196,31 @@ export default [
       },
       {
         indexed: false,
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+    ],
+    name: "ProposalRestrictionsChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "proposalId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+      {
+        indexed: false,
         internalType: "uint256[]",
         name: "amounts",
         type: "uint256[]",
@@ -234,6 +246,12 @@ export default [
       },
       {
         indexed: false,
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+      {
+        indexed: false,
         internalType: "uint256",
         name: "amount",
         type: "uint256",
@@ -251,18 +269,8 @@ export default [
         name: "operator",
         type: "address",
       },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
+      { indexed: true, internalType: "address", name: "from", type: "address" },
+      { indexed: true, internalType: "address", name: "to", type: "address" },
       {
         indexed: false,
         internalType: "uint256[]",
@@ -288,24 +296,9 @@ export default [
         name: "operator",
         type: "address",
       },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "id",
-        type: "uint256",
-      },
+      { indexed: true, internalType: "address", name: "from", type: "address" },
+      { indexed: true, internalType: "address", name: "to", type: "address" },
+      { indexed: false, internalType: "uint256", name: "id", type: "uint256" },
       {
         indexed: false,
         internalType: "uint256",
@@ -319,18 +312,8 @@ export default [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: false,
-        internalType: "string",
-        name: "value",
-        type: "string",
-      },
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "id",
-        type: "uint256",
-      },
+      { indexed: false, internalType: "string", name: "value", type: "string" },
+      { indexed: true, internalType: "uint256", name: "id", type: "uint256" },
     ],
     name: "URI",
     type: "event",
@@ -344,16 +327,8 @@ export default [
             name: "parentPoolAddress",
             type: "address",
           },
-          {
-            internalType: "address",
-            name: "trader",
-            type: "address",
-          },
-          {
-            internalType: "address",
-            name: "baseToken",
-            type: "address",
-          },
+          { internalType: "address", name: "trader", type: "address" },
+          { internalType: "address", name: "baseToken", type: "address" },
           {
             internalType: "uint256",
             name: "baseTokenDecimals",
@@ -379,16 +354,8 @@ export default [
             name: "parentPoolAddress",
             type: "address",
           },
-          {
-            internalType: "address",
-            name: "trader",
-            type: "address",
-          },
-          {
-            internalType: "address",
-            name: "baseToken",
-            type: "address",
-          },
+          { internalType: "address", name: "trader", type: "address" },
+          { internalType: "address", name: "baseToken", type: "address" },
           {
             internalType: "uint256",
             name: "baseTokenDecimals",
@@ -407,71 +374,31 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "id",
-        type: "uint256",
-      },
+      { internalType: "address", name: "account", type: "address" },
+      { internalType: "uint256", name: "id", type: "uint256" },
     ],
     name: "balanceOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address[]",
-        name: "accounts",
-        type: "address[]",
-      },
-      {
-        internalType: "uint256[]",
-        name: "ids",
-        type: "uint256[]",
-      },
+      { internalType: "address[]", name: "accounts", type: "address[]" },
+      { internalType: "uint256[]", name: "ids", type: "uint256[]" },
     ],
     name: "balanceOfBatch",
-    outputs: [
-      {
-        internalType: "uint256[]",
-        name: "",
-        type: "uint256[]",
-      },
-    ],
+    outputs: [{ internalType: "uint256[]", name: "", type: "uint256[]" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "proposalId",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "proposalId", type: "uint256" },
       {
         components: [
-          {
-            internalType: "uint256",
-            name: "timestampLimit",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "investLPLimit",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "timestampLimit", type: "uint256" },
+          { internalType: "uint256", name: "investLPLimit", type: "uint256" },
         ],
         internalType: "struct ITraderPoolInvestProposal.ProposalLimits",
         name: "proposalLimits",
@@ -484,13 +411,7 @@ export default [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "proposalId",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "proposalId", type: "uint256" }],
     name: "convertInvestedBaseToDividends",
     outputs: [],
     stateMutability: "nonpayable",
@@ -498,135 +419,57 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "string",
-        name: "descriptionURL",
-        type: "string",
-      },
+      { internalType: "string", name: "descriptionURL", type: "string" },
       {
         components: [
-          {
-            internalType: "uint256",
-            name: "timestampLimit",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "investLPLimit",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "timestampLimit", type: "uint256" },
+          { internalType: "uint256", name: "investLPLimit", type: "uint256" },
         ],
         internalType: "struct ITraderPoolInvestProposal.ProposalLimits",
         name: "proposalLimits",
         type: "tuple",
       },
-      {
-        internalType: "uint256",
-        name: "lpInvestment",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "baseInvestment",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "lpInvestment", type: "uint256" },
+      { internalType: "uint256", name: "baseInvestment", type: "uint256" },
     ],
     name: "create",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "proposalId",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "proposalId", type: "uint256" }],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "proposalId",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
+      { internalType: "uint256", name: "proposalId", type: "uint256" },
+      { internalType: "address", name: "user", type: "address" },
     ],
     name: "divest",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "claimedBase",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "claimedBase", type: "uint256" },
     ],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "id",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "id", type: "uint256" }],
     name: "exists",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "offset",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "limit",
-        type: "uint256",
-      },
+      { internalType: "address", name: "user", type: "address" },
+      { internalType: "uint256", name: "offset", type: "uint256" },
+      { internalType: "uint256", name: "limit", type: "uint256" },
     ],
     name: "getActiveInvestmentsInfo",
     outputs: [
       {
         components: [
-          {
-            internalType: "uint256",
-            name: "proposalId",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "lp2Balance",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "baseInvested",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "lpInvested",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "proposalId", type: "uint256" },
+          { internalType: "uint256", name: "lp2Balance", type: "uint256" },
+          { internalType: "uint256", name: "baseInvested", type: "uint256" },
+          { internalType: "uint256", name: "lpInvested", type: "uint256" },
         ],
         internalType: "struct ITraderPoolInvestProposal.ActiveInvestmentInfo[]",
         name: "investments",
@@ -639,26 +482,14 @@ export default [
   {
     inputs: [],
     name: "getBaseToken",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "getInjector",
-    outputs: [
-      {
-        internalType: "address",
-        name: "_injector",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "_injector", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
@@ -666,27 +497,15 @@ export default [
     inputs: [],
     name: "getInvestedBaseInUSD",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "investedBaseUSD",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "investedBaseUSD", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "offset",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "limit",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "offset", type: "uint256" },
+      { internalType: "uint256", name: "limit", type: "uint256" },
     ],
     name: "getProposalInfos",
     outputs: [
@@ -716,11 +535,7 @@ export default [
                 name: "proposalLimits",
                 type: "tuple",
               },
-              {
-                internalType: "uint256",
-                name: "lpLocked",
-                type: "uint256",
-              },
+              { internalType: "uint256", name: "lpLocked", type: "uint256" },
               {
                 internalType: "uint256",
                 name: "investedBase",
@@ -736,11 +551,8 @@ export default [
             name: "proposalInfo",
             type: "tuple",
           },
-          {
-            internalType: "uint256",
-            name: "totalInvestors",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "lp2Supply", type: "uint256" },
+          { internalType: "uint256", name: "totalInvestors", type: "uint256" },
         ],
         internalType: "struct ITraderPoolInvestProposal.ProposalInfoExtended[]",
         name: "proposals",
@@ -752,31 +564,15 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "uint256[]",
-        name: "proposalIds",
-        type: "uint256[]",
-      },
-      {
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
+      { internalType: "uint256[]", name: "proposalIds", type: "uint256[]" },
+      { internalType: "address", name: "user", type: "address" },
     ],
     name: "getRewards",
     outputs: [
       {
         components: [
-          {
-            internalType: "uint256",
-            name: "totalUsdAmount",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "totalBaseAmount",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "totalUsdAmount", type: "uint256" },
+          { internalType: "uint256", name: "totalBaseAmount", type: "uint256" },
           {
             internalType: "uint256",
             name: "baseAmountFromRewards",
@@ -784,16 +580,8 @@ export default [
           },
           {
             components: [
-              {
-                internalType: "uint256[]",
-                name: "amounts",
-                type: "uint256[]",
-              },
-              {
-                internalType: "address[]",
-                name: "tokens",
-                type: "address[]",
-              },
+              { internalType: "uint256[]", name: "amounts", type: "uint256[]" },
+              { internalType: "address[]", name: "tokens", type: "address[]" },
             ],
             internalType: "struct ITraderPoolInvestProposal.Reception[]",
             name: "rewards",
@@ -809,46 +597,18 @@ export default [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "user", type: "address" }],
     name: "getTotalActiveInvestments",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "proposalId",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "lpInvestment",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "baseInvestment",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "proposalId", type: "uint256" },
+      { internalType: "address", name: "user", type: "address" },
+      { internalType: "uint256", name: "lpInvestment", type: "uint256" },
+      { internalType: "uint256", name: "baseInvestment", type: "uint256" },
     ],
     name: "invest",
     outputs: [],
@@ -858,37 +618,17 @@ export default [
   {
     inputs: [],
     name: "investedBase",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "operator",
-        type: "address",
-      },
+      { internalType: "address", name: "account", type: "address" },
+      { internalType: "address", name: "operator", type: "address" },
     ],
     name: "isApprovedForAll",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
@@ -896,11 +636,7 @@ export default [
     inputs: [],
     name: "priceFeed",
     outputs: [
-      {
-        internalType: "contract IPriceFeed",
-        name: "",
-        type: "address",
-      },
+      { internalType: "contract IPriceFeed", name: "", type: "address" },
     ],
     stateMutability: "view",
     type: "function",
@@ -908,43 +644,17 @@ export default [
   {
     inputs: [],
     name: "proposalsTotalNum",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256[]",
-        name: "ids",
-        type: "uint256[]",
-      },
-      {
-        internalType: "uint256[]",
-        name: "amounts",
-        type: "uint256[]",
-      },
-      {
-        internalType: "bytes",
-        name: "data",
-        type: "bytes",
-      },
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256[]", name: "ids", type: "uint256[]" },
+      { internalType: "uint256[]", name: "amounts", type: "uint256[]" },
+      { internalType: "bytes", name: "data", type: "bytes" },
     ],
     name: "safeBatchTransferFrom",
     outputs: [],
@@ -953,31 +663,11 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "id",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-      {
-        internalType: "bytes",
-        name: "data",
-        type: "bytes",
-      },
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "id", type: "uint256" },
+      { internalType: "uint256", name: "amount", type: "uint256" },
+      { internalType: "bytes", name: "data", type: "bytes" },
     ],
     name: "safeTransferFrom",
     outputs: [],
@@ -986,16 +676,8 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "operator",
-        type: "address",
-      },
-      {
-        internalType: "bool",
-        name: "approved",
-        type: "bool",
-      },
+      { internalType: "address", name: "operator", type: "address" },
+      { internalType: "bool", name: "approved", type: "bool" },
     ],
     name: "setApprovalForAll",
     outputs: [],
@@ -1004,11 +686,7 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "contractsRegistry",
-        type: "address",
-      },
+      { internalType: "address", name: "contractsRegistry", type: "address" },
     ],
     name: "setDependencies",
     outputs: [],
@@ -1016,13 +694,7 @@ export default [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_injector",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "_injector", type: "address" }],
     name: "setInjector",
     outputs: [],
     stateMutability: "nonpayable",
@@ -1030,21 +702,9 @@ export default [
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "proposalId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256[]",
-        name: "amounts",
-        type: "uint256[]",
-      },
-      {
-        internalType: "address[]",
-        name: "addresses",
-        type: "address[]",
-      },
+      { internalType: "uint256", name: "proposalId", type: "uint256" },
+      { internalType: "uint256[]", name: "amounts", type: "uint256[]" },
+      { internalType: "address[]", name: "addresses", type: "address[]" },
     ],
     name: "supply",
     outputs: [],
@@ -1052,106 +712,44 @@ export default [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes4",
-        name: "interfaceId",
-        type: "bytes4",
-      },
-    ],
+    inputs: [{ internalType: "bytes4", name: "interfaceId", type: "bytes4" }],
     name: "supportsInterface",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "", type: "address" }],
     name: "totalLPBalances",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "totalLockedLP",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "id",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "id", type: "uint256" }],
     name: "totalSupply",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     name: "uri",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
+    outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "proposalId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "proposalId", type: "uint256" },
+      { internalType: "uint256", name: "amount", type: "uint256" },
     ],
     name: "withdraw",
     outputs: [],
