@@ -47,6 +47,7 @@ const BarProgress = styled.div<{ w: number }>`
   border-radius: 2px;
   height: 4px;
   width: ${(props) => props.w || 0}%;
+  transition: width 0.3s ease-in-out;
 `
 
 export const ProgressBar = ({ w }) => {

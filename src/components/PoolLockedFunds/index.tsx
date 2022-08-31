@@ -51,10 +51,10 @@ const PoolLockedFunds: React.FC<Props> = ({ address }) => {
             <S.Title>Fund used ({poolUsedToTotalPercentage}%)</S.Title>
             <Flex>
               <S.Value>${poolUsedInPositionsUSD.format}&nbsp;/&nbsp;</S.Value>
-              <S.Value c="#788AB4"> ${totalPoolUSD}</S.Value>
+              <S.Value c="#788AB4"> ${totalPoolUSD.format}</S.Value>
             </Flex>
           </Flex>
-          <ProgressBar w={poolUsedToTotalPercentage} />
+          <ProgressBar w={Number(poolUsedToTotalPercentage)} />
         </Flex>
       </S.Row>
     </>

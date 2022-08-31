@@ -1,18 +1,46 @@
-import { useEffect, useMemo, useState } from "react"
-import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
-import { parseEther } from "@ethersproject/units"
+import { useMemo } from "react"
+import { BigNumber } from "@ethersproject/bignumber"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"
-import { subtractBignumbers } from "utils/formulas"
+
 import { normalizeBigNumber } from "utils"
-import { useERC20 } from "./useContract"
+import { useERC20 } from "hooks/useContract"
+import { percentageOfBignumbers, subtractBignumbers } from "utils/formulas"
+import useOpenPositionsPricesOutUSD from "hooks/useOpenPositionsPricesOutUSD"
 
 function usePoolLockedFunds(poolAddress: string | undefined) {
   const [poolData] = usePoolQuery(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
   const [, baseToken] = useERC20(poolData?.baseToken)
 
-  console.groupCollapsed("usePoolLockedFunds")
-  console.log("poolInfo", poolInfo)
+  const _baseAndPositionBalances = useMemo(() => {
+    if (!poolInfo) return []
+
+    const [, ...rest] = poolInfo.baseAndPositionBalances
+    return rest
+  }, [poolInfo])
+
+  const positionAmountsMap = useMemo(() => {
+    if (
+      !poolInfo ||
+      !poolInfo.openPositions.length ||
+      !_baseAndPositionBalances.length
+    ) {
+      return new Map<string, BigNumber>([])
+    }
+
+    return new Map<string, BigNumber>(
+      poolInfo.openPositions.map((p, i) => [
+        `${poolAddress}${p}${0}`.toLowerCase(),
+        _baseAndPositionBalances[i],
+      ])
+    )
+  }, [_baseAndPositionBalances, poolAddress, poolInfo])
+
+  const lockedAmountUSD = useOpenPositionsPricesOutUSD(
+    poolAddress,
+    positionAmountsMap,
+    poolInfo?.openPositions
+  )
 
   const baseSymbol = useMemo(() => {
     if (!baseToken || !baseToken.symbol) return ""
@@ -49,26 +77,41 @@ function usePoolLockedFunds(poolAddress: string | undefined) {
   }, [poolInfo])
 
   const poolUsedInPositionsUSD = useMemo(() => {
-    if (!poolInfo || poolInfo.openPositions.length === 0) {
+    if (!poolInfo || poolInfo.openPositions.length === 0 || !lockedAmountUSD) {
       return { big: BigNumber.from(0), format: "0.00" }
     }
 
-    return { big: BigNumber.from(0), format: "0.00" }
-  }, [poolInfo])
+    return {
+      big: lockedAmountUSD,
+      format: normalizeBigNumber(lockedAmountUSD, 18, 2),
+    }
+  }, [poolInfo, lockedAmountUSD])
 
   const totalPoolUSD = useMemo(() => {
-    if (!poolInfo) return "0.00"
+    if (!poolInfo) return { big: BigNumber.from(0), format: "0.00" }
 
-    return normalizeBigNumber(poolInfo.totalPoolUSD, 18, 2)
+    return {
+      big: poolInfo.totalPoolUSD,
+      format: normalizeBigNumber(poolInfo.totalPoolUSD, 18, 2),
+    }
   }, [poolInfo])
 
   const poolUsedToTotalPercentage = useMemo(() => {
-    if (!poolInfo || poolInfo.openPositions.length === 0) {
+    if (
+      !poolUsedInPositionsUSD ||
+      !totalPoolUSD ||
+      poolUsedInPositionsUSD.big.isZero() ||
+      totalPoolUSD.big.isZero()
+    ) {
       return 0
     }
 
-    return 0
-  }, [poolInfo])
+    const res = percentageOfBignumbers(
+      poolUsedInPositionsUSD.big,
+      totalPoolUSD.big
+    )
+    return normalizeBigNumber(res, 18, 2)
+  }, [poolUsedInPositionsUSD, totalPoolUSD])
 
   const values = {
     baseSymbol,
@@ -80,9 +123,6 @@ function usePoolLockedFunds(poolAddress: string | undefined) {
     poolUsedInPositionsUSD,
     poolUsedToTotalPercentage,
   }
-
-  console.log("values", values)
-  console.groupEnd()
 
   return [values]
 }
