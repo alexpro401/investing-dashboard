@@ -89,15 +89,28 @@ const Styled = {
 
 export default Styled
 
+function getPnlColor(pnl) {
+  if (pnl > 0) {
+    return "#63b49b"
+  }
+
+  if (pnl < 0) {
+    return "#D75E65"
+  }
+
+  return "#788AB4"
+}
+
 const TipS = {
-  Container: styled.div<{ mon: number }>`
+  Container: styled(Flex)<{ mon: number }>`
     position: absolute;
-    top: -10px;
+    top: -48px;
     left: ${(p) => (p.mon > 7 ? "initial" : "0")};
     right: ${(p) => (p.mon > 7 ? "0" : "initial")};
   `,
   Content: styled(GradientBorder)`
     padding: 12px 8px;
+    width: max-content;
     border-radius: 12px;
 
     &:after {
@@ -109,36 +122,27 @@ const TipS = {
     height: 6px;
     border-radius: 50%;
     background: ${(p) => p.color};
+    flex: 0 0 auto;
   `,
   Month: styled.div`
-    margin: 0 4px;
+    margin: 0 6px;
     font-family: "Gilroy";
     font-style: normal;
     font-weight: 500;
     font-size: 11px;
     line-height: 13px;
     color: #eeecf1;
+    flex: 0 0 auto;
   `,
-  Pnl: styled.div<{ color: string }>`
+  PNL: styled.div<{ pnl: number }>`
     font-family: "Gilroy";
     font-style: normal;
     font-weight: 500;
     font-size: 11px;
     line-height: 13px;
-    color: ${(p) => p.color};
+    color: ${(p) => getPnlColor(p.pnl)};
+    flex: 0 0 auto;
   `,
-}
-
-function getPnlColor(pnl) {
-  if (pnl > 0) {
-    return "#63b49bs"
-  }
-
-  if (pnl < 0) {
-    return "#D75E65"
-  }
-
-  return "#788AB4"
 }
 
 interface IProps {
@@ -147,7 +151,7 @@ interface IProps {
   timestamp: number
 }
 
-export const Tip: React.FC<IProps> = ({ id, timestamp, pnl }) => {
+export const Tip: React.FC<IProps> = ({ id, timestamp, pnl, ...rest }) => {
   const month = useMemo(() => {
     if (!timestamp) return ""
 
@@ -156,14 +160,11 @@ export const Tip: React.FC<IProps> = ({ id, timestamp, pnl }) => {
   }, [timestamp])
 
   return (
-    <TipS.Container mon={id}>
+    <TipS.Container mon={id} {...rest}>
       <TipS.Content>
         <TipS.Dot color={getBg(Number(pnl))} />
         <TipS.Month>{month}</TipS.Month>
-        <TipS.Pnl color={getPnlColor(pnl)}>
-          {pnl > 0 ? "+ " : null}
-          {month}
-        </TipS.Pnl>
+        <TipS.PNL pnl={pnl}>{`${pnl > 0 ? "+ " : ""}${pnl}%`}</TipS.PNL>
       </TipS.Content>
     </TipS.Container>
   )

@@ -1,5 +1,8 @@
 import { AGREGATION_CODES } from "constants/history"
+import { opacityVariants } from "motion/variants"
+import { useState } from "react"
 import { usePriceHistory } from "state/pools/hooks"
+import { Flex } from "theme"
 import { daysAgoTimestamp, expandTimestamp } from "utils"
 
 import S, { Tip } from "./styled"
@@ -28,7 +31,7 @@ function prepareMonthlyHistory(payload) {
 
   payload.forEach((h) => {
     const month = new Date(expandTimestamp(h.timestamp)).getMonth()
-    res[month - 1] = h
+    res[month] = h
   })
 
   return res
@@ -49,8 +52,17 @@ const BarChart: React.FC<IProps> = ({ address, withTip }) => {
 
   const data = prepareMonthlyHistory(history)
 
-  if (data) {
-    console.log("data", data)
+  const [showTooltip, setShowTooltip] = useState(false)
+  const [activeItem, setActiveItem] = useState<number | null>(null)
+
+  const activateTooltip = (i) => {
+    setShowTooltip(true)
+    setActiveItem(i)
+  }
+
+  const deactivateTooltip = () => {
+    setShowTooltip(false)
+    setActiveItem(null)
   }
 
   if (!data) {
@@ -71,14 +83,31 @@ const BarChart: React.FC<IProps> = ({ address, withTip }) => {
           active={withTip}
           key={i}
           perc={v && v.percPNL ? Number(v.percPNL) : null}
+          onMouseEnter={() => activateTooltip(i)}
+          onMouseLeave={() => deactivateTooltip()}
         >
-          {v && v.percPNL && (
-            <Tip
-              id={i}
-              timestamp={expandTimestamp(v.timestamp)}
-              pnl={Number(v.percPNL)}
-            />
-          )}
+          <Flex
+            initial={
+              showTooltip && i === activeItem && v && v.percPNL
+                ? "visible"
+                : "hidden"
+            }
+            variants={opacityVariants}
+            transition={{ duration: 0.2 }}
+            animate={
+              showTooltip && i === activeItem && v && v.percPNL
+                ? "visible"
+                : "hidden"
+            }
+          >
+            {v && (
+              <Tip
+                id={i}
+                timestamp={expandTimestamp(Number(v.timestamp))}
+                pnl={Number(v.percPNL)}
+              />
+            )}
+          </Flex>
         </S.Bar>
       ))}
     </S.Container>
