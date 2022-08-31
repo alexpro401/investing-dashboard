@@ -8,133 +8,20 @@ import Button, { SecondaryButton } from "components/Button"
 import FundDetailsCard from "components/FundDetailsCard"
 import FundStatisticsCard from "components/FundStatisticsCard"
 import ProfitLossChart from "components/ProfitLossChart"
-import LockedFundsChart from "components/LockedFundsChart"
 import TabsLight from "components/TabsLight"
 import Header from "components/Header/Layout"
 
-import { Flex, Center } from "theme"
-import {
-  Container,
-  ButtonContainer,
-  Details,
-  TextGrey,
-  TextWhiteBig,
-  FundsUsed,
-} from "./styled"
+import { Center } from "theme"
+import { Container, ButtonContainer, Details, TextGrey } from "./styled"
 
-import {
-  TabCard,
-  Row,
-  MainValue,
-  Period,
-  ChartPeriods,
-} from "pages/Investor/styled"
 import BarChart from "pages/Investor/Bar"
+import { TabCard, Row, MainValue } from "pages/Investor/styled"
 
-import { IDetailedChart } from "constants/interfaces"
-import { PoolType } from "constants/interfaces_v2"
 import { shortenAddress } from "utils"
 import { useActiveWeb3React } from "hooks"
+import { PoolType } from "constants/interfaces_v2"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"
-
-const pnl: IDetailedChart[] = [
-  {
-    x: "1",
-    y: 1,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "2",
-    y: 1.23,
-    lpBasic: "0",
-    lpBasicPercent: 1,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "3",
-    y: 1.12,
-    lpBasic: "0",
-    lpBasicPercent: 1.2,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "4",
-    y: 11.34,
-    lpBasic: "0",
-    lpBasicPercent: 1.2,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "5",
-    y: 11,
-    lpBasic: "0",
-    lpBasicPercent: 1.2,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "6",
-    y: 11.76,
-    lpBasic: "0",
-    lpBasicPercent: 1.5,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "7",
-    y: 12.34,
-    lpBasic: "0",
-    lpBasicPercent: 5.5,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "8",
-    y: 15.92,
-    lpBasic: "0",
-    lpBasicPercent: 5.5,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "9",
-    y: 18.3,
-    lpBasic: "0",
-    lpBasicPercent: 5.5,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "10",
-    y: 19.3,
-    lpBasic: "0",
-    lpBasicPercent: 5.5,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "11",
-    y: 23.3,
-    lpBasic: "0",
-    lpBasicPercent: 5.5,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "12",
-    y: 23.63,
-    lpBasic: "0",
-    lpBasicPercent: 5.5,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-]
+import PoolLockedFunds from "components/PoolLockedFunds"
 
 interface Props {}
 
@@ -230,23 +117,7 @@ const Profile: React.FC<Props> = () => {
                 name: "Locked funds",
                 child: (
                   <>
-                    <LockedFundsChart address={poolAddress} />
-                    <Flex full p="15px 0 0">
-                      <Row>
-                        <TextGrey>Locked out of investor funds</TextGrey>
-                        <MainValue>$32.12k</MainValue>
-                      </Row>
-                    </Flex>
-                    <Row>
-                      <TextGrey>Your funds locked</TextGrey>
-                      <TextWhiteBig>$32.12k</TextWhiteBig>
-                    </Row>
-                    <Row>
-                      <FundsUsed
-                        current={"$61.15k / $101.92k"}
-                        total={"Fund used (60%)"}
-                      />
-                    </Row>
+                    <PoolLockedFunds address={poolAddress} />
                   </>
                 ),
               },

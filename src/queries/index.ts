@@ -146,7 +146,7 @@ const POSITION_EXCHANGE = `
   opening
 `
 
-const POSITION = `
+const POSITION_DATA = `
   id
   closed
   positionToken
@@ -156,6 +156,10 @@ const POSITION = `
   totalBaseCloseVolume
   totalPositionOpenVolume
   totalPositionCloseVolume
+`
+
+const POSITION = `
+  ${POSITION_DATA}
   exchanges(orderBy: timestamp, orderDirection: desc) {
     ${POSITION_EXCHANGE}
   }
@@ -165,6 +169,14 @@ const POSITION = `
     ticker
     baseToken
     descriptionURL
+  }
+`
+
+const PositionsByIdsQuery = `
+  query ($idList: [String]!) {
+    positions(skip: $offset, first: $limit, where: { id_in: $idList }) {
+      ${POSITION_DATA}
+    }
   }
 `
 
@@ -456,4 +468,5 @@ export {
   UserTransactionsQuery,
   getPoolsQueryVariables,
   RiskyProposalPositionQuery,
+  PositionsByIdsQuery,
 }

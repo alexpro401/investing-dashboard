@@ -5,26 +5,27 @@ import { useWeb3React } from "@web3-react/core"
 import { createClient, Provider as GraphProvider } from "urql"
 import { formatEther } from "@ethersproject/units"
 
-import { Flex, Center } from "theme"
-import Button, { SecondaryButton } from "components/Button"
-import MemberMobile from "components/MemberMobile"
-import FundDetailsCard from "components/FundDetailsCard"
-import FundStatisticsCard from "components/FundStatisticsCard"
-import TabsLight from "components/TabsLight"
-import ProfitLossChart from "components/ProfitLossChart"
-import LockedFundsChart from "components/LockedFundsChart"
-import Header from "components/Header/Layout"
-import { Profiles } from "components/Header/Components"
-import Pools from "components/Header/Pools"
-import PerformanceFeeCard from "components/PerformanceFeeCard"
 import BarChart from "pages/Investor/Bar"
+import { TabCard, Row, MainValue } from "pages/Investor/styled"
+
+import { Flex, Center } from "theme"
+import Pools from "components/Header/Pools"
+import TabsLight from "components/TabsLight"
+import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
+import MemberMobile from "components/MemberMobile"
+import { Profiles } from "components/Header/Components"
+import PoolLockedFunds from "components/PoolLockedFunds"
+import ProfitLossChart from "components/ProfitLossChart"
+import FundDetailsCard from "components/FundDetailsCard"
+import Button, { SecondaryButton } from "components/Button"
+import FundStatisticsCard from "components/FundStatisticsCard"
+import PerformanceFeeCard from "components/PerformanceFeeCard"
+
 import pencil from "assets/icons/pencil.svg"
 
 import { formatBigNumber } from "utils"
 import { usePoolQuery, usePoolContract, useTraderPool } from "hooks/usePool"
-
-import { TabCard, Row, MainText, MainValue } from "pages/Investor/styled"
 
 import {
   Container,
@@ -188,23 +189,7 @@ function Trader(props: Props) {
               name: "Locked funds",
               child: (
                 <>
-                  <LockedFundsChart address={poolAddress} />
-                  <Flex full p="15px 0 0">
-                    <Row>
-                      <MainText>Locked out of investor funds</MainText>
-                      <MainValue>$32.12k</MainValue>
-                    </Row>
-                  </Flex>
-                  <Row>
-                    <MainText>Your funds locked</MainText>
-                    <TextWhiteBig>$32.12k</TextWhiteBig>
-                  </Row>
-                  <Row>
-                    <FundsUsed
-                      current={"$61.15k / $101.92k"}
-                      total={"Fund used (60%)"}
-                    />
-                  </Row>
+                  <PoolLockedFunds address={poolAddress} />
                 </>
               ),
             },
