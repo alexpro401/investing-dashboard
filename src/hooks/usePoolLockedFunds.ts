@@ -5,7 +5,7 @@ import { usePoolContract, usePoolQuery } from "hooks/usePool"
 import { normalizeBigNumber } from "utils"
 import { useERC20 } from "hooks/useContract"
 import { percentageOfBignumbers, subtractBignumbers } from "utils/formulas"
-import useOpenPositionsPricesOutUSD from "hooks/useOpenPositionsPricesOutUSD"
+import useOpenPositionsPriceOutUSD from "hooks/useOpenPositionsPriceOutUSD"
 
 function usePoolLockedFunds(poolAddress: string | undefined) {
   const [poolData] = usePoolQuery(poolAddress)
@@ -36,7 +36,7 @@ function usePoolLockedFunds(poolAddress: string | undefined) {
     )
   }, [_baseAndPositionBalances, poolAddress, poolInfo])
 
-  const lockedAmountUSD = useOpenPositionsPricesOutUSD(
+  const lockedAmountUSD = useOpenPositionsPriceOutUSD(
     poolAddress,
     positionAmountsMap,
     poolInfo?.openPositions

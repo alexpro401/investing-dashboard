@@ -11,7 +11,7 @@ import { addBignumbers } from "utils/formulas"
  * @param poolAddress address of pool
  * @param positions addresses of open positions
  */
-const useOpenPositionsPricesOutUSD = (
+const useOpenPositionsPriceOutUSD = (
   poolAddress?: string,
   positionAmountsMap?: any,
   positions?: string[]
@@ -43,9 +43,9 @@ const useOpenPositionsPricesOutUSD = (
       data &&
       !loading &&
       positions &&
-      data.length !== positions.length
+      data.positions.length !== positions.length
     ) {
-      fetchMore()
+      fetchMore({ requestPolicy: "network-only" })
     }
   }, [data, fetchMore, loading, positions])
 
@@ -80,4 +80,4 @@ const useOpenPositionsPricesOutUSD = (
   return outUSDVolume
 }
 
-export default useOpenPositionsPricesOutUSD
+export default useOpenPositionsPriceOutUSD
