@@ -38,21 +38,11 @@ const Chart = ({ data }) => {
       <AreaChart stackOffset="silhouette" data={data}>
         <defs>
           <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="65%" stopColor="#9AE2CB33" stopOpacity={0.3} />
-            <stop offset="70%" stopColor="#9AE2CB33" stopOpacity={0.25} />
-            <stop offset="80%" stopColor="#9AE2CB33" stopOpacity={0.2} />
-            <stop offset="85%" stopColor="#9AE2CB26" stopOpacity={0.15} />
-            <stop offset="90%" stopColor="#9AE2CB20" stopOpacity={0.1} />
-            <stop offset="95%" stopColor="#9AE2CB15" stopOpacity={0.04} />
+            <stop offset="65%" stopColor="#9AE2CB33" stopOpacity={0.85} />
             <stop offset="100%" stopColor="#9AE2CB05" stopOpacity={0} />
           </linearGradient>
           <linearGradient id="colorSecond" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="65%" stopColor="#ffffff" stopOpacity={0.3} />
-            <stop offset="70%" stopColor="#ffffff" stopOpacity={0.25} />
-            <stop offset="80%" stopColor="#ffffff" stopOpacity={0.2} />
-            <stop offset="85%" stopColor="#ffffff" stopOpacity={0.15} />
-            <stop offset="90%" stopColor="#ffffff" stopOpacity={0.1} />
-            <stop offset="95%" stopColor="#ffffff" stopOpacity={0.04} />
+            <stop offset="65%" stopColor="#ffffff" stopOpacity={0.2} />
             <stop offset="100%" stopColor="#ffffff" stopOpacity={0} />
           </linearGradient>
         </defs>
