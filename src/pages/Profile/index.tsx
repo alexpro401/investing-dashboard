@@ -3,25 +3,24 @@ import { useParams, useNavigate } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
 import { GuardSpinner } from "react-spinners-kit"
 
-import MemberMobile from "components/MemberMobile"
-import Button, { SecondaryButton } from "components/Button"
-import FundDetailsCard from "components/FundDetailsCard"
-import FundStatisticsCard from "components/FundStatisticsCard"
-import ProfitLossChart from "components/ProfitLossChart"
 import TabsLight from "components/TabsLight"
 import Header from "components/Header/Layout"
+import PoolPnlInfo from "components/PoolPnlInfo"
+import MemberMobile from "components/MemberMobile"
+import PoolLockedFunds from "components/PoolLockedFunds"
+import FundDetailsCard from "components/FundDetailsCard"
+import Button, { SecondaryButton } from "components/Button"
+import FundStatisticsCard from "components/FundStatisticsCard"
 
 import { Center } from "theme"
-import { Container, ButtonContainer, Details, TextGrey } from "./styled"
+import { Container, ButtonContainer, Details } from "./styled"
 
-import BarChart from "components/BarChart"
-import { TabCard, Row, MainValue } from "pages/Investor/styled"
+import { TabCard } from "pages/Investor/styled"
 
 import { shortenAddress } from "utils"
 import { useActiveWeb3React } from "hooks"
 import { PoolType } from "constants/interfaces_v2"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"
-import PoolLockedFunds from "components/PoolLockedFunds"
 
 interface Props {}
 
@@ -97,19 +96,7 @@ const Profile: React.FC<Props> = () => {
                 name: "Profit & Loss",
                 child: (
                   <>
-                    <ProfitLossChart
-                      address={poolAddress}
-                      baseToken={poolData?.baseToken}
-                    />
-                    <BarChart address={poolAddress} />
-                    <Row>
-                      <TextGrey>P&L LP - $ETH</TextGrey>
-                      <MainValue>+ 13.1% (+112.132 ETH)</MainValue>
-                    </Row>
-                    <Row>
-                      <TextGrey>P&L LP - USD% - USD</TextGrey>
-                      <MainValue>+ 19.1% - 19.1 USD </MainValue>
-                    </Row>
+                    <PoolPnlInfo address={poolAddress} />
                   </>
                 ),
               },

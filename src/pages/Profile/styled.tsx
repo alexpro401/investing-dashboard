@@ -37,12 +37,3 @@ export const Details = styled(GradientBorder)`
     background: #181e2c;
   }
 `
-
-export const TextGrey = styled.div`
-  font-family: Gilroy;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 14px;
-  line-height: 130%;
-  color: #5a6071;
-`

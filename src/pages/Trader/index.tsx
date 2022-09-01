@@ -1,22 +1,21 @@
+import { useWeb3React } from "@web3-react/core"
+import { GuardSpinner } from "react-spinners-kit"
+import { formatEther } from "@ethersproject/units"
+import { createClient, Provider as GraphProvider } from "urql"
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
-import { GuardSpinner } from "react-spinners-kit"
-import { useWeb3React } from "@web3-react/core"
-import { createClient, Provider as GraphProvider } from "urql"
-import { formatEther } from "@ethersproject/units"
 
-import BarChart from "components/BarChart"
-import { TabCard, Row, MainValue } from "pages/Investor/styled"
+import { TabCard } from "pages/Investor/styled"
 
 import { Flex, Center } from "theme"
 import Pools from "components/Header/Pools"
 import TabsLight from "components/TabsLight"
 import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
+import PoolPnlInfo from "components/PoolPnlInfo"
 import MemberMobile from "components/MemberMobile"
 import { Profiles } from "components/Header/Components"
 import PoolLockedFunds from "components/PoolLockedFunds"
-import ProfitLossChart from "components/ProfitLossChart"
 import FundDetailsCard from "components/FundDetailsCard"
 import Button, { SecondaryButton } from "components/Button"
 import FundStatisticsCard from "components/FundStatisticsCard"
@@ -31,9 +30,6 @@ import {
   Container,
   ButtonContainer,
   Details,
-  TextWhiteBig,
-  TextGrey,
-  FundsUsed,
   DetailsEditLinkFrame,
   OwnInvesting,
   OwnInvestingLabel,
@@ -169,19 +165,7 @@ function Trader(props: Props) {
               name: "Profit & Loss",
               child: (
                 <>
-                  <ProfitLossChart
-                    address={poolAddress}
-                    baseToken={poolData?.baseToken}
-                  />
-                  <BarChart address={poolAddress} />
-                  <Row>
-                    <TextGrey>P&L LP - $ETH</TextGrey>
-                    <MainValue>0% (0 ETH)</MainValue>
-                  </Row>
-                  <Row>
-                    <TextGrey>P&L LP - USD% - USD</TextGrey>
-                    <MainValue>0% - 0 USD </MainValue>
-                  </Row>
+                  <PoolPnlInfo address={poolAddress} />
                 </>
               ),
             },
