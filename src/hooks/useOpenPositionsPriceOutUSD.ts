@@ -30,6 +30,14 @@ const useOpenPositionsPriceOutUSD = (
     },
   })
 
+  // Clear state to prevent memory leak
+  useEffect(() => {
+    return () => {
+      setOutUSD(BigNumber.from(0))
+      setFullData(false)
+    }
+  }, [poolAddress])
+
   // Must fetch all positions before calculate prices
   useEffect(() => {
     if (
