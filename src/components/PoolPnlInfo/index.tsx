@@ -21,7 +21,7 @@ const PoolPnlInfo: React.FC<Props> = ({ address }) => {
       <S.Row>
         <S.Label>Total P&L LP - {baseToken?.symbol}</S.Label>
         <S.Value>
-          {totalPnlPercentage}% ({totalPnlBase} {baseToken?.symbol})
+          {totalPnlPercentage}% ({totalPnlBase?.format} {baseToken?.symbol})
         </S.Value>
       </S.Row>
       <S.Row>
