@@ -36,7 +36,7 @@ const usePoolPnlInfo = (address: string | undefined) => {
     format: string
   }
   const totalPnlBase = useMemo<IAmount>(() => {
-    if (!poolData || !poolData.priceHistory) {
+    if (!poolData || !poolData.priceHistory || !poolData.priceHistory[0]) {
       return { big: BigNumber.from(0), format: "0" }
     }
 
@@ -46,7 +46,9 @@ const usePoolPnlInfo = (address: string | undefined) => {
   }, [poolData])
 
   const totalUSDPnlPerc = useMemo(() => {
-    if (!poolData) return "0"
+    if (!poolData || !poolData.priceHistory || !poolData.priceHistory[0]) {
+      return "0"
+    }
 
     const big = BigNumber.from(poolData.priceHistory[0].percPNL)
     return normalizeBigNumber(big, 4, 2)
