@@ -64,6 +64,7 @@ const POOL = `
   averagePositionTime
   investorsCount
   admins
+  orderSize
   privateInvestors {
     id
     activePools

@@ -75,6 +75,7 @@ export interface IPoolQuery {
   priceHistory: IPriceHistory[]
   privateInvestors: Investor[]
   admins: string[]
+  orderSize: BigNumber
 }
 
 export interface IPriceHistoryQuery {
