@@ -6,7 +6,7 @@ import {
   useMemo,
   useState,
 } from "react"
-import { formatEther, parseEther, parseUnits } from "@ethersproject/units"
+import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
@@ -31,8 +31,7 @@ import {
   addBignumbers,
   getPriceImpact,
   multiplyBignumbers,
-  _divideBignumbers,
-  _multiplyBignumbers,
+  divideBignumbers,
 } from "utils/formulas"
 
 import {
@@ -135,9 +134,9 @@ const useSwap = ({
   }, [gasTrackerResponse])
 
   const info = useMemo(() => {
-    const pnlUSD = _multiplyBignumbers([pnlLP, 18], [priceUSD, 18])
-    const traderLP = _multiplyBignumbers([pnlLP, 18], [traderShare, 18])
-    const traderPNLUSD = _multiplyBignumbers([traderLP, 18], [priceUSD, 18])
+    const pnlUSD = multiplyBignumbers([pnlLP, 18], [priceUSD, 18])
+    const traderLP = multiplyBignumbers([pnlLP, 18], [traderShare, 18])
+    const traderPNLUSD = multiplyBignumbers([traderLP, 18], [priceUSD, 18])
     const baseSymbol = baseTokenData?.symbol
 
     return {
@@ -529,7 +528,7 @@ const useSwap = ({
   useEffect(() => {
     if (pnl.isZero() || totalLockedLP.isZero()) return
 
-    const pnlLP = _multiplyBignumbers([pnl, 6], [totalLockedLP, 18])
+    const pnlLP = multiplyBignumbers([pnl, 6], [totalLockedLP, 18])
     setPNLLP(pnlLP)
   }, [pnl, totalLockedLP])
 
@@ -537,7 +536,7 @@ const useSwap = ({
   useEffect(() => {
     if (!poolInfo) return
 
-    const share = _divideBignumbers(
+    const share = divideBignumbers(
       [poolInfo.traderBase, 18],
       [poolInfo.totalPoolBase, 18]
     )
@@ -567,14 +566,14 @@ const useSwap = ({
     const positionOpen = BigNumber.from(position.totalPositionOpenVolume)
 
     if (positionOpen.isZero()) return
-    const buyingPrice = _divideBignumbers([baseOpen, 18], [positionOpen, 18])
+    const buyingPrice = divideBignumbers([baseOpen, 18], [positionOpen, 18])
     setAvgBuyingPrice(buyingPrice)
 
     const baseClose = BigNumber.from(position.totalBaseCloseVolume)
     const positionClose = BigNumber.from(position.totalPositionCloseVolume)
 
     if (positionClose.isZero()) return
-    const sellingPrice = _divideBignumbers([baseClose, 18], [positionClose, 18])
+    const sellingPrice = divideBignumbers([baseClose, 18], [positionClose, 18])
     setAvgSellingPrice(sellingPrice)
   }, [position])
 
