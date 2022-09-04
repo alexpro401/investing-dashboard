@@ -15,7 +15,15 @@ const PRICE_HISTORY = `
 `
 
 const PRICE_HISTORY_LAST = `
-  priceHistory(first: 1, orderBy: timestamp, orderDirection: desc, where: { isLast: true }) {
+  priceHistory(
+    first: 1,
+    orderBy: timestamp,
+    orderDirection: desc,
+    where: {
+      isLast: true,
+      aggregationType_gte: 0,
+      aggregationType_lte: 0,
+    }) {
     ${PRICE_HISTORY}
   }
 `
@@ -179,6 +187,21 @@ const BasicPositionsQuery = `
       ${POSITION}
     }
   }
+`
+
+const PoolPositionLast = `
+query ($poolId: String!, $tokenId: String!) {
+  positions(
+    first: 1, 
+    where: {
+      traderPool_: { id: $poolId }
+      positionToken: $tokenId
+    },
+    orderBy: startTimestamp, orderDirection: desc
+  ) {
+    ${POSITION}
+  }
+}
 `
 
 // Pool risky proposals
@@ -454,4 +477,5 @@ export {
   UserTransactionsQuery,
   getPoolsQueryVariables,
   RiskyProposalPositionQuery,
+  PoolPositionLast,
 }
