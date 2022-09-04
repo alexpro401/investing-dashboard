@@ -100,8 +100,8 @@ const useInvestInvestmentProposal = (
   const [isSlippageOpen, setSlippageOpen] = useState(false)
   const [toSelectorOpened, setToSelector] = useState(false)
   const [fromSelectorOpened, setFromSelector] = useState(false)
-  const [isWalletPrompting, setWalletPrompting] = usePayload()
-  const [error, setError] = useError()
+  const [, setWalletPrompting] = usePayload()
+  const [, setError] = useError()
 
   const [toAddress, setToAddress] = useState("")
   const [fromAddress, setFromAddress] = useState("")

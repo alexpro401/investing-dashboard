@@ -9,6 +9,7 @@ import { ExchangeType, OwnedPools } from "constants/interfaces_v2"
 import { getTime, setHours, setMinutes } from "date-fns"
 import { TransactionReceipt } from "@ethersproject/providers"
 import { Token } from "constants/types"
+import { getBalanceOf, getContract } from "./getContract"
 
 export const useUpdate = (ms: number) => {
   const [updator, setUpdate] = useState(0)
@@ -194,16 +195,39 @@ export function checkMetamask() {
 }
 
 export function getAllowance(
-  address,
+  account,
   tokenAddress,
   contractAddress,
   lib
-): BigNumber {
-  const signer = lib.getSigner(address).connectUnchecked()
+): Promise<BigNumber> {
+  try {
+    const erc20Contract = getContract(tokenAddress, ERC20, lib, account)
 
-  const erc20Contract = new Contract(tokenAddress, ERC20, signer)
+    return erc20Contract.allowance(account, contractAddress)
+  } catch (e) {
+    console.log(e)
+    return new Promise((resolve) => resolve(ZERO))
+  }
+}
 
-  return erc20Contract.allowance(address, contractAddress)
+export function getTokenBalance(
+  account,
+  tokenAddress,
+  library
+): Promise<BigNumber> {
+  try {
+    const contract = getContract(tokenAddress, ERC20, library, account)
+
+    return getBalanceOf({
+      account,
+      contract,
+      tokenAddress,
+      library,
+    })
+  } catch (e) {
+    console.log(e)
+    return new Promise((resolve) => resolve(ZERO))
+  }
 }
 
 export const focusText = (event) => event.target.select()

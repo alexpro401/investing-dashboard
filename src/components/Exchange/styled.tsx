@@ -5,14 +5,17 @@ import { FC, ReactNode, useState } from "react"
 import angle from "assets/icons/angle-up.svg"
 import tokenLines from "assets/icons/risky-tokens.svg"
 import { dropdownVariants } from "motion/variants"
+import { BigNumberInput } from "big-number-input"
+import TokenIcon from "components/TokenIcon"
+import { DividendToken } from "constants/interfaces"
 
-export const InputContainer = styled(GradientBorder)`
+export const InputContainer = styled(GradientBorder)<{ height?: string }>`
   flex-direction: column;
   justify-content: space-between;
   padding: 16px 16px 16px 16px;
   border-radius: 20px;
   width: 100%;
-  height: 100px;
+  height: ${(props) => (props.height ? props.height : "100px")};
 
   &:after {
     background: #141926;
@@ -129,6 +132,33 @@ export const Input = styled.input`
   }
 `
 
+export const InputS = styled.input`
+  font-family: Gilroy;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  color: #b1c7fc;
+  outline: none;
+  background: transparent;
+  border: none;
+  padding: 5px 0 0;
+  width: 50%;
+
+  &::placeholder {
+    color: #b1c7fc;
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  &:disabled {
+    color: #788ab4 !important;
+
+    &::placeholder {
+      color: #788ab4 !important;
+    }
+  }
+`
+
 export const ActiveSymbol = styled(GradientBorder)`
   cursor: pointer;
   user-select: none;
@@ -156,6 +186,20 @@ export const SymbolLabel = styled.span`
   white-space: nowrap;
   margin-top: 4px;
   margin: 4px 7px 0 4px;
+`
+
+export const SymbolLabelS = styled.span`
+  font-family: "Gilroy";
+  font-style: italic;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 15px;
+  text-align: right;
+
+  /* Text/2 */
+
+  color: #b1c7fc;
+  white-space: nowrap;
 `
 
 export const SelectToken = styled(SymbolLabel)`
@@ -441,3 +485,64 @@ export const TokenText = styled.div`
   line-height: 100%;
   color: #788ab4;
 `
+
+// DIVIDENDS INPUT
+
+export const AddButton = styled.button`
+  background: none;
+  border: none;
+  outline: none;
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+  text-align: center;
+
+  /* Text/link */
+
+  color: #2669eb;
+`
+
+export const ButtonDivider = styled.div`
+  width: fill-available;
+  height: 1px;
+  margin-top: 16px;
+
+  background: #1c2437;
+  border-radius: 16px;
+`
+
+const DividendsTokenContainer = styled(Flex)`
+  height: 48px;
+  padding: 16px;
+
+  background: #1c2437;
+  border-radius: 16px;
+  width: fill-available;
+`
+
+export const DividendsList = styled(Flex)`
+  padding: 16px 0;
+  gap: 16px;
+  width: fill-available;
+  flex-direction: column;
+`
+
+export const DividendsToken = ({ token }: { token: DividendToken }) => {
+  return (
+    <DividendsTokenContainer>
+      <BigNumberInput
+        decimals={18}
+        onChange={() => {}}
+        value="0"
+        renderInput={(props: any) => <InputS inputMode="decimal" {...props} />}
+      />
+      <Flex gap="8">
+        <SymbolLabelS>DEXE</SymbolLabelS>
+
+        <TokenIcon m="0" address={token.address} />
+      </Flex>
+    </DividendsTokenContainer>
+  )
+}

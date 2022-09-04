@@ -1,6 +1,5 @@
 import { ReactNode } from "react"
-import { Flex } from "theme"
-import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
+import { BigNumber } from "@ethersproject/bignumber"
 import { BigNumberInput } from "big-number-input"
 
 import TokenIcon from "components/TokenIcon"
@@ -24,9 +23,15 @@ import {
   SelectToken,
   SymbolLabel,
   Icon,
+  ButtonDivider,
+  AddButton,
+  DividendsList,
+  DividendsToken,
 } from "./styled"
+import { DividendToken } from "constants/interfaces"
 
-interface IToProps {
+interface Props {
+  tokens: DividendToken[]
   price: BigNumber
   amount: string
   balance: BigNumber
@@ -42,7 +47,8 @@ interface IToProps {
   onSelect?: () => void
 }
 
-const ExchangeInput: React.FC<IToProps> = ({
+const DividendsInput: React.FC<Props> = ({
+  tokens,
   price,
   amount,
   balance,
@@ -93,7 +99,7 @@ const ExchangeInput: React.FC<IToProps> = ({
   )
 
   return (
-    <InputContainer>
+    <InputContainer height="fit-content">
       <InputTop>
         {customPrice ? (
           customPrice
@@ -122,19 +128,25 @@ const ExchangeInput: React.FC<IToProps> = ({
           )}
         />
 
-        <ActiveSymbol onClick={onSelect}>
+        <ActiveSymbol>
           {!noData && icon}
           {noData ? (
             <SelectToken>Select Token</SelectToken>
           ) : (
             <SymbolLabel>{symbol}</SymbolLabel>
           )}
-          {!!onSelect && !isLocked && <Icon src={angleIcon} />}
           {isLocked && <Icon src={locker} />}
         </ActiveSymbol>
       </InputBottom>
+      <ButtonDivider />
+      <DividendsList>
+        {tokens.slice(1).map((token) => (
+          <DividendsToken token={token} key={token.address} />
+        ))}
+      </DividendsList>
+      <AddButton onClick={onSelect}>+ Select another token</AddButton>
     </InputContainer>
   )
 }
 
-export default ExchangeInput
+export default DividendsInput

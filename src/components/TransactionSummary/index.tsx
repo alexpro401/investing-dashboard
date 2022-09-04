@@ -25,6 +25,7 @@ import {
   PrivacyPolicyAgreeTransactionInfo,
   TraderGetPerformanceFeeTransactionInfo,
   TransactionInfo,
+  WithdrawInvestProposalTransactionInfo,
 } from "state/transactions/types"
 import { formatBigNumber } from "utils"
 import { useERC20 } from "hooks/useContract"
@@ -242,6 +243,16 @@ const DepositInvestProposalSummary: React.FC<{
   const amount = formatBigNumber(BigNumber.from(investLpAmountRaw))
   return <>Stake Invest Proposal LP2 tokens with {amount} LP tokens</>
 }
+const WithdrawInvestProposalSummary: React.FC<{
+  info: WithdrawInvestProposalTransactionInfo
+}> = ({ info: { amountRaw, symbol } }) => {
+  const amount = formatBigNumber(BigNumber.from(amountRaw))
+  return (
+    <>
+      Withdraw {amount} {symbol} from Invest Proposal
+    </>
+  )
+}
 
 const StakeInsuranceSummary: React.FC<{
   info: StakeInsuranceTransactionInfo
@@ -312,6 +323,8 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <EditInvestProposalSummary info={info} />
     case TransactionType.INVEST_PROPOSAL_INVEST:
       return <DepositInvestProposalSummary info={info} />
+    case TransactionType.INVEST_PROPOSAL_WITHDRAW:
+      return <WithdrawInvestProposalSummary info={info} />
     case TransactionType.INSURANCE_STAKE:
       return <StakeInsuranceSummary info={info} />
     case TransactionType.INSURANCE_UNSTAKE:

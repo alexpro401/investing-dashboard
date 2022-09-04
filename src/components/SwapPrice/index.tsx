@@ -21,10 +21,10 @@ import {
 import { dropdownVariants, rotate180Variants } from "motion/variants"
 
 interface Props {
-  fromSymbol: string | undefined
-  toSymbol: string | undefined
-  tokensCost: BigNumber
-  usdCost: BigNumber
+  fromSymbol?: string
+  toSymbol?: string
+  tokensCost?: BigNumber
+  usdCost?: BigNumber
   gasPrice: string
   isExpandable?: boolean
 }
@@ -48,7 +48,7 @@ const SwapPrice: React.FC<Props> = ({
   }, [isExpandable, isExpanded])
 
   useEffect(() => {
-    if (!fromSymbol || !toSymbol) {
+    if (!fromSymbol && !toSymbol) {
       setLoading(true)
       return
     }
@@ -87,10 +87,13 @@ const SwapPrice: React.FC<Props> = ({
       <Card onClick={handleAngleClick}>
         <Flex ai="center">
           <TokenPrice>
-            1 {toSymbol} = {formatNumber(formatUnits(tokensCost), 6)}{" "}
+            1 {toSymbol} ={" "}
+            {tokensCost && formatNumber(formatUnits(tokensCost), 6)}{" "}
             {fromSymbol}
           </TokenPrice>
-          <UsdPrice>(${formatNumber(formatUnits(usdCost), 2)})</UsdPrice>
+          {usdCost && (
+            <UsdPrice>(${formatNumber(formatUnits(usdCost), 2)})</UsdPrice>
+          )}
         </Flex>
         <Flex gap="6" ai="center">
           <GasIcon src={gas} />

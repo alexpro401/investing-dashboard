@@ -1,18 +1,16 @@
 import { Flex } from "theme"
-import { useNavigate, useParams } from "react-router-dom"
+import { useMemo, useState } from "react"
+import { useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
 
 import IconButton from "components/IconButton"
-import ExchangeInput from "components/Exchange/ExchangeInput"
-import RiskyInvestInput from "components/Exchange/RiskyInvestInput"
+import DividendsInput from "components/Exchange/DividendsInput"
 import ExchangeDivider from "components/Exchange/Divider"
 import Button, { SecondaryButton } from "components/Button"
 import CircularProgress from "components/CircularProgress"
-import TransactionSlippage from "components/TransactionSlippage"
 import Header from "components/Header/Layout"
 import TokenSelect from "modals/TokenSelect"
 
-import settings from "assets/icons/settings.svg"
 import close from "assets/icons/close-big.svg"
 
 import {
@@ -29,33 +27,20 @@ import {
 } from "components/Exchange/styled"
 
 import usePayDividends from "./usePayDividends"
-import { useMemo, useState } from "react"
-import SwapPrice from "components/SwapPrice"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
 })
 
 function PayDividends() {
-  const { poolAddress, proposalId, tokenAddress } = useParams()
-  const navigate = useNavigate()
+  const { poolAddress, proposalId } = useParams()
   const [isOpen, setTokenSelectOpen] = useState(false)
   const [
     {
+      tokens,
       form: { from, to },
-      isSlippageOpen,
-      oneTokenCost,
-      usdTokenCost,
-      gasPrice,
-      fromAmount,
-      toAmount,
-      direction,
-      slippage,
     },
     {
-      setDirection,
-      setSlippageOpen,
-      setSlippage,
       handleFromChange,
       handleSubmit,
       handlePercentageChange,
@@ -80,7 +65,7 @@ function PayDividends() {
       )
     }
 
-    if (fromAmount === "0" || toAmount === "0") {
+    if (from.amount === "0") {
       return (
         <SecondaryButton
           theme="disabled"
@@ -95,17 +80,11 @@ function PayDividends() {
     }
 
     return (
-      <Button
-        size="large"
-        theme={direction === "deposit" ? "primary" : "warn"}
-        onClick={handleSubmit}
-        fz={22}
-        full
-      >
+      <Button size="large" theme="primary" onClick={handleSubmit} fz={22} full>
         Pay dividends
       </Button>
     )
-  }, [direction, from.address, fromAmount, handleSubmit, toAmount])
+  }, [from.address, from.amount, handleSubmit])
 
   const lastDividends = useMemo(() => {
     return (
@@ -165,7 +144,8 @@ function PayDividends() {
         </IconsGroup>
       </CardHeader>
 
-      <ExchangeInput
+      <DividendsInput
+        tokens={tokens}
         price={from.price}
         amount={from.amount}
         balance={from.balance}
@@ -175,21 +155,6 @@ function PayDividends() {
         decimal={from.decimals}
         onChange={handleFromChange}
         onSelect={openTokenSelect}
-      />
-
-      <ExchangeDivider
-        changeAmount={handlePercentageChange}
-        changeDirection={setDirection}
-      />
-
-      <ExchangeInput
-        price={to.price}
-        amount={to.amount}
-        balance={to.balance}
-        address={to.address}
-        symbol={to.symbol}
-        customIcon={to.icon}
-        decimal={to.decimals}
       />
 
       <Flex full p="16px 0 0">
@@ -206,13 +171,6 @@ function PayDividends() {
           {lastDividendsContent}
         </InfoDropdown>
       </InfoCard>
-
-      <TransactionSlippage
-        slippage={slippage}
-        onChange={setSlippage}
-        isOpen={isSlippageOpen}
-        toggle={(v) => setSlippageOpen(v)}
-      />
     </Card>
   )
 
