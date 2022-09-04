@@ -360,7 +360,11 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
         {
           label: "Pay dividend",
           onClick: () => {
-            console.log("Pay dividend")
+            navigate(
+              `/pay-dividends-investment-proposal/${poolAddress}/${
+                Number(proposalId) - 1
+              }`
+            )
           },
         },
       ]

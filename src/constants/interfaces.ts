@@ -59,6 +59,12 @@ export interface Token {
   decimals: number
 }
 
+export interface DividendToken {
+  address: string
+  amount: BigNumber
+  allowance: BigNumber
+}
+
 export interface ITokenBase {
   address: string
   name: string

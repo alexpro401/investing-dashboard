@@ -89,6 +89,16 @@ function WithdrawInvestmentProposal() {
     )
   }, [onSubmit, from.amount, from.balance])
 
+  // {
+  //   transactions (where: {user: "0xca543e570e4a1f6da7cf9c4c7211692bc105a00a", type_contains: ["17"]}) {
+  //     investProposalWithdraw {
+  //       amount
+  //       transaction {
+  //         timestamp
+  //       }
+  //     }
+  //   }
+  // }
   const lastWithdraw = useMemo(() => {
     return (
       <Flex gap="4">
