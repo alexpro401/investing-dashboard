@@ -124,11 +124,11 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   const [expirationDate, setExpirationDate] = useState<{
     value: string
     completed: boolean
-    initial: string
+    initial: BigNumber
   }>({
     value: "0",
     completed: false,
-    initial: "0",
+    initial: BigNumber.from("0"),
   })
 
   /**
@@ -212,7 +212,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     setExpirationDate({
       value: format(expandedTimestampLimit, DATE_TIME_FORMAT),
       completed: currentTimestamp - expandedTimestampLimit >= 0,
-      initial: timestampLimit.toString(),
+      initial: timestampLimit,
     })
   }, [proposal])
 
@@ -405,13 +405,13 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
 
   const onUpdateRestrictions = (timestamp: number, maxSize: BigNumber) => {
     if (timestamp) {
-      const expanded = expandTimestamp(Number(timestamp.toString()))
+      const expanded = expandTimestamp(timestamp)
       const currentTimestamp = new Date().valueOf()
 
       setExpirationDate({
         value: format(expanded, DATE_TIME_FORMAT),
         completed: currentTimestamp - expanded >= 0,
-        initial: expanded.toString(),
+        initial: BigNumber.from(String(timestamp)),
       })
     }
 

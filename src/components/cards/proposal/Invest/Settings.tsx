@@ -41,7 +41,9 @@ const useUpdateInvestProposal = ({
   timestamp,
   maxSizeLP,
 }): [Values, Handlers] => {
-  const [timestampLimit, setTimestampLimit] = useState<number>(timestamp)
+  const [timestampLimit, setTimestampLimit] = useState<number>(
+    timestamp.toString()
+  )
   const [investLPLimit, setInvestLPLimit] = useState<string>(
     normalizeBigNumber(maxSizeLP, 18, 6)
   )
@@ -64,7 +66,7 @@ interface Props {
   visible: boolean
   setVisible: Dispatch<SetStateAction<boolean>>
 
-  timestamp: string
+  timestamp: BigNumber
   maxSizeLP: BigNumber
   fullness: BigNumber
   proposalPool: Contract | null
