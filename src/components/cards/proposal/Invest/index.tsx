@@ -7,39 +7,37 @@ import {
   useState,
 } from "react"
 import { format } from "date-fns"
-import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
-import { parseEther } from "@ethersproject/units"
-import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
+import { BigNumber } from "@ethersproject/bignumber"
 
-import { PriceFeed } from "abi"
-import { useActiveWeb3React } from "hooks"
-import { usePoolContract } from "hooks/usePool"
 import { getIpfsData } from "utils/ipfs"
-import { percentageOfBignumbers } from "utils/formulas"
+import { useActiveWeb3React } from "hooks"
+import usePoolPrice from "hooks/usePoolPrice"
+import { usePoolContract } from "hooks/usePool"
+import { DATE_TIME_FORMAT } from "constants/time"
 import { InvestProposal } from "constants/interfaces_v2"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import useInvestProposalData from "hooks/useInvestProposalData"
-import { selectPriceFeedAddress } from "state/contracts/selectors"
-import useContract, {
+import { addBignumbers, percentageOfBignumbers } from "utils/formulas"
+import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
+import {
   useERC20,
   useInvestProposalContract,
+  usePriceFeedContract,
 } from "hooks/useContract"
-import { DATE_TIME_FORMAT } from "constants/time"
 
 import { Flex } from "theme"
 import Icon from "components/Icon"
+import ReadMore from "components/ReadMore"
 import TokenIcon from "components/TokenIcon"
 import IconButton from "components/IconButton"
-import ReadMore from "components/ReadMore"
-
 import { Actions } from "components/cards/proposal/styled"
+
 import S from "./styled"
-import InvestCardSettings from "./Settings"
 import BodyTrader from "./BodyTrader"
 import BodyInvestor from "./BodyInvestor"
+import InvestCardSettings from "./Settings"
 
 import settingsIcon from "assets/icons/settings.svg"
 import settingsGreenIcon from "assets/icons/settings-green.svg"
@@ -52,12 +50,12 @@ interface Props {
 const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   const navigate = useNavigate()
   const { account } = useActiveWeb3React()
-  const priceFeedAddress = useSelector(selectPriceFeedAddress)
-  const priceFeed = useContract(priceFeedAddress, PriceFeed)
+  const priceFeed = usePriceFeedContract()
 
+  const [{ priceUSD }] = usePoolPrice(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [proposalPool, proposalAddress] = useInvestProposalContract(poolAddress)
   const [, baseTokenData] = useERC20(poolInfo?.parameters.baseToken)
+  const [proposalPool, proposalAddress] = useInvestProposalContract(poolAddress)
 
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
@@ -155,7 +153,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   const totalInvestors = useMemo<string>(() => {
     if (!proposal || !proposal.totalInvestors) return "0"
 
-    return normalizeBigNumber(proposal.totalInvestors, 18, 0)
+    return proposal.totalInvestors.toString()
   }, [proposal])
 
   /**
@@ -256,9 +254,10 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
       try {
         const activeInvestmentsInfo =
           await proposalPool.getActiveInvestmentsInfo(account, 0, 1)
-
         if (activeInvestmentsInfo && activeInvestmentsInfo[0]) {
-          setProposalId(activeInvestmentsInfo[0].proposalId.toString())
+          setProposalId(
+            String(Number(activeInvestmentsInfo[0].proposalId.toString()) - 1)
+          )
           setYouSizeLP(
             formatBigNumber(activeInvestmentsInfo[0].lpInvested, 18, 6)
           )
@@ -285,6 +284,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     ;(async () => {
       try {
         const { leftTokens, leftAmounts } = proposalInfo
+
         for (const [index, token] of leftTokens.entries()) {
           const amountPrice = await priceFeed.getNormalizedPriceOutUsd(
             token,
@@ -292,14 +292,12 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
           )
 
           if (amountPrice && amountPrice.amountOut) {
-            const totalDividendsAmountFixed = FixedNumber.fromValue(
-              totalDividendsAmount,
-              18
+            setTotalDividendsAmount(
+              addBignumbers(
+                [totalDividendsAmount, 18],
+                [amountPrice.amountOut, 18]
+              )
             )
-            const amountOutFixed = FixedNumber.from(amountPrice.amountOut)
-            const resFixed = totalDividendsAmountFixed.addUnsafe(amountOutFixed)
-
-            setTotalDividendsAmount(parseEther(resFixed._value))
           }
         }
       } catch (error) {
@@ -327,69 +325,56 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     })()
   }, [account, proposalId, proposalPool])
 
+  enum TerminalType {
+    Invest = "invest",
+    Withdraw = "withdraw",
+    PayDividends = "pay-dividends",
+  }
+
+  const onTerminalNavigate = useCallback(
+    (t: TerminalType) => {
+      if (!poolAddress || !proposalId) return
+      navigate(`/${t}-investment-proposal/${poolAddress}/${proposalId}`)
+    },
+    [TerminalType, navigate, poolAddress, proposalId]
+  )
+
   // Actions
   const actions = useMemo(() => {
     if (isTrader) {
       return [
         {
           label: "Withdraw",
-          onClick: () => {
-            navigate(
-              `/withdraw-investment-proposal/${poolAddress}/${
-                Number(proposalId) - 1
-              }`
-            )
-          },
+          onClick: () => onTerminalNavigate(TerminalType.Withdraw),
         },
         {
           label: "Deposit",
-          onClick: () => {
-            navigate(
-              `/invest-investment-proposal/${poolAddress}/${
-                Number(proposalId) - 1
-              }`
-            )
-          },
+          onClick: () => onTerminalNavigate(TerminalType.Invest),
         },
         {
           label: "Claim",
           onClick: () => {
+            // TODO: implement navigation to claim modal
             console.log("Claim")
           },
         },
         {
           label: "Pay dividend",
-          onClick: () => {
-            navigate(
-              `/pay-dividends-investment-proposal/${poolAddress}/${
-                Number(proposalId) - 1
-              }`
-            )
-          },
+          onClick: () => onTerminalNavigate(TerminalType.PayDividends),
         },
       ]
     }
     return [
       {
         label: "Stake LP",
-        onClick: () => {
-          console.log("Stake LP")
-        },
+        onClick: () => onTerminalNavigate(TerminalType.Invest),
       },
       {
         label: "Request a dividend",
-        onClick: () => {
-          console.log("Request a dividend")
-        },
-      },
-      {
-        label: "Withdraw",
-        onClick: () => {
-          console.log("Withdraw")
-        },
+        onClick: () => onTerminalNavigate(TerminalType.PayDividends),
       },
     ]
-  }, [isTrader])
+  }, [TerminalType, isTrader, onTerminalNavigate])
 
   /**
    * Navigate to pool page
@@ -499,6 +484,8 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
                 dividendsAvailable={dividendsAvailable}
                 totalDividends={normalizeBigNumber(totalDividendsAmount, 18, 6)}
                 expirationDate={expirationDate.value}
+                poolPriceUSD={normalizeBigNumber(priceUSD, 18, 2)}
+                onInvest={() => onTerminalNavigate(TerminalType.Invest)}
               />
             )}
           </S.Body>
