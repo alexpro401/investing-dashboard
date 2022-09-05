@@ -165,6 +165,11 @@ export interface DepositInvestProposalTransactionInfo {
   amount: string
   investLpAmountRaw: string
 }
+export interface WithdrawInvestProposalTransactionInfo {
+  type: TransactionType.INVEST_PROPOSAL_WITHDRAW
+  amountRaw: string
+  symbol: string
+}
 
 export interface StakeInsuranceTransactionInfo {
   type: TransactionType.INSURANCE_STAKE
@@ -212,6 +217,7 @@ export type TransactionInfo =
   | CreateInvestmentProposalTransactionInfo
   | EditInvestProposalTransactionInfo
   | DepositInvestProposalTransactionInfo
+  | WithdrawInvestProposalTransactionInfo
   | StakeInsuranceTransactionInfo
   | UnstakeInsuranceTransactionInfo
   | PrivacyPolicyAgreeTransactionInfo

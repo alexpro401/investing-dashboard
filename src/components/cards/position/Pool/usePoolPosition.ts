@@ -10,8 +10,8 @@ import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import {
   subtractBignumbers,
   addBignumbers,
-  _multiplyBignumbers,
-  _divideBignumbers,
+  multiplyBignumbers,
+  divideBignumbers,
   calcPositionPnlPercentage,
 } from "utils/formulas"
 import { ITokenBase } from "constants/interfaces"
@@ -84,7 +84,7 @@ function usePoolPosition(position: IPosition): [IPayload] {
     if (!position) return BIG_ZERO
 
     const { totalBaseOpenVolume, totalPositionOpenVolume } = position
-    return _divideBignumbers(
+    return divideBignumbers(
       [totalBaseOpenVolume, 18],
       [totalPositionOpenVolume, 18]
     )
@@ -99,7 +99,7 @@ function usePoolPosition(position: IPosition): [IPayload] {
     if (!position) return BIG_ZERO
 
     const { totalUSDOpenVolume, totalPositionOpenVolume } = position
-    return _divideBignumbers(
+    return divideBignumbers(
       [totalUSDOpenVolume, 18],
       [totalPositionOpenVolume, 18]
     )
@@ -115,7 +115,7 @@ function usePoolPosition(position: IPosition): [IPayload] {
 
     if (position.closed) {
       const { totalBaseCloseVolume, totalPositionCloseVolume } = position
-      return _divideBignumbers(
+      return divideBignumbers(
         [totalBaseCloseVolume, 18],
         [totalPositionCloseVolume, 18]
       )
@@ -133,7 +133,7 @@ function usePoolPosition(position: IPosition): [IPayload] {
 
     if (position.closed) {
       const { totalUSDCloseVolume, totalPositionCloseVolume } = position
-      return _divideBignumbers(
+      return divideBignumbers(
         [totalUSDCloseVolume, 18],
         [totalPositionCloseVolume, 18]
       )
@@ -175,7 +175,7 @@ function usePoolPosition(position: IPosition): [IPayload] {
           [totalBaseCloseVolume, 18]
         ) // current base open volume
 
-    const pnlBaseVolume = _multiplyBignumbers(
+    const pnlBaseVolume = multiplyBignumbers(
       [totalBaseVolume, 18],
       [pnlPercentage.big, 18]
     )
@@ -234,7 +234,7 @@ function usePoolPosition(position: IPosition): [IPayload] {
         if (price && price.amountOut && !price.amountOut.isZero()) {
           setPnlUSDCurrent(
             pnlBase.isNegative()
-              ? _multiplyBignumbers(
+              ? multiplyBignumbers(
                   [price.amountOut, 18],
                   [BigNumber.from("-1"), 18]
                 )

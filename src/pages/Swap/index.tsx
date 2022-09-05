@@ -55,6 +55,7 @@ const Swap = () => {
   const [
     { from, to },
     {
+      info,
       direction,
       gasPrice,
       receivedAfterSlippage,
@@ -148,33 +149,37 @@ const Swap = () => {
   const fundPNL = useMemo(() => {
     return (
       <Flex gap="4">
-        <InfoWhite>+12.72 ISDX</InfoWhite>
-        <InfoGrey>(+37.18%)</InfoGrey>
+        <InfoWhite>{info.fundPNL.lp}</InfoWhite>
+        <InfoGrey>({info.fundPNL.percent})</InfoGrey>
       </Flex>
     )
-  }, [])
+  }, [info])
 
   const fundPNLContent = useMemo(() => {
     return (
       <>
         <InfoRow>
           <InfoGrey>in USD</InfoGrey>
-          <InfoGrey>+1260 USD (+27.18%) </InfoGrey>
+          <InfoGrey>
+            {info.fundPNL.usd} ({info.fundPNL.percent}){" "}
+          </InfoGrey>
         </InfoRow>
         <InfoRow>
           <InfoGrey>Trader P&L</InfoGrey>
           <Flex gap="4">
-            <InfoWhite>2.11 ISDX </InfoWhite>
-            <InfoGrey>(+14%)</InfoGrey>
+            <InfoWhite>{info.fundPNL.traderLP}</InfoWhite>
+            <InfoGrey>({info.fundPNL.percent})</InfoGrey>
           </Flex>
         </InfoRow>
         <InfoRow>
           <InfoGrey>in USD</InfoGrey>
-          <InfoGrey>+1260 USD (+27.18%) </InfoGrey>
+          <InfoGrey>
+            {info.fundPNL.traderUSD} ({info.fundPNL.percent}){" "}
+          </InfoGrey>
         </InfoRow>
       </>
     )
-  }, [])
+  }, [info])
 
   const averagePrice = useMemo(() => {
     if (direction === "deposit") {
@@ -182,8 +187,8 @@ const Swap = () => {
         <InfoRow>
           <InfoGrey>Average buying price</InfoGrey>
           <Flex gap="4">
-            <InfoWhite>0.01289</InfoWhite>
-            <InfoGrey>WBNB</InfoGrey>
+            <InfoWhite>{info.avgBuyingPrice} </InfoWhite>
+            <InfoGrey>{info.baseSymbol}</InfoGrey>
           </Flex>
         </InfoRow>
       )
@@ -193,12 +198,12 @@ const Swap = () => {
       <InfoRow>
         <InfoGrey>Average selling price</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>0.01289 </InfoWhite>
-          <InfoGrey>WBNB</InfoGrey>
+          <InfoWhite>{info.avgSellingPrice} </InfoWhite>
+          <InfoGrey>{info.baseSymbol}</InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [direction])
+  }, [direction, info])
 
   const expectedOutput = useMemo(() => {
     return (
@@ -238,6 +243,20 @@ const Swap = () => {
       </InfoRow>
     )
   }, [receivedAfterSlippage, slippage, to.symbol])
+
+  const infoCard = useMemo(() => {
+    if (!inputToken || !outputToken) return
+    if (inputToken.length !== 42 || outputToken.length !== 42) return
+
+    return (
+      <InfoCard gap="12">
+        <InfoDropdown left={<InfoGrey>Fund P&L</InfoGrey>} right={fundPNL}>
+          {fundPNLContent}
+        </InfoDropdown>
+        {averagePrice}
+      </InfoCard>
+    )
+  }, [averagePrice, fundPNL, fundPNLContent, inputToken, outputToken])
 
   const form = (
     <Card>
@@ -329,12 +348,7 @@ const Swap = () => {
         {button}
       </Flex>
 
-      <InfoCard gap="12">
-        <InfoDropdown left={<InfoGrey>Fund P&L</InfoGrey>} right={fundPNL}>
-          {fundPNLContent}
-        </InfoDropdown>
-        {averagePrice}
-      </InfoCard>
+      {infoCard}
 
       <TransactionSlippage
         slippage={slippage}

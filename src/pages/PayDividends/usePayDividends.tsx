@@ -1,125 +1,64 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
-import { parseTransactionError, shortenAddress } from "utils"
-
-import { useWeb3React } from "@web3-react/core"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import Avatar from "components/Avatar"
 import Icon from "components/Icon"
 
 import { useTransactionAdder } from "state/transactions/hooks"
-import { TransactionType } from "state/transactions/types"
-import {
-  useInvestProposalMetadata,
-  usePoolMetadata,
-  useUserMetadata,
-} from "state/ipfsMetadata/hooks"
-import { SwapDirection } from "constants/types"
+import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 
-import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
+import { multiplyBignumbers } from "utils/formulas"
 
-import useAlert, { AlertType } from "hooks/useAlert"
-import { useRiskyProposal } from "hooks/useRiskyProposals"
 import { usePoolContract } from "hooks/usePool"
-import {
-  useBasicPoolContract,
-  useERC20,
-  useInvestPoolContract,
-  useInvestProposalContract,
-  useRiskyProposalContract,
-  useTraderPoolContract,
-  useUserRegistryContract,
-} from "hooks/useContract"
+import { useERC20, useInvestProposalContract } from "hooks/useContract"
 import { RiskyForm } from "constants/interfaces_v2"
-import usePoolPrice from "hooks/usePoolPrice"
-import useRiskyPrice from "hooks/useRiskyPrice"
-import useGasTracker from "state/gas/hooks"
-import { useInvestProposal } from "hooks/useInvestmentProposals"
-import useInvestmentPrice from "hooks/useInvestmentPrice"
-import { Token } from "constants/interfaces"
+import { Token, DividendToken } from "constants/interfaces"
+import { useWeb3React } from "@web3-react/core"
+import { SubmitState } from "constants/types"
+import usePayload from "hooks/usePayload"
+import { TransactionType } from "state/transactions/types"
+import { getAllowance, getTokenBalance, isTxMined } from "utils"
+import { ZERO } from "constants/index"
 
 const usePayDividends = (
   poolAddress?: string,
   proposalId?: string
 ): [
   {
+    tokens: DividendToken[]
     form: RiskyForm
-    isSlippageOpen: boolean
-    fromBalance: BigNumber
-    toBalance: BigNumber
-    inPrice: BigNumber
-    outPrice: BigNumber
-    oneTokenCost: BigNumber
-    usdTokenCost: BigNumber
-    gasPrice: string
-    fromAmount: string
-    toAmount: string
-    slippage: string
-    fromAddress: string
-    toAddress: string
-    toSelectorOpened: boolean
-    fromSelectorOpened: boolean
-    direction: SwapDirection
+    allowance: BigNumber
   },
   {
-    setFromAmount: (amount: string) => void
-    setSlippageOpen: (state: boolean) => void
-    setToAmount: (amount: string) => void
-    setToAddress: (address: string) => void
-    setFromAddress: (address: string) => void
-    setDirection: () => void
-    setToSelector: (state: boolean) => void
-    setFromSelector: (state: boolean) => void
-    setSlippage: (slippage: string) => void
+    updateAllowance: () => Promise<void>
     handlePercentageChange: (percentage: BigNumber) => void
     handleFromChange: (amount: string) => void
     handleDividendTokenSelect: (token: Token) => void
     handleSubmit: () => void
   }
 ] => {
-  const { account } = useWeb3React()
-  const [showAlert] = useAlert()
-  const [, getGasPrice] = useGasTracker()
-
+  const { account, library } = useWeb3React()
   const [dividendTokenAddress, setDividendTokenAddress] = useState("")
-  const [toBalance, setToBalance] = useState(BigNumber.from("0"))
-  const [fromBalance, setFromBalance] = useState(BigNumber.from("0"))
-  const [inPrice, setInPrice] = useState(BigNumber.from("0"))
-  const [outPrice, setOutPrice] = useState(BigNumber.from("0"))
+  const [toBalance, setToBalance] = useState(ZERO)
+  const [fromBalance, setFromBalance] = useState(ZERO)
+  const [inPrice, setInPrice] = useState(ZERO)
+  const [outPrice, setOutPrice] = useState(ZERO)
   const [fromAmount, setFromAmount] = useState("0")
   const [toAmount, setToAmount] = useState("0")
-  const [slippage, setSlippage] = useState("0.10")
-  const [isSlippageOpen, setSlippageOpen] = useState(false)
-  const [toSelectorOpened, setToSelector] = useState(false)
-  const [fromSelectorOpened, setFromSelector] = useState(false)
-  const [direction, setDirection] = useState<SwapDirection>("deposit")
-  const [oneTokenCost, setOneTokenCost] = useState(BigNumber.from("0"))
-  const [usdTokenCost, setUSDTokenCost] = useState(BigNumber.from("0"))
-  const [gasPrice, setGasPrice] = useState("0.00")
+  const [allowance, setAllowance] = useState(ZERO)
 
-  const [toAddress, setToAddress] = useState("")
-  const [fromAddress, setFromAddress] = useState("")
+  const [dividendTokens, setDividendTokens] = useState<string[]>([])
+  const [dividendAmounts, setDividendAmounts] = useState<BigNumber[]>([])
+  const [dividendAllowance, setDividendAllowance] = useState<BigNumber[]>([])
 
-  const handleDirectionChange = useCallback(() => {
-    setDirection(direction === "deposit" ? "withdraw" : "deposit")
-  }, [direction])
-
-  const traderPool = useTraderPoolContract(poolAddress)
-  const investPool = useInvestPoolContract(poolAddress)
-  const [proposalPool, proposalAddress] = useInvestProposalContract(poolAddress)
-  const proposal = useInvestProposal(poolAddress, proposalId)
+  const [, setPayload] = usePayload()
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [, baseToken] = useERC20(poolInfo?.parameters.baseToken)
   const [dividendTokenContract, dividendToken] = useERC20(dividendTokenAddress)
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
     poolInfo?.parameters.descriptionURL
   )
 
-  const [{ priceUSD: poolPriceUSD, priceBase: poolPriceBase }] =
-    usePoolPrice(poolAddress)
-  const { priceUSD: riskyPriceUSD, priceBase: riskyPriceBase } =
-    useInvestmentPrice(poolAddress, proposalId)
+  const [investProposal] = useInvestProposalContract(poolAddress)
 
   const addTransaction = useTransactionAdder()
 
@@ -163,33 +102,106 @@ const usePayDividends = (
     poolMetadata,
   ])
 
-  const handleDividendTokenSelect = useCallback((token: Token) => {
-    setDividendTokenAddress(token.address)
-  }, [])
+  // Memoized function that returns list of objects that represents dividend token
+  // Object contains token address, token amount, token allowance
+  const tokens = useMemo(() => {
+    return dividendTokens.map((token, index) => {
+      return {
+        address: token,
+        amount: dividendAmounts[index],
+        allowance: dividendAllowance[index],
+      }
+    })
+  }, [dividendTokens, dividendAmounts, dividendAllowance])
 
-  const getWalletBalance = useCallback(async () => {
-    if (!account || !dividendTokenContract) return
+  const handleDividendTokenSelect = useCallback(
+    (token: Token) => {
+      if (dividendTokens.indexOf(token.address) === -1) {
+        setDividendTokens([...dividendTokens, token.address])
+        setDividendAmounts([...dividendAmounts, ZERO])
+        setDividendAllowance([...dividendAllowance, ZERO])
+      } else {
+        setDividendTokens(
+          dividendTokens.filter((address) => address !== token.address)
+        )
+        setDividendAmounts(
+          dividendAmounts.filter(
+            (amount, index) => index !== dividendTokens.indexOf(token.address)
+          )
+        )
+        setDividendAllowance(
+          dividendAllowance.filter(
+            (amount, index) => index !== dividendTokens.indexOf(token.address)
+          )
+        )
+      }
+    },
+    [dividendAllowance, dividendAmounts, dividendTokens]
+  )
 
-    const balance: BigNumber = await dividendTokenContract.balanceOf(account)
-    setFromBalance(balance)
-  }, [account, dividendTokenContract])
+  const fetchAndUpdateAllowance = useCallback(async () => {
+    if (!account || !library || !poolAddress || !poolInfo) return
 
-  const getLP2Balance = useCallback(async () => {
-    if (!proposalPool || !account) return
-
-    const balance = await proposalPool?.balanceOf(
+    const allowance = await getAllowance(
       account,
-      Number(proposalId) + 1
+      poolInfo?.parameters.baseToken,
+      poolAddress,
+      library
     )
+    setAllowance(allowance)
+  }, [account, library, poolAddress, poolInfo])
 
-    if (direction === "deposit") {
-      setToBalance(balance)
-    } else {
-      setFromBalance(balance)
+  const updateAllowance = useCallback(async () => {
+    if (!account || !poolAddress || !dividendTokenContract) return
+
+    try {
+      setPayload(SubmitState.SIGN)
+
+      const amount = BigNumber.from(fromAmount)
+      const approveResponse = await dividendTokenContract.approve(
+        poolAddress,
+        amount
+      )
+      setPayload(SubmitState.WAIT_CONFIRM)
+
+      const receipt = await addTransaction(approveResponse, {
+        type: TransactionType.APPROVAL,
+        tokenAddress: dividendTokenAddress,
+        spender: account,
+      })
+
+      if (isTxMined(receipt)) {
+        fetchAndUpdateAllowance()
+        setPayload(SubmitState.SUCCESS)
+      }
+    } catch (e) {
+      setPayload(SubmitState.IDLE)
     }
-  }, [account, direction, proposalId, proposalPool])
+  }, [
+    account,
+    addTransaction,
+    dividendTokenAddress,
+    dividendTokenContract,
+    fetchAndUpdateAllowance,
+    fromAmount,
+    poolAddress,
+    setPayload,
+  ])
 
-  const handleSubmit = useCallback(async () => {}, [])
+  const runUpdate = useCallback(() => {
+    fetchAndUpdateAllowance().catch(console.log)
+  }, [fetchAndUpdateAllowance])
+
+  const handleSubmit = useCallback(async () => {
+    if (!investProposal || !dividendTokenAddress) return
+
+    const response = await investProposal.supply(
+      Number(proposalId) + 1,
+      [fromAmount],
+      [dividendTokenAddress]
+    )
+    console.log(response)
+  }, [dividendTokenAddress, fromAmount, investProposal, proposalId])
 
   const handleFromChange = useCallback(async (v: string) => {
     setFromAmount(v)
@@ -210,72 +222,47 @@ const usePayDividends = (
   )
 
   useEffect(() => {
-    handleFromChange(fromAmount)
-  }, [direction])
+    if (!poolInfo) return
 
+    const base = poolInfo.parameters.baseToken
+    setDividendTokenAddress(base)
+    // ;(async () => {
+    //   const allowance = await getAllowance(
+    //     account,
+    //     poolInfo?.parameters.baseToken,
+    //     poolAddress,
+    //     library
+    //   )
+    //   const balance = await getTokenBalance(account, base, library)
+
+    //   setDividendTokens([base])
+    //   setDividendAmounts([balance])
+    //   setDividendAllowance([allowance])
+    // })()
+  }, [account, library, poolAddress, poolInfo])
+
+  // init data
   useEffect(() => {
-    if (direction === "deposit") {
-      setUSDTokenCost(riskyPriceUSD)
-      setOneTokenCost(
-        divideBignumbers([riskyPriceBase, 18], [poolPriceBase, 18])
-      )
-    }
-    if (direction === "withdraw") {
-      setUSDTokenCost(poolPriceUSD)
-      setOneTokenCost(
-        divideBignumbers([poolPriceBase, 18], [riskyPriceBase, 18])
-      )
-    }
-  }, [direction, poolPriceBase, poolPriceUSD, riskyPriceBase, riskyPriceUSD])
+    runUpdate()
+  }, [runUpdate])
 
-  // get LP balance
-  // get LP2 balance
-  // update amounts
-  useEffect(() => {
-    getWalletBalance().catch(console.error)
-    getLP2Balance().catch(console.error)
-  }, [direction, getLP2Balance, getWalletBalance])
-
-  // balance updater for both LP and LP2
+  // update with interval
   useEffect(() => {
     const interval = setInterval(() => {
-      getWalletBalance().catch(console.error)
-      getLP2Balance().catch(console.error)
+      runUpdate()
     }, Number(process.env.REACT_APP_UPDATE_INTERVAL))
 
     return () => clearInterval(interval)
-  }, [getWalletBalance, getLP2Balance])
+  }, [runUpdate])
 
   return [
     {
+      tokens,
       form,
-      isSlippageOpen,
-      fromBalance,
-      toBalance,
-      oneTokenCost,
-      usdTokenCost,
-      gasPrice,
-      inPrice,
-      outPrice,
-      fromAmount,
-      toAmount,
-      fromAddress,
-      toAddress,
-      toSelectorOpened,
-      fromSelectorOpened,
-      direction,
-      slippage,
+      allowance,
     },
     {
-      setSlippageOpen,
-      setFromAmount,
-      setToAmount,
-      setToAddress,
-      setFromAddress,
-      setDirection: handleDirectionChange,
-      setToSelector,
-      setFromSelector,
-      setSlippage,
+      updateAllowance,
       handlePercentageChange,
       handleFromChange,
       handleDividendTokenSelect,

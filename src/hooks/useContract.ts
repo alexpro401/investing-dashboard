@@ -13,7 +13,7 @@ import {
   InvestTraderPool,
   UserRegistry,
 } from "abi"
-import { getContract } from "utils/getContract"
+import { getBalanceOf, getContract } from "utils/getContract"
 import { useActiveWeb3React } from "hooks"
 import { ITokenBase } from "constants/interfaces"
 import { TokenData } from "constants/types"
@@ -88,13 +88,12 @@ export function useERC20(
     if (typeof account !== "string" || account.length !== 42) return
     ;(async () => {
       try {
-        const isMainAsset =
-          storedAddress.toLocaleLowerCase() ===
-          "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-
-        const balance = await (isMainAsset
-          ? library.getBalance(account)
-          : contract.balanceOf(account))
+        const balance = await getBalanceOf({
+          tokenAddress: storedAddress,
+          library,
+          contract,
+          account,
+        })
 
         setBalance(balance)
       } catch (e) {

@@ -15,8 +15,8 @@ import {
   addBignumbers,
   percentageOfBignumbers,
   subtractBignumbers,
-  _divideBignumbers,
-  _multiplyBignumbers,
+  divideBignumbers,
+  multiplyBignumbers,
 } from "utils/formulas"
 import {
   isTxMined,
@@ -190,7 +190,7 @@ function useFundFee(
       [_platformCommissionUSD, 18],
       [_traderCommissionUSD, 18]
     )
-    const big = _divideBignumbers(
+    const big = divideBignumbers(
       [commissionsSum, 18],
       [fundCommissionPercentage.big, 18]
     )
@@ -207,7 +207,7 @@ function useFundFee(
       return "0.00"
     }
 
-    const res = _divideBignumbers(
+    const res = divideBignumbers(
       [fundProfitWithoutTraderUSD.big, 18],
       [dexePriceUSD, 18]
     )
@@ -279,7 +279,7 @@ function useFundFee(
       return "0.00"
     }
 
-    const res = _divideBignumbers(
+    const res = divideBignumbers(
       [netInvestorsProfitUSD.big, 18],
       [dexePriceUSD, 18]
     )
@@ -483,7 +483,7 @@ function useFundFee(
           const gasPriceEther = parseUnits(gas.FastGasPrice, "gwei")
 
           // Calculate gas price with multiplier
-          const gasWithMultiplier = _multiplyBignumbers(
+          const gasWithMultiplier = multiplyBignumbers(
             [COMMISSION_MULTIPLIER, 18],
             [gasPriceEther, 18]
           )
