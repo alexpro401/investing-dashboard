@@ -1,9 +1,9 @@
-import { parseEther, parseUnits } from "@ethersproject/units"
+import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 import { useEffect, useMemo, useState } from "react"
 
-import { formatBigNumber, normalizeBigNumber } from "utils"
-import { IPosition, IRiskyPositionCard } from "constants/interfaces_v2"
+import { normalizeBigNumber } from "utils"
+import { IRiskyPositionCard } from "constants/interfaces_v2"
 import { useERC20, usePriceFeedContract } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 
