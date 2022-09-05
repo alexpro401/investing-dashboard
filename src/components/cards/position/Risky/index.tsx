@@ -1,26 +1,14 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react"
-import { useSelector } from "react-redux"
-import { parseEther, parseUnits } from "@ethersproject/units"
-import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
+import { MouseEvent, useCallback, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 
-import { PriceFeed } from "abi"
+import { getProposalId } from "utils"
 import { IRiskyPositionCard, PoolInfo } from "constants/interfaces_v2"
-import useContract, { useERC20 } from "hooks/useContract"
-import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import { selectPriceFeedAddress } from "state/contracts/selectors"
-import { getProposalId, normalizeBigNumber } from "utils"
-import {
-  calcPositionPnlPercentage,
-  multiplyBignumbers,
-  subtractBignumbers,
-} from "utils/formulas"
 
 import { Flex } from "theme"
+import Icon from "components/Icon"
 import TokenIcon from "components/TokenIcon"
 import PositionTrade from "components/PositionTrade"
-
 import { accordionSummaryVariants } from "motion/variants"
 import SharedS, {
   BodyItem,
@@ -28,19 +16,8 @@ import SharedS, {
   Share,
 } from "components/cards/position/styled"
 import S from "./styled"
-import Icon from "components/Icon"
 
-const BIG_ZERO: BigNumber = BigNumber.from(0)
-
-interface IAmount {
-  big: BigNumber
-  format: string
-}
-
-const INITIAL_AMOUNT: IAmount = {
-  big: BIG_ZERO,
-  format: "0",
-}
+import useRiskyPosition from "./useRiskyPosition"
 
 interface Props {
   position: IRiskyPositionCard
@@ -57,17 +34,22 @@ const RiskyPositionCard: React.FC<Props> = ({
 }) => {
   const navigate = useNavigate()
 
-  const [, positionToken] = useERC20(position?.token)
-  const [, baseToken] = useERC20(position.pool.baseToken)
-  const priceFeedAddress = useSelector(selectPriceFeedAddress)
-  const priceFeed = useContract(priceFeedAddress, PriceFeed)
-  const exchanges = position.exchanges ?? []
+  const [
+    {
+      positionVolume,
+      entryPriceBase,
+      entryPriceUSD,
+      markPriceBase,
+      markPriceUSD,
+      pnlPercentage,
+      pnlBase,
+      pnlUSD,
+      positionToken,
+      baseToken,
+    },
+  ] = useRiskyPosition(position)
 
-  const [currentPositionPriceBase, setCurrentPositionPriceBase] =
-    useState(BIG_ZERO)
-  const currentPositionPriceUSD = useTokenPriceOutUSD({
-    tokenAddress: position.token,
-  })
+  const exchanges = position.exchanges ?? []
 
   const [openExtra, setOpenExtra] = useState<boolean>(false)
   const [showPositions, setShowPositions] = useState<boolean>(false)
@@ -98,168 +80,6 @@ const RiskyPositionCard: React.FC<Props> = ({
 
     return baseToken.symbol
   }, [baseToken])
-
-  /**
-   * Position volume
-   * if position.closed return totalPositionCloseVolume
-   * otherwise return current position volume
-   */
-  const positionVolume = useMemo<IAmount>(() => {
-    if (!position) return INITIAL_AMOUNT
-
-    const { totalPositionOpenVolume, totalPositionCloseVolume } = position
-
-    if (position.isClosed) {
-      return {
-        big: totalPositionCloseVolume,
-        format: normalizeBigNumber(totalPositionCloseVolume),
-      }
-    }
-
-    const big = subtractBignumbers(
-      [totalPositionOpenVolume, 18],
-      [totalPositionCloseVolume, 18]
-    )
-    return { big, format: normalizeBigNumber(big) }
-  }, [position])
-
-  /**
-   * Entry price (in fund base token)
-   * totalBaseOpenVolume/totalPositionOpenVolume
-   */
-  const entryPriceBase = useMemo<BigNumber>(() => {
-    if (!position) return BigNumber.from("0")
-
-    const baseOpen = FixedNumber.fromValue(position.totalBaseOpenVolume, 18)
-    const posOpen = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
-    const resFixed = baseOpen.divUnsafe(posOpen)
-
-    return parseEther(resFixed._value)
-  }, [position])
-
-  /**
-   * Entry price (in USD)
-   * totalUSDOpenVolume/totalPositionOpenVolume
-   */
-  const entryPriceUSD = useMemo<BigNumber>(() => {
-    if (!position) return BigNumber.from("0")
-
-    const usdOpen = FixedNumber.fromValue(position.totalUSDOpenVolume, 18)
-    const posOpen = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
-    const resFixed = usdOpen.divUnsafe(posOpen)
-
-    return parseEther(resFixed._value)
-  }, [position])
-
-  /**
-   * Mark price (in fund base token)
-   * if position open return currentPositionPriceBase (price for 1 position token)
-   * otherwise return totalBaseCloseVolume/totalPositionCloseVolume
-   */
-  const markPriceBase = useMemo<BigNumber>(() => {
-    if (!position) return BigNumber.from("0")
-
-    if (!position.isClosed) {
-      return currentPositionPriceBase
-    } else {
-      const base = FixedNumber.fromValue(position.totalBaseCloseVolume, 18)
-      const pos = FixedNumber.fromValue(position.totalPositionCloseVolume, 18)
-      const resFixed = base.divUnsafe(pos)
-
-      return parseEther(resFixed._value)
-    }
-  }, [currentPositionPriceBase, position])
-
-  /**
-   * Mark price (in USD)
-   * if position open return markPriceBase (price for 1 position token)
-   * otherwise return totalUSDCloseVolume/totalPositionCloseVolume
-   */
-  const markPriceUSD = useMemo<BigNumber>(() => {
-    if (!position) return BigNumber.from("0")
-
-    if (!position.isClosed) {
-      return currentPositionPriceUSD
-    } else {
-      const usd = FixedNumber.fromValue(position.totalUSDCloseVolume, 18)
-      const pos = FixedNumber.fromValue(position.totalPositionCloseVolume, 18)
-      const resFixed = usd.divUnsafe(pos)
-
-      return parseEther(resFixed._value)
-    }
-  }, [currentPositionPriceUSD, position])
-
-  /**
-   * P&L (in %)
-   */
-  const pnlPercentage = useMemo<IAmount>(() => {
-    if (!markPriceBase || !entryPriceBase) {
-      return INITIAL_AMOUNT
-    }
-
-    const big = calcPositionPnlPercentage(markPriceBase, entryPriceBase)
-
-    return {
-      big,
-      format: normalizeBigNumber(big, 18, 2),
-    }
-  }, [markPriceBase, entryPriceBase])
-
-  /**
-   * P&L (in baseToken)
-   * (markPriceBase - entryPriceBase) * positionVolume
-   */
-  const pnlBase = useMemo<BigNumber>(() => {
-    if (!markPriceBase || !entryPriceBase || !positionVolume) {
-      return BIG_ZERO
-    }
-
-    const priceDiff = subtractBignumbers(
-      [markPriceBase, 18],
-      [entryPriceBase, 18]
-    )
-
-    return multiplyBignumbers([priceDiff, 18], [positionVolume.big, 18])
-  }, [markPriceBase, entryPriceBase, positionVolume])
-
-  /**
-   * P&L (in USD)
-   */
-  const pnlUSD = useMemo<BigNumber>(() => {
-    if (!markPriceUSD || !entryPriceUSD || !positionVolume) {
-      return BIG_ZERO
-    }
-
-    const priceDiff = subtractBignumbers(
-      [markPriceUSD, 18],
-      [entryPriceUSD, 18]
-    )
-
-    return multiplyBignumbers([priceDiff, 18], [positionVolume.big, 18])
-  }, [markPriceUSD, entryPriceUSD, positionVolume])
-
-  // get mark price
-  useEffect(() => {
-    if (!priceFeed || !position || !position.token || !position.pool) return
-    ;(async () => {
-      try {
-        const amount = parseUnits("1", 18)
-
-        // without extended
-        const price = await priceFeed.getNormalizedExtendedPriceOut(
-          position.token,
-          position.pool.baseToken,
-          amount,
-          []
-        )
-        if (price && price.amountOut) {
-          setCurrentPositionPriceBase(price.amountOut)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    })()
-  }, [priceFeed, position])
 
   /**
    * Navigate to pool page
@@ -343,7 +163,7 @@ const RiskyPositionCard: React.FC<Props> = ({
                     m="0"
                     size={24}
                   />
-                  <S.Amount>{positionVolume}</S.Amount>
+                  <S.Amount>{positionVolume.format}</S.Amount>
                   <S.PositionSymbol>{positionTokenSymbol}</S.PositionSymbol>
                   <S.FundSymbol>/{baseTokenSymbol}</S.FundSymbol>
                 </>
@@ -356,7 +176,7 @@ const RiskyPositionCard: React.FC<Props> = ({
                         m="0"
                         size={24}
                       />
-                      <S.Amount>{positionVolume}</S.Amount>
+                      <S.Amount>{positionVolume.format}</S.Amount>
                       <S.PositionSymbol>{positionTokenSymbol}</S.PositionSymbol>
                     </>
                   ) : (
