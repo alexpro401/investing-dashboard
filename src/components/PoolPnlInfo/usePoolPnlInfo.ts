@@ -7,7 +7,7 @@ import { normalizeBigNumber } from "utils"
 import { usePoolQuery } from "hooks/usePool"
 import usePoolPrice from "hooks/usePoolPrice"
 import { useERC20, usePriceFeedContract } from "hooks/useContract"
-import { _divideBignumbers, _multiplyBignumbers } from "utils/formulas"
+import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 
 const usePoolPnlInfo = (address: string | undefined) => {
   const priceFeed = usePriceFeedContract()
@@ -26,8 +26,8 @@ const usePoolPnlInfo = (address: string | undefined) => {
       return "0"
     }
 
-    const d = _multiplyBignumbers([priceUSD, 18], [BigNumber.from(100), 18])
-    const r = _divideBignumbers([d, 18], [initialPriceUSD, 18])
+    const d = multiplyBignumbers([priceUSD, 18], [BigNumber.from(100), 18])
+    const r = divideBignumbers([d, 18], [initialPriceUSD, 18])
     return normalizeBigNumber(r, 18, 2)
   }, [initialPriceUSD, priceUSD])
 
@@ -66,7 +66,7 @@ const usePoolPnlInfo = (address: string | undefined) => {
 
     const isNegative = totalPnlBase.big.isNegative()
 
-    const big = _divideBignumbers(
+    const big = divideBignumbers(
       [totalPnlBase.big.abs(), 18],
       [_baseTokenPrice, 18]
     )
