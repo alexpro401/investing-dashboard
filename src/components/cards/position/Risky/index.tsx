@@ -11,7 +11,11 @@ import useContract, { useERC20 } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { selectPriceFeedAddress } from "state/contracts/selectors"
 import { getProposalId, normalizeBigNumber } from "utils"
-import { percentageOfBignumbers } from "utils/formulas"
+import {
+  calcPositionPnlPercentage,
+  multiplyBignumbers,
+  subtractBignumbers,
+} from "utils/formulas"
 
 import { Flex } from "theme"
 import TokenIcon from "components/TokenIcon"
@@ -25,6 +29,18 @@ import SharedS, {
 } from "components/cards/position/styled"
 import S from "./styled"
 import Icon from "components/Icon"
+
+const BIG_ZERO: BigNumber = BigNumber.from(0)
+
+interface IAmount {
+  big: BigNumber
+  format: string
+}
+
+const INITIAL_AMOUNT: IAmount = {
+  big: BIG_ZERO,
+  format: "0",
+}
 
 interface Props {
   position: IRiskyPositionCard
@@ -47,12 +63,8 @@ const RiskyPositionCard: React.FC<Props> = ({
   const priceFeed = useContract(priceFeedAddress, PriceFeed)
   const exchanges = position.exchanges ?? []
 
-  const [pnlUSDCurrent, setPnlUSDCurrent] = useState<BigNumber>(
-    BigNumber.from("0")
-  )
-  const [currentPositionPriceBase, setCurrentPositionPriceBase] = useState(
-    BigNumber.from(0)
-  )
+  const [currentPositionPriceBase, setCurrentPositionPriceBase] =
+    useState(BIG_ZERO)
   const currentPositionPriceUSD = useTokenPriceOutUSD({
     tokenAddress: position.token,
   })
@@ -88,22 +100,27 @@ const RiskyPositionCard: React.FC<Props> = ({
   }, [baseToken])
 
   /**
-   * Position amount
+   * Position volume
    * if position.closed return totalPositionCloseVolume
    * otherwise return current position volume
    */
-  const positionOpenAmount = useMemo<string>(() => {
-    if (!position) return "0"
+  const positionVolume = useMemo<IAmount>(() => {
+    if (!position) return INITIAL_AMOUNT
+
+    const { totalPositionOpenVolume, totalPositionCloseVolume } = position
 
     if (position.isClosed) {
-      return normalizeBigNumber(position.totalPositionCloseVolume, 18, 6)
-    } else {
-      const open = FixedNumber.fromValue(position.totalPositionOpenVolume, 18)
-      const close = FixedNumber.fromValue(position.totalPositionCloseVolume, 18)
-      const resFixed = open.subUnsafe(close)
-
-      return normalizeBigNumber(parseEther(resFixed._value), 18, 6)
+      return {
+        big: totalPositionCloseVolume,
+        format: normalizeBigNumber(totalPositionCloseVolume),
+      }
     }
+
+    const big = subtractBignumbers(
+      [totalPositionOpenVolume, 18],
+      [totalPositionCloseVolume, 18]
+    )
+    return { big, format: normalizeBigNumber(big) }
   }, [position])
 
   /**
@@ -172,104 +189,54 @@ const RiskyPositionCard: React.FC<Props> = ({
     }
   }, [currentPositionPriceUSD, position])
 
-  interface IPnlPercentage {
-    value: BigNumber
-    normalized: string
-  }
   /**
    * P&L (in %)
    */
-  const pnlPercentage = useMemo<IPnlPercentage>(() => {
+  const pnlPercentage = useMemo<IAmount>(() => {
     if (!markPriceBase || !entryPriceBase) {
-      return { value: BigNumber.from("0"), normalized: "0" }
+      return INITIAL_AMOUNT
     }
 
-    const percentage = percentageOfBignumbers(markPriceBase, entryPriceBase)
-
-    const resultFixed = FixedNumber.fromValue(percentage, 18).subUnsafe(
-      FixedNumber.from("100", 18)
-    )
-
-    const resultBig = parseEther(resultFixed._value)
+    const big = calcPositionPnlPercentage(markPriceBase, entryPriceBase)
 
     return {
-      value: resultBig,
-      normalized: normalizeBigNumber(resultBig, 18, 2),
+      big,
+      format: normalizeBigNumber(big, 18, 2),
     }
   }, [markPriceBase, entryPriceBase])
 
   /**
    * P&L (in baseToken)
-   * markPriceBase - entryPriceBase
+   * (markPriceBase - entryPriceBase) * positionVolume
    */
   const pnlBase = useMemo<BigNumber>(() => {
-    if (!position || !pnlPercentage || !positionToken) {
-      return BigNumber.from("0")
+    if (!markPriceBase || !entryPriceBase || !positionVolume) {
+      return BIG_ZERO
     }
 
-    const _pnlPercentageFixed = FixedNumber.fromValue(pnlPercentage.value, 18)
-    const _totalBaseOpenVolumeFixed = FixedNumber.fromValue(
-      position.totalBaseOpenVolume,
-      18
-    )
-    const _totalBaseCloseVolumeFixed = FixedNumber.fromValue(
-      position.totalBaseCloseVolume,
-      18
+    const priceDiff = subtractBignumbers(
+      [markPriceBase, 18],
+      [entryPriceBase, 18]
     )
 
-    const _totalBaseVolumeFixed = position.isClosed
-      ? FixedNumber.fromValue(position.totalBaseCloseVolume, 18)
-      : _totalBaseOpenVolumeFixed.subUnsafe(_totalBaseCloseVolumeFixed) // current base open volume
-
-    const _pnlBaseFixed = _totalBaseVolumeFixed.mulUnsafe(_pnlPercentageFixed)
-    const res = _totalBaseVolumeFixed.addUnsafe(_pnlBaseFixed)
-
-    return parseEther(res._value)
-  }, [position, pnlPercentage, positionToken])
+    return multiplyBignumbers([priceDiff, 18], [positionVolume.big, 18])
+  }, [markPriceBase, entryPriceBase, positionVolume])
 
   /**
    * P&L (in USD)
    */
   const pnlUSD = useMemo<BigNumber>(() => {
-    if (!markPriceUSD || !entryPriceUSD) return BigNumber.from("0")
-
-    if (!position.isClosed) {
-      return pnlUSDCurrent
+    if (!markPriceUSD || !entryPriceUSD || !positionVolume) {
+      return BIG_ZERO
     }
 
-    const _markPriceFixed = FixedNumber.fromValue(markPriceUSD, 18)
-    const _entryPriceUSDFixed = FixedNumber.fromValue(entryPriceUSD, 18)
+    const priceDiff = subtractBignumbers(
+      [markPriceUSD, 18],
+      [entryPriceUSD, 18]
+    )
 
-    const res = _markPriceFixed.subUnsafe(_entryPriceUSDFixed)
-
-    return parseEther(res._value)
-  }, [markPriceUSD, entryPriceUSD, position.isClosed, pnlUSDCurrent])
-
-  // fetch pnl price in USD
-  useEffect(() => {
-    if (!priceFeed || !pnlBase || !baseToken) return
-    ;(async () => {
-      try {
-        const price = await priceFeed.getNormalizedPriceOutUSD(
-          baseToken.address,
-          pnlBase.abs().toHexString()
-        )
-
-        if (price?.amountOut) {
-          if (pnlBase.lt(BigNumber.from("0"))) {
-            const res = FixedNumber.fromValue(price.amountOut, 18).mulUnsafe(
-              FixedNumber.from("-1")
-            )
-            setPnlUSDCurrent(parseEther(res._value))
-          } else {
-            setPnlUSDCurrent(price.amountOut)
-          }
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    })()
-  }, [baseToken, pnlBase, priceFeed])
+    return multiplyBignumbers([priceDiff, 18], [positionVolume.big, 18])
+  }, [markPriceUSD, entryPriceUSD, positionVolume])
 
   // get mark price
   useEffect(() => {
@@ -376,7 +343,7 @@ const RiskyPositionCard: React.FC<Props> = ({
                     m="0"
                     size={24}
                   />
-                  <S.Amount>{positionOpenAmount}</S.Amount>
+                  <S.Amount>{positionVolume}</S.Amount>
                   <S.PositionSymbol>{positionTokenSymbol}</S.PositionSymbol>
                   <S.FundSymbol>/{baseTokenSymbol}</S.FundSymbol>
                 </>
@@ -389,7 +356,7 @@ const RiskyPositionCard: React.FC<Props> = ({
                         m="0"
                         size={24}
                       />
-                      <S.Amount>{positionOpenAmount}</S.Amount>
+                      <S.Amount>{positionVolume}</S.Amount>
                       <S.PositionSymbol>{positionTokenSymbol}</S.PositionSymbol>
                     </>
                   ) : (
@@ -414,8 +381,8 @@ const RiskyPositionCard: React.FC<Props> = ({
                       <S.FundSymbol>/{baseTokenSymbol}</S.FundSymbol>
                     </>
                   )}
-                  <SharedS.PNL amount={+pnlPercentage.normalized}>
-                    {pnlPercentage.normalized}%
+                  <SharedS.PNL amount={+pnlPercentage.format}>
+                    {pnlPercentage.format}%
                   </SharedS.PNL>
                   {!isTrader && position.isClosed && (
                     <Share onClick={onShare} />
@@ -426,8 +393,8 @@ const RiskyPositionCard: React.FC<Props> = ({
             <Flex m={isTrader && position.isClosed ? "0 -8px 0 0" : ""}>
               {isTrader ? (
                 <>
-                  <SharedS.PNL amount={+pnlPercentage.normalized}>
-                    {pnlPercentage.normalized}%
+                  <SharedS.PNL amount={+pnlPercentage.format}>
+                    {pnlPercentage.format}%
                   </SharedS.PNL>
                   {position.isClosed && <Share onClick={onShare} />}
                 </>
@@ -467,7 +434,7 @@ const RiskyPositionCard: React.FC<Props> = ({
             <BodyItem
               label={`P&L ${baseTokenSymbol}`}
               amount={pnlBase}
-              pnl={pnlPercentage.value}
+              pnl={pnlPercentage.big}
               amountUSD={pnlUSD}
               ai="flex-end"
             />
