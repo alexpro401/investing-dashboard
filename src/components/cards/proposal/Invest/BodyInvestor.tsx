@@ -15,6 +15,9 @@ interface Props {
   totalDividends: string
   invested: boolean
   apr: string
+  poolPriceUSD: string
+
+  onInvest: () => void
 }
 
 const BodyInvestor: FC<Props> = ({
@@ -28,6 +31,8 @@ const BodyInvestor: FC<Props> = ({
   dividendsAvailable,
   totalDividends,
   apr,
+  poolPriceUSD,
+  onInvest,
 }) => {
   return (
     <>
@@ -70,7 +75,7 @@ const BodyInvestor: FC<Props> = ({
             ai="flex-end"
           />
           <BodyItem label="Custodian" amount={"-"} />
-          <BodyItem label="LP price ($)" amount={"999,989"} />
+          <BodyItem label="LP price ($)" amount={poolPriceUSD} />
           <div>
             <Button
               full
@@ -78,7 +83,7 @@ const BodyInvestor: FC<Props> = ({
               br="10px"
               onClick={(e) => {
                 e?.stopPropagation()
-                console.log("Stake LP")
+                onInvest()
               }}
             >
               Stake LP
