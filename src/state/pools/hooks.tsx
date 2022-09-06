@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useQuery } from "urql"
-import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
-import { parseEther } from "@ethersproject/units"
 
 import { useTraderPoolRegistryContract } from "hooks/useContract"
 import { AppDispatch, AppState } from "state"
@@ -87,6 +85,15 @@ export function useManagedPools(
   }, [pool])
 
   return [pools, pool.fetching]
+}
+
+export function useUserInvolvedPools(
+  address: string | null | undefined
+): [{ ownedPools: IPoolQuery[]; managedPools: IPoolQuery[] }, boolean] {
+  const [ownedPools, ownedLoading] = useOwnedPools(address)
+  const [managedPools, managedLoading] = useManagedPools(address)
+
+  return [{ ownedPools, managedPools }, ownedLoading || managedLoading]
 }
 
 /**
