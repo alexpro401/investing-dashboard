@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { Token as IToken } from "constants/interfaces"
+import { Token as IToken } from "interfaces"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { formatBigNumber, normalizeBigNumber } from "utils"
 

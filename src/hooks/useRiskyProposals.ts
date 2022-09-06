@@ -3,16 +3,15 @@ import { useRiskyProposalContract } from "hooks/useContract"
 import { Contract } from "@ethersproject/contracts"
 import debounce from "lodash.debounce"
 
-import {
-  RiskyProposal,
-  RiskyProposalInvestmentsInfo,
-} from "constants/interfaces_v2"
+import { IRiskyProposal } from "interfaces/contracts/ITraderPoolRiskyProposal"
+import { IRiskyProposalInvestmentsInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
+
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
 
 export function useRiskyProposals(
   poolAddress?: string
-): [{ data: RiskyProposal[]; loading: boolean }, () => void] {
-  const [proposals, setProposals] = useState<RiskyProposal[]>([])
+): [{ data: IRiskyProposal[]; loading: boolean }, () => void] {
+  const [proposals, setProposals] = useState<IRiskyProposal[]>([])
   const [offset, setOffset] = useState<number>(0)
   const [fetching, setFetching] = useState<boolean>(true)
   const [allFetched, setAllFetched] = useState<boolean>(false)
@@ -53,8 +52,8 @@ export function useRiskyProposals(
 export function useRiskyProposal(
   poolAddress?: string,
   index?: string
-): [RiskyProposal | undefined, Contract | null, string, () => void] {
-  const [proposal, setProposal] = useState<RiskyProposal | undefined>()
+): [IRiskyProposal | undefined, Contract | null, string, () => void] {
+  const [proposal, setProposal] = useState<IRiskyProposal | undefined>()
   const [update, setUpdate] = useState(false)
   const [riskyProposal, proposalAddress] = useRiskyProposalContract(poolAddress)
 
@@ -81,7 +80,7 @@ export function useActiveInvestmentsInfo(
   account?: string | null | undefined,
   index?: string
 ) {
-  const [info, setInfo] = useState<RiskyProposalInvestmentsInfo | undefined>()
+  const [info, setInfo] = useState<IRiskyProposalInvestmentsInfo | undefined>()
   const [riskyProposal] = useRiskyProposalContract(poolAddress)
 
   useEffect(() => {

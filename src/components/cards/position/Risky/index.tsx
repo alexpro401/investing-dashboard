@@ -6,7 +6,8 @@ import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 
 import { PriceFeed } from "abi"
-import { IRiskyPositionCard, PoolInfo } from "constants/interfaces_v2"
+import { IRiskyPositionCard } from "interfaces/thegraphs/basic-pools"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import useContract, { useERC20 } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { selectPriceFeedAddress } from "state/contracts/selectors"
@@ -29,7 +30,7 @@ import Icon from "components/Icon"
 interface Props {
   position: IRiskyPositionCard
   isTrader: boolean
-  poolInfo: PoolInfo
+  poolInfo: IPoolInfo
   poolMetadata: any
 }
 

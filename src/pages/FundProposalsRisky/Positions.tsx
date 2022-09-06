@@ -8,7 +8,7 @@ import { RiskyPositionsQuery } from "queries"
 import { usePoolContract } from "hooks/usePool"
 import useQueryPagination from "hooks/useQueryPagination"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-import { IRiskyPositionCard } from "constants/interfaces_v2"
+import { IRiskyPositionCard } from "interfaces/thegraphs/basic-pools"
 
 import LoadMore from "components/LoadMore"
 import RiskyPositionCard from "components/cards/position/Risky"

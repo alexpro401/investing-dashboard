@@ -1,6 +1,6 @@
 import { useWeb3React } from "@web3-react/core"
 import axios from "axios"
-import { GasPriceResponse } from "constants/interfaces_v2"
+import { GasPriceResponse } from "interfaces/explorer"
 import { FC, useCallback, useEffect, useMemo } from "react"
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "state"

@@ -1,14 +1,15 @@
+import { useMemo } from "react"
+
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { usePoolContract } from "hooks/usePool"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 
 import Icon from "components/Icon"
-import { useMemo } from "react"
-import { PoolInfo } from "constants/interfaces_v2"
 
 const usePoolIcon = (
   poolAddress: string,
   size = 24
-): [JSX.Element, PoolInfo | null] => {
+): [JSX.Element, IPoolInfo | null] => {
   const [, poolInfo] = usePoolContract(poolAddress)
 
   const [{ poolMetadata }] = usePoolMetadata(

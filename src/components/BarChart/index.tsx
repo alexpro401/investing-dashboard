@@ -1,6 +1,6 @@
 // import { motion } from "framer-motion"
 // import moment from "moment"
-import { IPool } from "constants/interfaces"
+import { IPool } from "interfaces"
 import { useState, useEffect } from "react"
 import ReactTooltip from "react-tooltip"
 

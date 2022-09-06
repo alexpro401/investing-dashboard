@@ -4,7 +4,7 @@ import { createClient, Provider as GraphProvider } from "urql"
 import RouteTabs from "components/RouteTabs"
 import InvestmentPositionsList from "./List"
 
-import { ITab } from "constants/interfaces"
+import { ITab } from "interfaces"
 import { useActiveWeb3React } from "hooks"
 
 const poolsClient = createClient({

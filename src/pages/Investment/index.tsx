@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom"
 
-import { ITab } from "constants/interfaces"
+import { ITab } from "interfaces"
 
 import InvestmentPositions from "pages/InvestmentPositions"
 import InvestmentRiskyProposals from "pages/InvestmentRiskyProposals"

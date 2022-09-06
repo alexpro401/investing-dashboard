@@ -11,7 +11,8 @@ import {
   useTraderPoolContract,
   useTraderPoolRegistryContract,
 } from "hooks/useContract"
-import { PoolInfo, PoolType } from "constants/interfaces_v2"
+import { PoolType } from "constants/types"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 
 import { shortenAddress } from "utils"
@@ -55,7 +56,7 @@ const Success: FC<SuccessProps> = () => {
   const { poolAddress } = useParams()
   const navigate = useNavigate()
 
-  const [poolInfo, setPoolInfo] = useState<PoolInfo | null>(null)
+  const [poolInfo, setPoolInfo] = useState<IPoolInfo | null>(null)
   const [poolType, setPoolType] = useState<PoolType | null>(null)
 
   const traderPool = useTraderPoolContract(poolAddress)

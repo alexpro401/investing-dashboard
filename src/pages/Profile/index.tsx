@@ -31,8 +31,8 @@ import {
 } from "pages/Investor/styled"
 import BarChart from "pages/Investor/Bar"
 
-import { IDetailedChart } from "constants/interfaces"
-import { PoolType } from "constants/interfaces_v2"
+import { IDetailedChart } from "interfaces"
+import { PoolType } from "constants/types"
 import { shortenAddress } from "utils"
 import { useActiveWeb3React } from "hooks"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"

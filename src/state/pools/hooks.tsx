@@ -22,7 +22,7 @@ import {
   IPoolQuery,
   IPriceHistoryQuery,
   IPriceHistory,
-} from "constants/interfaces_v2"
+} from "interfaces/thegraphs/all-pools"
 
 import {
   OwnedPoolsQuery,

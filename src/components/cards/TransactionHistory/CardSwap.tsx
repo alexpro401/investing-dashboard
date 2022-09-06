@@ -6,7 +6,7 @@ import TokenIcon from "components/TokenIcon"
 import ExternalLink from "components/ExternalLink"
 
 import { expandTimestamp } from "utils"
-import { ITokenBase } from "constants/interfaces"
+import { ITokenBase } from "interfaces"
 import { DATE_TIME_FORMAT } from "constants/time"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 

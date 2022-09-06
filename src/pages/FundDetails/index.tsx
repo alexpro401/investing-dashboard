@@ -8,7 +8,7 @@ import { Container } from "./styled"
 import FundDetailsEdit from "pages/FundDetailsEdit"
 import FundDetailsFee from "pages/FundDetailsFee"
 
-import { ITab } from "constants/interfaces"
+import { ITab } from "interfaces"
 
 const FundDetails = () => {
   const { poolAddress } = useParams()

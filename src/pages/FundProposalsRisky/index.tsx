@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { Routes, Route, useParams } from "react-router-dom"
 
-import { ITab } from "constants/interfaces"
+import { ITab } from "interfaces"
 
 import RouteTabs from "components/RouteTabs"
 import Proposals from "./Proposals"

@@ -1,7 +1,7 @@
 // import React, { useState, useRef } from "react"
 
 // import { motion } from "framer-motion"
-import { IPool } from "constants/interfaces"
+import { IPool } from "interfaces"
 import styled from "styled-components"
 import { Flex, device } from "theme"
 import { getRandomPnl } from "utils"

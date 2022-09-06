@@ -4,7 +4,7 @@ import Tabs from "components/Header/Tabs"
 import { More, GoBack } from "./Components"
 
 import { Container, Bar, Icons, Title } from "./styled"
-import { ITab } from "constants/interfaces"
+import { ITab } from "interfaces"
 
 interface Props {
   left?: ReactNode

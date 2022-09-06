@@ -22,7 +22,7 @@ import IconButton from "components/IconButton"
 import pencil from "assets/icons/pencil.svg"
 
 import { formatBigNumber } from "utils"
-import { IDetailedChart } from "constants/interfaces"
+import { IDetailedChart } from "interfaces"
 import { usePoolQuery, usePoolContract, useTraderPool } from "hooks/usePool"
 
 import {

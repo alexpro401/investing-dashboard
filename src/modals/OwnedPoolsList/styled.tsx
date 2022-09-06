@@ -1,7 +1,7 @@
 import styled from "styled-components"
 import { motion } from "framer-motion"
 
-import { PoolType } from "constants/interfaces_v2"
+import { PoolType } from "constants/types"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 
 import { Flex, To } from "theme"

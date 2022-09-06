@@ -4,7 +4,7 @@ import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import Popover from "components/Popover"
 
-import { IPoolQuery } from "constants/interfaces_v2"
+import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 
 import AddFund from "assets/icons/AddFund"
 import dexe from "assets/icons/dexe-dark.svg"

@@ -15,7 +15,7 @@ import {
 } from "abi"
 import { getBalanceOf, getContract } from "utils/getContract"
 import { useActiveWeb3React } from "hooks"
-import { ITokenBase } from "constants/interfaces"
+import { ITokenBase } from "interfaces"
 import { TokenData } from "constants/types"
 import { isAddress } from "utils"
 import { useSelector } from "react-redux"

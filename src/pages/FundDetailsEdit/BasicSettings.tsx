@@ -15,7 +15,7 @@ import ExternalLink from "components/ExternalLink"
 import { useActiveWeb3React } from "hooks"
 import { expandTimestamp, shortenAddress, formatBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { IPoolQuery } from "constants/interfaces_v2"
+import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { DATE_TIME_FORMAT } from "constants/time"
 
 const fundTypes = {

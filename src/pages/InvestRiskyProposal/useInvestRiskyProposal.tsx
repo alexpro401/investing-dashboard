@@ -20,11 +20,11 @@ import {
 import {
   IDivestAmounts,
   IProposalInvestTokens,
-} from "interfaces/ITraderPoolRiskyProposal"
+} from "interfaces/contracts/ITraderPoolRiskyProposal"
 import {
   IDivestAmountsAndCommissions,
   IPoolInvestTokens,
-} from "interfaces/ITraderPool"
+} from "interfaces/contracts/ITraderPool"
 
 import useAlert, { AlertType } from "hooks/useAlert"
 import {
@@ -39,7 +39,8 @@ import {
   useRiskyProposalContract,
   useTraderPoolContract,
 } from "hooks/useContract"
-import { RiskyForm, RiskyInvestInfo } from "constants/interfaces_v2"
+import { RiskyInvestInfo } from "interfaces/exchange"
+import { RiskyForm } from "interfaces/exchange"
 import usePoolPrice from "hooks/usePoolPrice"
 import useRiskyPrice from "hooks/useRiskyPrice"
 import useGasTracker from "state/gas/hooks"

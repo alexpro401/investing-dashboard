@@ -1,5 +1,5 @@
 import { useQuery } from "urql"
-import { IRiskyPosition } from "constants/interfaces_v2"
+import { IRiskyPosition } from "interfaces/thegraphs/basic-pools"
 import { RiskyProposalPositionQuery } from "queries"
 import { useEffect, useState } from "react"
 

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 
 import { useActiveWeb3React } from "hooks"
 import { getContract } from "utils/getContract"
-import { InvestProposal } from "constants/interfaces_v2"
+import { InvestProposal } from "interfaces/thegraphs/invest-pools"
 import { TraderPool, TraderPoolInvestProposal } from "abi"
 
 interface IProposalData {

@@ -6,7 +6,7 @@ import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 import { useActiveWeb3React } from "hooks"
 import { usePoolContract } from "hooks/usePool"
 import { InvestorRiskyProposalsQuery } from "queries"
-import { RiskyProposal } from "constants/interfaces_v2"
+import { IRiskyProposal } from "interfaces/contracts/ITraderPoolRiskyProposal"
 import useQueryPagination from "hooks/useQueryPagination"
 import { useRiskyProposalContract } from "hooks/useContract"
 
@@ -33,7 +33,7 @@ function RiskyProposalCardInitializer({
 }: IRiskyCardInitializer) {
   const [proposalPool] = useRiskyProposalContract(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [proposal, setProposal] = useState<RiskyProposal | null>(null)
+  const [proposal, setProposal] = useState<IRiskyProposal | null>(null)
 
   const isTrader = useMemo<boolean>(() => {
     if (!account || !poolInfo) {

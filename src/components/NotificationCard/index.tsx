@@ -5,7 +5,7 @@ import DexeInvestments from "assets/menu/DexeInvestments"
 import formatDistance from "date-fns/formatDistance"
 
 import { Flex } from "theme"
-import { INotification } from "constants/interfaces"
+import { INotification } from "interfaces"
 
 const NotificationCard: React.FC<INotification> = ({
   title,

@@ -1,7 +1,7 @@
 import React from "react"
 import TokenIcon from "components/TokenIcon"
 
-import { IPoolQuery } from "constants/interfaces_v2"
+import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { useERC20 } from "hooks/useContract"
 import { formatNumber } from "utils"
 import Icon from "components/Icon"

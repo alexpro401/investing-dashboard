@@ -1,5 +1,5 @@
-import { ITopMembersFilters } from "constants/interfaces"
-import { PoolType } from "constants/interfaces_v2"
+import { ITopMembersFilters } from "interfaces"
+import { PoolType } from "constants/types"
 //-----------------------------------------------------------------------------
 // # PRICE HISTORY
 //-----------------------------------------------------------------------------

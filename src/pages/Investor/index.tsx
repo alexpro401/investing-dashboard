@@ -24,7 +24,7 @@ import {
   Period,
   ChartPeriods,
 } from "./styled"
-import { IDetailedChart } from "constants/interfaces"
+import { IDetailedChart } from "interfaces"
 import Header from "components/Header/Layout"
 import { Profiles } from "components/Header/Components"
 import Pools from "components/Header/Pools"
@@ -166,12 +166,7 @@ function Investor(props: Props) {
   return (
     <>
       <Header left={leftIcon}>My investor profile</Header>
-      <Container
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-      >
+      <Container>
         <InvestorMobile account={account}>
           <ButtonContainer>
             <To to="/">
