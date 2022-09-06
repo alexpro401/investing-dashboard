@@ -101,7 +101,7 @@ const OwnedPoolsList: FC<Props> = ({ isOpen, toggle, pools, managedPools }) => {
         onClick={toggle}
         descriptionURL={pool.descriptionURL}
         baseAddress={pool.baseToken}
-        poolType="INVEST_POOL"
+        poolType={pool.type}
         name={pool.name}
         symbol={pool.ticker}
         pnl={`${pnl}%`}
