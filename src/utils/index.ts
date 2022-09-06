@@ -1,16 +1,21 @@
 import { getAddress } from "@ethersproject/address"
-import { Contract } from "@ethersproject/contracts"
 import { BigNumber, BigNumberish, FixedNumber } from "@ethersproject/bignumber"
 import { poolTypes, stableCoins, ZERO } from "constants/index"
 import { formatUnits, parseUnits, parseEther } from "@ethersproject/units"
 import { ERC20 } from "abi"
 import { useEffect, useState } from "react"
-import { OwnedPools } from "interfaces"
+import { ITopMembersFilters, OwnedPools } from "interfaces"
 import { ExchangeType } from "interfaces/exchange"
 import { getTime, setHours, setMinutes } from "date-fns"
 import { TransactionReceipt } from "@ethersproject/providers"
-import { Token } from "constants/types"
+import { PoolType, Token } from "constants/types"
 import { getBalanceOf, getContract } from "./getContract"
+import {
+  PoolsQuery,
+  PoolsQueryByType,
+  PoolsQueryByTypeWithSort,
+  PoolsQueryWithSort,
+} from "queries/all-pools"
 
 export const useUpdate = (ms: number) => {
   const [updator, setUpdate] = useState(0)
@@ -411,4 +416,47 @@ export const convertBigToFixed = (
 export const getProposalId = (id?: string) => {
   const proposalId = Number(id?.substring(42, 43))
   return isNaN(proposalId) ? -1 : proposalId
+}
+
+export const getPoolsQueryVariables = (
+  filters: ITopMembersFilters,
+  poolType: PoolType
+) => {
+  const isAllPools = poolType === "ALL_POOL"
+  const isSorting = filters.sort.direction !== ""
+
+  if (!isAllPools && !isSorting) {
+    return {
+      query: PoolsQueryByType,
+      variables: { q: filters.query, type: poolType },
+    }
+  }
+
+  if (isAllPools && isSorting) {
+    return {
+      query: PoolsQueryWithSort,
+      variables: {
+        q: filters.query,
+        orderBy: filters.sort.key,
+        orderDirection: filters.sort.direction,
+      },
+    }
+  }
+
+  if (!isAllPools && isSorting) {
+    return {
+      query: PoolsQueryByTypeWithSort,
+      variables: {
+        q: filters.query,
+        type: poolType,
+        orderBy: filters.sort.key,
+        orderDirection: filters.sort.direction,
+      },
+    }
+  }
+
+  return {
+    query: PoolsQuery,
+    variables: { q: filters.query },
+  }
 }

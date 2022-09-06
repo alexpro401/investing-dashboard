@@ -16,7 +16,7 @@ import { selectActivePoolType, selectPoolsFilters } from "state/pools/selectors"
 
 import { poolTypes } from "constants/index"
 
-import { isAddress } from "utils"
+import { isAddress, getPoolsQueryVariables } from "utils"
 
 import {
   IPoolQuery,
@@ -24,12 +24,7 @@ import {
   IPriceHistory,
 } from "interfaces/thegraphs/all-pools"
 
-import {
-  OwnedPoolsQuery,
-  ManagedPoolsQuery,
-  PriceHistoryQuery,
-  getPoolsQueryVariables,
-} from "queries"
+import { OwnedPoolsQuery, ManagedPoolsQuery, PriceHistoryQuery } from "queries"
 
 /**
  * Returns top members filter state variables and setter
