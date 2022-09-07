@@ -3,7 +3,8 @@ import { formatEther } from "@ethersproject/units"
 import { format } from "date-fns"
 
 import { useERC20 } from "hooks/useContract"
-import { IPoolQuery, PoolInfo } from "constants/interfaces_v2"
+import { IPoolQuery } from "interfaces/thegraphs/all-pools"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { expandTimestamp, formatBigNumber } from "utils"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { DATE_FORMAT } from "constants/time"
@@ -30,7 +31,7 @@ const fundTypes = {
 
 interface Props {
   pool: IPoolQuery
-  poolInfo: PoolInfo | null
+  poolInfo: IPoolInfo | null
   children?: ReactNode | null
 }
 

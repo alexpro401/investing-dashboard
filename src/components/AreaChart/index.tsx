@@ -1,4 +1,4 @@
-import { IPool } from "constants/interfaces"
+import { IPool } from "interfaces"
 import {
   AreaChart,
   Area,

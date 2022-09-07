@@ -9,7 +9,7 @@ import TopMembersBar from "components/TopMembersBar"
 import MemberMobile from "components/MemberMobile"
 import LoadMore from "components/LoadMore"
 
-import { PoolType } from "constants/interfaces_v2"
+import { PoolType } from "constants/types"
 
 import {
   selectBasicPools,

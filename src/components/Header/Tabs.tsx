@@ -2,7 +2,7 @@
  * Render Tabs
  */
 import { TabsMenu } from "components/TopMembersBar/styled"
-import { ITab } from "constants/interfaces"
+import { ITab } from "interfaces"
 import { useLocation } from "react-router-dom"
 import { To } from "theme"
 import isActiveRoute from "utils/isActiveRoute"

@@ -2,11 +2,11 @@ import { useEffect, useMemo, useState } from "react"
 
 import { useActiveWeb3React } from "hooks"
 import { getContract } from "utils/getContract"
-import { RiskyProposal } from "constants/interfaces_v2"
+import { IRiskyProposal } from "interfaces/contracts/ITraderPoolRiskyProposal"
 import { TraderPool, TraderPoolRiskyProposal } from "abi"
 
 interface IProposalData {
-  proposal: RiskyProposal
+  proposal: IRiskyProposal
   poolAddress: string
 }
 

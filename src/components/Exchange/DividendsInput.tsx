@@ -28,7 +28,7 @@ import {
   DividendsList,
   DividendsToken,
 } from "./styled"
-import { DividendToken } from "constants/interfaces"
+import { DividendToken } from "interfaces"
 
 interface Props {
   tokens: DividendToken[]

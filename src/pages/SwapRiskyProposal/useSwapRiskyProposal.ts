@@ -6,7 +6,8 @@ import {
   SetStateAction,
   useEffect,
 } from "react"
-import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
+import { ExchangeType } from "interfaces/exchange"
+import { ExchangeForm } from "interfaces/exchange"
 import { SubmitState, SwapDirection, TradeType } from "constants/types"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"

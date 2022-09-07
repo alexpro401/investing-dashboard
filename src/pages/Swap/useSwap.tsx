@@ -9,7 +9,8 @@ import {
 import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
+import { ExchangeType } from "interfaces/exchange"
+import { ExchangeForm } from "interfaces/exchange"
 import { SubmitState, SwapDirection, TradeType } from "constants/types"
 import { ZERO } from "constants/index"
 

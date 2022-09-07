@@ -1,5 +1,5 @@
-import { IUserData } from "constants/interfaces"
-import { OwnedPools } from "constants/interfaces_v2"
+import { IUserData } from "interfaces"
+import { OwnedPools } from "interfaces"
 
 export interface IUserTerms {
   agreed: boolean

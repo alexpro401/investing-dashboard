@@ -8,7 +8,7 @@ import TokensList from "components/TokensList"
 import Header, { EHeaderTitles } from "components/Header"
 
 import { selectWhitelist } from "state/pricefeed/selectors"
-import { Token } from "constants/interfaces"
+import { Token } from "interfaces"
 import useContract from "hooks/useContract"
 
 import back from "assets/icons/angle-left.svg"

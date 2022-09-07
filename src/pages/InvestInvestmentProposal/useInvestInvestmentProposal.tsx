@@ -20,7 +20,7 @@ import {
   usePoolMetadata,
 } from "state/ipfsMetadata/hooks"
 
-import { IDivestAmountsAndCommissions } from "interfaces/ITraderPool"
+import { IDivestAmountsAndCommissions } from "interfaces/contracts/ITraderPool"
 
 import {
   useERC20,
@@ -32,7 +32,7 @@ import { usePoolContract } from "hooks/usePool"
 import usePoolPrice from "hooks/usePoolPrice"
 import { useInvestProposal } from "hooks/useInvestmentProposals"
 
-import { RiskyForm } from "constants/interfaces_v2"
+import { RiskyForm } from "interfaces/exchange"
 import { ZERO } from "constants/index"
 import { SubmitState } from "constants/types"
 import { DATE_TIME_FORMAT } from "constants/time"

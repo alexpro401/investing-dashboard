@@ -37,7 +37,9 @@ import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { selectDexeAddress } from "state/contracts/selectors"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { useERC20, usePriceFeedContract } from "hooks/useContract"
-import { IPoolQuery, PoolInfo, IUserFeeInfo } from "constants/interfaces_v2"
+import { IUserFeeInfo } from "interfaces/contracts/ITraderPool"
+import { IPoolQuery } from "interfaces/thegraphs/all-pools"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { usePoolContract, usePoolQuery, useTraderPool } from "hooks/usePool"
 import usePayload from "hooks/usePayload"
 import useError from "hooks/useError"
@@ -89,7 +91,7 @@ interface IMethods {
 
 function useFundFee(
   poolAddress?: string
-): [[IPoolQuery | undefined, PoolInfo | null], IPayload, IMethods] {
+): [[IPoolQuery | undefined, IPoolInfo | null], IPayload, IMethods] {
   const { account, chainId } = useActiveWeb3React()
 
   const addToast = useAddToast()

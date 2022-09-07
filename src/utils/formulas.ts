@@ -1,4 +1,4 @@
-import { PoolInfo } from "constants/interfaces_v2"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { formatUnits, parseEther } from "@ethersproject/units"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import {
@@ -190,7 +190,7 @@ export const getPriceImpact = (from: BigNumber, to: BigNumber) => {
   }
 }
 
-export const getFreeLiquidity = (poolInfo: PoolInfo | null) => {
+export const getFreeLiquidity = (poolInfo: IPoolInfo | null) => {
   if (!poolInfo) return
 
   if (poolInfo.parameters.totalLPEmission.eq("0")) return Infinity

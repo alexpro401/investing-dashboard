@@ -19,7 +19,7 @@ import { TabCard } from "pages/Investor/styled"
 
 import { shortenAddress } from "utils"
 import { useActiveWeb3React } from "hooks"
-import { PoolType } from "constants/interfaces_v2"
+import { PoolType } from "constants/types"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"
 
 interface Props {}

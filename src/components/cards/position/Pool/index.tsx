@@ -1,6 +1,6 @@
 import { MouseEvent } from "react"
 
-import { IPosition } from "constants/interfaces_v2"
+import { IPosition } from "interfaces/thegraphs/all-pools"
 
 import { Flex } from "theme"
 import TokenIcon from "components/TokenIcon"

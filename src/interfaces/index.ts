@@ -1,30 +1,60 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import { BigNumber } from "@ethersproject/bignumber"
 
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      REACT_APP_NAMESPACE: string
+      REACT_APP_UPDATE_INTERVAL: string
+
+      REACT_APP_INFURA_ID: string
+      REACT_APP_ETHERSCAN_API_KEY: string
+
+      REACT_APP_CONTRACTS_REGISTRY_ADDRESS: string
+
+      REACT_APP_ALL_POOLS_API_URL: string
+      REACT_APP_BASIC_POOLS_API_URL: string
+      REACT_APP_INVEST_POOLS_API_URL: string
+      REACT_APP_INVESTORS_API_URL: string
+      REACT_APP_INTERACTIONS_API_URL: string
+      REACT_APP_MAIN_ASSET_ADDRESS: string
+
+      REACT_APP_IPFS_PROJECT_ID: string
+      REACT_APP_IPFS_PROJECT_SECRET: string
+
+      REACT_APP_PRIVACY_POLICY_HASH: string
+    }
+  }
+}
+
+export interface WhiteList {
+  address: string
+  decimals: number
+  symbol: string
+}
+
+export interface OwnedPools {
+  basic: string[]
+  invest: string[]
+}
+
+export interface IFundFeeHistory {
+  id: string
+  PNL: BigNumber
+  day: BigNumber
+  fundProfit: BigNumber
+  perfomanceFee: BigNumber
+  traderPool: {
+    id: string
+    baseToken: string
+  }
+}
+
+// Top traders page reducer payload
 export interface IPayload {
   loading: boolean
   error: string | null
   updatedAt: number | null
-}
-
-export interface IPost {
-  description: string
-  comments: number[]
-  created_at: string
-}
-
-export interface IPostGroup {
-  id: string
-  symbol: string
-  name: string
-  price: string
-  pnl: number
-  posts: IPost[]
-}
-
-export interface IStaticRanges {
-  label: string
-  isSelected: (period: string[]) => void
-  range: () => void
 }
 
 export interface ISortItem {
@@ -150,54 +180,6 @@ export interface IPool {
   supply: ISupply
 }
 
-export interface IFund {
-  basicTokenAdr: string
-  blockNumber: number
-  createdAt: string
-  creatorAdr: string
-  date: string
-  dexeCommissionDen: number
-  dexeCommissionNum: number
-  id: number
-  investorCommissionDen: number
-  investorCommissionNum: number
-  investorRestricted: boolean
-  isActualOn: boolean
-  name: string
-  poolAdr: string
-  symbol: string
-  totalSupply: string
-  traderCommissionDen: number
-  traderCommissionNum: number
-  tx: string
-  updatedAt: string
-}
-
-export interface IPoolInfo {
-  symbol: string
-  currentPrice: string
-  priceChange24H: number
-  totalValueLocked: string
-  annualPercentageYield: number
-  profitAndLoss: number
-
-  basicTokenAdr: string
-  basicTokenDecimal: number
-  basicTokenSymbol: string
-  copiers24H: number
-  fund: number
-  investorsFundsLocked: string
-  investorsFundsLocked24H: number
-  personalFundsLocked: string
-  personalFundsLocked24H: number
-  profitAndLossByPeriod: {
-    m1: number
-    m3: number
-    all: number
-  }
-  profitAndLossChart: IDetailedChart[]
-}
-
 export interface IUserData {
   id: number
   avatar: string
@@ -215,23 +197,6 @@ export interface IPoolTransaction {
   amount: BigNumber
   basePrice: BigNumber
   stablePrice: BigNumber
-}
-
-export interface IPoolPosition {
-  id: string
-  createdAt: string
-  updatedAt: string
-
-  tokenAddress: string
-  baseAddress: string
-  amount: BigNumber
-  avgBasePrice: BigNumber
-  avgStablePrice: BigNumber
-  pnlBase: BigNumber
-  pnlStable: BigNumber
-  pnl: number
-
-  transactions: IPoolTransaction[]
 }
 
 // END of POOL

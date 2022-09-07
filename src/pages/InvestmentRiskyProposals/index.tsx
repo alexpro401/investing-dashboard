@@ -6,7 +6,7 @@ import RouteTabs from "components/RouteTabs"
 import RiskyProposalsList from "./ProposalsList"
 import RiskyPositionsList from "./PositionsList"
 
-import { ITab } from "constants/interfaces"
+import { ITab } from "interfaces"
 import { useActiveWeb3React } from "hooks"
 import useInvestorProposalPools from "hooks/useInvestorProposalPools"
 

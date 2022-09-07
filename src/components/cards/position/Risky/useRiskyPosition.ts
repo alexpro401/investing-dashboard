@@ -3,7 +3,7 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { useEffect, useMemo, useState } from "react"
 
 import { normalizeBigNumber } from "utils"
-import { IRiskyPositionCard } from "constants/interfaces_v2"
+import { IRiskyPositionCard } from "interfaces/thegraphs/basic-pools"
 import { useERC20, usePriceFeedContract } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 
@@ -13,7 +13,7 @@ import {
   multiplyBignumbers,
   calcPositionPnlPercentage,
 } from "utils/formulas"
-import { ITokenBase } from "constants/interfaces"
+import { ITokenBase } from "interfaces"
 
 const BIG_ZERO: BigNumber = BigNumber.from(0)
 

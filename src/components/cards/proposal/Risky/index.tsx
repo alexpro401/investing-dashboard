@@ -20,7 +20,8 @@ import { percentageOfBignumbers } from "utils/formulas"
 import useContract, { useERC20 } from "hooks/useContract"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { expandTimestamp, normalizeBigNumber } from "utils"
-import { RiskyProposal, PoolInfo } from "constants/interfaces_v2"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
+import { IRiskyProposal } from "interfaces/contracts/ITraderPoolRiskyProposal"
 import { selectPriceFeedAddress } from "state/contracts/selectors"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
@@ -42,12 +43,12 @@ import settingsGreenIcon from "assets/icons/settings-green.svg"
 const MAX_INVESTORS_COUNT = 1000
 
 interface Props {
-  proposal: RiskyProposal
+  proposal: IRiskyProposal
   proposalId: number
   poolAddress: string
   proposalPool: Contract
   isTrader: boolean
-  poolInfo: PoolInfo
+  poolInfo: IPoolInfo
 }
 
 const RiskyProposalCard: FC<Props> = ({
