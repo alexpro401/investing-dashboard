@@ -1,95 +1,41 @@
+import { useWeb3React } from "@web3-react/core"
+import { GuardSpinner } from "react-spinners-kit"
+import { formatEther } from "@ethersproject/units"
+import { createClient, Provider as GraphProvider } from "urql"
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
-import { GuardSpinner } from "react-spinners-kit"
-import { useWeb3React } from "@web3-react/core"
-import { createClient, Provider as GraphProvider } from "urql"
-import { formatEther } from "@ethersproject/units"
+
+import { TabCard } from "pages/Investor/styled"
 
 import { Flex, Center } from "theme"
-import Button, { SecondaryButton } from "components/Button"
-import MemberMobile from "components/MemberMobile"
-import FundDetailsCard from "components/FundDetailsCard"
-import FundStatisticsCard from "components/FundStatisticsCard"
-import TabsLight from "components/TabsLight"
-import ProfitLossChart from "components/ProfitLossChart"
-import Header from "components/Header/Layout"
-import { Profiles } from "components/Header/Components"
 import Pools from "components/Header/Pools"
-import AreaChart from "components/AreaChart"
-import PerformanceFeeCard from "components/PerformanceFeeCard"
-import BarChart from "pages/Investor/Bar"
+import TabsLight from "components/TabsLight"
+import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
+import PoolPnlInfo from "components/PoolPnlInfo"
+import MemberMobile from "components/MemberMobile"
+import { Profiles } from "components/Header/Components"
+import PoolLockedFunds from "components/PoolLockedFunds"
+import FundDetailsCard from "components/FundDetailsCard"
+import Button, { SecondaryButton } from "components/Button"
+import FundStatisticsCard from "components/FundStatisticsCard"
+import PerformanceFeeCard from "components/PerformanceFeeCard"
+
 import pencil from "assets/icons/pencil.svg"
 
 import { formatBigNumber } from "utils"
-import { IDetailedChart } from "interfaces"
 import { usePoolQuery, usePoolContract, useTraderPool } from "hooks/usePool"
-
-import {
-  TabCard,
-  Row,
-  MainText,
-  MainValue,
-  Period,
-  ChartPeriods,
-} from "pages/Investor/styled"
 
 import {
   Container,
   ButtonContainer,
   Details,
-  TextWhiteBig,
-  TextGrey,
-  FundsUsed,
   DetailsEditLinkFrame,
   OwnInvesting,
   OwnInvestingLabel,
   OwnInvestingValue,
   OwnInvestingLink,
 } from "./styled"
-
-const pnlNew: IDetailedChart[] = [
-  {
-    x: "1",
-    y: 0,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "1",
-    y: 0,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "1",
-    y: 0,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "1",
-    y: 0,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "1",
-    y: 0,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-]
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -219,19 +165,7 @@ function Trader(props: Props) {
               name: "Profit & Loss",
               child: (
                 <>
-                  <ProfitLossChart
-                    address={poolAddress}
-                    baseToken={poolData?.baseToken}
-                  />
-                  <BarChart />
-                  <Row>
-                    <TextGrey>P&L LP - $ETH</TextGrey>
-                    <MainValue>0% (0 ETH)</MainValue>
-                  </Row>
-                  <Row>
-                    <TextGrey>P&L LP - USD% - USD</TextGrey>
-                    <MainValue>0% - 0 USD </MainValue>
-                  </Row>
+                  <PoolPnlInfo address={poolAddress} />
                 </>
               ),
             },
@@ -239,37 +173,7 @@ function Trader(props: Props) {
               name: "Locked funds",
               child: (
                 <>
-                  <AreaChart
-                    multiple
-                    tooltipSize="sm"
-                    height={163}
-                    data={pnlNew}
-                  />
-                  <ChartPeriods>
-                    <Period active>D</Period>
-                    <Period>W</Period>
-                    <Period>M</Period>
-                    <Period>3M</Period>
-                    <Period>6M</Period>
-                    <Period>1Y</Period>
-                    <Period>ALL</Period>
-                  </ChartPeriods>
-                  <Flex full p="15px 0 0">
-                    <Row>
-                      <MainText>Locked out of investor funds</MainText>
-                      <MainValue>$32.12k</MainValue>
-                    </Row>
-                  </Flex>
-                  <Row>
-                    <MainText>Your funds locked</MainText>
-                    <TextWhiteBig>$32.12k</TextWhiteBig>
-                  </Row>
-                  <Row>
-                    <FundsUsed
-                      current={"$61.15k / $101.92k"}
-                      total={"Fund used (60%)"}
-                    />
-                  </Row>
+                  <PoolLockedFunds address={poolAddress} />
                 </>
               ),
             },

@@ -2,12 +2,14 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { PoolType } from "constants/types"
 
 export interface IPriceHistory {
+  APY: BigNumber
   usdTVL: number
   baseTVL: number
   supply: number
   absPNL: number
   percPNL: number
   timestamp: number
+  traderUSD: number
   aggregationType: number
 }
 
@@ -39,6 +41,7 @@ export interface IPoolQuery {
   priceHistory: IPriceHistory[]
   privateInvestors: Investor[]
   admins: string[]
+  orderSize: BigNumber
 }
 
 export interface IExchange {

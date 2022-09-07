@@ -10,6 +10,7 @@ import {
   PoolPositionLast,
   BasicPositionsQuery,
   FundFeeHistoryQuery,
+  PositionsByIdsQuery,
 } from "./all-pools"
 
 import {
@@ -50,4 +51,5 @@ export {
   UserTransactionsQuery,
   RiskyProposalPositionQuery,
   PoolPositionLast,
+  PositionsByIdsQuery,
 }

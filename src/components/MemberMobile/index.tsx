@@ -1,13 +1,13 @@
-import React from "react"
-import TokenIcon from "components/TokenIcon"
+import React, { useMemo } from "react"
 
-import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { useERC20 } from "hooks/useContract"
-import { formatNumber } from "utils"
-import Icon from "components/Icon"
+import { IPoolQuery } from "interfaces/thegraphs/all-pools"
+import { formatNumber, normalizeBigNumber } from "utils"
+import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { getLastInArray, getPNL, getPriceLP, getUSDPrice } from "utils/formulas"
 
-import { usePoolMetadata } from "state/ipfsMetadata/hooks"
+import Icon from "components/Icon"
+import TokenIcon from "components/TokenIcon"
 
 import {
   Card,
@@ -34,6 +34,13 @@ const MemberMobile: React.FC<{
   const lastHistoryPoint = getLastInArray(data.priceHistory)
 
   const [{ poolMetadata }] = usePoolMetadata(data.id, data.descriptionURL)
+
+  const APY = useMemo(() => {
+    if (!lastHistoryPoint || !lastHistoryPoint.APY) {
+      return "0"
+    }
+    return normalizeBigNumber(lastHistoryPoint.APY, 4, 2)
+  }, [lastHistoryPoint])
 
   return (
     <Card
@@ -78,7 +85,7 @@ const MemberMobile: React.FC<{
             lastHistoryPoint ? lastHistoryPoint.usdTVL : 0
           )}`}
         />
-        <Statistic label="APY" value="0%" />
+        <Statistic label="APY" value={`${APY}%`} />
         <Statistic label="P&L" value={`0%`} />
         <Statistic label="Depositors" value={<>{data.investorsCount}</>} />
       </PoolStatisticContainer>

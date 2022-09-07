@@ -3,12 +3,14 @@
 //-----------------------------------------------------------------------------
 
 const PRICE_HISTORY = `
+  APY
   usdTVL
   baseTVL
   supply
   absPNL
   percPNL
   timestamp
+  traderUSD
   aggregationType
 `
 
@@ -68,6 +70,7 @@ const POOL = `
   averagePositionTime
   investorsCount
   admins
+  orderSize
   privateInvestors {
     id
     activePools
@@ -150,7 +153,7 @@ const POSITION_EXCHANGE = `
   opening
 `
 
-const POSITION = `
+const POSITION_DATA = `
   id
   closed
   positionToken
@@ -160,6 +163,10 @@ const POSITION = `
   totalBaseCloseVolume
   totalPositionOpenVolume
   totalPositionCloseVolume
+`
+
+const POSITION = `
+  ${POSITION_DATA}
   exchanges(orderBy: timestamp, orderDirection: desc) {
     ${POSITION_EXCHANGE}
   }
@@ -169,6 +176,14 @@ const POSITION = `
     ticker
     baseToken
     descriptionURL
+  }
+`
+
+const PositionsByIdsQuery = `
+  query ($idList: [String]!) {
+    positions(skip: $offset, first: $limit, where: { id_in: $idList }) {
+      ${POSITION_DATA}
+    }
   }
 `
 
@@ -235,4 +250,5 @@ export {
   PoolPositionLast,
   BasicPositionsQuery,
   FundFeeHistoryQuery,
+  PositionsByIdsQuery,
 }

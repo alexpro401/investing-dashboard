@@ -1,65 +1,171 @@
+import { useMemo } from "react"
 import styled from "styled-components"
+import { Flex, GradientBorder } from "theme"
 
-export const pnlToBarHeight = (pnl) => {
-  const val = pnl < 0 ? pnl * -1 : pnl
-  const pnlInHeight = val * 0.32
+function getTop(r) {
+  if (r === null || r > 0) {
+    return "0"
+  }
 
-  const height = pnlInHeight > 32 ? 32 : pnlInHeight
-  return `${height}px`
+  return "50%"
+}
+function getBottom(r) {
+  if (r === null || r > 0) {
+    return "50%"
+  }
+
+  if (r < 0) {
+    return "0"
+  }
+
+  return "49%"
+}
+function getBg(r) {
+  if (r === null) {
+    return "transparent"
+  }
+
+  if (r > 0) {
+    return "linear-gradient(179.35deg, #63B49B 1.92%, #63B49B 1.93%, #A4EBD4 99.53%)"
+  }
+  if (r < 0) {
+    return "linear-gradient(267.88deg, #D75E65 -0.85%, #E77171 98.22%)"
+  }
+
+  return "#788AB4"
+}
+function getBr(r) {
+  if (!r || r === null) {
+    return "0"
+  }
+
+  if (r > 0) {
+    return "4px 4px 0 0"
+  }
+  if (r < 0) {
+    return "0 0 4px 4px"
+  }
+
+  return "#ffffff"
 }
 
-export const StyledBarChart = styled.div`
-  width: 175px;
-  height: 64px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  position: relative;
-`
+const Styled = {
+  Container: styled(Flex)`
+    width: 100%;
+    justify-content: space-evenly;
+    margin: 44px 0 22px;
+  `,
+  Tip: styled.img`
+    position: absolute;
+    top: -50px;
+    left: -13px;
+    height: 46px;
+    width: 129px;
+    display: none;
+  `,
+  Bar: styled.div<{ active?: boolean; perc: number | null }>`
+    position: relative;
+    box-shadow: inset 1px 2px 2px 2px rgba(0, 0, 0, 0.2);
+    width: 16px;
+    height: 40px;
+    background: rgba(60, 66, 78, 0.5);
+    border-radius: 4px;
 
-export const TickContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  position: relative;
-  height: 64px;
-  width: 10px;
-`
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0px;
+      right: 0px;
+      top: ${(p) => getTop(p.perc)};
+      bottom: ${(p) => getBottom(p.perc)};
+      background: ${(p) => getBg(p.perc)};
+      display: ${(p) => (p.perc !== null ? "block" : "none")};
+      border-radius: ${(p) => getBr(p.perc)};
+      transition: top 0.3s ease-in-out, bottom 0.3s ease-in-out,
+        background 0.3s ease-in-out;
+    }
+  `,
+}
 
-export const Tick = styled.div<{ pnl: number }>`
-  position: absolute;
-  left: 0;
-  right: 0;
-  background: #464857;
-  width: 10px;
-  margin: 0 2.5px;
-  transition: all 0.4s cubic-bezier(0.63, 0.08, 0.49, 0.84);
-`
+export default Styled
 
-export const TickUp = styled(Tick)`
-  border-top-left-radius: 2px;
-  border-top-right-radius: 2px;
-  bottom: 32px;
-
-  border-top: 2px solid ${(props) => (props.pnl > 0 ? "#7fffd4" : "#464857")};
-  height: ${(props) =>
-    props.pnl && props.pnl > 0 ? pnlToBarHeight(props.pnl) : "2px"};
-
-  &:hover {
-    background: #7fffd4;
+function getPnlColor(pnl) {
+  if (pnl > 0) {
+    return "#63b49b"
   }
-`
 
-export const TickDown = styled(Tick)`
-  border-bottom-left-radius: 2px;
-  border-bottom-right-radius: 2px;
-  top: 32px;
-
-  border-bottom: 2px solid ${(props) => (props.pnl < 0 ? "#ff7f7f" : "#464857")};
-  height: ${(props) =>
-    props.pnl && props.pnl < 0 ? pnlToBarHeight(props.pnl) : "2px"};
-
-  &:hover {
-    background: ${(props) => (props.pnl <= 0 ? "#ff7f7f" : "transparent")};
+  if (pnl < 0) {
+    return "#D75E65"
   }
-`
+
+  return "#788AB4"
+}
+
+const TipS = {
+  Container: styled(Flex)<{ mon: number }>`
+    position: absolute;
+    top: -48px;
+    left: ${(p) => (p.mon > 7 ? "initial" : "0")};
+    right: ${(p) => (p.mon > 7 ? "0" : "initial")};
+  `,
+  Content: styled(GradientBorder)`
+    padding: 12px 8px;
+    width: max-content;
+    border-radius: 12px;
+
+    &:after {
+      background: #181e2c;
+    }
+  `,
+  Dot: styled.div<{ color: string }>`
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: ${(p) => p.color};
+    flex: 0 0 auto;
+  `,
+  Month: styled.div`
+    margin: 0 6px;
+    font-family: "Gilroy";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 13px;
+    color: #eeecf1;
+    flex: 0 0 auto;
+  `,
+  PNL: styled.div<{ pnl: number }>`
+    font-family: "Gilroy";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 13px;
+    color: ${(p) => getPnlColor(p.pnl)};
+    flex: 0 0 auto;
+  `,
+}
+
+interface IProps {
+  id: number
+  pnl: number
+  timestamp: number
+}
+
+export const Tip: React.FC<IProps> = ({ id, timestamp, pnl, ...rest }) => {
+  const month = useMemo(() => {
+    if (!timestamp) return ""
+
+    const formatter = new Intl.DateTimeFormat("en", { month: "short" })
+    return formatter.format(new Date(timestamp))
+  }, [timestamp])
+
+  return (
+    <TipS.Container mon={id} {...rest}>
+      <TipS.Content>
+        <TipS.Dot color={getBg(Number(pnl))} />
+        <TipS.Month>{month}</TipS.Month>
+        <TipS.PNL pnl={pnl}>{`${pnl > 0 ? "+ " : ""}${pnl}%`}</TipS.PNL>
+      </TipS.Content>
+    </TipS.Container>
+  )
+}
