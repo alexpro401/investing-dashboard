@@ -47,12 +47,14 @@ export interface Investor {
 export type PoolType = "ALL_POOL" | "INVEST_POOL" | "BASIC_POOL"
 
 export interface IPriceHistory {
+  APY: BigNumber
   usdTVL: number
   baseTVL: number
   supply: number
   absPNL: number
   percPNL: number
   timestamp: number
+  traderUSD: number
   aggregationType: number
 }
 
@@ -74,6 +76,7 @@ export interface IPoolQuery {
   priceHistory: IPriceHistory[]
   privateInvestors: Investor[]
   admins: string[]
+  orderSize: BigNumber
 }
 
 export interface IPriceHistoryQuery {

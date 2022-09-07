@@ -1,7 +1,12 @@
 import { PoolInfo } from "constants/interfaces_v2"
 import { formatUnits, parseEther } from "@ethersproject/units"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
-import { cutDecimalPlaces, formatNumber, convertBigToFixed } from "utils"
+import {
+  cutDecimalPlaces,
+  formatNumber,
+  convertBigToFixed,
+  normalizeBigNumber,
+} from "utils"
 
 export const getPNL = (SP: string) => {
   let CP = 1
@@ -156,6 +161,19 @@ export const formateChartData = (data) => {
       ...v,
       price: price,
       pnl,
+    }
+  })
+}
+
+export const formatLockedFundsChartData = (data) => {
+  if (!data) return undefined
+
+  return data.reverse().map((v) => {
+    const investorsUSD = subtractBignumbers([v.usdTVL, 18], [v.traderUSD, 18])
+    return {
+      ...v,
+      investorsUSD: Number(normalizeBigNumber(investorsUSD, 18, 2)),
+      traderUSDValue: Number(normalizeBigNumber(v.traderUSD, 18, 2)),
     }
   })
 }
