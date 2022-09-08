@@ -1,11 +1,11 @@
 import RadioButton from "components/RadioButton"
-import React, { useMemo } from "react"
+import React from "react"
 import styled from "styled-components"
 
 interface FundTypeCardProps {
   label: string
   description: string
-  name: "basic" | "investment" | "daoPool"
+  name: "basic" | "investment"
   selected: string
   handleSelect: (value: any) => void
   link: string
@@ -14,14 +14,13 @@ interface FundTypeCardProps {
 const ContainerCard = styled.div<{
   withBackground?: boolean
   shadow?: boolean
-  isActive?: boolean
 }>`
   padding: 28px 10px 26px 16px;
   box-sizing: border-box;
   background: linear-gradient(64.44deg, #10151f 32.35%, #181d26 100%);
   mix-blend-mode: normal;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.01);
-  border: 1px solid ${(props) => (props.isActive ? "#9AE2CB" : "#26324482")};
+  border: 1px solid #26324482;
   border-radius: 16px;
   margin-bottom: 16px;
   background: ${(props) =>
@@ -79,13 +78,12 @@ const FundTypeCard: React.FC<FundTypeCardProps> = ({
   handleSelect,
   link,
 }) => {
-  const isActive = useMemo(() => name === selected, [name, selected])
+  const isActive = name === selected
   return (
     <ContainerCard
       onClick={() => handleSelect(name)}
       withBackground={isActive}
       shadow={isActive}
-      isActive={isActive}
     >
       <Body>
         <RadioButton selected={selected} value={name} onChange={handleSelect} />
