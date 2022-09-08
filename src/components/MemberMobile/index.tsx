@@ -1,4 +1,5 @@
 import React, { useMemo } from "react"
+import { BigNumber } from "@ethersproject/bignumber"
 
 import { useERC20 } from "hooks/useContract"
 import { IPoolQuery } from "constants/interfaces_v2"
@@ -40,6 +41,18 @@ const MemberMobile: React.FC<{
       return "0"
     }
     return normalizeBigNumber(lastHistoryPoint.APY, 4, 2)
+  }, [lastHistoryPoint])
+
+  const percPNL = useMemo(() => {
+    if (
+      !lastHistoryPoint ||
+      !lastHistoryPoint.percPNL ||
+      BigNumber.from(lastHistoryPoint.percPNL).isZero()
+    ) {
+      return "0"
+    }
+
+    return normalizeBigNumber(lastHistoryPoint.percPNL, 4, 2)
   }, [lastHistoryPoint])
 
   return (
@@ -86,7 +99,7 @@ const MemberMobile: React.FC<{
           )}`}
         />
         <Statistic label="APY" value={`${APY}%`} />
-        <Statistic label="P&L" value={`0%`} />
+        <Statistic label="P&L" value={`${percPNL}%`} />
         <Statistic label="Depositors" value={<>{data.investorsCount}</>} />
       </PoolStatisticContainer>
       {children}
