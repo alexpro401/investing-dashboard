@@ -1,5 +1,5 @@
 import { useQuery } from "urql"
-import { IInvestorInvestedPools } from "constants/interfaces_v2"
+import { IInvestorInvestedPools } from "interfaces/thegraphs/invest-pools"
 import { InvestorPoolsInvestedForQuery } from "queries"
 
 function useInvestorProposalPools(address?: string, poolType?: string) {

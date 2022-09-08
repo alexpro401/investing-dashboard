@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { useLocation } from "react-router-dom"
 
-import { ITab } from "constants/interfaces"
+import { ITab } from "interfaces"
 import isActiveRoute from "utils/isActiveRoute"
 
 import S from "./styled"

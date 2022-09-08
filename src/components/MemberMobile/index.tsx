@@ -2,7 +2,7 @@ import React, { useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { useERC20 } from "hooks/useContract"
-import { IPoolQuery } from "constants/interfaces_v2"
+import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { formatNumber, normalizeBigNumber } from "utils"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { getLastInArray, getPNL, getPriceLP, getUSDPrice } from "utils/formulas"

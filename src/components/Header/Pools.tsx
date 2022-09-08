@@ -7,7 +7,7 @@ import { createClient, Provider as GraphProvider } from "urql"
 import Icon from "components/Icon"
 import OwnedPoolsList from "modals/OwnedPoolsList"
 
-import { useManagedPools, useOwnedPools } from "state/pools/hooks"
+import { useUserInvolvedPools } from "state/pools/hooks"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 
 import AddFund from "assets/icons/AddFund"
@@ -39,17 +39,18 @@ const Pools = ({}: IPortaitsProps) => {
   const { account } = useWeb3React()
 
   const [isModalOpen, setModal] = useState(false)
-  const [pools, isPoolsLoading] = useOwnedPools(account)
-  const [managedPools, isManagedPoolsLoading] = useManagedPools(account)
+
+  const [{ ownedPools, managedPools }, isPoolsLoading] =
+    useUserInvolvedPools(account)
 
   const createFund = () => {
     navigate("/create-fund")
   }
 
   const fundsPreview = useMemo<ReactNode>(() => {
-    if (pools && pools.length > 0) {
-      return pools
-        .slice(pools.length - 2)
+    if (ownedPools && ownedPools.length > 0) {
+      return ownedPools
+        .slice(ownedPools.length - 2)
         .map((pool) => <FundItem key={pool.id} pool={pool} />)
     }
 
@@ -60,9 +61,9 @@ const Pools = ({}: IPortaitsProps) => {
     }
 
     return null
-  }, [pools, managedPools])
+  }, [ownedPools, managedPools])
 
-  if (isPoolsLoading || isManagedPoolsLoading) {
+  if (isPoolsLoading) {
     return (
       <PortraitsPlus>
         <CircleSpinner color="#A4EBD4" size={16} loading />
@@ -70,11 +71,11 @@ const Pools = ({}: IPortaitsProps) => {
     )
   }
 
-  if (pools.length > 0 || managedPools.length > 0) {
+  if (ownedPools.length > 0 || managedPools.length > 0) {
     return (
       <>
         <OwnedPoolsList
-          pools={pools}
+          pools={ownedPools}
           managedPools={managedPools}
           isOpen={isModalOpen}
           toggle={() => setModal(false)}

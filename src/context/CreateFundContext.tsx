@@ -1,5 +1,5 @@
 import { createContext, useContext, Component } from "react"
-import { Token } from "constants/interfaces"
+import { Token } from "interfaces"
 import { sliderPropsByPeriodType } from "constants/index"
 import { IValidationError } from "constants/types"
 

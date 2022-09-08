@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useQuery } from "urql"
-import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
-import { parseEther } from "@ethersproject/units"
 
 import { useTraderPoolRegistryContract } from "hooks/useContract"
 import { AppDispatch, AppState } from "state"
@@ -16,20 +14,15 @@ import { selectActivePoolType, selectPoolsFilters } from "state/pools/selectors"
 
 import { poolTypes } from "constants/index"
 
-import { isAddress } from "utils"
+import { isAddress, getPoolsQueryVariables } from "utils"
 
 import {
   IPoolQuery,
   IPriceHistoryQuery,
   IPriceHistory,
-} from "constants/interfaces_v2"
+} from "interfaces/thegraphs/all-pools"
 
-import {
-  OwnedPoolsQuery,
-  ManagedPoolsQuery,
-  PriceHistoryQuery,
-  getPoolsQueryVariables,
-} from "queries"
+import { OwnedPoolsQuery, ManagedPoolsQuery, PriceHistoryQuery } from "queries"
 
 /**
  * Returns top members filter state variables and setter
@@ -92,6 +85,15 @@ export function useManagedPools(
   }, [pool])
 
   return [pools, pool.fetching]
+}
+
+export function useUserInvolvedPools(
+  address: string | null | undefined
+): [{ ownedPools: IPoolQuery[]; managedPools: IPoolQuery[] }, boolean] {
+  const [ownedPools, ownedLoading] = useOwnedPools(address)
+  const [managedPools, managedLoading] = useManagedPools(address)
+
+  return [{ ownedPools, managedPools }, ownedLoading || managedLoading]
 }
 
 /**

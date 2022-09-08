@@ -2,7 +2,7 @@
  * Components which are used in Header
  */
 import { Dispatch, SetStateAction, FC } from "react"
-import { ITopMembersFilters } from "constants/interfaces"
+import { ITopMembersFilters } from "interfaces"
 import IconSearch from "components/IconSearch"
 
 import { ClickableArea, IconButton } from "./styled"

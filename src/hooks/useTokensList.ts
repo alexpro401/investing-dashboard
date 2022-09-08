@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { ITokenBase } from "constants/interfaces"
+import { ITokenBase } from "interfaces"
 
 const lists = {
   eth: "https://tokens.1inch.exchange/v1.0",

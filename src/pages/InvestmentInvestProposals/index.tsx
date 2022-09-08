@@ -5,7 +5,7 @@ import { createClient, Provider as GraphProvider } from "urql"
 import RouteTabs from "components/RouteTabs"
 import InvestProposalsList from "./ProposalsList"
 
-import { ITab } from "constants/interfaces"
+import { ITab } from "interfaces"
 import { useActiveWeb3React } from "hooks"
 import useInvestorProposalPools from "hooks/useInvestorProposalPools"
 

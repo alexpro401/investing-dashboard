@@ -24,7 +24,8 @@ import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import useGasTracker from "state/gas/hooks"
 
 import { SubmitState, SwapDirection } from "constants/types"
-import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
+import { ExchangeForm } from "interfaces/exchange"
+import { ExchangeType } from "interfaces/exchange"
 import { IAlert } from "context/AlertContext"
 
 import Icon from "components/Icon"

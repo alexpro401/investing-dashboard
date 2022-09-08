@@ -25,7 +25,7 @@ import {
   usePriceFeedContract,
   useUserRegistryContract,
 } from "hooks/useContract"
-import { RiskyForm } from "constants/interfaces_v2"
+import { RiskyForm } from "interfaces/exchange"
 import usePoolPrice from "hooks/usePoolPrice"
 import useGasTracker from "state/gas/hooks"
 import { useInvestProposal } from "hooks/useInvestmentProposals"

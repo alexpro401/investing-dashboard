@@ -26,7 +26,7 @@ import TransactionSent from "modals/TransactionSent"
 import { SubmitState } from "constants/types"
 
 import { usePoolContract } from "hooks/usePool"
-import { Token } from "constants/interfaces"
+import { Token } from "interfaces"
 import { selectWhitelist } from "state/pricefeed/selectors"
 import { useERC20 } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"

@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit"
-import { Token } from "constants/interfaces"
+import { Token } from "interfaces"
 import { updateWhitelist } from "./actions"
 
 export interface PricefeedState {

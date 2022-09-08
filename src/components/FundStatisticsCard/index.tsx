@@ -5,7 +5,9 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { useERC20 } from "hooks/useContract"
 import { getPNL, getPriceLP } from "utils/formulas"
 import { expandTimestamp, normalizeBigNumber } from "utils"
-import { IPoolQuery, LeverageInfo, PoolInfo } from "constants/interfaces_v2"
+import { IPoolQuery } from "interfaces/thegraphs/all-pools"
+import { ILeverageInfo } from "interfaces/contracts/ITraderPool"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 
 import { Flex } from "theme"
 import ProgressBar from "components/ProgressBar"
@@ -15,8 +17,8 @@ import chartIcon from "assets/icons/bar-chart-icon.svg"
 
 interface IProps {
   data: IPoolQuery
-  leverage: LeverageInfo | null
-  info: PoolInfo | null
+  leverage: ILeverageInfo | null
+  info: IPoolInfo | null
 }
 
 const FundStatisticsCard: FC<IProps> = ({ data, leverage, info }) => {

@@ -1,10 +1,8 @@
 import { useEffect, useState, useCallback, useRef } from "react"
 import debounce from "lodash.debounce"
 
-import {
-  InvestProposal,
-  InvestProposalInvestmentsInfo,
-} from "constants/interfaces_v2"
+import { InvestProposal } from "interfaces/thegraphs/invest-pools"
+import { IInvestProposalInvestmentsInfo } from "interfaces/contracts/ITraderPoolInvestProposal"
 import { useInvestProposalContract } from "hooks/useContract"
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
 import useForceUpdate from "./useForceUpdate"
@@ -84,7 +82,7 @@ export function useActiveInvestmentsInfo(
   account?: string | null | undefined,
   index?: string
 ) {
-  const [info, setInfo] = useState<InvestProposalInvestmentsInfo | undefined>()
+  const [info, setInfo] = useState<IInvestProposalInvestmentsInfo | undefined>()
   const [proposal] = useInvestProposalContract(poolAddress)
 
   useEffect(() => {

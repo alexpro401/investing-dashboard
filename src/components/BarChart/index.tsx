@@ -1,6 +1,6 @@
+import { useState } from "react"
 import { AGREGATION_CODES } from "constants/history"
 import { opacityVariants } from "motion/variants"
-import { useState } from "react"
 import { usePriceHistory } from "state/pools/hooks"
 import { Flex } from "theme"
 import { daysAgoTimestamp, expandTimestamp } from "utils"

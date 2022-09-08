@@ -3,18 +3,17 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { useEffect, useMemo, useState } from "react"
 
 import { formatBigNumber } from "utils"
-import { IPosition } from "constants/interfaces_v2"
+import { IPosition } from "interfaces/thegraphs/all-pools"
 import { useERC20, usePriceFeedContract } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 
 import {
-  subtractBignumbers,
-  addBignumbers,
-  multiplyBignumbers,
   divideBignumbers,
+  subtractBignumbers,
+  multiplyBignumbers,
   calcPositionPnlPercentage,
 } from "utils/formulas"
-import { ITokenBase } from "constants/interfaces"
+import { ITokenBase } from "interfaces"
 
 const BIG_ZERO: BigNumber = BigNumber.from(0)
 
@@ -29,7 +28,7 @@ const INITIAL_AMOUNT: IAmount = {
 }
 
 interface IPayload {
-  currentPositionVolume: string
+  currentPositionVolume: IAmount
   entryPriceBase: BigNumber
   entryPriceUSD: BigNumber
   markPriceBase: BigNumber
@@ -52,7 +51,6 @@ function usePoolPosition(position: IPosition): [IPayload] {
 
   // STATE DATA
   const [markPrice, setMarkPriceBase] = useState<BigNumber>(BIG_ZERO)
-  const [pnlUSDCurrent, setPnlUSDCurrent] = useState<BigNumber>(BIG_ZERO)
 
   // MEMOIZED DATA
   /**
@@ -60,19 +58,23 @@ function usePoolPosition(position: IPosition): [IPayload] {
    *
    * closed ? totalPositionCloseVolume : totalPositionOpenVolume - totalPositionCloseVolume
    */
-  const currentPositionVolume = useMemo<string>(() => {
-    if (!position) return "0"
-
-    if (position.closed) {
-      return formatBigNumber(position.totalPositionCloseVolume)
-    }
+  const currentPositionVolume = useMemo<IAmount>(() => {
+    if (!position) return INITIAL_AMOUNT
 
     const { totalPositionOpenVolume, totalPositionCloseVolume } = position
-    const volume = subtractBignumbers(
+
+    if (position.closed) {
+      return {
+        big: totalPositionCloseVolume,
+        format: formatBigNumber(totalPositionCloseVolume),
+      }
+    }
+
+    const big = subtractBignumbers(
       [totalPositionOpenVolume, 18],
       [totalPositionCloseVolume, 18]
     )
-    return formatBigNumber(volume)
+    return { big, format: formatBigNumber(big) }
   }, [position])
 
   /**
@@ -159,41 +161,35 @@ function usePoolPosition(position: IPosition): [IPayload] {
 
   /**
    * P&L (in base token)
-   *
+   * (markPriceBase - entryPriceBase) * volumeInPositionToken
    */
   const pnlBase = useMemo<BigNumber>(() => {
-    if (!position || !pnlPercentage || pnlPercentage.big.isZero()) {
+    if (!markPriceBase || !entryPriceBase || !currentPositionVolume)
       return BIG_ZERO
-    }
 
-    const { closed, totalBaseOpenVolume, totalBaseCloseVolume } = position
-
-    const totalBaseVolume = closed
-      ? totalBaseCloseVolume
-      : subtractBignumbers(
-          [totalBaseOpenVolume, 18],
-          [totalBaseCloseVolume, 18]
-        ) // current base open volume
-
-    const pnlBaseVolume = multiplyBignumbers(
-      [totalBaseVolume, 18],
-      [pnlPercentage.big, 18]
+    const priceDiff = subtractBignumbers(
+      [markPriceBase, 18],
+      [entryPriceBase, 18]
     )
 
-    return addBignumbers([totalBaseVolume, 18], [pnlBaseVolume, 18])
-  }, [position, pnlPercentage])
+    return multiplyBignumbers([priceDiff, 18], [currentPositionVolume.big, 18])
+  }, [markPriceBase, entryPriceBase, currentPositionVolume])
 
   /**
    * P&L (in USD)
    */
   const pnlUSD = useMemo<BigNumber>(() => {
-    if (!position || !markPriceUSD || !entryPriceUSD) return BIG_ZERO
-
-    if (position.closed) {
-      return subtractBignumbers([markPriceUSD, 18], [entryPriceUSD, 18])
+    if (!markPriceUSD || !entryPriceUSD || !currentPositionVolume) {
+      return BIG_ZERO
     }
-    return pnlUSDCurrent
-  }, [markPriceUSD, entryPriceUSD, position, pnlUSDCurrent])
+
+    const priceDiff = subtractBignumbers(
+      [markPriceUSD, 18],
+      [entryPriceUSD, 18]
+    )
+
+    return multiplyBignumbers([priceDiff, 18], [currentPositionVolume.big, 18])
+  }, [markPriceUSD, entryPriceUSD, currentPositionVolume])
 
   // SIDE EFFECTS
   // Fetch price of 1 position token in base token
@@ -220,32 +216,6 @@ function usePoolPosition(position: IPosition): [IPayload] {
       }
     })()
   }, [position, priceFeed])
-
-  // fetch pnl price in USD
-  useEffect(() => {
-    if (!priceFeed || !pnlBase || !baseToken) return
-    ;(async () => {
-      try {
-        const price = await priceFeed.getNormalizedPriceOutUSD(
-          baseToken.address,
-          pnlBase.abs().toHexString()
-        )
-
-        if (price && price.amountOut && !price.amountOut.isZero()) {
-          setPnlUSDCurrent(
-            pnlBase.isNegative()
-              ? multiplyBignumbers(
-                  [price.amountOut, 18],
-                  [BigNumber.from("-1"), 18]
-                )
-              : price.amountOut
-          )
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    })()
-  }, [baseToken, pnlBase, priceFeed])
 
   return [
     {

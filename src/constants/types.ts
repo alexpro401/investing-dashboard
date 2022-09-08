@@ -41,3 +41,5 @@ export enum SubmitState {
   WAIT_CONFIRM = 2,
   SUCCESS = 3,
 }
+
+export type PoolType = "ALL_POOL" | "INVEST_POOL" | "BASIC_POOL"
