@@ -109,10 +109,6 @@ export const MainValue = styled.div`
   color: #9ae2cb;
 `
 
-export const SecondaryText = styled(MainText)`
-  color: #5a6071;
-`
-
 export const ButtonContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -122,37 +118,4 @@ export const ButtonContainer = styled.div`
   grid-gap: 16px;
   padding-top: 16px;
   width: 100%;
-`
-
-export const ChartPeriods = styled(Flex)`
-  justify-content: space-around;
-  width: 100%;
-  padding: 15px 0;
-`
-
-export const Period = styled.div<{ active?: boolean }>`
-  font-family: Gilroy;
-  font-style: normal;
-  font-weight: normal;
-  padding: 4px 11px 2px;
-  font-size: 12px;
-  line-height: 130%;
-  @media only screen and (${device.xxs}) {
-    font-size: 10px;
-  }
-
-  display: flex;
-  align-items: center;
-  text-align: center;
-  letter-spacing: 1px;
-
-  /* Text / gray */
-
-  color: ${(props) => (props.active ? "#000000" : "#5a607180")};
-  font-weight: ${(props) => (props.active ? 600 : 400)};
-  background: ${(props) =>
-    props.active
-      ? "linear-gradient(64.44deg, #63b49b 12.29%, #a4ebd4 76.64%)"
-      : "translate"};
-  border-radius: 14px;
 `

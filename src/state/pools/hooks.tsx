@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useQuery } from "urql"
-import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
-import { parseEther } from "@ethersproject/units"
 
 import { useTraderPoolRegistryContract } from "hooks/useContract"
 import { AppDispatch, AppState } from "state"
@@ -16,22 +14,15 @@ import { selectActivePoolType, selectPoolsFilters } from "state/pools/selectors"
 
 import { poolTypes } from "constants/index"
 
-import { isAddress } from "utils"
+import { isAddress, getPoolsQueryVariables } from "utils"
 
 import {
   IPoolQuery,
   IPriceHistoryQuery,
   IPriceHistory,
-} from "constants/interfaces_v2"
+} from "interfaces/thegraphs/all-pools"
 
-import {
-  OwnedPoolsQuery,
-  ManagedPoolsQuery,
-  PriceHistoryQuery,
-  getPoolsQueryVariables,
-} from "queries"
-
-import { useTraderPool } from "hooks/usePool"
+import { OwnedPoolsQuery, ManagedPoolsQuery, PriceHistoryQuery } from "queries"
 
 /**
  * Returns top members filter state variables and setter
@@ -96,6 +87,15 @@ export function useManagedPools(
   return [pools, pool.fetching]
 }
 
+export function useUserInvolvedPools(
+  address: string | null | undefined
+): [{ ownedPools: IPoolQuery[]; managedPools: IPoolQuery[] }, boolean] {
+  const [ownedPools, ownedLoading] = useOwnedPools(address)
+  const [managedPools, managedLoading] = useManagedPools(address)
+
+  return [{ ownedPools, managedPools }, ownedLoading || managedLoading]
+}
+
 /**
  * Returns map of pool price history
  */
@@ -133,31 +133,6 @@ export function usePriceHistory(
   }, [pool])
 
   return history
-}
-
-export function usePoolPrice(address: string | undefined) {
-  const traderPool = useTraderPool(address)
-  const [priceUSD, setPriceUSD] = useState(parseEther("1"))
-  const [priceBase, setPriceBase] = useState(parseEther("1"))
-
-  useEffect(() => {
-    if (!traderPool) return
-    ;(async () => {
-      const poolInfo = await traderPool.getPoolInfo()
-      if (poolInfo.lpSupply.gt("0")) {
-        const base = FixedNumber.fromValue(poolInfo.totalPoolBase, 18)
-        const usd = FixedNumber.fromValue(poolInfo.totalPoolUSD, 18)
-        const supply = FixedNumber.fromValue(poolInfo.lpSupply, 18)
-
-        const usdPrice = usd.divUnsafe(supply)
-        const basePrice = base.divUnsafe(supply)
-        setPriceUSD(BigNumber.from(usdPrice._hex))
-        setPriceBase(BigNumber.from(basePrice._hex))
-      }
-    })()
-  }, [traderPool])
-
-  return { priceUSD, priceBase }
 }
 
 export function usePoolsCounter() {

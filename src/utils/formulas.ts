@@ -1,7 +1,12 @@
-import { PoolInfo } from "constants/interfaces_v2"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { formatUnits, parseEther } from "@ethersproject/units"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
-import { cutDecimalPlaces, formatNumber, convertBigToFixed } from "utils"
+import {
+  cutDecimalPlaces,
+  formatNumber,
+  convertBigToFixed,
+  normalizeBigNumber,
+} from "utils"
 
 export const getPNL = (SP: string) => {
   let CP = 1
@@ -104,30 +109,10 @@ export const multiplyBignumbers = (
   const fn = FixedNumber.fromValue(bn1[0], bn1[1]).mulUnsafe(
     FixedNumber.fromValue(bn2[0], bn2[1])
   )
-  return BigNumber.from(fn._hex)
-}
-
-export const divideBignumbers = (
-  bn1: [BigNumber, number],
-  bn2: [BigNumber, number]
-): BigNumber => {
-  const fn = FixedNumber.fromValue(bn1[0], bn1[1]).divUnsafe(
-    FixedNumber.fromValue(bn2[0], bn2[1])
-  )
-  return BigNumber.from(fn._hex)
-}
-
-export const _multiplyBignumbers = (
-  bn1: [BigNumber, number],
-  bn2: [BigNumber, number]
-): BigNumber => {
-  const fn = FixedNumber.fromValue(bn1[0], bn1[1]).mulUnsafe(
-    FixedNumber.fromValue(bn2[0], bn2[1])
-  )
   return parseEther(fn._value)
 }
 
-export const _divideBignumbers = (
+export const divideBignumbers = (
   bn1: [BigNumber, number],
   bn2: [BigNumber, number]
 ): BigNumber => {
@@ -180,6 +165,19 @@ export const formateChartData = (data) => {
   })
 }
 
+export const formatLockedFundsChartData = (data) => {
+  if (!data) return undefined
+
+  return data.reverse().map((v) => {
+    const investorsUSD = subtractBignumbers([v.usdTVL, 18], [v.traderUSD, 18])
+    return {
+      ...v,
+      investorsUSD: Number(normalizeBigNumber(investorsUSD, 18, 2)),
+      traderUSDValue: Number(normalizeBigNumber(v.traderUSD, 18, 2)),
+    }
+  })
+}
+
 export const getPriceImpact = (from: BigNumber, to: BigNumber) => {
   try {
     const a = FixedNumber.fromValue(from, 18)
@@ -192,7 +190,7 @@ export const getPriceImpact = (from: BigNumber, to: BigNumber) => {
   }
 }
 
-export const getFreeLiquidity = (poolInfo: PoolInfo | null) => {
+export const getFreeLiquidity = (poolInfo: IPoolInfo | null) => {
   if (!poolInfo) return
 
   if (poolInfo.parameters.totalLPEmission.eq("0")) return Infinity

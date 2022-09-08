@@ -134,7 +134,7 @@ const getAmountSymbol = (amount) => {
     return "+"
   }
 
-  return ""
+  return "-"
 }
 
 interface IBodyItemProps {
@@ -167,7 +167,7 @@ export const BodyItem: FC<IBodyItemProps> = ({
           value={
             <>
               {pnl && getAmountSymbol(Number(amount))}
-              {normalizeBigNumber(amount, 18, 4)}
+              {Math.abs(Number(normalizeBigNumber(amount, 18, 4)))}
             </>
           }
           symbol={symbol}

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { PulseSpinner } from "react-spinners-kit"
 
-import { PoolType } from "constants/interfaces_v2"
+import { PoolType } from "constants/types"
 import { useTraderPoolRegistryContract } from "hooks/useContract"
 
 import FundProposalsRisky from "pages/FundProposalsRisky"

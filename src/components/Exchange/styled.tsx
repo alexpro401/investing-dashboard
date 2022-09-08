@@ -7,7 +7,7 @@ import tokenLines from "assets/icons/risky-tokens.svg"
 import { dropdownVariants } from "motion/variants"
 import { BigNumberInput } from "big-number-input"
 import TokenIcon from "components/TokenIcon"
-import { DividendToken } from "constants/interfaces"
+import { DividendToken } from "interfaces"
 
 export const InputContainer = styled(GradientBorder)<{ height?: string }>`
   flex-direction: column;

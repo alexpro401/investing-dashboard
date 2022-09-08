@@ -9,14 +9,16 @@ import {
 import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { ExchangeForm, ExchangeType } from "constants/interfaces_v2"
+import { ExchangeType } from "interfaces/exchange"
+import { ExchangeForm } from "interfaces/exchange"
 import { SubmitState, SwapDirection, TradeType } from "constants/types"
+import { ZERO } from "constants/index"
 
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 import useGasTracker from "state/gas/hooks"
 
-import { usePoolContract } from "hooks/usePool"
+import { usePoolContract, usePoolPosition, usePoolQuery } from "hooks/usePool"
 import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
 
@@ -26,14 +28,21 @@ import {
   useTraderPoolContract,
 } from "hooks/useContract"
 
-import { getPriceImpact, multiplyBignumbers } from "utils/formulas"
+import {
+  addBignumbers,
+  getPriceImpact,
+  multiplyBignumbers,
+  divideBignumbers,
+} from "utils/formulas"
 
 import {
   calcSlippage,
   isAddress,
   isTxMined,
+  normalizeBigNumber,
   parseTransactionError,
 } from "utils"
+import usePoolPrice from "hooks/usePoolPrice"
 
 interface UseSwapProps {
   pool: string | undefined
@@ -41,7 +50,21 @@ interface UseSwapProps {
   to: string | undefined
 }
 
+interface UseSwapInfo {
+  fundPNL: {
+    lp: string
+    percent: string
+    usd: string
+    traderLP: string
+    traderUSD: string
+  }
+  avgBuyingPrice: string
+  avgSellingPrice: string
+  baseSymbol?: string
+}
+
 interface UseSwapResponse {
+  info: UseSwapInfo
   direction: SwapDirection
   gasPrice: string
   oneTokenCost: BigNumber
@@ -50,7 +73,6 @@ interface UseSwapResponse {
   priceImpact: string
   slippage: string
   isSlippageOpen: boolean
-  baseToken: string | undefined
   swapPath: string[]
   setSlippage: Dispatch<SetStateAction<string>>
   setSlippageOpen: Dispatch<SetStateAction<boolean>>
@@ -74,9 +96,13 @@ const useSwap = ({
   const [, fromToken] = useERC20(from)
   const [, toToken] = useERC20(to)
 
-  const [receivedAfterSlippage, setReceivedAfterSlippage] = useState(
-    BigNumber.from("0")
-  )
+  const [avgBuyingPrice, setAvgBuyingPrice] = useState(ZERO)
+  const [avgSellingPrice, setAvgSellingPrice] = useState(ZERO)
+  const [traderShare, setTraderShare] = useState(ZERO)
+  const [totalLockedLP, setTotalLockedLP] = useState(ZERO)
+  const [pnl, setPNL] = useState(ZERO)
+  const [pnlLP, setPNLLP] = useState(ZERO)
+  const [receivedAfterSlippage, setReceivedAfterSlippage] = useState(ZERO)
   const [priceImpact, setPriceImpact] = useState("0.00")
   const [gasPrice, setGasPrice] = useState("0.00")
   const [, setError] = useError()
@@ -85,16 +111,21 @@ const useSwap = ({
   const [, setWalletPrompting] = usePayload()
   const [fromAmount, setFromAmount] = useState("0")
   const [toAmount, setToAmount] = useState("0")
-  const [toBalance, setToBalance] = useState(BigNumber.from("0"))
-  const [fromBalance, setFromBalance] = useState(BigNumber.from("0"))
-  const [fromPrice, setFromPrice] = useState(BigNumber.from("0"))
-  const [toPrice, setToPrice] = useState(BigNumber.from("0"))
-  const [oneTokenCost, setTokenCost] = useState(BigNumber.from("0"))
-  const [oneUSDCost, setUSDCost] = useState(BigNumber.from("0"))
+  const [toBalance, setToBalance] = useState(ZERO)
+  const [fromBalance, setFromBalance] = useState(ZERO)
+  const [fromPrice, setFromPrice] = useState(ZERO)
+  const [toPrice, setToPrice] = useState(ZERO)
+  const [oneTokenCost, setTokenCost] = useState(ZERO)
+  const [oneUSDCost, setUSDCost] = useState(ZERO)
   const [swapPath, setSwapPath] = useState<string[]>([])
   const [lastChangedField, setLastChangedField] = useState<"from" | "to">(
     "from"
   )
+
+  const [, baseTokenData] = useERC20(poolInfo?.parameters.baseToken)
+  const [{ priceUSD }] = usePoolPrice(pool)
+  const [history] = usePoolQuery(pool)
+  const position = usePoolPosition(pool, to)
 
   const transactionOptions = useMemo(() => {
     if (!gasTrackerResponse) return
@@ -102,6 +133,35 @@ const useSwap = ({
       gasPrice: parseUnits(gasTrackerResponse.ProposeGasPrice, "gwei"),
     }
   }, [gasTrackerResponse])
+
+  const info = useMemo(() => {
+    const pnlUSD = multiplyBignumbers([pnlLP, 18], [priceUSD, 18])
+    const traderLP = multiplyBignumbers([pnlLP, 18], [traderShare, 18])
+    const traderPNLUSD = multiplyBignumbers([traderLP, 18], [priceUSD, 18])
+    const baseSymbol = baseTokenData?.symbol
+
+    return {
+      fundPNL: {
+        lp: `${normalizeBigNumber(pnlLP, 18, 2)} ${poolInfo?.ticker}`,
+        percent: `${normalizeBigNumber(pnl, 4, 2)}%`,
+        usd: `${normalizeBigNumber(pnlUSD, 18, 2)} USD`,
+        traderLP: `${normalizeBigNumber(traderLP, 18, 2)} ${poolInfo?.ticker}`,
+        traderUSD: `${normalizeBigNumber(traderPNLUSD, 18, 2)} USD`,
+      },
+      avgBuyingPrice: normalizeBigNumber(avgBuyingPrice, 18, 6),
+      avgSellingPrice: normalizeBigNumber(avgSellingPrice, 18, 6),
+      baseSymbol,
+    }
+  }, [
+    pnlLP,
+    priceUSD,
+    traderShare,
+    poolInfo,
+    pnl,
+    avgBuyingPrice,
+    avgSellingPrice,
+    baseTokenData,
+  ])
 
   const form = useMemo(
     () => ({
@@ -278,7 +338,7 @@ const useSwap = ({
 
   const getTokenBalance = useCallback(
     (token: string | undefined) => {
-      if (!poolInfo) return BigNumber.from("0")
+      if (!poolInfo) return ZERO
 
       if (
         token?.toLocaleLowerCase() ===
@@ -291,7 +351,7 @@ const useSwap = ({
         .map((address) => address.toLocaleLowerCase())
         .indexOf((token || "").toLocaleLowerCase())
 
-      if (positionIndex === -1) return BigNumber.from("0")
+      if (positionIndex === -1) return ZERO
 
       return poolInfo.baseAndPositionBalances[positionIndex + 1]
     },
@@ -443,6 +503,48 @@ const useSwap = ({
     setToBalance(toBalanceData)
   }, [from, getTokenBalance, poolInfo, to])
 
+  // update total locked LP
+  useEffect(() => {
+    if (!poolInfo) return
+
+    const total = addBignumbers(
+      [poolInfo.lpSupply, 18],
+      [poolInfo.lpLockedInProposals, 18]
+    )
+
+    setTotalLockedLP(total)
+  }, [poolInfo])
+
+  // update pnl
+  useEffect(() => {
+    if (!history) return
+
+    if (!history.priceHistory || !history.priceHistory.length) return
+
+    const { percPNL } = history.priceHistory[0]
+
+    setPNL(BigNumber.from(percPNL))
+  }, [history])
+
+  useEffect(() => {
+    if (pnl.isZero() || totalLockedLP.isZero()) return
+
+    const pnlLP = multiplyBignumbers([pnl, 6], [totalLockedLP, 18])
+    setPNLLP(pnlLP)
+  }, [pnl, totalLockedLP])
+
+  // calculate trader pool share percentage from poolInfo. using totalPoolBase and traderBase values
+  useEffect(() => {
+    if (!poolInfo) return
+
+    const share = divideBignumbers(
+      [poolInfo.traderBase, 18],
+      [poolInfo.totalPoolBase, 18]
+    )
+
+    setTraderShare(share)
+  }, [poolInfo])
+
   // estimate gas price
   useEffect(() => {
     const amount = BigNumber.from(fromAmount)
@@ -457,9 +559,29 @@ const useSwap = ({
     })()
   }, [estimateGas, fromAmount, getGasPrice])
 
+  // update avg buy/sell price
+  useEffect(() => {
+    if (!position) return
+
+    const baseOpen = BigNumber.from(position.totalBaseOpenVolume)
+    const positionOpen = BigNumber.from(position.totalPositionOpenVolume)
+
+    if (positionOpen.isZero()) return
+    const buyingPrice = divideBignumbers([baseOpen, 18], [positionOpen, 18])
+    setAvgBuyingPrice(buyingPrice)
+
+    const baseClose = BigNumber.from(position.totalBaseCloseVolume)
+    const positionClose = BigNumber.from(position.totalPositionCloseVolume)
+
+    if (positionClose.isZero()) return
+    const sellingPrice = divideBignumbers([baseClose, 18], [positionClose, 18])
+    setAvgSellingPrice(sellingPrice)
+  }, [position])
+
   return [
     form,
     {
+      info,
       direction,
       gasPrice,
       receivedAfterSlippage,
@@ -468,7 +590,6 @@ const useSwap = ({
       oneUSDCost,
       isSlippageOpen,
       slippage,
-      baseToken: poolInfo?.parameters.baseToken,
       swapPath,
       setSlippage,
       setSlippageOpen,

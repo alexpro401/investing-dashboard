@@ -5,7 +5,7 @@ import { BigNumberInput } from "big-number-input"
 import TokenIcon from "components/TokenIcon"
 import Ripple from "components/Ripple"
 
-import { RiskyInvestInfo } from "constants/interfaces_v2"
+import { RiskyInvestInfo } from "interfaces/exchange"
 
 import { cutDecimalPlaces, formatBigNumber } from "utils"
 

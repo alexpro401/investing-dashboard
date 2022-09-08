@@ -11,7 +11,7 @@ import { expandTimestamp, formatBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
 import S from "./styled"
-import { ITokenBase } from "constants/interfaces"
+import { ITokenBase } from "interfaces"
 
 interface IVest {
   id: string

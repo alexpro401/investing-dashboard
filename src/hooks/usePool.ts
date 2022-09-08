@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useState } from "react"
 import { Contract } from "@ethersproject/contracts"
-import { IPoolQuery, LeverageInfo, PoolInfo } from "constants/interfaces_v2"
+import { IPosition } from "interfaces/thegraphs/all-pools"
+import { IPoolQuery } from "interfaces/thegraphs/all-pools"
+import { ILeverageInfo } from "interfaces/contracts/ITraderPool"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import useContract from "hooks/useContract"
 import { useQuery } from "urql"
 import { isAddress } from "utils"
 import { TraderPool } from "abi"
-import { PoolQuery } from "queries"
+import { PoolPositionLast, PoolQuery } from "queries"
 
 export function useTraderPool(address: string | undefined): Contract | null {
   const traderPool = useContract(address, TraderPool)
@@ -31,15 +34,37 @@ export function usePoolQuery(
 }
 
 /**
+ * Returns TheGraph info about specified position
+ */
+export function usePoolPosition(poolId, tokenId) {
+  const [position, setPosition] = useState<IPosition | undefined>()
+
+  const [pool, executeQuery] = useQuery<{
+    positions: IPosition[]
+  }>({
+    query: PoolPositionLast,
+    variables: { poolId, tokenId },
+  })
+
+  useEffect(() => {
+    if (!pool || !pool.data || !pool.data.positions) return
+
+    setPosition(pool.data.positions[0])
+  }, [pool])
+
+  return position
+}
+
+/**
  * Returns Contract info about the pool
  */
 export function usePoolContract(
   address: string | undefined
-): [LeverageInfo | null, PoolInfo | null, () => void] {
+): [ILeverageInfo | null, IPoolInfo | null, () => void] {
   const traderPool = useTraderPool(address)
   const [update, setUpdate] = useState(false)
-  const [leverageInfo, setLeverageInfo] = useState<LeverageInfo | null>(null)
-  const [poolInfo, setPoolInfo] = useState<PoolInfo | null>(null)
+  const [leverageInfo, setLeverageInfo] = useState<ILeverageInfo | null>(null)
+  const [poolInfo, setPoolInfo] = useState<IPoolInfo | null>(null)
 
   const fetchUpdate = useCallback(() => {
     setUpdate(!update)

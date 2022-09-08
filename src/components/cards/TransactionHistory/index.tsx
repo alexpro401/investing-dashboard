@@ -1,4 +1,4 @@
-import { ITokenBase } from "constants/interfaces"
+import { ITokenBase } from "interfaces"
 import { TransactionType } from "state/transactions/types"
 
 import CardSwap from "./CardSwap"

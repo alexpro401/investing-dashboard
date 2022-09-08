@@ -11,7 +11,7 @@ import arrowDown from "assets/icons/angle-down.svg"
 
 import angleDown from "assets/icons/angle-down.svg"
 import { useClickAway } from "react-use"
-import { ITokenBase } from "constants/interfaces"
+import { ITokenBase } from "interfaces"
 
 import useTokensList from "hooks/useTokensList"
 import useNetworkConfig from "hooks/useNetworkConfig"

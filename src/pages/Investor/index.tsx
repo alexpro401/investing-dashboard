@@ -1,16 +1,14 @@
-import { Flex, To } from "theme"
+import { To } from "theme"
 import { useWeb3React } from "@web3-react/core"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
+import { useSelector } from "react-redux"
 
 import Button, { SecondaryButton } from "components/Button"
 import InvestorMobile from "components/InvestorMobile"
-import { useSelector } from "react-redux"
-
-import AreaChart from "components/AreaChart"
 
 import { selectOwnedPools } from "state/user/selectors"
-import BarChart from "./Bar"
+import BarChart from "components/BarChart"
 import {
   Container,
   Tab,
@@ -19,17 +17,15 @@ import {
   Row,
   MainText,
   MainValue,
-  SecondaryText,
   ButtonContainer,
-  Period,
-  ChartPeriods,
 } from "./styled"
-import { IDetailedChart } from "constants/interfaces"
 import Header from "components/Header/Layout"
 import { Profiles } from "components/Header/Components"
 import Pools from "components/Header/Pools"
 import { getRedirectedPoolAddress } from "utils"
 import { useEffect } from "react"
+import ProfitLossChart from "components/ProfitLossChart"
+import { usePoolQuery } from "hooks/usePool"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -38,111 +34,17 @@ const poolsClient = createClient({
 
 interface Props {}
 
-const pnl: IDetailedChart[] = [
-  {
-    x: "1",
-    y: 1,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "2",
-    y: 1,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "3",
-    y: 1,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "4",
-    y: 1.34,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "5",
-    y: 1.15,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "6",
-    y: 1.76,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "7",
-    y: 2.34,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "8",
-    y: 5.5,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "9",
-    y: 4.87,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "10",
-    y: 5.56,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "11",
-    y: 5.5,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-  {
-    x: "12",
-    y: 7.63,
-    lpBasic: "0",
-    lpBasicPercent: 0,
-    lpUsd: "0",
-    lpUsdPercent: 0,
-  },
-]
-
 function Investor(props: Props) {
   const {} = props
 
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const { poolAddress } = useParams<{
+    poolAddress: string
+  }>()
+
   const { account } = useWeb3React()
+  const [poolData] = usePoolQuery(poolAddress)
 
   const ownedPools = useSelector(selectOwnedPools)
   const noPools = !ownedPools.basic.length && !ownedPools.invest.length
@@ -166,12 +68,7 @@ function Investor(props: Props) {
   return (
     <>
       <Header left={leftIcon}>My investor profile</Header>
-      <Container
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-      >
+      <Container>
         <InvestorMobile account={account}>
           <ButtonContainer>
             <To to="/">
@@ -190,21 +87,11 @@ function Investor(props: Props) {
           <TabContainer>
             <Tab active>Profit & Loss</Tab>
           </TabContainer>
-          <AreaChart
-            tooltipSize="sm"
-            height={window.innerWidth < 375 ? 120 : 174}
-            data={pnl}
+          <ProfitLossChart
+            address={poolAddress}
+            baseToken={poolData?.baseToken}
           />
-          <ChartPeriods>
-            <Period active>D</Period>
-            <Period>W</Period>
-            <Period>M</Period>
-            <Period>3M</Period>
-            <Period>6M</Period>
-            <Period>1Y</Period>
-            <Period>ALL</Period>
-          </ChartPeriods>
-          <BarChart />
+          <BarChart address={poolAddress} />
           <Row>
             <MainText>P&L LP - $ETH</MainText>
             <MainValue>+ 13.1% (+112.132 ETH)</MainValue>

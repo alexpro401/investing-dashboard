@@ -1,6 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { Token as IToken } from "constants/interfaces"
+import { Token as IToken } from "interfaces"
 
 import Search from "components/Search"
 import { Card, CardHeader, CardList } from "./styled"

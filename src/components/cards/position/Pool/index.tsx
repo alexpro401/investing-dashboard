@@ -1,6 +1,6 @@
 import { MouseEvent } from "react"
 
-import { IPosition } from "constants/interfaces_v2"
+import { IPosition } from "interfaces/thegraphs/all-pools"
 
 import { Flex } from "theme"
 import TokenIcon from "components/TokenIcon"
@@ -67,7 +67,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
           <SharedS.Head>
             <Flex>
               <TokenIcon address={position.positionToken} m="0" size={24} />
-              <S.Amount>{currentPositionVolume}</S.Amount>
+              <S.Amount>{currentPositionVolume.format}</S.Amount>
               <S.PositionSymbol>{positionToken?.symbol ?? ""}</S.PositionSymbol>
             </Flex>
             <Flex>

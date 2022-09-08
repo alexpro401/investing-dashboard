@@ -1,10 +1,13 @@
-import { FC, useState, useEffect } from "react"
-import { useWeb3React } from "@web3-react/core"
+import { getDay } from "date-fns"
+import { FC, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { TraderPool } from "abi"
-import useContract, { useERC20 } from "hooks/useContract"
-import { IPoolQuery, LeverageInfo, PoolInfo } from "constants/interfaces_v2"
+import { useERC20 } from "hooks/useContract"
+import { getPNL, getPriceLP } from "utils/formulas"
+import { expandTimestamp, normalizeBigNumber } from "utils"
+import { IPoolQuery } from "interfaces/thegraphs/all-pools"
+import { ILeverageInfo } from "interfaces/contracts/ITraderPool"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 
 import { Flex } from "theme"
 import ProgressBar from "components/ProgressBar"
@@ -14,30 +17,48 @@ import chartIcon from "assets/icons/bar-chart-icon.svg"
 
 interface IProps {
   data: IPoolQuery
-  leverage: LeverageInfo | null
-  info: PoolInfo | null
+  leverage: ILeverageInfo | null
+  info: IPoolInfo | null
 }
 
 const FundStatisticsCard: FC<IProps> = ({ data, leverage, info }) => {
-  const [traderLp, setTraderLp] = useState<BigNumber>(BigNumber.from("0"))
-  const [accountLp, setAccountLp] = useState<BigNumber>(BigNumber.from("0"))
   const [, baseData] = useERC20(data.baseToken)
-  const traderPool = useContract(data.id, TraderPool)
-  const { account } = useWeb3React()
 
   // UI variables
   const openPositionsPercent = info?.openPositions.length || 0 * 4
   const openPositions = info?.openPositions.length || 0
 
-  useEffect(() => {
-    if (!traderPool || !account || !info || !info.parameters.trader) return
-    ;(async () => {
-      const userLpBalance = await traderPool.balanceOf(account)
-      const traderLpBalance = await traderPool.balanceOf(info.parameters.trader)
-      setTraderLp(traderLpBalance)
-      setAccountLp(userLpBalance)
-    })()
-  }, [traderPool, account, info])
+  const orderSize = useMemo(() => {
+    if (!data) return "0"
+
+    return normalizeBigNumber(data.orderSize, 4, 2)
+  }, [data])
+
+  const dailyProfit = useMemo(() => {
+    if (!data) return "0"
+
+    const priceLP = getPriceLP(data.priceHistory)
+    const pnl = getPNL(priceLP)
+    const days = getDay(expandTimestamp(data.creationTime))
+
+    return (Number(pnl) / days).toFixed(2)
+  }, [data])
+
+  const timePosition = useMemo(() => {
+    if (!data) return ""
+    const date = new Date(data.averagePositionTime * 1000)
+    return `${date.getUTCHours()}H`
+  }, [data])
+
+  const totalTrades = useMemo(() => {
+    if (!data) return "0"
+    return data.totalTrades
+  }, [data])
+
+  const maxLoss = useMemo(() => {
+    if (!data) return "0"
+    return normalizeBigNumber(BigNumber.from(data.maxLoss), 4, 2)
+  }, [data])
 
   return (
     <Container>
@@ -85,15 +106,15 @@ const FundStatisticsCard: FC<IProps> = ({ data, leverage, info }) => {
           <InfoRow label={"Trades per Day"} value={data.averageTrades} />
         </Flex>
         <Flex full p="0 0 0 25px">
-          <InfoRow label={"Order Size"} value={"0%"} />
+          <InfoRow label={"Order Size"} value={`${orderSize}%`} />
         </Flex>
       </Flex>
       <Flex full>
         <Flex full p="0 25px 0 0">
-          <InfoRow label={"Daily Profit"} value={"0%"} />
+          <InfoRow label={"Daily Profit"} value={`${dailyProfit}%`} />
         </Flex>
         <Flex full p="0 0 0 25px">
-          <InfoRow label={"Time Positions"} value={"0H"} />
+          <InfoRow label={"Time Positions"} value={timePosition} />
         </Flex>
       </Flex>
       <Flex full>
@@ -106,10 +127,10 @@ const FundStatisticsCard: FC<IProps> = ({ data, leverage, info }) => {
       </Flex>
       <Flex full>
         <Flex full p="0 25px 0 0">
-          <InfoRow label={"Trades"} value={"0"} />
+          <InfoRow label={"Trades"} value={totalTrades} />
         </Flex>
         <Flex full p="0 0 0 25px">
-          <InfoRow label={"Max.Loss"} value={"0%"} />
+          <InfoRow label={"Max.Loss"} value={`${maxLoss}%`} />
         </Flex>
       </Flex>
     </Container>

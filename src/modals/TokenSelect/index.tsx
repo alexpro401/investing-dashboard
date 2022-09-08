@@ -6,7 +6,7 @@ import Modal from "components/Modal"
 
 import { selectWhitelist } from "state/pricefeed/selectors"
 
-import { Token } from "constants/interfaces"
+import { Token } from "interfaces"
 
 interface Props {
   isOpen: boolean

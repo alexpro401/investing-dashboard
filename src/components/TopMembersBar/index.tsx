@@ -7,7 +7,7 @@ import Header from "components/Header/Layout"
 import { Filters, Search } from "components/Header/Components"
 import TradersSort from "components/TradersSort"
 
-import { ITab } from "constants/interfaces"
+import { ITab } from "interfaces"
 import { usePoolsFilters } from "state/pools/hooks"
 
 import {

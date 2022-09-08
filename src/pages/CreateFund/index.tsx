@@ -23,7 +23,7 @@ import TokenSelect from "modals/TokenSelect"
 
 import { bigify, isTxMined } from "utils"
 import useContract from "hooks/useContract"
-import { Token } from "constants/interfaces"
+import { Token } from "interfaces"
 import { addFundMetadata } from "utils/ipfs"
 import { TraderPool, PoolFactory } from "abi"
 import { UpdateListType } from "constants/types"

@@ -10,8 +10,8 @@ import { multiplyBignumbers } from "utils/formulas"
 
 import { usePoolContract } from "hooks/usePool"
 import { useERC20, useInvestProposalContract } from "hooks/useContract"
-import { RiskyForm } from "constants/interfaces_v2"
-import { Token, DividendToken } from "constants/interfaces"
+import { RiskyForm } from "interfaces/exchange"
+import { Token, DividendToken } from "interfaces"
 import { useWeb3React } from "@web3-react/core"
 import { SubmitState } from "constants/types"
 import usePayload from "hooks/usePayload"
@@ -226,19 +226,19 @@ const usePayDividends = (
 
     const base = poolInfo.parameters.baseToken
     setDividendTokenAddress(base)
-    // ;(async () => {
-    //   const allowance = await getAllowance(
-    //     account,
-    //     poolInfo?.parameters.baseToken,
-    //     poolAddress,
-    //     library
-    //   )
-    //   const balance = await getTokenBalance(account, base, library)
+    ;(async () => {
+      const allowance = await getAllowance(
+        account,
+        poolInfo?.parameters.baseToken,
+        poolAddress,
+        library
+      )
+      const balance = await getTokenBalance(account, base, library)
 
-    //   setDividendTokens([base])
-    //   setDividendAmounts([balance])
-    //   setDividendAllowance([allowance])
-    // })()
+      setDividendTokens([base])
+      setDividendAmounts([balance])
+      setDividendAllowance([allowance])
+    })()
   }, [account, library, poolAddress, poolInfo])
 
   // init data

@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 import { AppDispatch } from "state"
 import { selectPoolsFilters } from "state/pools/selectors"
-import { ISortItem } from "constants/interfaces"
+import { ISortItem } from "interfaces"
 import { setFilter } from "state/pools/actions"
 
 import SortIcon from "assets/icons/SortIcon"
