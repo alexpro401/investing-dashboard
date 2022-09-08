@@ -10,18 +10,7 @@ import { getLastInArray, getPNL, getPriceLP, getUSDPrice } from "utils/formulas"
 import Icon from "components/Icon"
 import TokenIcon from "components/TokenIcon"
 
-import {
-  Card,
-  PoolInfoContainer,
-  PoolInfo,
-  Title,
-  Description,
-  BaseInfo,
-  Divider,
-  PoolStatisticContainer,
-  Statistic,
-  PNL,
-} from "./styled"
+import S, { Statistic } from "./styled"
 
 // @param data - pool data
 // @param index - indicating index in all list of pools
@@ -56,7 +45,7 @@ const MemberMobile: React.FC<{
   }, [lastHistoryPoint])
 
   return (
-    <Card
+    <S.Card
       initial={!index ? { opacity: 1, y: 0 } : { opacity: 0, y: -5 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -5 }}
@@ -66,8 +55,8 @@ const MemberMobile: React.FC<{
         ease: [0.29, 0.98, 0.29, 1],
       }}
     >
-      <PoolInfoContainer>
-        <PoolInfo>
+      <S.PoolInfoContainer>
+        <S.PoolInfo>
           <Icon
             size={38}
             m="0 8px 0 0"
@@ -75,23 +64,23 @@ const MemberMobile: React.FC<{
             address={data.id}
           />
           <div>
-            <Title>{data.ticker}</Title>
-            <Description>{data.name}</Description>
+            <S.Title>{data.ticker}</S.Title>
+            <S.Description>{data.name}</S.Description>
           </div>
-        </PoolInfo>
-        <BaseInfo>
+        </S.PoolInfo>
+        <S.BaseInfo>
           <TokenIcon address={data.baseToken} size={38} />
           <div>
-            <Title>
+            <S.Title>
               {formatNumber(priceLP, 2)}
-              <PNL value={pnl}>{pnl}%</PNL>
-            </Title>
-            <Description>{baseData?.symbol}</Description>
+              <S.PNL value={pnl}>{pnl}%</S.PNL>
+            </S.Title>
+            <S.Description>{baseData?.symbol}</S.Description>
           </div>
-        </BaseInfo>
-      </PoolInfoContainer>
-      <Divider />
-      <PoolStatisticContainer>
+        </S.BaseInfo>
+      </S.PoolInfoContainer>
+      <S.Divider />
+      <S.PoolStatisticContainer>
         <Statistic
           label="TVL"
           value={`$${getUSDPrice(
@@ -101,9 +90,9 @@ const MemberMobile: React.FC<{
         <Statistic label="APY" value={`${APY}%`} />
         <Statistic label="P&L" value={`${percPNL}%`} />
         <Statistic label="Depositors" value={<>{data.investorsCount}</>} />
-      </PoolStatisticContainer>
+      </S.PoolStatisticContainer>
       {children}
-    </Card>
+    </S.Card>
   )
 }
 
