@@ -352,3 +352,19 @@ export const Center = styled.div`
   justify-content: center;
   flex-direction: column;
 `
+
+function getNumberColor(value?: string | number): string {
+  const v = Number(value ?? 0)
+
+  if (v > 0) {
+    return "#83e5ca"
+  } else if (v < 0) {
+    return "#DB6D6D"
+  } else {
+    return "#616d8b"
+  }
+}
+
+export const ColorizedNumber = styled.div<{ value: string | number }>`
+  color: ${(p) => getNumberColor(p.value)};
+`

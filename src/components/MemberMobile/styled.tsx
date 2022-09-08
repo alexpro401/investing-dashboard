@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Flex, Text, BaseButton, device, size, GradientBorder } from "theme"
+import { Flex, size, GradientBorder, ColorizedNumber } from "theme"
 
 export const Card = styled(GradientBorder)`
   width: 100%;
@@ -93,16 +93,13 @@ export const PoolStatisticContainer = styled.div`
   grid-template-areas: ". . . . .";
 `
 
-export const PNL = styled.span`
+export const PNL = styled(ColorizedNumber)`
   padding-left: 3px;
   font-family: Gilroy;
   font-style: normal;
-  font-family: Gilroy;
   font-weight: 400;
   font-size: 10px;
   line-height: 12px;
-
-  color: #9ae2cb;
 `
 
 // # Statistic - UI element that represents one of statistics data inside pool card component

@@ -71,7 +71,7 @@ const MemberMobile: React.FC<{
           <div>
             <Title>
               {formatNumber(priceLP, 2)}
-              <PNL>{pnl}%</PNL>
+              <PNL value={pnl}>{pnl}%</PNL>
             </Title>
             <Description>{baseData?.symbol}</Description>
           </div>

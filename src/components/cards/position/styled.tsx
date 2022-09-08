@@ -1,24 +1,15 @@
-import { FC, MouseEvent, useMemo } from "react"
-import { BigNumber } from "@ethersproject/bignumber"
-import { normalizeBigNumber } from "utils"
 import styled from "styled-components"
 import { motion } from "framer-motion"
+import { FC, MouseEvent, useMemo } from "react"
+import { BigNumber } from "@ethersproject/bignumber"
 
-import { Flex, GradientBorder } from "theme"
-import { accordionSummaryVariants } from "motion/variants"
+import { normalizeBigNumber } from "utils"
+
 import Amount from "components/Amount"
+import { accordionSummaryVariants } from "motion/variants"
+import { ColorizedNumber, Flex, GradientBorder } from "theme"
 
 import shareIcon from "assets/icons/share.svg"
-
-const getPnlColor = (amount) => {
-  if (amount > 0) {
-    return "#83e5ca"
-  } else if (amount < 0) {
-    return "#DB6D6D"
-  } else {
-    return "#616d8b"
-  }
-}
 
 const Styled = {
   Container: styled.div`
@@ -71,7 +62,7 @@ const Styled = {
       background: #181e2c;
     }
   `,
-  PNL: styled.div<{ amount?: number }>`
+  PNL: styled(ColorizedNumber)`
     font-family: "Gilroy";
     font-style: normal;
     font-weight: 600;
@@ -79,7 +70,6 @@ const Styled = {
     letter-spacing: 0.01em;
     margin-left: 4px;
     font-size: 12px;
-    color: ${(props) => getPnlColor(props.amount)};
     transform: translateY(2px);
   `,
   WitoutData: styled.div`
