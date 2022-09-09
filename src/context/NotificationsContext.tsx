@@ -19,7 +19,7 @@ export const useNotificationsContext = () =>
   React.useContext(NotificationsContextProvider)
 
 class NotificationsContext extends React.Component<{
-  children: React.ReactNode
+  children?: React.ReactNode
 }> {
   static contextType = NotificationsContextProvider
 

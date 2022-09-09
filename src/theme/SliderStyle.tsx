@@ -1,6 +1,6 @@
 import { createGlobalStyle } from "styled-components"
 
-const SliderStyle = createGlobalStyle`
+const SliderStyle: any = createGlobalStyle`
   .rc-slider {
     position: relative;
     height: 14px;

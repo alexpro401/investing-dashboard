@@ -112,7 +112,11 @@ const propertiesMapping = {
   },
 }
 
-class UpdateFundContext extends React.Component {
+interface Props {
+  children?: React.ReactNode
+}
+
+class UpdateFundContext extends React.Component<Props> {
   static contextType = FundContext
 
   state = {

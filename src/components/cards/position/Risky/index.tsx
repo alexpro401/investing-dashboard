@@ -202,7 +202,7 @@ const RiskyPositionCard: React.FC<Props> = ({
                       <S.FundSymbol>/{baseTokenSymbol}</S.FundSymbol>
                     </>
                   )}
-                  <SharedS.PNL amount={+pnlPercentage.format}>
+                  <SharedS.PNL value={pnlPercentage.format}>
                     {pnlPercentage.format}%
                   </SharedS.PNL>
                   {!isTrader && position.isClosed && (
@@ -214,7 +214,7 @@ const RiskyPositionCard: React.FC<Props> = ({
             <Flex m={isTrader && position.isClosed ? "0 -8px 0 0" : ""}>
               {isTrader ? (
                 <>
-                  <SharedS.PNL amount={+pnlPercentage.format}>
+                  <SharedS.PNL value={pnlPercentage.format}>
                     {pnlPercentage.format}%
                   </SharedS.PNL>
                   {position.isClosed && <Share onClick={onShare} />}

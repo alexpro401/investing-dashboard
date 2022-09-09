@@ -4,11 +4,11 @@ import { poolTypes, stableCoins, ZERO } from "constants/index"
 import { formatUnits, parseUnits, parseEther } from "@ethersproject/units"
 import { ERC20 } from "abi"
 import { useEffect, useState } from "react"
-import { ITopMembersFilters, OwnedPools } from "interfaces"
+import { ITopMembersFilters, OwnedPools, Token } from "interfaces"
 import { ExchangeType } from "interfaces/exchange"
 import { getTime, setHours, setMinutes } from "date-fns"
 import { TransactionReceipt } from "@ethersproject/providers"
-import { PoolType, Token } from "constants/types"
+import { PoolType, TokenTuple } from "constants/types"
 import { getBalanceOf, getContract } from "./getContract"
 import {
   PoolsQuery,
@@ -196,8 +196,8 @@ export function getTypedSignature(address, lib, nonce) {
   return signer._signTypedData(domain, types, message)
 }
 
-export function checkMetamask() {
-  //
+export function getERC20Contract(address, lib, account) {
+  return getContract(address, ERC20, lib, account)
 }
 
 export function getAllowance(
@@ -207,7 +207,7 @@ export function getAllowance(
   lib
 ): Promise<BigNumber> {
   try {
-    const erc20Contract = getContract(tokenAddress, ERC20, lib, account)
+    const erc20Contract = getERC20Contract(tokenAddress, lib, account)
 
     return erc20Contract.allowance(account, contractAddress)
   } catch (e) {
@@ -222,7 +222,7 @@ export function getTokenBalance(
   library
 ): Promise<BigNumber> {
   try {
-    const contract = getContract(tokenAddress, ERC20, library, account)
+    const contract = getERC20Contract(tokenAddress, library, account)
 
     return getBalanceOf({
       account,
@@ -234,6 +234,26 @@ export function getTokenBalance(
     console.log(e)
     return new Promise((resolve) => resolve(ZERO))
   }
+}
+
+export function getTokenData(account, address, library): Promise<Token> {
+  const contract = getERC20Contract(address, library, account)
+
+  return new Promise((resolve, reject) => {
+    Promise.all([contract.name(), contract.symbol(), contract.decimals()])
+      .then(([name, symbol, decimals]) => {
+        resolve({
+          address,
+          name,
+          symbol,
+          decimals,
+        })
+      })
+      .catch((e) => {
+        console.log(e)
+        reject(e)
+      })
+  })
 }
 
 export const focusText = (event) => event.target.select()
@@ -262,7 +282,7 @@ export const fixFractionalDecimals = (
 }
 
 export const calcSlippage = (
-  token: Token,
+  token: TokenTuple,
   slippage: string,
   swapDirection: ExchangeType
 ) => {

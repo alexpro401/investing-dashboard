@@ -415,6 +415,7 @@ const iconVariants = {
 interface DropdownProps {
   left: ReactNode
   right: ReactNode
+  children?: ReactNode
 }
 
 export const InfoDropdown: FC<DropdownProps> = ({ left, right, children }) => {
@@ -498,9 +499,6 @@ export const AddButton = styled.button`
   font-size: 16px;
   line-height: 19px;
   text-align: center;
-
-  /* Text/link */
-
   color: #2669eb;
 `
 
@@ -508,6 +506,7 @@ export const ButtonDivider = styled.div`
   width: fill-available;
   height: 1px;
   margin-top: 16px;
+  margin-bottom: 16px;
 
   background: #1c2437;
   border-radius: 16px;
@@ -523,7 +522,6 @@ const DividendsTokenContainer = styled(Flex)`
 `
 
 export const DividendsList = styled(Flex)`
-  padding: 16px 0;
   gap: 16px;
   width: fill-available;
   flex-direction: column;

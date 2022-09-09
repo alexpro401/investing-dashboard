@@ -1,3 +1,4 @@
+import { BigNumber } from "@ethersproject/bignumber"
 import { useCallback, useMemo, useEffect } from "react"
 
 import {
@@ -55,7 +56,15 @@ export function TransactionUpdater() {
 
   const onReceipt = useCallback(
     ({ chainId, hash, receipt }) => {
-      dispatch(finalizeTransaction({ params: { chainId, hash, receipt } }))
+      const r = receipt
+
+      for (const [k, v] of Object.entries(r)) {
+        if (typeof v === "object" && v?.hasOwnProperty("_isBigNumber")) {
+          r[k] = (v as BigNumber).toHexString()
+        }
+      }
+
+      dispatch(finalizeTransaction({ params: { chainId, hash, receipt: r } }))
 
       addToast({ txn: { hash } }, hash, DEFAULT_TXN_DISMISS_MS)
       removeToast(`${hash}-wait`)

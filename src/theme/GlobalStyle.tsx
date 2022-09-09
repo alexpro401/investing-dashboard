@@ -22,7 +22,7 @@ export const GradientSVG = () => {
   )
 }
 
-const GlobalStyle = createGlobalStyle`
+const GlobalStyle: any = createGlobalStyle`
   body {
     width:100%;
     overflow-x:hidden;

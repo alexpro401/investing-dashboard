@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, ReactNode } from "react"
 import { createPortal } from "react-dom"
 
 import IconButton from "components/IconButton"
@@ -19,6 +19,7 @@ interface Props {
   isOpen: boolean
   title: string
   toggle: () => void
+  children?: ReactNode
 }
 
 const Confirm: FC<Props> = ({ isOpen, title, children, toggle }) => {

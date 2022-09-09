@@ -71,7 +71,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
               <S.PositionSymbol>{positionToken?.symbol ?? ""}</S.PositionSymbol>
             </Flex>
             <Flex>
-              <SharedS.PNL amount={Number(pnlPercentage.format)}>
+              <SharedS.PNL value={pnlPercentage.format}>
                 {pnlPercentage.format}%
               </SharedS.PNL>
             </Flex>

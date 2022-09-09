@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, ReactNode } from "react"
 import { createPortal } from "react-dom"
 import { CircleSpinner } from "react-spinners-kit"
 import { Flex } from "theme"
@@ -50,6 +50,7 @@ interface Props {
   failed?: boolean
   onClose: () => void
   onSubmit: () => void
+  children?: ReactNode
 }
 
 const Stepper: FC<Props> = ({

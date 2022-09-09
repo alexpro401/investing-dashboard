@@ -1,109 +1,99 @@
 import styled from "styled-components"
-import { Flex, Text, BaseButton, device, size, GradientBorder } from "theme"
+import { Flex, size, GradientBorder, ColorizedNumber } from "theme"
 
-export const Card = styled(GradientBorder)`
-  width: 100%;
-  border-radius: 16px;
-  padding: 0 11px;
-  box-sizing: border-box;
-  flex-direction: column;
-  justify-content: space-evenly;
-  z-index: 5;
+const Styled = {
+  Card: styled(GradientBorder)`
+    width: 100%;
+    border-radius: 16px;
+    padding: 0 11px;
+    box-sizing: border-box;
+    flex-direction: column;
+    justify-content: space-evenly;
+    z-index: 5;
 
-  &:after {
-    background: #181e2c;
-  }
+    &:after {
+      background: #181e2c;
+    }
 
-  @media only screen and (min-width: ${size.xs}) {
-    flex-direction: row;
-  }
-`
+    @media only screen and (min-width: ${size.xs}) {
+      flex-direction: row;
+    }
+  `,
+  PoolInfoContainer: styled(Flex)`
+    height: 62px;
+    width: 100%;
+    justify-content: space-between;
+  `,
+  PoolInfo: styled(Flex)`
+    justify-content: flex-start;
+  `,
+  BaseInfo: styled(Flex)`
+    justify-content: flex-start;
+    padding-left: 16px;
+  `,
+  Title: styled.div`
+    font-family: Gilroy;
+    font-weight: 700;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    letter-spacing: 1px;
 
-export const PoolInfoContainer = styled(Flex)`
-  height: 62px;
-  width: 100%;
-  justify-content: space-between;
-`
+    color: #ffffff;
+  `,
+  Description: styled.div`
+    font-family: Gilroy;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 12px;
 
-export const PoolInfo = styled(Flex)`
-  // width: 55%;
-  justify-content: flex-start;
-`
+    color: #5a6071;
+  `,
+  Divider: styled.div`
+    background: radial-gradient(
+        54.8% 53% at 50% 50%,
+        #587eb7 0%,
+        rgba(88, 126, 183, 0) 100%
+      ),
+      radial-gradient(
+        60% 51.57% at 50% 50%,
+        #6d99db 0%,
+        rgba(109, 153, 219, 0) 100%
+      ),
+      radial-gradient(
+        69.43% 69.43% at 50% 50%,
+        rgba(5, 5, 5, 0.5) 0%,
+        rgba(82, 82, 82, 0) 100%
+      );
+    opacity: 0.1;
+    width: fill-available;
+    margin-left: 63px;
+    height: 1px;
+  `,
+  PoolStatisticContainer: styled.div`
+    padding: 7px 16px 0;
+    height: 57px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 12px;
+    grid-template-areas: ". . . . .";
+  `,
+  PNL: styled(ColorizedNumber)`
+    padding-left: 3px;
+    font-family: Gilroy;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 12px;
+  `,
+}
 
-export const BaseInfo = styled(Flex)`
-  // width: 45%;
-  justify-content: flex-start;
-  padding-left: 16px;
-`
-
-export const Title = styled.div`
-  font-family: Gilroy;
-  font-weight: 700;
-  font-weight: bold;
-  font-size: 16px;
-  line-height: 20px;
-  display: flex;
-  align-items: center;
-  letter-spacing: 1px;
-
-  color: #ffffff;
-`
-
-export const Description = styled.div`
-  font-family: Gilroy;
-  font-style: normal;
-  font-family: Gilroy;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 12px;
-
-  color: #5a6071;
-`
-
-export const Divider = styled.div`
-  background: radial-gradient(
-      54.8% 53% at 50% 50%,
-      #587eb7 0%,
-      rgba(88, 126, 183, 0) 100%
-    ),
-    radial-gradient(
-      60% 51.57% at 50% 50%,
-      #6d99db 0%,
-      rgba(109, 153, 219, 0) 100%
-    ),
-    radial-gradient(
-      69.43% 69.43% at 50% 50%,
-      rgba(5, 5, 5, 0.5) 0%,
-      rgba(82, 82, 82, 0) 100%
-    );
-  opacity: 0.1;
-  width: fill-available;
-  margin-left: 63px;
-  height: 1px;
-`
-
-export const PoolStatisticContainer = styled.div`
-  padding: 7px 16px 0;
-  height: 57px;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr;
-  gap: 0px 12px;
-  grid-template-areas: ". . . . .";
-`
-
-export const PNL = styled.span`
-  padding-left: 3px;
-  font-family: Gilroy;
-  font-style: normal;
-  font-family: Gilroy;
-  font-weight: 400;
-  font-size: 10px;
-  line-height: 12px;
-
-  color: #9ae2cb;
-`
+export default Styled
 
 // # Statistic - UI element that represents one of statistics data inside pool card component
 

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState, useRef, ReactNode } from "react"
 
 import { useClickAway } from "react-use"
 import { motion } from "framer-motion"
@@ -106,7 +106,7 @@ interface Props {
   label?: React.ReactElement | string
   placeholder?: string
   data?: string[]
-  children?: React.ReactElement
+  children?: ReactNode
   position?: "right" | "left"
   value?: string
   onChange?: (name: string, value: string) => void
