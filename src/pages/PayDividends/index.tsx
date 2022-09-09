@@ -10,6 +10,7 @@ import Button, { SecondaryButton } from "components/Button"
 import CircularProgress from "components/CircularProgress"
 import Header from "components/Header/Layout"
 import TokenSelect from "modals/TokenSelect"
+import LockedIcon from "assets/icons/LockedIcon"
 
 import close from "assets/icons/close-big.svg"
 
@@ -27,6 +28,7 @@ import {
 } from "components/Exchange/styled"
 
 import usePayDividends from "./usePayDividends"
+import { Token } from "interfaces"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -35,45 +37,73 @@ const poolsClient = createClient({
 function PayDividends() {
   const { poolAddress, proposalId } = useParams()
   const [isOpen, setTokenSelectOpen] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(-1)
+
   const [
-    {
-      tokens,
-      form: { from, to },
-    },
+    { tokens },
     {
       handleFromChange,
       handleSubmit,
-      handlePercentageChange,
       handleDividendTokenSelect,
+      updateAllowance,
     },
   ] = usePayDividends(poolAddress, proposalId)
 
-  const openTokenSelect = () => {
+  const openTokenSelect = (index: number) => {
     setTokenSelectOpen(true)
+    setActiveIndex(index)
   }
 
   const closeTokenSelect = () => {
     setTokenSelectOpen(false)
   }
 
+  const onTokenSelect = (token: Token) => {
+    handleDividendTokenSelect(token, activeIndex)
+  }
+
+  // TODO: check terms and conditions agreement
   const button = useMemo(() => {
-    if (!from.address) {
+    const inufficientTokens = tokens.filter((token) =>
+      token.balance.lt(token.amount)
+    )
+
+    if (inufficientTokens.length) {
       return (
         <SecondaryButton theme="disabled" size="large" fz={22} full>
-          Select token
+          insufficient balance
         </SecondaryButton>
       )
     }
 
-    if (from.amount === "0") {
+    const lockedTokens = tokens.filter((token) =>
+      token.allowance.lt(token.amount)
+    )
+
+    if (lockedTokens.length) {
       return (
         <SecondaryButton
-          theme="disabled"
           size="large"
-          onClick={handleSubmit}
+          onClick={() => updateAllowance(lockedTokens[0].data.address)}
           fz={22}
           full
         >
+          <Flex>
+            <Flex ai="center">Unlock Token {lockedTokens[0].data.symbol}</Flex>
+            <Flex m="-3px 0 0 4px">
+              <LockedIcon />
+            </Flex>
+          </Flex>
+        </SecondaryButton>
+      )
+    }
+
+    const disabled =
+      tokens.filter((token) => token.amount.isZero()).length === tokens.length
+
+    if (disabled) {
+      return (
+        <SecondaryButton theme="disabled" size="large" fz={22} full>
           Enter amount
         </SecondaryButton>
       )
@@ -84,7 +114,7 @@ function PayDividends() {
         Pay dividends
       </Button>
     )
-  }, [from.address, from.amount, handleSubmit])
+  }, [handleSubmit, tokens])
 
   const lastDividends = useMemo(() => {
     return (
@@ -146,13 +176,6 @@ function PayDividends() {
 
       <DividendsInput
         tokens={tokens}
-        price={from.price}
-        amount={from.amount}
-        balance={from.balance}
-        address={from.address}
-        symbol={from.symbol}
-        customIcon={from.icon}
-        decimal={from.decimals}
         onChange={handleFromChange}
         onSelect={openTokenSelect}
       />
@@ -186,7 +209,7 @@ function PayDividends() {
         {form}
       </Container>
       <TokenSelect
-        onSelect={handleDividendTokenSelect}
+        onSelect={onTokenSelect}
         isOpen={isOpen}
         onClose={closeTokenSelect}
       />

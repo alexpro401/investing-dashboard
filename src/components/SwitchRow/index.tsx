@@ -14,6 +14,7 @@ interface SwitchRowProps {
   isOn: boolean
   name: string
   onChange: (state: boolean) => void
+  children?: ReactNode
 }
 
 const SwitchRow: FC<SwitchRowProps> = ({

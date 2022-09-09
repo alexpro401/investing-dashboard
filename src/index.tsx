@@ -1,5 +1,5 @@
 import React from "react"
-import ReactDOM from "react-dom"
+import { createRoot } from "react-dom/client"
 import { createWeb3ReactRoot, Web3ReactProvider } from "@web3-react/core"
 import { Normalize } from "styled-normalize"
 import { createTheme } from "react-data-table-component"
@@ -51,6 +51,8 @@ createTheme("dexe", {
   },
 })
 
+const NormalizeProxy: any = Normalize
+
 const GlobalComponents = () => (
   <>
     <ContractsRegistryUpdater />
@@ -60,7 +62,7 @@ const GlobalComponents = () => (
     <GasPriceUpdater />
     <PriceFeedUpdater />
     <TransactionUpdater />
-    <Normalize />
+    <NormalizeProxy />
     <GlobalStyle />
     <SideBar />
     <Alert />
@@ -71,7 +73,9 @@ const GlobalComponents = () => (
   </>
 )
 
-ReactDOM.render(
+const container = document.getElementById("root")
+const root = createRoot(container!)
+root.render(
   <React.StrictMode>
     <BrowserRouter>
       <ModalProvider>
@@ -91,6 +95,5 @@ ReactDOM.render(
         </SideBarContext>
       </ModalProvider>
     </BrowserRouter>
-  </React.StrictMode>,
-  document.getElementById("root")
+  </React.StrictMode>
 )

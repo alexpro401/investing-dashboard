@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import { Fragment, ReactNode } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 import { BigNumberInput } from "big-number-input"
 
@@ -32,119 +32,65 @@ import { DividendToken } from "interfaces"
 
 interface Props {
   tokens: DividendToken[]
-  price: BigNumber
-  amount: string
-  balance: BigNumber
-  address?: string
-  symbol?: string
-  decimal?: number
-  priceImpact?: string
-  customIcon?: ReactNode
-  customPrice?: ReactNode
-  customBalance?: ReactNode
-  isLocked?: boolean
-  onChange?: (amount: string) => void
-  onSelect?: () => void
+  onChange?: (amount: string, index: number) => void
+  onSelect: (index: number) => void
 }
 
-const DividendsInput: React.FC<Props> = ({
-  tokens,
-  price,
-  amount,
-  balance,
-  address,
-  symbol,
-  decimal,
-  priceImpact,
-  customIcon,
-  customPrice,
-  customBalance,
-  isLocked,
-  onChange,
-  onSelect,
-}) => {
-  const noData = !decimal || !symbol
-
-  const setMaxAmount = () => {
-    !!onChange && onChange(balance.toString())
+const DividendsInput: React.FC<Props> = ({ tokens, onChange, onSelect }) => {
+  const setMaxAmount = (index) => {
+    !!onChange && onChange(tokens[index].balance.toString(), index)
   }
 
-  const handleInputChange = (value) => {
-    !!onChange && onChange(value || "0")
+  const handleInputChange = (value, index) => {
+    !!onChange && onChange(value || "0", index)
   }
-
-  if (!onSelect && noData) {
-    return (
-      <InputContainer>
-        <InputTop>
-          <Price>
-            <Ripple width="67px" />
-          </Price>
-          <Balance>
-            <Ripple width="80px" />
-          </Balance>
-        </InputTop>
-        <InputBottom>
-          <Ripple width="120px" />
-          <Ripple width="60px" />
-        </InputBottom>
-      </InputContainer>
-    )
-  }
-
-  const icon = customIcon ? (
-    customIcon
-  ) : (
-    <TokenIcon m="0" address={address} size={26} />
-  )
 
   return (
     <InputContainer height="fit-content">
-      <InputTop>
-        {customPrice ? (
-          customPrice
-        ) : (
-          <Price>
-            ≈${formatBigNumber(price, 18, 2)}{" "}
-            {priceImpact && <>({priceImpact}%)</>}
-          </Price>
-        )}
+      {tokens.map(
+        ({ address, amount, data, price, balance, allowance }, index) => {
+          return (
+            <Fragment key={address}>
+              <InputTop>
+                <Price>≈${formatBigNumber(price, 18, 2)} </Price>
 
-        {customBalance || (
-          <Balance onClick={setMaxAmount}>
-            <Tokens>{formatBigNumber(balance, decimal, 6)}</Tokens>
-            {!!onChange && <Max>Max</Max>}
-          </Balance>
-        )}
-      </InputTop>
+                <Balance onClick={() => setMaxAmount(index)}>
+                  <Tokens>{formatBigNumber(balance, data.decimals, 6)}</Tokens>
+                  <Max>Max</Max>
+                </Balance>
+              </InputTop>
 
-      <InputBottom>
-        <BigNumberInput
-          decimals={decimal || 18}
-          onChange={handleInputChange}
-          value={cutDecimalPlaces(amount, decimal, false, 6).toString()}
-          renderInput={(props: any) => (
-            <Input disabled={!onChange} inputMode="decimal" {...props} />
-          )}
-        />
+              <InputBottom>
+                <BigNumberInput
+                  decimals={data.decimals || 18}
+                  onChange={(value) => handleInputChange(value, index)}
+                  value={cutDecimalPlaces(
+                    amount,
+                    data.decimals,
+                    false,
+                    6
+                  ).toString()}
+                  renderInput={(props: any) => (
+                    <Input
+                      disabled={!onChange}
+                      inputMode="decimal"
+                      {...props}
+                    />
+                  )}
+                />
 
-        <ActiveSymbol>
-          {!noData && icon}
-          {noData ? (
-            <SelectToken>Select Token</SelectToken>
-          ) : (
-            <SymbolLabel>{symbol}</SymbolLabel>
-          )}
-          {isLocked && <Icon src={locker} />}
-        </ActiveSymbol>
-      </InputBottom>
-      <ButtonDivider />
-      <DividendsList>
-        {tokens.slice(1).map((token) => (
-          <DividendsToken token={token} key={token.address} />
-        ))}
-      </DividendsList>
-      <AddButton onClick={onSelect}>+ Select another token</AddButton>
+                <ActiveSymbol onClick={() => onSelect(index)}>
+                  <TokenIcon m="0" address={address} size={26} />
+                  <SymbolLabel>{data.symbol}</SymbolLabel>
+                  <Icon src={angleIcon} />
+                </ActiveSymbol>
+              </InputBottom>
+              <ButtonDivider />
+            </Fragment>
+          )
+        }
+      )}
+      <AddButton onClick={() => onSelect(-1)}>+ Add more tokens</AddButton>
     </InputContainer>
   )
 }

@@ -9,15 +9,31 @@ import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { multiplyBignumbers } from "utils/formulas"
 
 import { usePoolContract } from "hooks/usePool"
-import { useERC20, useInvestProposalContract } from "hooks/useContract"
+import {
+  useERC20,
+  useInvestProposalContract,
+  usePriceFeedContract,
+} from "hooks/useContract"
 import { RiskyForm } from "interfaces/exchange"
 import { Token, DividendToken } from "interfaces"
 import { useWeb3React } from "@web3-react/core"
 import { SubmitState } from "constants/types"
 import usePayload from "hooks/usePayload"
 import { TransactionType } from "state/transactions/types"
-import { getAllowance, getTokenBalance, isTxMined } from "utils"
+import {
+  getAllowance,
+  getERC20Contract,
+  getTokenBalance,
+  getTokenData,
+  isTxMined,
+} from "utils"
 import { ZERO } from "constants/index"
+
+interface FetchedTokenData {
+  balance: BigNumber
+  allowance: BigNumber
+  data: Token
+}
 
 const usePayDividends = (
   poolAddress?: string,
@@ -25,82 +41,33 @@ const usePayDividends = (
 ): [
   {
     tokens: DividendToken[]
-    form: RiskyForm
-    allowance: BigNumber
   },
   {
-    updateAllowance: () => Promise<void>
-    handlePercentageChange: (percentage: BigNumber) => void
-    handleFromChange: (amount: string) => void
-    handleDividendTokenSelect: (token: Token) => void
+    updateAllowance: (address: string) => Promise<void>
+    handleFromChange: (amount: string, index: number) => void
+    handleDividendTokenSelect: (token: Token, index: number) => void
     handleSubmit: () => void
   }
 ] => {
   const { account, library } = useWeb3React()
-  const [dividendTokenAddress, setDividendTokenAddress] = useState("")
-  const [toBalance, setToBalance] = useState(ZERO)
-  const [fromBalance, setFromBalance] = useState(ZERO)
-  const [inPrice, setInPrice] = useState(ZERO)
-  const [outPrice, setOutPrice] = useState(ZERO)
-  const [fromAmount, setFromAmount] = useState("0")
-  const [toAmount, setToAmount] = useState("0")
-  const [allowance, setAllowance] = useState(ZERO)
 
+  const [isBaseAdded, setIsBaseAdded] = useState(false)
   const [dividendTokens, setDividendTokens] = useState<string[]>([])
   const [dividendAmounts, setDividendAmounts] = useState<BigNumber[]>([])
-  const [dividendAllowance, setDividendAllowance] = useState<BigNumber[]>([])
+  const [dividendBalances, setDividendBalances] = useState<BigNumber[]>([])
+  const [dividendPrices, setDividendPrices] = useState<BigNumber[]>([])
+  const [dividendAllowances, setDividendAllowances] = useState<BigNumber[]>([])
+  const [dividendDatas, setDividendDatas] = useState<Token[]>([])
 
   const [, setPayload] = usePayload()
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [dividendTokenContract, dividendToken] = useERC20(dividendTokenAddress)
-  const [{ poolMetadata }] = usePoolMetadata(
-    poolAddress,
-    poolInfo?.parameters.descriptionURL
-  )
 
-  const [investProposal] = useInvestProposalContract(poolAddress)
+  const priceFeed = usePriceFeedContract()
 
+  const [investProposal, investProposalAddress] =
+    useInvestProposalContract(poolAddress)
+  console.log("investProposalAddress", investProposalAddress)
   const addTransaction = useTransactionAdder()
-
-  const form = useMemo(() => {
-    return {
-      from: {
-        address: dividendToken?.address,
-        amount: fromAmount,
-        balance: fromBalance,
-        price: inPrice,
-        symbol: dividendToken?.symbol,
-        decimals: dividendToken?.decimals,
-        icon: undefined,
-      },
-      to: {
-        address: undefined,
-        amount: toAmount,
-        balance: toBalance,
-        price: outPrice,
-        symbol: "1/JBR",
-        decimals: 18,
-        icon: (
-          <Icon
-            size={24}
-            source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
-            address={poolAddress}
-          />
-        ),
-        info: {},
-      },
-    }
-  }, [
-    poolAddress,
-    dividendToken,
-    fromAmount,
-    fromBalance,
-    inPrice,
-    toAmount,
-    toBalance,
-    outPrice,
-    poolMetadata,
-  ])
 
   // Memoized function that returns list of objects that represents dividend token
   // Object contains token address, token amount, token allowance
@@ -109,137 +76,303 @@ const usePayDividends = (
       return {
         address: token,
         amount: dividendAmounts[index],
-        allowance: dividendAllowance[index],
+        balance: dividendBalances[index],
+        price: dividendPrices[index],
+        data: dividendDatas[index],
+        allowance: dividendAllowances[index],
       }
     })
-  }, [dividendTokens, dividendAmounts, dividendAllowance])
-
-  const handleDividendTokenSelect = useCallback(
-    (token: Token) => {
-      if (dividendTokens.indexOf(token.address) === -1) {
-        setDividendTokens([...dividendTokens, token.address])
-        setDividendAmounts([...dividendAmounts, ZERO])
-        setDividendAllowance([...dividendAllowance, ZERO])
-      } else {
-        setDividendTokens(
-          dividendTokens.filter((address) => address !== token.address)
-        )
-        setDividendAmounts(
-          dividendAmounts.filter(
-            (amount, index) => index !== dividendTokens.indexOf(token.address)
-          )
-        )
-        setDividendAllowance(
-          dividendAllowance.filter(
-            (amount, index) => index !== dividendTokens.indexOf(token.address)
-          )
-        )
-      }
-    },
-    [dividendAllowance, dividendAmounts, dividendTokens]
-  )
-
-  const fetchAndUpdateAllowance = useCallback(async () => {
-    if (!account || !library || !poolAddress || !poolInfo) return
-
-    const allowance = await getAllowance(
-      account,
-      poolInfo?.parameters.baseToken,
-      poolAddress,
-      library
-    )
-    setAllowance(allowance)
-  }, [account, library, poolAddress, poolInfo])
-
-  const updateAllowance = useCallback(async () => {
-    if (!account || !poolAddress || !dividendTokenContract) return
-
-    try {
-      setPayload(SubmitState.SIGN)
-
-      const amount = BigNumber.from(fromAmount)
-      const approveResponse = await dividendTokenContract.approve(
-        poolAddress,
-        amount
-      )
-      setPayload(SubmitState.WAIT_CONFIRM)
-
-      const receipt = await addTransaction(approveResponse, {
-        type: TransactionType.APPROVAL,
-        tokenAddress: dividendTokenAddress,
-        spender: account,
-      })
-
-      if (isTxMined(receipt)) {
-        fetchAndUpdateAllowance()
-        setPayload(SubmitState.SUCCESS)
-      }
-    } catch (e) {
-      setPayload(SubmitState.IDLE)
-    }
   }, [
-    account,
-    addTransaction,
-    dividendTokenAddress,
-    dividendTokenContract,
-    fetchAndUpdateAllowance,
-    fromAmount,
-    poolAddress,
-    setPayload,
+    dividendTokens,
+    dividendAmounts,
+    dividendBalances,
+    dividendPrices,
+    dividendDatas,
+    dividendAllowances,
   ])
 
-  const runUpdate = useCallback(() => {
-    fetchAndUpdateAllowance().catch(console.log)
-  }, [fetchAndUpdateAllowance])
+  const fetchTokenData = useCallback(
+    async (address: string) => {
+      const balance = await getTokenBalance(account, address, library)
+      const allowance = await getAllowance(
+        account,
+        address,
+        investProposalAddress,
+        library
+      )
+      const data = await getTokenData(account, address, library)
 
-  const handleSubmit = useCallback(async () => {
-    if (!investProposal || !dividendTokenAddress) return
-
-    const response = await investProposal.supply(
-      Number(proposalId) + 1,
-      [fromAmount],
-      [dividendTokenAddress]
-    )
-    console.log(response)
-  }, [dividendTokenAddress, fromAmount, investProposal, proposalId])
-
-  const handleFromChange = useCallback(async (v: string) => {
-    setFromAmount(v)
-    const amount = BigNumber.from(v)
-
-    try {
-    } catch (e) {
-      console.log(e)
-    }
-  }, [])
-
-  const handlePercentageChange = useCallback(
-    (percent: BigNumber) => {
-      const from = multiplyBignumbers([fromBalance, 18], [percent, 18])
-      handleFromChange(from.toString())
+      return { balance, allowance, data }
     },
-    [fromBalance, handleFromChange]
+    [account, library, investProposalAddress]
   )
 
+  const addTokenToList = useCallback(
+    ({ data, balance, allowance }: FetchedTokenData) => {
+      if (dividendTokens.includes(data.address)) return
+      setDividendTokens([...dividendTokens, data.address])
+      setDividendAmounts([...dividendAmounts, ZERO])
+      setDividendBalances([...dividendBalances, balance])
+      setDividendPrices([...dividendPrices, ZERO])
+      setDividendDatas([...dividendDatas, data])
+      setDividendAllowances([...dividendAllowances, allowance])
+    },
+    [
+      dividendPrices,
+      dividendAllowances,
+      dividendAmounts,
+      dividendBalances,
+      dividendDatas,
+      dividendTokens,
+    ]
+  )
+
+  const replaceTokenInList = useCallback(
+    (index: number, { data, balance, allowance }: FetchedTokenData) => {
+      const newTokens = [...dividendTokens]
+      const newAmounts = [...dividendAmounts]
+      const newBalances = [...dividendBalances]
+      const newPrices = [...dividendPrices]
+      const newDatas = [...dividendDatas]
+      const newAllowances = [...dividendAllowances]
+
+      newTokens[index] = data.address
+      newAmounts[index] = ZERO
+      newBalances[index] = balance
+      newPrices[index] = ZERO
+      newDatas[index] = data
+      newAllowances[index] = allowance
+
+      setDividendTokens(newTokens)
+      setDividendAmounts(newAmounts)
+      setDividendBalances(newBalances)
+      setDividendPrices(newPrices)
+      setDividendDatas(newDatas)
+      setDividendAllowances(newAllowances)
+    },
+    [
+      dividendAllowances,
+      dividendAmounts,
+      dividendBalances,
+      dividendDatas,
+      dividendPrices,
+      dividendTokens,
+    ]
+  )
+
+  const removeTokenFromList = useCallback(
+    (tokenAddress: string) => {
+      setDividendTokens(
+        dividendTokens.filter((address) => address !== tokenAddress)
+      )
+      setDividendAmounts(
+        dividendAmounts.filter(
+          (amount, index) => index !== dividendTokens.indexOf(tokenAddress)
+        )
+      )
+      setDividendAllowances(
+        dividendAllowances.filter(
+          (amount, index) => index !== dividendTokens.indexOf(tokenAddress)
+        )
+      )
+      setDividendBalances(
+        dividendBalances.filter(
+          (amount, index) => index !== dividendTokens.indexOf(tokenAddress)
+        )
+      )
+      setDividendDatas(
+        dividendDatas.filter(
+          (amount, index) => index !== dividendTokens.indexOf(tokenAddress)
+        )
+      )
+      setDividendPrices(
+        dividendPrices.filter(
+          (amount, index) => index !== dividendTokens.indexOf(tokenAddress)
+        )
+      )
+    },
+    [
+      dividendAllowances,
+      dividendAmounts,
+      dividendBalances,
+      dividendDatas,
+      dividendPrices,
+      dividendTokens,
+    ]
+  )
+
+  const runUpdate = useCallback(() => {}, [])
+
+  const handleSubmit = useCallback(async () => {
+    if (!investProposal) return
+
+    try {
+      const response = await investProposal.supply(
+        Number(proposalId) + 1,
+        dividendAmounts,
+        dividendTokens
+      )
+    } catch (error) {
+      console.log(error)
+    }
+  }, [dividendAmounts, dividendTokens, investProposal, proposalId])
+
+  const updateDividendAmount = useCallback(
+    (amount: BigNumber, index: number) => {
+      setDividendAmounts([
+        ...dividendAmounts.slice(0, index),
+        amount,
+        ...dividendAmounts.slice(index + 1),
+      ])
+    },
+    [dividendAmounts]
+  )
+
+  const updateDividendPrice = useCallback(
+    (price: BigNumber, index: number) => {
+      setDividendPrices([
+        ...dividendPrices.slice(0, index),
+        price,
+        ...dividendPrices.slice(index + 1),
+      ])
+    },
+    [dividendPrices]
+  )
+
+  const updateDividendAllowance = useCallback(
+    (allowance: BigNumber, index: number) => {
+      setDividendAllowances([
+        ...dividendAllowances.slice(0, index),
+        allowance,
+        ...dividendAllowances.slice(index + 1),
+      ])
+    },
+    [dividendAllowances]
+  )
+
+  const fetchAndUpdateAllowance = useCallback(
+    async (index: number) => {
+      const address = dividendTokens[index]
+      const allowance = await getAllowance(
+        account,
+        address,
+        investProposalAddress,
+        library
+      )
+      updateDividendAllowance(allowance, index)
+    },
+    [
+      account,
+      dividendTokens,
+      library,
+      investProposalAddress,
+      updateDividendAllowance,
+    ]
+  )
+
+  const updateAllowance = useCallback(
+    async (address: string) => {
+      const index = dividendTokens.indexOf(address)
+
+      if (index === -1) return
+
+      const dividendTokenContract = getERC20Contract(
+        dividendTokens[index],
+        library,
+        account
+      )
+
+      if (!dividendTokenContract) return
+
+      try {
+        setPayload(SubmitState.SIGN)
+        const amount = dividendAmounts[index]
+        const approveResponse = await dividendTokenContract.approve(
+          investProposalAddress,
+          amount
+        )
+
+        setPayload(SubmitState.WAIT_CONFIRM)
+
+        const receipt = await addTransaction(approveResponse, {
+          type: TransactionType.APPROVAL,
+          tokenAddress: dividendTokens[index],
+          spender: account,
+        })
+        if (isTxMined(receipt)) {
+          setPayload(SubmitState.SUCCESS)
+          await fetchAndUpdateAllowance(index)
+        }
+      } catch (error) {
+        setPayload(SubmitState.IDLE)
+      } finally {
+        setPayload(SubmitState.IDLE)
+      }
+    },
+    [
+      account,
+      addTransaction,
+      dividendAmounts,
+      dividendTokens,
+      library,
+      investProposalAddress,
+      setPayload,
+      fetchAndUpdateAllowance,
+    ]
+  )
+
+  const handleFromChange = useCallback(
+    async (v: string, i: number) => {
+      const amount = BigNumber.from(v)
+
+      updateDividendAmount(amount, i)
+
+      if (!priceFeed) return
+      const priceResponse = await priceFeed.getNormalizedPriceOutUSD(
+        dividendTokens[i],
+        amount
+      )
+      updateDividendPrice(priceResponse[0], i)
+
+      try {
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    [updateDividendAmount, priceFeed, dividendTokens, updateDividendPrice]
+  )
+
+  const handleDividendTokenSelect = useCallback(
+    async (token: Token, index: number) => {
+      const tokenData = await fetchTokenData(token.address)
+
+      if (dividendTokens.indexOf(token.address) >= 0) return
+
+      if (index >= 0) {
+        replaceTokenInList(index, tokenData)
+        return
+      }
+
+      addTokenToList(tokenData)
+    },
+    [addTokenToList, dividendTokens, fetchTokenData, replaceTokenInList]
+  )
+
+  // add base token on init
   useEffect(() => {
     if (!poolInfo) return
 
-    const base = poolInfo.parameters.baseToken
-    setDividendTokenAddress(base)
-    ;(async () => {
-      const allowance = await getAllowance(
-        account,
-        poolInfo?.parameters.baseToken,
-        poolAddress,
-        library
-      )
-      const balance = await getTokenBalance(account, base, library)
+    const base = poolInfo.parameters.baseToken.toLocaleLowerCase()
 
-      setDividendTokens([base])
-      setDividendAmounts([balance])
-      setDividendAllowance([allowance])
-    })()
-  }, [account, library, poolAddress, poolInfo])
+    if (dividendTokens.indexOf(base) > 0) return
+
+    if (isBaseAdded) return
+
+    fetchTokenData(base).then((token) => {
+      addTokenToList(token)
+      setIsBaseAdded(true)
+    })
+  }, [dividendTokens, fetchTokenData, addTokenToList, poolInfo, isBaseAdded])
 
   // init data
   useEffect(() => {
@@ -258,12 +391,9 @@ const usePayDividends = (
   return [
     {
       tokens,
-      form,
-      allowance,
     },
     {
       updateAllowance,
-      handlePercentageChange,
       handleFromChange,
       handleDividendTokenSelect,
       handleSubmit,

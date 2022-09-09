@@ -16,7 +16,7 @@ export const SideBarContextProvider =
 export const useSideBarContext = () => React.useContext(SideBarContextProvider)
 
 class SideBarContext extends React.Component<{
-  children: React.ReactNode
+  children?: React.ReactNode
 }> {
   static contextType = SideBarContextProvider
 

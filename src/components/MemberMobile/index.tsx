@@ -1,4 +1,4 @@
-import React, { useMemo } from "react"
+import React, { ReactNode, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { useERC20 } from "hooks/useContract"
@@ -17,6 +17,7 @@ import S, { Statistic } from "./styled"
 const MemberMobile: React.FC<{
   data: IPoolQuery
   index?: number
+  children?: ReactNode
 }> = ({ data, index = 0, children }) => {
   const [, baseData] = useERC20(data.baseToken)
   const priceLP = getPriceLP(data.priceHistory)

@@ -17,6 +17,7 @@ interface IProps {
   value?: ReactNode | null
   symbol?: ReactNode | null
   m?: string
+  children?: ReactNode
 }
 
 const Accordion: FC<IProps> = ({

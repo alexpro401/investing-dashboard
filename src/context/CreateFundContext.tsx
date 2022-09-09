@@ -1,4 +1,4 @@
-import { createContext, useContext, Component } from "react"
+import { createContext, useContext, Component, ReactNode } from "react"
 import { Token } from "interfaces"
 import { sliderPropsByPeriodType } from "constants/index"
 import { IValidationError } from "constants/types"
@@ -63,7 +63,11 @@ export const FundContext = createContext<IContext>(defaultContext)
 
 export const useCreateFundContext = () => useContext(FundContext)
 
-class CreateFundContext extends Component {
+interface Props {
+  children?: ReactNode
+}
+
+class CreateFundContext extends Component<Props> {
   static contextType = FundContext
 
   state = {
