@@ -1,11 +1,4 @@
-import {
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-  Dispatch,
-  SetStateAction,
-} from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 
 import { format } from "date-fns"
 import { useWeb3React } from "@web3-react/core"

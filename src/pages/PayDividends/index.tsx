@@ -2,10 +2,10 @@ import { Flex } from "theme"
 import { useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
+import { Token } from "interfaces"
 
 import IconButton from "components/IconButton"
 import DividendsInput from "components/Exchange/DividendsInput"
-import ExchangeDivider from "components/Exchange/Divider"
 import Button, { SecondaryButton } from "components/Button"
 import CircularProgress from "components/CircularProgress"
 import Header from "components/Header/Layout"
@@ -28,7 +28,6 @@ import {
 } from "components/Exchange/styled"
 
 import usePayDividends from "./usePayDividends"
-import { Token } from "interfaces"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -40,7 +39,7 @@ function PayDividends() {
   const [activeIndex, setActiveIndex] = useState(-1)
 
   const [
-    { tokens },
+    { tokens, info },
     {
       handleFromChange,
       handleSubmit,
@@ -114,7 +113,7 @@ function PayDividends() {
         Pay dividends
       </Button>
     )
-  }, [handleSubmit, tokens])
+  }, [handleSubmit, tokens, updateAllowance])
 
   const lastDividends = useMemo(() => {
     return (
@@ -143,12 +142,14 @@ function PayDividends() {
       <InfoRow>
         <InfoGrey>Proposal TVL</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>0 DEXE</InfoWhite>
-          <InfoGrey>($0)</InfoGrey>
+          <InfoWhite>
+            {info.tvl.base} {info.ticker}
+          </InfoWhite>
+          <InfoGrey>(${info.tvl.usd})</InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [info.tvl.base, info.ticker, info.tvl.usd])
 
   const APR = useMemo(() => {
     return (
