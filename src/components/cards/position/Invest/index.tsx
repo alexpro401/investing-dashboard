@@ -43,7 +43,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   const { account } = useActiveWeb3React()
   const traderPool = useTraderPool(position.pool.id)
   const [, poolInfo] = usePoolContract(position.pool.id)
-  const [{ priceBase, priceUSD }] = usePoolPrice(position.pool.id)
+  const [{ priceUSD }] = usePoolPrice(position.pool.id)
   const [, baseToken] = useERC20(position.pool.token)
   const priceFeedAddress = useSelector(selectPriceFeedAddress)
   const priceFeed = useContract(priceFeedAddress, PriceFeed)

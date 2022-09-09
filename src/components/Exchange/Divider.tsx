@@ -3,7 +3,7 @@ import { BigNumber } from "@ethersproject/bignumber"
 
 import { EXCHANGE_DEFAULT_PERCENTS } from "constants/index"
 
-import { DividerContainer, PercentButton, SwapButton, Icon } from "./styled"
+import { DividerContainer, PercentButton, SwapButton } from "./styled"
 import DirectionIcon from "assets/icons/SwapDirectionIcon"
 import DirectionButton from "assets/icons/SwapDirectionButton"
 

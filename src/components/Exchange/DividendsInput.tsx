@@ -1,12 +1,9 @@
-import { Fragment, ReactNode } from "react"
-import { BigNumber } from "@ethersproject/bignumber"
+import { Fragment } from "react"
 import { BigNumberInput } from "big-number-input"
 
 import TokenIcon from "components/TokenIcon"
-import Ripple from "components/Ripple"
 
 import angleIcon from "assets/icons/angle-down.svg"
-import locker from "assets/icons/locker.svg"
 
 import { cutDecimalPlaces, formatBigNumber } from "utils"
 
@@ -20,13 +17,10 @@ import {
   Tokens,
   Max,
   ActiveSymbol,
-  SelectToken,
   SymbolLabel,
   Icon,
   ButtonDivider,
   AddButton,
-  DividendsList,
-  DividendsToken,
 } from "./styled"
 import { DividendToken } from "interfaces"
 

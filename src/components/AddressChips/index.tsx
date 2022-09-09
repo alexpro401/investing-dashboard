@@ -6,7 +6,6 @@ import { shortenAddress } from "utils"
 import close from "assets/icons/chips-close.svg"
 import pencil from "assets/icons/pencil-edit.svg"
 import {
-  LimitIndicator,
   ChipsWrapper,
   TagItem,
   TagButton,

@@ -3,9 +3,8 @@ import { Flex } from "theme"
 import { useWeb3React } from "@web3-react/core"
 
 import Avatar from "components/Avatar"
-import Tooltip from "components/Tooltip"
 
-import { formatNumber, shortenAddress } from "utils"
+import { shortenAddress } from "utils"
 
 import shareIcon from "assets/icons/share.svg"
 
@@ -18,7 +17,6 @@ import {
   Divider,
   PoolStatisticContainer,
   Statistic,
-  PNL,
   ShareButton,
 } from "./styled"
 import { useSelector } from "react-redux"

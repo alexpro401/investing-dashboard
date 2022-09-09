@@ -1,22 +1,10 @@
-import { useState, useRef, useEffect, useCallback, ElementType } from "react"
+import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
 import { Text, Flex, BaseButton, device, ExternalLink } from "theme"
 import { motion } from "framer-motion"
 import RadioButton from "components/RadioButton"
 import PoolTypeLine from "assets/icons/PoolTypeLine"
-import { StageSpinner } from "react-spinners-kit"
-import { List } from "react-virtualized"
-import arrowDown from "assets/icons/angle-down.svg"
-
-import angleDown from "assets/icons/angle-down.svg"
-import { useClickAway } from "react-use"
-import { ITokenBase } from "interfaces"
-
-import useTokensList from "hooks/useTokensList"
-import useNetworkConfig from "hooks/useNetworkConfig"
-
-import TokenIcon from "components/TokenIcon"
 
 import InputSlider from "rc-slider"
 
@@ -27,7 +15,6 @@ import { focusText } from "utils"
 export const HintText = styled.div`
   font-family: Gilroy;
   font-style: normal;
-  font-family: Gilroy;
   font-weight: 400;
   font-size: 12px;
   width: 100%;

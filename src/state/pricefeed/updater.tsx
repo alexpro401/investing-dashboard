@@ -1,18 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react"
 import axios from "axios"
-import useContract, { useERC20 } from "hooks/useContract"
+import React, { useEffect } from "react"
 import { useWeb3React } from "@web3-react/core"
-import { PriceFeed } from "abi"
-import { AppDispatch, AppState } from "state"
 import { useDispatch, useSelector } from "react-redux"
-import { ContractsState } from "state/contracts/reducer"
-import whitelist from "constants/whitelisted"
-import {
-  DEFAULT_ACTIVE_LIST_URLS,
-  DEFAULT_LIST_OF_LISTS,
-} from "constants/lists"
+
+import { PriceFeed } from "abi"
+import useContract from "hooks/useContract"
 import { updateWhitelist } from "./actions"
+import { AppDispatch, AppState } from "state"
+import whitelist from "constants/whitelisted"
+import { ContractsState } from "state/contracts/reducer"
+import { DEFAULT_ACTIVE_LIST_URLS } from "constants/lists"
 
 export const PriceFeedUpdater: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()

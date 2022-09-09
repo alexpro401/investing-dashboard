@@ -1,25 +1,17 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
-
-import Icon from "components/Icon"
+import { useWeb3React } from "@web3-react/core"
 
 import { useTransactionAdder } from "state/transactions/hooks"
-import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-
-import { multiplyBignumbers } from "utils/formulas"
-
+import { TransactionType } from "state/transactions/types"
 import { usePoolContract } from "hooks/usePool"
 import {
-  useERC20,
   useInvestProposalContract,
   usePriceFeedContract,
 } from "hooks/useContract"
-import { RiskyForm } from "interfaces/exchange"
 import { Token, DividendToken } from "interfaces"
-import { useWeb3React } from "@web3-react/core"
 import { SubmitState } from "constants/types"
 import usePayload from "hooks/usePayload"
-import { TransactionType } from "state/transactions/types"
 import {
   getAllowance,
   getERC20Contract,

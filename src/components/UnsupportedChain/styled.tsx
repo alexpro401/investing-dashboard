@@ -1,4 +1,4 @@
-import { Text, Flex } from "theme"
+import { Flex } from "theme"
 import styled from "styled-components"
 
 export const Container = styled(Flex)`
