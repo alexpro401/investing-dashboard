@@ -508,7 +508,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
               />
               <S.Amount>{positionOpenLPAmount}</S.Amount>
               <S.PositionSymbol>{poolInfo?.ticker}</S.PositionSymbol>
-              <SharedS.PNL amount={+pnlPercentage.normalized}>
+              <SharedS.PNL value={pnlPercentage.normalized}>
                 {Number(pnlPercentage.normalized) > 0 && "+"}
                 {pnlPercentage.normalized}%
               </SharedS.PNL>
