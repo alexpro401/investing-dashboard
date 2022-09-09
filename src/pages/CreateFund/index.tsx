@@ -3,7 +3,12 @@ import FundTypeCard from "./FundTypeCard"
 import Button from "components/Button"
 
 import { FC, useState } from "react"
-import { Container, FundTypeCards, FundTypeCardsTitle } from "./styled"
+import {
+  Container,
+  FundTypeCards,
+  FundTypeCardsTitle,
+  CreateFundDocsBlock,
+} from "./styled"
 import { Flex } from "theme"
 import { useNavigate } from "react-router-dom"
 
@@ -33,6 +38,7 @@ const CreateFund: FC = () => {
     <>
       <Header>Create Fund</Header>
       <Container>
+        <CreateFundDocsBlock>Hello world</CreateFundDocsBlock>
         <FundTypeCards>
           <FundTypeCardsTitle>Create your own fund</FundTypeCardsTitle>
           <FundTypeCard
@@ -41,7 +47,6 @@ const CreateFund: FC = () => {
             name={FUND_TYPES.basic}
             selected={fundType}
             handleSelect={() => setFundType(FUND_TYPES.basic)}
-            link="Read More"
           />
           <FundTypeCard
             label="Investment fund"
@@ -49,7 +54,6 @@ const CreateFund: FC = () => {
             name={FUND_TYPES.investment}
             selected={fundType}
             handleSelect={() => setFundType(FUND_TYPES.investment)}
-            link="Read More"
           />
         </FundTypeCards>
         <FundTypeCards>
@@ -60,7 +64,13 @@ const CreateFund: FC = () => {
             name={FUND_TYPES.daoPool}
             selected={fundType}
             handleSelect={() => setFundType(FUND_TYPES.daoPool)}
-            link="Read More"
+            fundFeatures={[
+              "Interact with any DeFi protocol autonomously and automatically",
+              "Manage DAOs via tokens, NFTs, or both",
+              "Easily reward active DAO members",
+              "Modify every DAO governance setting via proposals",
+              "Implement different quorum settings for each proposal",
+            ]}
           />
         </FundTypeCards>
         <Flex full p="0 16px 42px" m="auto 0 0 0">

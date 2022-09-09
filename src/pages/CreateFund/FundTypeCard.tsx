@@ -1,6 +1,7 @@
 import RadioButton from "components/RadioButton"
 import React, { useMemo } from "react"
 import styled from "styled-components"
+import { AnimatePresence, motion } from "framer-motion"
 
 interface FundTypeCardProps {
   label: string
@@ -8,7 +9,8 @@ interface FundTypeCardProps {
   name: "basic" | "investment" | "daoPool"
   selected: string
   handleSelect: (value: any) => void
-  link: string
+  link?: string
+  fundFeatures?: string[]
 }
 
 const ContainerCard = styled.div<{
@@ -33,7 +35,9 @@ const ContainerCard = styled.div<{
 `
 
 const Body = styled.div`
-  display: flex;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: max-content 1fr;
   align-items: center;
 `
 
@@ -53,11 +57,11 @@ const Label = styled.div`
 const Description = styled.div`
   font-family: "Gilroy";
   font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 16px;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.5;
   letter-spacing: 0.03em;
-  color: #e4f2ff;
+  color: #b1c7fc;
 `
 
 const Link = styled.a`
@@ -71,13 +75,37 @@ const Link = styled.a`
   text-decoration: none;
 `
 
+const Features = styled(motion.div).attrs(() => ({
+  initial: "collapsed",
+  animate: "open",
+  exit: "collapsed",
+  variants: {
+    open: { opacity: 1, height: "auto" },
+    collapsed: { opacity: 0, height: 0 },
+  },
+  transition: { duration: 0.5 },
+}))`
+  display: grid;
+  grid-gap: 8px;
+  grid-column: 2 / 3;
+  margin-top: 16px;
+`
+
+const FeatureItem = styled.div`
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: #b1c7fc;
+`
+
 const FundTypeCard: React.FC<FundTypeCardProps> = ({
   label,
   description,
   selected,
   name,
   handleSelect,
-  link,
+  link = "",
+  fundFeatures = [],
 }) => {
   const isActive = useMemo(() => name === selected, [name, selected])
   return (
@@ -92,8 +120,17 @@ const FundTypeCard: React.FC<FundTypeCardProps> = ({
         <Text>
           <Label>{label}</Label>
           <Description>{description}</Description>
-          <Link href={link}>Read more</Link>
+          {link ? <Link href={link}>Read more</Link> : <></>}
         </Text>
+        <AnimatePresence initial={false}>
+          {fundFeatures.length && isActive && (
+            <Features>
+              {fundFeatures.map((feature, index) => (
+                <FeatureItem key={index}>{feature}</FeatureItem>
+              ))}
+            </Features>
+          )}
+        </AnimatePresence>
       </Body>
     </ContainerCard>
   )

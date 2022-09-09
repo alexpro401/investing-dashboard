@@ -1,4 +1,4 @@
-import { FC, useState, useCallback } from "react"
+import { FC, useState, useCallback, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { Flex } from "theme"
 import { useWeb3React } from "@web3-react/core"
@@ -7,7 +7,6 @@ import { PulseSpinner } from "react-spinners-kit"
 
 import Button from "components/Button"
 import Avatar from "components/Avatar"
-import Header from "components/Header/Layout"
 import AddressChips from "components/AddressChips"
 import Input from "components/Input"
 import IconButton from "components/IconButton"
@@ -47,7 +46,6 @@ import FundTypeCard from "./FundTypeCard"
 import FeeCard from "./FeeCard"
 
 import {
-  Container,
   Body,
   Steps,
   Step,
@@ -66,7 +64,11 @@ const deployMethodByType = {
   investment: "deployInvestPool",
 }
 
-const CreateFund: FC = () => {
+interface Props {
+  presettedFundType?: "basic" | "investment" | "daoPool"
+}
+
+const CreateFund: FC<Props> = ({ presettedFundType = "basic" }) => {
   const {
     handleChange,
     handleValidate,
@@ -354,6 +356,10 @@ const CreateFund: FC = () => {
     />
   )
 
+  useEffect(() => {
+    handleChange("fundType", presettedFundType)
+  }, [handleChange, presettedFundType])
+
   return (
     <>
       {!!steps.length && (
@@ -446,38 +452,9 @@ const CreateFund: FC = () => {
           </Step>
           <Step>
             <HeaderStep
-              title="Type of fund"
-              description="This settings can not be changed afrer creation"
-              index="2"
-            />
-            <StepBody>
-              <FundTypeCards>
-                <FundTypeCard
-                  name="basic"
-                  selected={fundType}
-                  label="Standard - Low risk"
-                  description="Trading on assets from the white list
-                  + non-whitelisted assets through the proposals..."
-                  link="Read More"
-                  handleSelect={(value: any) => handleChange("fundType", value)}
-                />
-                <FundTypeCard
-                  name="investment"
-                  selected={fundType}
-                  label="Investment - High risk "
-                  description="Manage the assets on your own..
-                  Manage the assets on your own..."
-                  link="Read More"
-                  handleSelect={(value: any) => handleChange("fundType", value)}
-                />
-              </FundTypeCards>
-            </StepBody>
-          </Step>
-          <Step>
-            <HeaderStep
               title="Investment"
               description="This settings can be changed in account ater"
-              index="3"
+              index="2"
             />
             <StepBody>
               <SwitchRow
@@ -552,7 +529,7 @@ const CreateFund: FC = () => {
             <HeaderStep
               title="Fund Details"
               description="This settings can be changed in account ater"
-              index="4"
+              index="3"
             />
             <StepBody>
               <Flex full p="12px 0">
@@ -577,7 +554,7 @@ const CreateFund: FC = () => {
             <HeaderStep
               title="Management Fee"
               description="This settings can not be changed afrer creation"
-              index="5"
+              index="4"
             />
             <StepBody isLast>
               <FeeCards>

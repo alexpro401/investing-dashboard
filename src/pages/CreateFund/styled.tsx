@@ -24,3 +24,8 @@ export const FundTypeCardsTitle = styled.h3`
   color: #e4f2ff;
   font-weight: 700;
 `
+
+export const CreateFundDocsBlock = styled.div`
+  background: #141926;
+  border-radius: 20px;
+`

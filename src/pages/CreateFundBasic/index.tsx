@@ -11,7 +11,7 @@ const CreateFundDaoPool: FC = () => {
       <Header>Create Fund basic</Header>
       <Container>
         <CreateFundContext>
-          <CreateFundForm />
+          <CreateFundForm presettedFundType="basic" />
         </CreateFundContext>
       </Container>
     </>
