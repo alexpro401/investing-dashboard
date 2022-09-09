@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, ReactNode } from "react"
 import { Flex } from "theme"
 import { useWeb3React } from "@web3-react/core"
 
@@ -29,6 +29,7 @@ import { useUserMetadata } from "state/ipfsMetadata/hooks"
 
 interface Props {
   account: string | null | undefined
+  children?: ReactNode
 }
 
 const useInvestorMobile = (): [

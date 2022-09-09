@@ -6,8 +6,6 @@ const useDefaultConnector = (isTried: boolean) => {
   const { activate, account } = useWeb3React()
   const [isActivated, setActivated] = useState(false)
 
-  // console.log(account)
-
   const activateProvider = useCallback(() => {
     if (!activate) return
     if (!!account) return

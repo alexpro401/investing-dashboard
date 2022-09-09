@@ -3,8 +3,9 @@ import TooltipIcon from "assets/icons/TooltipIcon"
 import styled, { createGlobalStyle } from "styled-components"
 import TooltipSmall from "assets/icons/TooltipSmall"
 import { GradientBorderBase } from "theme"
+import { ReactNode } from "react"
 
-const TooltipStyles = createGlobalStyle`
+const TooltipStyles: any = createGlobalStyle`
   button {
     padding: 0;
   }
@@ -81,7 +82,7 @@ const TooltipContent = styled.div``
 
 interface Props {
   id: string
-  children?: any
+  children?: ReactNode
   size?: "normal" | "small"
 }
 

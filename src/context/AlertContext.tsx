@@ -36,7 +36,7 @@ export const AlertContextProvider =
 export const useAlertContext = () => React.useContext(AlertContextProvider)
 
 class AlertContext extends React.Component<{
-  children: React.ReactNode
+  children?: React.ReactNode
 }> {
   static contextType = AlertContextProvider
 

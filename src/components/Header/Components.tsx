@@ -1,7 +1,7 @@
 /**
  * Components which are used in Header
  */
-import { Dispatch, SetStateAction, FC } from "react"
+import { Dispatch, SetStateAction, FC, ReactNode } from "react"
 import { ITopMembersFilters } from "interfaces"
 import IconSearch from "components/IconSearch"
 
@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom"
 
 interface IFiltersProps {
   onClick: () => void
+  children?: ReactNode
 }
 export const Filters: FC<IFiltersProps> = ({ onClick, children }) => {
   return (

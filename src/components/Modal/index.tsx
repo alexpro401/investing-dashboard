@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, ReactNode } from "react"
 import { createPortal } from "react-dom"
 import closeIcon from "assets/icons/close-gray.svg"
 import { Container, Overlay, Head, Title, Close } from "./styled"
@@ -9,6 +9,7 @@ interface Props {
   isOpen: boolean
   toggle: () => void
   title: string
+  children?: ReactNode
 }
 
 const Modal: FC<Props> = ({ children, isOpen, toggle, title }) => {

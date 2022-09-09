@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { ReactNode, useContext } from "react"
 import { motion } from "framer-motion"
 import styled from "styled-components"
 
@@ -157,7 +157,7 @@ const Group = styled.div`
   justify-content: space-around;
 `
 
-const Text: React.FC<{ children: React.ReactChild }> = ({ children }) => {
+const Text: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const menu = useContext(MenuContext)
   const isVisible = menu && menu.open
 

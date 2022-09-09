@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, ReactNode } from "react"
 import Confirm from "components/Confirm"
 import Wow from "assets/transaction-sent-icons/wow.svg"
 import { Body, WowImg, Text, ButtonsContainer } from "./styled"
@@ -8,6 +8,7 @@ interface TransactionSentProps {
   description: string
   isOpen: boolean
   toggle: () => void
+  children?: ReactNode
 }
 
 const TransactionSent: FC<TransactionSentProps> = ({

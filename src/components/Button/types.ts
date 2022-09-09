@@ -1,4 +1,4 @@
-import { MouseEvent } from "react"
+import { MouseEvent, ReactNode } from "react"
 
 export type ButtonThemeType = "primary" | "warn" | "disabled"
 
@@ -14,4 +14,5 @@ export interface MainButtonProps extends ButtonBaseProps {
   fz?: number
   full?: boolean
   disabled?: boolean
+  children?: ReactNode
 }

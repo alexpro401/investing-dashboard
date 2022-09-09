@@ -15,7 +15,7 @@ export const WalletContext = React.createContext<IContext>(defaultContext)
 export const useConnectWalletContext = () => React.useContext(WalletContext)
 
 class ConnectWalletContext extends React.Component<{
-  children: React.ReactNode
+  children?: React.ReactNode
 }> {
   static contextType = WalletContext
 

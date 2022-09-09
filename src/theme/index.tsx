@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import styled, { css } from "styled-components"
 import { motion } from "framer-motion"
 import { createBreakpoint } from "react-use"
+import { ReactNode } from "react"
 
 export const ease = [0.29, 0.98, 0.29, 1]
 
@@ -246,6 +247,7 @@ export const GradientBorderLightGreen = styled(Flex)<{ focused?: boolean }>`
 
 export const External: React.FC<{
   href: string
+  children?: ReactNode
 }> = ({ href, children }) => (
   <ExternalLink href={href} target="_blank" rel="noopener noreferrer">
     {children}

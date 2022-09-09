@@ -27,6 +27,7 @@ const Popover: React.FC<{
   toggle: (state: boolean) => void
   contentHeight: number
   noDrag?: boolean
+  children?: ReactNode
 }> = ({ title, children, isOpen, toggle, contentHeight, noDrag }) => {
   const [isDragging, setDragging] = useState(false)
   const containerRef = useRef<HTMLDivElement | null>(null)

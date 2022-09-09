@@ -128,6 +128,7 @@ export const LabelText = styled(Flex)`
 interface Props {
   icon: ReactNode
   right?: ReactNode
+  children?: ReactNode
 }
 export const Label: FC<Props> = ({ icon, right, children }) => {
   return (

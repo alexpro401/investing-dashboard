@@ -10,6 +10,7 @@ interface Props {
   left?: ReactNode
   right?: ReactNode
   tabs?: ITab[]
+  children?: ReactNode
 }
 
 const Layout: FC<Props> = ({ children, left, right, tabs }) => {

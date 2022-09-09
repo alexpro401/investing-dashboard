@@ -32,7 +32,7 @@ const fundTypes = {
 interface Props {
   pool: IPoolQuery
   poolInfo: IPoolInfo | null
-  children?: ReactNode | null
+  children?: ReactNode
 }
 
 const FundDetailsCard: FC<Props> = ({ pool, poolInfo, children = null }) => {

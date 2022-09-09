@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, ReactNode } from "react"
 import Compressor from "compressorjs"
 import ImageCropper from "modals/ImageCropper"
 import defaultAvatar from "assets/icons/default-avatar.svg"
@@ -39,6 +39,7 @@ interface Props {
   m?: string
   showUploader?: boolean
   onCrop?: any
+  children?: ReactNode
 }
 
 const Avatar: React.FC<Props> = ({

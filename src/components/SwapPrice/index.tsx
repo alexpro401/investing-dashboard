@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, ReactNode } from "react"
 import { Flex } from "theme"
 import { BigNumber } from "@ethersproject/bignumber"
 import { formatUnits } from "@ethersproject/units"
@@ -27,6 +27,7 @@ interface Props {
   usdCost?: BigNumber
   gasPrice: string
   isExpandable?: boolean
+  children?: ReactNode
 }
 
 const SwapPrice: React.FC<Props> = ({
