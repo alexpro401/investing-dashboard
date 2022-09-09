@@ -93,6 +93,9 @@ export interface DividendToken {
   address: string
   amount: BigNumber
   allowance: BigNumber
+  data: Token
+  price: BigNumber
+  balance: BigNumber
 }
 
 export interface ITokenBase {

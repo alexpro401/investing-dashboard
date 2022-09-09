@@ -1,5 +1,5 @@
 import { ReactNode } from "react"
-import { TokenData } from "constants/types"
+import { Token } from "interfaces"
 import { BigNumber } from "@ethersproject/bignumber"
 
 /// @notice The enum of exchange types
@@ -23,8 +23,8 @@ interface FormElement {
 export interface RiskyInvestInfo {
   stakeLimit: BigNumber | undefined
   tokens: {
-    base: TokenData | null
-    position: TokenData | null
+    base: Token | null
+    position: Token | null
   }
   amounts: BigNumber[]
   avgBuyingPrice: BigNumber

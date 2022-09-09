@@ -15,8 +15,7 @@ import {
 } from "abi"
 import { getBalanceOf, getContract } from "utils/getContract"
 import { useActiveWeb3React } from "hooks"
-import { ITokenBase } from "interfaces"
-import { TokenData } from "constants/types"
+import { ITokenBase, Token } from "interfaces"
 import { isAddress } from "utils"
 import { useSelector } from "react-redux"
 import {
@@ -56,7 +55,7 @@ export default function useContract(
 
 export function useERC20(
   address: string | undefined
-): [Contract | null, TokenData | null, BigNumber, () => void] {
+): [Contract | null, Token | null, BigNumber, () => void] {
   const { account, library } = useActiveWeb3React()
 
   const [storedAddress, setAddress] = useState("")
