@@ -73,7 +73,7 @@ const WithdrawalHistory: FC<IProps> = ({ payload, ...rest }) => {
         <S.Container {...rest}>
           <div>
             <S.Date>{creationDate}</S.Date>
-            <S.PNL amount={Number(pnl)}>
+            <S.PNL value={pnl}>
               {getPnlSymbol(Number(pnl))}
               {pnl} %
             </S.PNL>

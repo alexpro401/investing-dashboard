@@ -1,14 +1,5 @@
 import styled from "styled-components"
-
-function getPnlColor(amount: number): string {
-  if (amount > 0) {
-    return "#9ae2cb"
-  }
-  if (amount < 0) {
-    return "red"
-  }
-  return "gray"
-}
+import { ColorizedNumber } from "theme"
 
 const Styled = {
   Container: styled.div<{ m?: string }>`
@@ -26,14 +17,13 @@ const Styled = {
     font-feature-settings: "tnum" on, "lnum" on;
     color: #788ab4;
   `,
-  PNL: styled.div<{ amount: number }>`
+  PNL: styled(ColorizedNumber)`
     margin-top: 2px;
     font-family: "Gilroy";
     font-style: normal;
     font-weight: 600;
     font-size: 13px;
     line-height: 16px;
-    color: ${(props) => getPnlColor(props.amount)};
   `,
   Link: styled.a`
     display: block;
