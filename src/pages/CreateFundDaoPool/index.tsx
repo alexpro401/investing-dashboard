@@ -7,7 +7,14 @@ const CreateFundDaoPool: FC = () => {
   return (
     <>
       <Header>Create DAO</Header>
-      <Container>DAO</Container>
+      <Container
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        DAO
+      </Container>
     </>
   )
 }

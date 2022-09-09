@@ -1,6 +1,7 @@
 import Header from "components/Header/Layout"
-import FundTypeCard from "./FundTypeCard"
 import Button from "components/Button"
+import Icon from "components/Icon"
+import FundTypeCard from "./FundTypeCard"
 
 import { FC, useState } from "react"
 import {
@@ -8,9 +9,15 @@ import {
   FundTypeCards,
   FundTypeCardsTitle,
   CreateFundDocsBlock,
+  CreateFundDocsBlockTitle,
+  CreateFundDocsBlockLink,
+  CreateFundDocsImg,
+  HighlightDecor,
+  CreateFundDocsBlockCloseBtn,
 } from "./styled"
 import { Flex } from "theme"
 import { useNavigate } from "react-router-dom"
+import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 
 enum FUND_TYPES {
   basic = "basic",
@@ -20,6 +27,7 @@ enum FUND_TYPES {
 
 const CreateFund: FC = () => {
   const [fundType, setFundType] = useState(FUND_TYPES.basic)
+  const [isShowDocs, setIsShowDocs] = useState(true)
 
   const navigate = useNavigate()
 
@@ -37,8 +45,27 @@ const CreateFund: FC = () => {
   return (
     <>
       <Header>Create Fund</Header>
-      <Container>
-        <CreateFundDocsBlock>Hello world</CreateFundDocsBlock>
+      <Container
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        {isShowDocs && (
+          <CreateFundDocsBlock>
+            <HighlightDecor />
+            <CreateFundDocsBlockTitle>
+              See the documentation of various pools and key details.
+            </CreateFundDocsBlockTitle>
+            <CreateFundDocsBlockLink>
+              Read the documentation
+            </CreateFundDocsBlockLink>
+            <CreateFundDocsImg src={CreateFundDocsImage} />
+            <CreateFundDocsBlockCloseBtn onClick={() => setIsShowDocs(false)}>
+              <Icon />
+            </CreateFundDocsBlockCloseBtn>
+          </CreateFundDocsBlock>
+        )}
         <FundTypeCards>
           <FundTypeCardsTitle>Create your own fund</FundTypeCardsTitle>
           <FundTypeCard
