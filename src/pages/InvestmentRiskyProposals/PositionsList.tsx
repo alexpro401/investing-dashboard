@@ -5,6 +5,7 @@ import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { useActiveWeb3React } from "hooks"
 import { RiskyPositionsQuery } from "queries"
+import { prepareRiskyPositions } from "utils"
 import { usePoolContract } from "hooks/usePool"
 import useQueryPagination from "hooks/useQueryPagination"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
@@ -75,29 +76,10 @@ const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
     [activePools, closed]
   )
 
-  const prepareNewData = (d): IRiskyPositionCard[] =>
-    d.proposalPositions.map((p) => {
-      console.log(p)
-      const position = {
-        ...p,
-        token: p.proposal.token,
-        pool: p.proposal.basicPool,
-        exchanges: p.proposal.exchanges.reduce((acc, e) => {
-          if (e.exchanges && e.exchanges.length > 0) {
-            return [...acc, ...e.exchanges]
-          }
-          return acc
-        }, []),
-      }
-      delete position.proposal
-
-      return position
-    })
-
   const [{ data, loading }, fetchMore] = useQueryPagination(
     RiskyPositionsQuery,
     variables,
-    prepareNewData
+    prepareRiskyPositions
   )
 
   const loader = useRef<any>()
