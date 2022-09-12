@@ -2,13 +2,15 @@ import { useQuery } from "urql"
 import { useEffect, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
+import useError from "hooks/useError"
 import { PositionsByIdsQuery } from "queries"
-import { usePriceFeedContract } from "hooks/useContract"
 import { addBignumbers } from "utils/formulas"
+import { usePriceFeedContract } from "hooks/useContract"
 
 /**
  * Hook get pool positions, fetch positions tokens and prices of locked tokens in USD
  * @param poolAddress address of pool
+ * @param positionAmountsMap amounts of open positions
  * @param positions addresses of open positions
  */
 const useOpenPositionsPriceOutUSD = (
@@ -16,6 +18,7 @@ const useOpenPositionsPriceOutUSD = (
   positionAmountsMap?: any,
   positions?: string[]
 ) => {
+  const [, setError] = useError()
   const priceFeed = usePriceFeedContract()
 
   const [outUSDVolume, setOutUSD] = useState<BigNumber>(BigNumber.from(0))
@@ -84,6 +87,18 @@ const useOpenPositionsPriceOutUSD = (
       }
     })()
   }, [data, fullData, loading, priceFeed, positionAmountsMap])
+
+  // Clear error state
+  useEffect(() => {
+    return () => setError("")
+  }, [setError])
+
+  // Set error
+  useEffect(() => {
+    if (!loading && !!positions && error && error.message) {
+      setError(error.message)
+    }
+  }, [loading, positions, error, setError])
 
   return outUSDVolume
 }
