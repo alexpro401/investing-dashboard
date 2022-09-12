@@ -124,7 +124,7 @@ export default class AddressChips extends React.Component<
   }
 
   render() {
-    const { items, limit, readonly, label, customBg } = this.props
+    const { items, readonly, label, customBg } = this.props
     const { error } = this.state
     return (
       <Container

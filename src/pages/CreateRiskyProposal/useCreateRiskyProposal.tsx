@@ -52,7 +52,7 @@ const useCreateRiskyProposal = (
 
   const basicTraderPool = useBasicPoolContract(poolAddress)
   const traderPool = useTraderPool(poolAddress)
-  const [error, setError] = useError()
+  const [, setError] = useError()
   const [isSubmiting, setSubmiting] = usePayload()
 
   const [totalProposals, setTotalProposals] = useState<number>(0)
