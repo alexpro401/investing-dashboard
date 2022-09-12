@@ -755,13 +755,6 @@ export const DotsWrapper = styled(Flex)`
   justify-content: space-around;
 `
 
-const types = {
-  CHECKED: "#F7F7F7",
-  DEFAULT: "#8F90A0",
-  ACTIVE: "#35FFD1",
-  NEXT: "#4D9693",
-}
-
 const background = {
   CHECKED: "#889393",
   DEFAULT: "#636A77",

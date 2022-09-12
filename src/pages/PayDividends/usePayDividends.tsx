@@ -152,6 +152,7 @@ const usePayDividends = (
     ]
   )
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const removeTokenFromList = useCallback(
     (tokenAddress: string) => {
       setDividendTokens(
@@ -199,7 +200,7 @@ const usePayDividends = (
     if (!investProposal) return
 
     try {
-      const response = await investProposal.supply(
+      await investProposal.supply(
         Number(proposalId) + 1,
         dividendAmounts,
         dividendTokens

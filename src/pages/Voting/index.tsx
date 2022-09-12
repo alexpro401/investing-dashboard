@@ -32,7 +32,7 @@ const confirmStates = {
 
 const Voting = () => {
   const [votingState, setVotingState] = useState<"" | "up" | "down">("")
-  const [pendingState, setPendingState] = useState(SubmitState.IDLE)
+  const [, setPendingState] = useState(SubmitState.IDLE)
   const [successState, setSuccessState] = useState(false)
   const isOpen = votingState !== ""
 
