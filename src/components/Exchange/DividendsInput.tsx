@@ -41,49 +41,43 @@ const DividendsInput: React.FC<Props> = ({ tokens, onChange, onSelect }) => {
 
   return (
     <InputContainer height="fit-content">
-      {tokens.map(
-        ({ address, amount, data, price, balance, allowance }, index) => {
-          return (
-            <Fragment key={address}>
-              <InputTop>
-                <Price>≈${formatBigNumber(price, 18, 2)} </Price>
+      {tokens.map(({ address, amount, data, price, balance }, index) => {
+        return (
+          <Fragment key={address}>
+            <InputTop>
+              <Price>≈${formatBigNumber(price, 18, 2)} </Price>
 
-                <Balance onClick={() => setMaxAmount(index)}>
-                  <Tokens>{formatBigNumber(balance, data.decimals, 6)}</Tokens>
-                  <Max>Max</Max>
-                </Balance>
-              </InputTop>
+              <Balance onClick={() => setMaxAmount(index)}>
+                <Tokens>{formatBigNumber(balance, data.decimals, 6)}</Tokens>
+                <Max>Max</Max>
+              </Balance>
+            </InputTop>
 
-              <InputBottom>
-                <BigNumberInput
-                  decimals={data.decimals || 18}
-                  onChange={(value) => handleInputChange(value, index)}
-                  value={cutDecimalPlaces(
-                    amount,
-                    data.decimals,
-                    false,
-                    6
-                  ).toString()}
-                  renderInput={(props: any) => (
-                    <Input
-                      disabled={!onChange}
-                      inputMode="decimal"
-                      {...props}
-                    />
-                  )}
-                />
+            <InputBottom>
+              <BigNumberInput
+                decimals={data.decimals || 18}
+                onChange={(value) => handleInputChange(value, index)}
+                value={cutDecimalPlaces(
+                  amount,
+                  data.decimals,
+                  false,
+                  6
+                ).toString()}
+                renderInput={(props: any) => (
+                  <Input disabled={!onChange} inputMode="decimal" {...props} />
+                )}
+              />
 
-                <ActiveSymbol onClick={() => onSelect(index)}>
-                  <TokenIcon m="0" address={address} size={26} />
-                  <SymbolLabel>{data.symbol}</SymbolLabel>
-                  <Icon src={angleIcon} />
-                </ActiveSymbol>
-              </InputBottom>
-              <ButtonDivider />
-            </Fragment>
-          )
-        }
-      )}
+              <ActiveSymbol onClick={() => onSelect(index)}>
+                <TokenIcon m="0" address={address} size={26} />
+                <SymbolLabel>{data.symbol}</SymbolLabel>
+                <Icon src={angleIcon} />
+              </ActiveSymbol>
+            </InputBottom>
+            <ButtonDivider />
+          </Fragment>
+        )
+      })}
       <AddButton onClick={() => onSelect(-1)}>+ Add more tokens</AddButton>
     </InputContainer>
   )
