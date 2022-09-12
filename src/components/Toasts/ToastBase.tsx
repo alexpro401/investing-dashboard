@@ -28,9 +28,18 @@ const ToastBase: React.FC<IProps> = ({
   onClose = () => {},
   visible,
 }) => {
+  const handleDragEnd = (e, info) => {
+    if (info.point.y > 65) {
+      onClose()
+    }
+  }
+
   return (
     <>
       <Container
+        drag="x"
+        dragConstraints={{ left: 0, right: 10, top: 0, bottom: 0 }}
+        onDragEnd={handleDragEnd}
         animate={visible ? "visible" : "hidden"}
         initial="hidden"
         variants={{
@@ -38,7 +47,7 @@ const ToastBase: React.FC<IProps> = ({
             x: 0,
           },
           hidden: {
-            x: "100vw",
+            x: window.innerWidth,
           },
         }}
       >
