@@ -357,7 +357,7 @@ const FundDetailsEdit: FC = () => {
           const addReceipt = await handleInvestorsAdd()
 
           if (isTxMined(addReceipt)) {
-            investorsRemoveCallback()
+            investorsAddCallback()
             investorsSuccess = true
           }
         }
