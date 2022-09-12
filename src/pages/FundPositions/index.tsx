@@ -10,7 +10,6 @@ import S from "./styled"
 
 const AllPoolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-  requestPolicy: "network-only", // disable urql cache
 })
 
 const FundPositions = () => {

@@ -17,7 +17,6 @@ import S from "./styled"
 
 const poolClient = createClient({
   url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
-  requestPolicy: "network-only", // disable urql cache
 })
 
 interface IProps {

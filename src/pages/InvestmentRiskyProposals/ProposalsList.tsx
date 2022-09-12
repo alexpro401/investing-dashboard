@@ -17,7 +17,6 @@ import S from "./styled"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
-  requestPolicy: "network-only", // disable urql cache
 })
 
 interface IRiskyCardInitializer {
@@ -80,7 +79,10 @@ interface IProps {
 const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
   const { account } = useActiveWeb3React()
 
-  const variables = useMemo(() => ({ activePools }), [activePools])
+  const variables = useMemo(
+    () => ({ activePools: activePools ?? [] }),
+    [activePools]
+  )
 
   const prepareNewData = (d) =>
     d.proposals.map((p) => ({

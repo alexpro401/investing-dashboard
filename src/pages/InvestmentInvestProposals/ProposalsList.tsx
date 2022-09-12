@@ -15,7 +15,6 @@ import S from "./styled"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",
-  requestPolicy: "network-only",
 })
 
 interface IInvestProposalCardInitializer {

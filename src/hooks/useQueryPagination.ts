@@ -8,7 +8,7 @@ import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
 
 const useQueryPagination = (
   query,
-  variables = {},
+  variables,
   prepareNewData: (d: any) => any,
   limit = DEFAULT_PAGINATION_COUNT,
   initialOffset = 0
@@ -19,7 +19,8 @@ const useQueryPagination = (
 
   const [{ fetching, data, error }] = useQuery({
     query,
-    variables: { limit, offset, ...variables },
+    variables: { limit, offset, ...(variables ?? {}) },
+    requestPolicy: "network-only", // disable "urql" library cache
   })
 
   const prevFetching = usePrevious(fetching)
@@ -60,10 +61,10 @@ const useQueryPagination = (
 
   // Set error
   useEffect(() => {
-    if (!fetching && error && error.message) {
+    if (!fetching && !!variables && error && error.message) {
       setError(error.message)
     }
-  }, [fetching, error, setError])
+  }, [fetching, variables, error, setError])
 
   return [
     { data: result, error, loading: fetching },

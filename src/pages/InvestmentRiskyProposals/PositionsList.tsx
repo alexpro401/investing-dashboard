@@ -17,7 +17,6 @@ import S from "./styled"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
-  requestPolicy: "network-only",
 })
 
 interface IRiskyCardInitializer {
