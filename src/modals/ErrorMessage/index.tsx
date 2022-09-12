@@ -9,7 +9,7 @@ import warn from "assets/icons/warn-big.svg"
 
 import { Icon, Text } from "./styled"
 
-const TransactionError: FC = () => {
+const ErrorMessage: FC = () => {
   const [error, updateError] = useError()
 
   const closeModal = useCallback(() => {
@@ -27,4 +27,4 @@ const TransactionError: FC = () => {
   )
 }
 
-export default TransactionError
+export default ErrorMessage
