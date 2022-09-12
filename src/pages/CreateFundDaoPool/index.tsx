@@ -1,20 +1,21 @@
 import Header from "components/Header/Layout"
+import CreateFundDaoForm from "forms/CreateFundDaoForm"
 
 import { FC } from "react"
-import { Container } from "./styled"
+import * as S from "./styled"
 
 const CreateFundDaoPool: FC = () => {
   return (
     <>
       <Header>Create DAO</Header>
-      <Container
+      <S.Container
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        DAO
-      </Container>
+        <CreateFundDaoForm />
+      </S.Container>
     </>
   )
 }
