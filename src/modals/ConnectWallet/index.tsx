@@ -23,6 +23,7 @@ import {
   WalletTitle,
 } from "./styled"
 import { createPortal } from "react-dom"
+import { activateInjectedProvider } from "utils/activateInjectedProvider"
 
 const modalRoot = document.getElementById("modal")
 
@@ -44,6 +45,10 @@ export default function ConnectWallet({ isOpen, onRequestClose, onConnect }) {
       provider.walletConnectProvider?.wc?.uri
     ) {
       provider.walletConnectProvider = undefined
+    }
+
+    if (name === "injected") {
+      activateInjectedProvider("MetaMask")
     }
 
     if (provider) {
