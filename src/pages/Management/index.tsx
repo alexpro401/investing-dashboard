@@ -313,7 +313,12 @@ function Management() {
         spender: account,
       })
 
-      if (isTxMined(receipt) && receipt!.logs.length) {
+      if (
+        !!receipt &&
+        isTxMined(receipt) &&
+        receipt.logs &&
+        receipt.logs.length
+      ) {
         setLoading(SubmitState.SUCCESS)
         await fetchAndUpdateAllowance()
       }
