@@ -55,7 +55,7 @@ const TransactionHistory: React.FC<IProps> = ({ open, setOpen }) => {
     [account, filter]
   )
 
-  const [{ data, error, loading }, fetchMore] = useQueryPagination(
+  const [{ data, loading }, fetchMore] = useQueryPagination(
     UserTransactionsQuery,
     variables,
     (d) => d.transactions

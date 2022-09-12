@@ -95,7 +95,7 @@ const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
       return position
     })
 
-  const [{ data, error, loading }, fetchMore] = useQueryPagination(
+  const [{ data, loading }, fetchMore] = useQueryPagination(
     RiskyPositionsQuery,
     variables,
     prepareNewData

@@ -68,7 +68,7 @@ const InvestmentInvestProposalsList: FC<IProps> = ({
       poolAddress: p.investPool.id,
     }))
 
-  const [{ data, error, loading }, fetchMore] = useQueryPagination(
+  const [{ data, loading }, fetchMore] = useQueryPagination(
     InvestorInvestProposalsQuery(invested),
     variables,
     normalizeCollection

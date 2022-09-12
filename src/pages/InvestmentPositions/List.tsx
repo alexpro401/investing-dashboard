@@ -25,7 +25,7 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
 
   const prepareNewData = (d) => d.investorPoolPositions
 
-  const [{ data, error, loading }, fetchMore] = useQueryPagination(
+  const [{ data, loading }, fetchMore] = useQueryPagination(
     InvestorPositionsQuery,
     variables,
     prepareNewData

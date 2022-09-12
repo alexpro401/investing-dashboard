@@ -60,7 +60,7 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
       return position
     })
 
-  const [{ data, error, loading }, fetchMore] = useQueryPagination(
+  const [{ data, loading }, fetchMore] = useQueryPagination(
     RiskyPositionsQuery,
     variables,
     prepareNewData
