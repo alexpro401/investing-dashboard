@@ -1,8 +1,11 @@
 import { FC, useMemo } from "react"
+import { Flex } from "theme"
+import { createClient, Provider as GraphProvider } from "urql"
 
 import Modal from "components/Modal"
 import Token from "components/Token"
 
+import Button from "components/Button"
 import {
   InfoRow,
   InfoGrey,
@@ -12,78 +15,107 @@ import {
 
 import Tile from "./Tile"
 import useRequestDividend from "./useRequestDividend"
+import { IRequestDividendsParams } from "./useRequestDividendsContext"
 import * as S from "./styled"
-import { Flex } from "theme"
-import { cutDecimalPlaces, fromBig } from "utils"
-import Button from "components/Button"
+import formatDistanceToNow from "date-fns/formatDistanceToNow"
+import format from "date-fns/format"
+import { DATE_TIME_FORMAT } from "constants/time"
+
+const investPoolsClient = createClient({
+  url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",
+})
+
+const investorsPoolsClient = createClient({
+  url: process.env.REACT_APP_INVESTORS_API_URL || "",
+})
 
 interface Props {
   isOpen: boolean
   onClose: () => void
+  params: IRequestDividendsParams
 }
 
-const RequestDividend: FC<Props> = ({ isOpen, onClose }) => {
-  const { token } = useRequestDividend(
-    "0x76fdc031b2d4107660618e66b0a367f9fd01aeb7",
-    "0"
-  )
+const RequestDividend: FC<Props> = ({ isOpen, onClose, params }) => {
+  const { token, info, claims, handleSubmit } = useRequestDividend({
+    ...params,
+    onClose,
+  })
 
   const proposalSize = useMemo(() => {
     return (
       <InfoRow>
         <InfoGrey>Your proposal size:</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>0</InfoWhite>
-          <InfoGrey>/0 WBNB</InfoGrey>
+          <InfoWhite>{info?.proposalSize.account}</InfoWhite>
+          <InfoGrey>
+            /{info?.proposalSize.total} {info?.baseSymbol}
+          </InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [info])
 
   const totalDividends = useMemo(() => {
     return (
       <Flex gap="4">
-        <InfoGrey>$3000</InfoGrey>
+        <InfoGrey>${info?.totalDividendsUSD}</InfoGrey>
       </Flex>
     )
-  }, [])
+  }, [info])
 
   const dividendsList = useMemo(() => {
-    return [
-      {
-        address: "0x8babbb98678facc7342735486c851abd7a0d17ca",
-        amount: "0",
-      },
-      {
-        address: "0xae13d989dac2f0debff460ac112a837c89baa7cd",
-        amount: "0",
-      },
-    ].map((p) => <Token key={p.address} data={p} />)
-  }, [])
+    if (!info || !info.dividends) return
+    return info.dividends.map((dividend) => (
+      <Token key={dividend.address} data={dividend} />
+    ))
+  }, [info])
 
   const lastWithdrawn = useMemo(() => {
+    if (!claims || !claims.length)
+      return (
+        <Flex gap="4">
+          <InfoWhite>-</InfoWhite>
+        </Flex>
+      )
+
     return (
       <Flex gap="4">
-        <InfoWhite>3 month ago</InfoWhite>
+        <InfoWhite>
+          {formatDistanceToNow(new Date(Number(claims[0].timestamp) * 1000))}{" "}
+          ago
+        </InfoWhite>
       </Flex>
     )
-  }, [])
+  }, [claims])
 
   const withdrawsList = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoWhite>Jun 12, 2022</InfoWhite>
+    if (!claims) return
+
+    return claims.map((claim) => (
+      <InfoRow key={claim.id}>
+        <InfoWhite>
+          {format(
+            new Date(Number(claims[0].timestamp) * 1000),
+            DATE_TIME_FORMAT
+          )}
+        </InfoWhite>
         <Flex gap="4">
           <InfoWhite>0</InfoWhite>
           <InfoGrey>USD</InfoGrey>
         </Flex>
       </InfoRow>
-    )
-  }, [])
+    ))
+  }, [claims])
 
   return (
     <Modal isOpen={isOpen} toggle={onClose} title="Request a dividend">
-      <Tile token={token} />
+      <GraphProvider value={investPoolsClient}>
+        <Tile
+          poolAddress={params.poolAddress}
+          proposalId={params.proposalId}
+          token={token}
+        />
+      </GraphProvider>
       <S.Body>
         {proposalSize}
         <InfoDropdown
@@ -102,7 +134,7 @@ const RequestDividend: FC<Props> = ({ isOpen, onClose }) => {
           m="10px 0 0"
           size="large"
           theme="primary"
-          onClick={() => {}}
+          onClick={handleSubmit}
           fz={22}
           full
         >
@@ -113,4 +145,12 @@ const RequestDividend: FC<Props> = ({ isOpen, onClose }) => {
   )
 }
 
-export default RequestDividend
+const RequestDividendWithProvider = (props) => {
+  return (
+    <GraphProvider value={investorsPoolsClient}>
+      <RequestDividend {...props} />
+    </GraphProvider>
+  )
+}
+
+export default RequestDividendWithProvider

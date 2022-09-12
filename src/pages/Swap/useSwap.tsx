@@ -537,6 +537,7 @@ const useSwap = ({
   useEffect(() => {
     if (!poolInfo) return
 
+    // TODO: check for zero values
     const share = divideBignumbers(
       [poolInfo.traderBase, 18],
       [poolInfo.totalPoolBase, 18]

@@ -174,6 +174,9 @@ export interface SupplyInvestProposalTransactionInfo {
   type: TransactionType.INVEST_PROPOSAL_SUPPLY
   amount: string
 }
+export interface ClaimInvestProposalTransactionInfo {
+  type: TransactionType.INVEST_PROPOSAL_CLAIM
+}
 
 export interface StakeInsuranceTransactionInfo {
   type: TransactionType.INSURANCE_STAKE
@@ -223,6 +226,7 @@ export type TransactionInfo =
   | DepositInvestProposalTransactionInfo
   | WithdrawInvestProposalTransactionInfo
   | SupplyInvestProposalTransactionInfo
+  | ClaimInvestProposalTransactionInfo
   | StakeInsuranceTransactionInfo
   | UnstakeInsuranceTransactionInfo
   | PrivacyPolicyAgreeTransactionInfo

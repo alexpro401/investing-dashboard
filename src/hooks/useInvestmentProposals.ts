@@ -1,3 +1,4 @@
+import { IInvestProposalRewards } from "./../interfaces/contracts/ITraderPoolInvestProposal"
 import { useEffect, useState, useCallback, useRef } from "react"
 import debounce from "lodash.debounce"
 
@@ -98,6 +99,27 @@ export function useActiveInvestmentsInfo(
   }, [proposal, index, account])
 
   return info
+}
+
+export function useRewards({ poolAddress, account, proposalId }) {
+  const [investProposal] = useInvestProposalContract(poolAddress)
+  const [rewards, setRewards] = useState<IInvestProposalRewards | undefined>()
+
+  const fetchAndUpdateData = useCallback(async () => {
+    if (!investProposal || !account || !proposalId) return
+
+    const data = await investProposal.getRewards(
+      [parseFloat(proposalId) + 1],
+      account
+    )
+    setRewards(data)
+  }, [account, investProposal, proposalId])
+
+  useEffect(() => {
+    fetchAndUpdateData().catch(console.log)
+  }, [fetchAndUpdateData])
+
+  return rewards
 }
 
 export default useInvestProposals

@@ -27,6 +27,7 @@ import {
   TransactionInfo,
   WithdrawInvestProposalTransactionInfo,
   SupplyInvestProposalTransactionInfo,
+  ClaimInvestProposalTransactionInfo,
 } from "state/transactions/types"
 import { formatBigNumber } from "utils"
 import { useERC20 } from "hooks/useContract"
@@ -259,6 +260,11 @@ const SupplyInvestProposalSummary: React.FC<{
 }> = ({ info: { amount } }) => {
   return <>Supply transaction completed. Tokens paid: {amount}</>
 }
+const ClaimInvestProposalSummary: React.FC<{
+  info: ClaimInvestProposalTransactionInfo
+}> = () => {
+  return <>Claim invest proposal dividends</>
+}
 
 const StakeInsuranceSummary: React.FC<{
   info: StakeInsuranceTransactionInfo
@@ -333,6 +339,8 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <WithdrawInvestProposalSummary info={info} />
     case TransactionType.INVEST_PROPOSAL_SUPPLY:
       return <SupplyInvestProposalSummary info={info} />
+    case TransactionType.INVEST_PROPOSAL_CLAIM:
+      return <ClaimInvestProposalSummary info={info} />
     case TransactionType.INSURANCE_STAKE:
       return <StakeInsuranceSummary info={info} />
     case TransactionType.INSURANCE_UNSTAKE:

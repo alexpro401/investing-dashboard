@@ -15,6 +15,7 @@ export const Container = styled(motion.div)`
   height: fit-content;
   z-index: 100;
   padding: 0;
+  max-width: 343px;
 `
 
 export const Overlay = styled(motion.div)`
