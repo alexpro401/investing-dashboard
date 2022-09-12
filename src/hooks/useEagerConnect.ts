@@ -1,3 +1,4 @@
+import { activateInjectedProvider } from "utils/activateInjectedProvider"
 import { useState, useEffect } from "react"
 import { useWeb3React } from "@web3-react/core"
 
@@ -17,8 +18,9 @@ export function useEagerConnect() {
     if (
       !!activeProviderName &&
       activeProviderName in connectorsByName &&
-      activeProviderName === "metamask"
+      activeProviderName === "injected"
     ) {
+      activateInjectedProvider("MetaMask")
       injected
         .isAuthorized()
         .then((isAuthorized) => {
