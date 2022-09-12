@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 import { Flex } from "theme"
 import { Container, Body, Content, Icon, Close } from "./styled"
 import IconButton from "components/IconButton"
@@ -28,8 +30,11 @@ const ToastBase: React.FC<IProps> = ({
   onClose = () => {},
   visible,
 }) => {
+  const [visibleX, setVisibleX] = useState(0)
+
   const handleDragEnd = (e, info) => {
-    if (info.point.y > 65) {
+    if (info.point.y > 75) {
+      setVisibleX(window.innerWidth)
       onClose()
     }
   }
@@ -38,13 +43,13 @@ const ToastBase: React.FC<IProps> = ({
     <>
       <Container
         drag="x"
-        dragConstraints={{ left: 0, right: 10, top: 0, bottom: 0 }}
+        dragConstraints={{ left: 0, right: 5, top: 0, bottom: 0 }}
         onDragEnd={handleDragEnd}
         animate={visible ? "visible" : "hidden"}
         initial="hidden"
         variants={{
           visible: {
-            x: 0,
+            x: visibleX,
           },
           hidden: {
             x: window.innerWidth,
