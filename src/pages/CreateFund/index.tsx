@@ -18,6 +18,7 @@ import {
 import { Flex } from "theme"
 import { useNavigate } from "react-router-dom"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
+import chipsCloseSvg from "assets/icons/chips-close.svg"
 
 enum FUND_TYPES {
   basic = "basic",
@@ -62,7 +63,7 @@ const CreateFund: FC = () => {
             </CreateFundDocsBlockLink>
             <CreateFundDocsImg src={CreateFundDocsImage} />
             <CreateFundDocsBlockCloseBtn onClick={() => setIsShowDocs(false)}>
-              <Icon />
+              <Icon source={chipsCloseSvg} m={"0px"} size={20} />
             </CreateFundDocsBlockCloseBtn>
           </CreateFundDocsBlock>
         )}

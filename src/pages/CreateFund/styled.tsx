@@ -99,6 +99,11 @@ export const CreateFundDocsImg = styled.img`
 
 export const CreateFundDocsBlockCloseBtn = styled.button`
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 8px;
+  right: 4px;
+  background: none;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
