@@ -336,7 +336,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
       if (!poolAddress || !proposalId) return
       navigate(`/${t}-investment-proposal/${poolAddress}/${proposalId}`)
     },
-    [TerminalType, navigate, poolAddress, proposalId]
+    [navigate, poolAddress, proposalId]
   )
 
   // Actions

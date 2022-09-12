@@ -215,7 +215,7 @@ function Management() {
 
   const addTransaction = useTransactionAdder()
 
-  const fetchAndUpdateAllowance = async () => {
+  const fetchAndUpdateAllowance = useCallback(async () => {
     const allowance = await getAllowance(
       account,
       dexeAddress,
@@ -223,36 +223,36 @@ function Management() {
       library
     )
     setAllowance(allowance.toString())
-  }
+  }, [account, dexeAddress, insuranceAddress, library])
 
-  const fetchInsuranceAmountInUSD = async () => {
+  const fetchInsuranceAmountInUSD = useCallback(async () => {
     const price = await priceFeed?.getNormalizedPriceOutUSD(
       dexeAddress,
       insuranceAmount
     )
 
     setInsuranceAmountUSD(price[0])
-  }
+  }, [dexeAddress, insuranceAmount, priceFeed])
 
-  const fetchInsuranceBalance = async () => {
+  const fetchInsuranceBalance = useCallback(async () => {
     const userInsurance = await insurance?.getInsurance(account)
     setStakeAmount(userInsurance[0])
     setInsuranceAmount(userInsurance[1])
     await fetchInsuranceAmountInUSD()
-  }
+  }, [account, insurance, fetchInsuranceAmountInUSD])
 
   useEffect(() => {
     if (!insurance || !account) return
 
     fetchInsuranceBalance().catch(console.log)
-  }, [insurance, account])
+  }, [insurance, account, fetchInsuranceBalance])
 
   // update allowance
   useEffect(() => {
     if (!insuranceAddress || !dexeAddress || !account || !library) return
 
     fetchAndUpdateAllowance().catch(console.error)
-  }, [insuranceAddress, dexeAddress, account, library])
+  }, [insuranceAddress, dexeAddress, account, library, fetchAndUpdateAllowance])
 
   const handleSubmit = () => {
     setLoading(SubmitState.SIGN)

@@ -52,7 +52,7 @@ const useQueryPagination = (
   // Clear state when query or variables changed
   useEffect(() => {
     reset()
-  }, [query, variables])
+  }, [query, variables, reset])
 
   // Clear error state
   useEffect(() => {

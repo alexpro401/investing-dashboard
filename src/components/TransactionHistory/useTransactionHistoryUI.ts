@@ -37,7 +37,7 @@ function useTransactionHistoryUI(
     disableBodyScroll(scrollRef.current)
 
     return () => clearAllBodyScrollLocks()
-  }, [])
+  }, [scrollRef])
 
   useEffect(() => {
     if (!titleRef.current) return

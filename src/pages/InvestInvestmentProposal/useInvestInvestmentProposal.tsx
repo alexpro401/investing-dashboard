@@ -120,12 +120,15 @@ const useInvestInvestmentProposal = (
 
   const addTransaction = useTransactionAdder()
 
-  const poolIcon = (
-    <Icon
-      size={27}
-      source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
-      address={poolAddress}
-    />
+  const poolIcon = useMemo(
+    () => (
+      <Icon
+        size={27}
+        source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
+        address={poolAddress}
+      />
+    ),
+    [poolMetadata, poolAddress]
   )
 
   const info = useMemo(() => {
@@ -231,9 +234,7 @@ const useInvestInvestmentProposal = (
 
   const getDivestTokens = useCallback(
     async (amount: BigNumber): Promise<IDivestAmountsAndCommissions> => {
-      const divests: IDivestAmountsAndCommissions =
-        await traderPool?.getDivestAmountsAndCommissions(account, amount)
-      return divests
+      return traderPool?.getDivestAmountsAndCommissions(account, amount)
     },
     [account, traderPool]
   )
@@ -281,6 +282,8 @@ const useInvestInvestmentProposal = (
     fromAmount,
     addTransaction,
     runUpdate,
+    setError,
+    setWalletPrompting,
   ])
 
   const getPriceUSD = useCallback(

@@ -89,7 +89,10 @@ const useWithdrawInvestmentProposal = (
   const addTransaction = useTransactionAdder()
   const [{ userMetadata }] = useUserMetadata(profileURL)
 
-  const userIcon = <Avatar url={userAvatar} address={account} size={26} />
+  const userIcon = useMemo(
+    () => <Avatar url={userAvatar} address={account} size={26} />,
+    [userAvatar, account]
+  )
 
   const info = useMemo(() => {
     const expandedTimestampLimit = expandTimestamp(

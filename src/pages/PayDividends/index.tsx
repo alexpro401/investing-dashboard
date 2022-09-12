@@ -113,7 +113,7 @@ function PayDividends() {
         Pay dividends
       </Button>
     )
-  }, [handleSubmit, tokens])
+  }, [handleSubmit, updateAllowance, tokens])
 
   const lastDividends = useMemo(() => {
     return (
