@@ -1,6 +1,6 @@
 import { FC, ReactNode } from "react"
 import { Flex } from "theme"
-import * as S from "./styled"
+import * as S from "../styled"
 
 interface Props {
   icon: ReactNode

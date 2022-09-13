@@ -1,17 +1,17 @@
 import { FC, useContext, useState } from "react"
-import CreateDaoCardHead from "./CreateDaoCardHead"
-import CreateDaoCardStepNumber from "./CreateDaoCardStepNumber"
+import CreateDaoCardHead from "../components/CreateDaoCardHead"
+import CreateDaoCardStepNumber from "../components/CreateDaoCardStepNumber"
 
 import Icon from "components/Icon"
 import Switch from "components/Switch"
 import Input from "components/Input"
 import Avatar from "components/Avatar"
-import CreateDaoCardDescription from "./CreateDaoCardDescription"
+import CreateDaoCardDescription from "../components/CreateDaoCardDescription"
 import FileDock from "assets/icons/file-dock.svg"
 
 import { Flex } from "theme"
-import * as S from "./styled"
-import { FundDaoCreatingContext } from "./FundDaoCreatingContext"
+import * as S from "../styled"
+import { FundDaoCreatingContext } from "../../../context/FundDaoCreatingContext"
 
 const CreateFundDaoTitlesStep: FC = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>()
@@ -28,7 +28,7 @@ const CreateFundDaoTitlesStep: FC = () => {
   const fundDaoCreatingContext = useContext(FundDaoCreatingContext)
 
   return (
-    <Flex gap={"16"} dir={"column"} ai={"stretch"} p={"16px"}>
+    <Flex gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
       <S.CreateDaoCard>
         <CreateDaoCardHead
           icon={<CreateDaoCardStepNumber number={1} />}

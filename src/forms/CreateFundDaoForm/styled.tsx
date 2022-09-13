@@ -1,9 +1,12 @@
 import styled from "styled-components"
+import { Icon } from "common"
 
 export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
   margin: 0 auto;
   background-color: #040a0f;
-  width: fill-available;
+  width: 100%;
   height: calc(100vh - 94px);
   overflow-y: auto;
 
@@ -68,8 +71,43 @@ export const CreateFundDaoAvatarBtn = styled.button`
   margin-top: 8px;
 `
 
-export const CreateFundDaoStepsProgress = styled.div`
+export const CreateFundDaoStepsProgress = styled.div<{
+  progress: number
+}>`
+  position: relative;
   width: 100%;
   height: 1px;
   background: #293c54;
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: ${(props) => props.progress}%;
+    height: 1px;
+    background: #7fffd4;
+  }
+`
+
+export const StepsControllerButton = styled.button<{
+  isActive?: boolean
+}>`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  background: none;
+  color: ${(props) => (props.isActive ? "#7fffd4" : "#b1c7fc")};
+`
+
+export const RoundedIcon = styled(Icon)<{
+  isActive?: boolean
+}>`
+  padding: 5px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid ${(props) => (props.isActive ? "#7fffd4" : "#b1c7fc")};
+  color: ${(props) => (props.isActive ? "#7fffd4" : "#b1c7fc")};
 `

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { FundDaoStep } from "./FundDaoCreatingContext"
+import { FundDaoStep } from "../../context/FundDaoCreatingContext"
 
 export const useDaoPoolCreatingForm = (): {
   validatorsParams: {
