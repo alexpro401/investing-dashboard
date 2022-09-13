@@ -16,11 +16,13 @@ const Styled = {
       background: #181e2c;
     }
   `,
-  Head: styled(Flex)<{ isTrader?: boolean }>`
+  Head: styled(Flex)<{ isTrader: boolean | null }>`
     width: 100%;
     justify-content: space-between;
     padding: ${(props) =>
-      props.isTrader ? "8px 8px 7px 16px" : "8px 14px 7px 16px"};
+      props.isTrader || props.isTrader === null
+        ? "8px 8px 7px 16px"
+        : "8px 14px 7px 16px"};
     border-bottom: 1px solid #1d2635;
     position: relative;
   `,
