@@ -70,6 +70,7 @@ const RiskyProposalCard: FC<Props> = ({
     poolInfo?.parameters.descriptionURL
   )
 
+  const [tooltip, showTooltip] = useState(true)
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false)
 
   const [markPriceOpen, setMarkPriceOpen] = useState(BigNumber.from(0))
@@ -424,7 +425,10 @@ const RiskyProposalCard: FC<Props> = ({
                 <SharedS.Title>{proposalSymbol}</SharedS.Title>
                 <TraderRating rating={20} />
                 <Flex m="0 0 -5px">
-                  <Tooltip id="risky-proposal-rating-info" size="small">
+                  <Tooltip
+                    id={`risky-proposal-rating-info-${proposalId}-${poolAddress}`}
+                    size="small"
+                  >
                     Risky proposal rating info
                   </Tooltip>
                 </Flex>
@@ -529,7 +533,15 @@ const RiskyProposalCard: FC<Props> = ({
 
         {!isTrader && (
           <SharedS.Footer>
-            <Flex data-tip data-for={proposalId}>
+            <Flex
+              data-tip
+              data-for={`risky-proposal-trader-info-${proposalId}-${poolAddress}`}
+              onMouseEnter={() => showTooltip(true)}
+              onMouseLeave={() => {
+                showTooltip(false)
+                setTimeout(() => showTooltip(true), 50)
+              }}
+            >
               <SharedS.FundIconContainer>
                 <Icon
                   size={24}
@@ -537,10 +549,12 @@ const RiskyProposalCard: FC<Props> = ({
                   source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
                   address={poolAddress}
                 />
-                <TraderInfoBadge
-                  id={String(proposalId)}
-                  content="This is more than the average investment at risk proposals. Check on xxxxx what kind of token it is before trusting it."
-                />
+                {tooltip && (
+                  <TraderInfoBadge
+                    id={`risky-proposal-trader-info-${proposalId}-${poolAddress}`}
+                    content="This is more than the average investment at risk proposals. Check on xxxxx what kind of token it is before trusting it."
+                  />
+                )}
               </SharedS.FundIconContainer>
               <Flex dir="column" ai="flex-start" m="0 0 0 4px">
                 <SharedS.SizeTitle>
