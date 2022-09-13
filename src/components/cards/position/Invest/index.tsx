@@ -8,6 +8,7 @@ import { createClient, Provider as GraphProvider } from "urql"
 import { format } from "date-fns/esm"
 
 import { PriceFeed } from "abi"
+import { ZERO } from "constants/index"
 import { useActiveWeb3React } from "hooks"
 import { DATE_FORMAT } from "constants/time"
 import usePoolPrice from "hooks/usePoolPrice"
@@ -58,26 +59,22 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     return account === poolInfo.parameters.trader
   }, [account, poolInfo])
 
-  const [markPriceOpen, setMarkPriceOpenOpen] = useState(BigNumber.from(0))
+  const [markPriceOpen, setMarkPriceOpenOpen] = useState(ZERO)
   const markPriceOpenUSD = useTokenPriceOutUSD({
     tokenAddress: position.pool.token,
   })
-  const [pnlUSDCurrent, setPnlUSDCurrent] = useState<BigNumber>(
-    BigNumber.from("0")
-  )
+  const [pnlUSDCurrent, setPnlUSDCurrent] = useState<BigNumber>(ZERO)
   const [commissionUnlockTimestamp, setCommissionUnlockTimestamp] =
-    useState<BigNumber>(BigNumber.from("0"))
+    useState<BigNumber>(ZERO)
 
-  const [owedBaseCommission, setOwedBaseCommission] = useState<BigNumber>(
-    BigNumber.from("0")
-  )
+  const [owedBaseCommission, setOwedBaseCommission] = useState<BigNumber>(ZERO)
   const [commissionAmountUSD, setCommissionAmountUSD] = useState<{
     big: BigNumber
     format: string
-  }>({ big: BigNumber.from("0"), format: "0" })
+  }>({ big: ZERO, format: "0" })
 
   const [_totalAccountInvestedLP, _setTotalAccountInvestedLP] =
-    useState<BigNumber>(BigNumber.from("0"))
+    useState<BigNumber>(ZERO)
 
   const [showExtra, setShowExtra] = useState<boolean>(false)
   const [showPositions, setShowPositions] = useState<boolean>(false)
@@ -140,7 +137,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   }, [position])
 
   const entryPriceBase = useMemo<BigNumber>(() => {
-    if (!position) return BigNumber.from("0")
+    if (!position) return ZERO
 
     const baseFixed = FixedNumber.fromValue(position.totalBaseInvestVolume, 18)
     const lpFixed = FixedNumber.fromValue(position.totalLPInvestVolume, 18)
@@ -150,7 +147,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   }, [position])
 
   const entryPriceUSD = useMemo<BigNumber>(() => {
-    if (!position) return BigNumber.from("0")
+    if (!position) return ZERO
 
     const usdFixed = FixedNumber.fromValue(position.totalUSDInvestVolume, 18)
     const lpFixed = FixedNumber.fromValue(position.totalLPInvestVolume, 18)
@@ -160,7 +157,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   }, [position])
 
   const markPriceBase = useMemo(() => {
-    if (!position) BigNumber.from("0")
+    if (!position) ZERO
 
     const { isClosed, totalBaseDivestVolume, totalLPDivestVolume } = position
 
@@ -177,7 +174,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
 
   const markPriceUSD = useMemo(() => {
     if (!position) {
-      return BigNumber.from("0")
+      return ZERO
     }
 
     const { isClosed, totalUSDDivestVolume, totalLPDivestVolume } = position
@@ -195,7 +192,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
 
   const pnlPercentage = useMemo(() => {
     if (!markPriceBase || !entryPriceBase)
-      return { value: BigNumber.from("0"), normalized: "0" }
+      return { value: ZERO, normalized: "0" }
 
     const percentage = percentageOfBignumbers(markPriceBase, entryPriceBase)
     const resultFixed = FixedNumber.fromValue(percentage, 18).subUnsafe(
@@ -210,7 +207,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
 
   const pnlBase = useMemo(() => {
     if (!position || !pnlPercentage) {
-      return BigNumber.from("0")
+      return ZERO
     }
 
     const _pnlPercentage = FixedNumber.fromValue(pnlPercentage.value, 18)
@@ -235,7 +232,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   }, [pnlPercentage, position])
 
   const pnlUSD = useMemo(() => {
-    if (!position || !markPriceUSD || !entryPriceUSD) return BigNumber.from("0")
+    if (!position || !markPriceUSD || !entryPriceUSD) return ZERO
 
     if (!position.isClosed) {
       return pnlUSDCurrent
@@ -302,7 +299,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
       priceUSD.isZero() ||
       _totalAccountInvestedLP.isZero()
     ) {
-      return { big: BigNumber.from("0"), format: "0" }
+      return { big: ZERO, format: "0" }
     }
 
     const usd = FixedNumber.fromValue(priceUSD, 18)
@@ -323,7 +320,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     format: string
   }>(() => {
     if (!poolInfo || !priceUSD || priceUSD.isZero()) {
-      return { big: BigNumber.from("0"), format: "0" }
+      return { big: ZERO, format: "0" }
     }
 
     if (isTrader) {
@@ -404,7 +401,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
         )
 
         if (price?.amountOut) {
-          if (pnlBase.lt(BigNumber.from("0"))) {
+          if (pnlBase.lt(ZERO)) {
             const res = FixedNumber.fromValue(price.amountOut, 18).mulUnsafe(
               FixedNumber.from("-1")
             )

@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { BigNumber } from "@ethersproject/bignumber"
 
+import { ZERO } from "constants/index"
 import { getIpfsData } from "utils/ipfs"
 import { useActiveWeb3React } from "hooks"
 import usePoolPrice from "hooks/usePoolPrice"
@@ -91,7 +92,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   // Proposal data from proposals contract
   const [proposalId, setProposalId] = useState<string>("0")
   const [youSizeLP, setYouSizeLP] = useState<string>("0")
-  const [yourBalance, setYourBalance] = useState<BigNumber>(BigNumber.from("0"))
+  const [yourBalance, setYourBalance] = useState<BigNumber>(ZERO)
 
   // Pool base token ticker
   const baseTokenTicker = useMemo(() => {
@@ -109,9 +110,8 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   const proposalInfo = useInvestProposalData(
     String(proposalAddress + proposalId).toLowerCase()
   )
-  const [totalDividendsAmount, setTotalDividendsAmount] = useState<BigNumber>(
-    BigNumber.from("0")
-  )
+  const [totalDividendsAmount, setTotalDividendsAmount] =
+    useState<BigNumber>(ZERO)
 
   /**
    * Date of proposal expiration
@@ -126,7 +126,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   }>({
     value: "0",
     completed: false,
-    initial: BigNumber.from("0"),
+    initial: ZERO,
   })
 
   /**
@@ -135,7 +135,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   const [maxSizeLP, setMaxSizeLP] = useState<{
     value: BigNumber
     normalized: string
-  }>({ value: BigNumber.from("0"), normalized: "0" })
+  }>({ value: ZERO, normalized: "0" })
 
   /**
    * Supply
@@ -185,7 +185,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
       !totalDividendsAmount ||
       totalDividendsAmount.isZero()
     ) {
-      return BigNumber.from("0")
+      return ZERO
     }
 
     return percentageOfBignumbers(
