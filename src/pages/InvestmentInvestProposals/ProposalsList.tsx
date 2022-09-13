@@ -4,9 +4,9 @@ import { PulseSpinner } from "react-spinners-kit"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { InvestorInvestProposalsQuery } from "queries"
-import { InvestProposal } from "interfaces/thegraphs/invest-pools"
 import useQueryPagination from "hooks/useQueryPagination"
 import { useInvestProposalContract } from "hooks/useContract"
+import { InvestProposal } from "interfaces/thegraphs/invest-pools"
 
 import LoadMore from "components/LoadMore"
 import InvestProposalCard from "components/cards/proposal/Invest"

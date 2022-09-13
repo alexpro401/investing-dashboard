@@ -17,9 +17,9 @@ import { useActiveWeb3React } from "hooks"
 import usePoolPrice from "hooks/usePoolPrice"
 import { usePoolContract } from "hooks/usePool"
 import { DATE_TIME_FORMAT } from "constants/time"
-import { InvestProposal } from "interfaces/thegraphs/invest-pools"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import useInvestProposalData from "hooks/useInvestProposalData"
+import { InvestProposal } from "interfaces/thegraphs/invest-pools"
 import { addBignumbers, percentageOfBignumbers } from "utils/formulas"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import {
@@ -416,7 +416,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     if (isTrader === null) {
       return (
         <Flex>
-          <Skeleton m="0 4px 0 0" />
+          <Skeleton w="40px" m="0 4px 0 0" />
           <Skeleton variant="circle" />
         </Flex>
       )
@@ -454,7 +454,20 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
         <TokenIcon address={poolInfo?.parameters.baseToken} m="0" size={24} />
       </Flex>
     )
-  }, [isTrader])
+  }, [
+    expirationDate,
+    fullness,
+    isSettingsOpen,
+    isTrader,
+    maxSizeLP,
+    navigateToPool,
+    poolInfo,
+    proposal,
+    proposalId,
+    proposalPool,
+    ticker,
+    toggleSettings,
+  ])
 
   const body = useMemo(() => {
     if (isTrader === null) {
@@ -501,7 +514,25 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
         onInvest={() => onTerminalNavigate(TerminalType.Invest)}
       />
     )
-  }, [isTrader])
+  }, [
+    TerminalType,
+    APR,
+    baseTokenTicker,
+    dividendsAvailable,
+    expirationDate,
+    fullness,
+    invested,
+    isTrader,
+    maxSizeLP.normalized,
+    onTerminalNavigate,
+    priceUSD,
+    supply,
+    ticker,
+    totalDividendsAmount,
+    totalInvestors,
+    youSizeLP,
+    yourBalance,
+  ])
 
   return (
     <>
@@ -520,11 +551,24 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
             {headerRight}
           </S.Head>
           <S.Body>{body}</S.Body>
-          <S.ReadMoreContainer>
+          <S.ReadMoreContainer
+            color={
+              typeof description === "string" && description.length > 0
+                ? "#e4f2ff"
+                : "#414653"
+            }
+          >
             {description === null ? (
-              <Skeleton variant="rect" />
+              <Skeleton variant="rect" h="22px" />
             ) : (
-              <ReadMore content={description} maxLen={85} />
+              <ReadMore
+                content={
+                  description.length > 0
+                    ? description
+                    : "No description provided to proposal"
+                }
+                maxLen={85}
+              />
             )}
           </S.ReadMoreContainer>
         </S.Card>

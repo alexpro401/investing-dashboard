@@ -73,13 +73,13 @@ const Styled = {
     color: #788ab4;
     transform: translateY(2px);
   `,
-  ReadMoreContainer: styled.div`
+  ReadMoreContainer: styled.div<{ color: string }>`
     width: 100%;
     padding: 0 14px 16px 16px;
     font-weight: 400;
     font-size: 13px;
     line-height: 130%;
-    color: #e4f2ff;
+    color: ${(p) => p.color};
   `,
 }
 
