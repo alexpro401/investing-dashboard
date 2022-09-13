@@ -10,13 +10,13 @@ interface Props {
 
 const CreateDaoCardHead: FC<Props> = ({ icon, title, action }) => {
   return (
-    <Flex ai="center" jc="space-between" full>
+    <S.CreateDaoCardHead ai="center" jc="space-between" full>
       <Flex ai="center" gap="12">
         {icon}
         <S.CreateDaoCardTitle>{title}</S.CreateDaoCardTitle>
       </Flex>
       {action ? action : <></>}
-    </Flex>
+    </S.CreateDaoCardHead>
   )
 }
 

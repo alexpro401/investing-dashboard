@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import { Icon } from "common"
+import { Flex } from "../../theme"
 
 export const Container = styled.div`
   display: flex;
@@ -22,6 +23,10 @@ export const CreateDaoCard = styled.div`
   border-radius: 20px;
   padding: 16px;
   gap: 12px;
+`
+
+export const CreateDaoCardHead = styled(Flex)`
+  color: #e4f2ff;
 `
 
 export const CreateDaoCardTitle = styled.span`

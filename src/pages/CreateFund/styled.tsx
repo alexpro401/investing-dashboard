@@ -106,4 +106,5 @@ export const CreateFundDocsBlockCloseBtn = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #788ab4;
 `

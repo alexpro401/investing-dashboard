@@ -2,16 +2,16 @@ import { FC, useContext, useState } from "react"
 import CreateDaoCardHead from "../components/CreateDaoCardHead"
 import CreateDaoCardStepNumber from "../components/CreateDaoCardStepNumber"
 
-import Icon from "components/Icon"
+import { Icon } from "common"
 import Switch from "components/Switch"
 import Input from "components/Input"
 import Avatar from "components/Avatar"
 import CreateDaoCardDescription from "../components/CreateDaoCardDescription"
-import FileDock from "assets/icons/file-dock.svg"
 
 import { Flex } from "theme"
 import * as S from "../styled"
 import { FundDaoCreatingContext } from "../../../context/FundDaoCreatingContext"
+import { ICON_NAMES } from "../../../constants/icon-names"
 
 const CreateFundDaoTitlesStep: FC = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>()
@@ -56,7 +56,7 @@ const CreateFundDaoTitlesStep: FC = () => {
 
       <S.CreateDaoCard>
         <CreateDaoCardHead
-          icon={<Icon source={FileDock} m={"0"} />}
+          icon={<Icon name={ICON_NAMES.fileDock} />}
           title="DAO Name"
         />
         <CreateDaoCardDescription>
@@ -72,7 +72,7 @@ const CreateFundDaoTitlesStep: FC = () => {
 
       <S.CreateDaoCard>
         <CreateDaoCardHead
-          icon={<Icon source={FileDock} m={"0"} />}
+          icon={<Icon name={ICON_NAMES.shieldCheck} />}
           title="Governance token information"
         />
         <CreateDaoCardDescription>
@@ -90,7 +90,7 @@ const CreateFundDaoTitlesStep: FC = () => {
 
       <S.CreateDaoCard>
         <CreateDaoCardHead
-          icon={<Icon source={FileDock} m={"0"} />}
+          icon={<Icon name={ICON_NAMES.dollarOutline} />}
           title="ERC-20"
           action={
             <Switch
@@ -116,7 +116,7 @@ const CreateFundDaoTitlesStep: FC = () => {
 
       <S.CreateDaoCard>
         <CreateDaoCardHead
-          icon={<Icon source={FileDock} m={"0"} />}
+          icon={<Icon name={ICON_NAMES.star} />}
           title="ERC-721 (NFT)"
           action={
             <Switch
@@ -136,7 +136,7 @@ const CreateFundDaoTitlesStep: FC = () => {
 
       <S.CreateDaoCard>
         <CreateDaoCardHead
-          icon={<Icon source={FileDock} m={"0"} />}
+          icon={<Icon name={ICON_NAMES.globe} />}
           title="Additional Info"
         />
         <CreateDaoCardDescription>

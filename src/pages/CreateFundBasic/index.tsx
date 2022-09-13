@@ -1,15 +1,15 @@
 import Header from "components/Header/Layout"
-import CreateFundContext from "../../context/CreateFundContext"
-import CreateFundForm from "../../forms/CreateFundForm"
+import CreateFundContext from "context/CreateFundContext"
+import CreateFundForm from "forms/CreateFundForm"
 
 import { FC } from "react"
-import { Container } from "./styled"
+import * as S from "./styled"
 
 const CreateFundDaoPool: FC = () => {
   return (
     <>
       <Header>Create Fund basic</Header>
-      <Container
+      <S.Container
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -18,7 +18,7 @@ const CreateFundDaoPool: FC = () => {
         <CreateFundContext>
           <CreateFundForm presettedFundType="basic" />
         </CreateFundContext>
-      </Container>
+      </S.Container>
     </>
   )
 }

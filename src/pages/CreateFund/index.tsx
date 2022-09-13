@@ -1,24 +1,14 @@
 import Header from "components/Header/Layout"
 import Button from "components/Button"
-import Icon from "components/Icon"
+import { Icon } from "common"
 import FundTypeCard from "./FundTypeCard"
 
 import { FC, useState } from "react"
-import {
-  Container,
-  FundTypeCards,
-  FundTypeCardsTitle,
-  CreateFundDocsBlock,
-  CreateFundDocsBlockTitle,
-  CreateFundDocsBlockLink,
-  CreateFundDocsImg,
-  HighlightDecor,
-  CreateFundDocsBlockCloseBtn,
-} from "./styled"
+import * as S from "./styled"
 import { Flex } from "theme"
 import { useNavigate } from "react-router-dom"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
-import chipsCloseSvg from "assets/icons/chips-close.svg"
+import { ICON_NAMES } from "../../constants/icon-names"
 
 enum FUND_TYPES {
   basic = "basic",
@@ -46,29 +36,29 @@ const CreateFund: FC = () => {
   return (
     <>
       <Header>Create Fund</Header>
-      <Container
+      <S.Container
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
         {isShowDocs && (
-          <CreateFundDocsBlock>
-            <HighlightDecor />
-            <CreateFundDocsBlockTitle>
+          <S.CreateFundDocsBlock>
+            <S.HighlightDecor />
+            <S.CreateFundDocsBlockTitle>
               See the documentation of various pools and key details.
-            </CreateFundDocsBlockTitle>
-            <CreateFundDocsBlockLink>
+            </S.CreateFundDocsBlockTitle>
+            <S.CreateFundDocsBlockLink>
               Read the documentation
-            </CreateFundDocsBlockLink>
-            <CreateFundDocsImg src={CreateFundDocsImage} />
-            <CreateFundDocsBlockCloseBtn onClick={() => setIsShowDocs(false)}>
-              <Icon source={chipsCloseSvg} m={"0px"} size={20} />
-            </CreateFundDocsBlockCloseBtn>
-          </CreateFundDocsBlock>
+            </S.CreateFundDocsBlockLink>
+            <S.CreateFundDocsImg src={CreateFundDocsImage} />
+            <S.CreateFundDocsBlockCloseBtn onClick={() => setIsShowDocs(false)}>
+              <Icon name={ICON_NAMES.close} />
+            </S.CreateFundDocsBlockCloseBtn>
+          </S.CreateFundDocsBlock>
         )}
-        <FundTypeCards>
-          <FundTypeCardsTitle>Create your own fund</FundTypeCardsTitle>
+        <S.FundTypeCards>
+          <S.FundTypeCardsTitle>Create your own fund</S.FundTypeCardsTitle>
           <FundTypeCard
             label="Standard fund"
             description="Trade crypto from the Dexe DAO white list + any other crypto via a Risk Proposal"
@@ -83,9 +73,11 @@ const CreateFund: FC = () => {
             selected={fundType}
             handleSelect={() => setFundType(FUND_TYPES.investment)}
           />
-        </FundTypeCards>
-        <FundTypeCards>
-          <FundTypeCardsTitle>Create and govern your DAO</FundTypeCardsTitle>
+        </S.FundTypeCards>
+        <S.FundTypeCards>
+          <S.FundTypeCardsTitle>
+            Create and govern your DAO
+          </S.FundTypeCardsTitle>
           <FundTypeCard
             label="DAO pool"
             description="One-stop platform to create and govern your DAO effectively and securely."
@@ -100,13 +92,13 @@ const CreateFund: FC = () => {
               "Implement different quorum settings for each proposal",
             ]}
           />
-        </FundTypeCards>
+        </S.FundTypeCards>
         <Flex full p="0 16px 42px" m="auto 0 0 0">
           <Button full size="large" onClick={proceedToCreate}>
             Create fund
           </Button>
         </Flex>
-      </Container>
+      </S.Container>
     </>
   )
 }
