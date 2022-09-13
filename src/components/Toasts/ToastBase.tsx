@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { FC, ReactNode, useState } from "react"
 
 import { Flex } from "theme"
 import { Container, Body, Content, Icon, Close } from "./styled"
@@ -19,12 +19,12 @@ const iconMapper = {
 
 interface IProps {
   type: string
-  children: React.ReactNode
+  children: ReactNode
   onClose: () => void
   visible: boolean
 }
 
-const ToastBase: React.FC<IProps> = ({
+const ToastBase: FC<IProps> = ({
   type,
   children,
   onClose = () => {},
