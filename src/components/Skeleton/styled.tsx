@@ -13,7 +13,7 @@ const Animation = css`
   );
   background-size: 200%;
   background-position: 0 0;
-  animation-duration: 3s;
+  animation-duration: 5s;
   animation-fill-mode: backwards;
   animation-iteration-count: infinite;
   animation-name: ripple;
