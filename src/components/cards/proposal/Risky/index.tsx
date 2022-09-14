@@ -40,6 +40,7 @@ import SharedS, { BodyItem } from "components/cards/proposal/styled"
 
 import settingsIcon from "assets/icons/settings.svg"
 import settingsGreenIcon from "assets/icons/settings-green.svg"
+import useTokenRating from "hooks/useTokenRating"
 
 const MAX_INVESTORS_COUNT = 1000
 
@@ -65,6 +66,7 @@ const RiskyProposalCard: FC<Props> = ({
   const [, proposalToken] = useERC20(proposal.proposalInfo.token)
   const priceFeedAddress = useSelector(selectPriceFeedAddress)
   const priceFeed = useContract(priceFeedAddress, PriceFeed)
+  const getTokenRating = useTokenRating()
 
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
@@ -77,6 +79,8 @@ const RiskyProposalCard: FC<Props> = ({
   const [markPriceOpen, setMarkPriceOpen] = useState(ZERO)
   const [yourSizeLP, setYourSizeLP] = useState<BigNumber>(ZERO)
   const [traderSizeLP, setTraderSizeLP] = useState<BigNumber>(ZERO)
+
+  const [tokenRating, setTokenRating] = useState<number>(0)
 
   /**
    * Date of proposal expiration
@@ -326,6 +330,22 @@ const RiskyProposalCard: FC<Props> = ({
     })()
   }, [priceFeed, proposalToken])
 
+  // Fetch token rating
+  useEffect(() => {
+    if (!chainId || !proposal) return
+    ;(async () => {
+      try {
+        const rating = await getTokenRating(
+          chainId,
+          proposal.proposalInfo.token
+        )
+        setTokenRating(rating)
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [chainId, proposal, getTokenRating])
+
   /**
    * Navigate to pool page
    * @param e - click event
@@ -422,7 +442,7 @@ const RiskyProposalCard: FC<Props> = ({
             ) : (
               <Flex ai="center">
                 <SharedS.Title>{proposalSymbol}</SharedS.Title>
-                <TraderRating rating={20} />
+                <TraderRating rating={tokenRating} />
                 <Flex m="0 0 -5px">
                   <Tooltip
                     id={`risky-proposal-rating-info-${proposalId}-${poolAddress}`}
