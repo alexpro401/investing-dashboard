@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import useError from "hooks/useError"
+import { ZERO } from "constants/index"
 import { PositionsByIdsQuery } from "queries"
 import { addBignumbers } from "utils/formulas"
 import { usePriceFeedContract } from "hooks/useContract"
@@ -21,9 +22,10 @@ const useOpenPositionsPriceOutUSD = (
   const [, setError] = useError()
   const priceFeed = usePriceFeedContract()
 
-  const [outUSDVolume, setOutUSD] = useState<BigNumber>(BigNumber.from(0))
+  const [outUSDVolume, setOutUSD] = useState<BigNumber>(ZERO)
 
   const [{ fetching: loading, data, error }] = useQuery({
+    pause: !positions,
     query: PositionsByIdsQuery,
     variables: {
       idList: positions
@@ -35,7 +37,7 @@ const useOpenPositionsPriceOutUSD = (
   // Clear state to prevent memory leak
   useEffect(() => {
     return () => {
-      setOutUSD(BigNumber.from(0))
+      setOutUSD(ZERO)
     }
   }, [poolAddress])
 
