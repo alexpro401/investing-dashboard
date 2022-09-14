@@ -1,7 +1,6 @@
 import { Flex } from "theme"
 import S, { ProgressBar } from "./styled"
 import usePoolLockedFunds from "hooks/usePoolLockedFunds"
-import LockedFundsChart from "components/LockedFundsChart"
 
 interface Props {
   address: string | undefined
@@ -24,7 +23,6 @@ const PoolLockedFunds: React.FC<Props> = ({ address }) => {
 
   return (
     <>
-      <LockedFundsChart address={address} />
       <Flex full p="15px 0 0">
         <S.Row>
           <S.Title>Investor funds</S.Title>

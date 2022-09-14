@@ -9,6 +9,7 @@ import PoolPnlInfo from "components/PoolPnlInfo"
 import MemberMobile from "components/MemberMobile"
 import PoolLockedFunds from "components/PoolLockedFunds"
 import FundDetailsCard from "components/FundDetailsCard"
+import LockedFundsChart from "components/LockedFundsChart"
 import Button, { SecondaryButton } from "components/Button"
 import FundStatisticsCard from "components/FundStatisticsCard"
 
@@ -100,6 +101,7 @@ const Profile: React.FC<Props> = () => {
                 name: "Locked funds",
                 child: (
                   <>
+                    <LockedFundsChart address={poolAddress} />
                     <PoolLockedFunds address={poolAddress} />
                   </>
                 ),
