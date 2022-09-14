@@ -2,7 +2,7 @@ import { Flex } from "theme"
 import { InfoRow, InfoGrey, InfoWhite } from "components/Exchange/styled"
 import TokenIcon from "components/TokenIcon"
 import { useERC20 } from "hooks/useContract"
-import { cutDecimalPlaces, fromBig } from "utils"
+import { cutDecimalPlaces, normalizeBigNumber } from "utils"
 import { FC } from "react"
 import { BigNumberish } from "@ethersproject/bignumber"
 
@@ -23,7 +23,9 @@ const Token: FC<Props> = ({ data }) => {
         <InfoGrey>{tokenData?.name}</InfoGrey>
       </Flex>
       <Flex gap="4">
-        <InfoWhite>{fromBig(cutDecimalPlaces(data?.amount))}</InfoWhite>
+        <InfoWhite>
+          {normalizeBigNumber(cutDecimalPlaces(data?.amount))}
+        </InfoWhite>
         <InfoGrey>{tokenData?.symbol}</InfoGrey>
       </Flex>
     </InfoRow>

@@ -45,6 +45,10 @@ export enum TransactionType {
 
   TRADER_GET_PERFORMANCE_FEE = 23,
   USER_AGREED_TO_PRIVACY_POLICY = 24,
+
+  /* CUSTOM TRANSACTION TYPES */
+
+  INVEST_PROPOSAL_CONVERT_TO_DIVIDENDS = 100,
 }
 
 export interface ApproveTransactionInfo {
@@ -170,6 +174,13 @@ export interface WithdrawInvestProposalTransactionInfo {
   amountRaw: string
   symbol: string
 }
+export interface SupplyInvestProposalTransactionInfo {
+  type: TransactionType.INVEST_PROPOSAL_SUPPLY
+  amount: string
+}
+export interface ClaimInvestProposalTransactionInfo {
+  type: TransactionType.INVEST_PROPOSAL_CLAIM
+}
 
 export interface StakeInsuranceTransactionInfo {
   type: TransactionType.INSURANCE_STAKE
@@ -198,6 +209,10 @@ export interface TraderGetPerformanceFeeTransactionInfo
   type: TransactionType.TRADER_GET_PERFORMANCE_FEE
 }
 
+export interface ConvertInvestProposalToDividendsTransactionInfo {
+  type: TransactionType.INVEST_PROPOSAL_CONVERT_TO_DIVIDENDS
+}
+
 export type TransactionInfo =
   | ApproveTransactionInfo
   | DepositLiquidityTransactionInfo
@@ -218,10 +233,13 @@ export type TransactionInfo =
   | EditInvestProposalTransactionInfo
   | DepositInvestProposalTransactionInfo
   | WithdrawInvestProposalTransactionInfo
+  | SupplyInvestProposalTransactionInfo
+  | ClaimInvestProposalTransactionInfo
   | StakeInsuranceTransactionInfo
   | UnstakeInsuranceTransactionInfo
   | PrivacyPolicyAgreeTransactionInfo
   | TraderGetPerformanceFeeTransactionInfo
+  | ConvertInvestProposalToDividendsTransactionInfo
 
 export interface TransactionDetails {
   hash: string

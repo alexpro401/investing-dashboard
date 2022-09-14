@@ -43,6 +43,7 @@ import InvestCardSettings from "./Settings"
 
 import settingsIcon from "assets/icons/settings.svg"
 import settingsGreenIcon from "assets/icons/settings-green.svg"
+import useRequestDividendsContext from "modals/RequestDividend/useRequestDividendsContext"
 
 interface Props {
   proposal: InvestProposal
@@ -58,6 +59,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   const [, poolInfo] = usePoolContract(poolAddress)
   const [, baseTokenData] = useERC20(poolInfo?.parameters.baseToken)
   const [proposalPool, proposalAddress] = useInvestProposalContract(poolAddress)
+  const { requestDividends } = useRequestDividendsContext()
 
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
@@ -357,10 +359,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
         },
         {
           label: "Claim",
-          onClick: () => {
-            // TODO: implement navigation to claim modal
-            console.log("Claim")
-          },
+          onClick: () => requestDividends(poolAddress, proposalId),
         },
         {
           label: "Pay dividend",
@@ -375,10 +374,19 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
       },
       {
         label: "Request a dividend",
-        onClick: () => onTerminalNavigate(TerminalType.PayDividends),
+        onClick: () => requestDividends(poolAddress, proposalId),
       },
     ]
-  }, [TerminalType, isTrader, onTerminalNavigate])
+  }, [
+    TerminalType.Invest,
+    TerminalType.PayDividends,
+    TerminalType.Withdraw,
+    isTrader,
+    onTerminalNavigate,
+    poolAddress,
+    proposalId,
+    requestDividends,
+  ])
 
   /**
    * Navigate to pool page

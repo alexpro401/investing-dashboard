@@ -2,29 +2,55 @@ import { useState, useEffect, useCallback, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 import { useWeb3React } from "@web3-react/core"
 
+import { Token, DividendToken } from "interfaces"
+import { IInvestProposalSupply } from "interfaces/thegraphs/invest-pools"
+
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
+
 import { usePoolContract } from "hooks/usePool"
+import usePayload from "hooks/usePayload"
+import useError from "hooks/useError"
+import { useInvestProposal } from "hooks/useInvestmentProposals"
+import usePoolPrice from "hooks/usePoolPrice"
+import { useInvestProposalSupplies } from "hooks/useInvestProposalData"
 import {
+  useERC20,
   useInvestProposalContract,
   usePriceFeedContract,
 } from "hooks/useContract"
-import { Token, DividendToken } from "interfaces"
+
 import { SubmitState } from "constants/types"
-import usePayload from "hooks/usePayload"
+import { ZERO } from "constants/index"
+
 import {
   getAllowance,
   getERC20Contract,
   getTokenBalance,
   getTokenData,
   isTxMined,
+  normalizeBigNumber,
+  parseTransactionError,
 } from "utils"
-import { ZERO } from "constants/index"
+
+import { multiplyBignumbers } from "utils/formulas"
 
 interface FetchedTokenData {
   balance: BigNumber
   allowance: BigNumber
   data: Token
+}
+
+interface PayDividendsInfo {
+  tvl: {
+    base: string
+    usd: string
+  }
+  APR: {
+    percent: string
+    usd: string
+  }
+  ticker: string
 }
 
 const usePayDividends = (
@@ -33,6 +59,8 @@ const usePayDividends = (
 ): [
   {
     tokens: DividendToken[]
+    info: PayDividendsInfo
+    supplies?: IInvestProposalSupply[]
   },
   {
     updateAllowance: (address: string) => Promise<void>
@@ -52,13 +80,21 @@ const usePayDividends = (
   const [dividendDatas, setDividendDatas] = useState<Token[]>([])
 
   const [, setPayload] = usePayload()
+  const [, setError] = useError()
   const [, poolInfo] = usePoolContract(poolAddress)
 
   const priceFeed = usePriceFeedContract()
 
   const [investProposal, investProposalAddress] =
     useInvestProposalContract(poolAddress)
-  console.log("investProposalAddress", investProposalAddress)
+  const [proposal, updateProposal] = useInvestProposal(poolAddress, proposalId)
+  const [{ priceBase, priceUSD }, updatePoolPrice] = usePoolPrice(poolAddress)
+  const [, baseData] = useERC20(poolInfo?.parameters.baseToken)
+  const [supplies, APR] = useInvestProposalSupplies(
+    investProposalAddress,
+    proposalId
+  )
+
   const addTransaction = useTransactionAdder()
 
   // Memoized function that returns list of objects that represents dividend token
@@ -82,6 +118,34 @@ const usePayDividends = (
     dividendDatas,
     dividendAllowances,
   ])
+
+  const info = useMemo(() => {
+    const tvlUSD = multiplyBignumbers(
+      [proposal?.proposalInfo.lpLocked || ZERO, 18],
+      [priceUSD, 18]
+    )
+    const tvlBase = multiplyBignumbers(
+      [proposal?.proposalInfo.lpLocked || ZERO, 18],
+      [priceBase, 18]
+    )
+
+    const APR_USD = multiplyBignumbers(
+      [BigNumber.from(APR || ZERO), 6],
+      [tvlUSD, 18]
+    )
+
+    return {
+      tvl: {
+        base: proposal ? normalizeBigNumber(tvlBase) : "-",
+        usd: proposal ? normalizeBigNumber(tvlUSD, 18, 2) : "-",
+      },
+      APR: {
+        percent: APR ? normalizeBigNumber(APR, 4, 2) : "-",
+        usd: proposal && APR ? normalizeBigNumber(APR_USD, 18, 2) : "-",
+      },
+      ticker: baseData?.symbol || "",
+    }
+  }, [proposal, priceBase, priceUSD, baseData, APR])
 
   const fetchTokenData = useCallback(
     async (address: string) => {
@@ -152,63 +216,42 @@ const usePayDividends = (
     ]
   )
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const removeTokenFromList = useCallback(
-    (tokenAddress: string) => {
-      setDividendTokens(
-        dividendTokens.filter((address) => address !== tokenAddress)
+  const updateTokenInList = useCallback(
+    (index: number, { data, balance, allowance }: FetchedTokenData) => {
+      if (
+        dividendTokens[index].toLocaleLowerCase() !==
+        data.address.toLocaleLowerCase()
       )
-      setDividendAmounts(
-        dividendAmounts.filter(
-          (amount, index) => index !== dividendTokens.indexOf(tokenAddress)
-        )
-      )
-      setDividendAllowances(
-        dividendAllowances.filter(
-          (amount, index) => index !== dividendTokens.indexOf(tokenAddress)
-        )
-      )
-      setDividendBalances(
-        dividendBalances.filter(
-          (amount, index) => index !== dividendTokens.indexOf(tokenAddress)
-        )
-      )
-      setDividendDatas(
-        dividendDatas.filter(
-          (amount, index) => index !== dividendTokens.indexOf(tokenAddress)
-        )
-      )
-      setDividendPrices(
-        dividendPrices.filter(
-          (amount, index) => index !== dividendTokens.indexOf(tokenAddress)
-        )
-      )
+        return
+
+      setDividendBalances((prevBalances) => {
+        const newBalances = [...prevBalances]
+        newBalances[index] = balance
+        return newBalances
+      })
+      setDividendAllowances((prevAllowances) => {
+        const newAllowances = [...prevAllowances]
+        newAllowances[index] = allowance
+
+        return newAllowances
+      })
     },
-    [
-      dividendAllowances,
-      dividendAmounts,
-      dividendBalances,
-      dividendDatas,
-      dividendPrices,
-      dividendTokens,
-    ]
+    [dividendTokens]
   )
 
-  const runUpdate = useCallback(() => {}, [])
+  const updateTokens = useCallback(async () => {
+    const tokensUpdate = await Promise.all(
+      dividendTokens.map((token, index) => {
+        return new Promise<[number, FetchedTokenData]>((resolve) => {
+          fetchTokenData(token).then((data) => resolve([index, data]))
+        })
+      })
+    )
 
-  const handleSubmit = useCallback(async () => {
-    if (!investProposal) return
-
-    try {
-      await investProposal.supply(
-        Number(proposalId) + 1,
-        dividendAmounts,
-        dividendTokens
-      )
-    } catch (error) {
-      console.log(error)
-    }
-  }, [dividendAmounts, dividendTokens, investProposal, proposalId])
+    tokensUpdate.map((tokenData) => {
+      updateTokenInList(tokenData[0], tokenData[1])
+    })
+  }, [dividendTokens, fetchTokenData, updateTokenInList])
 
   const updateDividendAmount = useCallback(
     (amount: BigNumber, index: number) => {
@@ -351,6 +394,55 @@ const usePayDividends = (
     [addTokenToList, dividendTokens, fetchTokenData, replaceTokenInList]
   )
 
+  const runUpdate = useCallback(() => {
+    updateTokens().catch(console.log)
+    updateProposal()
+    updatePoolPrice()
+  }, [updateTokens, updateProposal, updatePoolPrice])
+
+  const handleSubmit = useCallback(async () => {
+    if (!investProposal) return
+
+    try {
+      setPayload(SubmitState.SIGN)
+
+      const transactionResponse = await investProposal.supply(
+        Number(proposalId) + 1,
+        dividendAmounts,
+        dividendTokens
+      )
+
+      setPayload(SubmitState.WAIT_CONFIRM)
+
+      const receipt = await addTransaction(transactionResponse, {
+        type: TransactionType.INVEST_PROPOSAL_SUPPLY,
+        amount: dividendTokens.length,
+      })
+
+      if (isTxMined(receipt)) {
+        runUpdate()
+        setPayload(SubmitState.SUCCESS)
+      }
+    } catch (error: any) {
+      setPayload(SubmitState.IDLE)
+      if (!!error && !!error.data && !!error.data.message) {
+        setError(error.data.message)
+      } else {
+        const errorMessage = parseTransactionError(error.toString())
+        !!errorMessage && setError(errorMessage)
+      }
+    }
+  }, [
+    addTransaction,
+    dividendAmounts,
+    dividendTokens,
+    investProposal,
+    proposalId,
+    runUpdate,
+    setError,
+    setPayload,
+  ])
+
   // add base token on init
   useEffect(() => {
     if (!poolInfo) return
@@ -384,6 +476,8 @@ const usePayDividends = (
   return [
     {
       tokens,
+      info,
+      supplies,
     },
     {
       updateAllowance,

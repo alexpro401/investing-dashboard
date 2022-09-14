@@ -117,7 +117,7 @@ export const formatBigNumber = (value?: BigNumber, decimals = 18, fix = 6) => {
 }
 
 export const normalizeBigNumber = (
-  value?: BigNumber,
+  value?: BigNumberish,
   decimals = 18,
   fix?: number
 ) => {

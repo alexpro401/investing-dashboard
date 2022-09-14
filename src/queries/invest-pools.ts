@@ -45,4 +45,36 @@ const InvestorInvestProposalsQuery = (invested) => {
 `
 }
 
-export { InvestProposalQuery, InvestorInvestProposalsQuery }
+const InvestProposalWithdrawals = `
+  query ($id: String!) {
+    proposal(id: $id) {
+      withdraws (orderBy: timestamp, orderDirection: desc) {
+        id
+        timestamp
+        amountBase
+      }
+    }
+  }
+`
+
+const InvestProposalSupplies = `
+  query ($id: String!) {
+    proposal(id: $id) {
+      APR
+      supplies (orderBy: timestamp, orderDirection: desc) {
+        id
+        hash
+        timestamp
+        dividendsTokens
+        amountDividendsTokens
+      }
+    }
+  }
+`
+
+export {
+  InvestProposalQuery,
+  InvestorInvestProposalsQuery,
+  InvestProposalWithdrawals,
+  InvestProposalSupplies,
+}

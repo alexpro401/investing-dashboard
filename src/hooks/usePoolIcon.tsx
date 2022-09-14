@@ -20,6 +20,7 @@ const usePoolIcon = (
   const icon = useMemo(() => {
     return (
       <Icon
+        m="0"
         size={size}
         source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
         address={poolAddress}

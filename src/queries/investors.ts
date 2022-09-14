@@ -41,4 +41,18 @@ const InvestorPoolsInvestedForQuery = `
   }
 `
 
-export { InvestorPositionsQuery, InvestorPoolsInvestedForQuery }
+// Investor claims
+const InvestorClaims = `
+  query ($id: String!) {
+    proposalClaims (orderBy: timestamp, orderDirection: desc, where: {
+       proposal_in: [$id]
+    }) {
+      id
+      timestamp
+      dividendsTokens
+      amountDividendsTokens
+    }
+  }
+`
+
+export { InvestorPositionsQuery, InvestorPoolsInvestedForQuery, InvestorClaims }

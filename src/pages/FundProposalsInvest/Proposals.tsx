@@ -10,6 +10,7 @@ import LoadMore from "components/LoadMore"
 import InvestProposalCard from "components/cards/proposal/Invest"
 
 import S from "./styled"
+import useRequestDividendsContext from "modals/RequestDividend/useRequestDividendsContext"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",

@@ -1,7 +1,7 @@
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { format } from "date-fns"
 import { useWeb3React } from "@web3-react/core"
 import { BigNumber } from "@ethersproject/bignumber"
-import { useState, useEffect, useCallback, useMemo } from "react"
 
 import Icon from "components/Icon"
 
