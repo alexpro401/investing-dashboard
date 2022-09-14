@@ -64,7 +64,7 @@ function Trader(props: Props) {
 
   const traderPool = useTraderPool(poolAddress)
   const [poolData] = usePoolQuery(poolAddress)
-  const [leverageInfo, poolInfoData] = usePoolContract(poolAddress)
+  const [, poolInfoData] = usePoolContract(poolAddress)
   const navigate = useNavigate()
 
   const redirectToInvestor = useCallback(() => {
@@ -204,13 +204,7 @@ function Trader(props: Props) {
           tabs={[
             {
               name: "Statistic",
-              child: (
-                <FundStatisticsCard
-                  data={poolData}
-                  leverage={leverageInfo}
-                  info={poolInfoData}
-                />
-              ),
+              child: <FundStatisticsCard data={poolData} info={poolInfoData} />,
             },
             {
               name: "Details",

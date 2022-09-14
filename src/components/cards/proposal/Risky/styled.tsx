@@ -171,7 +171,7 @@ const TraderRatingStyled = {
   `,
 }
 
-export const TraderRating: FC<{ rating: number }> = ({ rating }) => {
+export const TraderRating: FC<{ rating: number }> = () => {
   return (
     <TraderRatingStyled.Container>
       <TraderRatingStyled.Star src={starIcon} />

@@ -3,12 +3,17 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { useWeb3React } from "@web3-react/core"
 
 import { Token, DividendToken } from "interfaces"
+import { IInvestProposalSupply } from "interfaces/thegraphs/invest-pools"
 
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 
 import { usePoolContract } from "hooks/usePool"
 import usePayload from "hooks/usePayload"
+import useError from "hooks/useError"
+import { useInvestProposal } from "hooks/useInvestmentProposals"
+import usePoolPrice from "hooks/usePoolPrice"
+import { useInvestProposalSupplies } from "hooks/useInvestProposalData"
 import {
   useERC20,
   useInvestProposalContract,
@@ -27,12 +32,8 @@ import {
   normalizeBigNumber,
   parseTransactionError,
 } from "utils"
-import useError from "hooks/useError"
-import { useInvestProposal } from "hooks/useInvestmentProposals"
-import usePoolPrice from "hooks/usePoolPrice"
+
 import { multiplyBignumbers } from "utils/formulas"
-import { useInvestProposalSupplies } from "hooks/useInvestProposalData"
-import { IInvestProposalSupply } from "interfaces/thegraphs/invest-pools"
 
 interface FetchedTokenData {
   balance: BigNumber

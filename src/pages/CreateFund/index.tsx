@@ -1,4 +1,4 @@
-import { FC, useState, useCallback } from "react"
+import { FC, useState, useCallback, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import { Flex } from "theme"
 import { useWeb3React } from "@web3-react/core"
@@ -258,8 +258,14 @@ const CreateFund: FC = () => {
         setStepPending(true)
         const tx = await handlePoolCreate()
 
-        if (isTxMined(tx) && !!tx!.logs.length && !!tx!.logs[1].address) {
-          setCreactedAddress(tx!.logs[1].address)
+        if (
+          !!tx &&
+          isTxMined(tx) &&
+          !!tx.logs &&
+          !!tx.logs.length &&
+          !!tx.logs[1].address
+        ) {
+          setCreactedAddress(tx.logs[1].address)
           setStep(step + 1)
           setStepPending(false)
         }
@@ -341,18 +347,18 @@ const CreateFund: FC = () => {
     <TokenIcon size={24} address={baseToken.address} />
   )
 
-  const baseTokenLink = !baseToken.address ? (
-    <IconButton onClick={handleTokenSelectOpen} media={plus} />
-  ) : (
-    <ExternalLink
-      href={getExplorerLink(
-        chainId!,
-        baseToken.address,
-        ExplorerDataType.ADDRESS
-      )}
-      iconColor="#616D8B"
-    />
-  )
+  const baseTokenLink = useMemo(() => {
+    if (!baseToken || !chainId) {
+      return <IconButton onClick={handleTokenSelectOpen} media={plus} />
+    }
+
+    const href = getExplorerLink(
+      chainId,
+      baseToken.address,
+      ExplorerDataType.ADDRESS
+    )
+    return <ExternalLink href={href} iconColor="#616D8B" />
+  }, [baseToken, chainId])
 
   return (
     <>

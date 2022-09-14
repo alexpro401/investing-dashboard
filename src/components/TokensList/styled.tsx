@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Flex, BasicCard } from "theme"
+import { Flex } from "theme"
 
 // TOKEN ITEM
 

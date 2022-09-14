@@ -1,13 +1,10 @@
-import styled from "styled-components"
-import { Flex, Text } from "theme"
-
-import { opacityVariants } from "motion/variants"
-import Switch from "components/Switch"
+import { Flex } from "theme"
 import { ReactNode, FC } from "react"
+import styled from "styled-components"
 
 export const Container = styled.div`
   margin: 0 auto;
-  bacground-color: #040a0f;
+  background-color: #040a0f;
   width: fill-available;
   height: calc(100vh - 94px);
   overflow-y: auto;

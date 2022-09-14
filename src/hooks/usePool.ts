@@ -39,7 +39,7 @@ export function usePoolQuery(
 export function usePoolPosition(poolId, tokenId) {
   const [position, setPosition] = useState<IPosition | undefined>()
 
-  const [pool, executeQuery] = useQuery<{
+  const [pool] = useQuery<{
     positions: IPosition[]
   }>({
     query: PoolPositionLast,

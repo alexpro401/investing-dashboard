@@ -9,7 +9,7 @@ const Styled = {
 
   Body: styled.div`
     width: calc(100% + 10px);
-    overflow: "hidden";
+    overflow: hidden;
     height: 130px;
   `,
 
@@ -27,16 +27,6 @@ const Styled = {
 }
 
 export default Styled
-
-function getAmountColor(a: number): string {
-  if (a > 0) {
-    return "#9AE2CB"
-  } else if (a < 0) {
-    return "#D75E65"
-  } else {
-    return "#788AB4"
-  }
-}
 
 // Chart tooltip
 export const TooltipStyled = {

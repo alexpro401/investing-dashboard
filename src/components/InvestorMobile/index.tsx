@@ -3,9 +3,8 @@ import { Flex } from "theme"
 import { useWeb3React } from "@web3-react/core"
 
 import Avatar from "components/Avatar"
-import Tooltip from "components/Tooltip"
 
-import { formatNumber, shortenAddress } from "utils"
+import { shortenAddress } from "utils"
 
 import shareIcon from "assets/icons/share.svg"
 
@@ -18,7 +17,6 @@ import {
   Divider,
   PoolStatisticContainer,
   Statistic,
-  PNL,
   ShareButton,
 } from "./styled"
 import { useSelector } from "react-redux"
@@ -84,7 +82,7 @@ const InvestorMobile: React.FC<Props> = ({ account, children }) => {
     >
       <PoolInfoContainer>
         <PoolInfo>
-          <Avatar size={38} url={userAvatar} address={account!} />
+          <Avatar size={38} url={userAvatar} address={account ?? ""} />
           <Flex p="0 0 0 10px" dir="column" ai="flex-start">
             <Title>{userName ?? shortenAddress(account)}</Title>
             <Description>Investing</Description>

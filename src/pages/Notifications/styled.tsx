@@ -2,7 +2,6 @@ import styled from "styled-components"
 import { Flex } from "theme"
 import TokenIcon from "components/TokenIcon"
 
-import notificationMuted from "assets/icons/notification-muted.svg"
 import notificationActive from "assets/icons/notification-active.svg"
 
 export const Container = styled(Flex)`

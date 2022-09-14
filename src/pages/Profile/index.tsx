@@ -1,7 +1,7 @@
 import { useMemo } from "react"
+import { GuardSpinner } from "react-spinners-kit"
 import { useParams, useNavigate } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
-import { GuardSpinner } from "react-spinners-kit"
 
 import TabsLight from "components/TabsLight"
 import Header from "components/Header/Layout"
@@ -19,7 +19,6 @@ import { TabCard } from "pages/Investor/styled"
 
 import { shortenAddress } from "utils"
 import { useActiveWeb3React } from "hooks"
-import { PoolType } from "constants/types"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"
 
 interface Props {}
@@ -30,13 +29,12 @@ const poolsClient = createClient({
 
 const Profile: React.FC<Props> = () => {
   const { account } = useActiveWeb3React()
-  const { poolAddress, poolType } = useParams<{
+  const { poolAddress } = useParams<{
     poolAddress: string
-    poolType: PoolType
   }>()
 
   const [poolData] = usePoolQuery(poolAddress)
-  const [leverageInfo, poolInfoData] = usePoolContract(poolAddress)
+  const [, poolInfoData] = usePoolContract(poolAddress)
 
   const navigate = useNavigate()
 
@@ -53,8 +51,6 @@ const Profile: React.FC<Props> = () => {
     const tabPath = isPoolOwner ? "open" : "closed"
     navigate(`/fund-positions/${poolData?.id}/${tabPath}`)
   }
-
-  const back = () => navigate(-1)
 
   if (!poolData) {
     return (
@@ -118,11 +114,7 @@ const Profile: React.FC<Props> = () => {
               {
                 name: "Statistic",
                 child: (
-                  <FundStatisticsCard
-                    data={poolData}
-                    leverage={leverageInfo}
-                    info={poolInfoData}
-                  />
+                  <FundStatisticsCard data={poolData} info={poolInfoData} />
                 ),
               },
               {

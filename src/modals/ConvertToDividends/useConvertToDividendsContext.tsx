@@ -22,9 +22,9 @@ function useConvertToDividendsModal(): [
   IConvertToDividendsContext,
   IConvertToDividendsParams | undefined
 ] {
-  const [isOpen, setIsOpen] = useState(true)
-  const [poolAddress, setPoolAddress] = useState<string | undefined>("1")
-  const [proposalId, setProposalId] = useState<string | undefined>("1")
+  const [isOpen, setIsOpen] = useState(false)
+  const [poolAddress, setPoolAddress] = useState<string | undefined>()
+  const [proposalId, setProposalId] = useState<string | undefined>()
 
   const convertToDividends = useCallback((address: string, id: string) => {
     setIsOpen(true)

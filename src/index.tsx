@@ -14,7 +14,7 @@ import SideBar from "components/Sidebar"
 import Alert from "components/Alert"
 import ToastContainer from "components/Toasts"
 import Payload from "components/Payload"
-import TransactionError from "modals/TransactionError"
+import ErrorMessage from "modals/ErrorMessage"
 import TermsAgreement from "modals/TermsAgreement"
 
 import SideBarContext from "context/SideBarContext"
@@ -69,11 +69,12 @@ const GlobalComponents = () => (
     <ToastContainer />
     <TermsAgreement />
     <Payload />
-    <TransactionError />
+    <ErrorMessage />
   </>
 )
 
 const container = document.getElementById("root")
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const root = createRoot(container!)
 root.render(
   <React.StrictMode>

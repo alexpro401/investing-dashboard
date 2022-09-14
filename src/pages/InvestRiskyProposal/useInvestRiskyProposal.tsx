@@ -158,12 +158,15 @@ const useInvestRiskyProposal = (
 
   const addTransaction = useTransactionAdder()
 
-  const poolIcon = (
-    <Icon
-      size={27}
-      source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
-      address={poolAddress}
-    />
+  const poolIcon = useMemo(
+    () => (
+      <Icon
+        size={27}
+        source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
+        address={poolAddress}
+      />
+    ),
+    [poolMetadata, poolAddress]
   )
 
   const info = useMemo(() => {
@@ -588,6 +591,10 @@ const useInvestRiskyProposal = (
     [fromBalance, handleFromChange]
   )
 
+  const handleFromOnDirectionChange = useCallback(() => {
+    handleFromChange(fromAmount)
+  }, [handleFromChange, fromAmount])
+
   // estimate gas price
   useEffect(() => {
     ;(async () => {
@@ -603,8 +610,8 @@ const useInvestRiskyProposal = (
 
   // update "from" input on direction change
   useEffect(() => {
-    handleFromChange(fromAmount)
-  }, [direction])
+    handleFromOnDirectionChange()
+  }, [direction, handleFromOnDirectionChange])
 
   useEffect(() => {
     if (direction === "deposit") {

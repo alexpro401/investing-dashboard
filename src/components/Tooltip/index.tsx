@@ -3,7 +3,7 @@ import TooltipIcon from "assets/icons/TooltipIcon"
 import styled, { createGlobalStyle } from "styled-components"
 import TooltipSmall from "assets/icons/TooltipSmall"
 import { GradientBorderBase } from "theme"
-import { ReactNode } from "react"
+import { ReactNode, useState } from "react"
 
 const TooltipStyles: any = createGlobalStyle`
   button {
@@ -87,16 +87,27 @@ interface Props {
 }
 
 const Tooltip: React.FC<Props> = ({ id, children, size = "normal" }) => {
+  const [tooltip, showTooltip] = useState(true)
   return (
     <>
       <TooltipStyles />
-      <TooltipArea data-tip data-for={id}>
+      <TooltipArea
+        data-tip
+        data-for={id}
+        onMouseEnter={() => showTooltip(true)}
+        onMouseLeave={() => {
+          showTooltip(false)
+          setTimeout(() => showTooltip(true), 50)
+        }}
+      >
         {size === "normal" ? <TooltipIcon /> : <TooltipSmall />}
       </TooltipArea>
 
-      <ReactTooltip className="dark-tooltip" id={id}>
-        <TooltipContent>{children}</TooltipContent>
-      </ReactTooltip>
+      {tooltip && (
+        <ReactTooltip className="dark-tooltip" id={id}>
+          <TooltipContent>{children}</TooltipContent>
+        </ReactTooltip>
+      )}
     </>
   )
 }

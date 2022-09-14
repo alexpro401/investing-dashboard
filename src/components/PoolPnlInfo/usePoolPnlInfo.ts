@@ -3,6 +3,7 @@ import { parseUnits } from "@ethersproject/units"
 import { useEffect, useState, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
+import { ZERO } from "constants/index"
 import { normalizeBigNumber } from "utils"
 import { usePoolQuery } from "hooks/usePool"
 import usePoolPrice from "hooks/usePoolPrice"
@@ -15,11 +16,9 @@ const usePoolPnlInfo = (address: string | undefined) => {
   const [{ priceUSD }] = usePoolPrice(address)
   const [, baseToken] = useERC20(poolData?.baseToken)
 
-  const [_baseTokenPrice, _setBaseTokenPrice] = useState<BigNumber>(
-    BigNumber.from(0)
-  )
+  const [_baseTokenPrice, _setBaseTokenPrice] = useState<BigNumber>(ZERO)
 
-  const [initialPriceUSD, setInitialPriceUSD] = useState(BigNumber.from(0))
+  const [initialPriceUSD, setInitialPriceUSD] = useState(ZERO)
 
   const totalPnlPercentage = useMemo(() => {
     if (initialPriceUSD.isZero() || !priceUSD) {
@@ -37,7 +36,7 @@ const usePoolPnlInfo = (address: string | undefined) => {
   }
   const totalPnlBase = useMemo<IAmount>(() => {
     if (!poolData || !poolData.priceHistory || !poolData.priceHistory[0]) {
-      return { big: BigNumber.from(0), format: "0" }
+      return { big: ZERO, format: "0" }
     }
 
     const big = BigNumber.from(poolData.priceHistory[0].absPNL)

@@ -6,7 +6,6 @@ import { shortenAddress } from "utils"
 import close from "assets/icons/chips-close.svg"
 import pencil from "assets/icons/pencil-edit.svg"
 import {
-  LimitIndicator,
   ChipsWrapper,
   TagItem,
   TagButton,
@@ -125,7 +124,7 @@ export default class AddressChips extends React.Component<
   }
 
   render() {
-    const { items, limit, readonly, label, customBg } = this.props
+    const { items, readonly, label, customBg } = this.props
     const { error } = this.state
     return (
       <Container

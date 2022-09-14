@@ -1,8 +1,4 @@
-// import React, { useState, useRef } from "react"
-// import styled from "styled-components"
-// import { motion } from "framer-motion"
 import { CircularProgressbarWithChildren } from "react-circular-progressbar"
-import { GradientSVG } from "theme/GlobalStyle"
 import "./custom.css"
 
 import styled from "styled-components"

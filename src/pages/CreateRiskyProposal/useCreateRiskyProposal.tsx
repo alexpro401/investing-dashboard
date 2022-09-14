@@ -52,7 +52,7 @@ const useCreateRiskyProposal = (
 
   const basicTraderPool = useBasicPoolContract(poolAddress)
   const traderPool = useTraderPool(poolAddress)
-  const [error, setError] = useError()
+  const [, setError] = useError()
   const [isSubmiting, setSubmiting] = usePayload()
 
   const [totalProposals, setTotalProposals] = useState<number>(0)
@@ -219,7 +219,7 @@ const useCreateRiskyProposal = (
         "Token price is not available, please try again or select another token"
       )
     })
-  }, [riskyProposal, tokenAddress, getCreatingTokensInfo])
+  }, [riskyProposal, tokenAddress, getCreatingTokensInfo, setError])
 
   // watch for transaction confirm & check proposals count
   useEffect(() => {

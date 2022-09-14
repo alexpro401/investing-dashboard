@@ -1,33 +1,22 @@
 import { getAddress } from "@ethersproject/address"
-import { BigNumber, BigNumberish, FixedNumber } from "@ethersproject/bignumber"
-import { poolTypes, stableCoins, ZERO } from "constants/index"
-import { formatUnits, parseUnits, parseEther } from "@ethersproject/units"
-import { ERC20 } from "abi"
-import { useEffect, useState } from "react"
-import { ITopMembersFilters, OwnedPools, Token } from "interfaces"
-import { ExchangeType } from "interfaces/exchange"
 import { getTime, setHours, setMinutes } from "date-fns"
 import { TransactionReceipt } from "@ethersproject/providers"
+import { formatUnits, parseUnits, parseEther } from "@ethersproject/units"
+import { BigNumber, BigNumberish, FixedNumber } from "@ethersproject/bignumber"
+
+import { ERC20 } from "abi"
+import { poolTypes, ZERO } from "constants/index"
+import { ExchangeType } from "interfaces/exchange"
 import { PoolType, TokenTuple } from "constants/types"
 import { getBalanceOf, getContract } from "./getContract"
+import { ITopMembersFilters, OwnedPools, Token } from "interfaces"
+import { IRiskyPositionCard } from "interfaces/thegraphs/basic-pools"
 import {
   PoolsQuery,
   PoolsQueryByType,
   PoolsQueryByTypeWithSort,
   PoolsQueryWithSort,
 } from "queries/all-pools"
-
-export const useUpdate = (ms: number) => {
-  const [updator, setUpdate] = useState(0)
-
-  useEffect(() => {
-    const interval = setInterval(() => setUpdate(updator + 1), ms)
-
-    return () => clearInterval(interval)
-  }, [])
-
-  return updator
-}
 
 export const delay = (ms: number): Promise<void> => {
   return new Promise((res) => setTimeout(res, ms))
@@ -40,9 +29,7 @@ export function isAddress(value: any): boolean {
 
   try {
     const address = getAddress(value).toLowerCase()
-    if (address.length !== 42) return false
-
-    return true
+    return address.length === 42
   } catch (error) {
     console.log(error)
     return false
@@ -70,8 +57,7 @@ export const getRandomPnl = () => {
 }
 
 const parseDecimals = (float: string, decimals) => {
-  const floatPart = !!float ? `${float}`.substring(0, decimals + 1) : ".00"
-  return floatPart
+  return !!float ? `${float}`.substring(0, decimals + 1) : ".00"
 }
 
 const humanizeBigNumber = (amount: string | number, limit = 6): string => {
@@ -82,7 +68,7 @@ const humanizeBigNumber = (amount: string | number, limit = 6): string => {
     return numArr[0]
   }
 
-  // passes without formating
+  // passes without formatting
   if (numArr[1].length < limit) {
     return `${numArr[0]}.${numArr[1]}`
   }
@@ -122,36 +108,6 @@ export const formatNumber = (amount: string, decimals = 2) => {
   )
 }
 
-// @params n - number to format
-// @params d - decimals to apply
-// @return - formated number
-export const formatDecimalsNumber = (n: number, d?: number): number => {
-  const decimals = d || 4
-  if (!n) return 0
-  try {
-    const splited = n.toString().split(".")
-    const floatPart = splited[1] && splited[1] !== "0" ? `.${splited[1]}` : ""
-    return parseFloat(
-      `${splited[0]}${
-        floatPart.length < decimals
-          ? floatPart
-          : floatPart.substring(0, decimals + 1)
-      }`
-    )
-  } catch (e) {
-    return 0
-  }
-}
-
-export const calcPrice = (price, amount) => {
-  try {
-    return price * amount
-  } catch (e) {
-    console.log(e)
-    return 0
-  }
-}
-
 export const formatBigNumber = (value?: BigNumber, decimals = 18, fix = 6) => {
   if (!value) return formatNumber("0", fix)
 
@@ -168,25 +124,6 @@ export const normalizeBigNumber = (
   const amount = formatUnits(value || ZERO, decimals).toString()
 
   return humanizeBigNumber(amount, fix)
-}
-
-export const isStable = (address: string) =>
-  stableCoins.eth.indexOf(address.toLowerCase()) !== -1
-
-export function getBNBSign(lib, address, nonce) {
-  return new Promise((resolve) => {
-    lib.provider.bnbSign(address, nonce).then((v) => resolve(v.signature))
-  })
-}
-
-export function getSignature(nonce, address, lib) {
-  if (lib?.provider?.bnbSign) {
-    return getBNBSign(lib, address, nonce)
-  }
-
-  const signer = lib.getSigner(address)
-
-  return signer.signMessage(nonce)
 }
 
 export function getTypedSignature(address, lib, nonce) {
@@ -268,17 +205,6 @@ export const getRedirectedPoolAddress = (pools: OwnedPools) => {
   }
 
   return null
-}
-
-export const fixFractionalDecimals = (
-  amount: string,
-  decimals: number
-): string => {
-  const numArr = amount.split(".")
-  if (numArr.length === 2 && numArr[1].length > decimals) {
-    return `${numArr[0]}.${numArr[1].substring(0, decimals)}`
-  }
-  return amount
 }
 
 export const calcSlippage = (
@@ -479,4 +405,24 @@ export const getPoolsQueryVariables = (
     query: PoolsQuery,
     variables: { q: filters.query },
   }
+}
+
+// prepare risky positions data
+export const prepareRiskyPositions = (data): IRiskyPositionCard[] => {
+  return data.proposalPositions.map((p) => {
+    const position = {
+      ...p,
+      token: p.proposal.token,
+      pool: p.proposal.basicPool,
+      exchanges: p.proposal.exchanges.reduce((acc, e) => {
+        if (e.exchanges && e.exchanges.length > 0) {
+          return [...acc, ...e.exchanges]
+        }
+        return acc
+      }, []),
+    }
+    delete position.proposal
+
+    return position
+  })
 }

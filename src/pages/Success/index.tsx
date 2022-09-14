@@ -57,7 +57,7 @@ const Success: FC<SuccessProps> = () => {
   const navigate = useNavigate()
 
   const [poolInfo, setPoolInfo] = useState<IPoolInfo | null>(null)
-  const [poolType, setPoolType] = useState<PoolType | null>(null)
+  const [, setPoolType] = useState<PoolType | null>(null)
 
   const traderPool = useTraderPoolContract(poolAddress)
   const traderPoolRegistry = useTraderPoolRegistryContract()

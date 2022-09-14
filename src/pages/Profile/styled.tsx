@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Flex, ease, device, rotateVariants, GradientBorder } from "theme"
+import { GradientBorder } from "theme"
 import { motion } from "framer-motion"
 
 export const Container = styled(motion.div)`

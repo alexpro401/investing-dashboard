@@ -5,7 +5,7 @@ import { WalletConnectConnector } from "@web3-react/walletconnect-connector"
 import metamaskIcon from "assets/wallets/metamask.svg"
 import walletconnectIcon from "assets/wallets/walletconnect.svg"
 
-const LOCAL_NETWORK_URL = "http://localhost:8545"
+// const LOCAL_NETWORK_URL = "http://localhost:8545"
 const BSC_NETWORK_URL = "https://bsc-dataseed.binance.org/"
 const BSC_TESTNET_URL = "https://data-seed-prebsc-1-s1.binance.org:8545"
 

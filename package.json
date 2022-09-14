@@ -59,7 +59,7 @@
     "react-scripts": "4.0.3",
     "react-spinners-kit": "^1.9.1",
     "react-swipeable": "^6.1.2",
-    "react-tooltip": "^4.2.13",
+    "react-tooltip": "4.2.7",
     "react-use": "^15.3.8",
     "react-virtualized": "^9.22.3",
     "recharts": "^2.0.8",

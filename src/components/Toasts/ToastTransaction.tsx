@@ -1,16 +1,16 @@
-import { useMemo } from "react"
+import { FC, useMemo } from "react"
 import ToastBase from "./ToastBase"
 import { TransactionBody, TransactionErrorContent } from "./styled"
 
 import { ToastType } from "./types"
 
+import ExternalLink from "components/ExternalLink"
 import TransactionSummary from "components/TransactionSummary"
 import TransactionWait from "components/TransactionSummary/TransactionWait"
-import ExternalLink from "components/ExternalLink"
 
 import { useActiveWeb3React } from "hooks"
-import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useTransaction } from "state/transactions/hooks"
+import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
 interface IProps {
   hash: string
@@ -18,7 +18,7 @@ interface IProps {
   visible: boolean
 }
 
-const ToastTransaction: React.FC<IProps> = ({ hash, onClose, visible }) => {
+const ToastTransaction: FC<IProps> = ({ hash, onClose, visible }) => {
   const { chainId } = useActiveWeb3React()
   const tx = useTransaction(hash)
 
@@ -36,6 +36,7 @@ const ToastTransaction: React.FC<IProps> = ({ hash, onClose, visible }) => {
       No need dependency, otherwise React will 
       re-render content of 'wait toast' after transaction is confirmed 
     */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const body = useMemo(() => {
@@ -57,8 +58,9 @@ const ToastTransaction: React.FC<IProps> = ({ hash, onClose, visible }) => {
     }
     /* 
       No need dependency, otherwise React will 
-      re-render content of 'wait toast' after transaction is confirmed 
+      re-render content of 'wait toast' after transaction is confirmed
     */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (!tx) return null
