@@ -9,8 +9,9 @@ import useInvestProposals from "hooks/useInvestmentProposals"
 import LoadMore from "components/LoadMore"
 import InvestProposalCard from "components/cards/proposal/Invest"
 
+import { RequestDividendsProvider } from "modals/RequestDividend/useRequestDividendsContext"
+
 import S from "./styled"
-import useRequestDividendsContext from "modals/RequestDividend/useRequestDividendsContext"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",
@@ -63,7 +64,9 @@ const FundProposalsInvest = () => {
 const FundProposalsInvestWithProvider = (props) => {
   return (
     <GraphProvider value={poolsClient}>
-      <FundProposalsInvest {...props} />
+      <RequestDividendsProvider>
+        <FundProposalsInvest {...props} />
+      </RequestDividendsProvider>
     </GraphProvider>
   )
 }
