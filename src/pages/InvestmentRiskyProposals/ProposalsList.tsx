@@ -6,9 +6,9 @@ import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 import { useActiveWeb3React } from "hooks"
 import { usePoolContract } from "hooks/usePool"
 import { InvestorRiskyProposalsQuery } from "queries"
-import { IRiskyProposal } from "interfaces/contracts/ITraderPoolRiskyProposal"
 import useQueryPagination from "hooks/useQueryPagination"
 import { useRiskyProposalContract } from "hooks/useContract"
+import { IRiskyProposal } from "interfaces/contracts/ITraderPoolRiskyProposal"
 
 import LoadMore from "components/LoadMore"
 import RiskyProposalCard from "components/cards/proposal/Risky"
@@ -17,7 +17,6 @@ import S from "./styled"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
-  requestPolicy: "network-only", // disable urql cache
 })
 
 interface IRiskyCardInitializer {
@@ -80,7 +79,10 @@ interface IProps {
 const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
   const { account } = useActiveWeb3React()
 
-  const variables = useMemo(() => ({ activePools }), [activePools])
+  const variables = useMemo(
+    () => ({ activePools: activePools ?? [] }),
+    [activePools]
+  )
 
   const prepareNewData = (d) =>
     d.proposals.map((p) => ({
@@ -88,7 +90,7 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
       poolAddress: p.basicPool.id,
     }))
 
-  const [{ data, error, loading }, fetchMore] = useQueryPagination(
+  const [{ data, loading }, fetchMore] = useQueryPagination(
     InvestorRiskyProposalsQuery,
     variables,
     prepareNewData
@@ -96,7 +98,7 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
 
   const loader = useRef<any>()
 
-  // manually disable scrolling *refresh this effect when ref container dissapeared from DOM
+  // manually disable scrolling *refresh this effect when ref container disappeared from DOM
   useEffect(() => {
     if (!loader.current) return
     disableBodyScroll(loader.current)

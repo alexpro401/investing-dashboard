@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Flex, Text, BaseButton, GradientBorder } from "theme"
+import { Flex, GradientBorder } from "theme"
 
 export const Container = styled(Flex)`
   height: -webkit-fill-available;

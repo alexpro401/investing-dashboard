@@ -38,7 +38,7 @@ const Icon: React.FC<IProps> = ({ m, size, hash, source, address }) => {
     setLoadingState(false)
   }, [address, hash, source])
 
-  if (isLoading) {
+  if (isLoading || !address) {
     return <IconLoader m={m} size={size} />
   }
 
@@ -46,7 +46,7 @@ const Icon: React.FC<IProps> = ({ m, size, hash, source, address }) => {
     case IconType.IpfsIcon:
       return <IpfsIcon m={m} size={size} hash={hash} />
     case IconType.JazzIcon:
-      return <JazzIcon m={m} size={size} address={address!} />
+      return <JazzIcon m={m} size={size} address={address} />
     case IconType.BaseIcon:
     default:
       return <BaseIcon m={m} size={size} source={source} />

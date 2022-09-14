@@ -1,16 +1,16 @@
-import { Flex } from "theme"
+import { useMemo } from "react"
 import { useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
 
-import IconButton from "components/IconButton"
-import ExchangeInput from "components/Exchange/ExchangeInput"
-import ExchangeDivider from "components/Exchange/Divider"
-import Button, { SecondaryButton } from "components/Button"
-import CircularProgress from "components/CircularProgress"
-import TransactionSlippage from "components/TransactionSlippage"
+import { Flex } from "theme"
 import Header from "components/Header/Layout"
+import IconButton from "components/IconButton"
+import ExchangeDivider from "components/Exchange/Divider"
+import CircularProgress from "components/CircularProgress"
+import Button, { SecondaryButton } from "components/Button"
+import ExchangeInput from "components/Exchange/ExchangeInput"
+import TransactionSlippage from "components/TransactionSlippage"
 
-import settings from "assets/icons/settings.svg"
 import close from "assets/icons/close-big.svg"
 
 import {
@@ -26,7 +26,6 @@ import {
 } from "components/Exchange/styled"
 
 import useInvestInvestmentProposal from "./useInvestInvestmentProposal"
-import { useMemo } from "react"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",

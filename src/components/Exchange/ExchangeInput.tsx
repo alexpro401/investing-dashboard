@@ -1,6 +1,5 @@
 import { ReactNode } from "react"
-import { Flex } from "theme"
-import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
+import { BigNumber } from "@ethersproject/bignumber"
 import { BigNumberInput } from "big-number-input"
 
 import TokenIcon from "components/TokenIcon"

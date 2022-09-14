@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react"
+import { useEffect, useState, useCallback } from "react"
 import debounce from "lodash.debounce"
 
 import { InvestProposal } from "interfaces/thegraphs/invest-pools"
@@ -44,9 +44,11 @@ function useInvestProposals(poolAddress?: string): [IPayload, () => void] {
   }, [allFetched, offset, traderPoolInvestProposal])
 
   useEffect(() => {
-    if (!traderPoolInvestProposal || proposals.length > 0) return
+    if (!traderPoolInvestProposal || proposals.length > 0) {
+      return
+    }
     fetchProposals()
-  }, [traderPoolInvestProposal])
+  }, [traderPoolInvestProposal, fetchProposals, proposals])
 
   return [{ data: proposals, loading: fetching }, debounce(fetchProposals, 100)]
 }

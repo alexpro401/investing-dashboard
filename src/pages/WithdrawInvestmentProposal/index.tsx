@@ -1,13 +1,16 @@
-import { Flex } from "theme"
+import { useCallback, useMemo } from "react"
 import { useParams } from "react-router-dom"
+import { BigNumber } from "@ethersproject/bignumber"
 import { createClient, Provider as GraphProvider } from "urql"
 
-import IconButton from "components/IconButton"
-import ExchangeInput from "components/Exchange/ExchangeInput"
-import ExchangeDivider from "components/Exchange/Divider"
-import Button, { SecondaryButton } from "components/Button"
-import CircularProgress from "components/CircularProgress"
+import { Flex } from "theme"
+import SwapPrice from "components/SwapPrice"
 import Header from "components/Header/Layout"
+import IconButton from "components/IconButton"
+import ExchangeDivider from "components/Exchange/Divider"
+import CircularProgress from "components/CircularProgress"
+import Button, { SecondaryButton } from "components/Button"
+import ExchangeInput from "components/Exchange/ExchangeInput"
 
 import close from "assets/icons/close-big.svg"
 
@@ -25,11 +28,7 @@ import {
 } from "components/Exchange/styled"
 
 import useWithdrawInvestmentProposal from "./useWithdrawInvestmentProposal"
-import { useCallback, useMemo } from "react"
-import SwapPrice from "components/SwapPrice"
 import { useUserAgreement } from "state/user/hooks"
-import { BigNumber } from "@ethersproject/bignumber"
-import { normalizeBigNumber } from "utils"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",

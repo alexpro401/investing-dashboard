@@ -5,7 +5,6 @@ import { createClient, Provider as GraphProvider } from "urql"
 
 import IconButton from "components/IconButton"
 import DividendsInput from "components/Exchange/DividendsInput"
-import ExchangeDivider from "components/Exchange/Divider"
 import Button, { SecondaryButton } from "components/Button"
 import CircularProgress from "components/CircularProgress"
 import Header from "components/Header/Layout"
@@ -114,7 +113,7 @@ function PayDividends() {
         Pay dividends
       </Button>
     )
-  }, [handleSubmit, tokens])
+  }, [handleSubmit, updateAllowance, tokens])
 
   const lastDividends = useMemo(() => {
     return (

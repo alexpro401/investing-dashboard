@@ -1,11 +1,7 @@
-// import React, { useState, useRef } from "react"
 import NotificationsSlashed from "assets/menu/NotificationsSlashed"
 import close from "assets/icons/close.svg"
 import { NotificationsStyled, Header, Title, Body } from "./styled"
 import { IconButton } from "theme"
-import useNotifications from "hooks/useNotifications"
-
-import NotificationCard from "components/NotificationCard"
 
 interface IProps {
   isOpen: boolean

@@ -1,5 +1,5 @@
-import { Flex, Text, BasicCard } from "theme"
 import styled from "styled-components"
+import { Flex, BasicCard } from "theme"
 
 export const Title = styled.div`
   font-family: "Gilroy";

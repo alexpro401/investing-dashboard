@@ -6,7 +6,6 @@ import { useERC20 } from "hooks/useContract"
 import { getPNL, getPriceLP } from "utils/formulas"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
-import { ILeverageInfo } from "interfaces/contracts/ITraderPool"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 
 import { Flex } from "theme"
@@ -17,15 +16,14 @@ import chartIcon from "assets/icons/bar-chart-icon.svg"
 
 interface IProps {
   data: IPoolQuery
-  leverage: ILeverageInfo | null
   info: IPoolInfo | null
 }
 
-const FundStatisticsCard: FC<IProps> = ({ data, leverage, info }) => {
+const FundStatisticsCard: FC<IProps> = ({ data, info }) => {
   const [, baseData] = useERC20(data.baseToken)
 
   // UI variables
-  const openPositionsPercent = info?.openPositions.length || 0 * 4
+  const openPositionsPercent = info?.openPositions.length || 0
   const openPositions = info?.openPositions.length || 0
 
   const orderSize = useMemo(() => {

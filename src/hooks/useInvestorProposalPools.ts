@@ -3,7 +3,7 @@ import { IInvestorInvestedPools } from "interfaces/thegraphs/invest-pools"
 import { InvestorPoolsInvestedForQuery } from "queries"
 
 function useInvestorProposalPools(address?: string, poolType?: string) {
-  const [response, executeQuery] = useQuery<{
+  const [response] = useQuery<{
     investors: IInvestorInvestedPools[]
   }>({
     query: InvestorPoolsInvestedForQuery,

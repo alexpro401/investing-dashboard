@@ -1,23 +1,5 @@
 import React, { useState, useRef, ReactNode } from "react"
-import { useWeb3React } from "@web3-react/core"
-import { Flex } from "theme"
-import {
-  FloatingContainer,
-  Header,
-  Overlay,
-  Container,
-  Handle,
-  AccountCard,
-  AccountTitle,
-  AccountDescription,
-  AccountIcon,
-  AccountAddress,
-  AccountFooter,
-  TextButton,
-} from "./styled"
-
-import metamask from "assets/wallets/metamask.svg"
-import { shortenAddress } from "utils"
+import { FloatingContainer, Header, Overlay, Container, Handle } from "./styled"
 
 // TODO: if content height > greater than window height, then use scroll of that content
 

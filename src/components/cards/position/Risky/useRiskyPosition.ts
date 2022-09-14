@@ -2,10 +2,11 @@ import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 import { useEffect, useMemo, useState } from "react"
 
+import { ZERO } from "constants/index"
 import { normalizeBigNumber } from "utils"
-import { IRiskyPositionCard } from "interfaces/thegraphs/basic-pools"
-import { useERC20, usePriceFeedContract } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
+import { useERC20, usePriceFeedContract } from "hooks/useContract"
+import { IRiskyPositionCard } from "interfaces/thegraphs/basic-pools"
 
 import {
   divideBignumbers,
@@ -15,15 +16,13 @@ import {
 } from "utils/formulas"
 import { ITokenBase } from "interfaces"
 
-const BIG_ZERO: BigNumber = BigNumber.from(0)
-
 interface IAmount {
   big: BigNumber
   format: string
 }
 
 const INITIAL_AMOUNT: IAmount = {
-  big: BIG_ZERO,
+  big: ZERO,
   format: "0",
 }
 
@@ -46,8 +45,7 @@ function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
 
   const priceFeed = usePriceFeedContract()
 
-  const [currentPositionPriceBase, setCurrentPositionPriceBase] =
-    useState(BIG_ZERO)
+  const [currentPositionPriceBase, setCurrentPositionPriceBase] = useState(ZERO)
   const currentPositionPriceUSD = useTokenPriceOutUSD({
     tokenAddress: position.token,
   })
@@ -167,7 +165,7 @@ function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
    */
   const pnlBase = useMemo<BigNumber>(() => {
     if (!markPriceBase || !entryPriceBase || !positionVolume) {
-      return BIG_ZERO
+      return ZERO
     }
 
     const priceDiff = subtractBignumbers(
@@ -183,7 +181,7 @@ function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
    */
   const pnlUSD = useMemo<BigNumber>(() => {
     if (!markPriceUSD || !entryPriceUSD || !positionVolume) {
-      return BIG_ZERO
+      return ZERO
     }
 
     const priceDiff = subtractBignumbers(

@@ -447,7 +447,7 @@ const useSwapRiskyProposal = ({
   ])
 
   const handleSubmit = useCallback(async () => {
-    if (!proposalPool) return
+    if (!proposalPool || !direction) return
     setWalletPrompting(SubmitState.IDLE)
 
     const params = {
@@ -477,7 +477,7 @@ const useSwapRiskyProposal = ({
 
       const tx = await addTransaction(transactionResponse, {
         type: TransactionType.RISKY_PROPOSAL_SWAP,
-        tradeType: tradeType[direction!],
+        tradeType: tradeType[direction],
         inputCurrencyId: form.from.address,
         inputCurrencyAmountRaw: form.from.amount,
         outputCurrencyId: form.to.address,

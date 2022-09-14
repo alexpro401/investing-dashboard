@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Flex, Text, BaseButton, device, GradientBorder } from "theme"
+import { Flex, device, GradientBorder } from "theme"
 
 export const Card = styled(GradientBorder)`
   width: 100%;

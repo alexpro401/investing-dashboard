@@ -5,7 +5,7 @@ import { InvestProposalQuery } from "queries"
 export function useInvestProposalData(
   proposalId?: string
 ): IInvestProposal | undefined {
-  const [response, executeQuery] = useQuery<{
+  const [response] = useQuery<{
     proposal: IInvestProposal
   }>({
     query: InvestProposalQuery,

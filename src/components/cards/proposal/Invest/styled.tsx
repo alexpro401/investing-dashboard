@@ -16,11 +16,13 @@ const Styled = {
       background: #181e2c;
     }
   `,
-  Head: styled(Flex)<{ isTrader?: boolean }>`
+  Head: styled(Flex)<{ isTrader: boolean | null }>`
     width: 100%;
     justify-content: space-between;
     padding: ${(props) =>
-      props.isTrader ? "8px 8px 7px 16px" : "8px 14px 7px 16px"};
+      props.isTrader || props.isTrader === null
+        ? "8px 8px 7px 16px"
+        : "8px 14px 7px 16px"};
     border-bottom: 1px solid #1d2635;
     position: relative;
   `,
@@ -71,13 +73,13 @@ const Styled = {
     color: #788ab4;
     transform: translateY(2px);
   `,
-  ReadMoreContainer: styled.div`
+  ReadMoreContainer: styled.div<{ color: string }>`
     width: 100%;
     padding: 0 14px 16px 16px;
     font-weight: 400;
     font-size: 13px;
     line-height: 130%;
-    color: #e4f2ff;
+    color: ${(p) => p.color};
   `,
 }
 
