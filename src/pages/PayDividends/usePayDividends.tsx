@@ -31,6 +31,8 @@ import useError from "hooks/useError"
 import { useInvestProposal } from "hooks/useInvestmentProposals"
 import usePoolPrice from "hooks/usePoolPrice"
 import { multiplyBignumbers } from "utils/formulas"
+import { useInvestProposalSupplies } from "hooks/useInvestProposalData"
+import { IInvestProposalSupply } from "interfaces/thegraphs/invest-pools"
 
 interface FetchedTokenData {
   balance: BigNumber
@@ -43,6 +45,10 @@ interface PayDividendsInfo {
     base: string
     usd: string
   }
+  APR: {
+    percent: string
+    usd: string
+  }
   ticker: string
 }
 
@@ -53,6 +59,7 @@ const usePayDividends = (
   {
     tokens: DividendToken[]
     info: PayDividendsInfo
+    supplies?: IInvestProposalSupply[]
   },
   {
     updateAllowance: (address: string) => Promise<void>
@@ -82,6 +89,10 @@ const usePayDividends = (
   const [proposal, updateProposal] = useInvestProposal(poolAddress, proposalId)
   const [{ priceBase, priceUSD }, updatePoolPrice] = usePoolPrice(poolAddress)
   const [, baseData] = useERC20(poolInfo?.parameters.baseToken)
+  const [supplies, APR] = useInvestProposalSupplies(
+    investProposalAddress,
+    proposalId
+  )
 
   const addTransaction = useTransactionAdder()
 
@@ -108,30 +119,32 @@ const usePayDividends = (
   ])
 
   const info = useMemo(() => {
+    const tvlUSD = multiplyBignumbers(
+      [proposal?.proposalInfo.lpLocked || ZERO, 18],
+      [priceUSD, 18]
+    )
+    const tvlBase = multiplyBignumbers(
+      [proposal?.proposalInfo.lpLocked || ZERO, 18],
+      [priceBase, 18]
+    )
+
+    const APR_USD = multiplyBignumbers(
+      [BigNumber.from(APR || ZERO), 6],
+      [tvlUSD, 18]
+    )
+
     return {
       tvl: {
-        base: proposal
-          ? normalizeBigNumber(
-              multiplyBignumbers(
-                [proposal.proposalInfo.lpLocked, 18],
-                [priceBase, 18]
-              )
-            )
-          : "-",
-        usd: proposal
-          ? normalizeBigNumber(
-              multiplyBignumbers(
-                [proposal?.proposalInfo.lpLocked || ZERO, 18],
-                [priceUSD, 18]
-              ),
-              18,
-              2
-            )
-          : "-",
+        base: proposal ? normalizeBigNumber(tvlBase) : "-",
+        usd: proposal ? normalizeBigNumber(tvlUSD, 18, 2) : "-",
+      },
+      APR: {
+        percent: APR ? normalizeBigNumber(APR, 4, 2) : "-",
+        usd: proposal && APR ? normalizeBigNumber(APR_USD, 18, 2) : "-",
       },
       ticker: baseData?.symbol || "",
     }
-  }, [proposal, priceBase, priceUSD, baseData])
+  }, [proposal, priceBase, priceUSD, baseData, APR])
 
   const fetchTokenData = useCallback(
     async (address: string) => {
@@ -463,6 +476,7 @@ const usePayDividends = (
     {
       tokens,
       info,
+      supplies,
     },
     {
       updateAllowance,

@@ -28,6 +28,7 @@ import {
   WithdrawInvestProposalTransactionInfo,
   SupplyInvestProposalTransactionInfo,
   ClaimInvestProposalTransactionInfo,
+  ConvertInvestProposalToDividendsTransactionInfo,
 } from "state/transactions/types"
 import { formatBigNumber } from "utils"
 import { useERC20 } from "hooks/useContract"
@@ -299,6 +300,12 @@ const TraderGetPerformanceFeeSummary: React.FC<{
   )
 }
 
+const ConvertInvestProposalToDividendsSummary: React.FC<{
+  info: ConvertInvestProposalToDividendsTransactionInfo
+}> = () => {
+  return <>Convert Invest Proposal balance to Dividends.</>
+}
+
 const TransactionSummary: React.FC<IProps> = ({ info }) => {
   switch (info.type) {
     case TransactionType.APPROVAL:
@@ -349,6 +356,8 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <PrivacyPolicyAgreeSummary info={info} />
     case TransactionType.TRADER_GET_PERFORMANCE_FEE:
       return <TraderGetPerformanceFeeSummary info={info} />
+    case TransactionType.INVEST_PROPOSAL_CONVERT_TO_DIVIDENDS:
+      return <ConvertInvestProposalToDividendsSummary info={info} />
 
     default:
       return null

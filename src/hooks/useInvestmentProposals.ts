@@ -112,6 +112,7 @@ export function useRewards({ poolAddress, account, proposalId }) {
       [parseFloat(proposalId) + 1],
       account
     )
+
     setRewards(data)
   }, [account, investProposal, proposalId])
 

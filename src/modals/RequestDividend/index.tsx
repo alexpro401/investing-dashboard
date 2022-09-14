@@ -100,8 +100,8 @@ const RequestDividend: FC<Props> = ({ isOpen, onClose, params }) => {
           )}
         </InfoWhite>
         <Flex gap="4">
-          <InfoWhite>0</InfoWhite>
-          <InfoGrey>USD</InfoGrey>
+          <InfoWhite>{claim.dividendsTokens.length}</InfoWhite>
+          <InfoGrey>token{claim.dividendsTokens.length > 1 && "s"}</InfoGrey>
         </Flex>
       </InfoRow>
     ))

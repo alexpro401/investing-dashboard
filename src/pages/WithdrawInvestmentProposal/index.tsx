@@ -29,10 +29,9 @@ import { useCallback, useMemo } from "react"
 import SwapPrice from "components/SwapPrice"
 import { useUserAgreement } from "state/user/hooks"
 import { BigNumber } from "@ethersproject/bignumber"
-import { normalizeBigNumber } from "utils"
 
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
+const investPoolsClient = createClient({
+  url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",
 })
 
 function WithdrawInvestmentProposal() {
@@ -89,37 +88,31 @@ function WithdrawInvestmentProposal() {
     )
   }, [onSubmit, from.amount, from.balance])
 
-  // {
-  //   transactions (where: {user: "0xca543e570e4a1f6da7cf9c4c7211692bc105a00a", type_contains: ["17"]}) {
-  //     investProposalWithdraw {
-  //       amount
-  //       transaction {
-  //         timestamp
-  //       }
-  //     }
-  //   }
-  // }
   const lastWithdraw = useMemo(() => {
     return (
       <Flex gap="4">
-        <InfoGrey>0 {from.symbol}</InfoGrey>
+        <InfoGrey>
+          {info.withdrawals.length ? info.withdrawals[0].date : "-"}
+        </InfoGrey>
       </Flex>
     )
-  }, [from.symbol])
+  }, [info.withdrawals])
 
   const lastWithdrawContent = useMemo(() => {
     return (
       <>
-        <InfoRow>
-          <InfoGrey>Feb 12,2021</InfoGrey>
-          <Flex gap="4">
-            <InfoWhite>0</InfoWhite>
-            <InfoGrey>{from.symbol}</InfoGrey>
-          </Flex>
-        </InfoRow>
+        {info.withdrawals.map((withdraw) => (
+          <InfoRow key={withdraw.id}>
+            <InfoGrey>{withdraw.date}</InfoGrey>
+            <Flex gap="4">
+              <InfoWhite>{withdraw.amount}</InfoWhite>
+              <InfoGrey>{from.symbol}</InfoGrey>
+            </Flex>
+          </InfoRow>
+        ))}
       </>
     )
-  }, [from.symbol])
+  }, [from.symbol, info.withdrawals])
 
   const fullness = useMemo(() => {
     return (
@@ -213,7 +206,7 @@ function WithdrawInvestmentProposal() {
         {averageLpPrice}
         {expirationDate}
         <InfoDropdown
-          left={<InfoGrey>Last withdraw Jun 12,2022</InfoGrey>}
+          left={<InfoGrey>Last withdraw</InfoGrey>}
           right={lastWithdraw}
         >
           {lastWithdrawContent}
@@ -239,7 +232,7 @@ function WithdrawInvestmentProposal() {
 
 const WithdrawInvestmentProposalWithProvider = () => {
   return (
-    <GraphProvider value={poolsClient}>
+    <GraphProvider value={investPoolsClient}>
       <WithdrawInvestmentProposal />
     </GraphProvider>
   )
