@@ -11,6 +11,8 @@ import { InvestProposal } from "interfaces/thegraphs/invest-pools"
 import LoadMore from "components/LoadMore"
 import InvestProposalCard from "components/cards/proposal/Invest"
 
+import { RequestDividendsProvider } from "modals/RequestDividend/useRequestDividendsContext"
+
 import S from "./styled"
 
 const poolsClient = createClient({
@@ -122,7 +124,9 @@ const InvestmentInvestProposalsList: FC<IProps> = ({
 const InvestmentInvestProposalsListWithProvider = (props) => {
   return (
     <GraphProvider value={poolsClient}>
-      <InvestmentInvestProposalsList {...props} />
+      <RequestDividendsProvider>
+        <InvestmentInvestProposalsList {...props} />
+      </RequestDividendsProvider>
     </GraphProvider>
   )
 }
