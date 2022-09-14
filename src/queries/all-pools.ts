@@ -181,7 +181,7 @@ const POSITION = `
 
 const PositionsByIdsQuery = `
   query ($idList: [String]!) {
-    positions(skip: $offset, first: $limit, where: { id_in: $idList }) {
+    positions(first: 25, where: { id_in: $idList }) {
       ${POSITION_DATA}
     }
   }
