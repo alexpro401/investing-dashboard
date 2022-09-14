@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import useError from "hooks/useError"
+import { ZERO } from "constants/index"
 import { PositionsByIdsQuery } from "queries"
 import { addBignumbers } from "utils/formulas"
 import { usePriceFeedContract } from "hooks/useContract"
@@ -21,10 +22,10 @@ const useOpenPositionsPriceOutUSD = (
   const [, setError] = useError()
   const priceFeed = usePriceFeedContract()
 
-  const [outUSDVolume, setOutUSD] = useState<BigNumber>(BigNumber.from(0))
-  const [fullData, setFullData] = useState<boolean>(false)
+  const [outUSDVolume, setOutUSD] = useState<BigNumber>(ZERO)
 
-  const [{ fetching: loading, data, error }, fetchMore] = useQuery({
+  const [{ fetching: loading, data, error }] = useQuery({
+    pause: !positions,
     query: PositionsByIdsQuery,
     variables: {
       idList: positions
@@ -36,33 +37,13 @@ const useOpenPositionsPriceOutUSD = (
   // Clear state to prevent memory leak
   useEffect(() => {
     return () => {
-      setOutUSD(BigNumber.from(0))
-      setFullData(false)
+      setOutUSD(ZERO)
     }
   }, [poolAddress])
 
-  // Must fetch all positions before calculate prices
-  useEffect(() => {
-    if (
-      !loading &&
-      data &&
-      positions &&
-      data.positions.length === positions.length
-    ) {
-      setFullData(true)
-    } else if (
-      data &&
-      !loading &&
-      positions &&
-      data.positions.length !== positions.length
-    ) {
-      fetchMore({ requestPolicy: "network-only" })
-    }
-  }, [data, fetchMore, loading, positions])
-
   // Fetch prices of positions locked amounts in USD
   useEffect(() => {
-    if (loading || !fullData || !priceFeed || !positionAmountsMap) {
+    if (loading || !priceFeed || !positionAmountsMap) {
       return
     }
 
@@ -86,7 +67,7 @@ const useOpenPositionsPriceOutUSD = (
         console.error(error)
       }
     })()
-  }, [data, fullData, loading, priceFeed, positionAmountsMap])
+  }, [data, loading, priceFeed, positionAmountsMap])
 
   // Clear error state
   useEffect(() => {
