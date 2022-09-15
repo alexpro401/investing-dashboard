@@ -19,7 +19,7 @@ const TextButton = styled.button`
   width: 100%;
 `
 
-storiesOf('Avatar', module).add('default', () => {
+storiesOf('Form', module).add('Avatar', () => {
     const variants = [
         {
             name: "With image provided:",
