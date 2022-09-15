@@ -18,7 +18,7 @@ import { opacityVariants } from "motion/variants"
 import "rc-tooltip/assets/bootstrap.css"
 
 import defaultAvatar from "assets/icons/default-avatar.svg"
-import { useERC20 } from "hooks/useContract"
+import { useERC20 } from "hooks/useERC20"
 import { fromBig, formatNumber } from "utils"
 import {
   Slide,
