@@ -11,7 +11,7 @@ import ipfsMetadata from "./ipfsMetadata/reducer"
 import gas from "./gas/reducer"
 import erc20 from "./erc20/reducer"
 
-const RESET_KEY = "1661954057984"
+const RESET_KEY = "1663239394417"
 
 const PERSISTED_KEYS: string[] = [
   "user",
@@ -19,6 +19,7 @@ const PERSISTED_KEYS: string[] = [
   "pools",
   "ipfsMetadata",
   "gas",
+  "erc20",
 ]
 
 const shouldReset = () => {
