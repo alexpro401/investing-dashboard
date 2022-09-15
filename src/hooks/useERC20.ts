@@ -47,16 +47,14 @@ export function useERC20Balance(
 
   // check address and save
   useEffect(() => {
-    if (!address) return
-
-    if (address === storedAddress) return
+    if (!address || String(address).toLocaleLowerCase() === storedAddress) {
+      return
+    }
 
     try {
       isAddress(address)
-      setAddress(address)
+      setAddress(String(address).toLocaleLowerCase())
     } catch (e) {}
-
-    setBalance(ZERO)
   }, [address, storedAddress])
 
   useEffect(() => {
@@ -109,13 +107,13 @@ export function useERC20(
 
   // check address and save
   useEffect(() => {
-    if (!address || address === storedAddress) {
+    if (!address || String(address).toLocaleLowerCase() === storedAddress) {
       return
     }
 
     try {
       isAddress(address)
-      setAddress(address)
+      setAddress(String(address).toLocaleLowerCase())
     } catch (e) {}
   }, [address, storedAddress])
 

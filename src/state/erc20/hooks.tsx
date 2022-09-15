@@ -16,13 +16,14 @@ export function useERC20Data(
   const dispatch = useDispatch()
   const { chainId } = useActiveWeb3React()
 
+  const [storedAddress, setAddress] = useState("")
   const [loading, setLoading] = useState(true)
 
   const contract = useContract(address, ERC20)
   const ERC20Data = useSelector(selectERC20Data(chainId, address))
 
   const init = useCallback(async () => {
-    if (!address || !isAddress(address) || !chainId || !contract) {
+    if (!storedAddress || !isAddress(storedAddress) || !chainId || !contract) {
       return
     }
 
@@ -33,14 +34,16 @@ export function useERC20Data(
       const name = await contract.name()
 
       dispatch(
-        addToken({ params: { address, symbol, decimals, name, chainId } })
+        addToken({
+          params: { address: storedAddress, symbol, decimals, name, chainId },
+        })
       )
     } catch (e) {
       console.error(e)
     } finally {
       setLoading(false)
     }
-  }, [address, chainId, contract, dispatch])
+  }, [storedAddress, chainId, contract, dispatch])
 
   useEffect(() => {
     if (ERC20Data !== null) {
@@ -50,6 +53,18 @@ export function useERC20Data(
 
     ;(async () => await init())()
   }, [ERC20Data, init])
+
+  // check address and save
+  useEffect(() => {
+    if (!address || String(address).toLocaleLowerCase() === storedAddress) {
+      return
+    }
+
+    try {
+      isAddress(address)
+      setAddress(String(address).toLocaleLowerCase())
+    } catch (e) {}
+  }, [address, storedAddress])
 
   return [ERC20Data, loading, init]
 }
