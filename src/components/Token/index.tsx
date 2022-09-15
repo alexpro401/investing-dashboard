@@ -1,10 +1,10 @@
 import { Flex } from "theme"
 import { InfoRow, InfoGrey, InfoWhite } from "components/Exchange/styled"
 import TokenIcon from "components/TokenIcon"
-import { useERC20 } from "hooks/useContract"
 import { cutDecimalPlaces, normalizeBigNumber } from "utils"
 import { FC } from "react"
 import { BigNumberish } from "@ethersproject/bignumber"
+import { useERC20Data } from "state/erc20/hooks"
 
 interface Props {
   data: {
@@ -14,7 +14,7 @@ interface Props {
 }
 
 const Token: FC<Props> = ({ data }) => {
-  const [, tokenData] = useERC20(data.address)
+  const [tokenData] = useERC20Data(data.address)
 
   return (
     <InfoRow>

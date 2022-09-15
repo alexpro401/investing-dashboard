@@ -15,7 +15,6 @@ import { useInvestProposal } from "hooks/useInvestmentProposals"
 import usePoolPrice from "hooks/usePoolPrice"
 import { useInvestProposalSupplies } from "hooks/useInvestProposalData"
 import {
-  useERC20,
   useInvestProposalContract,
   usePriceFeedContract,
 } from "hooks/useContract"
@@ -34,6 +33,7 @@ import {
 } from "utils"
 
 import { multiplyBignumbers } from "utils/formulas"
+import { useERC20Data } from "state/erc20/hooks"
 
 interface FetchedTokenData {
   balance: BigNumber
@@ -89,7 +89,7 @@ const usePayDividends = (
     useInvestProposalContract(poolAddress)
   const [proposal, updateProposal] = useInvestProposal(poolAddress, proposalId)
   const [{ priceBase, priceUSD }, updatePoolPrice] = usePoolPrice(poolAddress)
-  const [, baseData] = useERC20(poolInfo?.parameters.baseToken)
+  const [baseData] = useERC20Data(poolInfo?.parameters.baseToken)
   const [supplies, APR] = useInvestProposalSupplies(
     investProposalAddress,
     proposalId

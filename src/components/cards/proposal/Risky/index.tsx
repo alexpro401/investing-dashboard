@@ -16,9 +16,10 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { PriceFeed } from "abi"
 import { ZERO } from "constants/index"
 import { useActiveWeb3React } from "hooks"
+import useContract from "hooks/useContract"
+import { useERC20Data } from "state/erc20/hooks"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { percentageOfBignumbers } from "utils/formulas"
-import useContract, { useERC20 } from "hooks/useContract"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
@@ -63,7 +64,7 @@ const RiskyProposalCard: FC<Props> = ({
 }) => {
   const navigate = useNavigate()
   const { account, chainId } = useActiveWeb3React()
-  const [, proposalToken] = useERC20(proposal.proposalInfo.token)
+  const [proposalToken] = useERC20Data(proposal.proposalInfo.token)
   const priceFeedAddress = useSelector(selectPriceFeedAddress)
   const priceFeed = useContract(priceFeedAddress, PriceFeed)
   const getTokenRating = useTokenRating()

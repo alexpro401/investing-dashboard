@@ -28,10 +28,10 @@ import { SubmitState } from "constants/types"
 import { usePoolContract } from "hooks/usePool"
 import { Token } from "interfaces"
 import { selectWhitelist } from "state/pricefeed/selectors"
-import { useERC20 } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { useUserAgreement } from "state/user/hooks"
 import usePayload from "hooks/usePayload"
+import { useERC20Data } from "state/erc20/hooks"
 
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import { dropdownVariants } from "motion/variants"
@@ -109,9 +109,9 @@ const CreateRiskyProposal: FC = () => {
 
   const proposalTokenPrice = useTokenPriceOutUSD({ tokenAddress: tokenAddress })
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [, baseTokenData] = useERC20(poolInfo?.parameters.baseToken)
+  const [baseTokenData] = useERC20Data(poolInfo?.parameters.baseToken)
 
-  const [, tokenData] = useERC20(tokenAddress)
+  const [tokenData] = useERC20Data(tokenAddress)
   const navigate = useNavigate()
 
   const whitelisted = useSelector(selectWhitelist)

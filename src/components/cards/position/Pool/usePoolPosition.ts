@@ -4,9 +4,10 @@ import { useEffect, useMemo, useState } from "react"
 
 import { ZERO } from "constants/index"
 import { formatBigNumber } from "utils"
+import { useERC20Data } from "state/erc20/hooks"
 import { IPosition } from "interfaces/thegraphs/all-pools"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import { useERC20, usePriceFeedContract } from "hooks/useContract"
+import { usePriceFeedContract } from "hooks/useContract"
 
 import {
   divideBignumbers,
@@ -41,8 +42,8 @@ interface IPayload {
 
 function usePoolPosition(position: IPosition): [IPayload] {
   const priceFeed = usePriceFeedContract()
-  const [, positionToken] = useERC20(position.positionToken)
-  const [, baseToken] = useERC20(position.traderPool.baseToken)
+  const [positionToken] = useERC20Data(position.positionToken)
+  const [baseToken] = useERC20Data(position.traderPool.baseToken)
 
   const currentPriceUSD = useTokenPriceOutUSD({
     tokenAddress: position.positionToken,

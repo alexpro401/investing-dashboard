@@ -2,12 +2,12 @@ import { FC, ReactNode, useState, useEffect, useMemo } from "react"
 import { formatEther } from "@ethersproject/units"
 import { format } from "date-fns"
 
-import { useERC20 } from "hooks/useContract"
-import { IPoolQuery } from "interfaces/thegraphs/all-pools"
-import { IPoolInfo } from "interfaces/contracts/ITraderPool"
+import { DATE_FORMAT } from "constants/time"
+import { useERC20Data } from "state/erc20/hooks"
 import { expandTimestamp, formatBigNumber } from "utils"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-import { DATE_FORMAT } from "constants/time"
+import { IPoolQuery } from "interfaces/thegraphs/all-pools"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 
 import Emission from "components/Emission"
 import ReadMore from "components/ReadMore"
@@ -38,7 +38,7 @@ interface Props {
 const FundDetailsCard: FC<Props> = ({ pool, poolInfo, children = null }) => {
   const [description, setDescription] = useState("")
   const [strategy, setStrategy] = useState("")
-  const [, baseToken] = useERC20(pool.baseToken)
+  const [baseToken] = useERC20Data(pool.baseToken)
 
   const [{ poolMetadata }] = usePoolMetadata(pool.id, pool.descriptionURL)
 

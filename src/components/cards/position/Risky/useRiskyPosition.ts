@@ -4,8 +4,9 @@ import { useEffect, useMemo, useState } from "react"
 
 import { ZERO } from "constants/index"
 import { normalizeBigNumber } from "utils"
+import { useERC20Data } from "state/erc20/hooks"
+import { usePriceFeedContract } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import { useERC20, usePriceFeedContract } from "hooks/useContract"
 import { IRiskyPositionCard } from "interfaces/thegraphs/basic-pools"
 
 import {
@@ -40,8 +41,8 @@ interface IPayload {
 }
 
 function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
-  const [, positionToken] = useERC20(position?.token)
-  const [, baseToken] = useERC20(position.pool.baseToken)
+  const [positionToken] = useERC20Data(position?.token)
+  const [baseToken] = useERC20Data(position.pool.baseToken)
 
   const priceFeed = usePriceFeedContract()
 
