@@ -6,7 +6,7 @@ import TokenIcon from "components/TokenIcon"
 import ExternalLink from "components/ExternalLink"
 
 import { expandTimestamp } from "utils"
-import { ITokenBase } from "interfaces"
+import { useERC20Data } from "state/erc20/hooks"
 import { DATE_TIME_FORMAT } from "constants/time"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
@@ -23,17 +23,17 @@ interface IProps {
   info: ITransactionSwap
   chainId?: number
   timestamp?: number
-  toToken?: ITokenBase
-  fromToken?: ITokenBase
 }
 
 const TransactionHistoryCardSwap: React.FC<IProps> = ({
   hash,
+  info,
   chainId,
   timestamp,
-  toToken,
-  fromToken,
 }) => {
+  const [toToken] = useERC20Data(info?.toToken)
+  const [fromToken] = useERC20Data(info?.fromToken)
+
   const explorerUrl = useMemo<string>(() => {
     if (!chainId || !hash) return ""
     return getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)
