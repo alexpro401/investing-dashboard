@@ -33,6 +33,7 @@ export const Container = styled(GradientBorder)<{
     props.size ? borderRadius[props.size] : borderRadius.normal};
   padding: ${(props) => (props.size ? padding[props.size] : padding.normal)};
   min-height: ${(props) => (props.size ? height[props.size] : height.normal)};
+  box-sizing: border-box;
 
   &:after {
     background: ${({ theme }) => background[theme]};
@@ -71,7 +72,7 @@ export const LimitText = styled.div`
 
 export const InputField = styled(motion.input)`
   outline: none;
-  appereance: none;
+  appearance: none;
   background: transparent;
   border: none;
   width: fill-available;
