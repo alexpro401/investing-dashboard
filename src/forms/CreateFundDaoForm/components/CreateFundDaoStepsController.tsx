@@ -24,16 +24,16 @@ const CreateFundDaoStepsController: FC<Props> = ({
   )
 
   return (
-    <Flex dir="column" full>
+    <Flex dir="column" full m="auto 0 0">
       <S.CreateFundDaoStepsProgress progress={progress} />
       <Flex jc="space-between" full p="25px">
         <S.StepsControllerButton onClick={prevCb}>
           <S.RoundedIcon name={ICON_NAMES.angleLeft} />
           Back
         </S.StepsControllerButton>
-        <S.StepsControllerButton isActive={true} onClick={nextCb}>
+        <S.StepsControllerButton isActive onClick={nextCb}>
           Continue
-          <S.RoundedIcon isActive={true} name={ICON_NAMES.angleRight} />
+          <S.RoundedIcon name={ICON_NAMES.angleRight} />
         </S.StepsControllerButton>
       </Flex>
     </Flex>

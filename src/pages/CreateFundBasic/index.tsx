@@ -4,6 +4,7 @@ import CreateFundForm from "forms/CreateFundForm"
 
 import { FC } from "react"
 import * as S from "./styled"
+import { opacityVariants } from "motion/variants"
 
 const CreateFundDaoPool: FC = () => {
   return (
@@ -14,6 +15,7 @@ const CreateFundDaoPool: FC = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
+        variants={opacityVariants}
       >
         <CreateFundContext>
           <CreateFundForm presettedFundType="basic" />

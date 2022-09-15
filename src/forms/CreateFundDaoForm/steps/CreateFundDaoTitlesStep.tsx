@@ -1,17 +1,19 @@
 import { FC, useContext, useState } from "react"
-import CreateDaoCardHead from "../components/CreateDaoCardHead"
-import CreateDaoCardStepNumber from "../components/CreateDaoCardStepNumber"
+import {
+  CreateDaoCardHead,
+  CreateDaoCardStepNumber,
+  CreateDaoCardDescription,
+} from "../components"
 
 import { Icon } from "common"
 import Switch from "components/Switch"
 import Input from "components/Input"
 import Avatar from "components/Avatar"
-import CreateDaoCardDescription from "../components/CreateDaoCardDescription"
 
 import { Flex } from "theme"
 import * as S from "../styled"
-import { FundDaoCreatingContext } from "../../../context/FundDaoCreatingContext"
-import { ICON_NAMES } from "../../../constants/icon-names"
+import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import { ICON_NAMES } from "constants/icon-names"
 
 const CreateFundDaoTitlesStep: FC = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>()
