@@ -1,10 +1,11 @@
-import { Flex } from "theme"
-import { ReactNode, FC } from "react"
 import styled from "styled-components"
+import { motion } from "framer-motion"
 
-export const Container = styled.div`
+export const Container = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
   margin: 0 auto;
-  background-color: #040a0f;
+  background-color: #0e121b;
   width: fill-available;
   height: calc(100vh - 94px);
   overflow-y: auto;
@@ -14,152 +15,96 @@ export const Container = styled.div`
   }
 `
 
-export const AvatarWrapper = styled(Flex)`
-  position: absolute;
-  top: -35px;
-  width: 100%;
-  justify-content: space-between;
-  flex-direction: column;
-  align-items: center;
-  height: 117px;
+export const FundTypeCards = styled.div`
+  padding: 0 16px;
 `
 
-export const LinkButton = styled.button`
-  background: none;
-  appereance: none;
-  border: none;
-  outline: none;
-  color: #2680eb;
-  padding: 0;
-  margin: 0;
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 12px;
-
-  text-align: center;
-  margin: 8px auto;
-  display: block;
-  letter-spacing: 0.03em;
-`
-
-export const Body = styled.div`
-  position: relative;
-  padding-top: 117px;
-  margin-top: 67px;
-  width: fill-available;
-  background: #08121a;
-  box-shadow: 0px -3px 102px 2px rgba(149, 185, 255, 0.26);
-  border-radius: 26px 26px 0px 0px;
-`
-
-export const Steps = styled.div``
-
-export const Step = styled.div``
-
-export const StepBody = styled.div<{ isLast?: boolean }>`
-  padding: ${(props) =>
-    props.isLast ? "24px 17px 24px 44px" : "24px 17px 48px 44px"};
-`
-
-export const FundTypeCards = styled.div``
-
-export const FeeCards = styled.div``
-
-export const ValidationError = styled.div`
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 12px;
-  color: #fc6d6d;
-  margin: 12px 0 0 3px;
-`
-
-export const InputRow = styled(Flex)`
-  width: 100%;
-  padding: 12px 0;
-  flex-direction: column;
-  align-items: flex-start;
-`
-
-const ModalIconsContainer = styled(Flex)`
-  flex-direction: column;
-  margin-top: 28px;
-  width: 100%;
-`
-
-const IconsContainer = styled(Flex)`
-  width: 52px;
-  height: 32px;
-  position: relative;
-`
-
-const LeftIcon = styled.div`
-  height: 32px;
-  width: 32px;
-  position: absolute;
-  left: 0;
-  top: 0;
-`
-
-const RightIcon = styled.div`
-  height: 32px;
-  width: 32px;
-  position: absolute;
-  right: 0;
-  top: 0;
-`
-
-const TickersContainer = styled(Flex)`
-  margin-top: 7px;
-  justify-content: center;
-`
-
-const Ticker = styled.div`
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 400;
+export const FundTypeCardsTitle = styled.h3`
   font-size: 16px;
-  line-height: 15px;
-  letter-spacing: 0.3px;
-`
-
-const FundTicker = styled(Ticker)`
+  line-height: 1.2;
   color: #e4f2ff;
-  text-align: right;
-  padding-right: 4px;
+  font-weight: 700;
 `
 
-const BaseTicker = styled(Ticker)`
-  color: #5e6d8e;
-  text-align: left;
+export const CreateFundDocsBlock = styled.div`
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  align-content: start;
+  background: #141926;
+  border-radius: 20px;
+  padding: 20px;
+  margin: 16px 16px 24px;
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 64px;
+    height: 30px;
+    background: #405d85;
+    filter: blur(30px);
+    transform: matrix(-0.96, 0.62, 0.22, -0.87, 0, 0);
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 64px;
+    height: 30px;
+    background: #405d85;
+    filter: blur(30px);
+    transform: matrix(0.94, -0.5, -0.3, 0.89, 0, 0);
+  }
 `
 
-interface ModalIconsProps {
-  left: ReactNode
-  right: ReactNode
-  fund: string
-  base: string
-}
+export const HighlightDecor = styled.div`
+  position: absolute;
+  top: 0;
+  left: -50px;
+  width: 75px;
+  height: 35px;
+  background: #85ffd9;
+  filter: blur(30px);
+  transform: matrix(0.48, -0.9, 0.85, 0.5, 0, 0);
+`
 
-export const ModalIcons: FC<ModalIconsProps> = ({
-  left,
-  right,
-  fund,
-  base,
-}) => {
-  return (
-    <ModalIconsContainer>
-      <IconsContainer>
-        <LeftIcon>{left}</LeftIcon>
-        <RightIcon>{right}</RightIcon>
-      </IconsContainer>
-      <TickersContainer>
-        <FundTicker>{fund}</FundTicker>
-        <BaseTicker>{base}</BaseTicker>
-      </TickersContainer>
-    </ModalIconsContainer>
-  )
-}
+export const CreateFundDocsBlockTitle = styled.h3`
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: #e4f2ff;
+  margin-bottom: 8px;
+`
+
+export const CreateFundDocsBlockLink = styled.a`
+  font-size: 13px;
+  line-height: 1.5;
+  color: #2669eb;
+`
+
+export const CreateFundDocsImg = styled.img`
+  max-width: 120px;
+  width: 100%;
+  transform: rotate(-10deg);
+  border-radius: 24px;
+  mix-blend-mode: lighten;
+  grid-row: 1 / 3;
+  grid-column: 2 / 3;
+`
+
+export const CreateFundDocsBlockCloseBtn = styled.button`
+  position: absolute;
+  top: 8px;
+  right: 4px;
+  background: none;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #788ab4;
+`
