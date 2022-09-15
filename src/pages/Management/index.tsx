@@ -11,7 +11,8 @@ import ExchangeDivider from "components/Exchange/Divider"
 import Button, { SecondaryButton } from "components/Button"
 import TransactionSlippage from "components/TransactionSlippage"
 
-import useContract, { useERC20 } from "hooks/useContract"
+import { useERC20 } from "hooks/useERC20"
+import useContract from "hooks/useContract"
 import {
   selectDexeAddress,
   selectInsuranceAddress,

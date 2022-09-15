@@ -15,7 +15,6 @@ import {
 import { IDivestAmountsAndCommissions } from "interfaces/contracts/ITraderPool"
 
 import {
-  useERC20,
   useInvestPoolContract,
   useInvestProposalContract,
   useTraderPoolContract,
@@ -38,6 +37,7 @@ import {
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
+import { useERC20Data } from "state/erc20/hooks"
 
 interface Info {
   tvl: {
@@ -104,7 +104,7 @@ const useInvestInvestmentProposal = (
   const [proposal, updateProposal] = useInvestProposal(poolAddress, proposalId)
 
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [, baseData] = useERC20(poolInfo?.parameters.baseToken)
+  const [baseData] = useERC20Data(poolInfo?.parameters.baseToken)
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
     poolInfo?.parameters.descriptionURL

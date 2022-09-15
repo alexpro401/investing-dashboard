@@ -16,6 +16,7 @@ import { getIpfsData } from "utils/ipfs"
 import { useActiveWeb3React } from "hooks"
 import usePoolPrice from "hooks/usePoolPrice"
 import { usePoolContract } from "hooks/usePool"
+import { useERC20Data } from "state/erc20/hooks"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import useInvestProposalData from "hooks/useInvestProposalData"
@@ -23,7 +24,6 @@ import { InvestProposal } from "interfaces/thegraphs/invest-pools"
 import { addBignumbers, percentageOfBignumbers } from "utils/formulas"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import {
-  useERC20,
   useInvestProposalContract,
   usePriceFeedContract,
 } from "hooks/useContract"
@@ -57,7 +57,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
 
   const [{ priceUSD }] = usePoolPrice(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [, baseTokenData] = useERC20(poolInfo?.parameters.baseToken)
+  const [baseTokenData] = useERC20Data(poolInfo?.parameters.baseToken)
   const [proposalPool, proposalAddress] = useInvestProposalContract(poolAddress)
   const { requestDividends } = useRequestDividendsContext()
 

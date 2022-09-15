@@ -3,14 +3,14 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"
 
 import { normalizeBigNumber } from "utils"
-import { useERC20 } from "hooks/useContract"
+import { useERC20Data } from "state/erc20/hooks"
 import { percentageOfBignumbers, subtractBignumbers } from "utils/formulas"
 import useOpenPositionsPriceOutUSD from "hooks/useOpenPositionsPriceOutUSD"
 
 function usePoolLockedFunds(poolAddress: string | undefined) {
   const [poolData] = usePoolQuery(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [, baseToken] = useERC20(poolData?.baseToken)
+  const [baseToken] = useERC20Data(poolData?.baseToken)
 
   const _baseAndPositionBalances = useMemo(() => {
     if (!poolInfo) return []

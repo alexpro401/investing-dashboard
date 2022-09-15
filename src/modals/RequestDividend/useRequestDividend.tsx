@@ -1,6 +1,5 @@
 import { useWeb3React } from "@web3-react/core"
 import {
-  useERC20,
   useInvestPoolContract,
   useInvestProposalContract,
   useTraderPoolContract,
@@ -17,6 +16,7 @@ import { useInvestProposalMetadata } from "state/ipfsMetadata/hooks"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 import { normalizeBigNumber } from "utils"
+import { useERC20Data } from "state/erc20/hooks"
 
 export interface DividendToken {
   icon: JSX.Element
@@ -39,7 +39,7 @@ const useRequestDividend = ({ poolAddress, proposalId, onClose }: Props) => {
   const investPool = useInvestPoolContract(poolAddress)
   const [, proposalAddress] = useInvestProposalContract(poolAddress)
   const rewards = useRewards({ poolAddress, proposalId, account })
-  const [, baseData] = useERC20(poolInfo?.parameters.baseToken)
+  const [baseData] = useERC20Data(poolInfo?.parameters.baseToken)
   const proposalInvestmentInfo = useActiveInvestmentsInfo(
     poolAddress,
     account,

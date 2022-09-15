@@ -17,7 +17,7 @@ import {
   useRiskyProposal,
 } from "hooks/useRiskyProposals"
 import { usePoolContract } from "hooks/usePool"
-import { useERC20, usePriceFeedContract } from "hooks/useContract"
+import { usePriceFeedContract } from "hooks/useContract"
 import {
   divideBignumbers,
   multiplyBignumbers,
@@ -39,6 +39,7 @@ import { ZERO } from "constants/index"
 import useRiskyPosition from "hooks/useRiskyPosition"
 import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
+import { useERC20Data } from "state/erc20/hooks"
 
 export interface UseSwapRiskyParams {
   poolAddress?: string
@@ -107,8 +108,8 @@ const useSwapRiskyProposal = ({
   const [, poolInfo] = usePoolContract(poolAddress)
   const priceFeed = usePriceFeedContract()
 
-  const [, baseToken] = useERC20(poolInfo?.parameters.baseToken)
-  const [, positionToken] = useERC20(proposalInfo?.proposalInfo.token)
+  const [baseToken] = useERC20Data(poolInfo?.parameters.baseToken)
+  const [positionToken] = useERC20Data(proposalInfo?.proposalInfo.token)
 
   const [, getGasPrice] = useGasTracker()
 

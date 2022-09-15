@@ -41,10 +41,11 @@ import { arrayDifference } from "utils/array"
 import { getIpfsData, addFundMetadata } from "utils/ipfs"
 import { useUpdateFundContext } from "context/UpdateFundContext"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"
-import useContract, { useERC20 } from "hooks/useContract"
+import useContract from "hooks/useContract"
 import { useAddToast } from "state/application/hooks"
 import { TraderPool } from "abi"
 
+import { useERC20Data } from "state/erc20/hooks"
 import { UpdateListType } from "constants/types"
 import { useUserAgreement } from "state/user/hooks"
 import { addPool } from "state/ipfsMetadata/actions"
@@ -62,7 +63,7 @@ const FundDetailsEdit: FC = () => {
 
   const [poolData] = usePoolQuery(poolAddress)
   const [, poolInfoData] = usePoolContract(poolAddress)
-  const [, baseData] = useERC20(poolData?.baseToken)
+  const [baseData] = useERC20Data(poolData?.baseToken)
   const traderPool = useContract(poolData?.id, TraderPool)
 
   const {

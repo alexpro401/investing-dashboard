@@ -34,7 +34,6 @@ import {
 import { usePoolContract } from "hooks/usePool"
 import {
   useBasicPoolContract,
-  useERC20,
   usePriceFeedContract,
   useRiskyProposalContract,
   useTraderPoolContract,
@@ -47,6 +46,7 @@ import useGasTracker from "state/gas/hooks"
 import { parseEther, parseUnits } from "@ethersproject/units"
 import { ZERO } from "constants/index"
 import useRiskyPosition from "hooks/useRiskyPosition"
+import { useERC20Data } from "state/erc20/hooks"
 
 const useInvestRiskyProposal = (
   poolAddress?: string,
@@ -146,8 +146,8 @@ const useInvestRiskyProposal = (
     proposalId
   )
 
-  const [, fromData] = useERC20(poolInfo?.parameters.baseToken)
-  const [, toData] = useERC20(proposal?.proposalInfo.token)
+  const [fromData] = useERC20Data(poolInfo?.parameters.baseToken)
+  const [toData] = useERC20Data(proposal?.proposalInfo.token)
 
   const [{ priceUSD: poolPriceUSD, priceBase: poolPriceBase }] =
     usePoolPrice(poolAddress)

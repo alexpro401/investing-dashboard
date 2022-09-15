@@ -6,12 +6,13 @@ import { Flex } from "theme"
 import TokenIcon from "components/TokenIcon"
 import ExternalLink from "components/ExternalLink"
 
+import { usePoolContract } from "hooks/usePool"
+import { useERC20Data } from "state/erc20/hooks"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { expandTimestamp, formatBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
 import S from "./styled"
-import { ITokenBase } from "interfaces"
 
 interface IVest {
   id: string
@@ -25,26 +26,27 @@ interface IProps {
   chainId?: number
   timestamp?: number
   isInvest: boolean
-  baseToken: ITokenBase
 }
 
 const TransactionHistoryCardLiquidity: React.FC<IProps> = ({
   hash,
-  info: { baseAmount },
+  info,
   chainId,
   timestamp,
   isInvest,
-  baseToken,
 }) => {
+  const [, poolInfo] = usePoolContract(info?.pool)
+  const [baseToken] = useERC20Data(poolInfo?.parameters.baseToken)
+
   const explorerUrl = useMemo<string>(() => {
     if (!chainId || !hash) return ""
     return getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)
   }, [chainId, hash])
 
   const amount = useMemo<string>(() => {
-    if (!baseAmount) return ""
-    return formatBigNumber(baseAmount)
-  }, [baseAmount])
+    if (!info || !info.baseAmount) return ""
+    return formatBigNumber(info.baseAmount)
+  }, [info])
 
   const datetime = useMemo<string>(() => {
     if (!timestamp) return ""

@@ -20,7 +20,6 @@ import { multiplyBignumbers } from "utils/formulas"
 
 import { usePoolContract } from "hooks/usePool"
 import {
-  useERC20,
   useInvestProposalContract,
   usePriceFeedContract,
   useUserRegistryContract,
@@ -37,6 +36,7 @@ import { parseEther } from "@ethersproject/units"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { format } from "date-fns"
 import { useInvestProposalWithdraws } from "hooks/useInvestProposalData"
+import { useERC20Data } from "state/erc20/hooks"
 
 interface WithdrawInfo {
   tvl: {
@@ -86,7 +86,7 @@ const useWithdrawInvestmentProposal = (
   const priceFeed = usePriceFeedContract()
   const [proposal, updateProposal] = useInvestProposal(poolAddress, proposalId)
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [, baseToken] = useERC20(poolInfo?.parameters.baseToken)
+  const [baseToken] = useERC20Data(poolInfo?.parameters.baseToken)
   const userRegistry = useUserRegistryContract()
   const [investProposalContract, proposalAddress] =
     useInvestProposalContract(poolAddress)

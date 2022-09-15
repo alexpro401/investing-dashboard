@@ -22,11 +22,7 @@ import { usePoolContract, usePoolPosition, usePoolQuery } from "hooks/usePool"
 import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
 
-import {
-  useERC20,
-  usePriceFeedContract,
-  useTraderPoolContract,
-} from "hooks/useContract"
+import { usePriceFeedContract, useTraderPoolContract } from "hooks/useContract"
 
 import {
   addBignumbers,
@@ -43,6 +39,7 @@ import {
   parseTransactionError,
 } from "utils"
 import usePoolPrice from "hooks/usePoolPrice"
+import { useERC20Data } from "state/erc20/hooks"
 
 interface UseSwapProps {
   pool: string | undefined
@@ -93,8 +90,8 @@ const useSwap = ({
   const addTransaction = useTransactionAdder()
   const [gasTrackerResponse, getGasPrice] = useGasTracker()
 
-  const [, fromToken] = useERC20(from)
-  const [, toToken] = useERC20(to)
+  const [fromToken] = useERC20Data(from)
+  const [toToken] = useERC20Data(to)
 
   const [avgBuyingPrice, setAvgBuyingPrice] = useState(ZERO)
   const [avgSellingPrice, setAvgSellingPrice] = useState(ZERO)
@@ -122,7 +119,7 @@ const useSwap = ({
     "from"
   )
 
-  const [, baseTokenData] = useERC20(poolInfo?.parameters.baseToken)
+  const [baseTokenData] = useERC20Data(poolInfo?.parameters.baseToken)
   const [{ priceUSD }] = usePoolPrice(pool)
   const [history] = usePoolQuery(pool)
   const position = usePoolPosition(pool, to)

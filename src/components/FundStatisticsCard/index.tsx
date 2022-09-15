@@ -2,7 +2,7 @@ import { getDay } from "date-fns"
 import { FC, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { useERC20 } from "hooks/useContract"
+import { useERC20Data } from "state/erc20/hooks"
 import { getPNL, getPriceLP } from "utils/formulas"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
@@ -20,7 +20,7 @@ interface IProps {
 }
 
 const FundStatisticsCard: FC<IProps> = ({ data, info }) => {
-  const [, baseData] = useERC20(data.baseToken)
+  const [baseData] = useERC20Data(data.baseToken)
 
   // UI variables
   const openPositionsPercent = info?.openPositions.length || 0
