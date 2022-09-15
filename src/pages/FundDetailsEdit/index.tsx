@@ -125,7 +125,9 @@ const FundDetailsEdit: FC = () => {
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
   const handleParametersUpdate = useCallback(async () => {
-    if (!traderPool || !poolData || !account || !poolAddress) return
+    if (!traderPool || !poolData || !poolInfoData || !account || !poolAddress) {
+      return
+    }
 
     const ipfsChanged = isIpfsDataUpdated()
 
@@ -143,7 +145,7 @@ const FundDetailsEdit: FC = () => {
         account
       )
     } else {
-      ipfsReceipt = poolData.descriptionURL
+      ipfsReceipt = poolInfoData.parameters.descriptionURL
     }
 
     const descriptionURL = ipfsChanged ? ipfsReceipt.path : ipfsReceipt
@@ -445,7 +447,9 @@ const FundDetailsEdit: FC = () => {
   useEffect(() => {
     if (!poolData || !poolInfoData) return
     ;(async () => {
-      const parsedIpfs = await getIpfsData(poolData.descriptionURL)
+      const parsedIpfs = await getIpfsData(
+        poolInfoData.parameters.descriptionURL
+      )
 
       if (!!parsedIpfs) {
         setInitialIpfs({
