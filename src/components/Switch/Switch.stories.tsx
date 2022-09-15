@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Grid from 'storybook/Grid';
 import Switch from './index';
 
-storiesOf('Switch', module).add('default', () => {
+storiesOf('Form', module).add('Switch', () => {
     const [isOn, setIsOn] = useState(false)
 
     const variants = [

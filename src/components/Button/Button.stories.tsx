@@ -5,7 +5,7 @@ import Grid from 'storybook/Grid';
 import { Flex } from 'theme';
 import Button, { SecondaryButton } from './index';
 
-storiesOf('Button', module).add('default', () => {
+storiesOf('Form', module).add('Button', () => {
     const variants = [
         {
             name: 'Disabled',

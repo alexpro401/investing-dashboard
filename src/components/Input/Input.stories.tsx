@@ -26,8 +26,8 @@ const Label = styled.div`
   color: #b1c7fc;
 `
 
-storiesOf('Input', module)
-    .add('default', () => {
+storiesOf('Form', module)
+    .add('Input', () => {
         const [value, setValue] = useState('Type something here');
 
         const variants = [
