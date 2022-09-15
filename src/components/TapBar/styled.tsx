@@ -1,4 +1,4 @@
-import { device, To } from "theme"
+import { To } from "theme"
 import styled from "styled-components"
 import { motion } from "framer-motion"
 import { useMatch } from "react-router-dom"

@@ -4,18 +4,19 @@ import { PulseSpinner } from "react-spinners-kit"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { InvestorInvestProposalsQuery } from "queries"
-import { InvestProposal } from "interfaces/thegraphs/invest-pools"
 import useQueryPagination from "hooks/useQueryPagination"
 import { useInvestProposalContract } from "hooks/useContract"
+import { InvestProposal } from "interfaces/thegraphs/invest-pools"
 
 import LoadMore from "components/LoadMore"
 import InvestProposalCard from "components/cards/proposal/Invest"
+
+import { RequestDividendsProvider } from "modals/RequestDividend/useRequestDividendsContext"
 
 import S from "./styled"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",
-  requestPolicy: "network-only",
 })
 
 interface IInvestProposalCardInitializer {
@@ -68,7 +69,7 @@ const InvestmentInvestProposalsList: FC<IProps> = ({
       poolAddress: p.investPool.id,
     }))
 
-  const [{ data, error, loading }, fetchMore] = useQueryPagination(
+  const [{ data, loading }, fetchMore] = useQueryPagination(
     InvestorInvestProposalsQuery(invested),
     variables,
     normalizeCollection
@@ -123,7 +124,9 @@ const InvestmentInvestProposalsList: FC<IProps> = ({
 const InvestmentInvestProposalsListWithProvider = (props) => {
   return (
     <GraphProvider value={poolsClient}>
-      <InvestmentInvestProposalsList {...props} />
+      <RequestDividendsProvider>
+        <InvestmentInvestProposalsList {...props} />
+      </RequestDividendsProvider>
     </GraphProvider>
   )
 }

@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Flex, device } from "theme"
+import { Flex } from "theme"
 
 const Styled = {
   Row: styled(Flex)`

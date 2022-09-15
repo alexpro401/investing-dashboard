@@ -1,3 +1,4 @@
+import { ZERO } from "constants/index"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { formatUnits, parseEther } from "@ethersproject/units"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
@@ -116,6 +117,8 @@ export const divideBignumbers = (
   bn1: [BigNumber, number],
   bn2: [BigNumber, number]
 ): BigNumber => {
+  if (bn2[0].isZero()) return ZERO
+
   const fn = FixedNumber.fromValue(bn1[0], bn1[1]).divUnsafe(
     FixedNumber.fromValue(bn2[0], bn2[1])
   )
@@ -166,7 +169,9 @@ export const formateChartData = (data) => {
 }
 
 export const formatLockedFundsChartData = (data) => {
-  if (!data) return undefined
+  if (!data || data.length === 0) {
+    return []
+  }
 
   return data.reverse().map((v) => {
     const investorsUSD = subtractBignumbers([v.usdTVL, 18], [v.traderUSD, 18])

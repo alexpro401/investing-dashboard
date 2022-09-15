@@ -2,10 +2,11 @@ import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 import { useEffect, useMemo, useState } from "react"
 
+import { ZERO } from "constants/index"
 import { normalizeBigNumber } from "utils"
-import { IRiskyPositionCard } from "interfaces/thegraphs/basic-pools"
-import { useERC20, usePriceFeedContract } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
+import { useERC20, usePriceFeedContract } from "hooks/useContract"
+import { IRiskyPositionCard } from "interfaces/thegraphs/basic-pools"
 
 import {
   divideBignumbers,
@@ -15,15 +16,13 @@ import {
 } from "utils/formulas"
 import { ITokenBase } from "interfaces"
 
-const BIG_ZERO: BigNumber = BigNumber.from(0)
-
 interface IAmount {
   big: BigNumber
   format: string
 }
 
 const INITIAL_AMOUNT: IAmount = {
-  big: BIG_ZERO,
+  big: ZERO,
   format: "0",
 }
 
@@ -46,8 +45,7 @@ function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
 
   const priceFeed = usePriceFeedContract()
 
-  const [currentPositionPriceBase, setCurrentPositionPriceBase] =
-    useState(BIG_ZERO)
+  const [currentPositionPriceBase, setCurrentPositionPriceBase] = useState(ZERO)
   const currentPositionPriceUSD = useTokenPriceOutUSD({
     tokenAddress: position.token,
   })
@@ -64,14 +62,14 @@ function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
 
     if (position.isClosed) {
       return {
-        big: totalPositionCloseVolume,
-        format: normalizeBigNumber(totalPositionCloseVolume),
+        big: BigNumber.from(totalPositionCloseVolume),
+        format: normalizeBigNumber(BigNumber.from(totalPositionCloseVolume)),
       }
     }
 
     const big = subtractBignumbers(
-      [totalPositionOpenVolume, 18],
-      [totalPositionCloseVolume, 18]
+      [BigNumber.from(totalPositionOpenVolume), 18],
+      [BigNumber.from(totalPositionCloseVolume), 18]
     )
     return { big, format: normalizeBigNumber(big) }
   }, [position])
@@ -81,12 +79,12 @@ function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
    * totalBaseOpenVolume/totalPositionOpenVolume
    */
   const entryPriceBase = useMemo<BigNumber>(() => {
-    if (!position) return BigNumber.from("0")
+    if (!position) return ZERO
 
     const { totalBaseOpenVolume, totalPositionOpenVolume } = position
     return divideBignumbers(
-      [totalBaseOpenVolume, 18],
-      [totalPositionOpenVolume, 18]
+      [BigNumber.from(totalBaseOpenVolume), 18],
+      [BigNumber.from(totalPositionOpenVolume), 18]
     )
   }, [position])
 
@@ -95,13 +93,13 @@ function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
    * totalUSDOpenVolume/totalPositionOpenVolume
    */
   const entryPriceUSD = useMemo<BigNumber>(() => {
-    if (!position) return BigNumber.from("0")
+    if (!position) return ZERO
 
     const { totalUSDOpenVolume, totalPositionOpenVolume } = position
 
     return divideBignumbers(
-      [totalUSDOpenVolume, 18],
-      [totalPositionOpenVolume, 18]
+      [BigNumber.from(totalUSDOpenVolume), 18],
+      [BigNumber.from(totalPositionOpenVolume), 18]
     )
   }, [position])
 
@@ -111,7 +109,7 @@ function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
    * otherwise return totalBaseCloseVolume/totalPositionCloseVolume
    */
   const markPriceBase = useMemo<BigNumber>(() => {
-    if (!position) return BigNumber.from("0")
+    if (!position) return ZERO
 
     if (!position.isClosed) {
       return currentPositionPriceBase
@@ -119,8 +117,8 @@ function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
       const { totalBaseCloseVolume, totalPositionCloseVolume } = position
 
       return divideBignumbers(
-        [totalBaseCloseVolume, 18],
-        [totalPositionCloseVolume, 18]
+        [BigNumber.from(totalBaseCloseVolume), 18],
+        [BigNumber.from(totalPositionCloseVolume), 18]
       )
     }
   }, [currentPositionPriceBase, position])
@@ -131,7 +129,7 @@ function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
    * otherwise return totalUSDCloseVolume/totalPositionCloseVolume
    */
   const markPriceUSD = useMemo<BigNumber>(() => {
-    if (!position) return BigNumber.from("0")
+    if (!position) return ZERO
 
     if (!position.isClosed) {
       return currentPositionPriceUSD
@@ -139,8 +137,8 @@ function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
       const { totalUSDCloseVolume, totalPositionCloseVolume } = position
 
       return divideBignumbers(
-        [totalUSDCloseVolume, 18],
-        [totalPositionCloseVolume, 18]
+        [BigNumber.from(totalUSDCloseVolume), 18],
+        [BigNumber.from(totalPositionCloseVolume), 18]
       )
     }
   }, [currentPositionPriceUSD, position])
@@ -167,7 +165,7 @@ function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
    */
   const pnlBase = useMemo<BigNumber>(() => {
     if (!markPriceBase || !entryPriceBase || !positionVolume) {
-      return BIG_ZERO
+      return ZERO
     }
 
     const priceDiff = subtractBignumbers(
@@ -183,7 +181,7 @@ function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
    */
   const pnlUSD = useMemo<BigNumber>(() => {
     if (!markPriceUSD || !entryPriceUSD || !positionVolume) {
-      return BIG_ZERO
+      return ZERO
     }
 
     const priceDiff = subtractBignumbers(

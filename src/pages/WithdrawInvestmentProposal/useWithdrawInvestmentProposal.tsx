@@ -36,6 +36,7 @@ import { SubmitState } from "constants/types"
 import { parseEther } from "@ethersproject/units"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { format } from "date-fns"
+import { useInvestProposalWithdraws } from "hooks/useInvestProposalData"
 
 interface WithdrawInfo {
   tvl: {
@@ -47,6 +48,11 @@ interface WithdrawInfo {
     usd: string
   }
   expirationDate: string
+  withdrawals: {
+    id: string
+    amount: string
+    date: string
+  }[]
 }
 
 const useWithdrawInvestmentProposal = (
@@ -82,14 +88,19 @@ const useWithdrawInvestmentProposal = (
   const [, poolInfo] = usePoolContract(poolAddress)
   const [, baseToken] = useERC20(poolInfo?.parameters.baseToken)
   const userRegistry = useUserRegistryContract()
-  const [investProposalContract] = useInvestProposalContract(poolAddress)
+  const [investProposalContract, proposalAddress] =
+    useInvestProposalContract(poolAddress)
+  const withdrawals = useInvestProposalWithdraws(proposalAddress, proposalId)
   const [, setPayload] = usePayload()
   const [, setError] = useError()
 
   const addTransaction = useTransactionAdder()
   const [{ userMetadata }] = useUserMetadata(profileURL)
 
-  const userIcon = <Avatar url={userAvatar} address={account} size={26} />
+  const userIcon = useMemo(
+    () => <Avatar url={userAvatar} address={account} size={26} />,
+    [userAvatar, account]
+  )
 
   const info = useMemo(() => {
     const expandedTimestampLimit = expandTimestamp(
@@ -121,8 +132,16 @@ const useWithdrawInvestmentProposal = (
       expirationDate: proposal
         ? format(expandedTimestampLimit, DATE_TIME_FORMAT)
         : "-",
+      withdrawals: (withdrawals || []).map((withdraw) => ({
+        id: withdraw.id,
+        date: format(
+          expandTimestamp(Number(withdraw.timestamp)),
+          DATE_TIME_FORMAT
+        ),
+        amount: normalizeBigNumber(BigNumber.from(withdraw.amountBase), 18, 6),
+      })),
     }
-  }, [proposal, priceBase, priceUSD])
+  }, [proposal, priceBase, priceUSD, withdrawals])
 
   const form = useMemo(() => {
     return {

@@ -42,9 +42,11 @@ export function useRiskyProposals(
   }, [allFetched, offset, riskyProposal])
 
   useEffect(() => {
-    if (!riskyProposal || proposals.length > 0) return
+    if (!riskyProposal || proposals.length > 0) {
+      return
+    }
     fetchProposals()
-  }, [riskyProposal])
+  }, [riskyProposal, proposals, fetchProposals])
 
   return [{ data: proposals, loading: fetching }, debounce(fetchProposals, 100)]
 }

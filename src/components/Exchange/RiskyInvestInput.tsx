@@ -1,12 +1,10 @@
 import { ReactNode, FC, useMemo } from "react"
-import { BigNumber } from "@ethersproject/bignumber"
 import { BigNumberInput } from "big-number-input"
+import { BigNumber } from "@ethersproject/bignumber"
 
-import TokenIcon from "components/TokenIcon"
 import Ripple from "components/Ripple"
-
+import TokenIcon from "components/TokenIcon"
 import { RiskyInvestInfo } from "interfaces/exchange"
-
 import { cutDecimalPlaces, formatBigNumber } from "utils"
 
 import {
@@ -25,7 +23,6 @@ import {
   TokenText,
   TokenInfo,
 } from "./styled"
-import { useERC20 } from "hooks/useContract"
 import { dropdownVariants } from "motion/variants"
 
 interface ReceivedTokenProps {

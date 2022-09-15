@@ -26,6 +26,9 @@ import {
   TraderGetPerformanceFeeTransactionInfo,
   TransactionInfo,
   WithdrawInvestProposalTransactionInfo,
+  SupplyInvestProposalTransactionInfo,
+  ClaimInvestProposalTransactionInfo,
+  ConvertInvestProposalToDividendsTransactionInfo,
 } from "state/transactions/types"
 import { formatBigNumber } from "utils"
 import { useERC20 } from "hooks/useContract"
@@ -253,6 +256,16 @@ const WithdrawInvestProposalSummary: React.FC<{
     </>
   )
 }
+const SupplyInvestProposalSummary: React.FC<{
+  info: SupplyInvestProposalTransactionInfo
+}> = ({ info: { amount } }) => {
+  return <>Supply transaction completed. Tokens paid: {amount}</>
+}
+const ClaimInvestProposalSummary: React.FC<{
+  info: ClaimInvestProposalTransactionInfo
+}> = () => {
+  return <>Claim invest proposal dividends</>
+}
 
 const StakeInsuranceSummary: React.FC<{
   info: StakeInsuranceTransactionInfo
@@ -285,6 +298,12 @@ const TraderGetPerformanceFeeSummary: React.FC<{
       {_baseTokenSymbol}.
     </>
   )
+}
+
+const ConvertInvestProposalToDividendsSummary: React.FC<{
+  info: ConvertInvestProposalToDividendsTransactionInfo
+}> = () => {
+  return <>Convert Invest Proposal balance to Dividends.</>
 }
 
 const TransactionSummary: React.FC<IProps> = ({ info }) => {
@@ -325,6 +344,10 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <DepositInvestProposalSummary info={info} />
     case TransactionType.INVEST_PROPOSAL_WITHDRAW:
       return <WithdrawInvestProposalSummary info={info} />
+    case TransactionType.INVEST_PROPOSAL_SUPPLY:
+      return <SupplyInvestProposalSummary info={info} />
+    case TransactionType.INVEST_PROPOSAL_CLAIM:
+      return <ClaimInvestProposalSummary info={info} />
     case TransactionType.INSURANCE_STAKE:
       return <StakeInsuranceSummary info={info} />
     case TransactionType.INSURANCE_UNSTAKE:
@@ -333,6 +356,8 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <PrivacyPolicyAgreeSummary info={info} />
     case TransactionType.TRADER_GET_PERFORMANCE_FEE:
       return <TraderGetPerformanceFeeSummary info={info} />
+    case TransactionType.INVEST_PROPOSAL_CONVERT_TO_DIVIDENDS:
+      return <ConvertInvestProposalToDividendsSummary info={info} />
 
     default:
       return null

@@ -9,6 +9,8 @@ import useInvestProposals from "hooks/useInvestmentProposals"
 import LoadMore from "components/LoadMore"
 import InvestProposalCard from "components/cards/proposal/Invest"
 
+import { RequestDividendsProvider } from "modals/RequestDividend/useRequestDividendsContext"
+
 import S from "./styled"
 
 const poolsClient = createClient({
@@ -62,7 +64,9 @@ const FundProposalsInvest = () => {
 const FundProposalsInvestWithProvider = (props) => {
   return (
     <GraphProvider value={poolsClient}>
-      <FundProposalsInvest {...props} />
+      <RequestDividendsProvider>
+        <FundProposalsInvest {...props} />
+      </RequestDividendsProvider>
     </GraphProvider>
   )
 }

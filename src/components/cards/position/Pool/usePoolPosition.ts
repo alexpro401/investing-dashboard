@@ -2,10 +2,11 @@ import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 import { useEffect, useMemo, useState } from "react"
 
+import { ZERO } from "constants/index"
 import { formatBigNumber } from "utils"
 import { IPosition } from "interfaces/thegraphs/all-pools"
-import { useERC20, usePriceFeedContract } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
+import { useERC20, usePriceFeedContract } from "hooks/useContract"
 
 import {
   divideBignumbers,
@@ -15,15 +16,13 @@ import {
 } from "utils/formulas"
 import { ITokenBase } from "interfaces"
 
-const BIG_ZERO: BigNumber = BigNumber.from(0)
-
 interface IAmount {
   big: BigNumber
   format: string
 }
 
 const INITIAL_AMOUNT: IAmount = {
-  big: BIG_ZERO,
+  big: ZERO,
   format: "0",
 }
 
@@ -50,7 +49,7 @@ function usePoolPosition(position: IPosition): [IPayload] {
   })
 
   // STATE DATA
-  const [markPrice, setMarkPriceBase] = useState<BigNumber>(BIG_ZERO)
+  const [markPrice, setMarkPriceBase] = useState<BigNumber>(ZERO)
 
   // MEMOIZED DATA
   /**
@@ -65,14 +64,14 @@ function usePoolPosition(position: IPosition): [IPayload] {
 
     if (position.closed) {
       return {
-        big: totalPositionCloseVolume,
-        format: formatBigNumber(totalPositionCloseVolume),
+        big: BigNumber.from(totalPositionCloseVolume),
+        format: formatBigNumber(BigNumber.from(totalPositionCloseVolume)),
       }
     }
 
     const big = subtractBignumbers(
-      [totalPositionOpenVolume, 18],
-      [totalPositionCloseVolume, 18]
+      [BigNumber.from(totalPositionOpenVolume), 18],
+      [BigNumber.from(totalPositionCloseVolume), 18]
     )
     return { big, format: formatBigNumber(big) }
   }, [position])
@@ -83,12 +82,13 @@ function usePoolPosition(position: IPosition): [IPayload] {
    * totalBaseOpenVolume / totalPositionOpenVolume
    */
   const entryPriceBase = useMemo<BigNumber>(() => {
-    if (!position) return BIG_ZERO
+    if (!position) return ZERO
 
     const { totalBaseOpenVolume, totalPositionOpenVolume } = position
+
     return divideBignumbers(
-      [totalBaseOpenVolume, 18],
-      [totalPositionOpenVolume, 18]
+      [BigNumber.from(totalBaseOpenVolume), 18],
+      [BigNumber.from(totalPositionOpenVolume), 18]
     )
   }, [position])
 
@@ -98,12 +98,12 @@ function usePoolPosition(position: IPosition): [IPayload] {
    * totalBaseOpenVolume / totalPositionOpenVolume
    */
   const entryPriceUSD = useMemo<BigNumber>(() => {
-    if (!position) return BIG_ZERO
+    if (!position) return ZERO
 
     const { totalUSDOpenVolume, totalPositionOpenVolume } = position
     return divideBignumbers(
-      [totalUSDOpenVolume, 18],
-      [totalPositionOpenVolume, 18]
+      [BigNumber.from(totalUSDOpenVolume), 18],
+      [BigNumber.from(totalPositionOpenVolume), 18]
     )
   }, [position])
 
@@ -113,13 +113,13 @@ function usePoolPosition(position: IPosition): [IPayload] {
    * closed ? totalBaseCloseVolume / totalPositionCloseVolume : markPrice
    */
   const markPriceBase = useMemo<BigNumber>(() => {
-    if (!position) return BIG_ZERO
+    if (!position) return ZERO
 
     if (position.closed) {
       const { totalBaseCloseVolume, totalPositionCloseVolume } = position
       return divideBignumbers(
-        [totalBaseCloseVolume, 18],
-        [totalPositionCloseVolume, 18]
+        [BigNumber.from(totalBaseCloseVolume), 18],
+        [BigNumber.from(totalPositionCloseVolume), 18]
       )
     }
     return markPrice
@@ -131,13 +131,13 @@ function usePoolPosition(position: IPosition): [IPayload] {
    * close ? totalUSDCloseVolume / totalPositionCloseVolume : currentPriceUSD
    */
   const markPriceUSD = useMemo<BigNumber>(() => {
-    if (!position) return BIG_ZERO
+    if (!position) return ZERO
 
     if (position.closed) {
       const { totalUSDCloseVolume, totalPositionCloseVolume } = position
       return divideBignumbers(
-        [totalUSDCloseVolume, 18],
-        [totalPositionCloseVolume, 18]
+        [BigNumber.from(totalUSDCloseVolume), 18],
+        [BigNumber.from(totalPositionCloseVolume), 18]
       )
     }
     return currentPriceUSD
@@ -164,8 +164,7 @@ function usePoolPosition(position: IPosition): [IPayload] {
    * (markPriceBase - entryPriceBase) * volumeInPositionToken
    */
   const pnlBase = useMemo<BigNumber>(() => {
-    if (!markPriceBase || !entryPriceBase || !currentPositionVolume)
-      return BIG_ZERO
+    if (!markPriceBase || !entryPriceBase || !currentPositionVolume) return ZERO
 
     const priceDiff = subtractBignumbers(
       [markPriceBase, 18],
@@ -180,7 +179,7 @@ function usePoolPosition(position: IPosition): [IPayload] {
    */
   const pnlUSD = useMemo<BigNumber>(() => {
     if (!markPriceUSD || !entryPriceUSD || !currentPositionVolume) {
-      return BIG_ZERO
+      return ZERO
     }
 
     const priceDiff = subtractBignumbers(

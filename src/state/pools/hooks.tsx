@@ -118,6 +118,7 @@ export function usePriceHistory(
       startDate,
     },
     requestPolicy: "network-only",
+    pause: !address || !startDate,
   })
 
   useEffect(() => {
@@ -126,8 +127,9 @@ export function usePriceHistory(
       !pool.data ||
       !pool.data.traderPool ||
       !pool.data.traderPool.priceHistory
-    )
+    ) {
       return
+    }
 
     setHistory(pool.data.traderPool.priceHistory)
   }, [pool])

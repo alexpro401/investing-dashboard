@@ -1,18 +1,48 @@
-import { FC } from "react"
+import { BigNumber } from "@ethersproject/bignumber"
+import { ZERO } from "constants/index"
+import { useInvestProposalContract } from "hooks/useContract"
+import useInvestProposalData from "hooks/useInvestProposalData"
+import { FC, useEffect, useState } from "react"
+import { normalizeBigNumber } from "utils"
 import * as S from "./styled"
 import { DividendToken } from "./useRequestDividend"
 
-const Tile: FC<{ token: DividendToken }> = ({ token }) => {
+interface Props {
+  token: DividendToken
+  poolAddress: string
+  proposalId: string
+}
+
+const Tile: FC<Props> = ({ token, poolAddress, proposalId }) => {
+  const [dividendsAvailable, setDividendsAvailable] = useState(ZERO)
+
+  const [, proposalAddress] = useInvestProposalContract(poolAddress)
+  const proposalData = useInvestProposalData(
+    proposalAddress.toLocaleLowerCase() + (parseFloat(proposalId) + 1)
+  )
+
+  useEffect(() => {
+    if (!proposalData) return
+
+    try {
+      const totalUSD = BigNumber.from(proposalData.totalUSDSupply)
+
+      setDividendsAvailable(totalUSD)
+    } catch {}
+  }, [proposalData])
+
   return (
     <S.Tile>
       {token.icon}
       <S.TextContainer ai="flex-start">
         <S.TextWhite>{token.symbol}</S.TextWhite>
-        <S.TextGray>{token.name}</S.TextGray>
+        <S.FundName>{token.name}</S.FundName>
       </S.TextContainer>
       <S.TextContainer ai="flex-end">
-        <S.TextWhite>$200.230.320</S.TextWhite>
-        <S.TextGray>Available dividends in USD</S.TextGray>
+        <S.TextWhite>
+          ${normalizeBigNumber(dividendsAvailable, 18, 2)}
+        </S.TextWhite>
+        <S.TextGray>Dividends available</S.TextGray>
       </S.TextContainer>
     </S.Tile>
   )

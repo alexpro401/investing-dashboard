@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
 
 import { useERC20 } from "hooks/useContract"
-import { SubmitState } from "constants/types"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 
 import { Flex } from "theme"
@@ -12,10 +11,8 @@ import Amount from "components/Amount"
 import Button from "components/Button"
 import Switch from "components/Switch"
 import Tooltip from "components/Tooltip"
-import Payload from "components/Payload"
 import Accordion from "components/Accordion"
 import AmountRow from "components/Amount/Row"
-import TransactionError from "modals/TransactionError"
 import ProfitLossChart from "components/ProfitLossChart"
 import WithdrawalsHistory from "components/WithdrawalsHistory"
 

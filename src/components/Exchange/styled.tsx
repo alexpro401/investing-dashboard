@@ -544,3 +544,16 @@ export const DividendsToken = ({ token }: { token: DividendToken }) => {
     </DividendsTokenContainer>
   )
 }
+
+export const BlueButton = styled.button`
+  background: none;
+  outline: none;
+  border: none;
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+  text-align: center;
+  color: #2669eb;
+`

@@ -739,7 +739,7 @@ const useInvest = ({
   // update from tokens amount on direction change
   useEffect(() => {
     updateFrom()
-  }, [direction])
+  }, [direction, updateFrom])
 
   // fetch is account have admin permission
   useEffect(() => {

@@ -1,3 +1,5 @@
+import { FC, ReactNode, useState } from "react"
+
 import { Flex } from "theme"
 import { Container, Body, Content, Icon, Close } from "./styled"
 import IconButton from "components/IconButton"
@@ -17,28 +19,40 @@ const iconMapper = {
 
 interface IProps {
   type: string
-  children: React.ReactNode
+  children: ReactNode
   onClose: () => void
   visible: boolean
 }
 
-const ToastBase: React.FC<IProps> = ({
+const ToastBase: FC<IProps> = ({
   type,
   children,
   onClose = () => {},
   visible,
 }) => {
+  const [visibleX, setVisibleX] = useState(0)
+
+  const handleDragEnd = (e, info) => {
+    if (info.point.y > 75) {
+      setVisibleX(window.innerWidth)
+      onClose()
+    }
+  }
+
   return (
     <>
       <Container
+        drag="x"
+        dragConstraints={{ left: 0, right: 5, top: 0, bottom: 0 }}
+        onDragEnd={handleDragEnd}
         animate={visible ? "visible" : "hidden"}
         initial="hidden"
         variants={{
           visible: {
-            x: 0,
+            x: visibleX,
           },
           hidden: {
-            x: "100vw",
+            x: window.innerWidth,
           },
         }}
       >

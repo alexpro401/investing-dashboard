@@ -52,3 +52,10 @@ export const TextGray = styled.div`
 
   color: #788ab4;
 `
+
+export const FundName = styled(TextGray)`
+  max-width: 105px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`

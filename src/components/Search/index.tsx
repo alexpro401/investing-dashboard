@@ -1,10 +1,8 @@
 import React, { useState, useRef } from "react"
 import styled from "styled-components"
-import { Flex, GradientBorder, GradientBorderLight } from "theme"
+import { GradientBorder } from "theme"
 import search from "assets/icons/search.svg"
 import remove from "assets/icons/remove.svg"
-import { useFocus } from "hooks"
-// import { motion } from "framer-motion"
 
 export const Container = styled(GradientBorder)<{ height: string }>`
   background: linear-gradient(64.44deg, #191e2b 32.35%, #272e3e 100%);

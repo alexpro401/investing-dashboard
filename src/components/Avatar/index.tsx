@@ -10,7 +10,6 @@ import JazzIcon from "components/Icon/JazzIcon"
 import {
   Img,
   Overlay,
-  HoverCamera,
   FileUpload,
   CameraIcon,
   Container,

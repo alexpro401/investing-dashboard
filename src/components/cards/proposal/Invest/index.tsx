@@ -11,14 +11,15 @@ import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { BigNumber } from "@ethersproject/bignumber"
 
+import { ZERO } from "constants/index"
 import { getIpfsData } from "utils/ipfs"
 import { useActiveWeb3React } from "hooks"
 import usePoolPrice from "hooks/usePoolPrice"
 import { usePoolContract } from "hooks/usePool"
 import { DATE_TIME_FORMAT } from "constants/time"
-import { InvestProposal } from "interfaces/thegraphs/invest-pools"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import useInvestProposalData from "hooks/useInvestProposalData"
+import { InvestProposal } from "interfaces/thegraphs/invest-pools"
 import { addBignumbers, percentageOfBignumbers } from "utils/formulas"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import {
@@ -29,6 +30,7 @@ import {
 
 import { Flex } from "theme"
 import Icon from "components/Icon"
+import Skeleton from "components/Skeleton"
 import ReadMore from "components/ReadMore"
 import TokenIcon from "components/TokenIcon"
 import IconButton from "components/IconButton"
@@ -41,6 +43,7 @@ import InvestCardSettings from "./Settings"
 
 import settingsIcon from "assets/icons/settings.svg"
 import settingsGreenIcon from "assets/icons/settings-green.svg"
+import useRequestDividendsContext from "modals/RequestDividend/useRequestDividendsContext"
 
 interface Props {
   proposal: InvestProposal
@@ -56,6 +59,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   const [, poolInfo] = usePoolContract(poolAddress)
   const [, baseTokenData] = useERC20(poolInfo?.parameters.baseToken)
   const [proposalPool, proposalAddress] = useInvestProposalContract(poolAddress)
+  const { requestDividends } = useRequestDividendsContext()
 
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
@@ -64,7 +68,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
 
   // Check that current user is pool trader or not
   const isTrader = useMemo(() => {
-    if (!account || !poolInfo) return false
+    if (!account || !poolInfo) return null
     return account === poolInfo?.parameters.trader
   }, [account, poolInfo])
 
@@ -87,11 +91,11 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
 
   // Proposal data from IPFS
   const [ticker, setTicker] = useState<string>("")
-  const [description, setDescription] = useState<string>("")
+  const [description, setDescription] = useState<string | null>(null)
   // Proposal data from proposals contract
   const [proposalId, setProposalId] = useState<string>("0")
   const [youSizeLP, setYouSizeLP] = useState<string>("0")
-  const [yourBalance, setYourBalance] = useState<BigNumber>(BigNumber.from("0"))
+  const [yourBalance, setYourBalance] = useState<BigNumber>(ZERO)
 
   // Pool base token ticker
   const baseTokenTicker = useMemo(() => {
@@ -109,9 +113,8 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   const proposalInfo = useInvestProposalData(
     String(proposalAddress + proposalId).toLowerCase()
   )
-  const [totalDividendsAmount, setTotalDividendsAmount] = useState<BigNumber>(
-    BigNumber.from("0")
-  )
+  const [totalDividendsAmount, setTotalDividendsAmount] =
+    useState<BigNumber>(ZERO)
 
   /**
    * Date of proposal expiration
@@ -126,7 +129,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   }>({
     value: "0",
     completed: false,
-    initial: BigNumber.from("0"),
+    initial: ZERO,
   })
 
   /**
@@ -135,7 +138,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   const [maxSizeLP, setMaxSizeLP] = useState<{
     value: BigNumber
     normalized: string
-  }>({ value: BigNumber.from("0"), normalized: "0" })
+  }>({ value: ZERO, normalized: "0" })
 
   /**
    * Supply
@@ -185,7 +188,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
       !totalDividendsAmount ||
       totalDividendsAmount.isZero()
     ) {
-      return BigNumber.from("0")
+      return ZERO
     }
 
     return percentageOfBignumbers(
@@ -336,11 +339,14 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
       if (!poolAddress || !proposalId) return
       navigate(`/${t}-investment-proposal/${poolAddress}/${proposalId}`)
     },
-    [TerminalType, navigate, poolAddress, proposalId]
+    [navigate, poolAddress, proposalId]
   )
 
   // Actions
   const actions = useMemo(() => {
+    if (isTrader === null) {
+      return []
+    }
     if (isTrader) {
       return [
         {
@@ -353,10 +359,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
         },
         {
           label: "Claim",
-          onClick: () => {
-            // TODO: implement navigation to claim modal
-            console.log("Claim")
-          },
+          onClick: () => requestDividends(poolAddress, proposalId),
         },
         {
           label: "Pay dividend",
@@ -371,10 +374,19 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
       },
       {
         label: "Request a dividend",
-        onClick: () => onTerminalNavigate(TerminalType.PayDividends),
+        onClick: () => requestDividends(poolAddress, proposalId),
       },
     ]
-  }, [TerminalType, isTrader, onTerminalNavigate])
+  }, [
+    TerminalType.Invest,
+    TerminalType.PayDividends,
+    TerminalType.Withdraw,
+    isTrader,
+    onTerminalNavigate,
+    poolAddress,
+    proposalId,
+    requestDividends,
+  ])
 
   /**
    * Navigate to pool page
@@ -408,6 +420,128 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     }
   }
 
+  const headerRight = useMemo(() => {
+    if (isTrader === null) {
+      return (
+        <Flex>
+          <Skeleton w="40px" m="0 4px 0 0" />
+          <Skeleton variant="circle" />
+        </Flex>
+      )
+    }
+
+    return isTrader ? (
+      <>
+        <Flex>
+          <S.Status active={!proposal.closed}>
+            {!proposal.closed ? "Open investing" : "Closed investing"}
+          </S.Status>
+          <Flex m="0 0 0 4px">
+            <IconButton
+              size={12}
+              media={isSettingsOpen ? settingsGreenIcon : settingsIcon}
+              onClick={toggleSettings}
+            />
+          </Flex>
+        </Flex>
+        <InvestCardSettings
+          ticker={ticker}
+          visible={isSettingsOpen}
+          setVisible={setIsSettingsOpen}
+          proposalPool={proposalPool}
+          proposalId={proposalId}
+          successCallback={onUpdateRestrictions}
+          timestamp={expirationDate.initial}
+          maxSizeLP={maxSizeLP.value}
+          fullness={fullness}
+        />
+      </>
+    ) : (
+      <Flex onClick={navigateToPool}>
+        <S.FundSymbol>{poolInfo?.ticker}</S.FundSymbol>
+        <TokenIcon address={poolInfo?.parameters.baseToken} m="0" size={24} />
+      </Flex>
+    )
+  }, [
+    expirationDate,
+    fullness,
+    isSettingsOpen,
+    isTrader,
+    maxSizeLP,
+    navigateToPool,
+    poolInfo,
+    proposal,
+    proposalId,
+    proposalPool,
+    ticker,
+    toggleSettings,
+  ])
+
+  const body = useMemo(() => {
+    if (isTrader === null) {
+      const fakeItems = Array(6).fill(null)
+
+      return (
+        <>
+          {fakeItems.map((_, index) => (
+            <div key={index}>
+              <Skeleton h="16px" />
+              <Skeleton h="13px" m={"8px 0"} />
+              <Skeleton h="10px" />
+            </div>
+          ))}
+        </>
+      )
+    }
+
+    return isTrader ? (
+      <BodyTrader
+        ticker={ticker}
+        supply={supply}
+        youSizeLP={youSizeLP}
+        maxSizeLP={maxSizeLP.normalized}
+        apr={APR}
+        dividendsAvailable={dividendsAvailable}
+        totalDividends={normalizeBigNumber(totalDividendsAmount, 18, 6)}
+        totalInvestors={totalInvestors}
+        expirationDate={expirationDate.value}
+      />
+    ) : (
+      <BodyInvestor
+        ticker={ticker}
+        baseTokenTicker={baseTokenTicker}
+        fullness={normalizeBigNumber(fullness, 18, 2)}
+        yourBalance={normalizeBigNumber(yourBalance, 18, 6)}
+        supply={supply}
+        invested={invested}
+        apr={APR}
+        dividendsAvailable={dividendsAvailable}
+        totalDividends={normalizeBigNumber(totalDividendsAmount, 18, 6)}
+        expirationDate={expirationDate.value}
+        poolPriceUSD={normalizeBigNumber(priceUSD, 18, 2)}
+        onInvest={() => onTerminalNavigate(TerminalType.Invest)}
+      />
+    )
+  }, [
+    TerminalType,
+    APR,
+    baseTokenTicker,
+    dividendsAvailable,
+    expirationDate,
+    fullness,
+    invested,
+    isTrader,
+    maxSizeLP.normalized,
+    onTerminalNavigate,
+    priceUSD,
+    supply,
+    ticker,
+    totalDividendsAmount,
+    totalInvestors,
+    youSizeLP,
+    yourBalance,
+  ])
+
   return (
     <>
       <S.Container>
@@ -422,75 +556,28 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
               />
               <S.Title>{ticker}</S.Title>
             </Flex>
-            {isTrader ? (
-              <>
-                <Flex>
-                  <S.Status active={!proposal.closed}>
-                    {!proposal.closed ? "Open investing" : "Closed investing"}
-                  </S.Status>
-                  <Flex m="0 0 0 4px">
-                    <IconButton
-                      size={12}
-                      media={isSettingsOpen ? settingsGreenIcon : settingsIcon}
-                      onClick={toggleSettings}
-                    />
-                  </Flex>
-                </Flex>
-                <InvestCardSettings
-                  ticker={ticker}
-                  visible={isSettingsOpen}
-                  setVisible={setIsSettingsOpen}
-                  proposalPool={proposalPool}
-                  proposalId={proposalId}
-                  successCallback={onUpdateRestrictions}
-                  timestamp={expirationDate.initial}
-                  maxSizeLP={maxSizeLP.value}
-                  fullness={fullness}
-                />
-              </>
-            ) : (
-              <Flex onClick={navigateToPool}>
-                <S.FundSymbol>{poolInfo?.ticker}</S.FundSymbol>
-                <TokenIcon
-                  address={poolInfo?.parameters.baseToken}
-                  m="0"
-                  size={24}
-                />
-              </Flex>
-            )}
+            {headerRight}
           </S.Head>
-          <S.Body>
-            {isTrader ? (
-              <BodyTrader
-                ticker={ticker}
-                supply={supply}
-                youSizeLP={youSizeLP}
-                maxSizeLP={maxSizeLP.normalized}
-                apr={APR}
-                dividendsAvailable={dividendsAvailable}
-                totalDividends={normalizeBigNumber(totalDividendsAmount, 18, 6)}
-                totalInvestors={totalInvestors}
-                expirationDate={expirationDate.value}
-              />
+          <S.Body>{body}</S.Body>
+          <S.ReadMoreContainer
+            color={
+              typeof description === "string" && description.length > 0
+                ? "#e4f2ff"
+                : "#414653"
+            }
+          >
+            {description === null ? (
+              <Skeleton variant="rect" h="22px" />
             ) : (
-              <BodyInvestor
-                ticker={ticker}
-                baseTokenTicker={baseTokenTicker}
-                fullness={normalizeBigNumber(fullness, 18, 2)}
-                yourBalance={normalizeBigNumber(yourBalance, 18, 6)}
-                supply={supply}
-                invested={invested}
-                apr={APR}
-                dividendsAvailable={dividendsAvailable}
-                totalDividends={normalizeBigNumber(totalDividendsAmount, 18, 6)}
-                expirationDate={expirationDate.value}
-                poolPriceUSD={normalizeBigNumber(priceUSD, 18, 2)}
-                onInvest={() => onTerminalNavigate(TerminalType.Invest)}
+              <ReadMore
+                content={
+                  description.length > 0
+                    ? description
+                    : "No description provided to proposal"
+                }
+                maxLen={85}
               />
             )}
-          </S.Body>
-          <S.ReadMoreContainer>
-            <ReadMore content={description} maxLen={85} />
           </S.ReadMoreContainer>
         </S.Card>
         <AnimatePresence>

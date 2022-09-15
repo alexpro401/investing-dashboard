@@ -145,3 +145,17 @@ export interface InvestProposal {
   proposalInfo: InvestProposalInfo
   totalInvestors: BigNumber
 }
+
+export interface IInvestProposalWithdraw {
+  id: string
+  timestamp: string
+  amountBase: string
+}
+
+export interface IInvestProposalSupply {
+  id: string
+  hash: string
+  timestamp: string
+  dividendsTokens: string[]
+  amountDividendsTokens: string[]
+}

@@ -1,6 +1,13 @@
 import { PulseSpinner } from "react-spinners-kit"
 import { createClient, Provider as GraphProvider } from "urql"
-import { Dispatch, SetStateAction, useCallback, useMemo, useRef } from "react"
+import {
+  FC,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react"
 
 import useTransactionHistoryUI from "./useTransactionHistoryUI"
 
@@ -23,7 +30,6 @@ import Shrink from "assets/icons/Shrink"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_INTERACTIONS_API_URL || "",
-  requestPolicy: "network-only",
 })
 
 interface IProps {
@@ -31,7 +37,12 @@ interface IProps {
   setOpen: Dispatch<SetStateAction<boolean>>
 }
 
-const TransactionHistory: React.FC<IProps> = ({ open, setOpen }) => {
+interface IVariables {
+  address: string | null | undefined
+  transactionTypes: TransactionType[]
+}
+
+const TransactionHistory: FC<IProps> = ({ open, setOpen }) => {
   const { chainId, account } = useActiveWeb3React()
 
   const scrollRef = useRef<any>(null)
@@ -44,10 +55,7 @@ const TransactionHistory: React.FC<IProps> = ({ open, setOpen }) => {
   const [{ filter, scrollH, variants }, { setFilter }] =
     useTransactionHistoryUI(scrollRef, titleRef, open)
 
-  const variables = useMemo<{
-    address: string | null | undefined
-    transactionTypes: TransactionType[]
-  }>(
+  const variables = useMemo<IVariables>(
     () => ({
       address: account,
       transactionTypes: [filter],
@@ -55,7 +63,7 @@ const TransactionHistory: React.FC<IProps> = ({ open, setOpen }) => {
     [account, filter]
   )
 
-  const [{ data, error, loading }, fetchMore] = useQueryPagination(
+  const [{ data, loading }, fetchMore] = useQueryPagination(
     UserTransactionsQuery,
     variables,
     (d) => d.transactions
@@ -151,7 +159,7 @@ const TransactionHistory: React.FC<IProps> = ({ open, setOpen }) => {
               />
             ))}
 
-          {(!data || (data.length === 0 && loading) || !tokensData) && (
+          {(!data || (data.length === 0 && loading)) && (
             <S.ListPlaceholder>
               <PulseSpinner />
             </S.ListPlaceholder>

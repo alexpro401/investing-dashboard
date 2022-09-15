@@ -1,8 +1,11 @@
-import { useEffect, useState, useCallback, useRef } from "react"
+import { useEffect, useState, useCallback } from "react"
 import debounce from "lodash.debounce"
 
 import { InvestProposal } from "interfaces/thegraphs/invest-pools"
-import { IInvestProposalInvestmentsInfo } from "interfaces/contracts/ITraderPoolInvestProposal"
+import {
+  IInvestProposalInvestmentsInfo,
+  IInvestProposalRewards,
+} from "interfaces/contracts/ITraderPoolInvestProposal"
 import { useInvestProposalContract } from "hooks/useContract"
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
 import useForceUpdate from "./useForceUpdate"
@@ -44,9 +47,11 @@ function useInvestProposals(poolAddress?: string): [IPayload, () => void] {
   }, [allFetched, offset, traderPoolInvestProposal])
 
   useEffect(() => {
-    if (!traderPoolInvestProposal || proposals.length > 0) return
+    if (!traderPoolInvestProposal || proposals.length > 0) {
+      return
+    }
     fetchProposals()
-  }, [traderPoolInvestProposal])
+  }, [traderPoolInvestProposal, fetchProposals, proposals])
 
   return [{ data: proposals, loading: fetching }, debounce(fetchProposals, 100)]
 }
@@ -98,6 +103,28 @@ export function useActiveInvestmentsInfo(
   }, [proposal, index, account])
 
   return info
+}
+
+export function useRewards({ poolAddress, account, proposalId }) {
+  const [investProposal] = useInvestProposalContract(poolAddress)
+  const [rewards, setRewards] = useState<IInvestProposalRewards | undefined>()
+
+  const fetchAndUpdateData = useCallback(async () => {
+    if (!investProposal || !account || !proposalId) return
+
+    const data = await investProposal.getRewards(
+      [parseFloat(proposalId) + 1],
+      account
+    )
+
+    setRewards(data)
+  }, [account, investProposal, proposalId])
+
+  useEffect(() => {
+    fetchAndUpdateData().catch(console.log)
+  }, [fetchAndUpdateData])
+
+  return rewards
 }
 
 export default useInvestProposals

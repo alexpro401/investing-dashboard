@@ -1,13 +1,14 @@
 import styled from "styled-components"
+import { motion } from "framer-motion"
 
 import { GradientBorder, Flex } from "theme"
 
-export const ToastsContainer = styled.div<{ height: string | number }>`
+export const ToastsContainer = styled(motion.div)<{ height: string | number }>`
   width: 100%;
   height: ${({ height }) => height};
   position: fixed;
   top: 32px;
-  z-index: 10;
+  z-index: 105;
 `
 export const ToastsInner = styled.div`
   overflow-x: hidden;

@@ -14,6 +14,7 @@ import { Contract } from "@ethersproject/contracts"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { PriceFeed } from "abi"
+import { ZERO } from "constants/index"
 import { useActiveWeb3React } from "hooks"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { percentageOfBignumbers } from "utils/formulas"
@@ -39,6 +40,7 @@ import SharedS, { BodyItem } from "components/cards/proposal/styled"
 
 import settingsIcon from "assets/icons/settings.svg"
 import settingsGreenIcon from "assets/icons/settings-green.svg"
+import useTokenRating from "hooks/useTokenRating"
 
 const MAX_INVESTORS_COUNT = 1000
 
@@ -64,19 +66,21 @@ const RiskyProposalCard: FC<Props> = ({
   const [, proposalToken] = useERC20(proposal.proposalInfo.token)
   const priceFeedAddress = useSelector(selectPriceFeedAddress)
   const priceFeed = useContract(priceFeedAddress, PriceFeed)
+  const getTokenRating = useTokenRating()
 
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
     poolInfo?.parameters.descriptionURL
   )
 
+  const [tooltip, showTooltip] = useState(true)
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false)
 
-  const [markPriceOpen, setMarkPriceOpen] = useState(BigNumber.from(0))
-  const [yourSizeLP, setYourSizeLP] = useState<BigNumber>(BigNumber.from("0"))
-  const [traderSizeLP, setTraderSizeLP] = useState<BigNumber>(
-    BigNumber.from("0")
-  )
+  const [markPriceOpen, setMarkPriceOpen] = useState(ZERO)
+  const [yourSizeLP, setYourSizeLP] = useState<BigNumber>(ZERO)
+  const [traderSizeLP, setTraderSizeLP] = useState<BigNumber>(ZERO)
+
+  const [tokenRating, setTokenRating] = useState<number>(0)
 
   /**
    * Date of proposal expiration
@@ -91,7 +95,7 @@ const RiskyProposalCard: FC<Props> = ({
   }>({
     value: "0",
     completed: false,
-    initial: BigNumber.from("0"),
+    initial: ZERO,
   })
 
   /**
@@ -100,7 +104,7 @@ const RiskyProposalCard: FC<Props> = ({
   const [maxSizeLP, setMaxSizeLP] = useState<{
     value: BigNumber
     normalized: string
-  }>({ value: BigNumber.from("0"), normalized: "0" })
+  }>({ value: ZERO, normalized: "0" })
 
   /**
    * Maximum price of proposal token
@@ -112,7 +116,7 @@ const RiskyProposalCard: FC<Props> = ({
     value: string
     completed: boolean
     initial: BigNumber
-  }>({ value: "0", completed: false, initial: BigNumber.from("0") })
+  }>({ value: "0", completed: false, initial: ZERO })
 
   /**
    * Symbol of proposal
@@ -137,7 +141,7 @@ const RiskyProposalCard: FC<Props> = ({
       !proposal?.proposalInfo?.proposalLimits?.investLPLimit ||
       !proposal.proposalInfo.lpLocked
     ) {
-      return { value: "0", completed: false, initial: BigNumber.from("0") }
+      return { value: "0", completed: false, initial: ZERO }
     }
 
     const { lpLocked, proposalLimits } = proposal.proposalInfo
@@ -154,7 +158,7 @@ const RiskyProposalCard: FC<Props> = ({
    */
   const currentPrice = useMemo<{ value: string; initial: BigNumber }>(() => {
     if (!markPriceOpen) {
-      return { value: "0", initial: BigNumber.from("0") }
+      return { value: "0", initial: ZERO }
     }
 
     return {
@@ -194,7 +198,7 @@ const RiskyProposalCard: FC<Props> = ({
    */
   const traderSizePercentage = useMemo(() => {
     if (maxSizeLP.value.isZero() || !traderSizeLP || traderSizeLP.isZero()) {
-      return BigNumber.from("0")
+      return ZERO
     }
 
     return percentageOfBignumbers(traderSizeLP, maxSizeLP.value)
@@ -326,6 +330,22 @@ const RiskyProposalCard: FC<Props> = ({
     })()
   }, [priceFeed, proposalToken])
 
+  // Fetch token rating
+  useEffect(() => {
+    if (!chainId || !proposal) return
+    ;(async () => {
+      try {
+        const rating = await getTokenRating(
+          chainId,
+          proposal.proposalInfo.token
+        )
+        setTokenRating(rating)
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [chainId, proposal, getTokenRating])
+
   /**
    * Navigate to pool page
    * @param e - click event
@@ -422,9 +442,12 @@ const RiskyProposalCard: FC<Props> = ({
             ) : (
               <Flex ai="center">
                 <SharedS.Title>{proposalSymbol}</SharedS.Title>
-                <TraderRating rating={20} />
+                <TraderRating rating={tokenRating} />
                 <Flex m="0 0 -5px">
-                  <Tooltip id="risky-proposal-rating-info" size="small">
+                  <Tooltip
+                    id={`risky-proposal-rating-info-${proposalId}-${poolAddress}`}
+                    size="small"
+                  >
                     Risky proposal rating info
                   </Tooltip>
                 </Flex>
@@ -529,7 +552,15 @@ const RiskyProposalCard: FC<Props> = ({
 
         {!isTrader && (
           <SharedS.Footer>
-            <Flex data-tip data-for={proposalId}>
+            <Flex
+              data-tip
+              data-for={`risky-proposal-trader-info-${proposalId}-${poolAddress}`}
+              onMouseEnter={() => showTooltip(true)}
+              onMouseLeave={() => {
+                showTooltip(false)
+                setTimeout(() => showTooltip(true), 50)
+              }}
+            >
               <SharedS.FundIconContainer>
                 <Icon
                   size={24}
@@ -537,10 +568,12 @@ const RiskyProposalCard: FC<Props> = ({
                   source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
                   address={poolAddress}
                 />
-                <TraderInfoBadge
-                  id={String(proposalId)}
-                  content="This is more than the average investment at risk proposals. Check on xxxxx what kind of token it is before trusting it."
-                />
+                {tooltip && (
+                  <TraderInfoBadge
+                    id={`risky-proposal-trader-info-${proposalId}-${poolAddress}`}
+                    content="This is more than the average investment at risk proposals. Check on xxxxx what kind of token it is before trusting it."
+                  />
+                )}
               </SharedS.FundIconContainer>
               <Flex dir="column" ai="flex-start" m="0 0 0 4px">
                 <SharedS.SizeTitle>

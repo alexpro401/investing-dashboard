@@ -2,7 +2,6 @@ import { createGlobalStyle } from "styled-components"
 import styled from "styled-components"
 import { device } from "theme"
 import { motion } from "framer-motion"
-import background from "assets/background/dashboard-overlay.png"
 
 export const GradientSVG = () => {
   const gradientTransform = `rotate(${180})`
@@ -28,7 +27,7 @@ const GlobalStyle: any = createGlobalStyle`
     overflow-x:hidden;
     overflow-y:hidden;
     background: #0E121B;
-
+    
     /* height: calc(var(--vh, 1vh) * 100);
     min-height: calc(var(--vh, 1vh) * 100); */
     min-height: -webkit-fill-available;

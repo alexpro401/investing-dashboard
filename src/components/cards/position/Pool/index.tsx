@@ -1,4 +1,4 @@
-import { MouseEvent } from "react"
+import { MouseEvent, useMemo } from "react"
 
 import { IPosition } from "interfaces/thegraphs/all-pools"
 
@@ -44,6 +44,13 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
     position.closed
   )
 
+  const baseSymbol = useMemo(() => {
+    if (!baseToken) {
+      return ""
+    }
+    return baseToken.symbol ?? ""
+  }, [baseToken])
+
   const actions = [
     {
       label: "All my trades",
@@ -79,20 +86,20 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
 
           <SharedS.Body>
             <BodyItem
-              label={"Entry Price " + baseToken?.symbol}
+              label={"Entry Price " + baseSymbol}
               amount={entryPriceBase}
               amountUSD={entryPriceUSD}
             />
             <BodyItem
               label={
                 (position.closed ? "Closed price " : "Current price ") +
-                baseToken?.symbol
+                baseSymbol
               }
               amount={markPriceBase}
               amountUSD={markPriceUSD}
             />
             <BodyItem
-              label={"P&L " + baseToken?.symbol}
+              label={"P&L " + baseSymbol}
               amount={pnlBase}
               pnl={pnlPercentage.big}
               amountUSD={pnlUSD}
@@ -114,7 +121,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
                 <PositionTrade
                   key={e.id}
                   data={e}
-                  baseTokenSymbol={baseToken?.symbol}
+                  baseTokenSymbol={baseSymbol}
                   timestamp={e.timestamp.toString()}
                   isBuy={e.opening}
                   amount={e.opening ? e.toVolume : e.fromVolume}

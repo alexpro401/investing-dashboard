@@ -124,7 +124,7 @@ const FundDetailsEdit: FC = () => {
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
   const handleParametersUpdate = useCallback(async () => {
-    if (!traderPool || !poolData || !account) return
+    if (!traderPool || !poolData || !account || !poolAddress) return
 
     const ipfsChanged = isIpfsDataUpdated()
 
@@ -160,7 +160,7 @@ const FundDetailsEdit: FC = () => {
     dispatch(
       addPool({
         params: {
-          poolId: poolAddress!,
+          poolId: poolAddress,
           hash: receipt.hash,
           assets: assetsParam,
           description,
@@ -357,7 +357,7 @@ const FundDetailsEdit: FC = () => {
           const addReceipt = await handleInvestorsAdd()
 
           if (isTxMined(addReceipt)) {
-            investorsRemoveCallback()
+            investorsAddCallback()
             investorsSuccess = true
           }
         }
@@ -406,6 +406,7 @@ const FundDetailsEdit: FC = () => {
   }
 
   const handleInvestorsRowChange = async (state: string[]) => {
+    if (!poolData) return
     if (state.length > investors.length) {
       handleChange("investors", state)
     } else {
@@ -421,7 +422,7 @@ const FundDetailsEdit: FC = () => {
             content: `Can't remove ${shortenAddress(
               removedAddress,
               3
-            )}. Claimed: ${claimedAmount} ${poolData!.ticker}.`,
+            )}. Claimed: ${claimedAmount} ${poolData.ticker}.`,
           },
           removedAddress,
           5000

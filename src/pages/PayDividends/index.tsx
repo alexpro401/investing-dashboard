@@ -2,15 +2,23 @@ import { Flex } from "theme"
 import { useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
+import { useWeb3React } from "@web3-react/core"
+import format from "date-fns/format"
+import formatDistanceToNow from "date-fns/formatDistanceToNow"
 
+import { Token } from "interfaces"
+import { DATE_TIME_FORMAT } from "constants/time"
+
+import ExternalLink from "components/ExternalLink"
 import IconButton from "components/IconButton"
 import DividendsInput from "components/Exchange/DividendsInput"
-import ExchangeDivider from "components/Exchange/Divider"
 import Button, { SecondaryButton } from "components/Button"
 import CircularProgress from "components/CircularProgress"
 import Header from "components/Header/Layout"
 import TokenSelect from "modals/TokenSelect"
 import LockedIcon from "assets/icons/LockedIcon"
+
+import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
 import close from "assets/icons/close-big.svg"
 
@@ -25,22 +33,27 @@ import {
   InfoGrey,
   InfoDropdown,
   InfoWhite,
+  BlueButton,
 } from "components/Exchange/styled"
 
 import usePayDividends from "./usePayDividends"
-import { Token } from "interfaces"
+import useConvertToDividendsContext, {
+  ConvertToDividendsProvider,
+} from "modals/ConvertToDividends/useConvertToDividendsContext"
 
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
+const investPoolClient = createClient({
+  url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",
 })
 
 function PayDividends() {
+  const { chainId } = useWeb3React()
   const { poolAddress, proposalId } = useParams()
   const [isOpen, setTokenSelectOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
+  const { convertToDividends } = useConvertToDividendsContext()
 
   const [
-    { tokens },
+    { tokens, info, supplies },
     {
       handleFromChange,
       handleSubmit,
@@ -114,53 +127,76 @@ function PayDividends() {
         Pay dividends
       </Button>
     )
-  }, [handleSubmit, tokens])
+  }, [handleSubmit, tokens, updateAllowance])
 
   const lastDividends = useMemo(() => {
+    if (!supplies || !supplies.length)
+      return (
+        <Flex gap="4">
+          <InfoWhite>-</InfoWhite>
+        </Flex>
+      )
+
     return (
       <Flex gap="4">
-        <InfoGrey>0 DEXE</InfoGrey>
+        <InfoWhite>
+          {formatDistanceToNow(new Date(Number(supplies[0].timestamp) * 1000))}{" "}
+          ago
+        </InfoWhite>
       </Flex>
     )
-  }, [])
+  }, [supplies])
 
   const lastDividendsContent = useMemo(() => {
-    return (
-      <>
-        <InfoRow>
-          <InfoGrey>Feb 12,2021</InfoGrey>
-          <Flex gap="4">
-            <InfoWhite>0</InfoWhite>
-            <InfoGrey>DEXE</InfoGrey>
-          </Flex>
-        </InfoRow>
-      </>
-    )
-  }, [])
+    return (supplies || []).map((supply) => (
+      <InfoRow key={supply.id}>
+        <InfoGrey>
+          {format(new Date(Number(supply.timestamp) * 1000), DATE_TIME_FORMAT)}
+        </InfoGrey>
+        <Flex gap="4">
+          {chainId && (
+            <ExternalLink
+              color="#2680EB"
+              href={getExplorerLink(
+                chainId,
+                supply.hash,
+                ExplorerDataType.TRANSACTION
+              )}
+            >
+              {supply.dividendsTokens.length} token
+              {supply.dividendsTokens.length > 1 && "s"}
+            </ExternalLink>
+          )}
+        </Flex>
+      </InfoRow>
+    ))
+  }, [supplies, chainId])
 
   const proposalTVL = useMemo(() => {
     return (
       <InfoRow>
         <InfoGrey>Proposal TVL</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>0 DEXE</InfoWhite>
-          <InfoGrey>($0)</InfoGrey>
+          <InfoWhite>
+            {info.tvl.base} {info.ticker}
+          </InfoWhite>
+          <InfoGrey>(${info.tvl.usd})</InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [info.tvl.base, info.ticker, info.tvl.usd])
 
   const APR = useMemo(() => {
     return (
       <InfoRow>
         <InfoGrey>APR after dividend</InfoGrey>
         <Flex gap="4">
-          <InfoWhite>13.32%</InfoWhite>
-          <InfoGrey>($134)</InfoGrey>
+          <InfoWhite>{info.APR.percent}%</InfoWhite>
+          <InfoGrey>(${info.APR.usd})</InfoGrey>
         </Flex>
       </InfoRow>
     )
-  }, [])
+  }, [info.APR])
 
   const form = (
     <Card>
@@ -188,12 +224,22 @@ function PayDividends() {
         {proposalTVL}
         {APR}
         <InfoDropdown
-          left={<InfoGrey>Last paid dividend Jun 12,2022</InfoGrey>}
+          left={<InfoGrey>Last paid dividend</InfoGrey>}
           right={lastDividends}
         >
           {lastDividendsContent}
         </InfoDropdown>
       </InfoCard>
+
+      <Flex p="16px 0 0">
+        {poolAddress && proposalId && (
+          <BlueButton
+            onClick={() => convertToDividends(poolAddress, proposalId)}
+          >
+            Convert balance to dividends
+          </BlueButton>
+        )}
+      </Flex>
     </Card>
   )
 
@@ -219,8 +265,10 @@ function PayDividends() {
 
 const PayDividendsWithProvider = () => {
   return (
-    <GraphProvider value={poolsClient}>
-      <PayDividends />
+    <GraphProvider value={investPoolClient}>
+      <ConvertToDividendsProvider>
+        <PayDividends />
+      </ConvertToDividendsProvider>
     </GraphProvider>
   )
 }

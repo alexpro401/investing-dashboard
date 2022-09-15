@@ -1,4 +1,4 @@
-import { useMemo, useState, MouseEvent } from "react"
+import { useState, MouseEvent } from "react"
 
 const MAX_LENGTH = 113
 
