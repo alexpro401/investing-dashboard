@@ -15,6 +15,7 @@ import {
   TokenBalance,
   TokenPrice,
 } from "./styled"
+import { ZERO } from "constants/index"
 
 const Token: FC<{
   tokenData: IToken
@@ -25,7 +26,7 @@ const Token: FC<{
 
   const price = useTokenPriceOutUSD({ tokenAddress: address })
 
-  const balanceFormated = formatBigNumber(balance || BigNumber.from("0"), 18)
+  const balanceFormated = formatBigNumber(balance || ZERO, 18)
 
   return (
     <TokenContainer onClick={() => onClick(tokenData)}>

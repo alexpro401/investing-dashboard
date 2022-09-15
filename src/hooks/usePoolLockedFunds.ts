@@ -6,6 +6,7 @@ import { normalizeBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
 import { percentageOfBignumbers, subtractBignumbers } from "utils/formulas"
 import useOpenPositionsPriceOutUSD from "hooks/useOpenPositionsPriceOutUSD"
+import { ZERO } from "constants/index"
 
 function usePoolLockedFunds(poolAddress: string | undefined) {
   const [poolData] = usePoolQuery(poolAddress)
@@ -78,7 +79,7 @@ function usePoolLockedFunds(poolAddress: string | undefined) {
 
   const poolUsedInPositionsUSD = useMemo(() => {
     if (!poolInfo || poolInfo.openPositions.length === 0 || !lockedAmountUSD) {
-      return { big: BigNumber.from(0), format: "0.00" }
+      return { big: ZERO, format: "0.00" }
     }
 
     return {
@@ -88,7 +89,7 @@ function usePoolLockedFunds(poolAddress: string | undefined) {
   }, [poolInfo, lockedAmountUSD])
 
   const totalPoolUSD = useMemo(() => {
-    if (!poolInfo) return { big: BigNumber.from(0), format: "0.00" }
+    if (!poolInfo) return { big: ZERO, format: "0.00" }
 
     return {
       big: poolInfo.totalPoolUSD,
