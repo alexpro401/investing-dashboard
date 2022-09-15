@@ -3,6 +3,7 @@ import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { usePriceFeedContract } from "hooks/useContract"
+import { ZERO } from "constants/index"
 
 interface IParams {
   tokenAddress: string | undefined
@@ -15,7 +16,7 @@ export default function useTokenPriceOutUSD({
 }: IParams): BigNumber {
   const priceFeed = usePriceFeedContract()
 
-  const [markPriceUSD, setMarkPriceUSD] = useState(BigNumber.from("0"))
+  const [markPriceUSD, setMarkPriceUSD] = useState(ZERO)
 
   useEffect(() => {
     if (!priceFeed || !tokenAddress || tokenAddress.length !== 42) return
