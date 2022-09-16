@@ -7,13 +7,13 @@ import {
 
 import { Icon } from "common"
 import Switch from "components/Switch"
-import Input from "components/Input"
+import { InputField } from "fields"
 import Avatar from "components/Avatar"
 
 import { Flex } from "theme"
 import * as S from "../styled"
-import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
+import Input from "../../../components/Input"
 
 const TitlesStep: FC = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>()
@@ -26,8 +26,6 @@ const TitlesStep: FC = () => {
 
   const [websiteUrl, setWebsiteUrl] = useState("")
   const [description, setDescription] = useState("")
-
-  const fundDaoCreatingContext = useContext(FundDaoCreatingContext)
 
   return (
     <Flex gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
@@ -64,11 +62,12 @@ const TitlesStep: FC = () => {
         <CreateDaoCardDescription>
           <p>*Maximum 15 characters</p>
         </CreateDaoCardDescription>
-        <Input
+        <InputField
           value={daoName}
-          onChange={setDaoName}
-          theme="grey"
+          setValue={setDaoName}
           label="DAO name"
+          nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
+          nodeRight={<Icon name={ICON_NAMES.fileDock} />}
         />
       </S.CreateDaoCard>
 
@@ -108,10 +107,9 @@ const TitlesStep: FC = () => {
             power
           </p>
         </CreateDaoCardDescription>
-        <Input
+        <InputField
           value={erc20token}
-          onChange={setErc20token}
-          theme="grey"
+          setValue={setErc20token}
           label="ERC-20 token"
         />
       </S.CreateDaoCard>
@@ -144,16 +142,10 @@ const TitlesStep: FC = () => {
         <CreateDaoCardDescription>
           <p>Add your DAO’s website, description, and social links.</p>
         </CreateDaoCardDescription>
-        <Input
-          value={websiteUrl}
-          onChange={setWebsiteUrl}
-          theme="grey"
-          label="Site"
-        />
-        <Input
+        <InputField value={websiteUrl} setValue={setWebsiteUrl} label="Site" />
+        <InputField
           value={description}
-          onChange={setDescription}
-          theme="grey"
+          setValue={setDescription}
           label="Description"
         />
       </S.CreateDaoCard>
