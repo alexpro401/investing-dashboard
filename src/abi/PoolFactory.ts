@@ -89,7 +89,6 @@ export default [
   },
   {
     inputs: [
-      { internalType: "bool", name: "withDistributionProposal", type: "bool" },
       {
         components: [
           {
@@ -125,12 +124,12 @@ export default [
                   },
                   {
                     internalType: "uint256",
-                    name: "minTokenBalance",
+                    name: "minVotesForVoting",
                     type: "uint256",
                   },
                   {
                     internalType: "uint256",
-                    name: "minNftBalance",
+                    name: "minVotesForCreating",
                     type: "uint256",
                   },
                   {
@@ -140,7 +139,7 @@ export default [
                   },
                   {
                     internalType: "uint256",
-                    name: "creationRewards",
+                    name: "creationReward",
                     type: "uint256",
                   },
                   {
@@ -153,9 +152,14 @@ export default [
                     name: "voteRewardsCoefficient",
                     type: "uint256",
                   },
+                  {
+                    internalType: "string",
+                    name: "executorDescription",
+                    type: "string",
+                  },
                 ],
                 internalType: "struct IGovSettings.ProposalSettings",
-                name: "internalProposalSetting",
+                name: "internalProposalSettings",
                 type: "tuple",
               },
               {
@@ -189,12 +193,12 @@ export default [
                   },
                   {
                     internalType: "uint256",
-                    name: "minTokenBalance",
+                    name: "minVotesForVoting",
                     type: "uint256",
                   },
                   {
                     internalType: "uint256",
-                    name: "minNftBalance",
+                    name: "minVotesForCreating",
                     type: "uint256",
                   },
                   {
@@ -204,7 +208,7 @@ export default [
                   },
                   {
                     internalType: "uint256",
-                    name: "creationRewards",
+                    name: "creationReward",
                     type: "uint256",
                   },
                   {
@@ -216,6 +220,11 @@ export default [
                     internalType: "uint256",
                     name: "voteRewardsCoefficient",
                     type: "uint256",
+                  },
+                  {
+                    internalType: "string",
+                    name: "executorDescription",
+                    type: "string",
                   },
                 ],
                 internalType: "struct IGovSettings.ProposalSettings",
@@ -253,12 +262,12 @@ export default [
                   },
                   {
                     internalType: "uint256",
-                    name: "minTokenBalance",
+                    name: "minVotesForVoting",
                     type: "uint256",
                   },
                   {
                     internalType: "uint256",
-                    name: "minNftBalance",
+                    name: "minVotesForCreating",
                     type: "uint256",
                   },
                   {
@@ -268,7 +277,7 @@ export default [
                   },
                   {
                     internalType: "uint256",
-                    name: "creationRewards",
+                    name: "creationReward",
                     type: "uint256",
                   },
                   {
@@ -280,6 +289,11 @@ export default [
                     internalType: "uint256",
                     name: "voteRewardsCoefficient",
                     type: "uint256",
+                  },
+                  {
+                    internalType: "string",
+                    name: "executorDescription",
+                    type: "string",
                   },
                 ],
                 internalType: "struct IGovSettings.ProposalSettings",
@@ -317,12 +331,12 @@ export default [
                   },
                   {
                     internalType: "uint256",
-                    name: "minTokenBalance",
+                    name: "minVotesForVoting",
                     type: "uint256",
                   },
                   {
                     internalType: "uint256",
-                    name: "minNftBalance",
+                    name: "minVotesForCreating",
                     type: "uint256",
                   },
                   {
@@ -332,7 +346,7 @@ export default [
                   },
                   {
                     internalType: "uint256",
-                    name: "creationRewards",
+                    name: "creationReward",
                     type: "uint256",
                   },
                   {
@@ -345,14 +359,19 @@ export default [
                     name: "voteRewardsCoefficient",
                     type: "uint256",
                   },
+                  {
+                    internalType: "string",
+                    name: "executorDescription",
+                    type: "string",
+                  },
                 ],
                 internalType: "struct IGovSettings.ProposalSettings",
-                name: "defaultProposalSetting",
+                name: "defaultProposalSettings",
                 type: "tuple",
               },
             ],
             internalType: "struct IPoolFactory.SettingsDeployParams",
-            name: "seetingsParams",
+            name: "settingsParams",
             type: "tuple",
           },
           {
@@ -399,9 +418,6 @@ export default [
             name: "userKeeperParams",
             type: "tuple",
           },
-          { internalType: "address", name: "owner", type: "address" },
-          { internalType: "uint256", name: "votesLimit", type: "uint256" },
-          { internalType: "uint256", name: "feePercentage", type: "uint256" },
           { internalType: "string", name: "descriptionURL", type: "string" },
         ],
         internalType: "struct IPoolFactory.GovPoolDeployParams",
