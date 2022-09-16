@@ -12,7 +12,6 @@ import { ICON_NAMES } from "constants/icon-names"
 
 import * as S from "forms/CreateFundDaoForm/styled"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
-import { CenteredImage } from "forms/CreateFundDaoForm/styled"
 
 const IsDaoValidatorStep: FC = () => {
   const [isValidator, setIsValidator] = useState(false)

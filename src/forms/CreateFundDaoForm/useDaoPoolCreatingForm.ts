@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { FundDaoStep } from "../../context/FundDaoCreatingContext"
+import { FundDaoPoolParameters } from "context/FundDaoCreatingContext"
 
 export const useDaoPoolCreatingForm = (): {
   validatorsParams: {
@@ -46,10 +46,10 @@ export const useDaoPoolCreatingForm = (): {
       set: (value: number) => void
     }
   }
-  internalProposalForm: FundDaoStep
-  distributionProposalSettingsForm: FundDaoStep
-  validatorsBalancesSettingsForm: FundDaoStep
-  defaultProposalSettingForm: FundDaoStep
+  internalProposalForm: FundDaoPoolParameters
+  distributionProposalSettingsForm: FundDaoPoolParameters
+  validatorsBalancesSettingsForm: FundDaoPoolParameters
+  defaultProposalSettingForm: FundDaoPoolParameters
 } => {
   const validatorsParams = {
     name: useState(""),
@@ -68,7 +68,7 @@ export const useDaoPoolCreatingForm = (): {
 
   const internalProposalForm = {
     earlyCompletion: useState(""),
-    delegatedVotingAllowed: useState(""),
+    delegatedVotingAllowed: useState(true),
     validatorsVote: useState(""),
     duration: useState(""),
     durationValidators: useState(""),
@@ -84,7 +84,7 @@ export const useDaoPoolCreatingForm = (): {
   }
   const distributionProposalSettingsForm = {
     earlyCompletion: useState(""),
-    delegatedVotingAllowed: useState(""),
+    delegatedVotingAllowed: useState(true),
     validatorsVote: useState(""),
     duration: useState(""),
     durationValidators: useState(""),
@@ -100,7 +100,7 @@ export const useDaoPoolCreatingForm = (): {
   }
   const validatorsBalancesSettingsForm = {
     earlyCompletion: useState(""),
-    delegatedVotingAllowed: useState(""),
+    delegatedVotingAllowed: useState(true),
     validatorsVote: useState(""),
     duration: useState(""),
     durationValidators: useState(""),
@@ -116,7 +116,7 @@ export const useDaoPoolCreatingForm = (): {
   }
   const defaultProposalSettingForm = {
     earlyCompletion: useState(""),
-    delegatedVotingAllowed: useState(""),
+    delegatedVotingAllowed: useState(true),
     validatorsVote: useState(""),
     duration: useState(""),
     durationValidators: useState(""),

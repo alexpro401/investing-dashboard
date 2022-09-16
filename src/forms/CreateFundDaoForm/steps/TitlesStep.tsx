@@ -15,7 +15,7 @@ import * as S from "../styled"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 
-const CreateFundDaoTitlesStep: FC = () => {
+const TitlesStep: FC = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>()
   const [daoName, setDaoName] = useState("")
 
@@ -161,4 +161,4 @@ const CreateFundDaoTitlesStep: FC = () => {
   )
 }
 
-export default CreateFundDaoTitlesStep
+export default TitlesStep

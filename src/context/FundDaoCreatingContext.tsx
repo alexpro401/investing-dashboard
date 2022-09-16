@@ -1,13 +1,13 @@
 import { createContext } from "react"
 
-export interface FundDaoStep {
+export interface FundDaoPoolParameters {
   earlyCompletion: {
     get: string
     set: (value: string) => void
   }
   delegatedVotingAllowed: {
-    get: string
-    set: (value: string) => void
+    get: boolean
+    set: (value: boolean) => void
   }
   validatorsVote: {
     get: string
@@ -108,10 +108,10 @@ interface FundDaoCreatingContext {
         }
       }
     | undefined
-  internalProposalForm: FundDaoStep | undefined
-  distributionProposalSettingsForm: FundDaoStep | undefined
-  validatorsBalancesSettingsForm: FundDaoStep | undefined
-  defaultProposalSettingForm: FundDaoStep | undefined
+  internalProposalForm: FundDaoPoolParameters | undefined
+  distributionProposalSettingsForm: FundDaoPoolParameters | undefined
+  validatorsBalancesSettingsForm: FundDaoPoolParameters | undefined
+  defaultProposalSettingForm: FundDaoPoolParameters | undefined
 }
 
 export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
