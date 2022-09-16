@@ -4,9 +4,10 @@ import { v4 as uuidv4 } from "uuid"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   isOpen: boolean
+  duration?: number
 }
 
-const Collapse: FC<Props> = ({ isOpen, children }) => {
+const Collapse: FC<Props> = ({ isOpen, duration = 0.15, children }) => {
   const uid = useMemo(() => uuidv4(), [])
 
   return (
@@ -21,7 +22,7 @@ const Collapse: FC<Props> = ({ isOpen, children }) => {
             open: { opacity: 1, height: "auto" },
             collapsed: { opacity: 0, height: 0 },
           }}
-          transition={{ duration: 0.15 }}
+          transition={{ duration: duration }}
         >
           {children}
         </motion.div>

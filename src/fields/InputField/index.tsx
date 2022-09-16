@@ -11,6 +11,7 @@ import {
 import * as S from "./styled"
 import { v4 as uuidv4 } from "uuid"
 import { AnimatePresence } from "framer-motion"
+import { Collapse } from "../../common"
 
 enum INPUT_TYPES {
   text = "text",
@@ -68,6 +69,8 @@ function InputField<V extends string | number>({
     () => ["", "readonly", true].includes(readonly as string | boolean),
     [readonly]
   )
+
+  const isLabelActive = useMemo(() => value !== "", [value])
 
   const normalizeRange = useCallback(
     (value: string | number): string => {
@@ -138,6 +141,7 @@ function InputField<V extends string | number>({
             isError={!!errorMessage}
             isNodeLeftExist={!!nodeLeft}
             isNodeRightExist={!!nodeRight}
+            inputId={`input-field--${uid}`}
           >
             {label}
           </S.Label>
@@ -147,9 +151,9 @@ function InputField<V extends string | number>({
         {nodeLeft ? <S.NodeLeftWrp>{nodeLeft}</S.NodeLeftWrp> : <></>}
         {nodeRight ? <S.NodeRightWrp>{nodeRight}</S.NodeRightWrp> : <></>}
       </S.InputWrp>
-      <AnimatePresence>
-        {errorMessage ? <S.ErrorMessage>{errorMessage}</S.ErrorMessage> : <></>}
-      </AnimatePresence>
+      <Collapse isOpen={!!errorMessage} duration={0.3}>
+        <S.ErrorMessage>{errorMessage}</S.ErrorMessage>
+      </Collapse>
     </S.Root>
   )
 }

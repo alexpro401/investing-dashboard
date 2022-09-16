@@ -111,6 +111,7 @@ export const Label = styled(motion.label)<{
   isError?: boolean
   isNodeLeftExist?: boolean
   isNodeRightExist?: boolean
+  inputId: string
 }>`
   overflow: hidden;
   text-overflow: ellipsis;
@@ -129,28 +130,27 @@ export const Label = styled(motion.label)<{
   ${(props) =>
     props.isNodeLeftExist
       ? `
-        right: 0;
+        right: auto;
         width: min-content;
-
-        ${Input}:not(:focus):placeholder-shown + & {
-          left: calc(${fieldPaddingRight * 3}px);
-        }
       `
       : ""}
 
-  ${Input}:not(:focus):placeholder-shown + & {
+  #${(props) => props.inputId}:not(:focus):placeholder-shown + & {
     top: 50%;
     color: ${fieldLabelColor};
+    ${(props) =>
+      props.isNodeLeftExist ? `left: calc(${fieldPaddingRight * 3}px);` : ""}
   }
 
-  ${Input}:not([disabled]):focus ~ &,
-  ${Input}:not(:focus):not(:placeholder-shown) + & {
+  #${(props) => props.inputId}:not([disabled]):focus ~ &,
+  #${(props) => props.inputId}:not(:focus):not(:placeholder-shown) + & {
     color: ${fieldLabelFocusColor};
     left: ${fieldPaddingLeft}px;
     font-size: ${fieldLabelFontSize}px;
   }
 
-  ${Input}:not(:focus):placeholder-shown:-webkit-autofill + & {
+  #${(props) => props.inputId}:not(:focus):placeholder-shown:-webkit-autofill
+    + & {
     top: 50%;
     color: ${fieldLabelColor};
   }

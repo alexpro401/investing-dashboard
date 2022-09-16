@@ -9,12 +9,10 @@ import { Collapse, Icon } from "common"
 import Switch from "components/Switch"
 import { InputField } from "fields"
 import Avatar from "components/Avatar"
-import { AnimatePresence, motion } from "framer-motion"
 
 import { Flex } from "theme"
 import * as S from "../styled"
 import { ICON_NAMES } from "constants/icon-names"
-import { readFromClipboard } from "../../../utils/clipboard"
 
 const TitlesStep: FC = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>()
