@@ -5,9 +5,7 @@ import {
   fieldErrorColor,
   fieldLabelColor,
   fieldLabelFocusColor,
-  fieldLabelFocusFontSize,
   fieldLabelFontSize,
-  fieldLabelHoverColor,
   fieldPaddingLeft,
   fieldPaddingRight,
   fieldPaddings,
@@ -128,8 +126,6 @@ export const Label = styled(motion.label)<{
 
   ${getDefaultFieldLabelStyles()}
 
-  ${(props) => (props.isError ? `color: ${fieldErrorColor};` : "")}
-
   ${(props) =>
     props.isNodeLeftExist
       ? `
@@ -158,9 +154,20 @@ export const Label = styled(motion.label)<{
     top: 50%;
     color: ${fieldLabelColor};
   }
+
+  ${(props) => (props.isError ? `color: ${fieldErrorColor} !important;` : "")}
 `
 
-export const ErrorMessage = styled(motion.span)`
+export const ErrorMessage = styled(motion.span).attrs(() => ({
+  initial: "collapsed",
+  animate: "open",
+  exit: "collapsed",
+  variants: {
+    open: { opacity: 1, height: "auto" },
+    collapsed: { opacity: 0, height: 0 },
+  },
+  transition: { duration: 0.15 },
+}))`
   ${getDefaultFieldErrorStyles()}
 `
 

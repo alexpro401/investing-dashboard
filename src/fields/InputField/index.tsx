@@ -1,14 +1,11 @@
 import {
   Dispatch,
-  FC,
   FormEvent,
   HTMLAttributes,
   ReactNode,
   SetStateAction,
   useCallback,
   useMemo,
-  useRef,
-  useState,
 } from "react"
 
 import * as S from "./styled"
@@ -131,12 +128,14 @@ function InputField<V extends string | number>({
           min={min}
           max={max}
           disabled={isDisabled || isReadonly}
+          isError={!!errorMessage}
           isNodeLeftExist={!!nodeLeft}
           isNodeRightExist={!!nodeRight}
         />
         {label ? (
           <S.Label
             htmlFor={`input-field--${uid}`}
+            isError={!!errorMessage}
             isNodeLeftExist={!!nodeLeft}
             isNodeRightExist={!!nodeRight}
           >
