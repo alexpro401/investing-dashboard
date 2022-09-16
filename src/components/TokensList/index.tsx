@@ -5,6 +5,7 @@ import { Token as IToken } from "interfaces"
 import Search from "components/Search"
 import { Card, CardHeader, CardList } from "./styled"
 import Token from "./Token"
+import { ZERO } from "constants/index"
 
 interface Props {
   tokens: IToken[]
@@ -32,13 +33,13 @@ const TokensList: React.FC<Props> = ({
   })
 
   const getBalance = (address: string) => {
-    if (withBalance) return BigNumber.from("0")
+    if (withBalance) return ZERO
 
     if (address in balances) {
       return balances[address]
     }
 
-    return BigNumber.from("0")
+    return ZERO
   }
 
   return (
