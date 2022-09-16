@@ -2,17 +2,23 @@ import { FC, useCallback, useMemo, useState } from "react"
 import { Container } from "./styled"
 import CreateFundDaoTitlesStep from "./steps/CreateFundDaoTitlesStep"
 import { CreateFundDaoStepsController } from "./components"
+import IsDaoValidatorStep from "./steps/IsDaoValidatorStep"
 
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { useDaoPoolCreatingForm } from "./useDaoPoolCreatingForm"
 import { useForm } from "hooks/useForm"
 import { useNavigate } from "react-router-dom"
+import { AnimatePresence, motion } from "framer-motion"
+import { opacityVariants } from "motion/variants"
 
 enum STEPS {
   titles = "titles",
+  isValidatorSelecting = "is-validator-selecting",
   internalProposal = "internal-proposal",
   distributionProposalSettings = "distribution-proposal-settings",
+  isCustomVoteSelecting = "is-custom-vote-selecting",
   validatorsBalancesSettings = "validators-balances-settings",
+  isTokenDistributionSettings = "",
   defaultProposalSetting = "default-proposal-setting",
 }
 
@@ -34,6 +40,10 @@ const CreateFundDaoForm: FC = () => {
   const handleNextStep = () => {
     switch (currentStep) {
       case STEPS.titles:
+        setCurrentStep(STEPS.isValidatorSelecting)
+        break
+      case STEPS.isValidatorSelecting:
+        // TODO: check isValidatorSelected
         setCurrentStep(STEPS.internalProposal)
         break
       case STEPS.internalProposal:
@@ -62,6 +72,9 @@ const CreateFundDaoForm: FC = () => {
         setCurrentStep(STEPS.internalProposal)
         break
       case STEPS.internalProposal:
+        setCurrentStep(STEPS.isValidatorSelecting)
+        break
+      case STEPS.isValidatorSelecting:
         setCurrentStep(STEPS.titles)
         break
       case STEPS.titles:
@@ -81,7 +94,71 @@ const CreateFundDaoForm: FC = () => {
   return (
     <FundDaoCreatingContext.Provider value={daoPoolCreatingForm}>
       <Container>
-        <CreateFundDaoTitlesStep />
+        <AnimatePresence>
+          {currentStep === STEPS.titles ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              variants={opacityVariants}
+            >
+              <CreateFundDaoTitlesStep />
+            </motion.div>
+          ) : currentStep === STEPS.isValidatorSelecting ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              variants={opacityVariants}
+            >
+              <IsDaoValidatorStep />
+            </motion.div>
+          ) : currentStep === STEPS.internalProposal ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              variants={opacityVariants}
+            >
+              2
+            </motion.div>
+          ) : currentStep === STEPS.distributionProposalSettings ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              variants={opacityVariants}
+            >
+              3
+            </motion.div>
+          ) : currentStep === STEPS.validatorsBalancesSettings ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              variants={opacityVariants}
+            >
+              4
+            </motion.div>
+          ) : currentStep === STEPS.defaultProposalSetting ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              variants={opacityVariants}
+            >
+              5
+            </motion.div>
+          ) : (
+            <></>
+          )}
+        </AnimatePresence>
 
         <CreateFundDaoStepsController
           totalStepsCount={totalStepsCount}

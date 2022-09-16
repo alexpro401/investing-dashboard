@@ -106,13 +106,15 @@ export const StepsControllerButton = styled.button<{
   color: ${(props) => (props.isActive ? "#7fffd4" : "#b1c7fc")};
 `
 
-export const RoundedIcon = styled(Icon)<{
-  isActive?: boolean
-}>`
+export const RoundedIcon = styled(Icon)`
   padding: 5px;
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 1px solid ${(props) => (props.isActive ? "#7fffd4" : "#b1c7fc")};
-  color: ${(props) => (props.isActive ? "#7fffd4" : "#b1c7fc")};
+  border: 1px solid;
+  color: inherit;
+`
+
+export const CenteredImage = styled.img`
+  margin: 0 auto;
 `

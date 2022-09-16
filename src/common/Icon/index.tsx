@@ -1,11 +1,14 @@
-import AngleLeftIcon from "assets/icons/AngleLeftIcon"
-import AngleRightIcon from "assets/icons/AngleRightIcon"
-import CloseIcon from "assets/icons/CloseIcon"
-import DollarOutlineIcon from "assets/icons/DollarOutlineIcon"
-import GlobeIcon from "assets/icons/GlobeIcon"
-import ShieldCheckIcon from "assets/icons/ShieldCheckIcon"
-import StarIcon from "assets/icons/StarIcon"
-import FileDockIcon from "assets/icons/FileDockIcon"
+import {
+  AngleLeftIcon,
+  AngleRightIcon,
+  CloseIcon,
+  DollarOutlineIcon,
+  GlobeIcon,
+  ShieldCheckIcon,
+  StarIcon,
+  FileDockIcon,
+  UsersIcon,
+} from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
 import { ICON_NAMES } from "constants/icon-names"
@@ -33,6 +36,8 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return FileDockIcon as unknown as ElementType
       case ICON_NAMES.star:
         return StarIcon as unknown as ElementType
+      case ICON_NAMES.users:
+        return UsersIcon as unknown as ElementType
 
       default:
         return AngleLeftIcon as unknown as ElementType

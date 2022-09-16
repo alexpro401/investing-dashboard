@@ -9,4 +9,5 @@ export enum ICON_NAMES {
   shieldCheck = "shield-check",
   star = "star",
   fileDock = "file-dock",
+  users = "users",
 }
