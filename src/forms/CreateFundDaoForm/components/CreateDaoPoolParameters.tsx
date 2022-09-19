@@ -17,21 +17,11 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   poolParameters: FundDaoPoolParameters
 }
 
-const CreateDaoPoolParameters: FC<Props> = ({ poolParameters, ...rest }) => {
+const CreateDaoPoolParameters: FC<Props> = ({ poolParameters }) => {
   const {
-    earlyCompletion,
     delegatedVotingAllowed,
-    validatorsVote,
-    duration,
-    durationValidators,
-    quorum,
-    quorumValidators,
     minTokenBalance,
-    minNftBalance,
     rewardToken,
-    creationRewards,
-    executionReward,
-    voteRewardsCoefficient,
     executorDescription,
   } = poolParameters
 

@@ -6,8 +6,8 @@ import {
 } from "../components"
 
 import { Collapse, Icon } from "common"
+import { InputField, TextareaField } from "fields"
 import Switch from "components/Switch"
-import { InputField } from "fields"
 import Avatar from "components/Avatar"
 
 import { Flex } from "theme"
@@ -162,11 +162,10 @@ const TitlesStep: FC = () => {
           <p>Add your DAO’s website, description, and social links.</p>
         </CreateDaoCardDescription>
         <InputField value={websiteUrl} setValue={setWebsiteUrl} label="Site" />
-        <InputField
+        <TextareaField
           value={description}
           setValue={setDescription}
           label="Description"
-          nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
         />
       </S.CreateDaoCard>
     </Flex>

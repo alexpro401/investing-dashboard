@@ -2,60 +2,45 @@ import {
   Dispatch,
   FormEvent,
   HTMLAttributes,
-  ReactNode,
   SetStateAction,
   useCallback,
   useMemo,
+  useState,
+  useRef,
 } from "react"
-
-import * as S from "./styled"
 import { v4 as uuidv4 } from "uuid"
-import { Collapse } from "../../common"
-
-enum INPUT_TYPES {
-  text = "text",
-  password = "password",
-  number = "number",
-}
+import * as S from "./styled"
+import { Collapse } from "common"
 
 interface Props<V extends string | number>
-  extends HTMLAttributes<HTMLInputElement> {
+  extends HTMLAttributes<HTMLTextAreaElement> {
   value: V
   setValue: Dispatch<SetStateAction<V>>
-  type?: string
   label?: string
   placeholder?: string
   errorMessage?: string
-  min?: number
-  max?: number
   disabled?: string | boolean
   readonly?: string | boolean
   tabindex?: number
-  nodeLeft?: ReactNode
-  nodeRight?: ReactNode
 }
 
-function InputField<V extends string | number>({
+function TextareaField<V extends string | number>({
   value,
   setValue,
-  type = INPUT_TYPES.text,
   label,
   placeholder = " ",
   errorMessage,
-  min,
-  max,
   disabled,
   readonly,
   tabindex,
   onInput,
   onChange,
-  nodeLeft,
-  nodeRight,
-  ...rest
+  onBlur,
 }: Props<V>) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const uid = useMemo(() => uuidv4(), [])
 
-  const isNumberType = useMemo(() => type === INPUT_TYPES.number, [type])
+  const [isFocused, setIsFocused] = useState(false)
 
   const isDisabled = useMemo(
     () => ["", "disabled", true].includes(disabled as string | boolean),
@@ -67,28 +52,13 @@ function InputField<V extends string | number>({
     [readonly]
   )
 
-  const normalizeRange = useCallback(
-    (value: string | number): string => {
-      let result = value
-
-      if (min && value < min) {
-        result = min
-      }
-      if (max && value > max) {
-        result = max
-      }
-
-      return result as string
-    },
-    [max, min]
-  )
+  const isToggled = useMemo(() => {
+    return !Boolean(value)
+  }, [isFocused, value])
 
   const handleInput = useCallback(
-    (event: FormEvent<HTMLInputElement>) => {
+    (event: FormEvent<HTMLTextAreaElement>) => {
       const eventTarget = event.currentTarget
-      if (isNumberType) {
-        eventTarget.value = normalizeRange(eventTarget.value)
-      }
       if (value === eventTarget.value) return
 
       setValue(eventTarget.value as V)
@@ -97,11 +67,11 @@ function InputField<V extends string | number>({
         onInput(event)
       }
     },
-    [isNumberType, normalizeRange, onInput, setValue, value]
+    [onInput, setValue, value]
   )
 
   const handleChange = useCallback(
-    (event: FormEvent<HTMLInputElement>) => {
+    (event: FormEvent<HTMLTextAreaElement>) => {
       if (onChange) {
         onChange(event)
       }
@@ -109,43 +79,52 @@ function InputField<V extends string | number>({
     [onChange]
   )
 
+  const handleBlur = useCallback(
+    (e) => {
+      setIsFocused(false)
+
+      if (onBlur) {
+        onBlur(e)
+      }
+    },
+    [onBlur]
+  )
+
   return (
-    <S.Root isReadonly={isReadonly} isDisabled={isDisabled} {...rest}>
-      <S.InputWrp>
-        <S.Input
-          id={`input-field--${uid}`}
+    <S.Root isReadonly={isReadonly} isDisabled={isDisabled}>
+      <S.TextAreaWrp>
+        <S.TextArea
+          ref={textareaRef}
+          id={`text-area-field--${uid}`}
           value={value}
           onInput={handleInput}
           onChange={handleChange}
-          onWheel={(event) => {
-            event.currentTarget.blur()
-          }}
           placeholder={placeholder}
           tabIndex={isDisabled || isReadonly ? -1 : tabindex}
-          type={type}
-          min={min}
-          max={max}
           disabled={isDisabled || isReadonly}
           isError={!!errorMessage}
-          isNodeLeftExist={!!nodeLeft}
-          isNodeRightExist={!!nodeRight}
+          onClick={() => setIsFocused(true)}
+          onBlur={handleBlur}
+          // FIXME
+          animate={{
+            height: isToggled
+              ? "56px"
+              : `${Math.max(textareaRef?.current?.scrollHeight || 0, 56)}px`,
+          }}
+          transition={{ duration: 0.05 }}
         />
         {label ? (
           <S.Label
-            htmlFor={`input-field--${uid}`}
+            htmlFor={`text-area-field--${uid}`}
             isError={!!errorMessage}
-            isNodeLeftExist={!!nodeLeft}
-            isNodeRightExist={!!nodeRight}
-            inputId={`input-field--${uid}`}
+            textareaId={`text-area-field--${uid}`}
           >
             {label}
           </S.Label>
         ) : (
           <></>
         )}
-        {nodeLeft ? <S.NodeLeftWrp>{nodeLeft}</S.NodeLeftWrp> : <></>}
-        {nodeRight ? <S.NodeRightWrp>{nodeRight}</S.NodeRightWrp> : <></>}
-      </S.InputWrp>
+      </S.TextAreaWrp>
       <Collapse isOpen={!!errorMessage} duration={0.3}>
         <S.ErrorMessage>{errorMessage}</S.ErrorMessage>
       </Collapse>
@@ -153,4 +132,4 @@ function InputField<V extends string | number>({
   )
 }
 
-export default InputField
+export default TextareaField

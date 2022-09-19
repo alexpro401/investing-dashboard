@@ -42,7 +42,6 @@ import plus from "assets/icons/button-plus.svg"
 import defaultAvatar from "assets/icons/default-avatar.svg"
 
 import HeaderStep from "./Header"
-import FundTypeCard from "./FundTypeCard"
 import FeeCard from "./FeeCard"
 
 import {
@@ -50,7 +49,6 @@ import {
   Steps,
   Step,
   StepBody,
-  FundTypeCards,
   FeeCards,
   LinkButton,
   AvatarWrapper,
@@ -348,6 +346,7 @@ const CreateFund: FC<Props> = ({ presettedFundType = "basic" }) => {
   ) : (
     <ExternalLink
       href={getExplorerLink(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         chainId!,
         baseToken.address,
         ExplorerDataType.ADDRESS
