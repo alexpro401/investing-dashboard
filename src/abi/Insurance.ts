@@ -145,6 +145,13 @@ export default [
     type: "function",
   },
   {
+    inputs: [],
+    name: "getMaxTreasuryPayout",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [{ internalType: "uint256", name: "deposit", type: "uint256" }],
     name: "getReceivedInsurance",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
