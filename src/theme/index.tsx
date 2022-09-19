@@ -36,16 +36,7 @@ export { size, device }
 
 export default {
   textPrimary: "#FAFAFA",
-  bgPrimary:
-    "linear-gradient(243deg,rgba(41, 49, 52, 1) 0%,rgba(53, 52, 75, 1) 100%);",
-  bgPrimaryHovered:
-    "linear-gradient(203deg,rgba(41, 49, 52, 1) 0%,rgba(53, 52, 75, 0.9) 100%);",
   device,
-  buttonGradients: {
-    primary: "linear-gradient(90deg, #a4ebd4 0%, #63b49b 100%)",
-    warn: "linear-gradient(90deg, #e87e7e 0%, #ac5c5c 100%)",
-    disabled: "linear-gradient(90deg,#74797E 0%,#4A4343 100%)",
-  },
 }
 
 export const chartColors = {

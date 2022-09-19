@@ -1,21 +1,20 @@
-import { FC, useContext, useState } from "react"
+import { FC, useState } from "react"
 import {
   CreateDaoCardHead,
   CreateDaoCardStepNumber,
   CreateDaoCardDescription,
 } from "../components"
 
-import { Icon } from "common"
+import { Collapse, Icon } from "common"
 import Switch from "components/Switch"
-import Input from "components/Input"
+import { InputField } from "fields"
 import Avatar from "components/Avatar"
 
 import { Flex } from "theme"
 import * as S from "../styled"
-import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 
-const CreateFundDaoTitlesStep: FC = () => {
+const TitlesStep: FC = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>()
   const [daoName, setDaoName] = useState("")
 
@@ -26,8 +25,6 @@ const CreateFundDaoTitlesStep: FC = () => {
 
   const [websiteUrl, setWebsiteUrl] = useState("")
   const [description, setDescription] = useState("")
-
-  const fundDaoCreatingContext = useContext(FundDaoCreatingContext)
 
   return (
     <Flex gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
@@ -64,11 +61,12 @@ const CreateFundDaoTitlesStep: FC = () => {
         <CreateDaoCardDescription>
           <p>*Maximum 15 characters</p>
         </CreateDaoCardDescription>
-        <Input
+        <InputField
           value={daoName}
-          onChange={setDaoName}
-          theme="grey"
+          setValue={setDaoName}
           label="DAO name"
+          nodeRight={<Icon name={ICON_NAMES.fileDock} />}
+          errorMessage={daoName}
         />
       </S.CreateDaoCard>
 
@@ -108,12 +106,13 @@ const CreateFundDaoTitlesStep: FC = () => {
             power
           </p>
         </CreateDaoCardDescription>
-        <Input
-          value={erc20token}
-          onChange={setErc20token}
-          theme="grey"
-          label="ERC-20 token"
-        />
+        <Collapse isOpen={isErc20}>
+          <InputField
+            value={erc20token}
+            setValue={setErc20token}
+            label="ERC-20 token"
+          />
+        </Collapse>
       </S.CreateDaoCard>
 
       <S.CreateDaoCard>
@@ -134,6 +133,24 @@ const CreateFundDaoTitlesStep: FC = () => {
             votes will each NFT represent.
           </p>
         </CreateDaoCardDescription>
+        <Collapse isOpen={isErc721}>
+          <InputField
+            value={erc20token}
+            setValue={setErc20token}
+            label="NFT ERC-721 address"
+            nodeRight={<button type="button">Paste</button>}
+          />
+          <InputField
+            value={erc20token}
+            setValue={setErc20token}
+            label="Voting power of all NFTs"
+          />
+          <InputField
+            value={erc20token}
+            setValue={setErc20token}
+            label="Number of NFTs"
+          />
+        </Collapse>
       </S.CreateDaoCard>
 
       <S.CreateDaoCard>
@@ -144,21 +161,16 @@ const CreateFundDaoTitlesStep: FC = () => {
         <CreateDaoCardDescription>
           <p>Add your DAO’s website, description, and social links.</p>
         </CreateDaoCardDescription>
-        <Input
-          value={websiteUrl}
-          onChange={setWebsiteUrl}
-          theme="grey"
-          label="Site"
-        />
-        <Input
+        <InputField value={websiteUrl} setValue={setWebsiteUrl} label="Site" />
+        <InputField
           value={description}
-          onChange={setDescription}
-          theme="grey"
+          setValue={setDescription}
           label="Description"
+          nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
         />
       </S.CreateDaoCard>
     </Flex>
   )
 }
 
-export default CreateFundDaoTitlesStep
+export default TitlesStep

@@ -1,8 +1,7 @@
 import { FC, useCallback, useMemo, useState } from "react"
 import { Container } from "./styled"
-import CreateFundDaoTitlesStep from "./steps/CreateFundDaoTitlesStep"
 import { CreateFundDaoStepsController } from "./components"
-import IsDaoValidatorStep from "./steps/IsDaoValidatorStep"
+import { TitlesStep, IsDaoValidatorStep, InternalProposalStep } from "./steps"
 
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { useDaoPoolCreatingForm } from "./useDaoPoolCreatingForm"
@@ -103,7 +102,7 @@ const CreateFundDaoForm: FC = () => {
               transition={{ duration: 0.2 }}
               variants={opacityVariants}
             >
-              <CreateFundDaoTitlesStep />
+              <TitlesStep />
             </motion.div>
           ) : currentStep === STEPS.isValidatorSelecting ? (
             <motion.div
@@ -123,7 +122,7 @@ const CreateFundDaoForm: FC = () => {
               transition={{ duration: 0.2 }}
               variants={opacityVariants}
             >
-              2
+              <InternalProposalStep />
             </motion.div>
           ) : currentStep === STEPS.distributionProposalSettings ? (
             <motion.div
