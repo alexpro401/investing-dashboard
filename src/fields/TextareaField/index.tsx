@@ -5,7 +5,6 @@ import {
   SetStateAction,
   useCallback,
   useMemo,
-  useState,
   useRef,
 } from "react"
 import { v4 as uuidv4 } from "uuid"
@@ -40,8 +39,6 @@ function TextareaField<V extends string | number>({
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const uid = useMemo(() => uuidv4(), [])
 
-  const [isFocused, setIsFocused] = useState(false)
-
   const isDisabled = useMemo(
     () => ["", "disabled", true].includes(disabled as string | boolean),
     [disabled]
@@ -54,7 +51,7 @@ function TextareaField<V extends string | number>({
 
   const isToggled = useMemo(() => {
     return !Boolean(value)
-  }, [isFocused, value])
+  }, [value])
 
   const handleInput = useCallback(
     (event: FormEvent<HTMLTextAreaElement>) => {
@@ -81,8 +78,6 @@ function TextareaField<V extends string | number>({
 
   const handleBlur = useCallback(
     (e) => {
-      setIsFocused(false)
-
       if (onBlur) {
         onBlur(e)
       }
@@ -102,8 +97,6 @@ function TextareaField<V extends string | number>({
           placeholder={placeholder}
           tabIndex={isDisabled || isReadonly ? -1 : tabindex}
           disabled={isDisabled || isReadonly}
-          isError={!!errorMessage}
-          onClick={() => setIsFocused(true)}
           onBlur={handleBlur}
           // FIXME
           animate={{
@@ -116,7 +109,6 @@ function TextareaField<V extends string | number>({
         {label ? (
           <S.Label
             htmlFor={`text-area-field--${uid}`}
-            isError={!!errorMessage}
             textareaId={`text-area-field--${uid}`}
           >
             {label}

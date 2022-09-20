@@ -1,11 +1,11 @@
-import { FC, useState } from "react"
+import { Dispatch, FC, SetStateAction, useCallback, useState } from "react"
 import {
+  CreateDaoCardDescription,
   CreateDaoCardHead,
   CreateDaoCardStepNumber,
-  CreateDaoCardDescription,
 } from "../components"
 
-import { Collapse, Icon } from "common"
+import { AppButton, Collapse, Icon } from "common"
 import { InputField, TextareaField } from "fields"
 import Switch from "components/Switch"
 import Avatar from "components/Avatar"
@@ -13,6 +13,7 @@ import Avatar from "components/Avatar"
 import { Flex } from "theme"
 import * as S from "../styled"
 import { ICON_NAMES } from "constants/icon-names"
+import { readFromClipboard } from "utils/clipboard"
 
 const TitlesStep: FC = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>()
@@ -25,6 +26,13 @@ const TitlesStep: FC = () => {
 
   const [websiteUrl, setWebsiteUrl] = useState("")
   const [description, setDescription] = useState("")
+
+  const pasteFromClipboard = useCallback(
+    async (dispatchCb: Dispatch<SetStateAction<any>>) => {
+      dispatchCb(await readFromClipboard())
+    },
+    []
+  )
 
   return (
     <Flex gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
@@ -111,6 +119,7 @@ const TitlesStep: FC = () => {
             value={erc20token}
             setValue={setErc20token}
             label="ERC-20 token"
+            errorMessage={"Invalid address"}
           />
         </Collapse>
       </S.CreateDaoCard>
@@ -129,8 +138,14 @@ const TitlesStep: FC = () => {
         />
         <CreateDaoCardDescription>
           <p>
-            Enter ERC-721 address, number of NFTs in the series, and how many
-            votes will each NFT represent.
+            Enter the governing NFT (ERC-721) address, number of NFTs in the
+            series, and the voting power. For governance, you can choose any
+            ERC-20 token, any (ERC-721) NFT, or a hybrid of both.
+          </p>
+          <br />
+          <p>
+            With hybrid governance (ERC-20 + NFT), your NFT can have more weight
+            than a token, and thus should have more voting power.
           </p>
         </CreateDaoCardDescription>
         <Collapse isOpen={isErc721}>
@@ -138,7 +153,17 @@ const TitlesStep: FC = () => {
             value={erc20token}
             setValue={setErc20token}
             label="NFT ERC-721 address"
-            nodeRight={<button type="button">Paste</button>}
+            nodeRight={
+              <AppButton
+                type="button"
+                text="paste"
+                color="default"
+                size="no-paddings"
+                onClick={() => pasteFromClipboard(setErc20token)}
+              >
+                Paste
+              </AppButton>
+            }
           />
           <InputField
             value={erc20token}

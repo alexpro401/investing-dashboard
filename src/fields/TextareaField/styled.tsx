@@ -39,7 +39,7 @@ export const TextAreaWrp = styled(motion.div)`
   position: relative;
 `
 
-export const TextArea = styled(motion.textarea)<{ isError?: boolean }>`
+export const TextArea = styled(motion.textarea)`
   resize: none;
   background: none;
   border: none;
@@ -94,15 +94,12 @@ export const TextArea = styled(motion.textarea)<{ isError?: boolean }>`
     }
   }
 
-  ${(props) => (props.isError ? `border-color: ${fieldErrorColor};` : "")}
-
   &:not([disabled]):focus {
     box-sizing: border-box;
   }
 `
 
 export const Label = styled(motion.label)<{
-  isError?: boolean
   textareaId: string
 }>`
   overflow: hidden;
@@ -120,7 +117,7 @@ export const Label = styled(motion.label)<{
   ${getDefaultFieldLabelStyles()}
 
   #${(props) => props.textareaId}:not(:focus):placeholder-shown + & {
-    top: ${fieldPaddingTop * 1.5}px;
+    top: ${fieldPaddingTop * 1.6}px;
     color: ${fieldLabelColor};
   }
 
@@ -136,8 +133,6 @@ export const Label = styled(motion.label)<{
     top: 50%;
     color: ${fieldLabelColor};
   }
-
-  ${(props) => (props.isError ? `color: ${fieldErrorColor} !important;` : "")}
 `
 
 export const ErrorMessage = styled(motion.span).attrs(() => ({

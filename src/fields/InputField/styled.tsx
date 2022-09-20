@@ -38,7 +38,6 @@ export const InputWrp = styled(motion.div)`
 `
 
 export const Input = styled(motion.input)<{
-  isError?: boolean
   isNodeLeftExist?: boolean
   isNodeRightExist?: boolean
 }>`
@@ -94,8 +93,6 @@ export const Input = styled(motion.input)<{
     }
   }
 
-  ${(props) => (props.isError ? `border-color: ${fieldErrorColor};` : "")}
-
   ${(props) =>
     props.isNodeRightExist ? `padding-right: ${fieldPaddingRight * 3}px;` : ""}
 
@@ -108,7 +105,6 @@ export const Input = styled(motion.input)<{
 `
 
 export const Label = styled(motion.label)<{
-  isError?: boolean
   isNodeLeftExist?: boolean
   isNodeRightExist?: boolean
   inputId: string
@@ -154,8 +150,6 @@ export const Label = styled(motion.label)<{
     top: 50%;
     color: ${fieldLabelColor};
   }
-
-  ${(props) => (props.isError ? `color: ${fieldErrorColor} !important;` : "")}
 `
 
 export const ErrorMessage = styled(motion.span).attrs(() => ({
