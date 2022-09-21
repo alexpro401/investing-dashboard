@@ -89,6 +89,11 @@ export interface DaoProposalSettingsForm {
 }
 
 interface FundDaoCreatingContext {
+  isErc20: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
+  isErc721: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
+
+  isValidator: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
+
   avatarUrl: { get: string; set: Dispatch<SetStateAction<string>> }
   daoName: { get: string; set: Dispatch<SetStateAction<string>> }
   websiteUrl: { get: string; set: Dispatch<SetStateAction<string>> }
@@ -105,6 +110,11 @@ interface FundDaoCreatingContext {
 }
 
 export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
+  isErc20: { get: false, set: () => {} },
+  isErc721: { get: false, set: () => {} },
+
+  isValidator: { get: false, set: () => {} },
+
   avatarUrl: { get: "", set: () => {} },
   daoName: { get: "", set: () => {} },
   websiteUrl: { get: "", set: () => {} },
@@ -123,6 +133,12 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
 const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
   children,
 }) => {
+  const [_isErc20, _setIsErc20] = useState<boolean>(false)
+  const [_isErc721, _setIsErc721] = useState<boolean>(false)
+
+  const [_isValidator, _setIsValidator] = useState(false)
+
+  // to ipfs
   const [_avatarUrl, _setAvatarUrl] = useState<string>("")
   const [_daoName, _setDaoName] = useState("")
   const [_websiteUrl, _setWebsiteUrl] = useState("")
@@ -215,6 +231,11 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
     <>
       <FundDaoCreatingContext.Provider
         value={{
+          isErc20: { get: _isErc20, set: _setIsErc20 },
+          isErc721: { get: _isErc721, set: _setIsErc721 },
+
+          isValidator: { get: _isValidator, set: _setIsValidator },
+
           avatarUrl: { get: _avatarUrl, set: _setAvatarUrl },
           daoName: { get: _daoName, set: _setDaoName },
           websiteUrl: { get: _websiteUrl, set: _setWebsiteUrl },

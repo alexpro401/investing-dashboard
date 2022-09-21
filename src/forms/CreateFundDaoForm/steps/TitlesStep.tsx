@@ -27,19 +27,16 @@ import { useFormValidation } from "hooks/useFormValidation"
 import { required } from "utils/validators"
 
 const TitlesStep: FC = () => {
-  // to ipfs
-
-  const [isErc20, setIsErc20] = useState(false)
-  const [isErc721, setIsErc721] = useState(false)
-
   const daoPoolFormContext = useContext(FundDaoCreatingContext)
+
+  const { isErc20, isErc721 } = daoPoolFormContext
 
   const { avatarUrl, daoName, websiteUrl, description } = daoPoolFormContext
 
   const { tokenAddress, nftAddress, totalPowerInTokens, nftsTotalSupply } =
     daoPoolFormContext.userKeeperParams
 
-  const { getFieldErrorMessage, touchField, isFormValid } = useFormValidation(
+  const { getFieldErrorMessage, touchField } = useFormValidation(
     {
       avatarUrl: avatarUrl.get,
       daoName: daoName.get,
@@ -57,8 +54,8 @@ const TitlesStep: FC = () => {
       daoName: { required },
       websiteUrl: { required },
       description: { required },
-      ...(isErc20 ? { tokenAddress: { required } } : {}),
-      ...(isErc721
+      ...(isErc20.get ? { tokenAddress: { required } } : {}),
+      ...(isErc721.get
         ? {
             nftAddress: { required },
             totalPowerInTokens: { required },
@@ -143,8 +140,8 @@ const TitlesStep: FC = () => {
           title="ERC-20"
           action={
             <Switch
-              isOn={isErc20}
-              onChange={(n, v) => setIsErc20(v)}
+              isOn={isErc20.get}
+              onChange={(n, v) => isErc20.set(v)}
               name={"create-fund-title-step-is-erc20"}
             />
           }
@@ -155,7 +152,7 @@ const TitlesStep: FC = () => {
             power
           </p>
         </CreateDaoCardDescription>
-        <Collapse isOpen={isErc20}>
+        <Collapse isOpen={isErc20.get}>
           <InputField
             value={tokenAddress.get}
             setValue={tokenAddress.set}
@@ -172,8 +169,8 @@ const TitlesStep: FC = () => {
           title="ERC-721 (NFT)"
           action={
             <Switch
-              isOn={isErc721}
-              onChange={(n, v) => setIsErc721(v)}
+              isOn={isErc721.get}
+              onChange={(n, v) => isErc721.set(v)}
               name={"create-fund-title-step-is-erc721"}
             />
           }
@@ -190,7 +187,7 @@ const TitlesStep: FC = () => {
             than a token, and thus should have more voting power.
           </p>
         </CreateDaoCardDescription>
-        <Collapse isOpen={isErc721}>
+        <Collapse isOpen={isErc721.get}>
           <InputField
             value={nftAddress.get}
             setValue={nftAddress.set}

@@ -5,16 +5,20 @@ import {
   CreateDaoCardDescription,
 } from "../components"
 
-import { FC, useState } from "react"
+import { FC, useContext } from "react"
 import { Flex } from "theme"
 import { Icon } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 
 import * as S from "forms/CreateFundDaoForm/styled"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
+import { InputField } from "fields"
+import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 
 const IsDaoValidatorStep: FC = () => {
-  const [isValidator, setIsValidator] = useState(false)
+  const { validatorsParams, isValidator } = useContext(FundDaoCreatingContext)
+
+  const { name, symbol, duration, quorum } = validatorsParams
 
   return (
     <Flex gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
@@ -46,8 +50,8 @@ const IsDaoValidatorStep: FC = () => {
           title="Add validator"
           action={
             <Switch
-              isOn={isValidator}
-              onChange={(n, v) => setIsValidator(v)}
+              isOn={isValidator.get}
+              onChange={(n, v) => isValidator.set(v)}
               name={"create-fund-is-validator-step-is-validator"}
             />
           }
@@ -59,6 +63,44 @@ const IsDaoValidatorStep: FC = () => {
             by voting.
           </p>
         </CreateDaoCardDescription>
+      </S.CreateDaoCard>
+
+      <S.CreateDaoCard>
+        <CreateDaoCardHead
+          icon={<Icon name={ICON_NAMES.users} />}
+          title="Validator settings"
+        />
+        <CreateDaoCardDescription>
+          <p>
+            Validators can also create special proposals to be voted on
+            exclusively among themselves.
+          </p>
+          <br />
+          <p>
+            Validators vote via a separate token that you will create and
+            configure below.
+          </p>
+        </CreateDaoCardDescription>
+        <InputField
+          value={name.get}
+          setValue={name.set}
+          label="Validator token name"
+        />
+        <InputField
+          value={symbol.get}
+          setValue={symbol.set}
+          label="Validator token symbol"
+        />
+        <InputField
+          value={duration.get}
+          setValue={duration.set}
+          label="Duration of validator voting"
+        />
+        <InputField
+          value={quorum.get}
+          setValue={quorum.set}
+          label="Quorum required for a vote pass"
+        />
       </S.CreateDaoCard>
     </Flex>
   )
