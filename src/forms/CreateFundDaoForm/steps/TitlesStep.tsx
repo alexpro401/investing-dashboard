@@ -1,32 +1,72 @@
-import { Dispatch, FC, SetStateAction, useCallback, useState } from "react"
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useState,
+} from "react"
+
+import { AppButton, Collapse, Icon } from "common"
+import { InputField, TextareaField } from "fields"
+import Switch from "components/Switch"
+import Avatar from "components/Avatar"
 import {
   CreateDaoCardDescription,
   CreateDaoCardHead,
   CreateDaoCardStepNumber,
 } from "../components"
 
-import { AppButton, Collapse, Icon } from "common"
-import { InputField, TextareaField } from "fields"
-import Switch from "components/Switch"
-import Avatar from "components/Avatar"
+import * as S from "../styled"
 
 import { Flex } from "theme"
-import * as S from "../styled"
+import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 import { readFromClipboard } from "utils/clipboard"
+import { useFormValidation } from "hooks/useFormValidation"
+import { required } from "utils/validators"
 
 const TitlesStep: FC = () => {
-  const [avatarUrl, setAvatarUrl] = useState<string | undefined>()
-  const [daoName, setDaoName] = useState("")
+  // to ipfs
 
   const [isErc20, setIsErc20] = useState(false)
-  const [erc20token, setErc20token] = useState("")
-
   const [isErc721, setIsErc721] = useState(false)
 
-  const [websiteUrl, setWebsiteUrl] = useState("")
-  const [description, setDescription] = useState("")
+  const daoPoolFormContext = useContext(FundDaoCreatingContext)
 
+  const { avatarUrl, daoName, websiteUrl, description } = daoPoolFormContext
+
+  const { tokenAddress, nftAddress, totalPowerInTokens, nftsTotalSupply } =
+    daoPoolFormContext.userKeeperParams
+
+  const { getFieldErrorMessage, touchField, isFormValid } = useFormValidation(
+    {
+      avatarUrl: avatarUrl.get,
+      daoName: daoName.get,
+      websiteUrl: websiteUrl.get,
+      description: description.get,
+
+      tokenAddress: tokenAddress.get,
+
+      nftAddress: nftAddress.get,
+      totalPowerInTokens: totalPowerInTokens.get,
+      nftsTotalSupply: nftsTotalSupply.get,
+    },
+    {
+      avatarUrl: { required },
+      daoName: { required },
+      websiteUrl: { required },
+      description: { required },
+      ...(isErc20 ? { tokenAddress: { required } } : {}),
+      ...(isErc721
+        ? {
+            nftAddress: { required },
+            totalPowerInTokens: { required },
+            nftsTotalSupply: { required },
+          }
+        : {}),
+    }
+  )
   const pasteFromClipboard = useCallback(
     async (dispatchCb: Dispatch<SetStateAction<any>>) => {
       dispatchCb(await readFromClipboard())
@@ -53,10 +93,10 @@ const TitlesStep: FC = () => {
 
       <Avatar
         m="0 auto"
-        onCrop={(key, url) => setAvatarUrl(url)}
+        onCrop={(key, url) => avatarUrl.set(url)}
         showUploader
         size={100}
-        url={avatarUrl}
+        url={avatarUrl.get}
       >
         <S.CreateFundDaoAvatarBtn>Add fund photo</S.CreateFundDaoAvatarBtn>
       </Avatar>
@@ -70,11 +110,12 @@ const TitlesStep: FC = () => {
           <p>*Maximum 15 characters</p>
         </CreateDaoCardDescription>
         <InputField
-          value={daoName}
-          setValue={setDaoName}
+          value={daoName.get}
+          setValue={daoName.set}
           label="DAO name"
           nodeRight={<Icon name={ICON_NAMES.fileDock} />}
-          errorMessage={daoName}
+          errorMessage={getFieldErrorMessage("daoName")}
+          onBlur={() => touchField("daoName")}
         />
       </S.CreateDaoCard>
 
@@ -116,10 +157,11 @@ const TitlesStep: FC = () => {
         </CreateDaoCardDescription>
         <Collapse isOpen={isErc20}>
           <InputField
-            value={erc20token}
-            setValue={setErc20token}
+            value={tokenAddress.get}
+            setValue={tokenAddress.set}
             label="ERC-20 token"
-            errorMessage={"Invalid address"}
+            errorMessage={getFieldErrorMessage("tokenAddress")}
+            onBlur={() => touchField("tokenAddress")}
           />
         </Collapse>
       </S.CreateDaoCard>
@@ -150,8 +192,8 @@ const TitlesStep: FC = () => {
         </CreateDaoCardDescription>
         <Collapse isOpen={isErc721}>
           <InputField
-            value={erc20token}
-            setValue={setErc20token}
+            value={nftAddress.get}
+            setValue={nftAddress.set}
             label="NFT ERC-721 address"
             nodeRight={
               <AppButton
@@ -159,21 +201,27 @@ const TitlesStep: FC = () => {
                 text="paste"
                 color="default"
                 size="no-paddings"
-                onClick={() => pasteFromClipboard(setErc20token)}
+                onClick={() => pasteFromClipboard(nftAddress.set)}
               >
                 Paste
               </AppButton>
             }
+            errorMessage={getFieldErrorMessage("nftAddress")}
+            onBlur={() => touchField("nftAddress")}
           />
           <InputField
-            value={erc20token}
-            setValue={setErc20token}
+            value={totalPowerInTokens.get}
+            setValue={totalPowerInTokens.set}
             label="Voting power of all NFTs"
+            errorMessage={getFieldErrorMessage("totalPowerInTokens")}
+            onBlur={() => touchField("totalPowerInTokens")}
           />
           <InputField
-            value={erc20token}
-            setValue={setErc20token}
+            value={nftsTotalSupply.get}
+            setValue={nftsTotalSupply.set}
             label="Number of NFTs"
+            errorMessage={getFieldErrorMessage("nftsTotalSupply")}
+            onBlur={() => touchField("nftsTotalSupply")}
           />
         </Collapse>
       </S.CreateDaoCard>
@@ -186,11 +234,19 @@ const TitlesStep: FC = () => {
         <CreateDaoCardDescription>
           <p>Add your DAO’s website, description, and social links.</p>
         </CreateDaoCardDescription>
-        <InputField value={websiteUrl} setValue={setWebsiteUrl} label="Site" />
+        <InputField
+          value={websiteUrl.get}
+          setValue={websiteUrl.set}
+          label="Site"
+          errorMessage={getFieldErrorMessage("websiteUrl")}
+          onBlur={() => touchField("websiteUrl")}
+        />
         <TextareaField
-          value={description}
-          setValue={setDescription}
+          value={description.get}
+          setValue={description.set}
           label="Description"
+          errorMessage={getFieldErrorMessage("description")}
+          onBlur={() => touchField("description")}
         />
       </S.CreateDaoCard>
     </Flex>
