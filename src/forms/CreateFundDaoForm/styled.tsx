@@ -1,6 +1,6 @@
 import styled from "styled-components"
+
 import { Icon } from "common"
-import { Flex } from "../../theme"
 
 export const Container = styled.div`
   display: flex;
@@ -14,28 +14,6 @@ export const Container = styled.div`
   @media all and (display-mode: standalone) {
     height: calc(100vh - 115px);
   }
-`
-
-export const CreateDaoCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  background: #181e2c;
-  border-radius: 20px;
-  padding: 16px;
-  gap: 12px;
-`
-
-export const CreateDaoCardHead = styled(Flex)`
-  color: #e4f2ff;
-`
-
-export const CreateDaoCardTitle = styled.span`
-  font-size: 16px;
-  line-height: 1.2;
-  font-weight: 700;
-  color: #e4f2ff;
-  margin: 0;
-  vertical-align: middle;
 `
 
 export const CreateDaoCardNumberIcon = styled.div`
@@ -57,13 +35,6 @@ export const CreateDaoCardNumberIconText = styled.span`
   font-weight: 700;
   text-align: center;
   text-transform: uppercase;
-`
-
-export const CreateDaoCardDescription = styled.div`
-  font-size: 12px;
-  line-height: 1.5;
-  font-weight: 400;
-  color: #b1c7fc;
 `
 
 export const CreateFundDaoAvatarBtn = styled.button`

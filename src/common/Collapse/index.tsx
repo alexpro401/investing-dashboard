@@ -7,11 +7,16 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   duration?: number
 }
 
-const Collapse: FC<Props> = ({ isOpen, duration = 0.15, children }) => {
+const Collapse: FC<Props> = ({
+  isOpen,
+  duration = 0.15,
+  children,
+  ...rest
+}) => {
   const uid = useMemo(() => uuidv4(), [])
 
   return (
-    <AnimatePresence initial={false}>
+    <AnimatePresence initial={false} {...rest}>
       {isOpen ? (
         <motion.div
           key={`collapse-${uid}`}
@@ -19,8 +24,8 @@ const Collapse: FC<Props> = ({ isOpen, duration = 0.15, children }) => {
           animate="open"
           exit="collapsed"
           variants={{
-            open: { opacity: 1, height: "auto" },
-            collapsed: { opacity: 0, height: 0 },
+            open: { opacity: 1, height: "auto", overflow: "hidden" },
+            collapsed: { opacity: 0, height: 0, overflow: "hidden" },
           }}
           transition={{ duration: duration }}
         >

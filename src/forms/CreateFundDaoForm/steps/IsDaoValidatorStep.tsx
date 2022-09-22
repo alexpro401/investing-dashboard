@@ -1,19 +1,22 @@
 import Switch from "components/Switch"
-import {
-  CreateDaoCardHead,
-  CreateDaoCardStepNumber,
-  CreateDaoCardDescription,
-} from "../components"
+import { CreateDaoCardStepNumber } from "../components"
 
 import { FC, useContext } from "react"
+import {
+  Card,
+  CardDescription,
+  CardFormControl,
+  CardHead,
+  Collapse,
+  Icon,
+} from "common"
+import { InputField } from "fields"
 import { Flex } from "theme"
-import { Icon } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 
 import * as S from "forms/CreateFundDaoForm/styled"
-import CreateFundDocsImage from "assets/others/create-fund-docs.png"
-import { InputField } from "fields"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 
 const IsDaoValidatorStep: FC = () => {
   const { validatorsParams, isValidator } = useContext(FundDaoCreatingContext)
@@ -22,12 +25,12 @@ const IsDaoValidatorStep: FC = () => {
 
   return (
     <Flex gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
-      <S.CreateDaoCard>
-        <CreateDaoCardHead
-          icon={<CreateDaoCardStepNumber number={2} />}
+      <Card>
+        <CardHead
+          nodeLeft={<CreateDaoCardStepNumber number={2} />}
           title="DAO validator settings"
         />
-        <CreateDaoCardDescription>
+        <CardDescription>
           <p>
             Here you can designate trusted DAO members to serve as validators
             who will hold a validator-only second vote on every passed proposal
@@ -39,16 +42,16 @@ const IsDaoValidatorStep: FC = () => {
             by VALIDATOR VOTING via an appropriate proposal. *Token/NFT selected
             for governance cannot be changed once initially set.
           </p>
-        </CreateDaoCardDescription>
-      </S.CreateDaoCard>
+        </CardDescription>
+      </Card>
 
       <S.CenteredImage src={CreateFundDocsImage} />
 
-      <S.CreateDaoCard>
-        <CreateDaoCardHead
-          icon={<Icon name={ICON_NAMES.users} />}
+      <Card>
+        <CardHead
+          nodeLeft={<Icon name={ICON_NAMES.users} />}
           title="Add validator"
-          action={
+          nodeRight={
             <Switch
               isOn={isValidator.get}
               onChange={(n, v) => isValidator.set(v)}
@@ -56,52 +59,56 @@ const IsDaoValidatorStep: FC = () => {
             />
           }
         />
-        <CreateDaoCardDescription>
+        <CardDescription>
           <p>
             Adding validators activates two-stage voting for enhanced DAO
             security. You can also add this function after the DAO is created,
             by voting.
           </p>
-        </CreateDaoCardDescription>
-      </S.CreateDaoCard>
+        </CardDescription>
+      </Card>
 
-      <S.CreateDaoCard>
-        <CreateDaoCardHead
-          icon={<Icon name={ICON_NAMES.users} />}
-          title="Validator settings"
-        />
-        <CreateDaoCardDescription>
-          <p>
-            Validators can also create special proposals to be voted on
-            exclusively among themselves.
-          </p>
-          <br />
-          <p>
-            Validators vote via a separate token that you will create and
-            configure below.
-          </p>
-        </CreateDaoCardDescription>
-        <InputField
-          value={name.get}
-          setValue={name.set}
-          label="Validator token name"
-        />
-        <InputField
-          value={symbol.get}
-          setValue={symbol.set}
-          label="Validator token symbol"
-        />
-        <InputField
-          value={duration.get}
-          setValue={duration.set}
-          label="Duration of validator voting"
-        />
-        <InputField
-          value={quorum.get}
-          setValue={quorum.set}
-          label="Quorum required for a vote pass"
-        />
-      </S.CreateDaoCard>
+      <Collapse isOpen={isValidator.get} duration={0.5}>
+        <Card>
+          <CardHead
+            nodeLeft={<Icon name={ICON_NAMES.users} />}
+            title="Validator settings"
+          />
+          <CardDescription>
+            <p>
+              Validators can also create special proposals to be voted on
+              exclusively among themselves.
+            </p>
+            <br />
+            <p>
+              Validators vote via a separate token that you will create and
+              configure below.
+            </p>
+          </CardDescription>
+          <CardFormControl>
+            <InputField
+              value={name.get}
+              setValue={name.set}
+              label="Validator token name"
+            />
+            <InputField
+              value={symbol.get}
+              setValue={symbol.set}
+              label="Validator token symbol"
+            />
+            <InputField
+              value={duration.get}
+              setValue={duration.set}
+              label="Duration of validator voting"
+            />
+            <InputField
+              value={quorum.get}
+              setValue={quorum.set}
+              label="Quorum required for a vote pass"
+            />
+          </CardFormControl>
+        </Card>
+      </Collapse>
     </Flex>
   )
 }

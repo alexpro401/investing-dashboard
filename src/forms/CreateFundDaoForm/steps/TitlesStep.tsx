@@ -1,21 +1,18 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useState,
-} from "react"
+import { Dispatch, FC, SetStateAction, useCallback, useContext } from "react"
 
-import { AppButton, Collapse, Icon } from "common"
+import {
+  AppButton,
+  Card,
+  CardDescription,
+  CardFormControl,
+  CardHead,
+  Collapse,
+  Icon,
+} from "common"
 import { InputField, TextareaField } from "fields"
 import Switch from "components/Switch"
 import Avatar from "components/Avatar"
-import {
-  CreateDaoCardDescription,
-  CreateDaoCardHead,
-  CreateDaoCardStepNumber,
-} from "../components"
+import { CreateDaoCardStepNumber } from "../components"
 
 import * as S from "../styled"
 
@@ -73,20 +70,20 @@ const TitlesStep: FC = () => {
 
   return (
     <Flex gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
-      <S.CreateDaoCard>
-        <CreateDaoCardHead
-          icon={<CreateDaoCardStepNumber number={1} />}
+      <Card>
+        <CardHead
+          nodeLeft={<CreateDaoCardStepNumber number={1} />}
           title="DAO Profile"
         />
-        <CreateDaoCardDescription>
+        <CardDescription>
           <p>Enter basic info about your DAO</p>
           <br />
           <p>
             *Once created, the DAO settings can be changed only by voting via
             the appropriate proposal.
           </p>
-        </CreateDaoCardDescription>
-      </S.CreateDaoCard>
+        </CardDescription>
+      </Card>
 
       <Avatar
         m="0 auto"
@@ -98,14 +95,14 @@ const TitlesStep: FC = () => {
         <S.CreateFundDaoAvatarBtn>Add fund photo</S.CreateFundDaoAvatarBtn>
       </Avatar>
 
-      <S.CreateDaoCard>
-        <CreateDaoCardHead
-          icon={<Icon name={ICON_NAMES.fileDock} />}
+      <Card>
+        <CardHead
+          nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
           title="DAO Name"
         />
-        <CreateDaoCardDescription>
+        <CardDescription>
           <p>*Maximum 15 characters</p>
-        </CreateDaoCardDescription>
+        </CardDescription>
         <InputField
           value={daoName.get}
           setValue={daoName.set}
@@ -114,14 +111,14 @@ const TitlesStep: FC = () => {
           errorMessage={getFieldErrorMessage("daoName")}
           onBlur={() => touchField("daoName")}
         />
-      </S.CreateDaoCard>
+      </Card>
 
-      <S.CreateDaoCard>
-        <CreateDaoCardHead
-          icon={<Icon name={ICON_NAMES.shieldCheck} />}
+      <Card>
+        <CardHead
+          nodeLeft={<Icon name={ICON_NAMES.shieldCheck} />}
           title="Governance token information"
         />
-        <CreateDaoCardDescription>
+        <CardDescription>
           <p>
             For governance, you can choose any ERC-20 token, any (ERC-721) NFT,
             or a hybrid of both.
@@ -131,14 +128,14 @@ const TitlesStep: FC = () => {
             *Token/NFT selected for governance cannot be changed once initially
             set.
           </p>
-        </CreateDaoCardDescription>
-      </S.CreateDaoCard>
+        </CardDescription>
+      </Card>
 
-      <S.CreateDaoCard>
-        <CreateDaoCardHead
-          icon={<Icon name={ICON_NAMES.dollarOutline} />}
+      <Card>
+        <CardHead
+          nodeLeft={<Icon name={ICON_NAMES.dollarOutline} />}
           title="ERC-20"
-          action={
+          nodeRight={
             <Switch
               isOn={isErc20.get}
               onChange={(n, v) => isErc20.set(v)}
@@ -146,12 +143,12 @@ const TitlesStep: FC = () => {
             />
           }
         />
-        <CreateDaoCardDescription>
+        <CardDescription>
           <p>
             Enter ERC-20 token address or create a new one. 1 token = 1 Voting
             power
           </p>
-        </CreateDaoCardDescription>
+        </CardDescription>
         <Collapse isOpen={isErc20.get}>
           <InputField
             value={tokenAddress.get}
@@ -161,13 +158,13 @@ const TitlesStep: FC = () => {
             onBlur={() => touchField("tokenAddress")}
           />
         </Collapse>
-      </S.CreateDaoCard>
+      </Card>
 
-      <S.CreateDaoCard>
-        <CreateDaoCardHead
-          icon={<Icon name={ICON_NAMES.star} />}
+      <Card>
+        <CardHead
+          nodeLeft={<Icon name={ICON_NAMES.star} />}
           title="ERC-721 (NFT)"
-          action={
+          nodeRight={
             <Switch
               isOn={isErc721.get}
               onChange={(n, v) => isErc721.set(v)}
@@ -175,7 +172,7 @@ const TitlesStep: FC = () => {
             />
           }
         />
-        <CreateDaoCardDescription>
+        <CardDescription>
           <p>
             Enter the governing NFT (ERC-721) address, number of NFTs in the
             series, and the voting power. For governance, you can choose any
@@ -186,66 +183,70 @@ const TitlesStep: FC = () => {
             With hybrid governance (ERC-20 + NFT), your NFT can have more weight
             than a token, and thus should have more voting power.
           </p>
-        </CreateDaoCardDescription>
+        </CardDescription>
         <Collapse isOpen={isErc721.get}>
-          <InputField
-            value={nftAddress.get}
-            setValue={nftAddress.set}
-            label="NFT ERC-721 address"
-            nodeRight={
-              <AppButton
-                type="button"
-                text="paste"
-                color="default"
-                size="no-paddings"
-                onClick={() => pasteFromClipboard(nftAddress.set)}
-              >
-                Paste
-              </AppButton>
-            }
-            errorMessage={getFieldErrorMessage("nftAddress")}
-            onBlur={() => touchField("nftAddress")}
-          />
-          <InputField
-            value={totalPowerInTokens.get}
-            setValue={totalPowerInTokens.set}
-            label="Voting power of all NFTs"
-            errorMessage={getFieldErrorMessage("totalPowerInTokens")}
-            onBlur={() => touchField("totalPowerInTokens")}
-          />
-          <InputField
-            value={nftsTotalSupply.get}
-            setValue={nftsTotalSupply.set}
-            label="Number of NFTs"
-            errorMessage={getFieldErrorMessage("nftsTotalSupply")}
-            onBlur={() => touchField("nftsTotalSupply")}
-          />
+          <CardFormControl>
+            <InputField
+              value={nftAddress.get}
+              setValue={nftAddress.set}
+              label="NFT ERC-721 address"
+              nodeRight={
+                <AppButton
+                  type="button"
+                  text="paste"
+                  color="default"
+                  size="no-paddings"
+                  onClick={() => pasteFromClipboard(nftAddress.set)}
+                >
+                  Paste
+                </AppButton>
+              }
+              errorMessage={getFieldErrorMessage("nftAddress")}
+              onBlur={() => touchField("nftAddress")}
+            />
+            <InputField
+              value={totalPowerInTokens.get}
+              setValue={totalPowerInTokens.set}
+              label="Voting power of all NFTs"
+              errorMessage={getFieldErrorMessage("totalPowerInTokens")}
+              onBlur={() => touchField("totalPowerInTokens")}
+            />
+            <InputField
+              value={nftsTotalSupply.get}
+              setValue={nftsTotalSupply.set}
+              label="Number of NFTs"
+              errorMessage={getFieldErrorMessage("nftsTotalSupply")}
+              onBlur={() => touchField("nftsTotalSupply")}
+            />
+          </CardFormControl>
         </Collapse>
-      </S.CreateDaoCard>
+      </Card>
 
-      <S.CreateDaoCard>
-        <CreateDaoCardHead
-          icon={<Icon name={ICON_NAMES.globe} />}
+      <Card>
+        <CardHead
+          nodeLeft={<Icon name={ICON_NAMES.globe} />}
           title="Additional Info"
         />
-        <CreateDaoCardDescription>
+        <CardDescription>
           <p>Add your DAO’s website, description, and social links.</p>
-        </CreateDaoCardDescription>
-        <InputField
-          value={websiteUrl.get}
-          setValue={websiteUrl.set}
-          label="Site"
-          errorMessage={getFieldErrorMessage("websiteUrl")}
-          onBlur={() => touchField("websiteUrl")}
-        />
-        <TextareaField
-          value={description.get}
-          setValue={description.set}
-          label="Description"
-          errorMessage={getFieldErrorMessage("description")}
-          onBlur={() => touchField("description")}
-        />
-      </S.CreateDaoCard>
+        </CardDescription>
+        <CardFormControl>
+          <InputField
+            value={websiteUrl.get}
+            setValue={websiteUrl.set}
+            label="Site"
+            errorMessage={getFieldErrorMessage("websiteUrl")}
+            onBlur={() => touchField("websiteUrl")}
+          />
+          <TextareaField
+            value={description.get}
+            setValue={description.set}
+            label="Description"
+            errorMessage={getFieldErrorMessage("description")}
+            onBlur={() => touchField("description")}
+          />
+        </CardFormControl>
+      </Card>
     </Flex>
   )
 }
