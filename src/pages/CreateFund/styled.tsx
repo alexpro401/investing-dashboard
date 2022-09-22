@@ -1,8 +1,11 @@
 import styled from "styled-components"
 import { motion } from "framer-motion"
+import { Icon } from "../../common"
 
 // page styles
 export const Container = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
   margin: 0 auto;
   background-color: #0e121b;
   width: fill-available;
@@ -15,6 +18,8 @@ export const Container = styled(motion.div)`
 `
 
 export const FundTypeCards = styled.div`
+  display: grid;
+  grid-gap: 16px;
   padding: 0 16px;
 `
 
@@ -35,6 +40,7 @@ export const CreateFundDocsBlock = styled.div`
   border-radius: 20px;
   padding: 20px;
   margin: 16px 16px 24px;
+  min-height: 120px;
 
   &:before {
     content: "";
@@ -108,82 +114,26 @@ export const CreateFundDocsBlockCloseBtn = styled.button`
   color: #788ab4;
 `
 
-// FundTypeCard styles
-export const FundTypeCardContainerCard = styled.div<{
-  withBackground?: boolean
-  shadow?: boolean
-  isActive?: boolean
-}>`
-  padding: 28px 10px 26px 16px;
-  box-sizing: border-box;
-  background: linear-gradient(64.44deg, #10151f 32.35%, #181d26 100%);
-  mix-blend-mode: normal;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.01);
-  border: 1px solid ${(props) => (props.isActive ? "#9AE2CB" : "#26324482")};
-  border-radius: 16px;
-  margin-bottom: 16px;
-  background: ${(props) =>
-    props.withBackground
-      ? "linear-gradient(64.44deg, #10151F 32.35%, #181D26 100%)"
-      : "transparent"};
-  box-shadow: ${(props) =>
-    props.shadow ? "0px 4px 4px rgba(0, 0, 0, 0.01)" : "none"};
-`
-
-export const FundTypeCardBody = styled.div`
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  align-items: center;
-`
-
-export const FundTypeCardText = styled.div``
-
-export const FundTypeCardLabel = styled.div`
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 14px;
-  color: #e4f2ff;
-  text-align: left;
-  margin-bottom: 12px;
-`
-
-export const FundTypeCardDescription = styled.div`
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 500;
-  font-size: 13px;
-  line-height: 1.5;
-  letter-spacing: 0.03em;
-  color: #b1c7fc;
-`
-
-export const FundTypeCardLink = styled.a`
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 0.03em;
-  color: #0165c2;
-  text-decoration: none;
-`
-
-export const FundTypeCardAccordionWrapper = styled.div`
-  grid-column: 2 / 3;
-`
-
-export const FundTypeCardFeatures = styled.div`
+export const CreateFundDaoFeatures = styled.div`
+  overflow: visible;
   display: grid;
   grid-gap: 8px;
-  margin-top: 16px;
 `
 
-export const FundTypeCardFeatureItem = styled.div`
+export const CreateFundDaoFeaturesItem = styled.div`
+  display: grid;
+  grid-template-columns: 12px 1fr;
+  grid-gap: 8px;
+  position: relative;
   font-size: 13px;
   line-height: 1.5;
   font-weight: 500;
-  color: #b1c7fc;
+  color: ${(props) => props.theme.textColors.secondary};
+  transform: translateX(-20px);
+`
+
+export const CreateFundDaoFeaturesItemIcon = styled(Icon)`
+  width: 12px;
+  height: 12px;
+  transform: translateY(3px);
 `

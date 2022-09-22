@@ -1,7 +1,6 @@
 import Header from "components/Header/Layout"
 import Button from "components/Button"
-import { Icon } from "common"
-import FundTypeCard from "./FundTypeCard"
+import { Collapse, Icon, SelectableCard } from "common"
 
 import { FC, useState } from "react"
 import * as S from "./styled"
@@ -10,6 +9,7 @@ import { useNavigate } from "react-router-dom"
 import { ICON_NAMES } from "constants/icon-names"
 
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
+import RadioButton from "../../components/RadioButton"
 
 enum FUND_TYPES {
   basic = "basic",
@@ -60,41 +60,88 @@ const CreateFund: FC = () => {
         )}
         <S.FundTypeCards>
           <S.FundTypeCardsTitle>Create your own fund</S.FundTypeCardsTitle>
-          <FundTypeCard
-            label="Standard fund"
-            description="Trade crypto from the Dexe DAO white list + any other crypto via a Risk Proposal"
-            name={FUND_TYPES.basic}
-            selected={fundType}
-            handleSelect={() => setFundType(FUND_TYPES.basic)}
+          <SelectableCard
+            value={fundType}
+            setValue={setFundType}
+            valueToSet={FUND_TYPES.basic}
+            nodeLeft={
+              <RadioButton
+                selected={fundType}
+                value={FUND_TYPES.basic}
+                onChange={() => {}}
+              />
+            }
+            title="Standard fund"
+            description={
+              <p>
+                Trade crypto from the Dexe DAO white list + any other crypto via
+                a Risk Proposal
+              </p>
+            }
           />
-          <FundTypeCard
-            label="Investment fund"
-            description="Investment in NFTs, Real Estate, Startups, and any other assets you want."
-            name={FUND_TYPES.investment}
-            selected={fundType}
-            handleSelect={() => setFundType(FUND_TYPES.investment)}
+          <SelectableCard
+            value={fundType}
+            setValue={setFundType}
+            valueToSet={FUND_TYPES.investment}
+            nodeLeft={
+              <RadioButton
+                selected={fundType}
+                value={FUND_TYPES.investment}
+                onChange={() => {}}
+              />
+            }
+            title="Investment fund"
+            description={
+              <p>
+                Investment in NFTs, Real Estate, Startups, and any other assets
+                you want.
+              </p>
+            }
           />
         </S.FundTypeCards>
         <S.FundTypeCards>
           <S.FundTypeCardsTitle>
             Create and govern your DAO
           </S.FundTypeCardsTitle>
-          <FundTypeCard
-            label="DAO pool"
-            description="One-stop platform to create and govern your DAO effectively and securely."
-            name={FUND_TYPES.daoPool}
-            selected={fundType}
-            handleSelect={() => setFundType(FUND_TYPES.daoPool)}
-            fundFeatures={[
-              "Interact with any DeFi protocol autonomously and automatically",
-              "Manage DAOs via tokens, NFTs, or both",
-              "Easily reward active DAO members",
-              "Modify every DAO governance setting via proposals",
-              "Implement different quorum settings for each proposal",
-            ]}
-          />
+
+          <SelectableCard
+            value={fundType}
+            setValue={setFundType}
+            valueToSet={FUND_TYPES.daoPool}
+            nodeLeft={
+              <RadioButton
+                selected={fundType}
+                value={FUND_TYPES.daoPool}
+                onChange={() => {}}
+              />
+            }
+            title="DAO pool"
+            description={
+              <p>
+                One-stop platform to create and govern your DAO effectively and
+                securely.
+              </p>
+            }
+          >
+            <Collapse isOpen={fundType === FUND_TYPES.daoPool}>
+              <S.CreateFundDaoFeatures>
+                {[
+                  "Interact with any DeFi protocol autonomously and automatically",
+                  "Manage DAOs via tokens, NFTs, or both",
+                  "Easily reward active DAO members",
+                  "Modify every DAO governance setting via proposals",
+                  "Implement different quorum settings for each proposal",
+                ].map((el, idx) => (
+                  <S.CreateFundDaoFeaturesItem key={idx}>
+                    <S.CreateFundDaoFeaturesItemIcon name={ICON_NAMES.globe} />
+                    {el}
+                  </S.CreateFundDaoFeaturesItem>
+                ))}
+              </S.CreateFundDaoFeatures>
+            </Collapse>
+          </SelectableCard>
         </S.FundTypeCards>
-        <Flex full p="0 16px 42px" m="auto 0 0 0">
+        <Flex full p="12px 16px 42px" m="auto 0 0 0">
           <Button full size="large" onClick={proceedToCreate}>
             Create fund
           </Button>
