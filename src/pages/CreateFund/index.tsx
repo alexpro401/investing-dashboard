@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom"
 import { ICON_NAMES } from "constants/icon-names"
 
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
-import RadioButton from "../../components/RadioButton"
+import RadioButton from "components/RadioButton"
 
 enum FUND_TYPES {
   basic = "basic",

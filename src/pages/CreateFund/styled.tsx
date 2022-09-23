@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import { motion } from "framer-motion"
-import { Icon } from "../../common"
+import { Icon } from "common"
 
 // page styles
 export const Container = styled(motion.div)`

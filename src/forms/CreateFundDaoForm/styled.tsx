@@ -1,10 +1,13 @@
 import styled from "styled-components"
 
-import { Icon } from "common"
+import { Icon, StepsNavigation } from "common"
+import StepsControllerContext from "context/StepsControllerContext"
+import { Flex } from "theme"
+import { motion } from "framer-motion"
+import { opacityVariants } from "../../motion/variants"
 
-export const Container = styled.div`
+export const Container = styled(StepsControllerContext)`
   display: flex;
-  flex-direction: column;
   margin: 0 auto;
   background-color: #040a0f;
   width: 100%;
@@ -14,6 +17,18 @@ export const Container = styled.div`
   @media all and (display-mode: standalone) {
     height: calc(100vh - 115px);
   }
+`
+
+export const StepsContainer = styled(motion.div).attrs(() => ({
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.2 },
+  variants: opacityVariants,
+}))`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 `
 
 export const CreateDaoCardNumberIcon = styled.div`
@@ -88,4 +103,12 @@ export const RoundedIcon = styled(Icon)`
 
 export const CenteredImage = styled.img`
   margin: 0 auto;
+`
+
+export const StepsRoot = styled(Flex)`
+  transform: scale(1);
+`
+
+export const StepsBottomNavigation = styled(StepsNavigation)`
+  margin-top: auto;
 `

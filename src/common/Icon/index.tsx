@@ -1,12 +1,14 @@
 import {
   AngleLeftIcon,
+  AngleLeftOutlinedIcon,
   AngleRightIcon,
+  AngleRightOutlinedIcon,
   CloseIcon,
   DollarOutlineIcon,
+  FileDockIcon,
   GlobeIcon,
   ShieldCheckIcon,
   StarIcon,
-  FileDockIcon,
   UsersIcon,
 } from "assets/icons"
 
@@ -38,6 +40,10 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return StarIcon as unknown as ElementType
       case ICON_NAMES.users:
         return UsersIcon as unknown as ElementType
+      case ICON_NAMES.angleLeftOutlined:
+        return AngleLeftOutlinedIcon as unknown as ElementType
+      case ICON_NAMES.angleRightOutlined:
+        return AngleRightOutlinedIcon as unknown as ElementType
 
       default:
         return AngleLeftIcon as unknown as ElementType

@@ -1,6 +1,5 @@
 import { FC, useCallback, useMemo, useState } from "react"
-import { Container } from "./styled"
-import { CreateFundDaoStepsController } from "./components"
+import * as S from "./styled"
 import { TitlesStep, IsDaoValidatorStep, InternalProposalStep } from "./steps"
 
 import { useForm } from "hooks/useForm"
@@ -87,80 +86,36 @@ const CreateFundDaoForm: FC = () => {
   }, [formController])
 
   return (
-    <Container>
+    <S.Container
+      totalStepsAmount={totalStepsCount}
+      currentStepNumber={currentStepNumber}
+      prevCb={handlePrevStep}
+      nextCb={handleNextStep}
+    >
       <AnimatePresence>
         {currentStep === STEPS.titles ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            variants={opacityVariants}
-          >
+          <S.StepsContainer>
             <TitlesStep />
-          </motion.div>
+          </S.StepsContainer>
         ) : currentStep === STEPS.isValidatorSelecting ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            variants={opacityVariants}
-          >
+          <S.StepsContainer>
             <IsDaoValidatorStep />
-          </motion.div>
+          </S.StepsContainer>
         ) : currentStep === STEPS.internalProposal ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            variants={opacityVariants}
-          >
+          <S.StepsContainer>
             <InternalProposalStep />
-          </motion.div>
+          </S.StepsContainer>
         ) : currentStep === STEPS.distributionProposalSettings ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            variants={opacityVariants}
-          >
-            3
-          </motion.div>
+          <S.StepsContainer>3</S.StepsContainer>
         ) : currentStep === STEPS.validatorsBalancesSettings ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            variants={opacityVariants}
-          >
-            4
-          </motion.div>
+          <S.StepsContainer>4</S.StepsContainer>
         ) : currentStep === STEPS.defaultProposalSetting ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            variants={opacityVariants}
-          >
-            5
-          </motion.div>
+          <S.StepsContainer>5</S.StepsContainer>
         ) : (
           <></>
         )}
       </AnimatePresence>
-
-      <CreateFundDaoStepsController
-        totalStepsCount={totalStepsCount}
-        currentStepNumber={currentStepNumber}
-        nextCb={handleNextStep}
-        prevCb={handlePrevStep}
-      />
-    </Container>
+    </S.Container>
   )
 }
 
