@@ -1,4 +1,13 @@
-import { Dispatch, FC, SetStateAction, useCallback, useContext } from "react"
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react"
+import { debounce } from "lodash"
 
 import {
   AppButton,
@@ -8,22 +17,24 @@ import {
   CardHead,
   Collapse,
   Icon,
-  StepsNavigation,
+  TokenChip,
 } from "common"
-import { InputField, TextareaField } from "fields"
+import { InputField, OverlapInputField, TextareaField } from "fields"
 import Switch from "components/Switch"
 import Avatar from "components/Avatar"
 import { CreateDaoCardStepNumber } from "../components"
 
 import * as S from "../styled"
 
-import { Flex } from "theme"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 import { readFromClipboard } from "utils/clipboard"
 import { useFormValidation } from "hooks/useFormValidation"
 import { required } from "utils/validators"
-import { StepsBottomNavigation, StepsRoot } from "../styled"
+import { ERC20 } from "abi"
+import { useActiveWeb3React } from "hooks"
+import { getContract } from "utils/getContract"
+import { isAddress } from "utils"
 
 const TitlesStep: FC = () => {
   const daoPoolFormContext = useContext(FundDaoCreatingContext)
@@ -63,12 +74,38 @@ const TitlesStep: FC = () => {
         : {}),
     }
   )
+
+  const { library, account } = useActiveWeb3React()
+  const [erc20Name, setErc20Name] = useState<string>("")
+  const [erc20Symbol, setErc20Symbol] = useState<string>("")
+
   const pasteFromClipboard = useCallback(
     async (dispatchCb: Dispatch<SetStateAction<any>>) => {
       dispatchCb(await readFromClipboard())
     },
     []
   )
+
+  const handleErc20Input = useCallback(
+    debounce(async (address: string) => {
+      try {
+        if (address && account && library) {
+          if (isAddress(address)) {
+            const contract = getContract(address, ERC20, library, account)
+            setErc20Name(await contract.name())
+            setErc20Symbol(await contract.symbol())
+          }
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }, 1000),
+    []
+  )
+
+  useEffect(() => {
+    handleErc20Input(tokenAddress.get)
+  }, [handleErc20Input, tokenAddress.get])
 
   return (
     <>
@@ -153,13 +190,54 @@ const TitlesStep: FC = () => {
             </p>
           </CardDescription>
           <Collapse isOpen={isErc20.get}>
-            <InputField
-              value={tokenAddress.get}
-              setValue={tokenAddress.set}
-              label="ERC-20 token"
-              errorMessage={getFieldErrorMessage("tokenAddress")}
-              onBlur={() => touchField("tokenAddress")}
-            />
+            <CardFormControl>
+              <OverlapInputField
+                value={tokenAddress.get}
+                setValue={tokenAddress.set}
+                label="ERC-20 token"
+                errorMessage={getFieldErrorMessage("tokenAddress")}
+                onBlur={() => touchField("tokenAddress")}
+                nodeRight={
+                  <AppButton
+                    type="button"
+                    text={erc20Name ? "Paste another" : "Paste"}
+                    color="default"
+                    size="no-paddings"
+                    onClick={() =>
+                      erc20Name
+                        ? tokenAddress.set("")
+                        : pasteFromClipboard(tokenAddress.set)
+                    }
+                  >
+                    Paste
+                  </AppButton>
+                }
+                overlapNodeLeft={
+                  erc20Name &&
+                  erc20Symbol && (
+                    <TokenChip name={erc20Name} symbol={erc20Symbol} />
+                  )
+                }
+                overlapNodeRight={
+                  erc20Name &&
+                  erc20Symbol && (
+                    <AppButton
+                      type="button"
+                      text="Paste another"
+                      color="default"
+                      size="no-paddings"
+                      onClick={() => {
+                        tokenAddress.set("")
+                        setErc20Name("")
+                        setErc20Symbol("")
+                      }}
+                    >
+                      Paste
+                    </AppButton>
+                  )
+                }
+              />
+            </CardFormControl>
           </Collapse>
         </Card>
 

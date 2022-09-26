@@ -4,7 +4,7 @@ import { Icon, StepsNavigation } from "common"
 import StepsControllerContext from "context/StepsControllerContext"
 import { Flex } from "theme"
 import { motion } from "framer-motion"
-import { opacityVariants } from "../../motion/variants"
+import { opacityVariants } from "motion/variants"
 
 export const Container = styled(StepsControllerContext)`
   display: flex;

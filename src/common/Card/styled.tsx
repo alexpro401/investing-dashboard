@@ -41,4 +41,5 @@ export const CardDescription = styled.div`
 export const CardFormControl = styled.div`
   display: grid;
   grid-gap: 24px;
+  padding: 16px 0;
 `

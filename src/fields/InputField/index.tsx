@@ -18,7 +18,7 @@ enum INPUT_TYPES {
   number = "number",
 }
 
-interface Props<V extends string | number>
+export interface Props<V extends string | number>
   extends HTMLAttributes<HTMLInputElement> {
   value: V
   setValue: Dispatch<SetStateAction<V>>
