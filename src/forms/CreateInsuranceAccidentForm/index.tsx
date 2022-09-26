@@ -7,7 +7,7 @@ import { useForm } from "hooks/useForm"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 
 import useAlert from "hooks/useAlert"
-import { expandTimestamp, normalizeBigNumber } from "utils"
+import { normalizeBigNumber } from "utils"
 import { AlertType } from "context/AlertContext"
 import useInsurance, { useInsuranceDueDay } from "hooks/useInsurance"
 import { useInsuranceAccidentCreatingForm } from "./useInsuranceAccidentCreatingForm"
@@ -44,13 +44,7 @@ const CreateInsuranceAccidentForm: FC = () => {
       return undefined
     }
 
-    return Math.floor(
-      Number(expandTimestamp(Number(context.form?.date.get))) /
-        1000 /
-        60 /
-        60 /
-        24
-    )
+    return Math.floor(Number(context.form?.date.get) / 86400)
   }, [context])
 
   const [dueDay] = useInsuranceDueDay(String(dayFromDate))
