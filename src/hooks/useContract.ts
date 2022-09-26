@@ -10,6 +10,7 @@ import {
   PoolRegistry,
   InvestTraderPool,
   UserRegistry,
+  Insurance,
 } from "abi"
 import { getContract } from "utils/getContract"
 import { useActiveWeb3React } from "hooks"
@@ -17,6 +18,7 @@ import { useActiveWeb3React } from "hooks"
 import { isAddress } from "utils"
 import { useSelector } from "react-redux"
 import {
+  selectInsuranceAddress,
   selectPriceFeedAddress,
   selectTraderPoolRegistryAddress,
   selectUserRegistryAddress,
@@ -121,4 +123,9 @@ export function useUserRegistryContract(): Contract | null {
   const userRegistry = useContract(userRegistryAddress, UserRegistry)
 
   return userRegistry
+}
+
+export function useInsuranceContract(): Contract | null {
+  const insuranceAddress = useSelector(selectInsuranceAddress)
+  return useContract(insuranceAddress, Insurance)
 }

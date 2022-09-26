@@ -55,4 +55,31 @@ const InvestorClaims = `
   }
 `
 
-export { InvestorPositionsQuery, InvestorPoolsInvestedForQuery, InvestorClaims }
+// Insurances
+const INSURANCE_HISTORY = `
+  id
+  day
+  stake
+  claimedAmount
+  investor { id }
+`
+
+// Insurance to day
+const InsurancDueDay = `
+  query ($account: String!, $day: String!) {
+    insuranceHistories (
+      first: 1,
+      orderBy:day, orderDirection:desc, 
+      where: { day_lte: $day, investor: $account }
+    ) {
+      ${INSURANCE_HISTORY}
+    }
+  }
+`
+
+export {
+  InvestorPositionsQuery,
+  InvestorPoolsInvestedForQuery,
+  InvestorClaims,
+  InsurancDueDay,
+}

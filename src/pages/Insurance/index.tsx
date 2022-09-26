@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom"
 import Header from "components/Header/Layout"
 import Voting from "pages/Voting"
 import Management from "pages/Management"
+import CreateInsuranceAccidentForm from "forms/CreateInsuranceAccidentForm"
 
 import { Container } from "./styled"
 
@@ -31,6 +32,10 @@ const Insurance = () => {
         <Routes>
           <Route path="voting" element={<Voting />}></Route>
           <Route path="management" element={<Management />}></Route>
+          <Route
+            path="proposals"
+            element={<CreateInsuranceAccidentForm />}
+          ></Route>
         </Routes>
       </Container>
     </>

@@ -182,6 +182,19 @@ export const formatLockedFundsChartData = (data) => {
     }
   })
 }
+export const formatInsuranceAccidentChartData = (data) => {
+  if (!data || data.length === 0) {
+    return []
+  }
+
+  return data.reverse().map((v) => {
+    const normalizedPNL = normalizeBigNumber(v.percPNL, 18, 2)
+    return {
+      ...v,
+      normalizedPNL,
+    }
+  })
+}
 
 export const getPriceImpact = (from: BigNumber, to: BigNumber) => {
   try {

@@ -293,11 +293,17 @@ export const Text = styled(motion.span)<{
   fz?: number
   fw?: number
   fs?: string
+  ff?: string
+  lh?: string
   align?: string
   p?: string
+  block?: boolean
 }>`
+  display: ${(props) => (props?.block ? "block" : "inline")};
+  font-family: ${(props) => (props?.ff ? props.ff : "Gilroy")};
   font-size: ${(props) => (props?.fz ? `${props.fz}px` : "14px")};
   font-weight: ${(props) => (props?.fw ? props.fw : 400)};
+  line-height: ${(props) => (props?.lh ? props.lh : "initial")};
   color: ${(props) => (props.color ? props.color : "#999999")};
   text-align: ${(props) => (props?.align ? props.align : "left")};
   font-style: ${(props) => props.fs || "normal"};

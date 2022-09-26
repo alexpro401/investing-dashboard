@@ -47,7 +47,7 @@ const DatePicker: React.FC<Props> = ({
         initial="hidden"
         variants={{
           visible: {
-            opacity: 0.4,
+            opacity: 0.9,
             display: "block",
           },
           hidden: {

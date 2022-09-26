@@ -48,7 +48,7 @@ interface Props {
   leftIcon?: ReactNode
   rightIcon?: ReactNode
   limit?: number
-  theme?: "grey" | "black"
+  theme?: "grey" | "black" | "clear"
   size?: "normal" | "small"
   error?: boolean
   onClick?: () => void

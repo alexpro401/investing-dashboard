@@ -19,3 +19,11 @@ export interface IInvestProposalMetadata {
   description: string
   ticker: string
 }
+
+export interface InsuranceAccidentMetadata {
+  hash: string
+  pool: string
+  created: number
+  timestamp: number
+  block: number
+}

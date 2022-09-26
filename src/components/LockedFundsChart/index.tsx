@@ -85,7 +85,7 @@ interface Props {
 const LockedFundsChart: React.FC<Props> = ({ address }) => {
   const [timeframe, setTimeframe] = useState(TIMEFRAMES["D"])
 
-  const history = usePriceHistory(
+  const [history] = usePriceHistory(
     address,
     TIMEFRAME_AGREGATION_CODES[timeframe],
     TIMEFRAME_LIMIT_CODE[timeframe],

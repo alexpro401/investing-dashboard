@@ -4,3 +4,11 @@ export interface IInvestorClaims {
   id: string
   timestamp: string
 }
+
+export interface Insurance {
+  id: string
+  day: string
+  stake: string
+  claimedAmount: string
+  investor: { id: string }
+}

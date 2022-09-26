@@ -78,7 +78,7 @@ const ProfitLossChart: React.FC<Props> = ({ address, baseToken }) => {
   const [timeframe, setTimeframe] = useState(TIMEFRAMES["D"])
   const [baseTokenData] = useERC20Data(baseToken)
 
-  const history = usePriceHistory(
+  const [history] = usePriceHistory(
     address,
     TIMEFRAME_AGREGATION_CODES[timeframe],
     TIMEFRAME_LIMIT_CODE[timeframe],

@@ -3,6 +3,8 @@ export enum ICON_NAMES {
   angleRight = "angle-right",
   angleDown = "angle-down",
   angleUp = "angle-up",
+  arrowDownFilled = "angle-down-filled",
+  arrowUpFilled = "angle-up-filled",
   close = "close",
   dollarOutline = "dollar-outline",
   globe = "globe",

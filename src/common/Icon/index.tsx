@@ -8,6 +8,8 @@ import {
   StarIcon,
   FileDockIcon,
   UsersIcon,
+  ArrowDownFilled,
+  ArrowUpFilled,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -38,6 +40,10 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return StarIcon as unknown as ElementType
       case ICON_NAMES.users:
         return UsersIcon as unknown as ElementType
+      case ICON_NAMES.arrowDownFilled:
+        return ArrowUpFilled as unknown as ElementType
+      case ICON_NAMES.arrowUpFilled:
+        return ArrowDownFilled as unknown as ElementType
 
       default:
         return AngleLeftIcon as unknown as ElementType
