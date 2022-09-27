@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
 } from "react"
 import { debounce } from "lodash"
 
@@ -31,7 +32,9 @@ import { readFromClipboard } from "utils/clipboard"
 import { useFormValidation } from "hooks/useFormValidation"
 import { required } from "utils/validators"
 import { isAddress } from "utils"
-import { useERC20 } from "../../../hooks/useERC20"
+import { useERC20 } from "hooks/useERC20"
+import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
+import { useActiveWeb3React } from "hooks"
 
 const TitlesStep: FC = () => {
   const daoPoolFormContext = useContext(FundDaoCreatingContext)
@@ -72,7 +75,14 @@ const TitlesStep: FC = () => {
     }
   )
 
+  const { chainId } = useActiveWeb3React()
+
   const [, erc20TokenData, , erc20TokenInit] = useERC20(tokenAddress.get)
+  const erc20TokenExplorerLink = useMemo(() => {
+    return chainId
+      ? getExplorerLink(chainId, tokenAddress.get, ExplorerDataType.ADDRESS)
+      : ""
+  }, [chainId, tokenAddress.get])
 
   const pasteFromClipboard = useCallback(
     async (dispatchCb: Dispatch<SetStateAction<any>>) => {
@@ -209,6 +219,7 @@ const TitlesStep: FC = () => {
                     <TokenChip
                       name={erc20TokenData?.name}
                       symbol={erc20TokenData?.symbol}
+                      link={erc20TokenExplorerLink}
                     />
                   )
                 }
@@ -228,6 +239,7 @@ const TitlesStep: FC = () => {
                     </AppButton>
                   )
                 }
+                disabled={!!erc20TokenData?.name}
               />
             </CardFormControl>
           </Collapse>

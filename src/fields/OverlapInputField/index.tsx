@@ -3,7 +3,6 @@ import { ReactNode } from "react"
 import { InputField, InputFieldProps } from "fields"
 
 import * as S from "./styled"
-import { Backdrop } from "./styled"
 
 interface Props<V extends string | number> extends InputFieldProps<V> {
   overlapNodeLeft?: ReactNode
@@ -30,8 +29,7 @@ function OverlapInputField<V extends string | number>({
   ...rest
 }: Props<V>) {
   return (
-    <S.Root>
-      {!!overlapNodeLeft || !!overlapNodeRight ? <S.Backdrop /> : <></>}
+    <S.Root isOverlapping={!!overlapNodeLeft || !!overlapNodeRight}>
       <InputField
         value={value}
         setValue={setValue}

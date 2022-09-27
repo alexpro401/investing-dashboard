@@ -4,8 +4,7 @@ import { TitlesStep, IsDaoValidatorStep, InternalProposalStep } from "./steps"
 
 import { useForm } from "hooks/useForm"
 import { useNavigate } from "react-router-dom"
-import { AnimatePresence, motion } from "framer-motion"
-import { opacityVariants } from "motion/variants"
+import { AnimatePresence } from "framer-motion"
 
 enum STEPS {
   titles = "titles",
