@@ -1,6 +1,7 @@
 import { isBoolean, isDate, isEmpty, isNumber } from "lodash"
 
 import { Validator } from "hooks/useFormValidation"
+import { isAddress } from "utils"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ValidatorFunc = (...params: any[]) => Validator
@@ -13,6 +14,11 @@ export const required: Validator = (value) => ({
     isBoolean(value) ||
     value instanceof File,
   message: "Please fill out this field",
+})
+
+export const isAddressValidator: Validator = (value) => ({
+  isValid: isAddress(value),
+  message: "This field must be a valid address",
 })
 
 export const minLength: ValidatorFunc = (length: number) => (value) => ({

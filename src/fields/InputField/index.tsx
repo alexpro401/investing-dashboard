@@ -24,6 +24,7 @@ export interface Props<V extends string | number>
   setValue: Dispatch<SetStateAction<V>>
   type?: string
   label?: string
+  labelNodeRight?: ReactNode
   placeholder?: string
   errorMessage?: string
   min?: number
@@ -40,6 +41,7 @@ function InputField<V extends string | number>({
   setValue,
   type = INPUT_TYPES.text,
   label,
+  labelNodeRight,
   placeholder = " ",
   errorMessage,
   min,
@@ -137,6 +139,7 @@ function InputField<V extends string | number>({
             inputId={`input-field--${uid}`}
           >
             {label}
+            {!!labelNodeRight ? labelNodeRight : <></>}
           </S.Label>
         ) : (
           <></>

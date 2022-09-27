@@ -25,7 +25,7 @@ const IsDaoValidatorStep: FC = () => {
 
   return (
     <>
-      <S.StepsRoot gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
+      <S.StepsRoot>
         <Card>
           <CardHead
             nodeLeft={<CreateDaoCardStepNumber number={2} />}
@@ -69,8 +69,8 @@ const IsDaoValidatorStep: FC = () => {
           </CardDescription>
         </Card>
 
-        <Collapse isOpen={isValidator.get} duration={0.5}>
-          <Card>
+        <Collapse isOpen={isValidator.get}>
+          <S.OverflowedCard>
             <CardHead
               nodeLeft={<Icon name={ICON_NAMES.users} />}
               title="Validator settings"
@@ -108,7 +108,7 @@ const IsDaoValidatorStep: FC = () => {
                 label="Quorum required for a vote pass"
               />
             </CardFormControl>
-          </Card>
+          </S.OverflowedCard>
         </Collapse>
       </S.StepsRoot>
       <S.StepsBottomNavigation />

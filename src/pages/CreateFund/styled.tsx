@@ -1,8 +1,7 @@
 import styled from "styled-components"
 import { motion } from "framer-motion"
-import { Icon } from "common"
+import { Card, Icon } from "common"
 
-// page styles
 export const Container = styled(motion.div)`
   display: flex;
   flex-direction: column;
@@ -118,6 +117,7 @@ export const CreateFundDaoFeatures = styled.div`
   overflow: visible;
   display: grid;
   grid-gap: 8px;
+  transform: translateX(-20px);
 `
 
 export const CreateFundDaoFeaturesItem = styled.div`
@@ -129,11 +129,10 @@ export const CreateFundDaoFeaturesItem = styled.div`
   line-height: 1.5;
   font-weight: 500;
   color: ${(props) => props.theme.textColors.secondary};
-  transform: translateX(-20px);
 `
 
 export const CreateFundDaoFeaturesItemIcon = styled(Icon)`
-  width: 12px;
-  height: 12px;
-  transform: translateY(3px);
+  width: 16px;
+  height: 16px;
+  color: ${(props) => props.theme.statusColors.success};
 `

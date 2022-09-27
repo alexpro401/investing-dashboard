@@ -30,7 +30,7 @@ import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 import { readFromClipboard } from "utils/clipboard"
 import { useFormValidation } from "hooks/useFormValidation"
-import { required } from "utils/validators"
+import { isAddressValidator, required } from "utils/validators"
 import { isAddress } from "utils"
 import { useERC20 } from "hooks/useERC20"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
@@ -46,7 +46,7 @@ const TitlesStep: FC = () => {
   const { tokenAddress, nftAddress, totalPowerInTokens, nftsTotalSupply } =
     daoPoolFormContext.userKeeperParams
 
-  const { getFieldErrorMessage, touchField } = useFormValidation(
+  const { getFieldErrorMessage, touchField, isFieldValid } = useFormValidation(
     {
       avatarUrl: avatarUrl.get,
       daoName: daoName.get,
@@ -64,10 +64,12 @@ const TitlesStep: FC = () => {
       daoName: { required },
       websiteUrl: { required },
       description: { required },
-      ...(isErc20.get ? { tokenAddress: { required } } : {}),
+      ...(isErc20.get
+        ? { tokenAddress: { required, isAddressValidator } }
+        : {}),
       ...(isErc721.get
         ? {
-            nftAddress: { required },
+            nftAddress: { required, isAddressValidator },
             totalPowerInTokens: { required },
             nftsTotalSupply: { required },
           }
@@ -110,7 +112,7 @@ const TitlesStep: FC = () => {
 
   return (
     <>
-      <S.StepsRoot gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
+      <S.StepsRoot>
         <Card>
           <CardHead
             nodeLeft={<CreateDaoCardStepNumber number={1} />}
@@ -148,7 +150,13 @@ const TitlesStep: FC = () => {
             value={daoName.get}
             setValue={daoName.set}
             label="DAO name"
-            nodeRight={<Icon name={ICON_NAMES.fileDock} />}
+            labelNodeRight={
+              isFieldValid("daoName") ? (
+                <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+              ) : (
+                <></>
+              )
+            }
             errorMessage={getFieldErrorMessage("daoName")}
             onBlur={() => touchField("daoName")}
           />
@@ -196,6 +204,13 @@ const TitlesStep: FC = () => {
                 value={tokenAddress.get}
                 setValue={tokenAddress.set}
                 label="ERC-20 token"
+                labelNodeRight={
+                  isFieldValid("tokenAddress") ? (
+                    <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                  ) : (
+                    <></>
+                  )
+                }
                 errorMessage={getFieldErrorMessage("tokenAddress")}
                 onBlur={() => touchField("tokenAddress")}
                 nodeRight={

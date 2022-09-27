@@ -11,6 +11,7 @@ import {
   ShieldCheckIcon,
   StarIcon,
   UsersIcon,
+  GreenCheckIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -47,6 +48,8 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return AngleRightOutlinedIcon as unknown as ElementType
       case ICON_NAMES.externalLink:
         return ExternalLinkIcon as unknown as ElementType
+      case ICON_NAMES.greenCheck:
+        return GreenCheckIcon as unknown as ElementType
 
       default:
         return AngleLeftIcon as unknown as ElementType

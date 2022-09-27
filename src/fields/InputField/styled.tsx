@@ -108,6 +108,8 @@ export const Label = styled(motion.label)<{
   isNodeRightExist?: boolean
   inputId: string
 }>`
+  display: flex;
+  gap: 4px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

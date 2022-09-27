@@ -1,8 +1,7 @@
 import styled from "styled-components"
 
-import { Icon, StepsNavigation } from "common"
+import { Icon, StepsNavigation, Card } from "common"
 import StepsControllerContext from "context/StepsControllerContext"
-import { Flex } from "theme"
 import { motion } from "framer-motion"
 import { opacityVariants } from "motion/variants"
 
@@ -105,10 +104,23 @@ export const CenteredImage = styled.img`
   margin: 0 auto;
 `
 
-export const StepsRoot = styled(Flex)`
+export const StepsRoot = styled.div`
+  display: flex;
+  flex-direction: column;
   transform: scale(1);
+  gap: 16px;
+  padding: 14px 16px 20px;
 `
 
 export const StepsBottomNavigation = styled(StepsNavigation)`
   margin-top: auto;
+`
+
+export const OverflowedCard = styled(Card)`
+  overflow: hidden;
+  height: 100%;
+`
+
+export const FieldValidIcon = styled(Icon)`
+  color: ${(props) => props.theme.statusColors.success};
 `
