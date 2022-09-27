@@ -1,6 +1,6 @@
 import * as S from "./styled"
 import { FC, HTMLAttributes, useMemo } from "react"
-import { ICON_NAMES } from "constants/icon-names"
+import ExternalLink from "components/ExternalLink"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   name: string
@@ -22,19 +22,20 @@ const TokenChip: FC<Props> = ({
     return <S.TokenChipFallbackIcon>{firstLetter}</S.TokenChipFallbackIcon>
   }, [symbol])
 
-  return (
-    <S.Root {...rest}>
-      <S.TokenChipSymbol title={name}>{symbol}</S.TokenChipSymbol>
-      {iconUrl ? <S.TokenChipIcon src={iconUrl} /> : fallbackIcon}
-      {link ? (
-        <>
-          <S.TokenChipIconDecor name={ICON_NAMES.externalLink} />
-          <S.TokenChipLink target="_blank" href={link} />
-        </>
-      ) : (
-        <></>
-      )}
-    </S.Root>
+  const TokenChipInnerContent = useMemo(
+    () => (
+      <S.Root {...rest}>
+        <S.TokenChipSymbol title={name}>{symbol}</S.TokenChipSymbol>
+        {iconUrl ? <S.TokenChipIcon src={iconUrl} /> : fallbackIcon}
+      </S.Root>
+    ),
+    [fallbackIcon, iconUrl, name, rest, symbol]
+  )
+
+  return link ? (
+    <ExternalLink href={link}>{TokenChipInnerContent}</ExternalLink>
+  ) : (
+    TokenChipInnerContent
   )
 }
 
