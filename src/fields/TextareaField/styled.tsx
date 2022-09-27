@@ -9,6 +9,8 @@ import {
   fieldPaddingLeft,
   fieldPaddingRight,
   fieldPaddings,
+  fieldPaddingTop,
+  fieldTransitionDuration,
   getDefaultFieldBorderStyles,
   getDefaultFieldErrorStyles,
   getDefaultFieldLabelStyles,
@@ -31,26 +33,25 @@ export const Root = styled.div<{
   ${(props) => (props.isDisabled || props.isReadonly ? "opacity: 0.5" : "")}
 `
 
-export const InputWrp = styled(motion.div)`
+export const TextAreaWrp = styled(motion.div)`
   display: flex;
   flex-direction: column;
   position: relative;
 `
 
-export const Input = styled(motion.input)<{
-  isNodeLeftExist?: boolean
-  isNodeRightExist?: boolean
-}>`
+export const TextArea = styled(motion.textarea)`
+  resize: none;
   background: none;
   border: none;
   outline: none;
   text-overflow: ellipsis;
   padding: ${fieldPaddings};
-  transition-property: box-shadow;
 
   ${getDefaultFieldTextStyles()}
 
   ${getDefaultFieldBorderStyles()}
+
+  transition: all ${fieldTransitionDuration}s ease;
 
   &::-webkit-input-placeholder {
     ${getDefaultFieldPlaceholderStyles()}
@@ -93,21 +94,13 @@ export const Input = styled(motion.input)<{
     }
   }
 
-  ${(props) =>
-    props.isNodeRightExist ? `padding-right: ${fieldPaddingRight * 3}px;` : ""}
-
-  ${(props) =>
-    props.isNodeLeftExist ? `padding-left: ${fieldPaddingLeft * 3}px;` : ""}
-
   &:not([disabled]):focus {
     box-sizing: border-box;
   }
 `
 
 export const Label = styled(motion.label)<{
-  isNodeLeftExist?: boolean
-  isNodeRightExist?: boolean
-  inputId: string
+  textareaId: string
 }>`
   overflow: hidden;
   text-overflow: ellipsis;
@@ -123,29 +116,19 @@ export const Label = styled(motion.label)<{
 
   ${getDefaultFieldLabelStyles()}
 
-  ${(props) =>
-    props.isNodeLeftExist
-      ? `
-        right: auto;
-        width: min-content;
-      `
-      : ""}
-
-  #${(props) => props.inputId}:not(:focus):placeholder-shown + & {
-    top: 50%;
+  #${(props) => props.textareaId}:not(:focus):placeholder-shown + & {
+    top: ${fieldPaddingTop * 1.6}px;
     color: ${fieldLabelColor};
-    ${(props) =>
-      props.isNodeLeftExist ? `left: calc(${fieldPaddingRight * 3}px);` : ""}
   }
 
-  #${(props) => props.inputId}:not([disabled]):focus ~ &,
-  #${(props) => props.inputId}:not(:focus):not(:placeholder-shown) + & {
+  #${(props) => props.textareaId}:not([disabled]):focus ~ &,
+  #${(props) => props.textareaId}:not(:focus):not(:placeholder-shown) + & {
     color: ${fieldLabelFocusColor};
     left: ${fieldPaddingLeft}px;
     font-size: ${fieldLabelFontSize}px;
   }
 
-  #${(props) => props.inputId}:not(:focus):placeholder-shown:-webkit-autofill
+  #${(props) => props.textareaId}:not(:focus):placeholder-shown:-webkit-autofill
     + & {
     top: 50%;
     color: ${fieldLabelColor};

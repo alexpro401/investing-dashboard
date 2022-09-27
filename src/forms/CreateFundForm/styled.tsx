@@ -1,8 +1,6 @@
 import styled from "styled-components"
-import { Flex, Text } from "theme"
+import { Flex } from "theme"
 
-import { opacityVariants } from "motion/variants"
-import Switch from "components/Switch"
 import { ReactNode, FC } from "react"
 
 export const Container = styled.div`

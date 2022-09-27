@@ -10,7 +10,6 @@ import {
 
 import * as S from "./styled"
 import { v4 as uuidv4 } from "uuid"
-import { AnimatePresence } from "framer-motion"
 import { Collapse } from "../../common"
 
 enum INPUT_TYPES {
@@ -58,8 +57,6 @@ function InputField<V extends string | number>({
 
   const isNumberType = useMemo(() => type === INPUT_TYPES.number, [type])
 
-  const isPasswordType = useMemo(() => type === INPUT_TYPES.password, [type])
-
   const isDisabled = useMemo(
     () => ["", "disabled", true].includes(disabled as string | boolean),
     [disabled]
@@ -69,8 +66,6 @@ function InputField<V extends string | number>({
     () => ["", "readonly", true].includes(readonly as string | boolean),
     [readonly]
   )
-
-  const isLabelActive = useMemo(() => value !== "", [value])
 
   const normalizeRange = useCallback(
     (value: string | number): string => {
@@ -131,14 +126,12 @@ function InputField<V extends string | number>({
           min={min}
           max={max}
           disabled={isDisabled || isReadonly}
-          isError={!!errorMessage}
           isNodeLeftExist={!!nodeLeft}
           isNodeRightExist={!!nodeRight}
         />
         {label ? (
           <S.Label
             htmlFor={`input-field--${uid}`}
-            isError={!!errorMessage}
             isNodeLeftExist={!!nodeLeft}
             isNodeRightExist={!!nodeRight}
             inputId={`input-field--${uid}`}

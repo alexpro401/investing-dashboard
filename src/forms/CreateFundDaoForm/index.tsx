@@ -3,8 +3,6 @@ import { Container } from "./styled"
 import { CreateFundDaoStepsController } from "./components"
 import { TitlesStep, IsDaoValidatorStep, InternalProposalStep } from "./steps"
 
-import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
-import { useDaoPoolCreatingForm } from "./useDaoPoolCreatingForm"
 import { useForm } from "hooks/useForm"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
@@ -22,8 +20,6 @@ enum STEPS {
 }
 
 const CreateFundDaoForm: FC = () => {
-  const daoPoolCreatingForm = useDaoPoolCreatingForm()
-
   const [currentStep, setCurrentStep] = useState(STEPS.titles)
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length, [])
@@ -91,82 +87,80 @@ const CreateFundDaoForm: FC = () => {
   }, [formController])
 
   return (
-    <FundDaoCreatingContext.Provider value={daoPoolCreatingForm}>
-      <Container>
-        <AnimatePresence>
-          {currentStep === STEPS.titles ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              variants={opacityVariants}
-            >
-              <TitlesStep />
-            </motion.div>
-          ) : currentStep === STEPS.isValidatorSelecting ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              variants={opacityVariants}
-            >
-              <IsDaoValidatorStep />
-            </motion.div>
-          ) : currentStep === STEPS.internalProposal ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              variants={opacityVariants}
-            >
-              <InternalProposalStep />
-            </motion.div>
-          ) : currentStep === STEPS.distributionProposalSettings ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              variants={opacityVariants}
-            >
-              3
-            </motion.div>
-          ) : currentStep === STEPS.validatorsBalancesSettings ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              variants={opacityVariants}
-            >
-              4
-            </motion.div>
-          ) : currentStep === STEPS.defaultProposalSetting ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              variants={opacityVariants}
-            >
-              5
-            </motion.div>
-          ) : (
-            <></>
-          )}
-        </AnimatePresence>
+    <Container>
+      <AnimatePresence>
+        {currentStep === STEPS.titles ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            variants={opacityVariants}
+          >
+            <TitlesStep />
+          </motion.div>
+        ) : currentStep === STEPS.isValidatorSelecting ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            variants={opacityVariants}
+          >
+            <IsDaoValidatorStep />
+          </motion.div>
+        ) : currentStep === STEPS.internalProposal ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            variants={opacityVariants}
+          >
+            <InternalProposalStep />
+          </motion.div>
+        ) : currentStep === STEPS.distributionProposalSettings ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            variants={opacityVariants}
+          >
+            3
+          </motion.div>
+        ) : currentStep === STEPS.validatorsBalancesSettings ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            variants={opacityVariants}
+          >
+            4
+          </motion.div>
+        ) : currentStep === STEPS.defaultProposalSetting ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            variants={opacityVariants}
+          >
+            5
+          </motion.div>
+        ) : (
+          <></>
+        )}
+      </AnimatePresence>
 
-        <CreateFundDaoStepsController
-          totalStepsCount={totalStepsCount}
-          currentStepNumber={currentStepNumber}
-          nextCb={handleNextStep}
-          prevCb={handlePrevStep}
-        />
-      </Container>
-    </FundDaoCreatingContext.Provider>
+      <CreateFundDaoStepsController
+        totalStepsCount={totalStepsCount}
+        currentStepNumber={currentStepNumber}
+        nextCb={handleNextStep}
+        prevCb={handlePrevStep}
+      />
+    </Container>
   )
 }
 
