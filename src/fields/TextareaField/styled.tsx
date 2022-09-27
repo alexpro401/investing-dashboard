@@ -2,7 +2,6 @@ import styled from "styled-components"
 import { motion } from "framer-motion"
 import {
   fieldBg,
-  fieldErrorColor,
   fieldLabelColor,
   fieldLabelFocusColor,
   fieldLabelFontSize,

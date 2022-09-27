@@ -5,6 +5,7 @@ import {
   AngleRightOutlinedIcon,
   CloseIcon,
   DollarOutlineIcon,
+  ExternalLinkIcon,
   FileDockIcon,
   GlobeIcon,
   ShieldCheckIcon,
@@ -44,6 +45,8 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return AngleLeftOutlinedIcon as unknown as ElementType
       case ICON_NAMES.angleRightOutlined:
         return AngleRightOutlinedIcon as unknown as ElementType
+      case ICON_NAMES.externalLink:
+        return ExternalLinkIcon as unknown as ElementType
 
       default:
         return AngleLeftIcon as unknown as ElementType

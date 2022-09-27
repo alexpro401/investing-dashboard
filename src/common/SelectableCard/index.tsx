@@ -6,10 +6,8 @@ import {
   useCallback,
   useMemo,
 } from "react"
-import { CardDescription, CardHead } from "common"
 
 import * as S from "./styled"
-import { SelectableCardDescription } from "./styled"
 
 interface Props<V> extends HTMLAttributes<HTMLDivElement> {
   nodeLeft?: ReactNode
