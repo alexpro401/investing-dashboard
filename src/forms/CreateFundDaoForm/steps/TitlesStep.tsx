@@ -5,7 +5,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useState,
 } from "react"
 import { debounce } from "lodash"
 
@@ -31,10 +30,8 @@ import { ICON_NAMES } from "constants/icon-names"
 import { readFromClipboard } from "utils/clipboard"
 import { useFormValidation } from "hooks/useFormValidation"
 import { required } from "utils/validators"
-import { ERC20 } from "abi"
-import { useActiveWeb3React } from "hooks"
-import { getContract } from "utils/getContract"
 import { isAddress } from "utils"
+import { useERC20 } from "../../../hooks/useERC20"
 
 const TitlesStep: FC = () => {
   const daoPoolFormContext = useContext(FundDaoCreatingContext)
@@ -75,9 +72,7 @@ const TitlesStep: FC = () => {
     }
   )
 
-  const { library, account } = useActiveWeb3React()
-  const [erc20Name, setErc20Name] = useState<string>("")
-  const [erc20Symbol, setErc20Symbol] = useState<string>("")
+  const [, erc20TokenData, , erc20TokenInit] = useERC20(tokenAddress.get)
 
   const pasteFromClipboard = useCallback(
     async (dispatchCb: Dispatch<SetStateAction<any>>) => {
@@ -89,12 +84,8 @@ const TitlesStep: FC = () => {
   const handleErc20Input = useCallback(
     debounce(async (address: string) => {
       try {
-        if (address && account && library) {
-          if (isAddress(address)) {
-            const contract = getContract(address, ERC20, library, account)
-            setErc20Name(await contract.name())
-            setErc20Symbol(await contract.symbol())
-          }
+        if (isAddress(address)) {
+          await erc20TokenInit()
         }
       } catch (e) {
         console.error(e)
@@ -200,11 +191,11 @@ const TitlesStep: FC = () => {
                 nodeRight={
                   <AppButton
                     type="button"
-                    text={erc20Name ? "Paste another" : "Paste"}
+                    text={erc20TokenData?.name ? "Paste another" : "Paste"}
                     color="default"
                     size="no-paddings"
                     onClick={() =>
-                      erc20Name
+                      erc20TokenData?.name
                         ? tokenAddress.set("")
                         : pasteFromClipboard(tokenAddress.set)
                     }
@@ -213,14 +204,17 @@ const TitlesStep: FC = () => {
                   </AppButton>
                 }
                 overlapNodeLeft={
-                  erc20Name &&
-                  erc20Symbol && (
-                    <TokenChip name={erc20Name} symbol={erc20Symbol} />
+                  erc20TokenData?.name &&
+                  erc20TokenData?.symbol && (
+                    <TokenChip
+                      name={erc20TokenData?.name}
+                      symbol={erc20TokenData?.symbol}
+                    />
                   )
                 }
                 overlapNodeRight={
-                  erc20Name &&
-                  erc20Symbol && (
+                  erc20TokenData?.name &&
+                  erc20TokenData?.symbol && (
                     <AppButton
                       type="button"
                       text="Paste another"
@@ -228,8 +222,6 @@ const TitlesStep: FC = () => {
                       size="no-paddings"
                       onClick={() => {
                         tokenAddress.set("")
-                        setErc20Name("")
-                        setErc20Symbol("")
                       }}
                     >
                       Paste
