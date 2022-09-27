@@ -10,7 +10,7 @@ import {
 
 import * as S from "./styled"
 import { v4 as uuidv4 } from "uuid"
-import { Collapse } from "../../common"
+import { Collapse } from "common"
 
 enum INPUT_TYPES {
   text = "text",

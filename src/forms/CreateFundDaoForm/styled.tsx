@@ -1,10 +1,13 @@
 import styled from "styled-components"
-import { Icon } from "common"
-import { Flex } from "../../theme"
 
-export const Container = styled.div`
+import { Icon, StepsNavigation } from "common"
+import StepsControllerContext from "context/StepsControllerContext"
+import { Flex } from "theme"
+import { motion } from "framer-motion"
+import { opacityVariants } from "../../motion/variants"
+
+export const Container = styled(StepsControllerContext)`
   display: flex;
-  flex-direction: column;
   margin: 0 auto;
   background-color: #040a0f;
   width: 100%;
@@ -16,26 +19,16 @@ export const Container = styled.div`
   }
 `
 
-export const CreateDaoCard = styled.div`
+export const StepsContainer = styled(motion.div).attrs(() => ({
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.2 },
+  variants: opacityVariants,
+}))`
   display: flex;
   flex-direction: column;
-  background: #181e2c;
-  border-radius: 20px;
-  padding: 16px;
-  gap: 12px;
-`
-
-export const CreateDaoCardHead = styled(Flex)`
-  color: #e4f2ff;
-`
-
-export const CreateDaoCardTitle = styled.span`
-  font-size: 16px;
-  line-height: 1.2;
-  font-weight: 700;
-  color: #e4f2ff;
-  margin: 0;
-  vertical-align: middle;
+  height: 100%;
 `
 
 export const CreateDaoCardNumberIcon = styled.div`
@@ -57,13 +50,6 @@ export const CreateDaoCardNumberIconText = styled.span`
   font-weight: 700;
   text-align: center;
   text-transform: uppercase;
-`
-
-export const CreateDaoCardDescription = styled.div`
-  font-size: 12px;
-  line-height: 1.5;
-  font-weight: 400;
-  color: #b1c7fc;
 `
 
 export const CreateFundDaoAvatarBtn = styled.button`
@@ -117,4 +103,12 @@ export const RoundedIcon = styled(Icon)`
 
 export const CenteredImage = styled.img`
   margin: 0 auto;
+`
+
+export const StepsRoot = styled(Flex)`
+  transform: scale(1);
+`
+
+export const StepsBottomNavigation = styled(StepsNavigation)`
+  margin-top: auto;
 `

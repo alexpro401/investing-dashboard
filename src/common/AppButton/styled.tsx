@@ -316,11 +316,17 @@ export const AppButtonText = styled.span`
   min-width: 0;
 `
 
-export const AppButtonIcon = styled(Icon)`
-  height: 1.2em;
-  width: 1.2em;
-
-  .app-button--icon-first & {
-    grid-column: -1;
-  }
+export const AppButtonIcon = styled(Icon)<{ size?: number }>`
+  ${(props) =>
+    !!props.size
+      ? css`
+          max-width: ${props.size}px;
+          max-height: ${props.size}px;
+          width: 100%;
+          height: 100%;
+        `
+      : css`
+          height: 1.2em;
+          width: 1.2em;
+        `}
 `

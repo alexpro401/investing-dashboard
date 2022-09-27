@@ -10,4 +10,6 @@ export enum ICON_NAMES {
   star = "star",
   fileDock = "file-dock",
   users = "users",
+  angleLeftOutlined = "angle-left-outlined",
+  angleRightOutlined = "angle-right-outlined",
 }

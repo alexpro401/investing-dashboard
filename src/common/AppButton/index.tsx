@@ -5,7 +5,7 @@ import * as S from "./styled"
 
 import { ICON_NAMES } from "constants/icon-names"
 
-export type SCHEMES = "filled" | "flat" | "default"
+export type SCHEMES = "filled" | "flat"
 
 export enum MODIFICATIONS {
   borderRounded = "border-rounded",
@@ -25,6 +25,7 @@ export type SIZES = "large" | "medium" | "small" | "x-small" | "no-paddings"
 type Props<R extends string, H extends string> = {
   iconLeft?: ICON_NAMES
   iconRight?: ICON_NAMES
+  iconSize?: number
   text?: string
   scheme?: SCHEMES
   size?: SIZES
@@ -42,6 +43,7 @@ type Props<R extends string, H extends string> = {
 const AppButton = <R extends string, H extends string>({
   iconLeft,
   iconRight,
+  iconSize,
   text,
   scheme = "filled",
   modifications = MODIFICATIONS.borderRounded,
@@ -70,9 +72,9 @@ const AppButton = <R extends string, H extends string>({
 
   const ButtonInner = (
     <>
-      {iconLeft ? <S.AppButtonIcon name={iconLeft} /> : <></>}
+      {iconLeft ? <S.AppButtonIcon name={iconLeft} size={iconSize} /> : <></>}
       {children || text ? <S.AppButtonText>{text}</S.AppButtonText> : <></>}
-      {iconRight ? <S.AppButtonIcon name={iconRight} /> : <></>}
+      {iconRight ? <S.AppButtonIcon name={iconRight} size={iconSize} /> : <></>}
     </>
   )
 
