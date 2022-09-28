@@ -11,3 +11,4 @@ export { default as AngleLeftOutlinedIcon } from "assets/icons/AngleLeftOutlined
 export { default as AngleRightOutlinedIcon } from "assets/icons/AngleRightOutlinedIcon"
 export { default as ExternalLinkIcon } from "assets/icons/ExternalLinkIcon"
 export { default as GreenCheckIcon } from "assets/icons/GreenCheckIcon"
+export { default as TrashIcon } from "assets/icons/TrashIcon"

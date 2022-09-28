@@ -36,6 +36,14 @@ export function isAddress(value: any): boolean {
   }
 }
 
+export function isValidUrl(value: string): boolean {
+  try {
+    return Boolean(new URL(value))
+  } catch (error) {
+    return false
+  }
+}
+
 export function shortenAddress(
   address: string | null | undefined,
   chars = 4

@@ -19,7 +19,12 @@ import {
   Icon,
   TokenChip,
 } from "common"
-import { InputField, OverlapInputField, TextareaField } from "fields"
+import {
+  InputField,
+  OverlapInputField,
+  TextareaField,
+  ExternalDocumentField,
+} from "fields"
 import Switch from "components/Switch"
 import Avatar from "components/Avatar"
 import { CreateDaoCardStepNumber } from "../components"
@@ -41,7 +46,8 @@ const TitlesStep: FC = () => {
 
   const { isErc20, isErc721 } = daoPoolFormContext
 
-  const { avatarUrl, daoName, websiteUrl, description } = daoPoolFormContext
+  const { avatarUrl, daoName, websiteUrl, description, documents } =
+    daoPoolFormContext
 
   const { tokenAddress, nftAddress, totalPowerInTokens, nftsTotalSupply } =
     daoPoolFormContext.userKeeperParams
@@ -346,6 +352,36 @@ const TitlesStep: FC = () => {
               onBlur={() => touchField("description")}
             />
           </CardFormControl>
+        </Card>
+
+        <Card>
+          <CardHead
+            nodeLeft={<Icon name={ICON_NAMES.globe} />}
+            title="Add documents"
+          />
+          <CardDescription>
+            <p>
+              Here you can add any documents to be featured in the DAO’s
+              profile, such as the DAO Memorandum.
+            </p>
+          </CardDescription>
+          <CardFormControl>
+            {documents.get.map((el, idx) => (
+              <ExternalDocumentField
+                key={idx}
+                value={el}
+                setValue={(doc) => documents.set(doc, idx)}
+                label={`Document ${idx + 1}`}
+              />
+            ))}
+          </CardFormControl>
+          <S.CardAddBtn
+            color="default"
+            text="+ Add more"
+            onClick={() =>
+              documents.set({ name: "", url: "" }, documents.get.length)
+            }
+          />
         </Card>
       </S.StepsRoot>
       <S.StepsBottomNavigation />

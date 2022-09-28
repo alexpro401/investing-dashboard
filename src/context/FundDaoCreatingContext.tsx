@@ -4,6 +4,7 @@ import {
   FC,
   HTMLAttributes,
   SetStateAction,
+  useCallback,
   useState,
 } from "react"
 
@@ -28,7 +29,7 @@ type GovPoolDeployParams = {
 }
 
 type ProposalSettings = {
-  earlyCompletion: boolean
+  earlyCompletion: boolean // have
   delegatedVotingAllowed: boolean
   validatorsVote: boolean
   duration: number
@@ -42,6 +43,11 @@ type ProposalSettings = {
   executionReward: number
   voteRewardsCoefficient: number
   executorDescription: string
+}
+
+export type ExternalFileDocument = {
+  name: string
+  url: string
 }
 
 export interface UserKeeperDeployParamsForm {
@@ -98,6 +104,13 @@ interface FundDaoCreatingContext {
   daoName: { get: string; set: Dispatch<SetStateAction<string>> }
   websiteUrl: { get: string; set: Dispatch<SetStateAction<string>> }
   description: { get: string; set: Dispatch<SetStateAction<string>> }
+  documents: {
+    get: ExternalFileDocument[]
+    set: (
+      value: ExternalFileDocument | ExternalFileDocument[],
+      idx?: number
+    ) => void
+  }
 
   userKeeperParams: UserKeeperDeployParamsForm
   validatorsParams: ValidatorsDeployParamsForm
@@ -119,6 +132,7 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
   daoName: { get: "", set: () => {} },
   websiteUrl: { get: "", set: () => {} },
   description: { get: "", set: () => {} },
+  documents: { get: [], set: () => {} },
 
   userKeeperParams: {} as UserKeeperDeployParamsForm,
   validatorsParams: {} as ValidatorsDeployParamsForm,
@@ -143,6 +157,23 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
   const [_daoName, _setDaoName] = useState("")
   const [_websiteUrl, _setWebsiteUrl] = useState("")
   const [_description, _setDescription] = useState("")
+  const [_documents, _setDocuments] = useState<ExternalFileDocument[]>([
+    { name: "", url: "" },
+  ])
+
+  const _handleChangeDocuments = useCallback((value, idx?: number) => {
+    _setDocuments((prev) => {
+      if (Array.isArray(value)) {
+        return value
+      } else {
+        const newDocs = [...prev]
+        if (idx !== undefined && idx !== null) {
+          newDocs[idx] = value
+        }
+        return newDocs
+      }
+    })
+  }, [])
 
   const _userKeeperParams = {
     tokenAddress: useState(""),
@@ -240,6 +271,7 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
           daoName: { get: _daoName, set: _setDaoName },
           websiteUrl: { get: _websiteUrl, set: _setWebsiteUrl },
           description: { get: _description, set: _setDescription },
+          documents: { get: _documents, set: _handleChangeDocuments },
 
           userKeeperParams: {
             tokenAddress: {

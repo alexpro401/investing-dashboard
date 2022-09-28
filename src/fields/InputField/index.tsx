@@ -21,7 +21,7 @@ enum INPUT_TYPES {
 export interface Props<V extends string | number>
   extends HTMLAttributes<HTMLInputElement> {
   value: V
-  setValue: Dispatch<SetStateAction<V>>
+  setValue?: Dispatch<SetStateAction<V>>
   type?: string
   label?: string
   labelNodeRight?: ReactNode
@@ -93,7 +93,9 @@ function InputField<V extends string | number>({
       }
       if (value === eventTarget.value) return
 
-      setValue(eventTarget.value as V)
+      if (setValue) {
+        setValue(eventTarget.value as V)
+      }
 
       if (onInput) {
         onInput(event)
@@ -130,6 +132,7 @@ function InputField<V extends string | number>({
           disabled={isDisabled || isReadonly}
           isNodeLeftExist={!!nodeLeft}
           isNodeRightExist={!!nodeRight}
+          autoComplete="off"
         />
         {label ? (
           <S.Label

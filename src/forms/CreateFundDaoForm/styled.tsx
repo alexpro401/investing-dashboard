@@ -1,6 +1,6 @@
 import styled from "styled-components"
 
-import { Icon, StepsNavigation, Card } from "common"
+import { Icon, StepsNavigation, Card, AppButton } from "common"
 import StepsControllerContext from "context/StepsControllerContext"
 import { motion } from "framer-motion"
 import { opacityVariants } from "motion/variants"
@@ -123,4 +123,8 @@ export const OverflowedCard = styled(Card)`
 
 export const FieldValidIcon = styled(Icon)`
   color: ${(props) => props.theme.statusColors.success};
+`
+
+export const CardAddBtn = styled(AppButton)`
+  margin: 0 auto;
 `

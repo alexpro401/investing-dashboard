@@ -71,8 +71,11 @@ export const Input = styled(motion.input)<{
     ${getDefaultFieldPlaceholderStyles()}
   }
 
-  &:not(:read-only) {
+  &:not(:read-only),
+  &:-webkit-autofill,
+  &:-webkit-autofill:focus {
     box-shadow: inset 0 0 0 50px ${fieldBg};
+    background: ${fieldBg};
   }
 
   &:read-only,
