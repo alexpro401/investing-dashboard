@@ -16,6 +16,8 @@ import * as S from "./styled"
 import NoEnoughInsurance from "modals/NoEnoughInsurance"
 import CreateInsuranceAccidentChooseFundStep from "./steps/CreateInsuranceAccidentChooseFundStep"
 import CreateInsuranceAccidentChooseBlockStep from "./steps/CreateInsuranceAccidentChooseBlockStep"
+import CreateInsuranceAccidentCheckSettingsStep from "./steps/CreateInsuranceAccidentCheckSettingsStep"
+import CreateInsuranceAccidentAddDescriptionStep from "./steps/CreateInsuranceAccidentAddDescriptionStep"
 import CreateInsuranceAccidentStepsController from "./components/CreateInsuranceAccidentStepsController"
 
 const investorsPoolsClient = createClient({
@@ -70,6 +72,16 @@ const CreateInsuranceAccidentForm: FC = () => {
   }, [dueDay])
 
   useEffect(() => {
+    if (
+      !isNil(dueDay) &&
+      !isNil(dueDay.data) &&
+      !isNil(context.insuranceDueDate)
+    ) {
+      context.insuranceDueDate.set(dueDay.data)
+    }
+  }, [dueDay, context])
+
+  useEffect(() => {
     return () => {
       setShowNotEnoughInsurance(false)
       setShowNotEnoughInsuranceByDay(false)
@@ -86,6 +98,8 @@ const CreateInsuranceAccidentForm: FC = () => {
   const submit = useCallback(async () => {
     formController.disableForm()
     try {
+      // TODO: 1) Prepare and save data to IPFS
+      // TODO: 2) Save URL from IPFS to chain
     } catch (error) {
       console.error(error)
     } finally {
@@ -137,6 +151,31 @@ const CreateInsuranceAccidentForm: FC = () => {
         setCurrentStep(STEPS.addDescription)
         break
       case STEPS.addDescription:
+        if (
+          isEmpty(context.form.description.get) ||
+          isEmpty(context.form.chat.get)
+        ) {
+          let message = ""
+
+          if (
+            isEmpty(context.form.description.get) &&
+            isEmpty(context.form.chat.get)
+          ) {
+            message = `Before continue add description of the accident and link to chat where investors can talk about accident.`
+          } else if (isEmpty(context.form.description.get)) {
+            message = `Before continue add description of the accident.`
+          } else if (isEmpty(context.form.chat.get)) {
+            message = `Before continue add link to chat where investors can talk about accident.`
+          }
+
+          showAlert({
+            content: message,
+            type: AlertType.warning,
+            hideDuration: 10000,
+          })
+          break
+        }
+
         submit()
         break
       default:
@@ -168,21 +207,11 @@ const CreateInsuranceAccidentForm: FC = () => {
       case STEPS.chooseBlock:
         return <CreateInsuranceAccidentChooseBlockStep />
       case STEPS.checkSettings:
-        return (
-          <>
-            <span style={{ color: "white" }}>checkSettings</span>
-          </>
-        )
+        return <CreateInsuranceAccidentCheckSettingsStep />
       case STEPS.addDescription:
-        return (
-          <>
-            <span style={{ color: "white" }}>addDescription</span>
-          </>
-        )
+        return <CreateInsuranceAccidentAddDescriptionStep />
     }
   }, [currentStep])
-
-  // console.log("context", context)
 
   return (
     <InsuranceAccidentCreatingContext.Provider value={context}>

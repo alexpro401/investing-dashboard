@@ -36,7 +36,7 @@ const poolsClient = createClient({
 })
 
 const CreateInsuranceAccidentChooseBlockStep: FC = () => {
-  const { form, insuranceAccidentExist } = useContext(
+  const { form, insuranceAccidentExist, poolPriceHistoryDueDate } = useContext(
     InsuranceAccidentCreatingContext
   )
 
@@ -83,8 +83,11 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
 
   useEffect(() => {
     if (currentPoint !== undefined && form) {
-      form?.block.set(currentPoint.payload.block)
-      form?.date.set(String(currentPoint.payload.timestamp))
+      const { payload } = currentPoint
+
+      form?.block.set(payload.block)
+      form?.date.set(String(payload.timestamp))
+      poolPriceHistoryDueDate?.set(payload)
     }
   }, [currentPoint])
 

@@ -1,15 +1,26 @@
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import {
+  InsuranceDueDate,
   InsuranceAccident,
   InsuranceAccidentExist,
+  PoolPriceHistoryDueDate,
+  InvestorsTotalsData,
+  InvestorsTotals,
+  InvestorsInfo,
 } from "context/InsuranceAccidentCreatingContext"
 import { selectInsuranceAccidentByPool } from "state/ipfsMetadata/selectors"
+import { Insurance } from "interfaces/thegraphs/investors"
+import { IPriceHistoryWithCalcPNL } from "interfaces/thegraphs/all-pools"
 
 interface IResult {
   context: {
     form: InsuranceAccident
     insuranceAccidentExist: InsuranceAccidentExist
+    insuranceDueDate: InsuranceDueDate
+    poolPriceHistoryDueDate: PoolPriceHistoryDueDate
+    investorsTotals: InvestorsTotals
+    investorsInfo: InvestorsInfo
   }
 }
 
@@ -50,6 +61,20 @@ export const useInsuranceAccidentCreatingForm = (): IResult => {
     set: insuranceAccidentExistState[1],
   }
 
+  const insuranceDueDateState = useState<Insurance | undefined>()
+  const insuranceDueDate = {
+    get: insuranceDueDateState[0],
+    set: insuranceDueDateState[1],
+  }
+
+  const poolPriceHistoryDueDateState = useState<
+    IPriceHistoryWithCalcPNL | undefined
+  >()
+  const poolPriceHistoryDueDate = {
+    get: poolPriceHistoryDueDateState[0],
+    set: poolPriceHistoryDueDateState[1],
+  }
+
   const accidentByChosenPool = useSelector(
     selectInsuranceAccidentByPool(form.pool.get)
   )
@@ -57,7 +82,26 @@ export const useInsuranceAccidentCreatingForm = (): IResult => {
     insuranceAccidentExist.set(accidentByChosenPool !== null)
   }, [accidentByChosenPool])
 
+  const investorsTotalsState = useState<InvestorsTotalsData | undefined>()
+  const investorsTotals = {
+    get: investorsTotalsState[0],
+    set: investorsTotalsState[1],
+  }
+
+  const investorsInfoState = useState<any | undefined>()
+  const investorsInfo = {
+    get: investorsInfoState[0],
+    set: investorsInfoState[1],
+  }
+
   return {
-    context: { form, insuranceAccidentExist },
+    context: {
+      form,
+      insuranceAccidentExist,
+      insuranceDueDate,
+      poolPriceHistoryDueDate,
+      investorsTotals,
+      investorsInfo,
+    },
   }
 }

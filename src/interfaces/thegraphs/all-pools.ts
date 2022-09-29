@@ -13,6 +13,11 @@ export interface IPriceHistory {
   aggregationType: number
 }
 
+export interface IPriceHistoryWithCalcPNL extends IPriceHistory {
+  pnl: string
+  price: string
+}
+
 export interface IPriceHistoryQuery {
   priceHistory: IPriceHistory[]
 }

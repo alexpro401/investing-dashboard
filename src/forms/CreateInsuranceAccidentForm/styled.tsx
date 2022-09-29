@@ -14,13 +14,14 @@ export const Content = styled.div`
 `
 
 export const CreateInsuranceAccidentCard = {
-  Container: styled.div<{ m?: string }>`
+  Container: styled.div<{ m?: string; p?: string; gap?: string }>`
+    width: 100%;
     display: flex;
     flex-direction: column;
     background: #181e2c;
     border-radius: 20px;
-    padding: 16px;
-    gap: 12px;
+    padding: ${(p) => p.p ?? "16px"};
+    gap: ${(p) => p.gap ?? "12px"};
     margin: ${(p) => p.m ?? "0"};
   `,
   Head: styled(Flex)`
