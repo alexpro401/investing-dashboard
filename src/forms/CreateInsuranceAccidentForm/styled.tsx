@@ -36,36 +36,15 @@ export const StepsBottomNavigation = styled(StepsNavigation)`
   margin-top: auto;
 `
 
-export const CreateInsuranceAccidentCard = {
-  Container: styled.div<{ m?: string; p?: string; gap?: string }>`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    background: #181e2c;
-    border-radius: 20px;
-    padding: ${(p) => p.p ?? "16px"};
-    gap: ${(p) => p.gap ?? "12px"};
-    margin: ${(p) => p.m ?? "0"};
-  `,
-  Head: styled(Flex)`
-    color: #e4f2ff;
-  `,
-  Title: styled.span`
-    font-size: 16px;
-    line-height: 1.2;
-    font-weight: 700;
-    color: #e4f2ff;
-    margin: 0;
-    vertical-align: middle;
-  `,
-  NumberIcon: styled.div`
+export const StepNumber = {
+  Icon: styled.div`
     position: relative;
     width: 18px;
     height: 18px;
     border-radius: 50%;
     border: 1.5px solid #7fffd4;
   `,
-  NumberIconText: styled.span`
+  Text: styled.span`
     position: absolute;
     top: 50%;
     left: 50%;
@@ -76,13 +55,6 @@ export const CreateInsuranceAccidentCard = {
     font-weight: 700;
     text-align: center;
     text-transform: uppercase;
-  `,
-
-  Description: styled.div`
-    font-size: 12px;
-    line-height: 1.5;
-    font-weight: 400;
-    color: #b1c7fc;
   `,
 }
 

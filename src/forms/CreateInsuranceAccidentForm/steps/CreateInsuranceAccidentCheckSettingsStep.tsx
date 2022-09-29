@@ -2,13 +2,11 @@ import { FC, useContext, useEffect, useMemo } from "react"
 import { isEmpty, isNil } from "lodash"
 import { useWeb3React } from "@web3-react/core"
 
-import CreateInsuranceAccidentCardHead from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardHead"
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
 
 import {
   StepsRoot,
   StepsBottomNavigation,
-  CreateInsuranceAccidentCard as CIACard,
 } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import * as S from "../styled/step-check-settings"
@@ -24,6 +22,7 @@ import CreateInsuranceAccidentMemberCard from "../components/CreateInsuranceAcci
 import { BigNumber } from "@ethersproject/bignumber"
 import { ZERO } from "constants/index"
 import useInvestorsLastPoolPosition from "hooks/useInvestorsLastPoolPosition"
+import { Card, CardDescription, CardHead } from "common"
 
 const TableRowSkeleton = (props) => (
   <S.TableRow gap="12px" {...props}>
@@ -264,87 +263,85 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
   return (
     <>
       <StepsRoot gap={"24"} dir={"column"} ai={"stretch"} p={"16px"} full>
-        <CIACard.Container>
-          <CreateInsuranceAccidentCardHead
-            icon={<CreateInsuranceAccidentCardStepNumber number={3} />}
+        <Card>
+          <CardHead
+            nodeLeft={<CreateInsuranceAccidentCardStepNumber number={3} />}
             title="Сheck insurance proposal details"
           />
-          <CIACard.Description>
+          <CardDescription>
             <p>
               тут ви бачете тотал інфу по всім учасникам фонду у яких була
               страховка
             </p>
-          </CIACard.Description>
-        </CIACard.Container>
+          </CardDescription>
+        </Card>
         <Flex full>
           <S.PNLGrid>
-            <CIACard.Container p="16px 10px" gap="8px">
+            <Card>
               <Text fz={16} fw={600} color="#E4F2FF" align="center">
                 <>{initialPrice}</>
               </Text>
               <Text fz={13} fw={500} color="#B1C7FC" align="center">
                 Initial LP Price
               </Text>
-            </CIACard.Container>
-            <CIACard.Container p="16px 10px" gap="8px">
+            </Card>
+            <Card>
               <Text fz={16} fw={600} color="#E4F2FF" align="center">
                 <>{currentPrice}</>
               </Text>
               <Text fz={13} fw={500} color="#B1C7FC" align="center">
                 Current Price
               </Text>
-            </CIACard.Container>
-            <CIACard.Container p="16px 10px" gap="8px">
+            </Card>
+            <Card>
               <Text fz={16} fw={600} color="#DB6D6D" align="center">
                 <>{priceDiff}</>
               </Text>
               <Text fz={13} fw={500} color="#B1C7FC" align="center">
                 Difference
               </Text>
-            </CIACard.Container>
+            </Card>
           </S.PNLGrid>
         </Flex>
         <Flex full>
-          <CIACard.Container p="16px">
-            <S.Table>
-              <S.TableHead>
-                <S.TableRow>
-                  <S.TableCell>Members: {accidentMembersCount}</S.TableCell>
-                  <S.TableCell>Amount LP</S.TableCell>
-                  <S.TableCell>Loss $</S.TableCell>
-                  <S.TableCell>Сoverage DEXE</S.TableCell>
-                </S.TableRow>
-              </S.TableHead>
-              <S.TableBody>
-                {prepareTableData
-                  ? Array(10)
-                      .fill(null)
-                      .map((_, i) => <TableRowSkeleton key={i} />)
-                  : insuranceHistory.data.map((h) => {
-                      const isCurrentUser =
-                        h.investor.id === String(account).toLowerCase()
-                      return (
-                        <CreateInsuranceAccidentMemberCard
-                          key={h.investor.id}
-                          payload={h}
-                          lpHistory={lpHistory.data[h.investor.id]}
-                          lpCurrent={lpCurrent.data[h.investor.id]}
-                          color={isCurrentUser ? "#2669EB" : undefined}
-                          fw={isCurrentUser ? 600 : 400}
-                        />
-                      )
-                    })}
-              </S.TableBody>
-              <S.TableFooter>
-                <S.TableRow fw={600}>
-                  <S.TableCell>Total:</S.TableCell>
-                  <S.TableCell>{totals.lp.render}</S.TableCell>
-                  <S.TableCell>{totals.loss.render}</S.TableCell>
-                  <S.TableCell>{totals.coverage.render}</S.TableCell>
-                </S.TableRow>
-              </S.TableFooter>
-            </S.Table>
-          </CIACard.Container>
+          <S.Table>
+            <S.TableHead>
+              <S.TableRow>
+                <S.TableCell>Members: {accidentMembersCount}</S.TableCell>
+                <S.TableCell>Amount LP</S.TableCell>
+                <S.TableCell>Loss $</S.TableCell>
+                <S.TableCell>Сoverage DEXE</S.TableCell>
+              </S.TableRow>
+            </S.TableHead>
+            <S.TableBody>
+              {prepareTableData
+                ? Array(10)
+                    .fill(null)
+                    .map((_, i) => <TableRowSkeleton key={i} />)
+                : insuranceHistory.data.map((h) => {
+                    const isCurrentUser =
+                      h.investor.id === String(account).toLowerCase()
+                    return (
+                      <CreateInsuranceAccidentMemberCard
+                        key={h.investor.id}
+                        payload={h}
+                        lpHistory={lpHistory.data[h.investor.id]}
+                        lpCurrent={lpCurrent.data[h.investor.id]}
+                        color={isCurrentUser ? "#2669EB" : undefined}
+                        fw={isCurrentUser ? 600 : 400}
+                      />
+                    )
+                  })}
+            </S.TableBody>
+            <S.TableFooter>
+              <S.TableRow fw={600}>
+                <S.TableCell>Total:</S.TableCell>
+                <S.TableCell>{totals.lp.render}</S.TableCell>
+                <S.TableCell>{totals.loss.render}</S.TableCell>
+                <S.TableCell>{totals.coverage.render}</S.TableCell>
+              </S.TableRow>
+            </S.TableFooter>
+          </S.Table>
         </Flex>
       </StepsRoot>
       <StepsBottomNavigation />

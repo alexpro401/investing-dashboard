@@ -15,4 +15,5 @@ export enum ICON_NAMES {
   angleLeftOutlined = "angle-left-outlined",
   angleRightOutlined = "angle-right-outlined",
   externalLink = "external-link",
+  chatOutline = "chat-outline",
 }

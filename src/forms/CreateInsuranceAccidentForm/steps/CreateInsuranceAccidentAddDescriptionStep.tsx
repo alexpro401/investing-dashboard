@@ -10,8 +10,8 @@ import {
 } from "react"
 import { isNil } from "lodash"
 import { useWeb3React } from "@web3-react/core"
+import { v4 as uuidv4 } from "uuid"
 
-import CreateInsuranceAccidentCardHead from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardHead"
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
 
 import * as S from "../styled/step-add-description"
@@ -19,7 +19,6 @@ import * as S from "../styled/step-add-description"
 import {
   StepsRoot,
   StepsBottomNavigation,
-  CreateInsuranceAccidentCard as CIACard,
 } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { Flex, Text } from "theme"
@@ -28,7 +27,7 @@ import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 import { BigNumber } from "@ethersproject/bignumber"
 import { ZERO } from "constants/index"
 import { ICON_NAMES } from "constants/icon-names"
-import { AppButton, Icon } from "common"
+import { AppButton, Icon, Card, CardDescription, CardHead } from "common"
 import { useInsuranceContract } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { selectDexeAddress } from "state/contracts/selectors"
@@ -37,6 +36,7 @@ import { InputField, TextareaField } from "fields"
 import { useFormValidation } from "hooks/useFormValidation"
 import { required } from "utils/validators"
 import { readFromClipboard } from "utils/clipboard"
+import Tooltip from "../../../components/Tooltip"
 
 const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
   const { account } = useWeb3React()
@@ -250,157 +250,152 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
   return (
     <>
       <StepsRoot gap={"24"} dir={"column"} ai={"stretch"} p={"16px"} full>
-        <CIACard.Container>
-          <CreateInsuranceAccidentCardHead
-            icon={<CreateInsuranceAccidentCardStepNumber number={4} />}
+        <Card>
+          <CardHead
+            nodeLeft={<CreateInsuranceAccidentCardStepNumber number={4} />}
             title="Финальный шаг text"
           />
-          <CIACard.Description>
+          <CardDescription>
             <p>текст</p>
-          </CIACard.Description>
-        </CIACard.Container>
+          </CardDescription>
+        </Card>
 
-        <Flex full>
-          <CIACard.Container p="16px 16px 4px">
-            <CreateInsuranceAccidentCardHead
-              icon={<Icon name={ICON_NAMES.fileDock} />}
-              title="Дані"
-            />
-            <div>
-              <S.DataBlock>
-                <Flex m="0 0 16px" full jc="space-between">
-                  <Text fz={13} fw={500} color="#B1C7FC">
-                    Your loss
+        <Card>
+          <CardHead
+            nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
+            title="Дані"
+          />
+          <div>
+            <S.DataBlock>
+              <Flex m="0 0 16px" full jc="space-between">
+                <Text fz={13} fw={500} color="#B1C7FC">
+                  Your loss
+                </Text>
+                <Flex jc="flex-end" gap="4">
+                  <Text fz={13} fw={500} color="#E4F2FF">
+                    {userLossDEXE} DEXE
                   </Text>
-                  <Flex jc="flex-end" gap="4">
-                    <Text fz={13} fw={500} color="#E4F2FF">
-                      {userLossDEXE} DEXE
-                    </Text>
-                    <Text fz={13} fw={500} color="#B1C7FC">
-                      <>($ {userLossUSD.format})</>
-                    </Text>
-                  </Flex>
-                </Flex>
-                <Flex full jc="space-between">
                   <Text fz={13} fw={500} color="#B1C7FC">
-                    Your insurance coverage
+                    <>($ {userLossUSD.format})</>
                   </Text>
-                  <Flex jc="flex-end" gap="4">
-                    <Text fz={13} fw={500} color="#E4F2FF">
-                      {userCoverageDEXE.format} DEXE
-                    </Text>
-                    <Text fz={13} fw={500} color="#B1C7FC">
-                      <>($ {userCoverageUSD})</>
-                    </Text>
-                  </Flex>
                 </Flex>
-              </S.DataBlock>
-              <S.DataBlock>
-                <Flex m="0 0 16px" full jc="space-between">
+              </Flex>
+              <Flex full jc="space-between">
+                <Text fz={13} fw={500} color="#B1C7FC">
+                  Your insurance coverage
+                </Text>
+                <Flex jc="flex-end" gap="4">
+                  <Text fz={13} fw={500} color="#E4F2FF">
+                    {userCoverageDEXE.format} DEXE
+                  </Text>
                   <Text fz={13} fw={500} color="#B1C7FC">
-                    Total loss
+                    <>($ {userCoverageUSD})</>
                   </Text>
-                  <Flex jc="flex-end" gap="4">
-                    <Text fz={13} fw={500} color="#E4F2FF">
-                      {totalLossDEXE} DEXE
-                    </Text>
-                    <Text fz={13} fw={500} color="#B1C7FC">
-                      ($ {totalLossUSD})
-                    </Text>
-                  </Flex>
                 </Flex>
-                <Flex full jc="space-between">
+              </Flex>
+            </S.DataBlock>
+            <S.DataBlock>
+              <Flex m="0 0 16px" full jc="space-between">
+                <Text fz={13} fw={500} color="#B1C7FC">
+                  Total loss
+                </Text>
+                <Flex jc="flex-end" gap="4">
+                  <Text fz={13} fw={500} color="#E4F2FF">
+                    {totalLossDEXE} DEXE
+                  </Text>
                   <Text fz={13} fw={500} color="#B1C7FC">
-                    Insurance coverage
+                    ($ {totalLossUSD})
                   </Text>
-                  <Flex jc="flex-end" gap="4">
-                    <Text fz={13} fw={500} color="#E4F2FF">
-                      {totalCoverageDEXE} DEXE
-                    </Text>
-                    <Text fz={13} fw={500} color="#B1C7FC">
-                      ($ {totalCoverageUSD})
-                    </Text>
-                  </Flex>
                 </Flex>
-              </S.DataBlock>
-              <S.DataBlock>
-                <Flex full jc="space-between">
-                  <Flex>
-                    <Text fz={13} fw={500} color="#B1C7FC">
-                      Insurance treasury/3
-                    </Text>
+              </Flex>
+              <Flex full jc="space-between">
+                <Text fz={13} fw={500} color="#B1C7FC">
+                  Insurance coverage
+                </Text>
+                <Flex jc="flex-end" gap="4">
+                  <Text fz={13} fw={500} color="#E4F2FF">
+                    {totalCoverageDEXE} DEXE
+                  </Text>
+                  <Text fz={13} fw={500} color="#B1C7FC">
+                    ($ {totalCoverageUSD})
+                  </Text>
+                </Flex>
+              </Flex>
+            </S.DataBlock>
+            <S.DataBlock>
+              <Flex full jc="space-between">
+                <Text fz={13} fw={500} color="#B1C7FC">
+                  <Flex ai="center" gap="6">
+                    <Tooltip id={uuidv4()}>
+                      Insurance treasury explanation
+                    </Tooltip>
+                    <span>Insurance treasury/3</span>
                   </Flex>
+                </Text>
 
-                  <Flex jc="flex-end" gap="4">
-                    <Text fz={13} fw={500} color="#E4F2FF">
-                      {normalizeBigNumber(insuranceTreasuryDEXE, 18, 3)} DEXE
-                    </Text>
-                    <Text fz={13} fw={500} color="#B1C7FC">
-                      ($ {normalizeBigNumber(insuranceTreasuryUSD, 18, 2)})
-                    </Text>
-                  </Flex>
+                <Flex jc="flex-end" gap="4">
+                  <Text fz={13} fw={500} color="#E4F2FF">
+                    {normalizeBigNumber(insuranceTreasuryDEXE, 18, 3)} DEXE
+                  </Text>
+                  <Text fz={13} fw={500} color="#B1C7FC">
+                    ($ {normalizeBigNumber(insuranceTreasuryUSD, 18, 2)})
+                  </Text>
                 </Flex>
-              </S.DataBlock>
-            </div>
-          </CIACard.Container>
-        </Flex>
+              </Flex>
+            </S.DataBlock>
+          </div>
+        </Card>
 
-        <Flex full>
-          <CIACard.Container p="16px">
-            <CreateInsuranceAccidentCardHead
-              icon={<Icon name={ICON_NAMES.fileDock} />}
-              title="Describe the problem"
-            />
-            <CIACard.Description>
-              <p>
-                Describe your problem. A thorough and concise description helps
-                DAO members make the right decision when voting on it.
-              </p>
-            </CIACard.Description>
-            <TextareaField
-              value={description.get}
-              setValue={description.set}
-              label="Description"
-              errorMessage={getFieldErrorMessage("description")}
-              onBlur={() => touchField("description")}
-            />
-          </CIACard.Container>
-        </Flex>
+        <Card>
+          <CardHead
+            nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
+            title="Describe the problem"
+          />
+          <CardDescription>
+            <p>
+              Describe your problem. A thorough and concise description helps
+              DAO members make the right decision when voting on it.
+            </p>
+          </CardDescription>
+          <TextareaField
+            value={description.get}
+            setValue={description.set}
+            label="Description"
+            errorMessage={getFieldErrorMessage("description")}
+            onBlur={() => touchField("description")}
+          />
+        </Card>
 
-        <Flex full>
-          <CIACard.Container p="16px">
-            <CreateInsuranceAccidentCardHead
-              icon={<Icon name={ICON_NAMES.fileDock} />}
-              title="Add chat for the discussion"
-            />
-            <CIACard.Description>
-              <p>
-                Создайте и прикрепите чат в котором будет вестись обсуждение по
-                указанному случаю. Это может быть Telegram-чат или ветка в
-                Discord
-              </p>
-            </CIACard.Description>
-            <InputField
-              value={chat.get}
-              setValue={chat.set}
-              label="Chat"
-              placeholder="www.xxxx.com/"
-              nodeRight={
-                <AppButton
-                  type="button"
-                  text="paste"
-                  color="default"
-                  size="no-paddings"
-                  onClick={() => pasteFromClipboard(chat.set)}
-                >
-                  Paste
-                </AppButton>
-              }
-              errorMessage={getFieldErrorMessage("chat")}
-              onBlur={() => touchField("chat")}
-            />
-          </CIACard.Container>
-        </Flex>
+        <Card>
+          <CardHead
+            nodeLeft={<Icon name={ICON_NAMES.chatOutline} />}
+            title="Add chat for the discussion"
+          />
+          <CardDescription>
+            <p>
+              Создайте и прикрепите чат в котором будет вестись обсуждение по
+              указанному случаю. Это может быть Telegram-чат или ветка в Discord
+            </p>
+          </CardDescription>
+          <InputField
+            value={chat.get}
+            setValue={chat.set}
+            label="Chat"
+            nodeRight={
+              <AppButton
+                type="button"
+                text="paste"
+                color="default"
+                size="no-paddings"
+                onClick={() => pasteFromClipboard(chat.set)}
+              >
+                Paste
+              </AppButton>
+            }
+            errorMessage={getFieldErrorMessage("chat")}
+            onBlur={() => touchField("chat")}
+          />
+        </Card>
       </StepsRoot>
       <StepsBottomNavigation />
     </>

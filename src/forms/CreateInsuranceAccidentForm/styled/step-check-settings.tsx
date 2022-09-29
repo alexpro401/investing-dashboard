@@ -1,7 +1,6 @@
 import styled from "styled-components"
 import { motion } from "framer-motion"
 import { Text } from "theme"
-import Skeleton from "components/Skeleton"
 
 export const PNLGrid = styled.div`
   width: 100%;
@@ -26,6 +25,12 @@ export const PNLGrid = styled.div`
 
 export const Table = styled(motion.div)`
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #181e2c;
+  border-radius: 20px;
+  padding: 16px;
+  gap: 12px;
 `
 export const TableHead = styled(motion.div)`
   width: 100%;

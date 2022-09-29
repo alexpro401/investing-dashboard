@@ -2,13 +2,13 @@ import { FC, useCallback, useContext, useEffect, useState } from "react"
 import { createClient, Provider as GraphProvider } from "urql"
 import { isNil, debounce } from "lodash"
 
-import CreateInsuranceAccidentCardHead from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardHead"
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
+
+import { Card, CardDescription, CardHead } from "common"
 
 import {
   StepsRoot,
   StepsBottomNavigation,
-  CreateInsuranceAccidentCard as CIACard,
 } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import InsuranceAccidentChart from "components/InsuranceAccidentChart"
@@ -124,21 +124,21 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
   return (
     <>
       <StepsRoot gap={"24"} dir={"column"} ai={"stretch"} p={"16px"} full>
-        <CIACard.Container>
-          <CreateInsuranceAccidentCardHead
-            icon={<CreateInsuranceAccidentCardStepNumber number={2} />}
+        <Card>
+          <CardHead
+            nodeLeft={<CreateInsuranceAccidentCardStepNumber number={2} />}
             title="Determine the price of insured event"
           />
-          <CIACard.Description>
+          <CardDescription>
             <p>
               Введите блок или дату перед страховым случаем
               <br />
               (когда все было норм).
             </p>
-          </CIACard.Description>
-        </CIACard.Container>
+          </CardDescription>
+        </Card>
 
-        <CIACard.Container>
+        <Card>
           <InsuranceAccidentChart
             data={historyFormatted}
             baseToken={baseTokenData}
@@ -170,7 +170,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
               />
             </div>
           </InputGroup>
-        </CIACard.Container>
+        </Card>
       </StepsRoot>
       <StepsBottomNavigation />
 

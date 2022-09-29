@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { CreateInsuranceAccidentCard as CIACard } from "forms/CreateInsuranceAccidentForm/styled"
+import { StepNumber } from "forms/CreateInsuranceAccidentForm/styled"
 
 interface Props {
   number: number
@@ -7,9 +7,9 @@ interface Props {
 
 const CreateInsuranceAccidentCardStepNumber: FC<Props> = ({ number }) => {
   return (
-    <CIACard.NumberIcon>
-      <CIACard.NumberIconText>{number}</CIACard.NumberIconText>
-    </CIACard.NumberIcon>
+    <StepNumber.Icon>
+      <StepNumber.Text>{number}</StepNumber.Text>
+    </StepNumber.Icon>
   )
 }
 

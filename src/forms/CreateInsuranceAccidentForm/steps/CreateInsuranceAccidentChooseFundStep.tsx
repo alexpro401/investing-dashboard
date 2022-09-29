@@ -4,14 +4,13 @@ import { useQuery, createClient, Provider as GraphProvider } from "urql"
 import { useActiveWeb3React } from "hooks"
 import { PoolsByInvestorsQuery } from "queries/all-pools"
 
-import CreateInsuranceAccidentCardHead from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardHead"
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
 import CreateInsuranceAccidentPools from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentPools"
 
+import { Card, CardDescription, CardHead } from "common"
 import {
   StepsRoot,
   StepsBottomNavigation,
-  CreateInsuranceAccidentCard as CIACard,
 } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import InsuranceAccidentExist from "modals/InsuranceAccidentExist"
@@ -57,19 +56,19 @@ const CreateInsuranceAccidentChooseFundStep: FC = () => {
   return (
     <>
       <StepsRoot gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
-        <CIACard.Container>
-          <CreateInsuranceAccidentCardHead
-            icon={<CreateInsuranceAccidentCardStepNumber number={1} />}
+        <Card>
+          <CardHead
+            nodeLeft={<CreateInsuranceAccidentCardStepNumber number={1} />}
             title="Choose the fund for proposals"
           />
-          <CIACard.Description>
+          <CardDescription>
             <p>
               Что это такое текст как это работает текст Что это такое текст.
               <br />
               как это работает текст Что это такое.
             </p>
-          </CIACard.Description>
-        </CIACard.Container>
+          </CardDescription>
+        </Card>
 
         <div>
           <CreateInsuranceAccidentPools
