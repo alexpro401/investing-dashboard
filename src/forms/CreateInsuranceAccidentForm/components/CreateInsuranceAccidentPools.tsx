@@ -34,6 +34,7 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
   payload,
 }) => {
   const { form } = useContext(InsuranceAccidentCreatingContext)
+  const { pool } = form
 
   const [filterTVL, setFilterTVL] = useState<FilterTVL | undefined>(undefined)
   const toggleFilterTVL = useCallback(() => {
@@ -52,19 +53,14 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
 
   const onTogglePool = useCallback(
     (id) => {
-      if (!form || !id) return
-
-      if (form.pool.get === id) {
-        form.pool.set("")
-      } else {
-        form.pool.set(id)
-      }
+      if (!id) return
+      pool.set(pool.get === id ? "" : id)
     },
-    [form]
+    [pool]
   )
 
   const list = useMemo(() => {
-    if (loading || !form) {
+    if (loading) {
       const items = Array(5).fill(null)
       return items.map((_, i) => (
         <CreateInsuranceAccidentPoolCard
@@ -95,7 +91,7 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
             key={p.id}
             pool={p}
             onToggle={() => onTogglePool(p.id)}
-            active={form.pool.get === p.id}
+            active={pool.get === p.id}
           />
         ))
     }
@@ -107,10 +103,10 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
           key={p.id}
           pool={p}
           onToggle={() => onTogglePool(p.id)}
-          active={form.pool.get === p.id}
+          active={pool.get === p.id}
         />
       ))
-  }, [loading, form, payload, onTogglePool, filterTVL])
+  }, [loading, pool, payload, onTogglePool, filterTVL])
 
   return (
     <CIAPools.Container>

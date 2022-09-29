@@ -1,6 +1,5 @@
 import { FC, useContext, useEffect, useMemo, useState } from "react"
 import { useQuery, createClient, Provider as GraphProvider } from "urql"
-import { isNil } from "lodash"
 
 import { useActiveWeb3React } from "hooks"
 import { PoolsByInvestorsQuery } from "queries/all-pools"
@@ -79,7 +78,7 @@ const CreateInsuranceAccidentChooseFundStep: FC = () => {
           />
         </div>
       </Content>
-      {!isNil(insuranceAccidentExist) && (
+      {!insuranceAccidentExist.get && (
         <InsuranceAccidentExist
           isOpen={insuranceAccidentExist.get}
           onClose={() => insuranceAccidentExist.set(false)}

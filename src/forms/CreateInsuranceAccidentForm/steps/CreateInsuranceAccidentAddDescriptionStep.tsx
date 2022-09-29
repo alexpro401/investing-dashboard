@@ -1,4 +1,13 @@
-import { FC, useContext, useEffect, useMemo, useState } from "react"
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import { isNil } from "lodash"
 import { useWeb3React } from "@web3-react/core"
 
@@ -18,21 +27,25 @@ import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 import { BigNumber } from "@ethersproject/bignumber"
 import { ZERO } from "constants/index"
 import { ICON_NAMES } from "constants/icon-names"
-import { Icon } from "common"
+import { AppButton, Icon } from "common"
 import { useInsuranceContract } from "hooks/useContract"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { selectDexeAddress } from "state/contracts/selectors"
 import { useSelector } from "react-redux"
-import TextArea from "components/TextArea"
-import Input from "components/Input"
+import { InputField, TextareaField } from "fields"
+import { useFormValidation } from "hooks/useFormValidation"
+import { required } from "utils/validators"
+import { readFromClipboard } from "utils/clipboard"
 
 const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
   const { account } = useWeb3React()
-  const insurance = useInsuranceContract()
   const { form, investorsTotals, investorsInfo } = useContext(
     InsuranceAccidentCreatingContext
   )
+  const { chat, description } = form
 
+  // Payload
+  const insurance = useInsuranceContract()
   const dexeAddress = useSelector(selectDexeAddress)
   const [insuranceTreasuryDEXE, setInsuranceTreasuryDEXE] = useState(ZERO)
   const dexePrice = useTokenPriceOutUSD({
@@ -148,7 +161,7 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
     )
 
     return normalizeBigNumber(value, 18, 3)
-  }, [investorsInfo])
+  }, [dexePrice, userCoverageDEXE])
 
   const totalLossDEXE = useMemo(() => {
     if (
@@ -213,6 +226,25 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
 
     return normalizeBigNumber(BigNumber.from(value), 18, 3)
   }, [investorsTotals, dexePrice])
+
+  // Form
+  const { getFieldErrorMessage, touchField } = useFormValidation(
+    {
+      chat: chat.get,
+      description: description.get,
+    },
+    {
+      chat: { required },
+      description: { required },
+    }
+  )
+
+  const pasteFromClipboard = useCallback(
+    async (dispatchCb: Dispatch<SetStateAction<any>>) => {
+      dispatchCb(await readFromClipboard())
+    },
+    []
+  )
 
   return (
     <>
@@ -324,12 +356,12 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
                 DAO members make the right decision when voting on it.
               </p>
             </CIACard.Description>
-            <TextArea
-              theme="grey"
-              defaultValue={form?.description.get ?? ""}
-              name="description"
-              placeholder="Description"
-              onChange={(n, v) => form?.description.set(v)}
+            <TextareaField
+              value={description.get}
+              setValue={description.set}
+              label="Description"
+              errorMessage={getFieldErrorMessage("description")}
+              onBlur={() => touchField("description")}
             />
           </CIACard.Container>
         </Flex>
@@ -347,14 +379,24 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
                 Discord
               </p>
             </CIACard.Description>
-            <Input
+            <InputField
+              value={chat.get}
+              setValue={chat.set}
               label="Chat"
-              type="url"
-              theme="grey"
-              inputmode="url"
               placeholder="www.xxxx.com/"
-              value={form?.chat.get ?? ""}
-              onChange={form?.chat.set}
+              nodeRight={
+                <AppButton
+                  type="button"
+                  text="paste"
+                  color="default"
+                  size="no-paddings"
+                  onClick={() => pasteFromClipboard(chat.set)}
+                >
+                  Paste
+                </AppButton>
+              }
+              errorMessage={getFieldErrorMessage("chat")}
+              onBlur={() => touchField("chat")}
             />
           </CIACard.Container>
         </Flex>

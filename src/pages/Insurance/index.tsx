@@ -3,6 +3,7 @@ import Header from "components/Header/Layout"
 import Voting from "pages/Voting"
 import Management from "pages/Management"
 import CreateInsuranceAccidentForm from "forms/CreateInsuranceAccidentForm"
+import InsuranceAccidentCreatingContextProvider from "context/InsuranceAccidentCreatingContext"
 
 import { Container } from "./styled"
 
@@ -34,7 +35,11 @@ const Insurance = () => {
           <Route path="management" element={<Management />}></Route>
           <Route
             path="proposals"
-            element={<CreateInsuranceAccidentForm />}
+            element={
+              <InsuranceAccidentCreatingContextProvider>
+                <CreateInsuranceAccidentForm />
+              </InsuranceAccidentCreatingContextProvider>
+            }
           ></Route>
         </Routes>
       </Container>

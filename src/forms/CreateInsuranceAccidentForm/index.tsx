@@ -1,16 +1,21 @@
 import { isEmpty, isNil } from "lodash"
 import { BigNumber } from "@ethersproject/bignumber"
 import { createClient, Provider as GraphProvider } from "urql"
-import { FC, useCallback, useEffect, useMemo, useState } from "react"
+import {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 
 import { useForm } from "hooks/useForm"
-import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 
 import useAlert from "hooks/useAlert"
 import { normalizeBigNumber } from "utils"
 import { AlertType } from "context/AlertContext"
 import useInsurance, { useInsuranceDueDay } from "hooks/useInsurance"
-import { useInsuranceAccidentCreatingForm } from "./useInsuranceAccidentCreatingForm"
 
 import * as S from "./styled"
 import NoEnoughInsurance from "modals/NoEnoughInsurance"
@@ -19,6 +24,7 @@ import CreateInsuranceAccidentChooseBlockStep from "./steps/CreateInsuranceAccid
 import CreateInsuranceAccidentCheckSettingsStep from "./steps/CreateInsuranceAccidentCheckSettingsStep"
 import CreateInsuranceAccidentAddDescriptionStep from "./steps/CreateInsuranceAccidentAddDescriptionStep"
 import CreateInsuranceAccidentStepsController from "./components/CreateInsuranceAccidentStepsController"
+import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
@@ -32,7 +38,11 @@ enum STEPS {
 }
 
 const CreateInsuranceAccidentForm: FC = () => {
-  const { context } = useInsuranceAccidentCreatingForm()
+  const context = useContext(InsuranceAccidentCreatingContext)
+  const { form, insuranceDueDate, insuranceAccidentExist } = context
+
+  const { pool, block, date, description, chat } = form
+
   const formController = useForm()
   const [showAlert] = useAlert()
 
@@ -42,12 +52,9 @@ const CreateInsuranceAccidentForm: FC = () => {
     useState(false)
 
   const dayFromDate = useMemo(() => {
-    if (!context.form?.date.get || isEmpty(context.form?.date.get)) {
-      return undefined
-    }
-
-    return Math.floor(Number(context.form?.date.get) / 86400)
-  }, [context])
+    if (isEmpty(date.get)) return ""
+    return Math.floor(Number(date.get) / 86400)
+  }, [date])
 
   const [dueDay] = useInsuranceDueDay(String(dayFromDate))
 
@@ -64,22 +71,18 @@ const CreateInsuranceAccidentForm: FC = () => {
   }, [notEnoughInsurance])
 
   useEffect(() => {
-    if (!isNil(dueDay) && dueDay.data?.stake) {
+    if (!isEmpty(dueDay.data) && !isNil(dueDay.data?.stake)) {
       const isInsuranceGreaterThanHundred =
-        Number(normalizeBigNumber(BigNumber.from(dueDay.data?.stake))) >= 100
+        Number(normalizeBigNumber(BigNumber.from(dueDay.data.stake))) >= 100
       setShowNotEnoughInsuranceByDay(!isInsuranceGreaterThanHundred)
     }
   }, [dueDay])
 
   useEffect(() => {
-    if (
-      !isNil(dueDay) &&
-      !isNil(dueDay.data) &&
-      !isNil(context.insuranceDueDate)
-    ) {
-      context.insuranceDueDate.set(dueDay.data)
+    if (!isEmpty(dueDay.data)) {
+      insuranceDueDate.set(dueDay.data)
     }
-  }, [dueDay, context])
+  }, [dueDay, insuranceDueDate])
 
   useEffect(() => {
     return () => {
@@ -112,7 +115,7 @@ const CreateInsuranceAccidentForm: FC = () => {
 
     switch (currentStep) {
       case STEPS.chooseFund:
-        if (isEmpty(context.form.pool.get)) {
+        if (isEmpty(pool.get)) {
           showAlert({
             content:
               "Before continue choose pool where accident has been happens",
@@ -121,12 +124,12 @@ const CreateInsuranceAccidentForm: FC = () => {
           })
           break
         }
-        if (!context.insuranceAccidentExist.get) {
+        if (!insuranceAccidentExist.get) {
           setCurrentStep(STEPS.chooseBlock)
         }
         break
       case STEPS.chooseBlock:
-        if (isEmpty(context.form.block.get) || isEmpty(context.form.date.get)) {
+        if (isEmpty(block.get) || isEmpty(date.get)) {
           showAlert({
             content:
               "Before continue choose closest block or date before accident has been happens",
@@ -151,20 +154,14 @@ const CreateInsuranceAccidentForm: FC = () => {
         setCurrentStep(STEPS.addDescription)
         break
       case STEPS.addDescription:
-        if (
-          isEmpty(context.form.description.get) ||
-          isEmpty(context.form.chat.get)
-        ) {
+        if (isEmpty(description.get) || isEmpty(chat.get)) {
           let message = ""
 
-          if (
-            isEmpty(context.form.description.get) &&
-            isEmpty(context.form.chat.get)
-          ) {
+          if (isEmpty(description.get) && isEmpty(chat.get)) {
             message = `Before continue add description of the accident and link to chat where investors can talk about accident.`
-          } else if (isEmpty(context.form.description.get)) {
+          } else if (isEmpty(description.get)) {
             message = `Before continue add description of the accident.`
-          } else if (isEmpty(context.form.chat.get)) {
+          } else if (isEmpty(chat.get)) {
             message = `Before continue add link to chat where investors can talk about accident.`
           }
 
@@ -214,7 +211,7 @@ const CreateInsuranceAccidentForm: FC = () => {
   }, [currentStep])
 
   return (
-    <InsuranceAccidentCreatingContext.Provider value={context}>
+    <>
       <S.Container>
         {step}
         <CreateInsuranceAccidentStepsController
@@ -228,7 +225,7 @@ const CreateInsuranceAccidentForm: FC = () => {
           onClose={() => setShowNotEnoughInsurance(false)}
         />
       </S.Container>
-    </InsuranceAccidentCreatingContext.Provider>
+    </>
   )
 }
 

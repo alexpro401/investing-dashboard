@@ -1,5 +1,5 @@
 import { FC, useContext, useEffect, useMemo } from "react"
-import { isNil } from "lodash"
+import { isEmpty, isNil } from "lodash"
 import { useWeb3React } from "@web3-react/core"
 
 import CreateInsuranceAccidentCardHead from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardHead"
@@ -35,9 +35,11 @@ const TableRowSkeleton = (props) => (
 
 function useCheckSettingsStepPayload() {
   const { account } = useWeb3React()
-  const { form } = useContext(InsuranceAccidentCreatingContext)
 
-  const [poolInvestors] = usePoolInvestorsByDay(form?.date.get, form?.pool.get)
+  const { form } = useContext(InsuranceAccidentCreatingContext)
+  const { date, pool } = form
+
+  const [poolInvestors] = usePoolInvestorsByDay(date.get, pool.get)
 
   const investors = useMemo(() => {
     if (
@@ -52,14 +54,11 @@ function useCheckSettingsStepPayload() {
     }, [] as string[])
   }, [poolInvestors])
 
-  const [insuranceHistory] = useInvestorsInsuranceHistory(
-    form?.date.get,
-    investors
-  )
+  const [insuranceHistory] = useInvestorsInsuranceHistory(date.get, investors)
 
   const [lpHistory] = useInvestorsLpHistory(
-    form?.date.get,
-    form?.pool.get ? [form?.pool.get] : form?.pool.get,
+    date.get,
+    !isEmpty(pool.get) ? [pool.get] : undefined,
     investors,
     (data) =>
       data.reduce(
@@ -72,7 +71,7 @@ function useCheckSettingsStepPayload() {
   )
 
   const [lpCurrent] = useInvestorsLastPoolPosition(
-    form?.pool.get,
+    pool.get,
     investors,
     (data) =>
       data.reduce(
@@ -106,37 +105,35 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
   const { form, poolPriceHistoryDueDate, investorsTotals, investorsInfo } =
     useContext(InsuranceAccidentCreatingContext)
 
-  const [{ priceUSD }] = usePoolPrice(form?.pool.get)
+  const { pool } = form
+
+  const [{ priceUSD }] = usePoolPrice(pool.get)
 
   const initialPrice = useMemo(() => {
-    if (isNil(poolPriceHistoryDueDate) || isNil(poolPriceHistoryDueDate?.get)) {
+    if (isEmpty(poolPriceHistoryDueDate.get)) {
       return <Skeleton w="120px" h="16px" />
     }
 
-    const { baseTVL, supply } = poolPriceHistoryDueDate?.get
+    const { baseTVL, supply } = poolPriceHistoryDueDate.get
     const price = getLP(String(baseTVL), String(supply))
 
     return `$ ${price}`
   }, [poolPriceHistoryDueDate])
 
   const currentPrice = useMemo(() => {
-    if (isNil(form) || isNil(priceUSD)) {
+    if (isNil(priceUSD)) {
       return <Skeleton w="120px" h="16px" />
     }
 
     return `$ ${normalizeBigNumber(priceUSD, 18, 2)}`
-  }, [form, priceUSD])
+  }, [priceUSD])
 
   const priceDiff = useMemo(() => {
-    if (
-      isNil(poolPriceHistoryDueDate) ||
-      isNil(poolPriceHistoryDueDate?.get) ||
-      isNil(priceUSD)
-    ) {
+    if (isEmpty(poolPriceHistoryDueDate.get) || isNil(priceUSD)) {
       return <Skeleton w="120px" h="16px" />
     }
 
-    const { baseTVL, supply } = poolPriceHistoryDueDate?.get
+    const { baseTVL, supply } = poolPriceHistoryDueDate.get
     const initial = getLP(String(baseTVL), String(supply))
 
     const diff = Math.abs(
@@ -236,7 +233,7 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
   }, [insuranceHistory, lpHistory, lpCurrent])
 
   useEffect(() => {
-    if (!prepareTableData && !isNil(investorsInfo)) {
+    if (!prepareTableData) {
       investorsInfo.set({
         insuranceHistory: insuranceHistory.data,
         lpHistory: lpHistory.data,
@@ -246,16 +243,16 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
   }, [prepareTableData])
 
   useEffect(() => {
-    const emptyTotals = isNil(investorsTotals?.get)
+    const emptyTotals = isEmpty(investorsTotals.get)
     const havePayload = !isNil(totals)
     const isSame =
-      !isNil(investorsTotals?.get) &&
-      investorsTotals?.get.lp === totals.lp.value.toHexString() &&
-      investorsTotals?.get.loss === totals.loss.value.toHexString() &&
-      investorsTotals?.get.coverage === totals.coverage.value.toHexString()
+      !isEmpty(investorsTotals.get) &&
+      investorsTotals.get.lp === totals.lp.value.toHexString() &&
+      investorsTotals.get.loss === totals.loss.value.toHexString() &&
+      investorsTotals.get.coverage === totals.coverage.value.toHexString()
 
     if ((emptyTotals && havePayload) || (havePayload && !isSame)) {
-      investorsTotals?.set({
+      investorsTotals.set({
         lp: totals.lp.value.toHexString(),
         loss: totals.loss.value.toHexString(),
         coverage: totals.coverage.value.toHexString(),

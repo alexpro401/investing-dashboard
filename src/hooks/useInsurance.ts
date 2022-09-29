@@ -76,10 +76,7 @@ export default useInsurance
 
 export const useInsuranceDueDay = (
   day
-): [
-  { data: Insurance | undefined | null; loading: boolean; error: any },
-  () => void
-] => {
+): [{ data: Insurance; loading: boolean; error: any }, () => void] => {
   const { account } = useWeb3React()
 
   const pause = useMemo(() => !account || !day || isEmpty(day), [day, account])
@@ -94,7 +91,9 @@ export const useInsuranceDueDay = (
 
   return [
     {
-      data: pause ? undefined : response?.data?.insuranceHistories[0] ?? null,
+      data: pause
+        ? ({} as Insurance)
+        : response?.data?.insuranceHistories[0] ?? ({} as Insurance),
       loading: response.fetching,
       error: response.error,
     },

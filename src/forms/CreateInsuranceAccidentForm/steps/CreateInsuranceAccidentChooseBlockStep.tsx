@@ -40,17 +40,19 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
     InsuranceAccidentCreatingContext
   )
 
-  const [, poolData] = usePoolContract(form?.pool.get)
+  const { block, pool, date } = form
+
+  const [, poolData] = usePoolContract(pool.get)
   const [baseTokenData] = useERC20Data(poolData?.parameters.baseToken)
 
   const [isDateOpen, setDateOpen] = useState<boolean>(false)
   const [timeframe, setTimeframe] = useState(TIMEFRAMES["M"])
 
   const [_searchBlock, _setSearchBlock] = useState(undefined)
-  const [_searchDate, _setSearchdate] = useState(undefined)
+  const [_searchDate, _setSearchDate] = useState(undefined)
 
   const [history, historyLoading, updateHistory] = usePriceHistory(
-    form?.pool.get,
+    pool.get,
     TIMEFRAME_AGREGATION_CODES[timeframe],
     TIMEFRAME_LIMIT_CODE[timeframe],
     _searchDate ? _searchDate : TIMEFRAME_FROM_DATE[timeframe],
@@ -77,17 +79,17 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
   }, [history])
 
   useEffect(() => {
-    _setSearchdate(undefined)
+    _setSearchDate(undefined)
     _setSearchBlock(undefined)
   }, [timeframe])
 
   useEffect(() => {
-    if (currentPoint !== undefined && form) {
+    if (currentPoint !== undefined) {
       const { payload } = currentPoint
 
-      form?.block.set(payload.block)
-      form?.date.set(String(payload.timestamp))
-      poolPriceHistoryDueDate?.set(payload)
+      block.set(payload.block)
+      date.set(String(payload.timestamp))
+      poolPriceHistoryDueDate.set(payload)
     }
   }, [currentPoint])
 
@@ -110,10 +112,10 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
         _setSearchBlock(!value || value.length === 0 ? "0" : value)
       } else if (name === "date") {
         setTimeframe(TIMEFRAMES["M"])
-        _setSearchdate(value)
+        _setSearchDate(value)
       }
       debounce(updateHistory, 750)
-      form?.[name].set(value)
+      form[name].set(value)
     },
     [form, updateHistory]
   )
@@ -151,7 +153,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
               theme="clear"
               inputmode="decimal"
               placeholder="Block"
-              value={form?.block.get}
+              value={block.get}
               onChange={(v) => onFieldChange("block", v)}
             />
             <div>
@@ -159,7 +161,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
                 disabled
                 theme="clear"
                 value={format(
-                  expandTimestamp(Number(form?.date.get)),
+                  expandTimestamp(Number(date.get)),
                   DATE_TIME_FORMAT
                 )}
                 placeholder="DD/MM/YYYY, HH"
@@ -177,7 +179,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
       )}
       <DatePicker
         isOpen={isDateOpen}
-        timestamp={expandTimestamp(Number(form?.date.get))}
+        timestamp={expandTimestamp(Number(date.get))}
         toggle={() => setDateOpen(false)}
         onChange={(v) => onFieldChange("date", String(v))}
       />
