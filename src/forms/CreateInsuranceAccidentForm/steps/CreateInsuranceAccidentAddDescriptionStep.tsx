@@ -33,10 +33,8 @@ import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { selectDexeAddress } from "state/contracts/selectors"
 import { useSelector } from "react-redux"
 import { InputField, TextareaField } from "fields"
-import { useFormValidation } from "hooks/useFormValidation"
-import { required } from "utils/validators"
 import { readFromClipboard } from "utils/clipboard"
-import Tooltip from "../../../components/Tooltip"
+import Tooltip from "components/Tooltip"
 
 const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
   const { account } = useWeb3React()
@@ -76,42 +74,29 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
   }, [insurance])
 
   const _inDayLpAmount = useMemo(() => {
-    if (
-      isNil(account) ||
-      isNil(investorsInfo) ||
-      isNil(investorsInfo.get) ||
-      isNil(investorsInfo.get.lpHistory)
-    ) {
-      return ZERO
-    }
+    if (isNil(account) || isNil(investorsInfo.get)) return ZERO
 
     return BigNumber.from(
-      investorsInfo.get.lpHistory[String(account).toLocaleLowerCase()].lpHistory
-        .currentLpAmount
+      investorsInfo.get[String(account).toLocaleLowerCase()]
+        .poolPositionBeforeAccident.lpHistory[0].currentLpAmount
     )
   }, [account, investorsInfo])
 
   const _currentLPAmount = useMemo(() => {
-    if (
-      isNil(account) ||
-      isNil(investorsInfo) ||
-      isNil(investorsInfo.get) ||
-      isNil(investorsInfo.get.lpCurrent)
-    )
-      return ZERO
+    if (isNil(account) || isNil(investorsInfo.get)) return ZERO
 
     return divideBignumbers(
       [
         BigNumber.from(
-          investorsInfo.get.lpCurrent[String(account).toLocaleLowerCase()]
-            .totalLPInvestVolume
+          investorsInfo.get[String(account).toLocaleLowerCase()]
+            .poolPositionOnAccidentCreation.totalLPInvestVolume
         ),
         18,
       ],
       [
         BigNumber.from(
-          investorsInfo.get.lpCurrent[String(account).toLocaleLowerCase()]
-            .totalLPDivestVolume
+          investorsInfo.get[String(account).toLocaleLowerCase()]
+            .poolPositionOnAccidentCreation.totalLPDivestVolume
         ),
         18,
       ]
@@ -140,17 +125,18 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
 
   const userCoverageDEXE = useMemo(() => {
     if (
-      isNil(investorsInfo) ||
+      isNil(account) ||
       isNil(investorsInfo.get) ||
-      isNil(investorsInfo.get.insuranceHistory)
+      isNil(investorsInfo.get[String(account).toLocaleLowerCase()])
     ) {
       return { big: ZERO, format: "0.0" }
     }
-    const stake = investorsInfo.get.insuranceHistory[0].stake
 
-    const big = BigNumber.from(stake).mul(10)
+    const big = BigNumber.from(
+      investorsInfo.get[String(account).toLocaleLowerCase()].stake
+    ).mul(10)
     return { big, format: normalizeBigNumber(big, 18, 3) }
-  }, [investorsInfo])
+  }, [account, investorsInfo])
 
   const userCoverageUSD = useMemo(() => {
     if (isNil(userCoverageDEXE) || isNil(dexePrice)) {
@@ -167,7 +153,6 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
   const totalLossDEXE = useMemo(() => {
     if (
       isNil(dexePrice) ||
-      isNil(investorsTotals) ||
       isNil(investorsTotals.get) ||
       BigNumber.from(investorsTotals.get.loss).isZero()
     ) {
@@ -184,7 +169,6 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
 
   const totalLossUSD = useMemo(() => {
     if (
-      isNil(investorsTotals) ||
       isNil(investorsTotals.get) ||
       BigNumber.from(investorsTotals.get.loss).isZero()
     ) {
@@ -196,7 +180,6 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
 
   const totalCoverageDEXE = useMemo(() => {
     if (
-      isNil(investorsTotals) ||
       isNil(investorsTotals.get) ||
       BigNumber.from(investorsTotals.get.coverage).isZero()
     ) {
@@ -213,7 +196,6 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
   const totalCoverageUSD = useMemo(() => {
     if (
       isNil(dexePrice) ||
-      isNil(investorsTotals) ||
       isNil(investorsTotals.get) ||
       BigNumber.from(investorsTotals.get.coverage).isZero()
     ) {
@@ -229,17 +211,6 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
   }, [investorsTotals, dexePrice])
 
   // Form
-  const { getFieldErrorMessage, touchField } = useFormValidation(
-    {
-      chat: chat.get,
-      description: description.get,
-    },
-    {
-      chat: { required },
-      description: { required },
-    }
-  )
-
   const pasteFromClipboard = useCallback(
     async (dispatchCb: Dispatch<SetStateAction<any>>) => {
       dispatchCb(await readFromClipboard())
@@ -361,8 +332,6 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
             value={description.get}
             setValue={description.set}
             label="Description"
-            errorMessage={getFieldErrorMessage("description")}
-            onBlur={() => touchField("description")}
           />
         </Card>
 
@@ -392,8 +361,6 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
                 Paste
               </AppButton>
             }
-            errorMessage={getFieldErrorMessage("chat")}
-            onBlur={() => touchField("chat")}
           />
         </Card>
       </StepsRoot>

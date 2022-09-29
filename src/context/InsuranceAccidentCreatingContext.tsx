@@ -7,7 +7,11 @@ import {
   useEffect,
   useState,
 } from "react"
-import { Insurance } from "interfaces/thegraphs/investors"
+import {
+  Insurance,
+  InvestorPoolPosition,
+  InvestorPoolPositionWithHistory,
+} from "interfaces/thegraphs/investors"
 import { IPriceHistoryWithCalcPNL } from "interfaces/thegraphs/all-pools"
 import { useSelector } from "react-redux"
 import { selectInsuranceAccidentByPool } from "state/ipfsMetadata/selectors"
@@ -41,12 +45,12 @@ export interface InsuranceAccidentExist {
 }
 
 export interface InsuranceDueDate {
-  get: Insurance | undefined
+  get: Insurance
   set: Dispatch<SetStateAction<Insurance>>
 }
 
 export interface PoolPriceHistoryDueDate {
-  get: IPriceHistoryWithCalcPNL | undefined
+  get: IPriceHistoryWithCalcPNL
   set: Dispatch<SetStateAction<IPriceHistoryWithCalcPNL>>
 }
 
@@ -56,13 +60,20 @@ export interface InvestorsTotalsData {
   coverage: string
 }
 export interface InvestorsTotals {
-  get: InvestorsTotalsData | undefined
+  get: InvestorsTotalsData
   set: Dispatch<SetStateAction<InvestorsTotalsData>>
 }
 
+export interface InsuranceAccidentInvestor extends Insurance {
+  poolPositionBeforeAccident: InvestorPoolPositionWithHistory
+  poolPositionOnAccidentCreation: InvestorPoolPosition
+}
+
+type InsuranceAccidentInvestors = Record<string, InsuranceAccidentInvestor>
+
 export interface InvestorsInfo {
-  get: any | undefined
-  set: Dispatch<SetStateAction<any>>
+  get: InsuranceAccidentInvestors
+  set: Dispatch<SetStateAction<InsuranceAccidentInvestors>>
 }
 
 interface InsuranceAccidentCreatingContext {
@@ -91,7 +102,7 @@ export const InsuranceAccidentCreatingContext =
       set: () => {},
     },
     investorsTotals: { get: {} as InvestorsTotalsData, set: () => {} },
-    investorsInfo: { get: {} as any, set: () => {} },
+    investorsInfo: { get: {} as InsuranceAccidentInvestors, set: () => {} },
   })
 
 const InsuranceAccidentCreatingContextProvider: FC<
@@ -123,7 +134,9 @@ const InsuranceAccidentCreatingContextProvider: FC<
     {} as InvestorsTotalsData
   )
 
-  const investorsInfo = useState<any>({} as any)
+  const investorsInfo = useState<InsuranceAccidentInvestors>(
+    {} as InsuranceAccidentInvestors
+  )
 
   return (
     <>

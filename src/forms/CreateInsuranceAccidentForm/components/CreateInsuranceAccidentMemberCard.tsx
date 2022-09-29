@@ -5,40 +5,39 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { isNil } from "lodash"
 import { ZERO } from "constants/index"
 import { divideBignumbers } from "utils/formulas"
+import { InsuranceAccidentInvestor } from "context/InsuranceAccidentCreatingContext"
 
 interface Props {
-  payload: any
-  lpHistory: any
-  lpCurrent: any
+  payload: InsuranceAccidentInvestor
   color?: string
   fw?: string | number
 }
 
-const CreateInsuranceAccidentMemberCard: FC<Props> = ({
-  payload,
-  lpHistory,
-  lpCurrent,
-  ...rest
-}) => {
+const CreateInsuranceAccidentMemberCard: FC<Props> = ({ payload, ...rest }) => {
   const address = shortenAddress(payload.investor.id)
 
   const inDayLpAmount = useMemo(() => {
-    if (!lpHistory) {
+    if (!payload) {
       return { big: ZERO, format: "0.0" }
     }
 
-    const big = BigNumber.from(lpHistory.lpHistory.currentLpAmount)
+    const big = BigNumber.from(
+      payload.poolPositionBeforeAccident.lpHistory[0].currentLpAmount
+    )
     return { big, format: normalizeBigNumber(big, 18, 3) }
-  }, [lpHistory])
+  }, [payload])
 
   const currentLPAmount = useMemo(() => {
-    if (isNil(lpCurrent)) return ZERO
+    if (isNil(payload)) return ZERO
+
+    const { totalLPInvestVolume, totalLPDivestVolume } =
+      payload.poolPositionOnAccidentCreation
 
     return divideBignumbers(
-      [BigNumber.from(lpCurrent.totalLPInvestVolume), 18],
-      [BigNumber.from(lpCurrent.totalLPDivestVolume), 18]
+      [BigNumber.from(totalLPInvestVolume), 18],
+      [BigNumber.from(totalLPDivestVolume), 18]
     )
-  }, [lpCurrent])
+  }, [payload])
 
   const loss = useMemo(() => {
     if (!currentLPAmount || !inDayLpAmount) {

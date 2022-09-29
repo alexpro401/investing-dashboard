@@ -6,6 +6,7 @@ import CreateInsuranceAccidentPoolCard from "./CreateInsuranceAccidentPoolCard"
 import CreateInsuranceAccidentPoolsSortButton from "./CreateInsuranceAccidentPoolsSortButton"
 import { CreateInsuranceAccidentPoolsStyled as CIAPools } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
+import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 
 type FilterTVL = "ask" | "desc"
 
@@ -25,7 +26,7 @@ function sortByTVLCb(p1, p2, filter: FilterTVL) {
 interface Props {
   loading: boolean
   total: number
-  payload: any[]
+  payload: IPoolQuery[]
 }
 
 const CreateInsuranceAccidentPools: FC<Props> = ({

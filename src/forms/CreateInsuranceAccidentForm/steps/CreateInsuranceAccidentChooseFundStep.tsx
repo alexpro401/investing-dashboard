@@ -14,6 +14,8 @@ import {
 } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import InsuranceAccidentExist from "modals/InsuranceAccidentExist"
+import { IPoolQuery } from "interfaces/thegraphs/all-pools"
+import { isNil } from "lodash"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -26,7 +28,7 @@ const CreateInsuranceAccidentChooseFundStep: FC = () => {
     InsuranceAccidentCreatingContext
   )
 
-  const [response] = useQuery({
+  const [response] = useQuery<{ traderPools: IPoolQuery[] }>({
     pause: !account,
     query: PoolsByInvestorsQuery,
     variables: {
@@ -35,19 +37,18 @@ const CreateInsuranceAccidentChooseFundStep: FC = () => {
   })
 
   const totalPools = useMemo<number>(() => {
-    if (response.fetching || !!response.error) {
+    if (isNil(response.data) || isNil(response.data.traderPools)) {
       return 0
     }
 
-    return response.data?.traderPools.length
+    return response.data.traderPools.length
   }, [response])
 
-  const [pools, setPools] = useState([])
+  const [pools, setPools] = useState<IPoolQuery[]>([])
 
   useEffect(() => {
-    if (response.fetching) return
-    if (!response.data || !response.data.traderPools) return
-    if (response.data.traderPools.length === 0) return
+    if (isNil(response.data) || isNil(response.data.traderPools)) return
+
     if (response.data.traderPools.length > 0) {
       setPools(response.data.traderPools)
     }

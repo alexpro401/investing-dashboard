@@ -44,8 +44,8 @@ const CreateInsuranceAccidentForm: FC = () => {
   const { pool, block, date, description, chat } = form
 
   const formController = useForm()
-  const [showAlert] = useAlert()
 
+  const [showAlert] = useAlert()
   const [insuranceBalances, insuranceLoading] = useInsurance()
   const [showNotEnoughInsurance, setShowNotEnoughInsurance] = useState(false)
   const [showNotEnoughInsuranceByDay, setShowNotEnoughInsuranceByDay] =
@@ -197,35 +197,6 @@ const CreateInsuranceAccidentForm: FC = () => {
     }
   }
 
-  const step = useMemo(() => {
-    switch (currentStep) {
-      case STEPS.chooseFund:
-        return (
-          <S.StepsContainer>
-            <CreateInsuranceAccidentChooseFundStep />
-          </S.StepsContainer>
-        )
-      case STEPS.chooseBlock:
-        return (
-          <S.StepsContainer>
-            <CreateInsuranceAccidentChooseBlockStep />
-          </S.StepsContainer>
-        )
-      case STEPS.checkSettings:
-        return (
-          <S.StepsContainer>
-            <CreateInsuranceAccidentCheckSettingsStep />
-          </S.StepsContainer>
-        )
-      case STEPS.addDescription:
-        return (
-          <S.StepsContainer>
-            <CreateInsuranceAccidentAddDescriptionStep />
-          </S.StepsContainer>
-        )
-    }
-  }, [currentStep])
-
   return (
     <>
       <S.Container
@@ -234,7 +205,27 @@ const CreateInsuranceAccidentForm: FC = () => {
         prevCb={handlePrevStep}
         nextCb={handleNextStep}
       >
-        <AnimatePresence>{step}</AnimatePresence>
+        <AnimatePresence>
+          {currentStep === STEPS.chooseFund ? (
+            <S.StepsContainer>
+              <CreateInsuranceAccidentChooseFundStep />
+            </S.StepsContainer>
+          ) : currentStep === STEPS.chooseBlock ? (
+            <S.StepsContainer>
+              <CreateInsuranceAccidentChooseBlockStep />
+            </S.StepsContainer>
+          ) : currentStep === STEPS.checkSettings ? (
+            <S.StepsContainer>
+              <CreateInsuranceAccidentCheckSettingsStep />
+            </S.StepsContainer>
+          ) : currentStep === STEPS.addDescription ? (
+            <S.StepsContainer>
+              <CreateInsuranceAccidentAddDescriptionStep />
+            </S.StepsContainer>
+          ) : (
+            <></>
+          )}
+        </AnimatePresence>
       </S.Container>
       <NoEnoughInsurance
         isOpen={showNotEnoughInsurance}

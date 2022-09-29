@@ -8,7 +8,10 @@ import {
   StepsRoot,
   StepsBottomNavigation,
 } from "forms/CreateInsuranceAccidentForm/styled"
-import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
+import {
+  InsuranceAccidentCreatingContext,
+  InsuranceAccidentInvestor,
+} from "context/InsuranceAccidentCreatingContext"
 import * as S from "../styled/step-check-settings"
 import { Flex, Text } from "theme"
 import usePoolPrice from "hooks/usePoolPrice"
@@ -33,7 +36,7 @@ const TableRowSkeleton = (props) => (
   </S.TableRow>
 )
 
-function useCheckSettingsStepPayload() {
+function useInvestorsInAccident() {
   const { account } = useWeb3React()
 
   const { form } = useContext(InsuranceAccidentCreatingContext)
@@ -64,7 +67,7 @@ function useCheckSettingsStepPayload() {
       data.reduce(
         (acc, { investor, lpHistory, ...rest }) => ({
           ...acc,
-          [investor.id]: { lpHistory: lpHistory[0], ...rest },
+          [investor.id]: { lpHistory: lpHistory, ...rest },
         }),
         {}
       )
@@ -83,24 +86,117 @@ function useCheckSettingsStepPayload() {
       )
   )
 
+  const loading = useMemo(
+    () => insuranceHistory.fetching || lpHistory.fetching || lpCurrent.fetching,
+    [insuranceHistory, lpHistory, lpCurrent]
+  )
+  const noData = useMemo(
+    () =>
+      isNil(insuranceHistory.data) ||
+      isNil(lpHistory.data) ||
+      isNil(lpCurrent.data),
+    [insuranceHistory, lpHistory, lpCurrent]
+  )
+
+  const investorsIncludingInAccident = useMemo(() => {
+    if (loading || noData || isNil(account)) {
+      return []
+    }
+
+    return insuranceHistory.data
+      .sort((a1) =>
+        a1.investor.id === String(account).toLocaleLowerCase() ? -1 : 1
+      )
+      .reduce(
+        (acc, h) => ({
+          ...acc,
+          [h.investor.id]: {
+            ...h,
+            poolPositionBeforeAccident: lpHistory.data[h.investor.id],
+            poolPositionOnAccidentCreation: lpCurrent.data[h.investor.id],
+          },
+        }),
+        {}
+      )
+  }, [loading, noData, insuranceHistory, lpHistory, lpCurrent, account])
+
+  const totals = useMemo(() => {
+    const InitialTotals = {
+      users: 0,
+      lp: { render: `LP 0`, value: ZERO },
+      loss: {
+        render: `$ 0`,
+        value: ZERO,
+      },
+      coverage: {
+        render: `DEXE 0`,
+        value: ZERO,
+      },
+    }
+    if (loading || noData) {
+      return InitialTotals
+    }
+
+    function calcLossOnIteration(prevLoss, currentLPInvest, currentLPDivest) {
+      const currentLPVolume = divideBignumbers(
+        [BigNumber.from(currentLPInvest), 18],
+        [BigNumber.from(currentLPDivest), 18]
+      ).abs()
+
+      return addBignumbers([prevLoss, 18], [currentLPVolume, 18])
+    }
+
+    const res = insuranceHistory.data.reduce(
+      (res, h) => {
+        const lp = lpHistory.data[h.investor.id]
+        const { totalLPInvestVolume, totalLPDivestVolume } =
+          lpCurrent.data[h.investor.id]
+
+        return {
+          ...res,
+          lp: addBignumbers(
+            [res.lp, 18],
+            [BigNumber.from(lp.lpHistory[0].currentLpAmount), 18]
+          ),
+          loss: calcLossOnIteration(
+            res.loss,
+            totalLPInvestVolume,
+            totalLPDivestVolume
+          ),
+          coverage: addBignumbers(
+            [res.coverage, 18],
+            [BigNumber.from(h.stake).mul(10), 18]
+          ),
+        }
+      },
+      { lp: ZERO, loss: ZERO, coverage: ZERO }
+    )
+
+    return {
+      users: insuranceHistory.data.length,
+      lp: { render: `LP ${normalizeBigNumber(res.lp, 18, 2)}`, value: res.lp },
+      loss: {
+        render: `$ ${normalizeBigNumber(res.loss, 18, 2)}`,
+        value: res.loss,
+      },
+      coverage: {
+        render: `DEXE ${normalizeBigNumber(res.coverage, 18, 2)}`,
+        value: res.coverage,
+      },
+    }
+  }, [loading, noData, insuranceHistory, lpHistory, lpCurrent])
+
   return {
-    insuranceHistory: {
-      ...insuranceHistory,
-      data: insuranceHistory.data
-        ? insuranceHistory.data.sort((a1, a2) =>
-            a1.investor.id === String(account).toLocaleLowerCase() ? -1 : 1
-          )
-        : insuranceHistory.data,
-    },
-    lpHistory,
-    lpCurrent,
+    data: investorsIncludingInAccident,
+    loading,
+    noData,
+    totals,
   }
 }
 
 const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
   const { account } = useWeb3React()
-  const { insuranceHistory, lpHistory, lpCurrent } =
-    useCheckSettingsStepPayload()
+  const { data, totals, loading, noData } = useInvestorsInAccident()
 
   const { form, poolPriceHistoryDueDate, investorsTotals, investorsInfo } =
     useContext(InsuranceAccidentCreatingContext)
@@ -143,104 +239,11 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
     return `$ ${diff}`
   }, [poolPriceHistoryDueDate, priceUSD])
 
-  const accidentMembersCount = useMemo(() => {
-    if (insuranceHistory.fetching || isNil(insuranceHistory.data)) {
-      return 0
-    }
-    return insuranceHistory.data.length
-  }, [insuranceHistory])
-
-  const prepareTableData = useMemo(() => {
-    return (
-      insuranceHistory.fetching ||
-      lpHistory.fetching ||
-      lpCurrent.fetching ||
-      isNil(insuranceHistory.data) ||
-      isNil(lpHistory.data) ||
-      isNil(lpCurrent.data)
-    )
-  }, [insuranceHistory, lpHistory])
-
-  const totals = useMemo(() => {
-    const InitialTotals = {
-      lp: { render: `LP 0`, value: ZERO },
-      loss: {
-        render: `$ 0`,
-        value: ZERO,
-      },
-      coverage: {
-        render: `DEXE 0`,
-        value: ZERO,
-      },
-    }
-    if (
-      insuranceHistory.fetching ||
-      lpHistory.fetching ||
-      lpCurrent.fetching ||
-      isNil(insuranceHistory.data) ||
-      isNil(lpHistory.data) ||
-      isNil(lpCurrent.data)
-    ) {
-      return InitialTotals
-    }
-
-    function calcLossOnIteration(prevLoss, currentLPInvest, currentLPDivest) {
-      const currentLPVolume = divideBignumbers(
-        [BigNumber.from(currentLPInvest), 18],
-        [BigNumber.from(currentLPDivest), 18]
-      ).abs()
-
-      return addBignumbers([prevLoss, 18], [currentLPVolume, 18])
-    }
-
-    const res = insuranceHistory.data.reduce(
-      (res, h) => {
-        const lp = lpHistory.data[h.investor.id]
-        const { totalLPInvestVolume, totalLPDivestVolume } =
-          lpCurrent.data[h.investor.id]
-
-        return {
-          ...res,
-          lp: addBignumbers(
-            [res.lp, 18],
-            [BigNumber.from(lp.lpHistory.currentLpAmount), 18]
-          ),
-          loss: calcLossOnIteration(
-            res.loss,
-            totalLPInvestVolume,
-            totalLPDivestVolume
-          ),
-          coverage: addBignumbers(
-            [res.coverage, 18],
-            [BigNumber.from(h.stake).mul(10), 18]
-          ),
-        }
-      },
-      { lp: ZERO, loss: ZERO, coverage: ZERO }
-    )
-
-    return {
-      lp: { render: `LP ${normalizeBigNumber(res.lp, 18, 2)}`, value: res.lp },
-      loss: {
-        render: `$ ${normalizeBigNumber(res.loss, 18, 2)}`,
-        value: res.loss,
-      },
-      coverage: {
-        render: `DEXE ${normalizeBigNumber(res.coverage, 18, 2)}`,
-        value: res.coverage,
-      },
-    }
-  }, [insuranceHistory, lpHistory, lpCurrent])
-
   useEffect(() => {
-    if (!prepareTableData) {
-      investorsInfo.set({
-        insuranceHistory: insuranceHistory.data,
-        lpHistory: lpHistory.data,
-        lpCurrent: lpCurrent.data,
-      })
+    if (!loading && !noData) {
+      investorsInfo.set(data)
     }
-  }, [prepareTableData])
+  }, [loading, noData])
 
   useEffect(() => {
     const emptyTotals = isEmpty(investorsTotals.get)
@@ -307,31 +310,31 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
           <S.Table>
             <S.TableHead>
               <S.TableRow>
-                <S.TableCell>Members: {accidentMembersCount}</S.TableCell>
+                <S.TableCell>Members: {totals.users}</S.TableCell>
                 <S.TableCell>Amount LP</S.TableCell>
                 <S.TableCell>Loss $</S.TableCell>
                 <S.TableCell>Сoverage DEXE</S.TableCell>
               </S.TableRow>
             </S.TableHead>
             <S.TableBody>
-              {prepareTableData
+              {loading || noData
                 ? Array(10)
                     .fill(null)
                     .map((_, i) => <TableRowSkeleton key={i} />)
-                : insuranceHistory.data.map((h) => {
-                    const isCurrentUser =
-                      h.investor.id === String(account).toLocaleLowerCase()
-                    return (
-                      <CreateInsuranceAccidentMemberCard
-                        key={h.investor.id}
-                        payload={h}
-                        lpHistory={lpHistory.data[h.investor.id]}
-                        lpCurrent={lpCurrent.data[h.investor.id]}
-                        color={isCurrentUser ? "#2669EB" : undefined}
-                        fw={isCurrentUser ? 600 : 400}
-                      />
-                    )
-                  })}
+                : (Object.values(data) as InsuranceAccidentInvestor[]).map(
+                    (h) => {
+                      const isCurrentUser =
+                        h.investor.id === String(account).toLocaleLowerCase()
+                      return (
+                        <CreateInsuranceAccidentMemberCard
+                          key={h.investor.id}
+                          payload={h}
+                          color={isCurrentUser ? "#2669EB" : undefined}
+                          fw={isCurrentUser ? 600 : 400}
+                        />
+                      )
+                    }
+                  )}
             </S.TableBody>
             <S.TableFooter>
               <S.TableRow fw={600}>

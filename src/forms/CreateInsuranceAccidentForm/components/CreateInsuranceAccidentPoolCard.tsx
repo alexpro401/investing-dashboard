@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from "react"
+import { FC, useMemo } from "react"
 import { format } from "date-fns"
 import { BigNumber } from "@ethersproject/bignumber"
 
@@ -11,11 +11,10 @@ import { CreateInsuranceAccidentPoolsStyled as CIAPools } from "forms/CreateInsu
 import { DATE_FORMAT } from "constants/time"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { expandTimestamp, normalizeBigNumber } from "utils"
-
-type Pool = any
+import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 
 interface Props {
-  pool: Pool | null
+  pool: IPoolQuery | null
   onToggle: () => void
   active: boolean
 }
