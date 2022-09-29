@@ -17,10 +17,12 @@ import { ExternalFileDocument } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 import { isValidUrl } from "utils"
 import { readFromClipboard } from "utils/clipboard"
+import { isEqual } from "lodash"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   value: ExternalFileDocument
   setValue: (...params: any) => any
+  onRemove?: (...params: any) => any
   label?: string
   placeholder?: string
   errorMessage?: string
@@ -29,6 +31,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 const ExternalDocumentField: FC<Props> = ({
   value,
   setValue,
+  onRemove,
   label,
   placeholder,
   errorMessage,
@@ -39,27 +42,43 @@ const ExternalDocumentField: FC<Props> = ({
 
   const { name, url } = useMemo(() => value, [value])
 
+  const croppedLink = useMemo(() => {
+    return !!url ? `${url.slice(0, 4)}...${url.slice(-4)}` : ""
+  }, [url])
+
   const handleNameInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const targetValue = e.currentTarget.value
 
-      if (targetValue) {
-        setValue({ name: targetValue, url })
-      }
+      setValue({ name: targetValue, url })
     },
     [setValue, url]
   )
 
+  const handlePasteLink = useCallback(async () => {
+    setLocalUrl(await readFromClipboard())
+  }, [])
+
+  const handleChangeLink = useCallback(() => {
+    setLocalUrl("")
+  }, [])
+
+  const handleRemove = useCallback(() => {
+    if (onRemove) {
+      onRemove()
+    }
+  }, [onRemove])
+
   useEffect(() => {
     if (localUrl && isValidUrl(localUrl)) {
-      if (url !== localUrl) {
-        setValue({ name, url: localUrl })
+      if (!isEqual(localUrl, url)) {
+        setValue({ ...value, url: localUrl })
+        setIsShowUrlOverlap(true)
       }
-      setIsShowUrlOverlap(true)
     } else {
       setIsShowUrlOverlap(false)
     }
-  }, [localUrl, name, setValue, url])
+  }, [localUrl, setValue, url, value])
 
   return (
     <S.Root {...rest}>
@@ -75,6 +94,7 @@ const ExternalDocumentField: FC<Props> = ({
               color="default"
               size="no-paddings"
               iconRight={ICON_NAMES.trash}
+              onClick={handleRemove}
             />
           ) : null
         }
@@ -90,7 +110,7 @@ const ExternalDocumentField: FC<Props> = ({
           setValue={setLocalUrl}
           overlapNodeLeft={
             isShowUrlOverlap ? (
-              <ExternalLink href={url}>{name}</ExternalLink>
+              <ExternalLink href={url}>{croppedLink}</ExternalLink>
             ) : null
           }
           nodeRight={
@@ -100,9 +120,7 @@ const ExternalDocumentField: FC<Props> = ({
               size="no-paddings"
               text={isShowUrlOverlap ? "Change link" : "+ Paste Link"}
               onClick={async () =>
-                isShowUrlOverlap
-                  ? setLocalUrl("")
-                  : setLocalUrl(await readFromClipboard())
+                isShowUrlOverlap ? handleChangeLink() : handlePasteLink()
               }
             />
           }

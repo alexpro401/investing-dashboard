@@ -371,6 +371,9 @@ const TitlesStep: FC = () => {
                 key={idx}
                 value={el}
                 setValue={(doc) => documents.set(doc, idx)}
+                onRemove={() =>
+                  documents.set(documents.get.filter((_, i) => i !== idx))
+                }
                 label={`Document ${idx + 1}`}
               />
             ))}

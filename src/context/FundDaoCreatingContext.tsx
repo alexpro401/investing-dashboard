@@ -9,39 +9,39 @@ import {
 } from "react"
 
 type UserKeeperDeployParams = {
-  tokenAddress: string
-  nftAddress: string
-  totalPowerInTokens: number
-  nftsTotalSupply: number
+  tokenAddress: string // binded
+  nftAddress: string // binded
+  totalPowerInTokens: number // binded
+  nftsTotalSupply: number // binded
 }
 
 type ValidatorsDeployParams = {
-  name: string
-  symbol: string
-  duration: number
-  quorum: number
+  name: string // binded
+  symbol: string // binded
+  duration: number // binded
+  quorum: number // binded
   validators: string[]
   balances: number[]
 }
 
 type GovPoolDeployParams = {
-  descriptionUrl: string
+  descriptionUrl: string // will be in ipfs
 }
 
 type ProposalSettings = {
-  earlyCompletion: boolean // have
-  delegatedVotingAllowed: boolean
+  earlyCompletion: boolean // binded
+  delegatedVotingAllowed: boolean // binded
   validatorsVote: boolean
-  duration: number
+  duration: number // binded
   durationValidators: number
-  quorum: number
+  quorum: number // binded
   quorumValidators: number
-  minVotesForVoting: number
-  minVotesForCreating: number
-  rewardToken: string
-  creationReward: number
-  executionReward: number
-  voteRewardsCoefficient: number
+  minVotesForVoting: number // binded
+  minVotesForCreating: number // binded
+  rewardToken: string // binded
+  creationReward: number // binded
+  executionReward: number // binded
+  voteRewardsCoefficient: number // binded
   executorDescription: string
 }
 
@@ -162,6 +162,8 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
   ])
 
   const _handleChangeDocuments = useCallback((value, idx?: number) => {
+    console.log("_handleChangeDocuments", value)
+
     _setDocuments((prev) => {
       if (Array.isArray(value)) {
         return value
