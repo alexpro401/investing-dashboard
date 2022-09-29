@@ -7,16 +7,16 @@ import {
   useEffect,
   useState,
 } from "react"
-import {
-  Insurance,
-  InvestorPoolPosition,
-  InvestorPoolPositionWithHistory,
-} from "interfaces/thegraphs/investors"
+import { Insurance } from "interfaces/thegraphs/investors"
 import { IPriceHistoryWithCalcPNL } from "interfaces/thegraphs/all-pools"
 import { useSelector } from "react-redux"
 import { selectInsuranceAccidentByPool } from "state/ipfsMetadata/selectors"
+import {
+  InsuranceAccidentInvestors,
+  InsuranceAccidentInvestorsTotalsInfo,
+} from "interfaces/insurance"
 
-export interface InsuranceAccident {
+export interface InsuranceAccidentForm {
   pool: {
     get: string
     set: Dispatch<SetStateAction<string>>
@@ -54,22 +54,10 @@ export interface PoolPriceHistoryDueDate {
   set: Dispatch<SetStateAction<IPriceHistoryWithCalcPNL>>
 }
 
-export interface InvestorsTotalsData {
-  lp: string
-  loss: string
-  coverage: string
-}
 export interface InvestorsTotals {
-  get: InvestorsTotalsData
-  set: Dispatch<SetStateAction<InvestorsTotalsData>>
+  get: InsuranceAccidentInvestorsTotalsInfo
+  set: Dispatch<SetStateAction<InsuranceAccidentInvestorsTotalsInfo>>
 }
-
-export interface InsuranceAccidentInvestor extends Insurance {
-  poolPositionBeforeAccident: InvestorPoolPositionWithHistory
-  poolPositionOnAccidentCreation: InvestorPoolPosition
-}
-
-type InsuranceAccidentInvestors = Record<string, InsuranceAccidentInvestor>
 
 export interface InvestorsInfo {
   get: InsuranceAccidentInvestors
@@ -77,7 +65,7 @@ export interface InvestorsInfo {
 }
 
 interface InsuranceAccidentCreatingContext {
-  form: InsuranceAccident
+  form: InsuranceAccidentForm
   insuranceAccidentExist: InsuranceAccidentExist
   insuranceDueDate: InsuranceDueDate
   poolPriceHistoryDueDate: PoolPriceHistoryDueDate
@@ -93,7 +81,7 @@ export const InsuranceAccidentCreatingContext =
       date: { get: "", set: () => {} },
       description: { get: "", set: () => {} },
       chat: { get: "", set: () => {} },
-    } as InsuranceAccident,
+    } as InsuranceAccidentForm,
 
     insuranceAccidentExist: { get: false, set: () => {} },
     insuranceDueDate: { get: {} as Insurance, set: () => {} },
@@ -101,7 +89,10 @@ export const InsuranceAccidentCreatingContext =
       get: {} as IPriceHistoryWithCalcPNL,
       set: () => {},
     },
-    investorsTotals: { get: {} as InvestorsTotalsData, set: () => {} },
+    investorsTotals: {
+      get: {} as InsuranceAccidentInvestorsTotalsInfo,
+      set: () => {},
+    },
     investorsInfo: { get: {} as InsuranceAccidentInvestors, set: () => {} },
   })
 
@@ -130,8 +121,8 @@ const InsuranceAccidentCreatingContextProvider: FC<
     {} as IPriceHistoryWithCalcPNL
   )
 
-  const investorsTotals = useState<InvestorsTotalsData>(
-    {} as InvestorsTotalsData
+  const investorsTotals = useState<InsuranceAccidentInvestorsTotalsInfo>(
+    {} as InsuranceAccidentInvestorsTotalsInfo
   )
 
   const investorsInfo = useState<InsuranceAccidentInvestors>(

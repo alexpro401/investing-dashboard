@@ -5,7 +5,7 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { isNil } from "lodash"
 import { ZERO } from "constants/index"
 import { divideBignumbers } from "utils/formulas"
-import { InsuranceAccidentInvestor } from "context/InsuranceAccidentCreatingContext"
+import { InsuranceAccidentInvestor } from "interfaces/insurance"
 
 interface Props {
   payload: InsuranceAccidentInvestor

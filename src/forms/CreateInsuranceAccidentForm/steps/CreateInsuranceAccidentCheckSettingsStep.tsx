@@ -8,10 +8,7 @@ import {
   StepsRoot,
   StepsBottomNavigation,
 } from "forms/CreateInsuranceAccidentForm/styled"
-import {
-  InsuranceAccidentCreatingContext,
-  InsuranceAccidentInvestor,
-} from "context/InsuranceAccidentCreatingContext"
+import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import * as S from "../styled/step-check-settings"
 import { Flex, Text } from "theme"
 import usePoolPrice from "hooks/usePoolPrice"
@@ -26,6 +23,7 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { ZERO } from "constants/index"
 import useInvestorsLastPoolPosition from "hooks/useInvestorsLastPoolPosition"
 import { Card, CardDescription, CardHead } from "common"
+import { InsuranceAccidentInvestor } from "interfaces/insurance"
 
 const TableRowSkeleton = (props) => (
   <S.TableRow gap="12px" {...props}>
