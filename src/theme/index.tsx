@@ -3,6 +3,7 @@ import styled, { css } from "styled-components"
 import { motion } from "framer-motion"
 import { createBreakpoint } from "react-use"
 import { ReactNode } from "react"
+import { colorsTheme } from "./colors.theme"
 
 export const ease = [0.29, 0.98, 0.29, 1]
 
@@ -37,6 +38,8 @@ export { size, device }
 export default {
   textPrimary: "#FAFAFA",
   device,
+  appFontFamily: "Gilroy",
+  ...colorsTheme,
 }
 
 export const chartColors = {

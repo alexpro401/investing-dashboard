@@ -3,7 +3,6 @@ import { Flex } from "theme"
 
 import * as S from "../styled"
 import { ICON_NAMES } from "constants/icon-names"
-import { RoundedIcon } from "../styled"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   totalStepsCount: number

@@ -1,4 +1,6 @@
-export const fieldBg = "#181E2C"
+import theme from "../theme"
+
+export const fieldBg = theme.backgroundColors.secondary
 
 export const fieldLabelColor = "#788AB4"
 export const fieldLabelHoverColor = "#B1C7FC"

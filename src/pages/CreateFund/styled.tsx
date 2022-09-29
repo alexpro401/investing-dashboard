@@ -1,7 +1,11 @@
 import styled from "styled-components"
 import { motion } from "framer-motion"
+import { Icon } from "common"
 
+// page styles
 export const Container = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
   margin: 0 auto;
   background-color: #0e121b;
   width: fill-available;
@@ -14,6 +18,8 @@ export const Container = styled(motion.div)`
 `
 
 export const FundTypeCards = styled.div`
+  display: grid;
+  grid-gap: 16px;
   padding: 0 16px;
 `
 
@@ -34,6 +40,7 @@ export const CreateFundDocsBlock = styled.div`
   border-radius: 20px;
   padding: 20px;
   margin: 16px 16px 24px;
+  min-height: 120px;
 
   &:before {
     content: "";
@@ -105,4 +112,28 @@ export const CreateFundDocsBlockCloseBtn = styled.button`
   justify-content: center;
   align-items: center;
   color: #788ab4;
+`
+
+export const CreateFundDaoFeatures = styled.div`
+  overflow: visible;
+  display: grid;
+  grid-gap: 8px;
+`
+
+export const CreateFundDaoFeaturesItem = styled.div`
+  display: grid;
+  grid-template-columns: 12px 1fr;
+  grid-gap: 8px;
+  position: relative;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: ${(props) => props.theme.textColors.secondary};
+  transform: translateX(-20px);
+`
+
+export const CreateFundDaoFeaturesItemIcon = styled(Icon)`
+  width: 12px;
+  height: 12px;
+  transform: translateY(3px);
 `
