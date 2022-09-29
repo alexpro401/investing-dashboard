@@ -2,6 +2,7 @@ import {
   ChangeEvent,
   FC,
   HTMLAttributes,
+  ReactNode,
   useCallback,
   useEffect,
   useMemo,
@@ -22,7 +23,7 @@ import { isEqual } from "lodash"
 interface Props extends HTMLAttributes<HTMLDivElement> {
   value: ExternalFileDocument
   setValue: (...params: any) => any
-  onRemove?: (...params: any) => any
+  topFieldNodeRight?: ReactNode
   label?: string
   placeholder?: string
   errorMessage?: string
@@ -31,7 +32,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 const ExternalDocumentField: FC<Props> = ({
   value,
   setValue,
-  onRemove,
+  topFieldNodeRight,
   label,
   placeholder,
   errorMessage,
@@ -63,12 +64,6 @@ const ExternalDocumentField: FC<Props> = ({
     setLocalUrl("")
   }, [])
 
-  const handleRemove = useCallback(() => {
-    if (onRemove) {
-      onRemove()
-    }
-  }, [onRemove])
-
   useEffect(() => {
     if (localUrl && isValidUrl(localUrl)) {
       if (!isEqual(localUrl, url)) {
@@ -87,17 +82,7 @@ const ExternalDocumentField: FC<Props> = ({
         label={label}
         placeholder={placeholder}
         onInput={handleNameInput}
-        nodeRight={
-          isShowUrlOverlap ? (
-            <AppButton
-              type="button"
-              color="default"
-              size="no-paddings"
-              iconRight={ICON_NAMES.trash}
-              onClick={handleRemove}
-            />
-          ) : null
-        }
+        nodeRight={topFieldNodeRight}
         labelNodeRight={
           !!name && isShowUrlOverlap ? (
             <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />

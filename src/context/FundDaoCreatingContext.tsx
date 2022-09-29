@@ -62,7 +62,7 @@ export interface ValidatorsDeployParamsForm {
   symbol: { get: string; set: Dispatch<SetStateAction<string>> }
   duration: { get: number; set: Dispatch<SetStateAction<number>> }
   quorum: { get: number; set: Dispatch<SetStateAction<number>> }
-  validators: { get: string[]; set: Dispatch<SetStateAction<string[]>> }
+  validators: { get: string[]; set: (value: any, idx?: number) => void }
   balances: { get: number[]; set: Dispatch<SetStateAction<number[]>> }
 }
 
@@ -162,8 +162,6 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
   ])
 
   const _handleChangeDocuments = useCallback((value, idx?: number) => {
-    console.log("_handleChangeDocuments", value)
-
     _setDocuments((prev) => {
       if (Array.isArray(value)) {
         return value
@@ -188,9 +186,26 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
     symbol: useState<string>(""),
     duration: useState<number>(0),
     quorum: useState<number>(0),
-    validators: useState<string[]>([]),
+    validators: useState<string[]>([""]),
     balances: useState<number[]>([]),
   }
+
+  const _handleChangeValidators = useCallback(
+    (value, idx?: number) => {
+      _validatorsParams.validators[1]((prev) => {
+        if (Array.isArray(value)) {
+          return value
+        } else {
+          const newValidators = [...prev]
+          if (idx !== undefined && idx !== null) {
+            newValidators[idx] = value
+          }
+          return newValidators
+        }
+      })
+    },
+    [_validatorsParams.validators]
+  )
   const _govPoolDeployParams = {
     descriptionUrl: useState<string>(""),
   }
@@ -312,7 +327,7 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
             },
             validators: {
               get: _validatorsParams.validators[0],
-              set: _validatorsParams.validators[1],
+              set: _handleChangeValidators,
             },
             balances: {
               get: _validatorsParams.balances[0],

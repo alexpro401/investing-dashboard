@@ -371,8 +371,18 @@ const TitlesStep: FC = () => {
                 key={idx}
                 value={el}
                 setValue={(doc) => documents.set(doc, idx)}
-                onRemove={() =>
-                  documents.set(documents.get.filter((_, i) => i !== idx))
+                topFieldNodeRight={
+                  documents.get.length > 1 ? (
+                    <AppButton
+                      type="button"
+                      color="default"
+                      size="no-paddings"
+                      iconRight={ICON_NAMES.trash}
+                      onClick={() =>
+                        documents.set(documents.get.filter((_, i) => i !== idx))
+                      }
+                    />
+                  ) : null
                 }
                 label={`Document ${idx + 1}`}
               />
@@ -382,7 +392,7 @@ const TitlesStep: FC = () => {
             color="default"
             text="+ Add more"
             onClick={() =>
-              documents.set({ name: "", url: "" }, documents.get.length)
+              documents.set([...documents.get, { name: "", url: "" }])
             }
           />
         </Card>

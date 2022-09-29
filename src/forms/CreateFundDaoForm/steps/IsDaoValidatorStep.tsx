@@ -10,7 +10,7 @@ import {
   Collapse,
   Icon,
 } from "common"
-import { InputField } from "fields"
+import { InputField, OverlapInputField } from "fields"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 
@@ -21,7 +21,8 @@ import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 const IsDaoValidatorStep: FC = () => {
   const { validatorsParams, isValidator } = useContext(FundDaoCreatingContext)
 
-  const { name, symbol, duration, quorum } = validatorsParams
+  const { name, symbol, duration, quorum, validators, balances } =
+    validatorsParams
 
   return (
     <>
@@ -108,6 +109,39 @@ const IsDaoValidatorStep: FC = () => {
                 label="Quorum required for a vote pass"
               />
             </CardFormControl>
+          </S.OverflowedCard>
+        </Collapse>
+        <Collapse isOpen={isValidator.get}>
+          <S.OverflowedCard>
+            <CardHead
+              nodeLeft={<Icon name={ICON_NAMES.users} />}
+              title="Validator addresses"
+            />
+            <CardDescription>
+              <p>
+                Add all validator addresses and the amount of tokens to
+                distribute. The validator tokens will be automatically
+                distributed to them accordingly.
+              </p>
+            </CardDescription>
+            <CardFormControl>
+              {validators.get.map((el, index) => (
+                <OverlapInputField
+                  key={index}
+                  value={el}
+                  setValue={(value) => validators.set(value, index)}
+                  label={`Address ${index + 1}`}
+                />
+              ))}
+            </CardFormControl>
+            <S.CardAddBtn
+              color="default"
+              text="+ Add more"
+              onClick={() => {
+                validators.set([...validators.get, ""])
+                balances.set([...balances.get, 0])
+              }}
+            />
           </S.OverflowedCard>
         </Collapse>
       </S.StepsRoot>
