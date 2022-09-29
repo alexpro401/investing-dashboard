@@ -30,7 +30,7 @@ const CreateInsuranceAccidentChooseFundStep: FC = () => {
     pause: !account,
     query: PoolsByInvestorsQuery,
     variables: {
-      investors: [account],
+      investors: [String(account).toLocaleLowerCase()],
     },
   })
 

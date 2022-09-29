@@ -320,7 +320,7 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
                     .map((_, i) => <TableRowSkeleton key={i} />)
                 : insuranceHistory.data.map((h) => {
                     const isCurrentUser =
-                      h.investor.id === String(account).toLowerCase()
+                      h.investor.id === String(account).toLocaleLowerCase()
                     return (
                       <CreateInsuranceAccidentMemberCard
                         key={h.investor.id}
