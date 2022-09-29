@@ -9,7 +9,8 @@ import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccident
 import CreateInsuranceAccidentPools from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentPools"
 
 import {
-  Content,
+  StepsRoot,
+  StepsBottomNavigation,
   CreateInsuranceAccidentCard as CIACard,
 } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
@@ -55,7 +56,7 @@ const CreateInsuranceAccidentChooseFundStep: FC = () => {
 
   return (
     <>
-      <Content>
+      <StepsRoot gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
         <CIACard.Container>
           <CreateInsuranceAccidentCardHead
             icon={<CreateInsuranceAccidentCardStepNumber number={1} />}
@@ -77,7 +78,8 @@ const CreateInsuranceAccidentChooseFundStep: FC = () => {
             total={totalPools}
           />
         </div>
-      </Content>
+      </StepsRoot>
+      <StepsBottomNavigation />
       {!insuranceAccidentExist.get && (
         <InsuranceAccidentExist
           isOpen={insuranceAccidentExist.get}

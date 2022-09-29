@@ -6,7 +6,8 @@ import CreateInsuranceAccidentCardHead from "forms/CreateInsuranceAccidentForm/c
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
 
 import {
-  Content,
+  StepsRoot,
+  StepsBottomNavigation,
   CreateInsuranceAccidentCard as CIACard,
 } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
@@ -262,7 +263,7 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
 
   return (
     <>
-      <Content>
+      <StepsRoot gap={"24"} dir={"column"} ai={"stretch"} p={"16px"} full>
         <CIACard.Container>
           <CreateInsuranceAccidentCardHead
             icon={<CreateInsuranceAccidentCardStepNumber number={3} />}
@@ -275,8 +276,7 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
             </p>
           </CIACard.Description>
         </CIACard.Container>
-
-        <Flex full m="24px 0 0">
+        <Flex full>
           <S.PNLGrid>
             <CIACard.Container p="16px 10px" gap="8px">
               <Text fz={16} fw={600} color="#E4F2FF" align="center">
@@ -304,7 +304,7 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
             </CIACard.Container>
           </S.PNLGrid>
         </Flex>
-        <Flex full m="24px 0 0">
+        <Flex full>
           <CIACard.Container p="16px">
             <S.Table>
               <S.TableHead>
@@ -346,7 +346,8 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
             </S.Table>
           </CIACard.Container>
         </Flex>
-      </Content>
+      </StepsRoot>
+      <StepsBottomNavigation />
     </>
   )
 }

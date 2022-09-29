@@ -6,7 +6,8 @@ import CreateInsuranceAccidentCardHead from "forms/CreateInsuranceAccidentForm/c
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
 
 import {
-  Content,
+  StepsRoot,
+  StepsBottomNavigation,
   CreateInsuranceAccidentCard as CIACard,
 } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
@@ -122,7 +123,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
 
   return (
     <>
-      <Content>
+      <StepsRoot gap={"24"} dir={"column"} ai={"stretch"} p={"16px"} full>
         <CIACard.Container>
           <CreateInsuranceAccidentCardHead
             icon={<CreateInsuranceAccidentCardStepNumber number={2} />}
@@ -137,7 +138,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
           </CIACard.Description>
         </CIACard.Container>
 
-        <CIACard.Container m="24px 0 0">
+        <CIACard.Container>
           <InsuranceAccidentChart
             data={historyFormatted}
             baseToken={baseTokenData}
@@ -170,19 +171,21 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
             </div>
           </InputGroup>
         </CIACard.Container>
-      </Content>
-      {!isNil(insuranceAccidentExist) && (
-        <InsuranceAccidentExist
-          isOpen={insuranceAccidentExist.get}
-          onClose={() => insuranceAccidentExist.set(false)}
-        />
-      )}
+      </StepsRoot>
+      <StepsBottomNavigation />
+
       <DatePicker
         isOpen={isDateOpen}
         timestamp={expandTimestamp(Number(date.get))}
         toggle={() => setDateOpen(false)}
         onChange={(v) => onFieldChange("date", String(v))}
       />
+      {!isNil(insuranceAccidentExist) && (
+        <InsuranceAccidentExist
+          isOpen={insuranceAccidentExist.get}
+          onClose={() => insuranceAccidentExist.set(false)}
+        />
+      )}
     </>
   )
 }

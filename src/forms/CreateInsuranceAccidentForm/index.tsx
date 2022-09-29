@@ -23,8 +23,8 @@ import CreateInsuranceAccidentChooseFundStep from "./steps/CreateInsuranceAccide
 import CreateInsuranceAccidentChooseBlockStep from "./steps/CreateInsuranceAccidentChooseBlockStep"
 import CreateInsuranceAccidentCheckSettingsStep from "./steps/CreateInsuranceAccidentCheckSettingsStep"
 import CreateInsuranceAccidentAddDescriptionStep from "./steps/CreateInsuranceAccidentAddDescriptionStep"
-import CreateInsuranceAccidentStepsController from "./components/CreateInsuranceAccidentStepsController"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
+import { AnimatePresence } from "framer-motion"
 
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
@@ -200,31 +200,46 @@ const CreateInsuranceAccidentForm: FC = () => {
   const step = useMemo(() => {
     switch (currentStep) {
       case STEPS.chooseFund:
-        return <CreateInsuranceAccidentChooseFundStep />
+        return (
+          <S.StepsContainer>
+            <CreateInsuranceAccidentChooseFundStep />
+          </S.StepsContainer>
+        )
       case STEPS.chooseBlock:
-        return <CreateInsuranceAccidentChooseBlockStep />
+        return (
+          <S.StepsContainer>
+            <CreateInsuranceAccidentChooseBlockStep />
+          </S.StepsContainer>
+        )
       case STEPS.checkSettings:
-        return <CreateInsuranceAccidentCheckSettingsStep />
+        return (
+          <S.StepsContainer>
+            <CreateInsuranceAccidentCheckSettingsStep />
+          </S.StepsContainer>
+        )
       case STEPS.addDescription:
-        return <CreateInsuranceAccidentAddDescriptionStep />
+        return (
+          <S.StepsContainer>
+            <CreateInsuranceAccidentAddDescriptionStep />
+          </S.StepsContainer>
+        )
     }
   }, [currentStep])
 
   return (
     <>
-      <S.Container>
-        {step}
-        <CreateInsuranceAccidentStepsController
-          totalStepsCount={totalStepsCount}
-          currentStepNumber={currentStepNumber}
-          nextCb={handleNextStep}
-          prevCb={handlePrevStep}
-        />
-        <NoEnoughInsurance
-          isOpen={showNotEnoughInsurance}
-          onClose={() => setShowNotEnoughInsurance(false)}
-        />
+      <S.Container
+        totalStepsAmount={totalStepsCount}
+        currentStepNumber={currentStepNumber}
+        prevCb={handlePrevStep}
+        nextCb={handleNextStep}
+      >
+        <AnimatePresence>{step}</AnimatePresence>
       </S.Container>
+      <NoEnoughInsurance
+        isOpen={showNotEnoughInsurance}
+        onClose={() => setShowNotEnoughInsurance(false)}
+      />
     </>
   )
 }

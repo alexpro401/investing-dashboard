@@ -17,7 +17,8 @@ import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccident
 import * as S from "../styled/step-add-description"
 
 import {
-  Content,
+  StepsRoot,
+  StepsBottomNavigation,
   CreateInsuranceAccidentCard as CIACard,
 } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
@@ -248,7 +249,7 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
 
   return (
     <>
-      <Content>
+      <StepsRoot gap={"24"} dir={"column"} ai={"stretch"} p={"16px"} full>
         <CIACard.Container>
           <CreateInsuranceAccidentCardHead
             icon={<CreateInsuranceAccidentCardStepNumber number={4} />}
@@ -259,7 +260,7 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
           </CIACard.Description>
         </CIACard.Container>
 
-        <Flex full m="24px 0 0">
+        <Flex full>
           <CIACard.Container p="16px 16px 4px">
             <CreateInsuranceAccidentCardHead
               icon={<Icon name={ICON_NAMES.fileDock} />}
@@ -344,7 +345,7 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
           </CIACard.Container>
         </Flex>
 
-        <Flex full m="24px 0 0">
+        <Flex full>
           <CIACard.Container p="16px">
             <CreateInsuranceAccidentCardHead
               icon={<Icon name={ICON_NAMES.fileDock} />}
@@ -366,7 +367,7 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
           </CIACard.Container>
         </Flex>
 
-        <Flex full m="24px 0 0">
+        <Flex full>
           <CIACard.Container p="16px">
             <CreateInsuranceAccidentCardHead
               icon={<Icon name={ICON_NAMES.fileDock} />}
@@ -400,7 +401,8 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
             />
           </CIACard.Container>
         </Flex>
-      </Content>
+      </StepsRoot>
+      <StepsBottomNavigation />
     </>
   )
 }
