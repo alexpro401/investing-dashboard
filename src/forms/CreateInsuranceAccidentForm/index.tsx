@@ -58,6 +58,7 @@ const CreateInsuranceAccidentForm: FC = () => {
     investorsTotals,
     insuranceAccidentExist,
     investorsInfo,
+    _clearState,
   } = context
 
   const { pool, block, date, description, chat } = form
@@ -145,6 +146,7 @@ const CreateInsuranceAccidentForm: FC = () => {
 
   useEffect(() => {
     return () => {
+      _clearState()
       setShowNotEnoughInsurance(false)
       setShowNotEnoughInsuranceByDay(false)
     }
@@ -197,6 +199,7 @@ const CreateInsuranceAccidentForm: FC = () => {
         })
 
         if (isTxMined(tx)) {
+          _clearState()
           setAccidentCreating(SubmitState.SUCCESS)
           setShowSuccessfullyCreatedModal(true)
         }

@@ -4,6 +4,7 @@ import {
   FC,
   HTMLAttributes,
   SetStateAction,
+  useCallback,
   useState,
 } from "react"
 import { Insurance } from "interfaces/thegraphs/investors"
@@ -77,7 +78,12 @@ export interface Chart {
   }
 }
 
-interface InsuranceAccidentCreatingContext {
+interface InsuranceAccidentCreatingContextUtilities {
+  _clearState: () => void
+}
+
+interface InsuranceAccidentCreatingContext
+  extends InsuranceAccidentCreatingContextUtilities {
   form: InsuranceAccidentForm
   insuranceAccidentExist: InsuranceAccidentExist
   insuranceDueDate: InsuranceDueDate
@@ -110,6 +116,7 @@ export const InsuranceAccidentCreatingContext =
       timeframe: { get: "", set: () => {} },
       forPool: { get: "", set: () => {} },
     },
+    _clearState: () => {},
   })
 
 const InsuranceAccidentCreatingContextProvider: FC<
@@ -143,6 +150,22 @@ const InsuranceAccidentCreatingContextProvider: FC<
     timeframe: useState<string>(TIMEFRAMES["M"]),
     forPool: useState<string>(""),
   }
+
+  const _clearState = useCallback(() => {
+    form.pool[1]("")
+    form.block[1]("")
+    form.date[1]("")
+    form.description[1]("")
+    form.chat[1]("")
+    insuranceAccidentExist[1](false)
+    insuranceDueDate[1]({} as Insurance)
+    investorsTotals[1]({} as InsuranceAccidentInvestorsTotalsInfo)
+    investorsInfo[1]({} as InsuranceAccidentInvestors)
+    chart.point[1]({} as InsuranceAccidentChartPoint)
+    chart.data[1]([] as IPriceHistory[])
+    chart.timeframe[1](TIMEFRAMES["M"])
+    chart.forPool[1]("")
+  }, [])
 
   return (
     <>
@@ -205,6 +228,7 @@ const InsuranceAccidentCreatingContextProvider: FC<
               set: chart.forPool[1],
             },
           },
+          _clearState,
         }}
       >
         {children}
