@@ -11,9 +11,9 @@ import {
 } from "react"
 
 import { useForm } from "hooks/useForm"
-
+import useError from "hooks/useError"
 import useAlert from "hooks/useAlert"
-import { normalizeBigNumber } from "utils"
+import { isTxMined, normalizeBigNumber, parseTransactionError } from "utils"
 import { AlertType } from "context/AlertContext"
 import useInsurance, { useInsuranceDueDay } from "hooks/useInsurance"
 
@@ -33,6 +33,9 @@ import { required } from "utils/validators"
 import { useInsuranceContract } from "hooks/useContract"
 import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
+import usePayload from "hooks/usePayload"
+import { SubmitState } from "constants/types"
+import CreateInsuranceAccidentCreatedSuccessfully from "./components/CreateInsuranceAccidentCreatedSuccessfully"
 
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
@@ -93,11 +96,16 @@ const CreateInsuranceAccidentForm: FC = () => {
     touchField("chat")
   }, [chat])
 
+  const [, setAccidentCreating] = usePayload()
   const [showAlert] = useAlert()
+  const [, setError] = useError()
   const [insuranceBalances, insuranceLoading] = useInsurance()
   const insurance = useInsuranceContract()
   const addTransaction = useTransactionAdder()
 
+  const [newAccidentHash, setNewAccidentHash] = useState("")
+  const [showSuccessfullyCreatedModal, setShowSuccessfullyCreatedModal] =
+    useState(false)
   const [showNotEnoughInsurance, setShowNotEnoughInsurance] = useState(false)
   const [showNotEnoughInsuranceByDay, setShowNotEnoughInsuranceByDay] =
     useState(false)
@@ -155,6 +163,7 @@ const CreateInsuranceAccidentForm: FC = () => {
     }
 
     formController.disableForm()
+    setAccidentCreating(SubmitState.SIGN)
     try {
       const insuranceProposalData = {
         creator: account,
@@ -178,17 +187,30 @@ const CreateInsuranceAccidentForm: FC = () => {
       const ipfsResponse = await addInsuranceProposalData(insuranceProposalData)
 
       if (!isNil(ipfsResponse) && !isNil(ipfsResponse.path)) {
+        setNewAccidentHash(ipfsResponse.path)
+        setAccidentCreating(SubmitState.WAIT_CONFIRM)
         const receipt = await insurance.proposeClaim(ipfsResponse.path)
 
-        addTransaction(receipt, {
+        const tx = await addTransaction(receipt, {
           type: TransactionType.INSURANCE_REGISTER_PROPOSAL_CLAIM,
           pool: pool.get,
         })
+
+        if (isTxMined(tx)) {
+          setAccidentCreating(SubmitState.SUCCESS)
+          setShowSuccessfullyCreatedModal(true)
+        }
       }
-    } catch (error) {
-      console.error(error)
+    } catch (error: any) {
+      if (!!error && !!error.data && !!error.data.message) {
+        setError(error.data.message)
+      } else {
+        const errorMessage = parseTransactionError(error.toString())
+        !!errorMessage && setError(errorMessage)
+      }
     } finally {
       formController.enableForm()
+      setAccidentCreating(SubmitState.IDLE)
     }
   }, [
     account,
@@ -337,6 +359,11 @@ const CreateInsuranceAccidentForm: FC = () => {
       <NoEnoughInsurance
         isOpen={showNotEnoughInsurance}
         onClose={() => setShowNotEnoughInsurance(false)}
+      />
+      <CreateInsuranceAccidentCreatedSuccessfully
+        open={showSuccessfullyCreatedModal}
+        setOpen={setShowSuccessfullyCreatedModal}
+        url={newAccidentHash}
       />
     </>
   )
