@@ -22,7 +22,7 @@ import {
 } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { Flex, Text } from "theme"
-import { normalizeBigNumber } from "utils"
+import { normalizeBigNumber, parseTransactionError } from "utils"
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 import { BigNumber } from "@ethersproject/bignumber"
 import { ZERO } from "constants/index"
@@ -35,8 +35,10 @@ import { useSelector } from "react-redux"
 import { InputField, TextareaField } from "fields"
 import { readFromClipboard } from "utils/clipboard"
 import Tooltip from "components/Tooltip"
+import useError from "hooks/useError"
 
 const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
+  const [, setError] = useError()
   const { account } = useWeb3React()
   const { form, investorsTotals, investorsInfo } = useContext(
     InsuranceAccidentCreatingContext
@@ -66,9 +68,13 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
         if (!isNil(maxTreasuryPayout)) {
           setInsuranceTreasuryDEXE(maxTreasuryPayout)
         }
-      } catch (e) {
-        // TODO: handle error
-        console.error(e)
+      } catch (error: any) {
+        if (!!error && !!error.data && !!error.data.message) {
+          setError(error.data.message)
+        } else {
+          const errorMessage = parseTransactionError(error.toString())
+          !!errorMessage && setError(errorMessage)
+        }
       }
     })()
   }, [insurance])
