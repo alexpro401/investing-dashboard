@@ -12,13 +12,13 @@ import AddressChips from "components/AddressChips"
 import Switch from "components/Switch"
 import TokenIcon from "components/TokenIcon"
 
-import { commonsTokensList } from "constants/index"
+import { commonsTokensList, ZERO } from "constants/index"
 
 import { opacityVariants } from "motion/variants"
 import "rc-tooltip/assets/bootstrap.css"
 
 import defaultAvatar from "assets/icons/default-avatar.svg"
-import { useERC20 } from "hooks/useContract"
+import { useERC20 } from "hooks/useERC20"
 import { fromBig, formatNumber } from "utils"
 import {
   Slide,
@@ -47,7 +47,7 @@ import "./slider.css"
 const initialState = {
   _traderWallet: "", // address
   _basicToken: "", // address
-  _totalSupply: BigNumber.from(0), // uint256
+  _totalSupply: ZERO, // uint256
   _comm: [
     BigNumber.from(10),
     BigNumber.from(3),

@@ -217,7 +217,7 @@ export const percentageOfBignumbers = (num1: BigNumber, num2: BigNumber) => {
 }
 
 export const getSumOfBignumbersArray = (bns: BigNumber[]) => {
-  return bns.reduce((prev, next) => prev.add(next), BigNumber.from("0"))
+  return bns.reduce((prev, next) => prev.add(next), ZERO)
 }
 
 /**

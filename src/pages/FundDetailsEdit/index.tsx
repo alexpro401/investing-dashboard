@@ -41,10 +41,11 @@ import { arrayDifference } from "utils/array"
 import { getIpfsData, addFundMetadata } from "utils/ipfs"
 import { useUpdateFundContext } from "context/UpdateFundContext"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"
-import useContract, { useERC20 } from "hooks/useContract"
+import useContract from "hooks/useContract"
 import { useAddToast } from "state/application/hooks"
 import { TraderPool } from "abi"
 
+import { useERC20Data } from "state/erc20/hooks"
 import { UpdateListType } from "constants/types"
 import { useUserAgreement } from "state/user/hooks"
 import { addPool } from "state/ipfsMetadata/actions"
@@ -62,7 +63,7 @@ const FundDetailsEdit: FC = () => {
 
   const [poolData] = usePoolQuery(poolAddress)
   const [, poolInfoData] = usePoolContract(poolAddress)
-  const [, baseData] = useERC20(poolData?.baseToken)
+  const [baseData] = useERC20Data(poolData?.baseToken)
   const traderPool = useContract(poolData?.id, TraderPool)
 
   const {
@@ -124,7 +125,9 @@ const FundDetailsEdit: FC = () => {
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
   const handleParametersUpdate = useCallback(async () => {
-    if (!traderPool || !poolData || !account || !poolAddress) return
+    if (!traderPool || !poolData || !poolInfoData || !account || !poolAddress) {
+      return
+    }
 
     const ipfsChanged = isIpfsDataUpdated()
 
@@ -142,7 +145,7 @@ const FundDetailsEdit: FC = () => {
         account
       )
     } else {
-      ipfsReceipt = poolData.descriptionURL
+      ipfsReceipt = poolInfoData.parameters.descriptionURL
     }
 
     const descriptionURL = ipfsChanged ? ipfsReceipt.path : ipfsReceipt
@@ -444,7 +447,9 @@ const FundDetailsEdit: FC = () => {
   useEffect(() => {
     if (!poolData || !poolInfoData) return
     ;(async () => {
-      const parsedIpfs = await getIpfsData(poolData.descriptionURL)
+      const parsedIpfs = await getIpfsData(
+        poolInfoData.parameters.descriptionURL
+      )
 
       if (!!parsedIpfs) {
         setInitialIpfs({

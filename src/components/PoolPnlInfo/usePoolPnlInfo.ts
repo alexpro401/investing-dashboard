@@ -7,14 +7,15 @@ import { ZERO } from "constants/index"
 import { normalizeBigNumber } from "utils"
 import { usePoolQuery } from "hooks/usePool"
 import usePoolPrice from "hooks/usePoolPrice"
-import { useERC20, usePriceFeedContract } from "hooks/useContract"
+import { useERC20Data } from "state/erc20/hooks"
+import { usePriceFeedContract } from "contracts"
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 
 const usePoolPnlInfo = (address: string | undefined) => {
   const priceFeed = usePriceFeedContract()
   const [poolData] = usePoolQuery(address)
   const [{ priceUSD }] = usePoolPrice(address)
-  const [, baseToken] = useERC20(poolData?.baseToken)
+  const [baseToken] = useERC20Data(poolData?.baseToken)
 
   const [_baseTokenPrice, _setBaseTokenPrice] = useState<BigNumber>(ZERO)
 

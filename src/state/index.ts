@@ -9,8 +9,9 @@ import pricefeed from "./pricefeed/reducer"
 import application from "./application/reducer"
 import ipfsMetadata from "./ipfsMetadata/reducer"
 import gas from "./gas/reducer"
+import erc20 from "./erc20/reducer"
 
-const RESET_KEY = "1661954057984"
+const RESET_KEY = "1663337385646"
 
 const PERSISTED_KEYS: string[] = [
   "user",
@@ -18,6 +19,7 @@ const PERSISTED_KEYS: string[] = [
   "pools",
   "ipfsMetadata",
   "gas",
+  "erc20",
 ]
 
 const shouldReset = () => {
@@ -43,6 +45,7 @@ const store = configureStore({
     pricefeed,
     ipfsMetadata,
     gas,
+    erc20,
   },
   middleware: [
     ...getDefaultMiddleware({ thunk: false }),

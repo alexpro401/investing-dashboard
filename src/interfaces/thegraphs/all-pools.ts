@@ -60,12 +60,12 @@ export interface IPosition {
   closed: boolean
   id: string
   positionToken: string
-  totalUSDOpenVolume: BigNumber
-  totalUSDCloseVolume: BigNumber
-  totalBaseOpenVolume: BigNumber
-  totalBaseCloseVolume: BigNumber
-  totalPositionOpenVolume: BigNumber
-  totalPositionCloseVolume: BigNumber
+  totalUSDOpenVolume: string
+  totalUSDCloseVolume: string
+  totalBaseOpenVolume: string
+  totalBaseCloseVolume: string
+  totalPositionOpenVolume: string
+  totalPositionCloseVolume: string
   exchanges: IExchange[]
   traderPool: {
     id: string

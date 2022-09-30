@@ -23,6 +23,148 @@ export default [
       {
         components: [
           {
+            components: [
+              {
+                internalType: "uint256",
+                name: "maxPoolInvestors",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "maxOpenPositions",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "leverageThreshold",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "leverageSlope",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "commissionInitTimestamp",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256[]",
+                name: "commissionDurations",
+                type: "uint256[]",
+              },
+              {
+                internalType: "uint256",
+                name: "dexeCommissionPercentage",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256[]",
+                name: "dexeCommissionDistributionPercentages",
+                type: "uint256[]",
+              },
+              {
+                internalType: "uint256",
+                name: "minTraderCommission",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256[]",
+                name: "maxTraderCommissions",
+                type: "uint256[]",
+              },
+              {
+                internalType: "uint256",
+                name: "delayForRiskyPool",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct ICoreProperties.TraderParameters",
+            name: "traderParams",
+            type: "tuple",
+          },
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "insuranceFactor",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "maxInsurancePoolShare",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "minInsuranceDeposit",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "minInsuranceProposalAmount",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "insuranceWithdrawalLock",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct ICoreProperties.InsuranceParameters",
+            name: "insuranceParams",
+            type: "tuple",
+          },
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "govVotesLimit",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "govCommissionPercentage",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct ICoreProperties.GovParameters",
+            name: "govParams",
+            type: "tuple",
+          },
+        ],
+        internalType: "struct ICoreProperties.CoreParameters",
+        name: "_coreParameters",
+        type: "tuple",
+      },
+    ],
+    name: "__CoreProperties_init",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address[]", name: "tokens", type: "address[]" }],
+    name: "addBlacklistTokens",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address[]", name: "tokens", type: "address[]" }],
+    name: "addWhitelistTokens",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "coreParameters",
+    outputs: [
+      {
+        components: [
+          {
             internalType: "uint256",
             name: "maxPoolInvestors",
             type: "uint256",
@@ -73,6 +215,13 @@ export default [
             name: "delayForRiskyPool",
             type: "uint256",
           },
+        ],
+        internalType: "struct ICoreProperties.TraderParameters",
+        name: "traderParams",
+        type: "tuple",
+      },
+      {
+        components: [
           { internalType: "uint256", name: "insuranceFactor", type: "uint256" },
           {
             internalType: "uint256",
@@ -95,66 +244,22 @@ export default [
             type: "uint256",
           },
         ],
-        internalType: "struct ICoreProperties.CoreParameters",
-        name: "_coreParameters",
+        internalType: "struct ICoreProperties.InsuranceParameters",
+        name: "insuranceParams",
         type: "tuple",
       },
-    ],
-    name: "__CoreProperties_init",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address[]", name: "tokens", type: "address[]" }],
-    name: "addBlacklistTokens",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address[]", name: "tokens", type: "address[]" }],
-    name: "addWhitelistTokens",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "coreParameters",
-    outputs: [
-      { internalType: "uint256", name: "maxPoolInvestors", type: "uint256" },
-      { internalType: "uint256", name: "maxOpenPositions", type: "uint256" },
-      { internalType: "uint256", name: "leverageThreshold", type: "uint256" },
-      { internalType: "uint256", name: "leverageSlope", type: "uint256" },
       {
-        internalType: "uint256",
-        name: "commissionInitTimestamp",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "dexeCommissionPercentage",
-        type: "uint256",
-      },
-      { internalType: "uint256", name: "minTraderCommission", type: "uint256" },
-      { internalType: "uint256", name: "delayForRiskyPool", type: "uint256" },
-      { internalType: "uint256", name: "insuranceFactor", type: "uint256" },
-      {
-        internalType: "uint256",
-        name: "maxInsurancePoolShare",
-        type: "uint256",
-      },
-      { internalType: "uint256", name: "minInsuranceDeposit", type: "uint256" },
-      {
-        internalType: "uint256",
-        name: "minInsuranceProposalAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "insuranceWithdrawalLock",
-        type: "uint256",
+        components: [
+          { internalType: "uint256", name: "govVotesLimit", type: "uint256" },
+          {
+            internalType: "uint256",
+            name: "govCommissionPercentage",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct ICoreProperties.GovParameters",
+        name: "govParams",
+        type: "tuple",
       },
     ],
     stateMutability: "view",
@@ -223,6 +328,7 @@ export default [
     name: "getDEXECommissionPercentages",
     outputs: [
       { internalType: "uint256", name: "", type: "uint256" },
+      { internalType: "uint256", name: "", type: "uint256" },
       { internalType: "uint256[]", name: "", type: "uint256[]" },
       { internalType: "address[3]", name: "", type: "address[3]" },
     ],
@@ -248,6 +354,13 @@ export default [
         type: "address[]",
       },
     ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getGovVotesLimit",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
@@ -400,76 +513,115 @@ export default [
       {
         components: [
           {
-            internalType: "uint256",
-            name: "maxPoolInvestors",
-            type: "uint256",
+            components: [
+              {
+                internalType: "uint256",
+                name: "maxPoolInvestors",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "maxOpenPositions",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "leverageThreshold",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "leverageSlope",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "commissionInitTimestamp",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256[]",
+                name: "commissionDurations",
+                type: "uint256[]",
+              },
+              {
+                internalType: "uint256",
+                name: "dexeCommissionPercentage",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256[]",
+                name: "dexeCommissionDistributionPercentages",
+                type: "uint256[]",
+              },
+              {
+                internalType: "uint256",
+                name: "minTraderCommission",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256[]",
+                name: "maxTraderCommissions",
+                type: "uint256[]",
+              },
+              {
+                internalType: "uint256",
+                name: "delayForRiskyPool",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct ICoreProperties.TraderParameters",
+            name: "traderParams",
+            type: "tuple",
           },
           {
-            internalType: "uint256",
-            name: "maxOpenPositions",
-            type: "uint256",
+            components: [
+              {
+                internalType: "uint256",
+                name: "insuranceFactor",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "maxInsurancePoolShare",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "minInsuranceDeposit",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "minInsuranceProposalAmount",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "insuranceWithdrawalLock",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct ICoreProperties.InsuranceParameters",
+            name: "insuranceParams",
+            type: "tuple",
           },
           {
-            internalType: "uint256",
-            name: "leverageThreshold",
-            type: "uint256",
-          },
-          { internalType: "uint256", name: "leverageSlope", type: "uint256" },
-          {
-            internalType: "uint256",
-            name: "commissionInitTimestamp",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256[]",
-            name: "commissionDurations",
-            type: "uint256[]",
-          },
-          {
-            internalType: "uint256",
-            name: "dexeCommissionPercentage",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256[]",
-            name: "dexeCommissionDistributionPercentages",
-            type: "uint256[]",
-          },
-          {
-            internalType: "uint256",
-            name: "minTraderCommission",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256[]",
-            name: "maxTraderCommissions",
-            type: "uint256[]",
-          },
-          {
-            internalType: "uint256",
-            name: "delayForRiskyPool",
-            type: "uint256",
-          },
-          { internalType: "uint256", name: "insuranceFactor", type: "uint256" },
-          {
-            internalType: "uint256",
-            name: "maxInsurancePoolShare",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "minInsuranceDeposit",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "minInsuranceProposalAmount",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "insuranceWithdrawalLock",
-            type: "uint256",
+            components: [
+              {
+                internalType: "uint256",
+                name: "govVotesLimit",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "govCommissionPercentage",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct ICoreProperties.GovParameters",
+            name: "govParams",
+            type: "tuple",
           },
         ],
         internalType: "struct ICoreProperties.CoreParameters",
@@ -485,6 +637,7 @@ export default [
   {
     inputs: [
       { internalType: "uint256", name: "dexeCommission", type: "uint256" },
+      { internalType: "uint256", name: "govCommission", type: "uint256" },
       {
         internalType: "uint256[]",
         name: "distributionPercentages",
@@ -515,6 +668,15 @@ export default [
     type: "function",
   },
   {
+    inputs: [
+      { internalType: "uint256", name: "newVotesLimit", type: "uint256" },
+    ],
+    name: "setGovVotesLimit",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [{ internalType: "address", name: "_injector", type: "address" }],
     name: "setInjector",
     outputs: [],
@@ -523,22 +685,33 @@ export default [
   },
   {
     inputs: [
-      { internalType: "uint256", name: "insuranceFactor", type: "uint256" },
       {
-        internalType: "uint256",
-        name: "maxInsurancePoolShare",
-        type: "uint256",
-      },
-      { internalType: "uint256", name: "minInsuranceDeposit", type: "uint256" },
-      {
-        internalType: "uint256",
-        name: "minInsuranceProposalAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "insuranceWithdrawalLock",
-        type: "uint256",
+        components: [
+          { internalType: "uint256", name: "insuranceFactor", type: "uint256" },
+          {
+            internalType: "uint256",
+            name: "maxInsurancePoolShare",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "minInsuranceDeposit",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "minInsuranceProposalAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "insuranceWithdrawalLock",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct ICoreProperties.InsuranceParameters",
+        name: "insuranceParams",
+        type: "tuple",
       },
     ],
     name: "setInsuranceParameters",

@@ -10,15 +10,16 @@ import { format } from "date-fns/esm"
 import { PriceFeed } from "abi"
 import { ZERO } from "constants/index"
 import { useActiveWeb3React } from "hooks"
+import useContract from "hooks/useContract"
 import { DATE_FORMAT } from "constants/time"
 import usePoolPrice from "hooks/usePoolPrice"
+import { useERC20Data } from "state/erc20/hooks"
 import { percentageOfBignumbers } from "utils/formulas"
-import useContract, { useERC20 } from "hooks/useContract"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-import { IInvestorProposal } from "interfaces/thegraphs/invest-pools"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { usePoolContract, useTraderPool } from "hooks/usePool"
 import { selectPriceFeedAddress } from "state/contracts/selectors"
+import { IInvestorProposal } from "interfaces/thegraphs/invest-pools"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 
 import { Flex } from "theme"
@@ -45,7 +46,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   const traderPool = useTraderPool(position.pool.id)
   const [, poolInfo] = usePoolContract(position.pool.id)
   const [{ priceUSD }] = usePoolPrice(position.pool.id)
-  const [, baseToken] = useERC20(position.pool.token)
+  const [baseToken] = useERC20Data(position.pool.token)
   const priceFeedAddress = useSelector(selectPriceFeedAddress)
   const priceFeed = useContract(priceFeedAddress, PriceFeed)
 

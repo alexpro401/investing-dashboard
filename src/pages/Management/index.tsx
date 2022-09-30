@@ -11,7 +11,8 @@ import ExchangeDivider from "components/Exchange/Divider"
 import Button, { SecondaryButton } from "components/Button"
 import TransactionSlippage from "components/TransactionSlippage"
 
-import useContract, { useERC20 } from "hooks/useContract"
+import { useERC20 } from "hooks/useERC20"
+import useContract from "hooks/useContract"
 import {
   selectDexeAddress,
   selectInsuranceAddress,
@@ -25,6 +26,7 @@ import {
   parseTransactionError,
   isTxMined,
 } from "utils"
+import { ZERO } from "constants/index"
 
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
@@ -191,13 +193,11 @@ function Management() {
   ] = useInsurance()
 
   const [, setError] = useError()
-  const [stakeAmount, setStakeAmount] = useState(BigNumber.from("0"))
-  const [insuranceAmount, setInsuranceAmount] = useState(BigNumber.from("0"))
-  const [insuranceAmountUSD, setInsuranceAmountUSD] = useState(
-    BigNumber.from("0")
-  )
-  const [inPrice, setInPrice] = useState(BigNumber.from("0"))
-  const [outPrice, setOutPrice] = useState(BigNumber.from("0"))
+  const [stakeAmount, setStakeAmount] = useState(ZERO)
+  const [insuranceAmount, setInsuranceAmount] = useState(ZERO)
+  const [insuranceAmountUSD, setInsuranceAmountUSD] = useState(ZERO)
+  const [inPrice, setInPrice] = useState(ZERO)
+  const [outPrice, setOutPrice] = useState(ZERO)
   const [allowance, setAllowance] = useState("-1")
 
   const [isSlippageOpen, setSlippageOpen] = useState(false)

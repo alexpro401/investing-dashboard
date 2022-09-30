@@ -171,16 +171,25 @@ const TraderRatingStyled = {
   `,
 }
 
-export const TraderRating: FC<{ rating: number }> = () => {
-  return (
-    <TraderRatingStyled.Container>
-      <TraderRatingStyled.Star src={starIcon} />
-      <TraderRatingStyled.Star src={starIcon} />
-      <TraderRatingStyled.Star src={starIcon} />
-      <TraderRatingStyled.Star src={starDarkIcon} />
-      <TraderRatingStyled.Star src={starDarkIcon} />
-    </TraderRatingStyled.Container>
-  )
+export const TraderRating: FC<{ rating?: number }> = ({ rating }) => {
+  const stars = useMemo(() => {
+    const items = Array(5).fill(null)
+
+    if (!rating) {
+      return items.map((_, i) => (
+        <TraderRatingStyled.Star key={i} src={starDarkIcon} />
+      ))
+    }
+
+    return items.map((_, i) => (
+      <TraderRatingStyled.Star
+        key={i}
+        src={i >= rating ? starDarkIcon : starIcon}
+      />
+    ))
+  }, [rating])
+
+  return <TraderRatingStyled.Container>{stars}</TraderRatingStyled.Container>
 }
 
 const LineBase = css`

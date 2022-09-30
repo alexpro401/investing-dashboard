@@ -13,6 +13,7 @@ import LoadMore from "components/LoadMore"
 import PoolPositionCard from "components/cards/position/Pool"
 
 import S, { BecomeInvestor } from "./styled"
+import { ZERO } from "constants/index"
 
 const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
   const { poolAddress } = useParams()
@@ -23,7 +24,7 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
   const [, poolInfo] = usePoolContract(poolAddress)
 
   const [totalAccountInvestedLP, setTotalAccountInvestedLP] =
-    useState<BigNumber>(BigNumber.from("0"))
+    useState<BigNumber>(ZERO)
 
   const variables = useMemo(
     () => ({
@@ -54,7 +55,7 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
       return false
     }
 
-    return !totalAccountInvestedLP.gt(BigNumber.from("0"))
+    return !totalAccountInvestedLP.gt(ZERO)
   }, [account, closed, loading, poolInfo, totalAccountInvestedLP])
 
   const openPositionsCount = useMemo<number>(() => {
@@ -81,7 +82,6 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
     ;(async () => {
       try {
         const usersData = await traderPool.getUsersInfo(account, 0, 0)
-        console.log(usersData)
         if (usersData && !!usersData.length) {
           setTotalAccountInvestedLP(usersData[0].poolLPBalance)
         }

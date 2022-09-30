@@ -31,7 +31,7 @@ import {
   ConvertInvestProposalToDividendsTransactionInfo,
 } from "state/transactions/types"
 import { formatBigNumber } from "utils"
-import { useERC20 } from "hooks/useContract"
+import { useERC20Data } from "state/erc20/hooks"
 import { TradeType, UpdateListType } from "constants/types"
 import { selectWhitelistItem } from "state/pricefeed/selectors"
 
@@ -165,7 +165,7 @@ const CredentialsUpdateSummary: React.FC = () => {
 const CreateRiskyProposalSummary: React.FC<{
   info: CreateRiskyProposalTransactionInfo
 }> = ({ info }) => {
-  const [, token] = useERC20(info.token)
+  const [token] = useERC20Data(info.token)
   return <>Successfully create Risky Proposal for {token?.symbol}</>
 }
 const EditRiskyProposalSummary: React.FC<{

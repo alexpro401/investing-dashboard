@@ -1,10 +1,10 @@
 import React, { ReactNode, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { useERC20 } from "hooks/useContract"
-import { IPoolQuery } from "interfaces/thegraphs/all-pools"
+import { useERC20Data } from "state/erc20/hooks"
 import { formatNumber, normalizeBigNumber } from "utils"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
+import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { getLastInArray, getPNL, getPriceLP, getUSDPrice } from "utils/formulas"
 
 import Icon from "components/Icon"
@@ -19,7 +19,7 @@ const MemberMobile: React.FC<{
   index?: number
   children?: ReactNode
 }> = ({ data, index = 0, children }) => {
-  const [, baseData] = useERC20(data.baseToken)
+  const [baseData] = useERC20Data(data.baseToken)
   const priceLP = getPriceLP(data.priceHistory)
   const pnl = getPNL(priceLP)
   const lastHistoryPoint = getLastInArray(data.priceHistory)

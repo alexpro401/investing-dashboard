@@ -2,7 +2,7 @@ import { useState } from "react"
 import { PulseSpinner } from "react-spinners-kit"
 import { AreaChart, Area, Tooltip, ResponsiveContainer } from "recharts"
 
-import { useERC20 } from "hooks/useContract"
+import { useERC20Data } from "state/erc20/hooks"
 import { formateChartData } from "utils/formulas"
 import { usePriceHistory } from "state/pools/hooks"
 import {
@@ -76,7 +76,7 @@ interface Props {
 
 const ProfitLossChart: React.FC<Props> = ({ address, baseToken }) => {
   const [timeframe, setTimeframe] = useState(TIMEFRAMES["D"])
-  const [, baseTokenData] = useERC20(baseToken)
+  const [baseTokenData] = useERC20Data(baseToken)
 
   const history = usePriceHistory(
     address,

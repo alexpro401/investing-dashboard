@@ -16,7 +16,8 @@ import useError from "hooks/useError"
 import usePoolPrice from "hooks/usePoolPrice"
 import useAlert, { AlertType } from "hooks/useAlert"
 import { usePoolContract, useTraderPool } from "hooks/usePool"
-import { useERC20, usePriceFeedContract } from "hooks/useContract"
+import { useERC20 } from "hooks/useERC20"
+import { usePriceFeedContract } from "contracts"
 
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
@@ -46,6 +47,7 @@ import {
   percentageOfBignumbers,
   divideBignumbers,
 } from "utils/formulas"
+import { ZERO } from "constants/index"
 
 interface UseInvestProps {
   poolAddress: string | undefined
@@ -111,17 +113,17 @@ const useInvest = ({
 
   const [{ priceBase, priceUSD }] = usePoolPrice(poolAddress)
   const [gasPrice, setGasPrice] = useState("0.00")
-  const [swapPriceUSD, setSwapPriceUSD] = useState(BigNumber.from("0"))
-  const [swapPrice, setSwapPrice] = useState(BigNumber.from("0"))
+  const [swapPriceUSD, setSwapPriceUSD] = useState(ZERO)
+  const [swapPrice, setSwapPrice] = useState(ZERO)
   const [isAdmin, setIsAdmin] = useState(false)
   const [fromAmount, setFromAmount] = useState("0")
   const [toAmount, setToAmount] = useState("0")
   const [slippage, setSlippage] = useState("0.10")
   const [direction, setDirection] = useState<SwapDirection>(initialDirection)
-  const [baseTokenPrice, setBasePrice] = useState(BigNumber.from("0"))
-  const [totalPosition, setTotalPosition] = useState(BigNumber.from("0"))
-  const [lpTokenPrice, setLpPrice] = useState(BigNumber.from("0"))
-  const [lpTokenBalance, setLPBalance] = useState(BigNumber.from("0"))
+  const [baseTokenPrice, setBasePrice] = useState(ZERO)
+  const [totalPosition, setTotalPosition] = useState(ZERO)
+  const [lpTokenPrice, setLpPrice] = useState(ZERO)
+  const [lpTokenBalance, setLPBalance] = useState(ZERO)
   const [allowance, setAllowance] = useState<BigNumber | undefined>()
   const [, setWalletPrompting] = usePayload()
   const [isSlippageOpen, setSlippageOpen] = useState(false)
@@ -197,7 +199,7 @@ const useInvest = ({
 
   const freeLiquidityPercent = useMemo(() => {
     if (!freeLiquidityLP || !poolInfo || typeof freeLiquidityLP === "number")
-      return BigNumber.from("0")
+      return ZERO
 
     return percentageOfBignumbers(
       freeLiquidityLP,
@@ -342,7 +344,7 @@ const useInvest = ({
   const fetchAndUpdateBalance = useCallback(async () => {
     if (!account || !traderPool) return
 
-    const balance: BigNumber = await traderPool?.balanceOf(account)
+    const balance: BigNumber = await traderPool.balanceOf(account)
     setLPBalance(balance)
   }, [account, traderPool])
 
@@ -402,6 +404,9 @@ const useInvest = ({
       if (!priceFeed || !poolInfo) return
 
       const basePrice = await getPriceUSD(poolInfo.parameters.baseToken, amount)
+
+      if (!basePrice) return
+
       setBasePrice(basePrice)
     },
     [priceFeed, poolInfo, getPriceUSD]
@@ -484,7 +489,7 @@ const useInvest = ({
 
   const handleDirectionChange = useCallback(() => {
     setPositions([])
-    setTotalPosition(BigNumber.from("0"))
+    setTotalPosition(ZERO)
 
     if (direction === "deposit") {
       setDirection("withdraw")

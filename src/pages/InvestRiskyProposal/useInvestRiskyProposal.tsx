@@ -17,15 +17,6 @@ import {
   percentageOfBignumbers,
 } from "utils/formulas"
 
-import {
-  IDivestAmounts,
-  IProposalInvestTokens,
-} from "interfaces/contracts/ITraderPoolRiskyProposal"
-import {
-  IDivestAmountsAndCommissions,
-  IPoolInvestTokens,
-} from "interfaces/contracts/ITraderPool"
-
 import useAlert, { AlertType } from "hooks/useAlert"
 import {
   useActiveInvestmentsInfo,
@@ -34,11 +25,11 @@ import {
 import { usePoolContract } from "hooks/usePool"
 import {
   useBasicPoolContract,
-  useERC20,
+  useTraderPoolRiskyProposalContract,
   usePriceFeedContract,
-  useRiskyProposalContract,
   useTraderPoolContract,
-} from "hooks/useContract"
+} from "contracts"
+
 import { RiskyInvestInfo } from "interfaces/exchange"
 import { RiskyForm } from "interfaces/exchange"
 import usePoolPrice from "hooks/usePoolPrice"
@@ -47,6 +38,14 @@ import useGasTracker from "state/gas/hooks"
 import { parseEther, parseUnits } from "@ethersproject/units"
 import { ZERO } from "constants/index"
 import useRiskyPosition from "hooks/useRiskyPosition"
+import { useERC20Data } from "state/erc20/hooks"
+import { GetDivestAmountsAndCommissionsResponse } from "interfaces/abi-typings/TraderPool"
+import { useProposalAddress } from "hooks/useContract"
+import {
+  GetInvestTokensResponse,
+  ReceptionsResponse as DivestsReceptionsResponse,
+} from "interfaces/abi-typings/TraderPoolRiskyProposal"
+import { ReceptionsResponse as InvestsReceptionsResponse } from "interfaces/abi-typings/TraderPool"
 
 const useInvestRiskyProposal = (
   poolAddress?: string,
@@ -125,7 +124,8 @@ const useInvestRiskyProposal = (
 
   const traderPool = useTraderPoolContract(poolAddress)
   const basicPool = useBasicPoolContract(poolAddress)
-  const [proposalPool, proposalAddress] = useRiskyProposalContract(poolAddress)
+  const proposalAddress = useProposalAddress(poolAddress)
+  const proposalPool = useTraderPoolRiskyProposalContract(proposalAddress)
   const [proposal] = useRiskyProposal(poolAddress, proposalId)
   const [, poolInfo] = usePoolContract(poolAddress)
   const priceFeed = usePriceFeedContract()
@@ -146,8 +146,8 @@ const useInvestRiskyProposal = (
     proposalId
   )
 
-  const [, fromData] = useERC20(poolInfo?.parameters.baseToken)
-  const [, toData] = useERC20(proposal?.proposalInfo.token)
+  const [fromData] = useERC20Data(poolInfo?.parameters.baseToken)
+  const [toData] = useERC20Data(proposal?.proposalInfo.token)
 
   const [{ priceUSD: poolPriceUSD, priceBase: poolPriceBase }] =
     usePoolPrice(poolAddress)
@@ -391,30 +391,38 @@ const useInvestRiskyProposal = (
   const getInvestTokens = useCallback(
     async (
       amount: BigNumber
-    ): Promise<[IDivestAmountsAndCommissions, IProposalInvestTokens]> => {
-      const divests: IDivestAmountsAndCommissions =
-        await traderPool?.getDivestAmountsAndCommissions(account, amount)
+    ): Promise<
+      [GetDivestAmountsAndCommissionsResponse, GetInvestTokensResponse]
+    > => {
+      if (!account || !proposalPool || !traderPool)
+        return new Promise((resolve, reject) => reject(null))
 
-      const invests: IProposalInvestTokens =
-        await proposalPool?.getInvestTokens(
-          Number(proposalId) + 1,
-          divests.receptions.baseAmount
-        )
+      const divests = await traderPool.getDivestAmountsAndCommissions(
+        account,
+        amount
+      )
+
+      const invests = await proposalPool.getInvestTokens(
+        Number(proposalId) + 1,
+        divests.receptions.baseAmount
+      )
       return [divests, invests]
     },
     [account, proposalId, proposalPool, traderPool]
   )
 
   const getDivestTokens = useCallback(
-    async (amount: BigNumber): Promise<[IDivestAmounts, IPoolInvestTokens]> => {
-      const divests: IDivestAmounts = await proposalPool?.getDivestAmounts(
+    async (
+      amount: BigNumber
+    ): Promise<[DivestsReceptionsResponse, InvestsReceptionsResponse]> => {
+      if (!proposalPool || !traderPool)
+        return new Promise((resolve, reject) => reject(null))
+      const divests = await proposalPool.getDivestAmounts(
         [Number(proposalId) + 1],
         [amount]
       )
 
-      const invests: IPoolInvestTokens = await traderPool?.getInvestTokens(
-        divests.baseAmount
-      )
+      const invests = await traderPool.getInvestTokens(divests.baseAmount)
 
       return [divests, invests]
     },
@@ -442,6 +450,8 @@ const useInvestRiskyProposal = (
     if (!basicPool || amount.isZero()) return
 
     const [divests, invests] = await getDivestTokens(amount)
+
+    if (!divests || !invests) return
 
     return await basicPool.estimateGas.reinvestProposal(
       Number(proposalId) + 1,
@@ -491,6 +501,8 @@ const useInvestRiskyProposal = (
     const amount = BigNumber.from(fromAmount)
 
     const [divests, invests] = await getDivestTokens(amount)
+
+    if (!divests || !invests) return
 
     const withdrawResponse = await basicPool?.reinvestProposal(
       Number(proposalId) + 1,

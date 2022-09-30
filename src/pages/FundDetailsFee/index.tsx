@@ -2,7 +2,7 @@ import { FC, useCallback } from "react"
 import { useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
 
-import { useERC20 } from "hooks/useContract"
+import { useERC20Data } from "state/erc20/hooks"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 
 import { Flex } from "theme"
@@ -65,7 +65,7 @@ const FundDetailsFee: FC = () => {
     agreed ? withdrawCommission() : setShowAgreement(true)
   }, [agreed, withdrawCommission, setShowAgreement])
 
-  const [, baseToken] = useERC20(poolData?.baseToken)
+  const [baseToken] = useERC20Data(poolData?.baseToken)
 
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,

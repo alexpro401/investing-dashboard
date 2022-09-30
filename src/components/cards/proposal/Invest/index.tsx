@@ -16,17 +16,16 @@ import { getIpfsData } from "utils/ipfs"
 import { useActiveWeb3React } from "hooks"
 import usePoolPrice from "hooks/usePoolPrice"
 import { usePoolContract } from "hooks/usePool"
+import { useERC20Data } from "state/erc20/hooks"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import useInvestProposalData from "hooks/useInvestProposalData"
-import { InvestProposal } from "interfaces/thegraphs/invest-pools"
 import { addBignumbers, percentageOfBignumbers } from "utils/formulas"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import {
-  useERC20,
-  useInvestProposalContract,
+  useTraderPoolInvestProposalContract,
   usePriceFeedContract,
-} from "hooks/useContract"
+} from "contracts"
 
 import { Flex } from "theme"
 import Icon from "components/Icon"
@@ -44,21 +43,25 @@ import InvestCardSettings from "./Settings"
 import settingsIcon from "assets/icons/settings.svg"
 import settingsGreenIcon from "assets/icons/settings-green.svg"
 import useRequestDividendsContext from "modals/RequestDividend/useRequestDividendsContext"
+import { useProposalAddress } from "hooks/useContract"
+import { ProposalsResponse } from "interfaces/abi-typings/TraderPoolInvestProposal"
 
 interface Props {
-  proposal: InvestProposal
+  proposal: ProposalsResponse
   poolAddress: string
 }
 
 const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
+  const [closed, setClosed] = useState(false)
   const navigate = useNavigate()
   const { account } = useActiveWeb3React()
   const priceFeed = usePriceFeedContract()
 
   const [{ priceUSD }] = usePoolPrice(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [, baseTokenData] = useERC20(poolInfo?.parameters.baseToken)
-  const [proposalPool, proposalAddress] = useInvestProposalContract(poolAddress)
+  const [baseTokenData] = useERC20Data(poolInfo?.parameters.baseToken)
+  const proposalPool = useTraderPoolInvestProposalContract(poolAddress)
+  const proposalAddress = useProposalAddress(poolAddress)
   const { requestDividends } = useRequestDividendsContext()
 
   const [{ poolMetadata }] = usePoolMetadata(
@@ -252,7 +255,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
 
   // Get proposal "active investment info" for current connected account
   useEffect(() => {
-    if (!proposalPool) return
+    if (!proposalPool || !account) return
     ;(async () => {
       try {
         const activeInvestmentsInfo =
@@ -289,7 +292,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
         const { leftTokens, leftAmounts } = proposalInfo
 
         for (const [index, token] of leftTokens.entries()) {
-          const amountPrice = await priceFeed.getNormalizedPriceOutUsd(
+          const amountPrice = await priceFeed.getNormalizedPriceOutUSD(
             token,
             leftAmounts[index]
           )
@@ -433,8 +436,8 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     return isTrader ? (
       <>
         <Flex>
-          <S.Status active={!proposal.closed}>
-            {!proposal.closed ? "Open investing" : "Closed investing"}
+          <S.Status active={!closed}>
+            {!closed ? "Open investing" : "Closed investing"}
           </S.Status>
           <Flex m="0 0 0 4px">
             <IconButton
@@ -470,7 +473,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     maxSizeLP,
     navigateToPool,
     poolInfo,
-    proposal,
+    closed,
     proposalId,
     proposalPool,
     ticker,
@@ -581,9 +584,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
           </S.ReadMoreContainer>
         </S.Card>
         <AnimatePresence>
-          {!proposal.closed && (
-            <Actions actions={actions} visible={openExtra} />
-          )}
+          {!closed && <Actions actions={actions} visible={openExtra} />}
         </AnimatePresence>
       </S.Container>
     </>

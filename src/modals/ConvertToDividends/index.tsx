@@ -4,7 +4,6 @@ import { IConvertToDividendsParams } from "./useConvertToDividendsContext"
 import * as S from "./styled"
 import Button from "components/Button"
 import useConvertToDividends from "./useConvertToDividends"
-import { usePoolContract } from "hooks/usePool"
 import TokenIcon from "components/TokenIcon"
 
 interface Props {

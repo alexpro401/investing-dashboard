@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom"
 import { PulseSpinner } from "react-spinners-kit"
 
 import { PoolType } from "constants/types"
-import { useTraderPoolRegistryContract } from "hooks/useContract"
+import { usePoolRegistryContract } from "contracts"
 
 import FundProposalsRisky from "pages/FundProposalsRisky"
 import FundProposalsInvest from "pages/FundProposalsInvest"
@@ -15,7 +15,7 @@ const FundProposals = () => {
 
   const [poolType, setPoolType] = useState<PoolType | null>(null)
 
-  const traderPoolRegistry = useTraderPoolRegistryContract()
+  const traderPoolRegistry = usePoolRegistryContract()
 
   useEffect(() => {
     if (!traderPoolRegistry || !poolAddress) return

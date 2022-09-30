@@ -12,14 +12,11 @@ import {
   usePoolMetadata,
 } from "state/ipfsMetadata/hooks"
 
-import { IDivestAmountsAndCommissions } from "interfaces/contracts/ITraderPool"
-
 import {
-  useERC20,
-  useInvestPoolContract,
-  useInvestProposalContract,
+  useInvestTraderPoolContract,
+  useTraderPoolInvestProposalContract,
   useTraderPoolContract,
-} from "hooks/useContract"
+} from "contracts"
 import { usePoolContract } from "hooks/usePool"
 import usePoolPrice from "hooks/usePoolPrice"
 import { useInvestProposal } from "hooks/useInvestmentProposals"
@@ -28,6 +25,7 @@ import { RiskyForm } from "interfaces/exchange"
 import { ZERO } from "constants/index"
 import { SubmitState } from "constants/types"
 import { DATE_TIME_FORMAT } from "constants/time"
+import { GetDivestAmountsAndCommissionsResponse } from "interfaces/abi-typings/TraderPool"
 
 import {
   expandTimestamp,
@@ -38,6 +36,7 @@ import {
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
+import { useERC20Data } from "state/erc20/hooks"
 
 interface Info {
   tvl: {
@@ -99,12 +98,12 @@ const useInvestInvestmentProposal = (
   const [fromAddress, setFromAddress] = useState("")
 
   const traderPool = useTraderPoolContract(poolAddress)
-  const investPool = useInvestPoolContract(poolAddress)
-  const [proposalPool] = useInvestProposalContract(poolAddress)
+  const investPool = useInvestTraderPoolContract(poolAddress)
+  const proposalPool = useTraderPoolInvestProposalContract(poolAddress)
   const [proposal, updateProposal] = useInvestProposal(poolAddress, proposalId)
 
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [, baseData] = useERC20(poolInfo?.parameters.baseToken)
+  const [baseData] = useERC20Data(poolInfo?.parameters.baseToken)
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
     poolInfo?.parameters.descriptionURL
@@ -233,8 +232,17 @@ const useInvestInvestmentProposal = (
   }, [getLP2Balance, getLPBalance, updateProposal, updatePoolPrice])
 
   const getDivestTokens = useCallback(
-    async (amount: BigNumber): Promise<IDivestAmountsAndCommissions> => {
-      return traderPool?.getDivestAmountsAndCommissions(account, amount)
+    async (
+      amount: BigNumber
+    ): Promise<GetDivestAmountsAndCommissionsResponse> => {
+      if (!account || !traderPool)
+        return new Promise((resolve, reject) => reject(null))
+
+      const divests = await traderPool.getDivestAmountsAndCommissions(
+        account,
+        amount
+      )
+      return divests
     },
     [account, traderPool]
   )

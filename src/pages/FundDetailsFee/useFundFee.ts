@@ -28,15 +28,16 @@ import {
 import { useActiveWeb3React } from "hooks"
 import { DATE_FORMAT } from "constants/time"
 import { SubmitState } from "constants/types"
+import { useERC20Data } from "state/erc20/hooks"
 import { ChainMainToken } from "constants/chains"
 import { useAddToast } from "state/application/hooks"
 import { selectGasByChain } from "state/gas/selectors"
-import useCoreProperties from "hooks/useCoreProperties"
+import { useCorePropertiesContract } from "contracts"
 import { TransactionType } from "state/transactions/types"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { selectDexeAddress } from "state/contracts/selectors"
 import { useTransactionAdder } from "state/transactions/hooks"
-import { useERC20, usePriceFeedContract } from "hooks/useContract"
+import { usePriceFeedContract } from "contracts"
 import { IUserFeeInfo } from "interfaces/contracts/ITraderPool"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
@@ -96,12 +97,12 @@ function useFundFee(
 
   const addToast = useAddToast()
   const priceFeed = usePriceFeedContract()
-  const coreProperties = useCoreProperties()
+  const coreProperties = useCorePropertiesContract()
   const addTransaction = useTransactionAdder()
   const traderPool = useTraderPool(poolAddress)
   const [poolGraphData] = usePoolQuery(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [, baseToken] = useERC20(poolGraphData?.baseToken)
+  const [baseToken] = useERC20Data(poolGraphData?.baseToken)
 
   const gas = useSelector(selectGasByChain(chainId))
   const dexeAddress = useSelector(selectDexeAddress)

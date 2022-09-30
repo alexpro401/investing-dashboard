@@ -10,19 +10,19 @@ import { format } from "date-fns"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { parseUnits } from "@ethersproject/units"
-import { Contract } from "@ethersproject/contracts"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { PriceFeed } from "abi"
 import { ZERO } from "constants/index"
 import { useActiveWeb3React } from "hooks"
+import useContract from "hooks/useContract"
+import { useERC20Data } from "state/erc20/hooks"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { percentageOfBignumbers } from "utils/formulas"
-import useContract, { useERC20 } from "hooks/useContract"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import { IRiskyProposal } from "interfaces/contracts/ITraderPoolRiskyProposal"
+import { ProposalsResponse } from "interfaces/abi-typings/TraderPoolRiskyProposal"
 import { selectPriceFeedAddress } from "state/contracts/selectors"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
@@ -40,14 +40,16 @@ import SharedS, { BodyItem } from "components/cards/proposal/styled"
 
 import settingsIcon from "assets/icons/settings.svg"
 import settingsGreenIcon from "assets/icons/settings-green.svg"
+import useTokenRating from "hooks/useTokenRating"
+import { TraderPoolRiskyProposalType } from "interfaces/abi-typings"
 
 const MAX_INVESTORS_COUNT = 1000
 
 interface Props {
-  proposal: IRiskyProposal
+  proposal: ProposalsResponse
   proposalId: number
   poolAddress: string
-  proposalPool: Contract
+  proposalPool: TraderPoolRiskyProposalType
   isTrader: boolean
   poolInfo: IPoolInfo
 }
@@ -62,9 +64,10 @@ const RiskyProposalCard: FC<Props> = ({
 }) => {
   const navigate = useNavigate()
   const { account, chainId } = useActiveWeb3React()
-  const [, proposalToken] = useERC20(proposal.proposalInfo.token)
+  const [proposalToken] = useERC20Data(proposal.proposalInfo.token)
   const priceFeedAddress = useSelector(selectPriceFeedAddress)
   const priceFeed = useContract(priceFeedAddress, PriceFeed)
+  const getTokenRating = useTokenRating()
 
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
@@ -77,6 +80,8 @@ const RiskyProposalCard: FC<Props> = ({
   const [markPriceOpen, setMarkPriceOpen] = useState(ZERO)
   const [yourSizeLP, setYourSizeLP] = useState<BigNumber>(ZERO)
   const [traderSizeLP, setTraderSizeLP] = useState<BigNumber>(ZERO)
+
+  const [tokenRating, setTokenRating] = useState<number>(0)
 
   /**
    * Date of proposal expiration
@@ -264,10 +269,7 @@ const RiskyProposalCard: FC<Props> = ({
 
   // Fetch current user locked funds in proposal
   useEffect(() => {
-    if (!proposalPool || proposalId === undefined) {
-      return
-    }
-
+    if (!proposalPool || proposalId === undefined || !account) return
     ;(async () => {
       try {
         const balance = await proposalPool.getActiveInvestmentsInfo(
@@ -325,6 +327,22 @@ const RiskyProposalCard: FC<Props> = ({
       }
     })()
   }, [priceFeed, proposalToken])
+
+  // Fetch token rating
+  useEffect(() => {
+    if (!chainId || !proposal) return
+    ;(async () => {
+      try {
+        const rating = await getTokenRating(
+          chainId,
+          proposal.proposalInfo.token
+        )
+        setTokenRating(rating)
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [chainId, proposal, getTokenRating])
 
   /**
    * Navigate to pool page
@@ -422,7 +440,7 @@ const RiskyProposalCard: FC<Props> = ({
             ) : (
               <Flex ai="center">
                 <SharedS.Title>{proposalSymbol}</SharedS.Title>
-                <TraderRating rating={20} />
+                <TraderRating rating={tokenRating} />
                 <Flex m="0 0 -5px">
                   <Tooltip
                     id={`risky-proposal-rating-info-${proposalId}-${poolAddress}`}

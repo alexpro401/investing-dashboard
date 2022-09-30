@@ -20,11 +20,10 @@ import { multiplyBignumbers } from "utils/formulas"
 
 import { usePoolContract } from "hooks/usePool"
 import {
-  useERC20,
-  useInvestProposalContract,
+  useTraderPoolInvestProposalContract,
   usePriceFeedContract,
   useUserRegistryContract,
-} from "hooks/useContract"
+} from "contracts"
 import { RiskyForm } from "interfaces/exchange"
 import usePoolPrice from "hooks/usePoolPrice"
 import useGasTracker from "state/gas/hooks"
@@ -37,6 +36,8 @@ import { parseEther } from "@ethersproject/units"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { format } from "date-fns"
 import { useInvestProposalWithdraws } from "hooks/useInvestProposalData"
+import { useERC20Data } from "state/erc20/hooks"
+import { useProposalAddress } from "hooks/useContract"
 
 interface WithdrawInfo {
   tvl: {
@@ -86,10 +87,11 @@ const useWithdrawInvestmentProposal = (
   const priceFeed = usePriceFeedContract()
   const [proposal, updateProposal] = useInvestProposal(poolAddress, proposalId)
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [, baseToken] = useERC20(poolInfo?.parameters.baseToken)
+  const [baseToken] = useERC20Data(poolInfo?.parameters.baseToken)
   const userRegistry = useUserRegistryContract()
-  const [investProposalContract, proposalAddress] =
-    useInvestProposalContract(poolAddress)
+  const investProposalContract =
+    useTraderPoolInvestProposalContract(poolAddress)
+  const proposalAddress = useProposalAddress(poolAddress)
   const withdrawals = useInvestProposalWithdraws(proposalAddress, proposalId)
   const [, setPayload] = usePayload()
   const [, setError] = useError()
@@ -305,7 +307,7 @@ const useWithdrawInvestmentProposal = (
 
   // get user avatar link
   useEffect(() => {
-    if (!userRegistry) return
+    if (!userRegistry || !account) return
 
     const getUserInfo = async () => {
       const userData = await userRegistry.userInfos(account)

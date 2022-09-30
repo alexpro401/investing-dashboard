@@ -17,7 +17,7 @@ import {
   useRiskyProposal,
 } from "hooks/useRiskyProposals"
 import { usePoolContract } from "hooks/usePool"
-import { useERC20, usePriceFeedContract } from "hooks/useContract"
+import { usePriceFeedContract } from "contracts"
 import {
   divideBignumbers,
   multiplyBignumbers,
@@ -39,6 +39,8 @@ import { ZERO } from "constants/index"
 import useRiskyPosition from "hooks/useRiskyPosition"
 import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
+import { useERC20Data } from "state/erc20/hooks"
+import { GetExchangeAmountResponse } from "interfaces/abi-typings/BasicTraderPool"
 
 export interface UseSwapRiskyParams {
   poolAddress?: string
@@ -107,8 +109,8 @@ const useSwapRiskyProposal = ({
   const [, poolInfo] = usePoolContract(poolAddress)
   const priceFeed = usePriceFeedContract()
 
-  const [, baseToken] = useERC20(poolInfo?.parameters.baseToken)
-  const [, positionToken] = useERC20(proposalInfo?.proposalInfo.token)
+  const [baseToken] = useERC20Data(poolInfo?.parameters.baseToken)
+  const [positionToken] = useERC20Data(proposalInfo?.proposalInfo.token)
 
   const [, getGasPrice] = useGasTracker()
 
@@ -224,8 +226,14 @@ const useSwapRiskyProposal = ({
   ])
 
   const getExchangeAmount = useCallback(
-    async (from, amount, field) => {
-      const exchange = await proposalPool?.getExchangeAmount(
+    async (
+      from,
+      amount,
+      field
+    ): Promise<[GetExchangeAmountResponse, BigNumber]> => {
+      if (!proposalPool || !from)
+        return new Promise((resolve, reject) => reject(null))
+      const exchange = await proposalPool.getExchangeAmount(
         Number(proposalId) + 1,
         from,
         amount,
@@ -277,6 +285,8 @@ const useSwapRiskyProposal = ({
           ExchangeType.FROM_EXACT
         )
 
+        if (!form.from.address || !form.to.address) return
+
         const fromPrice = await priceFeed.getNormalizedPriceOutUSD(
           form.from.address,
           amount
@@ -315,6 +325,8 @@ const useSwapRiskyProposal = ({
           amount,
           ExchangeType.TO_EXACT
         )
+
+        if (!form.from.address || !form.to.address) return
 
         const fromPrice = await priceFeed.getNormalizedPriceOutUSD(
           form.from.address,
@@ -407,11 +419,14 @@ const useSwapRiskyProposal = ({
         ExchangeType.FROM_EXACT
       )
 
-      const fromPrice = await priceFeed?.getNormalizedPriceOutUSD(
+      setTokenCost(exchange[0])
+
+      if (!priceFeed) return
+
+      const fromPrice = await priceFeed.getNormalizedPriceOutUSD(
         address,
         amount
       )
-      setTokenCost(exchange[0])
       setUSDCost(fromPrice[0])
     },
     [getExchangeAmount, priceFeed]

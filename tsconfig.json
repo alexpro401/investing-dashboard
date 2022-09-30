@@ -26,7 +26,10 @@
     "jsx": "react-jsx",
     "downlevelIteration": true,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": "src"
+    "baseUrl": "src",
+    "types": [
+      "@types/uuid"
+    ]
   },
   "exclude": [
     "node_modules",

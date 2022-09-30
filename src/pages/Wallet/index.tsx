@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react"
 import { Navigate, useNavigate } from "react-router-dom"
 import { useWeb3React } from "@web3-react/core"
 import { useSelector } from "react-redux"
-import { BigNumber } from "@ethersproject/bignumber"
 import { PulseSpinner } from "react-spinners-kit"
 
 import Avatar from "components/Avatar"
@@ -13,7 +12,8 @@ import TransactionHistory from "components/TransactionHistory"
 
 import { Insurance } from "abi"
 import { selectInsuranceAddress } from "state/contracts/selectors"
-import useContract, { useUserRegistryContract } from "hooks/useContract"
+import useContract from "hooks/useContract"
+import { useUserRegistryContract } from "contracts"
 import useCopyClipboard from "hooks/useCopyClipboard"
 
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
@@ -58,6 +58,7 @@ import {
   NetworkIcon,
 } from "./styled"
 import { useUserAgreement } from "state/user/hooks"
+import { ZERO } from "constants/index"
 
 const useUserSettings = (): [
   {
@@ -127,7 +128,7 @@ const useUserSettings = (): [
   }
 
   useEffect(() => {
-    if (!userRegistry) return
+    if (!userRegistry || !account) return
 
     const getUserInfo = async () => {
       setLoading(true)
@@ -190,7 +191,7 @@ export default function Wallet() {
 
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
-  const [insuranceAmount, setInsuranceAmount] = useState(BigNumber.from("0"))
+  const [insuranceAmount, setInsuranceAmount] = useState(ZERO)
 
   const insuranceAddress = useSelector(selectInsuranceAddress)
   const insurance = useContract(insuranceAddress, Insurance)
