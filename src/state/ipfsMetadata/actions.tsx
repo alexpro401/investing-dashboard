@@ -1,11 +1,7 @@
 import { createAction } from "@reduxjs/toolkit"
 
-import {
-  IInvestProposalMetadata,
-  InsuranceAccidentMetadata,
-  IPoolMetadata,
-  IUserMetadata,
-} from "./types"
+import { IInvestProposalMetadata, IPoolMetadata, IUserMetadata } from "./types"
+import { InsuranceAccident } from "interfaces/insurance"
 
 interface IAddPool extends IPoolMetadata {
   poolId: string
@@ -37,5 +33,5 @@ export const addProposal = createAction<{
 
 // Add insurance accident data
 export const addInsuranceAccident = createAction<{
-  params: InsuranceAccidentMetadata
+  params: { hash: string; data: InsuranceAccident }
 }>("ipfs/add-insurance-accident")

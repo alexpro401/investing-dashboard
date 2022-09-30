@@ -1,11 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit"
 
-import {
-  IInvestProposalMetadata,
-  InsuranceAccidentMetadata,
-  IPoolMetadata,
-  IUserMetadata,
-} from "./types"
+import { IInvestProposalMetadata, IPoolMetadata, IUserMetadata } from "./types"
 import {
   addPool,
   removePool,
@@ -14,6 +9,7 @@ import {
   addProposal,
   addInsuranceAccident,
 } from "./actions"
+import { InsuranceAccident } from "interfaces/insurance"
 
 export interface IpfsMetadataState {
   user: IUserMetadata | null
@@ -27,9 +23,7 @@ export interface IpfsMetadataState {
       [hash: string]: IInvestProposalMetadata
     }
   }
-  insuranceAccidents: {
-    [hash: string]: InsuranceAccidentMetadata
-  }
+  insuranceAccidents: Record<string, InsuranceAccident>
 }
 
 export const initialState: IpfsMetadataState = {
@@ -84,7 +78,7 @@ export default createReducer(initialState, (builder) =>
     .addCase(addInsuranceAccident, (state, { payload: { params } }) => {
       state.insuranceAccidents = {
         ...state.insuranceAccidents,
-        [params.hash]: params,
+        [params.hash]: params.data,
       }
     })
 )

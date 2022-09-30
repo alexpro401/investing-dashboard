@@ -15,7 +15,8 @@ import {
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import InsuranceAccidentExist from "modals/InsuranceAccidentExist"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
-import { isNil } from "lodash"
+import { isEmpty, isNil } from "lodash"
+import { useInsuranceAccidents } from "hooks/useInsurance"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -24,9 +25,23 @@ const poolsClient = createClient({
 const CreateInsuranceAccidentChooseFundStep: FC = () => {
   const { account } = useActiveWeb3React()
 
-  const { insuranceAccidentExist } = useContext(
+  const { form, insuranceAccidentExist } = useContext(
     InsuranceAccidentCreatingContext
   )
+  const { pool } = form
+
+  const { insuranceAccidentByPool, getInsuranceAccidentByPool } =
+    useInsuranceAccidents()
+
+  useEffect(() => {
+    getInsuranceAccidentByPool(pool.get)
+  }, [pool])
+
+  useEffect(() => {
+    insuranceAccidentExist.set(
+      !isEmpty(insuranceAccidentByPool) && !isNil(insuranceAccidentByPool)
+    )
+  }, [insuranceAccidentByPool])
 
   const [response] = useQuery<{ traderPools: IPoolQuery[] }>({
     pause: !account,

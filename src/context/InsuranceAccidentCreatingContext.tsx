@@ -4,12 +4,9 @@ import {
   FC,
   HTMLAttributes,
   SetStateAction,
-  useEffect,
   useState,
 } from "react"
 import { Insurance } from "interfaces/thegraphs/investors"
-import { useSelector } from "react-redux"
-import { selectInsuranceAccidentByPool } from "state/ipfsMetadata/selectors"
 import {
   InsuranceAccidentInvestors,
   InsuranceAccidentInvestorsTotalsInfo,
@@ -126,13 +123,7 @@ const InsuranceAccidentCreatingContextProvider: FC<
     chat: useState<string>(""),
   }
 
-  const _insuranceAccidentExist = useState<boolean>(false)
-  const accidentByChosenPool = useSelector(
-    selectInsuranceAccidentByPool(form.pool[0])
-  )
-  useEffect(() => {
-    _insuranceAccidentExist[1](accidentByChosenPool !== null)
-  }, [accidentByChosenPool])
+  const insuranceAccidentExist = useState<boolean>(false)
 
   const insuranceDueDate = useState<Insurance>({} as Insurance)
 
@@ -180,8 +171,8 @@ const InsuranceAccidentCreatingContextProvider: FC<
             },
           },
           insuranceAccidentExist: {
-            get: _insuranceAccidentExist[0],
-            set: _insuranceAccidentExist[1],
+            get: insuranceAccidentExist[0],
+            set: insuranceAccidentExist[1],
           },
           insuranceDueDate: {
             get: insuranceDueDate[0],

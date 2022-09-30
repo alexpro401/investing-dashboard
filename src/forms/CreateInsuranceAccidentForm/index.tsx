@@ -219,9 +219,16 @@ const CreateInsuranceAccidentForm: FC = () => {
           })
           break
         }
-        if (!insuranceAccidentExist.get) {
-          setCurrentStep(STEPS.chooseBlock)
+        if (insuranceAccidentExist.get) {
+          showAlert({
+            content: "Insurance accident for chosen pool already exist.",
+            type: AlertType.warning,
+            hideDuration: 10000,
+          })
+          break
         }
+
+        setCurrentStep(STEPS.chooseBlock)
         break
       case STEPS.chooseBlock:
         if (

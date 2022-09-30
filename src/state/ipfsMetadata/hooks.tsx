@@ -9,12 +9,10 @@ import {
   selectPoolMetadata,
   selectUserMetadata,
 } from "./selectors"
-import { addPool, addProposal, addUser } from "./actions"
-import {
-  IInvestProposalMetadata,
-  InsuranceAccidentMetadata,
-  IUserMetadata,
-} from "./types"
+import { addInsuranceAccident, addPool, addProposal, addUser } from "./actions"
+import { IInvestProposalMetadata, IUserMetadata } from "./types"
+import { InsuranceAccident } from "interfaces/insurance"
+import { isNil } from "lodash"
 
 export function usePoolMetadata(poolId, hash) {
   const dispatch = useDispatch()
@@ -116,13 +114,21 @@ export function useInvestProposalMetadata(
   return [{ investProposalMetadata, loading }, { fetchInvestProposalMetadata }]
 }
 
-export function useInsuranceAccidentMetadata(hash): [
-  {
-    insuranceAccidentMetadata: InsuranceAccidentMetadata | null
-    loading: boolean
-  },
-  { fetchInsuranceAccidentMetadata: () => void }
-] {
+interface InsuranceAccidentMetadataResult {
+  insuranceAccidentMetadata: InsuranceAccident | null
+  loading: boolean
+}
+interface InsuranceAccidentMetadataMethods {
+  fetchInsuranceAccidentMetadata: () => void
+}
+type InsuranceAccidentMetadataResponse = [
+  InsuranceAccidentMetadataResult,
+  InsuranceAccidentMetadataMethods
+]
+
+export function useInsuranceAccidentMetadata(
+  hash
+): InsuranceAccidentMetadataResponse {
   const dispatch = useDispatch()
   const insuranceAccidentMetadata = useSelector(selectInsuranceAccident(hash))
   const [loading, setLoading] = useState(false)
@@ -132,7 +138,7 @@ export function useInsuranceAccidentMetadata(hash): [
       setLoading(true)
       const data = await getIpfsData(hash)
       if (data) {
-        dispatch(addProposal({ params: { hash, ...data } }))
+        dispatch(addInsuranceAccident({ params: { hash, data } }))
       }
       setLoading(false)
     } catch (error) {
@@ -142,10 +148,8 @@ export function useInsuranceAccidentMetadata(hash): [
   }, [dispatch, hash])
 
   useEffect(() => {
-    if (!hash) return
-    if (insuranceAccidentMetadata === null) {
-      fetchInsuranceAccidentMetadata()
-    }
+    if (isNil(hash) || isNil(insuranceAccidentMetadata)) return
+    ;(async () => await fetchInsuranceAccidentMetadata())()
   }, [
     hash,
     dispatch,
