@@ -1,6 +1,6 @@
 import { FC, useCallback, useContext, useEffect, useState } from "react"
 import { createClient, Provider as GraphProvider } from "urql"
-import { isNil, debounce } from "lodash"
+import { isNil, isEmpty } from "lodash"
 
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
 
@@ -31,95 +31,124 @@ import { format } from "date-fns"
 import { DATE_TIME_FORMAT } from "constants/time"
 import DatePicker from "components/DatePicker"
 import { InputGroup } from "../styled"
+import Skeleton from "components/Skeleton"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
 })
 
 const CreateInsuranceAccidentChooseBlockStep: FC = () => {
-  const { form, insuranceAccidentExist, poolPriceHistoryDueDate } = useContext(
+  const { form, insuranceAccidentExist, chart } = useContext(
     InsuranceAccidentCreatingContext
   )
 
   const { block, pool, date } = form
+  const { forPool, timeframe, data, point } = chart
 
   const [, poolData] = usePoolContract(pool.get)
   const [baseTokenData] = useERC20Data(poolData?.parameters.baseToken)
 
   const [isDateOpen, setDateOpen] = useState<boolean>(false)
-  const [timeframe, setTimeframe] = useState(TIMEFRAMES["M"])
 
-  const [_searchBlock, _setSearchBlock] = useState(undefined)
-  const [_searchDate, _setSearchDate] = useState(undefined)
-
-  const [history, historyLoading, updateHistory] = usePriceHistory(
+  const [pause, setPause] = useState(true)
+  const [history, historyLoading] = usePriceHistory(
     pool.get,
-    TIMEFRAME_AGREGATION_CODES[timeframe],
-    TIMEFRAME_LIMIT_CODE[timeframe],
-    _searchDate ? _searchDate : TIMEFRAME_FROM_DATE[timeframe],
-    _searchBlock
+    TIMEFRAME_AGREGATION_CODES[timeframe.get],
+    TIMEFRAME_LIMIT_CODE[timeframe.get],
+    !isNil(date.get) && !isEmpty(date.get)
+      ? Number(date.get)
+      : TIMEFRAME_FROM_DATE[timeframe.get],
+    !isEmpty(block.get) ? Number(block.get) : undefined,
+    pause
   )
-  const historyFormatted = formateChartData(history)
 
-  const [currentPoint, setCurrentPoint] = useState<any | undefined>()
+  const historyFormatted = formateChartData(
+    !isEmpty(data.get) ? data.get : undefined
+  )
+
   useEffect(() => {
     if (history && history.length > 0) {
       const activeLabel = 1
       const payload = history[activeLabel] ?? {}
       const price = getLP(String(payload?.baseTVL), String(payload?.supply))
 
-      setCurrentPoint({
+      const newPoint = {
         activeLabel,
         payload: {
           ...payload,
           price,
           pnl: getPNL(price),
         },
-      })
+      }
+
+      point.set(newPoint)
+      data.set(history)
+      setPause(true)
     }
   }, [history])
 
   useEffect(() => {
-    _setSearchDate(undefined)
-    _setSearchBlock(undefined)
-  }, [timeframe])
+    if (isEmpty(data.get)) {
+      setPause(false)
+    }
+
+    if (isEmpty(forPool.get) || pool.get !== forPool.get) {
+      timeframe.set(TIMEFRAMES["M"])
+      data.set([])
+      date.set("")
+      block.set("")
+      setPause(false)
+    }
+
+    return () => {
+      forPool.set(pool.get)
+    }
+  }, [])
 
   useEffect(() => {
-    if (currentPoint !== undefined) {
-      const { payload } = currentPoint
-
-      block.set(payload.block)
-      date.set(String(payload.timestamp))
-      poolPriceHistoryDueDate.set(payload)
+    if (!isEmpty(point.get) && !historyLoading) {
+      block.set(point.get.payload.block)
+      date.set(String(point.get.payload.timestamp))
     }
-  }, [currentPoint])
+  }, [point])
 
   const onChoosePoint = useCallback(
     (p) => {
-      if (currentPoint && p && currentPoint.activeLabel !== p.activeLabel) {
-        setCurrentPoint({
+      if (
+        !isNil(p) &&
+        !isNil(p.activeLabel) &&
+        point.get.activeLabel !== p.activeLabel &&
+        !isNil(p.activePayload[0].payload)
+      ) {
+        point.set({
           payload: p.activePayload[0].payload ?? {},
           activeLabel: p.activeLabel,
         })
       }
     },
-    [currentPoint]
+    [point]
   )
 
-  const onFieldChange = useCallback(
-    (name, value) => {
-      if (name === "block") {
-        setTimeframe(TIMEFRAMES["M"])
-        _setSearchBlock(!value || value.length === 0 ? "0" : value)
-      } else if (name === "date") {
-        setTimeframe(TIMEFRAMES["M"])
-        _setSearchDate(value)
-      }
-      debounce(updateHistory, 750)
-      form[name].set(value)
-    },
-    [form, updateHistory]
-  )
+  const onFieldChange = useCallback((name, value) => {
+    setPause(true)
+    if (name === "block") {
+      block.set(!value || value.length === 0 ? "" : value)
+      date.set("")
+      timeframe.set(TIMEFRAMES["M"])
+    } else if (name === "date") {
+      date.set(value)
+      block.set("")
+      timeframe.set(TIMEFRAMES["M"])
+    }
+    setPause(false)
+  }, [])
+
+  const onTimeframeChange = useCallback((value) => {
+    timeframe.set(value)
+    date.set("")
+    block.set("")
+    setPause(false)
+  }, [])
 
   return (
     <>
@@ -143,21 +172,31 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
             data={historyFormatted}
             baseToken={baseTokenData}
             onPointClick={onChoosePoint}
-            activeDot={currentPoint}
-            loading={historyLoading}
+            activeDot={point.get}
+            loading={
+              historyLoading ||
+              isNil(historyFormatted) ||
+              isEmpty(historyFormatted)
+            }
           />
 
-          <TimeframeList current={timeframe} set={setTimeframe} />
+          <TimeframeList current={timeframe.get} set={onTimeframeChange} />
           <InputGroup>
-            <Input
-              type="number"
-              theme="clear"
-              inputmode="decimal"
-              placeholder="Block"
-              value={block.get}
-              onChange={(v) => onFieldChange("block", v)}
-            />
-            <div>
+            {isEmpty(block.get) ? (
+              <Skeleton h="50px" w="100%" radius="16px 0 0 16px" />
+            ) : (
+              <Input
+                type="number"
+                theme="clear"
+                inputmode="decimal"
+                placeholder="Block"
+                value={block.get}
+                onChange={(v) => onFieldChange("block", v)}
+              />
+            )}
+            {isEmpty(date.get) ? (
+              <Skeleton h="50px" w="100%" radius="0 16px 16px 0" />
+            ) : (
               <Input
                 disabled
                 theme="clear"
@@ -168,7 +207,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
                 placeholder="DD/MM/YYYY, HH"
                 onClick={() => setDateOpen(!isDateOpen)}
               />
-            </div>
+            )}
           </InputGroup>
         </Card>
       </StepsRoot>

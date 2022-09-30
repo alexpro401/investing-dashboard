@@ -1,9 +1,19 @@
-import { IPriceHistoryWithCalcPNL } from "./thegraphs/all-pools"
+import { IPriceHistory } from "./thegraphs/all-pools"
 import {
   Insurance,
   InvestorPoolPosition,
   InvestorPoolPositionWithHistory,
 } from "./thegraphs/investors"
+
+export interface IPriceHistoryWithCalcPNL extends IPriceHistory {
+  pnl: number | string
+  price: string
+}
+
+export interface InsuranceAccidentChartPoint {
+  activeLabel: number
+  payload: IPriceHistoryWithCalcPNL
+}
 
 export interface InsuranceAccidentInfo {
   pool: string
@@ -29,11 +39,18 @@ export type InsuranceAccidentInvestors = Record<
   InsuranceAccidentInvestor
 >
 
+export interface InsuranceAccidentPriceHistory {
+  data: IPriceHistory[]
+  point: InsuranceAccidentChartPoint
+  forPool: string
+  timeframe: string
+}
+
 export interface InsuranceAccident {
   creator: string
   timestamp: number
   accidentInfo: InsuranceAccidentInfo
-  poolPriceHistoryDueDate: IPriceHistoryWithCalcPNL
   investorsTotals: InsuranceAccidentInvestorsTotalsInfo
   investorsInfo: InsuranceAccidentInvestors
+  chart: InsuranceAccidentPriceHistory
 }

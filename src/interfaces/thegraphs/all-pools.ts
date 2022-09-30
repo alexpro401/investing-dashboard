@@ -3,6 +3,7 @@ import { PoolType } from "constants/types"
 
 export interface IPriceHistory {
   APY: BigNumber
+  block: string
   usdTVL: number
   baseTVL: number
   supply: number
@@ -11,11 +12,6 @@ export interface IPriceHistory {
   timestamp: number
   traderUSD: number
   aggregationType: number
-}
-
-export interface IPriceHistoryWithCalcPNL extends IPriceHistory {
-  pnl: string
-  price: string
 }
 
 export interface IPriceHistoryQuery {

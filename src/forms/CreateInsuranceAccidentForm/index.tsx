@@ -25,6 +25,9 @@ import CreateInsuranceAccidentCheckSettingsStep from "./steps/CreateInsuranceAcc
 import CreateInsuranceAccidentAddDescriptionStep from "./steps/CreateInsuranceAccidentAddDescriptionStep"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { AnimatePresence } from "framer-motion"
+import { addInsuranceProposalData, getIpfsData } from "utils/ipfs"
+import { InsuranceAccident } from "interfaces/insurance"
+import { useWeb3React } from "@web3-react/core"
 
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
@@ -38,8 +41,16 @@ enum STEPS {
 }
 
 const CreateInsuranceAccidentForm: FC = () => {
+  const { account } = useWeb3React()
   const context = useContext(InsuranceAccidentCreatingContext)
-  const { form, insuranceDueDate, insuranceAccidentExist } = context
+  const {
+    form,
+    chart,
+    insuranceDueDate,
+    investorsTotals,
+    insuranceAccidentExist,
+    investorsInfo,
+  } = context
 
   const { pool, block, date, description, chat } = form
 
@@ -99,16 +110,42 @@ const CreateInsuranceAccidentForm: FC = () => {
   )
 
   const submit = useCallback(async () => {
+    if (!account) {
+      return
+    }
     formController.disableForm()
     try {
       // TODO: 1) Prepare and save data to IPFS
+      const insuranceProposalData = {
+        creator: account,
+        accidentInfo: {
+          pool: pool.get,
+          block: block.get,
+          date: date.get,
+          description: description.get,
+          chat: chat.get,
+        },
+        investorsTotals: investorsTotals.get,
+        investorsInfo: investorsInfo.get,
+        chart: {
+          data: chart.data.get,
+          point: chart.point.get,
+          forPool: chart.forPool.get,
+          timeframe: chart.timeframe.get,
+        },
+      } as unknown as InsuranceAccident
+      const ipfsResponse = await addInsuranceProposalData(insuranceProposalData)
+      console.log("ipfsResponse", ipfsResponse)
+
+      const ipfsData = await getIpfsData(ipfsResponse.path)
+      console.log("ipfsData", ipfsData)
       // TODO: 2) Save URL from IPFS to chain
     } catch (error) {
       console.error(error)
     } finally {
       formController.enableForm()
     }
-  }, [formController])
+  }, [account, formController])
 
   const handleNextStep = () => {
     if (notEnoughInsurance) return

@@ -8,13 +8,15 @@ import {
   useState,
 } from "react"
 import { Insurance } from "interfaces/thegraphs/investors"
-import { IPriceHistoryWithCalcPNL } from "interfaces/thegraphs/all-pools"
 import { useSelector } from "react-redux"
 import { selectInsuranceAccidentByPool } from "state/ipfsMetadata/selectors"
 import {
   InsuranceAccidentInvestors,
   InsuranceAccidentInvestorsTotalsInfo,
+  InsuranceAccidentChartPoint,
 } from "interfaces/insurance"
+import { IPriceHistory } from "interfaces/thegraphs/all-pools"
+import { TIMEFRAMES } from "constants/history"
 
 export interface InsuranceAccidentForm {
   pool: {
@@ -49,11 +51,6 @@ export interface InsuranceDueDate {
   set: Dispatch<SetStateAction<Insurance>>
 }
 
-export interface PoolPriceHistoryDueDate {
-  get: IPriceHistoryWithCalcPNL
-  set: Dispatch<SetStateAction<IPriceHistoryWithCalcPNL>>
-}
-
 export interface InvestorsTotals {
   get: InsuranceAccidentInvestorsTotalsInfo
   set: Dispatch<SetStateAction<InsuranceAccidentInvestorsTotalsInfo>>
@@ -64,13 +61,32 @@ export interface InvestorsInfo {
   set: Dispatch<SetStateAction<InsuranceAccidentInvestors>>
 }
 
+export interface Chart {
+  point: {
+    get: InsuranceAccidentChartPoint
+    set: Dispatch<SetStateAction<InsuranceAccidentChartPoint>>
+  }
+  timeframe: {
+    get: string
+    set: Dispatch<SetStateAction<string>>
+  }
+  data: {
+    get: IPriceHistory[]
+    set: Dispatch<SetStateAction<IPriceHistory[]>>
+  }
+  forPool: {
+    get: string
+    set: Dispatch<SetStateAction<string>>
+  }
+}
+
 interface InsuranceAccidentCreatingContext {
   form: InsuranceAccidentForm
   insuranceAccidentExist: InsuranceAccidentExist
   insuranceDueDate: InsuranceDueDate
-  poolPriceHistoryDueDate: PoolPriceHistoryDueDate
   investorsTotals: InvestorsTotals
   investorsInfo: InvestorsInfo
+  chart: Chart
 }
 
 export const InsuranceAccidentCreatingContext =
@@ -85,15 +101,18 @@ export const InsuranceAccidentCreatingContext =
 
     insuranceAccidentExist: { get: false, set: () => {} },
     insuranceDueDate: { get: {} as Insurance, set: () => {} },
-    poolPriceHistoryDueDate: {
-      get: {} as IPriceHistoryWithCalcPNL,
-      set: () => {},
-    },
     investorsTotals: {
       get: {} as InsuranceAccidentInvestorsTotalsInfo,
       set: () => {},
     },
     investorsInfo: { get: {} as InsuranceAccidentInvestors, set: () => {} },
+
+    chart: {
+      point: { get: {} as InsuranceAccidentChartPoint, set: () => {} },
+      data: { get: [] as IPriceHistory[], set: () => {} },
+      timeframe: { get: "", set: () => {} },
+      forPool: { get: "", set: () => {} },
+    },
   })
 
 const InsuranceAccidentCreatingContextProvider: FC<
@@ -117,10 +136,6 @@ const InsuranceAccidentCreatingContextProvider: FC<
 
   const insuranceDueDate = useState<Insurance>({} as Insurance)
 
-  const poolPriceHistoryDueDate = useState<IPriceHistoryWithCalcPNL>(
-    {} as IPriceHistoryWithCalcPNL
-  )
-
   const investorsTotals = useState<InsuranceAccidentInvestorsTotalsInfo>(
     {} as InsuranceAccidentInvestorsTotalsInfo
   )
@@ -128,6 +143,15 @@ const InsuranceAccidentCreatingContextProvider: FC<
   const investorsInfo = useState<InsuranceAccidentInvestors>(
     {} as InsuranceAccidentInvestors
   )
+
+  const chart = {
+    point: useState<InsuranceAccidentChartPoint>(
+      {} as InsuranceAccidentChartPoint
+    ),
+    data: useState<IPriceHistory[]>([] as IPriceHistory[]),
+    timeframe: useState<string>(TIMEFRAMES["M"]),
+    forPool: useState<string>(""),
+  }
 
   return (
     <>
@@ -163,17 +187,32 @@ const InsuranceAccidentCreatingContextProvider: FC<
             get: insuranceDueDate[0],
             set: insuranceDueDate[1],
           },
-          poolPriceHistoryDueDate: {
-            get: poolPriceHistoryDueDate[0],
-            set: poolPriceHistoryDueDate[1],
-          },
           investorsTotals: {
             get: investorsTotals[0],
             set: investorsTotals[1],
           },
           investorsInfo: {
-            set: investorsInfo[1],
             get: investorsInfo[0],
+            set: investorsInfo[1],
+          },
+
+          chart: {
+            point: {
+              get: chart.point[0],
+              set: chart.point[1],
+            },
+            data: {
+              get: chart.data[0],
+              set: chart.data[1],
+            },
+            timeframe: {
+              get: chart.timeframe[0],
+              set: chart.timeframe[1],
+            },
+            forPool: {
+              get: chart.forPool[0],
+              set: chart.forPool[1],
+            },
           },
         }}
       >

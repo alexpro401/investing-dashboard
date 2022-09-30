@@ -196,23 +196,25 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
   const { account } = useWeb3React()
   const { data, totals, loading, noData } = useInvestorsInAccident()
 
-  const { form, poolPriceHistoryDueDate, investorsTotals, investorsInfo } =
-    useContext(InsuranceAccidentCreatingContext)
+  const { form, chart, investorsTotals, investorsInfo } = useContext(
+    InsuranceAccidentCreatingContext
+  )
 
   const { pool } = form
+  const { point } = chart
 
   const [{ priceUSD }] = usePoolPrice(pool.get)
 
   const initialPrice = useMemo(() => {
-    if (isEmpty(poolPriceHistoryDueDate.get)) {
+    if (isEmpty(point.get)) {
       return <Skeleton w="120px" h="16px" />
     }
 
-    const { baseTVL, supply } = poolPriceHistoryDueDate.get
+    const { baseTVL, supply } = point.get.payload
     const price = getLP(String(baseTVL), String(supply))
 
     return `$ ${price}`
-  }, [poolPriceHistoryDueDate])
+  }, [point])
 
   const currentPrice = useMemo(() => {
     if (isNil(priceUSD)) {
@@ -223,11 +225,11 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
   }, [priceUSD])
 
   const priceDiff = useMemo(() => {
-    if (isEmpty(poolPriceHistoryDueDate.get) || isNil(priceUSD)) {
+    if (isEmpty(point.get) || isNil(priceUSD)) {
       return <Skeleton w="120px" h="16px" />
     }
 
-    const { baseTVL, supply } = poolPriceHistoryDueDate.get
+    const { baseTVL, supply } = point.get.payload
     const initial = getLP(String(baseTVL), String(supply))
 
     const diff = Math.abs(
@@ -235,7 +237,7 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
     ).toFixed(2)
 
     return `$ ${diff}`
-  }, [poolPriceHistoryDueDate, priceUSD])
+  }, [point, priceUSD])
 
   useEffect(() => {
     if (!loading && !noData) {

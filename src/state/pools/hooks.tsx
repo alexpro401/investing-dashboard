@@ -104,7 +104,8 @@ export function usePriceHistory(
   timeframes: [number, number],
   limit = 1000,
   startDate: number,
-  block?: number
+  block?: number,
+  pause?: boolean
 ): [IPriceHistory[] | undefined, boolean, () => void] {
   const [history, setHistory] = useState<IPriceHistory[] | undefined>(undefined)
   const [pool, update] = useQuery<{
@@ -120,7 +121,7 @@ export function usePriceHistory(
       block,
     },
     requestPolicy: "network-only",
-    pause: !address || !startDate,
+    pause: pause || !address || !startDate,
   })
 
   useEffect(() => {
