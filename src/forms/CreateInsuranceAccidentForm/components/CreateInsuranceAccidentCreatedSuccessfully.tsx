@@ -9,7 +9,6 @@ import Confirm from "components/Confirm"
 import confirmModalImage from "assets/images/confirm-modal.png"
 
 import * as S from "../styled/modal-created-sucessfully"
-import { useWeb3React } from "@web3-react/core"
 import { copyToClipboard } from "utils/clipboard"
 import AppButton from "common/AppButton"
 import { ICON_NAMES } from "constants/icon-names"
@@ -26,7 +25,6 @@ const CreateInsuranceAccidentCreatedSuccessfully: FC<Props> = ({
   url,
   setOpen,
 }) => {
-  const { account } = useWeb3React()
   const navigate = useNavigate()
   const addToast = useAddToast()
 
