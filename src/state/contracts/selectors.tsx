@@ -34,7 +34,7 @@ export const selectPoolFactoryAddress = createSelector(
   (contracts) => contracts.PoolFactory || ""
 )
 
-export const selectTraderPoolRegistryAddress = createSelector(
+export const selectPoolRegistryAddress = createSelector(
   [selectContracts],
   (contracts) => contracts.PoolRegistry || ""
 )

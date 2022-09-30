@@ -82,7 +82,6 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
     ;(async () => {
       try {
         const usersData = await traderPool.getUsersInfo(account, 0, 0)
-        console.log(usersData)
         if (usersData && !!usersData.length) {
           setTotalAccountInvestedLP(usersData[0].poolLPBalance)
         }

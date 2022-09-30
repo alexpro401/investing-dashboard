@@ -29,7 +29,7 @@ const getAllFiles = function (dirPath, arrayOfFiles) {
   return arrayOfFiles
 }
 
-const ignoreFiles = ["index.ts", "ERC20.ts"]
+const ignoreFiles = ["index.ts"]
 
 const fileNames = getAllFiles(ABI_PATH)
   .filter((f) => !ignoreFiles.includes(f.file))

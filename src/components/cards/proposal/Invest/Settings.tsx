@@ -8,7 +8,6 @@ import {
   useCallback,
 } from "react"
 import { format } from "date-fns"
-import { Contract } from "@ethersproject/contracts"
 import { BigNumber } from "@ethersproject/bignumber"
 import { parseEther, parseUnits } from "@ethersproject/units"
 
@@ -26,6 +25,7 @@ import { accordionSummaryVariants } from "motion/variants"
 import { Flex } from "theme"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { SettingsStyled as S } from "./styled"
+import { TraderPoolInvestProposalType } from "interfaces/abi-typings"
 
 interface Values {
   timestampLimit: number
@@ -69,7 +69,7 @@ interface Props {
   timestamp: BigNumber
   maxSizeLP: BigNumber
   fullness: BigNumber
-  proposalPool: Contract | null
+  proposalPool: TraderPoolInvestProposalType | null
   proposalId: string
   successCallback: (timestamp: number, maxSize: BigNumber) => void
 }
@@ -151,7 +151,7 @@ const InvestCardSettings: FC<Props> = ({
     if (!hasError) {
       try {
         const limitHex = parseUnits(investLPLimit, 18).toHexString()
-        const proposalLimits = [timestampLimit, limitHex]
+        const proposalLimits = { timestampLimit, investLPLimit: limitHex }
 
         const receipt = await proposalPool.changeProposalRestrictions(
           proposalId,

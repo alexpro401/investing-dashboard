@@ -86,7 +86,7 @@ export interface DeployBasicPoolRequest {
   commissionPeriod: BigNumberish
   commissionPercentage: BigNumberish
 }
-export interface SettingsParamsRequestRequest {
+export interface SettingsParamsRequest {
   earlyCompletion: boolean
   delegatedVotingAllowed: boolean
   validatorsVote: boolean

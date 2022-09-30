@@ -12,7 +12,8 @@ import TransactionHistory from "components/TransactionHistory"
 
 import { Insurance } from "abi"
 import { selectInsuranceAddress } from "state/contracts/selectors"
-import useContract, { useUserRegistryContract } from "hooks/useContract"
+import useContract from "hooks/useContract"
+import { useUserRegistryContract } from "contracts"
 import useCopyClipboard from "hooks/useCopyClipboard"
 
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
@@ -127,7 +128,7 @@ const useUserSettings = (): [
   }
 
   useEffect(() => {
-    if (!userRegistry) return
+    if (!userRegistry || !account) return
 
     const getUserInfo = async () => {
       setLoading(true)

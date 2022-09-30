@@ -56,7 +56,7 @@ export function useContractsRegistryContract() {
   ) as unknown as ContractsRegistryType | null
 }
 
-export default function useCoreProperties() {
+export function useCorePropertiesContract() {
   return useContract(
     useSelector(selectCorePropertiesAddress),
     CoreProperties
@@ -77,7 +77,7 @@ export function useInsuranceContract() {
   ) as unknown as InsuranceType | null
 }
 
-export function useInvestTraderPool(address: Address) {
+export function useInvestTraderPoolContract(address: Address) {
   return useContract(
     address,
     InvestTraderPool

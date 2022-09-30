@@ -7,8 +7,9 @@ import { useActiveWeb3React } from "hooks"
 import { usePoolContract } from "hooks/usePool"
 import { InvestorRiskyProposalsQuery } from "queries"
 import useQueryPagination from "hooks/useQueryPagination"
-import { useRiskyProposalContract } from "hooks/useContract"
-import { IRiskyProposal } from "interfaces/contracts/ITraderPoolRiskyProposal"
+import { useTraderPoolRiskyProposalContract } from "contracts"
+import { ProposalsResponse } from "interfaces/abi-typings/TraderPoolRiskyProposal"
+import { useProposalAddress } from "hooks/useContract"
 
 import LoadMore from "components/LoadMore"
 import RiskyProposalCard from "components/cards/proposal/Risky"
@@ -30,9 +31,10 @@ function RiskyProposalCardInitializer({
   poolAddress,
   proposalId,
 }: IRiskyCardInitializer) {
-  const [proposalPool] = useRiskyProposalContract(poolAddress)
+  const proposalAddress = useProposalAddress(poolAddress)
+  const proposalPool = useTraderPoolRiskyProposalContract(proposalAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [proposal, setProposal] = useState<IRiskyProposal | null>(null)
+  const [proposal, setProposal] = useState<ProposalsResponse | null>(null)
 
   const isTrader = useMemo<boolean>(() => {
     if (!account || !poolInfo) {
@@ -48,7 +50,7 @@ function RiskyProposalCardInitializer({
       try {
         const data = await proposalPool.getProposalInfos(proposalId, 1)
         if (data && data[0]) {
-          setProposal({ ...data[0], poolAddress })
+          setProposal(data[0])
         }
       } catch (error) {
         console.log(error)

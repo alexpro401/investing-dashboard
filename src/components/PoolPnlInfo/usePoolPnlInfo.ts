@@ -8,7 +8,7 @@ import { normalizeBigNumber } from "utils"
 import { usePoolQuery } from "hooks/usePool"
 import usePoolPrice from "hooks/usePoolPrice"
 import { useERC20Data } from "state/erc20/hooks"
-import { usePriceFeedContract } from "hooks/useContract"
+import { usePriceFeedContract } from "contracts"
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 
 const usePoolPnlInfo = (address: string | undefined) => {

@@ -6,6 +6,7 @@ import {
   BigNumberish,
 } from "ethers"
 import { EthersContractContextV5 } from "ethereum-abi-types-generator"
+import { RiskyProposalLimitsRequest } from "./ProposalLimits"
 
 export type ContractContext = EthersContractContextV5<
   TraderPoolRiskyProposal,
@@ -135,7 +136,7 @@ export interface ProposalActivePortfolioExchangedEventEmittedResponse {
 export interface ProposalCreatedEventEmittedResponse {
   proposalId: BigNumberish
   token: string
-  proposalLimits: ProposalLimitsRequest
+  proposalLimits: RiskyProposalLimitsRequest
 }
 export interface ProposalDivestedEventEmittedResponse {
   proposalId: BigNumberish

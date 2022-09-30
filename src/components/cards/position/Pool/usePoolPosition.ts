@@ -7,7 +7,7 @@ import { formatBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
 import { IPosition } from "interfaces/thegraphs/all-pools"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import { usePriceFeedContract } from "hooks/useContract"
+import { usePriceFeedContract } from "contracts"
 
 import {
   divideBignumbers,
