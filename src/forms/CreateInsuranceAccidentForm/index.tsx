@@ -121,9 +121,7 @@ const CreateInsuranceAccidentForm: FC = () => {
   const notEnoughInsurance = useMemo(() => {
     if (insuranceLoading) return false
 
-    return (
-      Number(normalizeBigNumber(insuranceBalances.insuranceDexe, 18, 6)) < 1000
-    )
+    return insuranceBalances.insuranceDexe.lt(1000)
   }, [insuranceLoading, insuranceBalances])
 
   useEffect(() => {
