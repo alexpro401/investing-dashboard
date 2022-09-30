@@ -192,6 +192,11 @@ export interface UnstakeInsuranceTransactionInfo {
   amount: number
 }
 
+export interface InsuranceRegisterProposalClaimTransactionInfo {
+  type: TransactionType.INSURANCE_REGISTER_PROPOSAL_CLAIM
+  pool: string
+}
+
 export interface PrivacyPolicyAgreeTransactionInfo {
   type: TransactionType.USER_AGREED_TO_PRIVACY_POLICY
 }
@@ -237,6 +242,7 @@ export type TransactionInfo =
   | ClaimInvestProposalTransactionInfo
   | StakeInsuranceTransactionInfo
   | UnstakeInsuranceTransactionInfo
+  | InsuranceRegisterProposalClaimTransactionInfo
   | PrivacyPolicyAgreeTransactionInfo
   | TraderGetPerformanceFeeTransactionInfo
   | ConvertInvestProposalToDividendsTransactionInfo

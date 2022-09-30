@@ -25,9 +25,14 @@ import CreateInsuranceAccidentCheckSettingsStep from "./steps/CreateInsuranceAcc
 import CreateInsuranceAccidentAddDescriptionStep from "./steps/CreateInsuranceAccidentAddDescriptionStep"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { AnimatePresence } from "framer-motion"
-import { addInsuranceProposalData, getIpfsData } from "utils/ipfs"
+import { addInsuranceProposalData } from "utils/ipfs"
 import { InsuranceAccident } from "interfaces/insurance"
 import { useWeb3React } from "@web3-react/core"
+import { useFormValidation } from "hooks/useFormValidation"
+import { required } from "utils/validators"
+import { useInsuranceContract } from "hooks/useContract"
+import { TransactionType } from "state/transactions/types"
+import { useTransactionAdder } from "state/transactions/hooks"
 
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
@@ -55,9 +60,44 @@ const CreateInsuranceAccidentForm: FC = () => {
   const { pool, block, date, description, chat } = form
 
   const formController = useForm()
+  const { isFormValid, getFieldErrorMessage, touchField } = useFormValidation(
+    {
+      pool: pool.get,
+      block: block.get,
+      date: date.get,
+      description: description.get,
+      chat: chat.get,
+    },
+    {
+      pool: { required },
+      block: { required },
+      date: { required },
+      description: { required },
+      chat: { required },
+    }
+  )
+
+  useEffect(() => {
+    touchField("pool")
+  }, [pool])
+  useEffect(() => {
+    touchField("block")
+  }, [block])
+  useEffect(() => {
+    touchField("date")
+  }, [date])
+  useEffect(() => {
+    touchField("description")
+  }, [description])
+  useEffect(() => {
+    touchField("chat")
+  }, [chat])
 
   const [showAlert] = useAlert()
   const [insuranceBalances, insuranceLoading] = useInsurance()
+  const insurance = useInsuranceContract()
+  const addTransaction = useTransactionAdder()
+
   const [showNotEnoughInsurance, setShowNotEnoughInsurance] = useState(false)
   const [showNotEnoughInsuranceByDay, setShowNotEnoughInsuranceByDay] =
     useState(false)
@@ -110,12 +150,12 @@ const CreateInsuranceAccidentForm: FC = () => {
   )
 
   const submit = useCallback(async () => {
-    if (!account) {
+    if (!account || !isFormValid || !insurance) {
       return
     }
+
     formController.disableForm()
     try {
-      // TODO: 1) Prepare and save data to IPFS
       const insuranceProposalData = {
         creator: account,
         accidentInfo: {
@@ -134,25 +174,43 @@ const CreateInsuranceAccidentForm: FC = () => {
           timeframe: chart.timeframe.get,
         },
       } as unknown as InsuranceAccident
-      const ipfsResponse = await addInsuranceProposalData(insuranceProposalData)
-      console.log("ipfsResponse", ipfsResponse)
 
-      const ipfsData = await getIpfsData(ipfsResponse.path)
-      console.log("ipfsData", ipfsData)
-      // TODO: 2) Save URL from IPFS to chain
+      const ipfsResponse = await addInsuranceProposalData(insuranceProposalData)
+
+      if (!isNil(ipfsResponse) && !isNil(ipfsResponse.path)) {
+        const receipt = await insurance.proposeClaim(ipfsResponse.path)
+
+        addTransaction(receipt, {
+          type: TransactionType.INSURANCE_REGISTER_PROPOSAL_CLAIM,
+          pool: pool.get,
+        })
+      }
     } catch (error) {
       console.error(error)
     } finally {
       formController.enableForm()
     }
-  }, [account, formController])
+  }, [
+    account,
+    addTransaction,
+    block,
+    chart,
+    date,
+    description,
+    formController,
+    insurance,
+    investorsInfo,
+    investorsTotals,
+    isFormValid,
+    pool,
+  ])
 
   const handleNextStep = () => {
     if (notEnoughInsurance) return
 
     switch (currentStep) {
       case STEPS.chooseFund:
-        if (isEmpty(pool.get)) {
+        if (!isEmpty(getFieldErrorMessage("pool"))) {
           showAlert({
             content:
               "Before continue choose pool where accident has been happens",
@@ -166,7 +224,10 @@ const CreateInsuranceAccidentForm: FC = () => {
         }
         break
       case STEPS.chooseBlock:
-        if (isEmpty(block.get) || isEmpty(date.get)) {
+        if (
+          !isEmpty(getFieldErrorMessage("block")) ||
+          !isEmpty(getFieldErrorMessage("date"))
+        ) {
           showAlert({
             content:
               "Before continue choose closest block or date before accident has been happens",
@@ -191,14 +252,16 @@ const CreateInsuranceAccidentForm: FC = () => {
         setCurrentStep(STEPS.addDescription)
         break
       case STEPS.addDescription:
-        if (isEmpty(description.get) || isEmpty(chat.get)) {
-          let message = ""
+        const descriptionInvalid = !isEmpty(getFieldErrorMessage("description"))
+        const chatInvalid = !isEmpty(getFieldErrorMessage("chat"))
 
-          if (isEmpty(description.get) && isEmpty(chat.get)) {
+        if (descriptionInvalid || chatInvalid) {
+          let message = ""
+          if (descriptionInvalid && chatInvalid) {
             message = `Before continue add description of the accident and link to chat where investors can talk about accident.`
-          } else if (isEmpty(description.get)) {
+          } else if (descriptionInvalid) {
             message = `Before continue add description of the accident.`
-          } else if (isEmpty(chat.get)) {
+          } else if (chatInvalid) {
             message = `Before continue add link to chat where investors can talk about accident.`
           }
 
