@@ -49,7 +49,7 @@ const CreateInsuranceAccidentCreatedSuccessfully: FC<Props> = ({
       <S.Image src={confirmModalImage} alt="Success" />
       <AppButton
         onClick={copyURLToClipboard}
-        iconRight={ICON_NAMES.fileDock}
+        iconRight={ICON_NAMES.copy}
         color="default"
         size="x-small"
         text={shortenAddress(url, 7)}

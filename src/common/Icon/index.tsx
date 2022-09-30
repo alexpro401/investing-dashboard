@@ -14,6 +14,7 @@ import {
   ArrowDownFilled,
   ArrowUpFilled,
   ChatOutline,
+  Copy,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -56,6 +57,8 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return ArrowDownFilled as unknown as ElementType
       case ICON_NAMES.chatOutline:
         return ChatOutline as unknown as ElementType
+      case ICON_NAMES.copy:
+        return Copy as unknown as ElementType
 
       default:
         return AngleLeftIcon as unknown as ElementType

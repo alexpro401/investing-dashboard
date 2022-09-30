@@ -13,3 +13,4 @@ export { default as AngleLeftOutlinedIcon } from "assets/icons/AngleLeftOutlined
 export { default as AngleRightOutlinedIcon } from "assets/icons/AngleRightOutlinedIcon"
 export { default as ExternalLinkIcon } from "assets/icons/ExternalLinkIcon"
 export { default as ChatOutline } from "assets/icons/ChatOutline"
+export { default as Copy } from "assets/icons/Copy"
