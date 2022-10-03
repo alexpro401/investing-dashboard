@@ -25,6 +25,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   setValue: (...params: any) => any
   topFieldNodeRight?: ReactNode
   label?: string
+  labelNodeRight?: ReactNode
   placeholder?: string
   errorMessage?: string
 }
@@ -34,6 +35,7 @@ const ExternalDocumentField: FC<Props> = ({
   setValue,
   topFieldNodeRight,
   label,
+  labelNodeRight,
   placeholder,
   errorMessage,
   ...rest
@@ -84,9 +86,11 @@ const ExternalDocumentField: FC<Props> = ({
         onInput={handleNameInput}
         nodeRight={topFieldNodeRight}
         labelNodeRight={
-          !!name && isShowUrlOverlap ? (
+          labelNodeRight ||
+          (!!name && isShowUrlOverlap && (
             <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
-          ) : null
+          )) ||
+          null
         }
       />
       <S.BottomInputField>

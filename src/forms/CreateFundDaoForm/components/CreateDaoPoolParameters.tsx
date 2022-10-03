@@ -35,19 +35,6 @@ const CreateDaoPoolParameters: FC<Props> = ({ poolParameters }) => {
 
   return (
     <Flex gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
-      <Card>
-        <CardHead
-          nodeLeft={<CreateDaoCardStepNumber number={3} />}
-          title="General voting settings"
-        />
-        <CardDescription>
-          <p>
-            Configure the settings for proposals, voting, vote delegation, and
-            rewards for active members.
-          </p>
-        </CardDescription>
-      </Card>
-
       <S.CenteredImage src={CreateFundDocsImage} />
 
       <Card>

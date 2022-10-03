@@ -35,8 +35,8 @@ import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 import { readFromClipboard } from "utils/clipboard"
 import { useFormValidation } from "hooks/useFormValidation"
-import { isAddressValidator, required } from "utils/validators"
-import { isAddress } from "utils"
+import { isAddressValidator, isUrl, required } from "utils/validators"
+import { isAddress, isValidUrl } from "utils"
 import { useERC20 } from "hooks/useERC20"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
@@ -58,6 +58,7 @@ const TitlesStep: FC = () => {
       daoName: daoName.get,
       websiteUrl: websiteUrl.get,
       description: description.get,
+      documents: documents.get,
 
       tokenAddress: tokenAddress.get,
 
@@ -70,6 +71,8 @@ const TitlesStep: FC = () => {
       daoName: { required },
       websiteUrl: { required },
       description: { required },
+      documents: { required },
+
       ...(isErc20.get
         ? { tokenAddress: { required, isAddressValidator } }
         : {}),
@@ -385,6 +388,14 @@ const TitlesStep: FC = () => {
                   ) : null
                 }
                 label={`Document ${idx + 1}`}
+                labelNodeRight={
+                  !!el.name && !!el.url && isValidUrl(el.url) ? (
+                    <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                  ) : (
+                    <></>
+                  )
+                }
+                // errorMessage={getFieldErrorMessage(`documents[${idx}]`)}
               />
             ))}
           </CardFormControl>

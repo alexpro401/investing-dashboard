@@ -15,4 +15,5 @@ export enum ICON_NAMES {
   externalLink = "external-link",
   greenCheck = "green-check",
   trash = "trash",
+  cog = "cog",
 }

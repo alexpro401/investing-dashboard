@@ -10,7 +10,7 @@ import {
   Collapse,
   Icon,
 } from "common"
-import { InputField, OverlapInputField } from "fields"
+import { AddressAmountField, InputField } from "fields"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 
@@ -125,12 +125,14 @@ const IsDaoValidatorStep: FC = () => {
               </p>
             </CardDescription>
             <CardFormControl>
-              {validators.get.map((el, index) => (
-                <OverlapInputField
-                  key={index}
-                  value={el}
-                  setValue={(value) => validators.set(value, index)}
-                  label={`Address ${index + 1}`}
+              {validators.get.map((_, idx) => (
+                <AddressAmountField
+                  key={idx}
+                  value={validators[idx]}
+                  setValue={(value) => validators.set(value, idx)}
+                  secondValue={balances[idx]}
+                  setSecondValue={(value) => balances.set(value, idx)}
+                  label={`Address ${idx + 1}`}
                 />
               ))}
             </CardFormControl>

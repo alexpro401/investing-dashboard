@@ -4,17 +4,17 @@ import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { Card, CardDescription, CardHead, StepsNavigation } from "common"
 import * as S from "../styled"
 
-const InternalProposalStep: FC = () => {
-  const { internalProposalForm } = useContext(FundDaoCreatingContext)
+const DefaultProposalStep: FC = () => {
+  const { defaultProposalSettingForm } = useContext(FundDaoCreatingContext)
 
   return (
     <>
       <S.StepsRoot>
-        {internalProposalForm ? (
+        {defaultProposalSettingForm ? (
           <>
             <Card>
               <CardHead
-                nodeLeft={<CreateDaoCardStepNumber number={4} />}
+                nodeLeft={<CreateDaoCardStepNumber number={3} />}
                 title="General voting settings"
               />
               <CardDescription>
@@ -24,7 +24,9 @@ const InternalProposalStep: FC = () => {
                 </p>
               </CardDescription>
             </Card>
-            <CreateDaoPoolParameters poolParameters={internalProposalForm} />
+            <CreateDaoPoolParameters
+              poolParameters={defaultProposalSettingForm}
+            />
           </>
         ) : (
           <></>
@@ -35,4 +37,4 @@ const InternalProposalStep: FC = () => {
   )
 }
 
-export default InternalProposalStep
+export default DefaultProposalStep

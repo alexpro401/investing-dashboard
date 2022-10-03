@@ -63,7 +63,7 @@ export interface ValidatorsDeployParamsForm {
   duration: { get: number; set: Dispatch<SetStateAction<number>> }
   quorum: { get: number; set: Dispatch<SetStateAction<number>> }
   validators: { get: string[]; set: (value: any, idx?: number) => void }
-  balances: { get: number[]; set: Dispatch<SetStateAction<number[]>> }
+  balances: { get: number[]; set: (value: any, idx?: number) => void }
 }
 
 export interface GovPoolDeployParamsForm {
@@ -97,6 +97,7 @@ export interface DaoProposalSettingsForm {
 interface FundDaoCreatingContext {
   isErc20: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
   isErc721: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
+  isCustomVoting: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
 
   isValidator: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
 
@@ -116,15 +117,16 @@ interface FundDaoCreatingContext {
   validatorsParams: ValidatorsDeployParamsForm
   govPoolDeployParams: GovPoolDeployParamsForm
 
-  internalProposalForm: DaoProposalSettingsForm
-  distributionProposalSettingsForm: DaoProposalSettingsForm
-  validatorsBalancesSettingsForm: DaoProposalSettingsForm
   defaultProposalSettingForm: DaoProposalSettingsForm
+  internalProposalForm: DaoProposalSettingsForm
+  validatorsBalancesSettingsForm: DaoProposalSettingsForm
+  distributionProposalSettingsForm: DaoProposalSettingsForm
 }
 
 export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
   isErc20: { get: false, set: () => {} },
   isErc721: { get: false, set: () => {} },
+  isCustomVoting: { get: false, set: () => {} },
 
   isValidator: { get: false, set: () => {} },
 
@@ -139,9 +141,9 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
   govPoolDeployParams: {} as GovPoolDeployParamsForm,
 
   internalProposalForm: {} as DaoProposalSettingsForm,
-  distributionProposalSettingsForm: {} as DaoProposalSettingsForm,
   validatorsBalancesSettingsForm: {} as DaoProposalSettingsForm,
   defaultProposalSettingForm: {} as DaoProposalSettingsForm,
+  distributionProposalSettingsForm: {} as DaoProposalSettingsForm,
 })
 
 const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
@@ -149,6 +151,7 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
 }) => {
   const [_isErc20, _setIsErc20] = useState<boolean>(false)
   const [_isErc721, _setIsErc721] = useState<boolean>(false)
+  const [_isCustomVoting, _setIsCustomVoting] = useState<boolean>(false)
 
   const [_isValidator, _setIsValidator] = useState(false)
 
@@ -206,6 +209,24 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
     },
     [_validatorsParams.validators]
   )
+
+  const _handleChangeBalances = useCallback(
+    (value, idx?: number) => {
+      _validatorsParams.balances[1]((prev) => {
+        if (Array.isArray(value)) {
+          return value
+        } else {
+          const newBalances = [...prev]
+          if (idx !== undefined && idx !== null) {
+            newBalances[idx] = value
+          }
+          return newBalances
+        }
+      })
+    },
+    [_validatorsParams.balances]
+  )
+
   const _govPoolDeployParams = {
     descriptionUrl: useState<string>(""),
   }
@@ -281,6 +302,7 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
         value={{
           isErc20: { get: _isErc20, set: _setIsErc20 },
           isErc721: { get: _isErc721, set: _setIsErc721 },
+          isCustomVoting: { get: _isCustomVoting, set: _setIsCustomVoting },
 
           isValidator: { get: _isValidator, set: _setIsValidator },
 
@@ -331,7 +353,7 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
             },
             balances: {
               get: _validatorsParams.balances[0],
-              set: _validatorsParams.balances[1],
+              set: _handleChangeBalances,
             },
           } as ValidatorsDeployParamsForm,
           govPoolDeployParams: {
