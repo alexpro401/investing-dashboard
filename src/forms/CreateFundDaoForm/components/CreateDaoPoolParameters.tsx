@@ -1,16 +1,10 @@
-import { CreateDaoCardStepNumber } from "./index"
 import { Card, CardDescription, CardFormControl, CardHead, Icon } from "common"
 import Switch from "components/Switch"
 import { InputField } from "fields"
 
-import * as S from "../styled"
-
 import { FC, HTMLAttributes } from "react"
-import { Flex } from "theme"
 import { DaoProposalSettingsForm } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
-
-import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   poolParameters: DaoProposalSettingsForm
@@ -34,9 +28,7 @@ const CreateDaoPoolParameters: FC<Props> = ({ poolParameters }) => {
   } = poolParameters
 
   return (
-    <Flex gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
-      <S.CenteredImage src={CreateFundDocsImage} />
-
+    <>
       <Card>
         <CardHead
           nodeLeft={<Icon name={ICON_NAMES.users} />}
@@ -163,7 +155,7 @@ const CreateDaoPoolParameters: FC<Props> = ({ poolParameters }) => {
           />
         </CardFormControl>
       </Card>
-    </Flex>
+    </>
   )
 }
 

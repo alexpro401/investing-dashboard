@@ -14,8 +14,8 @@ const InternalProposalStep: FC = () => {
           <>
             <Card>
               <CardHead
-                nodeLeft={<CreateDaoCardStepNumber number={4} />}
-                title="General voting settings"
+                nodeLeft={<CreateDaoCardStepNumber number={5} />}
+                title="Internal voting settings"
               />
               <CardDescription>
                 <p>

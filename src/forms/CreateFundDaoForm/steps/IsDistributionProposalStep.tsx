@@ -7,30 +7,36 @@ import * as S from "../styled"
 import { ICON_NAMES } from "constants/icon-names"
 import Switch from "components/Switch"
 
-const IsCustomVotingStep: FC = () => {
-  const { isCustomVoting } = useContext(FundDaoCreatingContext)
+const IsDistributionProposalStep: FC = () => {
+  const { isDistributionProposal } = useContext(FundDaoCreatingContext)
 
   return (
     <>
       <S.StepsRoot>
         <Card>
           <CardHead
-            nodeLeft={<CreateDaoCardStepNumber number={4} />}
-            title="Changing General voting settings"
+            nodeLeft={<CreateDaoCardStepNumber number={6} />}
+            title="Token distribution proposal settings"
           />
           <CardDescription>
             <p>
-              Configure the settings for proposals to change the General voting
-              settings (the ones you set up in the previous step).
+              Configure the settings for proposals to distribute tokens from the
+              DAO treasury to members.
+            </p>
+            <br />
+            <p>
+              After the voting, members can claim the distribution. Reward size
+              depends on member’s voting power (number of tokens voted with).
             </p>
             <br />
             <p>By default, these proposals use the general voting settings.</p>
             <br />
-            <AppButton
-              text="Why you may need this?"
-              color="default"
-              size="no-paddings"
-            />
+            <p>
+              *To ensure fair token distribution, Early vote completion and Vote
+              delegation settings are turned off.
+            </p>
+            <br />
+            <AppButton text="Details" color="default" size="no-paddings" />
           </CardDescription>
         </Card>
 
@@ -40,8 +46,8 @@ const IsCustomVotingStep: FC = () => {
             title="Set custom voting settings"
             nodeRight={
               <Switch
-                isOn={isCustomVoting.get}
-                onChange={(n, v) => isCustomVoting.set(v)}
+                isOn={isDistributionProposal.get}
+                onChange={(n, v) => isDistributionProposal.set(v)}
                 name={
                   "Turn on to set custom voting settings for changing general voting settings."
                 }
@@ -62,4 +68,4 @@ const IsCustomVotingStep: FC = () => {
   )
 }
 
-export default IsCustomVotingStep
+export default IsDistributionProposalStep

@@ -3,6 +3,7 @@ import { CreateDaoCardStepNumber, CreateDaoPoolParameters } from "../components"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { Card, CardDescription, CardHead, StepsNavigation } from "common"
 import * as S from "../styled"
+import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 
 const DefaultProposalStep: FC = () => {
   const { defaultProposalSettingForm } = useContext(FundDaoCreatingContext)
@@ -24,6 +25,7 @@ const DefaultProposalStep: FC = () => {
                 </p>
               </CardDescription>
             </Card>
+            <S.CenteredImage src={CreateFundDocsImage} />
             <CreateDaoPoolParameters
               poolParameters={defaultProposalSettingForm}
             />

@@ -6,6 +6,8 @@ import {
   InternalProposalStep,
   IsCustomVotingStep,
   DefaultProposalStep,
+  IsDistributionProposalStep,
+  DistributionProposalStep,
 } from "./steps"
 
 import { useForm } from "hooks/useForm"
@@ -16,8 +18,8 @@ enum STEPS {
   titles = "titles",
   IsDaoValidator = "is-dao-validator",
   defaultProposalSetting = "default-proposal-setting",
-  internalProposal = "internal-proposal",
   isCustomVoteSelecting = "is-custom-vote-selecting",
+  internalProposal = "internal-proposal",
   validatorsBalancesSettings = "validators-balances-settings",
   isTokenDistributionSettings = "is-token-distribution-settings",
   distributionProposalSettings = "distribution-proposal-settings",
@@ -45,15 +47,12 @@ const CreateFundDaoForm: FC = () => {
         setCurrentStep(STEPS.defaultProposalSetting)
         break
       case STEPS.defaultProposalSetting:
-        setCurrentStep(STEPS.internalProposal)
-        break
-      case STEPS.internalProposal:
         setCurrentStep(STEPS.isCustomVoteSelecting)
         break
       case STEPS.isCustomVoteSelecting:
-        setCurrentStep(STEPS.validatorsBalancesSettings)
+        setCurrentStep(STEPS.internalProposal)
         break
-      case STEPS.validatorsBalancesSettings:
+      case STEPS.internalProposal:
         setCurrentStep(STEPS.isTokenDistributionSettings)
         break
       case STEPS.isTokenDistributionSettings:
@@ -75,17 +74,14 @@ const CreateFundDaoForm: FC = () => {
       case STEPS.defaultProposalSetting:
         setCurrentStep(STEPS.IsDaoValidator)
         break
-      case STEPS.internalProposal:
+      case STEPS.isCustomVoteSelecting:
         setCurrentStep(STEPS.defaultProposalSetting)
         break
-      case STEPS.isCustomVoteSelecting:
-        setCurrentStep(STEPS.internalProposal)
-        break
-      case STEPS.validatorsBalancesSettings:
+      case STEPS.internalProposal:
         setCurrentStep(STEPS.isCustomVoteSelecting)
         break
       case STEPS.isTokenDistributionSettings:
-        setCurrentStep(STEPS.validatorsBalancesSettings)
+        setCurrentStep(STEPS.internalProposal)
         break
       case STEPS.distributionProposalSettings:
         setCurrentStep(STEPS.isTokenDistributionSettings)
@@ -95,6 +91,7 @@ const CreateFundDaoForm: FC = () => {
   const submit = useCallback(() => {
     formController.disableForm()
     try {
+      console.log("submit")
     } catch (error) {
       console.error(error)
     }
@@ -124,27 +121,24 @@ const CreateFundDaoForm: FC = () => {
             {/*defaultProposalSettings*/}
             <DefaultProposalStep />
           </S.StepsContainer>
+        ) : currentStep === STEPS.isCustomVoteSelecting ? (
+          <S.StepsContainer>
+            <IsCustomVotingStep />
+          </S.StepsContainer>
         ) : currentStep === STEPS.internalProposal ? (
           <S.StepsContainer>
             {/*internalProposalSettings*/}
             <InternalProposalStep />
           </S.StepsContainer>
-        ) : currentStep === STEPS.isCustomVoteSelecting ? (
-          <S.StepsContainer>
-            <IsCustomVotingStep />
-          </S.StepsContainer>
-        ) : currentStep === STEPS.validatorsBalancesSettings ? (
-          <S.StepsContainer>
-            {/*validatorsBalancesSettingsForm*/}
-          </S.StepsContainer>
         ) : currentStep === STEPS.isTokenDistributionSettings ? (
           <S.StepsContainer>
-            {/*validatorsBalancesSettingsForm*/}
+            {/*isTokenDistributionSettingsStep*/}
+            <IsDistributionProposalStep />
           </S.StepsContainer>
         ) : currentStep === STEPS.distributionProposalSettings ? (
           <S.StepsContainer>
             {/*distributionProposalSettingsForm*/}
-            <InternalProposalStep />
+            <DistributionProposalStep />
           </S.StepsContainer>
         ) : (
           <></>

@@ -98,6 +98,10 @@ interface FundDaoCreatingContext {
   isErc20: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
   isErc721: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
   isCustomVoting: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
+  isDistributionProposal: {
+    get: boolean
+    set: Dispatch<SetStateAction<boolean>>
+  }
 
   isValidator: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
 
@@ -127,6 +131,7 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
   isErc20: { get: false, set: () => {} },
   isErc721: { get: false, set: () => {} },
   isCustomVoting: { get: false, set: () => {} },
+  isDistributionProposal: { get: false, set: () => {} },
 
   isValidator: { get: false, set: () => {} },
 
@@ -152,6 +157,8 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
   const [_isErc20, _setIsErc20] = useState<boolean>(false)
   const [_isErc721, _setIsErc721] = useState<boolean>(false)
   const [_isCustomVoting, _setIsCustomVoting] = useState<boolean>(false)
+  const [_isDistributionProposal, _setIsDistributionProposal] =
+    useState<boolean>(false)
 
   const [_isValidator, _setIsValidator] = useState(false)
 
@@ -303,6 +310,10 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
           isErc20: { get: _isErc20, set: _setIsErc20 },
           isErc721: { get: _isErc721, set: _setIsErc721 },
           isCustomVoting: { get: _isCustomVoting, set: _setIsCustomVoting },
+          isDistributionProposal: {
+            get: _isDistributionProposal,
+            set: _setIsDistributionProposal,
+          },
 
           isValidator: { get: _isValidator, set: _setIsValidator },
 
