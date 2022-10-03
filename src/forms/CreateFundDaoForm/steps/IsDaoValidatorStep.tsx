@@ -3,6 +3,7 @@ import { CreateDaoCardStepNumber } from "../components"
 
 import { FC, useContext } from "react"
 import {
+  AppButton,
   Card,
   CardDescription,
   CardFormControl,
@@ -125,14 +126,40 @@ const IsDaoValidatorStep: FC = () => {
               </p>
             </CardDescription>
             <CardFormControl>
-              {validators.get.map((_, idx) => (
+              {validators.get.map((el, idx) => (
                 <AddressAmountField
                   key={idx}
-                  value={validators[idx]}
+                  value={validators.get[idx]}
                   setValue={(value) => validators.set(value, idx)}
-                  secondValue={balances[idx]}
+                  secondValue={balances.get[idx]}
                   setSecondValue={(value) => balances.set(value, idx)}
                   label={`Address ${idx + 1}`}
+                  internalNodeRight={<span>TKN</span>}
+                  overlapNodeLeft={
+                    <AppButton
+                      iconRight={ICON_NAMES.trash}
+                      size="no-paddings"
+                      color="default"
+                      onClick={() => {
+                        if (validators.get.length > 1) {
+                          validators.set(
+                            validators.get.filter((_, i) => i !== idx)
+                          )
+                          balances.set(balances.get.filter((_, i) => i !== idx))
+                        } else {
+                          validators.set("", idx)
+                          balances.set("", idx)
+                        }
+                      }}
+                    />
+                  }
+                  labelNodeRight={
+                    !!balances.get[idx] ? (
+                      <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                    ) : (
+                      <></>
+                    )
+                  }
                 />
               ))}
             </CardFormControl>

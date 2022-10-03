@@ -4,14 +4,37 @@ export const Root = styled.div`
   position: relative;
 `
 
-export const InternalInput = styled.div`
-  position: absolute;
-  top: ${56 / 2}px;
-  right: 0;
-  transform: translateY(-50%);
+export const InternalInputWrp = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: ${(props) => props.theme.textColors.secondary};
+  gap: 4px;
+`
 
-  input {
-    background: transparent;
-    border: none;
+export const InternalInput = styled.input`
+  background: transparent;
+  border: none;
+  flex: 1;
+  max-width: 80px;
+  text-align: right;
+
+  color: ${(props) => props.theme.textColors.primary} !important;
+  -webkit-text-fill-color: ${(props) =>
+    props.theme.textColors.primary} !important;
+  fill: ${(props) => props.theme.textColors.primary} !important;
+
+  &:focus {
+    outline: none;
   }
+`
+
+export const OverlapLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`
+
+export const OverlapCroppedAddress = styled.span`
+  color: ${(props) => props.theme.textColors.primary};
 `
