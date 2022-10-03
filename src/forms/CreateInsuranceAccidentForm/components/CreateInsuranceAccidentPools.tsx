@@ -1,5 +1,13 @@
-import { FC, useCallback, useContext, useMemo, useState } from "react"
+import {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import { BigNumber } from "@ethersproject/bignumber"
+import { debounce } from "lodash"
 
 import { Flex } from "theme"
 import CreateInsuranceAccidentPoolCard from "./CreateInsuranceAccidentPoolCard"
@@ -7,6 +15,7 @@ import CreateInsuranceAccidentPoolsSortButton from "./CreateInsuranceAccidentPoo
 import { CreateInsuranceAccidentPoolsStyled as CIAPools } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
+import CreateInsuranceAccidentNoInvestments from "./CreateInsuranceAccidentNoInvestments"
 
 type FilterTVL = "ask" | "desc"
 
@@ -37,6 +46,7 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
   const { form } = useContext(InsuranceAccidentCreatingContext)
   const { pool } = form
 
+  const [noInvestments, setNoInvestments] = useState<boolean>(false)
   const [filterTVL, setFilterTVL] = useState<FilterTVL | undefined>(undefined)
   const toggleFilterTVL = useCallback(() => {
     switch (filterTVL) {
@@ -60,8 +70,14 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
     [pool]
   )
 
+  useEffect(() => {
+    debounce(() => {
+      setNoInvestments(!loading && payload.length === 0)
+    }, 500)
+  }, [loading, payload])
+
   const list = useMemo(() => {
-    if (loading) {
+    if (loading || (!loading && payload.length === 0)) {
       const items = Array(5).fill(null)
       return items.map((_, i) => (
         <CreateInsuranceAccidentPoolCard
@@ -73,15 +89,6 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
           active={false}
         />
       ))
-    }
-
-    if (!loading && payload.length === 0) {
-      return (
-        <>
-          <p>You not invested in any fond yet.</p>
-          <button>Choose pool to invest</button>
-        </>
-      )
     }
 
     if (filterTVL === undefined) {
@@ -110,16 +117,22 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
   }, [loading, pool, payload, onTogglePool, filterTVL])
 
   return (
-    <CIAPools.Container>
-      <Flex full ai="center" jc="space-between" gap="12" m="32px 0 16px">
-        <CIAPools.Title>All funds I invested in: {total}</CIAPools.Title>
-        <CreateInsuranceAccidentPoolsSortButton
-          filter={filterTVL}
-          onClick={toggleFilterTVL}
-        />
-      </Flex>
-      <div>{list}</div>
-    </CIAPools.Container>
+    <>
+      <CIAPools.Container>
+        <Flex full ai="center" jc="space-between" gap="12" m="32px 0 16px">
+          <CIAPools.Title>All funds I invested in: {total}</CIAPools.Title>
+          <CreateInsuranceAccidentPoolsSortButton
+            filter={filterTVL}
+            onClick={toggleFilterTVL}
+          />
+        </Flex>
+        <div>{list}</div>
+      </CIAPools.Container>
+      <CreateInsuranceAccidentNoInvestments
+        open={noInvestments}
+        setOpen={setNoInvestments}
+      />
+    </>
   )
 }
 

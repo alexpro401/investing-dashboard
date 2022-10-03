@@ -214,7 +214,7 @@ export default function Wallet() {
   }
 
   const handleInsuranceRedirect = () => {
-    navigate("/insurance/management")
+    navigate("/insurance")
   }
 
   const handleAddressCopy = () => {

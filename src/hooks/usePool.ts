@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 import { Contract } from "@ethersproject/contracts"
+import { isEmpty } from "lodash"
 import { IPosition } from "interfaces/thegraphs/all-pools"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { ILeverageInfo } from "interfaces/contracts/ITraderPool"
@@ -9,6 +10,7 @@ import { useQuery } from "urql"
 import { isAddress } from "utils"
 import { TraderPool } from "abi"
 import { PoolPositionLast, PoolQuery } from "queries"
+import { PoolsByInvestorsQuery } from "queries/all-pools"
 
 export function useTraderPool(address: string | undefined): Contract | null {
   const traderPool = useContract(address, TraderPool)
@@ -86,4 +88,17 @@ export function usePoolContract(
   }, [traderPool, update])
 
   return [leverageInfo, poolInfo, fetchUpdate]
+}
+
+/**
+ * Returns TheGraph info about the pool
+ */
+export function usePoolsByInvestors(investors: string[]) {
+  return useQuery<{ traderPools: IPoolQuery[] }>({
+    pause: !investors || isEmpty(investors),
+    query: PoolsByInvestorsQuery,
+    variables: {
+      investors,
+    },
+  })
 }

@@ -1,8 +1,7 @@
 import { FC, useContext, useEffect, useMemo, useState } from "react"
-import { useQuery, createClient, Provider as GraphProvider } from "urql"
+import { createClient, Provider as GraphProvider } from "urql"
 
 import { useActiveWeb3React } from "hooks"
-import { PoolsByInvestorsQuery } from "queries/all-pools"
 
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
 import CreateInsuranceAccidentPools from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentPools"
@@ -17,6 +16,7 @@ import InsuranceAccidentExist from "modals/InsuranceAccidentExist"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { isEmpty, isNil } from "lodash"
 import { useInsuranceAccidents } from "hooks/useInsurance"
+import { usePoolsByInvestors } from "hooks/usePool"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -43,13 +43,12 @@ const CreateInsuranceAccidentChooseFundStep: FC = () => {
     )
   }, [insuranceAccidentByPool])
 
-  const [response] = useQuery<{ traderPools: IPoolQuery[] }>({
-    pause: !account,
-    query: PoolsByInvestorsQuery,
-    variables: {
-      investors: [String(account).toLocaleLowerCase()],
-    },
-  })
+  const investors = useMemo<string[]>(
+    () => (isNil(account) ? [] : [String(account).toLocaleLowerCase()]),
+    [account]
+  )
+
+  const [response] = usePoolsByInvestors(investors)
 
   const totalPools = useMemo<number>(() => {
     if (isNil(response.data) || isNil(response.data.traderPools)) {

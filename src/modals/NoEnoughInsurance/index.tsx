@@ -17,7 +17,7 @@ const NoEnoughInsurance: FC<Props> = ({ isOpen, onClose }) => {
 
   const navigateToStake = () => {
     onClose()
-    navigate("/insurance/management")
+    navigate("/insurance")
   }
 
   return (

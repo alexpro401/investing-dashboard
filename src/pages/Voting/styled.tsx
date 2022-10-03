@@ -3,7 +3,6 @@ import styled from "styled-components"
 export const Body = styled.div`
   margin: 0 auto;
   width: fill-available;
-  padding: 16px 16px 24px;
   box-sizing: border-box;
 `
 
