@@ -4,6 +4,7 @@ import { Icon, StepsNavigation, Card, AppButton } from "common"
 import StepsControllerContext from "context/StepsControllerContext"
 import { motion } from "framer-motion"
 import { opacityVariants } from "motion/variants"
+import { getDefaultFieldBorderStyles } from "fields/styled"
 
 export const Container = styled(StepsControllerContext)`
   display: flex;
@@ -127,4 +128,19 @@ export const FieldValidIcon = styled(Icon)`
 
 export const CardAddBtn = styled(AppButton)`
   margin: 0 auto;
+`
+
+export const CardFieldBtn = styled(AppButton)`
+  text-align: left;
+  justify-content: flex-start;
+  width: 100%;
+
+  ${getDefaultFieldBorderStyles}
+
+  padding: 17.5px 16px;
+
+  &:not([disabled]):hover,
+  &:not([disabled]):focus {
+    ${getDefaultFieldBorderStyles}
+  }
 `

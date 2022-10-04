@@ -1,7 +1,7 @@
 import Switch from "components/Switch"
 import { CreateDaoCardStepNumber } from "../components"
 
-import { FC, useContext } from "react"
+import { FC, useCallback, useContext } from "react"
 import {
   AppButton,
   Card,
@@ -24,6 +24,24 @@ const IsDaoValidatorStep: FC = () => {
 
   const { name, symbol, duration, quorum, validators, balances } =
     validatorsParams
+
+  const handleAddValidator = useCallback(() => {
+    validators.set([...validators.get, ""])
+    balances.set([...balances.get, 0])
+  }, [balances, validators])
+
+  const handleRemoveValidator = useCallback(
+    (idx: number) => {
+      if (validators.get.length > 1) {
+        validators.set(validators.get.filter((_, i) => i !== idx))
+        balances.set(balances.get.filter((_, i) => i !== idx))
+      } else {
+        validators.set("", idx)
+        balances.set("", idx)
+      }
+    },
+    [balances, validators]
+  )
 
   return (
     <>
@@ -132,44 +150,29 @@ const IsDaoValidatorStep: FC = () => {
                   value={validators.get[idx]}
                   setValue={(value) => validators.set(value, idx)}
                   secondValue={balances.get[idx]}
-                  setSecondValue={(value) => balances.set(value, idx)}
-                  label={`Address ${idx + 1}`}
-                  internalNodeRight={<span>TKN</span>}
+                  setSecondValue={(value) => balances.set(+value || 0, idx)}
+                  label={`${idx + 1}. Address 0x...`}
+                  internalNodeRight={<span>{symbol.get}</span>}
                   overlapNodeLeft={
                     <AppButton
                       iconRight={ICON_NAMES.trash}
                       size="no-paddings"
                       color="default"
-                      onClick={() => {
-                        if (validators.get.length > 1) {
-                          validators.set(
-                            validators.get.filter((_, i) => i !== idx)
-                          )
-                          balances.set(balances.get.filter((_, i) => i !== idx))
-                        } else {
-                          validators.set("", idx)
-                          balances.set("", idx)
-                        }
-                      }}
+                      onClick={() => handleRemoveValidator(idx)}
                     />
                   }
                   labelNodeRight={
                     !!balances.get[idx] ? (
                       <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
-                    ) : (
-                      <></>
-                    )
+                    ) : null
                   }
                 />
               ))}
             </CardFormControl>
-            <S.CardAddBtn
+            <S.CardFieldBtn
               color="default"
-              text="+ Add more"
-              onClick={() => {
-                validators.set([...validators.get, ""])
-                balances.set([...balances.get, 0])
-              }}
+              text="+ Paste address"
+              onClick={handleAddValidator}
             />
           </S.OverflowedCard>
         </Collapse>

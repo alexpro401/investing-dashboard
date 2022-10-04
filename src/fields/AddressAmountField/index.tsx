@@ -7,6 +7,8 @@ import {
   SetStateAction,
   useCallback,
   useMemo,
+  useRef,
+  useState,
 } from "react"
 import { cropAddress, isAddress } from "utils"
 
@@ -30,6 +32,10 @@ function AddressAmountField({
   labelNodeRight,
   ...rest
 }: Props) {
+  const internalInputElement = useRef<HTMLInputElement | null>(null)
+
+  const [isSecondValueFocused, setIsSecondValueFocused] = useState(false)
+
   const isValidAddress = useMemo(() => isAddress(value), [value])
 
   const handleSecondInput = useCallback(
@@ -60,13 +66,30 @@ function AddressAmountField({
         }
         overlapNodeRight={
           isValidAddress ? (
-            <S.InternalInputWrp>
-              <S.InternalInput
-                value={secondValue}
-                onInput={handleSecondInput}
-              />
-              {internalNodeRight}
-            </S.InternalInputWrp>
+            <>
+              <S.InternalInputWrp>
+                {!!secondValue || isSecondValueFocused ? (
+                  <S.InternalInput
+                    value={secondValue}
+                    onInput={handleSecondInput}
+                    ref={internalInputElement}
+                    onBlur={() => setIsSecondValueFocused(false)}
+                  />
+                ) : (
+                  <S.InternalInputPlaceholder
+                    onClick={() => {
+                      setIsSecondValueFocused(true)
+                      setTimeout(() => {
+                        internalInputElement.current?.focus()
+                      }, 500)
+                    }}
+                  >
+                    + 0,00
+                  </S.InternalInputPlaceholder>
+                )}
+                {internalNodeRight}
+              </S.InternalInputWrp>
+            </>
           ) : null
         }
       />

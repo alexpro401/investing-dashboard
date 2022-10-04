@@ -38,3 +38,11 @@ export const OverlapLeft = styled.div`
 export const OverlapCroppedAddress = styled.span`
   color: ${(props) => props.theme.textColors.primary};
 `
+
+export const InternalInputPlaceholder = styled.button`
+  color: ${(props) => props.theme.brandColors.secondary};
+  font-weight: 600;
+  padding: 0;
+  background: transparent;
+  border: none;
+`

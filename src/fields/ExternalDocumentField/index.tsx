@@ -41,7 +41,6 @@ const ExternalDocumentField: FC<Props> = ({
   ...rest
 }) => {
   const [isShowUrlOverlap, setIsShowUrlOverlap] = useState<boolean>(false)
-  const [localUrl, setLocalUrl] = useState<string>("")
 
   const { name, url } = useMemo(() => value, [value])
 
@@ -58,24 +57,30 @@ const ExternalDocumentField: FC<Props> = ({
     [setValue, url]
   )
 
+  const handleUrlInput = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const targetValue = e.currentTarget.value
+
+      setValue({ name, url: targetValue })
+    },
+    [name, setValue]
+  )
+
   const handlePasteLink = useCallback(async () => {
-    setLocalUrl(await readFromClipboard())
-  }, [])
+    setValue({ name, url: await readFromClipboard() })
+  }, [name, setValue])
 
   const handleChangeLink = useCallback(() => {
-    setLocalUrl("")
-  }, [])
+    setValue({ name, url: "" })
+  }, [name, setValue])
 
   useEffect(() => {
-    if (localUrl && isValidUrl(localUrl)) {
-      if (!isEqual(localUrl, url)) {
-        setValue({ ...value, url: localUrl })
-        setIsShowUrlOverlap(true)
-      }
+    if (url && isValidUrl(url)) {
+      setIsShowUrlOverlap(true)
     } else {
       setIsShowUrlOverlap(false)
     }
-  }, [localUrl, setValue, url, value])
+  }, [url])
 
   return (
     <S.Root {...rest}>
@@ -95,8 +100,8 @@ const ExternalDocumentField: FC<Props> = ({
       />
       <S.BottomInputField>
         <OverlapInputField
-          value={localUrl}
-          setValue={setLocalUrl}
+          value={url}
+          onInput={handleUrlInput}
           overlapNodeLeft={
             isShowUrlOverlap ? (
               <ExternalLink href={url}>{croppedLink}</ExternalLink>
