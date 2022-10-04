@@ -1,6 +1,6 @@
 import { useQuery } from "urql"
-import { isEmpty, isNil } from "lodash"
-import { useDispatch, useSelector } from "react-redux"
+import { isEmpty } from "lodash"
+import { useSelector } from "react-redux"
 import { useWeb3React } from "@web3-react/core"
 import { BigNumber } from "@ethersproject/bignumber"
 import { useCallback, useEffect, useMemo, useState } from "react"
@@ -10,13 +10,6 @@ import { InsurancDueDay } from "queries/investors"
 import { Insurance } from "interfaces/thegraphs/investors"
 import { selectDexeAddress } from "state/contracts/selectors"
 import { useInsuranceContract, usePriceFeedContract } from "hooks/useContract"
-import { getIpfsData } from "utils/ipfs"
-import { addInsuranceAccident } from "state/ipfsMetadata/actions"
-import {
-  selectInsuranceAccidentByPool,
-  selectInsuranceAccidents,
-} from "state/ipfsMetadata/selectors"
-import { InsuranceAccident } from "interfaces/insurance"
 
 interface IValues {
   stakeDexe: BigNumber
@@ -106,75 +99,4 @@ export const useInsuranceDueDay = (
     },
     refetch,
   ]
-}
-
-export const useInsuranceAccidents = (): {
-  loading: boolean
-  total: number
-  data: Record<string, InsuranceAccident>
-  insuranceAccidentByPool: InsuranceAccident | null
-  getInsuranceAccidentByPool: (pool: string) => void
-} => {
-  const dispatch = useDispatch()
-  const insurance = useInsuranceContract()
-
-  const [loading, setLoading] = useState<boolean>(true)
-  const [total, setTotal] = useState<number>(0)
-  const [offset, setOffset] = useState<number>(0)
-  const [limit, setLimit] = useState<number>(10)
-  const fullLoaded = useMemo(() => offset === total, [offset, total])
-
-  const [searchPool, setSearchPool] = useState("")
-
-  const data = useSelector(selectInsuranceAccidents())
-  const insuranceAccidentByPool = useSelector(
-    selectInsuranceAccidentByPool(searchPool)
-  )
-
-  const fetch = useCallback(async () => {
-    if (isNil(insurance)) return
-
-    setLoading(true)
-    const totalActiveAccidents = await insurance.ongoingClaimsCount()
-    setTotal(Number(totalActiveAccidents.toString()))
-
-    const activeAccidents = await insurance.listOngoingClaims(
-      offset,
-      Number(totalActiveAccidents.toString())
-    )
-
-    for (const accidentId of activeAccidents) {
-      const accidentData = await getIpfsData(accidentId)
-
-      dispatch(
-        addInsuranceAccident({
-          params: { hash: accidentId, data: accidentData },
-        })
-      )
-    }
-
-    setOffset(activeAccidents.length)
-    setLoading(false)
-  }, [insurance])
-
-  const getInsuranceAccidentByPool = useCallback((pool) => {
-    setSearchPool(pool)
-  }, [])
-
-  useEffect(() => {
-    if (isNil(insurance)) return
-    ;(async () => {
-      setLoading(true)
-      await fetch()
-      setLoading(false)
-    })()
-  }, [insurance])
-
-  return {
-    loading,
-    total,
-    data,
-    insuranceAccidentByPool,
-    getInsuranceAccidentByPool,
-  }
 }

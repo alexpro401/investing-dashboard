@@ -1,21 +1,26 @@
+import { createClient, Provider as GraphProvider } from "urql"
+
+import useInsurancePage from "./useInsurancePage"
+import { ICON_NAMES } from "constants/icon-names"
+
+import { Flex, Text } from "theme"
 import Header from "components/Header/Layout"
+import { AppButton, Card, CardDescription, CardHead } from "common"
+
 import Voting from "pages/Voting"
 import Management from "pages/Management"
 
 import * as S from "./styled"
-import { AppButton, Card, CardDescription, CardHead } from "common"
-import useInsurancePage from "./useInsurancePage"
-import { createClient, Provider as GraphProvider } from "urql"
-import { Flex, Text } from "theme"
-import { ICON_NAMES } from "constants/icon-names"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
 })
 
 const Insurance = () => {
-  const [{ checkingInvestmentStatus }, { onInsuranceCreateNavigate }] =
-    useInsurancePage()
+  const [
+    { checkingInvestmentStatus, accidentsResponse },
+    { onInsuranceCreateNavigate, fetchInsuranceAccidents },
+  ] = useInsurancePage()
 
   return (
     <>
@@ -62,7 +67,11 @@ const Insurance = () => {
               </Text>
             </Flex>
             <Flex full m="16px 0 0">
-              <Voting />
+              <Voting
+                data={accidentsResponse?.data}
+                loading={accidentsResponse?.loading ?? true}
+                fetchMore={fetchInsuranceAccidents}
+              />
             </Flex>
           </Flex>
         </S.Content>

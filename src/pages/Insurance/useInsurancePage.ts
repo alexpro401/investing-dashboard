@@ -4,6 +4,7 @@ import { useCallback, useMemo } from "react"
 import { isNil } from "lodash"
 import { useNavigate } from "react-router-dom"
 import useAlert, { AlertType } from "hooks/useAlert"
+import { useInsuranceAccidents } from "state/ipfsMetadata/hooks"
 
 function useInsurancePage() {
   const { account } = useActiveWeb3React()
@@ -16,6 +17,8 @@ function useInsurancePage() {
   )
 
   const [poolsInvestedInResponse] = usePoolsByInvestors(investors)
+  const [accidentsResponse, { fetch: fetchInsuranceAccidents }] =
+    useInsuranceAccidents()
 
   const onInsuranceCreateNavigate = useCallback(() => {
     if (
@@ -40,8 +43,11 @@ function useInsurancePage() {
   }, [navigate, poolsInvestedInResponse, showAlert])
 
   return [
-    { checkingInvestmentStatus: poolsInvestedInResponse.fetching },
-    { onInsuranceCreateNavigate },
+    {
+      checkingInvestmentStatus: poolsInvestedInResponse.fetching,
+      accidentsResponse,
+    },
+    { onInsuranceCreateNavigate, fetchInsuranceAccidents },
   ]
 }
 

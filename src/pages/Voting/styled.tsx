@@ -2,8 +2,26 @@ import styled from "styled-components"
 
 export const Body = styled.div`
   margin: 0 auto;
-  width: fill-available;
+  overflow-y: auto;
+  max-height: 600px;
+  width: 100%;
   box-sizing: border-box;
+`
+
+export const BodyPlaceholder = styled.div`
+  width: 100%;
+  height: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 14px;
+  text-align: center;
+  letter-spacing: 0.1px;
+  color: #5a6071;
 `
 
 export const ConfirmationText = styled.div`

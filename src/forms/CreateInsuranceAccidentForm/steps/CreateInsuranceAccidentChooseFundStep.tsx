@@ -15,7 +15,7 @@ import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreat
 import InsuranceAccidentExist from "modals/InsuranceAccidentExist"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { isEmpty, isNil } from "lodash"
-import { useInsuranceAccidents } from "hooks/useInsurance"
+import { useInsuranceAccidents } from "state/ipfsMetadata/hooks"
 import { usePoolsByInvestors } from "hooks/usePool"
 
 const poolsClient = createClient({
@@ -30,9 +30,14 @@ const CreateInsuranceAccidentChooseFundStep: FC = () => {
   )
   const { pool } = form
 
-  const { insuranceAccidentByPool, getInsuranceAccidentByPool } =
-    useInsuranceAccidents()
+  const [
+    { insuranceAccidentByPool },
+    { getInsuranceAccidentByPool, fetchAll },
+  ] = useInsuranceAccidents()
 
+  useEffect(() => {
+    fetchAll()
+  }, [])
   useEffect(() => {
     getInsuranceAccidentByPool(pool.get)
   }, [pool])
