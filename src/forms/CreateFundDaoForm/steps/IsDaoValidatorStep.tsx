@@ -117,7 +117,11 @@ const IsDaoValidatorStep: FC = () => {
                 setValue={symbol.set}
                 label="Validator token symbol"
               />
-              <DurationField value={duration.get} setValue={duration.set} />
+              <DurationField
+                value={duration.get}
+                setValue={duration.set}
+                label="Duration of validator voting"
+              />
               <InputField
                 value={quorum.get}
                 setValue={quorum.set}

@@ -1,7 +1,7 @@
-import * as S from "./styled"
-import { InputFieldProps, InputField } from "fields"
 import { useCallback, useMemo, useState } from "react"
+import { InputFieldProps, InputField } from "fields"
 import { AppButton } from "common"
+import * as S from "./styled"
 
 type Duration = {
   years: number
@@ -16,18 +16,14 @@ type Duration = {
 interface Props<V extends string | number> extends InputFieldProps<V> {}
 
 function DurationField<V extends string | number>({
-  value,
   setValue,
   label,
   labelNodeRight,
   placeholder = " ",
   errorMessage,
-  min,
-  max,
   disabled,
   readonly,
   tabindex,
-  onInput,
   onChange,
   nodeLeft,
   nodeRight,
@@ -96,11 +92,11 @@ function DurationField<V extends string | number>({
       setLocalValue(
         [
           ...(years ? [`${years}Y`] : []),
-          ...(months ? [`${months}M`] : []),
+          ...(months ? [`${months}Mon`] : []),
           ...(weeks ? [`${weeks}W`] : []),
           ...(days ? [`${days}D`] : []),
           ...(hours ? [`${hours}H`] : []),
-          ...(minutes ? [`${minutes}M`] : []),
+          ...(minutes ? [`${minutes}Min`] : []),
           ...(seconds ? [`${seconds}S`] : []),
         ].join("/")
       )
@@ -114,6 +110,17 @@ function DurationField<V extends string | number>({
         value={localValue}
         setValue={setLocalValue}
         onInput={() => setIsDropdownOpen(true)}
+        onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
+        label={label}
+        labelNodeRight={labelNodeRight}
+        placeholder={placeholder}
+        errorMessage={errorMessage}
+        disabled={disabled}
+        readonly={readonly}
+        tabindex={tabindex}
+        onChange={onChange}
+        nodeLeft={nodeLeft}
+        nodeRight={nodeRight}
       />
       <S.DropdownParsedVariants isOpen={isDropdownOpen && !!parsedDuration}>
         <AppButton
