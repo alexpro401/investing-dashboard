@@ -43,7 +43,7 @@ interface IProps {
 }
 
 const BarChart: React.FC<IProps> = ({ address, withTip }) => {
-  const history = usePriceHistory(
+  const [history] = usePriceHistory(
     address,
     [AGREGATION_CODES["1m"] - 1, AGREGATION_CODES["1m"]],
     12,

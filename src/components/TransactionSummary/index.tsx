@@ -22,6 +22,7 @@ import {
   DepositInvestProposalTransactionInfo,
   StakeInsuranceTransactionInfo,
   UnstakeInsuranceTransactionInfo,
+  InsuranceRegisterProposalClaimTransactionInfo,
   PrivacyPolicyAgreeTransactionInfo,
   TraderGetPerformanceFeeTransactionInfo,
   TransactionInfo,
@@ -36,6 +37,7 @@ import { TradeType, UpdateListType } from "constants/types"
 import { selectWhitelistItem } from "state/pricefeed/selectors"
 
 import FormattedCurrencyAmount from "./FormattedCurrencyAmount"
+import { usePoolQuery } from "../../hooks/usePool"
 
 interface IProps {
   info: TransactionInfo
@@ -283,6 +285,14 @@ const UnstakeInsuranceSummary: React.FC<{
   return <>Unstake insurance {toAmount} DEXE-LP</>
 }
 
+const InsuranceRegisterProposalClaimSummary: React.FC<{
+  info: InsuranceRegisterProposalClaimTransactionInfo
+}> = ({ info: { pool } }) => {
+  const [poolData] = usePoolQuery(pool)
+
+  return <>Created insurance proposal for &quot;{poolData?.name}&quot; pool</>
+}
+
 const PrivacyPolicyAgreeSummary: React.FC<{
   info: PrivacyPolicyAgreeTransactionInfo
 }> = () => {
@@ -352,6 +362,8 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <StakeInsuranceSummary info={info} />
     case TransactionType.INSURANCE_UNSTAKE:
       return <UnstakeInsuranceSummary info={info} />
+    case TransactionType.INSURANCE_REGISTER_PROPOSAL_CLAIM:
+      return <InsuranceRegisterProposalClaimSummary info={info} />
     case TransactionType.USER_AGREED_TO_PRIVACY_POLICY:
       return <PrivacyPolicyAgreeSummary info={info} />
     case TransactionType.TRADER_GET_PERFORMANCE_FEE:

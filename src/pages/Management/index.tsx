@@ -1,43 +1,20 @@
 import { Flex } from "theme"
-import { useState, useEffect, useCallback } from "react"
+import { useMemo } from "react"
 import { createClient, Provider as GraphProvider } from "urql"
-import { useSelector } from "react-redux"
-import { useWeb3React } from "@web3-react/core"
 import { BigNumber } from "@ethersproject/bignumber"
-import { Insurance, PriceFeed } from "abi"
 
 import ExchangeInput from "components/Exchange/ExchangeInput"
-import ExchangeDivider from "components/Exchange/Divider"
 import Button, { SecondaryButton } from "components/Button"
 import TransactionSlippage from "components/TransactionSlippage"
 
-import { useERC20 } from "hooks/useERC20"
-import useContract from "hooks/useContract"
-import {
-  selectDexeAddress,
-  selectInsuranceAddress,
-  selectPriceFeedAddress,
-} from "state/contracts/selectors"
-
-import { multiplyBignumbers } from "utils/formulas"
-import {
-  formatBigNumber,
-  getAllowance,
-  parseTransactionError,
-  isTxMined,
-} from "utils"
-import { ZERO } from "constants/index"
-
-import { useTransactionAdder } from "state/transactions/hooks"
-import { TransactionType } from "state/transactions/types"
+import { formatBigNumber } from "utils"
 
 import LockedIcon from "assets/icons/LockedIcon"
 import multiplier from "assets/icons/10x-staking.svg"
 
 import { Card, CardHeader, Title } from "components/Exchange/styled"
-import { SubmitState, SwapDirection } from "constants/types"
+import useInsuranceManagement from "./useInsuranceManagement"
 import {
-  Container,
   PriceCard,
   Row,
   Label,
@@ -45,328 +22,36 @@ import {
   InsuranceAmount,
   MultiplierIcon,
 } from "./styled"
-import useError from "hooks/useError"
-import usePayload from "hooks/usePayload"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
 })
 
-export const useInsurance = (): [
-  {
-    fromAmount: string
-    toAmount: string
-    slippage: string
-    fromAddress: string
-    toAddress: string
-    toSelectorOpened: boolean
-    fromSelectorOpened: boolean
-    pending: boolean
-    direction: SwapDirection
-  },
-  {
-    setFromAmount: (amount: string) => void
-    setToAmount: (amount: string) => void
-    setToAddress: (address: string) => void
-    setFromAddress: (address: string) => void
-    setDirection: (d?: SwapDirection) => void
-    setPercentage: (v: number) => void
-    setToSelector: (state: boolean) => void
-    setFromSelector: (state: boolean) => void
-    setSlippage: (slippage: string) => void
-  }
-] => {
-  const { library } = useWeb3React()
-
-  const [fromAmount, setFromAmount] = useState("0")
-  const [toAmount, setToAmount] = useState("0")
-  const [slippage, setSlippage] = useState("0.10")
-  const [hash, setHash] = useState("")
-  const [pending, setPending] = useState(false)
-  const [toSelectorOpened, setToSelector] = useState(false)
-  const [fromSelectorOpened, setFromSelector] = useState(false)
-  const [direction, setDirection] = useState<SwapDirection>("deposit")
-
-  const [toAddress, setToAddress] = useState("")
-  const [fromAddress, setFromAddress] = useState("")
-
-  useEffect(() => {
-    if (!hash || !library) return
-    ;(async () => {
-      try {
-        await library.waitForTransaction(hash)
-
-        setPending(false)
-        setHash("")
-      } catch (e) {
-        console.log(e)
-      }
-    })()
-  }, [hash, library])
-
-  const setFromAmountCallback = useCallback(
-    (amount: string): void => setFromAmount(amount),
-    []
-  )
-
-  const setToAmountCallback = useCallback(
-    (amount: string): void => setToAmount(amount),
-    []
-  )
-
-  const setSlippageCallback = useCallback(
-    (slippage: string): void => setSlippage(slippage),
-    []
-  )
-
-  const setToAddressCallback = useCallback(
-    (address: string): void => setToAddress(address),
-    []
-  )
-
-  const setFromAddressCallback = useCallback(
-    (address: string): void => setFromAddress(address),
-    []
-  )
-
-  const setToSelectorCallback = useCallback(
-    (v: boolean): void => setToSelector(v),
-    []
-  )
-
-  const setFromSelectorCallback = useCallback(
-    (v: boolean): void => setFromSelector(v),
-    []
-  )
-
-  const handleDirectionChange = useCallback(
-    (d?: SwapDirection) => {
-      if (d !== undefined) {
-        setDirection(d)
-        return
-      }
-      if (direction === "deposit") {
-        setDirection("withdraw")
-      } else {
-        setDirection("deposit")
-      }
-    },
-    [direction]
-  )
-
-  const handlePercentageChange = useCallback((v: number) => {
-    // TODO: decide how to know balance
-    console.log(v)
-  }, [])
-
-  return [
-    {
-      fromAmount,
-      toAmount,
-      fromAddress,
-      toAddress,
-      toSelectorOpened,
-      fromSelectorOpened,
-      direction,
-      pending,
-      slippage,
-    },
-    {
-      setFromAmount: setFromAmountCallback,
-      setToAmount: setToAmountCallback,
-      setToAddress: setToAddressCallback,
-      setFromAddress: setFromAddressCallback,
-      setDirection: handleDirectionChange,
-      setPercentage: handlePercentageChange,
-      setToSelector: setToSelectorCallback,
-      setFromSelector: setFromSelectorCallback,
-      setSlippage: setSlippageCallback,
-    },
-  ]
-}
-
 function Management() {
-  const { account, library } = useWeb3React()
-  const [
-    { fromAmount, toAmount, direction, slippage },
-    { setFromAmount, setToAmount, setDirection, setSlippage },
-  ] = useInsurance()
+  const {
+    direction,
+    setDirection,
+    fromAmount,
+    toAmount,
+    allowance,
+    approve,
+    handleSubmit,
+    inPrice,
+    outPrice,
+    handleFromChange,
+    handleToChange,
+    fromBalance,
+    dexeAddress,
+    insuranceAmount,
+    stakeAmount,
+    insuranceAmountUSD,
+    slippage,
+    setSlippage,
+    isSlippageOpen,
+    setSlippageOpen,
+  } = useInsuranceManagement()
 
-  const [, setError] = useError()
-  const [stakeAmount, setStakeAmount] = useState(ZERO)
-  const [insuranceAmount, setInsuranceAmount] = useState(ZERO)
-  const [insuranceAmountUSD, setInsuranceAmountUSD] = useState(ZERO)
-  const [inPrice, setInPrice] = useState(ZERO)
-  const [outPrice, setOutPrice] = useState(ZERO)
-  const [allowance, setAllowance] = useState("-1")
-
-  const [isSlippageOpen, setSlippageOpen] = useState(false)
-  const [, setLoading] = usePayload()
-
-  const priceFeedAddress = useSelector(selectPriceFeedAddress)
-  const insuranceAddress = useSelector(selectInsuranceAddress)
-  const dexeAddress = useSelector(selectDexeAddress)
-
-  const priceFeed = useContract(priceFeedAddress, PriceFeed)
-  const insurance = useContract(insuranceAddress, Insurance)
-
-  const [fromToken, fromData, fromBalance, refetchBalance] =
-    useERC20(dexeAddress)
-
-  const addTransaction = useTransactionAdder()
-
-  const fetchAndUpdateAllowance = useCallback(async () => {
-    const allowance = await getAllowance(
-      account,
-      dexeAddress,
-      insuranceAddress,
-      library
-    )
-    setAllowance(allowance.toString())
-  }, [account, dexeAddress, insuranceAddress, library])
-
-  const fetchInsuranceAmountInUSD = useCallback(async () => {
-    const price = await priceFeed?.getNormalizedPriceOutUSD(
-      dexeAddress,
-      insuranceAmount
-    )
-
-    setInsuranceAmountUSD(price[0])
-  }, [dexeAddress, insuranceAmount, priceFeed])
-
-  const fetchInsuranceBalance = useCallback(async () => {
-    const userInsurance = await insurance?.getInsurance(account)
-    setStakeAmount(userInsurance[0])
-    setInsuranceAmount(userInsurance[1])
-    await fetchInsuranceAmountInUSD()
-  }, [account, insurance, fetchInsuranceAmountInUSD])
-
-  useEffect(() => {
-    if (!insurance || !account) return
-
-    fetchInsuranceBalance().catch(console.log)
-  }, [insurance, account, fetchInsuranceBalance])
-
-  // update allowance
-  useEffect(() => {
-    if (!insuranceAddress || !dexeAddress || !account || !library) return
-
-    fetchAndUpdateAllowance().catch(console.error)
-  }, [insuranceAddress, dexeAddress, account, library, fetchAndUpdateAllowance])
-
-  const handleSubmit = () => {
-    setLoading(SubmitState.SIGN)
-
-    const handleBuy = async () => {
-      const amount = BigNumber.from(fromAmount)
-      const response = await insurance?.buyInsurance(amount)
-
-      setLoading(SubmitState.WAIT_CONFIRM)
-      const receipt = await addTransaction(response, {
-        type: TransactionType.INSURANCE_STAKE,
-        amount: fromAmount,
-      })
-      if (isTxMined(receipt)) {
-        setLoading(SubmitState.SUCCESS)
-        refetchBalance()
-        await fetchInsuranceBalance()
-      }
-    }
-
-    const handleSell = async () => {
-      const amount = BigNumber.from(toAmount)
-      const response = await insurance?.withdraw(amount)
-      const receipt = await addTransaction(response, {
-        type: TransactionType.INSURANCE_UNSTAKE,
-        amount: toAmount,
-      })
-      if (isTxMined(receipt)) {
-        setLoading(SubmitState.SUCCESS)
-        refetchBalance()
-        await fetchInsuranceBalance()
-      }
-    }
-
-    ;(direction === "deposit" ? handleBuy() : handleSell()).catch((error) => {
-      setLoading(SubmitState.IDLE)
-      if (!!error && !!error.data && !!error.data.message) {
-        setError(error.data.message)
-      } else {
-        const errorMessage = parseTransactionError(error.toString())
-        !!errorMessage && setError(errorMessage)
-      }
-    })
-  }
-
-  const approve = () => {
-    if (!dexeAddress || !insuranceAddress || !fromToken) return
-    setLoading(SubmitState.SIGN)
-
-    const approveToken = async () => {
-      const amount = BigNumber.from(fromAmount)
-      const approveResponse = await fromToken.approve(insuranceAddress, amount)
-      setLoading(SubmitState.WAIT_CONFIRM)
-
-      const receipt = await addTransaction(approveResponse, {
-        type: TransactionType.APPROVAL,
-        tokenAddress: dexeAddress,
-        spender: account,
-      })
-
-      if (
-        !!receipt &&
-        isTxMined(receipt) &&
-        receipt.logs &&
-        receipt.logs.length
-      ) {
-        setLoading(SubmitState.SUCCESS)
-        await fetchAndUpdateAllowance()
-      }
-    }
-
-    approveToken().catch(() => {
-      setLoading(SubmitState.IDLE)
-    })
-  }
-
-  const handlePercentageChange = (percent: BigNumber) => {
-    if (!fromData) return
-
-    const from = multiplyBignumbers(
-      [fromBalance, fromData.decimals],
-      [percent, 18]
-    )
-    handleFromChange(from.toString())
-  }
-
-  const handleFromChange = (v: string) => {
-    setFromAmount(v)
-
-    const fetchAndUpdateTo = async () => {
-      const amount = BigNumber.from(v)
-
-      const outAmount = await insurance?.getReceivedInsurance(amount)
-
-      const price = await priceFeed?.getNormalizedPriceOutUSD(
-        dexeAddress,
-        amount
-      )
-      setToAmount(outAmount)
-      setInPrice(price[0])
-      setOutPrice(price[0].mul(BigNumber.from("10")))
-    }
-
-    fetchAndUpdateTo().catch(console.error)
-  }
-
-  const handleToChange = (v: string) => {
-    setToAmount(v)
-
-    const amount = BigNumber.from(v)
-    setFromAmount(amount.div(BigNumber.from("10")).toString())
-  }
-
-  const getButton = () => {
+  const button = useMemo(() => {
     if (fromAmount === "0" || toAmount === "0") {
       return (
         <SecondaryButton
@@ -402,9 +87,7 @@ function Management() {
         {direction === "deposit" ? `Stake DEXE` : `Unstake DEXE`}
       </Button>
     )
-  }
-
-  const button = getButton()
+  }, [allowance, approve, direction, fromAmount, handleSubmit, toAmount])
 
   const from = (
     <ExchangeInput
@@ -445,7 +128,7 @@ function Management() {
     />
   )
 
-  const form = (
+  return (
     <Card>
       <CardHeader>
         <Flex>
@@ -465,13 +148,6 @@ function Management() {
       </CardHeader>
 
       {direction === "deposit" ? from : to}
-
-      <ExchangeDivider
-        changeAmount={handlePercentageChange}
-        changeDirection={setDirection}
-      />
-
-      {direction === "deposit" ? to : from}
 
       <PriceCard>
         <Row>
@@ -506,12 +182,6 @@ function Management() {
         toggle={(v) => setSlippageOpen(v)}
       />
     </Card>
-  )
-
-  return (
-    <>
-      <Container>{form}</Container>
-    </>
   )
 }
 

@@ -3,7 +3,7 @@ import { Flex } from "theme"
 
 export const Container = styled(Flex)`
   width: fill-available;
-  padding: 0 16px 0;
+  padding: 0;
   box-sizing: border-box;
 `
 
@@ -11,7 +11,7 @@ export const TrackerPart = styled.div`
   display: flex;
   height: 3px;
   flex: 1;
-  background: #131927;
+  background: #20283a;
   border-radius: 6px;
   &:last-child {
     margin-left: 2px;

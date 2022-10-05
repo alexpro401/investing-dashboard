@@ -1,7 +1,11 @@
-import { useState } from "react"
-import InsuranceCard from "components/InsuranceCard"
+import { FC, useEffect, useRef, useState } from "react"
+import { PulseSpinner } from "react-spinners-kit"
+import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
+import { isEmpty, isFunction, isNil } from "lodash"
+
 import {
   Body,
+  BodyPlaceholder,
   ConfirmationText,
   VoicePoverContainer,
   VoicePoverText,
@@ -10,11 +14,17 @@ import {
   BtnContainer,
   ButtonsConteiner,
 } from "./styled"
-import Confirm from "components/Confirm"
+import VotingCard from "components/cards/Voting"
+import VotingCardInsuranceHead from "components/cards/Voting/VotingCardInsuranceHead"
+
 import Icon from "components/Icon"
+import Confirm from "components/Confirm"
+import LoadMore from "components/LoadMore"
 import Button, { SecondaryButton } from "components/Button"
-import TransactionSent from "modals/TransactionSent"
+
 import { SubmitState } from "constants/types"
+import TransactionSent from "modals/TransactionSent"
+import { InsuranceAccident } from "interfaces/insurance"
 
 // confirm states
 const confirmStates = {
@@ -30,11 +40,26 @@ const confirmStates = {
   },
 }
 
-const Voting = () => {
+interface Props {
+  data?: Record<string, InsuranceAccident>
+  loading: boolean
+  fetchMore?: () => void
+}
+
+const Voting: FC<Props> = ({ data, loading, fetchMore }) => {
   const [votingState, setVotingState] = useState<"" | "up" | "down">("")
   const [, setPendingState] = useState(SubmitState.IDLE)
   const [successState, setSuccessState] = useState(false)
   const isOpen = votingState !== ""
+
+  const scrollRef = useRef<any>(null)
+
+  useEffect(() => {
+    if (!scrollRef.current) return
+    disableBodyScroll(scrollRef.current)
+
+    return () => clearAllBodyScrollLocks()
+  }, [scrollRef])
 
   const handleClose = () => setVotingState("")
 
@@ -50,13 +75,34 @@ const Voting = () => {
 
   return (
     <>
-      <Body>
-        <InsuranceCard startvoting={setVotingState} />
-        <InsuranceCard startvoting={setVotingState} />
-        <InsuranceCard startvoting={setVotingState} />
-        <InsuranceCard startvoting={setVotingState} />
-        <InsuranceCard startvoting={setVotingState} />
-        <InsuranceCard startvoting={setVotingState} />
+      <Body ref={scrollRef}>
+        {(isNil(data) || (isEmpty(data) && loading)) && (
+          <BodyPlaceholder>
+            <PulseSpinner />
+          </BodyPlaceholder>
+        )}
+
+        {(isNil(data) || (isEmpty(data) && !loading)) && (
+          <BodyPlaceholder>No transactions</BodyPlaceholder>
+        )}
+
+        {!isNil(data) &&
+          Object.entries(data).map(([hash, accident]) => (
+            <VotingCard
+              shorten
+              key={hash}
+              payload={accident}
+              nodeHead={<VotingCardInsuranceHead payload={accident} />}
+            />
+          ))}
+
+        <LoadMore
+          isLoading={loading && isNil(data)}
+          handleMore={
+            !isNil(fetchMore) && isFunction(fetchMore) ? fetchMore : () => {}
+          }
+          r={scrollRef}
+        />
       </Body>
 
       <TransactionSent

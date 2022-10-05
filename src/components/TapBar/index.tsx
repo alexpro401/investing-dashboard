@@ -32,7 +32,7 @@ export const TapBar = () => {
         text="My profile"
       />
       <NavItem path="/" Icon={TopTraders} text="Traders" />
-      <NavItem path="/insurance/voting" Icon={Insurance} text="Insurance" />
+      <NavItem path="/insurance" Icon={Insurance} text="Insurance" />
     </MobileMenu>
   )
 }
