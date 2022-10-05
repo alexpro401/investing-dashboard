@@ -1,10 +1,10 @@
 import styled from "styled-components"
 
-import { Icon, StepsNavigation } from "common"
+import { Icon, StepsNavigation, Card, AppButton } from "common"
 import StepsControllerContext from "context/StepsControllerContext"
-import { Flex } from "theme"
 import { motion } from "framer-motion"
-import { opacityVariants } from "../../motion/variants"
+import { opacityVariants } from "motion/variants"
+import { getDefaultFieldBorderStyles } from "fields/styled"
 
 export const Container = styled(StepsControllerContext)`
   display: flex;
@@ -105,10 +105,42 @@ export const CenteredImage = styled.img`
   margin: 0 auto;
 `
 
-export const StepsRoot = styled(Flex)`
+export const StepsRoot = styled.div`
+  display: flex;
+  flex-direction: column;
   transform: scale(1);
+  gap: 16px;
+  padding: 14px 16px 20px;
 `
 
 export const StepsBottomNavigation = styled(StepsNavigation)`
   margin-top: auto;
+`
+
+export const OverflowedCard = styled(Card)`
+  overflow: hidden;
+  height: 100%;
+`
+
+export const FieldValidIcon = styled(Icon)`
+  color: ${(props) => props.theme.statusColors.success};
+`
+
+export const CardAddBtn = styled(AppButton)`
+  margin: 0 auto;
+`
+
+export const CardFieldBtn = styled(AppButton)`
+  text-align: left;
+  justify-content: flex-start;
+  width: 100%;
+
+  ${getDefaultFieldBorderStyles}
+
+  padding: 17.5px 16px;
+
+  &:not([disabled]):hover,
+  &:not([disabled]):focus {
+    ${getDefaultFieldBorderStyles}
+  }
 `

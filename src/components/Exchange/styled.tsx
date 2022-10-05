@@ -325,7 +325,7 @@ export const Card = styled(BasicCard)`
   position: relative;
   border-radius: 20px;
   background: #181e2c;
-  max-width: 400px;
+  max-width: 375px;
   margin: auto;
 `
 

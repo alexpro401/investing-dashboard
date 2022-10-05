@@ -1,5 +1,4 @@
 import { createContext, FC, HTMLAttributes } from "react"
-import { Flex } from "../theme"
 
 interface StepsControllerContext {
   totalStepsAmount: number

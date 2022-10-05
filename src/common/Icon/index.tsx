@@ -5,11 +5,19 @@ import {
   AngleRightOutlinedIcon,
   CloseIcon,
   DollarOutlineIcon,
+  ExternalLinkIcon,
   FileDockIcon,
   GlobeIcon,
   ShieldCheckIcon,
   StarIcon,
   UsersIcon,
+  ArrowDownFilled,
+  ArrowUpFilled,
+  ChatOutline,
+  Copy,
+  GreenCheckIcon,
+  TrashIcon,
+  CogIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -44,6 +52,22 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return AngleLeftOutlinedIcon as unknown as ElementType
       case ICON_NAMES.angleRightOutlined:
         return AngleRightOutlinedIcon as unknown as ElementType
+      case ICON_NAMES.externalLink:
+        return ExternalLinkIcon as unknown as ElementType
+      case ICON_NAMES.arrowDownFilled:
+        return ArrowUpFilled as unknown as ElementType
+      case ICON_NAMES.arrowUpFilled:
+        return ArrowDownFilled as unknown as ElementType
+      case ICON_NAMES.chatOutline:
+        return ChatOutline as unknown as ElementType
+      case ICON_NAMES.copy:
+        return Copy as unknown as ElementType
+      case ICON_NAMES.greenCheck:
+        return GreenCheckIcon as unknown as ElementType
+      case ICON_NAMES.trash:
+        return TrashIcon as unknown as ElementType
+      case ICON_NAMES.cog:
+        return CogIcon as unknown as ElementType
 
       default:
         return AngleLeftIcon as unknown as ElementType
