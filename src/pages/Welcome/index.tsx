@@ -65,7 +65,7 @@ const Welcome: React.FC = () => {
     if (!account) return
 
     navigate(state.from.pathname, { replace: true })
-  }, [account, navigate, state.from.pathname])
+  }, [account, navigate, state])
 
   useEffect(() => {
     const loadingTimeout = setTimeout(() => {
