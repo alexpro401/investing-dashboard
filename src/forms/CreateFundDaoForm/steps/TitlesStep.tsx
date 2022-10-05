@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from "react"
 import { debounce } from "lodash"
 
@@ -52,6 +53,10 @@ const TitlesStep: FC = () => {
   const { tokenAddress, nftAddress, totalPowerInTokens, nftsTotalSupply } =
     daoPoolFormContext.userKeeperParams
 
+  const [someComplexObject, setSomeComplexObject] = useState({
+    fullName: { firstName: "", lastName: { ancestor: "", default: "" } },
+  })
+
   const { getFieldErrorMessage, touchField, isFieldValid } = useFormValidation(
     {
       avatarUrl: avatarUrl.get,
@@ -65,13 +70,23 @@ const TitlesStep: FC = () => {
       nftAddress: nftAddress.get,
       totalPowerInTokens: totalPowerInTokens.get,
       nftsTotalSupply: nftsTotalSupply.get,
+
+      someComplexObject,
     },
     {
       avatarUrl: { required },
       daoName: { required },
       websiteUrl: { required },
       description: { required },
-      documents: { required },
+      documents: {
+        required,
+        $every: {
+          name: { required },
+          url: { required, isUrl },
+        },
+      },
+
+      someComplexObject: { required },
 
       ...(isErc20.get
         ? { tokenAddress: { required, isAddressValidator } }

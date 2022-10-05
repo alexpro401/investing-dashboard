@@ -1,4 +1,4 @@
-import { get, isEmpty, isEqual } from "lodash"
+import { get, isEmpty, isEqual, isObject } from "lodash"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
 type FormSchema = Record<string, unknown>
@@ -21,28 +21,99 @@ type ValidationFieldState = {
   isDirty: boolean
   isError: boolean
   errors: ValidationErrors
+  [index: number]: ValidationFieldState
 }
 
 type ValidationState = Record<keyof FormSchema, ValidationFieldState>
 
+interface ValidatorOptions {
+  [key: string]: Validator | ValidatorOptions
+}
+
+type ValidationRules = Record<keyof FormSchema, ValidatorOptions>
+
+function _generateDefaultFieldState(fieldKey: string | number, field: unknown) {
+  const defaultFlags = {
+    isInvalid: false,
+    isDirty: false,
+    isError: false,
+    errors: {},
+  }
+
+  // const documents = [
+  //   { name: "", url: "" },
+  //   { name: "", url: "" },
+  //   { name: "", url: "" },
+  //   { name: "", url: "" },
+  // ]
+
+  // const avatarUrl = ""
+
+  // const someComplexObject = {
+  //   fullName: { firstName: "", lastName: { ancestor: "", default: "" } },
+  // }
+
+  if (!isObject(field)) {
+    return {
+      [fieldKey]: defaultFlags,
+    }
+  } else if (Array.isArray(field)) {
+    return {
+      [fieldKey]: {
+        ...defaultFlags,
+        ...field
+          .map((el, index) => ({
+            ..._generateDefaultFieldState(index, el),
+          }))
+          .reduce((acc, el) => {
+            return {
+              ...acc,
+              ...el,
+            }
+          }, {}),
+      },
+    }
+  } else {
+    return {
+      [fieldKey]: {
+        ...defaultFlags,
+        ...Object.keys(field)
+          .map((el) => _generateDefaultFieldState(el, field[el]))
+          .reduce((acc, el) => {
+            return {
+              ...acc,
+              ...el,
+            }
+          }, {}),
+      },
+    }
+  }
+}
+
 export const useFormValidation = (
   formSchema: FormSchema,
-  validationRules: Record<keyof FormSchema, Record<string, Validator>>
+  validationRules: ValidationRules
 ) => {
   const validationDefaultState = useMemo(() => {
-    return Object.keys(validationRules).reduce(
-      (acc, fieldName) => ({
-        ...acc,
-        [fieldName]: {
-          isInvalid: false,
-          isDirty: false,
-          isError: false,
-          errors: [],
-        },
-      }),
+    const defaultValidationState = Object.keys(validationRules).reduce(
+      (acc, fieldName) => {
+        const _validationState = _generateDefaultFieldState(
+          fieldName,
+          formSchema[fieldName]
+        )
+
+        return {
+          ...acc,
+          ..._validationState,
+        }
+      },
       {}
     )
-  }, [validationRules])
+
+    console.log(defaultValidationState)
+
+    return defaultValidationState
+  }, [formSchema, validationRules])
 
   const [validationState, setValidationState] = useState<ValidationState>(
     validationDefaultState
@@ -68,6 +139,20 @@ export const useFormValidation = (
     })
   }, [getValidationState, formSchema, validationState])
 
+  const _validateArrayField = useCallback(
+    (fieldName: string) => {
+      // can be ["", "", ""] or [{ name: "" }, { name: "" }, { name: "" }]
+      const originalData = formSchema[fieldName] as unknown[]
+
+      // need to check if rule is an Validator of primitive type
+      // or it's an object with Validators
+
+      const _validationRules = get(validationRules, fieldName, {})
+      const _validationState = get(validationState, fieldName, [])
+    },
+    [formSchema, validationRules, validationState]
+  )
+
   const _validateField = useCallback(
     (fieldName: string): ValidationState => {
       const fieldValidators = validationRules[fieldName]
@@ -78,7 +163,9 @@ export const useFormValidation = (
       let errors = {} as ValidationErrors
 
       for (const validatorName in fieldValidators) {
-        const validationResult = fieldValidators[validatorName](
+        if (validatorName === "$every") continue
+
+        const validationResult = (fieldValidators[validatorName] as Validator)(
           formSchema[fieldName]
         )
 
