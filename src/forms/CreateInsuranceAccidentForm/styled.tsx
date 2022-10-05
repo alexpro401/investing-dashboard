@@ -6,8 +6,13 @@ import { StepsNavigation } from "common"
 export const Container = styled(StepsControllerContext)``
 
 export const StepsRoot = styled(Flex)`
-  transform: scale(1);
   width: 100%;
+  height: calc(100% - 51px);
+  overflow-y: auto;
+
+  @media all and (display-mode: standalone) {
+    height: calc(100% - 66px);
+  }
 `
 
 export const StepsBottomNavigation = styled(StepsNavigation)`
