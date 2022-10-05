@@ -197,7 +197,7 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
     duration: useState<number>(0),
     quorum: useState<number>(0),
     validators: useState<string[]>([""]),
-    balances: useState<number[]>([]),
+    balances: useState<number[]>([0]),
   }
 
   const _handleChangeValidators = useCallback(
