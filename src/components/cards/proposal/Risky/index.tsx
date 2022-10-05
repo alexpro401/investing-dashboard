@@ -10,7 +10,6 @@ import { format } from "date-fns"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { parseUnits } from "@ethersproject/units"
-import { Contract } from "@ethersproject/contracts"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { PriceFeed } from "abi"
@@ -23,7 +22,7 @@ import { percentageOfBignumbers } from "utils/formulas"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import { IRiskyProposal } from "interfaces/contracts/ITraderPoolRiskyProposal"
+import { ProposalsResponse } from "interfaces/abi-typings/TraderPoolRiskyProposal"
 import { selectPriceFeedAddress } from "state/contracts/selectors"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
@@ -42,14 +41,15 @@ import SharedS, { BodyItem } from "components/cards/proposal/styled"
 import settingsIcon from "assets/icons/settings.svg"
 import settingsGreenIcon from "assets/icons/settings-green.svg"
 import useTokenRating from "hooks/useTokenRating"
+import { TraderPoolRiskyProposalType } from "interfaces/abi-typings"
 
 const MAX_INVESTORS_COUNT = 1000
 
 interface Props {
-  proposal: IRiskyProposal
+  proposal: ProposalsResponse
   proposalId: number
   poolAddress: string
-  proposalPool: Contract
+  proposalPool: TraderPoolRiskyProposalType
   isTrader: boolean
   poolInfo: IPoolInfo
 }
@@ -269,10 +269,7 @@ const RiskyProposalCard: FC<Props> = ({
 
   // Fetch current user locked funds in proposal
   useEffect(() => {
-    if (!proposalPool || proposalId === undefined) {
-      return
-    }
-
+    if (!proposalPool || proposalId === undefined || !account) return
     ;(async () => {
       try {
         const balance = await proposalPool.getActiveInvestmentsInfo(

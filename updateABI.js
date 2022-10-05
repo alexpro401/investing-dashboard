@@ -1,6 +1,8 @@
 const fs = require("fs")
 const path = require("path")
+const { exec } = require("child_process")
 
+// path to the folder where the ABI files are located in your project
 const ABI_PATH = path.join(__dirname, "src/abi")
 
 const writeInFile = (path, content) => {
@@ -27,11 +29,11 @@ const getAllFiles = function (dirPath, arrayOfFiles) {
   return arrayOfFiles
 }
 
-const ignoreFiles = ["index.ts", "ERC20.ts"]
+const ignoreFiles = ["index.ts"]
 
 const fileNames = getAllFiles(ABI_PATH)
   .filter((f) => !ignoreFiles.includes(f.file))
-  .map((f) => f.file.substring(0, f.file.length - 3))
+  .map((f) => f.file.substring(0, f.file.length - 5))
 
 console.log(`ABI's found: (${fileNames.length}): `)
 console.log(fileNames)
@@ -60,11 +62,33 @@ const parseJSON = (path) => {
   }
 }
 
-abiUpdateAllFilesList.map((f) => {
-  const abi = parseJSON(f.dirPath + "/" + f.file)
-  const jsonContent = JSON.stringify(abi.abi)
-  writeInFile(
-    ABI_PATH + "/" + f.file.substring(0, f.file.length - 5) + ".ts",
-    `export default ${jsonContent}`
+const executeABITypesGenerator = (jsonPath) => {
+  exec(
+    `yarn abi-types-generator "${jsonPath}" --output=./src/interfaces/abi-typings --provider=ethers_v5`,
+    (error, stdout, stderr) => {
+      if (error) {
+        console.log(`error: ${error.message}`)
+        return
+      }
+      if (stderr) {
+        console.log(`stderr: ${stderr}`)
+        return
+      }
+      console.log(`stdout: ${stdout}`)
+    }
   )
+}
+
+abiUpdateAllFilesList.map((f) => {
+  const jsonPath = f.dirPath + "/" + f.file
+
+  const abi = parseJSON(jsonPath)
+  const jsonContent = JSON.stringify(abi.abi)
+
+  writeInFile(
+    ABI_PATH + "/" + f.file.substring(0, f.file.length - 5) + ".json",
+    jsonContent
+  )
+
+  executeABITypesGenerator(jsonPath)
 })

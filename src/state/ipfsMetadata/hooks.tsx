@@ -15,7 +15,7 @@ import {
 import { addInsuranceAccident, addPool, addProposal, addUser } from "./actions"
 import { IInvestProposalMetadata, IUserMetadata } from "./types"
 import { InsuranceAccident } from "interfaces/insurance"
-import { useInsuranceContract } from "hooks/useContract"
+import { useInsuranceContract } from "contracts"
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
 
 export function usePoolMetadata(poolId, hash) {
@@ -240,7 +240,7 @@ export const useInsuranceAccidents = (): [
     setLoading(true)
 
     const totalActiveAccidents = await fetchTotalCount()
-    const totalNormalized = Number(totalActiveAccidents.toString())
+    const totalNormalized = Number(totalActiveAccidents?.toString())
 
     setTotal(totalNormalized)
 

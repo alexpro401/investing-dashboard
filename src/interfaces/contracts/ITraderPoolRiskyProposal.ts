@@ -4,21 +4,6 @@ import { BigNumber } from "@ethersproject/bignumber"
    # Contract TraderPoolRiskyProposal
 */
 
-// method: getInvestTokens()
-export interface IProposalInvestTokens {
-  baseAmount: BigNumber
-  lp2Amount: BigNumber
-  positionAmount: BigNumber
-}
-
-// method: getDivestAmounts()
-export interface IDivestAmounts {
-  baseAmount: BigNumber
-  givenAmount: BigNumber[]
-  positions: string[]
-  receivedAmounts: BigNumber[]
-}
-
 // method: getActiveInvestmentsInfo()
 export interface IRiskyProposalInvestmentsInfo {
   baseInvested: BigNumber
