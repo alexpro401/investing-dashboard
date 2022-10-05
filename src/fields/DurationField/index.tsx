@@ -109,7 +109,7 @@ function DurationField<V extends string | number>({
       <InputField
         value={localValue}
         setValue={setLocalValue}
-        onInput={() => setIsDropdownOpen(true)}
+        onInput={(e) => setIsDropdownOpen(!!e.currentTarget.value)}
         onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
         label={label}
         labelNodeRight={labelNodeRight}
@@ -124,7 +124,7 @@ function DurationField<V extends string | number>({
       />
       <S.DropdownParsedVariants isOpen={isDropdownOpen && !!parsedDuration}>
         <AppButton
-          text={parsedDurationString}
+          text={parsedDurationString || "No results"}
           onClick={handleSelectDuration}
           color="default"
         />

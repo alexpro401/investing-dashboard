@@ -121,6 +121,7 @@ const IsDaoValidatorStep: FC = () => {
                 value={duration.get}
                 setValue={duration.set}
                 label="Duration of validator voting"
+                placeholder="1Y 6Mon 2w 1d 6H 30Min 9s"
               />
               <InputField
                 value={quorum.get}
