@@ -40,19 +40,6 @@ function _generateDefaultFieldState(fieldKey: string | number, field: unknown) {
     errors: {},
   }
 
-  // const documents = [
-  //   { name: "", url: "" },
-  //   { name: "", url: "" },
-  //   { name: "", url: "" },
-  //   { name: "", url: "" },
-  // ]
-
-  // const avatarUrl = ""
-
-  // const someComplexObject = {
-  //   fullName: { firstName: "", lastName: { ancestor: "", default: "" } },
-  // }
-
   if (!isObject(field)) {
     return {
       [fieldKey]: defaultFlags,
@@ -61,30 +48,24 @@ function _generateDefaultFieldState(fieldKey: string | number, field: unknown) {
     return {
       [fieldKey]: {
         ...defaultFlags,
-        ...field
-          .map((el, index) => ({
+        ...field.reduce((acc, el, index) => {
+          return {
+            ...acc,
             ..._generateDefaultFieldState(index, el),
-          }))
-          .reduce((acc, el) => {
-            return {
-              ...acc,
-              ...el,
-            }
-          }, {}),
+          }
+        }, {}),
       },
     }
   } else {
     return {
       [fieldKey]: {
         ...defaultFlags,
-        ...Object.keys(field)
-          .map((el) => _generateDefaultFieldState(el, field[el]))
-          .reduce((acc, el) => {
-            return {
-              ...acc,
-              ...el,
-            }
-          }, {}),
+        ...Object.keys(field).reduce((acc, el) => {
+          return {
+            ...acc,
+            ..._generateDefaultFieldState(el, field[el]),
+          }
+        }, {}),
       },
     }
   }
@@ -95,24 +76,17 @@ export const useFormValidation = (
   validationRules: ValidationRules
 ) => {
   const validationDefaultState = useMemo(() => {
-    const defaultValidationState = Object.keys(validationRules).reduce(
-      (acc, fieldName) => {
-        const _validationState = _generateDefaultFieldState(
-          fieldName,
-          formSchema[fieldName]
-        )
+    return Object.keys(validationRules).reduce((acc, fieldName) => {
+      const _validationState = _generateDefaultFieldState(
+        fieldName,
+        formSchema[fieldName]
+      )
 
-        return {
-          ...acc,
-          ..._validationState,
-        }
-      },
-      {}
-    )
-
-    console.log(defaultValidationState)
-
-    return defaultValidationState
+      return {
+        ...acc,
+        ..._validationState,
+      }
+    }, {})
   }, [formSchema, validationRules])
 
   const [validationState, setValidationState] = useState<ValidationState>(
