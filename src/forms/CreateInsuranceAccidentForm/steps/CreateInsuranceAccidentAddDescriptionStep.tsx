@@ -226,7 +226,14 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
 
   return (
     <>
-      <StepsRoot gap={"24"} dir={"column"} ai={"stretch"} p={"16px"} full>
+      <StepsRoot
+        gap={"24"}
+        dir={"column"}
+        jc={"flex-start"}
+        ai={"stretch"}
+        p={"16px"}
+        full
+      >
         <Card>
           <CardHead
             nodeLeft={<CreateInsuranceAccidentCardStepNumber number={4} />}

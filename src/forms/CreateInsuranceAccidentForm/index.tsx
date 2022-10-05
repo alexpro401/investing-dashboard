@@ -337,21 +337,13 @@ const CreateInsuranceAccidentForm: FC = () => {
       >
         <AnimatePresence>
           {currentStep === STEPS.chooseFund ? (
-            <S.StepsContainer>
-              <CreateInsuranceAccidentChooseFundStep />
-            </S.StepsContainer>
+            <CreateInsuranceAccidentChooseFundStep />
           ) : currentStep === STEPS.chooseBlock ? (
-            <S.StepsContainer>
-              <CreateInsuranceAccidentChooseBlockStep />
-            </S.StepsContainer>
+            <CreateInsuranceAccidentChooseBlockStep />
           ) : currentStep === STEPS.checkSettings ? (
-            <S.StepsContainer>
-              <CreateInsuranceAccidentCheckSettingsStep />
-            </S.StepsContainer>
+            <CreateInsuranceAccidentCheckSettingsStep />
           ) : currentStep === STEPS.addDescription ? (
-            <S.StepsContainer>
-              <CreateInsuranceAccidentAddDescriptionStep />
-            </S.StepsContainer>
+            <CreateInsuranceAccidentAddDescriptionStep />
           ) : (
             <></>
           )}

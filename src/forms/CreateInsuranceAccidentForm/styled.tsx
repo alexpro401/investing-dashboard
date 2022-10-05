@@ -1,35 +1,13 @@
 import styled from "styled-components"
 import { Flex } from "theme"
-import { motion } from "framer-motion"
 import StepsControllerContext from "context/StepsControllerContext"
 import { StepsNavigation } from "common"
 
-export const Container = styled(StepsControllerContext)`
-  display: flex;
-  margin: 0 auto;
-  background-color: #040a0f;
-  width: 100%;
-  height: calc(100vh - 94px);
-  overflow-y: auto;
-
-  @media all and (display-mode: standalone) {
-    height: calc(100vh - 115px);
-  }
-`
+export const Container = styled(StepsControllerContext)``
 
 export const StepsRoot = styled(Flex)`
   transform: scale(1);
-`
-
-export const StepsContainer = styled(motion.div).attrs(() => ({
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-  transition: { duration: 0.2 },
-}))`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  width: 100%;
 `
 
 export const StepsBottomNavigation = styled(StepsNavigation)`

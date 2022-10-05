@@ -75,7 +75,14 @@ const CreateInsuranceAccidentChooseFundStep: FC = () => {
 
   return (
     <>
-      <StepsRoot gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
+      <StepsRoot
+        gap={"16"}
+        dir={"column"}
+        jc={"flex-start"}
+        ai={"stretch"}
+        p={"16px"}
+        full
+      >
         <Card>
           <CardHead
             nodeLeft={<CreateInsuranceAccidentCardStepNumber number={1} />}

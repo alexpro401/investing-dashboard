@@ -3,7 +3,7 @@ import styled from "styled-components"
 export const Container = styled.div`
   margin: 0 auto;
   width: fill-available;
-  height: calc(100vh - 94px);
+  height: calc(100vh - 96px);
   overflow-y: auto;
 
   @media all and (display-mode: standalone) {
