@@ -47,7 +47,7 @@ export const getDefaultFieldTextStyles = () => {
 export const getDefaultFieldBorderStyles = () => {
   return `
     border: 1px solid ${"#293C54"};
-    border-radius: 10px;
+    border-radius: 16px;
   `
 }
 
