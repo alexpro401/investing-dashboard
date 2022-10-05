@@ -1,6 +1,5 @@
-import { FC, useEffect, useRef, useState } from "react"
+import { FC, useRef, useState } from "react"
 import { PulseSpinner } from "react-spinners-kit"
-import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 import { isEmpty, isFunction, isNil } from "lodash"
 
 import {
@@ -53,13 +52,6 @@ const Voting: FC<Props> = ({ data, loading, fetchMore }) => {
   const isOpen = votingState !== ""
 
   const scrollRef = useRef<any>(null)
-
-  useEffect(() => {
-    if (!scrollRef.current) return
-    disableBodyScroll(scrollRef.current)
-
-    return () => clearAllBodyScrollLocks()
-  }, [scrollRef])
 
   const handleClose = () => setVotingState("")
 
