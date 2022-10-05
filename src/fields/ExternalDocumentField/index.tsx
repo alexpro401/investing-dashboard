@@ -101,6 +101,7 @@ const ExternalDocumentField: FC<Props> = ({
       <S.BottomInputField>
         <OverlapInputField
           value={url}
+          placeholder="https://"
           onInput={handleUrlInput}
           overlapNodeLeft={
             isShowUrlOverlap ? (
