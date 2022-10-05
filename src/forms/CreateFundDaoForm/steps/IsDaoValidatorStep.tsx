@@ -11,7 +11,7 @@ import {
   Collapse,
   Icon,
 } from "common"
-import { AddressAmountField, InputField } from "fields"
+import { AddressAmountField, InputField, DurationField } from "fields"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 
@@ -117,10 +117,11 @@ const IsDaoValidatorStep: FC = () => {
                 setValue={symbol.set}
                 label="Validator token symbol"
               />
-              <InputField
+              <DurationField
                 value={duration.get}
                 setValue={duration.set}
                 label="Duration of validator voting"
+                placeholder="1Y 6Mon 2w 1d 6H 30Min 9s"
               />
               <InputField
                 value={quorum.get}
