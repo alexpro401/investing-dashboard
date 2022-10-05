@@ -24,8 +24,8 @@ const Collapse: FC<Props> = ({
           animate="open"
           exit="collapsed"
           variants={{
-            open: { opacity: 1, height: "auto", overflow: "hidden" },
-            collapsed: { opacity: 0, height: 0, overflow: "hidden" },
+            open: { opacity: 1, height: "auto" },
+            collapsed: { opacity: 0, height: 0 },
           }}
           transition={{ duration: duration }}
         >

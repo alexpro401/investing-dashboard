@@ -1,8 +1,9 @@
 import Switch from "components/Switch"
 import { CreateDaoCardStepNumber } from "../components"
 
-import { FC, useContext } from "react"
+import { FC, useCallback, useContext } from "react"
 import {
+  AppButton,
   Card,
   CardDescription,
   CardFormControl,
@@ -10,7 +11,7 @@ import {
   Collapse,
   Icon,
 } from "common"
-import { InputField } from "fields"
+import { AddressAmountField, InputField } from "fields"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 
@@ -21,11 +22,30 @@ import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 const IsDaoValidatorStep: FC = () => {
   const { validatorsParams, isValidator } = useContext(FundDaoCreatingContext)
 
-  const { name, symbol, duration, quorum } = validatorsParams
+  const { name, symbol, duration, quorum, validators, balances } =
+    validatorsParams
+
+  const handleAddValidator = useCallback(() => {
+    validators.set([...validators.get, ""])
+    balances.set([...balances.get, 0])
+  }, [balances, validators])
+
+  const handleRemoveValidator = useCallback(
+    (idx: number) => {
+      if (validators.get.length > 1) {
+        validators.set(validators.get.filter((_, i) => i !== idx))
+        balances.set(balances.get.filter((_, i) => i !== idx))
+      } else {
+        validators.set("", idx)
+        balances.set("", idx)
+      }
+    },
+    [balances, validators]
+  )
 
   return (
     <>
-      <S.StepsRoot gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
+      <S.StepsRoot>
         <Card>
           <CardHead
             nodeLeft={<CreateDaoCardStepNumber number={2} />}
@@ -69,8 +89,8 @@ const IsDaoValidatorStep: FC = () => {
           </CardDescription>
         </Card>
 
-        <Collapse isOpen={isValidator.get} duration={0.5}>
-          <Card>
+        <Collapse isOpen={isValidator.get}>
+          <S.OverflowedCard>
             <CardHead
               nodeLeft={<Icon name={ICON_NAMES.users} />}
               title="Validator settings"
@@ -108,7 +128,53 @@ const IsDaoValidatorStep: FC = () => {
                 label="Quorum required for a vote pass"
               />
             </CardFormControl>
-          </Card>
+          </S.OverflowedCard>
+        </Collapse>
+        <Collapse isOpen={isValidator.get}>
+          <S.OverflowedCard>
+            <CardHead
+              nodeLeft={<Icon name={ICON_NAMES.users} />}
+              title="Validator addresses"
+            />
+            <CardDescription>
+              <p>
+                Add all validator addresses and the amount of tokens to
+                distribute. The validator tokens will be automatically
+                distributed to them accordingly.
+              </p>
+            </CardDescription>
+            <CardFormControl>
+              {validators.get.map((el, idx) => (
+                <AddressAmountField
+                  key={idx}
+                  value={validators.get[idx]}
+                  setValue={(value) => validators.set(value, idx)}
+                  secondValue={balances.get[idx]}
+                  setSecondValue={(value) => balances.set(+value || 0, idx)}
+                  label={`${idx + 1}. Address 0x...`}
+                  internalNodeRight={<span>{symbol.get}</span>}
+                  overlapNodeLeft={
+                    <AppButton
+                      iconRight={ICON_NAMES.trash}
+                      size="no-paddings"
+                      color="default"
+                      onClick={() => handleRemoveValidator(idx)}
+                    />
+                  }
+                  labelNodeRight={
+                    !!balances.get[idx] ? (
+                      <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                    ) : null
+                  }
+                />
+              ))}
+            </CardFormControl>
+            <S.CardFieldBtn
+              color="default"
+              text="+ Paste address"
+              onClick={handleAddValidator}
+            />
+          </S.OverflowedCard>
         </Collapse>
       </S.StepsRoot>
       <S.StepsBottomNavigation />

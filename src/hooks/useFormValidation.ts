@@ -137,7 +137,7 @@ export const useFormValidation = (
       const validationField = get(validationState, fieldPath)
 
       if (
-        Boolean(validationField) &&
+        !Boolean(validationField) &&
         !Object.keys(formSchema).includes(fieldPath)
       ) {
         throw new Error(`Field "${fieldPath}" not found`)
@@ -157,9 +157,27 @@ export const useFormValidation = (
     [formSchema, validationState]
   )
 
+  const isFieldValid = useCallback(
+    (fieldPath: string) => {
+      const validationField = get(validationState, fieldPath)
+
+      if (!Boolean(validationField)) {
+        if (Object.keys(formSchema).includes(fieldPath)) {
+          return false
+        } else {
+          throw new Error(`Field "${fieldPath}" not found`)
+        }
+      }
+
+      return !validationField.isInvalid || false
+    },
+    [formSchema, validationState]
+  )
+
   return {
     isFormValid,
     getFieldErrorMessage,
     touchField,
+    isFieldValid,
   }
 }
