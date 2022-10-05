@@ -9,10 +9,9 @@ import { addDays } from "date-fns/esm"
 import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
 import { useTraderPool } from "hooks/usePool"
-import {
-  useBasicPoolContract,
-  useRiskyProposalContract,
-} from "hooks/useContract"
+import { useBasicPoolContract } from "contracts"
+import { useTraderPoolRiskyProposalContract } from "contracts"
+import { useProposalAddress } from "hooks/useContract"
 
 import { ZERO } from "constants/index"
 import { IValidationError, SubmitState } from "constants/types"
@@ -48,7 +47,8 @@ const useCreateRiskyProposal = (
   const addTransaction = useTransactionAdder()
   const { account } = useWeb3React()
   const initialTimeLimit = shortTimestamp(getTime(addDays(new Date(), 30)))
-  const [riskyProposal] = useRiskyProposalContract(poolAddress)
+  const proposalAddress = useProposalAddress(poolAddress)
+  const riskyProposal = useTraderPoolRiskyProposalContract(proposalAddress)
 
   const basicTraderPool = useBasicPoolContract(poolAddress)
   const traderPool = useTraderPool(poolAddress)
@@ -123,7 +123,14 @@ const useCreateRiskyProposal = (
   }, [investLPLimit, lpAmount, maxTokenPriceLimit, positionPrice])
 
   const handleSubmit = useCallback(() => {
-    if (!basicTraderPool || !traderPool || !riskyProposal || !account) return
+    if (
+      !basicTraderPool ||
+      !traderPool ||
+      !riskyProposal ||
+      !account ||
+      !tokenAddress
+    )
+      return
 
     if (!handleValidate()) return
 
@@ -151,11 +158,11 @@ const useCreateRiskyProposal = (
       const createResponse = await basicTraderPool.createProposal(
         tokenAddress,
         amount,
-        [
+        {
           timestampLimit,
-          parseUnits(investLPLimit, 18).toHexString(),
-          parseUnits(maxTokenPriceLimit, 18).toHexString(),
-        ],
+          investLPLimit: parseUnits(investLPLimit, 18).toHexString(),
+          maxTokenPriceLimit: parseUnits(maxTokenPriceLimit, 18).toHexString(),
+        },
         percentage,
         divests.receptions.receivedAmounts,
         tokens[0],
@@ -201,7 +208,9 @@ const useCreateRiskyProposal = (
   ])
 
   const getCreatingTokensInfo = useCallback(async () => {
-    const tokens = await riskyProposal?.getCreationTokens(
+    if (!riskyProposal || !tokenAddress) return
+
+    const tokens = await riskyProposal.getCreationTokens(
       tokenAddress,
       parseEther("1").toHexString(),
       parseUnits("100", 27).toHexString(),

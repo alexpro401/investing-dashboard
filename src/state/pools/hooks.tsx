@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useQuery } from "urql"
 
-import { useTraderPoolRegistryContract } from "hooks/useContract"
+import { usePoolRegistryContract } from "contracts"
 import { AppDispatch, AppState } from "state"
 import {
   addPools,
@@ -144,7 +144,7 @@ export function usePoolsCounter() {
   const [, setUpdate] = useState(false)
   const updateRef = useRef(false)
   const dispatch = useDispatch<AppDispatch>()
-  const traderPoolRegistry = useTraderPoolRegistryContract()
+  const traderPoolRegistry = usePoolRegistryContract()
 
   const handleUpdate = useCallback(() => {
     updateRef.current = !updateRef.current

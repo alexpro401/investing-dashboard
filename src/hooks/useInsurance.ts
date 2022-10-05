@@ -9,7 +9,7 @@ import { ZERO } from "constants/index"
 import { InsurancDueDay } from "queries/investors"
 import { Insurance } from "interfaces/thegraphs/investors"
 import { selectDexeAddress } from "state/contracts/selectors"
-import { useInsuranceContract, usePriceFeedContract } from "hooks/useContract"
+import { useInsuranceContract, usePriceFeedContract } from "contracts"
 
 interface IValues {
   stakeDexe: BigNumber
@@ -37,13 +37,14 @@ function useInsurance(): [IValues, boolean, () => void] {
       insuranceAmount
     )
 
-    setInsuranceAmountUSD(price[0])
     setLoading(false)
+    if (!price) return
+    setInsuranceAmountUSD(price[0])
   }, [dexeAddress, insuranceAmount, priceFeed])
 
   const fetchInsuranceBalance = useCallback(async () => {
     setLoading(true)
-    const userInsurance = await insurance?.getInsurance(account)
+    const userInsurance = await insurance!.getInsurance(account!)
     setStakeAmount(userInsurance[0])
     setInsuranceAmount(userInsurance[1])
     setLoading(false)

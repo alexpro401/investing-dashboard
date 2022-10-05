@@ -1,5 +1,5 @@
 import { useWeb3React } from "@web3-react/core"
-import { useInvestProposalContract } from "hooks/useContract"
+import { useTraderPoolInvestProposalContract } from "contracts"
 import { useInvestProposal } from "hooks/useInvestmentProposals"
 import { usePoolContract } from "hooks/usePool"
 import { useCallback, useEffect, useMemo, useState } from "react"
@@ -18,7 +18,7 @@ const useConvertToDividends = (
   onClose
 ): [Balance | undefined, () => void] => {
   const { library, account } = useWeb3React()
-  const [investProposal] = useInvestProposalContract(poolAddress)
+  const investProposal = useTraderPoolInvestProposalContract(poolAddress)
   const [proposal] = useInvestProposal(poolAddress, proposalId)
   const [, poolInfo] = usePoolContract(poolAddress)
   const addTransaction = useTransactionAdder()

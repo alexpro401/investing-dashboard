@@ -5,7 +5,8 @@ import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 import { useActiveWeb3React } from "hooks"
 import { usePoolContract } from "hooks/usePool"
 import useRiskyProposals from "hooks/useRiskyProposals"
-import { useRiskyProposalContract } from "hooks/useContract"
+import { useTraderPoolRiskyProposalContract } from "contracts"
+import { useProposalAddress } from "hooks/useContract"
 
 import LoadMore from "components/LoadMore"
 import RiskyProposalCard from "components/cards/proposal/Risky"
@@ -18,7 +19,8 @@ interface IProps {
 
 const FundProposalsRisky: FC<IProps> = ({ poolAddress }) => {
   const { account } = useActiveWeb3React()
-  const [proposalPool] = useRiskyProposalContract(poolAddress)
+  const proposalAddress = useProposalAddress(poolAddress)
+  const proposalPool = useTraderPoolRiskyProposalContract(proposalAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
   const [{ data, loading }, fetchMore] = useRiskyProposals(poolAddress)
 

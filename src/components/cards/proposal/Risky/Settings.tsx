@@ -8,7 +8,6 @@ import {
   SetStateAction,
 } from "react"
 import { format } from "date-fns"
-import { Contract } from "@ethersproject/contracts"
 import { BigNumber } from "@ethersproject/bignumber"
 import { parseEther, parseUnits } from "@ethersproject/units"
 
@@ -27,6 +26,7 @@ import { accordionSummaryVariants } from "motion/variants"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { SettingsStyled as S } from "./styled"
 import { useUserAgreement } from "state/user/hooks"
+import { TraderPoolRiskyProposalType } from "interfaces/abi-typings"
 
 interface Values {
   timestampLimit: number
@@ -71,7 +71,7 @@ interface Props {
   maxInvestPrice: BigNumber
   fullness: BigNumber
   currentPrice: BigNumber
-  proposalPool: Contract
+  proposalPool: TraderPoolRiskyProposalType
   proposalId: number
   proposalSymbol?: string
   poolAddress: string
@@ -196,11 +196,11 @@ const RiskyCardSettings: FC<Props> = ({
 
     if (!hasError) {
       try {
-        const proposalLimits = [
+        const proposalLimits = {
           timestampLimit,
-          parseUnits(investLPLimit, 18).toHexString(),
-          parseUnits(maxTokenPriceLimit, 18).toHexString(),
-        ]
+          investLPLimit: parseUnits(investLPLimit, 18).toHexString(),
+          maxTokenPriceLimit: parseUnits(maxTokenPriceLimit, 18).toHexString(),
+        }
 
         const receipt = await proposalPool.changeProposalRestrictions(
           proposalId,

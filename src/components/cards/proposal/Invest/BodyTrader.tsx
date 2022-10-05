@@ -1,11 +1,12 @@
 import { FC } from "react"
 
 import { BodyItem } from "components/cards/proposal/styled"
+import { BigNumber } from "@ethersproject/bignumber"
 
 interface Props {
   ticker: string
 
-  supply: string
+  supply: { big: BigNumber; format: string }
   youSizeLP: string
   maxSizeLP: string
   apr: string
@@ -30,7 +31,7 @@ const BodyTrader: FC<Props> = ({
 }) => {
   return (
     <>
-      <BodyItem label={"Supply " + ticker} amount={supply} />
+      <BodyItem label={"Supply " + ticker} amount={supply.format} />
       <BodyItem label={"Your size " + ticker} amount={youSizeLP} />
       <BodyItem label={"Max Size " + ticker} amount={maxSizeLP} ai="flex-end" />
       <BodyItem label="APR" amount={`${apr} %`} />

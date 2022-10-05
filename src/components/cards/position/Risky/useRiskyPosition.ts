@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react"
 import { ZERO } from "constants/index"
 import { normalizeBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
-import { usePriceFeedContract } from "hooks/useContract"
+import { usePriceFeedContract } from "contracts"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { IRiskyPositionCard } from "interfaces/thegraphs/basic-pools"
 
@@ -195,8 +195,10 @@ function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
 
   // get mark price
   useEffect(() => {
-    if (!priceFeed || !position || !position.token || !position.pool) return
+    if (!priceFeed) return
     ;(async () => {
+      if (!position.token || !position.pool) return
+
       try {
         const amount = parseUnits("1", 18)
 

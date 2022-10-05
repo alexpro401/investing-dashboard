@@ -4,31 +4,6 @@ import { BigNumber } from "@ethersproject/bignumber"
    # Contract TraderPool
 */
 
-// method: getDivestAmountsAndCommissions()
-export interface IDivestAmountsAndCommissions {
-  comissions: {
-    dexeBaseCommission: BigNumber
-    dexeDexeCommission: BigNumber
-    traderBaseCommission: BigNumber
-  }
-  receptions: {
-    baseAmount: BigNumber
-    givenAmounts: BigNumber[]
-    lpAmount: BigNumber
-    positions: string[]
-    receivedAmounts: BigNumber[]
-  }
-}
-
-// method: getInvestTokens()
-export interface IPoolInvestTokens {
-  baseAmount: BigNumber
-  givenAmounts: BigNumber[]
-  lpAmount: BigNumber
-  positions: string[]
-  receivedAmounts: BigNumber[]
-}
-
 // method: getPoolInfo()
 export interface IPoolInfo {
   baseAndPositionBalances: BigNumber[]

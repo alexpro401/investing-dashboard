@@ -15,9 +15,9 @@ import { useTransactionAdder } from "state/transactions/hooks"
 import { addInvestProposalMetadata } from "utils/ipfs"
 import { shortTimestamp } from "utils"
 import {
-  useInvestPoolContract,
-  useInvestProposalContract,
-} from "hooks/useContract"
+  useInvestTraderPoolContract,
+  useTraderPoolInvestProposalContract,
+} from "contracts"
 import { parseTransactionError, isTxMined } from "utils"
 import { BigNumber } from "@ethersproject/bignumber"
 import { IValidationError, SubmitState } from "constants/types"
@@ -72,10 +72,10 @@ const useCreateInvestmentProposal = (
   )
 
   const traderPool = useTraderPool(poolAddress)
-  const investTraderPool = useInvestPoolContract(poolAddress)
+  const investTraderPool = useInvestTraderPoolContract(poolAddress)
   const addTransaction = useTransactionAdder()
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [investProposal] = useInvestProposalContract(poolAddress)
+  const investProposal = useTraderPoolInvestProposalContract(poolAddress)
 
   const updateTotalProposals = useCallback(async () => {
     if (!investProposal) return
@@ -144,7 +144,7 @@ const useCreateInvestmentProposal = (
       const createReceipt = await investTraderPool.createProposal(
         ipfsReceipt.path,
         amount,
-        [timestampLimit, investLPLimitHex],
+        { timestampLimit, investLPLimit: investLPLimitHex },
         divests.receptions.receivedAmounts
       )
 

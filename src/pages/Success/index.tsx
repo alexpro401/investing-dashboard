@@ -7,10 +7,7 @@ import Header from "components/Header/Layout"
 import Icon from "components/Icon"
 import Button from "components/Button"
 
-import {
-  useTraderPoolContract,
-  useTraderPoolRegistryContract,
-} from "hooks/useContract"
+import { useTraderPoolContract, usePoolRegistryContract } from "contracts"
 import { PoolType } from "constants/types"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
@@ -60,7 +57,7 @@ const Success: FC<SuccessProps> = () => {
   const [, setPoolType] = useState<PoolType | null>(null)
 
   const traderPool = useTraderPoolContract(poolAddress)
-  const traderPoolRegistry = useTraderPoolRegistryContract()
+  const traderPoolRegistry = usePoolRegistryContract()
 
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
@@ -80,7 +77,7 @@ const Success: FC<SuccessProps> = () => {
   }, [getPoolInfo])
 
   useEffect(() => {
-    if (!traderPoolRegistry) return
+    if (!traderPoolRegistry || !poolAddress) return
     ;(async () => {
       const isBase = await traderPoolRegistry.isBasicPool(poolAddress)
       setPoolType(isBase ? "BASIC_POOL" : "INVEST_POOL")
