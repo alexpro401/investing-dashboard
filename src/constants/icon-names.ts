@@ -17,4 +17,7 @@ export enum ICON_NAMES {
   externalLink = "external-link",
   chatOutline = "chat-outline",
   copy = "copy",
+  greenCheck = "green-check",
+  trash = "trash",
+  cog = "cog",
 }

@@ -4,44 +4,50 @@ import {
   FC,
   HTMLAttributes,
   SetStateAction,
+  useCallback,
   useState,
 } from "react"
 
 type UserKeeperDeployParams = {
-  tokenAddress: string
-  nftAddress: string
-  totalPowerInTokens: number
-  nftsTotalSupply: number
+  tokenAddress: string // binded
+  nftAddress: string // binded
+  totalPowerInTokens: number // binded
+  nftsTotalSupply: number // binded
 }
 
 type ValidatorsDeployParams = {
-  name: string
-  symbol: string
-  duration: number
-  quorum: number
+  name: string // binded
+  symbol: string // binded
+  duration: number // binded
+  quorum: number // binded
   validators: string[]
   balances: number[]
 }
 
 type GovPoolDeployParams = {
-  descriptionUrl: string
+  descriptionUrl: string // will be in ipfs
 }
 
 type ProposalSettings = {
-  earlyCompletion: boolean
-  delegatedVotingAllowed: boolean
+  earlyCompletion: boolean // binded
+  delegatedVotingAllowed: boolean // binded
   validatorsVote: boolean
-  duration: number
+  duration: number // binded
   durationValidators: number
-  quorum: number
+  quorum: number // binded
   quorumValidators: number
-  minVotesForVoting: number
-  minVotesForCreating: number
-  rewardToken: string
-  creationReward: number
-  executionReward: number
-  voteRewardsCoefficient: number
+  minVotesForVoting: number // binded
+  minVotesForCreating: number // binded
+  rewardToken: string // binded
+  creationReward: number // binded
+  executionReward: number // binded
+  voteRewardsCoefficient: number // binded
   executorDescription: string
+}
+
+export type ExternalFileDocument = {
+  name: string
+  url: string
 }
 
 export interface UserKeeperDeployParamsForm {
@@ -56,8 +62,8 @@ export interface ValidatorsDeployParamsForm {
   symbol: { get: string; set: Dispatch<SetStateAction<string>> }
   duration: { get: number; set: Dispatch<SetStateAction<number>> }
   quorum: { get: number; set: Dispatch<SetStateAction<number>> }
-  validators: { get: string[]; set: Dispatch<SetStateAction<string[]>> }
-  balances: { get: number[]; set: Dispatch<SetStateAction<number[]>> }
+  validators: { get: string[]; set: (value: any, idx?: number) => void }
+  balances: { get: number[]; set: (value: any, idx?: number) => void }
 }
 
 export interface GovPoolDeployParamsForm {
@@ -91,6 +97,11 @@ export interface DaoProposalSettingsForm {
 interface FundDaoCreatingContext {
   isErc20: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
   isErc721: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
+  isCustomVoting: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
+  isDistributionProposal: {
+    get: boolean
+    set: Dispatch<SetStateAction<boolean>>
+  }
 
   isValidator: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
 
@@ -98,20 +109,29 @@ interface FundDaoCreatingContext {
   daoName: { get: string; set: Dispatch<SetStateAction<string>> }
   websiteUrl: { get: string; set: Dispatch<SetStateAction<string>> }
   description: { get: string; set: Dispatch<SetStateAction<string>> }
+  documents: {
+    get: ExternalFileDocument[]
+    set: (
+      value: ExternalFileDocument | ExternalFileDocument[],
+      idx?: number
+    ) => void
+  }
 
   userKeeperParams: UserKeeperDeployParamsForm
   validatorsParams: ValidatorsDeployParamsForm
   govPoolDeployParams: GovPoolDeployParamsForm
 
-  internalProposalForm: DaoProposalSettingsForm
-  distributionProposalSettingsForm: DaoProposalSettingsForm
-  validatorsBalancesSettingsForm: DaoProposalSettingsForm
   defaultProposalSettingForm: DaoProposalSettingsForm
+  internalProposalForm: DaoProposalSettingsForm
+  validatorsBalancesSettingsForm: DaoProposalSettingsForm
+  distributionProposalSettingsForm: DaoProposalSettingsForm
 }
 
 export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
   isErc20: { get: false, set: () => {} },
   isErc721: { get: false, set: () => {} },
+  isCustomVoting: { get: false, set: () => {} },
+  isDistributionProposal: { get: false, set: () => {} },
 
   isValidator: { get: false, set: () => {} },
 
@@ -119,15 +139,16 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
   daoName: { get: "", set: () => {} },
   websiteUrl: { get: "", set: () => {} },
   description: { get: "", set: () => {} },
+  documents: { get: [], set: () => {} },
 
   userKeeperParams: {} as UserKeeperDeployParamsForm,
   validatorsParams: {} as ValidatorsDeployParamsForm,
   govPoolDeployParams: {} as GovPoolDeployParamsForm,
 
   internalProposalForm: {} as DaoProposalSettingsForm,
-  distributionProposalSettingsForm: {} as DaoProposalSettingsForm,
   validatorsBalancesSettingsForm: {} as DaoProposalSettingsForm,
   defaultProposalSettingForm: {} as DaoProposalSettingsForm,
+  distributionProposalSettingsForm: {} as DaoProposalSettingsForm,
 })
 
 const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
@@ -135,6 +156,9 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
 }) => {
   const [_isErc20, _setIsErc20] = useState<boolean>(false)
   const [_isErc721, _setIsErc721] = useState<boolean>(false)
+  const [_isCustomVoting, _setIsCustomVoting] = useState<boolean>(false)
+  const [_isDistributionProposal, _setIsDistributionProposal] =
+    useState<boolean>(false)
 
   const [_isValidator, _setIsValidator] = useState(false)
 
@@ -143,6 +167,23 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
   const [_daoName, _setDaoName] = useState("")
   const [_websiteUrl, _setWebsiteUrl] = useState("")
   const [_description, _setDescription] = useState("")
+  const [_documents, _setDocuments] = useState<ExternalFileDocument[]>([
+    { name: "", url: "" },
+  ])
+
+  const _handleChangeDocuments = useCallback((value, idx?: number) => {
+    _setDocuments((prev) => {
+      if (Array.isArray(value)) {
+        return value
+      } else {
+        const newDocs = [...prev]
+        if (idx !== undefined && idx !== null) {
+          newDocs[idx] = value
+        }
+        return newDocs
+      }
+    })
+  }, [])
 
   const _userKeeperParams = {
     tokenAddress: useState(""),
@@ -155,9 +196,44 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
     symbol: useState<string>(""),
     duration: useState<number>(0),
     quorum: useState<number>(0),
-    validators: useState<string[]>([]),
-    balances: useState<number[]>([]),
+    validators: useState<string[]>([""]),
+    balances: useState<number[]>([0]),
   }
+
+  const _handleChangeValidators = useCallback(
+    (value, idx?: number) => {
+      _validatorsParams.validators[1]((prev) => {
+        if (Array.isArray(value)) {
+          return value
+        } else {
+          const newValidators = [...prev]
+          if (idx !== undefined && idx !== null) {
+            newValidators[idx] = value
+          }
+          return newValidators
+        }
+      })
+    },
+    [_validatorsParams.validators]
+  )
+
+  const _handleChangeBalances = useCallback(
+    (value, idx?: number) => {
+      _validatorsParams.balances[1]((prev) => {
+        if (Array.isArray(value)) {
+          return value
+        } else {
+          const newBalances = [...prev]
+          if (idx !== undefined && idx !== null) {
+            newBalances[idx] = value
+          }
+          return newBalances
+        }
+      })
+    },
+    [_validatorsParams.balances]
+  )
+
   const _govPoolDeployParams = {
     descriptionUrl: useState<string>(""),
   }
@@ -233,6 +309,11 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
         value={{
           isErc20: { get: _isErc20, set: _setIsErc20 },
           isErc721: { get: _isErc721, set: _setIsErc721 },
+          isCustomVoting: { get: _isCustomVoting, set: _setIsCustomVoting },
+          isDistributionProposal: {
+            get: _isDistributionProposal,
+            set: _setIsDistributionProposal,
+          },
 
           isValidator: { get: _isValidator, set: _setIsValidator },
 
@@ -240,6 +321,7 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
           daoName: { get: _daoName, set: _setDaoName },
           websiteUrl: { get: _websiteUrl, set: _setWebsiteUrl },
           description: { get: _description, set: _setDescription },
+          documents: { get: _documents, set: _handleChangeDocuments },
 
           userKeeperParams: {
             tokenAddress: {
@@ -278,11 +360,11 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
             },
             validators: {
               get: _validatorsParams.validators[0],
-              set: _validatorsParams.validators[1],
+              set: _handleChangeValidators,
             },
             balances: {
               get: _validatorsParams.balances[0],
-              set: _validatorsParams.balances[1],
+              set: _handleChangeBalances,
             },
           } as ValidatorsDeployParamsForm,
           govPoolDeployParams: {

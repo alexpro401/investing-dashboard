@@ -15,6 +15,9 @@ import {
   ArrowUpFilled,
   ChatOutline,
   Copy,
+  GreenCheckIcon,
+  TrashIcon,
+  CogIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -59,6 +62,12 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return ChatOutline as unknown as ElementType
       case ICON_NAMES.copy:
         return Copy as unknown as ElementType
+      case ICON_NAMES.greenCheck:
+        return GreenCheckIcon as unknown as ElementType
+      case ICON_NAMES.trash:
+        return TrashIcon as unknown as ElementType
+      case ICON_NAMES.cog:
+        return CogIcon as unknown as ElementType
 
       default:
         return AngleLeftIcon as unknown as ElementType

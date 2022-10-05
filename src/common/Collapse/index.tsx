@@ -1,11 +1,12 @@
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion, MotionProps } from "framer-motion"
 import { FC, HTMLAttributes, useMemo } from "react"
 import { v4 as uuidv4 } from "uuid"
 
-interface Props extends HTMLAttributes<HTMLDivElement> {
+type Props = {
   isOpen: boolean
   duration?: number
-}
+} & HTMLAttributes<HTMLDivElement> &
+  MotionProps
 
 const Collapse: FC<Props> = ({
   isOpen,
@@ -16,7 +17,7 @@ const Collapse: FC<Props> = ({
   const uid = useMemo(() => uuidv4(), [])
 
   return (
-    <AnimatePresence initial={false} {...rest}>
+    <AnimatePresence initial={false}>
       {isOpen ? (
         <motion.div
           key={`collapse-${uid}`}
@@ -24,10 +25,11 @@ const Collapse: FC<Props> = ({
           animate="open"
           exit="collapsed"
           variants={{
-            open: { opacity: 1, height: "auto", overflow: "hidden" },
-            collapsed: { opacity: 0, height: 0, overflow: "hidden" },
+            open: { opacity: 1, height: "auto" },
+            collapsed: { opacity: 0, height: 0 },
           }}
           transition={{ duration: duration }}
+          {...rest}
         >
           {children}
         </motion.div>
