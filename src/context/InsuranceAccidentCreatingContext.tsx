@@ -44,6 +44,11 @@ export interface InsuranceAccidentExist {
   set: Dispatch<SetStateAction<boolean>>
 }
 
+export interface InsurancePoolHaveTrades {
+  get: boolean
+  set: Dispatch<SetStateAction<boolean>>
+}
+
 export interface InsuranceDueDate {
   get: Insurance
   set: Dispatch<SetStateAction<Insurance>>
@@ -85,6 +90,7 @@ interface InsuranceAccidentCreatingContextUtilities {
 interface InsuranceAccidentCreatingContext
   extends InsuranceAccidentCreatingContextUtilities {
   form: InsuranceAccidentForm
+  insurancePoolHaveTrades: InsurancePoolHaveTrades
   insuranceAccidentExist: InsuranceAccidentExist
   insuranceDueDate: InsuranceDueDate
   investorsTotals: InvestorsTotals
@@ -102,6 +108,7 @@ export const InsuranceAccidentCreatingContext =
       chat: { get: "", set: () => {} },
     } as InsuranceAccidentForm,
 
+    insurancePoolHaveTrades: { get: false, set: () => {} },
     insuranceAccidentExist: { get: false, set: () => {} },
     insuranceDueDate: { get: {} as Insurance, set: () => {} },
     investorsTotals: {
@@ -131,6 +138,7 @@ const InsuranceAccidentCreatingContextProvider: FC<
   }
 
   const insuranceAccidentExist = useState<boolean>(false)
+  const insurancePoolHaveTrades = useState<boolean>(false)
 
   const insuranceDueDate = useState<Insurance>({} as Insurance)
 
@@ -157,6 +165,7 @@ const InsuranceAccidentCreatingContextProvider: FC<
     form.date[1]("")
     form.description[1]("")
     form.chat[1]("")
+    insurancePoolHaveTrades[1](false)
     insuranceAccidentExist[1](false)
     insuranceDueDate[1]({} as Insurance)
     investorsTotals[1]({} as InsuranceAccidentInvestorsTotalsInfo)
@@ -192,6 +201,10 @@ const InsuranceAccidentCreatingContextProvider: FC<
               get: form.chat[0],
               set: form.chat[1],
             },
+          },
+          insurancePoolHaveTrades: {
+            get: insurancePoolHaveTrades[0],
+            set: insurancePoolHaveTrades[1],
           },
           insuranceAccidentExist: {
             get: insuranceAccidentExist[0],
