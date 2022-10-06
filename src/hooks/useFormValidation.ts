@@ -1,6 +1,5 @@
-import { get, isEmpty, isEqual, isObject } from "lodash"
+import { get, isEmpty, isEqual, isObject, set, cloneDeep } from "lodash"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { minLength, required } from "../utils/validators"
 
 type FormSchema = Record<string, unknown>
 
@@ -22,7 +21,6 @@ type ValidationFieldState = {
   isDirty: boolean
   isError: boolean
   errors: ValidationErrors
-  [index: number]: ValidationFieldState
 }
 
 type ValidationState = Record<keyof FormSchema, ValidationFieldState>
@@ -102,23 +100,26 @@ export const useFormValidation = (
         throw new Error(`Field ${fieldName} has no validators`)
 
       const validateResult = Object.entries(fieldValidators).reduce(
-        (acc, [validatorKey, validator]) => ({
-          ...acc,
-          ..._validateField(
+        (acc, [validatorKey, validator]) => {
+          const validatedField = _validateField(
             validatorKey,
             validator,
             fieldName,
-            formSchema[fieldName]
-          ),
-        }),
-        {}
-      )
+            formSchema[fieldName],
+            acc
+          )
 
-      console.log("validateResult", validateResult)
+          return {
+            ...acc,
+            ...validatedField,
+          }
+        },
+        {} as ValidationFieldState
+      )
 
       return {
         ...acc,
-        ...validateResult,
+        [fieldName]: validateResult,
       }
     }, {})
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -136,81 +137,68 @@ export const useFormValidation = (
     (
       validatorKey: string,
       validator: Validator | ValidatorOptions,
-      fieldName: string | number,
-      field: unknown
-    ): ValidationState => {
+      fieldKey: string | number,
+      fieldValue: unknown,
+      accumulator: ValidationFieldState
+    ): ValidationFieldState => {
       if (typeof validator == "function") {
-        const { isValid, message } = validator(field)
+        const { isValid, message } = validator(fieldValue)
+
+        const cachedResult = {
+          ...cloneDeep(validationState[fieldKey]),
+        }
+
+        const errors = {
+          ...accumulator?.errors,
+          ...(isValid
+            ? {}
+            : {
+                [validatorKey]: {
+                  message,
+                },
+              }),
+        }
+
+        const isInvalid = !isEmpty(errors) || false
+        const isDirty = cachedResult?.isDirty || false
+        const isError = (isInvalid && isDirty) || false
 
         return {
-          [fieldName]: {
-            isInvalid: !isValid,
-            isDirty: false,
-            isError: !isValid,
-            errors: {
-              [validatorKey]: {
-                message,
-              },
-            },
-          },
+          ...cachedResult,
+          isInvalid,
+          isDirty,
+          isError,
+          errors,
         }
       } else if (validatorKey === "$every") {
-        if (!Array.isArray(field)) {
-          throw new Error(
-            `${fieldName}: $every validator can be used only for arrays`
-          )
-        }
+        if (!Array.isArray(fieldValue))
+          throw new Error(`${fieldKey}: is not an array`)
 
-        return field.reduce((acc, el, index) => {
-          return Object.entries(validator).reduce(
-            (acc, [_validatorKey, _validator]) => ({
-              ...acc,
-              ..._validateField(_validatorKey, _validator, index, el),
-            }),
-            {}
-          )
-        }, {})
-      } else if (isObject(field)) {
-        // TODO: here
-        return Object.entries(validator).reduce(
-          (_acc, [_validatorKey, _validator]) => {
-            // validatorKey = fullName
-            // const validator = {
-            //   required,
-            //   firstName: { required },
-            //   lastName: {
-            //     ancestor: { required },
-            //     default: { required, minLength: minLength(6) },
-            //   },
-            // }
-            // so we need to keep fieldName as key
-            return {
-              ..._acc,
-              [validatorKey]: _validateField(
-                _validatorKey,
-                _validator,
-                fieldName,
-                field[fieldName]
-              ),
-            }
-          },
-          {}
-        )
+        return {} as ValidationFieldState
+      } else if (isObject(fieldValue)) {
+        return {} as ValidationFieldState
       }
-      return {}
+      return {} as ValidationFieldState
     },
-    []
+    [validationState]
   )
 
   const touchField = useCallback(
     (fieldPath: string): void => {
-      setValidationState((prevState) => ({
-        ...prevState,
-        [fieldPath]: {
-          ...validationState[fieldPath],
-          isDirty: true,
-        },
-      }))
+      if (!validationState[fieldPath])
+        throw new Error(`Field ${fieldPath} not found`)
+
+      setValidationState((prevState) => {
+        const nextState = {
+          ...prevState,
+          [fieldPath]: {
+            ...validationState[fieldPath],
+            isDirty: true,
+          },
+        }
+
+        return isEqual(prevState, nextState) ? prevState : nextState
+      })
     },
     [validationState]
   )
