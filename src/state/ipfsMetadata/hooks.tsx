@@ -1,6 +1,6 @@
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useMemo } from "react"
 import { useSelector, useDispatch } from "react-redux"
-import { isNil } from "lodash"
+import { debounce, isEmpty, isNil } from "lodash"
 
 import { getIpfsData } from "utils/ipfs"
 
@@ -196,11 +196,19 @@ export const useInsuranceAccidents = (): [
 
   const data = useSelector(selectInsuranceAccidents())
 
+  const allLoaded = useMemo(() => {
+    if (isEmpty(data) && !loading) {
+      return false
+    }
+
+    return Object.keys(data).length === total
+  }, [data, total, loading])
+
   const insuranceAccidentByPool = useSelector(
     selectInsuranceAccidentByPool(searchPool)
   )
 
-  const _saveAccidentToStore = async (hash) => {
+  const _saveAccidentToStore = useCallback(async (hash) => {
     const accidentData = await getIpfsData(hash)
 
     dispatch(
@@ -208,7 +216,7 @@ export const useInsuranceAccidents = (): [
         params: { hash, data: accidentData },
       })
     )
-  }
+  }, [])
 
   const fetchTotalCount = useCallback(async () => {
     if (isNil(insurance)) return
@@ -220,7 +228,7 @@ export const useInsuranceAccidents = (): [
   }, [insurance])
 
   const fetch = useCallback(async () => {
-    if (isNil(insurance)) return
+    if (isNil(insurance) || allLoaded || loading) return
 
     setLoading(true)
 
@@ -232,10 +240,10 @@ export const useInsuranceAccidents = (): [
 
     setOffset((prevOffset) => prevOffset + activeAccidents.length)
     setLoading(false)
-  }, [insurance, _saveAccidentToStore])
+  }, [insurance, _saveAccidentToStore, loading])
 
   const fetchAll = useCallback(async () => {
-    if (isNil(insurance)) return
+    if (isNil(insurance) || allLoaded || loading) return
 
     setLoading(true)
 
@@ -255,7 +263,7 @@ export const useInsuranceAccidents = (): [
 
     setOffset(activeAccidents.length)
     setLoading(false)
-  }, [insurance, _saveAccidentToStore])
+  }, [insurance, _saveAccidentToStore, allLoaded, loading])
 
   const getInsuranceAccidentByPool = useCallback(
     (pool) => {
