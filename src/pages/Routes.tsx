@@ -34,8 +34,11 @@ const InvestInvestmentProposal = lazy(
 const WithdrawInvestmentProposal = lazy(
   () => import("pages/WithdrawInvestmentProposal")
 )
-const CreateProposalSelectType = lazy(
-  () => import("pages/CreateProposalSelectType")
+const CreateDaoProposalSelectType = lazy(
+  () => import("pages/CreateDaoProposalSelectType")
+)
+const CreateNewDaoProposalType = lazy(
+  () => import("pages/CreateDaoProposalSelectType")
 )
 // const Insurance = lazy(() => import("pages/Insurance"))
 
@@ -138,7 +141,11 @@ export default function Routes() {
                 {/* proposals */}
                 <Route
                   path="dao/:daoAddress/create-proposal"
-                  element={<CreateProposalSelectType />}
+                  element={<CreateDaoProposalSelectType />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-new-proposal-type"
+                  element={<CreateNewDaoProposalType />}
                 />
 
                 <Route path="/*" element={<TopMembers />} />
