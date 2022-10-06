@@ -10,6 +10,7 @@ import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
 import { usePoolFactoryContract } from "contracts"
 import { parseEther, parseUnits } from "@ethersproject/units"
+import useGasTracker from "state/gas/hooks"
 
 enum EProposalType {
   daoProfileModification = "daoProfileModification",
@@ -32,7 +33,17 @@ const CreateProposalSelectType: React.FC = () => {
   const [selectedProposalType, setSelectedProposalType] =
     useState<EProposalType>(EProposalType.daoProfileModification)
 
+  const [gasTrackerResponse] = useGasTracker()
+
   const factory = usePoolFactoryContract()
+
+  const transactionOptions = useMemo(() => {
+    if (!gasTrackerResponse) return
+    return {
+      // ProposeGasPrice = 10 on testnet
+      gasPrice: parseUnits(gasTrackerResponse.ProposeGasPrice, "gwei"),
+    }
+  }, [gasTrackerResponse])
 
   const createPool = async () => {
     if (!factory) return
@@ -126,7 +137,10 @@ const CreateProposalSelectType: React.FC = () => {
     }
 
     try {
-      const response = await factory.deployGovPool(POOL_PARAMETERS)
+      const response = await factory.deployGovPool(
+        POOL_PARAMETERS,
+        transactionOptions
+      )
 
       console.log(response)
     } catch (e) {
