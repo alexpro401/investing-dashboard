@@ -35,7 +35,9 @@ const useOwnedAndInvestedPools = (): [Response] => {
 
     return [
       ...(!isEmpty(ownedPools) ? ownedPools : []),
-      ...(!isEmpty(response.data) ? response.data.traderPools : []),
+      ...(!isEmpty(response.data) && !isNil(response.data)
+        ? response.data?.traderPools
+        : []),
     ]
   }, [fetching, ownedPools, ownedPoolsFetching, response])
 
