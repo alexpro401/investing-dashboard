@@ -29,7 +29,7 @@ import { addInsuranceProposalData } from "utils/ipfs"
 import { InsuranceAccident } from "interfaces/insurance"
 import { useWeb3React } from "@web3-react/core"
 import { useFormValidation } from "hooks/useFormValidation"
-import { required } from "utils/validators"
+import { isUrl, required } from "utils/validators"
 import { useInsuranceContract } from "contracts"
 import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
@@ -79,7 +79,7 @@ const CreateInsuranceAccidentForm: FC = () => {
       block: { required },
       date: { required },
       description: { required },
-      chat: { required },
+      chat: { required, isUrl },
     }
   )
 
@@ -313,7 +313,9 @@ const CreateInsuranceAccidentForm: FC = () => {
           } else if (descriptionInvalid) {
             message = `Before continue add description of the accident.`
           } else if (chatInvalid) {
-            message = `Before continue add link to chat where investors can talk about accident.`
+            message = `Before continue add link to chat where investors can talk about accident. ${getFieldErrorMessage(
+              "chat"
+            )}.`
           }
 
           showAlert({
