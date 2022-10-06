@@ -1,22 +1,24 @@
 import { useCallback, useEffect, useState } from "react"
-import { useRiskyProposalContract } from "hooks/useContract"
-import { Contract } from "@ethersproject/contracts"
+import { useTraderPoolRiskyProposalContract } from "contracts"
+import { useProposalAddress } from "hooks/useContract"
 import debounce from "lodash.debounce"
 
-import { IRiskyProposal } from "interfaces/contracts/ITraderPoolRiskyProposal"
+import { ProposalsResponse } from "interfaces/abi-typings/TraderPoolRiskyProposal"
 import { IRiskyProposalInvestmentsInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
+import { TraderPoolRiskyProposalType } from "interfaces/abi-typings"
 
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
 
 export function useRiskyProposals(
   poolAddress?: string
-): [{ data: IRiskyProposal[]; loading: boolean }, () => void] {
-  const [proposals, setProposals] = useState<IRiskyProposal[]>([])
+): [{ data: ProposalsResponse[]; loading: boolean }, () => void] {
+  const [proposals, setProposals] = useState<ProposalsResponse[]>([])
   const [offset, setOffset] = useState<number>(0)
   const [fetching, setFetching] = useState<boolean>(true)
   const [allFetched, setAllFetched] = useState<boolean>(false)
 
-  const [riskyProposal] = useRiskyProposalContract(poolAddress)
+  const proposalAddress = useProposalAddress(poolAddress)
+  const riskyProposal = useTraderPoolRiskyProposalContract(proposalAddress)
 
   const fetchProposals = useCallback(async () => {
     if (riskyProposal !== null && !allFetched) {
@@ -54,10 +56,16 @@ export function useRiskyProposals(
 export function useRiskyProposal(
   poolAddress?: string,
   index?: string
-): [IRiskyProposal | undefined, Contract | null, string, () => void] {
-  const [proposal, setProposal] = useState<IRiskyProposal | undefined>()
+): [
+  ProposalsResponse | undefined,
+  TraderPoolRiskyProposalType | null,
+  string,
+  () => void
+] {
+  const [proposal, setProposal] = useState<ProposalsResponse | undefined>()
   const [update, setUpdate] = useState(false)
-  const [riskyProposal, proposalAddress] = useRiskyProposalContract(poolAddress)
+  const proposalAddress = useProposalAddress(poolAddress)
+  const riskyProposal = useTraderPoolRiskyProposalContract(proposalAddress)
 
   const refresh = useCallback(() => {
     setUpdate(!update)
@@ -83,7 +91,8 @@ export function useActiveInvestmentsInfo(
   index?: string
 ) {
   const [info, setInfo] = useState<IRiskyProposalInvestmentsInfo | undefined>()
-  const [riskyProposal] = useRiskyProposalContract(poolAddress)
+  const proposalAddress = useProposalAddress(poolAddress)
+  const riskyProposal = useTraderPoolRiskyProposalContract(proposalAddress)
 
   useEffect(() => {
     if (!riskyProposal || !index || !account) return

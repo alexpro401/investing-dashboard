@@ -27,7 +27,7 @@ export const OverlapNodeLeft = styled(motion.div).attrs(() => ({
   delay: { duration: 0.5 },
 }))`
   position: absolute;
-  top: 50%;
+  top: ${56 / 2}px;
   left: ${fieldPaddingLeft}px;
   transform: translateY(-50%);
   z-index: 2;
@@ -41,7 +41,7 @@ export const OverlapNodeRight = styled(motion.div).attrs(() => ({
   delay: { duration: 0.5 },
 }))`
   position: absolute;
-  top: 50%;
+  top: ${56 / 2}px;
   right: ${fieldPaddingRight}px;
   transform: translateY(-50%);
   z-index: 2;

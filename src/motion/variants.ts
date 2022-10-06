@@ -92,6 +92,16 @@ export const rotate180Variants = {
   },
 }
 
+export const appeareFromLeftVariants = {
+  visible: {
+    x: 0,
+  },
+  hidden: {
+    x: -window?.innerWidth ?? "-100vw",
+    transition: { duration: 0.2, delay: 0.1 },
+  },
+}
+
 export const getSlideTopVariants = (hiddenH) => ({
   visible: {
     top: 55,

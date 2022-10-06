@@ -44,3 +44,9 @@ checks local abi folder and updates with new one
 ```bash
     node updateABI.js /your_abi_folder_path && yarn run lint-abi
 ```
+
+example:
+
+```bash
+node updateABI.js "/Users/ih8apple//Downloads/Telegram Desktop/contracts 7" && yarn run lint-abi
+```

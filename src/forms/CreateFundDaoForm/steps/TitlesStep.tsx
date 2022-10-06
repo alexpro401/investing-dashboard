@@ -19,7 +19,12 @@ import {
   Icon,
   TokenChip,
 } from "common"
-import { InputField, OverlapInputField, TextareaField } from "fields"
+import {
+  InputField,
+  OverlapInputField,
+  TextareaField,
+  ExternalDocumentField,
+} from "fields"
 import Switch from "components/Switch"
 import Avatar from "components/Avatar"
 import { CreateDaoCardStepNumber } from "../components"
@@ -30,8 +35,8 @@ import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 import { readFromClipboard } from "utils/clipboard"
 import { useFormValidation } from "hooks/useFormValidation"
-import { required } from "utils/validators"
-import { isAddress } from "utils"
+import { isAddressValidator, isUrl, required } from "utils/validators"
+import { isAddress, isValidUrl } from "utils"
 import { useERC20 } from "hooks/useERC20"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
@@ -41,17 +46,19 @@ const TitlesStep: FC = () => {
 
   const { isErc20, isErc721 } = daoPoolFormContext
 
-  const { avatarUrl, daoName, websiteUrl, description } = daoPoolFormContext
+  const { avatarUrl, daoName, websiteUrl, description, documents } =
+    daoPoolFormContext
 
   const { tokenAddress, nftAddress, totalPowerInTokens, nftsTotalSupply } =
     daoPoolFormContext.userKeeperParams
 
-  const { getFieldErrorMessage, touchField } = useFormValidation(
+  const { getFieldErrorMessage, touchField, isFieldValid } = useFormValidation(
     {
       avatarUrl: avatarUrl.get,
       daoName: daoName.get,
       websiteUrl: websiteUrl.get,
       description: description.get,
+      documents: documents.get,
 
       tokenAddress: tokenAddress.get,
 
@@ -64,10 +71,14 @@ const TitlesStep: FC = () => {
       daoName: { required },
       websiteUrl: { required },
       description: { required },
-      ...(isErc20.get ? { tokenAddress: { required } } : {}),
+      documents: { required },
+
+      ...(isErc20.get
+        ? { tokenAddress: { required, isAddressValidator } }
+        : {}),
       ...(isErc721.get
         ? {
-            nftAddress: { required },
+            nftAddress: { required, isAddressValidator },
             totalPowerInTokens: { required },
             nftsTotalSupply: { required },
           }
@@ -110,7 +121,7 @@ const TitlesStep: FC = () => {
 
   return (
     <>
-      <S.StepsRoot gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
+      <S.StepsRoot>
         <Card>
           <CardHead
             nodeLeft={<CreateDaoCardStepNumber number={1} />}
@@ -148,7 +159,13 @@ const TitlesStep: FC = () => {
             value={daoName.get}
             setValue={daoName.set}
             label="DAO name"
-            nodeRight={<Icon name={ICON_NAMES.fileDock} />}
+            labelNodeRight={
+              isFieldValid("daoName") ? (
+                <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+              ) : (
+                <></>
+              )
+            }
             errorMessage={getFieldErrorMessage("daoName")}
             onBlur={() => touchField("daoName")}
           />
@@ -196,6 +213,13 @@ const TitlesStep: FC = () => {
                 value={tokenAddress.get}
                 setValue={tokenAddress.set}
                 label="ERC-20 token"
+                labelNodeRight={
+                  isFieldValid("tokenAddress") ? (
+                    <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                  ) : (
+                    <></>
+                  )
+                }
                 errorMessage={getFieldErrorMessage("tokenAddress")}
                 onBlur={() => touchField("tokenAddress")}
                 nodeRight={
@@ -331,6 +355,57 @@ const TitlesStep: FC = () => {
               onBlur={() => touchField("description")}
             />
           </CardFormControl>
+        </Card>
+
+        <Card>
+          <CardHead
+            nodeLeft={<Icon name={ICON_NAMES.globe} />}
+            title="Add documents"
+          />
+          <CardDescription>
+            <p>
+              Here you can add any documents to be featured in the DAO’s
+              profile, such as the DAO Memorandum.
+            </p>
+          </CardDescription>
+          <CardFormControl>
+            {documents.get.map((el, idx) => (
+              <ExternalDocumentField
+                key={idx}
+                value={el}
+                setValue={(doc) => documents.set(doc, idx)}
+                topFieldNodeRight={
+                  documents.get.length > 1 ? (
+                    <AppButton
+                      type="button"
+                      color="default"
+                      size="no-paddings"
+                      iconRight={ICON_NAMES.trash}
+                      onClick={() =>
+                        documents.set(documents.get.filter((_, i) => i !== idx))
+                      }
+                    />
+                  ) : null
+                }
+                label={`Document ${idx + 1}`}
+                labelNodeRight={
+                  !!el.name && !!el.url && isValidUrl(el.url) ? (
+                    <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                  ) : (
+                    <></>
+                  )
+                }
+                // errorMessage={getFieldErrorMessage(`documents[${idx}]`)}
+              />
+            ))}
+          </CardFormControl>
+          <S.CardAddBtn
+            color="default"
+            text="+ Add more"
+            onClick={() =>
+              documents.set([...documents.get, { name: "", url: "" }])
+            }
+          />
         </Card>
       </S.StepsRoot>
       <S.StepsBottomNavigation />

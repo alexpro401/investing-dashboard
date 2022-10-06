@@ -6,7 +6,7 @@ import useError from "hooks/useError"
 import { ZERO } from "constants/index"
 import { PositionsByIdsQuery } from "queries"
 import { addBignumbers } from "utils/formulas"
-import { usePriceFeedContract } from "hooks/useContract"
+import { usePriceFeedContract } from "contracts"
 
 /**
  * Hook get pool positions, fetch positions tokens and prices of locked tokens in USD

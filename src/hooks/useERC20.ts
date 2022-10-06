@@ -11,6 +11,7 @@ import { useActiveWeb3React } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
 import { getBalanceOf } from "utils/getContract"
 
+// TODO: balance not updating when balance !== null
 export function useERC20Balance(
   address: string | undefined
 ): [BigNumber | null, boolean, () => void] {

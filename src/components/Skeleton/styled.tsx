@@ -36,6 +36,7 @@ interface IProps {
   w?: string
   h?: string
   m?: string
+  radius?: string
 }
 
 export const TextSkeleton = styled(motion.div)<IProps>`
@@ -43,7 +44,7 @@ export const TextSkeleton = styled(motion.div)<IProps>`
   width: ${(props) => props.w ?? "100%"};
   height: ${(props) => props.h ?? "13px"};
   margin: ${(props) => props.m ?? "0"};
-  border-radius: 4px;
+  border-radius: ${(props) => props.radius ?? "4px"};
   flex-shrink: 0;
 `
 
@@ -52,7 +53,7 @@ export const RectSkeleton = styled(motion.div)<IProps>`
   width: ${(props) => props.w ?? "100%"};
   height: ${(props) => props.h ?? "26px"};
   margin: ${(props) => props.m ?? "0"};
-  border-radius: 4px;
+  border-radius: ${(props) => props.radius ?? "4px"};
   flex-shrink: 0;
 `
 
@@ -61,6 +62,6 @@ export const CircleSkeleton = styled(motion.div)<IProps>`
   width: ${(props) => props.w ?? "24px"};
   height: ${(props) => props.h ?? "24px"};
   margin: ${(props) => props.m ?? "0"};
-  border-radius: 50%;
+  border-radius: ${(props) => props.radius ?? "50%"};
   flex-shrink: 0;
 `

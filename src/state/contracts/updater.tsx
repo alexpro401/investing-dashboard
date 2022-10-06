@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react"
-import useContract from "hooks/useContract"
-import { ContractsRegistry } from "abi"
 import { AppDispatch } from "state"
 import { useDispatch } from "react-redux"
 import { updateContracts } from "./actions"
+import { useContractsRegistryContract } from "contracts"
 
 const contractAddressGetters = [
   "getPoolFactoryContract",
@@ -23,10 +22,7 @@ const contractAddressGetters = [
 
 export const ContractsRegistryUpdater: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const contractsRegistry = useContract(
-    process.env.REACT_APP_CONTRACTS_REGISTRY_ADDRESS,
-    ContractsRegistry
-  )
+  const contractsRegistry = useContractsRegistryContract()
 
   useEffect(() => {
     if (!contractsRegistry) {

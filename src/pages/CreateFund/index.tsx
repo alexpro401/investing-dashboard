@@ -133,7 +133,9 @@ const CreateFund: FC = () => {
                   "Implement different quorum settings for each proposal",
                 ].map((el, idx) => (
                   <S.CreateFundDaoFeaturesItem key={idx}>
-                    <S.CreateFundDaoFeaturesItemIcon name={ICON_NAMES.globe} />
+                    <S.CreateFundDaoFeaturesItemIcon
+                      name={ICON_NAMES.greenCheck}
+                    />
                     {el}
                   </S.CreateFundDaoFeaturesItem>
                 ))}

@@ -1,7 +1,7 @@
 import { FC, useContext } from "react"
-import { CreateDaoPoolParameters } from "../components"
+import { CreateDaoCardStepNumber, CreateDaoPoolParameters } from "../components"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
-import { StepsNavigation } from "common"
+import { Card, CardDescription, CardHead, StepsNavigation } from "common"
 import * as S from "../styled"
 
 const InternalProposalStep: FC = () => {
@@ -12,6 +12,18 @@ const InternalProposalStep: FC = () => {
       <S.StepsRoot>
         {internalProposalForm ? (
           <>
+            <Card>
+              <CardHead
+                nodeLeft={<CreateDaoCardStepNumber number={5} />}
+                title="Internal voting settings"
+              />
+              <CardDescription>
+                <p>
+                  Configure the settings for proposals, voting, vote delegation,
+                  and rewards for active members.
+                </p>
+              </CardDescription>
+            </Card>
             <CreateDaoPoolParameters poolParameters={internalProposalForm} />
           </>
         ) : (

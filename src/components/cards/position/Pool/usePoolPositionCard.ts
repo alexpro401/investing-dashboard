@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom"
 import { MouseEvent, useMemo, useState, useCallback, useEffect } from "react"
 
 import { useActiveWeb3React } from "hooks"
-import { useTraderPoolRegistryContract } from "hooks/useContract"
+import { usePoolRegistryContract } from "contracts"
 
 interface IPayload {
   openExtra: boolean
@@ -23,7 +23,7 @@ function usePoolPositionCard(
 ): [IPayload, IActions] {
   const navigate = useNavigate()
   const { account } = useActiveWeb3React()
-  const traderPoolRegistry = useTraderPoolRegistryContract()
+  const traderPoolRegistry = usePoolRegistryContract()
 
   // STATE DATA
   const [openExtra, setOpenExtra] = useState<boolean>(false)

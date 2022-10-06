@@ -2,13 +2,14 @@ import { FC } from "react"
 
 import Button from "components/Button"
 import { BodyItem } from "components/cards/proposal/styled"
+import { BigNumber } from "@ethersproject/bignumber"
 
 interface Props {
   ticker: string
   baseTokenTicker: string
 
   fullness: string
-  supply: string
+  supply: { big: BigNumber; format: string }
   expirationDate: string
   yourBalance: string
   dividendsAvailable: string
@@ -38,7 +39,7 @@ const BodyInvestor: FC<Props> = ({
     <>
       {invested ? (
         <>
-          <BodyItem label={`Supply (${ticker})`} amount={supply} />
+          <BodyItem label={`Supply (${ticker})`} amount={supply.format} />
           <BodyItem label="Fulness" amount={`${fullness}%`} />
           <BodyItem
             label={"Your balance " + baseTokenTicker}

@@ -42,6 +42,7 @@ const CreateProposalSelectType = lazy(
 const PrivacyPolicy = lazy(() => import("pages/PrivacyPolicy"))
 const ServiceTerms = lazy(() => import("pages/ServiceTerms"))
 const Insurance = lazy(() => import("pages/Insurance"))
+const InsuranceCreate = lazy(() => import("pages/InsuranceCreate"))
 const FundPositions = lazy(() => import("pages/FundPositions"))
 const FundDetails = lazy(() => import("pages/FundDetails")) // TODO: my trader profile
 const Investment = lazy(() => import("pages/Investment"))
@@ -124,7 +125,8 @@ export default function Routes() {
                 <Route path="create-fund/dao" element={<CreateFundDaoPool />} />
                 <Route path="success/:poolAddress" element={<Success />} />
 
-                <Route path="insurance/*" element={<Insurance />} />
+                <Route path="insurance" element={<Insurance />} />
+                <Route path="insurance/create" element={<InsuranceCreate />} />
                 <Route
                   path="fund-positions/:poolAddress/*"
                   element={<FundPositions />}

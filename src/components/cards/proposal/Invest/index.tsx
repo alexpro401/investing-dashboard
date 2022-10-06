@@ -20,13 +20,12 @@ import { useERC20Data } from "state/erc20/hooks"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import useInvestProposalData from "hooks/useInvestProposalData"
-import { InvestProposal } from "interfaces/thegraphs/invest-pools"
 import { addBignumbers, percentageOfBignumbers } from "utils/formulas"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import {
-  useInvestProposalContract,
+  useTraderPoolInvestProposalContract,
   usePriceFeedContract,
-} from "hooks/useContract"
+} from "contracts"
 
 import { Flex } from "theme"
 import Icon from "components/Icon"
@@ -44,9 +43,11 @@ import InvestCardSettings from "./Settings"
 import settingsIcon from "assets/icons/settings.svg"
 import settingsGreenIcon from "assets/icons/settings-green.svg"
 import useRequestDividendsContext from "modals/RequestDividend/useRequestDividendsContext"
+import { useProposalAddress } from "hooks/useContract"
+import { ProposalsResponse } from "interfaces/abi-typings/TraderPoolInvestProposal"
 
 interface Props {
-  proposal: InvestProposal
+  proposal: ProposalsResponse
   poolAddress: string
 }
 
@@ -58,7 +59,8 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   const [{ priceUSD }] = usePoolPrice(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
   const [baseTokenData] = useERC20Data(poolInfo?.parameters.baseToken)
-  const [proposalPool, proposalAddress] = useInvestProposalContract(poolAddress)
+  const proposalPool = useTraderPoolInvestProposalContract(poolAddress)
+  const proposalAddress = useProposalAddress(poolAddress)
   const { requestDividends } = useRequestDividendsContext()
 
   const [{ poolMetadata }] = usePoolMetadata(
@@ -136,18 +138,20 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
    * Proposal limit in LP's
    */
   const [maxSizeLP, setMaxSizeLP] = useState<{
-    value: BigNumber
-    normalized: string
-  }>({ value: ZERO, normalized: "0" })
+    big: BigNumber
+    format: string
+  }>({ big: ZERO, format: "0" })
 
   /**
    * Supply
    */
   const supply = useMemo(() => {
     if (!proposal || !proposal.proposalInfo.investedBase) {
-      return "0"
+      return { big: ZERO, format: "0" }
     }
-    return normalizeBigNumber(proposal.proposalInfo.investedBase, 18, 6)
+
+    const big = proposal.proposalInfo.investedBase
+    return { big, format: normalizeBigNumber(big, 18, 6) }
   }, [proposal])
 
   /**
@@ -197,6 +201,10 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     )
   }, [proposal, totalDividendsAmount])
 
+  const completed = useMemo(() => {
+    return expirationDate.completed || supply.big.gte(maxSizeLP.big)
+  }, [expirationDate, supply, maxSizeLP])
+
   // Set expiration date
   useEffect(() => {
     if (!proposal || !proposal?.proposalInfo.proposalLimits.timestampLimit) {
@@ -226,8 +234,8 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     const { investLPLimit } = proposal.proposalInfo.proposalLimits
 
     setMaxSizeLP({
-      value: investLPLimit,
-      normalized: formatBigNumber(investLPLimit, 18, 6),
+      big: investLPLimit,
+      format: formatBigNumber(investLPLimit, 18, 6),
     })
   }, [proposal])
 
@@ -252,7 +260,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
 
   // Get proposal "active investment info" for current connected account
   useEffect(() => {
-    if (!proposalPool) return
+    if (!proposalPool || !account) return
     ;(async () => {
       try {
         const activeInvestmentsInfo =
@@ -289,7 +297,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
         const { leftTokens, leftAmounts } = proposalInfo
 
         for (const [index, token] of leftTokens.entries()) {
-          const amountPrice = await priceFeed.getNormalizedPriceOutUsd(
+          const amountPrice = await priceFeed.getNormalizedPriceOutUSD(
             token,
             leftAmounts[index]
           )
@@ -414,8 +422,8 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
 
     if (maxSize) {
       setMaxSizeLP({
-        value: maxSize,
-        normalized: normalizeBigNumber(maxSize, 18, 6),
+        big: maxSize,
+        format: normalizeBigNumber(maxSize, 18, 6),
       })
     }
   }
@@ -433,8 +441,8 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     return isTrader ? (
       <>
         <Flex>
-          <S.Status active={!proposal.closed}>
-            {!proposal.closed ? "Open investing" : "Closed investing"}
+          <S.Status active={!completed}>
+            {!completed ? "Open investing" : "Closed investing"}
           </S.Status>
           <Flex m="0 0 0 4px">
             <IconButton
@@ -452,7 +460,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
           proposalId={proposalId}
           successCallback={onUpdateRestrictions}
           timestamp={expirationDate.initial}
-          maxSizeLP={maxSizeLP.value}
+          maxSizeLP={maxSizeLP.big}
           fullness={fullness}
         />
       </>
@@ -470,7 +478,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     maxSizeLP,
     navigateToPool,
     poolInfo,
-    proposal,
+    completed,
     proposalId,
     proposalPool,
     ticker,
@@ -499,7 +507,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
         ticker={ticker}
         supply={supply}
         youSizeLP={youSizeLP}
-        maxSizeLP={maxSizeLP.normalized}
+        maxSizeLP={maxSizeLP.format}
         apr={APR}
         dividendsAvailable={dividendsAvailable}
         totalDividends={normalizeBigNumber(totalDividendsAmount, 18, 6)}
@@ -531,7 +539,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     fullness,
     invested,
     isTrader,
-    maxSizeLP.normalized,
+    maxSizeLP.format,
     onTerminalNavigate,
     priceUSD,
     supply,
@@ -581,9 +589,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
           </S.ReadMoreContainer>
         </S.Card>
         <AnimatePresence>
-          {!proposal.closed && (
-            <Actions actions={actions} visible={openExtra} />
-          )}
+          {!completed && <Actions actions={actions} visible={openExtra} />}
         </AnimatePresence>
       </S.Container>
     </>
