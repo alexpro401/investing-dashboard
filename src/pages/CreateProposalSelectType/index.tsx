@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 import Header from "components/Header/Layout"
@@ -8,6 +8,8 @@ import { ICON_NAMES } from "constants/icon-names"
 
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
+import { usePoolFactoryContract } from "contracts"
+import { parseEther, parseUnits } from "@ethersproject/units"
 
 enum EProposalType {
   daoProfileModification = "daoProfileModification",
@@ -29,6 +31,106 @@ const CreateProposalSelectType: React.FC = () => {
   const navigate = useNavigate()
   const [selectedProposalType, setSelectedProposalType] =
     useState<EProposalType>(EProposalType.daoProfileModification)
+
+  const factory = usePoolFactoryContract()
+
+  useEffect(() => {
+    if (!factory) return
+
+    const OWNER = "0xCa543e570e4A1F6DA7cf9C4C7211692Bc105a00A"
+    const ZERO = "0x0000000000000000000000000000000000000000"
+    const POOL_PARAMETERS = {
+      settingsParams: {
+        internalProposalSettings: {
+          earlyCompletion: true,
+          delegatedVotingAllowed: true,
+          validatorsVote: false,
+          duration: 500,
+          durationValidators: 600,
+          quorum: parseUnits("51", 25),
+          quorumValidators: parseUnits("61", 25),
+          minTokenBalance: parseEther("10"),
+          minNftBalance: 2,
+          rewardToken: ZERO,
+          creationRewards: 0,
+          executionReward: 0,
+          voteRewardsCoefficient: 0,
+        },
+        distributionProposalSettings: {
+          earlyCompletion: true,
+          delegatedVotingAllowed: false,
+          validatorsVote: false,
+          duration: 500,
+          durationValidators: 600,
+          quorum: parseUnits("51", 25),
+          quorumValidators: parseUnits("61", 25),
+          minTokenBalance: parseEther("10"),
+          minNftBalance: 2,
+          rewardToken: ZERO,
+          creationRewards: 0,
+          executionReward: 0,
+          voteRewardsCoefficient: 0,
+        },
+        validatorsBalancesSettings: {
+          earlyCompletion: true,
+          delegatedVotingAllowed: false,
+          validatorsVote: false,
+          duration: 500,
+          durationValidators: 600,
+          quorum: parseUnits("51", 25),
+          quorumValidators: parseUnits("61", 25),
+          minTokenBalance: parseEther("10"),
+          minNftBalance: 2,
+          rewardToken: ZERO,
+          creationRewards: 0,
+          executionReward: 0,
+          voteRewardsCoefficient: 0,
+        },
+        defaultProposalSetting: {
+          earlyCompletion: false,
+          delegatedVotingAllowed: true,
+          validatorsVote: false,
+          duration: 700,
+          durationValidators: 800,
+          quorum: parseUnits("71", 25),
+          quorumValidators: parseUnits("100", 25),
+          minTokenBalance: parseEther("20"),
+          minNftBalance: 3,
+          rewardToken: ZERO,
+          creationRewards: 0,
+          executionReward: 0,
+          voteRewardsCoefficient: 0,
+        },
+      },
+      validatorsParams: {
+        name: "Validator Token",
+        symbol: "VT",
+        duration: 500,
+        quorum: parseUnits("51", 25),
+        validators: [OWNER],
+        balances: [parseEther("100")],
+      },
+      userKeeperParams: {
+        tokenAddress: "0x8a9424745056eb399fd19a0ec26a14316684e274",
+        nftAddress: null,
+        totalPowerInTokens: parseEther("33000"),
+        nftsTotalSupply: 33,
+      },
+      owner: OWNER,
+      votesLimit: 10,
+      feePercentage: parseUnits("1", 25),
+      descriptionURL: "example.com",
+    }
+    ;(async () => {
+      try {
+        const response = await factory.deployGovPool(true, POOL_PARAMETERS)
+
+        console.log(response)
+      } catch (e) {
+        console.log(e)
+      }
+    })()
+  }, [factory])
 
   const proceedToNextStep = useCallback(() => {
     //TODO NAVIGATE to path related to selected proposal type
