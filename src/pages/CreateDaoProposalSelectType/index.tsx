@@ -34,10 +34,12 @@ const CreateProposalSelectType: React.FC = () => {
 
   const factory = usePoolFactoryContract()
 
-  useEffect(() => {
+  const createPool = async () => {
     if (!factory) return
 
-    const OWNER = "0xCa543e570e4A1F6DA7cf9C4C7211692Bc105a00A"
+    console.log(factory)
+
+    const OWNER = "0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3"
     const ZERO = "0x0000000000000000000000000000000000000000"
     const POOL_PARAMETERS = {
       settingsParams: {
@@ -49,57 +51,61 @@ const CreateProposalSelectType: React.FC = () => {
           durationValidators: 600,
           quorum: parseUnits("51", 25),
           quorumValidators: parseUnits("61", 25),
-          minTokenBalance: parseEther("10"),
-          minNftBalance: 2,
+          minVotesForVoting: parseEther("10"),
+          minVotesForCreating: parseEther("5"),
           rewardToken: ZERO,
-          creationRewards: 0,
+          creationReward: 0,
           executionReward: 0,
           voteRewardsCoefficient: 0,
+          executorDescription: "internal",
         },
         distributionProposalSettings: {
-          earlyCompletion: true,
+          earlyCompletion: false,
           delegatedVotingAllowed: false,
           validatorsVote: false,
           duration: 500,
           durationValidators: 600,
           quorum: parseUnits("51", 25),
           quorumValidators: parseUnits("61", 25),
-          minTokenBalance: parseEther("10"),
-          minNftBalance: 2,
+          minVotesForVoting: parseEther("10"),
+          minVotesForCreating: parseEther("5"),
           rewardToken: ZERO,
-          creationRewards: 0,
+          creationReward: 0,
           executionReward: 0,
           voteRewardsCoefficient: 0,
+          executorDescription: "DP",
         },
         validatorsBalancesSettings: {
           earlyCompletion: true,
           delegatedVotingAllowed: false,
-          validatorsVote: false,
+          validatorsVote: true,
           duration: 500,
           durationValidators: 600,
           quorum: parseUnits("51", 25),
           quorumValidators: parseUnits("61", 25),
-          minTokenBalance: parseEther("10"),
-          minNftBalance: 2,
+          minVotesForVoting: parseEther("10"),
+          minVotesForCreating: parseEther("5"),
           rewardToken: ZERO,
-          creationRewards: 0,
+          creationReward: 0,
           executionReward: 0,
           voteRewardsCoefficient: 0,
+          executorDescription: "validators",
         },
-        defaultProposalSetting: {
+        defaultProposalSettings: {
           earlyCompletion: false,
           delegatedVotingAllowed: true,
-          validatorsVote: false,
+          validatorsVote: true,
           duration: 700,
           durationValidators: 800,
           quorum: parseUnits("71", 25),
           quorumValidators: parseUnits("100", 25),
-          minTokenBalance: parseEther("20"),
-          minNftBalance: 3,
+          minVotesForVoting: parseEther("20"),
+          minVotesForCreating: parseEther("5"),
           rewardToken: ZERO,
-          creationRewards: 0,
+          creationReward: 0,
           executionReward: 0,
           voteRewardsCoefficient: 0,
+          executorDescription: "default",
         },
       },
       validatorsParams: {
@@ -112,24 +118,24 @@ const CreateProposalSelectType: React.FC = () => {
       },
       userKeeperParams: {
         tokenAddress: "0x8a9424745056eb399fd19a0ec26a14316684e274",
-        nftAddress: null,
+        nftAddress: ZERO,
         totalPowerInTokens: parseEther("33000"),
         nftsTotalSupply: 33,
       },
-      owner: OWNER,
-      votesLimit: 10,
-      feePercentage: parseUnits("1", 25),
       descriptionURL: "example.com",
     }
-    ;(async () => {
-      try {
-        const response = await factory.deployGovPool(true, POOL_PARAMETERS)
 
-        console.log(response)
-      } catch (e) {
-        console.log(e)
-      }
-    })()
+    try {
+      const response = await factory.deployGovPool(POOL_PARAMETERS)
+
+      console.log(response)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  useEffect(() => {
+    createPool()
   }, [factory])
 
   const proceedToNextStep = useCallback(() => {
