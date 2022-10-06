@@ -1,35 +1,26 @@
-import { useActiveWeb3React } from "hooks"
-import { usePoolsByInvestors } from "hooks/usePool"
-import { useCallback, useMemo } from "react"
-import { isNil } from "lodash"
+import { useCallback } from "react"
+import { isEmpty } from "lodash"
 import { useNavigate } from "react-router-dom"
+
 import useAlert, { AlertType } from "hooks/useAlert"
 import { useInsuranceAccidents } from "state/ipfsMetadata/hooks"
+import useOwnedAndInvestedPools from "hooks/useOwnedAndInvestedPools"
 
 function useInsurancePage() {
-  const { account } = useActiveWeb3React()
   const navigate = useNavigate()
   const [showAlert] = useAlert()
 
-  const investors = useMemo<string[]>(
-    () => (isNil(account) ? [] : [String(account).toLocaleLowerCase()]),
-    [account]
-  )
+  const [{ data: pools, fetching }] = useOwnedAndInvestedPools()
 
-  const [poolsInvestedInResponse] = usePoolsByInvestors(investors)
   const [accidentsResponse, { fetch: fetchInsuranceAccidents }] =
     useInsuranceAccidents()
 
   const onInsuranceCreateNavigate = useCallback(() => {
-    if (
-      poolsInvestedInResponse.fetching ||
-      isNil(poolsInvestedInResponse.data) ||
-      isNil(poolsInvestedInResponse.data.traderPools)
-    ) {
+    if (fetching || (!fetching && isEmpty(pools))) {
       return
     }
 
-    if (poolsInvestedInResponse.data.traderPools.length === 0) {
+    if (pools.length === 0) {
       showAlert({
         content:
           "You can't create insurance accident proposal because you not invested in any fund yet.",
@@ -40,11 +31,11 @@ function useInsurancePage() {
     }
 
     navigate("/insurance/create")
-  }, [navigate, poolsInvestedInResponse, showAlert])
+  }, [navigate, fetching, pools, showAlert])
 
   return [
     {
-      checkingInvestmentStatus: poolsInvestedInResponse.fetching,
+      checkingInvestmentStatus: fetching,
       accidentsResponse,
     },
     { onInsuranceCreateNavigate, fetchInsuranceAccidents },
