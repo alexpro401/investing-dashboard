@@ -134,7 +134,15 @@ const CreateProposalSelectType: React.FC = () => {
 
   const proceedToNextStep = useCallback(() => {
     //TODO NAVIGATE to path related to selected proposal type
-    navigate("/")
+    const nextProposalTypePath = {
+      [EProposalType.daoProfileModification]: "/",
+      [EProposalType.chaningVotingSettings]: "/",
+      [EProposalType.tokenDistribution]: "/",
+      [EProposalType.validatorSettings]: "/",
+      [EProposalType.changeTokenPrice]: "/",
+    }[selectedProposalType]
+
+    navigate(nextProposalTypePath)
   }, [navigate, selectedProposalType])
 
   const proposalTypes = useMemo<IProposalType[]>(
