@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom"
 import styled from "styled-components"
 import { motion } from "framer-motion"
 
@@ -59,6 +60,13 @@ export const TutorialCardBlockTitle = styled.h3`
 `
 
 export const TutorialCardBlockLink = styled.a`
+  font-size: 13px;
+  line-height: 1.5;
+  color: #2669eb;
+  text-decoration: none;
+`
+
+export const TutorialCardBlockNavLink = styled(NavLink)`
   font-size: 13px;
   line-height: 1.5;
   color: #2669eb;

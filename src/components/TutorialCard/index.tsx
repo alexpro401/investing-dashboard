@@ -3,20 +3,21 @@ import { AnimatePresence } from "framer-motion"
 
 import { Icon } from "common"
 import { ICON_NAMES } from "constants/icon-names"
-import { opacityVariants } from "motion/variants"
 
 import * as S from "./styled"
 
-interface ITutorialCardProps {
+type ITutorialCardProps = {
   text: string
+  linkText: string
   imageSrc: string
-  href: string
-}
+} & ({ href: string; to?: never } | { to: string; href?: never })
 
 const TutorialCard: React.FC<ITutorialCardProps> = ({
   text,
+  linkText,
   imageSrc,
   href,
+  to,
 }) => {
   const [isOpened, setIsOpened] = useState<boolean>(true)
 
@@ -50,9 +51,20 @@ const TutorialCard: React.FC<ITutorialCardProps> = ({
         >
           <S.HighlightDecor />
           <S.TutorialCardBlockTitle>{text}</S.TutorialCardBlockTitle>
-          <S.TutorialCardBlockLink rel="noreferrer" target="_blank" href={href}>
-            Read the documentation
-          </S.TutorialCardBlockLink>
+          {to && (
+            <S.TutorialCardBlockNavLink to={to}>
+              {linkText}
+            </S.TutorialCardBlockNavLink>
+          )}
+          {!to && href && (
+            <S.TutorialCardBlockLink
+              rel="noopener noreferrer"
+              target="_blank"
+              href={href}
+            >
+              {linkText}
+            </S.TutorialCardBlockLink>
+          )}
           <S.TutorialCardImg src={imageSrc} />
           <S.TutorialCardCloseBtn onClick={handleCloseCard}>
             <Icon name={ICON_NAMES.close} />

@@ -28,6 +28,9 @@ const primaryBackgrounds = {
   warn: "#DB6D6D",
 }
 
+const primaryDisabledBg = "rgba(154, 226, 203, 0.5)"
+const primaryDisabledColor = "#0D1320"
+
 export const Primary = styled(BaseButton)<{
   size?: string
   m?: string
@@ -48,10 +51,17 @@ export const Primary = styled(BaseButton)<{
   border-radius: ${(props) => props.br || "10px"};
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   width: ${(props) => (props.full ? "100%" : "fit-content")};
-  box-sizing: border-box;
+  box-sizing: border - box;
   margin: ${(props) => props.m || "0 auto"};
-  min-width: fit-content;
+  min-width: fit - content;
   background: ${(props) => primaryBackgrounds[props.color]};
+
+  ${(props) =>
+    props.disabled &&
+    `
+    background: ${primaryDisabledBg} !important;
+    color: ${primaryDisabledColor} !important;
+  `}
 
   ${Text} {
     font-family: "Gilroy";
@@ -83,11 +93,11 @@ export const Secondary = styled(GradientBorder)<{
   background: transparent;
   border-radius: 10px;
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
-  transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease -in -out;
   width: ${(props) => (props.full ? "100%" : "fit-content")};
-  box-sizing: border-box;
+  box-sizing: border - box;
   margin: ${(props) => props.m || "0 auto"};
-  min-width: fit-content;
+  min-width: fit - content;
   animation: changeButton 3s ease infinite;
   z-index: 20;
 
