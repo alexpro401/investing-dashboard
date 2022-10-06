@@ -8,7 +8,7 @@ import {
   useMemo,
   useState,
 } from "react"
-import { isNil } from "lodash"
+import { isEmpty, isNil } from "lodash"
 import { useWeb3React } from "@web3-react/core"
 import { v4 as uuidv4 } from "uuid"
 
@@ -80,7 +80,12 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
   }, [insurance])
 
   const _inDayLpAmount = useMemo(() => {
-    if (isNil(account) || isNil(investorsInfo.get)) return ZERO
+    if (
+      isNil(account) ||
+      isNil(investorsInfo.get) ||
+      isEmpty(investorsInfo.get)
+    )
+      return ZERO
 
     return BigNumber.from(
       investorsInfo.get[String(account).toLocaleLowerCase()]
