@@ -1,6 +1,7 @@
-import { PulseSpinner } from "react-spinners-kit"
 import { AreaChart, Area, Tooltip, ResponsiveContainer } from "recharts"
 import { useEffect, useMemo, useState } from "react"
+import { PulseSpinner } from "react-spinners-kit"
+import { isEmpty, isNil } from "lodash"
 import { format } from "date-fns"
 
 import S from "./styled"
@@ -119,7 +120,7 @@ const InsuranceAccidentChart: React.FC<Props> = ({
   loading,
 }) => {
   const amount = useMemo(() => {
-    if (!activeDot || loading) {
+    if (loading || isEmpty(activeDot) || isNil(activeDot.payload.price)) {
       return <Skeleton w="100px" h="19px" />
     }
 
@@ -127,7 +128,7 @@ const InsuranceAccidentChart: React.FC<Props> = ({
   }, [activeDot, loading])
 
   const date = useMemo(() => {
-    if (!activeDot || loading) {
+    if (loading || isEmpty(activeDot) || isNil(activeDot.payload.timestamp)) {
       return <Skeleton w="120px" h="15px" />
     }
 

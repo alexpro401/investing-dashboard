@@ -7,11 +7,11 @@ export const Container = styled(StepsControllerContext)``
 
 export const StepsRoot = styled(Flex)`
   width: 100%;
-  height: calc(100% - 51px);
+  height: calc(100vh - 146px);
   overflow-y: auto;
 
   @media all and (display-mode: standalone) {
-    height: calc(100% - 66px);
+    height: calc(100% - 165px);
   }
 `
 
