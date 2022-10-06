@@ -36,7 +36,12 @@ import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 import { readFromClipboard } from "utils/clipboard"
 import { useFormValidation } from "hooks/useFormValidation"
-import { isAddressValidator, isUrl, required } from "utils/validators"
+import {
+  isAddressValidator,
+  isUrl,
+  minLength,
+  required,
+} from "utils/validators"
 import { isAddress, isValidUrl } from "utils"
 import { useERC20 } from "hooks/useERC20"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
@@ -54,7 +59,11 @@ const TitlesStep: FC = () => {
     daoPoolFormContext.userKeeperParams
 
   const [someComplexObject, setSomeComplexObject] = useState({
-    fullName: { firstName: "", lastName: { ancestor: "", default: "" } },
+    fullName: {
+      yopta: "nenada",
+      firstName: "",
+      lastName: { ancestor: "", default: "" },
+    },
   })
 
   const { getFieldErrorMessage, touchField, isFieldValid } = useFormValidation(
@@ -74,19 +83,29 @@ const TitlesStep: FC = () => {
       someComplexObject,
     },
     {
-      avatarUrl: { required },
-      daoName: { required },
-      websiteUrl: { required },
-      description: { required },
-      documents: {
+      // avatarUrl: { required },
+      // daoName: { required },
+      // websiteUrl: { required },
+      // description: { required },
+      // documents: {
+      //   required,
+      //   $every: {
+      //     name: { required },
+      //     url: { required, isUrl },
+      //   },
+      // },
+
+      someComplexObject: {
         required,
-        $every: {
-          name: { required },
-          url: { required, isUrl },
+        fullName: {
+          required,
+          firstName: { required },
+          lastName: {
+            ancestor: { required },
+            default: { required, minLength: minLength(6) },
+          },
         },
       },
-
-      someComplexObject: { required },
 
       ...(isErc20.get
         ? { tokenAddress: { required, isAddressValidator } }

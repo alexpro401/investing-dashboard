@@ -1,5 +1,6 @@
 import { get, isEmpty, isEqual, isObject } from "lodash"
 import { useCallback, useEffect, useMemo, useState } from "react"
+import { minLength, required } from "../utils/validators"
 
 type FormSchema = Record<string, unknown>
 
@@ -95,7 +96,25 @@ export const useFormValidation = (
 
   const getValidationState = useCallback((): ValidationState => {
     return Object.keys(validationRules).reduce((acc, fieldName) => {
-      const validateResult = _validateField(fieldName)
+      const fieldValidators = validationRules[fieldName]
+
+      if (!fieldValidators || isEmpty(fieldValidators))
+        throw new Error(`Field ${fieldName} has no validators`)
+
+      const validateResult = Object.entries(fieldValidators).reduce(
+        (acc, [validatorKey, validator]) => ({
+          ...acc,
+          ..._validateField(
+            validatorKey,
+            validator,
+            fieldName,
+            formSchema[fieldName]
+          ),
+        }),
+        {}
+      )
+
+      console.log("validateResult", validateResult)
 
       return {
         ...acc,
@@ -113,63 +132,74 @@ export const useFormValidation = (
     })
   }, [getValidationState, formSchema, validationState])
 
-  const _validateArrayField = useCallback(
-    (fieldName: string) => {
-      // can be ["", "", ""] or [{ name: "" }, { name: "" }, { name: "" }]
-      const originalData = formSchema[fieldName] as unknown[]
-
-      // need to check if rule is an Validator of primitive type
-      // or it's an object with Validators
-
-      const _validationRules = get(validationRules, fieldName, {})
-      const _validationState = get(validationState, fieldName, [])
-    },
-    [formSchema, validationRules, validationState]
-  )
-
   const _validateField = useCallback(
-    (fieldName: string): ValidationState => {
-      const fieldValidators = validationRules[fieldName]
+    (
+      validatorKey: string,
+      validator: Validator | ValidatorOptions,
+      fieldName: string | number,
+      field: unknown
+    ): ValidationState => {
+      if (typeof validator == "function") {
+        const { isValid, message } = validator(field)
 
-      if (!fieldValidators || isEmpty(fieldValidators))
-        throw new Error(`Field ${fieldName} has no validators`)
-
-      let errors = {} as ValidationErrors
-
-      for (const validatorName in fieldValidators) {
-        if (validatorName === "$every") continue
-
-        const validationResult = (fieldValidators[validatorName] as Validator)(
-          formSchema[fieldName]
-        )
-
-        if (!validationResult.isValid) {
-          errors = {
-            ...errors,
-            [validatorName]: { message: validationResult.message },
-          }
+        return {
+          [fieldName]: {
+            isInvalid: !isValid,
+            isDirty: false,
+            isError: !isValid,
+            errors: {
+              [validatorKey]: {
+                message,
+              },
+            },
+          },
         }
-      }
+      } else if (validatorKey === "$every") {
+        if (!Array.isArray(field)) {
+          throw new Error(
+            `${fieldName}: $every validator can be used only for arrays`
+          )
+        }
 
-      return {
-        [fieldName]: {
-          ...(validationState ? validationState[fieldName] : {}),
-          errors,
-          isInvalid:
-            !isEmpty(validationState && validationState[fieldName]?.errors) ||
-            false,
-          isError:
-            (validationState &&
-              validationState[fieldName]?.isDirty &&
-              validationState &&
-              validationState[fieldName]?.isInvalid) ||
-            false,
-          isDirty:
-            (validationState && validationState[fieldName]?.isDirty) || false,
-        },
+        return field.reduce((acc, el, index) => {
+          return Object.entries(validator).reduce(
+            (acc, [_validatorKey, _validator]) => ({
+              ...acc,
+              ..._validateField(_validatorKey, _validator, index, el),
+            }),
+            {}
+          )
+        }, {})
+      } else if (isObject(field)) {
+        // TODO: here
+        return Object.entries(validator).reduce(
+          (_acc, [_validatorKey, _validator]) => {
+            // validatorKey = fullName
+            // const validator = {
+            //   required,
+            //   firstName: { required },
+            //   lastName: {
+            //     ancestor: { required },
+            //     default: { required, minLength: minLength(6) },
+            //   },
+            // }
+            // so we need to keep fieldName as key
+            return {
+              ..._acc,
+              [validatorKey]: _validateField(
+                _validatorKey,
+                _validator,
+                fieldName,
+                field[fieldName]
+              ),
+            }
+          },
+          {}
+        )
       }
+      return {}
     },
-    [formSchema, validationRules, validationState]
+    []
   )
 
   const touchField = useCallback(
