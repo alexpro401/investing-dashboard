@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { useTraderPoolRiskyProposalContract } from "contracts"
 import { useProposalAddress } from "hooks/useContract"
-import debounce from "lodash.debounce"
+import { debounce } from "lodash"
 
 import { ProposalsResponse } from "interfaces/abi-typings/TraderPoolRiskyProposal"
 import { IRiskyProposalInvestmentsInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
