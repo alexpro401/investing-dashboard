@@ -43,7 +43,9 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
   total,
   payload,
 }) => {
-  const { form } = useContext(InsuranceAccidentCreatingContext)
+  const { form, insurancePoolHaveTrades } = useContext(
+    InsuranceAccidentCreatingContext
+  )
   const { pool } = form
 
   const [noInvestments, setNoInvestments] = useState<boolean>(false)
@@ -63,9 +65,15 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
   }, [filterTVL])
 
   const onTogglePool = useCallback(
-    (id) => {
-      if (!id) return
-      pool.set(pool.get === id ? "" : id)
+    (poolData: IPoolQuery) => {
+      if (!poolData) return
+
+      const same = pool.get === poolData.id
+
+      pool.set(same ? "" : poolData.id)
+      insurancePoolHaveTrades.set(
+        same ? false : Number(poolData.totalTrades) > 0
+      )
     },
     [pool]
   )
@@ -98,7 +106,7 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
           <CreateInsuranceAccidentPoolCard
             key={p.id}
             pool={p}
-            onToggle={() => onTogglePool(p.id)}
+            onToggle={() => onTogglePool(p)}
             active={pool.get === p.id}
           />
         ))
@@ -110,7 +118,7 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
         <CreateInsuranceAccidentPoolCard
           key={p.id}
           pool={p}
-          onToggle={() => onTogglePool(p.id)}
+          onToggle={() => onTogglePool(p)}
           active={pool.get === p.id}
         />
       ))

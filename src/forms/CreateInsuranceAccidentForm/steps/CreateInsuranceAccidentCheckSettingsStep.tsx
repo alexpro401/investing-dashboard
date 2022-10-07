@@ -85,14 +85,21 @@ function useInvestorsInAccident() {
   )
 
   const loading = useMemo(
-    () => insuranceHistory.fetching || lpHistory.fetching || lpCurrent.fetching,
-    [insuranceHistory, lpHistory, lpCurrent]
+    () =>
+      isNil(investors) ||
+      insuranceHistory.fetching ||
+      lpHistory.fetching ||
+      lpCurrent.fetching,
+    [investors, insuranceHistory, lpHistory, lpCurrent]
   )
   const noData = useMemo(
     () =>
       isNil(insuranceHistory.data) ||
+      isEmpty(insuranceHistory.data) ||
       isNil(lpHistory.data) ||
-      isNil(lpCurrent.data),
+      isEmpty(lpHistory.data) ||
+      isNil(lpCurrent.data) ||
+      isEmpty(lpCurrent.data),
     [insuranceHistory, lpHistory, lpCurrent]
   )
 
@@ -263,9 +270,47 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
     }
   }, [totals])
 
+  const tableBody = useMemo(() => {
+    if (loading) {
+      return Array(10)
+        .fill(null)
+        .map((_, i) => <TableRowSkeleton key={i} />)
+    }
+
+    if (!loading && noData) {
+      return (
+        <Flex full ai="center" jc="center">
+          <Text fz={16} fw={500} color="#e4f2ff">
+            No investors
+          </Text>
+        </Flex>
+      )
+    }
+
+    return (Object.values(data) as InsuranceAccidentInvestor[]).map((h) => {
+      const isCurrentUser =
+        h.investor.id === String(account).toLocaleLowerCase()
+      return (
+        <CreateInsuranceAccidentMemberCard
+          key={h.investor.id}
+          payload={h}
+          color={isCurrentUser ? "#2669EB" : undefined}
+          fw={isCurrentUser ? 600 : 400}
+        />
+      )
+    })
+  }, [account, data, loading, noData])
+
   return (
     <>
-      <StepsRoot gap={"24"} dir={"column"} ai={"stretch"} p={"16px"} full>
+      <StepsRoot
+        gap={"24"}
+        dir={"column"}
+        jc={"flex-start"}
+        ai={"stretch"}
+        p={"16px"}
+        full
+      >
         <Card>
           <CardHead
             nodeLeft={<CreateInsuranceAccidentCardStepNumber number={3} />}
@@ -316,26 +361,7 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
                 <S.TableCell>Сoverage DEXE</S.TableCell>
               </S.TableRow>
             </S.TableHead>
-            <S.TableBody>
-              {loading || noData
-                ? Array(10)
-                    .fill(null)
-                    .map((_, i) => <TableRowSkeleton key={i} />)
-                : (Object.values(data) as InsuranceAccidentInvestor[]).map(
-                    (h) => {
-                      const isCurrentUser =
-                        h.investor.id === String(account).toLocaleLowerCase()
-                      return (
-                        <CreateInsuranceAccidentMemberCard
-                          key={h.investor.id}
-                          payload={h}
-                          color={isCurrentUser ? "#2669EB" : undefined}
-                          fw={isCurrentUser ? 600 : 400}
-                        />
-                      )
-                    }
-                  )}
-            </S.TableBody>
+            <S.TableBody>{tableBody}</S.TableBody>
             <S.TableFooter>
               <S.TableRow fw={600}>
                 <S.TableCell>Total:</S.TableCell>

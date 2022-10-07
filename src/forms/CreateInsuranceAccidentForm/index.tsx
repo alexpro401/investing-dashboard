@@ -29,13 +29,14 @@ import { addInsuranceProposalData } from "utils/ipfs"
 import { InsuranceAccident } from "interfaces/insurance"
 import { useWeb3React } from "@web3-react/core"
 import { useFormValidation } from "hooks/useFormValidation"
-import { required } from "utils/validators"
+import { isUrl, required } from "utils/validators"
 import { useInsuranceContract } from "contracts"
 import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
 import usePayload from "hooks/usePayload"
 import { SubmitState } from "constants/types"
 import CreateInsuranceAccidentCreatedSuccessfully from "./components/CreateInsuranceAccidentCreatedSuccessfully"
+import { ZERO } from "constants/index"
 
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
@@ -58,6 +59,7 @@ const CreateInsuranceAccidentForm: FC = () => {
     investorsTotals,
     insuranceAccidentExist,
     investorsInfo,
+    insurancePoolHaveTrades,
     _clearState,
   } = context
 
@@ -77,7 +79,7 @@ const CreateInsuranceAccidentForm: FC = () => {
       block: { required },
       date: { required },
       description: { required },
-      chat: { required },
+      chat: { required, isUrl },
     }
   )
 
@@ -250,6 +252,15 @@ const CreateInsuranceAccidentForm: FC = () => {
           })
           break
         }
+        if (!insurancePoolHaveTrades.get) {
+          showAlert({
+            content:
+              "Chosen fund have no trades. You can't create insurance accident proposal on pool without trades.",
+            type: AlertType.warning,
+            hideDuration: 10000,
+          })
+          break
+        }
 
         setCurrentStep(STEPS.chooseBlock)
         break
@@ -279,6 +290,16 @@ const CreateInsuranceAccidentForm: FC = () => {
         setCurrentStep(STEPS.checkSettings)
         break
       case STEPS.checkSettings:
+        if (isEmpty(investorsInfo.get)) {
+          showAlert({
+            content:
+              "Chosen fund have no investments. You can't create insurance accident proposal on pool without trading.",
+            type: AlertType.warning,
+            hideDuration: 10000,
+          })
+          break
+        }
+
         setCurrentStep(STEPS.addDescription)
         break
       case STEPS.addDescription:
@@ -292,7 +313,9 @@ const CreateInsuranceAccidentForm: FC = () => {
           } else if (descriptionInvalid) {
             message = `Before continue add description of the accident.`
           } else if (chatInvalid) {
-            message = `Before continue add link to chat where investors can talk about accident.`
+            message = `Before continue add link to chat where investors can talk about accident. ${getFieldErrorMessage(
+              "chat"
+            )}.`
           }
 
           showAlert({
@@ -316,6 +339,12 @@ const CreateInsuranceAccidentForm: FC = () => {
         setCurrentStep(STEPS.checkSettings)
         break
       case STEPS.checkSettings:
+        investorsInfo.set({})
+        investorsTotals.set({
+          lp: ZERO.toHexString(),
+          loss: ZERO.toHexString(),
+          coverage: ZERO.toHexString(),
+        })
         setCurrentStep(STEPS.chooseBlock)
         break
       case STEPS.chooseBlock:
@@ -337,21 +366,13 @@ const CreateInsuranceAccidentForm: FC = () => {
       >
         <AnimatePresence>
           {currentStep === STEPS.chooseFund ? (
-            <S.StepsContainer>
-              <CreateInsuranceAccidentChooseFundStep />
-            </S.StepsContainer>
+            <CreateInsuranceAccidentChooseFundStep />
           ) : currentStep === STEPS.chooseBlock ? (
-            <S.StepsContainer>
-              <CreateInsuranceAccidentChooseBlockStep />
-            </S.StepsContainer>
+            <CreateInsuranceAccidentChooseBlockStep />
           ) : currentStep === STEPS.checkSettings ? (
-            <S.StepsContainer>
-              <CreateInsuranceAccidentCheckSettingsStep />
-            </S.StepsContainer>
+            <CreateInsuranceAccidentCheckSettingsStep />
           ) : currentStep === STEPS.addDescription ? (
-            <S.StepsContainer>
-              <CreateInsuranceAccidentAddDescriptionStep />
-            </S.StepsContainer>
+            <CreateInsuranceAccidentAddDescriptionStep />
           ) : (
             <></>
           )}

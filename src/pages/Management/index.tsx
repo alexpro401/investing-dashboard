@@ -52,7 +52,10 @@ function Management() {
   } = useInsuranceManagement()
 
   const button = useMemo(() => {
-    if (fromAmount === "0" || toAmount === "0") {
+    if (
+      (direction === "deposit" && fromAmount === "0") ||
+      (direction === "withdraw" && toAmount === "0")
+    ) {
       return (
         <SecondaryButton
           theme="disabled"

@@ -68,33 +68,22 @@ const useInsuranceManagement = () => {
   }, [account, dexeAddress, insuranceAddress, library])
 
   const fetchInsuranceAmountInUSD = useCallback(async () => {
-    const price = await priceFeed?.getNormalizedPriceOutUSD(
+    if (!priceFeed || insuranceAmount.isZero()) return
+
+    const price = await priceFeed.getNormalizedPriceOutUSD(
       dexeAddress,
       insuranceAmount
     )
-
     setInsuranceAmountUSD(price[0])
   }, [dexeAddress, insuranceAmount, priceFeed])
 
   const fetchInsuranceBalance = useCallback(async () => {
-    const userInsurance = await insurance?.getInsurance(account)
+    if (!insurance) return
+
+    const userInsurance = await insurance.getInsurance(account)
     setStakeAmount(userInsurance[0])
     setInsuranceAmount(userInsurance[1])
-    await fetchInsuranceAmountInUSD()
-  }, [account, insurance, fetchInsuranceAmountInUSD])
-
-  useEffect(() => {
-    if (!insurance || !account) return
-
-    fetchInsuranceBalance().catch(console.log)
-  }, [insurance, account, fetchInsuranceBalance])
-
-  // update allowance
-  useEffect(() => {
-    if (!insuranceAddress || !dexeAddress || !account || !library) return
-
-    fetchAndUpdateAllowance().catch(console.error)
-  }, [insuranceAddress, dexeAddress, account, library, fetchAndUpdateAllowance])
+  }, [account, insurance])
 
   const handleSubmit = useCallback(() => {
     setLoading(SubmitState.SIGN)
@@ -190,40 +179,79 @@ const useInsuranceManagement = () => {
     setLoading,
   ])
 
-  const handleFromChange = (v: string) => {
-    setFromAmount(v)
+  const handleFromChange = useCallback(
+    (v: string) => {
+      setFromAmount(v)
 
-    const fetchPrice = async () => {
-      const amount = BigNumber.from(v)
+      const fetchPrice = async () => {
+        const amount = BigNumber.from(v)
 
-      const price = await priceFeed?.getNormalizedPriceOutUSD(
-        dexeAddress,
-        amount
-      )
-      setInPrice(price[0])
-    }
+        const price = await priceFeed?.getNormalizedPriceOutUSD(
+          dexeAddress,
+          amount
+        )
+        setInPrice(price[0])
+      }
 
-    fetchPrice().catch(console.error)
-  }
+      fetchPrice().catch(console.error)
+    },
+    [dexeAddress, priceFeed]
+  )
 
-  const handleToChange = (v: string) => {
-    setToAmount(v)
+  const handleToChange = useCallback(
+    (v: string) => {
+      setToAmount(v)
 
-    const fetchPrice = async () => {
-      const amount = divideBignumbers(
-        [BigNumber.from(v), 18],
-        [parseEther("10"), 18]
-      )
+      const fetchPrice = async () => {
+        const amount = divideBignumbers(
+          [BigNumber.from(v), 18],
+          [parseEther("10"), 18]
+        )
 
-      const price = await priceFeed?.getNormalizedPriceOutUSD(
-        dexeAddress,
-        amount
-      )
-      setOutPrice(price[0])
-    }
+        const price = await priceFeed?.getNormalizedPriceOutUSD(
+          dexeAddress,
+          amount
+        )
+        setOutPrice(price[0])
+      }
 
-    fetchPrice().catch(console.error)
-  }
+      fetchPrice().catch(console.error)
+    },
+    [dexeAddress, priceFeed]
+  )
+
+  const runUpdate = useCallback(async () => {
+    fetchAndUpdateAllowance()
+    fetchInsuranceBalance()
+    refetchBalance()
+  }, [fetchAndUpdateAllowance, fetchInsuranceBalance, refetchBalance])
+
+  // update insurance amount in USD on insuranceAmount change
+  useEffect(() => {
+    fetchInsuranceAmountInUSD().catch(console.log)
+  }, [fetchInsuranceAmountInUSD])
+
+  // update insurance balance on account change
+  useEffect(() => {
+    if (!insurance || !account) return
+    fetchInsuranceBalance().catch(console.log)
+  }, [insurance, account, fetchInsuranceBalance])
+
+  // update allowance
+  useEffect(() => {
+    if (!insuranceAddress || !dexeAddress || !account || !library) return
+
+    fetchAndUpdateAllowance().catch(console.error)
+  }, [insuranceAddress, dexeAddress, account, library, fetchAndUpdateAllowance])
+
+  // global updater
+  useEffect(() => {
+    const interval = setInterval(() => {
+      runUpdate()
+    }, Number(process.env.REACT_APP_UPDATE_INTERVAL))
+
+    return () => clearInterval(interval)
+  }, [runUpdate])
 
   return {
     direction,

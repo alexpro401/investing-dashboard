@@ -1,12 +1,14 @@
 import styled from "styled-components"
 
 export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   margin: 0 auto;
-  width: fill-available;
-  height: calc(100vh - 94px);
-  overflow-y: auto;
+  height: calc(100% - 50px);
+  overflow: hidden;
 
   @media all and (display-mode: standalone) {
-    height: calc(100vh - 115px);
+    height: calc(100% - 65px);
   }
 `

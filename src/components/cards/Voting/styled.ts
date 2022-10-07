@@ -5,6 +5,9 @@ import styled from "styled-components"
 export const Container = styled(Card)`
   padding: 0;
   gap: 0;
+  &:not(:first-child) {
+    margin-top: 16px;
+  }
 `
 
 export const Head = styled.div`
