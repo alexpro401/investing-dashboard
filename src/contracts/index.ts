@@ -101,10 +101,7 @@ export function useInvestTraderPoolContract(address: Address) {
 }
 
 export function usePoolFactoryContract() {
-  return useContract(
-    useSelector(selectPoolFactoryAddress),
-    PoolFactory
-  ) as unknown as PoolFactoryType | null
+  return useContract(useSelector(selectPoolFactoryAddress), PoolFactory)
 }
 
 export function usePoolRegistryContract() {

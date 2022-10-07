@@ -156,6 +156,7 @@ export interface PoolFactory {
    * @param parameters Type: tuple, Indexed: false
    */
   deployGovPool(
+    withDistributionProposal: boolean,
     parameters: DeployGovPoolRequest,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>
