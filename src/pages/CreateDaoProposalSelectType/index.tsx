@@ -27,8 +27,9 @@ interface IProposalType {
 
 const CreateProposalSelectType: React.FC = () => {
   const navigate = useNavigate()
-  const [selectedProposalType, setSelectedProposalType] =
-    useState<EProposalType>(EProposalType.daoProfileModification)
+  const [selectedProposalType, setSelectedProposalType] = useState(
+    EProposalType.daoProfileModification
+  )
 
   const proceedToNextStep = useCallback(() => {
     //TODO NAVIGATE to path related to selected proposal type
