@@ -1,13 +1,24 @@
+import { useWeb3React } from "@web3-react/core"
 import { useCallback, useMemo } from "react"
 import { parseEther, parseUnits } from "@ethersproject/units"
 
 import { usePoolFactoryContract } from "contracts"
 import useGasTracker from "state/gas/hooks"
+import { useTransactionAdder } from "state/transactions/hooks"
+import { TransactionType } from "state/transactions/types"
+import { isTxMined, parseTransactionError } from "utils"
+import usePayload from "./usePayload"
+import { SubmitState } from "constants/types"
+import useError from "hooks/useError"
 
 const useCreateDAO = () => {
   const factory = usePoolFactoryContract()
+  const { account } = useWeb3React()
 
   const [gasTrackerResponse] = useGasTracker()
+  const addTransaction = useTransactionAdder()
+  const [, setPayload] = usePayload()
+  const [, setError] = useError()
 
   const transactionOptions = useMemo(() => {
     if (!gasTrackerResponse) return
@@ -17,10 +28,32 @@ const useCreateDAO = () => {
     }
   }, [gasTrackerResponse])
 
+  const tryEstimateGas = useCallback(
+    async (params) => {
+      try {
+        const gas = await factory?.estimateGas.deployGovPool(
+          params,
+          transactionOptions
+        )
+
+        if (!gas?._isBigNumber) {
+          return
+        }
+
+        return gas
+      } catch {
+        return
+      }
+    },
+    [factory, transactionOptions]
+  )
+
   const createPool = useCallback(async () => {
     if (!factory) return
 
-    const OWNER = "0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3"
+    setPayload(SubmitState.SIGN)
+
+    const OWNER = account
     const ZERO = "0x0000000000000000000000000000000000000000"
     const POOL_PARAMETERS = {
       settingsParams: {
@@ -106,17 +139,42 @@ const useCreateDAO = () => {
       descriptionURL: "example.com",
     }
 
-    try {
-      const response = await factory.deployGovPool(
-        POOL_PARAMETERS,
-        transactionOptions
-      )
+    const gasLimit = await tryEstimateGas(POOL_PARAMETERS)
 
-      console.log(response)
-    } catch (e) {
-      console.log(e)
+    try {
+      const transactionResponse = await factory.deployGovPool(POOL_PARAMETERS, {
+        ...transactionOptions,
+        gasLimit,
+      })
+
+      setPayload(SubmitState.WAIT_CONFIRM)
+      const receipt = await addTransaction(transactionResponse, {
+        type: TransactionType.GOV_POOL_CREATE,
+      })
+
+      if (isTxMined(receipt)) {
+        setPayload(SubmitState.SUCCESS)
+      }
+    } catch (error: any) {
+      setPayload(SubmitState.IDLE)
+      if (!!error && !!error.data && !!error.data.message) {
+        setError(error.data.message)
+      } else {
+        const errorMessage = parseTransactionError(error.toString())
+        !!errorMessage && setError(errorMessage)
+      }
     }
-  }, [factory, transactionOptions])
+  }, [
+    account,
+    addTransaction,
+    factory,
+    setError,
+    setPayload,
+    transactionOptions,
+    tryEstimateGas,
+  ])
+
+  return createPool
 }
 
 export default useCreateDAO
