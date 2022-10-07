@@ -429,7 +429,8 @@ const TitlesStep: FC = () => {
                     <></>
                   )
                 }
-                // errorMessage={getFieldErrorMessage(`documents[${idx}]`)}
+                errorMessage={getFieldErrorMessage(`documents[${idx}].name`)}
+                onBlur={() => touchField(`documents[${idx}].name`)}
               />
             ))}
           </CardFormControl>
