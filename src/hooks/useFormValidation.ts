@@ -1,5 +1,6 @@
-import { get, isEmpty, isEqual, isObject, set, cloneDeep } from "lodash"
+import { get, isEmpty, isEqual, isObject, cloneDeep } from "lodash"
 import { useCallback, useEffect, useMemo, useState } from "react"
+import { minLength, required } from "../utils/validators"
 
 type FormSchema = Record<string, unknown>
 
@@ -7,6 +8,10 @@ type FormSchema = Record<string, unknown>
 export type Validator = (...params: any[]) => {
   isValid: boolean
   message: string
+}
+
+interface ValidatorOptions {
+  [key: string]: Validator | ValidatorOptions
 }
 
 type ValidationErrors = Record<
@@ -24,10 +29,6 @@ type ValidationFieldState = {
 }
 
 type ValidationState = Record<keyof FormSchema, ValidationFieldState>
-
-interface ValidatorOptions {
-  [key: string]: Validator | ValidatorOptions
-}
 
 type ValidationRules = Record<keyof FormSchema, ValidatorOptions>
 
@@ -93,22 +94,75 @@ export const useFormValidation = (
   )
 
   const getValidationState = useCallback((): ValidationState => {
+    /**
+     * someComplexObject: {
+     *   required,
+     *   fullName: {
+     *     required,
+     *     firstName: { required },
+     *     lastName: {
+     *       ancestor: { required },
+     *       default: { required, minLength: minLength(6) },
+     *     },
+     *   },
+     * }
+     */
     return Object.keys(validationRules).reduce((acc, fieldName) => {
       const fieldValidators = validationRules[fieldName]
 
       if (!fieldValidators || isEmpty(fieldValidators))
         throw new Error(`Field ${fieldName} has no validators`)
 
+      /**
+       * required,
+       * fullName: {
+       *   required,
+       *   firstName: { required },
+       *   lastName: {
+       *     ancestor: { required },
+       *     default: { required, minLength: minLength(6) },
+       *   },
+       * }
+       */
       const validateResult = Object.entries(fieldValidators).reduce(
         (acc, [validatorKey, validator]) => {
+          const cachedResult =
+            typeof validator === "function"
+              ? {
+                  ...cloneDeep(validationState[fieldName]),
+                }
+              : {
+                  ...cloneDeep(get(validationState[fieldName], validatorKey)),
+                }
+
+          const fieldKey =
+            typeof validator === "function" ? fieldName : validatorKey
+
+          const fieldValue =
+            typeof validator === "function"
+              ? formSchema[fieldName]
+              : get(formSchema[fieldName], validatorKey)
+
+          const accumulator =
+            typeof validator === "function" ? acc : acc[fieldKey]
+
           const validatedField = _validateField(
             validatorKey,
             validator,
-            fieldName,
-            formSchema[fieldName],
-            acc
+            fieldKey,
+            fieldValue,
+            accumulator,
+            cachedResult
           )
 
+          console.log("validatedField", validatedField)
+
+          /**
+           * Don't return there fieldName as key,
+           * this reduce must return {@link ValidationFieldState}
+           * for current (top) level field, and if we'll get an object as validator
+           * we must return it's validatorKey with {@link ValidationFieldState}
+           */
           return {
             ...acc,
             ...validatedField,
@@ -133,20 +187,35 @@ export const useFormValidation = (
     })
   }, [getValidationState, formSchema, validationState])
 
+  /**
+   * Validate field
+   * Should return:
+   * if (typeof validator === "function")
+   *   return {@link ValidationFieldState}
+   *
+   * If (isObject(validator) && isEqual(validatorKey, "$every"))
+   *   return { [validatorKey]: {@link ValidationFieldState} }
+   * @param validatorKey
+   * @param validator
+   * @param fieldName
+   * @param fieldValue
+   * @param validationFieldState
+   */
   const _validateField = useCallback(
     (
       validatorKey: string,
       validator: Validator | ValidatorOptions,
       fieldKey: string | number,
       fieldValue: unknown,
-      accumulator: ValidationFieldState
-    ): ValidationFieldState => {
+      accumulator: ValidationFieldState,
+      cachedResult: ValidationFieldState
+    ):
+      | ValidationFieldState
+      | { [x: string | number]: ValidationFieldState } => {
+      // TODO: create path for nested fields
+
       if (typeof validator == "function") {
         const { isValid, message } = validator(fieldValue)
-
-        const cachedResult = {
-          ...cloneDeep(validationState[fieldKey]),
-        }
 
         const errors = {
           ...accumulator?.errors,
@@ -175,12 +244,75 @@ export const useFormValidation = (
           throw new Error(`${fieldKey}: is not an array`)
 
         return {} as ValidationFieldState
-      } else if (isObject(fieldValue)) {
-        return {} as ValidationFieldState
+      } else if (isObject(validator)) {
+        return {
+          /**
+           * fullName: {
+           *   yopta: "nenada",
+           *   firstName: "",
+           *   lastName: { ancestor: "", default: "" },
+           * }
+           */
+          /**
+           * fullName: {
+           *   required,
+           *   firstName: { required },
+           *   lastName: {
+           *     ancestor: { required },
+           *     default: { required, minLength: minLength(6) },
+           *   },
+           * }
+           */
+          [validatorKey]: Object.entries(validator).reduce(
+            (acc, [_validatorKey, _validatorValue]) => {
+              /**
+               * validatorKey: fullName,
+               * validator: { required, firstName: { required }, lastName: { ancestor: { required }, default: { required, minLength: minLength(6) } } }
+               * fieldKey: string | number,
+               * fieldValue: unknown,
+               * accumulator: ValidationFieldState,
+               * cachedResult: ValidationFieldState
+               */
+              const _cachedResult =
+                typeof _validatorValue === "function"
+                  ? cachedResult
+                  : cachedResult[_validatorKey]
+
+              const _fieldKey =
+                typeof _validatorValue === "function" ? fieldKey : _validatorKey
+
+              const _fieldValue =
+                typeof _validatorValue === "function"
+                  ? fieldValue
+                  : get(fieldValue, _validatorKey)
+
+              const _accumulator =
+                typeof _validatorValue === "function" ? acc : acc[_fieldKey]
+
+              const validatedNestedField = _validateField(
+                _validatorKey,
+                _validatorValue,
+                _fieldKey,
+                _fieldValue,
+                _accumulator,
+                _cachedResult
+              )
+
+              return {
+                ...acc,
+                ...(typeof _validatorValue === "function" ||
+                _fieldKey === _validatorKey
+                  ? { ...validatedNestedField }
+                  : { [_fieldKey]: validatedNestedField }),
+              }
+            },
+            accumulator
+          ),
+        }
       }
       return {} as ValidationFieldState
     },
-    [validationState]
+    []
   )
 
   const touchField = useCallback(

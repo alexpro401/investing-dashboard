@@ -84,7 +84,7 @@ const TitlesStep: FC = () => {
     },
     {
       // avatarUrl: { required },
-      daoName: { required, minLength: minLength(6) },
+      // daoName: { required, minLength: minLength(6) },
       // websiteUrl: { required },
       // description: { required },
       // documents: {
@@ -95,17 +95,17 @@ const TitlesStep: FC = () => {
       //   },
       // },
 
-      // someComplexObject: {
-      //   required,
-      //   fullName: {
-      //     required,
-      //     firstName: { required },
-      //     lastName: {
-      //       ancestor: { required },
-      //       default: { required, minLength: minLength(6) },
-      //     },
-      //   },
-      // },
+      someComplexObject: {
+        required,
+        fullName: {
+          required,
+          firstName: { required },
+          lastName: {
+            ancestor: { required },
+            default: { required, minLength: minLength(6) },
+          },
+        },
+      },
 
       // ...(isErc20.get
       //   ? { tokenAddress: { required, isAddressValidator } }
