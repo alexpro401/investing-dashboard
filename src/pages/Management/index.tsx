@@ -51,8 +51,6 @@ function Management() {
     setSlippageOpen,
   } = useInsuranceManagement()
 
-  console.log("fromAmount", fromAmount)
-
   const button = useMemo(() => {
     if (
       (direction === "deposit" && fromAmount === "0") ||

@@ -79,32 +79,15 @@ export function useERC20(
 
   const contract = useContract(storedAddress, ERC20)
 
-  const [tokenData, dataLoading, fetchData] = useERC20Data(address)
-  const [balance, balanceLoading, fetchBalance] = useERC20Balance(address)
+  const [tokenData] = useERC20Data(address)
+  const [balance, , fetchBalance] = useERC20Balance(address)
 
   const init = useCallback(() => {
-    if (!storedAddress) {
-      return
-    }
+    if (!storedAddress) return
     ;(async () => {
-      if (tokenData === null && !dataLoading) {
-        fetchData()
-      }
+      fetchBalance()
     })()
-    ;(async () => {
-      if (balance === null && !balanceLoading) {
-        fetchBalance()
-      }
-    })()
-  }, [
-    balance,
-    balanceLoading,
-    dataLoading,
-    fetchBalance,
-    fetchData,
-    storedAddress,
-    tokenData,
-  ])
+  }, [fetchBalance, storedAddress])
 
   // check address and save
   useEffect(() => {

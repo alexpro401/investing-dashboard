@@ -85,24 +85,6 @@ const useInsuranceManagement = () => {
     setInsuranceAmount(userInsurance[1])
   }, [account, insurance])
 
-  // update insurance amount in USD on insuranceAmount change
-  useEffect(() => {
-    fetchInsuranceAmountInUSD().catch(console.log)
-  }, [fetchInsuranceAmountInUSD])
-
-  // update insurance balance on account change
-  useEffect(() => {
-    if (!insurance || !account) return
-    fetchInsuranceBalance().catch(console.log)
-  }, [insurance, account, fetchInsuranceBalance])
-
-  // update allowance
-  useEffect(() => {
-    if (!insuranceAddress || !dexeAddress || !account || !library) return
-
-    fetchAndUpdateAllowance().catch(console.error)
-  }, [insuranceAddress, dexeAddress, account, library, fetchAndUpdateAllowance])
-
   const handleSubmit = useCallback(() => {
     setLoading(SubmitState.SIGN)
 
@@ -237,6 +219,39 @@ const useInsuranceManagement = () => {
     },
     [dexeAddress, priceFeed]
   )
+
+  const runUpdate = useCallback(async () => {
+    fetchAndUpdateAllowance()
+    fetchInsuranceBalance()
+    refetchBalance()
+  }, [fetchAndUpdateAllowance, fetchInsuranceBalance, refetchBalance])
+
+  // update insurance amount in USD on insuranceAmount change
+  useEffect(() => {
+    fetchInsuranceAmountInUSD().catch(console.log)
+  }, [fetchInsuranceAmountInUSD])
+
+  // update insurance balance on account change
+  useEffect(() => {
+    if (!insurance || !account) return
+    fetchInsuranceBalance().catch(console.log)
+  }, [insurance, account, fetchInsuranceBalance])
+
+  // update allowance
+  useEffect(() => {
+    if (!insuranceAddress || !dexeAddress || !account || !library) return
+
+    fetchAndUpdateAllowance().catch(console.error)
+  }, [insuranceAddress, dexeAddress, account, library, fetchAndUpdateAllowance])
+
+  // global updater
+  useEffect(() => {
+    const interval = setInterval(() => {
+      runUpdate()
+    }, Number(process.env.REACT_APP_UPDATE_INTERVAL))
+
+    return () => clearInterval(interval)
+  }, [runUpdate])
 
   return {
     direction,
