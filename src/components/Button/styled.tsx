@@ -28,6 +28,9 @@ const primaryBackgrounds = {
   warn: "#DB6D6D",
 }
 
+const primaryDisabledBg = "rgba(154, 226, 203, 0.5)"
+const primaryDisabledColor = "#0D1320"
+
 export const Primary = styled(BaseButton)<{
   size?: string
   m?: string
@@ -52,6 +55,13 @@ export const Primary = styled(BaseButton)<{
   margin: ${(props) => props.m || "0 auto"};
   min-width: fit-content;
   background: ${(props) => primaryBackgrounds[props.color]};
+
+  ${(props) =>
+    props.disabled &&
+    `
+    background: ${primaryDisabledBg} !important;
+    color: ${primaryDisabledColor} !important;
+  `}
 
   ${Text} {
     font-family: "Gilroy";

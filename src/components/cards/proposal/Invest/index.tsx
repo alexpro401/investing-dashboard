@@ -52,7 +52,6 @@ interface Props {
 }
 
 const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
-  const [closed, setClosed] = useState(false)
   const navigate = useNavigate()
   const { account } = useActiveWeb3React()
   const priceFeed = usePriceFeedContract()
@@ -139,18 +138,20 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
    * Proposal limit in LP's
    */
   const [maxSizeLP, setMaxSizeLP] = useState<{
-    value: BigNumber
-    normalized: string
-  }>({ value: ZERO, normalized: "0" })
+    big: BigNumber
+    format: string
+  }>({ big: ZERO, format: "0" })
 
   /**
    * Supply
    */
   const supply = useMemo(() => {
     if (!proposal || !proposal.proposalInfo.investedBase) {
-      return "0"
+      return { big: ZERO, format: "0" }
     }
-    return normalizeBigNumber(proposal.proposalInfo.investedBase, 18, 6)
+
+    const big = proposal.proposalInfo.investedBase
+    return { big, format: normalizeBigNumber(big, 18, 6) }
   }, [proposal])
 
   /**
@@ -200,6 +201,10 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     )
   }, [proposal, totalDividendsAmount])
 
+  const completed = useMemo(() => {
+    return expirationDate.completed || supply.big.gte(maxSizeLP.big)
+  }, [expirationDate, supply, maxSizeLP])
+
   // Set expiration date
   useEffect(() => {
     if (!proposal || !proposal?.proposalInfo.proposalLimits.timestampLimit) {
@@ -229,8 +234,8 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     const { investLPLimit } = proposal.proposalInfo.proposalLimits
 
     setMaxSizeLP({
-      value: investLPLimit,
-      normalized: formatBigNumber(investLPLimit, 18, 6),
+      big: investLPLimit,
+      format: formatBigNumber(investLPLimit, 18, 6),
     })
   }, [proposal])
 
@@ -417,8 +422,8 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
 
     if (maxSize) {
       setMaxSizeLP({
-        value: maxSize,
-        normalized: normalizeBigNumber(maxSize, 18, 6),
+        big: maxSize,
+        format: normalizeBigNumber(maxSize, 18, 6),
       })
     }
   }
@@ -436,8 +441,8 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     return isTrader ? (
       <>
         <Flex>
-          <S.Status active={!closed}>
-            {!closed ? "Open investing" : "Closed investing"}
+          <S.Status active={!completed}>
+            {!completed ? "Open investing" : "Closed investing"}
           </S.Status>
           <Flex m="0 0 0 4px">
             <IconButton
@@ -455,7 +460,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
           proposalId={proposalId}
           successCallback={onUpdateRestrictions}
           timestamp={expirationDate.initial}
-          maxSizeLP={maxSizeLP.value}
+          maxSizeLP={maxSizeLP.big}
           fullness={fullness}
         />
       </>
@@ -473,7 +478,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     maxSizeLP,
     navigateToPool,
     poolInfo,
-    closed,
+    completed,
     proposalId,
     proposalPool,
     ticker,
@@ -502,7 +507,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
         ticker={ticker}
         supply={supply}
         youSizeLP={youSizeLP}
-        maxSizeLP={maxSizeLP.normalized}
+        maxSizeLP={maxSizeLP.format}
         apr={APR}
         dividendsAvailable={dividendsAvailable}
         totalDividends={normalizeBigNumber(totalDividendsAmount, 18, 6)}
@@ -534,7 +539,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     fullness,
     invested,
     isTrader,
-    maxSizeLP.normalized,
+    maxSizeLP.format,
     onTerminalNavigate,
     priceUSD,
     supply,
@@ -584,7 +589,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
           </S.ReadMoreContainer>
         </S.Card>
         <AnimatePresence>
-          {!closed && <Actions actions={actions} visible={openExtra} />}
+          {!completed && <Actions actions={actions} visible={openExtra} />}
         </AnimatePresence>
       </S.Container>
     </>

@@ -1,3 +1,6 @@
+export type { ContractContext as ERC20Type } from "./ERC20"
+export type { ContractContext as ERC721Type } from "./ERC721Power"
+
 export type { ContractContext as BasicTraderPoolType } from "./BasicTraderPool"
 export type { ContractContext as ContractsRegistryType } from "./ContractsRegistry"
 export type { ContractContext as CorePropertiesType } from "./CoreProperties"
@@ -10,3 +13,10 @@ export type { ContractContext as TraderPoolType } from "./TraderPool"
 export type { ContractContext as TraderPoolInvestProposalType } from "./TraderPoolInvestProposal"
 export type { ContractContext as TraderPoolRiskyProposalType } from "./TraderPoolRiskyProposal"
 export type { ContractContext as UserRegistryType } from "./UserRegistry"
+
+export type { ContractContext as GovPoolType } from "./GovPool"
+export type { ContractContext as GovSettingsType } from "./GovSettings"
+export type { ContractContext as GovUserKeeperType } from "./GovUserKeeper"
+export type { ContractContext as GovValidatorsType } from "./GovValidators"
+export type { ContractContext as DistributionProposalType } from "./DistributionProposal"
+export type { MulticallInterface as MulticallType } from "./Multicall"

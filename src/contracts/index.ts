@@ -6,7 +6,13 @@ import {
   BasicTraderPool,
   ContractsRegistry,
   CoreProperties,
+  DistributionProposal,
   ERC20,
+  ERC721,
+  GovPool,
+  GovSettings,
+  GovUserKeeper,
+  GovValidators,
   Insurance,
   InvestTraderPool,
   PoolFactory,
@@ -22,6 +28,13 @@ import {
   BasicTraderPoolType,
   ContractsRegistryType,
   CorePropertiesType,
+  DistributionProposalType,
+  ERC20Type,
+  ERC721Type,
+  GovPoolType,
+  GovSettingsType,
+  GovUserKeeperType,
+  GovValidatorsType,
   InsuranceType,
   InvestTraderPoolType,
   PoolFactoryType,
@@ -53,6 +66,14 @@ import { useActiveWeb3React } from "hooks"
 */
 
 type Address = string | undefined
+
+export function useERC20Contract(address: Address) {
+  return useContract(address, ERC20) as unknown as ERC20Type | null
+}
+
+export function useERC721Contract(address: Address) {
+  return useContract(address, ERC721) as unknown as ERC721Type | null
+}
 
 export function useContractsRegistryContract() {
   return useContract(
@@ -89,11 +110,10 @@ export function useInvestTraderPoolContract(address: Address) {
   ) as unknown as InvestTraderPoolType | null
 }
 
+// no type for this contract
+// reason: bad generated ts code
 export function usePoolFactoryContract() {
-  return useContract(
-    useSelector(selectPoolFactoryAddress),
-    PoolFactory
-  ) as unknown as PoolFactoryType | null
+  return useContract(useSelector(selectPoolFactoryAddress), PoolFactory)
 }
 
 export function usePoolRegistryContract() {
@@ -133,6 +153,35 @@ export function useUserRegistryContract() {
     useSelector(selectUserRegistryAddress),
     UserRegistry
   ) as unknown as UserRegistryType | null
+}
+
+export function useDistributionProposalContract(address: Address) {
+  return useContract(
+    address,
+    DistributionProposal
+  ) as unknown as DistributionProposalType | null
+}
+
+export function useGovPoolContract(address: Address) {
+  return useContract(address, GovPool) as unknown as GovPoolType | null
+}
+
+export function useGovSettingsContract(address: Address) {
+  return useContract(address, GovSettings) as unknown as GovSettingsType | null
+}
+
+export function useGovUserKeeperContract(address: Address) {
+  return useContract(
+    address,
+    GovUserKeeper
+  ) as unknown as GovUserKeeperType | null
+}
+
+export function useGovValidatorsContract(address: Address) {
+  return useContract(
+    address,
+    GovValidators
+  ) as unknown as GovValidatorsType | null
 }
 
 export function useMulticallContract() {

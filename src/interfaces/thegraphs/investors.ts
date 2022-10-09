@@ -4,3 +4,33 @@ export interface IInvestorClaims {
   id: string
   timestamp: string
 }
+
+export interface Insurance {
+  id: string
+  day: string
+  stake: string
+  claimedAmount: string
+  investor: { id: string }
+}
+
+export interface InvestorPoolPosition {
+  id: string
+  pool: { id: string; token: string }
+  investor: { id: string }
+  isClosed: boolean
+  totalBaseInvestVolume: string
+  totalBaseDivestVolume: string
+  totalLPInvestVolume: string
+  totalLPDivestVolume: string
+  totalUSDInvestVolume: string
+  totalUSDDivestVolume: string
+}
+
+export interface InvestorPoolHistory {
+  id: string
+  day: string
+  currentLpAmount: string
+}
+export interface InvestorPoolPositionWithHistory extends InvestorPoolPosition {
+  lpHistory: InvestorPoolHistory[]
+}

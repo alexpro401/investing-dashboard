@@ -3,6 +3,7 @@ import { PoolType } from "constants/types"
 
 export interface IPriceHistory {
   APY: BigNumber
+  block: string
   usdTVL: number
   baseTVL: number
   supply: number

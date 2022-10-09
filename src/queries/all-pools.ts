@@ -3,7 +3,9 @@
 //-----------------------------------------------------------------------------
 
 const PRICE_HISTORY = `
+  id
   APY
+  block
   usdTVL
   baseTVL
   supply
@@ -28,24 +30,25 @@ const PRICE_HISTORY_LAST = `
   }
 `
 
-const PRICE_HISTORY_FULL = (startDate) => `
+const PRICE_HISTORY_FULL = (startDate, block) => `
   priceHistory(
     first: $limit, 
     orderBy: timestamp, orderDirection: asc, 
     where: { 
       aggregationType_gte: $minTimeframe,
       aggregationType_lte: $maxTimeframe,
-      ${startDate !== 0 ? "timestamp_gte: $startDate" : ""}
+      ${startDate !== 0 ? "timestamp_gte: $startDate," : ""}
+      ${block !== undefined ? `block_gte: ${block}` : ""}
     }
   ) {
     ${PRICE_HISTORY}
   }
 `
 
-const PriceHistoryQuery = (startDate) => `
+const PriceHistoryQuery = (startDate, block?) => `
   query ($address: String!, $minTimeframe: Int!, $maxTimeframe: Int!, $limit: Int!, $startDate: Int!) {
     traderPool(id: $address) {
-      ${PRICE_HISTORY_FULL(startDate)}
+      ${PRICE_HISTORY_FULL(startDate, block)}
     }
   }
 `
@@ -140,6 +143,19 @@ const PoolsQueryByTypeWithSort = `
   }
 `
 
+const PoolsByInvestorsQuery = `
+  query ($investors: [String]!) {
+    traderPools(
+      where: { investors_contains: $investors },
+      first: 1000,
+      orderBy: creationTime,
+      orderDirection: desc
+    ) {
+      ${POOL}
+    }
+  }
+`
+
 // Basic pool positions
 const POSITION_EXCHANGE = `
   id
@@ -190,9 +206,9 @@ const PositionsByIdsQuery = `
 const BasicPositionsQuery = `
   query ($offset: Int!, $limit: Int!, $address: String!, $closed: Boolean!) {
     positions(
-      skip: $offset, first: $limit, 
-      where: { 
-        closed: $closed, 
+      skip: $offset, first: $limit,
+      where: {
+        closed: $closed,
         traderPool_: { id: $address }
       },
       orderBy: startTimestamp, orderDirection: desc
@@ -205,7 +221,7 @@ const BasicPositionsQuery = `
 const PoolPositionLast = `
 query ($poolId: String!, $tokenId: String!) {
   positions(
-    first: 1, 
+    first: 1,
     where: {
       traderPool_: { id: $poolId }
       positionToken: $tokenId
@@ -221,8 +237,8 @@ query ($poolId: String!, $tokenId: String!) {
 const FundFeeHistoryQuery = `
   query($offset: Int!, $limit: Int!, $address: String!) {
     feeHistories(
-      skip: $offset, first: $limit, 
-      orderBy: day, orderDirection: desc, 
+      skip: $offset, first: $limit,
+      orderBy: day, orderDirection: desc,
       where: { traderPool_: { id: $address }}
     ) {
       id
@@ -251,4 +267,5 @@ export {
   BasicPositionsQuery,
   FundFeeHistoryQuery,
   PositionsByIdsQuery,
+  PoolsByInvestorsQuery,
 }

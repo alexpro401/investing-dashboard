@@ -1,4 +1,13 @@
-import { Dispatch, FC, SetStateAction, useCallback, useContext } from "react"
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react"
+import { debounce } from "lodash"
 
 import {
   AppButton,
@@ -8,39 +17,48 @@ import {
   CardHead,
   Collapse,
   Icon,
-  StepsNavigation,
+  TokenChip,
 } from "common"
-import { InputField, TextareaField } from "fields"
+import {
+  InputField,
+  OverlapInputField,
+  TextareaField,
+  ExternalDocumentField,
+} from "fields"
 import Switch from "components/Switch"
 import Avatar from "components/Avatar"
 import { CreateDaoCardStepNumber } from "../components"
 
 import * as S from "../styled"
 
-import { Flex } from "theme"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 import { readFromClipboard } from "utils/clipboard"
 import { useFormValidation } from "hooks/useFormValidation"
-import { required } from "utils/validators"
-import { StepsBottomNavigation, StepsRoot } from "../styled"
+import { isAddressValidator, isUrl, required } from "utils/validators"
+import { isAddress, isValidUrl } from "utils"
+import { useERC20 } from "hooks/useERC20"
+import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
+import { useActiveWeb3React } from "hooks"
 
 const TitlesStep: FC = () => {
   const daoPoolFormContext = useContext(FundDaoCreatingContext)
 
   const { isErc20, isErc721 } = daoPoolFormContext
 
-  const { avatarUrl, daoName, websiteUrl, description } = daoPoolFormContext
+  const { avatarUrl, daoName, websiteUrl, description, documents } =
+    daoPoolFormContext
 
   const { tokenAddress, nftAddress, totalPowerInTokens, nftsTotalSupply } =
     daoPoolFormContext.userKeeperParams
 
-  const { getFieldErrorMessage, touchField } = useFormValidation(
+  const { getFieldErrorMessage, touchField, isFieldValid } = useFormValidation(
     {
       avatarUrl: avatarUrl.get,
       daoName: daoName.get,
       websiteUrl: websiteUrl.get,
       description: description.get,
+      documents: documents.get,
 
       tokenAddress: tokenAddress.get,
 
@@ -53,16 +71,30 @@ const TitlesStep: FC = () => {
       daoName: { required },
       websiteUrl: { required },
       description: { required },
-      ...(isErc20.get ? { tokenAddress: { required } } : {}),
+      documents: { required },
+
+      ...(isErc20.get
+        ? { tokenAddress: { required, isAddressValidator } }
+        : {}),
       ...(isErc721.get
         ? {
-            nftAddress: { required },
+            nftAddress: { required, isAddressValidator },
             totalPowerInTokens: { required },
             nftsTotalSupply: { required },
           }
         : {}),
     }
   )
+
+  const { chainId } = useActiveWeb3React()
+
+  const [, erc20TokenData, , erc20TokenInit] = useERC20(tokenAddress.get)
+  const erc20TokenExplorerLink = useMemo(() => {
+    return chainId
+      ? getExplorerLink(chainId, tokenAddress.get, ExplorerDataType.ADDRESS)
+      : ""
+  }, [chainId, tokenAddress.get])
+
   const pasteFromClipboard = useCallback(
     async (dispatchCb: Dispatch<SetStateAction<any>>) => {
       dispatchCb(await readFromClipboard())
@@ -70,9 +102,26 @@ const TitlesStep: FC = () => {
     []
   )
 
+  const handleErc20Input = useCallback(
+    debounce(async (address: string) => {
+      try {
+        if (isAddress(address)) {
+          await erc20TokenInit()
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }, 1000),
+    []
+  )
+
+  useEffect(() => {
+    handleErc20Input(tokenAddress.get)
+  }, [handleErc20Input, tokenAddress.get])
+
   return (
     <>
-      <S.StepsRoot gap={"16"} dir={"column"} ai={"stretch"} p={"16px"} full>
+      <S.StepsRoot>
         <Card>
           <CardHead
             nodeLeft={<CreateDaoCardStepNumber number={1} />}
@@ -110,7 +159,13 @@ const TitlesStep: FC = () => {
             value={daoName.get}
             setValue={daoName.set}
             label="DAO name"
-            nodeRight={<Icon name={ICON_NAMES.fileDock} />}
+            labelNodeRight={
+              isFieldValid("daoName") ? (
+                <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+              ) : (
+                <></>
+              )
+            }
             errorMessage={getFieldErrorMessage("daoName")}
             onBlur={() => touchField("daoName")}
           />
@@ -153,13 +208,64 @@ const TitlesStep: FC = () => {
             </p>
           </CardDescription>
           <Collapse isOpen={isErc20.get}>
-            <InputField
-              value={tokenAddress.get}
-              setValue={tokenAddress.set}
-              label="ERC-20 token"
-              errorMessage={getFieldErrorMessage("tokenAddress")}
-              onBlur={() => touchField("tokenAddress")}
-            />
+            <CardFormControl>
+              <OverlapInputField
+                value={tokenAddress.get}
+                setValue={tokenAddress.set}
+                label="ERC-20 token"
+                labelNodeRight={
+                  isFieldValid("tokenAddress") ? (
+                    <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                  ) : (
+                    <></>
+                  )
+                }
+                errorMessage={getFieldErrorMessage("tokenAddress")}
+                onBlur={() => touchField("tokenAddress")}
+                nodeRight={
+                  <AppButton
+                    type="button"
+                    text={erc20TokenData?.name ? "Paste another" : "Paste"}
+                    color="default"
+                    size="no-paddings"
+                    onClick={() =>
+                      erc20TokenData?.name
+                        ? tokenAddress.set("")
+                        : pasteFromClipboard(tokenAddress.set)
+                    }
+                  >
+                    Paste
+                  </AppButton>
+                }
+                overlapNodeLeft={
+                  erc20TokenData?.name &&
+                  erc20TokenData?.symbol && (
+                    <TokenChip
+                      name={erc20TokenData?.name}
+                      symbol={erc20TokenData?.symbol}
+                      link={erc20TokenExplorerLink}
+                    />
+                  )
+                }
+                overlapNodeRight={
+                  erc20TokenData?.name &&
+                  erc20TokenData?.symbol && (
+                    <AppButton
+                      type="button"
+                      text="Paste another"
+                      color="default"
+                      size="no-paddings"
+                      onClick={() => {
+                        tokenAddress.set("")
+                      }}
+                    >
+                      Paste
+                    </AppButton>
+                  )
+                }
+                disabled={!!erc20TokenData?.name}
+              />
+            </CardFormControl>
           </Collapse>
         </Card>
 
@@ -249,6 +355,57 @@ const TitlesStep: FC = () => {
               onBlur={() => touchField("description")}
             />
           </CardFormControl>
+        </Card>
+
+        <Card>
+          <CardHead
+            nodeLeft={<Icon name={ICON_NAMES.globe} />}
+            title="Add documents"
+          />
+          <CardDescription>
+            <p>
+              Here you can add any documents to be featured in the DAO’s
+              profile, such as the DAO Memorandum.
+            </p>
+          </CardDescription>
+          <CardFormControl>
+            {documents.get.map((el, idx) => (
+              <ExternalDocumentField
+                key={idx}
+                value={el}
+                setValue={(doc) => documents.set(doc, idx)}
+                topFieldNodeRight={
+                  documents.get.length > 1 ? (
+                    <AppButton
+                      type="button"
+                      color="default"
+                      size="no-paddings"
+                      iconRight={ICON_NAMES.trash}
+                      onClick={() =>
+                        documents.set(documents.get.filter((_, i) => i !== idx))
+                      }
+                    />
+                  ) : null
+                }
+                label={`Document ${idx + 1}`}
+                labelNodeRight={
+                  !!el.name && !!el.url && isValidUrl(el.url) ? (
+                    <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                  ) : (
+                    <></>
+                  )
+                }
+                // errorMessage={getFieldErrorMessage(`documents[${idx}]`)}
+              />
+            ))}
+          </CardFormControl>
+          <S.CardAddBtn
+            color="default"
+            text="+ Add more"
+            onClick={() =>
+              documents.set([...documents.get, { name: "", url: "" }])
+            }
+          />
         </Card>
       </S.StepsRoot>
       <S.StepsBottomNavigation />

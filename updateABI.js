@@ -33,7 +33,7 @@ const ignoreFiles = ["index.ts"]
 
 const fileNames = getAllFiles(ABI_PATH)
   .filter((f) => !ignoreFiles.includes(f.file))
-  .map((f) => f.file.substring(0, f.file.length - 3))
+  .map((f) => f.file.substring(0, f.file.length - 5))
 
 console.log(`ABI's found: (${fileNames.length}): `)
 console.log(fileNames)
@@ -86,8 +86,8 @@ abiUpdateAllFilesList.map((f) => {
   const jsonContent = JSON.stringify(abi.abi)
 
   writeInFile(
-    ABI_PATH + "/" + f.file.substring(0, f.file.length - 5) + ".ts",
-    `export default ${jsonContent}`
+    ABI_PATH + "/" + f.file.substring(0, f.file.length - 5) + ".json",
+    jsonContent
   )
 
   executeABITypesGenerator(jsonPath)

@@ -54,8 +54,9 @@ export interface ContractCallOverrides {
    */
   gasLimit?: number
 }
-export type PoolFactoryEvents = "TraderPoolDeployed"
+export type PoolFactoryEvents = "DaoPoolDeployed" | "TraderPoolDeployed"
 export interface PoolFactoryEventsContext {
+  DaoPoolDeployed(...parameters: any): EventFilter
   TraderPoolDeployed(...parameters: any): EventFilter
 }
 export type PoolFactoryMethodNames =
@@ -65,6 +66,11 @@ export type PoolFactoryMethodNames =
   | "getInjector"
   | "setDependencies"
   | "setInjector"
+export interface DaoPoolDeployedEventEmittedResponse {
+  govPool: string
+  DP: string
+  validators: string
+}
 export interface TraderPoolDeployedEventEmittedResponse {
   poolType: string
   symbol: string

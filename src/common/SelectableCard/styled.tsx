@@ -17,7 +17,6 @@ export const Root = styled(Card)<{
           flex-direction: column;
         `
   }}
-  overflow: hidden;
   position: relative;
   border: 1px solid
     ${(props) =>
