@@ -42,6 +42,11 @@ import {
   selectUserRegistryAddress,
 } from "state/contracts/selectors"
 
+import { Multicall } from "interfaces/abi-typings/Multicall"
+import multiCallAbi from "abi/Multicall.json"
+import { getMulticallAddress } from "utils/addressHelpers"
+import { useActiveWeb3React } from "hooks"
+
 /*
     TODO: useERC20Contract
       * hint | add ERC20 abi to folder containing all json abis
@@ -128,4 +133,13 @@ export function useUserRegistryContract() {
     useSelector(selectUserRegistryAddress),
     UserRegistry
   ) as unknown as UserRegistryType | null
+}
+
+export function useMulticallContract() {
+  const { chainId } = useActiveWeb3React()
+  return useContract(
+    getMulticallAddress(chainId),
+    multiCallAbi,
+    false
+  ) as unknown as Multicall | null
 }
