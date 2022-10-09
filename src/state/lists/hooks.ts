@@ -7,9 +7,6 @@ import { AppState } from "state"
 import { useAppSelector } from "state/hooks"
 import sortByListPriority from "utils/listSort"
 
-import UNSUPPORTED_TOKEN_LIST from "constants/tokenLists/pancake-unsupported.tokenlist.json"
-import BROKEN_LIST from "constants/tokenLists/pancake-warning.tokenlist.json"
-
 import { UNSUPPORTED_LIST_URLS } from "constants/lists"
 
 export type TokenAddressMap = ChainTokenMap
@@ -107,32 +104,6 @@ export function useCombinedActiveList(): TokenAddressMap {
   return activeTokens
 }
 
-// list of tokens not supported on interface for various reasons, used to show warnings and prevent swaps and adds
-export function useUnsupportedTokenList(): TokenAddressMap {
-  // get hard-coded broken tokens
-  const brokenListMap = useMemo(() => tokensToChainTokenMap(BROKEN_LIST), [])
-
-  // get hard-coded list of unsupported tokens
-  const localUnsupportedListMap = useMemo(
-    () => tokensToChainTokenMap(UNSUPPORTED_TOKEN_LIST),
-    []
-  )
-
-  // get dynamic list of unsupported tokens
-  const loadedUnsupportedListMap = useCombinedTokenMapFromUrls(
-    UNSUPPORTED_LIST_URLS
-  )
-
-  // format into one token address map
-  return useMemo(
-    () =>
-      combineMaps(
-        brokenListMap,
-        combineMaps(localUnsupportedListMap, loadedUnsupportedListMap)
-      ),
-    [brokenListMap, localUnsupportedListMap, loadedUnsupportedListMap]
-  )
-}
 export function useIsListActive(url: string): boolean {
   const activeListUrls = useActiveListUrls()
   return Boolean(activeListUrls?.includes(url))
