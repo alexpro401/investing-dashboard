@@ -1,8 +1,10 @@
 export enum SupportedChainId {
-  ETHEREUM = 1,
   BINANCE_SMART_CHAIN = 56,
   BINANCE_SMART_CHAIN_TESTNET = 97,
 }
+
+export const FAST_INTERVAL = 10000
+export const SLOW_INTERVAL = 60000
 
 export const ChainMainToken = {
   [SupportedChainId.BINANCE_SMART_CHAIN]:
@@ -12,7 +14,6 @@ export const ChainMainToken = {
 }
 
 export const ChainNameById = {
-  [SupportedChainId.ETHEREUM]: "ETHEREUM",
   [SupportedChainId.BINANCE_SMART_CHAIN]: "BNB",
   [SupportedChainId.BINANCE_SMART_CHAIN_TESTNET]: "BNB",
 }

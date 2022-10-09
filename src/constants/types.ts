@@ -36,3 +36,9 @@ export enum SubmitState {
 }
 
 export type PoolType = "ALL_POOL" | "INVEST_POOL" | "BASIC_POOL"
+
+export interface Address {
+  97: string
+  56: string
+  [chainId: number]: string
+}
