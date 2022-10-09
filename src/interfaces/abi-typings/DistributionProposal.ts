@@ -54,8 +54,10 @@ export interface ContractCallOverrides {
    */
   gasLimit?: number
 }
-export type DistributionProposalEvents = undefined
-export interface DistributionProposalEventsContext {}
+export type DistributionProposalEvents = "DistributionProposalClaimed"
+export interface DistributionProposalEventsContext {
+  DistributionProposalClaimed(...parameters: any): EventFilter
+}
 export type DistributionProposalMethodNames =
   | "__DistributionProposal_init"
   | "claim"
@@ -63,6 +65,11 @@ export type DistributionProposalMethodNames =
   | "getPotentialReward"
   | "govAddress"
   | "proposals"
+export interface DistributionProposalClaimedEventEmittedResponse {
+  proposalId: BigNumberish
+  sender: string
+  amount: BigNumberish
+}
 export interface ProposalsResponse {
   rewardAddress: string
   0: string
@@ -96,9 +103,9 @@ export interface DistributionProposal {
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>
   /**
-   * Payable: false
+   * Payable: true
    * Constant: false
-   * StateMutability: nonpayable
+   * StateMutability: payable
    * Type: function
    * @param proposalId Type: uint256, Indexed: false
    * @param token Type: address, Indexed: false

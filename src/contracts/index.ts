@@ -100,6 +100,8 @@ export function useInvestTraderPoolContract(address: Address) {
   ) as unknown as InvestTraderPoolType | null
 }
 
+// no type for this contract
+// reason: bad generated ts code
 export function usePoolFactoryContract() {
   return useContract(useSelector(selectPoolFactoryAddress), PoolFactory)
 }

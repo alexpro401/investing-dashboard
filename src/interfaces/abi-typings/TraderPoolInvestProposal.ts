@@ -58,6 +58,7 @@ export interface ContractCallOverrides {
 export type TraderPoolInvestProposalEvents =
   | "ApprovalForAll"
   | "ProposalClaimed"
+  | "ProposalConverted"
   | "ProposalCreated"
   | "ProposalDivested"
   | "ProposalInvested"
@@ -72,6 +73,7 @@ export type TraderPoolInvestProposalEvents =
 export interface TraderPoolInvestProposalEventsContext {
   ApprovalForAll(...parameters: any): EventFilter
   ProposalClaimed(...parameters: any): EventFilter
+  ProposalConverted(...parameters: any): EventFilter
   ProposalCreated(...parameters: any): EventFilter
   ProposalDivested(...parameters: any): EventFilter
   ProposalInvested(...parameters: any): EventFilter
@@ -128,6 +130,12 @@ export interface ProposalClaimedEventEmittedResponse {
   user: string
   amounts: BigNumberish[]
   tokens: string[]
+}
+export interface ProposalConvertedEventEmittedResponse {
+  proposalId: BigNumberish
+  user: string
+  amount: BigNumberish
+  baseToken: string
 }
 export interface ProposalCreatedEventEmittedResponse {
   proposalId: BigNumberish
