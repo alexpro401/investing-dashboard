@@ -1,5 +1,5 @@
 import { Interface } from "@ethersproject/abi"
-import ERC20 from "abi/erc20.json"
+import { ERC20 } from "abi"
 import { Token } from "interfaces"
 import { useMemo } from "react"
 import { useMultipleContractSingleData } from "state/multicall/hooks"
