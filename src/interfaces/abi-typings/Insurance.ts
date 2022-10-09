@@ -81,12 +81,10 @@ export type InsuranceMethodNames =
   | "ongoingClaimsCount"
   | "owner"
   | "proposeClaim"
-  | "receiveDexeFromPools"
   | "rejectClaim"
   | "renounceOwnership"
   | "setDependencies"
   | "setInjector"
-  | "totalPool"
   | "transferOwnership"
   | "userInfos"
   | "withdraw"
@@ -277,17 +275,6 @@ export interface Insurance {
    * Constant: false
    * StateMutability: nonpayable
    * Type: function
-   * @param amount Type: uint256, Indexed: false
-   */
-  receiveDexeFromPools(
-    amount: BigNumberish,
-    overrides?: ContractTransactionOverrides
-  ): Promise<ContractTransaction>
-  /**
-   * Payable: false
-   * Constant: false
-   * StateMutability: nonpayable
-   * Type: function
    * @param url Type: string, Indexed: false
    */
   rejectClaim(
@@ -325,13 +312,6 @@ export interface Insurance {
     _injector: string,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>
-  /**
-   * Payable: false
-   * Constant: true
-   * StateMutability: view
-   * Type: function
-   */
-  totalPool(overrides?: ContractCallOverrides): Promise<BigNumber>
   /**
    * Payable: false
    * Constant: false

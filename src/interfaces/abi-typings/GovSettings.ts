@@ -63,7 +63,6 @@ export type GovSettingsMethodNames =
   | "addSettings"
   | "changeExecutors"
   | "editSettings"
-  | "executorInfo"
   | "executorToSettings"
   | "getDefaultSettings"
   | "getSettings"
@@ -122,13 +121,6 @@ export interface EditSettingsRequest {
   executionReward: BigNumberish
   voteRewardsCoefficient: BigNumberish
   executorDescription: string
-}
-export interface ExecutorInfoResponse {
-  result0: BigNumber
-  0: BigNumber
-  result1: number
-  1: number
-  length: 2
 }
 export interface ProposalsettingsResponse {
   earlyCompletion: boolean
@@ -201,20 +193,16 @@ export interface GovSettings {
    * @param distributionProposalAddress Type: address, Indexed: false
    * @param validatorsAddress Type: address, Indexed: false
    * @param govUserKeeperAddress Type: address, Indexed: false
-   * @param internalProposalSettings Type: tuple, Indexed: false
-   * @param distributionProposalSettings Type: tuple, Indexed: false
-   * @param validatorsBalancesSettings Type: tuple, Indexed: false
-   * @param defaultProposalSettings Type: tuple, Indexed: false
+   * @param proposalSettings Type: tuple[], Indexed: false
+   * @param additionalProposalExecutors Type: address[], Indexed: false
    */
   __GovSettings_init(
     govPoolAddress: string,
     distributionProposalAddress: string,
     validatorsAddress: string,
     govUserKeeperAddress: string,
-    internalProposalSettings: __GovSettings_initRequest,
-    distributionProposalSettings: __GovSettings_initRequest,
-    validatorsBalancesSettings: __GovSettings_initRequest,
-    defaultProposalSettings: __GovSettings_initRequest,
+    proposalSettings: __GovSettings_initRequest[],
+    additionalProposalExecutors: string[],
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>
   /**
@@ -254,17 +242,6 @@ export interface GovSettings {
     _settings: EditSettingsRequest[],
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>
-  /**
-   * Payable: false
-   * Constant: true
-   * StateMutability: view
-   * Type: function
-   * @param executor Type: address, Indexed: false
-   */
-  executorInfo(
-    executor: string,
-    overrides?: ContractCallOverrides
-  ): Promise<ExecutorInfoResponse>
   /**
    * Payable: false
    * Constant: true

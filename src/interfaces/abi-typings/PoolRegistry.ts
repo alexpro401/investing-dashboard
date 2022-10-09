@@ -78,6 +78,7 @@ export type PoolRegistryMethodNames =
   | "getProxyBeacon"
   | "injectDependenciesToExistingPools"
   | "isBasicPool"
+  | "isGovPool"
   | "isInvestPool"
   | "isTraderPool"
   | "listAssociatedPools"
@@ -339,6 +340,17 @@ export interface PoolRegistry {
    * @param potentialPool Type: address, Indexed: false
    */
   isBasicPool(
+    potentialPool: string,
+    overrides?: ContractCallOverrides
+  ): Promise<boolean>
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param potentialPool Type: address, Indexed: false
+   */
+  isGovPool(
     potentialPool: string,
     overrides?: ContractCallOverrides
   ): Promise<boolean>

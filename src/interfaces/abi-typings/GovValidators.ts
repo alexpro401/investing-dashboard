@@ -54,9 +54,14 @@ export interface ContractCallOverrides {
    */
   gasLimit?: number
 }
-export type GovValidatorsEvents = "OwnershipTransferred"
+export type GovValidatorsEvents =
+  | "ChangedValidatorsBalances"
+  | "OwnershipTransferred"
+  | "Voted"
 export interface GovValidatorsEventsContext {
+  ChangedValidatorsBalances(...parameters: any): EventFilter
   OwnershipTransferred(...parameters: any): EventFilter
+  Voted(...parameters: any): EventFilter
 }
 export type GovValidatorsMethodNames =
   | "__GovValidators_init"
@@ -77,9 +82,18 @@ export type GovValidatorsMethodNames =
   | "transferOwnership"
   | "validatorsCount"
   | "vote"
+export interface ChangedValidatorsBalancesEventEmittedResponse {
+  validators: string[]
+  newBalance: BigNumberish[]
+}
 export interface OwnershipTransferredEventEmittedResponse {
   previousOwner: string
   newOwner: string
+}
+export interface VotedEventEmittedResponse {
+  proposalId: BigNumberish
+  sender: string
+  vote: BigNumberish
 }
 export interface CoreResponse {
   executed: boolean

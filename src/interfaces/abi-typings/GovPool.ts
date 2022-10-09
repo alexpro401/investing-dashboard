@@ -54,8 +54,21 @@ export interface ContractCallOverrides {
    */
   gasLimit?: number
 }
-export type GovPoolEvents = undefined
-export interface GovPoolEventsContext {}
+export type GovPoolEvents =
+  | "DPCreated"
+  | "Delegated"
+  | "ProposalCreated"
+  | "ProposalExecuted"
+  | "RewardClaimed"
+  | "Voted"
+export interface GovPoolEventsContext {
+  DPCreated(...parameters: any): EventFilter
+  Delegated(...parameters: any): EventFilter
+  ProposalCreated(...parameters: any): EventFilter
+  ProposalExecuted(...parameters: any): EventFilter
+  RewardClaimed(...parameters: any): EventFilter
+  Voted(...parameters: any): EventFilter
+}
 export type GovPoolMethodNames =
   | "__GovPool_init"
   | "claimRewards"
@@ -93,6 +106,41 @@ export type GovPoolMethodNames =
   | "vote"
   | "voteDelegated"
   | "withdraw"
+export interface DPCreatedEventEmittedResponse {
+  proposalId: BigNumberish
+  sender: string
+  token: string
+  amount: BigNumberish
+}
+export interface DelegatedEventEmittedResponse {
+  from: string
+  to: string
+  amount: BigNumberish
+  nfts: BigNumberish[]
+  isDelegate: boolean
+}
+export interface ProposalCreatedEventEmittedResponse {
+  proposalId: BigNumberish
+  sender: string
+  quorum: BigNumberish
+  mainExecutor: string
+}
+export interface ProposalExecutedEventEmittedResponse {
+  proposalId: BigNumberish
+  sender: string
+}
+export interface RewardClaimedEventEmittedResponse {
+  proposalId: BigNumberish
+  sender: string
+  token: string
+  amount: BigNumberish
+}
+export interface VotedEventEmittedResponse {
+  proposalId: BigNumberish
+  sender: string
+  personalVote: BigNumberish
+  delegatedVote: BigNumberish
+}
 export interface GetProposalInfoResponse {
   result0: string[]
   0: string[]
