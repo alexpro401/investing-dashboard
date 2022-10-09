@@ -1,0 +1,22 @@
+{
+  "name": "dexe Black List",
+  "timestamp": "2022-01-26T11:45:09Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "tags": {},
+  "logoURI": "https://s2.coinmarketcap.com/static/img/coins/64x64/7326.png",
+  "keywords": ["dexe", "blacklist"],
+  "tokens": [
+    {
+      "name": "SafeMoon",
+      "symbol": "SAFEMOON",
+      "address": "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
+      "chainId": 97,
+      "decimals": 9,
+      "logoURI": "https://pancake.kiemtienonline360.com/images/coins/0xdacbdecc2992a63390d108e8507b98c7e2b5584a.png"
+    }
+  ]
+}
