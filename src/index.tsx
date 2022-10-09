@@ -29,8 +29,11 @@ import { UserPoolsUpdater, UserTermsUpdater } from "state/user/updater"
 import { TransactionUpdater } from "state/transactions/updater"
 import { GasPriceUpdater } from "state/gas/updater"
 import { PoolListUpdater } from "state/pools/updater"
+import MulticallUpdater from "state/multicall/updater"
+import ListsUpdater from "state/lists/updater"
 
 import "react-virtualized/styles.css"
+import { usePollBlockNumber } from "state/block/hooks"
 
 const Web3ProviderNetwork = createWeb3ReactRoot("NETWORK")
 
@@ -53,8 +56,14 @@ createTheme("dexe", {
 
 const NormalizeProxy: any = Normalize
 
+const GlobalHooks = () => {
+  usePollBlockNumber()
+  return null
+}
+
 const GlobalComponents = () => (
   <>
+    <GlobalHooks />
     <ContractsRegistryUpdater />
     <UserPoolsUpdater />
     <UserTermsUpdater />
@@ -70,6 +79,8 @@ const GlobalComponents = () => (
     <TermsAgreement />
     <Payload />
     <ErrorMessage />
+    <MulticallUpdater />
+    <ListsUpdater />
   </>
 )
 
