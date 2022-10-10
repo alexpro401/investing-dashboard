@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 
 import Header from "components/Header/Layout"
 import TutorialCard from "components/TutorialCard"
+import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import { SelectableCard, Icon, Collapse } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 
@@ -126,57 +127,59 @@ const CreateProposalSelectType: React.FC = () => {
   return (
     <>
       <Header>Create proposal</Header>
-      <S.CreateProposalSelectTypePageHolder
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-      >
-        <S.CreateProposalSelectTypeContent>
-          <TutorialCard
-            text={"Shape your DAO with your best ideas."}
-            linkText={"Read the tutorial"}
-            imageSrc={tutorialImageSrc}
-            href={"https://github.com/"}
-          />
-          <S.CreateProposalSelectTypeHeader>
-            <S.CreateProposalSelectTypeTitle>
-              Choose type of proposal
-            </S.CreateProposalSelectTypeTitle>
-            {/* TODO redirect to create custom proposal page */}
-            <S.CreateProposalSelectTypeCreateNew to="/">
-              + Create new
-            </S.CreateProposalSelectTypeCreateNew>
-          </S.CreateProposalSelectTypeHeader>
-          {proposalTypes.map(
-            ({ description, guide, iconName, title, type }) => {
-              return (
-                <SelectableCard
-                  key={type}
-                  value={selectedProposalType}
-                  setValue={setSelectedProposalType}
-                  valueToSet={type}
-                  headNodeLeft={<Icon name={iconName} />}
-                  title={title}
-                  description={description}
-                >
-                  {guide && (
-                    <Collapse isOpen={selectedProposalType === type}>
-                      <S.ProposalTypeGuide>{guide}</S.ProposalTypeGuide>
-                    </Collapse>
-                  )}
-                </SelectableCard>
-              )
-            }
-          )}
-          <S.CreateProposalSelectTypeSubmitButton
-            type="button"
-            size="large"
-            onClick={proceedToNextStep}
-            text={"Start creating proposal"}
-          />
-        </S.CreateProposalSelectTypeContent>
-      </S.CreateProposalSelectTypePageHolder>
+      <WithGovPoolAddressValidation daoPoolAddress="123">
+        <S.CreateProposalSelectTypePageHolder
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <S.CreateProposalSelectTypeContent>
+            <TutorialCard
+              text={"Shape your DAO with your best ideas."}
+              linkText={"Read the tutorial"}
+              imageSrc={tutorialImageSrc}
+              href={"https://github.com/"}
+            />
+            <S.CreateProposalSelectTypeHeader>
+              <S.CreateProposalSelectTypeTitle>
+                Choose type of proposal
+              </S.CreateProposalSelectTypeTitle>
+              {/* TODO redirect to create custom proposal page */}
+              <S.CreateProposalSelectTypeCreateNew to="/dao/123/create-new-proposal-type">
+                + Create new
+              </S.CreateProposalSelectTypeCreateNew>
+            </S.CreateProposalSelectTypeHeader>
+            {proposalTypes.map(
+              ({ description, guide, iconName, title, type }) => {
+                return (
+                  <SelectableCard
+                    key={type}
+                    value={selectedProposalType}
+                    setValue={setSelectedProposalType}
+                    valueToSet={type}
+                    headNodeLeft={<Icon name={iconName} />}
+                    title={title}
+                    description={description}
+                  >
+                    {guide && (
+                      <Collapse isOpen={selectedProposalType === type}>
+                        <S.ProposalTypeGuide>{guide}</S.ProposalTypeGuide>
+                      </Collapse>
+                    )}
+                  </SelectableCard>
+                )
+              }
+            )}
+            <S.CreateProposalSelectTypeSubmitButton
+              type="button"
+              size="large"
+              onClick={proceedToNextStep}
+              text={"Start creating proposal"}
+            />
+          </S.CreateProposalSelectTypeContent>
+        </S.CreateProposalSelectTypePageHolder>
+      </WithGovPoolAddressValidation>
     </>
   )
 }
