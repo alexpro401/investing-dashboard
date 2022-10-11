@@ -6,7 +6,7 @@ import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 import { InvestorInvestProposalsQuery } from "queries"
 import useQueryPagination from "hooks/useQueryPagination"
 import { useTraderPoolInvestProposalContract } from "contracts"
-import { ProposalsResponse } from "interfaces/abi-typings/TraderPoolInvestProposal"
+import { IInvestProposalInfo } from "interfaces/contracts/ITraderPoolInvestProposal"
 
 import LoadMore from "components/LoadMore"
 import InvestProposalCard from "components/cards/proposal/Invest"
@@ -29,7 +29,7 @@ function InvestProposalCardInitializer({
   proposalId,
 }: IInvestProposalCardInitializer) {
   const proposalPool = useTraderPoolInvestProposalContract(poolAddress)
-  const [proposal, setProposal] = useState<ProposalsResponse | null>(null)
+  const [proposal, setProposal] = useState<IInvestProposalInfo[0] | null>(null)
 
   useEffect(() => {
     if (!proposalPool || !poolAddress) return

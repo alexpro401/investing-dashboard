@@ -11,11 +11,11 @@ const provider = new JsonRpcProvider(
   "https://data-seed-prebsc-1-s1.binance.org:8545/"
 )
 
-export default function useContract(
+export default function useContract<T extends Contract = Contract>(
   address: string | undefined,
   ABI: any,
   withSignerIfPossible = true
-): Contract | null {
+): T | null {
   const { library, account } = useActiveWeb3React()
 
   return useMemo(() => {
@@ -32,7 +32,7 @@ export default function useContract(
       console.error("Failed to get contract", error)
       return null
     }
-  }, [address, ABI, library, withSignerIfPossible, account])
+  }, [address, ABI, library, withSignerIfPossible, account]) as T
 }
 
 export function useProposalAddress(poolAddress) {

@@ -39,13 +39,15 @@ import { parseEther, parseUnits } from "@ethersproject/units"
 import { ZERO } from "constants/index"
 import useRiskyPosition from "hooks/useRiskyPosition"
 import { useERC20Data } from "state/erc20/hooks"
-import { GetDivestAmountsAndCommissionsResponse } from "interfaces/abi-typings/TraderPool"
 import { useProposalAddress } from "hooks/useContract"
 import {
-  GetInvestTokensResponse,
-  ReceptionsResponse as DivestsReceptionsResponse,
-} from "interfaces/abi-typings/TraderPoolRiskyProposal"
-import { ReceptionsResponse as InvestsReceptionsResponse } from "interfaces/abi-typings/TraderPool"
+  IDivestAmountsAndCommissions,
+  IInvestTokens,
+} from "interfaces/contracts/ITraderPool"
+import {
+  IDivestAmounts,
+  IRiskyProposalInvestTokens,
+} from "interfaces/contracts/ITraderPoolRiskyProposal"
 
 const useInvestRiskyProposal = (
   poolAddress?: string,
@@ -391,9 +393,7 @@ const useInvestRiskyProposal = (
   const getInvestTokens = useCallback(
     async (
       amount: BigNumber
-    ): Promise<
-      [GetDivestAmountsAndCommissionsResponse, GetInvestTokensResponse]
-    > => {
+    ): Promise<[IDivestAmountsAndCommissions, IRiskyProposalInvestTokens]> => {
       if (!account || !proposalPool || !traderPool)
         return new Promise((resolve, reject) => reject(null))
 
@@ -412,9 +412,7 @@ const useInvestRiskyProposal = (
   )
 
   const getDivestTokens = useCallback(
-    async (
-      amount: BigNumber
-    ): Promise<[DivestsReceptionsResponse, InvestsReceptionsResponse]> => {
+    async (amount: BigNumber): Promise<[IDivestAmounts, IInvestTokens]> => {
       if (!proposalPool || !traderPool)
         return new Promise((resolve, reject) => reject(null))
       const divests = await proposalPool.getDivestAmounts(

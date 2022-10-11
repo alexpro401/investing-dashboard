@@ -2,14 +2,13 @@ import { Contract } from "@ethersproject/contracts"
 import { BigNumber } from "@ethersproject/bignumber"
 import { useCallback, useEffect, useState } from "react"
 
-import { ERC20 } from "abi"
 import { isAddress } from "utils"
 import { Token } from "interfaces"
 import { ZERO } from "constants/index"
-import useContract from "./useContract"
 import { useActiveWeb3React } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
 import { getBalanceOf } from "utils/getContract"
+import { useERC20Contract } from "contracts"
 
 // TODO: balance not updating when balance !== null
 export function useERC20Balance(
@@ -21,7 +20,7 @@ export function useERC20Balance(
   const [balance, setBalance] = useState<BigNumber | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const contract = useContract(address, ERC20)
+  const contract = useERC20Contract(address)
 
   const init = useCallback(() => {
     if (typeof address !== "string" || address.length !== 42) {
@@ -77,7 +76,7 @@ export function useERC20(
 
   const [storedAddress, setAddress] = useState("")
 
-  const contract = useContract(storedAddress, ERC20)
+  const contract = useERC20Contract(storedAddress)
 
   const [tokenData] = useERC20Data(address)
   const [balance, , fetchBalance] = useERC20Balance(address)

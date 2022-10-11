@@ -1,22 +1,22 @@
 import { useEffect, useState, useCallback } from "react"
 import { debounce } from "lodash"
 
-import {
-  IInvestProposalInvestmentsInfo,
-  IInvestProposalRewards,
-} from "interfaces/contracts/ITraderPoolInvestProposal"
 import { useTraderPoolInvestProposalContract } from "contracts"
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
 import useForceUpdate from "./useForceUpdate"
-import { ProposalsResponse } from "interfaces/abi-typings/TraderPoolInvestProposal"
+import {
+  IInvestProposalActiveInvestmentsInfo,
+  IInvestProposalInfo,
+  IInvestProposalRewards,
+} from "interfaces/contracts/ITraderPoolInvestProposal"
 
 interface IPayload {
-  data: ProposalsResponse[]
+  data: IInvestProposalInfo
   loading: boolean
 }
 
 function useInvestProposals(poolAddress?: string): [IPayload, () => void] {
-  const [proposals, setProposals] = useState<ProposalsResponse[]>([])
+  const [proposals, setProposals] = useState<IInvestProposalInfo>([])
   const [offset, setOffset] = useState<number>(0)
   const [fetching, setFetching] = useState<boolean>(true)
   const [allFetched, setAllFetched] = useState<boolean>(false)
@@ -60,9 +60,9 @@ function useInvestProposals(poolAddress?: string): [IPayload, () => void] {
 export function useInvestProposal(
   poolAddress?: string,
   index?: string
-): [ProposalsResponse | undefined, () => void] {
+): [IInvestProposalInfo[0] | undefined, () => void] {
   const [updateObserver, update] = useForceUpdate()
-  const [proposal, setProposal] = useState<ProposalsResponse | undefined>()
+  const [proposal, setProposal] = useState<IInvestProposalInfo[0] | undefined>()
   const traderPoolInvestProposal =
     useTraderPoolInvestProposalContract(poolAddress)
 
@@ -89,7 +89,9 @@ export function useActiveInvestmentsInfo(
   account?: string | null | undefined,
   index?: string
 ) {
-  const [info, setInfo] = useState<IInvestProposalInvestmentsInfo | undefined>()
+  const [info, setInfo] = useState<
+    IInvestProposalActiveInvestmentsInfo[0] | undefined
+  >()
   const proposal = useTraderPoolInvestProposalContract(poolAddress)
 
   useEffect(() => {

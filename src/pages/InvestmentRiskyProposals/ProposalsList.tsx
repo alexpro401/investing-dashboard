@@ -8,13 +8,13 @@ import { usePoolContract } from "hooks/usePool"
 import { InvestorRiskyProposalsQuery } from "queries"
 import useQueryPagination from "hooks/useQueryPagination"
 import { useTraderPoolRiskyProposalContract } from "contracts"
-import { ProposalsResponse } from "interfaces/abi-typings/TraderPoolRiskyProposal"
 import { useProposalAddress } from "hooks/useContract"
 
 import LoadMore from "components/LoadMore"
 import RiskyProposalCard from "components/cards/proposal/Risky"
 
 import S from "./styled"
+import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
@@ -34,7 +34,7 @@ function RiskyProposalCardInitializer({
   const proposalAddress = useProposalAddress(poolAddress)
   const proposalPool = useTraderPoolRiskyProposalContract(proposalAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [proposal, setProposal] = useState<ProposalsResponse | null>(null)
+  const [proposal, setProposal] = useState<IRiskyProposalInfo[0] | null>(null)
 
   const isTrader = useMemo<boolean>(() => {
     if (!account || !poolInfo) {

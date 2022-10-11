@@ -1,50 +1,27 @@
 import { useSelector } from "react-redux"
-
 import useContract from "hooks/useContract"
 
 import {
-  BasicTraderPool,
-  ContractsRegistry,
-  CoreProperties,
-  DistributionProposal,
-  ERC20,
-  ERC721,
-  GovPool,
-  GovSettings,
-  GovUserKeeper,
-  GovValidators,
-  Insurance,
-  InvestTraderPool,
-  PoolFactory,
-  PoolRegistry,
-  PriceFeed,
-  TraderPool,
-  TraderPoolInvestProposal,
-  TraderPoolRiskyProposal,
-  UserRegistry,
+  ERC20 as ERC20_ABI,
+  BasicTraderPool as BasicTraderPool_ABI,
+  ContractsRegistry as ContractsRegistry_ABI,
+  CoreProperties as CoreProperties_ABI,
+  DistributionProposal as DistributionProposal_ABI,
+  ERC721 as ERC721_ABI,
+  GovPool as GovPool_ABI,
+  GovSettings as GovSettings_ABI,
+  GovUserKeeper as GovUserKeeper_ABI,
+  GovValidators as GovValidators_ABI,
+  Insurance as Insurance_ABI,
+  InvestTraderPool as InvestTraderPool_ABI,
+  PoolFactory as PoolFactory_ABI,
+  PoolRegistry as PoolRegistry_ABI,
+  PriceFeed as PriceFeed_ABI,
+  TraderPool as TraderPool_ABI,
+  TraderPoolInvestProposal as TraderPoolInvestProposal_ABI,
+  TraderPoolRiskyProposal as TraderPoolRiskyProposal_ABI,
+  UserRegistry as UserRegistry_ABI,
 } from "abi"
-
-import {
-  BasicTraderPoolType,
-  ContractsRegistryType,
-  CorePropertiesType,
-  DistributionProposalType,
-  ERC20Type,
-  ERC721Type,
-  GovPoolType,
-  GovSettingsType,
-  GovUserKeeperType,
-  GovValidatorsType,
-  InsuranceType,
-  InvestTraderPoolType,
-  PoolFactoryType,
-  PoolRegistryType,
-  PriceFeedType,
-  TraderPoolInvestProposalType,
-  TraderPoolRiskyProposalType,
-  TraderPoolType,
-  UserRegistryType,
-} from "interfaces/abi-typings"
 
 import {
   selectCorePropertiesAddress,
@@ -55,121 +32,129 @@ import {
   selectUserRegistryAddress,
 } from "state/contracts/selectors"
 
+import {
+  ERC20,
+  ERC721Power,
+  ContractsRegistry,
+  CoreProperties,
+  BasicTraderPool,
+  Insurance,
+  InvestTraderPool,
+  PoolFactory,
+  PoolRegistry,
+  PriceFeed,
+  TraderPool,
+  TraderPoolInvestProposal,
+  TraderPoolRiskyProposal,
+  UserRegistry,
+  DistributionProposal,
+  GovPool,
+  GovSettings,
+  GovUserKeeper,
+  GovValidators,
+} from "interfaces/typechain"
+
 type Address = string | undefined
 
 export function useERC20Contract(address: Address) {
-  return useContract(address, ERC20) as unknown as ERC20Type | null
+  return useContract<ERC20>(address, ERC20_ABI)
 }
 
 export function useERC721Contract(address: Address) {
-  return useContract(address, ERC721) as unknown as ERC721Type | null
+  return useContract<ERC721Power>(address, ERC721_ABI)
 }
 
 export function useContractsRegistryContract() {
-  return useContract(
+  return useContract<ContractsRegistry>(
     process.env.REACT_APP_CONTRACTS_REGISTRY_ADDRESS,
-    ContractsRegistry
-  ) as unknown as ContractsRegistryType | null
+    ContractsRegistry_ABI
+  )
 }
 
 export function useCorePropertiesContract() {
-  return useContract(
+  return useContract<CoreProperties>(
     useSelector(selectCorePropertiesAddress),
-    CoreProperties
-  ) as unknown as CorePropertiesType | null
+    CoreProperties_ABI
+  )
 }
 
 export function useBasicPoolContract(address: Address) {
-  return useContract(
-    address,
-    BasicTraderPool
-  ) as unknown as BasicTraderPoolType | null
+  return useContract<BasicTraderPool>(address, BasicTraderPool_ABI)
 }
 
 export function useInsuranceContract() {
-  return useContract(
+  return useContract<Insurance>(
     useSelector(selectInsuranceAddress),
-    Insurance
-  ) as unknown as InsuranceType | null
+    Insurance_ABI
+  )
 }
 
 export function useInvestTraderPoolContract(address: Address) {
-  return useContract(
-    address,
-    InvestTraderPool
-  ) as unknown as InvestTraderPoolType | null
+  return useContract<InvestTraderPool>(address, InvestTraderPool_ABI)
 }
 
-// no type for this contract
-// reason: bad generated ts code
 export function usePoolFactoryContract() {
-  return useContract(useSelector(selectPoolFactoryAddress), PoolFactory)
+  return useContract<PoolFactory>(
+    useSelector(selectPoolFactoryAddress),
+    PoolFactory_ABI
+  )
 }
 
 export function usePoolRegistryContract() {
-  return useContract(
+  return useContract<PoolRegistry>(
     useSelector(selectPoolRegistryAddress),
-    PoolRegistry
-  ) as unknown as PoolRegistryType | null
+    PoolRegistry_ABI
+  )
 }
 
 export function usePriceFeedContract() {
-  return useContract(
+  return useContract<PriceFeed>(
     useSelector(selectPriceFeedAddress),
-    PriceFeed
-  ) as unknown as PriceFeedType | null
+    PriceFeed_ABI
+  )
 }
 
 export function useTraderPoolContract(address: Address) {
-  return useContract(address, TraderPool) as unknown as TraderPoolType | null
+  return useContract<TraderPool>(address, TraderPool_ABI)
 }
 
 export function useTraderPoolInvestProposalContract(address: Address) {
-  return useContract(
+  return useContract<TraderPoolInvestProposal>(
     address,
-    TraderPoolInvestProposal
-  ) as unknown as TraderPoolInvestProposalType | null
+    TraderPoolInvestProposal_ABI
+  )
 }
 
 export function useTraderPoolRiskyProposalContract(address: Address) {
-  return useContract(
+  return useContract<TraderPoolRiskyProposal>(
     address,
-    TraderPoolRiskyProposal
-  ) as unknown as TraderPoolRiskyProposalType | null
+    TraderPoolRiskyProposal_ABI
+  )
 }
 
 export function useUserRegistryContract() {
-  return useContract(
+  return useContract<UserRegistry>(
     useSelector(selectUserRegistryAddress),
-    UserRegistry
-  ) as unknown as UserRegistryType | null
+    UserRegistry_ABI
+  )
 }
 
 export function useDistributionProposalContract(address: Address) {
-  return useContract(
-    address,
-    DistributionProposal
-  ) as unknown as DistributionProposalType | null
+  return useContract<DistributionProposal>(address, DistributionProposal_ABI)
 }
 
 export function useGovPoolContract(address: Address) {
-  return useContract(address, GovPool) as unknown as GovPoolType | null
+  return useContract<GovPool>(address, GovPool_ABI)
 }
 
 export function useGovSettingsContract(address: Address) {
-  return useContract(address, GovSettings) as unknown as GovSettingsType | null
+  return useContract<GovSettings>(address, GovSettings_ABI)
 }
 
 export function useGovUserKeeperContract(address: Address) {
-  return useContract(
-    address,
-    GovUserKeeper
-  ) as unknown as GovUserKeeperType | null
+  return useContract<GovUserKeeper>(address, GovUserKeeper_ABI)
 }
 
 export function useGovValidatorsContract(address: Address) {
-  return useContract(
-    address,
-    GovValidators
-  ) as unknown as GovValidatorsType | null
+  return useContract<GovValidators>(address, GovValidators_ABI)
 }

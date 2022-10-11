@@ -80,8 +80,13 @@ const useCreateInvestmentProposal = (
   const updateTotalProposals = useCallback(async () => {
     if (!investProposal) return
 
-    const total = await investProposal.proposalsTotalNum()
-    setTotalProposals(total.toNumber())
+    try {
+      const total = await investProposal.proposalsTotalNum()
+
+      setTotalProposals(total.toNumber())
+    } catch (e) {
+      console.error(e)
+    }
   }, [investProposal])
 
   const handleValidate = useCallback(() => {

@@ -40,7 +40,7 @@ import useRiskyPosition from "hooks/useRiskyPosition"
 import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
 import { useERC20Data } from "state/erc20/hooks"
-import { GetExchangeAmountResponse } from "interfaces/abi-typings/BasicTraderPool"
+import { IRiskyProposalExchangeAmount } from "interfaces/contracts/ITraderPoolRiskyProposal"
 
 export interface UseSwapRiskyParams {
   poolAddress?: string
@@ -230,7 +230,7 @@ const useSwapRiskyProposal = ({
       from,
       amount,
       field
-    ): Promise<[GetExchangeAmountResponse, BigNumber]> => {
+    ): Promise<[IRiskyProposalExchangeAmount, BigNumber]> => {
       if (!proposalPool || !from)
         return new Promise((resolve, reject) => reject(null))
       const exchange = await proposalPool.getExchangeAmount(
@@ -368,7 +368,7 @@ const useSwapRiskyProposal = ({
   )
 
   const estimateGas = useCallback(async () => {
-    if (!proposalPool) return
+    if (!proposalPool || !form.from.address) return
 
     if (lastChangedField === "from") {
       const amount = BigNumber.from(fromAmount)
