@@ -156,6 +156,7 @@ const useCreateDAO = () => {
         setPayload(SubmitState.SUCCESS)
       }
     } catch (error: any) {
+      console.log(error)
       setPayload(SubmitState.IDLE)
       if (!!error && !!error.data && !!error.data.message) {
         setError(error.data.message)

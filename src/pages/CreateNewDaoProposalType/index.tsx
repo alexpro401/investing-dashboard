@@ -1,37 +1,34 @@
 import React from "react"
+import { useParams } from "react-router-dom"
 
 import Header from "components/Header/Layout"
+import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
+import DaoProposalCreatingContextProvider from "context/DaoProposalCreatingContext"
 import FundDaoCreatingContextProvider from "context/FundDaoCreatingContext"
-import { DefaultProposalStep } from "forms/CreateFundDaoForm/steps"
-import StepsControllerContext from "context/StepsControllerContext"
+import CreateNewProposalTypeForm from "forms/CreateNewProposalTypeForm"
 
 import * as S from "./styled"
 
 const CreateNewProposalType: React.FC = () => {
+  const { daoAddress } = useParams<"daoAddress">()
+
   return (
     <>
       <Header>Create Proposal</Header>
-      <S.CreateNewDaoProposalTypePageHolder
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-      >
-        <StepsControllerContext
-          currentStepNumber={1}
-          totalStepsAmount={5}
-          prevCb={() => {
-            console.log("prev")
-          }}
-          nextCb={() => {
-            console.log("next")
-          }}
+      <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
+        <S.CreateNewDaoProposalTypePageHolder
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
         >
           <FundDaoCreatingContextProvider>
-            <DefaultProposalStep />
+            <DaoProposalCreatingContextProvider>
+              <CreateNewProposalTypeForm />
+            </DaoProposalCreatingContextProvider>
           </FundDaoCreatingContextProvider>
-        </StepsControllerContext>
-      </S.CreateNewDaoProposalTypePageHolder>
+        </S.CreateNewDaoProposalTypePageHolder>
+      </WithGovPoolAddressValidation>
     </>
   )
 }

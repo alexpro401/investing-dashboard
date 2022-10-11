@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
 
 import Header from "components/Header/Layout"
 import TutorialCard from "components/TutorialCard"
@@ -28,6 +28,7 @@ interface IProposalType {
 
 const CreateProposalSelectType: React.FC = () => {
   const navigate = useNavigate()
+  const { daoAddress } = useParams<"daoAddress">()
   const [selectedProposalType, setSelectedProposalType] = useState(
     EProposalType.daoProfileModification
   )
@@ -127,7 +128,7 @@ const CreateProposalSelectType: React.FC = () => {
   return (
     <>
       <Header>Create proposal</Header>
-      <WithGovPoolAddressValidation daoPoolAddress="123">
+      <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
         <S.CreateProposalSelectTypePageHolder
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -145,8 +146,9 @@ const CreateProposalSelectType: React.FC = () => {
               <S.CreateProposalSelectTypeTitle>
                 Choose type of proposal
               </S.CreateProposalSelectTypeTitle>
-              {/* TODO redirect to create custom proposal page */}
-              <S.CreateProposalSelectTypeCreateNew to="/dao/123/create-new-proposal-type">
+              <S.CreateProposalSelectTypeCreateNew
+                to={`/dao/${daoAddress}/create-new-proposal-type`}
+              >
                 + Create new
               </S.CreateProposalSelectTypeCreateNew>
             </S.CreateProposalSelectTypeHeader>
