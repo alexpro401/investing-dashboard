@@ -4,7 +4,7 @@ import {
   VersionUpgrade,
 } from "lib/token-list"
 import { useWeb3React } from "@web3-react/core"
-import { UNSUPPORTED_LIST_URLS, OFFICIAL_LISTS } from "constants/lists"
+import { UNSUPPORTED_LIST_URLS } from "constants/lists"
 import useInterval from "lib/hooks/useInterval"
 import { useCallback, useEffect } from "react"
 import { useAppDispatch } from "state/hooks"
@@ -12,13 +12,11 @@ import { useAllLists } from "state/lists/hooks"
 
 import { useFetchListCallback } from "hooks/useFetchListCallback"
 import useIsWindowVisible from "hooks/useIsWindowVisible"
-import { acceptListUpdate, enableList } from "./actions"
+import { acceptListUpdate } from "./actions"
 import { useActiveListUrls } from "./hooks"
 
-import { SupportedChainId } from "constants/chains"
-
 export default function Updater(): null {
-  const { chainId, library } = useWeb3React()
+  const { library } = useWeb3React()
   const dispatch = useAppDispatch()
   const isWindowVisible = useIsWindowVisible()
 
@@ -36,9 +34,6 @@ export default function Updater(): null {
     )
   }, [fetchList, isWindowVisible, lists])
 
-  useEffect(() => {
-    OFFICIAL_LISTS.map((list) => dispatch(enableList(list)))
-  }, [dispatch])
   // fetch all lists every 10 minutes, but only after we initialize library
   useInterval(fetchAllListsCallback, library ? 1000 * 60 * 10 : null)
 
@@ -77,6 +72,8 @@ export default function Updater(): null {
         )
         switch (bump) {
           case VersionUpgrade.NONE:
+            console.log("bump none")
+            break
           // throw new Error("unexpected no version bump")
           case VersionUpgrade.PATCH:
           case VersionUpgrade.MINOR:
@@ -86,6 +83,7 @@ export default function Updater(): null {
             )
             // automatically update minor/patch as long as bump matches the min update
             if (bump >= min) {
+              console.log("bump")
               dispatch(acceptListUpdate(listUrl))
             } else {
               console.error(
