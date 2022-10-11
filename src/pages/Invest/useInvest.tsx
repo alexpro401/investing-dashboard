@@ -17,7 +17,7 @@ import usePoolPrice from "hooks/usePoolPrice"
 import useAlert, { AlertType } from "hooks/useAlert"
 import { usePoolContract, useTraderPool } from "hooks/usePool"
 import { useERC20 } from "hooks/useERC20"
-import { usePriceFeedContract } from "hooks/useContract"
+import { usePriceFeedContract } from "contracts"
 
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
@@ -344,7 +344,7 @@ const useInvest = ({
   const fetchAndUpdateBalance = useCallback(async () => {
     if (!account || !traderPool) return
 
-    const balance: BigNumber = await traderPool?.balanceOf(account)
+    const balance: BigNumber = await traderPool.balanceOf(account)
     setLPBalance(balance)
   }, [account, traderPool])
 
@@ -404,6 +404,9 @@ const useInvest = ({
       if (!priceFeed || !poolInfo) return
 
       const basePrice = await getPriceUSD(poolInfo.parameters.baseToken, amount)
+
+      if (!basePrice) return
+
       setBasePrice(basePrice)
     },
     [priceFeed, poolInfo, getPriceUSD]

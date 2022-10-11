@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useQuery } from "urql"
 
-import { useTraderPoolRegistryContract } from "hooks/useContract"
+import { usePoolRegistryContract } from "contracts"
 import { AppDispatch, AppState } from "state"
 import {
   addPools,
@@ -103,22 +103,25 @@ export function usePriceHistory(
   address: string | undefined,
   timeframes: [number, number],
   limit = 1000,
-  startDate: number
-): IPriceHistory[] | undefined {
+  startDate: number,
+  block?: number,
+  pause?: boolean
+): [IPriceHistory[] | undefined, boolean, () => void] {
   const [history, setHistory] = useState<IPriceHistory[] | undefined>(undefined)
-  const [pool] = useQuery<{
+  const [pool, update] = useQuery<{
     traderPool: IPriceHistoryQuery
   }>({
-    query: PriceHistoryQuery(startDate),
+    query: PriceHistoryQuery(startDate, block),
     variables: {
       address,
       minTimeframe: timeframes[0],
       maxTimeframe: timeframes[1],
       limit,
       startDate,
+      block,
     },
     requestPolicy: "network-only",
-    pause: !address || !startDate,
+    pause: pause || !address || !startDate,
   })
 
   useEffect(() => {
@@ -134,14 +137,14 @@ export function usePriceHistory(
     setHistory(pool.data.traderPool.priceHistory)
   }, [pool])
 
-  return history
+  return [history, pool.fetching, update]
 }
 
 export function usePoolsCounter() {
   const [, setUpdate] = useState(false)
   const updateRef = useRef(false)
   const dispatch = useDispatch<AppDispatch>()
-  const traderPoolRegistry = useTraderPoolRegistryContract()
+  const traderPoolRegistry = usePoolRegistryContract()
 
   const handleUpdate = useCallback(() => {
     updateRef.current = !updateRef.current

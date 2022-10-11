@@ -1,27 +1,28 @@
 import { useEffect, useState, useCallback } from "react"
-import debounce from "lodash.debounce"
+import { debounce } from "lodash"
 
-import { InvestProposal } from "interfaces/thegraphs/invest-pools"
 import {
   IInvestProposalInvestmentsInfo,
   IInvestProposalRewards,
 } from "interfaces/contracts/ITraderPoolInvestProposal"
-import { useInvestProposalContract } from "hooks/useContract"
+import { useTraderPoolInvestProposalContract } from "contracts"
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
 import useForceUpdate from "./useForceUpdate"
+import { ProposalsResponse } from "interfaces/abi-typings/TraderPoolInvestProposal"
 
 interface IPayload {
-  data: InvestProposal[]
+  data: ProposalsResponse[]
   loading: boolean
 }
 
 function useInvestProposals(poolAddress?: string): [IPayload, () => void] {
-  const [proposals, setProposals] = useState<InvestProposal[]>([])
+  const [proposals, setProposals] = useState<ProposalsResponse[]>([])
   const [offset, setOffset] = useState<number>(0)
   const [fetching, setFetching] = useState<boolean>(true)
   const [allFetched, setAllFetched] = useState<boolean>(false)
 
-  const [traderPoolInvestProposal] = useInvestProposalContract(poolAddress)
+  const traderPoolInvestProposal =
+    useTraderPoolInvestProposalContract(poolAddress)
 
   const fetchProposals = useCallback(async () => {
     if (traderPoolInvestProposal !== null && !allFetched) {
@@ -59,10 +60,11 @@ function useInvestProposals(poolAddress?: string): [IPayload, () => void] {
 export function useInvestProposal(
   poolAddress?: string,
   index?: string
-): [InvestProposal | undefined, () => void] {
+): [ProposalsResponse | undefined, () => void] {
   const [updateObserver, update] = useForceUpdate()
-  const [proposal, setProposal] = useState<InvestProposal | undefined>()
-  const [traderPoolInvestProposal] = useInvestProposalContract(poolAddress)
+  const [proposal, setProposal] = useState<ProposalsResponse | undefined>()
+  const traderPoolInvestProposal =
+    useTraderPoolInvestProposalContract(poolAddress)
 
   useEffect(() => {
     if (!traderPoolInvestProposal || !index) return
@@ -88,7 +90,7 @@ export function useActiveInvestmentsInfo(
   index?: string
 ) {
   const [info, setInfo] = useState<IInvestProposalInvestmentsInfo | undefined>()
-  const [proposal] = useInvestProposalContract(poolAddress)
+  const proposal = useTraderPoolInvestProposalContract(poolAddress)
 
   useEffect(() => {
     if (!proposal || !index || !account) return
@@ -106,7 +108,7 @@ export function useActiveInvestmentsInfo(
 }
 
 export function useRewards({ poolAddress, account, proposalId }) {
-  const [investProposal] = useInvestProposalContract(poolAddress)
+  const investProposal = useTraderPoolInvestProposalContract(poolAddress)
   const [rewards, setRewards] = useState<IInvestProposalRewards | undefined>()
 
   const fetchAndUpdateData = useCallback(async () => {

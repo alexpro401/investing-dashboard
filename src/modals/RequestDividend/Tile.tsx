@@ -1,6 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber"
 import { ZERO } from "constants/index"
-import { useInvestProposalContract } from "hooks/useContract"
+import { useProposalAddress } from "hooks/useContract"
 import useInvestProposalData from "hooks/useInvestProposalData"
 import { FC, useEffect, useState } from "react"
 import { normalizeBigNumber } from "utils"
@@ -16,7 +16,7 @@ interface Props {
 const Tile: FC<Props> = ({ token, poolAddress, proposalId }) => {
   const [dividendsAvailable, setDividendsAvailable] = useState(ZERO)
 
-  const [, proposalAddress] = useInvestProposalContract(poolAddress)
+  const proposalAddress = useProposalAddress(poolAddress)
   const proposalData = useInvestProposalData(
     proposalAddress.toLocaleLowerCase() + (parseFloat(proposalId) + 1)
   )

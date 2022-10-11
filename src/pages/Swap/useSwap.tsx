@@ -22,7 +22,7 @@ import { usePoolContract, usePoolPosition, usePoolQuery } from "hooks/usePool"
 import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
 
-import { usePriceFeedContract, useTraderPoolContract } from "hooks/useContract"
+import { usePriceFeedContract, useTraderPoolContract } from "contracts"
 
 import {
   addBignumbers,
@@ -40,6 +40,7 @@ import {
 } from "utils"
 import usePoolPrice from "hooks/usePoolPrice"
 import { useERC20Data } from "state/erc20/hooks"
+import { GetExchangeAmountResponse } from "interfaces/abi-typings/TraderPool"
 
 interface UseSwapProps {
   pool: string | undefined
@@ -210,8 +211,13 @@ const useSwap = ({
   }
 
   const getExchangeFromAmounts = useCallback(
-    async (amount: BigNumber) => {
-      const exchange = await traderPool?.getExchangeAmount(
+    async (
+      amount: BigNumber
+    ): Promise<[GetExchangeAmountResponse, BigNumber]> => {
+      if (!traderPool || !from || !to)
+        return new Promise((resolve, reject) => reject(null))
+
+      const exchange = await traderPool.getExchangeAmount(
         from,
         to,
         amount.toHexString(),
@@ -229,8 +235,13 @@ const useSwap = ({
     [from, slippage, to, traderPool]
   )
   const getExchangeToAmounts = useCallback(
-    async (amount: BigNumber) => {
-      const exchange = await traderPool?.getExchangeAmount(
+    async (
+      amount: BigNumber
+    ): Promise<[GetExchangeAmountResponse, BigNumber]> => {
+      if (!traderPool || !from || !to)
+        return new Promise((resolve, reject) => reject(null))
+
+      const exchange = await traderPool.getExchangeAmount(
         from,
         to,
         amount.toHexString(),
@@ -250,7 +261,7 @@ const useSwap = ({
 
   const handleFromChange = useCallback(
     (v: string) => {
-      if (!traderPool || !priceFeed) return
+      if (!traderPool || !priceFeed || !from || !to) return
       setLastChangedField("from")
 
       const amount = BigNumber.from(v)
@@ -289,7 +300,7 @@ const useSwap = ({
 
   const handleToChange = useCallback(
     (v: string) => {
-      if (!traderPool || !priceFeed) return
+      if (!traderPool || !priceFeed || !from || !to) return
       setLastChangedField("to")
 
       const amount = BigNumber.from(v)
@@ -397,7 +408,7 @@ const useSwap = ({
   }, [exchangeParams, from, lastChangedField, to, traderPool])
 
   const handleSubmit = useCallback(async () => {
-    if (!traderPool) return
+    if (!traderPool || !from || !to) return
 
     setWalletPrompting(SubmitState.SIGN)
     try {

@@ -11,6 +11,10 @@ import {
   ShieldCheckIcon,
   StarIcon,
   UsersIcon,
+  ArrowDownFilled,
+  ArrowUpFilled,
+  ChatOutline,
+  Copy,
   GreenCheckIcon,
   TrashIcon,
   CogIcon,
@@ -50,6 +54,14 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return AngleRightOutlinedIcon as unknown as ElementType
       case ICON_NAMES.externalLink:
         return ExternalLinkIcon as unknown as ElementType
+      case ICON_NAMES.arrowDownFilled:
+        return ArrowUpFilled as unknown as ElementType
+      case ICON_NAMES.arrowUpFilled:
+        return ArrowDownFilled as unknown as ElementType
+      case ICON_NAMES.chatOutline:
+        return ChatOutline as unknown as ElementType
+      case ICON_NAMES.copy:
+        return Copy as unknown as ElementType
       case ICON_NAMES.greenCheck:
         return GreenCheckIcon as unknown as ElementType
       case ICON_NAMES.trash:

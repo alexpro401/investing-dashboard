@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react"
 import { useQuery } from "urql"
-import debounce from "lodash.debounce"
+import { debounce } from "lodash"
 import { usePrevious } from "react-use"
 
 import useError from "hooks/useError"

@@ -435,6 +435,16 @@ export const prepareRiskyPositions = (data): IRiskyPositionCard[] => {
   })
 }
 
+export const getDaysToDate = (date): number => {
+  if (!date) return 0
+
+  if (typeof date === "object") {
+    return Math.floor(Number(shortTimestamp(date.getTime())) / 86400)
+  }
+
+  return Math.floor(Number(date) / 86400)
+}
+
 export const cropAddress = (value: string) => {
   return `${value.substring(0, 4)}...${value.substring(value.length - 4)}`
 }

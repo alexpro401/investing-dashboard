@@ -5,6 +5,7 @@ import { GradientBorder, Flex } from "theme"
 const background = {
   black: "#08121a",
   grey: "#191F2C",
+  clear: "transparent",
 }
 
 const height = {
@@ -23,7 +24,7 @@ const borderRadius = {
 }
 
 export const Container = styled(GradientBorder)<{
-  theme: "grey" | "black"
+  theme: "grey" | "black" | "clear"
   size?: string
   error?: boolean
 }>`
@@ -38,6 +39,15 @@ export const Container = styled(GradientBorder)<{
   &:after {
     background: ${({ theme }) => background[theme]};
   }
+
+  ${(props) =>
+    props.theme === "clear" &&
+    `
+      &:after,
+      &:before {
+        background: transparent;
+      }
+  `}
   ${(props) =>
     props.error &&
     `
