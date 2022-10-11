@@ -8,7 +8,7 @@ export const Page404Container = styled.main`
 
 export const Page404Content = styled.section`
   margin: 0 auto;
-  background-color: ${theme.backgroundColors.light};
+  background-color: ${theme.backgroundColors.secondary};
   padding: 20px;
   border-radius: 16px;
 `

@@ -22,11 +22,9 @@ const WithGovPoolAddressValidation = ({ daoPoolAddress, children }: IProps) => {
 
     try {
       const _isValid = await poolRegistryContract.isGovPool(daoPoolAddress)
-      console.log(_isValid, daoPoolAddress)
 
       setIsValid(_isValid)
     } catch (error) {
-      console.log(error)
       setIsValid(false)
     } finally {
       setLoading(false)
