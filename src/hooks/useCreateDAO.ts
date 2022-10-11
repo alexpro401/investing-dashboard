@@ -55,72 +55,76 @@ const useCreateDAO = () => {
 
     const OWNER = account
     const ZERO = "0x0000000000000000000000000000000000000000"
+
     const POOL_PARAMETERS = {
       settingsParams: {
-        internalProposalSettings: {
-          earlyCompletion: true,
-          delegatedVotingAllowed: true,
-          validatorsVote: false,
-          duration: 500,
-          durationValidators: 600,
-          quorum: parseUnits("51", 25),
-          quorumValidators: parseUnits("61", 25),
-          minVotesForVoting: parseEther("10"),
-          minVotesForCreating: parseEther("5"),
-          rewardToken: ZERO,
-          creationReward: 0,
-          executionReward: 0,
-          voteRewardsCoefficient: 0,
-          executorDescription: "internal",
-        },
-        distributionProposalSettings: {
-          earlyCompletion: false,
-          delegatedVotingAllowed: false,
-          validatorsVote: false,
-          duration: 500,
-          durationValidators: 600,
-          quorum: parseUnits("51", 25),
-          quorumValidators: parseUnits("61", 25),
-          minVotesForVoting: parseEther("10"),
-          minVotesForCreating: parseEther("5"),
-          rewardToken: ZERO,
-          creationReward: 0,
-          executionReward: 0,
-          voteRewardsCoefficient: 0,
-          executorDescription: "DP",
-        },
-        validatorsBalancesSettings: {
-          earlyCompletion: true,
-          delegatedVotingAllowed: false,
-          validatorsVote: true,
-          duration: 500,
-          durationValidators: 600,
-          quorum: parseUnits("51", 25),
-          quorumValidators: parseUnits("61", 25),
-          minVotesForVoting: parseEther("10"),
-          minVotesForCreating: parseEther("5"),
-          rewardToken: ZERO,
-          creationReward: 0,
-          executionReward: 0,
-          voteRewardsCoefficient: 0,
-          executorDescription: "validators",
-        },
-        defaultProposalSettings: {
-          earlyCompletion: false,
-          delegatedVotingAllowed: true,
-          validatorsVote: true,
-          duration: 700,
-          durationValidators: 800,
-          quorum: parseUnits("71", 25),
-          quorumValidators: parseUnits("100", 25),
-          minVotesForVoting: parseEther("20"),
-          minVotesForCreating: parseEther("5"),
-          rewardToken: ZERO,
-          creationReward: 0,
-          executionReward: 0,
-          voteRewardsCoefficient: 0,
-          executorDescription: "default",
-        },
+        proposalSettings: [
+          {
+            earlyCompletion: false,
+            delegatedVotingAllowed: true,
+            validatorsVote: true,
+            duration: 700,
+            durationValidators: 800,
+            quorum: parseUnits("71", 25),
+            quorumValidators: parseUnits("100", 25),
+            minVotesForVoting: parseEther("20"),
+            minVotesForCreating: parseEther("5"),
+            rewardToken: ZERO,
+            creationReward: 0,
+            executionReward: 0,
+            voteRewardsCoefficient: 0,
+            executorDescription: "default",
+          },
+          {
+            earlyCompletion: true,
+            delegatedVotingAllowed: true,
+            validatorsVote: false,
+            duration: 500,
+            durationValidators: 600,
+            quorum: parseUnits("51", 25),
+            quorumValidators: parseUnits("61", 25),
+            minVotesForVoting: parseEther("10"),
+            minVotesForCreating: parseEther("5"),
+            rewardToken: ZERO,
+            creationReward: 0,
+            executionReward: 0,
+            voteRewardsCoefficient: 0,
+            executorDescription: "internal",
+          },
+          {
+            earlyCompletion: false,
+            delegatedVotingAllowed: false,
+            validatorsVote: false,
+            duration: 500,
+            durationValidators: 600,
+            quorum: parseUnits("51", 25),
+            quorumValidators: parseUnits("61", 25),
+            minVotesForVoting: parseEther("10"),
+            minVotesForCreating: parseEther("5"),
+            rewardToken: ZERO,
+            creationReward: 0,
+            executionReward: 0,
+            voteRewardsCoefficient: 0,
+            executorDescription: "DP",
+          },
+          {
+            earlyCompletion: true,
+            delegatedVotingAllowed: false,
+            validatorsVote: true,
+            duration: 500,
+            durationValidators: 600,
+            quorum: parseUnits("51", 25),
+            quorumValidators: parseUnits("61", 25),
+            minVotesForVoting: parseEther("10"),
+            minVotesForCreating: parseEther("5"),
+            rewardToken: ZERO,
+            creationReward: 0,
+            executionReward: 0,
+            voteRewardsCoefficient: 0,
+            executorDescription: "validators",
+          },
+        ],
+        additionalProposalExecutors: [],
       },
       validatorsParams: {
         name: "Validator Token",
@@ -147,6 +151,8 @@ const useCreateDAO = () => {
         gasLimit,
       })
 
+      console.log(transactionResponse)
+
       setPayload(SubmitState.WAIT_CONFIRM)
       const receipt = await addTransaction(transactionResponse, {
         type: TransactionType.GOV_POOL_CREATE,
@@ -156,6 +162,7 @@ const useCreateDAO = () => {
         setPayload(SubmitState.SUCCESS)
       }
     } catch (error: any) {
+      console.log(error)
       setPayload(SubmitState.IDLE)
       if (!!error && !!error.data && !!error.data.message) {
         setError(error.data.message)
