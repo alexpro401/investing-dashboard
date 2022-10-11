@@ -1,32 +1,23 @@
-const PANCAKE_DEFAULT =
-  "https://localhost:3000/lists/pancake-default.tokenlist.json"
-const DEXE_WHITELIST =
-  "https://localhost:3000/lists/dexe-whitelist.tokenlist.json"
-const DEXE_BLACKLIST =
-  "https://localhost:3000/lists/dexe-blacklist.tokenlist.json"
-const PANCAKE_EXTENDED =
-  "https://tokens.pancakeswap.finance/pancakeswap-extended.json"
-const COINGECKO = "https://tokens.pancakeswap.finance/coingecko.json"
-const CMC = "https://tokens.pancakeswap.finance/cmc.json"
+const ROOT = "https://localhost:3000"
+
+const DEXE_DEFAULT = `${ROOT}/lists/dexe-default.tokenlist.json`
+const DEXE_WHITELIST = `${ROOT}/lists/dexe-whitelist.tokenlist.json`
+const DEXE_BLACKLIST = `${ROOT}/lists/dexe-blacklist.tokenlist.json`
 
 // List of official tokens list
-export const OFFICIAL_LISTS = [
-  PANCAKE_DEFAULT,
-  PANCAKE_EXTENDED,
-  DEXE_WHITELIST,
-]
+export const DEFAULT_LIST_OF_LISTS_TO_DISPLAY = [DEXE_DEFAULT, DEXE_WHITELIST]
 
-export const UNSUPPORTED_LIST_URLS: string[] = []
+export const UNSUPPORTED_LIST_URLS: string[] = [DEXE_BLACKLIST]
 export const WARNING_LIST_URLS: string[] = []
 
 // lower index == higher priority for token import
 export const DEFAULT_LIST_OF_LISTS: string[] = [
-  PANCAKE_EXTENDED,
-  CMC,
-  COINGECKO,
+  ...DEFAULT_LIST_OF_LISTS_TO_DISPLAY,
   ...UNSUPPORTED_LIST_URLS, // need to load unsupported tokens as well
   ...WARNING_LIST_URLS,
 ]
 
 // default lists to be 'active' aka searched across
-export const DEFAULT_ACTIVE_LIST_URLS: string[] = []
+export const DEFAULT_ACTIVE_LIST_URLS: string[] = [
+  ...DEFAULT_LIST_OF_LISTS_TO_DISPLAY,
+]
