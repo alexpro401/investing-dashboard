@@ -38,7 +38,7 @@ const CreateDaoProposalSelectType = lazy(
   () => import("pages/CreateDaoProposalSelectType")
 )
 const CreateNewDaoProposalType = lazy(
-  () => import("pages/CreateDaoProposalSelectType")
+  () => import("pages/CreateNewDaoProposalType")
 )
 // const Insurance = lazy(() => import("pages/Insurance"))
 

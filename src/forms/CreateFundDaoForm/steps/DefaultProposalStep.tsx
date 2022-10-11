@@ -1,12 +1,14 @@
 import { FC, useContext } from "react"
 import { CreateDaoCardStepNumber, CreateDaoPoolParameters } from "../components"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import { stepsControllerContext } from "context/StepsControllerContext"
 import { Card, CardDescription, CardHead, StepsNavigation } from "common"
 import * as S from "../styled"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 
 const DefaultProposalStep: FC = () => {
   const { defaultProposalSettingForm } = useContext(FundDaoCreatingContext)
+  const { currentStepNumber } = useContext(stepsControllerContext)
 
   return (
     <>
@@ -15,7 +17,9 @@ const DefaultProposalStep: FC = () => {
           <>
             <Card>
               <CardHead
-                nodeLeft={<CreateDaoCardStepNumber number={3} />}
+                nodeLeft={
+                  <CreateDaoCardStepNumber number={currentStepNumber} />
+                }
                 title="General voting settings"
               />
               <CardDescription>
