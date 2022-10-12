@@ -62,23 +62,6 @@ const parseJSON = (path) => {
   }
 }
 
-const executeABITypesGenerator = (jsonPath) => {
-  exec(
-    `yarn abi-types-generator "${jsonPath}" --output=./src/interfaces/abi-typings --provider=ethers_v5`,
-    (error, stdout, stderr) => {
-      if (error) {
-        console.log(`error: ${error.message}`)
-        return
-      }
-      if (stderr) {
-        console.log(`stderr: ${stderr}`)
-        return
-      }
-      console.log(`stdout: ${stdout}`)
-    }
-  )
-}
-
 abiUpdateAllFilesList.map((f) => {
   const jsonPath = f.dirPath + "/" + f.file
 
@@ -89,6 +72,16 @@ abiUpdateAllFilesList.map((f) => {
     ABI_PATH + "/" + f.file.substring(0, f.file.length - 5) + ".json",
     jsonContent
   )
+})
 
-  executeABITypesGenerator(jsonPath)
+exec(`yarn run lint-abi`, (error, stdout, stderr) => {
+  if (error) {
+    console.log(`error: ${error.message}`)
+    return
+  }
+  if (stderr) {
+    console.log(`stderr: ${stderr}`)
+    return
+  }
+  console.log(`stdout: ${stdout}`)
 })

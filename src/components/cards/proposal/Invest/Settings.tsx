@@ -25,7 +25,7 @@ import { accordionSummaryVariants } from "motion/variants"
 import { Flex } from "theme"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { SettingsStyled as S } from "./styled"
-import { TraderPoolInvestProposalType } from "interfaces/abi-typings"
+import { TraderPoolInvestProposal } from "interfaces/typechain"
 
 interface Values {
   timestampLimit: number
@@ -69,7 +69,7 @@ interface Props {
   timestamp: BigNumber
   maxSizeLP: BigNumber
   fullness: BigNumber
-  proposalPool: TraderPoolInvestProposalType | null
+  proposalPool: TraderPoolInvestProposal | null
   proposalId: string
   successCallback: (timestamp: number, maxSize: BigNumber) => void
 }

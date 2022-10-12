@@ -44,10 +44,10 @@ import settingsIcon from "assets/icons/settings.svg"
 import settingsGreenIcon from "assets/icons/settings-green.svg"
 import useRequestDividendsContext from "modals/RequestDividend/useRequestDividendsContext"
 import { useProposalAddress } from "hooks/useContract"
-import { ProposalsResponse } from "interfaces/abi-typings/TraderPoolInvestProposal"
+import { IInvestProposalInfo } from "interfaces/contracts/ITraderPoolInvestProposal"
 
 interface Props {
-  proposal: ProposalsResponse
+  proposal: IInvestProposalInfo[0]
   poolAddress: string
 }
 

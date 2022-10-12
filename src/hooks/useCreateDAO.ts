@@ -49,7 +49,7 @@ const useCreateDAO = () => {
   )
 
   const createPool = useCallback(async () => {
-    if (!factory) return
+    if (!factory || !account) return
 
     setPayload(SubmitState.SIGN)
 

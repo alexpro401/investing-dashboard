@@ -6,7 +6,6 @@ import { useActiveWeb3React } from "hooks"
 import { usePoolContract } from "hooks/usePool"
 import useRiskyProposals from "hooks/useRiskyProposals"
 import { useTraderPoolRiskyProposalContract } from "contracts"
-import { useProposalAddress } from "hooks/useContract"
 
 import LoadMore from "components/LoadMore"
 import RiskyProposalCard from "components/cards/proposal/Risky"
@@ -19,8 +18,7 @@ interface IProps {
 
 const FundProposalsRisky: FC<IProps> = ({ poolAddress }) => {
   const { account } = useActiveWeb3React()
-  const proposalAddress = useProposalAddress(poolAddress)
-  const proposalPool = useTraderPoolRiskyProposalContract(proposalAddress)
+  const proposalPool = useTraderPoolRiskyProposalContract(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
   const [{ data, loading }, fetchMore] = useRiskyProposals(poolAddress)
 

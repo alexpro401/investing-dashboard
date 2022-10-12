@@ -3,22 +3,23 @@ import { useTraderPoolRiskyProposalContract } from "contracts"
 import { useProposalAddress } from "hooks/useContract"
 import { debounce } from "lodash"
 
-import { ProposalsResponse } from "interfaces/abi-typings/TraderPoolRiskyProposal"
-import { IRiskyProposalInvestmentsInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
-import { TraderPoolRiskyProposalType } from "interfaces/abi-typings"
+import {
+  IRiskyProposalInfo,
+  IRiskyProposalInvestmentsInfo,
+} from "interfaces/contracts/ITraderPoolRiskyProposal"
 
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
+import { TraderPoolRiskyProposal } from "interfaces/typechain"
 
 export function useRiskyProposals(
   poolAddress?: string
-): [{ data: ProposalsResponse[]; loading: boolean }, () => void] {
-  const [proposals, setProposals] = useState<ProposalsResponse[]>([])
+): [{ data: IRiskyProposalInfo; loading: boolean }, () => void] {
+  const [proposals, setProposals] = useState<IRiskyProposalInfo>([])
   const [offset, setOffset] = useState<number>(0)
   const [fetching, setFetching] = useState<boolean>(true)
   const [allFetched, setAllFetched] = useState<boolean>(false)
 
-  const proposalAddress = useProposalAddress(poolAddress)
-  const riskyProposal = useTraderPoolRiskyProposalContract(proposalAddress)
+  const riskyProposal = useTraderPoolRiskyProposalContract(poolAddress)
 
   const fetchProposals = useCallback(async () => {
     if (riskyProposal !== null && !allFetched) {
@@ -57,15 +58,15 @@ export function useRiskyProposal(
   poolAddress?: string,
   index?: string
 ): [
-  ProposalsResponse | undefined,
-  TraderPoolRiskyProposalType | null,
+  IRiskyProposalInfo[0] | undefined,
+  TraderPoolRiskyProposal | null,
   string,
   () => void
 ] {
-  const [proposal, setProposal] = useState<ProposalsResponse | undefined>()
+  const [proposal, setProposal] = useState<IRiskyProposalInfo[0] | undefined>()
   const [update, setUpdate] = useState(false)
   const proposalAddress = useProposalAddress(poolAddress)
-  const riskyProposal = useTraderPoolRiskyProposalContract(proposalAddress)
+  const riskyProposal = useTraderPoolRiskyProposalContract(poolAddress)
 
   const refresh = useCallback(() => {
     setUpdate(!update)
@@ -90,9 +91,10 @@ export function useActiveInvestmentsInfo(
   account?: string | null | undefined,
   index?: string
 ) {
-  const [info, setInfo] = useState<IRiskyProposalInvestmentsInfo | undefined>()
-  const proposalAddress = useProposalAddress(poolAddress)
-  const riskyProposal = useTraderPoolRiskyProposalContract(proposalAddress)
+  const [info, setInfo] = useState<
+    IRiskyProposalInvestmentsInfo[0] | undefined
+  >()
+  const riskyProposal = useTraderPoolRiskyProposalContract(poolAddress)
 
   useEffect(() => {
     if (!riskyProposal || !index || !account) return

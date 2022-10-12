@@ -22,7 +22,6 @@ const PRICE_HISTORY_LAST = `
     orderBy: timestamp,
     orderDirection: desc,
     where: {
-      isLast: true,
       aggregationType_gte: 0,
       aggregationType_lte: 0,
     }) {

@@ -26,7 +26,7 @@ import { accordionSummaryVariants } from "motion/variants"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { SettingsStyled as S } from "./styled"
 import { useUserAgreement } from "state/user/hooks"
-import { TraderPoolRiskyProposalType } from "interfaces/abi-typings"
+import { TraderPoolRiskyProposal } from "interfaces/typechain"
 
 interface Values {
   timestampLimit: number
@@ -71,7 +71,7 @@ interface Props {
   maxInvestPrice: BigNumber
   fullness: BigNumber
   currentPrice: BigNumber
-  proposalPool: TraderPoolRiskyProposalType
+  proposalPool: TraderPoolRiskyProposal
   proposalId: number
   proposalSymbol?: string
   poolAddress: string
