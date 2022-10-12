@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux"
-import useContract from "hooks/useContract"
+import useContract, { useProposalAddress } from "hooks/useContract"
 
 import {
   ERC20 as ERC20_ABI,
@@ -118,14 +118,18 @@ export function useTraderPoolContract(address: Address) {
   return useContract<TraderPool>(address, TraderPool_ABI)
 }
 
-export function useTraderPoolInvestProposalContract(address: Address) {
+export function useTraderPoolInvestProposalContract(poolAddress: Address) {
+  const address = useProposalAddress(poolAddress)
+
   return useContract<TraderPoolInvestProposal>(
     address,
     TraderPoolInvestProposal_ABI
   )
 }
 
-export function useTraderPoolRiskyProposalContract(address: Address) {
+export function useTraderPoolRiskyProposalContract(poolAddress: Address) {
+  const address = useProposalAddress(poolAddress)
+
   return useContract<TraderPoolRiskyProposal>(
     address,
     TraderPoolRiskyProposal_ABI
