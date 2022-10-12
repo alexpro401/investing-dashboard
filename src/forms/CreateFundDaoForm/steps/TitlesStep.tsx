@@ -58,14 +58,6 @@ const TitlesStep: FC = () => {
   const { tokenAddress, nftAddress, totalPowerInTokens, nftsTotalSupply } =
     daoPoolFormContext.userKeeperParams
 
-  const [someComplexObject, setSomeComplexObject] = useState({
-    fullName: {
-      yopta: "nenada",
-      firstName: "",
-      lastName: { ancestor: "", default: "" },
-    },
-  })
-
   const { getFieldErrorMessage, touchField, isFieldValid } = useFormValidation(
     {
       avatarUrl: avatarUrl.get,
@@ -79,14 +71,12 @@ const TitlesStep: FC = () => {
       nftAddress: nftAddress.get,
       totalPowerInTokens: totalPowerInTokens.get,
       nftsTotalSupply: nftsTotalSupply.get,
-
-      someComplexObject,
     },
     {
-      // avatarUrl: { required },
-      // daoName: { required, minLength: minLength(6) },
-      // websiteUrl: { required },
-      // description: { required },
+      avatarUrl: { required },
+      daoName: { required, minLength: minLength(6) },
+      websiteUrl: { required },
+      description: { required },
       documents: {
         required,
         $every: {
@@ -95,28 +85,16 @@ const TitlesStep: FC = () => {
         },
       },
 
-      // someComplexObject: {
-      //   required,
-      //   fullName: {
-      //     required,
-      //     firstName: { required },
-      //     lastName: {
-      //       ancestor: { required },
-      //       default: { required, minLength: minLength(6) },
-      //     },
-      //   },
-      // },
-
-      // ...(isErc20.get
-      //   ? { tokenAddress: { required, isAddressValidator } }
-      //   : {}),
-      // ...(isErc721.get
-      //   ? {
-      //       nftAddress: { required, isAddressValidator },
-      //       totalPowerInTokens: { required },
-      //       nftsTotalSupply: { required },
-      //     }
-      //   : {}),
+      ...(isErc20.get
+        ? { tokenAddress: { required, isAddressValidator } }
+        : {}),
+      ...(isErc721.get
+        ? {
+            nftAddress: { required, isAddressValidator },
+            totalPowerInTokens: { required },
+            nftsTotalSupply: { required },
+          }
+        : {}),
     }
   )
 
