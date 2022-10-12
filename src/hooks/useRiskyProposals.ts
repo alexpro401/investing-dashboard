@@ -19,8 +19,7 @@ export function useRiskyProposals(
   const [fetching, setFetching] = useState<boolean>(true)
   const [allFetched, setAllFetched] = useState<boolean>(false)
 
-  const proposalAddress = useProposalAddress(poolAddress)
-  const riskyProposal = useTraderPoolRiskyProposalContract(proposalAddress)
+  const riskyProposal = useTraderPoolRiskyProposalContract(poolAddress)
 
   const fetchProposals = useCallback(async () => {
     if (riskyProposal !== null && !allFetched) {
@@ -67,7 +66,7 @@ export function useRiskyProposal(
   const [proposal, setProposal] = useState<IRiskyProposalInfo[0] | undefined>()
   const [update, setUpdate] = useState(false)
   const proposalAddress = useProposalAddress(poolAddress)
-  const riskyProposal = useTraderPoolRiskyProposalContract(proposalAddress)
+  const riskyProposal = useTraderPoolRiskyProposalContract(poolAddress)
 
   const refresh = useCallback(() => {
     setUpdate(!update)
@@ -95,8 +94,7 @@ export function useActiveInvestmentsInfo(
   const [info, setInfo] = useState<
     IRiskyProposalInvestmentsInfo[0] | undefined
   >()
-  const proposalAddress = useProposalAddress(poolAddress)
-  const riskyProposal = useTraderPoolRiskyProposalContract(proposalAddress)
+  const riskyProposal = useTraderPoolRiskyProposalContract(poolAddress)
 
   useEffect(() => {
     if (!riskyProposal || !index || !account) return

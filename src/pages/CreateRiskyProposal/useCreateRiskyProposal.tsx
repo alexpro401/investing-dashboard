@@ -11,7 +11,6 @@ import usePayload from "hooks/usePayload"
 import { useTraderPool } from "hooks/usePool"
 import { useBasicPoolContract } from "contracts"
 import { useTraderPoolRiskyProposalContract } from "contracts"
-import { useProposalAddress } from "hooks/useContract"
 
 import { ZERO } from "constants/index"
 import { IValidationError, SubmitState } from "constants/types"
@@ -47,8 +46,7 @@ const useCreateRiskyProposal = (
   const addTransaction = useTransactionAdder()
   const { account } = useWeb3React()
   const initialTimeLimit = shortTimestamp(getTime(addDays(new Date(), 30)))
-  const proposalAddress = useProposalAddress(poolAddress)
-  const riskyProposal = useTraderPoolRiskyProposalContract(proposalAddress)
+  const riskyProposal = useTraderPoolRiskyProposalContract(poolAddress)
 
   const basicTraderPool = useBasicPoolContract(poolAddress)
   const traderPool = useTraderPool(poolAddress)
