@@ -6,7 +6,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
 } from "react"
 import { debounce } from "lodash"
 
@@ -46,6 +45,7 @@ import { isAddress, isValidUrl } from "utils"
 import { useERC20 } from "hooks/useERC20"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
+import { stepsControllerContext } from "context/StepsControllerContext"
 
 const TitlesStep: FC = () => {
   const daoPoolFormContext = useContext(FundDaoCreatingContext)
@@ -58,47 +58,50 @@ const TitlesStep: FC = () => {
   const { tokenAddress, nftAddress, totalPowerInTokens, nftsTotalSupply } =
     daoPoolFormContext.userKeeperParams
 
-  const { getFieldErrorMessage, touchField, isFieldValid } = useFormValidation(
-    {
-      avatarUrl: avatarUrl.get,
-      daoName: daoName.get,
-      websiteUrl: websiteUrl.get,
-      description: description.get,
-      documents: documents.get,
+  const { getFieldErrorMessage, touchField, isFieldValid, isFormValid } =
+    useFormValidation(
+      {
+        avatarUrl: avatarUrl.get,
+        daoName: daoName.get,
+        websiteUrl: websiteUrl.get,
+        description: description.get,
+        documents: documents.get,
 
-      tokenAddress: tokenAddress.get,
+        tokenAddress: tokenAddress.get,
 
-      nftAddress: nftAddress.get,
-      totalPowerInTokens: totalPowerInTokens.get,
-      nftsTotalSupply: nftsTotalSupply.get,
-    },
-    {
-      avatarUrl: { required },
-      daoName: { required, minLength: minLength(6) },
-      websiteUrl: { required },
-      description: { required },
-      documents: {
-        required,
-        $every: {
-          name: { required },
-          url: { required, isUrl },
-        },
+        nftAddress: nftAddress.get,
+        totalPowerInTokens: totalPowerInTokens.get,
+        nftsTotalSupply: nftsTotalSupply.get,
       },
+      {
+        avatarUrl: { required },
+        daoName: { required, minLength: minLength(6) },
+        websiteUrl: { required },
+        description: { required },
+        documents: {
+          required,
+          $every: {
+            name: { required },
+            url: { required, isUrl },
+          },
+        },
 
-      ...(isErc20.get
-        ? { tokenAddress: { required, isAddressValidator } }
-        : {}),
-      ...(isErc721.get
-        ? {
-            nftAddress: { required, isAddressValidator },
-            totalPowerInTokens: { required },
-            nftsTotalSupply: { required },
-          }
-        : {}),
-    }
-  )
+        ...(isErc20.get
+          ? { tokenAddress: { required, isAddressValidator } }
+          : {}),
+        ...(isErc721.get
+          ? {
+              nftAddress: { required, isAddressValidator },
+              totalPowerInTokens: { required },
+              nftsTotalSupply: { required },
+            }
+          : {}),
+      }
+    )
 
   const { chainId } = useActiveWeb3React()
+
+  const { nextCb } = useContext(stepsControllerContext)
 
   const [, erc20TokenData, , erc20TokenInit] = useERC20(tokenAddress.get)
   const erc20TokenExplorerLink = useMemo(() => {
@@ -130,6 +133,12 @@ const TitlesStep: FC = () => {
   useEffect(() => {
     handleErc20Input(tokenAddress.get)
   }, [handleErc20Input, tokenAddress.get])
+
+  const handleNextStep = () => {
+    if (!isFormValid()) return
+
+    nextCb()
+  }
 
   return (
     <>
@@ -407,8 +416,14 @@ const TitlesStep: FC = () => {
                     <></>
                   )
                 }
-                errorMessage={getFieldErrorMessage(`documents[${idx}].name`)}
-                onBlur={() => touchField(`documents[${idx}].name`)}
+                errorMessage={
+                  getFieldErrorMessage(`documents[${idx}].url`) ||
+                  getFieldErrorMessage(`documents[${idx}].name`)
+                }
+                onBlur={() => {
+                  touchField(`documents[${idx}].name`)
+                  touchField(`documents[${idx}].url`)
+                }}
               />
             ))}
           </CardFormControl>
@@ -421,7 +436,7 @@ const TitlesStep: FC = () => {
           />
         </Card>
       </S.StepsRoot>
-      <S.StepsBottomNavigation />
+      <S.StepsBottomNavigation customNextCb={handleNextStep} />
     </>
   )
 }

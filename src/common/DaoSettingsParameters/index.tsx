@@ -1,16 +1,21 @@
-import { Card, CardDescription, CardFormControl, CardHead, Icon } from "common"
+import {
+  Card,
+  CardDescription,
+  CardFormControl,
+  CardHead,
+  Icon,
+} from "../index"
+import { ICON_NAMES } from "constants/icon-names"
 import Switch from "components/Switch"
 import { InputField } from "fields"
-
 import { FC, HTMLAttributes } from "react"
 import { DaoProposalSettingsForm } from "context/FundDaoCreatingContext"
-import { ICON_NAMES } from "constants/icon-names"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   poolParameters: DaoProposalSettingsForm
 }
 
-const CreateDaoPoolParameters: FC<Props> = ({ poolParameters }) => {
+const DaoSettingsParameters: FC<Props> = ({ poolParameters }) => {
   const {
     delegatedVotingAllowed,
     duration,
@@ -159,4 +164,4 @@ const CreateDaoPoolParameters: FC<Props> = ({ poolParameters }) => {
   )
 }
 
-export default CreateDaoPoolParameters
+export default DaoSettingsParameters

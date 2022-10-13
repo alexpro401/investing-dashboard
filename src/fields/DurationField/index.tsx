@@ -16,6 +16,7 @@ type Duration = {
 interface Props<V extends string | number> extends InputFieldProps<V> {}
 
 function DurationField<V extends string | number>({
+  value,
   setValue,
   label,
   labelNodeRight,
@@ -68,6 +69,10 @@ function DurationField<V extends string | number>({
     )
   }, [])
 
+  const parseSeconds = useCallback((seconds: number | string) => {
+    // TODO: Implement
+  }, [])
+
   const parsedDurationString = useMemo(() => {
     const { years, months, weeks, days, hours, minutes, seconds } =
       parsedDuration
@@ -104,12 +109,22 @@ function DurationField<V extends string | number>({
     }
   }, [convertToSeconds, parsedDuration, setValue])
 
+  const handleInput = useCallback(
+    (e) => {
+      if (setValue) {
+        setValue("" as V)
+      }
+      setIsDropdownOpen(!!e.currentTarget.value)
+    },
+    [setValue]
+  )
+
   return (
     <S.Root {...rest}>
       <InputField
         value={localValue}
         setValue={setLocalValue}
-        onInput={(e) => setIsDropdownOpen(!!e.currentTarget.value)}
+        onInput={handleInput}
         onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
         label={label}
         labelNodeRight={labelNodeRight}

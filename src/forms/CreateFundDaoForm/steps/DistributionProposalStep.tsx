@@ -1,11 +1,12 @@
 import { FC, useContext } from "react"
-import { CreateDaoCardStepNumber, CreateDaoPoolParameters } from "../components"
+import { CreateDaoCardStepNumber } from "../components"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import {
   AppButton,
   Card,
   CardDescription,
   CardHead,
+  DaoSettingsParameters,
   StepsNavigation,
 } from "common"
 
@@ -46,7 +47,7 @@ const DistributionProposalStep: FC = () => {
               </CardDescription>
             </Card>
             <S.CenteredImage src={CreateFundDocsImage} />
-            <CreateDaoPoolParameters
+            <DaoSettingsParameters
               poolParameters={distributionProposalSettingsForm}
             />
           </>

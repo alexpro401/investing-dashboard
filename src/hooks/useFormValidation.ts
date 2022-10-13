@@ -294,13 +294,22 @@ export const useFormValidation = (
     [validationState]
   )
 
-  const isFormValid = useCallback((): boolean => {
-    for (const key in validationState) {
-      touchField(key)
-      if (validationState[key].isInvalid) return false
-    }
-    return true
-  }, [touchField, validationState])
+  const isFormValid = useCallback(
+    (fieldState = validationState): boolean => {
+      let _isFormValid = true
+
+      // TODO: isFormValid is not working for nested fields
+      for (const key in fieldState) {
+        touchField(key)
+        if (fieldState[key].isInvalid) {
+          _isFormValid = false
+        }
+      }
+
+      return _isFormValid
+    },
+    [touchField, validationState]
+  )
 
   const getFieldErrorMessage = useCallback(
     (fieldPath: string) => {
