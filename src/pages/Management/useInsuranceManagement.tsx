@@ -85,6 +85,19 @@ const useInsuranceManagement = () => {
     setInsuranceAmount(userInsurance[1])
   }, [account, insurance])
 
+  const handleError = useCallback(
+    (error) => {
+      setLoading(SubmitState.IDLE)
+      if (!!error && !!error.data && !!error.data.message) {
+        setError(error.data.message)
+      } else {
+        const errorMessage = parseTransactionError(error.toString())
+        !!errorMessage && setError(errorMessage)
+      }
+    },
+    [setError, setLoading]
+  )
+
   const handleSubmit = useCallback(() => {
     setLoading(SubmitState.SIGN)
 
@@ -119,22 +132,16 @@ const useInsuranceManagement = () => {
     }
 
     ;(direction === "deposit" ? handleBuy() : handleSell()).catch((error) => {
-      setLoading(SubmitState.IDLE)
-      if (!!error && !!error.data && !!error.data.message) {
-        setError(error.data.message)
-      } else {
-        const errorMessage = parseTransactionError(error.toString())
-        !!errorMessage && setError(errorMessage)
-      }
+      handleError(error)
     })
   }, [
+    handleError,
     addTransaction,
     direction,
     fetchInsuranceBalance,
     fromAmount,
     insurance,
     refetchBalance,
-    setError,
     setLoading,
     toAmount,
   ])
@@ -165,10 +172,11 @@ const useInsuranceManagement = () => {
       }
     }
 
-    approveToken().catch(() => {
-      setLoading(SubmitState.IDLE)
+    approveToken().catch((error) => {
+      handleError(error)
     })
   }, [
+    handleError,
     account,
     addTransaction,
     dexeAddress,

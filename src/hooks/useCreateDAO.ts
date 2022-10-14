@@ -168,6 +168,8 @@ const useCreateDAO = () => {
         const errorMessage = parseTransactionError(error.toString())
         !!errorMessage && setError(errorMessage)
       }
+    } finally {
+      setPayload(SubmitState.IDLE)
     }
   }, [
     account,
