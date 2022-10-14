@@ -1,38 +1,21 @@
-import { BigNumber } from "@ethersproject/bignumber"
+import { TraderPoolRiskyProposal } from "interfaces/typechain"
 
-/*
-   # Contract TraderPoolRiskyProposal
-*/
+export type IRiskyProposalInfo = Awaited<
+  ReturnType<TraderPoolRiskyProposal["getProposalInfos"]>
+>
 
-// method: getActiveInvestmentsInfo()
-export interface IRiskyProposalInvestmentsInfo {
-  baseInvested: BigNumber
-  baseShare: BigNumber
-  lp2Balance: BigNumber
-  lpInvested: BigNumber
-  positionShare: BigNumber
-  proposalId: BigNumber
-}
+export type IRiskyProposalExchangeAmount = Awaited<
+  ReturnType<TraderPoolRiskyProposal["getExchangeAmount"]>
+>
 
-// method: getProposalInfos()
-export interface IRiskyProposal {
-  lp2Supply: BigNumber
-  proposalInfo: RiskyProposalInfo
-  positionTokenPrice: BigNumber
-  totalProposalBase: BigNumber
-  totalProposalUSD: BigNumber
-  totalInvestors: BigNumber
-}
-interface RiskyProposalInfo {
-  balanceBase: BigNumber
-  balancePosition: BigNumber
-  lpLocked: BigNumber
-  proposalLimits: RiskyProposalLimits
-  token: string
-  tokenDecimals: BigNumber
-}
-interface RiskyProposalLimits {
-  investLPLimit: BigNumber
-  maxTokenPriceLimit: BigNumber
-  timestampLimit: BigNumber
-}
+export type IRiskyProposalInvestmentsInfo = Awaited<
+  ReturnType<TraderPoolRiskyProposal["getActiveInvestmentsInfo"]>
+>
+
+export type IRiskyProposalInvestTokens = Awaited<
+  ReturnType<TraderPoolRiskyProposal["getInvestTokens"]>
+>
+
+export type IDivestAmounts = Awaited<
+  ReturnType<TraderPoolRiskyProposal["getDivestAmounts"]>
+>

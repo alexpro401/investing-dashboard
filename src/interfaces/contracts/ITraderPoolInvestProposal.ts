@@ -1,26 +1,11 @@
-import { BigNumber } from "@ethersproject/bignumber"
+import { TraderPoolInvestProposal } from "interfaces/typechain"
 
-/*
-   # Contract TraderPoolInvestProposal
-*/
-
-// method: getActiveInvestmentsInfo()
-export interface IInvestProposalInvestmentsInfo {
-  baseInvested: BigNumber
-  lp2Balance: BigNumber
-  lpInvested: BigNumber
-  proposalId: BigNumber
-}
-
-interface IReception {
-  amounts: BigNumber[]
-  tokens: string[]
-}
-
-// method: getRewards()
-export interface IInvestProposalRewards {
-  totalUsdAmount: BigNumber
-  totalBaseAmount: BigNumber
-  baseAmountFromRewards: BigNumber
-  rewards: IReception[]
-}
+export type IInvestProposalInfo = Awaited<
+  ReturnType<TraderPoolInvestProposal["getProposalInfos"]>
+>
+export type IInvestProposalActiveInvestmentsInfo = Awaited<
+  ReturnType<TraderPoolInvestProposal["getActiveInvestmentsInfo"]>
+>
+export type IInvestProposalRewards = Awaited<
+  ReturnType<TraderPoolInvestProposal["getRewards"]>
+>

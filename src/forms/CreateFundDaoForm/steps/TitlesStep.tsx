@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from "react"
 import { debounce } from "lodash"
 
@@ -35,7 +36,12 @@ import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 import { readFromClipboard } from "utils/clipboard"
 import { useFormValidation } from "hooks/useFormValidation"
-import { isAddressValidator, isUrl, required } from "utils/validators"
+import {
+  isAddressValidator,
+  isUrl,
+  minLength,
+  required,
+} from "utils/validators"
 import { isAddress, isValidUrl } from "utils"
 import { useERC20 } from "hooks/useERC20"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
@@ -68,10 +74,16 @@ const TitlesStep: FC = () => {
     },
     {
       avatarUrl: { required },
-      daoName: { required },
+      daoName: { required, minLength: minLength(6) },
       websiteUrl: { required },
       description: { required },
-      documents: { required },
+      documents: {
+        required,
+        $every: {
+          name: { required },
+          url: { required, isUrl },
+        },
+      },
 
       ...(isErc20.get
         ? { tokenAddress: { required, isAddressValidator } }
@@ -395,7 +407,8 @@ const TitlesStep: FC = () => {
                     <></>
                   )
                 }
-                // errorMessage={getFieldErrorMessage(`documents[${idx}]`)}
+                errorMessage={getFieldErrorMessage(`documents[${idx}].name`)}
+                onBlur={() => touchField(`documents[${idx}].name`)}
               />
             ))}
           </CardFormControl>

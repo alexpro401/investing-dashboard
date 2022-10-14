@@ -22,7 +22,6 @@ import { percentageOfBignumbers } from "utils/formulas"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import { ProposalsResponse } from "interfaces/abi-typings/TraderPoolRiskyProposal"
 import { selectPriceFeedAddress } from "state/contracts/selectors"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
@@ -41,15 +40,16 @@ import SharedS, { BodyItem } from "components/cards/proposal/styled"
 import settingsIcon from "assets/icons/settings.svg"
 import settingsGreenIcon from "assets/icons/settings-green.svg"
 import useTokenRating from "hooks/useTokenRating"
-import { TraderPoolRiskyProposalType } from "interfaces/abi-typings"
+import { TraderPoolRiskyProposal } from "interfaces/typechain"
+import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
 
 const MAX_INVESTORS_COUNT = 1000
 
 interface Props {
-  proposal: ProposalsResponse
+  proposal: IRiskyProposalInfo[0]
   proposalId: number
   poolAddress: string
-  proposalPool: TraderPoolRiskyProposalType
+  proposalPool: TraderPoolRiskyProposal
   isTrader: boolean
   poolInfo: IPoolInfo
 }

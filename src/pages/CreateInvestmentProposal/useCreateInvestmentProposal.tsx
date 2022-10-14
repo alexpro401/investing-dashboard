@@ -80,8 +80,13 @@ const useCreateInvestmentProposal = (
   const updateTotalProposals = useCallback(async () => {
     if (!investProposal) return
 
-    const total = await investProposal.proposalsTotalNum()
-    setTotalProposals(total.toNumber())
+    try {
+      const total = await investProposal.proposalsTotalNum()
+
+      setTotalProposals(total.toNumber())
+    } catch (e) {
+      console.error(e)
+    }
   }, [investProposal])
 
   const handleValidate = useCallback(() => {
@@ -118,12 +123,11 @@ const useCreateInvestmentProposal = (
     return !errors.length
   }, [investLPLimit, lpAmount])
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(async () => {
     if (!investTraderPool || !traderPool) return
-
     if (!handleValidate()) return
 
-    const createInvestProposal = async () => {
+    try {
       setSubmiting(SubmitState.SIGN)
       setError("")
       const amount = parseEther(lpAmount).toHexString()
@@ -160,9 +164,7 @@ const useCreateInvestmentProposal = (
       if (isTxMined(receipt)) {
         setSubmiting(SubmitState.SUCCESS)
       }
-    }
-
-    createInvestProposal().catch((error) => {
+    } catch (error: any) {
       setSubmiting(SubmitState.IDLE)
 
       if (!!error && !!error.data && !!error.data.message) {
@@ -171,8 +173,23 @@ const useCreateInvestmentProposal = (
         const errorMessage = parseTransactionError(error.toString())
         !!errorMessage && setError(errorMessage)
       }
-    })
-  }
+    } finally {
+      setSubmiting(SubmitState.IDLE)
+    }
+  }, [
+    account,
+    addTransaction,
+    description,
+    handleValidate,
+    investLPLimit,
+    investTraderPool,
+    lpAmount,
+    setError,
+    setSubmiting,
+    ticker,
+    timestampLimit,
+    traderPool,
+  ])
 
   // update balance
   useEffect(() => {

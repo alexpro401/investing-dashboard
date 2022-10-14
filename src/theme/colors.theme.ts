@@ -5,7 +5,7 @@ const brandColors = {
 
 const backgroundColors = {
   primary: "#0E121B",
-  secondary: "#141926",
+  secondary: "#181E2C",
 }
 
 const textColors = {

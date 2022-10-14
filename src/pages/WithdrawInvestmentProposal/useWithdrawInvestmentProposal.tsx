@@ -235,7 +235,7 @@ const useWithdrawInvestmentProposal = (
         !!errorMessage && setError(errorMessage)
       }
     } finally {
-      setPayload(SubmitState.SUCCESS)
+      setPayload(SubmitState.IDLE)
     }
   }, [
     investProposalContract,

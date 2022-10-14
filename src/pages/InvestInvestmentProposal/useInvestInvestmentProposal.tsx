@@ -25,7 +25,7 @@ import { RiskyForm } from "interfaces/exchange"
 import { ZERO } from "constants/index"
 import { SubmitState } from "constants/types"
 import { DATE_TIME_FORMAT } from "constants/time"
-import { GetDivestAmountsAndCommissionsResponse } from "interfaces/abi-typings/TraderPool"
+import { IDivestAmountsAndCommissions } from "interfaces/contracts/ITraderPool"
 
 import {
   expandTimestamp,
@@ -208,20 +208,28 @@ const useInvestInvestmentProposal = (
   const getLPBalance = useCallback(async () => {
     if (!traderPool || !account) return
 
-    const lpAvailable = await traderPool?.balanceOf(account)
+    try {
+      const lpAvailable = await traderPool.balanceOf(account)
 
-    setLPBalance(lpAvailable)
+      setLPBalance(lpAvailable)
+    } catch (e) {
+      console.error(e)
+    }
   }, [account, traderPool])
 
   const getLP2Balance = useCallback(async () => {
     if (!proposalPool || !account) return
 
-    const balance = await proposalPool?.balanceOf(
-      account,
-      Number(proposalId) + 1
-    )
+    try {
+      const balance = await proposalPool.balanceOf(
+        account,
+        Number(proposalId) + 1
+      )
 
-    setLP2Balance(balance)
+      setLP2Balance(balance)
+    } catch (e) {
+      console.error(e)
+    }
   }, [account, proposalId, proposalPool])
 
   const runUpdate = useCallback(() => {
@@ -232,17 +240,20 @@ const useInvestInvestmentProposal = (
   }, [getLP2Balance, getLPBalance, updateProposal, updatePoolPrice])
 
   const getDivestTokens = useCallback(
-    async (
-      amount: BigNumber
-    ): Promise<GetDivestAmountsAndCommissionsResponse> => {
+    async (amount: BigNumber): Promise<IDivestAmountsAndCommissions> => {
       if (!account || !traderPool)
         return new Promise((resolve, reject) => reject(null))
 
-      const divests = await traderPool.getDivestAmountsAndCommissions(
-        account,
-        amount
-      )
-      return divests
+      try {
+        const divests = await traderPool.getDivestAmountsAndCommissions(
+          account,
+          amount
+        )
+        return divests
+      } catch (e) {
+        return new Promise((resolve, reject) => reject(null))
+        console.error(e)
+      }
     },
     [account, traderPool]
   )
@@ -280,6 +291,8 @@ const useInvestInvestmentProposal = (
         const errorMessage = parseTransactionError(error.toString())
         !!errorMessage && setError(errorMessage)
       }
+    } finally {
+      setWalletPrompting(SubmitState.IDLE)
     }
   }, [
     traderPool,

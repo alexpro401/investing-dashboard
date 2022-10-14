@@ -117,7 +117,7 @@ function useFundFee(
   // TECHNICAL DATA (used for calculation purposes only)
 
   // Investors commission info
-  const [_investorsInfo, _setInvestorsInfo] = useState<IUserFeeInfo[]>([])
+  const [_investorsInfo, _setInvestorsInfo] = useState<IUserFeeInfo>([])
 
   // Funds under pool management in baseToken (without trader funds)
   const _fundsUnderManagementBase = useMemo<BigNumber>(() => {
@@ -310,7 +310,7 @@ function useFundFee(
     if (!traderPool || !account) return
     ;(async () => {
       try {
-        const usersInfo: IUserFeeInfo[] = await traderPool.getUsersInfo(
+        const usersInfo: IUserFeeInfo = await traderPool.getUsersInfo(
           account,
           0,
           1000
@@ -443,7 +443,7 @@ function useFundFee(
 
   // Get ranges with investors
   const _getInvestorsRanges = useCallback(
-    async (investors: IUserFeeInfo[]) => {
+    async (investors: IUserFeeInfo) => {
       if (!priceFeed || !chainId || !gas || !poolGraphData) {
         return { ranges: [], amountBase: BIG_ZERO, amountLP: BIG_ZERO }
       }

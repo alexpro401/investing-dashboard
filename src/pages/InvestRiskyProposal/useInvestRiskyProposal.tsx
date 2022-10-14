@@ -39,13 +39,15 @@ import { parseEther, parseUnits } from "@ethersproject/units"
 import { ZERO } from "constants/index"
 import useRiskyPosition from "hooks/useRiskyPosition"
 import { useERC20Data } from "state/erc20/hooks"
-import { GetDivestAmountsAndCommissionsResponse } from "interfaces/abi-typings/TraderPool"
 import { useProposalAddress } from "hooks/useContract"
 import {
-  GetInvestTokensResponse,
-  ReceptionsResponse as DivestsReceptionsResponse,
-} from "interfaces/abi-typings/TraderPoolRiskyProposal"
-import { ReceptionsResponse as InvestsReceptionsResponse } from "interfaces/abi-typings/TraderPool"
+  IDivestAmountsAndCommissions,
+  IInvestTokens,
+} from "interfaces/contracts/ITraderPool"
+import {
+  IDivestAmounts,
+  IRiskyProposalInvestTokens,
+} from "interfaces/contracts/ITraderPoolRiskyProposal"
 
 const useInvestRiskyProposal = (
   poolAddress?: string,
@@ -125,7 +127,7 @@ const useInvestRiskyProposal = (
   const traderPool = useTraderPoolContract(poolAddress)
   const basicPool = useBasicPoolContract(poolAddress)
   const proposalAddress = useProposalAddress(poolAddress)
-  const proposalPool = useTraderPoolRiskyProposalContract(proposalAddress)
+  const proposalPool = useTraderPoolRiskyProposalContract(poolAddress)
   const [proposal] = useRiskyProposal(poolAddress, proposalId)
   const [, poolInfo] = usePoolContract(poolAddress)
   const priceFeed = usePriceFeedContract()
@@ -377,9 +379,7 @@ const useInvestRiskyProposal = (
   }, [account, direction, traderPool])
 
   const getLP2Balance = useCallback(async () => {
-    if (!investmentsInfo) return
-
-    const balance = investmentsInfo.lp2Balance
+    const balance = !investmentsInfo ? ZERO : investmentsInfo.lp2Balance
 
     if (direction === "deposit") {
       setToBalance(balance)
@@ -391,9 +391,7 @@ const useInvestRiskyProposal = (
   const getInvestTokens = useCallback(
     async (
       amount: BigNumber
-    ): Promise<
-      [GetDivestAmountsAndCommissionsResponse, GetInvestTokensResponse]
-    > => {
+    ): Promise<[IDivestAmountsAndCommissions, IRiskyProposalInvestTokens]> => {
       if (!account || !proposalPool || !traderPool)
         return new Promise((resolve, reject) => reject(null))
 
@@ -412,9 +410,7 @@ const useInvestRiskyProposal = (
   )
 
   const getDivestTokens = useCallback(
-    async (
-      amount: BigNumber
-    ): Promise<[DivestsReceptionsResponse, InvestsReceptionsResponse]> => {
+    async (amount: BigNumber): Promise<[IDivestAmounts, IInvestTokens]> => {
       if (!proposalPool || !traderPool)
         return new Promise((resolve, reject) => reject(null))
       const divests = await proposalPool.getDivestAmounts(
@@ -640,23 +636,26 @@ const useInvestRiskyProposal = (
     }
   }, [direction, poolPriceBase, poolPriceUSD, riskyPriceBase, riskyPriceUSD])
 
+  const runUpdate = useCallback(async () => {
+    getLPBalance().catch(console.error)
+    getLP2Balance().catch(console.error)
+  }, [getLP2Balance, getLPBalance])
+
   // get LP balance
   // get LP2 balance
   // update amounts
   useEffect(() => {
-    getLPBalance().catch(console.error)
-    getLP2Balance().catch(console.error)
-  }, [direction, getLP2Balance, getLPBalance])
+    runUpdate()
+  }, [runUpdate])
 
   // balance updater for both LP and LP2
   useEffect(() => {
     const interval = setInterval(() => {
-      getLPBalance().catch(console.error)
-      getLP2Balance().catch(console.error)
+      runUpdate()
     }, Number(process.env.REACT_APP_UPDATE_INTERVAL))
 
     return () => clearInterval(interval)
-  }, [getLPBalance, getLP2Balance])
+  }, [runUpdate])
 
   return [
     {

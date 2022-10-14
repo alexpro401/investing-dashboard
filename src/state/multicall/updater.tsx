@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { useCurrentBlock } from "hooks/useBlockNumber"
-import { Multicall, ResultStructOutput } from "interfaces/abi-typings/Multicall"
+import { Multicall3 } from "interfaces/typechain/Multicall"
+import { Multicall } from "interfaces/typechain"
 import { useMulticallContract } from "contracts"
 import useDebounce from "hooks/useDebounce"
 import { CancelledError, retry, RetryableError } from "utils/retry"
@@ -29,7 +30,7 @@ async function fetchChunk(
   multicallContract: Multicall,
   chunk: Call[],
   minBlockNumber: number
-): Promise<{ results: ResultStructOutput[]; blockNumber: number }> {
+): Promise<{ results: Multicall3.ResultStructOutput[]; blockNumber: number }> {
   console.debug("Fetching chunk", multicallContract, chunk, minBlockNumber)
   let resultsBlockNumber
   let returnData

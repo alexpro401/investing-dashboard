@@ -239,6 +239,7 @@ export const defaultButtonStyles = (
       : size === "no-paddings"
       ? css`
           padding: 0;
+          border-radius: 0px !important;
         `
       : ""}
 

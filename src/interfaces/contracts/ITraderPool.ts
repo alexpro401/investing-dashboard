@@ -1,52 +1,17 @@
-import { BigNumber } from "@ethersproject/bignumber"
+import { TraderPool } from "interfaces/typechain"
 
-/*
-   # Contract TraderPool
-*/
+export type ITraderPoolExchangeAmount = Awaited<
+  ReturnType<TraderPool["getExchangeAmount"]>
+>
 
-// method: getPoolInfo()
-export interface IPoolInfo {
-  baseAndPositionBalances: BigNumber[]
-  lpLockedInProposals: BigNumber
-  lpSupply: BigNumber
-  name: string
-  openPositions: string[]
-  ticker: string
-  totalInvestors: BigNumber
-  totalPoolBase: BigNumber
-  totalPoolUSD: BigNumber
-  traderBase: BigNumber
-  traderLPBalance: BigNumber
-  traderUSD: BigNumber
-  parameters: IPoolParameters
-}
-interface IPoolParameters {
-  baseToken: string
-  trader: string
-  baseTokenDecimals: BigNumber
-  commissionPercentage: BigNumber
-  commissionPeriod: number
-  descriptionURL: string
-  minimalInvestment: BigNumber
-  privatePool: boolean
-  totalLPEmission: BigNumber
-}
+export type IPoolInfo = Awaited<ReturnType<TraderPool["getPoolInfo"]>>
 
-// method: getLeverageInfo()
-export interface ILeverageInfo {
-  totalPoolUSDWithProposals: BigNumber
-  freeLeverageBase: BigNumber
-  freeLeverageUSD: BigNumber
-  traderLeverageUSDTokens: BigNumber
-}
+export type ILeverageInfo = Awaited<ReturnType<TraderPool["getLeverageInfo"]>>
 
-// method: getUsersInfo()
-export interface IUserFeeInfo {
-  commissionUnlockTimestamp: BigNumber
-  poolLPBalance: BigNumber
-  investedBase: BigNumber
-  poolUSDShare: BigNumber
-  poolBaseShare: BigNumber
-  owedBaseCommission: BigNumber
-  owedLPCommission: BigNumber
-}
+export type IUserFeeInfo = Awaited<ReturnType<TraderPool["getUsersInfo"]>>
+
+export type IInvestTokens = Awaited<ReturnType<TraderPool["getInvestTokens"]>>
+
+export type IDivestAmountsAndCommissions = Awaited<
+  ReturnType<TraderPool["getDivestAmountsAndCommissions"]>
+>

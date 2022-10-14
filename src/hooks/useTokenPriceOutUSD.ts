@@ -21,14 +21,18 @@ export default function useTokenPriceOutUSD({
   useEffect(() => {
     if (!priceFeed || !tokenAddress || tokenAddress.length !== 42) return
     ;(async () => {
-      const _amount = amount ?? parseUnits("1", 18)
+      try {
+        const _amount = amount ?? parseUnits("1", 18)
 
-      const priceUSD = await priceFeed
-        .getNormalizedPriceOutUSD(tokenAddress, _amount.toHexString())
-        .catch(console.error)
+        const priceUSD = await priceFeed
+          .getNormalizedPriceOutUSD(tokenAddress, _amount.toHexString())
+          .catch(console.error)
 
-      if (!!priceUSD) {
-        setMarkPriceUSD(priceUSD.amountOut)
+        if (!!priceUSD) {
+          setMarkPriceUSD(priceUSD.amountOut)
+        }
+      } catch (e) {
+        console.error(e)
       }
     })()
   }, [tokenAddress, priceFeed, amount])

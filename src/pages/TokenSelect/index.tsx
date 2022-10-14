@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import { TraderPool } from "abi"
@@ -14,14 +14,26 @@ import useContract from "hooks/useContract"
 import back from "assets/icons/angle-left.svg"
 
 import { Title, Container, TitleContainer, CardHeader, Card } from "./styled"
+import { useCurrencyBalances } from "hooks/useBalance"
+import { useWeb3React } from "@web3-react/core"
+import { useAllTokens } from "hooks/useToken"
 
 const TokenSelect: React.FC = () => {
   const navigate = useNavigate()
+  const { account } = useWeb3React()
   const { type, poolAddress, field, address } = useParams()
   const [q, setQuery] = useState("")
   const [balances, setBalances] = useState({})
   const whitelisted = useSelector(selectWhitelist)
   const traderPool = useContract(poolAddress, TraderPool)
+
+  const allTokens = useAllTokens()
+  const allTokensArray = useMemo(
+    () => Object.values(allTokens ?? {}),
+    [allTokens]
+  )
+  const bl = useCurrencyBalances(account, allTokensArray)
+  console.log(bl.map((b) => [b?.toSignificant(4), b?.currency.symbol]))
 
   const onSelect = useCallback(
     (token: Token) => {

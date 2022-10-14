@@ -9,6 +9,7 @@ import {
 import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 
+import { ITraderPoolExchangeAmount } from "interfaces/contracts/ITraderPool"
 import { ExchangeType } from "interfaces/exchange"
 import { ExchangeForm } from "interfaces/exchange"
 import { SubmitState, SwapDirection, TradeType } from "constants/types"
@@ -40,7 +41,6 @@ import {
 } from "utils"
 import usePoolPrice from "hooks/usePoolPrice"
 import { useERC20Data } from "state/erc20/hooks"
-import { GetExchangeAmountResponse } from "interfaces/abi-typings/TraderPool"
 
 interface UseSwapProps {
   pool: string | undefined
@@ -213,7 +213,7 @@ const useSwap = ({
   const getExchangeFromAmounts = useCallback(
     async (
       amount: BigNumber
-    ): Promise<[GetExchangeAmountResponse, BigNumber]> => {
+    ): Promise<[ITraderPoolExchangeAmount, BigNumber]> => {
       if (!traderPool || !from || !to)
         return new Promise((resolve, reject) => reject(null))
 
@@ -237,7 +237,7 @@ const useSwap = ({
   const getExchangeToAmounts = useCallback(
     async (
       amount: BigNumber
-    ): Promise<[GetExchangeAmountResponse, BigNumber]> => {
+    ): Promise<[ITraderPoolExchangeAmount, BigNumber]> => {
       if (!traderPool || !from || !to)
         return new Promise((resolve, reject) => reject(null))
 
@@ -386,7 +386,7 @@ const useSwap = ({
   }, [fromAmount, getExchangeFromAmounts, getExchangeToAmounts, toAmount])
 
   const estimateGas = useCallback(async () => {
-    if (!traderPool) return
+    if (!traderPool || !from || !to) return
 
     try {
       const amount = BigNumber.from(exchangeParams[lastChangedField].amount)
@@ -451,6 +451,8 @@ const useSwap = ({
         const errorMessage = parseTransactionError(error.toString())
         !!errorMessage && setError(errorMessage)
       }
+    } finally {
+      setWalletPrompting(SubmitState.IDLE)
     }
   }, [
     traderPool,
