@@ -1,10 +1,21 @@
-import React, { useState, useMemo, useCallback } from "react"
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useContext,
+  useEffect,
+} from "react"
 import { AnimatePresence } from "framer-motion"
 import { useNavigate, useParams } from "react-router-dom"
+import { parseEther } from "@ethersproject/units"
 
 import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { DefaultProposalStep } from "forms/CreateFundDaoForm/steps"
+import { DaoProposalCreatingContext } from "context/DaoProposalCreatingContext"
+import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import useCreateDaoProposalType from "hooks/useCreateDaoProposalType"
+import useDAODeposit from "hooks/useDAODeposit"
 
 import * as S from "./styled"
 
@@ -16,6 +27,13 @@ enum STEPS {
 const CreateNewProposalTypeForm: React.FC = () => {
   const navigate = useNavigate()
   const { daoAddress } = useParams<"daoAddress">()
+  const createDaoProposalType = useCreateDaoProposalType({
+    daoPoolAddress: daoAddress ?? "",
+  })
+  const daoDeposit = useDAODeposit(daoAddress ?? "")
+
+  const daoProposalCreatingInfo = useContext(DaoProposalCreatingContext)
+  const firstStepSettings = useContext(FundDaoCreatingContext)
 
   const [currentStep, setCurrentStep] = useState<STEPS>(
     STEPS.generalVotingSettings
@@ -26,6 +44,55 @@ const CreateNewProposalTypeForm: React.FC = () => {
     () => Object.values(STEPS).indexOf(currentStep) + 1,
     [currentStep]
   )
+
+  useEffect(() => {
+    daoDeposit("0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3", parseEther("1"))
+  }, [daoDeposit])
+
+  const handleCreateDaoProposalType = useCallback(() => {
+    const {
+      contractAddress,
+      proposalDescription,
+      proposalName,
+      proposalTypeName,
+    } = daoProposalCreatingInfo
+
+    const {
+      defaultProposalSettingForm: {
+        earlyCompletion,
+        delegatedVotingAllowed,
+        duration,
+        quorum,
+        minVotesForVoting,
+        minVotesForCreating,
+        rewardToken,
+        creationReward,
+        executionReward,
+        voteRewardsCoefficient,
+      },
+    } = firstStepSettings
+
+    createDaoProposalType({
+      proposalInfo: {
+        contractAddress: contractAddress.get,
+        proposalDescription: proposalDescription.get,
+        proposalName: proposalName.get,
+        proposalTypeName: proposalTypeName.get,
+      },
+      proposalSettings: {
+        earlyCompletion: earlyCompletion.get,
+        delegatedVotingAllowed: delegatedVotingAllowed.get,
+        duration: duration.get,
+        quorum: quorum.get,
+        minVotesForVoting: minVotesForVoting.get,
+        minVotesForCreating: minVotesForCreating.get,
+        rewardToken: rewardToken.get,
+        creationReward: creationReward.get,
+        executionReward: executionReward.get,
+        voteRewardsCoefficient: voteRewardsCoefficient.get,
+      },
+    })
+  }, [createDaoProposalType, daoProposalCreatingInfo, firstStepSettings])
 
   const handlePrevStep = useCallback(() => {
     switch (currentStep) {
@@ -50,10 +117,14 @@ const CreateNewProposalTypeForm: React.FC = () => {
         setCurrentStep(STEPS.basicInfo)
         break
       }
+      case STEPS.basicInfo: {
+        handleCreateDaoProposalType()
+        break
+      }
       default:
         break
     }
-  }, [currentStep])
+  }, [currentStep, handleCreateDaoProposalType])
 
   return (
     <StepsControllerContext
@@ -70,7 +141,10 @@ const CreateNewProposalTypeForm: React.FC = () => {
         )}
         {currentStep === STEPS.basicInfo && (
           <S.StepsContainer>
-            <CreateDaoProposalGeneralForm withContractName />
+            <CreateDaoProposalGeneralForm
+              withContractName
+              withProposalTypeName
+            />
           </S.StepsContainer>
         )}
       </AnimatePresence>

@@ -10,7 +10,12 @@ import {
 } from "common"
 import { InputField, TextareaField } from "fields"
 import { useFormValidation } from "hooks/useFormValidation"
-import { required } from "utils/validators"
+import {
+  required,
+  isAddressValidator,
+  minLength,
+  maxLength,
+} from "utils/validators"
 import { readFromClipboard } from "utils/clipboard"
 import { DaoProposalCreatingContext } from "context/DaoProposalCreatingContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
@@ -20,27 +25,51 @@ import * as S from "./styled"
 
 interface ICreateDaoProposalGeneralFormProps {
   withContractName?: boolean
+  withProposalTypeName?: boolean
 }
 
 const CreateDaoProposalGeneralForm: React.FC<
   ICreateDaoProposalGeneralFormProps
-> = ({ withContractName = false }) => {
-  const { contractAddress, description, proposalName } = useContext(
-    DaoProposalCreatingContext
-  )
+> = ({ withContractName = false, withProposalTypeName = false }) => {
+  const {
+    contractAddress,
+    proposalTypeName,
+    proposalDescription,
+    proposalName,
+  } = useContext(DaoProposalCreatingContext)
 
-  const { currentStepNumber } = useContext(stepsControllerContext)
+  const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
 
-  const { getFieldErrorMessage, touchField } = useFormValidation(
+  const { getFieldErrorMessage, touchField, isFormValid } = useFormValidation(
     {
       ...(withContractName ? { contractAddress: contractAddress.get } : {}),
+      ...(withProposalTypeName
+        ? { proposalTypeName: proposalTypeName.get }
+        : {}),
       proposalName: proposalName.get,
-      description: description.get,
+      description: proposalDescription.get,
     },
     {
-      ...(withContractName ? { contractAddress: { required } } : {}),
-      proposalName: { required },
-      description: { required },
+      ...(withContractName
+        ? { contractAddress: { required, isAddressValidator } }
+        : {}),
+      ...(withProposalTypeName
+        ? {
+            proposalTypeName: {
+              required,
+              minLength: minLength(4),
+              maxLength: maxLength(40),
+            },
+          }
+        : {}),
+      proposalName: {
+        required,
+        minLength: minLength(4),
+        maxLength: maxLength(40),
+      },
+      proposalDescription: {
+        maxLength: maxLength(1000),
+      },
     }
   )
 
@@ -50,6 +79,12 @@ const CreateDaoProposalGeneralForm: React.FC<
     },
     []
   )
+
+  const handleNextStepCb = useCallback(() => {
+    if (isFormValid()) {
+      nextCb()
+    }
+  }, [nextCb, isFormValid])
 
   return (
     <>
@@ -90,6 +125,15 @@ const CreateDaoProposalGeneralForm: React.FC<
                 }
               />
             )}
+            {withProposalTypeName && (
+              <InputField
+                value={proposalTypeName.get}
+                setValue={proposalTypeName.set}
+                label="Proposal type name"
+                errorMessage={getFieldErrorMessage("proposalTypeName")}
+                onBlur={() => touchField("proposalTypeName")}
+              />
+            )}
             <InputField
               value={proposalName.get}
               setValue={proposalName.set}
@@ -98,16 +142,19 @@ const CreateDaoProposalGeneralForm: React.FC<
               onBlur={() => touchField("proposalName")}
             />
             <TextareaField
-              value={description.get}
-              setValue={description.set}
+              value={proposalDescription.get}
+              setValue={proposalDescription.set}
               label="Description"
-              errorMessage={getFieldErrorMessage("description")}
-              onBlur={() => touchField("description")}
+              errorMessage={getFieldErrorMessage("proposalDescription")}
+              onBlur={() => touchField("proposalDescription")}
             />
           </CardFormControl>
         </Card>
       </S.StepsRoot>
-      <StepsNavigation />
+      <StepsNavigation
+        customNextCb={handleNextStepCb}
+        nextLabel={"Create Proposal"}
+      />
     </>
   )
 }
