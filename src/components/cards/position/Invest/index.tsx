@@ -14,7 +14,11 @@ import useContract from "hooks/useContract"
 import { DATE_FORMAT } from "constants/time"
 import usePoolPrice from "hooks/usePoolPrice"
 import { useERC20Data } from "state/erc20/hooks"
-import { percentageOfBignumbers } from "utils/formulas"
+import {
+  multiplyBignumbers,
+  percentageOfBignumbers,
+  subtractBignumbers,
+} from "utils/formulas"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { usePoolContract, useTraderPool } from "hooks/usePool"
@@ -115,13 +119,19 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     return baseToken.symbol
   }, [baseToken])
 
-  const positionOpenLPAmount = useMemo<string>(() => {
+  const positionOpenLPAmount = useMemo<{
+    big: BigNumber
+    format: string
+  }>(() => {
     if (!position.totalLPInvestVolume || !position.totalLPDivestVolume) {
-      return "0"
+      return { big: ZERO, format: "0" }
     }
 
     if (position.isClosed) {
-      return normalizeBigNumber(position.totalLPInvestVolume, 18, 6)
+      return {
+        big: position.totalLPInvestVolume,
+        format: normalizeBigNumber(position.totalLPInvestVolume, 18, 6),
+      }
     } else {
       const investFixed = FixedNumber.fromValue(
         position.totalLPInvestVolume,
@@ -132,8 +142,9 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
         18
       )
       const res = investFixed.subUnsafe(divestFixed)
+      const big = parseEther(res._value)
 
-      return normalizeBigNumber(parseEther(res._value), 18, 6)
+      return { big, format: normalizeBigNumber(big, 18, 6) }
     }
   }, [position])
 
@@ -207,45 +218,30 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   }, [markPriceBase, entryPriceBase])
 
   const pnlBase = useMemo(() => {
-    if (!position || !pnlPercentage) {
+    if (!markPriceBase || !entryPriceBase || !positionOpenLPAmount) {
       return ZERO
     }
 
-    const _pnlPercentage = FixedNumber.fromValue(pnlPercentage.value, 18)
-
-    const _totalBaseInvestVolume = FixedNumber.fromValue(
-      position.totalBaseInvestVolume,
-      18
-    )
-    const _totalBaseDivestVolume = FixedNumber.fromValue(
-      position.totalBaseDivestVolume,
-      18
+    const priceDiff = subtractBignumbers(
+      [markPriceBase, 18],
+      [entryPriceBase, 18]
     )
 
-    const _totalBaseVolumeFixed = position.isClosed
-      ? _totalBaseDivestVolume
-      : _totalBaseInvestVolume.subUnsafe(_totalBaseDivestVolume) // current base open volume
-
-    const _pnlBaseFixed = _totalBaseVolumeFixed.mulUnsafe(_pnlPercentage)
-    const res = _totalBaseVolumeFixed.addUnsafe(_pnlBaseFixed)
-
-    return parseEther(res._value)
-  }, [pnlPercentage, position])
+    return multiplyBignumbers([priceDiff, 18], [positionOpenLPAmount.big, 18])
+  }, [markPriceBase, entryPriceBase, positionOpenLPAmount])
 
   const pnlUSD = useMemo(() => {
-    if (!position || !markPriceUSD || !entryPriceUSD) return ZERO
-
-    if (!position.isClosed) {
-      return pnlUSDCurrent
+    if (!markPriceUSD || !entryPriceUSD || !positionOpenLPAmount) {
+      return ZERO
     }
 
-    const _markPriceFixed = FixedNumber.fromValue(markPriceUSD, 18)
-    const _entryPriceUSDFixed = FixedNumber.fromValue(entryPriceUSD, 18)
+    const priceDiff = subtractBignumbers(
+      [markPriceUSD, 18],
+      [entryPriceUSD, 18]
+    )
 
-    const res = _markPriceFixed.subUnsafe(_entryPriceUSDFixed)
-
-    return parseEther(res._value)
-  }, [entryPriceUSD, markPriceUSD, pnlUSDCurrent, position])
+    return multiplyBignumbers([priceDiff, 18], [positionOpenLPAmount.big, 18])
+  }, [entryPriceUSD, markPriceUSD, positionOpenLPAmount])
 
   // Commission data
 
@@ -504,7 +500,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
                 source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
                 address={position.pool.id}
               />
-              <S.Amount>{positionOpenLPAmount}</S.Amount>
+              <S.Amount>{positionOpenLPAmount.format}</S.Amount>
               <S.PositionSymbol>{poolInfo?.ticker}</S.PositionSymbol>
               <SharedS.PNL value={pnlPercentage.normalized}>
                 {Number(pnlPercentage.normalized) > 0 && "+"}
