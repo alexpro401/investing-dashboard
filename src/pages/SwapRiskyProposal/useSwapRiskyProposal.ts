@@ -332,7 +332,6 @@ const useSwapRiskyProposal = ({
           form.from.address,
           exchange[0]
         )
-        console.log(fromPrice[0].toString())
         const toPrice = await priceFeed.getNormalizedPriceOutUSD(
           form.to.address,
           amount
@@ -509,6 +508,8 @@ const useSwapRiskyProposal = ({
       setWalletPrompting(SubmitState.IDLE)
       const errorMessage = parseTransactionError(error.toString())
       !!errorMessage && setError(errorMessage)
+    } finally {
+      setWalletPrompting(SubmitState.IDLE)
     }
   }, [
     addTransaction,

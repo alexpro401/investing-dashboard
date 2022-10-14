@@ -451,6 +451,8 @@ const useSwap = ({
         const errorMessage = parseTransactionError(error.toString())
         !!errorMessage && setError(errorMessage)
       }
+    } finally {
+      setWalletPrompting(SubmitState.IDLE)
     }
   }, [
     traderPool,
