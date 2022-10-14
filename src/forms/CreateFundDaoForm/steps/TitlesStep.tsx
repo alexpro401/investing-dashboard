@@ -50,7 +50,7 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 const TitlesStep: FC = () => {
   const daoPoolFormContext = useContext(FundDaoCreatingContext)
 
-  const { isErc20, isErc721 } = daoPoolFormContext
+  const { isErc20, isErc721, isErc721Enumerable } = daoPoolFormContext
 
   const { avatarUrl, daoName, websiteUrl, description, documents } =
     daoPoolFormContext
@@ -341,13 +341,15 @@ const TitlesStep: FC = () => {
                 errorMessage={getFieldErrorMessage("totalPowerInTokens")}
                 onBlur={() => touchField("totalPowerInTokens")}
               />
-              <InputField
-                value={nftsTotalSupply.get}
-                setValue={nftsTotalSupply.set}
-                label="Number of NFTs"
-                errorMessage={getFieldErrorMessage("nftsTotalSupply")}
-                onBlur={() => touchField("nftsTotalSupply")}
-              />
+              {!isErc721Enumerable.get && (
+                <InputField
+                  value={nftsTotalSupply.get}
+                  setValue={nftsTotalSupply.set}
+                  label="Number of NFTs"
+                  errorMessage={getFieldErrorMessage("nftsTotalSupply")}
+                  onBlur={() => touchField("nftsTotalSupply")}
+                />
+              )}
             </CardFormControl>
           </Collapse>
         </Card>

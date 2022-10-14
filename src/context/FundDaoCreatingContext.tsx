@@ -5,8 +5,11 @@ import {
   HTMLAttributes,
   SetStateAction,
   useCallback,
+  useEffect,
   useState,
 } from "react"
+import { debounce } from "lodash"
+import { isAddress } from "../utils"
 
 type UserKeeperDeployParams = {
   tokenAddress: string // binded
@@ -102,8 +105,8 @@ interface FundDaoCreatingContext {
     get: boolean
     set: Dispatch<SetStateAction<boolean>>
   }
-
   isValidator: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
+  isErc721Enumerable: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
 
   avatarUrl: { get: string; set: Dispatch<SetStateAction<string>> }
   daoName: { get: string; set: Dispatch<SetStateAction<string>> }
@@ -132,8 +135,8 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
   isErc721: { get: false, set: () => {} },
   isCustomVoting: { get: false, set: () => {} },
   isDistributionProposal: { get: false, set: () => {} },
-
   isValidator: { get: false, set: () => {} },
+  isErc721Enumerable: { get: false, set: () => {} },
 
   avatarUrl: { get: "", set: () => {} },
   daoName: { get: "", set: () => {} },
@@ -199,6 +202,27 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
     validators: useState<string[]>([""]),
     balances: useState<number[]>([0]),
   }
+
+  const [_isErc721Enumerable, _setIsErc721Enumerable] = useState(false)
+
+  const handleErc721Input = useCallback(
+    debounce(async (address: string) => {
+      try {
+        if (isAddress(address)) {
+          // TODO: create useErc721 hook
+          // await erc721Init()
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }, 1000),
+    []
+  )
+
+  useEffect(() => {
+    // check _userKeeperParams.nftAddress is enumerable
+    // _nftAddress.supportsInterface("0x780e9d63"))
+  }, [_userKeeperParams.nftAddress[0]])
 
   const _handleChangeValidators = useCallback(
     (value, idx?: number) => {
@@ -314,8 +338,11 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
             get: _isDistributionProposal,
             set: _setIsDistributionProposal,
           },
-
           isValidator: { get: _isValidator, set: _setIsValidator },
+          isErc721Enumerable: {
+            get: _isErc721Enumerable,
+            set: _setIsErc721Enumerable,
+          },
 
           avatarUrl: { get: _avatarUrl, set: _setAvatarUrl },
           daoName: { get: _daoName, set: _setDaoName },

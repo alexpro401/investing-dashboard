@@ -8,12 +8,14 @@ import {
   DefaultProposalStep,
   IsDistributionProposalStep,
   DistributionProposalStep,
+  SuccessStep,
 } from "./steps"
 
 import { useForm } from "hooks/useForm"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import useCreateDAO from "../../hooks/useCreateDAO"
 
 enum STEPS {
   titles = "titles",
@@ -23,6 +25,7 @@ enum STEPS {
   internalProposal = "internal-proposal",
   isTokenDistributionSettings = "is-token-distribution-settings",
   distributionProposalSettings = "distribution-proposal-settings",
+  success = "success",
 }
 
 const CreateFundDaoForm: FC = () => {
@@ -41,6 +44,8 @@ const CreateFundDaoForm: FC = () => {
   const { isCustomVoting, isDistributionProposal } = useContext(
     FundDaoCreatingContext
   )
+
+  const createDaoCb = useCreateDAO()
 
   const handleNextStep = () => {
     switch (currentStep) {
@@ -93,22 +98,27 @@ const CreateFundDaoForm: FC = () => {
         setCurrentStep(STEPS.isCustomVoteSelecting)
         break
       case STEPS.isTokenDistributionSettings:
-        setCurrentStep(STEPS.internalProposal)
+        setCurrentStep(
+          isCustomVoting.get
+            ? STEPS.internalProposal
+            : STEPS.isCustomVoteSelecting
+        )
         break
       case STEPS.distributionProposalSettings:
         setCurrentStep(STEPS.isTokenDistributionSettings)
     }
   }
 
-  const submit = useCallback(() => {
+  const submit = useCallback(async () => {
     formController.disableForm()
     try {
-      console.log("submit")
+      await createDaoCb()
+      setCurrentStep(STEPS.success)
     } catch (error) {
       console.error(error)
     }
     formController.enableForm()
-  }, [formController])
+  }, [createDaoCb, formController])
 
   return (
     <S.Container
@@ -151,6 +161,10 @@ const CreateFundDaoForm: FC = () => {
           <S.StepsContainer>
             {/*distributionProposalSettingsForm*/}
             <DistributionProposalStep />
+          </S.StepsContainer>
+        ) : currentStep === STEPS.success ? (
+          <S.StepsContainer>
+            <SuccessStep />
           </S.StepsContainer>
         ) : (
           <></>

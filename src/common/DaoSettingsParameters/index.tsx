@@ -8,8 +8,11 @@ import {
 import { ICON_NAMES } from "constants/icon-names"
 import Switch from "components/Switch"
 import { InputField } from "fields"
-import { FC, HTMLAttributes } from "react"
-import { DaoProposalSettingsForm } from "context/FundDaoCreatingContext"
+import { FC, HTMLAttributes, useContext } from "react"
+import {
+  DaoProposalSettingsForm,
+  FundDaoCreatingContext,
+} from "context/FundDaoCreatingContext"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   poolParameters: DaoProposalSettingsForm
@@ -30,7 +33,12 @@ const DaoSettingsParameters: FC<Props> = ({ poolParameters }) => {
     creationReward,
     voteRewardsCoefficient,
     executionReward,
+
+    durationValidators,
+    quorumValidators,
   } = poolParameters
+
+  const { isValidator } = useContext(FundDaoCreatingContext)
 
   return (
     <>
@@ -75,6 +83,36 @@ const DaoSettingsParameters: FC<Props> = ({ poolParameters }) => {
           />
         </CardFormControl>
       </Card>
+
+      {isValidator.get && (
+        <Card>
+          <CardHead
+            nodeLeft={<Icon name={ICON_NAMES.cog} />}
+            title="Voting settings for validators"
+          />
+          <CardDescription>
+            <p>
+              Once a proposal passes the general vote, validator will hold a
+              validator-only second vote on every passed proposal to filter out
+              potentially malicious proposals.
+            </p>
+            <br />
+            <p>Set parameters for a second voting stage for validators.</p>
+          </CardDescription>
+          <CardFormControl>
+            <InputField
+              value={durationValidators.get}
+              setValue={durationValidators.set}
+              label="Length of voting period"
+            />
+            <InputField
+              value={quorumValidators.get}
+              setValue={quorumValidators.set}
+              label="Votes needed for quorum"
+            />
+          </CardFormControl>
+        </Card>
+      )}
 
       <Card>
         <CardHead
