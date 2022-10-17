@@ -12,6 +12,7 @@ import { SubmitState } from "constants/types"
 import useError from "hooks/useError"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { cloneDeep } from "lodash"
+import { IPoolFactory } from "../interfaces/typechain/PoolFactory"
 
 const useCreateDAO = () => {
   const {
@@ -87,120 +88,149 @@ const useCreateDAO = () => {
       durationValidators: isValidator.get
         ? defaultProposalSettingForm.durationValidators.get
         : defaultProposalSettingForm.duration.get,
-      quorum: parseUnits(String(defaultProposalSettingForm.quorum.get), 25),
+      quorum: parseUnits(
+        String(defaultProposalSettingForm.quorum.get),
+        25
+      ).toString(),
       quorumValidators: isValidator.get
         ? parseUnits(
             String(defaultProposalSettingForm.quorumValidators.get),
             25
-          )
-        : parseUnits(String(defaultProposalSettingForm.quorum.get), 25),
+          ).toString()
+        : parseUnits(
+            String(defaultProposalSettingForm.quorum.get),
+            25
+          ).toString(),
       minVotesForVoting: parseEther(
         String(defaultProposalSettingForm.minVotesForVoting.get)
-      ),
+      ).toString(),
       minVotesForCreating: parseEther(
         String(defaultProposalSettingForm.minVotesForCreating.get)
-      ),
+      ).toString(),
       rewardToken: defaultProposalSettingForm.rewardToken.get || ZERO_ADDR,
       creationReward: parseUnits(
         String(defaultProposalSettingForm.creationReward.get),
         18
-      ),
+      ).toString(),
       executionReward: parseUnits(
         String(defaultProposalSettingForm.executionReward.get),
         18
-      ),
+      ).toString(),
       voteRewardsCoefficient: parseUnits(
         String(defaultProposalSettingForm.voteRewardsCoefficient.get),
         18
-      ),
+      ).toString(),
       executorDescription: "default",
     }
 
-    const internalSettings = isValidator.get
-      ? {
-          earlyCompletion: internalProposalForm.earlyCompletion.get,
-          delegatedVotingAllowed:
-            internalProposalForm.delegatedVotingAllowed.get,
-          validatorsVote: internalProposalForm.validatorsVote.get,
-          duration: internalProposalForm.duration.get,
-          durationValidators: isValidator.get
-            ? internalProposalForm.durationValidators.get
-            : internalProposalForm.duration.get,
-          quorum: parseUnits(String(internalProposalForm.quorum.get), 25),
-          quorumValidators: isValidator.get
-            ? parseUnits(String(internalProposalForm.quorumValidators.get), 25)
-            : parseUnits(String(internalProposalForm.quorum.get), 25),
-          minVotesForVoting: parseEther(
-            String(internalProposalForm.minVotesForVoting.get)
-          ),
-          minVotesForCreating: parseEther(
-            String(internalProposalForm.minVotesForCreating.get)
-          ),
-          rewardToken: internalProposalForm.rewardToken.get || ZERO_ADDR,
-          creationReward: parseUnits(
-            String(internalProposalForm.creationReward.get),
-            18
-          ),
-          executionReward: parseUnits(
-            String(internalProposalForm.executionReward.get),
-            18
-          ),
-          voteRewardsCoefficient: parseUnits(
-            String(internalProposalForm.voteRewardsCoefficient.get),
-            18
-          ),
-          executorDescription: "internal",
-        }
-      : cloneDeep(defaultSettings)
+    const internalSettings = {
+      ...(isCustomVoting.get
+        ? {
+            earlyCompletion: internalProposalForm.earlyCompletion.get,
+            delegatedVotingAllowed:
+              internalProposalForm.delegatedVotingAllowed.get,
+            validatorsVote: internalProposalForm.validatorsVote.get,
+            duration: internalProposalForm.duration.get,
+            durationValidators: isValidator.get
+              ? internalProposalForm.durationValidators.get
+              : internalProposalForm.duration.get,
+            quorum: parseUnits(
+              String(internalProposalForm.quorum.get),
+              25
+            ).toString(),
+            quorumValidators: isValidator.get
+              ? parseUnits(
+                  String(internalProposalForm.quorumValidators.get),
+                  25
+                ).toString()
+              : parseUnits(
+                  String(internalProposalForm.quorum.get),
+                  25
+                ).toString(),
+            minVotesForVoting: parseEther(
+              String(internalProposalForm.minVotesForVoting.get)
+            ).toString(),
+            minVotesForCreating: parseEther(
+              String(internalProposalForm.minVotesForCreating.get)
+            ).toString(),
+            rewardToken: internalProposalForm.rewardToken.get || ZERO_ADDR,
+            creationReward: parseUnits(
+              String(internalProposalForm.creationReward.get),
+              18
+            ).toString(),
+            executionReward: parseUnits(
+              String(internalProposalForm.executionReward.get),
+              18
+            ).toString(),
+            voteRewardsCoefficient: parseUnits(
+              String(internalProposalForm.voteRewardsCoefficient.get),
+              18
+            ).toString(),
+            executorDescription: "internal",
+          }
+        : { ...cloneDeep(defaultSettings), executorDescription: "internal" }),
+    }
 
-    const DPSettings = isDistributionProposal.get
-      ? {
-          earlyCompletion: distributionProposalSettingsForm.earlyCompletion.get,
-          delegatedVotingAllowed:
-            distributionProposalSettingsForm.delegatedVotingAllowed.get,
-          validatorsVote: distributionProposalSettingsForm.validatorsVote.get,
-          duration: distributionProposalSettingsForm.duration.get,
-          durationValidators: isValidator.get
-            ? distributionProposalSettingsForm.durationValidators.get
-            : distributionProposalSettingsForm.duration.get,
-          quorum: parseUnits(
-            String(distributionProposalSettingsForm.quorum.get),
-            25
-          ),
-          quorumValidators: isValidator.get
-            ? parseUnits(
-                String(distributionProposalSettingsForm.quorumValidators.get),
-                25
-              )
-            : parseUnits(
-                String(distributionProposalSettingsForm.quorum.get),
-                25
+    const DPSettings = {
+      ...(isDistributionProposal.get
+        ? {
+            earlyCompletion:
+              distributionProposalSettingsForm.earlyCompletion.get,
+            delegatedVotingAllowed:
+              distributionProposalSettingsForm.delegatedVotingAllowed.get,
+            validatorsVote: distributionProposalSettingsForm.validatorsVote.get,
+            duration: distributionProposalSettingsForm.duration.get,
+            durationValidators: isValidator.get
+              ? distributionProposalSettingsForm.durationValidators.get
+              : distributionProposalSettingsForm.duration.get,
+            quorum: parseUnits(
+              String(distributionProposalSettingsForm.quorum.get),
+              25
+            ).toString(),
+            quorumValidators: isValidator.get
+              ? parseUnits(
+                  String(distributionProposalSettingsForm.quorumValidators.get),
+                  25
+                ).toString()
+              : parseUnits(
+                  String(distributionProposalSettingsForm.quorum.get),
+                  25
+                ).toString(),
+            minVotesForVoting: parseEther(
+              String(distributionProposalSettingsForm.minVotesForVoting.get)
+            ).toString(),
+            minVotesForCreating: parseEther(
+              String(distributionProposalSettingsForm.minVotesForCreating.get)
+            ).toString(),
+            rewardToken:
+              distributionProposalSettingsForm.rewardToken.get || ZERO_ADDR,
+            creationReward: parseUnits(
+              String(distributionProposalSettingsForm.creationReward.get),
+              18
+            ).toString(),
+            executionReward: parseUnits(
+              String(distributionProposalSettingsForm.executionReward.get),
+              18
+            ).toString(),
+            voteRewardsCoefficient: parseUnits(
+              String(
+                distributionProposalSettingsForm.voteRewardsCoefficient.get
               ),
-          minVotesForVoting: parseEther(
-            String(distributionProposalSettingsForm.minVotesForVoting.get)
-          ),
-          minVotesForCreating: parseEther(
-            String(distributionProposalSettingsForm.minVotesForCreating.get)
-          ),
-          rewardToken:
-            distributionProposalSettingsForm.rewardToken.get || ZERO_ADDR,
-          creationReward: parseUnits(
-            String(distributionProposalSettingsForm.creationReward.get),
-            18
-          ),
-          executionReward: parseUnits(
-            String(distributionProposalSettingsForm.executionReward.get),
-            18
-          ),
-          voteRewardsCoefficient: parseUnits(
-            String(distributionProposalSettingsForm.voteRewardsCoefficient.get),
-            18
-          ),
-          executorDescription: "DP",
-        }
-      : cloneDeep(defaultSettings)
+              18
+            ).toString(),
+          }
+        : {
+            ...cloneDeep(defaultSettings),
+            delegatedVotingAllowed: false,
+            earlyCompletion: false,
+            executorDescription: "DP",
+          }),
+    }
 
-    const validatorsSettings = cloneDeep(defaultSettings)
+    const validatorsSettings = {
+      ...cloneDeep(defaultSettings),
+      executorDescription: "validators",
+    }
 
     const POOL_PARAMETERS = {
       settingsParams: {
@@ -213,14 +243,20 @@ const useCreateDAO = () => {
         additionalProposalExecutors: [],
       },
       validatorsParams: {
-        name: validatorsParams.name.get,
-        symbol: validatorsParams.symbol.get,
-        duration: validatorsParams.duration.get,
-        quorum: parseUnits(String(validatorsParams.quorum.get), 25),
-        validators: validatorsParams.validators.get,
-        balances: validatorsParams.balances.get.map((el) =>
-          parseEther(String(el))
-        ),
+        name: isValidator.get ? validatorsParams.name.get : "Validator Token",
+        symbol: isValidator.get ? validatorsParams.symbol.get : "VT",
+        duration: isValidator.get
+          ? validatorsParams.duration.get
+          : defaultSettings.duration,
+        quorum: isValidator.get
+          ? parseUnits(String(validatorsParams.quorum.get), 25).toString()
+          : defaultSettings.quorum,
+        validators: isValidator.get ? validatorsParams.validators.get : [],
+        balances: isValidator.get
+          ? validatorsParams.balances.get?.map((el) =>
+              parseEther(String(el)).toString()
+            )
+          : [],
       },
       userKeeperParams: {
         tokenAddress: userKeeperParams.tokenAddress.get || ZERO_ADDR,
@@ -235,13 +271,18 @@ const useCreateDAO = () => {
       descriptionURL: "example.com",
     }
 
+    console.log(POOL_PARAMETERS)
+
     const gasLimit = await tryEstimateGas(POOL_PARAMETERS)
 
     try {
-      const transactionResponse = await factory.deployGovPool(POOL_PARAMETERS, {
-        ...transactionOptions,
-        gasLimit,
-      })
+      const transactionResponse = await factory.deployGovPool(
+        POOL_PARAMETERS as unknown as IPoolFactory.GovPoolDeployParamsStruct,
+        {
+          ...transactionOptions,
+          gasLimit,
+        }
+      )
 
       setPayload(SubmitState.WAIT_CONFIRM)
       const receipt = await addTransaction(transactionResponse, {
@@ -260,15 +301,69 @@ const useCreateDAO = () => {
         const errorMessage = parseTransactionError(error.toString())
         !!errorMessage && setError(errorMessage)
       }
+      throw new Error(error)
     }
   }, [
     account,
     addTransaction,
+    defaultProposalSettingForm.creationReward.get,
+    defaultProposalSettingForm.delegatedVotingAllowed.get,
+    defaultProposalSettingForm.duration.get,
+    defaultProposalSettingForm.durationValidators.get,
+    defaultProposalSettingForm.earlyCompletion.get,
+    defaultProposalSettingForm.executionReward.get,
+    defaultProposalSettingForm.minVotesForCreating.get,
+    defaultProposalSettingForm.minVotesForVoting.get,
+    defaultProposalSettingForm.quorum.get,
+    defaultProposalSettingForm.quorumValidators.get,
+    defaultProposalSettingForm.rewardToken.get,
+    defaultProposalSettingForm.validatorsVote.get,
+    defaultProposalSettingForm.voteRewardsCoefficient.get,
+    distributionProposalSettingsForm.creationReward.get,
+    distributionProposalSettingsForm.delegatedVotingAllowed.get,
+    distributionProposalSettingsForm.duration.get,
+    distributionProposalSettingsForm.durationValidators.get,
+    distributionProposalSettingsForm.earlyCompletion.get,
+    distributionProposalSettingsForm.executionReward.get,
+    distributionProposalSettingsForm.minVotesForCreating.get,
+    distributionProposalSettingsForm.minVotesForVoting.get,
+    distributionProposalSettingsForm.quorum.get,
+    distributionProposalSettingsForm.quorumValidators.get,
+    distributionProposalSettingsForm.rewardToken.get,
+    distributionProposalSettingsForm.validatorsVote.get,
+    distributionProposalSettingsForm.voteRewardsCoefficient.get,
     factory,
+    internalProposalForm.creationReward.get,
+    internalProposalForm.delegatedVotingAllowed.get,
+    internalProposalForm.duration.get,
+    internalProposalForm.durationValidators.get,
+    internalProposalForm.earlyCompletion.get,
+    internalProposalForm.executionReward.get,
+    internalProposalForm.minVotesForCreating.get,
+    internalProposalForm.minVotesForVoting.get,
+    internalProposalForm.quorum.get,
+    internalProposalForm.quorumValidators.get,
+    internalProposalForm.rewardToken.get,
+    internalProposalForm.validatorsVote.get,
+    internalProposalForm.voteRewardsCoefficient.get,
+    isDistributionProposal.get,
+    isErc721.get,
+    isErc721Enumerable.get,
+    isValidator.get,
     setError,
     setPayload,
     transactionOptions,
     tryEstimateGas,
+    userKeeperParams.nftAddress.get,
+    userKeeperParams.nftsTotalSupply.get,
+    userKeeperParams.tokenAddress.get,
+    userKeeperParams.totalPowerInTokens.get,
+    validatorsParams.balances.get,
+    validatorsParams.duration.get,
+    validatorsParams.name.get,
+    validatorsParams.quorum.get,
+    validatorsParams.symbol.get,
+    validatorsParams.validators.get,
   ])
 
   return createPool

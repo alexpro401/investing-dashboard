@@ -1,18 +1,14 @@
-import {
-  Card,
-  CardDescription,
-  CardFormControl,
-  CardHead,
-  Icon,
-} from "../index"
+import { Card, CardDescription, CardFormControl, CardHead, Icon } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 import Switch from "components/Switch"
-import { InputField } from "fields"
+import { DurationField, InputField } from "fields"
 import { FC, HTMLAttributes, useContext } from "react"
 import {
   DaoProposalSettingsForm,
   FundDaoCreatingContext,
 } from "context/FundDaoCreatingContext"
+import { useFormValidation } from "hooks/useFormValidation"
+import { required } from "utils/validators"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   poolParameters: DaoProposalSettingsForm
@@ -37,6 +33,42 @@ const DaoSettingsParameters: FC<Props> = ({ poolParameters }) => {
     durationValidators,
     quorumValidators,
   } = poolParameters
+
+  const { getFieldErrorMessage, touchField, isFieldValid, isFormValid } =
+    useFormValidation(
+      {
+        delegatedVotingAllowed: delegatedVotingAllowed.get,
+        duration: duration.get,
+        quorum: quorum.get,
+
+        earlyCompletion: earlyCompletion.get,
+
+        minVotesForVoting: minVotesForVoting.get,
+        minVotesForCreating: minVotesForCreating.get,
+
+        rewardToken: rewardToken.get,
+        creationReward: creationReward.get,
+        voteRewardsCoefficient: voteRewardsCoefficient.get,
+        executionReward: executionReward.get,
+
+        durationValidators: durationValidators.get,
+        quorumValidators: quorumValidators.get,
+      },
+      {
+        delegatedVotingAllowed: { required },
+        duration: { required },
+        quorum: { required },
+        earlyCompletion: { required },
+        minVotesForVoting: { required },
+        minVotesForCreating: { required },
+        rewardToken: { required },
+        creationReward: { required },
+        voteRewardsCoefficient: { required },
+        executionReward: { required },
+        durationValidators: { required },
+        quorumValidators: { required },
+      }
+    )
 
   const { isValidator } = useContext(FundDaoCreatingContext)
 
@@ -71,10 +103,13 @@ const DaoSettingsParameters: FC<Props> = ({ poolParameters }) => {
           <p>General settings for voting.</p>
         </CardDescription>
         <CardFormControl>
-          <InputField
+          <DurationField
             value={duration.get}
             setValue={duration.set}
             label="*Duration of voting"
+            placeholder="1Y 6Mon 2w 1d"
+            errorMessage={getFieldErrorMessage("duration")}
+            onBlur={() => touchField("duration")}
           />
           <InputField
             value={quorum.get}

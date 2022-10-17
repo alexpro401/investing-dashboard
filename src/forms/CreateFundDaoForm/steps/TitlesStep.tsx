@@ -76,7 +76,7 @@ const TitlesStep: FC = () => {
       {
         avatarUrl: { required },
         daoName: { required, minLength: minLength(6) },
-        websiteUrl: { required },
+        websiteUrl: { required, isUrl },
         description: { required },
         documents: {
           required,
@@ -217,7 +217,12 @@ const TitlesStep: FC = () => {
             nodeRight={
               <Switch
                 isOn={isErc20.get}
-                onChange={(n, v) => isErc20.set(v)}
+                onChange={(n, v) => {
+                  isErc20.set(v)
+                  if (!v && !isErc721.get) {
+                    isErc721.set(true)
+                  }
+                }}
                 name={"create-fund-title-step-is-erc20"}
               />
             }
@@ -297,7 +302,12 @@ const TitlesStep: FC = () => {
             nodeRight={
               <Switch
                 isOn={isErc721.get}
-                onChange={(n, v) => isErc721.set(v)}
+                onChange={(n, v) => {
+                  isErc721.set(v)
+                  if (!v && !isErc20.get) {
+                    isErc20.set(true)
+                  }
+                }}
                 name={"create-fund-title-step-is-erc721"}
               />
             }

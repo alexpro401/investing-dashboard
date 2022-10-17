@@ -30,6 +30,7 @@ enum STEPS {
 
 const CreateFundDaoForm: FC = () => {
   const [currentStep, setCurrentStep] = useState(STEPS.titles)
+  // const [currentStep, setCurrentStep] = useState(STEPS.defaultProposalSetting)
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length, [])
   const currentStepNumber = useMemo(

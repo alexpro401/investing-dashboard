@@ -157,7 +157,7 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
 const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
   children,
 }) => {
-  const [_isErc20, _setIsErc20] = useState<boolean>(false)
+  const [_isErc20, _setIsErc20] = useState<boolean>(true)
   const [_isErc721, _setIsErc721] = useState<boolean>(false)
   const [_isCustomVoting, _setIsCustomVoting] = useState<boolean>(false)
   const [_isDistributionProposal, _setIsDistributionProposal] =
