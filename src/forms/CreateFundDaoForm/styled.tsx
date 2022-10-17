@@ -158,6 +158,10 @@ export const SuccessAvatar = styled.img`
 `
 
 export const SuccessTitle = styled.h2`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90%;
+  white-space: nowrap;
   color: ${(props) => props.theme.textColors.primary};
   margin: 0;
   font-size: 20px;

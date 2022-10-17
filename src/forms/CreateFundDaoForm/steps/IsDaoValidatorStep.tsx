@@ -28,28 +28,29 @@ const IsDaoValidatorStep: FC = () => {
   const { name, symbol, duration, quorum, validators, balances } =
     validatorsParams
 
-  const { getFieldErrorMessage, touchField, isFormValid } = useFormValidation(
-    {
-      name: name.get,
-      symbol: symbol.get,
-      duration: duration.get,
-      quorum: quorum.get,
-      validators: validators.get,
-      balances: balances.get,
-    },
-    {
-      ...(isValidator.get
-        ? {
-            name: { required },
-            symbol: { required },
-            duration: { required },
-            quorum: { required },
-            validators: { required, $every: { required } },
-            balances: { required, $every: { required } },
-          }
-        : {}),
-    }
-  )
+  const { getFieldErrorMessage, touchField, touchForm, isFieldsValid } =
+    useFormValidation(
+      {
+        name: name.get,
+        symbol: symbol.get,
+        duration: duration.get,
+        quorum: quorum.get,
+        validators: validators.get,
+        balances: balances.get,
+      },
+      {
+        ...(isValidator.get
+          ? {
+              name: { required },
+              symbol: { required },
+              duration: { required },
+              quorum: { required },
+              validators: { required, $every: { required } },
+              balances: { required, $every: { required } },
+            }
+          : {}),
+      }
+    )
 
   const { nextCb } = useContext(stepsControllerContext)
 
@@ -72,7 +73,8 @@ const IsDaoValidatorStep: FC = () => {
   )
 
   const handleNextStep = () => {
-    if (!isFormValid()) return
+    touchForm()
+    if (!isFieldsValid) return
 
     nextCb()
   }

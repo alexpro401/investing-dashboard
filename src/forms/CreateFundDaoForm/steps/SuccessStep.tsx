@@ -12,14 +12,9 @@ const SuccessStep: FC<Props> = () => {
     <>
       <S.SuccessBackdrop>
         <S.SuccessAvatarWrp>
-          <S.SuccessAvatar
-            src={
-              avatarUrl.get ||
-              "https://images.unsplash.com/photo-1665596666171-2378d6e973b9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80"
-            }
-          />
+          <S.SuccessAvatar src={avatarUrl.get} />
         </S.SuccessAvatarWrp>
-        <S.SuccessTitle>{daoName.get || "DaoName"}</S.SuccessTitle>
+        <S.SuccessTitle>{daoName.get}</S.SuccessTitle>
         <S.SuccessSubtitle href="https://www.youtube.com/" iconColor="#788AB4">
           address
         </S.SuccessSubtitle>

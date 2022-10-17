@@ -66,22 +66,23 @@ const CreateInsuranceAccidentForm: FC = () => {
   const { pool, block, date, description, chat } = form
 
   const formController = useForm()
-  const { isFormValid, getFieldErrorMessage, touchField } = useFormValidation(
-    {
-      pool: pool.get,
-      block: block.get,
-      date: date.get,
-      description: description.get,
-      chat: chat.get,
-    },
-    {
-      pool: { required },
-      block: { required },
-      date: { required },
-      description: { required },
-      chat: { required, isUrl },
-    }
-  )
+  const { isFieldsValid, touchForm, getFieldErrorMessage, touchField } =
+    useFormValidation(
+      {
+        pool: pool.get,
+        block: block.get,
+        date: date.get,
+        description: description.get,
+        chat: chat.get,
+      },
+      {
+        pool: { required },
+        block: { required },
+        date: { required },
+        description: { required },
+        chat: { required, isUrl },
+      }
+    )
 
   useEffect(() => {
     touchField("pool")
@@ -160,7 +161,8 @@ const CreateInsuranceAccidentForm: FC = () => {
   )
 
   const submit = useCallback(async () => {
-    if (!account || !isFormValid || !insurance) {
+    touchForm()
+    if (!account || !isFieldsValid || !insurance) {
       return
     }
 
@@ -226,7 +228,8 @@ const CreateInsuranceAccidentForm: FC = () => {
     insurance,
     investorsInfo,
     investorsTotals,
-    isFormValid,
+    isFieldsValid,
+    touchForm,
     pool,
   ])
 

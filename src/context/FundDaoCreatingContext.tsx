@@ -11,43 +11,6 @@ import {
 import { debounce } from "lodash"
 import { isAddress } from "../utils"
 
-type UserKeeperDeployParams = {
-  tokenAddress: string // binded
-  nftAddress: string // binded
-  totalPowerInTokens: number // binded
-  nftsTotalSupply: number // binded
-}
-
-type ValidatorsDeployParams = {
-  name: string // binded
-  symbol: string // binded
-  duration: number // binded
-  quorum: number // binded
-  validators: string[]
-  balances: number[]
-}
-
-type GovPoolDeployParams = {
-  descriptionUrl: string // will be in ipfs
-}
-
-type ProposalSettings = {
-  earlyCompletion: boolean // binded
-  delegatedVotingAllowed: boolean // binded
-  validatorsVote: boolean
-  duration: number // binded
-  durationValidators: number
-  quorum: number // binded
-  quorumValidators: number
-  minVotesForVoting: number // binded
-  minVotesForCreating: number // binded
-  rewardToken: string // binded
-  creationReward: number // binded
-  executionReward: number // binded
-  voteRewardsCoefficient: number // binded
-  executorDescription: string
-}
-
 export type ExternalFileDocument = {
   name: string
   url: string
@@ -91,10 +54,6 @@ export interface DaoProposalSettingsForm {
   executionReward: { get: number; set: Dispatch<SetStateAction<number>> }
   voteRewardsCoefficient: { get: number; set: Dispatch<SetStateAction<number>> }
   executorDescription: { get: string; set: Dispatch<SetStateAction<string>> }
-
-  // TODO: ?
-  // minTokenBalance: { get: string; set: Dispatch<SetStateAction<string>> }
-  // minNftBalance: { get: string; set: Dispatch<SetStateAction<string>> }
 }
 
 interface FundDaoCreatingContext {
@@ -203,6 +162,7 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
     balances: useState<number[]>([0]),
   }
 
+  // TODO: refactor this, use useErc721 instead and keep erc721 instance
   const [_isErc721Enumerable, _setIsErc721Enumerable] = useState(false)
 
   const handleErc721Input = useCallback(

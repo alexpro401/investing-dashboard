@@ -8,13 +8,16 @@ import {
   FundDaoCreatingContext,
 } from "context/FundDaoCreatingContext"
 import { useFormValidation } from "hooks/useFormValidation"
-import { required } from "utils/validators"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   poolParameters: DaoProposalSettingsForm
+  formValidation: ReturnType<typeof useFormValidation>
 }
 
-const DaoSettingsParameters: FC<Props> = ({ poolParameters }) => {
+const DaoSettingsParameters: FC<Props> = ({
+  poolParameters,
+  formValidation,
+}) => {
   const {
     delegatedVotingAllowed,
     duration,
@@ -34,43 +37,9 @@ const DaoSettingsParameters: FC<Props> = ({ poolParameters }) => {
     quorumValidators,
   } = poolParameters
 
-  const { getFieldErrorMessage, touchField, isFieldValid, isFormValid } =
-    useFormValidation(
-      {
-        delegatedVotingAllowed: delegatedVotingAllowed.get,
-        duration: duration.get,
-        quorum: quorum.get,
-
-        earlyCompletion: earlyCompletion.get,
-
-        minVotesForVoting: minVotesForVoting.get,
-        minVotesForCreating: minVotesForCreating.get,
-
-        rewardToken: rewardToken.get,
-        creationReward: creationReward.get,
-        voteRewardsCoefficient: voteRewardsCoefficient.get,
-        executionReward: executionReward.get,
-
-        durationValidators: durationValidators.get,
-        quorumValidators: quorumValidators.get,
-      },
-      {
-        delegatedVotingAllowed: { required },
-        duration: { required },
-        quorum: { required },
-        earlyCompletion: { required },
-        minVotesForVoting: { required },
-        minVotesForCreating: { required },
-        rewardToken: { required },
-        creationReward: { required },
-        voteRewardsCoefficient: { required },
-        executionReward: { required },
-        durationValidators: { required },
-        quorumValidators: { required },
-      }
-    )
-
   const { isValidator } = useContext(FundDaoCreatingContext)
+
+  const { getFieldErrorMessage, touchField, isFieldValid } = formValidation
 
   return (
     <>
@@ -115,6 +84,8 @@ const DaoSettingsParameters: FC<Props> = ({ poolParameters }) => {
             value={quorum.get}
             setValue={quorum.set}
             label="Votes needed for quorum"
+            errorMessage={getFieldErrorMessage("quorum")}
+            onBlur={() => touchField("quorum")}
           />
         </CardFormControl>
       </Card>
@@ -139,11 +110,15 @@ const DaoSettingsParameters: FC<Props> = ({ poolParameters }) => {
               value={durationValidators.get}
               setValue={durationValidators.set}
               label="Length of voting period"
+              errorMessage={getFieldErrorMessage("durationValidators")}
+              onBlur={() => touchField("durationValidators")}
             />
             <InputField
               value={quorumValidators.get}
               setValue={quorumValidators.set}
               label="Votes needed for quorum"
+              errorMessage={getFieldErrorMessage("quorumValidators")}
+              onBlur={() => touchField("quorumValidators")}
             />
           </CardFormControl>
         </Card>
@@ -182,11 +157,15 @@ const DaoSettingsParameters: FC<Props> = ({ poolParameters }) => {
             value={minVotesForVoting.get}
             setValue={minVotesForVoting.set}
             label="Voting"
+            errorMessage={getFieldErrorMessage("minVotesForVoting")}
+            onBlur={() => touchField("minVotesForVoting")}
           />
           <InputField
             value={minVotesForCreating.get}
             setValue={minVotesForCreating.set}
             label="Creating a proposal"
+            errorMessage={getFieldErrorMessage("minVotesForCreating")}
+            onBlur={() => touchField("minVotesForCreating")}
           />
         </CardFormControl>
       </Card>
@@ -220,16 +199,22 @@ const DaoSettingsParameters: FC<Props> = ({ poolParameters }) => {
             value={creationReward.get}
             setValue={creationReward.set}
             label="Amount of tokens for creator"
+            errorMessage={getFieldErrorMessage("creationReward")}
+            onBlur={() => touchField("creationReward")}
           />
           <InputField
             value={voteRewardsCoefficient.get}
             setValue={voteRewardsCoefficient.set}
             label="Amount of tokens for the voter"
+            errorMessage={getFieldErrorMessage("voteRewardsCoefficient")}
+            onBlur={() => touchField("voteRewardsCoefficient")}
           />
           <InputField
             value={executionReward.get}
             setValue={executionReward.set}
             label="Amount of tokens for tx. executor"
+            errorMessage={getFieldErrorMessage("executionReward")}
+            onBlur={() => touchField("executionReward")}
           />
         </CardFormControl>
       </Card>

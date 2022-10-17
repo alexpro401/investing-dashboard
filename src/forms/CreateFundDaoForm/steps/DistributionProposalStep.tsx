@@ -13,11 +13,75 @@ import {
 import * as S from "../styled"
 
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
+import { stepsControllerContext } from "../../../context/StepsControllerContext"
+import { useFormValidation } from "../../../hooks/useFormValidation"
+import { required } from "../../../utils/validators"
 
 const DistributionProposalStep: FC = () => {
   const { distributionProposalSettingsForm } = useContext(
     FundDaoCreatingContext
   )
+  const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
+
+  const {
+    delegatedVotingAllowed,
+    duration,
+    quorum,
+
+    earlyCompletion,
+
+    minVotesForVoting,
+    minVotesForCreating,
+
+    rewardToken,
+    creationReward,
+    voteRewardsCoefficient,
+    executionReward,
+
+    durationValidators,
+    quorumValidators,
+  } = distributionProposalSettingsForm
+
+  const formValidation = useFormValidation(
+    {
+      delegatedVotingAllowed: delegatedVotingAllowed.get,
+      duration: duration.get,
+      quorum: quorum.get,
+
+      earlyCompletion: earlyCompletion.get,
+
+      minVotesForVoting: minVotesForVoting.get,
+      minVotesForCreating: minVotesForCreating.get,
+
+      rewardToken: rewardToken.get,
+      creationReward: creationReward.get,
+      voteRewardsCoefficient: voteRewardsCoefficient.get,
+      executionReward: executionReward.get,
+
+      durationValidators: durationValidators.get,
+      quorumValidators: quorumValidators.get,
+    },
+    {
+      delegatedVotingAllowed: { required },
+      duration: { required },
+      quorum: { required },
+      earlyCompletion: { required },
+      minVotesForVoting: { required },
+      minVotesForCreating: { required },
+      creationReward: { required },
+      voteRewardsCoefficient: { required },
+      executionReward: { required },
+      durationValidators: { required },
+      quorumValidators: { required },
+    }
+  )
+
+  const handleNextStep = () => {
+    formValidation.touchForm()
+    if (!formValidation.isFieldsValid) return
+
+    nextCb()
+  }
 
   return (
     <>
@@ -26,7 +90,9 @@ const DistributionProposalStep: FC = () => {
           <>
             <Card>
               <CardHead
-                nodeLeft={<CreateDaoCardStepNumber number={7} />}
+                nodeLeft={
+                  <CreateDaoCardStepNumber number={currentStepNumber} />
+                }
                 title="Changing General voting settings*"
               />
               <CardDescription>
@@ -49,13 +115,14 @@ const DistributionProposalStep: FC = () => {
             <S.CenteredImage src={CreateFundDocsImage} />
             <DaoSettingsParameters
               poolParameters={distributionProposalSettingsForm}
+              formValidation={formValidation}
             />
           </>
         ) : (
           <></>
         )}
       </S.StepsRoot>
-      <StepsNavigation />
+      <StepsNavigation customNextCb={handleNextStep} />
     </>
   )
 }

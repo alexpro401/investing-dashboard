@@ -58,46 +58,51 @@ const TitlesStep: FC = () => {
   const { tokenAddress, nftAddress, totalPowerInTokens, nftsTotalSupply } =
     daoPoolFormContext.userKeeperParams
 
-  const { getFieldErrorMessage, touchField, isFieldValid, isFormValid } =
-    useFormValidation(
-      {
-        avatarUrl: avatarUrl.get,
-        daoName: daoName.get,
-        websiteUrl: websiteUrl.get,
-        description: description.get,
-        documents: documents.get,
+  const {
+    getFieldErrorMessage,
+    touchField,
+    isFieldValid,
+    touchForm,
+    isFieldsValid,
+  } = useFormValidation(
+    {
+      avatarUrl: avatarUrl.get,
+      daoName: daoName.get,
+      websiteUrl: websiteUrl.get,
+      description: description.get,
+      documents: documents.get,
 
-        tokenAddress: tokenAddress.get,
+      tokenAddress: tokenAddress.get,
 
-        nftAddress: nftAddress.get,
-        totalPowerInTokens: totalPowerInTokens.get,
-        nftsTotalSupply: nftsTotalSupply.get,
-      },
-      {
-        avatarUrl: { required },
-        daoName: { required, minLength: minLength(6) },
-        websiteUrl: { required, isUrl },
-        description: { required },
-        documents: {
-          required,
-          $every: {
-            name: { required },
-            url: { required, isUrl },
-          },
+      nftAddress: nftAddress.get,
+      totalPowerInTokens: totalPowerInTokens.get,
+      nftsTotalSupply: nftsTotalSupply.get,
+    },
+    {
+      avatarUrl: { required },
+      daoName: { required, minLength: minLength(6) },
+      websiteUrl: { required, isUrl },
+      description: { required },
+      documents: {
+        required,
+        $every: {
+          name: { required },
+          url: { required, isUrl },
         },
+      },
 
-        ...(isErc20.get
-          ? { tokenAddress: { required, isAddressValidator } }
-          : {}),
-        ...(isErc721.get
-          ? {
-              nftAddress: { required, isAddressValidator },
-              totalPowerInTokens: { required },
-              nftsTotalSupply: { required },
-            }
-          : {}),
-      }
-    )
+      ...(isErc20.get
+        ? { tokenAddress: { required, isAddressValidator } }
+        : {}),
+      ...(isErc721.get
+        ? {
+            nftAddress: { required, isAddressValidator },
+            totalPowerInTokens: { required },
+            nftsTotalSupply: { required },
+          }
+        : {}),
+    }
+  )
 
   const { chainId } = useActiveWeb3React()
 
@@ -135,7 +140,8 @@ const TitlesStep: FC = () => {
   }, [handleErc20Input, tokenAddress.get])
 
   const handleNextStep = () => {
-    if (!isFormValid()) return
+    touchForm()
+    if (!isFieldsValid) return
 
     nextCb()
   }

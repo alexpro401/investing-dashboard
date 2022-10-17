@@ -131,17 +131,14 @@ const CreateFundDaoForm: FC = () => {
       <AnimatePresence>
         {currentStep === STEPS.titles ? (
           <S.StepsContainer>
-            {/*UserKeeperParams and descriptionURL*/}
             <TitlesStep />
           </S.StepsContainer>
         ) : currentStep === STEPS.IsDaoValidator ? (
           <S.StepsContainer>
-            {/*validatorsParams*/}
             <IsDaoValidatorStep />
           </S.StepsContainer>
         ) : currentStep === STEPS.defaultProposalSetting ? (
           <S.StepsContainer>
-            {/*defaultProposalSettings*/}
             <DefaultProposalStep />
           </S.StepsContainer>
         ) : currentStep === STEPS.isCustomVoteSelecting ? (
@@ -150,17 +147,14 @@ const CreateFundDaoForm: FC = () => {
           </S.StepsContainer>
         ) : currentStep === STEPS.internalProposal ? (
           <S.StepsContainer>
-            {/*internalProposalSettings*/}
             <InternalProposalStep />
           </S.StepsContainer>
         ) : currentStep === STEPS.isTokenDistributionSettings ? (
           <S.StepsContainer>
-            {/*isTokenDistributionSettingsStep*/}
             <IsDistributionProposalStep />
           </S.StepsContainer>
         ) : currentStep === STEPS.distributionProposalSettings ? (
           <S.StepsContainer>
-            {/*distributionProposalSettingsForm*/}
             <DistributionProposalStep />
           </S.StepsContainer>
         ) : currentStep === STEPS.success ? (
