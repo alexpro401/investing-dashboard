@@ -1,13 +1,6 @@
-import React, {
-  useState,
-  useMemo,
-  useCallback,
-  useContext,
-  useEffect,
-} from "react"
+import React, { useState, useMemo, useCallback, useContext } from "react"
 import { AnimatePresence } from "framer-motion"
 import { useNavigate, useParams } from "react-router-dom"
-import { parseEther } from "@ethersproject/units"
 
 import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
@@ -15,7 +8,6 @@ import { DefaultProposalStep } from "forms/CreateFundDaoForm/steps"
 import { DaoProposalCreatingContext } from "context/DaoProposalCreatingContext"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import useCreateDaoProposalType from "hooks/useCreateDaoProposalType"
-import useDAODeposit from "hooks/useDAODeposit"
 
 import * as S from "./styled"
 
@@ -30,7 +22,6 @@ const CreateNewProposalTypeForm: React.FC = () => {
   const createDaoProposalType = useCreateDaoProposalType({
     daoPoolAddress: daoAddress ?? "",
   })
-  const daoDeposit = useDAODeposit(daoAddress ?? "")
 
   const daoProposalCreatingInfo = useContext(DaoProposalCreatingContext)
   const firstStepSettings = useContext(FundDaoCreatingContext)
@@ -45,16 +36,13 @@ const CreateNewProposalTypeForm: React.FC = () => {
     [currentStep]
   )
 
-  useEffect(() => {
-    daoDeposit("0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3", parseEther("1"))
-  }, [daoDeposit])
-
   const handleCreateDaoProposalType = useCallback(() => {
     const {
       contractAddress,
       proposalDescription,
       proposalName,
       proposalTypeName,
+      proposalTypeDescription,
     } = daoProposalCreatingInfo
 
     const {
@@ -78,6 +66,7 @@ const CreateNewProposalTypeForm: React.FC = () => {
         proposalDescription: proposalDescription.get,
         proposalName: proposalName.get,
         proposalTypeName: proposalTypeName.get,
+        proposalTypeDescription: proposalTypeDescription.get,
       },
       proposalSettings: {
         earlyCompletion: earlyCompletion.get,
@@ -144,6 +133,7 @@ const CreateNewProposalTypeForm: React.FC = () => {
             <CreateDaoProposalGeneralForm
               withContractName
               withProposalTypeName
+              withProposalTypeDescription
             />
           </S.StepsContainer>
         )}

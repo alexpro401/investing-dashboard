@@ -31,6 +31,7 @@ import {
   ClaimInvestProposalTransactionInfo,
   ConvertInvestProposalToDividendsTransactionInfo,
   GovPoolCreateTransactionInfo,
+  GovPoolDepositTransactionInfo,
 } from "state/transactions/types"
 import { formatBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
@@ -323,6 +324,12 @@ const GovPoolCreateSummary: React.FC<{
   return <>Create DAO pool.</>
 }
 
+const GovPoolDepositSummary: React.FC<{
+  info: GovPoolDepositTransactionInfo
+}> = () => {
+  return <>Successfuly deposited.</>
+}
+
 const TransactionSummary: React.FC<IProps> = ({ info }) => {
   switch (info.type) {
     case TransactionType.APPROVAL:
@@ -379,6 +386,8 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <ConvertInvestProposalToDividendsSummary info={info} />
     case TransactionType.GOV_POOL_CREATE:
       return <GovPoolCreateSummary info={info} />
+    case TransactionType.GOV_POOL_DEPOSIT:
+      return <GovPoolDepositSummary info={info} />
 
     default:
       return null

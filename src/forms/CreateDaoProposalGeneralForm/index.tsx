@@ -26,14 +26,20 @@ import * as S from "./styled"
 interface ICreateDaoProposalGeneralFormProps {
   withContractName?: boolean
   withProposalTypeName?: boolean
+  withProposalTypeDescription?: boolean
 }
 
 const CreateDaoProposalGeneralForm: React.FC<
   ICreateDaoProposalGeneralFormProps
-> = ({ withContractName = false, withProposalTypeName = false }) => {
+> = ({
+  withContractName = false,
+  withProposalTypeName = false,
+  withProposalTypeDescription = false,
+}) => {
   const {
     contractAddress,
     proposalTypeName,
+    proposalTypeDescription,
     proposalDescription,
     proposalName,
   } = useContext(DaoProposalCreatingContext)
@@ -45,6 +51,9 @@ const CreateDaoProposalGeneralForm: React.FC<
       ...(withContractName ? { contractAddress: contractAddress.get } : {}),
       ...(withProposalTypeName
         ? { proposalTypeName: proposalTypeName.get }
+        : {}),
+      ...(withProposalTypeDescription
+        ? { proposalTypeDescription: proposalTypeDescription.get }
         : {}),
       proposalName: proposalName.get,
       description: proposalDescription.get,
@@ -59,6 +68,13 @@ const CreateDaoProposalGeneralForm: React.FC<
               required,
               minLength: minLength(4),
               maxLength: maxLength(40),
+            },
+          }
+        : {}),
+      ...(withProposalTypeDescription
+        ? {
+            proposalTypeDescription: {
+              maxLength: maxLength(1000),
             },
           }
         : {}),
@@ -125,15 +141,6 @@ const CreateDaoProposalGeneralForm: React.FC<
                 }
               />
             )}
-            {withProposalTypeName && (
-              <InputField
-                value={proposalTypeName.get}
-                setValue={proposalTypeName.set}
-                label="Proposal type name"
-                errorMessage={getFieldErrorMessage("proposalTypeName")}
-                onBlur={() => touchField("proposalTypeName")}
-              />
-            )}
             <InputField
               value={proposalName.get}
               setValue={proposalName.set}
@@ -148,6 +155,24 @@ const CreateDaoProposalGeneralForm: React.FC<
               errorMessage={getFieldErrorMessage("proposalDescription")}
               onBlur={() => touchField("proposalDescription")}
             />
+            {withProposalTypeName && (
+              <InputField
+                value={proposalTypeName.get}
+                setValue={proposalTypeName.set}
+                label="Proposal type name"
+                errorMessage={getFieldErrorMessage("proposalTypeName")}
+                onBlur={() => touchField("proposalTypeName")}
+              />
+            )}
+            {withProposalTypeDescription && (
+              <TextareaField
+                value={proposalTypeDescription.get}
+                setValue={proposalTypeDescription.set}
+                label="Proposal type description"
+                errorMessage={getFieldErrorMessage("proposalTypeDescription")}
+                onBlur={() => touchField("proposalTypeDescription")}
+              />
+            )}
           </CardFormControl>
         </Card>
       </S.StepsRoot>

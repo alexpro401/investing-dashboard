@@ -52,7 +52,7 @@ const useDAODeposit = (daoPoolAddress: string) => {
   }, [updateTokenAddress])
 
   const daoDeposit = useCallback(
-    async (account: string, amount: BigNumber) => {
+    async (account: string, amount: BigNumber, nftIds: number[]) => {
       try {
         if (!account || !govPoolContract || !userKeeperContract || !fromToken)
           return
@@ -64,21 +64,18 @@ const useDAODeposit = (daoPoolAddress: string) => {
         const transactionResponse = await govPoolContract.deposit(
           account,
           amount,
-          []
+          nftIds
         )
-
-        console.log(transactionResponse)
 
         setPayload(SubmitState.WAIT_CONFIRM)
         const receipt = await addTransaction(transactionResponse, {
-          type: TransactionType.GOV_POOL_CREATE,
+          type: TransactionType.GOV_POOL_DEPOSIT,
         })
 
         if (isTxMined(receipt)) {
           setPayload(SubmitState.SUCCESS)
         }
       } catch (error: any) {
-        console.log("daoDeposit error: ", error)
         setPayload(SubmitState.IDLE)
         if (!!error && !!error.data && !!error.data.message) {
           setError(error.data.message)

@@ -3,6 +3,10 @@ import React, { useState, createContext, Dispatch, SetStateAction } from "react"
 interface IDaoProposalCreatingContext {
   contractAddress: { get: string; set: Dispatch<SetStateAction<string>> }
   proposalTypeName: { get: string; set: Dispatch<SetStateAction<string>> }
+  proposalTypeDescription: {
+    get: string
+    set: Dispatch<SetStateAction<string>>
+  }
   proposalName: { get: string; set: Dispatch<SetStateAction<string>> }
   proposalDescription: { get: string; set: Dispatch<SetStateAction<string>> }
 }
@@ -16,6 +20,7 @@ export const DaoProposalCreatingContext =
   createContext<IDaoProposalCreatingContext>({
     contractAddress: { get: "", set: () => {} },
     proposalTypeName: { get: "", set: () => {} },
+    proposalTypeDescription: { get: "", set: () => {} },
     proposalName: { get: "", set: () => {} },
     proposalDescription: { get: "", set: () => {} },
   })
@@ -25,6 +30,8 @@ const DaoProposalCreatingContextProvider: React.FC<
 > = ({ children }) => {
   const [_contractAddress, _setContractAddress] = useState<string>("")
   const [_proposalTypeName, _setProposalTypeName] = useState<string>("")
+  const [_proposalTypeDescritpion, _setProposalTypeDescritpion] =
+    useState<string>("")
   const [_proposalName, _setProposalName] = useState<string>("")
   const [_proposalDescription, _setProposalDescription] = useState<string>("")
 
@@ -33,6 +40,10 @@ const DaoProposalCreatingContextProvider: React.FC<
       value={{
         contractAddress: { get: _contractAddress, set: _setContractAddress },
         proposalTypeName: { get: _proposalTypeName, set: _setProposalTypeName },
+        proposalTypeDescription: {
+          get: _proposalTypeDescritpion,
+          set: _setProposalTypeDescritpion,
+        },
         proposalName: { get: _proposalName, set: _setProposalName },
         proposalDescription: {
           get: _proposalDescription,

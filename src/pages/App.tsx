@@ -18,6 +18,7 @@ import { SpecialModalBackground, AppWrapper } from "theme/GlobalStyle"
 const App = () => {
   const eager = useEagerConnect()
   useInactiveListener(eager)
+
   return (
     <ThemeProvider theme={theme}>
       <ModalProvider backgroundComponent={SpecialModalBackground}>

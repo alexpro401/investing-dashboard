@@ -14,6 +14,7 @@ interface ICreateDaoProposalTypeArgs {
     proposalTypeName: string
     proposalName: string
     proposalDescription: string
+    proposalTypeDescription: string
   }
   proposalSettings: {
     earlyCompletion: boolean
@@ -85,7 +86,7 @@ const useCreateDaoProposalType = ({
         const _govSettingsAddress = await govPoolContract.govSetting()
         setGovSettingsAddress(_govSettingsAddress)
       } catch (error) {
-        //TODO set error here
+        console.log(error)
       }
     }
     setupGovSettingsAddress()
@@ -101,6 +102,7 @@ const useCreateDaoProposalType = ({
           proposalDescription,
           proposalName,
           proposalTypeName,
+          proposalTypeDescription,
         },
         proposalSettings: {
           earlyCompletion,
@@ -116,20 +118,15 @@ const useCreateDaoProposalType = ({
         },
       } = args
 
-      /* get from default dao settings - validatorsVote, durationValidators, quorumValidators */
-      const executorDescription = proposalTypeName
-
       try {
         const { validatorsVote, durationValidators, quorumValidators } =
           await govSettingsContract.settings(EExecutor.DEFAULT)
 
-        const settings1 = await govSettingsContract.settings(0)
-        const settings2 = await govSettingsContract.settings(1)
-
-        console.log("settings1: ", settings1)
-        console.log("settings2: ", settings2)
-
-        // await deposit()
+        let { path: daoProposalTypeIPFSCode } = await addDaoProposalTypeData({
+          proposalName: proposalTypeName,
+          proposalDescription: proposalTypeDescription,
+        })
+        daoProposalTypeIPFSCode = "ipfs://" + daoProposalTypeIPFSCode
 
         const encodedAddSettingsMethod = encodeAbiMethod(
           GovSettings,
@@ -137,6 +134,7 @@ const useCreateDaoProposalType = ({
           [
             [
               {
+                // TODO add real proposal data from form component
                 earlyCompletion,
                 delegatedVotingAllowed,
                 validatorsVote,
@@ -150,37 +148,15 @@ const useCreateDaoProposalType = ({
                 creationReward: 0,
                 executionReward: 0,
                 voteRewardsCoefficient: 1,
-                executorDescription,
+                executorDescription: daoProposalTypeIPFSCode,
               },
             ],
           ]
         )
 
-        console.log({
-          earlyCompletion,
-          delegatedVotingAllowed,
-          validatorsVote,
-          duration: 70,
-          durationValidators,
-          quorum: parseUnits("1", 25),
-          quorumValidators,
-          minVotesForVoting: 1,
-          minVotesForCreating: 1,
-          rewardToken: "0x0000000000000000000000000000000000000000",
-          creationReward: 0,
-          executionReward: 0,
-          voteRewardsCoefficient: 1,
-          executorDescription,
-        })
-
-        console.log("encodedAddSettingsMethod: ", encodedAddSettingsMethod)
-
         const newSettingsIdBN = await govSettingsContract.newSettingsId()
-        console.log(newSettingsIdBN)
 
         const newSettings = newSettingsIdBN.toNumber()
-
-        console.log("newSettings: ", newSettings)
 
         const encodedChangeExecuterMethod = encodeAbiMethod(
           GovSettings,
@@ -188,24 +164,20 @@ const useCreateDaoProposalType = ({
           [[contractAddress], [newSettings]]
         )
 
-        console.log(
-          "encodedChangeExecuterMethod: ",
-          encodedChangeExecuterMethod
-        )
-
-        const { path: daoProposalTypeIPFSCode } = await addDaoProposalTypeData({
+        let { path: daoProposalIPFSCode } = await addDaoProposalTypeData({
           proposalName: proposalName,
           proposalDescription: proposalDescription,
         })
+        daoProposalIPFSCode = "ipfs://" + daoProposalIPFSCode
 
         const gasLimit = await tryEstimateGas(
-          daoProposalTypeIPFSCode,
+          daoProposalIPFSCode,
           govSettingsAddress,
           [encodedAddSettingsMethod, encodedChangeExecuterMethod]
         )
 
         const resultTransaction = await govPoolContract.createProposal(
-          daoProposalTypeIPFSCode,
+          daoProposalIPFSCode,
           [govSettingsAddress, govSettingsAddress],
           [0, 0],
           [encodedAddSettingsMethod, encodedChangeExecuterMethod],
