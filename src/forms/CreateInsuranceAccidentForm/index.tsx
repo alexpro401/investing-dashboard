@@ -66,7 +66,7 @@ const CreateInsuranceAccidentForm: FC = () => {
   const { pool, block, date, description, chat } = form
 
   const formController = useForm()
-  const { isFormValid, getFieldErrorMessage, touchField } = useFormValidation(
+  const { isFieldsValid, getFieldErrorMessage, touchField } = useFormValidation(
     {
       pool: pool.get,
       block: block.get,
@@ -160,7 +160,7 @@ const CreateInsuranceAccidentForm: FC = () => {
   )
 
   const submit = useCallback(async () => {
-    if (!account || !isFormValid || !insurance) {
+    if (!account || !isFieldsValid || !insurance) {
       return
     }
 
@@ -226,7 +226,7 @@ const CreateInsuranceAccidentForm: FC = () => {
     insurance,
     investorsInfo,
     investorsTotals,
-    isFormValid,
+    isFieldsValid,
     pool,
   ])
 
