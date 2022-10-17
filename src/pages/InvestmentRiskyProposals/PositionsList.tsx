@@ -139,10 +139,15 @@ const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
     }),
     [closed, account]
   )
+  const pause = useMemo(
+    () => isNil(closed) || isNil(account),
+    [closed, account]
+  )
 
   const [{ data, loading }, fetchMore] = useQueryPagination(
     InvestorProposalsPositionsQuery,
     variables,
+    pause,
     (d) => d.proposalPositions
   )
 

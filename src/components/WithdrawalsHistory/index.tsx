@@ -24,6 +24,7 @@ const WithdrawalsHistory: FC<IProps> = ({ unlockDate, poolAddress }) => {
   const [{ data, loading }, fetchMore] = useQueryPagination(
     FundFeeHistoryQuery,
     variables,
+    !poolAddress,
     (d) => d.feeHistories
   )
 
