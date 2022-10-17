@@ -348,6 +348,16 @@ const useInvest = ({
     setLPBalance(balance)
   }, [account, traderPool])
 
+  const handleError = useCallback(
+    (error) => {
+      setWalletPrompting(SubmitState.IDLE)
+
+      const errorMessage = parseTransactionError(error)
+      !!errorMessage && setError(errorMessage)
+    },
+    [setError, setWalletPrompting]
+  )
+
   const updateAllowance = useCallback(async () => {
     if (!account || !poolAddress || !baseToken) return
 
@@ -374,6 +384,8 @@ const useInvest = ({
         setWalletPrompting(SubmitState.SUCCESS)
       }
     } catch (e) {
+      handleError(e)
+    } finally {
       setWalletPrompting(SubmitState.IDLE)
     }
   }, [
@@ -386,6 +398,7 @@ const useInvest = ({
     addTransaction,
     fetchAndUpdateAllowance,
     setWalletPrompting,
+    handleError,
   ])
 
   const getPriceUSD = useCallback(
@@ -635,24 +648,23 @@ const useInvest = ({
 
     setWalletPrompting(SubmitState.SIGN)
 
-    const handleError = (error) => {
+    try {
+      if (direction === "deposit") {
+        await handleDeposit()
+      } else {
+        await handleWithdraw()
+      }
+    } catch (e) {
+      handleError(e)
+    } finally {
       setWalletPrompting(SubmitState.IDLE)
-
-      const errorMessage = parseTransactionError(error)
-      !!errorMessage && setError(errorMessage)
-    }
-
-    if (direction === "deposit") {
-      handleDeposit().catch(handleError)
-    } else {
-      handleWithdraw().catch(handleError)
     }
   }, [
+    handleError,
     direction,
     handleDeposit,
     handleValidate,
     handleWithdraw,
-    setError,
     setWalletPrompting,
   ])
 

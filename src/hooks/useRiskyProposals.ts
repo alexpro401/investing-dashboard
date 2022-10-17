@@ -76,7 +76,7 @@ export function useRiskyProposal(
     if (!riskyProposal || !index) return
     ;(async () => {
       const data = await riskyProposal.getProposalInfos(
-        index,
+        parseFloat(index),
         parseFloat(index) + 1
       )
       setProposal(data[0])
@@ -105,9 +105,7 @@ export function useActiveInvestmentsInfo(
           index,
           1
         )
-        if (data.length) {
-          setInfo(data[0])
-        }
+        setInfo(data[0])
       } catch {}
     })()
   }, [riskyProposal, index, account])
