@@ -33,7 +33,7 @@ const RiskyPositionCardInitializer: FC<IRiskyCardInitializer> = ({
     // Must subtract 2
     // because in useRiskyPosition add 1 (positionId have shift of one between contract and graph)
     // but here we use id from graph
-    proposalId: String(Number(position.proposalId) - 2),
+    proposalId: String(Number(position.proposalId) - 1),
     closed: position.isClosed,
   })
 
