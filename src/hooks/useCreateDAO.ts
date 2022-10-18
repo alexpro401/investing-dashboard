@@ -21,12 +21,13 @@ const useCreateDAO = () => {
     isCustomVoting,
     isDistributionProposal,
     isValidator,
-    isErc721Enumerable,
     avatarUrl,
     daoName,
     websiteUrl,
     description,
     documents,
+    erc20,
+    erc721,
     userKeeperParams,
     validatorsParams,
     govPoolDeployParams,
@@ -264,9 +265,10 @@ const useCreateDAO = () => {
         totalPowerInTokens: isErc721.get
           ? parseEther(String(userKeeperParams.totalPowerInTokens.get))
           : 0,
-        nftsTotalSupply: isErc721Enumerable.get
-          ? 0
-          : userKeeperParams.nftsTotalSupply.get,
+        nftsTotalSupply:
+          isErc721.get && erc721.isEnumerable
+            ? 0
+            : userKeeperParams.nftsTotalSupply.get,
       },
       descriptionURL: "example.com",
     }
@@ -349,7 +351,6 @@ const useCreateDAO = () => {
     internalProposalForm.voteRewardsCoefficient.get,
     isDistributionProposal.get,
     isErc721.get,
-    isErc721Enumerable.get,
     isValidator.get,
     setError,
     setPayload,

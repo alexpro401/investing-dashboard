@@ -51,7 +51,7 @@ import { useErc721 } from "hooks/useErc721"
 const TitlesStep: FC = () => {
   const daoPoolFormContext = useContext(FundDaoCreatingContext)
 
-  const { isErc20, isErc721 } = daoPoolFormContext
+  const { isErc20, isErc721, erc20, erc721 } = daoPoolFormContext
 
   const { avatarUrl, daoName, websiteUrl, description, documents } =
     daoPoolFormContext
@@ -63,12 +63,12 @@ const TitlesStep: FC = () => {
 
   const { nextCb } = useContext(stepsControllerContext)
 
-  const [, erc20TokenData, , erc20TokenInit] = useERC20(tokenAddress.get)
+  const [, erc20TokenData] = erc20
   const {
     name: erc721Name,
     symbol: erc721Symbol,
     isEnumerable: erc721IsEnumerable,
-  } = useErc721(nftAddress.get)
+  } = erc721
 
   const erc20TokenExplorerLink = useMemo(() => {
     return chainId
@@ -128,23 +128,6 @@ const TitlesStep: FC = () => {
     },
     []
   )
-
-  const handleErc20Input = useCallback(
-    debounce(async (address: string) => {
-      try {
-        if (isAddress(address)) {
-          await erc20TokenInit()
-        }
-      } catch (e) {
-        console.error(e)
-      }
-    }, 1000),
-    []
-  )
-
-  useEffect(() => {
-    handleErc20Input(tokenAddress.get)
-  }, [handleErc20Input, tokenAddress.get])
 
   const handleNextStep = () => {
     touchForm()
