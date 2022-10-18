@@ -1,16 +1,23 @@
 import { Card, CardDescription, CardFormControl, CardHead, Icon } from "common"
-import Switch from "components/Switch"
-import { InputField } from "fields"
-
-import { FC, HTMLAttributes } from "react"
-import { DaoProposalSettingsForm } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
+import Switch from "components/Switch"
+import { DurationField, InputField } from "fields"
+import { FC, HTMLAttributes, useContext } from "react"
+import {
+  DaoProposalSettingsForm,
+  FundDaoCreatingContext,
+} from "context/FundDaoCreatingContext"
+import { useFormValidation } from "hooks/useFormValidation"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   poolParameters: DaoProposalSettingsForm
+  formValidation: ReturnType<typeof useFormValidation>
 }
 
-const CreateDaoPoolParameters: FC<Props> = ({ poolParameters }) => {
+const DaoSettingsParameters: FC<Props> = ({
+  poolParameters,
+  formValidation,
+}) => {
   const {
     delegatedVotingAllowed,
     duration,
@@ -25,7 +32,14 @@ const CreateDaoPoolParameters: FC<Props> = ({ poolParameters }) => {
     creationReward,
     voteRewardsCoefficient,
     executionReward,
+
+    durationValidators,
+    quorumValidators,
   } = poolParameters
+
+  const { isValidator } = useContext(FundDaoCreatingContext)
+
+  const { getFieldErrorMessage, touchField, isFieldValid } = formValidation
 
   return (
     <>
@@ -58,18 +72,57 @@ const CreateDaoPoolParameters: FC<Props> = ({ poolParameters }) => {
           <p>General settings for voting.</p>
         </CardDescription>
         <CardFormControl>
-          <InputField
+          <DurationField
             value={duration.get}
             setValue={duration.set}
             label="*Duration of voting"
+            placeholder="1Y 6Mon 2w 1d"
+            errorMessage={getFieldErrorMessage("duration")}
+            onBlur={() => touchField("duration")}
           />
           <InputField
             value={quorum.get}
             setValue={quorum.set}
             label="Votes needed for quorum"
+            errorMessage={getFieldErrorMessage("quorum")}
+            onBlur={() => touchField("quorum")}
           />
         </CardFormControl>
       </Card>
+
+      {isValidator.get && (
+        <Card>
+          <CardHead
+            nodeLeft={<Icon name={ICON_NAMES.cog} />}
+            title="Voting settings for validators"
+          />
+          <CardDescription>
+            <p>
+              Once a proposal passes the general vote, validator will hold a
+              validator-only second vote on every passed proposal to filter out
+              potentially malicious proposals.
+            </p>
+            <br />
+            <p>Set parameters for a second voting stage for validators.</p>
+          </CardDescription>
+          <CardFormControl>
+            <InputField
+              value={durationValidators.get}
+              setValue={durationValidators.set}
+              label="Length of voting period"
+              errorMessage={getFieldErrorMessage("durationValidators")}
+              onBlur={() => touchField("durationValidators")}
+            />
+            <InputField
+              value={quorumValidators.get}
+              setValue={quorumValidators.set}
+              label="Votes needed for quorum"
+              errorMessage={getFieldErrorMessage("quorumValidators")}
+              onBlur={() => touchField("quorumValidators")}
+            />
+          </CardFormControl>
+        </Card>
+      )}
 
       <Card>
         <CardHead
@@ -104,11 +157,15 @@ const CreateDaoPoolParameters: FC<Props> = ({ poolParameters }) => {
             value={minVotesForVoting.get}
             setValue={minVotesForVoting.set}
             label="Voting"
+            errorMessage={getFieldErrorMessage("minVotesForVoting")}
+            onBlur={() => touchField("minVotesForVoting")}
           />
           <InputField
             value={minVotesForCreating.get}
             setValue={minVotesForCreating.set}
             label="Creating a proposal"
+            errorMessage={getFieldErrorMessage("minVotesForCreating")}
+            onBlur={() => touchField("minVotesForCreating")}
           />
         </CardFormControl>
       </Card>
@@ -142,16 +199,22 @@ const CreateDaoPoolParameters: FC<Props> = ({ poolParameters }) => {
             value={creationReward.get}
             setValue={creationReward.set}
             label="Amount of tokens for creator"
+            errorMessage={getFieldErrorMessage("creationReward")}
+            onBlur={() => touchField("creationReward")}
           />
           <InputField
             value={voteRewardsCoefficient.get}
             setValue={voteRewardsCoefficient.set}
             label="Amount of tokens for the voter"
+            errorMessage={getFieldErrorMessage("voteRewardsCoefficient")}
+            onBlur={() => touchField("voteRewardsCoefficient")}
           />
           <InputField
             value={executionReward.get}
             setValue={executionReward.set}
             label="Amount of tokens for tx. executor"
+            errorMessage={getFieldErrorMessage("executionReward")}
+            onBlur={() => touchField("executionReward")}
           />
         </CardFormControl>
       </Card>
@@ -159,4 +222,4 @@ const CreateDaoPoolParameters: FC<Props> = ({ poolParameters }) => {
   )
 }
 
-export default CreateDaoPoolParameters
+export default DaoSettingsParameters

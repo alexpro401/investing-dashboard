@@ -20,4 +20,9 @@ export enum ICON_NAMES {
   greenCheck = "green-check",
   trash = "trash",
   cog = "cog",
+  facebook = "facebook",
+  linkedin = "linkedin",
+  medium = "medium",
+  telegram = "telegram",
+  twitter = "twitter",
 }

@@ -18,12 +18,41 @@ import { ICON_NAMES } from "constants/icon-names"
 import * as S from "forms/CreateFundDaoForm/styled"
 
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
+import { useFormValidation } from "hooks/useFormValidation"
+import { required } from "utils/validators"
+import { stepsControllerContext } from "context/StepsControllerContext"
 
 const IsDaoValidatorStep: FC = () => {
   const { validatorsParams, isValidator } = useContext(FundDaoCreatingContext)
 
   const { name, symbol, duration, quorum, validators, balances } =
     validatorsParams
+
+  const { getFieldErrorMessage, touchField, touchForm, isFieldsValid } =
+    useFormValidation(
+      {
+        name: name.get,
+        symbol: symbol.get,
+        duration: duration.get,
+        quorum: quorum.get,
+        validators: validators.get,
+        balances: balances.get,
+      },
+      {
+        ...(isValidator.get
+          ? {
+              name: { required },
+              symbol: { required },
+              duration: { required },
+              quorum: { required },
+              validators: { required, $every: { required } },
+              balances: { required, $every: { required } },
+            }
+          : {}),
+      }
+    )
+
+  const { nextCb } = useContext(stepsControllerContext)
 
   const handleAddValidator = useCallback(() => {
     validators.set([...validators.get, ""])
@@ -42,6 +71,13 @@ const IsDaoValidatorStep: FC = () => {
     },
     [balances, validators]
   )
+
+  const handleNextStep = () => {
+    touchForm()
+    if (!isFieldsValid) return
+
+    nextCb()
+  }
 
   return (
     <>
@@ -111,22 +147,30 @@ const IsDaoValidatorStep: FC = () => {
                 value={name.get}
                 setValue={name.set}
                 label="Validator token name"
+                errorMessage={getFieldErrorMessage("name")}
+                onBlur={() => touchField("name")}
               />
               <InputField
                 value={symbol.get}
                 setValue={symbol.set}
                 label="Validator token symbol"
+                errorMessage={getFieldErrorMessage("symbol")}
+                onBlur={() => touchField("symbol")}
               />
               <DurationField
                 value={duration.get}
                 setValue={duration.set}
                 label="Duration of validator voting"
                 placeholder="1Y 6Mon 2w 1d 6H 30Min 9s"
+                errorMessage={getFieldErrorMessage("duration")}
+                onBlur={() => touchField("duration")}
               />
               <InputField
                 value={quorum.get}
                 setValue={quorum.set}
                 label="Quorum required for a vote pass"
+                errorMessage={getFieldErrorMessage("quorum")}
+                onBlur={() => touchField("quorum")}
               />
             </CardFormControl>
           </S.OverflowedCard>
@@ -167,6 +211,14 @@ const IsDaoValidatorStep: FC = () => {
                       <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
                     ) : null
                   }
+                  errorMessage={
+                    getFieldErrorMessage(`validators[${idx}]`) ||
+                    getFieldErrorMessage(`balances[${idx}]`)
+                  }
+                  onBlur={() => {
+                    touchField(`validators[${idx}]`)
+                    touchField(`balances[${idx}]`)
+                  }}
                 />
               ))}
             </CardFormControl>
@@ -178,7 +230,7 @@ const IsDaoValidatorStep: FC = () => {
           </S.OverflowedCard>
         </Collapse>
       </S.StepsRoot>
-      <S.StepsBottomNavigation />
+      <S.StepsBottomNavigation customNextCb={handleNextStep} />
     </>
   )
 }

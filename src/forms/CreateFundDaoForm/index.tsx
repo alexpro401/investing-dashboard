@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useState } from "react"
+import { FC, useCallback, useContext, useMemo, useState } from "react"
 import * as S from "./styled"
 import {
   TitlesStep,
@@ -8,11 +8,14 @@ import {
   DefaultProposalStep,
   IsDistributionProposalStep,
   DistributionProposalStep,
+  SuccessStep,
 } from "./steps"
 
 import { useForm } from "hooks/useForm"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
+import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import useCreateDAO from "../../hooks/useCreateDAO"
 
 enum STEPS {
   titles = "titles",
@@ -20,13 +23,14 @@ enum STEPS {
   defaultProposalSetting = "default-proposal-setting",
   isCustomVoteSelecting = "is-custom-vote-selecting",
   internalProposal = "internal-proposal",
-  validatorsBalancesSettings = "validators-balances-settings",
   isTokenDistributionSettings = "is-token-distribution-settings",
   distributionProposalSettings = "distribution-proposal-settings",
+  success = "success",
 }
 
 const CreateFundDaoForm: FC = () => {
   const [currentStep, setCurrentStep] = useState(STEPS.titles)
+  // const [currentStep, setCurrentStep] = useState(STEPS.defaultProposalSetting)
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length, [])
   const currentStepNumber = useMemo(
@@ -37,6 +41,12 @@ const CreateFundDaoForm: FC = () => {
   const formController = useForm()
 
   const navigate = useNavigate()
+
+  const { isCustomVoting, isDistributionProposal } = useContext(
+    FundDaoCreatingContext
+  )
+
+  const createDaoCb = useCreateDAO()
 
   const handleNextStep = () => {
     switch (currentStep) {
@@ -50,13 +60,21 @@ const CreateFundDaoForm: FC = () => {
         setCurrentStep(STEPS.isCustomVoteSelecting)
         break
       case STEPS.isCustomVoteSelecting:
-        setCurrentStep(STEPS.internalProposal)
+        setCurrentStep(
+          isCustomVoting.get
+            ? STEPS.internalProposal
+            : STEPS.isTokenDistributionSettings
+        )
         break
       case STEPS.internalProposal:
         setCurrentStep(STEPS.isTokenDistributionSettings)
         break
       case STEPS.isTokenDistributionSettings:
-        setCurrentStep(STEPS.distributionProposalSettings)
+        if (isDistributionProposal.get) {
+          setCurrentStep(STEPS.distributionProposalSettings)
+        } else {
+          submit()
+        }
         break
       case STEPS.distributionProposalSettings:
         submit()
@@ -81,22 +99,27 @@ const CreateFundDaoForm: FC = () => {
         setCurrentStep(STEPS.isCustomVoteSelecting)
         break
       case STEPS.isTokenDistributionSettings:
-        setCurrentStep(STEPS.internalProposal)
+        setCurrentStep(
+          isCustomVoting.get
+            ? STEPS.internalProposal
+            : STEPS.isCustomVoteSelecting
+        )
         break
       case STEPS.distributionProposalSettings:
         setCurrentStep(STEPS.isTokenDistributionSettings)
     }
   }
 
-  const submit = useCallback(() => {
+  const submit = useCallback(async () => {
     formController.disableForm()
     try {
-      console.log("submit")
+      await createDaoCb()
+      setCurrentStep(STEPS.success)
     } catch (error) {
       console.error(error)
     }
     formController.enableForm()
-  }, [formController])
+  }, [createDaoCb, formController])
 
   return (
     <S.Container
@@ -108,17 +131,14 @@ const CreateFundDaoForm: FC = () => {
       <AnimatePresence>
         {currentStep === STEPS.titles ? (
           <S.StepsContainer>
-            {/*UserKeeperParams and descriptionURL*/}
             <TitlesStep />
           </S.StepsContainer>
         ) : currentStep === STEPS.IsDaoValidator ? (
           <S.StepsContainer>
-            {/*validatorsParams*/}
             <IsDaoValidatorStep />
           </S.StepsContainer>
         ) : currentStep === STEPS.defaultProposalSetting ? (
           <S.StepsContainer>
-            {/*defaultProposalSettings*/}
             <DefaultProposalStep />
           </S.StepsContainer>
         ) : currentStep === STEPS.isCustomVoteSelecting ? (
@@ -127,18 +147,19 @@ const CreateFundDaoForm: FC = () => {
           </S.StepsContainer>
         ) : currentStep === STEPS.internalProposal ? (
           <S.StepsContainer>
-            {/*internalProposalSettings*/}
             <InternalProposalStep />
           </S.StepsContainer>
         ) : currentStep === STEPS.isTokenDistributionSettings ? (
           <S.StepsContainer>
-            {/*isTokenDistributionSettingsStep*/}
             <IsDistributionProposalStep />
           </S.StepsContainer>
         ) : currentStep === STEPS.distributionProposalSettings ? (
           <S.StepsContainer>
-            {/*distributionProposalSettingsForm*/}
             <DistributionProposalStep />
+          </S.StepsContainer>
+        ) : currentStep === STEPS.success ? (
+          <S.StepsContainer>
+            <SuccessStep />
           </S.StepsContainer>
         ) : (
           <></>
