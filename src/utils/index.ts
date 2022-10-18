@@ -10,7 +10,6 @@ import { ExchangeType } from "interfaces/exchange"
 import { PoolType, TokenTuple } from "constants/types"
 import { getBalanceOf, getContract } from "./getContract"
 import { ITopMembersFilters, OwnedPools, Token } from "interfaces"
-import { IRiskyPositionCard } from "interfaces/thegraphs/basic-pools"
 import {
   PoolsQuery,
   PoolsQueryByType,
@@ -413,26 +412,6 @@ export const getPoolsQueryVariables = (
     query: PoolsQuery,
     variables: { q: filters.query },
   }
-}
-
-// prepare risky positions data
-export const prepareRiskyPositions = (data): IRiskyPositionCard[] => {
-  return data.proposalPositions.map((p) => {
-    const position = {
-      ...p,
-      token: p.proposal.token,
-      pool: p.proposal.basicPool,
-      exchanges: p.proposal.exchanges.reduce((acc, e) => {
-        if (e.exchanges && e.exchanges.length > 0) {
-          return [...acc, ...e.exchanges]
-        }
-        return acc
-      }, []),
-    }
-    delete position.proposal
-
-    return position
-  })
 }
 
 export const getDaysToDate = (date): number => {

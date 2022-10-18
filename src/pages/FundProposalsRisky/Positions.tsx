@@ -5,7 +5,6 @@ import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { useActiveWeb3React } from "hooks"
 import { RiskyPositionsQuery } from "queries"
-import { prepareRiskyPositions } from "utils"
 import { usePoolContract } from "hooks/usePool"
 import useQueryPagination from "hooks/useQueryPagination"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
@@ -45,7 +44,16 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
     RiskyPositionsQuery,
     variables,
     !poolAddress,
-    prepareRiskyPositions
+    (d) =>
+      d.proposalPositions.map((p) => ({
+        ...p,
+        proposal: {
+          ...p.proposal,
+          exchanges: p.proposal.exchanges[0]
+            ? p.proposal.exchanges[0].exchanges
+            : [],
+        },
+      }))
   )
 
   const loader = useRef<any>()

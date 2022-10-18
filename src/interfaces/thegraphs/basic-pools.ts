@@ -1,14 +1,12 @@
 import { BigNumber } from "@ethersproject/bignumber"
 
-export interface IRiskyPosition {
-  id: string
-  isClosed: boolean
-  totalBaseOpenVolume: BigNumber
-  totalBaseCloseVolume: BigNumber
-  totalPositionOpenVolume: BigNumber
-  totalPositionCloseVolume: BigNumber
-  totalUSDOpenVolume: BigNumber
-  totalUSDCloseVolume: BigNumber
+export interface RiskyPositionProposalData {
+  token: string
+  basicPool: {
+    id: string
+    baseToken: string
+  }
+  exchanges?: IRiskyPositionExchange[]
 }
 
 export interface IRiskyPositionExchange {
@@ -19,6 +17,18 @@ export interface IRiskyPositionExchange {
   fromVolume: BigNumber
   toVolume: BigNumber
   usdVolume: BigNumber
+}
+
+export interface IRiskyPosition {
+  id: string
+  isClosed: boolean
+  totalBaseOpenVolume: BigNumber
+  totalBaseCloseVolume: BigNumber
+  totalPositionOpenVolume: BigNumber
+  totalPositionCloseVolume: BigNumber
+  totalUSDOpenVolume: BigNumber
+  totalUSDCloseVolume: BigNumber
+  proposal: RiskyPositionProposalData
 }
 
 export interface IRiskyProposal {
@@ -32,14 +42,4 @@ export interface IRiskyProposal {
 
 export interface IRiskyProposalQuery {
   proposals: IRiskyProposal[]
-}
-
-export interface IRiskyPositionCard extends IRiskyPosition {
-  token?: string
-  proposal?: string
-  pool: {
-    id: string
-    baseToken: string
-  }
-  exchanges: IRiskyPositionExchange[]
 }
