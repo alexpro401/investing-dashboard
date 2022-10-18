@@ -5,45 +5,11 @@ import {
   HTMLAttributes,
   SetStateAction,
   useCallback,
+  useEffect,
   useState,
 } from "react"
-
-type UserKeeperDeployParams = {
-  tokenAddress: string // binded
-  nftAddress: string // binded
-  totalPowerInTokens: number // binded
-  nftsTotalSupply: number // binded
-}
-
-type ValidatorsDeployParams = {
-  name: string // binded
-  symbol: string // binded
-  duration: number // binded
-  quorum: number // binded
-  validators: string[]
-  balances: number[]
-}
-
-type GovPoolDeployParams = {
-  descriptionUrl: string // will be in ipfs
-}
-
-type ProposalSettings = {
-  earlyCompletion: boolean // binded
-  delegatedVotingAllowed: boolean // binded
-  validatorsVote: boolean
-  duration: number // binded
-  durationValidators: number
-  quorum: number // binded
-  quorumValidators: number
-  minVotesForVoting: number // binded
-  minVotesForCreating: number // binded
-  rewardToken: string // binded
-  creationReward: number // binded
-  executionReward: number // binded
-  voteRewardsCoefficient: number // binded
-  executorDescription: string
-}
+import { debounce } from "lodash"
+import { isAddress } from "../utils"
 
 export type ExternalFileDocument = {
   name: string
@@ -88,10 +54,6 @@ export interface DaoProposalSettingsForm {
   executionReward: { get: number; set: Dispatch<SetStateAction<number>> }
   voteRewardsCoefficient: { get: number; set: Dispatch<SetStateAction<number>> }
   executorDescription: { get: string; set: Dispatch<SetStateAction<string>> }
-
-  // TODO: ?
-  // minTokenBalance: { get: string; set: Dispatch<SetStateAction<string>> }
-  // minNftBalance: { get: string; set: Dispatch<SetStateAction<string>> }
 }
 
 interface FundDaoCreatingContext {
@@ -102,8 +64,8 @@ interface FundDaoCreatingContext {
     get: boolean
     set: Dispatch<SetStateAction<boolean>>
   }
-
   isValidator: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
+  isErc721Enumerable: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
 
   avatarUrl: { get: string; set: Dispatch<SetStateAction<string>> }
   daoName: { get: string; set: Dispatch<SetStateAction<string>> }
@@ -132,8 +94,8 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
   isErc721: { get: false, set: () => {} },
   isCustomVoting: { get: false, set: () => {} },
   isDistributionProposal: { get: false, set: () => {} },
-
   isValidator: { get: false, set: () => {} },
+  isErc721Enumerable: { get: false, set: () => {} },
 
   avatarUrl: { get: "", set: () => {} },
   daoName: { get: "", set: () => {} },
@@ -154,7 +116,7 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
 const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
   children,
 }) => {
-  const [_isErc20, _setIsErc20] = useState<boolean>(false)
+  const [_isErc20, _setIsErc20] = useState<boolean>(true)
   const [_isErc721, _setIsErc721] = useState<boolean>(false)
   const [_isCustomVoting, _setIsCustomVoting] = useState<boolean>(false)
   const [_isDistributionProposal, _setIsDistributionProposal] =
@@ -199,6 +161,28 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
     validators: useState<string[]>([""]),
     balances: useState<number[]>([0]),
   }
+
+  // TODO: refactor this, use useErc721 instead and keep erc721 instance
+  const [_isErc721Enumerable, _setIsErc721Enumerable] = useState(false)
+
+  const handleErc721Input = useCallback(
+    debounce(async (address: string) => {
+      try {
+        if (isAddress(address)) {
+          // TODO: create useErc721 hook
+          // await erc721Init()
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }, 1000),
+    []
+  )
+
+  useEffect(() => {
+    // check _userKeeperParams.nftAddress is enumerable
+    // _nftAddress.supportsInterface("0x780e9d63"))
+  }, [_userKeeperParams.nftAddress[0]])
 
   const _handleChangeValidators = useCallback(
     (value, idx?: number) => {
@@ -314,8 +298,11 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
             get: _isDistributionProposal,
             set: _setIsDistributionProposal,
           },
-
           isValidator: { get: _isValidator, set: _setIsValidator },
+          isErc721Enumerable: {
+            get: _isErc721Enumerable,
+            set: _setIsErc721Enumerable,
+          },
 
           avatarUrl: { get: _avatarUrl, set: _setAvatarUrl },
           daoName: { get: _daoName, set: _setDaoName },

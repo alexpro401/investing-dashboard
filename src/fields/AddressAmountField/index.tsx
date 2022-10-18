@@ -30,6 +30,7 @@ function AddressAmountField({
   internalNodeRight,
   label,
   labelNodeRight,
+  errorMessage,
   ...rest
 }: Props) {
   const internalInputElement = useRef<HTMLInputElement | null>(null)
@@ -92,6 +93,7 @@ function AddressAmountField({
             </>
           ) : null
         }
+        errorMessage={errorMessage}
       />
     </S.Root>
   )

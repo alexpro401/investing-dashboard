@@ -6,7 +6,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
 } from "react"
 import { debounce } from "lodash"
 
@@ -46,11 +45,12 @@ import { isAddress, isValidUrl } from "utils"
 import { useERC20 } from "hooks/useERC20"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
+import { stepsControllerContext } from "context/StepsControllerContext"
 
 const TitlesStep: FC = () => {
   const daoPoolFormContext = useContext(FundDaoCreatingContext)
 
-  const { isErc20, isErc721 } = daoPoolFormContext
+  const { isErc20, isErc721, isErc721Enumerable } = daoPoolFormContext
 
   const { avatarUrl, daoName, websiteUrl, description, documents } =
     daoPoolFormContext
@@ -58,7 +58,13 @@ const TitlesStep: FC = () => {
   const { tokenAddress, nftAddress, totalPowerInTokens, nftsTotalSupply } =
     daoPoolFormContext.userKeeperParams
 
-  const { getFieldErrorMessage, touchField, isFieldValid } = useFormValidation(
+  const {
+    getFieldErrorMessage,
+    touchField,
+    isFieldValid,
+    touchForm,
+    isFieldsValid,
+  } = useFormValidation(
     {
       avatarUrl: avatarUrl.get,
       daoName: daoName.get,
@@ -75,7 +81,7 @@ const TitlesStep: FC = () => {
     {
       avatarUrl: { required },
       daoName: { required, minLength: minLength(6) },
-      websiteUrl: { required },
+      websiteUrl: { required, isUrl },
       description: { required },
       documents: {
         required,
@@ -99,6 +105,8 @@ const TitlesStep: FC = () => {
   )
 
   const { chainId } = useActiveWeb3React()
+
+  const { nextCb } = useContext(stepsControllerContext)
 
   const [, erc20TokenData, , erc20TokenInit] = useERC20(tokenAddress.get)
   const erc20TokenExplorerLink = useMemo(() => {
@@ -130,6 +138,13 @@ const TitlesStep: FC = () => {
   useEffect(() => {
     handleErc20Input(tokenAddress.get)
   }, [handleErc20Input, tokenAddress.get])
+
+  const handleNextStep = () => {
+    touchForm()
+    if (!isFieldsValid) return
+
+    nextCb()
+  }
 
   return (
     <>
@@ -208,7 +223,12 @@ const TitlesStep: FC = () => {
             nodeRight={
               <Switch
                 isOn={isErc20.get}
-                onChange={(n, v) => isErc20.set(v)}
+                onChange={(n, v) => {
+                  isErc20.set(v)
+                  if (!v && !isErc721.get) {
+                    isErc721.set(true)
+                  }
+                }}
                 name={"create-fund-title-step-is-erc20"}
               />
             }
@@ -288,7 +308,12 @@ const TitlesStep: FC = () => {
             nodeRight={
               <Switch
                 isOn={isErc721.get}
-                onChange={(n, v) => isErc721.set(v)}
+                onChange={(n, v) => {
+                  isErc721.set(v)
+                  if (!v && !isErc20.get) {
+                    isErc20.set(true)
+                  }
+                }}
                 name={"create-fund-title-step-is-erc721"}
               />
             }
@@ -332,13 +357,15 @@ const TitlesStep: FC = () => {
                 errorMessage={getFieldErrorMessage("totalPowerInTokens")}
                 onBlur={() => touchField("totalPowerInTokens")}
               />
-              <InputField
-                value={nftsTotalSupply.get}
-                setValue={nftsTotalSupply.set}
-                label="Number of NFTs"
-                errorMessage={getFieldErrorMessage("nftsTotalSupply")}
-                onBlur={() => touchField("nftsTotalSupply")}
-              />
+              {!isErc721Enumerable.get && (
+                <InputField
+                  value={nftsTotalSupply.get}
+                  setValue={nftsTotalSupply.set}
+                  label="Number of NFTs"
+                  errorMessage={getFieldErrorMessage("nftsTotalSupply")}
+                  onBlur={() => touchField("nftsTotalSupply")}
+                />
+              )}
             </CardFormControl>
           </Collapse>
         </Card>
@@ -407,8 +434,14 @@ const TitlesStep: FC = () => {
                     <></>
                   )
                 }
-                errorMessage={getFieldErrorMessage(`documents[${idx}].name`)}
-                onBlur={() => touchField(`documents[${idx}].name`)}
+                errorMessage={
+                  getFieldErrorMessage(`documents[${idx}].url`) ||
+                  getFieldErrorMessage(`documents[${idx}].name`)
+                }
+                onBlur={() => {
+                  touchField(`documents[${idx}].name`)
+                  touchField(`documents[${idx}].url`)
+                }}
               />
             ))}
           </CardFormControl>
@@ -421,7 +454,7 @@ const TitlesStep: FC = () => {
           />
         </Card>
       </S.StepsRoot>
-      <S.StepsBottomNavigation />
+      <S.StepsBottomNavigation customNextCb={handleNextStep} />
     </>
   )
 }
