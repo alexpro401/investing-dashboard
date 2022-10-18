@@ -126,3 +126,20 @@ export const addInsuranceProposalData = (payload) => {
 
   return client.add(dataString)
 }
+
+export const addDaoProposalTypeData = ({
+  proposalName,
+  proposalDescription,
+}: {
+  proposalName: string
+  proposalDescription: string
+}) => {
+  const data = {
+    proposalName,
+    proposalDescription,
+    timestamp: new Date().getTime() / 1000,
+  }
+  const dataToString = stringify(data)
+
+  return client.add(dataToString)
+}
