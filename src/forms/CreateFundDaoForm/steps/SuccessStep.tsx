@@ -2,7 +2,7 @@ import { FC, HTMLAttributes, useContext } from "react"
 
 import * as S from "../styled"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
-import { ICON_NAMES } from "../../../constants/icon-names"
+import { ICON_NAMES } from "constants/icon-names"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 

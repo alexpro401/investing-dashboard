@@ -1,13 +1,9 @@
-import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo } from "react"
 
 import { ZERO } from "constants/index"
 import { normalizeBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
-import { usePriceFeedContract } from "contracts"
-import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import { IRiskyPosition } from "interfaces/thegraphs/basic-pools"
 
 import {
   divideBignumbers,
@@ -16,6 +12,8 @@ import {
   calcPositionPnlPercentage,
 } from "utils/formulas"
 import { ITokenBase } from "interfaces"
+import usePoolPrice from "hooks/usePoolPrice"
+import useRiskyPrice from "hooks/useRiskyPrice"
 
 interface IAmount {
   big: BigNumber
@@ -40,109 +38,111 @@ interface IPayload {
   baseToken: ITokenBase | null
 }
 
-function useRiskyPosition(position: IRiskyPosition): [IPayload] {
-  const [positionToken] = useERC20Data(position?.proposal.token)
-  const [baseToken] = useERC20Data(position.proposal.basicPool.baseToken)
+function useRiskyPosition(position: any, proposalId): [IPayload] {
+  const [positionToken] = useERC20Data(position?.token)
+  const [baseToken] = useERC20Data(position.pool.baseToken)
 
-  const priceFeed = usePriceFeedContract()
+  const [{ priceBase: PoolPriceBase, priceUSD: PoolPriceUSD }] = usePoolPrice(
+    position.pool.id
+  )
 
-  const [currentPositionPriceBase, setCurrentPositionPriceBase] = useState(ZERO)
-  const currentPositionPriceUSD = useTokenPriceOutUSD({
-    tokenAddress: position.proposal.token,
-  })
+  const { priceBase: RiskyPriceBase, priceUSD: RiskyPriceUSD } = useRiskyPrice(
+    position.pool.id,
+    proposalId
+  )
 
   /**
    * Position volume
-   * if position.closed return totalPositionCloseVolume
+   * if position.closed return totalLP2CloseVolume
    * otherwise return current position volume
    */
   const positionVolume = useMemo<IAmount>(() => {
     if (!position) return INITIAL_AMOUNT
 
-    const { totalPositionOpenVolume, totalPositionCloseVolume } = position
+    const { totalLP2OpenVolume, totalLP2CloseVolume } = position
 
     if (position.isClosed) {
       return {
-        big: BigNumber.from(totalPositionCloseVolume),
-        format: normalizeBigNumber(BigNumber.from(totalPositionCloseVolume)),
+        big: BigNumber.from(totalLP2CloseVolume),
+        format: normalizeBigNumber(BigNumber.from(totalLP2CloseVolume)),
       }
     }
 
     const big = subtractBignumbers(
-      [BigNumber.from(totalPositionOpenVolume), 18],
-      [BigNumber.from(totalPositionCloseVolume), 18]
+      [BigNumber.from(totalLP2OpenVolume), 18],
+      [BigNumber.from(totalLP2CloseVolume), 18]
     )
     return { big, format: normalizeBigNumber(big) }
   }, [position])
 
   /**
    * Entry price (in fund base token)
-   * totalBaseOpenVolume/totalPositionOpenVolume
+   * totalBaseOpenVolume/totalLP2OpenVolume
    */
   const entryPriceBase = useMemo<BigNumber>(() => {
     if (!position) return ZERO
 
-    const { totalBaseOpenVolume, totalPositionOpenVolume } = position
+    const { totalBaseOpenVolume, totalLP2OpenVolume } = position
     return divideBignumbers(
       [BigNumber.from(totalBaseOpenVolume), 18],
-      [BigNumber.from(totalPositionOpenVolume), 18]
+      [BigNumber.from(totalLP2OpenVolume), 18]
     )
   }, [position])
 
   /**
    * Entry price (in USD)
-   * totalUSDOpenVolume/totalPositionOpenVolume
+   * totalUSDOpenVolume/totalLP2OpenVolume
    */
   const entryPriceUSD = useMemo<BigNumber>(() => {
     if (!position) return ZERO
 
-    const { totalUSDOpenVolume, totalPositionOpenVolume } = position
+    const { totalUSDOpenVolume, totalLP2OpenVolume } = position
 
     return divideBignumbers(
       [BigNumber.from(totalUSDOpenVolume), 18],
-      [BigNumber.from(totalPositionOpenVolume), 18]
+      [BigNumber.from(totalLP2OpenVolume), 18]
     )
   }, [position])
 
   /**
    * Mark price (in fund base token)
    * if position open return currentPositionPriceBase (price for 1 position token)
-   * otherwise return totalBaseCloseVolume/totalPositionCloseVolume
+   * otherwise return totalBaseCloseVolume/totalLP2CloseVolume
    */
   const markPriceBase = useMemo<BigNumber>(() => {
     if (!position) return ZERO
 
     if (!position.isClosed) {
-      return currentPositionPriceBase
+      return divideBignumbers([RiskyPriceBase, 18], [PoolPriceBase, 18])
     } else {
-      const { totalBaseCloseVolume, totalPositionCloseVolume } = position
+      const { totalBaseCloseVolume, totalLP2CloseVolume } = position
 
       return divideBignumbers(
         [BigNumber.from(totalBaseCloseVolume), 18],
-        [BigNumber.from(totalPositionCloseVolume), 18]
+        [BigNumber.from(totalLP2CloseVolume), 18]
       )
     }
-  }, [currentPositionPriceBase, position])
+  }, [RiskyPriceBase, PoolPriceBase, position])
 
   /**
    * Mark price (in USD)
    * if position open return markPriceBase (price for 1 position token)
-   * otherwise return totalUSDCloseVolume/totalPositionCloseVolume
+   * otherwise return totalUSDCloseVolume/totalLP2CloseVolume
    */
   const markPriceUSD = useMemo<BigNumber>(() => {
     if (!position) return ZERO
 
     if (!position.isClosed) {
-      return currentPositionPriceUSD
+      return divideBignumbers([RiskyPriceUSD, 18], [PoolPriceUSD, 18])
     } else {
-      const { totalUSDCloseVolume, totalPositionCloseVolume } = position
+      const { totalUSDCloseVolume, totalLP2CloseVolume } = position
 
       return divideBignumbers(
         [BigNumber.from(totalUSDCloseVolume), 18],
-        [BigNumber.from(totalPositionCloseVolume), 18]
+        [BigNumber.from(totalLP2CloseVolume), 18]
       )
     }
-  }, [currentPositionPriceUSD, position])
+  }, [RiskyPriceUSD, PoolPriceUSD, position])
 
   /**
    * P&L (in %)
@@ -192,31 +192,6 @@ function useRiskyPosition(position: IRiskyPosition): [IPayload] {
 
     return multiplyBignumbers([priceDiff, 18], [positionVolume.big, 18])
   }, [markPriceUSD, entryPriceUSD, positionVolume])
-
-  // get mark price
-  useEffect(() => {
-    if (!priceFeed) return
-    ;(async () => {
-      if (!position.proposal.token || !position.proposal.basicPool) return
-
-      try {
-        const amount = parseUnits("1", 18)
-
-        // without extended
-        const price = await priceFeed.getNormalizedExtendedPriceOut(
-          position.proposal.token,
-          position.proposal.basicPool.baseToken,
-          amount,
-          []
-        )
-        if (price && price.amountOut) {
-          setCurrentPositionPriceBase(price.amountOut)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    })()
-  }, [priceFeed, position])
 
   return [
     {

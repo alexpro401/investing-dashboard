@@ -303,6 +303,7 @@ const useCreateDAO = () => {
         const errorMessage = parseTransactionError(error.toString())
         !!errorMessage && setError(errorMessage)
       }
+      throw new Error(error)
     } finally {
       setPayload(SubmitState.IDLE)
     }

@@ -34,3 +34,34 @@ export interface InvestorPoolHistory {
 export interface InvestorPoolPositionWithHistory extends InvestorPoolPosition {
   lpHistory: InvestorPoolHistory[]
 }
+
+export interface InvestorRiskyVest {
+  id: string
+  hash: string
+  isInvest: boolean
+  timestamp: string
+  baseVolume: string
+  lpVolume: string
+  lp2Volume: string
+  usdVolume: string
+}
+
+export interface InvestorRiskyPosition {
+  id: string
+  isClosed: boolean
+  proposalId: string
+  totalBaseOpenVolume: string
+  totalBaseCloseVolume: string
+  totalLPOpenVolume: string
+  totalLPCloseVolume: string
+  totalLP2OpenVolume: string
+  totalLP2CloseVolume: string
+  totalUSDOpenVolume: string
+  totalUSDCloseVolume: string
+  proposalContract: { id: string }
+  investor: { id: string }
+}
+
+export interface InvestorRiskyPositionWithVests extends InvestorRiskyPosition {
+  vests: InvestorRiskyVest[]
+}

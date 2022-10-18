@@ -46,6 +46,27 @@ const RiskyPositionsQuery = `
   }
 `
 
+const InvestorRiskyPositionByIdQuery = `
+  query ($id: String!) {
+    proposalPosition(id: $id) {
+      id
+      totalBaseOpenVolume
+      totalBaseCloseVolume
+      totalPositionOpenVolume
+      totalPositionCloseVolume
+      totalUSDOpenVolume
+      totalUSDCloseVolume
+      proposal {
+        token
+        basicPool {
+          id
+          baseToken
+        }
+      }
+    }
+  }
+`
+
 const RiskyProposalPositionQuery = `
   query ($proposalAddress: String!, $closed: Boolean!) {
     proposal(id: $proposalAddress) {
@@ -70,5 +91,6 @@ const InvestorRiskyProposalsQuery = `
 export {
   RiskyProposalPositionQuery,
   RiskyPositionsQuery,
+  InvestorRiskyPositionByIdQuery,
   InvestorRiskyProposalsQuery,
 }

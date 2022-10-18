@@ -229,8 +229,8 @@ const CreateInsuranceAccidentForm: FC = () => {
     investorsInfo,
     investorsTotals,
     isFieldsValid,
-    pool,
     touchForm,
+    pool,
   ])
 
   const handleNextStep = () => {

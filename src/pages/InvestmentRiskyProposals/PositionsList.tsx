@@ -2,17 +2,18 @@ import { FC, useMemo, useEffect, useRef } from "react"
 import { PulseSpinner } from "react-spinners-kit"
 import { createClient, Provider as GraphProvider } from "urql"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
+import { isNil } from "lodash"
 
 import { useActiveWeb3React } from "hooks"
-import { RiskyPositionsQuery } from "queries"
-import { prepareRiskyPositions } from "utils"
 import { usePoolContract } from "hooks/usePool"
+import useRiskyPosition from "hooks/useRiskyPosition"
 import useQueryPagination from "hooks/useQueryPagination"
+import { InvestorProposalsPositionsQuery } from "queries"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-import { IRiskyPositionCard } from "interfaces/thegraphs/basic-pools"
+import { InvestorRiskyPositionWithVests } from "interfaces/thegraphs/investors"
 
 import LoadMore from "components/LoadMore"
-import RiskyPositionCard from "components/cards/position/Risky"
+import RiskyInvestorPositionCard from "components/cards/position/RiskyInvestor"
 
 import S from "./styled"
 
@@ -21,16 +22,26 @@ const poolsClient = createClient({
 })
 
 interface IRiskyCardInitializer {
-  account: string
-  poolAddress: string
-  position: IRiskyPositionCard
+  position: InvestorRiskyPositionWithVests
 }
 
 const RiskyPositionCardInitializer: FC<IRiskyCardInitializer> = ({
-  account,
-  poolAddress,
   position,
 }) => {
+  const data = useRiskyPosition({
+    proposalAddress: position.proposalContract.id,
+    // Must subtract 2
+    // because in useRiskyPosition add 1 (positionId have shift of one between contract and graph)
+    // but here we use id from graph
+    proposalId: String(Number(position.proposalId) - 1),
+    closed: position.isClosed,
+  })
+
+  const poolAddress = useMemo(() => {
+    if (isNil(data)) return ""
+    return data.proposal.basicPool.id
+  }, [data])
+
   const [, poolInfo] = usePoolContract(poolAddress)
 
   const [{ poolMetadata }] = usePoolMetadata(
@@ -38,24 +49,31 @@ const RiskyPositionCardInitializer: FC<IRiskyCardInitializer> = ({
     poolInfo?.parameters.descriptionURL
   )
 
-  const isTrader = useMemo<boolean>(() => {
-    if (!account || !poolInfo) {
-      return false
+  const positionDTO = useMemo(() => {
+    if (isNil(position) || isNil(data)) {
+      return undefined
     }
 
-    return account === poolInfo.parameters.trader
-  }, [account, poolInfo])
+    return {
+      ...position,
+      token: data.proposal.token,
+      pool: {
+        id: data.proposal.basicPool.id,
+        baseToken: data.proposal.basicPool.baseToken,
+      },
+    }
+  }, [position, data])
 
-  if (!position || !poolInfo || !poolMetadata) {
+  if (!position || !poolInfo || !poolMetadata || !positionDTO) {
     return null
   }
 
   return (
-    <RiskyPositionCard
-      position={position}
-      isTrader={isTrader}
+    <RiskyInvestorPositionCard
+      position={positionDTO}
       poolInfo={poolInfo}
       poolMetadata={poolMetadata}
+      proposalId={position.proposalId}
     />
   )
 }
@@ -70,21 +88,26 @@ const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
 
   const variables = useMemo(
     () => ({
-      poolAddressList: activePools,
+      address: String(account).toLocaleLowerCase(),
+      type: "RISKY_PROPOSAL",
       closed,
     }),
-    [activePools, closed]
+    [closed, account]
+  )
+  const pause = useMemo(
+    () => isNil(closed) || isNil(account),
+    [closed, account]
   )
 
   const [{ data, loading }, fetchMore] = useQueryPagination(
-    RiskyPositionsQuery,
+    InvestorProposalsPositionsQuery,
     variables,
-    prepareRiskyPositions
+    pause,
+    (d) => d.proposalPositions
   )
 
   const loader = useRef<any>()
 
-  // manually disable scrolling *refresh this effect when ref container dissapeared from DOM
   useEffect(() => {
     if (!loader.current) return
     disableBodyScroll(loader.current)
@@ -111,32 +134,21 @@ const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
   }
 
   return (
-    <>
-      <S.List ref={loader}>
-        {data.map((p) => (
-          <RiskyPositionCardInitializer
-            key={p.id}
-            position={p}
-            account={account}
-            poolAddress={p.pool.id}
-          />
-        ))}
-        <LoadMore
-          isLoading={loading && !!data.length}
-          handleMore={fetchMore}
-          r={loader}
-        />
-      </S.List>
-    </>
-  )
-}
-
-const InvestmentRiskyPositionsListWithProvider = (props) => {
-  return (
     <GraphProvider value={poolsClient}>
-      <InvestmentRiskyPositionsList {...props} />
+      <>
+        <S.List ref={loader}>
+          {data.map((p) => (
+            <RiskyPositionCardInitializer key={p.id} position={p} />
+          ))}
+          <LoadMore
+            isLoading={loading && !!data.length}
+            handleMore={fetchMore}
+            r={loader}
+          />
+        </S.List>
+      </>
     </GraphProvider>
   )
 }
 
-export default InvestmentRiskyPositionsListWithProvider
+export default InvestmentRiskyPositionsList

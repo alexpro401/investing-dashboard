@@ -160,6 +160,51 @@ const InvestorsInsuranceHistoriesQuery = `
   }
 `
 
+const INVESTOR_PROPOSAL_POSITION_VEST = `
+  id
+  hash
+  isInvest
+  timestamp
+  baseVolume
+  lpVolume
+  lp2Volume
+  usdVolume
+`
+
+const INVESTOR_PROPOSAL_POSITION = `
+  id
+  isClosed
+  proposalId
+  totalBaseOpenVolume
+  totalBaseCloseVolume
+  totalLPOpenVolume
+  totalLPCloseVolume
+  totalLP2OpenVolume
+  totalLP2CloseVolume
+  totalUSDOpenVolume
+  totalUSDCloseVolume
+  proposalContract { id }
+  investor { id }
+  vests {
+    ${INVESTOR_PROPOSAL_POSITION_VEST}
+  }
+`
+
+const InvestorProposalsPositionsQuery = `
+  query ($address: String!, $type: String!, $closed: Boolean!, $offset: Int!, $limit: Int!) {
+    proposalPositions(
+      skip: $offset, first: $limit, 
+      where: { 
+        isClosed: $closed, 
+        investor: $address,
+        proposalContract_: { proposalType: $type }
+      }
+    ) {
+      ${INVESTOR_PROPOSAL_POSITION}
+    }
+  }
+`
+
 export {
   InvestorPositionsQuery,
   InvestorPoolsInvestedForQuery,
@@ -169,4 +214,5 @@ export {
   InvestorPoolPositionQuery,
   InvestorsPoolsLpHistoryQuery,
   InvestorsInsuranceHistoriesQuery,
+  InvestorProposalsPositionsQuery,
 }
