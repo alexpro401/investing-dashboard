@@ -57,6 +57,14 @@
       "chainId": 97,
       "decimals": 18,
       "logoURI": "https://pancake.kiemtienonline360.com/images/coins/0xf9f93cf501bfadb6494589cb4b4c15de49e85d0e.png"
+    },
+    {
+      "name": "SafeMoon",
+      "symbol": "SAFEMOON",
+      "address": "0xdacbdecc2992a63390d108e8507b98c7e2b5584a",
+      "chainId": 97,
+      "decimals": 9,
+      "logoURI": "https://pancake.kiemtienonline360.com/images/coins/0xdacbdecc2992a63390d108e8507b98c7e2b5584a.png"
     }
   ]
 }

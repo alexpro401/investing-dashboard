@@ -11,6 +11,14 @@
   "keywords": ["dexe", "defaultlist"],
   "tokens": [
     {
+      "name": "Zeta token",
+      "symbol": "ZETA",
+      "address": "0x000080383847bD75F91c168269Aa74004877592f",
+      "chainId": 97,
+      "decimals": 18,
+      "logoURI": "https://pancakeswap.finance/images/tokens/0x000080383847bD75F91c168269Aa74004877592f.png"
+    },
+    {
       "name": "Wrapped BNB",
       "symbol": "WBNB",
       "address": "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
@@ -117,18 +125,18 @@
     {
       "name": "PancakeSwap Token",
       "symbol": "CAKE",
-      "address": "0xFa60D973F7642B748046464e165A65B7323b0DEE",
+      "address": "0xF9f93cF501BFaDB6494589Cb4b4C15dE49E85D0e",
       "chainId": 97,
       "decimals": 18,
-      "logoURI": "https://pancakeswap.finance/images/tokens/0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82.png"
+      "logoURI": "https://pancakeswap.finance/images/tokens/0xf9f93cf501bfadb6494589cb4b4c15de49e85d0e.png"
     },
     {
       "name": "BUSD Token",
       "symbol": "BUSD",
-      "address": "0xaB1a4d4f1D656d2450692D237fdD6C7f9146e814",
+      "address": "0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7",
       "chainId": 97,
       "decimals": 18,
-      "logoURI": "https://pancakeswap.finance/images/tokens/0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56.png"
+      "logoURI": "https://pancakeswap.finance/images/tokens/0x78867bbeef44f2326bf8ddd1941a4439382ef2a7.png"
     },
     {
       "name": "BUSD Token",
