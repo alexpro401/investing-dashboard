@@ -14,6 +14,7 @@ import RiskyProposalCard from "components/cards/proposal/Risky"
 
 import S from "./styled"
 import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
+import { isNil } from "lodash"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
@@ -93,6 +94,7 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
   const [{ data, loading }, fetchMore] = useQueryPagination(
     InvestorRiskyProposalsQuery,
     variables,
+    isNil(activePools),
     prepareNewData
   )
 

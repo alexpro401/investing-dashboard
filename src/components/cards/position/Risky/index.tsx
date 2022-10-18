@@ -1,9 +1,9 @@
-import { MouseEvent, useCallback, useMemo, useState } from "react"
+import { FC, MouseEvent, useCallback, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 
 import { getProposalId } from "utils"
-import { IRiskyPositionCard } from "interfaces/thegraphs/basic-pools"
+import { IRiskyPosition } from "interfaces/thegraphs/basic-pools"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 
 import { Flex } from "theme"
@@ -21,13 +21,13 @@ import S from "./styled"
 import useRiskyPosition from "./useRiskyPosition"
 
 interface Props {
-  position: IRiskyPositionCard
+  position: IRiskyPosition
   isTrader: boolean
   poolInfo: IPoolInfo
   poolMetadata: any
 }
 
-const RiskyPositionCard: React.FC<Props> = ({
+const RiskyPositionCard: FC<Props> = ({
   position,
   isTrader,
   poolInfo,
@@ -50,7 +50,7 @@ const RiskyPositionCard: React.FC<Props> = ({
     },
   ] = useRiskyPosition(position)
 
-  const exchanges = position.exchanges ?? []
+  const exchanges = position.proposal.exchanges ?? []
 
   const [openExtra, setOpenExtra] = useState<boolean>(false)
   const [showPositions, setShowPositions] = useState<boolean>(false)
@@ -89,7 +89,7 @@ const RiskyPositionCard: React.FC<Props> = ({
   const navigateToPool = useCallback(
     (e: MouseEvent<HTMLElement>): void => {
       e.stopPropagation()
-      navigate(`/pool/profile/BASIC_POOL/${position.pool.id}`)
+      navigate(`/pool/profile/BASIC_POOL/${position.proposal.basicPool.id}`)
     },
     [navigate, position]
   )
@@ -113,7 +113,9 @@ const RiskyPositionCard: React.FC<Props> = ({
       const proposalId = getProposalId(position.id)
       if (proposalId < 0) return
       navigate(
-        `/swap-risky-proposal/${position.pool.id}/${proposalId - 1}/deposit`
+        `/swap-risky-proposal/${position.proposal.basicPool.id}/${
+          proposalId - 1
+        }/deposit`
       )
     },
     [navigate, position]
@@ -129,7 +131,9 @@ const RiskyPositionCard: React.FC<Props> = ({
       const proposalId = getProposalId(position.id)
       if (proposalId < 0) return
       navigate(
-        `/swap-risky-proposal/${position.pool.id}/${proposalId - 1}/withdraw`
+        `/swap-risky-proposal/${position.proposal.basicPool.id}/${
+          proposalId - 1
+        }/withdraw`
       )
     },
     [navigate, position]
@@ -229,7 +233,7 @@ const RiskyPositionCard: React.FC<Props> = ({
                       source={
                         poolMetadata?.assets[poolMetadata?.assets.length - 1]
                       }
-                      address={position.pool.id}
+                      address={position.proposal.basicPool.id}
                     />
                   ) : (
                     <TokenIcon address={baseToken?.address} m="0" size={26} />

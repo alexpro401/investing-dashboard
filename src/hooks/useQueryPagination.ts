@@ -9,6 +9,7 @@ import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
 const useQueryPagination = (
   query,
   variables,
+  pause,
   prepareNewData: (d: any) => any,
   limit = DEFAULT_PAGINATION_COUNT,
   initialOffset = 0
@@ -19,6 +20,7 @@ const useQueryPagination = (
 
   const [{ fetching, data, error }] = useQuery({
     query,
+    pause,
     variables: { limit, offset, ...(variables ?? {}) },
     requestPolicy: "network-only", // disable "urql" library cache
   })
