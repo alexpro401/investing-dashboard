@@ -120,7 +120,7 @@ const useCreateRiskyProposal = (
     return !errors.length
   }, [investLPLimit, lpAmount, maxTokenPriceLimit, positionPrice])
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     if (
       !basicTraderPool ||
       !traderPool ||
@@ -132,7 +132,7 @@ const useCreateRiskyProposal = (
 
     if (!handleValidate()) return
 
-    const createRiskyProposal = async () => {
+    try {
       setSubmiting(SubmitState.SIGN)
       setError("")
       const amount = parseEther(lpAmount || "0").toHexString()
@@ -175,18 +175,17 @@ const useCreateRiskyProposal = (
       })
 
       if (isTxMined(receipt)) {
-        // TODO: show modal
         setSubmiting(SubmitState.SUCCESS)
       }
-    }
-
-    createRiskyProposal().catch((error) => {
+    } catch (error: any) {
       setSubmiting(SubmitState.IDLE)
       console.log(error)
 
       const errorMessage = parseTransactionError(error)
       !!errorMessage && setError(errorMessage)
-    })
+    } finally {
+      setSubmiting(SubmitState.IDLE)
+    }
   }, [
     account,
     addTransaction,

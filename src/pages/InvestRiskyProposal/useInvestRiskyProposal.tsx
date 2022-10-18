@@ -379,9 +379,7 @@ const useInvestRiskyProposal = (
   }, [account, direction, traderPool])
 
   const getLP2Balance = useCallback(async () => {
-    if (!investmentsInfo) return
-
-    const balance = investmentsInfo.lp2Balance
+    const balance = !investmentsInfo ? ZERO : investmentsInfo.lp2Balance
 
     if (direction === "deposit") {
       setToBalance(balance)
@@ -638,23 +636,26 @@ const useInvestRiskyProposal = (
     }
   }, [direction, poolPriceBase, poolPriceUSD, riskyPriceBase, riskyPriceUSD])
 
+  const runUpdate = useCallback(async () => {
+    getLPBalance().catch(console.error)
+    getLP2Balance().catch(console.error)
+  }, [getLP2Balance, getLPBalance])
+
   // get LP balance
   // get LP2 balance
   // update amounts
   useEffect(() => {
-    getLPBalance().catch(console.error)
-    getLP2Balance().catch(console.error)
-  }, [direction, getLP2Balance, getLPBalance])
+    runUpdate()
+  }, [runUpdate])
 
   // balance updater for both LP and LP2
   useEffect(() => {
     const interval = setInterval(() => {
-      getLPBalance().catch(console.error)
-      getLP2Balance().catch(console.error)
+      runUpdate()
     }, Number(process.env.REACT_APP_UPDATE_INTERVAL))
 
     return () => clearInterval(interval)
-  }, [getLPBalance, getLP2Balance])
+  }, [runUpdate])
 
   return [
     {
