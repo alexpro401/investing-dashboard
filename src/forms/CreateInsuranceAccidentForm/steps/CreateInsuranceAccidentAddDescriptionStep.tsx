@@ -375,9 +375,7 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
                 color="default"
                 size="no-paddings"
                 onClick={() => pasteFromClipboard(chat.set)}
-              >
-                Paste
-              </AppButton>
+              />
             }
           />
         </Card>

@@ -160,9 +160,7 @@ const CreateDaoProposalGeneralForm: React.FC<
                     color="default"
                     size="no-paddings"
                     onClick={() => pasteFromClipboard(contractAddress.set)}
-                  >
-                    Paste
-                  </AppButton>
+                  />
                 }
               />
             )}

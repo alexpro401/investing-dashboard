@@ -7,7 +7,7 @@ import * as S from "../styled"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 import { DaoSettingsParameters } from "common"
 import { useFormValidation } from "hooks/useFormValidation"
-import { required } from "utils/validators"
+import { isPercentage, required } from "utils/validators"
 
 const DefaultProposalStep: FC = () => {
   const { defaultProposalSettingForm } = useContext(FundDaoCreatingContext)
@@ -54,7 +54,7 @@ const DefaultProposalStep: FC = () => {
     {
       delegatedVotingAllowed: { required },
       duration: { required },
-      quorum: { required },
+      quorum: { required, isPercentage },
       earlyCompletion: { required },
       minVotesForVoting: { required },
       minVotesForCreating: { required },
@@ -63,7 +63,7 @@ const DefaultProposalStep: FC = () => {
       voteRewardsCoefficient: { required },
       executionReward: { required },
       durationValidators: { required },
-      quorumValidators: { required },
+      quorumValidators: { required, isPercentage },
     }
   )
 

@@ -46,17 +46,35 @@ import { useERC20 } from "hooks/useERC20"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
+import { useErc721 } from "hooks/useErc721"
 
 const TitlesStep: FC = () => {
   const daoPoolFormContext = useContext(FundDaoCreatingContext)
 
-  const { isErc20, isErc721, isErc721Enumerable } = daoPoolFormContext
+  const { isErc20, isErc721, erc20, erc721 } = daoPoolFormContext
 
   const { avatarUrl, daoName, websiteUrl, description, documents } =
     daoPoolFormContext
 
   const { tokenAddress, nftAddress, totalPowerInTokens, nftsTotalSupply } =
     daoPoolFormContext.userKeeperParams
+
+  const { chainId } = useActiveWeb3React()
+
+  const { nextCb } = useContext(stepsControllerContext)
+
+  const [, erc20TokenData] = erc20
+  const {
+    name: erc721Name,
+    symbol: erc721Symbol,
+    isEnumerable: erc721IsEnumerable,
+  } = erc721
+
+  const erc20TokenExplorerLink = useMemo(() => {
+    return chainId
+      ? getExplorerLink(chainId, tokenAddress.get, ExplorerDataType.ADDRESS)
+      : ""
+  }, [chainId, tokenAddress.get])
 
   const {
     getFieldErrorMessage,
@@ -98,22 +116,11 @@ const TitlesStep: FC = () => {
         ? {
             nftAddress: { required, isAddressValidator },
             totalPowerInTokens: { required },
-            nftsTotalSupply: { required },
+            ...(erc721IsEnumerable ? { nftsTotalSupply: { required } } : {}),
           }
         : {}),
     }
   )
-
-  const { chainId } = useActiveWeb3React()
-
-  const { nextCb } = useContext(stepsControllerContext)
-
-  const [, erc20TokenData, , erc20TokenInit] = useERC20(tokenAddress.get)
-  const erc20TokenExplorerLink = useMemo(() => {
-    return chainId
-      ? getExplorerLink(chainId, tokenAddress.get, ExplorerDataType.ADDRESS)
-      : ""
-  }, [chainId, tokenAddress.get])
 
   const pasteFromClipboard = useCallback(
     async (dispatchCb: Dispatch<SetStateAction<any>>) => {
@@ -121,23 +128,6 @@ const TitlesStep: FC = () => {
     },
     []
   )
-
-  const handleErc20Input = useCallback(
-    debounce(async (address: string) => {
-      try {
-        if (isAddress(address)) {
-          await erc20TokenInit()
-        }
-      } catch (e) {
-        console.error(e)
-      }
-    }, 1000),
-    []
-  )
-
-  useEffect(() => {
-    handleErc20Input(tokenAddress.get)
-  }, [handleErc20Input, tokenAddress.get])
 
   const handleNextStep = () => {
     touchForm()
@@ -265,9 +255,7 @@ const TitlesStep: FC = () => {
                         ? tokenAddress.set("")
                         : pasteFromClipboard(tokenAddress.set)
                     }
-                  >
-                    Paste
-                  </AppButton>
+                  />
                 }
                 overlapNodeLeft={
                   erc20TokenData?.name &&
@@ -290,9 +278,7 @@ const TitlesStep: FC = () => {
                       onClick={() => {
                         tokenAddress.set("")
                       }}
-                    >
-                      Paste
-                    </AppButton>
+                    />
                   )
                 }
                 disabled={!!erc20TokenData?.name}
@@ -332,20 +318,49 @@ const TitlesStep: FC = () => {
           </CardDescription>
           <Collapse isOpen={isErc721.get}>
             <CardFormControl>
-              <InputField
+              <OverlapInputField
                 value={nftAddress.get}
                 setValue={nftAddress.set}
                 label="NFT ERC-721 address"
+                labelNodeRight={
+                  isFieldValid("nftAddress") ? (
+                    <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                  ) : (
+                    <></>
+                  )
+                }
                 nodeRight={
                   <AppButton
                     type="button"
-                    text="paste"
                     color="default"
                     size="no-paddings"
                     onClick={() => pasteFromClipboard(nftAddress.set)}
-                  >
-                    Paste
-                  </AppButton>
+                    text={"Paste"}
+                  />
+                }
+                overlapNodeLeft={
+                  erc721Name &&
+                  erc721Symbol && (
+                    <TokenChip
+                      name={erc721Name}
+                      symbol={erc721Symbol}
+                      link={erc20TokenExplorerLink}
+                    />
+                  )
+                }
+                overlapNodeRight={
+                  erc721Name &&
+                  erc721Symbol && (
+                    <AppButton
+                      type="button"
+                      text="Paste another"
+                      color="default"
+                      size="no-paddings"
+                      onClick={() => {
+                        nftAddress.set("")
+                      }}
+                    />
+                  )
                 }
                 errorMessage={getFieldErrorMessage("nftAddress")}
                 onBlur={() => touchField("nftAddress")}
@@ -357,7 +372,7 @@ const TitlesStep: FC = () => {
                 errorMessage={getFieldErrorMessage("totalPowerInTokens")}
                 onBlur={() => touchField("totalPowerInTokens")}
               />
-              {!isErc721Enumerable.get && (
+              {!erc721IsEnumerable && (
                 <InputField
                   value={nftsTotalSupply.get}
                   setValue={nftsTotalSupply.set}

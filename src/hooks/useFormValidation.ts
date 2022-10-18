@@ -352,7 +352,7 @@ export const useFormValidation = (
     (fieldPath: string) => {
       const validationField = get(validationState, fieldPath)
 
-      if (!validationField) throw new Error(`Field "${fieldPath}" not found`)
+      if (!validationField) return false
 
       return !validationField.isInvalid || false
     },
