@@ -15,7 +15,7 @@ import * as S from "../styled"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 import { stepsControllerContext } from "../../../context/StepsControllerContext"
 import { useFormValidation } from "../../../hooks/useFormValidation"
-import { required } from "../../../utils/validators"
+import { isPercentage, required } from "../../../utils/validators"
 
 const DistributionProposalStep: FC = () => {
   const { distributionProposalSettingsForm } = useContext(
@@ -64,7 +64,7 @@ const DistributionProposalStep: FC = () => {
     {
       delegatedVotingAllowed: { required },
       duration: { required },
-      quorum: { required },
+      quorum: { required, isPercentage },
       earlyCompletion: { required },
       minVotesForVoting: { required },
       minVotesForCreating: { required },
@@ -72,7 +72,7 @@ const DistributionProposalStep: FC = () => {
       voteRewardsCoefficient: { required },
       executionReward: { required },
       durationValidators: { required },
-      quorumValidators: { required },
+      quorumValidators: { required, isPercentage },
     }
   )
 

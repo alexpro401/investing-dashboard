@@ -44,7 +44,7 @@ function OverlapInputField<V extends string | number>({
         onInput={onInput}
         onChange={onChange}
         nodeLeft={nodeLeft}
-        nodeRight={nodeRight}
+        nodeRight={!overlapNodeRight && nodeRight}
         {...rest}
       />
       {overlapNodeLeft ? (

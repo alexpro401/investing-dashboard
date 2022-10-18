@@ -19,7 +19,7 @@ import * as S from "forms/CreateFundDaoForm/styled"
 
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 import { useFormValidation } from "hooks/useFormValidation"
-import { required } from "utils/validators"
+import { isPercentage, required } from "utils/validators"
 import { stepsControllerContext } from "context/StepsControllerContext"
 
 const IsDaoValidatorStep: FC = () => {
@@ -44,7 +44,7 @@ const IsDaoValidatorStep: FC = () => {
               name: { required },
               symbol: { required },
               duration: { required },
-              quorum: { required },
+              quorum: { required, isPercentage },
               validators: { required, $every: { required } },
               balances: { required, $every: { required } },
             }
