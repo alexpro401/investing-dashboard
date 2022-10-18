@@ -49,48 +49,49 @@ const CreateDaoProposalGeneralForm: React.FC<
 
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
 
-  const { getFieldErrorMessage, touchField, isFormValid } = useFormValidation(
-    {
-      ...(withContractName ? { contractAddress: contractAddress.get } : {}),
-      ...(withProposalTypeName
-        ? { proposalTypeName: proposalTypeName.get }
-        : {}),
-      ...(withProposalTypeDescription
-        ? { proposalTypeDescription: proposalTypeDescription.get }
-        : {}),
-      proposalName: proposalName.get,
-      description: proposalDescription.get,
-    },
-    {
-      ...(withContractName
-        ? { contractAddress: { required, isAddressValidator } }
-        : {}),
-      ...(withProposalTypeName
-        ? {
-            proposalTypeName: {
-              required,
-              minLength: minLength(4),
-              maxLength: maxLength(40),
-            },
-          }
-        : {}),
-      ...(withProposalTypeDescription
-        ? {
-            proposalTypeDescription: {
-              maxLength: maxLength(1000),
-            },
-          }
-        : {}),
-      proposalName: {
-        required,
-        minLength: minLength(4),
-        maxLength: maxLength(40),
+  const { getFieldErrorMessage, touchField, isFieldsValid, touchForm } =
+    useFormValidation(
+      {
+        ...(withContractName ? { contractAddress: contractAddress.get } : {}),
+        ...(withProposalTypeName
+          ? { proposalTypeName: proposalTypeName.get }
+          : {}),
+        ...(withProposalTypeDescription
+          ? { proposalTypeDescription: proposalTypeDescription.get }
+          : {}),
+        proposalName: proposalName.get,
+        description: proposalDescription.get,
       },
-      proposalDescription: {
-        maxLength: maxLength(1000),
-      },
-    }
-  )
+      {
+        ...(withContractName
+          ? { contractAddress: { required, isAddressValidator } }
+          : {}),
+        ...(withProposalTypeName
+          ? {
+              proposalTypeName: {
+                required,
+                minLength: minLength(4),
+                maxLength: maxLength(40),
+              },
+            }
+          : {}),
+        ...(withProposalTypeDescription
+          ? {
+              proposalTypeDescription: {
+                maxLength: maxLength(1000),
+              },
+            }
+          : {}),
+        proposalName: {
+          required,
+          minLength: minLength(4),
+          maxLength: maxLength(40),
+        },
+        proposalDescription: {
+          maxLength: maxLength(1000),
+        },
+      }
+    )
 
   const pasteFromClipboard = useCallback(
     async (dispatchCb: Dispatch<SetStateAction<any>>) => {
@@ -100,10 +101,11 @@ const CreateDaoProposalGeneralForm: React.FC<
   )
 
   const handleNextStepCb = useCallback(() => {
-    if (isFormValid()) {
+    touchForm()
+    if (isFieldsValid) {
       nextCb()
     }
-  }, [nextCb, isFormValid])
+  }, [nextCb, isFieldsValid, touchForm])
 
   return (
     <>
