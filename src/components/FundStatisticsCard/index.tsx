@@ -35,9 +35,11 @@ const FundStatisticsCard: FC<IProps> = ({ data, info }) => {
   const dailyProfit = useMemo(() => {
     if (!data) return "0"
 
+    const days = getDay(expandTimestamp(data.creationTime))
+    if (days === 0) return "0"
+
     const priceLP = getPriceLP(data.priceHistory)
     const pnl = getPNL(priceLP)
-    const days = getDay(expandTimestamp(data.creationTime))
 
     return (Number(pnl) / days).toFixed(2)
   }, [data])

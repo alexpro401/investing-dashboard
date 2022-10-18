@@ -8,41 +8,90 @@ import {
   CardFormControl,
   AppButton,
 } from "common"
+import Button from "components/Button"
 import { InputField, TextareaField } from "fields"
 import { useFormValidation } from "hooks/useFormValidation"
-import { required } from "utils/validators"
+import {
+  required,
+  isAddressValidator,
+  minLength,
+  maxLength,
+} from "utils/validators"
 import { readFromClipboard } from "utils/clipboard"
 import { DaoProposalCreatingContext } from "context/DaoProposalCreatingContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { CreateDaoCardStepNumber } from "forms/CreateFundDaoForm/components"
+import TransactionSent from "modals/TransactionSent"
 
 import * as S from "./styled"
 
 interface ICreateDaoProposalGeneralFormProps {
   withContractName?: boolean
+  withProposalTypeName?: boolean
+  withProposalTypeDescription?: boolean
 }
 
 const CreateDaoProposalGeneralForm: React.FC<
   ICreateDaoProposalGeneralFormProps
-> = ({ withContractName = false }) => {
-  const { contractAddress, description, proposalName } = useContext(
-    DaoProposalCreatingContext
-  )
+> = ({
+  withContractName = false,
+  withProposalTypeName = false,
+  withProposalTypeDescription = false,
+}) => {
+  const {
+    contractAddress,
+    proposalTypeName,
+    proposalTypeDescription,
+    proposalDescription,
+    proposalName,
+    successModalState,
+  } = useContext(DaoProposalCreatingContext)
 
-  const { currentStepNumber } = useContext(stepsControllerContext)
+  const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
 
-  const { getFieldErrorMessage, touchField } = useFormValidation(
-    {
-      ...(withContractName ? { contractAddress: contractAddress.get } : {}),
-      proposalName: proposalName.get,
-      description: description.get,
-    },
-    {
-      ...(withContractName ? { contractAddress: { required } } : {}),
-      proposalName: { required },
-      description: { required },
-    }
-  )
+  const { getFieldErrorMessage, touchField, isFieldsValid, touchForm } =
+    useFormValidation(
+      {
+        ...(withContractName ? { contractAddress: contractAddress.get } : {}),
+        ...(withProposalTypeName
+          ? { proposalTypeName: proposalTypeName.get }
+          : {}),
+        ...(withProposalTypeDescription
+          ? { proposalTypeDescription: proposalTypeDescription.get }
+          : {}),
+        proposalName: proposalName.get,
+        description: proposalDescription.get,
+      },
+      {
+        ...(withContractName
+          ? { contractAddress: { required, isAddressValidator } }
+          : {}),
+        ...(withProposalTypeName
+          ? {
+              proposalTypeName: {
+                required,
+                minLength: minLength(4),
+                maxLength: maxLength(40),
+              },
+            }
+          : {}),
+        ...(withProposalTypeDescription
+          ? {
+              proposalTypeDescription: {
+                maxLength: maxLength(1000),
+              },
+            }
+          : {}),
+        proposalName: {
+          required,
+          minLength: minLength(4),
+          maxLength: maxLength(40),
+        },
+        proposalDescription: {
+          maxLength: maxLength(1000),
+        },
+      }
+    )
 
   const pasteFromClipboard = useCallback(
     async (dispatchCb: Dispatch<SetStateAction<any>>) => {
@@ -51,8 +100,35 @@ const CreateDaoProposalGeneralForm: React.FC<
     []
   )
 
+  const handleNextStepCb = useCallback(() => {
+    touchForm()
+    if (isFieldsValid) {
+      nextCb()
+    }
+  }, [nextCb, isFieldsValid, touchForm])
+
   return (
     <>
+      <TransactionSent
+        isOpen={successModalState.opened}
+        toggle={() => {
+          successModalState.onClick()
+        }}
+        title={successModalState.title}
+        description={successModalState.text}
+      >
+        <Button
+          onClick={() => {
+            successModalState.onClick()
+          }}
+          size="large"
+          theme="primary"
+          fz={22}
+          full
+        >
+          {successModalState.buttonText}
+        </Button>
+      </TransactionSent>
       <S.StepsRoot>
         <Card>
           <CardHead
@@ -96,16 +172,37 @@ const CreateDaoProposalGeneralForm: React.FC<
               onBlur={() => touchField("proposalName")}
             />
             <TextareaField
-              value={description.get}
-              setValue={description.set}
+              value={proposalDescription.get}
+              setValue={proposalDescription.set}
               label="Description"
-              errorMessage={getFieldErrorMessage("description")}
-              onBlur={() => touchField("description")}
+              errorMessage={getFieldErrorMessage("proposalDescription")}
+              onBlur={() => touchField("proposalDescription")}
             />
+            {withProposalTypeName && (
+              <InputField
+                value={proposalTypeName.get}
+                setValue={proposalTypeName.set}
+                label="Proposal type name"
+                errorMessage={getFieldErrorMessage("proposalTypeName")}
+                onBlur={() => touchField("proposalTypeName")}
+              />
+            )}
+            {withProposalTypeDescription && (
+              <TextareaField
+                value={proposalTypeDescription.get}
+                setValue={proposalTypeDescription.set}
+                label="Proposal type description"
+                errorMessage={getFieldErrorMessage("proposalTypeDescription")}
+                onBlur={() => touchField("proposalTypeDescription")}
+              />
+            )}
           </CardFormControl>
         </Card>
       </S.StepsRoot>
-      <StepsNavigation />
+      <StepsNavigation
+        customNextCb={handleNextStepCb}
+        nextLabel={"Create Proposal"}
+      />
     </>
   )
 }

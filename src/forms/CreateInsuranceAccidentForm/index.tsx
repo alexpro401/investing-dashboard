@@ -66,7 +66,7 @@ const CreateInsuranceAccidentForm: FC = () => {
   const { pool, block, date, description, chat } = form
 
   const formController = useForm()
-  const { isFieldsValid, touchForm, getFieldErrorMessage, touchField } =
+  const { isFieldsValid, getFieldErrorMessage, touchField, touchForm } =
     useFormValidation(
       {
         pool: pool.get,
@@ -229,8 +229,8 @@ const CreateInsuranceAccidentForm: FC = () => {
     investorsInfo,
     investorsTotals,
     isFieldsValid,
-    touchForm,
     pool,
+    touchForm,
   ])
 
   const handleNextStep = () => {
