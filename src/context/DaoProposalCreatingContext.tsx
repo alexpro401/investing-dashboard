@@ -1,5 +1,23 @@
 import React, { useState, createContext, Dispatch, SetStateAction } from "react"
 
+interface ISuccessModalState {
+  opened: boolean
+  image: React.ReactNode
+  title: string
+  text: string
+  buttonText: string
+  onClick: () => void
+}
+
+const initialSuccessModalState = {
+  opened: false,
+  image: null,
+  title: "",
+  text: "",
+  buttonText: "",
+  onClick: () => {},
+}
+
 interface IDaoProposalCreatingContext {
   contractAddress: { get: string; set: Dispatch<SetStateAction<string>> }
   proposalTypeName: { get: string; set: Dispatch<SetStateAction<string>> }
@@ -9,6 +27,10 @@ interface IDaoProposalCreatingContext {
   }
   proposalName: { get: string; set: Dispatch<SetStateAction<string>> }
   proposalDescription: { get: string; set: Dispatch<SetStateAction<string>> }
+
+  successModalState: ISuccessModalState
+  setSuccessModalState: Dispatch<SetStateAction<ISuccessModalState>>
+  closeSuccessModalState: () => void
 }
 
 interface IDaoProposalCreatingContextProviderProps {
@@ -23,6 +45,10 @@ export const DaoProposalCreatingContext =
     proposalTypeDescription: { get: "", set: () => {} },
     proposalName: { get: "", set: () => {} },
     proposalDescription: { get: "", set: () => {} },
+
+    successModalState: initialSuccessModalState,
+    setSuccessModalState: () => {},
+    closeSuccessModalState: () => {},
   })
 
 const DaoProposalCreatingContextProvider: React.FC<
@@ -34,6 +60,9 @@ const DaoProposalCreatingContextProvider: React.FC<
     useState<string>("")
   const [_proposalName, _setProposalName] = useState<string>("")
   const [_proposalDescription, _setProposalDescription] = useState<string>("")
+
+  const [_successModalState, _setSuccessModalState] =
+    useState<ISuccessModalState>(initialSuccessModalState)
 
   return (
     <DaoProposalCreatingContext.Provider
@@ -49,6 +78,10 @@ const DaoProposalCreatingContextProvider: React.FC<
           get: _proposalDescription,
           set: _setProposalDescription,
         },
+        successModalState: _successModalState,
+        setSuccessModalState: _setSuccessModalState,
+        closeSuccessModalState: () =>
+          _setSuccessModalState(initialSuccessModalState),
       }}
     >
       {children}

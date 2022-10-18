@@ -8,6 +8,7 @@ import {
   CardFormControl,
   AppButton,
 } from "common"
+import Button from "components/Button"
 import { InputField, TextareaField } from "fields"
 import { useFormValidation } from "hooks/useFormValidation"
 import {
@@ -20,6 +21,7 @@ import { readFromClipboard } from "utils/clipboard"
 import { DaoProposalCreatingContext } from "context/DaoProposalCreatingContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { CreateDaoCardStepNumber } from "forms/CreateFundDaoForm/components"
+import TransactionSent from "modals/TransactionSent"
 
 import * as S from "./styled"
 
@@ -42,6 +44,7 @@ const CreateDaoProposalGeneralForm: React.FC<
     proposalTypeDescription,
     proposalDescription,
     proposalName,
+    successModalState,
   } = useContext(DaoProposalCreatingContext)
 
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
@@ -104,6 +107,26 @@ const CreateDaoProposalGeneralForm: React.FC<
 
   return (
     <>
+      <TransactionSent
+        isOpen={successModalState.opened}
+        toggle={() => {
+          successModalState.onClick()
+        }}
+        title={successModalState.title}
+        description={successModalState.text}
+      >
+        <Button
+          onClick={() => {
+            successModalState.onClick()
+          }}
+          size="large"
+          theme="primary"
+          fz={22}
+          full
+        >
+          {successModalState.buttonText}
+        </Button>
+      </TransactionSent>
       <S.StepsRoot>
         <Card>
           <CardHead

@@ -1,5 +1,6 @@
-import { useCallback, useState, useEffect, useMemo } from "react"
+import { useCallback, useState, useEffect, useMemo, useContext } from "react"
 import { parseUnits } from "@ethersproject/units"
+import { useNavigate } from "react-router-dom"
 
 import { useGovPoolContract, useGovSettingsContract } from "contracts"
 import { addDaoProposalTypeData } from "utils/ipfs"
@@ -7,6 +8,13 @@ import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovSettings } from "abi"
 import useGasTracker from "state/gas/hooks"
+import { DaoProposalCreatingContext } from "context/DaoProposalCreatingContext"
+import useError from "hooks/useError"
+import usePayload from "./usePayload"
+import { useTransactionAdder } from "state/transactions/hooks"
+import { SubmitState } from "constants/types"
+import { TransactionType } from "state/transactions/types"
+import { isTxMined, parseTransactionError } from "utils"
 
 interface ICreateDaoProposalTypeArgs {
   proposalInfo: {
@@ -37,8 +45,15 @@ interface IUseCreateDaoProposalTypeProps {
 const useCreateDaoProposalType = ({
   daoPoolAddress,
 }: IUseCreateDaoProposalTypeProps) => {
+  const navigate = useNavigate()
   const [govSettingsAddress, setGovSettingsAddress] = useState<string>("")
+  const { setSuccessModalState, closeSuccessModalState } = useContext(
+    DaoProposalCreatingContext
+  )
 
+  const addTransaction = useTransactionAdder()
+  const [, setPayload] = usePayload()
+  const [, setError] = useError()
   const [gasTrackerResponse] = useGasTracker()
   const govPoolContract = useGovPoolContract(daoPoolAddress)
   const govSettingsContract = useGovSettingsContract(govSettingsAddress)
@@ -119,6 +134,8 @@ const useCreateDaoProposalType = ({
       } = args
 
       try {
+        setPayload(SubmitState.SIGN)
+
         const { validatorsVote, durationValidators, quorumValidators } =
           await govSettingsContract.settings(EExecutor.DEFAULT)
 
@@ -184,9 +201,35 @@ const useCreateDaoProposalType = ({
           { ...transactionOptions, gasLimit }
         )
 
-        console.log(resultTransaction)
-      } catch (error) {
-        console.log(error)
+        setPayload(SubmitState.WAIT_CONFIRM)
+        const receipt = await addTransaction(resultTransaction, {
+          type: TransactionType.GOV_POOL_CREATE_PROPOSAL_TYPE,
+          title: proposalName,
+        })
+
+        if (isTxMined(receipt)) {
+          setPayload(SubmitState.SUCCESS)
+          setSuccessModalState({
+            opened: true,
+            title: "Success",
+            text: "Congrats! You just successfully created a proposal and voted for it. Follow the proposal’s status at All proposals.",
+            image: "",
+            buttonText: "All proposals",
+            onClick: () => {
+              //TODO redirect to real proposals list
+              navigate("/")
+              closeSuccessModalState()
+            },
+          })
+        }
+      } catch (error: any) {
+        setPayload(SubmitState.IDLE)
+        if (!!error && !!error.data && !!error.data.message) {
+          setError(error.data.message)
+        } else {
+          const errorMessage = parseTransactionError(error.toString())
+          !!errorMessage && setError(errorMessage)
+        }
       }
     },
     [
@@ -195,6 +238,12 @@ const useCreateDaoProposalType = ({
       govSettingsAddress,
       transactionOptions,
       tryEstimateGas,
+      addTransaction,
+      setPayload,
+      setError,
+      closeSuccessModalState,
+      setSuccessModalState,
+      navigate,
     ]
   )
 

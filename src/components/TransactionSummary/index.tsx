@@ -32,6 +32,7 @@ import {
   ConvertInvestProposalToDividendsTransactionInfo,
   GovPoolCreateTransactionInfo,
   GovPoolDepositTransactionInfo,
+  GovPoolCreateProposalTypeTransactionInfo,
 } from "state/transactions/types"
 import { formatBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
@@ -327,7 +328,13 @@ const GovPoolCreateSummary: React.FC<{
 const GovPoolDepositSummary: React.FC<{
   info: GovPoolDepositTransactionInfo
 }> = () => {
-  return <>Successfuly deposited.</>
+  return <>Successfully deposited.</>
+}
+
+const GovPoolCreateProposalTypeSummary: React.FC<{
+  info: GovPoolCreateProposalTypeTransactionInfo
+}> = ({ info: { title } }) => {
+  return <>Successfully created new proposal: {`"${title}"`}</>
 }
 
 const TransactionSummary: React.FC<IProps> = ({ info }) => {
@@ -388,7 +395,8 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <GovPoolCreateSummary info={info} />
     case TransactionType.GOV_POOL_DEPOSIT:
       return <GovPoolDepositSummary info={info} />
-
+    case TransactionType.GOV_POOL_CREATE_PROPOSAL_TYPE:
+      return <GovPoolCreateProposalTypeSummary info={info} />
     default:
       return null
   }
