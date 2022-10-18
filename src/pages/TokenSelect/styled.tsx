@@ -12,12 +12,12 @@ export const Title = styled.div`
 `
 
 export const Container = styled(Flex)`
-  width: 100%;
+  width: 343px;
   height: calc(100vh - 94px);
-  padding: 16px;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  margin: 0 auto;
 
   @media all and (display-mode: standalone) {
     height: calc(100vh - 115px);

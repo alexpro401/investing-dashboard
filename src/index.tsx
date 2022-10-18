@@ -32,7 +32,6 @@ import { PoolListUpdater } from "state/pools/updater"
 import MulticallUpdater from "state/multicall/updater"
 import ListsUpdater from "state/lists/updater"
 
-import "react-virtualized/styles.css"
 import { usePollBlockNumber } from "state/block/hooks"
 
 const Web3ProviderNetwork = createWeb3ReactRoot("NETWORK")

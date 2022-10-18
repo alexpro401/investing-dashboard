@@ -1,70 +1,114 @@
-import { BigNumber } from "@ethersproject/bignumber"
-
-import { Token as IToken } from "interfaces"
+import { CSSProperties, useCallback, useMemo } from "react"
+import { Currency, Token } from "lib/entities"
+import { FixedSizeList } from "react-window"
+import AutoSizer from "react-virtualized-auto-sizer"
 
 import Search from "components/Search"
-import { Card, CardHeader, CardList } from "./styled"
-import Token from "./Token"
-import { ZERO } from "constants/index"
+
+import CurrencyRow from "./Token"
+import PoolToken from "./PoolToken"
+import * as S from "./styled"
+
+function currencyKey(currency: Currency): string {
+  return currency.isToken ? currency.address : "ETHER"
+}
 
 interface Props {
-  tokens: IToken[]
+  currencies: Token[]
   query: string
-  balances?: { [address: string]: BigNumber }
-  onSelect: (token: IToken) => void
+  poolAddress?: string
+  onSelect: (token: Currency) => void
   handleChange: (v: string) => void
 }
 
+interface TokenRowProps {
+  data: Array<Currency>
+  index: number
+  style: CSSProperties
+}
+
 const TokensList: React.FC<Props> = ({
-  tokens,
+  poolAddress,
+  currencies,
   query,
-  balances,
   onSelect,
   handleChange,
 }) => {
-  const withBalance = balances === undefined || !Object.keys(balances).length
+  const itemData: Currency[] = useMemo(() => {
+    // if (otherListTokens && otherListTokens?.length > 0) {
+    //   return [...currencies, BREAK_LINE, ...otherListTokens]
+    // }
+    return currencies
+  }, [currencies])
 
-  const sortedTokens = [...tokens].sort((a, b) => {
-    if (balances === undefined) return 0
+  const itemKey = useCallback((index: number, data: typeof itemData) => {
+    const currency = data[index]
+    // if (isBreakLine(currency)) return BREAK_LINE
 
-    if (b.address in balances) return 1
+    return currencyKey(currency)
+  }, [])
 
-    return -1
-  })
+  const Row = useCallback(
+    ({ data, index, style }: TokenRowProps) => {
+      const token = data[index]
 
-  const getBalance = (address: string) => {
-    if (withBalance) return ZERO
+      const address = currencyKey(token)
 
-    if (address in balances) {
-      return balances[address]
-    }
+      if (poolAddress) {
+        return (
+          <PoolToken
+            poolAddress={poolAddress}
+            address={address}
+            style={style}
+            onClick={onSelect}
+            currency={token}
+          />
+        )
+      }
 
-    return ZERO
-  }
+      return (
+        <CurrencyRow
+          address={address}
+          style={style}
+          onClick={onSelect}
+          currency={token}
+        />
+      )
+    },
+    [onSelect, poolAddress]
+  )
+
+  const list = (
+    <AutoSizer>
+      {({ height, width }) => (
+        <FixedSizeList
+          itemData={itemData}
+          itemCount={itemData.length}
+          itemSize={60}
+          itemKey={itemKey}
+          height={height}
+          width={width}
+        >
+          {Row}
+        </FixedSizeList>
+      )}
+    </AutoSizer>
+  )
+
+  const noItems = <S.Placeholder>No results found.</S.Placeholder>
 
   return (
-    <Card>
-      <CardHeader>
+    <S.Card>
+      <S.CardHeader>
         <Search
           placeholder="Name, ticker, address"
           value={query}
           handleChange={handleChange}
           height="38px"
         />
-      </CardHeader>
-      <CardList>
-        {sortedTokens.map((token) => {
-          return (
-            <Token
-              balance={getBalance(token.address)}
-              onClick={onSelect}
-              key={token.address}
-              tokenData={token}
-            />
-          )
-        })}
-      </CardList>
-    </Card>
+      </S.CardHeader>
+      <S.CardList>{!!itemData.length ? list : noItems}</S.CardList>
+    </S.Card>
   )
 }
 

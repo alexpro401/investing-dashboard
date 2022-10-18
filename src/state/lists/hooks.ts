@@ -7,7 +7,7 @@ import { AppState } from "state"
 import { useAppSelector } from "state/hooks"
 import sortByListPriority from "utils/listSort"
 
-import { UNSUPPORTED_LIST_URLS } from "constants/lists"
+import { UNSUPPORTED_LIST_URLS, WHITELIST_LIST_URLS } from "constants/lists"
 
 export type TokenAddressMap = ChainTokenMap
 
@@ -83,6 +83,28 @@ export function useActiveListUrls(): string[] | undefined {
   )
 }
 
+export function useWhiteListUrls(): string[] | undefined {
+  const activeListUrls = useAppSelector((state) => state.lists.byUrl)
+  return useMemo(
+    () =>
+      Object.keys(activeListUrls)?.filter((url) =>
+        WHITELIST_LIST_URLS.includes(url)
+      ),
+    [activeListUrls]
+  )
+}
+
+export function useBlackListUrls(): string[] | undefined {
+  const activeListUrls = useAppSelector((state) => state.lists.byUrl)
+  return useMemo(
+    () =>
+      Object.keys(activeListUrls)?.filter((url) =>
+        UNSUPPORTED_LIST_URLS.includes(url)
+      ),
+    [activeListUrls]
+  )
+}
+
 export function useInactiveListUrls(): string[] {
   const lists = useAllLists()
   const allActiveListUrls = useActiveListUrls()
@@ -97,11 +119,20 @@ export function useInactiveListUrls(): string[] {
   )
 }
 
+export function useCombinedWhiteList(): TokenAddressMap {
+  const whiteListUrls = useWhiteListUrls()
+  return useCombinedTokenMapFromUrls(whiteListUrls)
+}
+
+export function useCombinedUnsupportedList(): TokenAddressMap {
+  const blackListUrls = useBlackListUrls()
+  return useCombinedTokenMapFromUrls(blackListUrls)
+}
+
 // get all the tokens from active lists, combine with local default tokens
 export function useCombinedActiveList(): TokenAddressMap {
   const activeListUrls = useActiveListUrls()
-  const activeTokens = useCombinedTokenMapFromUrls(activeListUrls)
-  return activeTokens
+  return useCombinedTokenMapFromUrls(activeListUrls)
 }
 
 export function useIsListActive(url: string): boolean {

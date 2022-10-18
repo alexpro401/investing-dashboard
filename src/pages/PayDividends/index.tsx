@@ -254,11 +254,11 @@ function PayDividends() {
       >
         {form}
       </Container>
-      <TokenSelect
+      {/* <TokenSelect
         onSelect={onTokenSelect}
         isOpen={isOpen}
         onClose={closeTokenSelect}
-      />
+      /> */}
     </>
   )
 }

@@ -5,6 +5,7 @@ import { Flex } from "theme"
 
 export const TokenContainer = styled(Flex)`
   width: fill-available;
+  box-sizing: border-box;
   height: 50px;
   justify-content: flex-start;
   padding: 0 16px;
@@ -79,6 +80,16 @@ export const TokenPrice = styled.div`
   color: #e4f2ff;
 `
 
+export const Placeholder = styled.div`
+  box-sizing: border-box;
+  margin: 16px 0px;
+  min-width: 0px;
+  font-weight: 500;
+  color: #788ab4;
+  font-size: 14px;
+  text-align: center;
+`
+
 // TOKENS CARD
 
 export const Card = styled(Flex)`
@@ -127,6 +138,7 @@ export const CardHeader = styled(Flex)`
 export const CardList = styled.div`
   width: 100%;
   height: calc(100vh - 400px);
+  max-height: 448px;
   overflow-y: auto;
   padding: 10px 0 0;
 `

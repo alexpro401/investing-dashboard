@@ -18,22 +18,30 @@ import {
 import { ZERO } from "constants/index"
 import { Currency } from "lib/entities"
 import { useWeb3React } from "@web3-react/core"
-import { useCurrencyBalance } from "hooks/useBalance"
+import { useCurrencyBalance, useFundBalance } from "hooks/useBalance"
 import { parseEther } from "@ethersproject/units"
 
 interface Props {
+  poolAddress?: string
   address: string
   currency: Currency
   style: CSSProperties
   onClick: (token: Currency) => void
 }
 
-const Token: FC<Props> = ({ address, currency, style, onClick }) => {
+const PoolToken: FC<Props> = ({
+  poolAddress,
+  address,
+  currency,
+  style,
+  onClick,
+}) => {
   const { symbol, name } = currency
   const { account } = useWeb3React()
 
   const token = currency.isToken ? currency : undefined
-  const balance = useCurrencyBalance(account ?? undefined, token)
+  const balance = useFundBalance(poolAddress, account ?? undefined, token)
+  // console.log(balance?.toSignificant(4))
 
   const price = useTokenPriceOutUSD({
     tokenAddress: address,
@@ -60,4 +68,4 @@ const Token: FC<Props> = ({ address, currency, style, onClick }) => {
   )
 }
 
-export default Token
+export default PoolToken

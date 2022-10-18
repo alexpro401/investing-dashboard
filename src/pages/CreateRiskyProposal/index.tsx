@@ -190,12 +190,12 @@ const CreateRiskyProposal: FC = () => {
       ),
       content: (
         <Body noPaddings>
-          <TokensList
+          {/* <TokensList
             query=""
             handleChange={() => {}}
             tokens={whitelisted}
             onSelect={handleRiskyTokenSelect}
-          />
+          /> */}
         </Body>
       ),
     },

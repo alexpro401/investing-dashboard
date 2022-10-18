@@ -1,48 +1,78 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react"
-import { useSelector } from "react-redux"
+import React, { useCallback, useMemo, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { TraderPool } from "abi"
+import { useWeb3React } from "@web3-react/core"
 
 import IconButton from "components/IconButton"
 import TokensList from "components/TokensList"
 import Header, { EHeaderTitles } from "components/Header"
 
-import { selectWhitelist } from "state/pricefeed/selectors"
-import { Token } from "interfaces"
-import useContract from "hooks/useContract"
+import { usePoolBalancesWithLoadingIndicator } from "hooks/useBalance"
+import { useToken, useUnsupportedTokens, useAllTokens } from "hooks/useToken"
 
 import back from "assets/icons/angle-left.svg"
 
-import { Title, Container, TitleContainer, CardHeader, Card } from "./styled"
-import { useCurrencyBalances } from "hooks/useBalance"
-import { useWeb3React } from "@web3-react/core"
-import { useAllTokens } from "hooks/useToken"
+import useDebounce from "hooks/useDebounce"
+import { isAddress } from "utils"
+import { getTokenFilter } from "lib/hooks/useTokenList/filtering"
+import {
+  tokenComparator,
+  useSortTokensByQuery,
+} from "lib/hooks/useTokenList/sorting"
+import { Currency, Token } from "lib/entities"
+
+import * as S from "./styled"
 
 const TokenSelect: React.FC = () => {
   const navigate = useNavigate()
   const { account } = useWeb3React()
   const { type, poolAddress, field, address } = useParams()
-  const [q, setQuery] = useState("")
-  const [balances, setBalances] = useState({})
-  const whitelisted = useSelector(selectWhitelist)
-  const traderPool = useContract(poolAddress, TraderPool)
+  const [searchQuery, setSearchQuery] = useState<string>("")
+  const debouncedQuery = useDebounce(searchQuery, 200)
+
+  const isAddressSearch = isAddress(debouncedQuery)
+
+  const searchToken = useToken(debouncedQuery)
 
   const allTokens = useAllTokens()
+
   const allTokensArray = useMemo(
     () => Object.values(allTokens ?? {}),
     [allTokens]
   )
-  const bl = useCurrencyBalances(account, allTokensArray)
-  console.log(bl.map((b) => [b?.toSignificant(4), b?.currency.symbol]))
+
+  const [balances, balancesIsLoading] = usePoolBalancesWithLoadingIndicator(
+    poolAddress,
+    account,
+    allTokensArray
+  )
+
+  const filteredTokens: Token[] = useMemo(() => {
+    return Object.values(allTokens).filter(getTokenFilter(debouncedQuery))
+  }, [allTokens, debouncedQuery])
+
+  const sortedTokens: Token[] = useMemo(
+    () =>
+      !balancesIsLoading
+        ? [...filteredTokens].sort(tokenComparator.bind(null, balances))
+        : [],
+    [balances, filteredTokens, balancesIsLoading]
+  )
+
+  const filteredSortedTokens = useSortTokensByQuery(
+    debouncedQuery,
+    sortedTokens
+  )
 
   const onSelect = useCallback(
-    (token: Token) => {
+    (currency: Currency) => {
       const rootPath = `/pool/swap/${type}/${poolAddress}`
+      const token = currency.isToken ? currency : undefined
+
+      if (!token) return
 
       if (field === "from") {
         navigate(`${rootPath}/${token.address}/${address}`)
       }
-
       if (field === "to") {
         navigate(`${rootPath}/${address}/${token.address}`)
       }
@@ -50,50 +80,32 @@ const TokenSelect: React.FC = () => {
     [navigate, poolAddress, type, field, address]
   )
 
-  useEffect(() => {
-    if (!traderPool) return
-
-    const fetchBalances = async () => {
-      const info = await traderPool?.getPoolInfo()
-      const balance = {}
-
-      info.openPositions.map((address: string, index) => {
-        balance[address.toLocaleLowerCase()] =
-          info.baseAndPositionBalances[index + 1]
-      })
-
-      setBalances(balance)
-    }
-
-    fetchBalances().catch(console.error)
-  }, [traderPool])
-
   return (
     <>
       <Header title={EHeaderTitles.myTraderProfile} />
 
-      <Container
+      <S.Container
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        <Card>
-          <CardHeader>
-            <TitleContainer>
+        <S.Card>
+          <S.CardHeader>
+            <S.TitleContainer>
               <IconButton media={back} onClick={() => navigate(-1)} />
-              <Title>Select token</Title>
-            </TitleContainer>
-          </CardHeader>
+              <S.Title>Select token</S.Title>
+            </S.TitleContainer>
+          </S.CardHeader>
           <TokensList
-            balances={balances}
-            handleChange={setQuery}
-            tokens={whitelisted}
+            poolAddress={poolAddress}
+            handleChange={setSearchQuery}
+            currencies={filteredSortedTokens}
             onSelect={onSelect}
-            query={q}
+            query={searchQuery}
           />
-        </Card>
-      </Container>
+        </S.Card>
+      </S.Container>
     </>
   )
 }

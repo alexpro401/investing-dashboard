@@ -7,6 +7,7 @@ const DEXE_BLACKLIST = `${ROOT}/lists/dexe-blacklist.tokenlist.json`
 // List of official tokens list
 export const DEFAULT_LIST_OF_LISTS_TO_DISPLAY = [DEXE_DEFAULT, DEXE_WHITELIST]
 
+export const WHITELIST_LIST_URLS: string[] = [DEXE_WHITELIST]
 export const UNSUPPORTED_LIST_URLS: string[] = [DEXE_BLACKLIST]
 export const WARNING_LIST_URLS: string[] = []
 
