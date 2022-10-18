@@ -1,6 +1,7 @@
 import { useERC721Contract } from "contracts"
 import { useCallback, useEffect, useState } from "react"
 import { isUndefined } from "lodash"
+import { isAddress } from "../utils"
 
 export const useErc721 = (address: string) => {
   const contract = useERC721Contract(address)
@@ -10,6 +11,7 @@ export const useErc721 = (address: string) => {
   const [isEnumerable, setIsEnumerable] = useState(false)
 
   const getName = useCallback(async () => {
+    console.log("Getting name")
     const _res = await contract?.name()
     setName(_res || "")
   }, [contract])
@@ -24,13 +26,27 @@ export const useErc721 = (address: string) => {
     setIsEnumerable(!isUndefined(_res) ? _res : false)
   }, [contract])
 
+  const clearDetails = useCallback(() => {
+    setName("")
+    setSymbol("")
+    setIsEnumerable(false)
+  }, [])
+
   const loadDetails = useCallback(async () => {
-    await Promise.all([getName(), getSymbol(), checkIsSupportEnumerable()])
-  }, [checkIsSupportEnumerable, getName, getSymbol])
+    try {
+      await Promise.all([getName(), getSymbol(), checkIsSupportEnumerable()])
+    } catch (error) {
+      clearDetails()
+    }
+  }, [checkIsSupportEnumerable, clearDetails, getName, getSymbol])
 
   useEffect(() => {
-    loadDetails()
-  }, [address, loadDetails])
+    if (isAddress(address)) {
+      loadDetails()
+    } else {
+      clearDetails()
+    }
+  }, [address, clearDetails, loadDetails])
 
   return {
     name,
