@@ -7,7 +7,7 @@ import { normalizeBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
 import { usePriceFeedContract } from "contracts"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import { IRiskyPositionCard } from "interfaces/thegraphs/basic-pools"
+import { IRiskyPosition } from "interfaces/thegraphs/basic-pools"
 
 import {
   divideBignumbers,
@@ -40,15 +40,15 @@ interface IPayload {
   baseToken: ITokenBase | null
 }
 
-function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
-  const [positionToken] = useERC20Data(position?.token)
-  const [baseToken] = useERC20Data(position.pool.baseToken)
+function useRiskyPosition(position: IRiskyPosition): [IPayload] {
+  const [positionToken] = useERC20Data(position?.proposal.token)
+  const [baseToken] = useERC20Data(position.proposal.basicPool.baseToken)
 
   const priceFeed = usePriceFeedContract()
 
   const [currentPositionPriceBase, setCurrentPositionPriceBase] = useState(ZERO)
   const currentPositionPriceUSD = useTokenPriceOutUSD({
-    tokenAddress: position.token,
+    tokenAddress: position.proposal.token,
   })
 
   /**
@@ -197,15 +197,15 @@ function useRiskyPosition(position: IRiskyPositionCard): [IPayload] {
   useEffect(() => {
     if (!priceFeed) return
     ;(async () => {
-      if (!position.token || !position.pool) return
+      if (!position.proposal.token || !position.proposal.basicPool) return
 
       try {
         const amount = parseUnits("1", 18)
 
         // without extended
         const price = await priceFeed.getNormalizedExtendedPriceOut(
-          position.token,
-          position.pool.baseToken,
+          position.proposal.token,
+          position.proposal.basicPool.baseToken,
           amount,
           []
         )

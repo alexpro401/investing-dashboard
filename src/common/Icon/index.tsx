@@ -18,6 +18,11 @@ import {
   GreenCheckIcon,
   TrashIcon,
   CogIcon,
+  FacebookIcon,
+  LinkedinIcon,
+  MediumIcon,
+  TelegramIcon,
+  TwitterIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -68,6 +73,16 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return TrashIcon as unknown as ElementType
       case ICON_NAMES.cog:
         return CogIcon as unknown as ElementType
+      case ICON_NAMES.facebook:
+        return FacebookIcon as unknown as ElementType
+      case ICON_NAMES.linkedin:
+        return LinkedinIcon as unknown as ElementType
+      case ICON_NAMES.medium:
+        return MediumIcon as unknown as ElementType
+      case ICON_NAMES.telegram:
+        return TelegramIcon as unknown as ElementType
+      case ICON_NAMES.twitter:
+        return TwitterIcon as unknown as ElementType
 
       default:
         return AngleLeftIcon as unknown as ElementType

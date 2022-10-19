@@ -7,43 +7,8 @@ import {
   useCallback,
   useState,
 } from "react"
-
-type UserKeeperDeployParams = {
-  tokenAddress: string // binded
-  nftAddress: string // binded
-  totalPowerInTokens: number // binded
-  nftsTotalSupply: number // binded
-}
-
-type ValidatorsDeployParams = {
-  name: string // binded
-  symbol: string // binded
-  duration: number // binded
-  quorum: number // binded
-  validators: string[]
-  balances: number[]
-}
-
-type GovPoolDeployParams = {
-  descriptionUrl: string // will be in ipfs
-}
-
-type ProposalSettings = {
-  earlyCompletion: boolean // binded
-  delegatedVotingAllowed: boolean // binded
-  validatorsVote: boolean
-  duration: number // binded
-  durationValidators: number
-  quorum: number // binded
-  quorumValidators: number
-  minVotesForVoting: number // binded
-  minVotesForCreating: number // binded
-  rewardToken: string // binded
-  creationReward: number // binded
-  executionReward: number // binded
-  voteRewardsCoefficient: number // binded
-  executorDescription: string
-}
+import { useERC20 } from "../hooks/useERC20"
+import { useErc721 } from "../hooks/useErc721"
 
 export type ExternalFileDocument = {
   name: string
@@ -88,21 +53,19 @@ export interface DaoProposalSettingsForm {
   executionReward: { get: number; set: Dispatch<SetStateAction<number>> }
   voteRewardsCoefficient: { get: number; set: Dispatch<SetStateAction<number>> }
   executorDescription: { get: string; set: Dispatch<SetStateAction<string>> }
-
-  // TODO: ?
-  // minTokenBalance: { get: string; set: Dispatch<SetStateAction<string>> }
-  // minNftBalance: { get: string; set: Dispatch<SetStateAction<string>> }
 }
 
 interface FundDaoCreatingContext {
   isErc20: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
   isErc721: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
+  erc20: ReturnType<typeof useERC20>
+  erc721: ReturnType<typeof useErc721>
+
   isCustomVoting: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
   isDistributionProposal: {
     get: boolean
     set: Dispatch<SetStateAction<boolean>>
   }
-
   isValidator: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
 
   avatarUrl: { get: string; set: Dispatch<SetStateAction<string>> }
@@ -132,8 +95,9 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
   isErc721: { get: false, set: () => {} },
   isCustomVoting: { get: false, set: () => {} },
   isDistributionProposal: { get: false, set: () => {} },
-
   isValidator: { get: false, set: () => {} },
+  erc20: {} as ReturnType<typeof useERC20>,
+  erc721: {} as ReturnType<typeof useErc721>,
 
   avatarUrl: { get: "", set: () => {} },
   daoName: { get: "", set: () => {} },
@@ -154,8 +118,9 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
 const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
   children,
 }) => {
-  const [_isErc20, _setIsErc20] = useState<boolean>(false)
+  const [_isErc20, _setIsErc20] = useState<boolean>(true)
   const [_isErc721, _setIsErc721] = useState<boolean>(false)
+
   const [_isCustomVoting, _setIsCustomVoting] = useState<boolean>(false)
   const [_isDistributionProposal, _setIsDistributionProposal] =
     useState<boolean>(false)
@@ -303,6 +268,9 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
     executorDescription: useState<string>(""),
   }
 
+  const erc20 = useERC20(_userKeeperParams.tokenAddress[0])
+  const erc721 = useErc721(_userKeeperParams.nftAddress[0])
+
   return (
     <>
       <FundDaoCreatingContext.Provider
@@ -314,8 +282,9 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
             get: _isDistributionProposal,
             set: _setIsDistributionProposal,
           },
-
           isValidator: { get: _isValidator, set: _setIsValidator },
+          erc20,
+          erc721,
 
           avatarUrl: { get: _avatarUrl, set: _setAvatarUrl },
           daoName: { get: _daoName, set: _setDaoName },
