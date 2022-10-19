@@ -8,6 +8,7 @@ import Search from "components/Search"
 import CurrencyRow from "./Token"
 import PoolToken from "./PoolToken"
 import * as S from "./styled"
+import { useUnsupportedTokens } from "hooks/useToken"
 
 function currencyKey(currency: Currency): string {
   return currency.isToken ? currency.address : "ETHER"
@@ -41,18 +42,31 @@ const TokensList: React.FC<Props> = ({
     return currencies
   }, [currencies])
 
-  const itemKey = useCallback((index: number, data: typeof itemData) => {
-    const currency = data[index]
-    // if (isBreakLine(currency)) return BREAK_LINE
+  const itemKey = useCallback(
+    (index: number, data: typeof itemData) => {
+      const currency = data[index]
+      // if (isBreakLine(currency)) return BREAK_LINE
 
-    return currencyKey(currency)
-  }, [])
+      return currencyKey(currency)
+    },
+    [itemData]
+  )
+
+  const blacklist = useUnsupportedTokens()
+
+  const blacklistTokensAdresses = useMemo(
+    () => Object.values(blacklist ?? {}).map((t) => t.address),
+    [blacklist]
+  )
 
   const Row = useCallback(
     ({ data, index, style }: TokenRowProps) => {
       const token = data[index]
 
       const address = currencyKey(token)
+      const isBlacklisted = blacklistTokensAdresses.includes(
+        token.wrapped.address
+      )
 
       if (poolAddress) {
         return (
@@ -75,7 +89,7 @@ const TokensList: React.FC<Props> = ({
         />
       )
     },
-    [onSelect, poolAddress]
+    [onSelect, poolAddress, blacklistTokensAdresses]
   )
 
   const list = (

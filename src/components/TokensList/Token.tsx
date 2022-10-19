@@ -1,25 +1,15 @@
 import { CSSProperties, FC, useMemo } from "react"
-import { BigNumber } from "@ethersproject/bignumber"
 
-import { Token as IToken } from "interfaces"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import { formatBigNumber, normalizeBigNumber } from "utils"
+import { normalizeBigNumber } from "utils"
 
 import TokenIcon from "components/TokenIcon"
-import {
-  TokenContainer,
-  TokenInfo,
-  Symbol,
-  Name,
-  BalanceInfo,
-  TokenBalance,
-  TokenPrice,
-} from "./styled"
-import { ZERO } from "constants/index"
 import { Currency } from "lib/entities"
 import { useWeb3React } from "@web3-react/core"
 import { useCurrencyBalance } from "hooks/useBalance"
 import { parseEther } from "@ethersproject/units"
+
+import * as S from "./styled"
 
 interface Props {
   address: string
@@ -35,28 +25,30 @@ const Token: FC<Props> = ({ address, currency, style, onClick }) => {
   const token = currency.isToken ? currency : undefined
   const balance = useCurrencyBalance(account ?? undefined, token)
 
-  const price = useTokenPriceOutUSD({
-    tokenAddress: address,
-    amount: useMemo(
-      () => parseEther(balance?.toSignificant(4) || "1"),
-      [balance]
-    ),
-  })
+  const usdPriceParams = useMemo(
+    () => ({
+      tokenAddress: address,
+      amount: parseEther(balance?.toSignificant(4) || "1"),
+    }),
+    [address, balance]
+  )
+
+  const price = useTokenPriceOutUSD(usdPriceParams)
 
   return (
-    <TokenContainer style={style} onClick={() => onClick(currency)}>
+    <S.TokenContainer style={style} onClick={() => onClick(currency)}>
       <TokenIcon address={address} size={30} />
-      <TokenInfo>
-        <Symbol>{symbol}</Symbol>
-        <Name>{name}</Name>
-      </TokenInfo>
-      <BalanceInfo>
-        {balance && <TokenBalance>{balance.toSignificant(4)}</TokenBalance>}
+      <S.TokenInfo>
+        <S.Symbol>{symbol}</S.Symbol>
+        <S.Name>{name}</S.Name>
+      </S.TokenInfo>
+      <S.BalanceInfo>
+        {balance && <S.TokenBalance>{balance.toSignificant(4)}</S.TokenBalance>}
         {!price.isZero() && (
-          <TokenPrice>${normalizeBigNumber(price, 18, 2)}</TokenPrice>
+          <S.TokenPrice>${normalizeBigNumber(price, 18, 2)}</S.TokenPrice>
         )}
-      </BalanceInfo>
-    </TokenContainer>
+      </S.BalanceInfo>
+    </S.TokenContainer>
   )
 }
 

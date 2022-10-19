@@ -1,13 +1,9 @@
-import { CSSProperties, FC, useMemo } from "react"
-
-import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import { normalizeBigNumber } from "utils"
+import { CSSProperties, FC } from "react"
 
 import TokenIcon from "components/TokenIcon"
 import { Currency } from "lib/entities"
 import { useWeb3React } from "@web3-react/core"
 import { useFundBalance } from "hooks/useBalance"
-import { parseEther } from "@ethersproject/units"
 
 import * as S from "./styled"
 
@@ -19,7 +15,7 @@ interface Props {
   onClick: (token: Currency) => void
 }
 
-const PoolToken: FC<Props> = ({
+const BlacklistToken: FC<Props> = ({
   poolAddress,
   address,
   currency,
@@ -31,15 +27,6 @@ const PoolToken: FC<Props> = ({
 
   const token = currency.isToken ? currency : undefined
   const balance = useFundBalance(poolAddress, account ?? undefined, token)
-  // console.log(balance?.toSignificant(4))
-
-  const price = useTokenPriceOutUSD({
-    tokenAddress: address,
-    amount: useMemo(
-      () => parseEther(balance?.toSignificant(4) || "1"),
-      [balance]
-    ),
-  })
 
   return (
     <S.TokenContainer style={style} onClick={() => onClick(currency)}>
@@ -50,12 +37,9 @@ const PoolToken: FC<Props> = ({
       </S.TokenInfo>
       <S.BalanceInfo>
         {balance && <S.TokenBalance>{balance.toSignificant(4)}</S.TokenBalance>}
-        {!price.isZero() && (
-          <S.TokenPrice>${normalizeBigNumber(price, 18, 2)}</S.TokenPrice>
-        )}
       </S.BalanceInfo>
     </S.TokenContainer>
   )
 }
 
-export default PoolToken
+export default BlacklistToken
