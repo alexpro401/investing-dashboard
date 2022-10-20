@@ -25,6 +25,10 @@ const CreateProposalChangeDAOSettingsForm: React.FC = () => {
     [currentStep]
   )
 
+  const handleCreateChangeDaoSettingsProposal = useCallback(() => {
+    console.log("TO DO")
+  }, [])
+
   const handlePrevStep = useCallback(() => {
     switch (currentStep) {
       case STEPS.daoSettings: {
@@ -50,12 +54,13 @@ const CreateProposalChangeDAOSettingsForm: React.FC = () => {
       }
       case STEPS.basicInfo: {
         //TODO handle create change settings DAO proposal
+        handleCreateChangeDaoSettingsProposal()
         break
       }
       default:
         break
     }
-  }, [currentStep])
+  }, [currentStep, handleCreateChangeDaoSettingsProposal])
 
   return (
     <StepsControllerContext
