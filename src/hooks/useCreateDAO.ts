@@ -12,8 +12,8 @@ import { SubmitState } from "constants/types"
 import useError from "hooks/useError"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { cloneDeep } from "lodash"
-import { IPoolFactory } from "../interfaces/typechain/PoolFactory"
-import { IpfsEntity } from "../utils/ipfsEntity"
+import { IPoolFactory } from "interfaces/typechain/PoolFactory"
+import { IpfsEntity } from "utils/ipfsEntity"
 
 const useCreateDAO = () => {
   const {
