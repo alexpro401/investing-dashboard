@@ -1,6 +1,6 @@
 import styled from "styled-components"
 
-import { Icon as IconComponent } from "common"
+import { AppButton, Icon as IconComponent } from "common"
 import { motion } from "framer-motion"
 import {
   fieldBg,
@@ -88,11 +88,14 @@ export const Label = styled(motion.label)<{
 
   right: auto;
   width: min-content;
+  color: ${fieldLabelFocusColor};
+  left: ${fieldPaddingLeft}px;
+  font-size: ${fieldLabelFontSize}px;
 
   ${(props) =>
     !props.isActive ? `color: ${theme.brandColors.secondary} !important;` : ""}
 
-  ${(props) => (props.empty ? "opacity: 0;" : "")}
+  ${(props) => (props.empty || !props.isActive ? "opacity: 0;" : "")}
 `
 
 export const Input = styled(motion.input)<{
@@ -152,27 +155,28 @@ export const Input = styled(motion.input)<{
   &:not([disabled]):focus {
     box-sizing: border-box;
   }
+`
 
-  // changing label styles
-  &:not(:focus):placeholder-shown + ${Label} {
-    top: 50%;
-    color: ${fieldLabelColor};
+export const Button = styled(AppButton).attrs(() => ({
+  type: "button",
+  color: "default",
+  size: "no-paddings",
+}))<{ visible: boolean; hasNodeLeft: boolean }>`
+  font-weight: 500;
+  font-size: 16px;
+  padding: 3px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 
-    ${(props) =>
-      props.hasNodeLeft ? `left: calc(${fieldPaddingRight * 3}px)` : ""}
-  }
+  ${(props) =>
+    props.hasNodeLeft
+      ? `left: ${fieldPaddingLeft * 3}px;`
+      : `left: ${fieldPaddingLeft}px;`}
 
-  &:not([disabled]):focus
-    ~ ${Label},
-    &:not(:focus):not(:placeholder-shown)
-    + ${Label} {
-    color: ${fieldLabelFocusColor};
-    left: ${fieldPaddingLeft}px;
-    font-size: ${fieldLabelFontSize}px;
-  }
+  ${(props) => (!props.visible ? "display: none;" : "")}
 
-  &:not(:focus):placeholder-shown:-webkit-autofill + ${Label} {
-    top: 50%;
-    color: ${fieldLabelColor};
+  span {
+    overflow: visible;
   }
 `

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react"
+import React, { useCallback, useContext, useState, useMemo } from "react"
 
 import {
   AppButton,
@@ -21,13 +21,7 @@ import {
 import Avatar from "components/Avatar"
 import { ICON_NAMES } from "constants/icon-names"
 import { useFormValidation } from "hooks/useFormValidation"
-import {
-  required,
-  minLength,
-  maxLength,
-  isUrl,
-  isUrlUnrequired,
-} from "utils/validators"
+import { required, minLength, maxLength, isUrl } from "utils/validators"
 import { isValidUrl } from "utils"
 
 import * as S from "../styled"
@@ -48,6 +42,12 @@ const ChangeDAOSettings: React.FC = () => {
   } = useContext(DaoProposalChangeDaoSettingsCreatingContext)
 
   const [socialLinksOpened, setSocialLinksOpened] = useState<boolean>(false)
+
+  const customLinksNotEmpty = useMemo(
+    () =>
+      customUrls.get.filter((customUrl) => customUrl.url !== "").length !== 0,
+    [customUrls]
+  )
 
   const {
     touchField,
@@ -80,15 +80,27 @@ const ChangeDAOSettings: React.FC = () => {
       },
       websiteUrl: { required, isUrl, maxLength: maxLength(200) },
       description: { required, maxLength: maxLength(1000) },
-      telegramUrl: { maxLength: maxLength(200), isUrlUnrequired },
-      twitterUrl: { maxLength: maxLength(200), isUrlUnrequired },
-      mediumUrl: { maxLength: maxLength(200), isUrlUnrequired },
-      githubUrl: { maxLength: maxLength(200), isUrlUnrequired },
-      customUrls: {
-        $every: {
-          url: { maxLength: maxLength(200), isUrlUnrequired },
-        },
-      },
+      ...(telegramUrl.get
+        ? { telegramUrl: { maxLength: maxLength(200), isUrl } }
+        : {}),
+      ...(twitterUrl.get
+        ? { twitterUrl: { maxLength: maxLength(200), isUrl } }
+        : {}),
+      ...(mediumUrl.get
+        ? { mediumUrl: { maxLength: maxLength(200), isUrl } }
+        : {}),
+      ...(githubUrl.get
+        ? { githubUrl: { maxLength: maxLength(200), isUrl } }
+        : {}),
+      ...(customLinksNotEmpty
+        ? {
+            customUrls: {
+              $every: {
+                url: { maxLength: maxLength(200), isUrl },
+              },
+            },
+          }
+        : {}),
     }
   )
 
@@ -257,46 +269,50 @@ const ChangeDAOSettings: React.FC = () => {
                     )
                   }
                 />
-                {customUrls.get.map((el, idx) => (
-                  <SocialLinkField
-                    key={idx}
-                    id={`custom-social-link-${idx}`}
-                    value={el.url}
-                    setValue={(newUrl: string) => {
-                      customUrls.set({ url: newUrl }, idx)
-                    }}
-                    errorMessage={
-                      !isUrlUnrequired(el.url).isValid
-                        ? isUrlUnrequired(el.url).message
-                        : !maxLength(200)(el.url).isValid
-                        ? maxLength(200)(el.url).message
-                        : undefined
-                    }
-                    nodeRight={
-                      el.url !== "" || idx !== 0 ? (
-                        <AppButton
-                          type="button"
-                          color="default"
-                          size="no-paddings"
-                          iconRight={ICON_NAMES.trash}
-                          onClick={() => {
-                            if (idx !== 0) {
-                              customUrls.set([
-                                ...customUrls.get.filter(
-                                  (_, index) => index !== idx
-                                ),
-                              ])
-                            } else {
-                              customUrls.set({ url: "" }, idx)
-                            }
-                          }}
-                        />
-                      ) : (
-                        <></>
-                      )
-                    }
-                  />
-                ))}
+                {customUrls.get.map((el, idx) => {
+                  const errorMessage = customLinksNotEmpty
+                    ? !isUrl(el.url).isValid
+                      ? isUrl(el.url).message
+                      : !maxLength(200)(el.url).isValid
+                      ? maxLength(200)(el.url).message
+                      : undefined
+                    : undefined
+
+                  return (
+                    <SocialLinkField
+                      key={idx}
+                      id={`custom-social-link-${idx}`}
+                      value={el.url}
+                      setValue={(newUrl: string) => {
+                        customUrls.set({ url: newUrl }, idx)
+                      }}
+                      errorMessage={errorMessage}
+                      nodeRight={
+                        el.url !== "" || idx !== 0 ? (
+                          <AppButton
+                            type="button"
+                            color="default"
+                            size="no-paddings"
+                            iconRight={ICON_NAMES.trash}
+                            onClick={() => {
+                              if (idx !== 0) {
+                                customUrls.set([
+                                  ...customUrls.get.filter(
+                                    (_, index) => index !== idx
+                                  ),
+                                ])
+                              } else {
+                                customUrls.set({ url: "" }, idx)
+                              }
+                            }}
+                          />
+                        ) : (
+                          <></>
+                        )
+                      }
+                    />
+                  )
+                })}
               </>
             )}
           </CardFormControl>
