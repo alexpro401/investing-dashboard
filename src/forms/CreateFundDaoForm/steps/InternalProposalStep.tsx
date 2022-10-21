@@ -10,7 +10,7 @@ import {
 } from "common"
 import * as S from "../styled"
 import { useFormValidation } from "hooks/useFormValidation"
-import { required } from "utils/validators"
+import { isPercentage, required } from "utils/validators"
 import { stepsControllerContext } from "context/StepsControllerContext"
 
 const InternalProposalStep: FC = () => {
@@ -58,7 +58,7 @@ const InternalProposalStep: FC = () => {
     {
       delegatedVotingAllowed: { required },
       duration: { required },
-      quorum: { required },
+      quorum: { required, isPercentage },
       earlyCompletion: { required },
       minVotesForVoting: { required },
       minVotesForCreating: { required },
@@ -67,7 +67,7 @@ const InternalProposalStep: FC = () => {
       voteRewardsCoefficient: { required },
       executionReward: { required },
       durationValidators: { required },
-      quorumValidators: { required },
+      quorumValidators: { required, isPercentage },
     }
   )
 

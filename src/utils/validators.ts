@@ -40,3 +40,8 @@ export const isUrlUnrequired: Validator = (value) => ({
   isValid: isValidUnrequiredUrl(value),
   message: "This field must be a valid URL",
 })
+
+export const isPercentage: Validator = (value) => ({
+  isValid: +value >= 0 && +value <= 100,
+  message: "This field must be a valid percentage",
+})

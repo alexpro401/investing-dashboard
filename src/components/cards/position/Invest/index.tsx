@@ -453,18 +453,11 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     })()
   }, [baseToken, owedBaseCommission, priceFeed])
 
-  const onBuyMore = (e?: MouseEvent<HTMLElement>): void => {
+  const onNavigateTerminal = (e?: MouseEvent<HTMLElement>): void => {
     if (e) {
       e.stopPropagation()
     }
     navigate(`/pool/invest/${position.pool.id}`)
-  }
-
-  const onClosePosition = (e?: MouseEvent<HTMLElement>): void => {
-    if (e) {
-      e.stopPropagation()
-    }
-    navigate(`/pool/ivest/${position.pool.id}`)
   }
 
   const actions = [
@@ -475,7 +468,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     },
     {
       label: "Buy more",
-      onClick: onBuyMore,
+      onClick: onNavigateTerminal,
     },
     {
       label: "Comission",
@@ -484,7 +477,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     },
     {
       label: "Close",
-      onClick: onClosePosition,
+      onClick: onNavigateTerminal,
     },
   ]
 

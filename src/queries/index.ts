@@ -16,6 +16,7 @@ import {
 import {
   RiskyProposalPositionQuery,
   RiskyPositionsQuery,
+  InvestorRiskyPositionByIdQuery,
   InvestorRiskyProposalsQuery,
 } from "./basic-pools"
 
@@ -27,6 +28,7 @@ import {
 import {
   InvestorPositionsQuery,
   InvestorPoolsInvestedForQuery,
+  InvestorProposalsPositionsQuery,
 } from "./investors"
 
 import { UserTransactionsQuery } from "./interactions"
@@ -47,9 +49,11 @@ export {
   InvestorRiskyProposalsQuery,
   InvestorInvestProposalsQuery,
   RiskyPositionsQuery,
+  InvestorRiskyPositionByIdQuery,
   FundFeeHistoryQuery,
   UserTransactionsQuery,
   RiskyProposalPositionQuery,
   PoolPositionLast,
   PositionsByIdsQuery,
+  InvestorProposalsPositionsQuery,
 }

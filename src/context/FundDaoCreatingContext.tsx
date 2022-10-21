@@ -5,11 +5,10 @@ import {
   HTMLAttributes,
   SetStateAction,
   useCallback,
-  useEffect,
   useState,
 } from "react"
-import { debounce } from "lodash"
-import { isAddress } from "../utils"
+import { useERC20 } from "../hooks/useERC20"
+import { useErc721 } from "../hooks/useErc721"
 
 export type ExternalFileDocument = {
   name: string
@@ -59,13 +58,15 @@ export interface DaoProposalSettingsForm {
 interface FundDaoCreatingContext {
   isErc20: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
   isErc721: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
+  erc20: ReturnType<typeof useERC20>
+  erc721: ReturnType<typeof useErc721>
+
   isCustomVoting: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
   isDistributionProposal: {
     get: boolean
     set: Dispatch<SetStateAction<boolean>>
   }
   isValidator: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
-  isErc721Enumerable: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
 
   avatarUrl: { get: string; set: Dispatch<SetStateAction<string>> }
   daoName: { get: string; set: Dispatch<SetStateAction<string>> }
@@ -95,7 +96,8 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
   isCustomVoting: { get: false, set: () => {} },
   isDistributionProposal: { get: false, set: () => {} },
   isValidator: { get: false, set: () => {} },
-  isErc721Enumerable: { get: false, set: () => {} },
+  erc20: {} as ReturnType<typeof useERC20>,
+  erc721: {} as ReturnType<typeof useErc721>,
 
   avatarUrl: { get: "", set: () => {} },
   daoName: { get: "", set: () => {} },
@@ -118,6 +120,7 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
 }) => {
   const [_isErc20, _setIsErc20] = useState<boolean>(true)
   const [_isErc721, _setIsErc721] = useState<boolean>(false)
+
   const [_isCustomVoting, _setIsCustomVoting] = useState<boolean>(false)
   const [_isDistributionProposal, _setIsDistributionProposal] =
     useState<boolean>(false)
@@ -161,28 +164,6 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
     validators: useState<string[]>([""]),
     balances: useState<number[]>([0]),
   }
-
-  // TODO: refactor this, use useErc721 instead and keep erc721 instance
-  const [_isErc721Enumerable, _setIsErc721Enumerable] = useState(false)
-
-  const handleErc721Input = useCallback(
-    debounce(async (address: string) => {
-      try {
-        if (isAddress(address)) {
-          // TODO: create useErc721 hook
-          // await erc721Init()
-        }
-      } catch (e) {
-        console.error(e)
-      }
-    }, 1000),
-    []
-  )
-
-  useEffect(() => {
-    // check _userKeeperParams.nftAddress is enumerable
-    // _nftAddress.supportsInterface("0x780e9d63"))
-  }, [_userKeeperParams.nftAddress[0]])
 
   const _handleChangeValidators = useCallback(
     (value, idx?: number) => {
@@ -287,6 +268,9 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
     executorDescription: useState<string>(""),
   }
 
+  const erc20 = useERC20(_userKeeperParams.tokenAddress[0])
+  const erc721 = useErc721(_userKeeperParams.nftAddress[0])
+
   return (
     <>
       <FundDaoCreatingContext.Provider
@@ -299,10 +283,8 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
             set: _setIsDistributionProposal,
           },
           isValidator: { get: _isValidator, set: _setIsValidator },
-          isErc721Enumerable: {
-            get: _isErc721Enumerable,
-            set: _setIsErc721Enumerable,
-          },
+          erc20,
+          erc721,
 
           avatarUrl: { get: _avatarUrl, set: _setAvatarUrl },
           daoName: { get: _daoName, set: _setDaoName },
