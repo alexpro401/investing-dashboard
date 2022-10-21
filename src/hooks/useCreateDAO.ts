@@ -13,10 +13,10 @@ import useError from "hooks/useError"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { cloneDeep } from "lodash"
 import { IPoolFactory } from "../interfaces/typechain/PoolFactory"
+import { IpfsEntity } from "../utils/ipfsEntity"
 
 const useCreateDAO = () => {
   const {
-    isErc20,
     isErc721,
     isCustomVoting,
     isDistributionProposal,
@@ -26,13 +26,10 @@ const useCreateDAO = () => {
     websiteUrl,
     description,
     documents,
-    erc20,
     erc721,
     userKeeperParams,
     validatorsParams,
-    govPoolDeployParams,
     internalProposalForm,
-    validatorsBalancesSettingsForm,
     defaultProposalSettingForm,
     distributionProposalSettingsForm,
   } = useContext(FundDaoCreatingContext)
@@ -77,6 +74,18 @@ const useCreateDAO = () => {
     if (!factory || !account) return
 
     setPayload(SubmitState.SIGN)
+
+    const additionalData = new IpfsEntity(
+      JSON.stringify({
+        avatarUrl: avatarUrl.get,
+        daoName: daoName.get,
+        websiteUrl: websiteUrl.get,
+        description: description.get,
+        documents: documents.get,
+      })
+    )
+
+    await additionalData.uploadSelf()
 
     const ZERO_ADDR = "0x0000000000000000000000000000000000000000"
 
@@ -270,10 +279,8 @@ const useCreateDAO = () => {
             ? 0
             : userKeeperParams.nftsTotalSupply.get,
       },
-      descriptionURL: "example.com",
+      descriptionURL: additionalData._path,
     }
-
-    console.log(POOL_PARAMETERS)
 
     const gasLimit = await tryEstimateGas(POOL_PARAMETERS)
 
