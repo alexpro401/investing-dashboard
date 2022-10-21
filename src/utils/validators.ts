@@ -1,7 +1,7 @@
 import { isBoolean, isDate, isEmpty, isNumber } from "lodash"
 
 import { Validator } from "hooks/useFormValidation"
-import { isAddress, isValidUrl } from "utils"
+import { isAddress, isValidUrl, isValidUnrequiredUrl } from "utils"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ValidatorFunc = (...params: any[]) => Validator
@@ -33,5 +33,10 @@ export const maxLength: ValidatorFunc = (length: number) => (value) => ({
 
 export const isUrl: Validator = (value) => ({
   isValid: isValidUrl(value),
+  message: "This field must be a valid URL",
+})
+
+export const isUrlUnrequired: Validator = (value) => ({
+  isValid: isValidUnrequiredUrl(value),
   message: "This field must be a valid URL",
 })

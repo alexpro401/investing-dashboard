@@ -68,6 +68,7 @@ export const Icon = styled(IconComponent)<{ isActive: boolean }>`
 
 export const Label = styled(motion.label)<{
   isActive: boolean
+  empty: boolean
 }>`
   display: flex;
   gap: 4px;
@@ -89,7 +90,9 @@ export const Label = styled(motion.label)<{
   width: min-content;
 
   ${(props) =>
-    !props.isActive ? `color: ${theme.brandColors.secondary} !important` : ""}
+    !props.isActive ? `color: ${theme.brandColors.secondary} !important;` : ""}
+
+  ${(props) => (props.empty ? "opacity: 0;" : "")}
 `
 
 export const Input = styled(motion.input)<{

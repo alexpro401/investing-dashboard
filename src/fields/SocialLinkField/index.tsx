@@ -74,7 +74,11 @@ function SocialLinkField<V extends string>({
           hasNodeRight={!!nodeRight}
           autoComplete="off"
         />
-        <S.Label htmlFor={`input-field--${id}`} isActive={isActive}>
+        <S.Label
+          htmlFor={`input-field--${id}`}
+          isActive={isActive}
+          empty={isActive && !label}
+        >
           {isActive
             ? label
               ? label[0].toUpperCase() + label.slice(1)

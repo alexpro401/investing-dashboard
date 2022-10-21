@@ -44,6 +44,16 @@ export function isValidUrl(value: string): boolean {
   }
 }
 
+export function isValidUnrequiredUrl(value: string): boolean {
+  try {
+    if (value === "") return true
+
+    return Boolean(new URL(value))
+  } catch (error) {
+    return false
+  }
+}
+
 export function shortenAddress(
   address: string | null | undefined,
   chars = 4

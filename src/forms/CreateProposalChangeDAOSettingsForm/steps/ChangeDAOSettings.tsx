@@ -21,7 +21,13 @@ import {
 import Avatar from "components/Avatar"
 import { ICON_NAMES } from "constants/icon-names"
 import { useFormValidation } from "hooks/useFormValidation"
-import { required, minLength, maxLength, isUrl } from "utils/validators"
+import {
+  required,
+  minLength,
+  maxLength,
+  isUrl,
+  isUrlUnrequired,
+} from "utils/validators"
 import { isValidUrl } from "utils"
 
 import * as S from "../styled"
@@ -74,13 +80,13 @@ const ChangeDAOSettings: React.FC = () => {
       },
       websiteUrl: { required, isUrl, maxLength: maxLength(200) },
       description: { required, maxLength: maxLength(1000) },
-      telegramUrl: { maxLength: maxLength(200), isUrl },
-      twitterUrl: { maxLength: maxLength(200), isUrl },
-      mediumUrl: { maxLength: maxLength(200), isUrl },
-      githubUrl: { maxLength: maxLength(200), isUrl },
+      telegramUrl: { maxLength: maxLength(200), isUrlUnrequired },
+      twitterUrl: { maxLength: maxLength(200), isUrlUnrequired },
+      mediumUrl: { maxLength: maxLength(200), isUrlUnrequired },
+      githubUrl: { maxLength: maxLength(200), isUrlUnrequired },
       customUrls: {
         $every: {
-          url: { maxLength: maxLength(200), isUrl },
+          url: { maxLength: maxLength(200), isUrlUnrequired },
         },
       },
     }
@@ -169,6 +175,7 @@ const ChangeDAOSettings: React.FC = () => {
                   icon={ICON_NAMES.telegram}
                   value={telegramUrl.get}
                   setValue={telegramUrl.set}
+                  onBlur={() => touchField("telegramUrl")}
                   errorMessage={getFieldErrorMessage("telegramUrl")}
                   nodeRight={
                     telegramUrl.get !== "" ? (
@@ -190,6 +197,7 @@ const ChangeDAOSettings: React.FC = () => {
                   icon={ICON_NAMES.twitter}
                   value={twitterUrl.get}
                   setValue={twitterUrl.set}
+                  onBlur={() => touchField("twitterUrl")}
                   errorMessage={getFieldErrorMessage("twitterUrl")}
                   nodeRight={
                     twitterUrl.get !== "" ? (
@@ -211,6 +219,7 @@ const ChangeDAOSettings: React.FC = () => {
                   icon={ICON_NAMES.medium}
                   value={mediumUrl.get}
                   setValue={mediumUrl.set}
+                  onBlur={() => touchField("mediumUrl")}
                   errorMessage={getFieldErrorMessage("mediumUrl")}
                   nodeRight={
                     mediumUrl.get !== "" ? (
@@ -232,6 +241,7 @@ const ChangeDAOSettings: React.FC = () => {
                   icon={ICON_NAMES.github}
                   value={githubUrl.get}
                   setValue={githubUrl.set}
+                  onBlur={() => touchField("githubUrl")}
                   errorMessage={getFieldErrorMessage("githubUrl")}
                   nodeRight={
                     githubUrl.get !== "" ? (
@@ -255,7 +265,13 @@ const ChangeDAOSettings: React.FC = () => {
                     setValue={(newUrl: string) => {
                       customUrls.set({ url: newUrl }, idx)
                     }}
-                    errorMessage={getFieldErrorMessage("githubUrl")}
+                    errorMessage={
+                      !isUrlUnrequired(el.url).isValid
+                        ? isUrlUnrequired(el.url).message
+                        : !maxLength(200)(el.url).isValid
+                        ? maxLength(200)(el.url).message
+                        : undefined
+                    }
                     nodeRight={
                       el.url !== "" || idx !== 0 ? (
                         <AppButton
