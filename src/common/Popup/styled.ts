@@ -2,6 +2,7 @@ import { motion } from "framer-motion"
 import styled from "styled-components"
 
 export const Backdrop = styled(motion.div).attrs(() => ({
+  className: "popup__backdrop",
   initial: { opacity: 0, pointerEvents: "none" },
   animate: { opacity: 1, pointerEvents: "auto" },
   exit: { opacity: 0, pointerEvents: "none" },
@@ -16,7 +17,7 @@ export const Backdrop = styled(motion.div).attrs(() => ({
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  background-filter: blur(50px);
+  backdrop-filter: blur(2px);
 `
 
 export const ModalPane = styled(motion.div).attrs(() => ({

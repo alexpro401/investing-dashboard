@@ -32,6 +32,8 @@ const useCreateDAO = () => {
     internalProposalForm,
     defaultProposalSettingForm,
     distributionProposalSettingsForm,
+
+    clearFormStorage,
   } = useContext(FundDaoCreatingContext)
 
   const factory = usePoolFactoryContract()
@@ -313,10 +315,14 @@ const useCreateDAO = () => {
       throw new Error(error)
     } finally {
       setPayload(SubmitState.IDLE)
+      clearFormStorage()
     }
   }, [
     account,
     addTransaction,
+    avatarUrl.get,
+    clearFormStorage,
+    daoName.get,
     defaultProposalSettingForm.creationReward.get,
     defaultProposalSettingForm.delegatedVotingAllowed.get,
     defaultProposalSettingForm.duration.get,
@@ -330,6 +336,7 @@ const useCreateDAO = () => {
     defaultProposalSettingForm.rewardToken.get,
     defaultProposalSettingForm.validatorsVote.get,
     defaultProposalSettingForm.voteRewardsCoefficient.get,
+    description.get,
     distributionProposalSettingsForm.creationReward.get,
     distributionProposalSettingsForm.delegatedVotingAllowed.get,
     distributionProposalSettingsForm.duration.get,
@@ -343,6 +350,8 @@ const useCreateDAO = () => {
     distributionProposalSettingsForm.rewardToken.get,
     distributionProposalSettingsForm.validatorsVote.get,
     distributionProposalSettingsForm.voteRewardsCoefficient.get,
+    documents.get,
+    erc721.isEnumerable,
     factory,
     internalProposalForm.creationReward.get,
     internalProposalForm.delegatedVotingAllowed.get,
@@ -357,6 +366,7 @@ const useCreateDAO = () => {
     internalProposalForm.rewardToken.get,
     internalProposalForm.validatorsVote.get,
     internalProposalForm.voteRewardsCoefficient.get,
+    isCustomVoting.get,
     isDistributionProposal.get,
     isErc721.get,
     isValidator.get,
@@ -374,6 +384,7 @@ const useCreateDAO = () => {
     validatorsParams.quorum.get,
     validatorsParams.symbol.get,
     validatorsParams.validators.get,
+    websiteUrl.get,
   ])
 
   return createPool
