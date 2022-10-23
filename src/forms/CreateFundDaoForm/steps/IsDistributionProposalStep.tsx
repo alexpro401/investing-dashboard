@@ -1,6 +1,6 @@
-import { FC, useContext } from "react"
+import { FC, useContext, useState } from "react"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
-import { AppButton, Card, CardDescription, CardHead, Icon } from "common"
+import { AppButton, Card, CardDescription, CardHead, Icon, Popup } from "common"
 import { CreateDaoCardStepNumber } from "../components"
 
 import * as S from "../styled"
@@ -8,6 +8,7 @@ import { ICON_NAMES } from "constants/icon-names"
 import Switch from "components/Switch"
 
 const IsDistributionProposalStep: FC = () => {
+  const [isPopupShown, setIsPopupShown] = useState(false)
   const { isDistributionProposal } = useContext(FundDaoCreatingContext)
 
   return (
@@ -36,7 +37,12 @@ const IsDistributionProposalStep: FC = () => {
               delegation settings are turned off.
             </p>
             <br />
-            <AppButton text="Details" color="default" size="no-paddings" />
+            <AppButton
+              text="Details"
+              color="default"
+              size="no-paddings"
+              onClick={() => setIsPopupShown(true)}
+            />
           </CardDescription>
         </Card>
 
@@ -62,6 +68,26 @@ const IsDistributionProposalStep: FC = () => {
             </p>
           </CardDescription>
         </Card>
+
+        <Popup isShown={isPopupShown} setIsShown={setIsPopupShown}>
+          <S.InfoPopupContent>
+            <S.InfoPopupActions>
+              <S.InfoPopupIcon name={ICON_NAMES.star} />
+              <S.InfoPopupHeaderTitle>Details</S.InfoPopupHeaderTitle>
+              <S.InfoPopupCloseBtn onClick={() => setIsPopupShown(false)} />
+            </S.InfoPopupActions>
+            <S.InfoPopupContentText>
+              With this type of proposal, your DAO will have fair rewards
+              proportional to each hodler’s token count.
+              <br />
+              <br /> Let’s say you want to distribute your DAO’s quarterly
+              earnings to holders. You need to create a proposal with the token
+              name and quantity to be distributed. Everybody who votes on this
+              proposal will be able to claim tokens proportionally to how many
+              tokens they voted with.
+            </S.InfoPopupContentText>
+          </S.InfoPopupContent>
+        </Popup>
       </S.StepsRoot>
       <S.StepsBottomNavigation />
     </>

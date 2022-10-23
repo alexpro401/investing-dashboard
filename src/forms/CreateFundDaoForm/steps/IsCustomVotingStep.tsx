@@ -1,13 +1,15 @@
-import { FC, useContext } from "react"
+import { FC, useContext, useState } from "react"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
-import { AppButton, Card, CardDescription, CardHead, Icon } from "common"
+import { AppButton, Card, CardDescription, CardHead, Icon, Popup } from "common"
 import { CreateDaoCardStepNumber } from "../components"
 
 import * as S from "../styled"
 import { ICON_NAMES } from "constants/icon-names"
 import Switch from "components/Switch"
+import { InfoPopupContentText, InfoPopupContentTitle } from "../styled"
 
 const IsCustomVotingStep: FC = () => {
+  const [isPopupShown, setIsPopupShown] = useState(false)
   const { isCustomVoting } = useContext(FundDaoCreatingContext)
 
   return (
@@ -30,6 +32,7 @@ const IsCustomVotingStep: FC = () => {
               text="Why you may need this?"
               color="default"
               size="no-paddings"
+              onClick={() => setIsPopupShown(true)}
             />
           </CardDescription>
         </Card>
@@ -56,6 +59,31 @@ const IsCustomVotingStep: FC = () => {
             </p>
           </CardDescription>
         </Card>
+        <Popup isShown={isPopupShown} setIsShown={setIsPopupShown}>
+          <S.InfoPopupContent>
+            <S.InfoPopupActions>
+              <S.InfoPopupIcon name={ICON_NAMES.star} />
+              <S.InfoPopupHeaderTitle>
+                Why you may need this?
+              </S.InfoPopupHeaderTitle>
+              <S.InfoPopupCloseBtn onClick={() => setIsPopupShown(false)} />
+            </S.InfoPopupActions>
+            <S.InfoPopupContentTitle>Example 1</S.InfoPopupContentTitle>
+            <S.InfoPopupContentText>
+              E.g., you see that proposals are not reaching quorum so you want
+              to lower it. But your proposals to change the quorum also don’t
+              reach the quorum. Here you can have a proposal to change quorum
+              requirements for all proposal types with a lower quorum.
+            </S.InfoPopupContentText>
+            <S.InfoPopupContentTitle>Example 2</S.InfoPopupContentTitle>
+            <S.InfoPopupContentText>
+              You want the proposals that change general voting settings to have
+              a higher barrier to avoid abuse and to be voted on by only large
+              token holders. Here you can set the minimum voting threshold to a
+              high level in order to achieve this.
+            </S.InfoPopupContentText>
+          </S.InfoPopupContent>
+        </Popup>
       </S.StepsRoot>
       <S.StepsBottomNavigation />
     </>

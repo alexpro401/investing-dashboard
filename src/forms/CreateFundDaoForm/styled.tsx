@@ -9,6 +9,7 @@ import {
   getDefaultFieldErrorStyles,
 } from "fields/styled"
 import ExternalLink from "components/ExternalLink"
+import { ICON_NAMES } from "../../constants/icon-names"
 
 export const Container = styled(StepsControllerContext)`
   display: flex;
@@ -80,11 +81,13 @@ export const CenteredImage = styled.img`
 `
 
 export const StepsRoot = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   transform: scale(1);
   gap: 16px;
   padding: 14px 16px 20px;
+  height: 100%;
 `
 
 export const StepsBottomNavigation = styled(StepsNavigation)`
@@ -217,4 +220,54 @@ export const SuccessLinksWrp = styled.div`
 
 export const SuccessLink = styled(AppButton)`
   color: #788ab4;
+`
+
+export const InfoPopupActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+`
+
+export const InfoPopupIcon = styled(Icon)`
+  color: ${(props) => props.theme.textColors.secondary};
+  width: 24px;
+  height: 24px;
+`
+
+export const InfoPopupHeaderTitle = styled.h3`
+  color: ${(props) => props.theme.textColors.primary};
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.3;
+  margin: 0;
+`
+
+export const InfoPopupCloseBtn = styled(AppButton).attrs(() => ({
+  color: "default",
+  iconRight: ICON_NAMES.close,
+  size: "no-paddings",
+}))`
+  color: ${(props) => props.theme.textColors.secondary};
+  margin-left: auto;
+`
+
+export const InfoPopupContent = styled.div`
+  max-width: 350px;
+`
+
+export const InfoPopupContentText = styled.div`
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.5;
+  color: ${(props) => props.theme.textColors.primary};
+  margin-bottom: 16px;
+`
+
+export const InfoPopupContentTitle = styled.h5`
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 700;
+  color: ${(props) => props.theme.brandColors.secondary};
+  margin: 0 0 6px;
 `
