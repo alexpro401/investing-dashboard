@@ -4,7 +4,10 @@ import { Icon, StepsNavigation, Card, AppButton } from "common"
 import StepsControllerContext from "context/StepsControllerContext"
 import { motion } from "framer-motion"
 import { opacityVariants } from "motion/variants"
-import { getDefaultFieldBorderStyles } from "fields/styled"
+import {
+  getDefaultFieldBorderStyles,
+  getDefaultFieldErrorStyles,
+} from "fields/styled"
 import ExternalLink from "components/ExternalLink"
 
 export const Container = styled(StepsControllerContext)`
@@ -53,6 +56,11 @@ export const CreateDaoCardNumberIconText = styled.span`
   text-transform: uppercase;
 `
 
+export const CreateFundDaoAvatarActions = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
 export const CreateFundDaoAvatarBtn = styled.button`
   background: none;
   color: #2669eb;
@@ -61,6 +69,10 @@ export const CreateFundDaoAvatarBtn = styled.button`
   font-weight: 600;
   border: none;
   margin-top: 8px;
+`
+
+export const CreateFundDaoAvatarBtnErrorMessage = styled.span`
+  ${getDefaultFieldErrorStyles};
 `
 
 export const CenteredImage = styled.img`
