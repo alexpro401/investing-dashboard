@@ -5,7 +5,7 @@ import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
-import { cropAddress } from "../../../utils"
+import { shortenAddress } from "utils"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -33,7 +33,7 @@ const SuccessStep: FC<Props> = () => {
           }
           iconColor="#788AB4"
         >
-          {cropAddress(createdDaoAddress.get)}
+          {shortenAddress(createdDaoAddress.get)}
         </S.SuccessSubtitle>
         <S.SuccessDescription>
           <p>You just successfully created a DAO!</p>
