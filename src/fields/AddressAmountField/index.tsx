@@ -10,7 +10,7 @@ import {
   useRef,
   useState,
 } from "react"
-import { cropAddress, isAddress } from "utils"
+import { isAddress, shortenAddress } from "utils"
 
 interface Props extends InputFieldProps<string | number> {
   value: string | number
@@ -60,7 +60,7 @@ function AddressAmountField({
             <S.OverlapLeft>
               {overlapNodeLeft}
               <S.OverlapCroppedAddress>
-                {cropAddress(value as string)}
+                {shortenAddress(value as string)}
               </S.OverlapCroppedAddress>
             </S.OverlapLeft>
           ) : null

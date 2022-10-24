@@ -4,8 +4,12 @@ import { Icon, StepsNavigation, Card, AppButton } from "common"
 import StepsControllerContext from "context/StepsControllerContext"
 import { motion } from "framer-motion"
 import { opacityVariants } from "motion/variants"
-import { getDefaultFieldBorderStyles } from "fields/styled"
+import {
+  getDefaultFieldBorderStyles,
+  getDefaultFieldErrorStyles,
+} from "fields/styled"
 import ExternalLink from "components/ExternalLink"
+import { ICON_NAMES } from "../../constants/icon-names"
 
 export const Container = styled(StepsControllerContext)`
   display: flex;
@@ -27,6 +31,7 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   transition: { duration: 0.2 },
   variants: opacityVariants,
 }))`
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -53,6 +58,11 @@ export const CreateDaoCardNumberIconText = styled.span`
   text-transform: uppercase;
 `
 
+export const CreateFundDaoAvatarActions = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
 export const CreateFundDaoAvatarBtn = styled.button`
   background: none;
   color: #2669eb;
@@ -61,6 +71,10 @@ export const CreateFundDaoAvatarBtn = styled.button`
   font-weight: 600;
   border: none;
   margin-top: 8px;
+`
+
+export const CreateFundDaoAvatarBtnErrorMessage = styled.span`
+  ${getDefaultFieldErrorStyles};
 `
 
 export const CenteredImage = styled.img`
@@ -73,6 +87,7 @@ export const StepsRoot = styled.div`
   transform: scale(1);
   gap: 16px;
   padding: 14px 16px 20px;
+  flex: 1;
 `
 
 export const StepsBottomNavigation = styled(StepsNavigation)`
@@ -205,4 +220,23 @@ export const SuccessLinksWrp = styled.div`
 
 export const SuccessLink = styled(AppButton)`
   color: #788ab4;
+`
+
+export const InfoPopupContent = styled.div`
+  max-width: 350px;
+`
+
+export const InfoPopupContentText = styled.div`
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+`
+
+export const InfoPopupContentTitle = styled.h5`
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 700;
+  color: #2669eb;
+  margin: 0 0 6px;
 `

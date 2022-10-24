@@ -3,11 +3,17 @@ import { FC, HTMLAttributes, useContext } from "react"
 import * as S from "../styled"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
+import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
+import { useActiveWeb3React } from "hooks"
+import { shortenAddress } from "utils"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const SuccessStep: FC<Props> = () => {
-  const { avatarUrl, daoName } = useContext(FundDaoCreatingContext)
+  const { chainId } = useActiveWeb3React()
+
+  const { avatarUrl, daoName, createdDaoAddress, clearFormStorage } =
+    useContext(FundDaoCreatingContext)
   return (
     <>
       <S.SuccessBackdrop>
@@ -15,8 +21,19 @@ const SuccessStep: FC<Props> = () => {
           <S.SuccessAvatar src={avatarUrl.get} />
         </S.SuccessAvatarWrp>
         <S.SuccessTitle>{daoName.get}</S.SuccessTitle>
-        <S.SuccessSubtitle href="https://www.youtube.com/" iconColor="#788AB4">
-          address
+        <S.SuccessSubtitle
+          href={
+            chainId
+              ? getExplorerLink(
+                  chainId,
+                  createdDaoAddress.get,
+                  ExplorerDataType.ADDRESS
+                )
+              : ""
+          }
+          iconColor="#788AB4"
+        >
+          {shortenAddress(createdDaoAddress.get)}
         </S.SuccessSubtitle>
         <S.SuccessDescription>
           <p>You just successfully created a DAO!</p>
@@ -58,7 +75,12 @@ const SuccessStep: FC<Props> = () => {
               color="default"
             />
           </S.SuccessLinksWrp>
-          <S.SuccessLinkBtn text="Go to DAO profile" size="large" />
+          <S.SuccessLinkBtn
+            text="Go to DAO profile"
+            size="large"
+            routePath={"/me/investor"}
+            onClick={clearFormStorage}
+          />
         </S.SuccessFooter>
       </S.SuccessBackdrop>
     </>

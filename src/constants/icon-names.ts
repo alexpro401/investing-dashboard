@@ -27,7 +27,10 @@ export enum ICON_NAMES {
   twitter = "twitter",
   warn = "warn",
   warnCircled = "warn-circled",
-  modalClose = "modal-close",
   search = "search",
   clear = "clear",
+  github = "github",
+  modalClose = "modal-close",
+  infoCircled = "info-circled",
+  warningCircled = "warning-circled",
 }

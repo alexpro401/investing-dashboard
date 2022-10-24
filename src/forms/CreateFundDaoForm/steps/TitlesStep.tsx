@@ -4,10 +4,8 @@ import {
   SetStateAction,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
 } from "react"
-import { debounce } from "lodash"
 
 import {
   AppButton,
@@ -41,12 +39,10 @@ import {
   minLength,
   required,
 } from "utils/validators"
-import { isAddress, isValidUrl } from "utils"
-import { useERC20 } from "hooks/useERC20"
+import { isValidUrl } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
-import { useErc721 } from "hooks/useErc721"
 
 const TitlesStep: FC = () => {
   const daoPoolFormContext = useContext(FundDaoCreatingContext)
@@ -161,7 +157,12 @@ const TitlesStep: FC = () => {
           size={100}
           url={avatarUrl.get}
         >
-          <S.CreateFundDaoAvatarBtn>Add fund photo</S.CreateFundDaoAvatarBtn>
+          <S.CreateFundDaoAvatarActions>
+            <S.CreateFundDaoAvatarBtn>Add fund photo</S.CreateFundDaoAvatarBtn>
+            <S.CreateFundDaoAvatarBtnErrorMessage>
+              {getFieldErrorMessage("avatarUrl")}
+            </S.CreateFundDaoAvatarBtnErrorMessage>
+          </S.CreateFundDaoAvatarActions>
         </Avatar>
 
         <Card>

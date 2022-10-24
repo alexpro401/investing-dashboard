@@ -16,9 +16,10 @@ import * as S from "./styled"
 
 import { ExternalFileDocument } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
-import { isValidUrl } from "utils"
+import { isValidUrl, shortenAddress } from "utils"
 import { readFromClipboard } from "utils/clipboard"
 import { isEqual } from "lodash"
+import extractRootDomain from "utils/extractRootDomain"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   value: ExternalFileDocument
@@ -45,7 +46,7 @@ const ExternalDocumentField: FC<Props> = ({
   const { name, url } = useMemo(() => value, [value])
 
   const croppedLink = useMemo(() => {
-    return !!url ? `${url.slice(0, 4)}...${url.slice(-4)}` : ""
+    return !!url ? extractRootDomain(url) : ""
   }, [url])
 
   const handleNameInput = useCallback(
@@ -66,21 +67,23 @@ const ExternalDocumentField: FC<Props> = ({
     [name, setValue]
   )
 
-  const handlePasteLink = useCallback(async () => {
-    setValue({ name, url: await readFromClipboard() })
-  }, [name, setValue])
-
-  const handleChangeLink = useCallback(() => {
-    setValue({ name, url: "" })
-  }, [name, setValue])
-
-  useEffect(() => {
+  const validateAndShowUrlOverlap = useCallback(() => {
     if (url && isValidUrl(url)) {
       setIsShowUrlOverlap(true)
     } else {
       setIsShowUrlOverlap(false)
     }
   }, [url])
+
+  const handlePasteLink = useCallback(async () => {
+    setValue({ name, url: await readFromClipboard() })
+    validateAndShowUrlOverlap()
+  }, [validateAndShowUrlOverlap, name, setValue])
+
+  const handleChangeLink = useCallback(() => {
+    setValue({ name, url: "" })
+    setIsShowUrlOverlap(false)
+  }, [name, setValue])
 
   return (
     <S.Root {...rest}>
@@ -120,6 +123,8 @@ const ExternalDocumentField: FC<Props> = ({
             />
           }
           errorMessage={errorMessage}
+          disabled={isShowUrlOverlap}
+          onBlur={validateAndShowUrlOverlap}
         />
       </S.BottomInputField>
     </S.Root>

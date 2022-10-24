@@ -12,11 +12,12 @@ import { SubmitState } from "constants/types"
 import useError from "hooks/useError"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { cloneDeep } from "lodash"
-import { IPoolFactory } from "../interfaces/typechain/PoolFactory"
+import { IPoolFactory } from "interfaces/typechain/PoolFactory"
+import { IpfsEntity } from "utils/ipfsEntity"
+import { BytesLike, ethers } from "ethers"
 
 const useCreateDAO = () => {
   const {
-    isErc20,
     isErc721,
     isCustomVoting,
     isDistributionProposal,
@@ -26,15 +27,13 @@ const useCreateDAO = () => {
     websiteUrl,
     description,
     documents,
-    erc20,
     erc721,
     userKeeperParams,
     validatorsParams,
-    govPoolDeployParams,
     internalProposalForm,
-    validatorsBalancesSettingsForm,
     defaultProposalSettingForm,
     distributionProposalSettingsForm,
+    createdDaoAddress,
   } = useContext(FundDaoCreatingContext)
 
   const factory = usePoolFactoryContract()
@@ -77,6 +76,18 @@ const useCreateDAO = () => {
     if (!factory || !account) return
 
     setPayload(SubmitState.SIGN)
+
+    const additionalData = new IpfsEntity(
+      JSON.stringify({
+        avatarUrl: avatarUrl.get,
+        daoName: daoName.get,
+        websiteUrl: websiteUrl.get,
+        description: description.get,
+        documents: documents.get,
+      })
+    )
+
+    await additionalData.uploadSelf()
 
     const ZERO_ADDR = "0x0000000000000000000000000000000000000000"
 
@@ -270,10 +281,8 @@ const useCreateDAO = () => {
             ? 0
             : userKeeperParams.nftsTotalSupply.get,
       },
-      descriptionURL: "example.com",
+      descriptionURL: additionalData._path,
     }
-
-    console.log(POOL_PARAMETERS)
 
     const gasLimit = await tryEstimateGas(POOL_PARAMETERS)
 
@@ -292,6 +301,14 @@ const useCreateDAO = () => {
       })
 
       if (isTxMined(receipt)) {
+        const data = receipt?.logs[receipt?.logs.length - 1].data
+        const abiCoder = new ethers.utils.AbiCoder()
+        const govPoolAddress = abiCoder.decode(
+          ["address", "address", "address"],
+          data as BytesLike
+        )[0]
+
+        createdDaoAddress.set(govPoolAddress)
         setPayload(SubmitState.SUCCESS)
       }
     } catch (error: any) {
@@ -310,6 +327,8 @@ const useCreateDAO = () => {
   }, [
     account,
     addTransaction,
+    avatarUrl.get,
+    daoName.get,
     defaultProposalSettingForm.creationReward.get,
     defaultProposalSettingForm.delegatedVotingAllowed.get,
     defaultProposalSettingForm.duration.get,
@@ -323,6 +342,7 @@ const useCreateDAO = () => {
     defaultProposalSettingForm.rewardToken.get,
     defaultProposalSettingForm.validatorsVote.get,
     defaultProposalSettingForm.voteRewardsCoefficient.get,
+    description.get,
     distributionProposalSettingsForm.creationReward.get,
     distributionProposalSettingsForm.delegatedVotingAllowed.get,
     distributionProposalSettingsForm.duration.get,
@@ -336,6 +356,8 @@ const useCreateDAO = () => {
     distributionProposalSettingsForm.rewardToken.get,
     distributionProposalSettingsForm.validatorsVote.get,
     distributionProposalSettingsForm.voteRewardsCoefficient.get,
+    documents.get,
+    erc721.isEnumerable,
     factory,
     internalProposalForm.creationReward.get,
     internalProposalForm.delegatedVotingAllowed.get,
@@ -350,6 +372,7 @@ const useCreateDAO = () => {
     internalProposalForm.rewardToken.get,
     internalProposalForm.validatorsVote.get,
     internalProposalForm.voteRewardsCoefficient.get,
+    isCustomVoting.get,
     isDistributionProposal.get,
     isErc721.get,
     isValidator.get,
@@ -367,6 +390,7 @@ const useCreateDAO = () => {
     validatorsParams.quorum.get,
     validatorsParams.symbol.get,
     validatorsParams.validators.get,
+    websiteUrl.get,
   ])
 
   return createPool

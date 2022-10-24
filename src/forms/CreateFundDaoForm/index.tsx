@@ -15,11 +15,11 @@ import { useForm } from "hooks/useForm"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
-import useCreateDAO from "../../hooks/useCreateDAO"
+import useCreateDAO from "hooks/useCreateDAO"
 
 enum STEPS {
   titles = "titles",
-  IsDaoValidator = "is-dao-validator",
+  isDaoValidator = "is-dao-validator",
   defaultProposalSetting = "default-proposal-setting",
   isCustomVoteSelecting = "is-custom-vote-selecting",
   internalProposal = "internal-proposal",
@@ -47,12 +47,23 @@ const CreateFundDaoForm: FC = () => {
 
   const createDaoCb = useCreateDAO()
 
+  const submit = useCallback(async () => {
+    formController.disableForm()
+    try {
+      await createDaoCb()
+      setCurrentStep(STEPS.success)
+    } catch (error) {
+      console.error(error)
+    }
+    formController.enableForm()
+  }, [createDaoCb, formController])
+
   const handleNextStep = () => {
     switch (currentStep) {
       case STEPS.titles:
-        setCurrentStep(STEPS.IsDaoValidator)
+        setCurrentStep(STEPS.isDaoValidator)
         break
-      case STEPS.IsDaoValidator:
+      case STEPS.isDaoValidator:
         setCurrentStep(STEPS.defaultProposalSetting)
         break
       case STEPS.defaultProposalSetting:
@@ -85,11 +96,11 @@ const CreateFundDaoForm: FC = () => {
       case STEPS.titles:
         navigate("/create-fund")
         break
-      case STEPS.IsDaoValidator:
+      case STEPS.isDaoValidator:
         setCurrentStep(STEPS.titles)
         break
       case STEPS.defaultProposalSetting:
-        setCurrentStep(STEPS.IsDaoValidator)
+        setCurrentStep(STEPS.isDaoValidator)
         break
       case STEPS.isCustomVoteSelecting:
         setCurrentStep(STEPS.defaultProposalSetting)
@@ -109,17 +120,6 @@ const CreateFundDaoForm: FC = () => {
     }
   }
 
-  const submit = useCallback(async () => {
-    formController.disableForm()
-    try {
-      await createDaoCb()
-      setCurrentStep(STEPS.success)
-    } catch (error) {
-      console.error(error)
-    }
-    formController.enableForm()
-  }, [createDaoCb, formController])
-
   return (
     <S.Container
       totalStepsAmount={totalStepsCount}
@@ -132,7 +132,7 @@ const CreateFundDaoForm: FC = () => {
           <S.StepsContainer>
             <TitlesStep />
           </S.StepsContainer>
-        ) : currentStep === STEPS.IsDaoValidator ? (
+        ) : currentStep === STEPS.isDaoValidator ? (
           <S.StepsContainer>
             <IsDaoValidatorStep />
           </S.StepsContainer>

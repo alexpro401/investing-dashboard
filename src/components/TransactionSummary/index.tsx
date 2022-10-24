@@ -40,7 +40,7 @@ import { TradeType, UpdateListType } from "constants/types"
 import { selectWhitelistItem } from "state/pricefeed/selectors"
 
 import FormattedCurrencyAmount from "./FormattedCurrencyAmount"
-import { usePoolQuery } from "../../hooks/usePool"
+import { usePoolQuery } from "hooks/usePool"
 
 interface IProps {
   info: TransactionInfo
