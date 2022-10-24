@@ -31,6 +31,7 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   transition: { duration: 0.2 },
   variants: opacityVariants,
 }))`
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -81,13 +82,12 @@ export const CenteredImage = styled.img`
 `
 
 export const StepsRoot = styled.div`
-  position: relative;
   display: flex;
   flex-direction: column;
   transform: scale(1);
   gap: 16px;
   padding: 14px 16px 20px;
-  height: 100%;
+  flex: 1;
 `
 
 export const StepsBottomNavigation = styled(StepsNavigation)`
