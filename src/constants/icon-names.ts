@@ -25,4 +25,5 @@ export enum ICON_NAMES {
   medium = "medium",
   telegram = "telegram",
   twitter = "twitter",
+  github = "github",
 }

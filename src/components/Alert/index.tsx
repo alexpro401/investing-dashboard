@@ -30,16 +30,30 @@ const Alert: React.FC = () => {
         initial="hidden"
         variants={{
           visible: {
-            x: 0,
-            display: "block",
+            opacity: 1,
+            pointerEvents: "auto",
           },
           hidden: {
-            x: "-100vw",
-            transitionEnd: { display: "none" },
+            opacity: 0,
+            pointerEvents: "none",
           },
         }}
+        transition={{ duration: 0.25 }}
+        onClick={hideAlert}
       >
-        <Body withHeader={showHeader}>
+        <Body
+          variants={{
+            visible: {
+              x: 0,
+            },
+            hidden: {
+              x: "-100vw",
+            },
+          }}
+          transition={{ duration: 0.5 }}
+          withHeader={showHeader}
+          onClick={(e) => e.stopPropagation()}
+        >
           <Close>
             <IconButton onClick={hideAlert} media={close} size={16} />
           </Close>
