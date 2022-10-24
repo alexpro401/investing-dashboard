@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react"
 import { InputFieldProps, InputField } from "fields"
 import { AppButton } from "common"
 import * as S from "./styled"
+import { useEffectOnce } from "react-use"
 
 type Duration = {
   years: number
@@ -33,8 +34,76 @@ function DurationField<V extends string | number>({
   const [localValue, setLocalValue] = useState("")
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
+  const parseSeconds = useCallback((seconds: number | string) => {
+    const _seconds = Number(seconds)
+    if (_seconds < 1) {
+      return "0"
+    }
+
+    const oneMinute = 60
+    const oneHour = oneMinute * 60
+    const oneDay = oneHour * 24
+    const oneWeek = oneDay * 7
+    const oneMonth = oneDay * 30
+    const oneYear = oneDay * 365
+
+    const years = Math.floor(_seconds / oneYear)
+    const months = Math.floor((_seconds - oneYear * years) / oneMonth)
+    const weeks = Math.floor(
+      (_seconds - oneYear * years - oneMonth * months) / oneWeek
+    )
+    const days = Math.floor(
+      (_seconds - oneYear * years - oneMonth * months - oneWeek * weeks) /
+        oneDay
+    )
+    const hours = Math.floor(
+      (_seconds -
+        oneYear * years -
+        oneMonth * months -
+        oneWeek * weeks -
+        oneDay * days) /
+        oneHour
+    )
+    const minutes = Math.floor(
+      (_seconds -
+        oneYear * years -
+        oneMonth * months -
+        oneWeek * weeks -
+        oneDay * days -
+        oneHour * hours) /
+        oneMinute
+    )
+    const sec = Math.floor(
+      _seconds -
+        oneYear * years -
+        oneMonth * months -
+        oneWeek * weeks -
+        oneDay * days -
+        oneHour * hours -
+        oneMinute * minutes
+    )
+    const times = {
+      year: years,
+      month: months,
+      week: weeks,
+      day: days,
+      hour: hours,
+      minute: minutes,
+      second: sec,
+    }
+    const qualifier = (num) => (num > 1 ? "s" : "")
+    const numToStr = (num, unit) =>
+      num > 0 ? `${num}${unit}${qualifier(num)}` : ""
+    return Object.entries(times).reduce(
+      (acc, [unit, num]) => acc + numToStr(num, unit),
+      ""
+    )
+  }, [])
+
   const parsedDuration = useMemo(() => {
-    const unparsedString = localValue.toLowerCase()
+    const unparsedString = localValue
+      ? localValue.toLowerCase()
+      : parseSeconds(value)
 
     const years = unparsedString.match(/(\d+)y|year|years/)
     const months = unparsedString.match(/(\d+)mon|month|months/)
@@ -53,7 +122,7 @@ function DurationField<V extends string | number>({
       minutes: minutes ? parseInt(minutes[1]) : 0,
       seconds: seconds ? parseInt(seconds[1]) : 0,
     }
-  }, [localValue])
+  }, [localValue, parseSeconds, value])
 
   const convertToSeconds = useCallback((duration: Duration) => {
     const { years, months, weeks, days, hours, minutes, seconds } = duration
@@ -67,10 +136,6 @@ function DurationField<V extends string | number>({
       months * 60 * 60 * 24 * 30 +
       years * 60 * 60 * 24 * 365
     )
-  }, [])
-
-  const parseSeconds = useCallback((seconds: number | string) => {
-    // TODO: Implement
   }, [])
 
   const parsedDurationString = useMemo(() => {
@@ -88,26 +153,30 @@ function DurationField<V extends string | number>({
     ].join(" ")
   }, [parsedDuration])
 
+  const fillLocalInputResult = useCallback(() => {
+    const { years, months, weeks, days, hours, minutes, seconds } =
+      parsedDuration
+
+    setLocalValue(
+      [
+        ...(years ? [`${years}Y`] : []),
+        ...(months ? [`${months}Mon`] : []),
+        ...(weeks ? [`${weeks}W`] : []),
+        ...(days ? [`${days}D`] : []),
+        ...(hours ? [`${hours}H`] : []),
+        ...(minutes ? [`${minutes}Min`] : []),
+        ...(seconds ? [`${seconds}S`] : []),
+      ].join("/")
+    )
+  }, [parsedDuration])
+
   const handleSelectDuration = useCallback(() => {
     if (setValue) {
-      const { years, months, weeks, days, hours, minutes, seconds } =
-        parsedDuration
-
       setValue(convertToSeconds(parsedDuration) as V)
-      setLocalValue(
-        [
-          ...(years ? [`${years}Y`] : []),
-          ...(months ? [`${months}Mon`] : []),
-          ...(weeks ? [`${weeks}W`] : []),
-          ...(days ? [`${days}D`] : []),
-          ...(hours ? [`${hours}H`] : []),
-          ...(minutes ? [`${minutes}Min`] : []),
-          ...(seconds ? [`${seconds}S`] : []),
-        ].join("/")
-      )
+      fillLocalInputResult()
       setIsDropdownOpen(false)
     }
-  }, [convertToSeconds, parsedDuration, setValue])
+  }, [convertToSeconds, fillLocalInputResult, parsedDuration, setValue])
 
   const handleInput = useCallback(
     (e) => {
@@ -118,6 +187,12 @@ function DurationField<V extends string | number>({
     },
     [setValue]
   )
+
+  useEffectOnce(() => {
+    if (value) {
+      fillLocalInputResult()
+    }
+  })
 
   return (
     <S.Root {...rest}>

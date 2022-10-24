@@ -157,7 +157,12 @@ const TitlesStep: FC = () => {
           size={100}
           url={avatarUrl.get}
         >
-          <S.CreateFundDaoAvatarBtn>Add fund photo</S.CreateFundDaoAvatarBtn>
+          <S.CreateFundDaoAvatarActions>
+            <S.CreateFundDaoAvatarBtn>Add fund photo</S.CreateFundDaoAvatarBtn>
+            <S.CreateFundDaoAvatarBtnErrorMessage>
+              {getFieldErrorMessage("avatarUrl")}
+            </S.CreateFundDaoAvatarBtnErrorMessage>
+          </S.CreateFundDaoAvatarActions>
         </Avatar>
 
         <Card>
