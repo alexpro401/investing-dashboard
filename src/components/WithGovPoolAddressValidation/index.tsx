@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 
 import { usePoolRegistryContract } from "contracts"
 import Page404 from "components/Page404"
@@ -7,10 +7,13 @@ import image404Src from "assets/others/create-fund-docs.png"
 
 interface IProps {
   daoPoolAddress: string
-  children: JSX.Element
+  children: React.ReactNode
 }
 
-const WithGovPoolAddressValidation = ({ daoPoolAddress, children }: IProps) => {
+const WithGovPoolAddressValidation: React.FC<IProps> = ({
+  daoPoolAddress,
+  children,
+}) => {
   const poolRegistryContract = usePoolRegistryContract()
   const [loading, setLoading] = useState<boolean>(true)
   const [isValid, setIsValid] = useState<boolean>(false)
@@ -36,7 +39,7 @@ const WithGovPoolAddressValidation = ({ daoPoolAddress, children }: IProps) => {
   }, [daoPoolAddress, checkGovAddressValidation, poolRegistryContract])
 
   if (loading) {
-    return null
+    return <></>
   }
 
   if (!isValid) {
@@ -49,7 +52,7 @@ const WithGovPoolAddressValidation = ({ daoPoolAddress, children }: IProps) => {
     )
   }
 
-  return children
+  return <>{children}</>
 }
 
 export default WithGovPoolAddressValidation

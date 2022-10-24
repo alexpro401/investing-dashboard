@@ -23,6 +23,7 @@ import {
   MediumIcon,
   TelegramIcon,
   TwitterIcon,
+  GithubIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -83,7 +84,8 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return TelegramIcon as unknown as ElementType
       case ICON_NAMES.twitter:
         return TwitterIcon as unknown as ElementType
-
+      case ICON_NAMES.github:
+        return GithubIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }
