@@ -89,6 +89,7 @@ interface FundDaoCreatingContext {
   distributionProposalSettingsForm: DaoProposalSettingsForm
 
   clearFormStorage: () => void
+  createdDaoAddress: { get: string; set: Dispatch<SetStateAction<string>> }
 }
 
 type StoredForm = {
@@ -206,6 +207,7 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
   distributionProposalSettingsForm: {} as DaoProposalSettingsForm,
 
   clearFormStorage: () => {},
+  createdDaoAddress: { get: "", set: () => {} },
 })
 
 const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
@@ -565,6 +567,7 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
 
   const erc20 = useERC20(_userKeeperParams.tokenAddress[0])
   const erc721 = useErc721(_userKeeperParams.nftAddress[0])
+  const [_createdDaoAddress, _setCreatedDaoAddress] = useState("")
 
   useEffect(() => {
     setValue((prevState) => {
@@ -1060,6 +1063,10 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
           } as DaoProposalSettingsForm,
 
           clearFormStorage: remove,
+          createdDaoAddress: {
+            get: _createdDaoAddress,
+            set: _setCreatedDaoAddress,
+          },
         }}
       >
         {children}
