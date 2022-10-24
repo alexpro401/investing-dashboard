@@ -11,6 +11,7 @@ export interface IAlert {
   content: React.ReactNode
   hideDuration?: number
 }
+
 interface IContext extends IAlert {
   isOpen: boolean
   showAlert: ({}: IAlert) => void
@@ -63,8 +64,16 @@ class AlertContext extends React.Component<{
     }, d)
   }
 
+  clearContent = () => {
+    setTimeout(() => {
+      this.setState({ content: null, title: null, type: null })
+    }, 200)
+  }
+
   hide = () => {
-    this.setState(defaultState)
+    const { title, content, type } = this.state
+
+    this.setState({ ...defaultState, content, title, type }, this.clearContent)
   }
 
   render() {

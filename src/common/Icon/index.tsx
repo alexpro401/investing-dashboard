@@ -24,6 +24,9 @@ import {
   TelegramIcon,
   TwitterIcon,
   GithubIcon,
+  ModalCloseIcon,
+  CircleWarningIcon,
+  CircleInfoIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -86,6 +89,12 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return TwitterIcon as unknown as ElementType
       case ICON_NAMES.github:
         return GithubIcon as unknown as ElementType
+      case ICON_NAMES.modalClose:
+        return ModalCloseIcon as unknown as ElementType
+      case ICON_NAMES.infoCircled:
+        return CircleInfoIcon as unknown as ElementType
+      case ICON_NAMES.warningCircled:
+        return CircleWarningIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }

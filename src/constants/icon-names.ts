@@ -26,4 +26,7 @@ export enum ICON_NAMES {
   telegram = "telegram",
   twitter = "twitter",
   github = "github",
+  modalClose = "modal-close",
+  infoCircled = "info-circled",
+  warningCircled = "warning-circled",
 }
