@@ -1,33 +1,39 @@
 import styled from "styled-components"
-import { Flex, GradientBorder } from "theme"
+import { Flex } from "theme"
+import { motion } from "framer-motion"
 
-export const Container = styled(GradientBorder)`
+export const Container = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
   position: fixed;
   margin: auto;
   bottom: 56px;
   left: 0;
   right: 0;
-  width: 343px;
-  height: fit-content;
-  border-radius: 16px;
+  width: 100%;
+  height: 100%;
   z-index: 90;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(1.5px);
 
   @media all and (display-mode: standalone) {
     bottom: 86px;
   }
-
-  &:after {
-    background: #181e2c;
-  }
 `
 
-export const Body = styled(Flex)<{ withHeader: boolean }>`
+export const Body = styled(motion.div)<{ withHeader: boolean }>`
+  max-width: 343px;
   width: 100%;
+  height: fit-content;
   padding: ${({ withHeader }) =>
     withHeader ? "17px 24px 17px 16px" : "22px 24px 22px 16px"};
   flex-direction: column;
   box-sizing: border-box;
   position: relative;
+  background: #181e2c;
+  border-radius: 16px;
 `
 
 export const Header = styled(Flex)`
