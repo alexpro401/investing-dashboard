@@ -10,7 +10,7 @@ export const Container = styled(GradientBorder)`
   width: 343px;
   height: fit-content;
   border-radius: 16px;
-  z-index: 90;
+  z-index: 101;
 
   @media all and (display-mode: standalone) {
     bottom: 86px;
