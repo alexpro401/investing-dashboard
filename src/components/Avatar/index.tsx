@@ -105,8 +105,6 @@ const Avatar: React.FC<Props> = ({
   return (
     <Container margin={m}>
       <Image />
-      {showUploader && !url && !address && <Overlay size={size} />}
-      {showUploader && !url && !address && <CameraIcon src={picture} />}
       {showUploader && (
         <>
           <FileUpload

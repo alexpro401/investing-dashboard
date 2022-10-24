@@ -3,6 +3,7 @@ import styled from "styled-components"
 
 export const Img = styled.img<{ size: number }>`
   display: block;
+  margin: 0 auto;
   width: ${(props) => `${props.size}px`};
   height: ${(props) => `${props.size}px`};
   min-width: ${(props) => `${props.size}px`};
