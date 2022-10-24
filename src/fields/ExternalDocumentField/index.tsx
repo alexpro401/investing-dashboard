@@ -16,9 +16,10 @@ import * as S from "./styled"
 
 import { ExternalFileDocument } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
-import { isValidUrl } from "utils"
+import { isValidUrl, shortenAddress } from "utils"
 import { readFromClipboard } from "utils/clipboard"
 import { isEqual } from "lodash"
+import extractRootDomain from "utils/extractRootDomain"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   value: ExternalFileDocument
@@ -45,7 +46,7 @@ const ExternalDocumentField: FC<Props> = ({
   const { name, url } = useMemo(() => value, [value])
 
   const croppedLink = useMemo(() => {
-    return !!url ? `${url.slice(0, 4)}...${url.slice(-4)}` : ""
+    return !!url ? extractRootDomain(url) : ""
   }, [url])
 
   const handleNameInput = useCallback(
