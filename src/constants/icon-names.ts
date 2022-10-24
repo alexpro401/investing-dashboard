@@ -25,4 +25,9 @@ export enum ICON_NAMES {
   medium = "medium",
   telegram = "telegram",
   twitter = "twitter",
+  warn = "warn",
+  warnCircled = "warn-circled",
+  modalClose = "modal-close",
+  search = "search",
+  clear = "clear",
 }
