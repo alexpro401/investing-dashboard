@@ -32,7 +32,6 @@ const Tabs: FC<IProps> = ({ tabs, gap }) => {
         })}
       </S.List>
       {tabs[activeTab].child}
-      <div></div>
     </>
   )
 }
