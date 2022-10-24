@@ -97,13 +97,13 @@ const TokenSelect: React.FC = () => {
               <S.Title>Select token</S.Title>
             </S.TitleContainer>
           </S.CardHeader>
-          <TokensList
+          {/* <TokensList
             poolAddress={poolAddress}
             handleChange={setSearchQuery}
             currencies={filteredSortedTokens}
             onSelect={onSelect}
             query={searchQuery}
-          />
+          /> */}
         </S.Card>
       </S.Container>
     </>

@@ -1,9 +1,9 @@
-import { FC, useMemo, useState } from "react"
+import { FC, ReactNode, useCallback, useMemo, useState } from "react"
 
 import TokensList from "components/TokensList"
 import Modal from "components/Modal"
 
-import { useWhitelistTokens } from "hooks/useToken"
+import { useTryCustomToken, useWhitelistTokens } from "hooks/useToken"
 import { Currency, Token } from "lib/entities"
 import useDebounce from "hooks/useDebounce"
 import { useTokenBalancesWithLoadingIndicator } from "hooks/useBalance"
@@ -13,6 +13,16 @@ import {
   tokenComparator,
   useSortTokensByQuery,
 } from "lib/hooks/useTokenList/sorting"
+import ImportToken from "components/TokensList/ImportToken"
+import { useAddUserToken } from "state/user/hooks"
+
+export enum CurrencyModalView {
+  search,
+  manage,
+  importToken,
+  importList,
+  tokenSafety,
+}
 
 interface Props {
   isOpen: boolean
@@ -23,8 +33,14 @@ interface Props {
 const TokenSelect: FC<Props> = ({ isOpen, onClose, onSelect }) => {
   const { account } = useWeb3React()
   const [searchQuery, setSearchQuery] = useState<string>("")
+
+  const [modalView, setModalView] = useState<CurrencyModalView>(
+    CurrencyModalView.search
+  )
   const debouncedQuery = useDebounce(searchQuery, 200)
   const allTokens = useWhitelistTokens()
+  const customToken = useTryCustomToken(debouncedQuery)
+  const addToken = useAddUserToken()
 
   const allTokensArray = useMemo(
     () => Object.values(allTokens ?? {}),
@@ -53,23 +69,64 @@ const TokenSelect: FC<Props> = ({ isOpen, onClose, onSelect }) => {
     sortedTokens
   )
 
-  const selectWithClose = (currency: Currency) => {
-    const token = currency.isToken ? currency : undefined
+  const showImportToken = useCallback(() => {
+    if (!customToken) return
+    setModalView(CurrencyModalView.importToken)
+  }, [customToken])
 
-    if (!token) return
+  const handleSelect = useCallback(
+    (currency: Currency) => {
+      const token = currency.isToken ? currency : undefined
 
-    onSelect(token)
-    onClose()
+      if (!token) return
+
+      onSelect(token)
+      onClose()
+    },
+    [onClose, onSelect]
+  )
+
+  const handleImportToken = useCallback(
+    (token: Token) => {
+      addToken(token)
+      setModalView(CurrencyModalView.search)
+    },
+    [addToken]
+  )
+
+  let content: ReactNode
+  let title = "Select a Token"
+
+  switch (modalView) {
+    case CurrencyModalView.search:
+      title = "Select a Token"
+      content = (
+        <TokensList
+          customToken={customToken}
+          query={searchQuery}
+          onSelect={handleSelect}
+          showImportToken={showImportToken}
+          handleChange={setSearchQuery}
+          currencies={filteredSortedTokens}
+        />
+      )
+      break
+    case CurrencyModalView.importToken:
+      title = "import token"
+      content = (
+        <ImportToken
+          isImport
+          showImportToken={showImportToken}
+          importToken={handleImportToken}
+          token={customToken!}
+        />
+      )
+      break
   }
 
   return (
-    <Modal isOpen={isOpen} toggle={onClose} title="Select token">
-      <TokensList
-        query={searchQuery}
-        onSelect={selectWithClose}
-        handleChange={setSearchQuery}
-        currencies={filteredSortedTokens}
-      />
+    <Modal isOpen={isOpen} toggle={onClose} title={title}>
+      {content}
     </Modal>
   )
 }

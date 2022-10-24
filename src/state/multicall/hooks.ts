@@ -228,7 +228,7 @@ export function useSingleContractMultipleData(
     return results.map((result) =>
       toCallState(result, contract?.interface, fragment, currentBlockNumber)
     )
-  }, [cache, chainId, results, contract?.interface, fragment])
+  }, [cache, chainId, results, contract, fragment])
 }
 
 export function useMultipleContractSingleData(
@@ -317,5 +317,5 @@ export function useSingleCallResult(
       fragment,
       currentBlockNumber
     )
-  }, [cache, chainId, result, contract?.interface, fragment])
+  }, [cache, chainId, result, contract, fragment])
 }
