@@ -52,7 +52,7 @@ const CreateProposalSelectType: React.FC = () => {
   const proceedToNextStep = useCallback(() => {
     //TODO NAVIGATE to path related to selected proposal type
     const nextProposalTypePath = {
-      [EProposalType.daoProfileModification]: "/",
+      [EProposalType.daoProfileModification]: `/dao/${daoAddress}/create-proposal-change-dao-settings`,
       [EProposalType.chaningVotingSettings]: "/",
       [EProposalType.tokenDistribution]: "/",
       [EProposalType.validatorSettings]: "/",
@@ -60,7 +60,7 @@ const CreateProposalSelectType: React.FC = () => {
     }[selectedProposalType]
 
     navigate(nextProposalTypePath)
-  }, [navigate, selectedProposalType])
+  }, [navigate, selectedProposalType, daoAddress])
 
   const proposalTypes = useMemo<IProposalType[]>(
     () => [
