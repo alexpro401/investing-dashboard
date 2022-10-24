@@ -239,6 +239,20 @@ export const GradientBorderLightGreen = styled(Flex)<{ focused?: boolean }>`
   }
 `
 
+export const GradientBorderSearch = styled(Flex)<{ focused?: boolean }>`
+  ${GradientBorderBase}
+
+  &:before {
+    background-image: ${(props) =>
+      props.focused
+        ? "linear-gradient(to bottom right,#a4ebd4 100%,#63b49b 100%)"
+        : "linear-gradient(to bottom right,#587eb76e 0%,#26324482 20%,#2632447d 40%,#6d99db80 100%)"};
+  }
+  &:after {
+    background: ${(props) => (props.focused ? "#141926" : "#141A27")};
+  }
+`
+
 export const External: React.FC<{
   href: string
   children?: ReactNode

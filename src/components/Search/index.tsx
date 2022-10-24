@@ -1,71 +1,7 @@
 import React, { useState, useRef } from "react"
-import styled from "styled-components"
-import { GradientBorder } from "theme"
-import search from "assets/icons/search.svg"
-import remove from "assets/icons/remove.svg"
-
-export const Container = styled(GradientBorder)<{ height: string }>`
-  background: linear-gradient(64.44deg, #191e2b 32.35%, #272e3e 100%);
-  border-radius: 32px;
-  padding: 0 10px 0 14px;
-  width: fill-available;
-  height: ${(props) => props.height || "30px"};
-  box-shadow: 0px 7px 4px rgba(0, 0, 0, 0.07);
-  align-items: center;
-`
-
-export const Input = styled.input`
-  background: none;
-  outline: none;
-  border: none;
-
-  flex: 1;
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 14px;
-  color: #c5d1dc;
-  padding-top: 5px;
-  padding-left: 5px;
-
-  &::-webkit-input-placeholder {
-    font-family: "Gilroy";
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 14px;
-    color: #666f87;
-  }
-  &:-moz-placeholder {
-    font-family: "Gilroy";
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 14px;
-    color: #666f87;
-  }
-  &::-moz-placeholder {
-    font-family: "Gilroy";
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 14px;
-    color: #666f87;
-  }
-  &:-ms-input-placeholder {
-    font-family: "Gilroy";
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 14px;
-    color: #666f87;
-  }
-`
-
-export const Icon = styled.img<{ top?: string }>`
-  transform: translateY(${(props) => (props.top ? props.top : 0)});
-`
+import { Icon } from "common"
+import { ICON_NAMES } from "constants/icon-names"
+import * as S from "./styled"
 
 interface Props {
   height: string
@@ -80,16 +16,17 @@ const Search: React.FC<Props> = ({
   handleChange,
   value,
 }) => {
-  const ref = useRef<any>(null)
+  const ref = useRef<HTMLInputElement>(null)
   const [isFocused, setFocused] = useState(false)
   return (
-    <Container height={height} focused={isFocused}>
-      <Icon
-        top="1px"
-        src={search}
+    <S.Container height={height} focused={isFocused}>
+      <S.IconWrapper
         onClick={() => ref.current && ref.current?.focus && ref.current.focus()}
-      />
-      <Input
+      >
+        <Icon name={ICON_NAMES.search} />
+      </S.IconWrapper>
+      <S.Input
+        spellCheck={false}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         value={value}
@@ -99,9 +36,11 @@ const Search: React.FC<Props> = ({
       />
 
       {!!value && (
-        <Icon top="0px" onClick={() => handleChange("")} src={remove} />
+        <S.IconWrapper onClick={() => handleChange("")}>
+          <Icon name={ICON_NAMES.clear} />
+        </S.IconWrapper>
       )}
-    </Container>
+    </S.Container>
   )
 }
 
