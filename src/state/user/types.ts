@@ -12,4 +12,17 @@ export interface IUserState {
   ownedPools: OwnedPools
   data: IUserData | null | false
   terms: IUserTerms
+  tokens: {
+    [chainId: number]: {
+      [address: string]: SerializedToken
+    }
+  }
+}
+
+export interface SerializedToken {
+  chainId: number
+  address: string
+  decimals: number
+  symbol?: string
+  name?: string
 }
