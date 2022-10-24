@@ -3,60 +3,65 @@ import { Flex } from "theme"
 
 import { useAlertContext, AlertType } from "context/AlertContext"
 
-import IconButton from "components/IconButton"
-import { Container, Body, Header, Icon, Title, Content, Close } from "./styled"
-
-import close from "assets/icons/close-gray.svg"
-import info from "assets/icons/alert-info.svg"
-import warning from "assets/icons/alert-warning.svg"
+import { ICON_NAMES } from "constants/icon-names"
+import { Icon } from "common"
+import * as S from "./styled"
+import { MutableRefObject, useRef } from "react"
 
 const alertRoot = document.getElementById("alert")
 
 const iconMapper = {
-  [AlertType.info]: <Icon src={info} />,
-  [AlertType.warning]: <Icon src={warning} />,
+  [AlertType.info]: <Icon name={ICON_NAMES.infoCircled} />,
+  [AlertType.warning]: <Icon name={ICON_NAMES.warningCircled} />,
 }
 
 const Alert: React.FC = () => {
   const { isOpen, type, title, content, hideAlert } = useAlertContext()
-
-  const showHeader = type === AlertType.info && title !== null
+  const contentRef = useRef() as MutableRefObject<HTMLDivElement>
 
   if (!alertRoot) return null
   return createPortal(
     <>
-      <Container
+      <S.Container
         animate={isOpen ? "visible" : "hidden"}
         initial="hidden"
         variants={{
           visible: {
-            x: 0,
-            display: "block",
+            opacity: 1,
+            pointerEvents: "auto",
           },
           hidden: {
-            x: "-100vw",
-            transitionEnd: { display: "none" },
+            opacity: 0,
+            pointerEvents: "none",
           },
         }}
+        transition={{ duration: 0.1 }}
+        onClick={hideAlert}
       >
-        <Body withHeader={showHeader}>
-          <Close>
-            <IconButton onClick={hideAlert} media={close} size={16} />
-          </Close>
-          {showHeader && (
-            <Header>
-              <Flex m="0 7px 0 0">{type && iconMapper[type]}</Flex>
-              <Title>{title}</Title>
-            </Header>
-          )}
+        <S.Body
+          variants={{
+            visible: {
+              y: 0,
+              opacity: 1,
+            },
+            hidden: {
+              y: 20,
+              opacity: 0,
+            },
+          }}
+          transition={{ duration: 0.15 }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <S.Header>
+            <Flex m="0 8px 1px 0">{type && iconMapper[type]}</Flex>
+            <S.Title>{title || "Action unavailable"}</S.Title>
+            <Icon onClick={hideAlert} name={ICON_NAMES.modalClose} />
+          </S.Header>
           <Flex>
-            {type === AlertType.warning && (
-              <Flex m="0 7px 0 0">{type && iconMapper[type]}</Flex>
-            )}
-            <Content>{content}</Content>
+            <S.Content ref={contentRef}>{content}</S.Content>
           </Flex>
-        </Body>
-      </Container>
+        </S.Body>
+      </S.Container>
     </>,
     alertRoot
   )

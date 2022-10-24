@@ -6,9 +6,37 @@ import { CreateDaoCardStepNumber } from "../components"
 import * as S from "../styled"
 import { ICON_NAMES } from "constants/icon-names"
 import Switch from "components/Switch"
+import { AlertType } from "context/AlertContext"
+import useAlert from "hooks/useAlert"
 
 const IsDistributionProposalStep: FC = () => {
   const { isDistributionProposal } = useContext(FundDaoCreatingContext)
+
+  const [showAlert] = useAlert()
+
+  const handleClickShowAlert = () => {
+    showAlert({
+      title: "Why you may need this?",
+      content: (
+        <>
+          <S.InfoPopupContent>
+            <S.InfoPopupContentText>
+              With this type of proposal, your DAO will have fair rewards
+              proportional to each hodler’s token count.
+              <br />
+              <br /> Let’s say you want to distribute your DAO’s quarterly
+              earnings to holders. You need to create a proposal with the token
+              name and quantity to be distributed. Everybody who votes on this
+              proposal will be able to claim tokens proportionally to how many
+              tokens they voted with.
+            </S.InfoPopupContentText>
+          </S.InfoPopupContent>
+        </>
+      ),
+      type: AlertType.info,
+      hideDuration: 10000,
+    })
+  }
 
   return (
     <>
@@ -36,7 +64,12 @@ const IsDistributionProposalStep: FC = () => {
               delegation settings are turned off.
             </p>
             <br />
-            <AppButton text="Details" color="default" size="no-paddings" />
+            <AppButton
+              text="Details"
+              color="default"
+              size="no-paddings"
+              onClick={handleClickShowAlert}
+            />
           </CardDescription>
         </Card>
 

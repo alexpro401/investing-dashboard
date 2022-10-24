@@ -9,6 +9,7 @@ import {
   getDefaultFieldErrorStyles,
 } from "fields/styled"
 import ExternalLink from "components/ExternalLink"
+import { ICON_NAMES } from "../../constants/icon-names"
 
 export const Container = styled(StepsControllerContext)`
   display: flex;
@@ -80,11 +81,13 @@ export const CenteredImage = styled.img`
 `
 
 export const StepsRoot = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   transform: scale(1);
   gap: 16px;
   padding: 14px 16px 20px;
+  height: 100%;
 `
 
 export const StepsBottomNavigation = styled(StepsNavigation)`
@@ -217,4 +220,23 @@ export const SuccessLinksWrp = styled.div`
 
 export const SuccessLink = styled(AppButton)`
   color: #788ab4;
+`
+
+export const InfoPopupContent = styled.div`
+  max-width: 350px;
+`
+
+export const InfoPopupContentText = styled.div`
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+`
+
+export const InfoPopupContentTitle = styled.h5`
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 700;
+  color: #2669eb;
+  margin: 0 0 6px;
 `
