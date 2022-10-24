@@ -56,7 +56,7 @@ export const Tab = styled(motion.div)<{ active }>`
     bottom: 0;
     left: 0;
     right: 0;
-    height: ${(props) => (props.active ? "2px" : 0)};
+    height: ${(props) => (props.active ? "1px" : 0)};
     background: #7fffd4;
     border-radius: 1px;
     transition: height ease-in-out 0.3s;
