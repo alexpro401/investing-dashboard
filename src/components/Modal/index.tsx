@@ -1,7 +1,8 @@
+import { Icon } from "common"
+import { ICON_NAMES } from "constants/icon-names"
 import { FC, ReactNode } from "react"
 import { createPortal } from "react-dom"
-import closeIcon from "assets/icons/close-gray.svg"
-import { Container, Overlay, Head, Title, Close } from "./styled"
+import * as S from "./styled"
 
 const modalRoot = document.getElementById("modal")
 
@@ -16,7 +17,7 @@ const Modal: FC<Props> = ({ children, isOpen, toggle, title }) => {
   if (!modalRoot) return null
   return createPortal(
     <>
-      <Overlay
+      <S.Overlay
         onClick={toggle}
         animate={isOpen ? "visible" : "hidden"}
         initial="hidden"
@@ -31,7 +32,7 @@ const Modal: FC<Props> = ({ children, isOpen, toggle, title }) => {
           },
         }}
       />
-      <Container
+      <S.Container
         animate={isOpen ? "visible" : "hidden"}
         initial="hidden"
         variants={{
@@ -45,12 +46,12 @@ const Modal: FC<Props> = ({ children, isOpen, toggle, title }) => {
           },
         }}
       >
-        <Head>
-          <Title>{title}</Title>
-          <Close onClick={toggle} src={closeIcon} />
-        </Head>
+        <S.Head>
+          <S.Title>{title}</S.Title>
+          <Icon name={ICON_NAMES.modalClose} onClick={toggle} />
+        </S.Head>
         {children}
-      </Container>
+      </S.Container>
     </>,
     modalRoot
   )
