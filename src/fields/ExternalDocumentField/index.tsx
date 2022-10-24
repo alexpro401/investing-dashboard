@@ -66,21 +66,23 @@ const ExternalDocumentField: FC<Props> = ({
     [name, setValue]
   )
 
-  const handlePasteLink = useCallback(async () => {
-    setValue({ name, url: await readFromClipboard() })
-  }, [name, setValue])
-
-  const handleChangeLink = useCallback(() => {
-    setValue({ name, url: "" })
-  }, [name, setValue])
-
-  useEffect(() => {
+  const validateAndShowUrlOverlap = useCallback(() => {
     if (url && isValidUrl(url)) {
       setIsShowUrlOverlap(true)
     } else {
       setIsShowUrlOverlap(false)
     }
   }, [url])
+
+  const handlePasteLink = useCallback(async () => {
+    setValue({ name, url: await readFromClipboard() })
+    validateAndShowUrlOverlap()
+  }, [validateAndShowUrlOverlap, name, setValue])
+
+  const handleChangeLink = useCallback(() => {
+    setValue({ name, url: "" })
+    setIsShowUrlOverlap(false)
+  }, [name, setValue])
 
   return (
     <S.Root {...rest}>
@@ -120,6 +122,8 @@ const ExternalDocumentField: FC<Props> = ({
             />
           }
           errorMessage={errorMessage}
+          disabled={isShowUrlOverlap}
+          onBlur={validateAndShowUrlOverlap}
         />
       </S.BottomInputField>
     </S.Root>

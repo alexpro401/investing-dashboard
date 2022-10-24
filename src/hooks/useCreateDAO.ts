@@ -14,6 +14,7 @@ import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { cloneDeep } from "lodash"
 import { IPoolFactory } from "interfaces/typechain/PoolFactory"
 import { IpfsEntity } from "utils/ipfsEntity"
+import { BytesLike, ethers } from "ethers"
 
 const useCreateDAO = () => {
   const {
@@ -32,8 +33,7 @@ const useCreateDAO = () => {
     internalProposalForm,
     defaultProposalSettingForm,
     distributionProposalSettingsForm,
-
-    clearFormStorage,
+    createdDaoAddress,
   } = useContext(FundDaoCreatingContext)
 
   const factory = usePoolFactoryContract()
@@ -301,6 +301,14 @@ const useCreateDAO = () => {
       })
 
       if (isTxMined(receipt)) {
+        const data = receipt?.logs[receipt?.logs.length - 1].data
+        const abiCoder = new ethers.utils.AbiCoder()
+        const govPoolAddress = abiCoder.decode(
+          ["address", "address", "address"],
+          data as BytesLike
+        )[0]
+
+        createdDaoAddress.set(govPoolAddress)
         setPayload(SubmitState.SUCCESS)
       }
     } catch (error: any) {
@@ -315,13 +323,11 @@ const useCreateDAO = () => {
       throw new Error(error)
     } finally {
       setPayload(SubmitState.IDLE)
-      clearFormStorage()
     }
   }, [
     account,
     addTransaction,
     avatarUrl.get,
-    clearFormStorage,
     daoName.get,
     defaultProposalSettingForm.creationReward.get,
     defaultProposalSettingForm.delegatedVotingAllowed.get,
