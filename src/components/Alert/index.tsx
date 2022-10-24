@@ -45,7 +45,7 @@ const Alert: React.FC = () => {
               opacity: 1,
             },
             hidden: {
-              y: -20,
+              y: 20,
               opacity: 0,
             },
           }}
