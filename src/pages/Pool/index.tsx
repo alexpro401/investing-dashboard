@@ -9,7 +9,7 @@ import { TabCard } from "pages/Investor/styled"
 
 import { Flex, Center } from "theme"
 import Pools from "components/Header/Pools"
-import TabsLight from "components/TabsLight"
+import Tabs from "common/Tabs"
 import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
 import PoolPnlInfo from "components/PoolPnlInfo"
@@ -149,7 +149,7 @@ function Pool() {
       </PoolStatisticCard>
 
       <TabCard>
-        <TabsLight
+        <Tabs
           tabs={[
             {
               name: "Profit & Loss",
@@ -190,7 +190,7 @@ function Pool() {
             size={10}
           />
         </DetailsEditLinkFrame>
-        <TabsLight
+        <Tabs
           tabs={[
             {
               name: "Statistic",

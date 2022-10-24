@@ -5,7 +5,7 @@ import { createClient, Provider as GraphProvider } from "urql"
 import { useWeb3React } from "@web3-react/core"
 import { isNil } from "lodash"
 
-import TabsLight from "components/TabsLight"
+import Tabs from "common/Tabs"
 import Header from "components/Header/Layout"
 import PoolPnlInfo from "components/PoolPnlInfo"
 import PoolLockedFunds from "components/PoolLockedFunds"
@@ -88,7 +88,7 @@ const Profile: FC<Props> = () => {
         </PoolStatisticCard>
 
         <TabCard>
-          <TabsLight
+          <Tabs
             tabs={[
               {
                 name: "Profit & Loss",
@@ -111,7 +111,7 @@ const Profile: FC<Props> = () => {
         </TabCard>
 
         <Details>
-          <TabsLight
+          <Tabs
             tabs={[
               {
                 name: "Statistic",
