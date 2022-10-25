@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect, useMemo, useContext } from "react"
-import { parseUnits } from "@ethersproject/units"
+import { parseEther, parseUnits } from "@ethersproject/units"
 import { useNavigate } from "react-router-dom"
 
 import { useGovPoolContract, useGovSettingsContract } from "contracts"
@@ -15,6 +15,7 @@ import { useTransactionAdder } from "state/transactions/hooks"
 import { SubmitState } from "constants/types"
 import { TransactionType } from "state/transactions/types"
 import { isTxMined, parseTransactionError } from "utils"
+import { ZERO } from "constants/index"
 
 interface ICreateDaoProposalTypeArgs {
   proposalInfo: {
@@ -151,20 +152,32 @@ const useCreateDaoProposalType = ({
           [
             [
               {
-                // TODO add real proposal data from form component
                 earlyCompletion,
                 delegatedVotingAllowed,
                 validatorsVote,
-                duration: 70,
+                duration,
                 durationValidators,
-                quorum: parseUnits("1", 25),
+                quorum: parseUnits(String(quorum), 25).toString(),
                 quorumValidators,
-                minVotesForVoting: 1,
-                minVotesForCreating: 1,
-                rewardToken: "0x0000000000000000000000000000000000000000",
-                creationReward: 0,
-                executionReward: 0,
-                voteRewardsCoefficient: 1,
+                minVotesForVoting: parseEther(
+                  String(minVotesForVoting)
+                ).toString(),
+                minVotesForCreating: parseEther(
+                  String(minVotesForCreating)
+                ).toString(),
+                rewardToken: rewardToken || ZERO,
+                creationReward: parseUnits(
+                  String(creationReward),
+                  18
+                ).toString(),
+                executionReward: parseUnits(
+                  String(executionReward),
+                  18
+                ).toString(),
+                voteRewardsCoefficient: parseUnits(
+                  String(voteRewardsCoefficient),
+                  18
+                ).toString(),
                 executorDescription: daoProposalTypeIPFSCode,
               },
             ],
