@@ -1,11 +1,10 @@
 import styled from "styled-components"
-import { Flex } from "theme"
+import theme, { Flex } from "theme"
 import { motion } from "framer-motion"
 
 export const Container = styled(motion.div)`
-  background: linear-gradient(64.44deg, #191e2b 32.35%, #272e3e 100%);
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
-  border-radius: 10px;
+  background: ${theme.backgroundColors.secondary};
+  border-radius: 20px;
   position: absolute;
   top: 0;
   left: 16px;
@@ -33,7 +32,7 @@ export const Overlay = styled(motion.div)`
 
 export const Head = styled(Flex)`
   width: fill-available;
-  jutsify-content: space-between;
+  justify-content: space-between;
   align-items: center;
   padding: 24px 16px;
 `
@@ -42,9 +41,7 @@ export const Title = styled.div`
   font-family: "Gilroy";
   font-style: normal;
   font-weight: 600;
-  font-size: 16px;
-  line-height: 16px;
+  font-size: 20px;
+  line-height: 150%;
   color: #e4f2ff;
 `
-
-export const Close = styled.img``
