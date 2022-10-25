@@ -1,4 +1,4 @@
-import { useState, useEffect, ReactNode } from "react"
+import { useState, useEffect, ReactNode, FC } from "react"
 import { Flex } from "theme"
 import { useWeb3React } from "@web3-react/core"
 
@@ -27,6 +27,9 @@ import { useUserMetadata } from "state/ipfsMetadata/hooks"
 
 interface Props {
   account: string | null | undefined
+  activePoolsCount: ReactNode
+  totalInvested: ReactNode
+  tv: ReactNode
   children?: ReactNode
 }
 
@@ -67,7 +70,8 @@ const useInvestorMobile = (): [
   return [{ userName, userAvatar }]
 }
 
-const InvestorMobile: React.FC<Props> = ({ account, children }) => {
+const InvestorMobile: FC<Props> = (props) => {
+  const { account, children, activePoolsCount, totalInvested, tv } = props
   const [{ userName, userAvatar }] = useInvestorMobile()
 
   return (
@@ -92,10 +96,10 @@ const InvestorMobile: React.FC<Props> = ({ account, children }) => {
       </PoolInfoContainer>
       <Divider />
       <PoolStatisticContainer>
-        <Statistic label="Invested" value={`$213k`} />
-        <Statistic label="TV" value="$312k" />
+        <Statistic label="Invested" value={totalInvested} />
+        <Statistic label="TV" value={tv} />
         <Statistic label="P&L" value={`12.38%`} />
-        <Statistic label="Pools" value={<>3</>} />
+        <Statistic label="Pools" value={activePoolsCount} />
       </PoolStatisticContainer>
       {children}
     </Card>

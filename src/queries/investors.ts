@@ -205,11 +205,35 @@ const InvestorProposalsPositionsQuery = `
   }
 `
 
+const INVESTOR = `
+  id
+  activePools { id type }
+  allPools { id type }
+`
+
+const InvestorQuery = `
+  query ($address: String!) {
+    investor(id: $address) {
+      ${INVESTOR}
+    }
+  }
+`
+
+const InvestorPoolsPositionsQuery = `
+  query ($address: String!, $offset: Int!, $limit: Int!) {
+    investorPoolPositions(skip: $offset, first: $limit, where: {investor: $address}) {
+      ${INVESTOR_POOL_POSITION}
+    }
+  }
+`
+
 export {
+  InvestorQuery,
   InvestorPositionsQuery,
   InvestorPoolsInvestedForQuery,
   InvestorClaims,
   InsurancDueDay,
+  InvestorPoolsPositionsQuery,
   TraderPoolHistoriesQuery,
   InvestorPoolPositionQuery,
   InvestorsPoolsLpHistoryQuery,
