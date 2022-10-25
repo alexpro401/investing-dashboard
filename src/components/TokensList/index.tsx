@@ -1,32 +1,27 @@
-import { CSSProperties, useCallback, useMemo, useState } from "react"
+import { CSSProperties, useCallback, useMemo } from "react"
 import { Currency, Token } from "lib/entities"
 import { FixedSizeList } from "react-window"
 import AutoSizer from "react-virtualized-auto-sizer"
 
-import Search from "components/Search"
-
-import WalletToken from "./WalletToken"
-import PoolToken from "./PoolToken"
-import * as S from "./styled"
-import { useUnsupportedTokens, useUserTokens } from "hooks/useToken"
+import {
+  useUnsupportedTokens,
+  useUserTokens,
+  useWhitelistTokens,
+} from "hooks/useToken"
 import BlacklistToken from "./BlacklistToken"
 import useAlert, { AlertType } from "hooks/useAlert"
 import theme, { Text } from "theme"
-import ImportRow from "./ImportRow"
-import { useUserAddedTokens } from "state/user/hooks"
+import TokenRow from "./TokenRow"
+import { CurrencyAmount } from "lib/entities/fractions/currencyAmount"
 
 function currencyKey(currency: Currency): string {
   return currency.isToken ? currency.address : "ETHER"
 }
 
 interface Props {
-  customToken?: Token
   currencies: Token[]
-  query: string
-  poolAddress?: string
+  balances: { [tokenAddress: string]: CurrencyAmount<Token> | undefined }
   onSelect: (token: Currency) => void
-  handleChange: (v: string) => void
-  showImportToken: (token: Token) => void
 }
 
 interface TokenRowProps {
@@ -35,15 +30,7 @@ interface TokenRowProps {
   style: CSSProperties
 }
 
-const TokensList: React.FC<Props> = ({
-  customToken,
-  poolAddress,
-  currencies,
-  query,
-  onSelect,
-  handleChange,
-  showImportToken,
-}) => {
+const TokensList: React.FC<Props> = ({ currencies, balances, onSelect }) => {
   const [showAlert] = useAlert()
   const userAddedTokens = useUserTokens()
 
@@ -75,26 +62,22 @@ const TokensList: React.FC<Props> = ({
     [showAlert]
   )
 
+  const whitelist = useWhitelistTokens()
   const blacklist = useUnsupportedTokens()
-
-  const blacklistTokensAdresses = useMemo(
-    () => Object.values(blacklist ?? {}).map((t) => t.address),
-    [blacklist]
-  )
 
   const Row = useCallback(
     ({ data, index, style }: TokenRowProps) => {
       const token = data[index]
 
       const address = currencyKey(token)
-      const isBlacklisted = blacklistTokensAdresses.includes(
-        token.wrapped.address
-      )
+      const isBlacklisted = token.wrapped.address in blacklist
+      const isWhitelisted = token.wrapped.address in whitelist
       const isUserAdded = token.wrapped.address in userAddedTokens
 
       if (isBlacklisted) {
         return (
           <BlacklistToken
+            balance={balances[address]}
             address={address}
             style={style}
             onClick={onBlacklistSelect}
@@ -103,21 +86,10 @@ const TokensList: React.FC<Props> = ({
         )
       }
 
-      if (poolAddress) {
-        return (
-          <PoolToken
-            isUserAdded={isUserAdded}
-            poolAddress={poolAddress}
-            address={address}
-            style={style}
-            onClick={onSelect}
-            currency={token}
-          />
-        )
-      }
-
       return (
-        <WalletToken
+        <TokenRow
+          balance={balances[address]}
+          isRisky={!isWhitelisted}
           isUserAdded={isUserAdded}
           address={address}
           style={style}
@@ -127,15 +99,16 @@ const TokensList: React.FC<Props> = ({
       )
     },
     [
-      blacklistTokensAdresses,
+      blacklist,
+      whitelist,
       userAddedTokens,
-      poolAddress,
+      balances,
       onSelect,
       onBlacklistSelect,
     ]
   )
 
-  const list = (
+  return (
     <AutoSizer>
       {({ height, width }) => (
         <FixedSizeList
@@ -150,29 +123,6 @@ const TokensList: React.FC<Props> = ({
         </FixedSizeList>
       )}
     </AutoSizer>
-  )
-
-  const importToken = customToken && (
-    <ImportRow importToken={showImportToken} token={customToken} />
-  )
-  const noItems = importToken || (
-    <S.Placeholder>No results found.</S.Placeholder>
-  )
-
-  return (
-    <S.Card>
-      <S.CardHeader>
-        <Search
-          placeholder="Name, ticker, address"
-          value={query}
-          handleChange={handleChange}
-          height="40px"
-        />
-      </S.CardHeader>
-      <S.CardList style={{ minHeight: 400 }}>
-        {!!itemData.length ? list : noItems}
-      </S.CardList>
-    </S.Card>
   )
 }
 

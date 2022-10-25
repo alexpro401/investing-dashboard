@@ -1,26 +1,25 @@
 import { CSSProperties, FC, MouseEvent, useCallback, useMemo } from "react"
 
-import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import { normalizeBigNumber } from "utils"
-
 import TokenIcon from "components/TokenIcon"
-import { Currency } from "lib/entities"
+import { Currency, Token } from "lib/entities"
 import { useWeb3React } from "@web3-react/core"
-import { useCurrencyBalance } from "hooks/useBalance"
-import { parseEther } from "@ethersproject/units"
 
 import * as S from "./styled"
 import { Flex } from "theme"
 import { Icon } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 import { useRemoveUserAddedToken } from "state/user/hooks"
+import { Balance } from "./Balance"
+import { CurrencyAmount } from "lib/entities/fractions/currencyAmount"
 
 interface Props {
   address: string
+  balance?: CurrencyAmount<Token>
   currency: Currency
+  isUserAdded: boolean
+  isRisky: boolean
   style: CSSProperties
   onClick: (token: Currency) => void
-  isUserAdded: boolean
 }
 
 const iconStyle = {
@@ -28,26 +27,22 @@ const iconStyle = {
   transform: "translate(0, -2px)",
 }
 
-const Token: FC<Props> = ({
+const TokenRow: FC<Props> = ({
   address,
+  balance,
   currency,
-  style,
   isUserAdded,
+  isRisky,
+  style,
   onClick,
 }) => {
   const { symbol, name } = currency
-  const { account, chainId } = useWeb3React()
-
-  const token = currency.isToken ? currency : undefined
-  const balance = useCurrencyBalance(account ?? undefined, token)
+  const { chainId } = useWeb3React()
   const removeToken = useRemoveUserAddedToken()
 
-  const usdPriceParams = useMemo(
-    () => ({
-      tokenAddress: address,
-      amount: parseEther(balance?.toSignificant(4) || "1"),
-    }),
-    [address, balance]
+  const token = useMemo(
+    () => (currency.isToken ? currency : undefined),
+    [currency]
   )
 
   const handleRemoveToken = useCallback(
@@ -59,14 +54,14 @@ const Token: FC<Props> = ({
     [chainId, currency.wrapped.address, removeToken]
   )
 
-  const price = useTokenPriceOutUSD(usdPriceParams)
-
   return (
     <S.TokenContainer style={style} onClick={() => onClick(currency)}>
       <TokenIcon address={address} size={32} />
       <S.TokenInfo>
         <Flex gap="4">
-          {isUserAdded && <Icon name={ICON_NAMES.warn} style={iconStyle} />}
+          {(isUserAdded || isRisky) && (
+            <Icon name={ICON_NAMES.warn} style={iconStyle} />
+          )}
           <S.Symbol>{symbol}</S.Symbol>
         </Flex>
         <Flex gap="4">
@@ -82,14 +77,9 @@ const Token: FC<Props> = ({
           )}
         </Flex>
       </S.TokenInfo>
-      <S.BalanceInfo>
-        {balance && <S.TokenBalance>{balance.toSignificant(4)}</S.TokenBalance>}
-        {!price.isZero() && (
-          <S.TokenPrice>${normalizeBigNumber(price, 18, 2)}</S.TokenPrice>
-        )}
-      </S.BalanceInfo>
+      <Balance token={token} balance={balance} />
     </S.TokenContainer>
   )
 }
 
-export default Token
+export default TokenRow

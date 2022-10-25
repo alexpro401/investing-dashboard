@@ -1,6 +1,5 @@
 import { CSSProperties, FC } from "react"
-import { useWeb3React } from "@web3-react/core"
-import { Currency } from "lib/entities"
+import { Currency, Token } from "lib/entities"
 import { Icon } from "common"
 import theme, { Flex } from "theme"
 
@@ -8,12 +7,13 @@ import { ICON_NAMES } from "constants/icon-names"
 
 import TokenIcon from "components/TokenIcon"
 
-import { useCurrencyBalance } from "hooks/useBalance"
-
 import * as S from "./styled"
+import { Balance } from "./Balance"
+import { CurrencyAmount } from "lib/entities/fractions/currencyAmount"
 
 interface Props {
   address: string
+  balance?: CurrencyAmount<Token>
   currency: Currency
   style: CSSProperties
   onClick: (token: Currency) => void
@@ -24,12 +24,16 @@ const iconStyle = {
   transform: "translate(0, -2px)",
 }
 
-const BlacklistToken: FC<Props> = ({ address, currency, style, onClick }) => {
+const BlacklistToken: FC<Props> = ({
+  address,
+  balance,
+  currency,
+  style,
+  onClick,
+}) => {
   const { symbol, name } = currency
-  const { account } = useWeb3React()
 
   const token = currency.isToken ? currency : undefined
-  const balance = useCurrencyBalance(account ?? undefined, token)
 
   return (
     <S.TokenContainer disabled style={style} onClick={() => onClick(currency)}>
@@ -44,9 +48,7 @@ const BlacklistToken: FC<Props> = ({ address, currency, style, onClick }) => {
           <S.Blacklist>Blacklist</S.Blacklist>
         </Flex>
       </S.TokenInfo>
-      <S.BalanceInfo>
-        {balance && <S.TokenBalance>{balance.toSignificant(4)}</S.TokenBalance>}
-      </S.BalanceInfo>
+      <Balance token={token} balance={balance} />
     </S.TokenContainer>
   )
 }

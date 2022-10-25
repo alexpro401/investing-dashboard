@@ -16,6 +16,10 @@ import {
 import ImportToken from "components/TokensList/ImportToken"
 import { useAddUserToken } from "state/user/hooks"
 
+import * as S from "./styled"
+import ImportRow from "components/TokensList/ImportRow"
+import Search from "components/Search"
+
 export enum CurrencyModalView {
   search,
   manage,
@@ -100,26 +104,57 @@ const TokenSelect: FC<Props> = ({ isOpen, onClose, onSelect }) => {
   switch (modalView) {
     case CurrencyModalView.search:
       title = "Select a Token"
+      const importToken = customToken && (
+        <ImportRow importToken={showImportToken} token={customToken} />
+      )
+      const noItems = importToken || (
+        <S.Placeholder>No results found.</S.Placeholder>
+      )
+
       content = (
-        <TokensList
-          customToken={customToken}
-          query={searchQuery}
-          onSelect={handleSelect}
-          showImportToken={showImportToken}
-          handleChange={setSearchQuery}
-          currencies={filteredSortedTokens}
-        />
+        <S.Card>
+          <S.CardHeader>
+            <Search
+              placeholder="Name, ticker, address"
+              value={searchQuery}
+              handleChange={setSearchQuery}
+              height="40px"
+            />
+          </S.CardHeader>
+          <S.CardList style={{ minHeight: 400 }}>
+            {!!filteredSortedTokens.length ? (
+              <TokensList
+                balances={balances}
+                onSelect={handleSelect}
+                currencies={filteredSortedTokens}
+              />
+            ) : (
+              noItems
+            )}
+          </S.CardList>
+        </S.Card>
       )
       break
     case CurrencyModalView.importToken:
       title = "import token"
       content = (
-        <ImportToken
-          isImport
-          showImportToken={showImportToken}
-          importToken={handleImportToken}
-          token={customToken!}
-        />
+        <S.Card>
+          <S.CardHeader></S.CardHeader>
+          <S.CardList style={{ minHeight: 400 }}>
+            <ImportToken
+              isImport
+              showImportToken={showImportToken}
+              token={customToken!}
+            />
+          </S.CardList>
+          <S.Footer>
+            <S.ImportButton
+              onClick={() => handleImportToken(customToken!)}
+              size="large"
+              text="Import"
+            />
+          </S.Footer>
+        </S.Card>
       )
       break
   }
