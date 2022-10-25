@@ -1,5 +1,7 @@
-import React from "react"
+import React, { useCallback } from "react"
 import { useParams } from "react-router-dom"
+
+import { useGovPoolContract } from "contracts"
 
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
@@ -11,6 +13,10 @@ import * as S from "./styled"
 
 const CreateNewProposalType: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
+
+  // const setupDefaultDaoSettings = useCallback(() => {}, [])
+
+  // useEffect(() => {}, [])
 
   return (
     <>
