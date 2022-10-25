@@ -111,15 +111,18 @@ const CreateFund: FC<Props> = ({ presettedFundType = "basic" }) => {
 
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
-  const hideModal = () => setModalState(false)
+  const hideModal = useCallback(() => setModalState(false), [])
 
-  const handleTokenSelectOpen = () => {
+  const handleTokenSelectOpen = useCallback(() => {
     setModalState(true)
-  }
+  }, [])
 
-  const handleTokenSelect = (token: Token) => {
-    handleChange("baseToken", token)
-  }
+  const handleTokenSelect = useCallback(
+    (token: Token) => {
+      handleChange("baseToken", token)
+    },
+    [handleChange]
+  )
 
   const handlePoolCreate = useCallback(async () => {
     if (!account || !traderPoolFactory) return
