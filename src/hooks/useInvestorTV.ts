@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { isEmpty, isNil } from "lodash"
 
 import { TraderPool } from "abi"
@@ -12,50 +12,67 @@ import {
   divideBignumbers,
   multiplyBignumbers,
 } from "utils/formulas"
+import { BigNumber } from "@ethersproject/bignumber"
 
-function useInvestorTV(address?: string | null, pools?: { id: string }[]) {
+function useInvestorTV(
+  address?: string | null,
+  pools?: { id: string }[]
+): [{ usd: BigNumber }, { loading: boolean }] {
   const { library } = useActiveWeb3React()
   const [, setError] = useError()
 
   const [loading, setLoading] = useState(true)
   const [usd, setUsd] = useState(ZERO)
 
+  const calculateTV = useCallback(
+    async (address, pools) => {
+      let result = ZERO
+
+      for (const pool of pools) {
+        const poolContract = await getContract(
+          pool.id,
+          TraderPool,
+          library,
+          address
+        )
+
+        const poolInfo = await poolContract.getPoolInfo()
+        const poolPriceUSD = divideBignumbers(
+          [poolInfo.totalPoolUSD, 18],
+          [poolInfo.lpSupply, 18]
+        )
+
+        const balanceLP = await poolContract.balanceOf(address)
+
+        const balanceUSD = multiplyBignumbers(
+          [poolPriceUSD, 18],
+          [balanceLP, 18]
+        )
+
+        result = addBignumbers([result, 18], [balanceUSD, 18])
+      }
+
+      return result
+    },
+    [library]
+  )
+
   useEffect(() => {
-    if (isNil(pools) || isEmpty(pools) || isNil(library) || isNil(address)) {
+    if (
+      isNil(pools) ||
+      isEmpty(pools) ||
+      isNil(library) ||
+      isNil(address) ||
+      !loading
+    ) {
       return
     }
 
     ;(async () => {
       try {
-        const last = pools.at(-1)
-
-        for (const pool of pools) {
-          const poolContract = await getContract(
-            pool.id,
-            TraderPool,
-            library,
-            address
-          )
-
-          const poolInfo = await poolContract.getPoolInfo()
-          const poolPriceUSD = divideBignumbers(
-            [poolInfo.totalPoolUSD, 18],
-            [poolInfo.lpSupply, 18]
-          )
-
-          const balanceLP = await poolContract.balanceOf(address)
-
-          const balanceUSD = multiplyBignumbers(
-            [poolPriceUSD, 18],
-            [balanceLP, 18]
-          )
-
-          setUsd((prev) => addBignumbers([prev, 18], [balanceUSD, 18]))
-
-          if (!isNil(last) && pool.id === last.id) {
-            setLoading(false)
-          }
-        }
+        const amount = await calculateTV(address, pools)
+        setUsd(amount)
+        setLoading(false)
       } catch (error: any) {
         if (!!error && !!error.data && !!error.data.message) {
           setError(error.data.message)

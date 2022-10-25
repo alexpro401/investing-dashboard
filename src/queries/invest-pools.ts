@@ -1,4 +1,4 @@
-// Pool invnest proposals
+// InvestedFund invnest proposals
 
 const INVEST_PROPOSAL = `
   id

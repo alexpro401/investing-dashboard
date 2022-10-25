@@ -207,8 +207,8 @@ const InvestorProposalsPositionsQuery = `
 
 const INVESTOR = `
   id
-  activePools { id type }
-  allPools { id type }
+  activePools { id type token }
+  allPools { id type token }
 `
 
 const InvestorQuery = `

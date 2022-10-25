@@ -67,8 +67,7 @@ export const Tab = styled(Flex)<{ active?: boolean }>`
 `
 
 export const TabCard = styled(GradientBorder)`
-  margin-bottom: 16px;
-  margin-top: 24px;
+  margin-top: 16px;
   padding: 0 0 6px;
   position: relative;
   border-radius: 16px;
@@ -118,4 +117,10 @@ export const ButtonContainer = styled.div`
   grid-gap: 16px;
   padding-top: 16px;
   width: 100%;
+`
+
+export const PoolsList = styled.div<{ maxH: boolean }>`
+  width: 100%;
+  height: ${({ maxH }) => (maxH ? "180px" : "initial")};
+  overflow-y: auto;
 `
