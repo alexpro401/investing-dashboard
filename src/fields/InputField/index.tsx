@@ -6,11 +6,14 @@ import {
   SetStateAction,
   useCallback,
   useMemo,
+  useRef,
+  useState,
 } from "react"
 
 import * as S from "./styled"
 import { v4 as uuidv4 } from "uuid"
 import { Collapse } from "common"
+import { useClickAway } from "react-use"
 
 enum INPUT_TYPES {
   text = "text",
@@ -34,6 +37,7 @@ export interface Props<V extends string | number>
   tabindex?: number
   nodeLeft?: ReactNode
   nodeRight?: ReactNode
+  hint?: string
 }
 
 function InputField<V extends string | number>({
@@ -53,9 +57,14 @@ function InputField<V extends string | number>({
   onChange,
   nodeLeft,
   nodeRight,
+  hint,
+  onBlur,
   ...rest
 }: Props<V>) {
+  const rootEl = useRef(null)
+
   const uid = useMemo(() => uuidv4(), [])
+  const [isFocused, setIsFocused] = useState(false)
 
   const isNumberType = useMemo(() => type === INPUT_TYPES.number, [type])
 
@@ -113,8 +122,29 @@ function InputField<V extends string | number>({
     [onChange]
   )
 
+  const handleBlur = useCallback(
+    (e) => {
+      if (onBlur) {
+        onBlur(e)
+      }
+      setIsFocused(false)
+    },
+    [onBlur]
+  )
+
+  useClickAway(rootEl, () => {
+    setIsFocused(false)
+  })
+
   return (
-    <S.Root isReadonly={isReadonly} isDisabled={isDisabled} {...rest}>
+    <S.Root
+      ref={rootEl}
+      isReadonly={isReadonly}
+      isDisabled={isDisabled}
+      onFocus={() => setIsFocused(true)}
+      onBlur={handleBlur}
+      {...rest}
+    >
       <S.InputWrp>
         <S.Input
           id={`input-field--${uid}`}
@@ -133,6 +163,7 @@ function InputField<V extends string | number>({
           isNodeLeftExist={!!nodeLeft}
           isNodeRightExist={!!nodeRight}
           autoComplete="off"
+          onBlur={handleBlur}
         />
         {label ? (
           <S.Label
@@ -152,6 +183,9 @@ function InputField<V extends string | number>({
       </S.InputWrp>
       <Collapse isOpen={!!errorMessage} duration={0.3}>
         <S.ErrorMessage>{errorMessage}</S.ErrorMessage>
+      </Collapse>
+      <Collapse isOpen={!!hint && isFocused}>
+        <S.InputFieldHint>{hint}</S.InputFieldHint>
       </Collapse>
     </S.Root>
   )

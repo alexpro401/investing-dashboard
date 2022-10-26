@@ -234,8 +234,10 @@ export const useFormValidation = (
     return Object.keys(validationRules).reduce((acc, fieldName) => {
       const fieldValidators = validationRules[fieldName]
 
-      if (!fieldValidators || isEmpty(fieldValidators))
-        throw new Error(`Field ${fieldName} has no validators`)
+      if (!fieldValidators || isEmpty(fieldValidators)) {
+        console.error(`Field ${fieldName} has no validators`)
+        return {}
+      }
 
       const validatedField = Object.entries(fieldValidators).reduce(
         (acc, [validatorKey, validator]) => {
@@ -296,8 +298,10 @@ export const useFormValidation = (
 
   const touchField = useCallback(
     (fieldPath: string): void => {
-      if (!get(validationState, fieldPath))
-        throw new Error(`Field ${fieldPath} not found`)
+      if (!get(validationState, fieldPath)) {
+        console.error(`Field ${fieldPath} not found`)
+        return
+      }
 
       setValidationState((prevState) => {
         const nextState = {
