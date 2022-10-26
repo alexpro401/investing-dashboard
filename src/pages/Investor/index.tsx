@@ -67,7 +67,11 @@ function Investor() {
   const { data: investorData, fetching: investorFetching } = investorResp
 
   const _activePools = useMemo(() => {
-    if (investorFetching || isNil(investorData)) {
+    if (
+      investorFetching ||
+      isNil(investorData) ||
+      isNil(investorData.investor)
+    ) {
       return []
     }
     return investorData.investor.activePools
