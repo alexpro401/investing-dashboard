@@ -535,20 +535,20 @@ const TitlesStep: FC = () => {
                       })
                     }
                   }}
-                  // errorMessage={
-                  //   key !== "other"
-                  //     ? getFieldErrorMessage(`socialLinks.${key}`)
-                  //     : getFieldErrorMessage(`socialLinks.others[${idx - 6}]`)
-                  // }
-                  // onBlur={() => {
-                  //   if (!!value) {
-                  //     if (key === "other") {
-                  //       touchField(`socialLinks.others[${idx - 6}]`)
-                  //     } else {
-                  //       touchField(`socialLinks.${key}`)
-                  //     }
-                  //   }
-                  // }}
+                  errorMessage={
+                    key !== "other"
+                      ? getFieldErrorMessage(`socialLinks.${key}`)
+                      : getFieldErrorMessage(`socialLinks.others[${idx - 6}]`)
+                  }
+                  onBlur={() => {
+                    if (!!value) {
+                      if (key === "other") {
+                        touchField(`socialLinks.others[${idx - 6}]`)
+                      } else {
+                        touchField(`socialLinks.${key}`)
+                      }
+                    }
+                  }}
                 />
               ))}
             </CardFormControl>
