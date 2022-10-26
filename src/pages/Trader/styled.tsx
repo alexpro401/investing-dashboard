@@ -50,6 +50,7 @@ export const DetailsEditLinkFrame = styled(Flex)`
 
 export const OwnInvesting = styled(GradientBorder)`
   padding: 16px;
+  margin-top: 16px;
   border-radius: 10px;
   width: 100%;
 
