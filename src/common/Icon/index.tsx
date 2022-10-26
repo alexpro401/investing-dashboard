@@ -10,7 +10,9 @@ import {
   GlobeIcon,
   ShieldCheckIcon,
   StarIcon,
+  UserIcon,
   UsersIcon,
+  UsersGroupIcon,
   ArrowDownFilled,
   ArrowUpFilled,
   ChatOutline,
@@ -56,8 +58,12 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return FileDockIcon as unknown as ElementType
       case ICON_NAMES.star:
         return StarIcon as unknown as ElementType
+      case ICON_NAMES.user:
+        return UserIcon as unknown as ElementType
       case ICON_NAMES.users:
         return UsersIcon as unknown as ElementType
+      case ICON_NAMES.usersGroup:
+        return UsersGroupIcon as unknown as ElementType
       case ICON_NAMES.angleLeftOutlined:
         return AngleLeftOutlinedIcon as unknown as ElementType
       case ICON_NAMES.angleRightOutlined:
