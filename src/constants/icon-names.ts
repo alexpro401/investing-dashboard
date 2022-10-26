@@ -29,4 +29,5 @@ export enum ICON_NAMES {
   modalClose = "modal-close",
   infoCircled = "info-circled",
   warningCircled = "warning-circled",
+  share = "share",
 }
