@@ -13,6 +13,7 @@ import { useERC20 } from "hooks/useERC20"
 import { useErc721 } from "hooks/useErc721"
 import { useLocalStorage } from "react-use"
 import { isEqual } from "lodash"
+import { SUPPORTED_SOCIALS } from "constants/socials"
 
 export type ExternalFileDocument = {
   name: string
@@ -72,6 +73,10 @@ interface FundDaoCreatingContext {
   daoName: { get: string; set: Dispatch<SetStateAction<string>> }
   websiteUrl: { get: string; set: Dispatch<SetStateAction<string>> }
   description: { get: string; set: Dispatch<SetStateAction<string>> }
+  socialLinks: {
+    get: [SUPPORTED_SOCIALS, string][]
+    set: Dispatch<SetStateAction<[SUPPORTED_SOCIALS, string][]>>
+  }
   documents: {
     get: ExternalFileDocument[]
     set: (
@@ -102,6 +107,7 @@ type StoredForm = {
   _daoName: string
   _websiteUrl: string
   _description: string
+  _socialLinks: [SUPPORTED_SOCIALS, string][]
   _documents: ExternalFileDocument[]
   _userKeeperParams: {
     tokenAddress: string
@@ -196,6 +202,7 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
   daoName: { get: "", set: () => {} },
   websiteUrl: { get: "", set: () => {} },
   description: { get: "", set: () => {} },
+  socialLinks: { get: [], set: () => {} },
   documents: { get: [], set: () => {} },
 
   userKeeperParams: {} as UserKeeperDeployParamsForm,
@@ -225,6 +232,7 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
       _daoName: "",
       _websiteUrl: "",
       _description: "",
+      _socialLinks: [],
       _documents: [{ name: "", url: "" }],
       _userKeeperParams: {
         tokenAddress: "",
@@ -331,6 +339,9 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
   const [_daoName, _setDaoName] = useState(storedForm._daoName)
   const [_websiteUrl, _setWebsiteUrl] = useState(storedForm._websiteUrl)
   const [_description, _setDescription] = useState(storedForm._description)
+  const [_socialLinks, _setSocialLinks] = useState<
+    [SUPPORTED_SOCIALS, string][]
+  >(storedForm._socialLinks)
   const [_documents, _setDocuments] = useState<ExternalFileDocument[]>(
     storedForm._documents
   )
@@ -581,6 +592,7 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
         _daoName,
         _websiteUrl,
         _description,
+        _socialLinks,
         _documents,
         _userKeeperParams: {
           tokenAddress: _userKeeperParams.tokenAddress[0],
@@ -735,6 +747,7 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
     _isErc20,
     _isErc721,
     _isValidator,
+    _socialLinks,
     _userKeeperParams.nftAddress,
     _userKeeperParams.nftsTotalSupply,
     _userKeeperParams.tokenAddress,
@@ -782,6 +795,7 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
           daoName: { get: _daoName, set: _setDaoName },
           websiteUrl: { get: _websiteUrl, set: _setWebsiteUrl },
           description: { get: _description, set: _setDescription },
+          socialLinks: { get: _socialLinks, set: _setSocialLinks },
           documents: { get: _documents, set: _handleChangeDocuments },
 
           userKeeperParams: {

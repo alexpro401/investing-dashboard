@@ -96,10 +96,10 @@ export const Input = styled(motion.input)<{
   }
 
   ${(props) =>
-    props.isNodeRightExist ? `padding-right: ${fieldPaddingRight * 4}px;` : ""}
+    props.isNodeRightExist ? `padding-right: ${fieldPaddingRight * 3}px;` : ""}
 
   ${(props) =>
-    props.isNodeLeftExist ? `padding-left: ${fieldPaddingLeft * 4}px;` : ""}
+    props.isNodeLeftExist ? `padding-left: ${fieldPaddingLeft * 3}px;` : ""}
 
   &:not([disabled]):focus {
     box-sizing: border-box;
@@ -139,7 +139,7 @@ export const Label = styled(motion.label)<{
     top: 50%;
     color: ${fieldLabelColor};
     ${(props) =>
-      props.isNodeLeftExist ? `left: calc(${fieldPaddingRight * 4}px);` : ""}
+      props.isNodeLeftExist ? `left: calc(${fieldPaddingLeft * 3}px);` : ""}
   }
 
   #${(props) => props.inputId}:not([disabled]):focus ~ &,

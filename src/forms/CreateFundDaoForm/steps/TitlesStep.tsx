@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useState,
 } from "react"
 
 import {
@@ -22,6 +23,7 @@ import {
   OverlapInputField,
   TextareaField,
   ExternalDocumentField,
+  SocialLinkFieldv2,
 } from "fields"
 import Switch from "components/Switch"
 import Avatar from "components/Avatar"
@@ -47,13 +49,15 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 const TitlesStep: FC = () => {
   const daoPoolFormContext = useContext(FundDaoCreatingContext)
 
-  const { isErc20, isErc721, erc20, erc721 } = daoPoolFormContext
+  const { isErc20, isErc721, erc20, erc721, socialLinks } = daoPoolFormContext
 
   const { avatarUrl, daoName, websiteUrl, description, documents } =
     daoPoolFormContext
 
   const { tokenAddress, nftAddress, totalPowerInTokens, nftsTotalSupply } =
     daoPoolFormContext.userKeeperParams
+
+  const [isShowSocials, setIsShowSocials] = useState(false)
 
   const { chainId } = useActiveWeb3React()
 
@@ -84,6 +88,22 @@ const TitlesStep: FC = () => {
       daoName: daoName.get,
       websiteUrl: websiteUrl.get,
       description: description.get,
+
+      ...(socialLinks.get.length
+        ? {
+            socialLinks: {
+              facebook: socialLinks.get[0][1],
+              linkedin: socialLinks.get[1][1],
+              medium: socialLinks.get[2][1],
+              telegram: socialLinks.get[3][1],
+              twitter: socialLinks.get[4][1],
+              github: socialLinks.get[5][1],
+
+              others: socialLinks.get.slice(6, socialLinks.get.length),
+            },
+          }
+        : {}),
+
       documents: documents.get,
 
       tokenAddress: tokenAddress.get,
@@ -97,6 +117,54 @@ const TitlesStep: FC = () => {
       daoName: { required, minLength: minLength(6) },
       websiteUrl: { required, isUrl },
       description: { required },
+
+      ...(socialLinks.get.length
+        ? {
+            socialLinks: {
+              required,
+              ...(socialLinks.get[0][1]
+                ? {
+                    facebook: { isUrl },
+                  }
+                : {}),
+              ...(socialLinks.get[1][1]
+                ? {
+                    linkedin: { isUrl },
+                  }
+                : {}),
+              ...(socialLinks.get[2][1]
+                ? {
+                    medium: { isUrl },
+                  }
+                : {}),
+              ...(socialLinks.get[3][1]
+                ? {
+                    telegram: { isUrl },
+                  }
+                : {}),
+              ...(socialLinks.get[4][1]
+                ? {
+                    twitter: { isUrl },
+                  }
+                : {}),
+              ...(socialLinks.get[5][1]
+                ? {
+                    github: { isUrl },
+                  }
+                : {}),
+              ...(socialLinks.get.slice(6, socialLinks.get.length).length
+                ? {
+                    others: {
+                      $every: {
+                        isUrl,
+                      },
+                    },
+                  }
+                : {}),
+            },
+          }
+        : {}),
+
       documents: {
         required,
         $every: {
@@ -125,12 +193,25 @@ const TitlesStep: FC = () => {
     []
   )
 
-  const handleNextStep = () => {
+  const handleNextStep = useCallback(() => {
     touchForm()
     if (!isFieldsValid) return
 
     nextCb()
-  }
+  }, [isFieldsValid, nextCb, touchForm])
+
+  const handleAddSocials = useCallback(() => {
+    socialLinks.set([
+      ["facebook", ""],
+      ["linkedin", ""],
+      ["medium", ""],
+      ["telegram", ""],
+      ["twitter", ""],
+      ["github", ""],
+      ["other", ""],
+    ])
+    setIsShowSocials(true)
+  }, [socialLinks])
 
   return (
     <>
@@ -410,6 +491,68 @@ const TitlesStep: FC = () => {
               onBlur={() => touchField("description")}
             />
           </CardFormControl>
+          {!socialLinks.get.length ? (
+            <S.CardAddBtn
+              text={"+ Add social media"}
+              size="no-paddings"
+              color="default"
+              onClick={handleAddSocials}
+            />
+          ) : (
+            <></>
+          )}
+          <Collapse isOpen={!!socialLinks.get || isShowSocials}>
+            <CardFormControl>
+              {socialLinks.get.map(([key, value], idx) => (
+                <SocialLinkFieldv2
+                  key={idx}
+                  socialType={key}
+                  label={key}
+                  value={value}
+                  setValue={(val) => {
+                    socialLinks.set((prevState) => {
+                      const nextState = [...prevState]
+                      nextState[idx][1] = val as string
+                      return nextState
+                    })
+                  }}
+                  onShowInput={() => {
+                    if (idx === socialLinks.get.length - 1) {
+                      socialLinks.set((prevState) => {
+                        const nextState = [...prevState]
+                        nextState.push(["other", ""])
+                        return nextState
+                      })
+                    }
+                  }}
+                  onHideInput={() => {
+                    if (key === "other" && idx !== socialLinks.get.length - 1) {
+                      socialLinks.set((prevState) => {
+                        const nextState = [
+                          ...prevState.filter((el, i) => i !== idx),
+                        ]
+                        return nextState
+                      })
+                    }
+                  }}
+                  errorMessage={
+                    key !== "other"
+                      ? getFieldErrorMessage(`socialLinks.${key}`)
+                      : getFieldErrorMessage(`socialLinks.others[${idx - 6}]`)
+                  }
+                  onBlur={() => {
+                    if (!!value) {
+                      if (key === "other") {
+                        touchField(`socialLinks.others[${idx - 6}]`)
+                      } else {
+                        touchField(`socialLinks.${key}`)
+                      }
+                    }
+                  }}
+                />
+              ))}
+            </CardFormControl>
+          </Collapse>
         </Card>
 
         <Card>
