@@ -5,7 +5,6 @@ import { motion } from "framer-motion"
 export const Container = styled(motion.div)`
   background: ${theme.backgroundColors.secondary};
   border-radius: 20px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
   position: absolute;
   top: 0;
   left: 16px;
@@ -46,5 +45,3 @@ export const Title = styled.div`
   line-height: 19px;
   color: ${theme.textColors.primary};
 `
-
-export const Close = styled.img``
