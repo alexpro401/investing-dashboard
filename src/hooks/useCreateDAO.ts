@@ -26,6 +26,7 @@ const useCreateDAO = () => {
     daoName,
     websiteUrl,
     description,
+    socialLinks,
     documents,
     erc721,
     userKeeperParams,
@@ -83,6 +84,7 @@ const useCreateDAO = () => {
         daoName: daoName.get,
         websiteUrl: websiteUrl.get,
         description: description.get,
+        socialLinks: socialLinks.get,
         documents: documents.get,
       })
     )
