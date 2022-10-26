@@ -3,28 +3,18 @@ import { useWeb3React } from "@web3-react/core"
 import { useSelector, useDispatch } from "react-redux"
 
 import useContract from "hooks/useContract"
-import { AppState, AppDispatch } from "state"
-import { PoolRegistry, UserRegistry } from "abi"
-import { ContractsState } from "state/contracts/reducer"
+import { AppDispatch } from "state"
+import { UserRegistry } from "abi"
 import { addOwnedPools, changeTermsAgreed } from "state/user/actions"
 import { selectUserRegistryAddress } from "state/contracts/selectors"
+import { usePoolRegistryContract } from "contracts"
 
 export const UserPoolsUpdater: React.FC = () => {
   const { account } = useWeb3React()
 
   const dispatch = useDispatch<AppDispatch>()
 
-  const traderPoolRegistryAddress = useSelector<
-    AppState,
-    ContractsState["PoolRegistry"]
-  >((state) => {
-    return state.contracts.PoolRegistry
-  })
-
-  const traderPoolRegistry = useContract(
-    traderPoolRegistryAddress,
-    PoolRegistry
-  )
+  const traderPoolRegistry = usePoolRegistryContract()
 
   useEffect(() => {
     if (!traderPoolRegistry || !account) return
@@ -35,13 +25,13 @@ export const UserPoolsUpdater: React.FC = () => {
         const investPoolName = await traderPoolRegistry.INVEST_POOL_NAME()
 
         // get user owned pools
-        const traderBasicPools = await traderPoolRegistry.listTraderPools(
+        const traderBasicPools = await traderPoolRegistry.listAssociatedPools(
           account,
           basicPoolName,
           0,
           25
         )
-        const traderInvestPools = await traderPoolRegistry.listTraderPools(
+        const traderInvestPools = await traderPoolRegistry.listAssociatedPools(
           account,
           investPoolName,
           0,
