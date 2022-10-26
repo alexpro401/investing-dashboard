@@ -8,8 +8,6 @@ import { v4 as uuidv4 } from "uuid"
 import { PulseSpinner } from "react-spinners-kit"
 
 import { To, Text, Flex } from "theme"
-import Button, { SecondaryButton } from "components/Button"
-import InvestorMobile from "components/InvestorMobile"
 
 import { selectOwnedPools } from "state/user/selectors"
 import BarChart from "components/BarChart"
@@ -21,21 +19,18 @@ import {
   Row,
   MainText,
   MainValue,
-  ButtonContainer,
   PoolsList,
 } from "./styled"
 import Header from "components/Header/Layout"
 import { Profiles } from "components/Header/Components"
 import Pools from "components/Header/Pools"
-import { getRedirectedPoolAddress, normalizeBigNumber } from "utils"
+import { getRedirectedPoolAddress } from "utils"
 import ProfitLossChart from "components/ProfitLossChart"
 import { usePoolQuery, usePoolsByInvestors } from "hooks/usePool"
 import { InvestorQuery } from "queries"
 import { IInvestorQuery } from "interfaces/thegraphs/investors"
-import useInvestorTotalInvest from "hooks/useInvestorTotalInvest"
-import Skeleton from "components/Skeleton"
-import useInvestorTV from "hooks/useInvestorTV"
 import InvestedFund from "components/cards/InvestedFund"
+import InvestorStatistic from "./InvestorStatistic"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -76,42 +71,6 @@ function Investor() {
     }
     return investorData.investor.activePools
   }, [investorData, investorFetching])
-
-  const activePoolsCount = useMemo(() => {
-    if (investorFetching || isNil(investorData)) {
-      return <Skeleton w="25px" h="16px" />
-    }
-    return <>{_activePools.length}</>
-  }, [_activePools, investorFetching])
-
-  const [{ usd: totalInvestUSD }, { loading: totalLoading }] =
-    useInvestorTotalInvest(account)
-
-  const totalInvested = useMemo(() => {
-    if (totalLoading) {
-      return <Skeleton w="45px" h="16px" />
-    }
-    const res = normalizeBigNumber(totalInvestUSD, 18, 2)
-    return <>${res}</>
-  }, [totalInvestUSD, totalLoading])
-
-  const [{ usd: tvUSD }, { loading: tvLoading }] = useInvestorTV(
-    account,
-    _activePools
-  )
-
-  const tv = useMemo(() => {
-    if (isEmpty(_activePools)) {
-      return <>$0.0</>
-    }
-
-    if (tvLoading) {
-      return <Skeleton w="45px" h="16px" />
-    }
-
-    const res = normalizeBigNumber(tvUSD, 18, 2)
-    return <>${res}</>
-  }, [_activePools, tvUSD, tvLoading])
 
   const ownedPools = useSelector(selectOwnedPools)
   const noPools = !ownedPools.basic.length && !ownedPools.invest.length
@@ -191,25 +150,8 @@ function Investor() {
     <>
       <Header left={leftIcon}>My investor profile</Header>
       <Container>
-        <InvestorMobile
-          account={account}
-          totalInvested={totalInvested}
-          activePoolsCount={activePoolsCount}
-          tv={tv}
-        >
-          <ButtonContainer>
-            <To to="/">
-              <SecondaryButton full fz={14}>
-                New investment
-              </SecondaryButton>
-            </To>
-            <To to="/investment/positions/open">
-              <Button full fz={14}>
-                My investments
-              </Button>
-            </To>
-          </ButtonContainer>
-        </InvestorMobile>
+        <InvestorStatistic activePools={_activePools} />
+
         <TabCard>
           <TabContainer>
             <Tab active>Profit & Loss</Tab>
