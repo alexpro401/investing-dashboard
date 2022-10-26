@@ -169,7 +169,7 @@ export const useFormValidation = (
               validator,
               index,
               el,
-              acc[index],
+              get(acc, index),
               get(cachedResult, index)
             ),
           }
