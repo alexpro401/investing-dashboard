@@ -22,7 +22,6 @@ import { usePoolContract } from "hooks/usePool"
 import {
   useTraderPoolInvestProposalContract,
   usePriceFeedContract,
-  useUserRegistryContract,
 } from "contracts"
 import { RiskyForm } from "interfaces/exchange"
 import usePoolPrice from "hooks/usePoolPrice"
@@ -80,15 +79,13 @@ const useWithdrawInvestmentProposal = (
   const [fromAmount, setFromAmount] = useState(ZERO)
   const [gasPrice, setGasPrice] = useState("0.00")
   const [baseTokenPrice, setBaseTokenPrice] = useState(ZERO)
-  const [profileURL, setProfileURL] = useState<string | null>(null)
-  const [userAvatar, setUserAvatar] = useState("")
 
   const [{ priceUSD, priceBase }] = usePoolPrice(poolAddress)
   const priceFeed = usePriceFeedContract()
   const [proposal, updateProposal] = useInvestProposal(poolAddress, proposalId)
   const [, poolInfo] = usePoolContract(poolAddress)
   const [baseToken] = useERC20Data(poolInfo?.parameters.baseToken)
-  const userRegistry = useUserRegistryContract()
+
   const investProposalContract =
     useTraderPoolInvestProposalContract(poolAddress)
   const proposalAddress = useProposalAddress(poolAddress)
@@ -97,10 +94,10 @@ const useWithdrawInvestmentProposal = (
   const [, setError] = useError()
 
   const addTransaction = useTransactionAdder()
-  const [{ userMetadata }] = useUserMetadata(profileURL)
+  const [{ userAvatar }] = useUserMetadata(account)
 
   const userIcon = useMemo(
-    () => <Avatar url={userAvatar} address={account} size={26} />,
+    () => <Avatar url={userAvatar ?? ""} address={account} size={26} />,
     [userAvatar, account]
   )
 
@@ -304,29 +301,6 @@ const useWithdrawInvestmentProposal = (
       setGasPrice(gas)
     })()
   }, [estimateGas, fromAmount, getGasPrice])
-
-  // get user avatar link
-  useEffect(() => {
-    if (!userRegistry || !account) return
-
-    const getUserInfo = async () => {
-      const userData = await userRegistry.userInfos(account)
-      setProfileURL(userData.profileURL)
-    }
-
-    getUserInfo().catch((error) => {
-      console.error(error)
-    })
-  }, [userRegistry, account])
-
-  // set user avatar
-  useEffect(() => {
-    if (userMetadata !== null) {
-      if ("assets" in userMetadata && userMetadata.assets.length) {
-        setUserAvatar(userMetadata.assets[userMetadata.assets.length - 1])
-      }
-    }
-  }, [userMetadata])
 
   return [
     {

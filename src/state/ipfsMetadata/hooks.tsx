@@ -15,8 +15,9 @@ import {
 import { addInsuranceAccident, addPool, addProposal, addUser } from "./actions"
 import { IInvestProposalMetadata, IUserMetadata } from "./types"
 import { InsuranceAccident } from "interfaces/insurance"
-import { useInsuranceContract } from "contracts"
+import { useInsuranceContract, useUserRegistryContract } from "contracts"
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
+import { shortenAddress } from "utils"
 
 export function usePoolMetadata(poolId, hash) {
   const dispatch = useDispatch()
@@ -47,38 +48,84 @@ export function usePoolMetadata(poolId, hash) {
   return [{ poolMetadata, loading }, { fetchPoolMetadata }]
 }
 
-export function useUserMetadata(
-  hash
-): [
-  { userMetadata: IUserMetadata | null; loading: boolean },
-  { fetchUserMetadata: () => void }
+export function useUserMetadata(account): [
+  {
+    userMetadata: IUserMetadata | null
+    loading: boolean
+    userName: string | null
+    userAvatar: string | undefined
+  },
+  { fetchUserMetadata: (enableLoader: boolean) => void }
 ] {
   const dispatch = useDispatch()
-  const userMetadata = useSelector(selectUserMetadata(hash))
+  const userRegistry = useUserRegistryContract()
+
+  const userMetadata = useSelector(selectUserMetadata(account))
+
   const [loading, setLoading] = useState(false)
 
-  const fetchUserMetadata = useCallback(async () => {
-    try {
-      setLoading(true)
-      const data = await getIpfsData(hash)
-      if (data) {
-        dispatch(addUser({ params: { hash, ...data } }))
-      }
-      setLoading(false)
-    } catch (error) {
-      console.error(error)
-      setLoading(false)
+  const userName = useMemo(
+    () => userMetadata?.name ?? shortenAddress(account) ?? null,
+    [account, userMetadata]
+  )
+
+  const userAvatar = useMemo(() => {
+    if (
+      !isNil(userMetadata) &&
+      !isNil(userMetadata.assets) &&
+      userMetadata.assets.length > 0
+    ) {
+      const { assets } = userMetadata
+      return assets[assets.length - 1]
     }
-  }, [dispatch, hash])
+
+    return undefined
+  }, [userMetadata])
+
+  const fetchUserMetadata = useCallback(
+    async (enableLoader = true) => {
+      if (!account || !userRegistry) return
+      try {
+        if (enableLoader) {
+          setLoading(true)
+        }
+        const userData = await userRegistry.userInfos(account)
+        if (!isNil(userData) && !isEmpty(userData.profileURL)) {
+          const { profileURL } = userData
+          const ipfsData = await getIpfsData(profileURL)
+
+          if (!isNil(ipfsData)) {
+            dispatch(
+              addUser({
+                params: { hash: profileURL, ...ipfsData },
+              })
+            )
+          }
+        }
+      } catch (error) {
+        console.error(error)
+      } finally {
+        if (enableLoader) {
+          setLoading(false)
+        }
+      }
+    },
+    [account, userRegistry]
+  )
 
   useEffect(() => {
-    if (!hash) return
-    if (userMetadata === null) {
-      fetchUserMetadata()
-    }
-  }, [hash, userMetadata, dispatch, fetchUserMetadata])
+    if (!account || !userRegistry) return
+    ;(async () => {
+      if (userMetadata === null) {
+        await fetchUserMetadata(true)
+      }
+    })()
+  }, [account, userMetadata, userRegistry])
 
-  return [{ userMetadata, loading }, { fetchUserMetadata }]
+  return [
+    { userMetadata, loading, userName, userAvatar },
+    { fetchUserMetadata: debounce(fetchUserMetadata, 100) },
+  ]
 }
 
 export function useInvestProposalMetadata(
