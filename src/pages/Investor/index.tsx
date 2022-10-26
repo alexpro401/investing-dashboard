@@ -101,12 +101,17 @@ function Investor() {
   )
 
   const tv = useMemo(() => {
+    if (isEmpty(_activePools)) {
+      return <>$0.0</>
+    }
+
     if (tvLoading) {
       return <Skeleton w="45px" h="16px" />
     }
+
     const res = normalizeBigNumber(tvUSD, 18, 2)
     return <>${res}</>
-  }, [tvUSD, tvLoading])
+  }, [_activePools, tvUSD, tvLoading])
 
   const ownedPools = useSelector(selectOwnedPools)
   const noPools = !ownedPools.basic.length && !ownedPools.invest.length

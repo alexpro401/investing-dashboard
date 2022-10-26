@@ -58,13 +58,12 @@ function useInvestorTV(
   )
 
   useEffect(() => {
-    if (
-      isNil(pools) ||
-      isEmpty(pools) ||
-      isNil(library) ||
-      isNil(address) ||
-      !loading
-    ) {
+    if (isNil(library) || isNil(address) || !loading) {
+      return
+    }
+
+    if (isEmpty(pools)) {
+      setLoading(false)
       return
     }
 

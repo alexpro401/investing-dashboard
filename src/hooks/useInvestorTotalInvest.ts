@@ -30,11 +30,12 @@ function useInvestorTotalInvest(address?: string | null) {
   })
 
   useEffect(() => {
-    if (
-      fetching ||
-      isNil(data.investorPoolPositions) ||
-      isEmpty(data.investorPoolPositions)
-    ) {
+    if (fetching || isNil(data.investorPoolPositions)) {
+      return
+    }
+
+    if (isEmpty(data.investorPoolPositions) && !fetching) {
+      setLoading(false)
       return
     }
 
