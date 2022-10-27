@@ -296,8 +296,10 @@ export const useFormValidation = (
 
   const touchField = useCallback(
     (fieldPath: string): void => {
-      if (!get(validationState, fieldPath))
-        throw new Error(`Field ${fieldPath} not found`)
+      if (!get(validationState, fieldPath)) {
+        console.error(`Field ${fieldPath} not found`)
+        return
+      }
 
       setValidationState((prevState) => {
         const nextState = {

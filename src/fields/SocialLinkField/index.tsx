@@ -3,7 +3,7 @@ import { InputFieldProps } from "fields"
 import * as S from "./styled"
 import { ICON_NAMES } from "constants/icon-names"
 import { SUPPORTED_SOCIALS } from "constants/socials"
-import { useCallback, useMemo } from "react"
+import { useCallback, useMemo, useRef } from "react"
 import { readFromClipboard } from "utils/clipboard"
 import { isValidUrl } from "utils"
 import { AppButton } from "common"
@@ -25,6 +25,7 @@ function SocialLinkField<V extends string | number>({
   onBlur,
   onPaste,
   onRemove,
+  ...rest
 }: Props<V>) {
   const iconName = useMemo(() => {
     const iconNamesMap = {
@@ -38,8 +39,6 @@ function SocialLinkField<V extends string | number>({
     }
     return iconNamesMap[socialType] as ICON_NAMES
   }, [socialType])
-
-  const _errorMessage = useMemo(() => errorMessage || "", [errorMessage])
 
   const handlePaste = useCallback(async () => {
     const clipboardValue = await readFromClipboard()
@@ -82,8 +81,9 @@ function SocialLinkField<V extends string | number>({
         }
         nodeLeft={iconName && value ? <S.InputIcon name={iconName} /> : null}
         nodeRight={value ? <S.RemoveBtn onClick={handleRemove} /> : null}
-        errorMessage={_errorMessage}
+        errorMessage={errorMessage}
         onBlur={onBlur}
+        {...rest}
       />
     </S.Root>
   )

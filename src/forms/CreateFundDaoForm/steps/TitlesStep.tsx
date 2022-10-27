@@ -38,6 +38,12 @@ import { useFormValidation } from "hooks/useFormValidation"
 import {
   isAddressValidator,
   isUrl,
+  isUrlFacebook,
+  isUrlGithub,
+  isUrlLinkedin,
+  isUrlMedium,
+  isUrlTelegram,
+  isUrlTwitter,
   minLength,
   required,
 } from "utils/validators"
@@ -127,32 +133,32 @@ const TitlesStep: FC = () => {
               required,
               ...(socialLinks.get[0][1]
                 ? {
-                    facebook: { isUrl },
+                    facebook: { isUrl, isUrlFacebook },
                   }
                 : {}),
               ...(socialLinks.get[1][1]
                 ? {
-                    linkedin: { isUrl },
+                    linkedin: { isUrl, isUrlLinkedin },
                   }
                 : {}),
               ...(socialLinks.get[2][1]
                 ? {
-                    medium: { isUrl },
+                    medium: { isUrl, isUrlMedium },
                   }
                 : {}),
               ...(socialLinks.get[3][1]
                 ? {
-                    telegram: { isUrl },
+                    telegram: { isUrl, isUrlTelegram },
                   }
                 : {}),
               ...(socialLinks.get[4][1]
                 ? {
-                    twitter: { isUrl },
+                    twitter: { isUrl, isUrlTwitter },
                   }
                 : {}),
               ...(socialLinks.get[5][1]
                 ? {
-                    github: { isUrl },
+                    github: { isUrl, isUrlGithub },
                   }
                 : {}),
               ...(socialLinks.get
@@ -550,30 +556,32 @@ const TitlesStep: FC = () => {
                       ? `socialLinks.others[${idx - 6}].value`
                       : `socialLinks.${key}`
                   )}
-                  onBlur={() => {
-                    if (!!value) {
-                      touchField(
-                        key === "other"
-                          ? `socialLinks.others[${idx - 6}].value`
-                          : `socialLinks.${key}`
-                      )
-                    }
+                  onPaste={() => {
+                    touchField(
+                      key === "other"
+                        ? `socialLinks.others[${idx - 6}].value`
+                        : `socialLinks.${key}`
+                    )
                   }}
                 />
               ))}
-              <S.CardAddBtn
-                text="+ Add other"
-                size="no-paddings"
-                color="default"
-                onClick={() => {
-                  socialLinks.set((prevState) => {
-                    return [
-                      ...prevState,
-                      ["other", ""] as [SUPPORTED_SOCIALS, string],
-                    ]
-                  })
-                }}
-              />
+              {socialLinks.get.length ? (
+                <S.CardAddBtn
+                  text="+ Add other"
+                  size="no-paddings"
+                  color="default"
+                  onClick={() => {
+                    socialLinks.set((prevState) => {
+                      return [
+                        ...prevState,
+                        ["other", ""] as [SUPPORTED_SOCIALS, string],
+                      ]
+                    })
+                  }}
+                />
+              ) : (
+                <></>
+              )}
             </CardFormControl>
           </Collapse>
         </Card>
