@@ -38,6 +38,12 @@ import { useFormValidation } from "hooks/useFormValidation"
 import {
   isAddressValidator,
   isUrl,
+  isUrlFacebook,
+  isUrlGithub,
+  isUrlLinkedin,
+  isUrlMedium,
+  isUrlTelegram,
+  isUrlTwitter,
   minLength,
   required,
 } from "utils/validators"
@@ -90,22 +96,15 @@ const TitlesStep: FC = () => {
       websiteUrl: websiteUrl.get,
       description: description.get,
 
-      ...(socialLinks.get.length
-        ? {
-            socialLinks: {
-              facebook: socialLinks.get[0][1],
-              linkedin: socialLinks.get[1][1],
-              medium: socialLinks.get[2][1],
-              telegram: socialLinks.get[3][1],
-              twitter: socialLinks.get[4][1],
-              github: socialLinks.get[5][1],
-
-              others: socialLinks.get
-                .slice(6, socialLinks.get.length)
-                .map((el) => ({ key: el[0], value: el[1] })),
-            },
-          }
-        : {}),
+      facebook: socialLinks.get?.[0]?.[1] || "",
+      linkedin: socialLinks.get?.[1]?.[1] || "",
+      medium: socialLinks.get?.[2]?.[1] || "",
+      telegram: socialLinks.get?.[3]?.[1] || "",
+      twitter: socialLinks.get?.[4]?.[1] || "",
+      github: socialLinks.get?.[5]?.[1] || "",
+      others: socialLinks.get
+        ?.slice(6, socialLinks.get.length)
+        ?.map((el) => ({ key: el[0], value: el[1] })),
 
       documents: documents.get,
 
@@ -121,51 +120,44 @@ const TitlesStep: FC = () => {
       websiteUrl: { required, isUrl },
       description: { required },
 
-      ...(socialLinks.get.length
+      ...(socialLinks.get?.[0]?.[1]
         ? {
-            socialLinks: {
-              required,
-              ...(socialLinks.get[0][1]
-                ? {
-                    facebook: { isUrl },
-                  }
-                : {}),
-              ...(socialLinks.get[1][1]
-                ? {
-                    linkedin: { isUrl },
-                  }
-                : {}),
-              ...(socialLinks.get[2][1]
-                ? {
-                    medium: { isUrl },
-                  }
-                : {}),
-              ...(socialLinks.get[3][1]
-                ? {
-                    telegram: { isUrl },
-                  }
-                : {}),
-              ...(socialLinks.get[4][1]
-                ? {
-                    twitter: { isUrl },
-                  }
-                : {}),
-              ...(socialLinks.get[5][1]
-                ? {
-                    github: { isUrl },
-                  }
-                : {}),
-              ...(socialLinks.get
-                .slice(6, socialLinks.get.length)
-                .map((el) => ({ key: el[0], value: el[1] })).length
-                ? {
-                    others: {
-                      $every: {
-                        isUrl,
-                      },
-                    },
-                  }
-                : {}),
+            facebook: { isUrl, isUrlFacebook },
+          }
+        : {}),
+      ...(socialLinks.get?.[1]?.[1]
+        ? {
+            linkedin: { isUrl, isUrlLinkedin },
+          }
+        : {}),
+      ...(socialLinks.get?.[2]?.[1]
+        ? {
+            medium: { isUrl, isUrlMedium },
+          }
+        : {}),
+      ...(socialLinks.get?.[3]?.[1]
+        ? {
+            telegram: { isUrl, isUrlTelegram },
+          }
+        : {}),
+      ...(socialLinks.get?.[4]?.[1]
+        ? {
+            twitter: { isUrl, isUrlTwitter },
+          }
+        : {}),
+      ...(socialLinks.get?.[5]?.[1]
+        ? {
+            github: { isUrl, isUrlGithub },
+          }
+        : {}),
+      ...(socialLinks.get
+        ?.slice(6, socialLinks.get.length)
+        ?.map((el) => ({ key: el[0], value: el[1] })).length
+        ? {
+            others: {
+              $every: {
+                isUrl,
+              },
             },
           }
         : {}),
@@ -515,9 +507,7 @@ const TitlesStep: FC = () => {
                   label={key}
                   labelNodeRight={
                     isFieldValid(
-                      key === "other"
-                        ? `socialLinks.others[${idx - 6}].value`
-                        : `socialLinks.${key}`
+                      key === "other" ? `others[${idx - 6}].value` : `${key}`
                     ) ? (
                       <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
                     ) : (
@@ -546,34 +536,32 @@ const TitlesStep: FC = () => {
                     })
                   }}
                   errorMessage={getFieldErrorMessage(
-                    key === "other"
-                      ? `socialLinks.others[${idx - 6}].value`
-                      : `socialLinks.${key}`
+                    key === "other" ? `others[${idx - 6}].value` : `${key}`
                   )}
-                  onBlur={() => {
-                    if (!!value) {
-                      touchField(
-                        key === "other"
-                          ? `socialLinks.others[${idx - 6}].value`
-                          : `socialLinks.${key}`
-                      )
-                    }
+                  onPaste={() => {
+                    touchField(
+                      key === "other" ? `others[${idx - 6}].value` : `${key}`
+                    )
                   }}
                 />
               ))}
-              <S.CardAddBtn
-                text="+ Add other"
-                size="no-paddings"
-                color="default"
-                onClick={() => {
-                  socialLinks.set((prevState) => {
-                    return [
-                      ...prevState,
-                      ["other", ""] as [SUPPORTED_SOCIALS, string],
-                    ]
-                  })
-                }}
-              />
+              {socialLinks.get.length ? (
+                <S.CardAddBtn
+                  text="+ Add other"
+                  size="no-paddings"
+                  color="default"
+                  onClick={() => {
+                    socialLinks.set((prevState) => {
+                      return [
+                        ...prevState,
+                        ["other", ""] as [SUPPORTED_SOCIALS, string],
+                      ]
+                    })
+                  }}
+                />
+              ) : (
+                <></>
+              )}
             </CardFormControl>
           </Collapse>
         </Card>

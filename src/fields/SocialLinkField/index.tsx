@@ -25,6 +25,7 @@ function SocialLinkField<V extends string | number>({
   onBlur,
   onPaste,
   onRemove,
+  ...rest
 }: Props<V>) {
   const iconName = useMemo(() => {
     const iconNamesMap = {
@@ -39,17 +40,15 @@ function SocialLinkField<V extends string | number>({
     return iconNamesMap[socialType] as ICON_NAMES
   }, [socialType])
 
-  const _errorMessage = useMemo(() => errorMessage || "", [errorMessage])
-
   const handlePaste = useCallback(async () => {
     const clipboardValue = await readFromClipboard()
 
     if (isValidUrl(clipboardValue) && setValue) {
       setValue(clipboardValue as V)
-    }
 
-    if (onPaste) {
-      onPaste()
+      if (onPaste) {
+        onPaste()
+      }
     }
   }, [onPaste, setValue])
 
@@ -82,8 +81,9 @@ function SocialLinkField<V extends string | number>({
         }
         nodeLeft={iconName && value ? <S.InputIcon name={iconName} /> : null}
         nodeRight={value ? <S.RemoveBtn onClick={handleRemove} /> : null}
-        errorMessage={_errorMessage}
+        errorMessage={errorMessage}
         onBlur={onBlur}
+        {...rest}
       />
     </S.Root>
   )

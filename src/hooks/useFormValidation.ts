@@ -76,6 +76,8 @@ export const useFormValidation = (
   formSchema: FormSchema,
   validationRules: ValidationRules
 ) => {
+  const [fieldsToTouchStack, setFieldsToTouchStack] = useState<string[]>([])
+
   const [isFieldsValid, setIsFieldsValid] = useState(false)
   const _getValidationDefaultState = useCallback(
     (
@@ -300,7 +302,14 @@ export const useFormValidation = (
     (fieldPath: string): void => {
       if (!get(validationState, fieldPath)) {
         console.error(`Field ${fieldPath} not found`)
+        setFieldsToTouchStack((prevState) => [...prevState, fieldPath])
         return
+      }
+
+      if (fieldsToTouchStack.includes(fieldPath)) {
+        setFieldsToTouchStack((prevState) => [
+          ...prevState.filter((el) => el !== fieldPath),
+        ])
       }
 
       setValidationState((prevState) => {
@@ -316,8 +325,12 @@ export const useFormValidation = (
         return isEqual(prevState, nextState) ? prevState : nextState
       })
     },
-    [validationState]
+    [fieldsToTouchStack, validationState]
   )
+
+  useEffect(() => {
+    fieldsToTouchStack.forEach((el) => touchField(el))
+  }, [validationState])
 
   const touchForm = useCallback(() => {
     const _defaultState = _getValidationDefaultState({
