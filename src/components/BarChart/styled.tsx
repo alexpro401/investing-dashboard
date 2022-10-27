@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import styled from "styled-components"
-import { Flex, GradientBorder } from "theme"
+import { Flex, getAmountColor, GradientBorder } from "theme"
 
 function getTop(r) {
   if (r === null || r > 0) {
@@ -89,18 +89,6 @@ const Styled = {
 
 export default Styled
 
-function getPnlColor(pnl) {
-  if (pnl > 0) {
-    return "#63b49b"
-  }
-
-  if (pnl < 0) {
-    return "#D75E65"
-  }
-
-  return "#788AB4"
-}
-
 const TipS = {
   Container: styled(Flex)<{ mon: number }>`
     position: absolute;
@@ -140,7 +128,7 @@ const TipS = {
     font-weight: 500;
     font-size: 11px;
     line-height: 13px;
-    color: ${(p) => getPnlColor(p.pnl)};
+    color: ${(p) => getAmountColor(p.pnl, "#788AB4")};
     flex: 0 0 auto;
   `,
 }
