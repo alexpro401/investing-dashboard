@@ -30,6 +30,9 @@ export const Account = {
     padding: 11px 15px;
     margin: 0 16px 16px;
   `,
+  RightNode: styled(AppButton)`
+    padding: 0;
+  `,
 }
 
 export const AccountCard: React.FC<{
@@ -61,9 +64,9 @@ export const AccountCard: React.FC<{
             </Flex>
           </AccountInfo>
         </div>
-        <AppButton
+        <Account.RightNode
           color="default"
-          size="no-paddings"
+          size="small"
           text="Open trader profile"
           routePath="/me/trader"
         />
