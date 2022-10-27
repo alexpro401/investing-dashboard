@@ -60,14 +60,11 @@ const useCreateDaoProposalType = ({
   const [gasTrackerResponse] = useGasTracker()
   const [newSettingId, newSettingIdLoading, newSettingIdError] =
     useDaoPoolNewSettingId({ daoAddress: daoPoolAddress })
-  const [
-    { validatorsVote, durationValidators, quorumValidators },
-    settingsLoading,
-    settingsError,
-  ] = useDaoPoolSetting({
-    daoAddress: daoPoolAddress,
-    settingsId: EExecutor.DEFAULT,
-  })
+  const [daoDefaultSettings, settingsLoading, settingsError] =
+    useDaoPoolSetting({
+      daoAddress: daoPoolAddress,
+      settingsId: EExecutor.DEFAULT,
+    })
 
   const govPoolContract = useGovPoolContract(daoPoolAddress)
 
@@ -127,9 +124,13 @@ const useCreateDaoProposalType = ({
         newSettingIdLoading ||
         newSettingIdError ||
         settingsLoading ||
-        settingsError
+        settingsError ||
+        !daoDefaultSettings
       )
         return
+
+      const { validatorsVote, durationValidators, quorumValidators } =
+        daoDefaultSettings
 
       const {
         proposalInfo: {
@@ -268,9 +269,7 @@ const useCreateDaoProposalType = ({
       closeSuccessModalState,
       setSuccessModalState,
       navigate,
-      validatorsVote,
-      durationValidators,
-      quorumValidators,
+      daoDefaultSettings,
       newSettingId,
       newSettingIdLoading,
       newSettingIdError,

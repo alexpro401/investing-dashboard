@@ -28,13 +28,13 @@ interface IDaoSettings {
 const useDaoPoolSetting = ({
   daoAddress,
   settingsId,
-}: IUseDaoPoolSetting): [IDaoSettings, boolean, boolean] => {
+}: IUseDaoPoolSetting): [IDaoSettings | undefined, boolean, boolean] => {
   const govPoolContract = useGovPoolContract(daoAddress)
 
   const [govSettingsAddress, setGovSettingsAddress] = useState<string>("")
   const govSettingsContract = useGovSettingsContract(govSettingsAddress)
 
-  const [result, setResult] = useState<IDaoSettings>({} as IDaoSettings)
+  const [result, setResult] = useState<IDaoSettings | undefined>(undefined)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<boolean>(false)
 

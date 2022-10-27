@@ -13,10 +13,9 @@ import {
 import { useERC20 } from "hooks/useERC20"
 import { useErc721 } from "hooks/useErc721"
 import { useLocalStorage } from "react-use"
-import { isEqual } from "lodash"
 import { DaoProposal, ExternalFileDocument } from "types"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
-import { get } from "lodash"
+import { get, isEqual } from "lodash"
 
 export interface UserKeeperDeployParamsForm {
   tokenAddress: { get: string; set: Dispatch<SetStateAction<string>> }
@@ -137,21 +136,23 @@ const FundDaoCreatingContextProvider: FC<
 
   const initialForm = useMemo<DaoProposal>(() => {
     if (customLSKey) {
-      if (localStorage.getItem(customLSKey)) {
-        return JSON.parse(localStorage.getItem(customLSKey) ?? "")
+      const customFormFromLS = localStorage.getItem(customLSKey)
+
+      if (customFormFromLS) {
+        return JSON.parse(JSON.parse(customFormFromLS))
       }
 
       return daoProposal
     } else {
-      if (localStorage.getItem("fund-dao-creating-form")) {
-        return JSON.parse(localStorage.getItem("fund-dao-creating-form") ?? "")
+      const formFromLS = localStorage.getItem("fund-dao-creating-form")
+
+      if (formFromLS) {
+        return JSON.parse(JSON.parse(formFromLS))
       }
 
       return INITIAL_DAO_PROPOSAL
     }
   }, [customLSKey, daoProposal])
-
-  console.dir({ initialForm, typeofInitialForm: typeof initialForm })
 
   const storedForm = useMemo<DaoProposal>(() => {
     try {
@@ -410,6 +411,8 @@ const FundDaoCreatingContextProvider: FC<
       storedForm._defaultProposalSettingForm.executorDescription
     ),
   }
+
+  console.log("_defaultProposalSettingForm: ", _defaultProposalSettingForm)
 
   const erc20 = useERC20(_userKeeperParams.tokenAddress[0])
   const erc721 = useErc721(_userKeeperParams.nftAddress[0])
@@ -929,18 +932,10 @@ export const useIsDaoFieldChanged = ({ field }: { field: string }): boolean => {
 
   useEffect(() => {
     try {
-      console.log()
       const initialValue = get(contextValue.initialForm, "_" + field)
       const currentValue = get(contextValue, field + ".get")
 
-      console.log({
-        initialValue,
-        currentValue,
-        1: contextValue.initialForm,
-        2: field,
-      })
-
-      setResult(!isEqual(initialValue, currentValue))
+      setResult(JSON.stringify(initialValue) !== JSON.stringify(currentValue))
     } catch (error) {
       setResult(false)
     }

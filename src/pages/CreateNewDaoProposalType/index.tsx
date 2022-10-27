@@ -1,5 +1,6 @@
 import React, { useEffect } from "react"
 import { useParams, useLocation } from "react-router-dom"
+import { formatUnits, formatEther } from "@ethersproject/units"
 
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
@@ -9,6 +10,7 @@ import CreateNewProposalTypeForm from "forms/CreateNewProposalTypeForm"
 import useDaoPoolSetting from "hooks/useDaoPoolSetting"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
+import { ZERO_ADDR } from "constants/index"
 
 import * as S from "./styled"
 
@@ -26,7 +28,21 @@ const CreateNewProposalType: React.FC = () => {
     }
   }, [location])
 
-  if (loading) return null
+  if (loading || !daoSettings) return null
+
+  const {
+    earlyCompletion,
+    delegatedVotingAllowed,
+    validatorsVote,
+    duration,
+    quorum,
+    minVotesForVoting,
+    minVotesForCreating,
+    rewardToken,
+    creationReward,
+    executionReward,
+    voteRewardsCoefficient,
+  } = daoSettings
 
   return (
     <>
@@ -38,15 +54,25 @@ const CreateNewProposalType: React.FC = () => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <p style={{ color: "white" }}>{JSON.stringify(daoSettings)}</p>
           <FundDaoCreatingContextProvider
             customLSKey={"creating-new-dao-proposal-type"}
             daoProposal={{
               ...INITIAL_DAO_PROPOSAL,
               _defaultProposalSettingForm: {
                 ...INITIAL_DAO_PROPOSAL._defaultProposalSettingForm,
-                duration: 1000,
-                quorum: 63,
+                earlyCompletion,
+                delegatedVotingAllowed,
+                validatorsVote,
+                duration: duration.toNumber(),
+                quorum: Number(formatUnits(quorum, 25)),
+                minVotesForVoting: Number(formatEther(minVotesForVoting)),
+                minVotesForCreating: Number(formatEther(minVotesForCreating)),
+                rewardToken: rewardToken === ZERO_ADDR ? "" : rewardToken,
+                creationReward: Number(formatUnits(creationReward, 18)),
+                executionReward: Number(formatUnits(executionReward, 18)),
+                voteRewardsCoefficient: Number(
+                  formatUnits(voteRewardsCoefficient, 18)
+                ),
               },
             }}
           >
