@@ -1,22 +1,32 @@
-import React, { useCallback } from "react"
-import { useParams } from "react-router-dom"
-
-import { useGovPoolContract } from "contracts"
+import React, { useEffect } from "react"
+import { useParams, useLocation } from "react-router-dom"
 
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import DaoProposalCreatingContextProvider from "context/DaoProposalCreatingContext"
 import FundDaoCreatingContextProvider from "context/FundDaoCreatingContext"
 import CreateNewProposalTypeForm from "forms/CreateNewProposalTypeForm"
+import useDaoPoolSetting from "hooks/useDaoPoolSetting"
+import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
+import { INITIAL_DAO_PROPOSAL } from "constants/dao"
 
 import * as S from "./styled"
 
 const CreateNewProposalType: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
+  const [daoSettings, loading] = useDaoPoolSetting({
+    daoAddress: daoAddress ?? "",
+    settingsId: EExecutor.DEFAULT,
+  })
+  const location = useLocation()
 
-  // const setupDefaultDaoSettings = useCallback(() => {}, [])
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem("creating-new-dao-proposal-type")
+    }
+  }, [location])
 
-  // useEffect(() => {}, [])
+  if (loading) return null
 
   return (
     <>
@@ -28,7 +38,18 @@ const CreateNewProposalType: React.FC = () => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <FundDaoCreatingContextProvider>
+          <p style={{ color: "white" }}>{JSON.stringify(daoSettings)}</p>
+          <FundDaoCreatingContextProvider
+            customLSKey={"creating-new-dao-proposal-type"}
+            daoProposal={{
+              ...INITIAL_DAO_PROPOSAL,
+              _defaultProposalSettingForm: {
+                ...INITIAL_DAO_PROPOSAL._defaultProposalSettingForm,
+                duration: 1000,
+                quorum: 63,
+              },
+            }}
+          >
             <DaoProposalCreatingContextProvider>
               <CreateNewProposalTypeForm />
             </DaoProposalCreatingContextProvider>

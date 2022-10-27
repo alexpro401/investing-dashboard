@@ -6,17 +6,23 @@ import { FC, HTMLAttributes, useContext } from "react"
 import {
   DaoProposalSettingsForm,
   FundDaoCreatingContext,
+  useIsDaoFieldChanged,
 } from "context/FundDaoCreatingContext"
 import { useFormValidation } from "hooks/useFormValidation"
+import { EInputColors } from "fields/InputField"
+
+import * as S from "./styled"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   poolParameters: DaoProposalSettingsForm
   formValidation: ReturnType<typeof useFormValidation>
+  isCreatingProposal?: boolean
 }
 
 const DaoSettingsParameters: FC<Props> = ({
   poolParameters,
   formValidation,
+  isCreatingProposal = false,
 }) => {
   const {
     delegatedVotingAllowed,
@@ -40,6 +46,12 @@ const DaoSettingsParameters: FC<Props> = ({
   const { isValidator } = useContext(FundDaoCreatingContext)
 
   const { getFieldErrorMessage, touchField, isFieldValid } = formValidation
+
+  const quorumIsChanged = useIsDaoFieldChanged({
+    field: "defaultProposalSettingForm.quorum",
+  })
+
+  console.log("isCreatingProposal: ", isCreatingProposal)
 
   return (
     <>
@@ -86,6 +98,12 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Votes needed for quorum"
             errorMessage={getFieldErrorMessage("quorum")}
             onBlur={() => touchField("quorum")}
+            color={
+              isCreatingProposal && quorumIsChanged
+                ? EInputColors.success
+                : undefined
+            }
+            labelNodeRight={<S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />}
           />
         </CardFormControl>
       </Card>

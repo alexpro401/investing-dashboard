@@ -9,11 +9,13 @@ import {
   fieldPaddingRight,
   fieldPaddings,
   getDefaultFieldBorderStyles,
+  getFieldSuccessBorderStyles,
   getDefaultFieldErrorStyles,
   getDefaultFieldLabelStyles,
   getDefaultFieldPlaceholderStyles,
   getDefaultFieldTextStyles,
 } from "fields/styled"
+import { EInputColors } from "./index"
 
 /* CHANGED */
 
@@ -39,6 +41,7 @@ export const InputWrp = styled(motion.div)`
 export const Input = styled(motion.input)<{
   isNodeLeftExist?: boolean
   isNodeRightExist?: boolean
+  color?: EInputColors
 }>`
   background: none;
   border: none;
@@ -49,7 +52,10 @@ export const Input = styled(motion.input)<{
 
   ${getDefaultFieldTextStyles()}
 
-  ${getDefaultFieldBorderStyles()}
+  ${({ color }) => (!color ? getDefaultFieldBorderStyles() : "")}
+
+  ${({ color }) =>
+    color === EInputColors.success ? getFieldSuccessBorderStyles() : ""}
 
   &::-webkit-input-placeholder {
     ${getDefaultFieldPlaceholderStyles()}

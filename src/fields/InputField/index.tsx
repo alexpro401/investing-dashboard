@@ -18,6 +18,11 @@ enum INPUT_TYPES {
   number = "number",
 }
 
+export enum EInputColors {
+  success = "success",
+  warning = "warning",
+}
+
 export interface Props<V extends string | number>
   extends HTMLAttributes<HTMLInputElement> {
   value: V
@@ -34,6 +39,7 @@ export interface Props<V extends string | number>
   tabindex?: number
   nodeLeft?: ReactNode
   nodeRight?: ReactNode
+  color?: EInputColors
 }
 
 function InputField<V extends string | number>({
@@ -53,6 +59,7 @@ function InputField<V extends string | number>({
   onChange,
   nodeLeft,
   nodeRight,
+  color,
   ...rest
 }: Props<V>) {
   const uid = useMemo(() => uuidv4(), [])
@@ -132,6 +139,7 @@ function InputField<V extends string | number>({
           disabled={isDisabled || isReadonly}
           isNodeLeftExist={!!nodeLeft}
           isNodeRightExist={!!nodeRight}
+          color={color}
           autoComplete="off"
         />
         {label ? (
