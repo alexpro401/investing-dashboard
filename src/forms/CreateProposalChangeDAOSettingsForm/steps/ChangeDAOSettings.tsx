@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState, useMemo } from "react"
+import React, { useCallback, useContext, useState } from "react"
 
 import {
   AppButton,
@@ -22,7 +22,18 @@ import {
 import Avatar from "components/Avatar"
 import { ICON_NAMES } from "constants/icon-names"
 import { useFormValidation } from "hooks/useFormValidation"
-import { required, minLength, maxLength, isUrl } from "utils/validators"
+import {
+  required,
+  minLength,
+  maxLength,
+  isUrl,
+  isUrlFacebook,
+  isUrlLinkedin,
+  isUrlMedium,
+  isUrlTelegram,
+  isUrlTwitter,
+  isUrlGithub,
+} from "utils/validators"
 import { isValidUrl } from "utils"
 
 import * as S from "../styled"
@@ -91,32 +102,32 @@ const ChangeDAOSettings: React.FC = () => {
               required,
               ...(socialLinks.get[0][1]
                 ? {
-                    facebook: { isUrl },
+                    facebook: { isUrl, isUrlFacebook },
                   }
                 : {}),
               ...(socialLinks.get[1][1]
                 ? {
-                    linkedin: { isUrl },
+                    linkedin: { isUrl, isUrlLinkedin },
                   }
                 : {}),
               ...(socialLinks.get[2][1]
                 ? {
-                    medium: { isUrl },
+                    medium: { isUrl, isUrlMedium },
                   }
                 : {}),
               ...(socialLinks.get[3][1]
                 ? {
-                    telegram: { isUrl },
+                    telegram: { isUrl, isUrlTelegram },
                   }
                 : {}),
               ...(socialLinks.get[4][1]
                 ? {
-                    twitter: { isUrl },
+                    twitter: { isUrl, isUrlTwitter },
                   }
                 : {}),
               ...(socialLinks.get[5][1]
                 ? {
-                    github: { isUrl },
+                    github: { isUrl, isUrlGithub },
                   }
                 : {}),
               ...(socialLinks.get
@@ -271,14 +282,12 @@ const ChangeDAOSettings: React.FC = () => {
                         ? `socialLinks.others[${idx - 6}].value`
                         : `socialLinks.${key}`
                     )}
-                    onBlur={() => {
-                      if (!!value) {
-                        touchField(
-                          key === "other"
-                            ? `socialLinks.others[${idx - 6}].value`
-                            : `socialLinks.${key}`
-                        )
-                      }
+                    onPaste={() => {
+                      touchField(
+                        key === "other"
+                          ? `socialLinks.others[${idx - 6}].value`
+                          : `socialLinks.${key}`
+                      )
                     }}
                   />
                 ))}

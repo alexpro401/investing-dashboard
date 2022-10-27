@@ -96,22 +96,18 @@ const TitlesStep: FC = () => {
       websiteUrl: websiteUrl.get,
       description: description.get,
 
-      ...(socialLinks.get.length
-        ? {
-            socialLinks: {
-              facebook: socialLinks.get[0][1],
-              linkedin: socialLinks.get[1][1],
-              medium: socialLinks.get[2][1],
-              telegram: socialLinks.get[3][1],
-              twitter: socialLinks.get[4][1],
-              github: socialLinks.get[5][1],
+      socialLinks: {
+        facebook: socialLinks.get?.[0]?.[1] || "",
+        linkedin: socialLinks.get?.[1]?.[1] || "",
+        medium: socialLinks.get?.[2]?.[1] || "",
+        telegram: socialLinks.get?.[3]?.[1] || "",
+        twitter: socialLinks.get?.[4]?.[1] || "",
+        github: socialLinks.get?.[5]?.[1] || "",
 
-              others: socialLinks.get
-                .slice(6, socialLinks.get.length)
-                .map((el) => ({ key: el[0], value: el[1] })),
-            },
-          }
-        : {}),
+        others: socialLinks.get
+          ?.slice(6, socialLinks.get.length)
+          ?.map((el) => ({ key: el[0], value: el[1] })),
+      },
 
       documents: documents.get,
 
