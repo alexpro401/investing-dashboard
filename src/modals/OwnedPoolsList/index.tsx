@@ -22,18 +22,23 @@ import { getLastInArray, getPNL, getPriceLP, getUSDPrice } from "utils/formulas"
 interface Props {
   isOpen: boolean
   toggle: () => void
-  pools: IPoolQuery[]
+  ownedPools: IPoolQuery[]
   managedPools: IPoolQuery[]
 }
 
-const OwnedPoolsList: FC<Props> = ({ isOpen, toggle, pools, managedPools }) => {
+const OwnedPoolsList: FC<Props> = ({
+  isOpen,
+  toggle,
+  ownedPools,
+  managedPools,
+}) => {
   const navigate = useNavigate()
   const { account } = useWeb3React()
 
   const scrollRef = useRef<any>(null)
 
-  const basicPools = pools.filter(({ type }) => type === "BASIC_POOL")
-  const investPools = pools.filter(({ type }) => type === "INVEST_POOL")
+  const basicPools = ownedPools.filter(({ type }) => type === "BASIC_POOL")
+  const investPools = ownedPools.filter(({ type }) => type === "INVEST_POOL")
 
   useEffect(() => {
     if (!scrollRef.current || !isOpen) return () => clearAllBodyScrollLocks()

@@ -2,13 +2,15 @@ import { useMemo, useState, ReactNode } from "react"
 import { useWeb3React } from "@web3-react/core"
 import { useNavigate } from "react-router-dom"
 import { CircleSpinner } from "react-spinners-kit"
+import { useSelector } from "react-redux"
 import { createClient, Provider as GraphProvider } from "urql"
 
 import Icon from "components/Icon"
 import OwnedPoolsList from "modals/OwnedPoolsList"
 
-import { useUserInvolvedPools } from "state/pools/hooks"
+import { selectPayload } from "state/pools/selectors"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
+import { selectInvolvedPools } from "state/user/selectors"
 
 import AddFund from "assets/icons/AddFund"
 
@@ -40,30 +42,30 @@ const Pools = ({}: IPortaitsProps) => {
 
   const [isModalOpen, setModal] = useState(false)
 
-  const [{ ownedPools, managedPools }, isPoolsLoading] =
-    useUserInvolvedPools(account)
+  const { owned, managed } = useSelector(selectInvolvedPools(account))
+  const { loading } = useSelector(selectPayload)
 
   const createFund = () => {
     navigate("/create-fund")
   }
 
   const fundsPreview = useMemo<ReactNode>(() => {
-    if (ownedPools && ownedPools.length > 0) {
-      return ownedPools
-        .slice(ownedPools.length - 2)
+    if (owned && owned.length > 0) {
+      return owned
+        .slice(owned.length - 2)
         .map((pool) => <FundItem key={pool.id} pool={pool} />)
     }
 
-    if (managedPools && managedPools.length > 0) {
-      return managedPools
-        .slice(managedPools.length - 2)
+    if (managed && managed.length > 0) {
+      return managed
+        .slice(managed.length - 2)
         .map((pool) => <FundItem key={pool.id} pool={pool} />)
     }
 
     return null
-  }, [ownedPools, managedPools])
+  }, [owned, managed])
 
-  if (isPoolsLoading) {
+  if (loading) {
     return (
       <PortraitsPlus>
         <CircleSpinner color="#A4EBD4" size={16} loading />
@@ -71,12 +73,12 @@ const Pools = ({}: IPortaitsProps) => {
     )
   }
 
-  if (ownedPools.length > 0 || managedPools.length > 0) {
+  if (owned.length > 0 || managed.length > 0) {
     return (
       <>
         <OwnedPoolsList
-          pools={ownedPools}
-          managedPools={managedPools}
+          ownedPools={owned}
+          managedPools={managed}
           isOpen={isModalOpen}
           toggle={() => setModal(false)}
         />
