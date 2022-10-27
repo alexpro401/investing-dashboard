@@ -96,18 +96,15 @@ const TitlesStep: FC = () => {
       websiteUrl: websiteUrl.get,
       description: description.get,
 
-      socialLinks: {
-        facebook: socialLinks.get?.[0]?.[1] || "",
-        linkedin: socialLinks.get?.[1]?.[1] || "",
-        medium: socialLinks.get?.[2]?.[1] || "",
-        telegram: socialLinks.get?.[3]?.[1] || "",
-        twitter: socialLinks.get?.[4]?.[1] || "",
-        github: socialLinks.get?.[5]?.[1] || "",
-
-        others: socialLinks.get
-          ?.slice(6, socialLinks.get.length)
-          ?.map((el) => ({ key: el[0], value: el[1] })),
-      },
+      facebook: socialLinks.get?.[0]?.[1] || "",
+      linkedin: socialLinks.get?.[1]?.[1] || "",
+      medium: socialLinks.get?.[2]?.[1] || "",
+      telegram: socialLinks.get?.[3]?.[1] || "",
+      twitter: socialLinks.get?.[4]?.[1] || "",
+      github: socialLinks.get?.[5]?.[1] || "",
+      others: socialLinks.get
+        ?.slice(6, socialLinks.get.length)
+        ?.map((el) => ({ key: el[0], value: el[1] })),
 
       documents: documents.get,
 
@@ -123,51 +120,44 @@ const TitlesStep: FC = () => {
       websiteUrl: { required, isUrl },
       description: { required },
 
-      ...(socialLinks.get.length
+      ...(socialLinks.get?.[0]?.[1]
         ? {
-            socialLinks: {
-              required,
-              ...(socialLinks.get[0][1]
-                ? {
-                    facebook: { isUrl, isUrlFacebook },
-                  }
-                : {}),
-              ...(socialLinks.get[1][1]
-                ? {
-                    linkedin: { isUrl, isUrlLinkedin },
-                  }
-                : {}),
-              ...(socialLinks.get[2][1]
-                ? {
-                    medium: { isUrl, isUrlMedium },
-                  }
-                : {}),
-              ...(socialLinks.get[3][1]
-                ? {
-                    telegram: { isUrl, isUrlTelegram },
-                  }
-                : {}),
-              ...(socialLinks.get[4][1]
-                ? {
-                    twitter: { isUrl, isUrlTwitter },
-                  }
-                : {}),
-              ...(socialLinks.get[5][1]
-                ? {
-                    github: { isUrl, isUrlGithub },
-                  }
-                : {}),
-              ...(socialLinks.get
-                .slice(6, socialLinks.get.length)
-                .map((el) => ({ key: el[0], value: el[1] })).length
-                ? {
-                    others: {
-                      $every: {
-                        isUrl,
-                      },
-                    },
-                  }
-                : {}),
+            facebook: { isUrl, isUrlFacebook },
+          }
+        : {}),
+      ...(socialLinks.get?.[1]?.[1]
+        ? {
+            linkedin: { isUrl, isUrlLinkedin },
+          }
+        : {}),
+      ...(socialLinks.get?.[2]?.[1]
+        ? {
+            medium: { isUrl, isUrlMedium },
+          }
+        : {}),
+      ...(socialLinks.get?.[3]?.[1]
+        ? {
+            telegram: { isUrl, isUrlTelegram },
+          }
+        : {}),
+      ...(socialLinks.get?.[4]?.[1]
+        ? {
+            twitter: { isUrl, isUrlTwitter },
+          }
+        : {}),
+      ...(socialLinks.get?.[5]?.[1]
+        ? {
+            github: { isUrl, isUrlGithub },
+          }
+        : {}),
+      ...(socialLinks.get
+        ?.slice(6, socialLinks.get.length)
+        ?.map((el) => ({ key: el[0], value: el[1] })).length
+        ? {
+            others: {
+              $every: {
+                isUrl,
+              },
             },
           }
         : {}),
@@ -517,9 +507,7 @@ const TitlesStep: FC = () => {
                   label={key}
                   labelNodeRight={
                     isFieldValid(
-                      key === "other"
-                        ? `socialLinks.others[${idx - 6}].value`
-                        : `socialLinks.${key}`
+                      key === "other" ? `others[${idx - 6}].value` : `${key}`
                     ) ? (
                       <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
                     ) : (
@@ -548,15 +536,11 @@ const TitlesStep: FC = () => {
                     })
                   }}
                   errorMessage={getFieldErrorMessage(
-                    key === "other"
-                      ? `socialLinks.others[${idx - 6}].value`
-                      : `socialLinks.${key}`
+                    key === "other" ? `others[${idx - 6}].value` : `${key}`
                   )}
                   onPaste={() => {
                     touchField(
-                      key === "other"
-                        ? `socialLinks.others[${idx - 6}].value`
-                        : `socialLinks.${key}`
+                      key === "other" ? `others[${idx - 6}].value` : `${key}`
                     )
                   }}
                 />

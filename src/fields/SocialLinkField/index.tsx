@@ -45,10 +45,10 @@ function SocialLinkField<V extends string | number>({
 
     if (isValidUrl(clipboardValue) && setValue) {
       setValue(clipboardValue as V)
-    }
 
-    if (onPaste) {
-      onPaste()
+      if (onPaste) {
+        onPaste()
+      }
     }
   }, [onPaste, setValue])
 
