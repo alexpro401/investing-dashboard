@@ -137,18 +137,14 @@ const FundDaoCreatingContextProvider: FC<
 
   const initialForm = useMemo<DaoProposal>(() => {
     if (customLSKey) {
-      const customFormFromLS = localStorage.getItem(customLSKey)
-
-      if (customFormFromLS) {
-        return JSON.parse(customFormFromLS)
+      if (localStorage.getItem(customLSKey)) {
+        return JSON.parse(localStorage.getItem(customLSKey) ?? "")
       }
 
       return daoProposal
     } else {
-      const formFromLS = localStorage.getItem("fund-dao-creating-form")
-
-      if (formFromLS) {
-        return JSON.parse(formFromLS)
+      if (localStorage.getItem("fund-dao-creating-form")) {
+        return JSON.parse(localStorage.getItem("fund-dao-creating-form") ?? "")
       }
 
       return INITIAL_DAO_PROPOSAL
