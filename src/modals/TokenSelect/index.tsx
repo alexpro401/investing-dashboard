@@ -19,6 +19,9 @@ import { useAddUserToken } from "state/user/hooks"
 import * as S from "./styled"
 import ImportRow from "components/TokensList/ImportRow"
 import Search from "components/Search"
+import { AppButton } from "common"
+import { Manage } from "components/TokensList/Manage"
+import { useNavigate } from "react-router-dom"
 
 export enum CurrencyModalView {
   search,
@@ -37,6 +40,7 @@ interface Props {
 const TokenSelect: FC<Props> = ({ isOpen, onClose, onSelect }) => {
   const { account } = useWeb3React()
   const [searchQuery, setSearchQuery] = useState<string>("")
+  const navigate = useNavigate()
 
   const [modalView, setModalView] = useState<CurrencyModalView>(
     CurrencyModalView.search
@@ -98,6 +102,11 @@ const TokenSelect: FC<Props> = ({ isOpen, onClose, onSelect }) => {
     [addToken]
   )
 
+  const handleManageTokens = useCallback(() => {
+    setModalView(CurrencyModalView.manage)
+    navigate("/create-fund/basic/lists")
+  }, [navigate])
+
   let content: ReactNode
   let title = "Select a Token"
 
@@ -132,6 +141,14 @@ const TokenSelect: FC<Props> = ({ isOpen, onClose, onSelect }) => {
               noItems
             )}
           </S.CardList>
+          <S.Footer>
+            <AppButton
+              onClick={handleManageTokens}
+              size="no-paddings"
+              color="default"
+              text="Manage Tokens"
+            />
+          </S.Footer>
         </S.Card>
       )
       break
@@ -156,6 +173,10 @@ const TokenSelect: FC<Props> = ({ isOpen, onClose, onSelect }) => {
           </S.Footer>
         </S.Card>
       )
+      break
+    case CurrencyModalView.manage:
+      title = "Manage Tokens"
+      content = <Manage />
       break
   }
 

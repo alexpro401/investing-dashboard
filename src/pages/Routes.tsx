@@ -127,9 +127,12 @@ export default function Routes() {
                   element={<PayDividends />}
                 />
                 <Route path="create-fund" element={<CreateFund />} />
-                <Route path="create-fund/basic" element={<CreateFundBasic />} />
                 <Route
-                  path="create-fund/investment"
+                  path="create-fund/basic/*"
+                  element={<CreateFundBasic />}
+                />
+                <Route
+                  path="create-fund/investment/*"
                   element={<CreateFundInvestment />}
                 />
                 <Route path="create-fund/dao" element={<CreateFundDaoPool />} />

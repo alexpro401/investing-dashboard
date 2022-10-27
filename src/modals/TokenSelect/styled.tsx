@@ -121,6 +121,7 @@ export const Footer = styled(Flex)`
   width: 100%;
   padding: 16px;
   position: relative;
+  justify-content: center;
   &:before {
     position: absolute;
     top: 0;
