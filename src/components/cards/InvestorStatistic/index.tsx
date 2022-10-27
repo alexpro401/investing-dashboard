@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid"
 import { ButtonContainer, InvestorStatisticValue } from "./styled"
 import { Flex, Text, To } from "theme"
 import Button, { SecondaryButton } from "components/Button"
-import InfoCard from "components/cards/Info"
+import { CardInfo } from "common"
 import Skeleton from "components/Skeleton"
 import Avatar from "components/Avatar"
 import { Icon } from "common"
@@ -21,7 +21,7 @@ import { useUserMetadata } from "state/ipfsMetadata/hooks"
 interface Props {
   activePools: InvestorPoolQuery[]
 }
-const InvestorStatistic: FC<Props> = ({ activePools }) => {
+const InvestorStatisticCard: FC<Props> = ({ activePools }) => {
   const { account } = useWeb3React()
 
   const [{ loading: userLoading, userName, userAvatar }] =
@@ -127,7 +127,7 @@ const InvestorStatistic: FC<Props> = ({ activePools }) => {
 
   return (
     <>
-      <InfoCard
+      <CardInfo
         nodeHeadLeft={leftNode}
         nodeHeadRight={rightNode}
         statistic={userStatistic}
@@ -144,9 +144,9 @@ const InvestorStatistic: FC<Props> = ({ activePools }) => {
             </Button>
           </To>
         </ButtonContainer>
-      </InfoCard>
+      </CardInfo>
     </>
   )
 }
 
-export default InvestorStatistic
+export default InvestorStatisticCard

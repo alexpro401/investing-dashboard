@@ -30,7 +30,7 @@ import { usePoolQuery, usePoolsByInvestors } from "hooks/usePool"
 import { InvestorQuery } from "queries"
 import { IInvestorQuery } from "interfaces/thegraphs/investors"
 import InvestedFund from "components/cards/InvestedFund"
-import InvestorStatistic from "./InvestorStatistic"
+import InvestorStatisticCard from "components/cards/InvestorStatistic"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -150,7 +150,7 @@ function Investor() {
     <>
       <Header left={leftIcon}>My investor profile</Header>
       <Container>
-        <InvestorStatistic activePools={_activePools} />
+        <InvestorStatisticCard activePools={_activePools} />
 
         <TabCard>
           <TabContainer>

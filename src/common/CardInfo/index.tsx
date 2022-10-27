@@ -19,7 +19,7 @@ interface Props {
   statistic: Statistic[]
 }
 
-const InfoCard: FC<Props> = (props) => {
+const CardInfo: FC<Props> = (props) => {
   const { nodeHeadLeft, nodeHeadRight, statistic, children } = props
 
   return (
@@ -54,4 +54,4 @@ const InfoCard: FC<Props> = (props) => {
   )
 }
 
-export default InfoCard
+export default CardInfo

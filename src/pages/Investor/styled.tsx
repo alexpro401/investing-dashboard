@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Flex, device, GradientBorder, Text } from "theme"
+import { Flex, device, GradientBorder } from "theme"
 
 export const Container = styled(Flex)`
   width: 100%;
@@ -108,23 +108,8 @@ export const MainValue = styled.div`
   color: #9ae2cb;
 `
 
-export const ButtonContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: 1fr;
-  grid-gap: 16px;
-  width: 100%;
-`
-
 export const PoolsList = styled.div<{ maxH: boolean }>`
   width: 100%;
   height: ${({ maxH }) => (maxH ? "180px" : "initial")};
   overflow-y: auto;
 `
-
-export const InvestorStatisticValue = styled(Text).attrs(() => ({
-  color: "#f7f7f7",
-  fw: 600,
-  fs: 16,
-  lh: "16px",
-}))``
