@@ -5,7 +5,7 @@ import { Flex, Text, To } from "theme"
 import Button, { SecondaryButton } from "components/Button"
 import { CardInfo } from "common"
 import Skeleton from "components/Skeleton"
-import Avatar from "components/Avatar"
+import AccountInfo from "components/AccountInfo"
 import { Icon } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 
@@ -16,7 +16,6 @@ import useInvestorTotalInvest from "hooks/useInvestorTotalInvest"
 import { normalizeBigNumber } from "utils"
 import useInvestorTV from "hooks/useInvestorTV"
 import Tooltip from "components/Tooltip"
-import { useUserMetadata } from "state/ipfsMetadata/hooks"
 
 interface Props {
   activePools: InvestorPoolQuery[]
@@ -24,8 +23,6 @@ interface Props {
 const InvestorStatisticCard: FC<Props> = ({ activePools }) => {
   const { account } = useWeb3React()
 
-  const [{ loading: userLoading, userName, userAvatar }] =
-    useUserMetadata(account)
   const [{ usd: totalInvestUSD }, { loading: totalLoading }] =
     useInvestorTotalInvest(account)
 
@@ -84,37 +81,23 @@ const InvestorStatisticCard: FC<Props> = ({ activePools }) => {
     [totalInvested, tv, activePoolsCount]
   )
 
-  const leftNode = useMemo(() => {
-    if (userLoading) {
-      return (
-        <Flex ai="center" jc="flex-start">
-          <Skeleton variant="circle" w="38px" h="38px" />
-          <Flex dir="column" ai="flex-start" jc="space-between" m="0 0 0 10px">
-            <Skeleton variant="text" h="21px" w="121px" />
-            <Skeleton variant="text" h="17px" w="50px" m="4px 0 0" />
-          </Flex>
+  const leftNode = useMemo(
+    () => (
+      <AccountInfo account={account}>
+        <Flex full ai="center" jc="flex-start" gap="6">
+          <Text fz={12} lh="15px" color="#5a6071">
+            Investing
+          </Text>{" "}
+          <Text fz={12} lh="15px" color="#9AE2CB">
+            +2.1%
+          </Text>
+          <Tooltip id={uuidv4()}>PnL explanation</Tooltip>
         </Flex>
-      )
-    }
+      </AccountInfo>
+    ),
 
-    return (
-      <Flex ai="center" jc="flex-start">
-        <Avatar size={38} url={userAvatar} address={account} />
-        <Flex p="0 0 0 10px" dir="column" ai="flex-start">
-          <Text color="#ffffff">{userName}</Text>
-          <Flex full ai="center" jc="flex-start" gap="6">
-            <Text fz={12} lh="15px" color="#5a6071">
-              Investing
-            </Text>{" "}
-            <Text fz={12} lh="15px" color="#9AE2CB">
-              +2.1%
-            </Text>
-            <Tooltip id={uuidv4()}>PnL explanation</Tooltip>
-          </Flex>
-        </Flex>
-      </Flex>
-    )
-  }, [account, userName, userAvatar, userLoading])
+    [account]
+  )
 
   const rightNode = useMemo(
     () => (
