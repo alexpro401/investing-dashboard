@@ -2,7 +2,7 @@ import { FC, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import * as S from "./styled"
-import { Flex, Text } from "theme"
+import { Flex, getAmountColor, Text } from "theme"
 import Icon from "components/Icon"
 import Skeleton from "components/Skeleton"
 import TokenIcon from "components/TokenIcon"
@@ -16,12 +16,6 @@ import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 interface Props {
   data: IPoolQuery
   account: string
-}
-
-function getPnlColor(pnl) {
-  if (pnl.gt(0)) return "#9AE2CB"
-  if (pnl.lt(0)) return "#D75E65"
-  return "#E4F2FF"
 }
 
 function getPnlSymbol(pnl) {
@@ -57,11 +51,12 @@ const InvestedFund: FC<Props> = ({ data, account }) => {
       return <Skeleton w="50px" h="17px" />
     }
 
-    const pnl = BigNumber.from(lastHistoryPoint.percPNL)
+    const pnlBN = BigNumber.from(lastHistoryPoint.percPNL)
+    const pnl = normalizeBigNumber(pnlBN, 4, 2)
 
     return (
-      <Text block color={getPnlColor(pnl)} fz={16} fw={600}>
-        {getPnlSymbol(pnl)} {normalizeBigNumber(pnl, 4, 2)}%
+      <Text block color={getAmountColor(pnl, "#E4F2FF")} fz={16} fw={600}>
+        {getPnlSymbol(pnlBN)} {pnl}%
       </Text>
     )
   }, [lastHistoryPoint])
