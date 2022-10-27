@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react"
+import { FC, ReactNode, useMemo } from "react"
 import { isNil } from "lodash"
 
 import { useUserMetadata } from "state/ipfsMetadata/hooks"
@@ -6,6 +6,7 @@ import { useUserMetadata } from "state/ipfsMetadata/hooks"
 import { Flex, Text } from "theme"
 import Avatar from "components/Avatar"
 import Skeleton from "components/Skeleton"
+import { shortenAddress } from "utils"
 
 interface Props {
   account?: string | null
@@ -14,6 +15,12 @@ interface Props {
 
 const AccountInfo: FC<Props> = ({ account, children }) => {
   const [{ loading, userName, userAvatar }] = useUserMetadata(account)
+
+  const name = useMemo(() => {
+    if (isNil(userName)) return ""
+
+    return userName.length > 15 ? shortenAddress(userName, 7) : userName
+  }, [userName])
 
   if (loading) {
     return (
@@ -34,7 +41,7 @@ const AccountInfo: FC<Props> = ({ account, children }) => {
       <Avatar size={38} url={userAvatar} address={account} />
       <Flex p="0 0 0 10px" dir="column" ai="flex-start">
         <Text color="#ffffff" fz={16} lh="19px" fw={600}>
-          {userName}
+          {name}
         </Text>
         {children}
       </Flex>
