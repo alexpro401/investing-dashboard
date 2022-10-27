@@ -10,6 +10,7 @@ export const DEFAULT_LIST_OF_LISTS_TO_DISPLAY = [DEXE_DEFAULT, DEXE_WHITELIST]
 export const WHITELIST_LIST_URLS: string[] = [DEXE_WHITELIST]
 export const UNSUPPORTED_LIST_URLS: string[] = [DEXE_BLACKLIST]
 export const WARNING_LIST_URLS: string[] = []
+export const PRODUCT_LIST_URLS: string[] = [DEXE_WHITELIST, DEXE_BLACKLIST]
 
 // lower index == higher priority for token import
 export const DEFAULT_LIST_OF_LISTS: string[] = [

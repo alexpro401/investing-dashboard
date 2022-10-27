@@ -22,6 +22,12 @@ import Search from "components/Search"
 import { AppButton } from "common"
 import { Manage } from "components/TokensList/Manage"
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom"
+import ImportList from "components/TokensList/ImportList"
+import { TokenList } from "lib/token-list"
+import { useAllLists } from "state/lists/hooks"
+import { useFetchListCallback } from "hooks/useFetchListCallback"
+import { useAppDispatch } from "state/hooks"
+import { enableList, removeList } from "state/lists/actions"
 
 interface Props {
   onSelect: (token: Token) => void
@@ -29,7 +35,9 @@ interface Props {
 
 const TokenSelect: FC<Props> = ({ onSelect }) => {
   const { account } = useWeb3React()
-  const [searchQuery, setSearchQuery] = useState<string>("")
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const isOpen = pathname.includes("modal")
@@ -106,6 +114,34 @@ const TokenSelect: FC<Props> = ({ onSelect }) => {
     <S.Placeholder>No results found.</S.Placeholder>
   )
 
+  const lists = useAllLists()
+  const fetchList = useFetchListCallback()
+
+  // used for import list
+  const [importList, setImportList] = useState<TokenList | undefined>()
+  const [listURL, setListUrl] = useState<string | undefined>()
+  const [confirmed, setConfirmed] = useState(false)
+
+  // monitor is list is loading
+  const adding = Boolean(lists[listURL ?? ""]?.loadingRequestId)
+  const [addError, setAddError] = useState<string | null>(null)
+
+  const handleAddList = useCallback(() => {
+    if (adding) return
+    setAddError(null)
+    fetchList(listURL!)
+      .then(() => {
+        // turn list on
+        dispatch(enableList(listURL!))
+        // go back to lists
+        navigate("modal/manage/lists")
+      })
+      .catch((error) => {
+        setAddError(error.message)
+        dispatch(removeList(listURL!))
+      })
+  }, [adding, dispatch, fetchList, listURL, navigate])
+
   const content = (
     <Routes>
       <Route
@@ -147,24 +183,52 @@ const TokenSelect: FC<Props> = ({ onSelect }) => {
         element={
           <S.Card>
             <S.CardHeader></S.CardHeader>
-            <S.CardList style={{ minHeight: 400 }}>
-              <ImportToken
-                isImport
-                showImportToken={showImportToken}
-                token={customToken!}
-              />
+            <S.CardList style={{ minHeight: 300 }}>
+              {/* show import token view */}
+              {customToken && (
+                <ImportToken
+                  showImportToken={showImportToken}
+                  token={customToken!}
+                />
+              )}
+              {/* show import list view */}
+              {importList && (
+                <ImportList
+                  confirmed={confirmed}
+                  setConfirmed={setConfirmed}
+                  importList={importList}
+                  listURL={listURL!}
+                />
+              )}
+              {/* TODO: show no items view */}
             </S.CardList>
             <S.Footer>
-              <S.ImportButton
-                onClick={() => handleImportToken(customToken!)}
-                size="large"
-                text="Import"
-              />
+              {customToken && (
+                <S.ImportButton
+                  disabled={!confirmed}
+                  onClick={() => handleImportToken(customToken!)}
+                  size="large"
+                  text="Import"
+                />
+              )}
+              {importList && (
+                <S.ImportButton
+                  disabled={!confirmed}
+                  onClick={handleAddList}
+                  size="large"
+                  text="Import"
+                />
+              )}
             </S.Footer>
           </S.Card>
         }
       />
-      <Route path="modal/manage/*" element={<Manage />} />
+      <Route
+        path="modal/manage/*"
+        element={
+          <Manage setImportList={setImportList} setListUrl={setListUrl} />
+        }
+      />
     </Routes>
   )
 

@@ -5,20 +5,15 @@ import ImportRow from "./ImportRow"
 
 interface Props {
   token: Token
-  isImport: boolean
   showImportToken: () => void
 }
 
 const ImportToken: FC<Props> = (props) => {
-  const { token, isImport, showImportToken } = props
+  const { token, showImportToken } = props
 
   return (
     <>
-      <ImportRow
-        importToken={showImportToken}
-        importing={isImport}
-        token={token}
-      />
+      <ImportRow importToken={showImportToken} importing token={token} />
       <WarnCard isChecked onChange={() => {}} title="Import at your own risk">
         Anyone can create a BEP20 token on BNB Smart Chain with any name,
         including creating fake versions of existing tokens and tokens that

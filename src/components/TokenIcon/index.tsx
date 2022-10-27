@@ -97,7 +97,7 @@ const checkImageBroken = (chainId, account, address) => {
 
 export const DefaultTokenIcon = ({ size, m, symbol }: IDefaultProps) => (
   <Fallback m={m || "0 8px 0 0"} size={size}>
-    <SymbolLetter>{symbol[0]}</SymbolLetter>
+    <SymbolLetter>{symbol[0].toLocaleUpperCase()}</SymbolLetter>
   </Fallback>
 )
 

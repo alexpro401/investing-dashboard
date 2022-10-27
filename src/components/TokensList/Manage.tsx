@@ -1,7 +1,7 @@
 import RouteTabs from "components/RouteTabs"
 import Search from "components/Search"
 import { ITab } from "interfaces"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { FC, useCallback, useEffect, useMemo, useState } from "react"
 import * as S from "modals/TokenSelect/styled"
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom"
 import isActiveRoute from "utils/isActiveRoute"
@@ -9,8 +9,14 @@ import { AppButton } from "common"
 import useDebounce from "hooks/useDebounce"
 import Tokens from "./Tokens"
 import Lists from "./Lists"
+import { TokenList } from "lib/token-list"
 
-export const Manage = () => {
+interface Props {
+  setImportList: (list: TokenList) => void
+  setListUrl: (url: string) => void
+}
+
+export const Manage: FC<Props> = ({ setImportList, setListUrl }) => {
   const [searchQuery, setSearchQuery] = useState("")
   const { pathname } = useLocation()
   const navigate = useNavigate()
@@ -71,7 +77,13 @@ export const Manage = () => {
           />
           <Route
             path={"lists"}
-            element={<Lists debouncedQuery={debouncedQuery} />}
+            element={
+              <Lists
+                setImportList={setImportList}
+                setListUrl={setListUrl}
+                debouncedQuery={debouncedQuery}
+              />
+            }
           />
         </Routes>
       </S.CardList>

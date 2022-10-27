@@ -23,7 +23,11 @@ export const Symbol = styled.div`
 `
 
 export const Name = styled.div`
+  position: relative;
   overflow: hidden;
+  max-width: 150px;
+  height: 15px;
+  text-overflow: ellipsis;
   font-family: "Gilroy";
   font-style: normal;
   font-weight: 400;
@@ -189,4 +193,161 @@ export const ListRowName = styled.div`
   max-width: 135px;
   overflow: hidden;
   text-overflow: ellipsis;
+`
+
+export const Error = styled.div`
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 15px;
+  letter-spacing: 0.03em;
+  text-align: center;
+  font-feature-settings: "tnum" on, "lnum" on;
+  color: #db6d6d;
+`
+
+// static list card
+
+export const StaticListCard = styled(Flex)`
+  padding: 12px 16px;
+  margin: 0 16px;
+  gap: 16px;
+  box-sizing: border-box;
+
+  width: fill-available;
+  height: 64px;
+
+  /* Main color/dark gray */
+
+  background: #141926;
+  border-radius: 24px;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 3;
+  flex-grow: 0;
+`
+
+export const StaticListCardContent = styled(Flex)`
+  /* Auto layout */
+  padding: 0px;
+  gap: 8px;
+
+  height: 40px;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+`
+
+export const StaticListCardInfo = styled(Flex)`
+  /* Auto layout */
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 4px;
+
+  height: 40px;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+`
+
+export const StaticListCardName = styled.div`
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  font-feature-settings: "tnum" on, "lnum" on;
+
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  /* Text/main */
+
+  color: ${theme.textColors.primary};
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+`
+
+export const StaticListCardTokens = styled.div`
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 16px;
+  /* identical to box height */
+
+  letter-spacing: 0.03em;
+  font-feature-settings: "tnum" on, "lnum" on;
+
+  /* Text/2 */
+
+  color: #b1c7fc;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+`
+
+export const StaticListCardLink = styled.a`
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 15px;
+  /* identical to box height */
+
+  letter-spacing: 0.03em;
+  font-feature-settings: "tnum" on, "lnum" on;
+
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  /* Text/link */
+
+  color: ${theme.brandColors.secondary};
+  text-decoration: none;
+`
+
+export const PopoverWrapper = styled.div`
+  position: relative;
+`
+
+export const PopoverContent = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px;
+  box-sizing: border-box;
+  gap: 16px;
+
+  position: absolute;
+  width: 154px;
+  height: 44px;
+  left: 5px;
+  top: 7px;
+  z-index: 120;
+
+  /* Additional color / tooltip */
+
+  background: #28334a;
+  border-radius: 16px;
 `
