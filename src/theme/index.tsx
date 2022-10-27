@@ -246,7 +246,7 @@ export const GradientBorderSearch = styled(Flex)<{ focused?: boolean }>`
     background-image: ${(props) =>
       props.focused
         ? "linear-gradient(to bottom right,#a4ebd4 100%,#63b49b 100%)"
-        : "linear-gradient(to bottom right,#587eb76e 0%,#26324482 20%,#2632447d 40%,#6d99db80 100%)"};
+        : "linear-gradient(to bottom right,#28334A 0%,#28334A 100%)"};
   }
   &:after {
     background: ${(props) => (props.focused ? "#141926" : "#141A27")};
