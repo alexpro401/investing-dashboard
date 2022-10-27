@@ -102,7 +102,7 @@ const InvestorStatistic: FC<Props> = ({ activePools }) => {
         <Avatar size={38} url={userAvatar} address={account} />
         <Flex p="0 0 0 10px" dir="column" ai="flex-start">
           <Text color="#ffffff">{userName}</Text>
-          <div>
+          <Flex full ai="center" jc="flex-start" gap="6">
             <Text fz={12} lh="15px" color="#5a6071">
               Investing
             </Text>{" "}
@@ -110,7 +110,7 @@ const InvestorStatistic: FC<Props> = ({ activePools }) => {
               +2.1%
             </Text>
             <Tooltip id={uuidv4()}>PnL explanation</Tooltip>
-          </div>
+          </Flex>
         </Flex>
       </Flex>
     )
