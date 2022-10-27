@@ -15,6 +15,7 @@ import { copyToClipboard } from "utils/clipboard"
 import { shortenAddress } from "utils"
 import { ICON_NAMES } from "constants/icon-names"
 import { isNil } from "lodash"
+import dexe from "assets/icons/dexe-dark.svg"
 
 export const Scroll = styled.div`
   padding: 16px 0;
@@ -141,6 +142,32 @@ export const List = {
     width: 38px;
   `,
 }
+
+export const ListHead = ({ title, showLabels = true }) => (
+  <List.Head>
+    <Text block color="#E4F2FF">
+      {title}
+    </Text>
+    {showLabels && (
+      <>
+        <Text block color="#B1C7FC">
+          TVL
+        </Text>
+        <Text block color="#B1C7FC" align="right">
+          P&L
+        </Text>
+      </>
+    )}
+  </List.Head>
+)
+export const ListPlaceholder = ({ title }) => (
+  <div>
+    <List.Placeholder>
+      <List.PlaceholderIcon src={dexe} />
+      {title}
+    </List.Placeholder>
+  </div>
+)
 
 export const ButtonContainer = styled(Flex).attrs(() => ({
   full: true,

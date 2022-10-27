@@ -3,47 +3,21 @@ import { useNavigate } from "react-router-dom"
 import { useWeb3React } from "@web3-react/core"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
-import { Text } from "theme"
 import { AppButton } from "common"
 import Modal from "components/Modal"
 import {
   Scroll,
   List,
+  ListHead,
+  ListPlaceholder,
   AccountCard,
   Divider,
   PoolCard,
   ButtonContainer,
 } from "./styled"
-import dexe from "assets/icons/dexe-dark.svg"
 
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { getLastInArray, getPNL, getPriceLP, getUSDPrice } from "utils/formulas"
-
-const ListHead = ({ title, showLabels = true }) => (
-  <List.Head>
-    <Text block color="#E4F2FF">
-      {title}
-    </Text>
-    {showLabels && (
-      <>
-        <Text block color="#B1C7FC">
-          TVL
-        </Text>
-        <Text block color="#B1C7FC" align="right">
-          P&L
-        </Text>
-      </>
-    )}
-  </List.Head>
-)
-const ListPlaceholder = ({ title }) => (
-  <div>
-    <List.Placeholder>
-      <List.PlaceholderIcon src={dexe} />
-      {title}
-    </List.Placeholder>
-  </div>
-)
 
 interface Props {
   isOpen: boolean
