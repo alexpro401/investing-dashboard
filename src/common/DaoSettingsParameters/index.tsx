@@ -1,13 +1,34 @@
-import { Card, CardDescription, CardFormControl, CardHead, Icon } from "common"
+import {
+  AppButton,
+  Card,
+  CardDescription,
+  CardFormControl,
+  CardHead,
+  Icon,
+  TokenChip,
+} from "common"
 import { ICON_NAMES } from "constants/icon-names"
 import Switch from "components/Switch"
-import { DurationField, InputField } from "fields"
-import { FC, HTMLAttributes, useContext } from "react"
+import { DurationField, InputField, OverlapInputField } from "fields"
+import {
+  Dispatch,
+  FC,
+  HTMLAttributes,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useMemo,
+} from "react"
 import {
   DaoProposalSettingsForm,
   FundDaoCreatingContext,
 } from "context/FundDaoCreatingContext"
 import { useFormValidation } from "hooks/useFormValidation"
+import * as S from "forms/CreateFundDaoForm/styled"
+import { useERC20 } from "hooks/useERC20"
+import { readFromClipboard } from "utils/clipboard"
+import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
+import { useActiveWeb3React } from "hooks"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   poolParameters: DaoProposalSettingsForm
@@ -40,6 +61,23 @@ const DaoSettingsParameters: FC<Props> = ({
   const { isValidator } = useContext(FundDaoCreatingContext)
 
   const { getFieldErrorMessage, touchField, isFieldValid } = formValidation
+
+  const [, erc20TokenData] = useERC20(rewardToken.get)
+
+  const { chainId } = useActiveWeb3React()
+
+  const erc20TokenExplorerLink = useMemo(() => {
+    return chainId
+      ? getExplorerLink(chainId, rewardToken.get, ExplorerDataType.ADDRESS)
+      : ""
+  }, [chainId, rewardToken.get])
+
+  const pasteFromClipboard = useCallback(
+    async (dispatchCb: Dispatch<SetStateAction<any>>) => {
+      dispatchCb(await readFromClipboard())
+    },
+    []
+  )
 
   return (
     <>
@@ -159,6 +197,7 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Voting"
             errorMessage={getFieldErrorMessage("minVotesForVoting")}
             onBlur={() => touchField("minVotesForVoting")}
+            hint="1 token=1 Voting Power"
           />
           <InputField
             value={minVotesForCreating.get}
@@ -190,10 +229,58 @@ const DaoSettingsParameters: FC<Props> = ({
           <p>*Rewards only granted for accepted proposals. </p>
         </CardDescription>
         <CardFormControl>
-          <InputField
+          <OverlapInputField
             value={rewardToken.get}
             setValue={rewardToken.set}
             label="ERC-20 token for rewards"
+            hint="Address of the ERC-20 token used for rewards — you will need to send enough of this token to the DAO treasury."
+            labelNodeRight={
+              isFieldValid("rewardToken") ? (
+                <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+              ) : (
+                <></>
+              )
+            }
+            errorMessage={getFieldErrorMessage("rewardToken")}
+            onBlur={() => touchField("rewardToken")}
+            nodeRight={
+              <AppButton
+                type="button"
+                text={erc20TokenData?.name ? "Paste another" : "Paste"}
+                color="default"
+                size="no-paddings"
+                onClick={() =>
+                  erc20TokenData?.name
+                    ? rewardToken.set("")
+                    : pasteFromClipboard(rewardToken.set)
+                }
+              />
+            }
+            overlapNodeLeft={
+              erc20TokenData?.name &&
+              erc20TokenData?.symbol && (
+                <TokenChip
+                  name={erc20TokenData?.name}
+                  symbol={erc20TokenData?.symbol}
+                  link={erc20TokenExplorerLink}
+                />
+              )
+            }
+            overlapNodeRight={
+              erc20TokenData?.name &&
+              erc20TokenData?.symbol && (
+                <AppButton
+                  type="button"
+                  text="Paste another"
+                  color="default"
+                  size="no-paddings"
+                  onClick={() => {
+                    rewardToken.set("")
+                  }}
+                />
+              )
+            }
+            disabled={!!erc20TokenData?.name}
           />
           <InputField
             value={creationReward.get}
@@ -201,6 +288,7 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Amount of tokens for creator"
             errorMessage={getFieldErrorMessage("creationReward")}
             onBlur={() => touchField("creationReward")}
+            hint="Size of the reward for an accepted proposal."
           />
           <InputField
             value={voteRewardsCoefficient.get}
@@ -215,6 +303,7 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Amount of tokens for tx. executor"
             errorMessage={getFieldErrorMessage("executionReward")}
             onBlur={() => touchField("executionReward")}
+            hint="Set % of memeber’s voting tokens to be received as reward (e.g. 1% = 1 reward token for every 100 voted with)"
           />
         </CardFormControl>
       </Card>

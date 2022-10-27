@@ -5,13 +5,10 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react"
+import { SUPPORTED_SOCIALS } from "constants/socials"
 
 export type ExternalFileDocument = {
   name: string
-  url: string
-}
-
-export type ExternalCustomSocialLink = {
   url: string
 }
 
@@ -27,16 +24,9 @@ interface IDaoProposalChangeDaoSettingsCreatingContext {
   }
   websiteUrl: { get: string; set: Dispatch<SetStateAction<string>> }
   description: { get: string; set: Dispatch<SetStateAction<string>> }
-  telegramUrl: { get: string; set: Dispatch<SetStateAction<string>> }
-  twitterUrl: { get: string; set: Dispatch<SetStateAction<string>> }
-  mediumUrl: { get: string; set: Dispatch<SetStateAction<string>> }
-  githubUrl: { get: string; set: Dispatch<SetStateAction<string>> }
-  customUrls: {
-    get: ExternalCustomSocialLink[]
-    set: (
-      value: ExternalCustomSocialLink | ExternalCustomSocialLink[],
-      idx?: number
-    ) => void
+  socialLinks: {
+    get: [SUPPORTED_SOCIALS, string][]
+    set: Dispatch<SetStateAction<[SUPPORTED_SOCIALS, string][]>>
   }
 }
 
@@ -54,14 +44,7 @@ export const DaoProposalChangeDaoSettingsCreatingContext =
     },
     websiteUrl: { get: "", set: () => {} },
     description: { get: "", set: () => {} },
-    telegramUrl: { get: "", set: () => {} },
-    twitterUrl: { get: "", set: () => {} },
-    mediumUrl: { get: "", set: () => {} },
-    githubUrl: { get: "", set: () => {} },
-    customUrls: {
-      get: [],
-      set: () => {},
-    },
+    socialLinks: { get: [], set: () => {} },
   })
 
 const DaoProposalChangeDaoSettingsCreatingContextProvider: React.FC<
@@ -74,13 +57,9 @@ const DaoProposalChangeDaoSettingsCreatingContextProvider: React.FC<
   ])
   const [_websiteUrl, _setWebsiteUrl] = useState<string>("")
   const [_descriptionUrl, _setDescriptionUrl] = useState<string>("")
-  const [_telegramUrl, _setTelegramUrl] = useState<string>("")
-  const [_twitterUrl, _setTwitterUrl] = useState<string>("")
-  const [_mediumUrl, _setMediumUrl] = useState<string>("")
-  const [_githubUrl, _setGithubUrl] = useState<string>("")
-  const [_customUrls, _setCustomUrls] = useState<ExternalCustomSocialLink[]>([
-    { url: "" },
-  ])
+  const [_socialLinks, _setSocialLinks] = useState<
+    [SUPPORTED_SOCIALS, string][]
+  >([])
 
   const _handleChangeDocuments = useCallback((value, idx?: number) => {
     _setDocuments((prev) => {
@@ -96,20 +75,6 @@ const DaoProposalChangeDaoSettingsCreatingContextProvider: React.FC<
     })
   }, [])
 
-  const _handleChangeCustomUrls = useCallback((value, idx?: number) => {
-    _setCustomUrls((prev) => {
-      if (Array.isArray(value)) {
-        return value
-      } else {
-        const newCustomUrls = [...prev]
-        if (idx !== undefined && idx !== null) {
-          newCustomUrls[idx] = value
-        }
-        return newCustomUrls
-      }
-    })
-  }, [])
-
   return (
     <DaoProposalChangeDaoSettingsCreatingContext.Provider
       value={{
@@ -118,11 +83,7 @@ const DaoProposalChangeDaoSettingsCreatingContextProvider: React.FC<
         documents: { get: _documents, set: _handleChangeDocuments },
         websiteUrl: { get: _websiteUrl, set: _setWebsiteUrl },
         description: { get: _descriptionUrl, set: _setDescriptionUrl },
-        telegramUrl: { get: _telegramUrl, set: _setTelegramUrl },
-        twitterUrl: { get: _twitterUrl, set: _setTwitterUrl },
-        mediumUrl: { get: _mediumUrl, set: _setMediumUrl },
-        githubUrl: { get: _githubUrl, set: _setGithubUrl },
-        customUrls: { get: _customUrls, set: _handleChangeCustomUrls },
+        socialLinks: { get: _socialLinks, set: _setSocialLinks },
       }}
     >
       {children}

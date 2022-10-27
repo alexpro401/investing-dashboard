@@ -1,85 +1,90 @@
-import { HTMLAttributes, useCallback, ReactNode, useMemo } from "react"
-
-import { Collapse } from "common"
-import { ICON_NAMES } from "constants/icon-names"
-import { readFromClipboard } from "utils/clipboard"
+import { InputFieldProps } from "fields"
 
 import * as S from "./styled"
+import { ICON_NAMES } from "constants/icon-names"
+import { SUPPORTED_SOCIALS } from "constants/socials"
+import { useCallback, useMemo } from "react"
+import { readFromClipboard } from "utils/clipboard"
+import { isValidUrl } from "utils"
+import { AppButton } from "common"
 
-interface ISocialLinkFieldProps<V extends string>
-  extends HTMLAttributes<HTMLInputElement> {
-  value: V
-  setValue?: (value: V) => void
-  icon?: ICON_NAMES
-  label?: string
-  id: string
-  errorMessage?: string
-  readonly?: boolean
-  disabled?: boolean
-  nodeRight?: ReactNode
+interface Props<V extends string | number> extends InputFieldProps<V> {
+  socialType: SUPPORTED_SOCIALS
+  onPaste?: () => void
+  onRemove?: () => void
 }
 
-function SocialLinkField<V extends string>({
+function SocialLinkField<V extends string | number>({
+  socialType,
   value,
   setValue,
-  id,
-  icon,
   label,
+  placeholder,
+  labelNodeRight,
   errorMessage,
-  readonly = false,
-  disabled = false,
-  nodeRight,
+  onBlur,
+  onPaste,
+  onRemove,
   ...rest
-}: ISocialLinkFieldProps<V>) {
-  const handlePasteValue = useCallback(async () => {
-    const text = await readFromClipboard()
-    if (text && setValue) {
-      setValue(text as V)
+}: Props<V>) {
+  const iconName = useMemo(() => {
+    const iconNamesMap = {
+      facebook: ICON_NAMES.facebook,
+      linkedin: ICON_NAMES.linkedin,
+      medium: ICON_NAMES.medium,
+      telegram: ICON_NAMES.telegram,
+      twitter: ICON_NAMES.twitter,
+      github: ICON_NAMES.github,
+      other: "",
     }
-  }, [setValue])
+    return iconNamesMap[socialType] as ICON_NAMES
+  }, [socialType])
 
-  const isActive: boolean = useMemo(() => value !== "", [value])
+  const handlePaste = useCallback(async () => {
+    const clipboardValue = await readFromClipboard()
+
+    if (isValidUrl(clipboardValue) && setValue) {
+      setValue(clipboardValue as V)
+
+      if (onPaste) {
+        onPaste()
+      }
+    }
+  }, [onPaste, setValue])
+
+  const handleRemove = useCallback(() => {
+    if (onRemove) {
+      onRemove()
+    }
+  }, [onRemove])
 
   return (
-    <S.Root isDisabled={disabled} isReadonly={readonly} {...rest}>
-      <S.InputWrp>
-        <S.Input
-          id={`input-field--${id}`}
-          value={value}
-          onWheel={(event) => {
-            event.currentTarget.blur()
-          }}
-          placeholder={" "}
-          tabIndex={-1}
-          type={"text"}
-          disabled={true}
-          hasNodeLeft={!!icon && !!label}
-          hasNodeRight={!!nodeRight}
-          autoComplete="off"
-        />
-        <S.Label isActive={isActive} empty={isActive && !label}>
-          {isActive
-            ? label
-              ? label[0].toUpperCase() + label.slice(1)
-              : ""
-            : ""}
-        </S.Label>
-        {icon && (
-          <S.IconWrap>
-            <S.Icon name={icon} isActive={isActive} />
-          </S.IconWrap>
-        )}
-        {nodeRight && <S.NodeRightWrap>{nodeRight}</S.NodeRightWrap>}
-        <S.Button
-          visible={!isActive}
-          text={label ? `Paste ${label}` : "Paste other"}
-          hasNodeLeft={!!icon && !!label}
-          onClick={handlePasteValue}
-        />
-      </S.InputWrp>
-      <Collapse isOpen={!!errorMessage} duration={0.3}>
-        <S.ErrorMessage>{errorMessage}</S.ErrorMessage>
-      </Collapse>
+    <S.Root>
+      <S.OverlapInputFieldWrp
+        value={value}
+        label={value && label}
+        labelNodeRight={labelNodeRight}
+        placeholder={placeholder}
+        onInput={(e) => e.preventDefault()}
+        overlapNodeLeft={
+          !value ? (
+            <S.OverlapPaste>
+              <AppButton
+                color="default"
+                size="no-paddings"
+                text={`Paste ${socialType}`}
+                iconLeft={iconName}
+                onClick={handlePaste}
+              />
+            </S.OverlapPaste>
+          ) : null
+        }
+        nodeLeft={iconName && value ? <S.InputIcon name={iconName} /> : null}
+        nodeRight={value ? <S.RemoveBtn onClick={handleRemove} /> : null}
+        errorMessage={errorMessage}
+        onBlur={onBlur}
+        {...rest}
+      />
     </S.Root>
   )
 }
