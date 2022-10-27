@@ -36,21 +36,10 @@ const ChangeDAOSettings: React.FC = () => {
     documents,
     description,
     websiteUrl,
-    twitterUrl,
-    telegramUrl,
-    mediumUrl,
-    githubUrl,
     socialLinks,
-    customUrls, // TODO: remove
   } = useContext(DaoProposalChangeDaoSettingsCreatingContext)
 
   const [socialLinksOpened, setSocialLinksOpened] = useState<boolean>(false)
-
-  const customLinksNotEmpty = useMemo(
-    () =>
-      customUrls.get.filter((customUrl) => customUrl.url !== "").length !== 0,
-    [customUrls]
-  )
 
   const {
     touchField,
@@ -65,10 +54,6 @@ const ChangeDAOSettings: React.FC = () => {
       documents: documents.get,
       websiteUrl: websiteUrl.get,
       description: description.get,
-      telegramUrl: telegramUrl.get,
-      twitterUrl: twitterUrl.get,
-      mediumUrl: mediumUrl.get,
-      githubUrl: githubUrl.get,
 
       ...(socialLinks.get.length
         ? {
@@ -86,8 +71,6 @@ const ChangeDAOSettings: React.FC = () => {
             },
           }
         : {}),
-
-      customUrls: customUrls.get, // TODO: remove
     },
     {
       avatarUrl: { required },
@@ -147,29 +130,6 @@ const ChangeDAOSettings: React.FC = () => {
                     },
                   }
                 : {}),
-            },
-          }
-        : {}),
-
-      // TODO: remove
-      ...(telegramUrl.get
-        ? { telegramUrl: { maxLength: maxLength(200), isUrl } }
-        : {}),
-      ...(twitterUrl.get
-        ? { twitterUrl: { maxLength: maxLength(200), isUrl } }
-        : {}),
-      ...(mediumUrl.get
-        ? { mediumUrl: { maxLength: maxLength(200), isUrl } }
-        : {}),
-      ...(githubUrl.get
-        ? { githubUrl: { maxLength: maxLength(200), isUrl } }
-        : {}),
-      ...(customLinksNotEmpty
-        ? {
-            customUrls: {
-              $every: {
-                url: { maxLength: maxLength(200), isUrl },
-              },
             },
           }
         : {}),
