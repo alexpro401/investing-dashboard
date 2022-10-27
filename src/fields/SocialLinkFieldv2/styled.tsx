@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 import { AppButton, Icon } from "common"
 import {
   fieldLabelHoverColor,
@@ -6,15 +6,29 @@ import {
   getDefaultFieldBorderStyles,
 } from "../styled"
 import { ICON_NAMES } from "constants/icon-names"
+import { OverlapInputField } from "fields"
 
-export const Root = styled.div<{
-  isGap: boolean
-}>`
+export const Root = styled.div``
+
+export const OverlapPaste = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: ${({ isGap }) => (isGap ? "24px" : "0")};
-  overflow: hidden;
-  transition: all 0.15s ease;
+  align-items: center;
+  gap: 16px;
+  color: ${(props) => props.theme.brandColors.secondary};
+`
+
+export const OverlapInputFieldWrp = styled(OverlapInputField)`
+  ${(props) =>
+    !props.value
+      ? css`
+          svg {
+            color: ${(props) => props.theme.brandColors.secondary} !important;
+          }
+        `
+      : ""}
+  input {
+    pointer-events: none;
+  }
 `
 
 export const InputBtn = styled(AppButton).attrs(() => ({

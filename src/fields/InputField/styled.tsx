@@ -27,7 +27,7 @@ export const Root = styled.div<{
   width: 100%;
   flex: 1;
 
-  ${(props) => (props.isDisabled || props.isReadonly ? "opacity: 0.5" : "")}
+  ${(props) => (props.isDisabled ? "opacity: 0.5" : "")}
 `
 
 export const InputWrp = styled(motion.div)`
@@ -78,7 +78,6 @@ export const Input = styled(motion.input)<{
     background: ${fieldBg};
   }
 
-  &:read-only,
   &:disabled {
     cursor: default;
     filter: grayscale(100%);

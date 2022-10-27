@@ -45,6 +45,7 @@ import { isValidUrl } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
+import { SUPPORTED_SOCIALS } from "../../../constants/socials"
 
 const TitlesStep: FC = () => {
   const daoPoolFormContext = useContext(FundDaoCreatingContext)
@@ -99,7 +100,9 @@ const TitlesStep: FC = () => {
               twitter: socialLinks.get[4][1],
               github: socialLinks.get[5][1],
 
-              others: socialLinks.get.slice(6, socialLinks.get.length),
+              others: socialLinks.get
+                .slice(6, socialLinks.get.length)
+                .map((el) => ({ key: el[0], value: el[1] })),
             },
           }
         : {}),
@@ -152,7 +155,9 @@ const TitlesStep: FC = () => {
                     github: { isUrl },
                   }
                 : {}),
-              ...(socialLinks.get.slice(6, socialLinks.get.length).length
+              ...(socialLinks.get
+                .slice(6, socialLinks.get.length)
+                .map((el) => ({ key: el[0], value: el[1] })).length
                 ? {
                     others: {
                       $every: {
@@ -508,6 +513,17 @@ const TitlesStep: FC = () => {
                   key={idx}
                   socialType={key}
                   label={key}
+                  labelNodeRight={
+                    isFieldValid(
+                      key === "other"
+                        ? `socialLinks.others[${idx - 6}].value`
+                        : `socialLinks.${key}`
+                    ) ? (
+                      <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                    ) : (
+                      <></>
+                    )
+                  }
                   value={value}
                   setValue={(val) => {
                     socialLinks.set((prevState) => {
@@ -516,41 +532,48 @@ const TitlesStep: FC = () => {
                       return nextState
                     })
                   }}
-                  onShowInput={() => {
-                    if (idx === socialLinks.get.length - 1) {
-                      socialLinks.set((prevState) => {
-                        const nextState = [...prevState]
-                        nextState.push(["other", ""])
-                        return nextState
-                      })
-                    }
+                  onRemove={() => {
+                    socialLinks.set((prevState) => {
+                      let nextState = [...prevState]
+
+                      if (key === "other") {
+                        nextState = [...prevState.filter((el, i) => i !== idx)]
+                      } else {
+                        nextState[idx][1] = ""
+                      }
+
+                      return nextState
+                    })
                   }}
-                  onHideInput={() => {
-                    if (key === "other" && idx !== socialLinks.get.length - 1) {
-                      socialLinks.set((prevState) => {
-                        const nextState = [
-                          ...prevState.filter((el, i) => i !== idx),
-                        ]
-                        return nextState
-                      })
-                    }
-                  }}
-                  errorMessage={
-                    key !== "other"
-                      ? getFieldErrorMessage(`socialLinks.${key}`)
-                      : getFieldErrorMessage(`socialLinks.others[${idx - 6}]`)
-                  }
+                  errorMessage={getFieldErrorMessage(
+                    key === "other"
+                      ? `socialLinks.others[${idx - 6}].value`
+                      : `socialLinks.${key}`
+                  )}
                   onBlur={() => {
                     if (!!value) {
-                      if (key === "other") {
-                        touchField(`socialLinks.others[${idx - 6}]`)
-                      } else {
-                        touchField(`socialLinks.${key}`)
-                      }
+                      touchField(
+                        key === "other"
+                          ? `socialLinks.others[${idx - 6}].value`
+                          : `socialLinks.${key}`
+                      )
                     }
                   }}
                 />
               ))}
+              <S.CardAddBtn
+                text="+ Add other"
+                size="no-paddings"
+                color="default"
+                onClick={() => {
+                  socialLinks.set((prevState) => {
+                    return [
+                      ...prevState,
+                      ["other", ""] as [SUPPORTED_SOCIALS, string],
+                    ]
+                  })
+                }}
+              />
             </CardFormControl>
           </Collapse>
         </Card>

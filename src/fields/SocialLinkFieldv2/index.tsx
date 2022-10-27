@@ -1,16 +1,17 @@
-import { InputField, InputFieldProps } from "fields"
+import { InputFieldProps } from "fields"
 
 import * as S from "./styled"
 import { ICON_NAMES } from "constants/icon-names"
 import { SUPPORTED_SOCIALS } from "constants/socials"
-import { useCallback, useMemo, useState } from "react"
-import { Collapse } from "common"
-import { useEffectOnce } from "react-use"
+import { useCallback, useMemo } from "react"
+import { readFromClipboard } from "utils/clipboard"
+import { isValidUrl } from "utils"
+import { AppButton } from "../../common"
 
 interface Props<V extends string | number> extends InputFieldProps<V> {
   socialType: SUPPORTED_SOCIALS
-  onShowInput?: () => void
-  onHideInput?: () => void
+  onPaste?: () => void
+  onRemove?: () => void
 }
 
 function SocialLinkField<V extends string | number>({
@@ -22,11 +23,9 @@ function SocialLinkField<V extends string | number>({
   labelNodeRight,
   errorMessage,
   onBlur,
-  onShowInput,
-  onHideInput,
+  onPaste,
+  onRemove,
 }: Props<V>) {
-  const [isShowInput, setIsShowInput] = useState(false)
-
   const iconName = useMemo(() => {
     const iconNamesMap = {
       facebook: ICON_NAMES.facebook,
@@ -40,58 +39,52 @@ function SocialLinkField<V extends string | number>({
     return iconNamesMap[socialType] as ICON_NAMES
   }, [socialType])
 
-  const handleInputBtnClick = useCallback(() => {
-    if (isShowInput) {
-      if (setValue) {
-        setValue("" as V)
-      }
-      setIsShowInput(false)
-      if (onHideInput) {
-        onHideInput()
-      }
-    } else {
-      setIsShowInput(true)
-      if (onShowInput) {
-        onShowInput()
-      }
+  const _errorMessage = useMemo(() => errorMessage || "", [errorMessage])
+
+  const handlePaste = useCallback(async () => {
+    const clipboardValue = await readFromClipboard()
+
+    if (isValidUrl(clipboardValue) && setValue) {
+      setValue(clipboardValue as V)
     }
-  }, [isShowInput, onShowInput, setValue])
 
-  useEffectOnce(() => {
-    setIsShowInput(!!value)
-  })
+    if (onPaste) {
+      onPaste()
+    }
+  }, [onPaste, setValue])
 
-  const handleInput = useCallback(
-    (e) => {
-      if (setValue) {
-        setValue(e.currentTarget.value)
-      }
-    },
-    [setValue]
-  )
+  const handleRemove = useCallback(() => {
+    if (onRemove) {
+      onRemove()
+    }
+  }, [onRemove])
 
   return (
-    <S.Root isGap={!!value || isShowInput}>
-      <S.InputBtn
-        iconLeft={iconName}
-        text={`Paste ${socialType}`}
-        onClick={handleInputBtnClick}
+    <S.Root>
+      <S.OverlapInputFieldWrp
+        value={value}
+        label={value && label}
+        labelNodeRight={labelNodeRight}
+        placeholder={placeholder}
+        onInput={(e) => e.preventDefault()}
+        overlapNodeLeft={
+          !value ? (
+            <S.OverlapPaste>
+              <AppButton
+                color="default"
+                size="no-paddings"
+                text={`Paste ${socialType}`}
+                iconLeft={iconName}
+                onClick={handlePaste}
+              />
+            </S.OverlapPaste>
+          ) : null
+        }
+        nodeLeft={iconName && value ? <S.InputIcon name={iconName} /> : null}
+        nodeRight={value ? <S.RemoveBtn onClick={handleRemove} /> : null}
+        errorMessage={_errorMessage}
+        onBlur={onBlur}
       />
-      <Collapse isOpen={!!value || isShowInput}>
-        <InputField
-          value={value}
-          label={label}
-          labelNodeRight={labelNodeRight}
-          placeholder={placeholder}
-          onInput={handleInput}
-          nodeLeft={iconName ? <S.InputIcon name={iconName} /> : null}
-          nodeRight={
-            value ? <S.RemoveBtn onClick={handleInputBtnClick} /> : null
-          }
-          errorMessage={errorMessage}
-          onBlur={onBlur}
-        />
-      </Collapse>
     </S.Root>
   )
 }
