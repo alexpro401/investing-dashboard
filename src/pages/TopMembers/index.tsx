@@ -5,9 +5,9 @@ import { CubeSpinner } from "react-spinners-kit"
 import { Routes, Route } from "react-router-dom"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
-import TopMembersBar from "components/TopMembersBar"
-import MemberMobile from "components/MemberMobile"
 import LoadMore from "components/LoadMore"
+import TopMembersBar from "components/TopMembersBar"
+import PoolStatisticCard from "components/cards/PoolStatistic"
 
 import { PoolType } from "constants/types"
 
@@ -77,7 +77,7 @@ const List: React.FC<Props> = ({ poolType }) => {
         {pools[poolType].map((pool, index) => (
           <To key={pool.id} to={`/pool/profile/${pool.type}/${pool.id}`}>
             <Flex p="16px 0 0" full>
-              <MemberMobile data={pool} index={index} />
+              <PoolStatisticCard data={pool} index={index} />
             </Flex>
           </To>
         ))}

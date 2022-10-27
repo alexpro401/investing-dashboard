@@ -13,13 +13,13 @@ import TabsLight from "components/TabsLight"
 import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
 import PoolPnlInfo from "components/PoolPnlInfo"
-import MemberMobile from "components/MemberMobile"
 import { Profiles } from "components/Header/Components"
 import PoolLockedFunds from "components/PoolLockedFunds"
 import FundDetailsCard from "components/FundDetailsCard"
 import Button, { SecondaryButton } from "components/Button"
 import FundStatisticsCard from "components/FundStatisticsCard"
 import PerformanceFeeCard from "components/PerformanceFeeCard"
+import PoolStatisticCard from "components/cards/PoolStatistic"
 
 import pencil from "assets/icons/pencil.svg"
 
@@ -42,11 +42,7 @@ const poolsClient = createClient({
   requestPolicy: "network-only",
 })
 
-interface Props {}
-
-function Trader(props: Props) {
-  const {} = props
-
+function Trader() {
   const { account } = useWeb3React()
   const { pathname } = useLocation()
   const { poolAddress, poolType } = useParams<{
@@ -135,7 +131,7 @@ function Trader(props: Props) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <MemberMobile data={poolData}>
+      <PoolStatisticCard data={poolData}>
         <ButtonContainer>
           <SecondaryButton
             fz={14}
@@ -156,7 +152,7 @@ function Trader(props: Props) {
             Positions
           </Button>
         </ButtonContainer>
-      </MemberMobile>
+      </PoolStatisticCard>
 
       <TabCard>
         <TabsLight
