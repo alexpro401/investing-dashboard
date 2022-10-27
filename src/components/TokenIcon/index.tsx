@@ -58,10 +58,17 @@ export const Loader = styled.div<IconProps>`
   background: linear-gradient(64.44deg, #191e2b 32.35%, #272e3e 100%);
 `
 
-interface IProps {
+interface BaseProps {
   size?: number
-  address?: string
   m?: string
+}
+
+interface IDefaultProps extends BaseProps {
+  symbol: string
+}
+
+interface IProps extends BaseProps {
+  address?: string
 }
 
 const getIconsPathByChain = (id, address) => {
@@ -87,6 +94,12 @@ const checkImageBroken = (chainId, account, address) => {
     localStorage.getItem(`broken-${chainId}-${account}-${address}`) === "true"
   )
 }
+
+export const DefaultTokenIcon = ({ size, m, symbol }: IDefaultProps) => (
+  <Fallback m={m || "0 8px 0 0"} size={size}>
+    <SymbolLetter>{symbol[0]}</SymbolLetter>
+  </Fallback>
+)
 
 const TokenIcon: React.FC<IProps> = ({ size, address, m }) => {
   const { account, chainId } = useWeb3React()
@@ -126,11 +139,7 @@ const TokenIcon: React.FC<IProps> = ({ size, address, m }) => {
   }, [account, address, chainId, src])
 
   if (noImage && tokenData) {
-    return (
-      <Fallback m={m || "0 8px 0 0"} size={size}>
-        <SymbolLetter>{tokenData.symbol[0]}</SymbolLetter>
-      </Fallback>
-    )
+    return <DefaultTokenIcon symbol={tokenData.symbol} m={m} size={size} />
   }
 
   if (isLoading) {

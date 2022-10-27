@@ -1,6 +1,6 @@
 import { AppButton } from "common"
 import styled from "styled-components"
-import { Flex } from "theme"
+import theme, { Flex } from "theme"
 
 // TOKEN ITEM
 
@@ -106,4 +106,87 @@ export const TokenContainer = styled(Flex)<{ disabled?: boolean }>`
 export const RemoveButton = styled(AppButton)`
   padding: 0;
   border-radius: 0;
+`
+
+// LIST ROW
+
+// list row container
+export const ListRow = styled(Flex)`
+  margin: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 16px;
+
+  width: fill-available;
+  height: 64px;
+
+  /* Main color/dark gray */
+
+  background: #141926;
+  border-radius: 24px;
+  box-sizing: border-box;
+`
+
+// list row content
+export const ListRowContent = styled(Flex)`
+  /* Auto layout */
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 8px;
+
+  height: 40px;
+
+  /* Inside auto layout */
+
+  flex: 1 0 auto;
+  order: 0;
+`
+
+// list row tokens counter
+export const ListRowTokensCounter = styled(Flex)`
+  align-items: center;
+  padding: 0px;
+  gap: 5px;
+
+  height: 16px;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 16px;
+  /* identical to box height */
+
+  letter-spacing: 0.03em;
+  font-feature-settings: "tnum" on, "lnum" on;
+
+  /* Text/2 */
+
+  color: ${theme.textColors.secondary};
+`
+
+// list row name
+export const ListRowName = styled.div`
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  font-feature-settings: "tnum" on, "lnum" on;
+  color: ${theme.textColors.primary};
+  max-width: 135px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `

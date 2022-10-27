@@ -1,13 +1,14 @@
 import RouteTabs from "components/RouteTabs"
 import Search from "components/Search"
 import { ITab } from "interfaces"
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import * as S from "modals/TokenSelect/styled"
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom"
 import isActiveRoute from "utils/isActiveRoute"
 import { AppButton } from "common"
 import useDebounce from "hooks/useDebounce"
 import Tokens from "./Tokens"
+import Lists from "./Lists"
 
 export const Manage = () => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -42,6 +43,11 @@ export const Manage = () => {
     [manageTabs, pathname]
   )
 
+  // clear search query on tab change
+  useEffect(() => {
+    setSearchQuery("")
+  }, [pathname])
+
   const handleBack = useCallback(() => {
     navigate(root + "/modal/search")
   }, [navigate, root])
@@ -62,6 +68,10 @@ export const Manage = () => {
           <Route
             path={"tokens"}
             element={<Tokens debouncedQuery={debouncedQuery} />}
+          />
+          <Route
+            path={"lists"}
+            element={<Lists debouncedQuery={debouncedQuery} />}
           />
         </Routes>
       </S.CardList>
