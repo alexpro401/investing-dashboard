@@ -23,7 +23,7 @@ import {
   OverlapInputField,
   TextareaField,
   ExternalDocumentField,
-  SocialLinkFieldv2,
+  SocialLinkField,
 } from "fields"
 import Switch from "components/Switch"
 import Avatar from "components/Avatar"
@@ -45,7 +45,7 @@ import { isValidUrl } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
-import { SUPPORTED_SOCIALS } from "../../../constants/socials"
+import { SUPPORTED_SOCIALS } from "constants/socials"
 
 const TitlesStep: FC = () => {
   const daoPoolFormContext = useContext(FundDaoCreatingContext)
@@ -509,7 +509,7 @@ const TitlesStep: FC = () => {
           <Collapse isOpen={!!socialLinks.get || isShowSocials}>
             <CardFormControl>
               {socialLinks.get.map(([key, value], idx) => (
-                <SocialLinkFieldv2
+                <SocialLinkField
                   key={idx}
                   socialType={key}
                   label={key}

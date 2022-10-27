@@ -1,10 +1,6 @@
 import styled, { css } from "styled-components"
 import { AppButton, Icon } from "common"
-import {
-  fieldLabelHoverColor,
-  fieldPaddings,
-  getDefaultFieldBorderStyles,
-} from "../styled"
+import { fieldLabelHoverColor } from "fields/styled"
 import { ICON_NAMES } from "constants/icon-names"
 import { OverlapInputField } from "fields"
 
@@ -28,23 +24,6 @@ export const OverlapInputFieldWrp = styled(OverlapInputField)`
       : ""}
   input {
     pointer-events: none;
-  }
-`
-
-export const InputBtn = styled(AppButton).attrs(() => ({
-  type: "button",
-  color: "default",
-  size: "no-paddings",
-}))`
-  width: 100%;
-  padding: ${fieldPaddings};
-  ${getDefaultFieldBorderStyles()}
-  border-radius: 16px !important;
-  justify-content: flex-start;
-
-  &:hover,
-  &:focus {
-    border: 1px solid ${"#293C54"}!important;
   }
 `
 

@@ -8,6 +8,7 @@ import {
   CardDescription,
   Icon,
   CardFormControl,
+  Collapse,
 } from "common"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { CreateDaoCardStepNumber } from "forms/CreateFundDaoForm/components"
@@ -25,6 +26,7 @@ import { required, minLength, maxLength, isUrl } from "utils/validators"
 import { isValidUrl } from "utils"
 
 import * as S from "../styled"
+import { SUPPORTED_SOCIALS } from "constants/socials"
 
 const ChangeDAOSettings: React.FC = () => {
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
@@ -38,7 +40,8 @@ const ChangeDAOSettings: React.FC = () => {
     telegramUrl,
     mediumUrl,
     githubUrl,
-    customUrls,
+    socialLinks,
+    customUrls, // TODO: remove
   } = useContext(DaoProposalChangeDaoSettingsCreatingContext)
 
   const [socialLinksOpened, setSocialLinksOpened] = useState<boolean>(false)
@@ -66,7 +69,25 @@ const ChangeDAOSettings: React.FC = () => {
       twitterUrl: twitterUrl.get,
       mediumUrl: mediumUrl.get,
       githubUrl: githubUrl.get,
-      customUrls: customUrls.get,
+
+      ...(socialLinks.get.length
+        ? {
+            socialLinks: {
+              facebook: socialLinks.get[0][1],
+              linkedin: socialLinks.get[1][1],
+              medium: socialLinks.get[2][1],
+              telegram: socialLinks.get[3][1],
+              twitter: socialLinks.get[4][1],
+              github: socialLinks.get[5][1],
+
+              others: socialLinks.get
+                .slice(6, socialLinks.get.length)
+                .map((el) => ({ key: el[0], value: el[1] })),
+            },
+          }
+        : {}),
+
+      customUrls: customUrls.get, // TODO: remove
     },
     {
       avatarUrl: { required },
@@ -80,6 +101,57 @@ const ChangeDAOSettings: React.FC = () => {
       },
       websiteUrl: { required, isUrl, maxLength: maxLength(200) },
       description: { required, maxLength: maxLength(1000) },
+
+      ...(socialLinks.get.length
+        ? {
+            socialLinks: {
+              required,
+              ...(socialLinks.get[0][1]
+                ? {
+                    facebook: { isUrl },
+                  }
+                : {}),
+              ...(socialLinks.get[1][1]
+                ? {
+                    linkedin: { isUrl },
+                  }
+                : {}),
+              ...(socialLinks.get[2][1]
+                ? {
+                    medium: { isUrl },
+                  }
+                : {}),
+              ...(socialLinks.get[3][1]
+                ? {
+                    telegram: { isUrl },
+                  }
+                : {}),
+              ...(socialLinks.get[4][1]
+                ? {
+                    twitter: { isUrl },
+                  }
+                : {}),
+              ...(socialLinks.get[5][1]
+                ? {
+                    github: { isUrl },
+                  }
+                : {}),
+              ...(socialLinks.get
+                .slice(6, socialLinks.get.length)
+                .map((el) => ({ key: el[0], value: el[1] })).length
+                ? {
+                    others: {
+                      $every: {
+                        isUrl,
+                      },
+                    },
+                  }
+                : {}),
+            },
+          }
+        : {}),
+
+      // TODO: remove
       ...(telegramUrl.get
         ? { telegramUrl: { maxLength: maxLength(200), isUrl } }
         : {}),
@@ -111,6 +183,19 @@ const ChangeDAOSettings: React.FC = () => {
       nextCb()
     }
   }, [nextCb, touchForm, isFieldsValid])
+
+  const handleAddSocials = useCallback(() => {
+    socialLinks.set([
+      ["facebook", ""],
+      ["linkedin", ""],
+      ["medium", ""],
+      ["telegram", ""],
+      ["twitter", ""],
+      ["github", ""],
+      ["other", ""],
+    ])
+    setSocialLinksOpened(true)
+  }, [socialLinks])
 
   return (
     <>
@@ -179,157 +264,85 @@ const ChangeDAOSettings: React.FC = () => {
               errorMessage={getFieldErrorMessage("description")}
               onBlur={() => touchField("description")}
             />
-            {socialLinksOpened && (
-              <>
-                <SocialLinkField
-                  id="twitter"
-                  label="twitter"
-                  icon={ICON_NAMES.telegram}
-                  value={telegramUrl.get}
-                  setValue={telegramUrl.set}
-                  onBlur={() => touchField("telegramUrl")}
-                  errorMessage={getFieldErrorMessage("telegramUrl")}
-                  nodeRight={
-                    telegramUrl.get !== "" ? (
-                      <AppButton
-                        type="button"
-                        color="default"
-                        size="no-paddings"
-                        iconRight={ICON_NAMES.trash}
-                        onClick={() => telegramUrl.set("")}
-                      />
-                    ) : (
-                      <></>
-                    )
-                  }
-                />
-                <SocialLinkField
-                  id="telegram"
-                  label="telegram"
-                  icon={ICON_NAMES.twitter}
-                  value={twitterUrl.get}
-                  setValue={twitterUrl.set}
-                  onBlur={() => touchField("twitterUrl")}
-                  errorMessage={getFieldErrorMessage("twitterUrl")}
-                  nodeRight={
-                    twitterUrl.get !== "" ? (
-                      <AppButton
-                        type="button"
-                        color="default"
-                        size="no-paddings"
-                        iconRight={ICON_NAMES.trash}
-                        onClick={() => twitterUrl.set("")}
-                      />
-                    ) : (
-                      <></>
-                    )
-                  }
-                />
-                <SocialLinkField
-                  id="mediumUrl"
-                  label="medium"
-                  icon={ICON_NAMES.medium}
-                  value={mediumUrl.get}
-                  setValue={mediumUrl.set}
-                  onBlur={() => touchField("mediumUrl")}
-                  errorMessage={getFieldErrorMessage("mediumUrl")}
-                  nodeRight={
-                    mediumUrl.get !== "" ? (
-                      <AppButton
-                        type="button"
-                        color="default"
-                        size="no-paddings"
-                        iconRight={ICON_NAMES.trash}
-                        onClick={() => mediumUrl.set("")}
-                      />
-                    ) : (
-                      <></>
-                    )
-                  }
-                />
-                <SocialLinkField
-                  id="githubUrl"
-                  label="github"
-                  icon={ICON_NAMES.github}
-                  value={githubUrl.get}
-                  setValue={githubUrl.set}
-                  onBlur={() => touchField("githubUrl")}
-                  errorMessage={getFieldErrorMessage("githubUrl")}
-                  nodeRight={
-                    githubUrl.get !== "" ? (
-                      <AppButton
-                        type="button"
-                        color="default"
-                        size="no-paddings"
-                        iconRight={ICON_NAMES.trash}
-                        onClick={() => githubUrl.set("")}
-                      />
-                    ) : (
-                      <></>
-                    )
-                  }
-                />
-                {customUrls.get.map((el, idx) => {
-                  const errorMessage = customLinksNotEmpty
-                    ? !isUrl(el.url).isValid
-                      ? isUrl(el.url).message
-                      : !maxLength(200)(el.url).isValid
-                      ? maxLength(200)(el.url).message
-                      : undefined
-                    : undefined
 
-                  return (
-                    <SocialLinkField
-                      key={idx}
-                      id={`custom-social-link-${idx}`}
-                      value={el.url}
-                      setValue={(newUrl: string) => {
-                        customUrls.set({ url: newUrl }, idx)
-                      }}
-                      errorMessage={errorMessage}
-                      nodeRight={
-                        el.url !== "" || idx !== 0 ? (
-                          <AppButton
-                            type="button"
-                            color="default"
-                            size="no-paddings"
-                            iconRight={ICON_NAMES.trash}
-                            onClick={() => {
-                              if (idx !== 0) {
-                                customUrls.set([
-                                  ...customUrls.get.filter(
-                                    (_, index) => index !== idx
-                                  ),
-                                ])
-                              } else {
-                                customUrls.set({ url: "" }, idx)
-                              }
-                            }}
-                          />
-                        ) : (
-                          <></>
+            <Collapse isOpen={!!socialLinks.get && socialLinksOpened}>
+              <CardFormControl>
+                {socialLinks.get.map(([key, value], idx) => (
+                  <SocialLinkField
+                    key={idx}
+                    socialType={key}
+                    label={key}
+                    labelNodeRight={
+                      isFieldValid(
+                        key === "other"
+                          ? `socialLinks.others[${idx - 6}].value`
+                          : `socialLinks.${key}`
+                      ) ? (
+                        <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                      ) : (
+                        <></>
+                      )
+                    }
+                    value={value}
+                    setValue={(val) => {
+                      socialLinks.set((prevState) => {
+                        const nextState = [...prevState]
+                        nextState[idx][1] = val as string
+                        return nextState
+                      })
+                    }}
+                    onRemove={() => {
+                      socialLinks.set((prevState) => {
+                        let nextState = [...prevState]
+
+                        if (key === "other") {
+                          nextState = [
+                            ...prevState.filter((el, i) => i !== idx),
+                          ]
+                        } else {
+                          nextState[idx][1] = ""
+                        }
+
+                        return nextState
+                      })
+                    }}
+                    errorMessage={getFieldErrorMessage(
+                      key === "other"
+                        ? `socialLinks.others[${idx - 6}].value`
+                        : `socialLinks.${key}`
+                    )}
+                    onBlur={() => {
+                      if (!!value) {
+                        touchField(
+                          key === "other"
+                            ? `socialLinks.others[${idx - 6}].value`
+                            : `socialLinks.${key}`
                         )
                       }
-                    />
-                  )
-                })}
-              </>
-            )}
+                    }}
+                  />
+                ))}
+                <S.CardAddBtn
+                  text="+ Add other"
+                  size="no-paddings"
+                  color="default"
+                  onClick={() => {
+                    socialLinks.set((prevState) => {
+                      return [
+                        ...prevState,
+                        ["other", ""] as [SUPPORTED_SOCIALS, string],
+                      ]
+                    })
+                  }}
+                />
+              </CardFormControl>
+            </Collapse>
           </CardFormControl>
-          {!socialLinksOpened && (
+          {!socialLinks.get.length && (
             <S.CardAddBtn
               color="default"
               text="+ Add social links"
-              onClick={() => setSocialLinksOpened(true)}
-            />
-          )}
-          {socialLinksOpened && (
-            <S.CardAddBtn
-              color="default"
-              text="+ Add more"
-              onClick={() => {
-                customUrls.set([...customUrls.get, { url: "" }])
-              }}
+              onClick={handleAddSocials}
             />
           )}
         </Card>

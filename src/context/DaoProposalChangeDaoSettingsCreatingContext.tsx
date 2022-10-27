@@ -5,6 +5,7 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react"
+import { SUPPORTED_SOCIALS } from "constants/socials"
 
 export type ExternalFileDocument = {
   name: string
@@ -31,13 +32,17 @@ interface IDaoProposalChangeDaoSettingsCreatingContext {
   twitterUrl: { get: string; set: Dispatch<SetStateAction<string>> }
   mediumUrl: { get: string; set: Dispatch<SetStateAction<string>> }
   githubUrl: { get: string; set: Dispatch<SetStateAction<string>> }
+  socialLinks: {
+    get: [SUPPORTED_SOCIALS, string][]
+    set: Dispatch<SetStateAction<[SUPPORTED_SOCIALS, string][]>>
+  }
   customUrls: {
     get: ExternalCustomSocialLink[]
     set: (
       value: ExternalCustomSocialLink | ExternalCustomSocialLink[],
       idx?: number
     ) => void
-  }
+  } // TODO: remove
 }
 
 interface IDaoProposalChangeDaoSettingsCreatingContextProviderProps {
@@ -58,10 +63,11 @@ export const DaoProposalChangeDaoSettingsCreatingContext =
     twitterUrl: { get: "", set: () => {} },
     mediumUrl: { get: "", set: () => {} },
     githubUrl: { get: "", set: () => {} },
+    socialLinks: { get: [], set: () => {} },
     customUrls: {
       get: [],
       set: () => {},
-    },
+    }, // TODO: remove
   })
 
 const DaoProposalChangeDaoSettingsCreatingContextProvider: React.FC<
@@ -78,9 +84,12 @@ const DaoProposalChangeDaoSettingsCreatingContextProvider: React.FC<
   const [_twitterUrl, _setTwitterUrl] = useState<string>("")
   const [_mediumUrl, _setMediumUrl] = useState<string>("")
   const [_githubUrl, _setGithubUrl] = useState<string>("")
+  const [_socialLinks, _setSocialLinks] = useState<
+    [SUPPORTED_SOCIALS, string][]
+  >([])
   const [_customUrls, _setCustomUrls] = useState<ExternalCustomSocialLink[]>([
     { url: "" },
-  ])
+  ]) // TODO: remove
 
   const _handleChangeDocuments = useCallback((value, idx?: number) => {
     _setDocuments((prev) => {
@@ -122,7 +131,8 @@ const DaoProposalChangeDaoSettingsCreatingContextProvider: React.FC<
         twitterUrl: { get: _twitterUrl, set: _setTwitterUrl },
         mediumUrl: { get: _mediumUrl, set: _setMediumUrl },
         githubUrl: { get: _githubUrl, set: _setGithubUrl },
-        customUrls: { get: _customUrls, set: _handleChangeCustomUrls },
+        socialLinks: { get: _socialLinks, set: _setSocialLinks },
+        customUrls: { get: _customUrls, set: _handleChangeCustomUrls }, // TODO: remove
       }}
     >
       {children}
