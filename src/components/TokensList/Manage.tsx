@@ -1,30 +1,37 @@
 import RouteTabs from "components/RouteTabs"
 import Search from "components/Search"
 import { ITab } from "interfaces"
-import { useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import * as S from "modals/TokenSelect/styled"
-import { Route, Routes, useLocation } from "react-router-dom"
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom"
 import isActiveRoute from "utils/isActiveRoute"
-import ManageToken from "./ManageToken"
-import { useUserAddedTokens } from "state/user/hooks"
+import { AppButton } from "common"
+import useDebounce from "hooks/useDebounce"
+import Tokens from "./Tokens"
 
 export const Manage = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const { pathname } = useLocation()
-  const userTokens = useUserAddedTokens()
+  const navigate = useNavigate()
+  const debouncedQuery = useDebounce(searchQuery, 200)
+
+  const root = useMemo(
+    () => pathname.slice(0, pathname.indexOf("/modal")),
+    [pathname]
+  )
 
   const manageTabs = useMemo(
     () => [
       {
         title: "Lists",
-        source: "/create-fund/basic/lists",
+        source: root + "/modal/manage/lists",
       },
       {
         title: "Tokens",
-        source: "/create-fund/basic/tokens",
+        source: root + "/modal/manage/tokens",
       },
     ],
-    []
+    [root]
   ) as ITab[]
 
   const searchTitle = useMemo(
@@ -34,6 +41,10 @@ export const Manage = () => {
         : "0x...",
     [manageTabs, pathname]
   )
+
+  const handleBack = useCallback(() => {
+    navigate(root + "/modal/search")
+  }, [navigate, root])
 
   return (
     <S.Card>
@@ -50,19 +61,18 @@ export const Manage = () => {
         <Routes>
           <Route
             path={"tokens"}
-            element={
-              <>
-                {userTokens.map((token) => (
-                  <ManageToken key={token.address} token={token} />
-                ))}
-                {!userTokens.length && (
-                  <S.Placeholder>No tokens found</S.Placeholder>
-                )}
-              </>
-            }
+            element={<Tokens debouncedQuery={debouncedQuery} />}
           />
         </Routes>
       </S.CardList>
+      <S.Footer>
+        <AppButton
+          onClick={handleBack}
+          size="no-paddings"
+          color="default"
+          text="Return to the list"
+        />
+      </S.Footer>
     </S.Card>
   )
 }

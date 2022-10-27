@@ -1,4 +1,4 @@
-import { FC, ReactNode, useCallback, useMemo, useState } from "react"
+import { FC, useCallback, useMemo, useState } from "react"
 
 import TokensList from "components/TokensList"
 import Modal from "components/Modal"
@@ -21,34 +21,27 @@ import ImportRow from "components/TokensList/ImportRow"
 import Search from "components/Search"
 import { AppButton } from "common"
 import { Manage } from "components/TokensList/Manage"
-import { useNavigate } from "react-router-dom"
-
-export enum CurrencyModalView {
-  search,
-  manage,
-  importToken,
-  importList,
-  tokenSafety,
-}
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom"
 
 interface Props {
-  isOpen: boolean
   onSelect: (token: Token) => void
-  onClose: () => void
 }
 
-const TokenSelect: FC<Props> = ({ isOpen, onClose, onSelect }) => {
+const TokenSelect: FC<Props> = ({ onSelect }) => {
   const { account } = useWeb3React()
   const [searchQuery, setSearchQuery] = useState<string>("")
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const isOpen = pathname.includes("modal")
 
-  const [modalView, setModalView] = useState<CurrencyModalView>(
-    CurrencyModalView.search
-  )
   const debouncedQuery = useDebounce(searchQuery, 200)
   const allTokens = useWhitelistTokens()
   const customToken = useTryCustomToken(debouncedQuery)
   const addToken = useAddUserToken()
+
+  const onClose = useCallback(() => {
+    navigate(pathname.slice(0, pathname.indexOf("/modal")))
+  }, [navigate, pathname])
 
   const allTokensArray = useMemo(
     () => Object.values(allTokens ?? {}),
@@ -79,8 +72,8 @@ const TokenSelect: FC<Props> = ({ isOpen, onClose, onSelect }) => {
 
   const showImportToken = useCallback(() => {
     if (!customToken) return
-    setModalView(CurrencyModalView.importToken)
-  }, [customToken])
+    navigate("modal/import")
+  }, [customToken, navigate])
 
   const handleSelect = useCallback(
     (currency: Currency) => {
@@ -97,91 +90,86 @@ const TokenSelect: FC<Props> = ({ isOpen, onClose, onSelect }) => {
   const handleImportToken = useCallback(
     (token: Token) => {
       addToken(token)
-      setModalView(CurrencyModalView.search)
+      navigate("modal/search")
     },
-    [addToken]
+    [addToken, navigate]
   )
 
   const handleManageTokens = useCallback(() => {
-    setModalView(CurrencyModalView.manage)
-    navigate("/create-fund/basic/lists")
+    navigate("modal/manage/tokens")
   }, [navigate])
 
-  let content: ReactNode
-  let title = "Select a Token"
+  const importToken = customToken && (
+    <ImportRow importToken={showImportToken} token={customToken} />
+  )
+  const noItems = importToken || (
+    <S.Placeholder>No results found.</S.Placeholder>
+  )
 
-  switch (modalView) {
-    case CurrencyModalView.search:
-      title = "Select a Token"
-      const importToken = customToken && (
-        <ImportRow importToken={showImportToken} token={customToken} />
-      )
-      const noItems = importToken || (
-        <S.Placeholder>No results found.</S.Placeholder>
-      )
-
-      content = (
-        <S.Card>
-          <S.CardHeader>
-            <Search
-              placeholder="Name, ticker, address"
-              value={searchQuery}
-              handleChange={setSearchQuery}
-              height="40px"
-            />
-          </S.CardHeader>
-          <S.CardList style={{ minHeight: 400 }}>
-            {!!filteredSortedTokens.length ? (
-              <TokensList
-                balances={balances}
-                onSelect={handleSelect}
-                currencies={filteredSortedTokens}
+  const content = (
+    <Routes>
+      <Route
+        path="modal/search"
+        element={
+          <S.Card>
+            <S.CardHeader>
+              <Search
+                placeholder="Name, ticker, address"
+                value={searchQuery}
+                handleChange={setSearchQuery}
+                height="40px"
               />
-            ) : (
-              noItems
-            )}
-          </S.CardList>
-          <S.Footer>
-            <AppButton
-              onClick={handleManageTokens}
-              size="no-paddings"
-              color="default"
-              text="Manage Tokens"
-            />
-          </S.Footer>
-        </S.Card>
-      )
-      break
-    case CurrencyModalView.importToken:
-      title = "import token"
-      content = (
-        <S.Card>
-          <S.CardHeader></S.CardHeader>
-          <S.CardList style={{ minHeight: 400 }}>
-            <ImportToken
-              isImport
-              showImportToken={showImportToken}
-              token={customToken!}
-            />
-          </S.CardList>
-          <S.Footer>
-            <S.ImportButton
-              onClick={() => handleImportToken(customToken!)}
-              size="large"
-              text="Import"
-            />
-          </S.Footer>
-        </S.Card>
-      )
-      break
-    case CurrencyModalView.manage:
-      title = "Manage Tokens"
-      content = <Manage />
-      break
-  }
+            </S.CardHeader>
+            <S.CardList style={{ minHeight: 400 }}>
+              {!!filteredSortedTokens.length ? (
+                <TokensList
+                  balances={balances}
+                  onSelect={handleSelect}
+                  currencies={filteredSortedTokens}
+                />
+              ) : (
+                noItems
+              )}
+            </S.CardList>
+            <S.Footer>
+              <AppButton
+                onClick={handleManageTokens}
+                size="no-paddings"
+                color="default"
+                text="Manage Tokens"
+              />
+            </S.Footer>
+          </S.Card>
+        }
+      />
+      <Route
+        path="modal/import"
+        element={
+          <S.Card>
+            <S.CardHeader></S.CardHeader>
+            <S.CardList style={{ minHeight: 400 }}>
+              <ImportToken
+                isImport
+                showImportToken={showImportToken}
+                token={customToken!}
+              />
+            </S.CardList>
+            <S.Footer>
+              <S.ImportButton
+                onClick={() => handleImportToken(customToken!)}
+                size="large"
+                text="Import"
+              />
+            </S.Footer>
+          </S.Card>
+        }
+      />
+      <Route path="modal/manage/*" element={<Manage />} />
+    </Routes>
+  )
 
   return (
-    <Modal isOpen={isOpen} toggle={onClose} title={title}>
+    <Modal isOpen={isOpen} toggle={onClose} title={"Select token"}>
       {isOpen && content}
     </Modal>
   )

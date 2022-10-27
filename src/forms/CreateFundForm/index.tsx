@@ -114,8 +114,9 @@ const CreateFund: FC<Props> = ({ presettedFundType = "basic" }) => {
   const hideModal = useCallback(() => setModalState(false), [])
 
   const handleTokenSelectOpen = useCallback(() => {
-    setModalState(true)
-  }, [])
+    // setModalState(true)
+    navigate("modal/search")
+  }, [navigate])
 
   const handleTokenSelect = useCallback(
     (token: Token) => {
@@ -395,11 +396,7 @@ const CreateFund: FC<Props> = ({ presettedFundType = "basic" }) => {
           )}
         </Stepper>
       )}
-      <TokenSelect
-        onSelect={handleTokenSelect}
-        isOpen={isOpen}
-        onClose={hideModal}
-      />
+      <TokenSelect onSelect={handleTokenSelect} />
       <Body>
         <AvatarWrapper>
           <Avatar
