@@ -7,15 +7,17 @@ import isActiveRoute from "utils/isActiveRoute"
 import S from "./styled"
 
 interface IProps {
+  m?: string
   tabs: ITab[]
 }
 
-const RouteTabs: FC<IProps> = ({ tabs }) => {
+const RouteTabs: FC<IProps> = ({ tabs, m = "0" }) => {
   const { pathname } = useLocation()
 
   return (
     <>
       <S.Tabs
+        m={m}
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: -20, opacity: 0 }}
