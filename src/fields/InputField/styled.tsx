@@ -183,3 +183,11 @@ export const NodeRightWrp = styled(motion.div)`
   transform: translateY(-50%);
   color: inherit;
 `
+
+export const InputFieldHint = styled.span`
+  display: block;
+  color: ${(props) => props.theme.textColors.secondary};
+  font-size: 14px;
+  line-height: 1.5;
+  margin-top: 8px;
+`

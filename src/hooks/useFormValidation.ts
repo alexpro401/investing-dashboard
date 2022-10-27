@@ -236,8 +236,10 @@ export const useFormValidation = (
     return Object.keys(validationRules).reduce((acc, fieldName) => {
       const fieldValidators = validationRules[fieldName]
 
-      if (!fieldValidators || isEmpty(fieldValidators))
-        throw new Error(`Field ${fieldName} has no validators`)
+      if (!fieldValidators || isEmpty(fieldValidators)) {
+        console.error(`Field ${fieldName} has no validators`)
+        return {}
+      }
 
       const validatedField = Object.entries(fieldValidators).reduce(
         (acc, [validatorKey, validator]) => {
