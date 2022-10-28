@@ -47,9 +47,9 @@ export interface DaoProposalSettingsForm {
   minVotesForVoting: { get: number; set: Dispatch<SetStateAction<number>> }
   minVotesForCreating: { get: number; set: Dispatch<SetStateAction<number>> }
   rewardToken: { get: string; set: Dispatch<SetStateAction<string>> }
-  creationReward: { get: number; set: Dispatch<SetStateAction<number>> }
-  executionReward: { get: number; set: Dispatch<SetStateAction<number>> }
-  voteRewardsCoefficient: { get: number; set: Dispatch<SetStateAction<number>> }
+  creationReward: { get: string; set: Dispatch<SetStateAction<string>> }
+  executionReward: { get: string; set: Dispatch<SetStateAction<string>> }
+  voteRewardsCoefficient: { get: string; set: Dispatch<SetStateAction<string>> }
   executorDescription: { get: string; set: Dispatch<SetStateAction<string>> }
 }
 
@@ -272,13 +272,13 @@ const FundDaoCreatingContextProvider: FC<
       storedForm._internalProposalForm.minVotesForCreating
     ),
     rewardToken: useState<string>(storedForm._internalProposalForm.rewardToken),
-    creationReward: useState<number>(
+    creationReward: useState<string>(
       storedForm._internalProposalForm.creationReward
     ),
-    executionReward: useState<number>(
+    executionReward: useState<string>(
       storedForm._internalProposalForm.executionReward
     ),
-    voteRewardsCoefficient: useState<number>(
+    voteRewardsCoefficient: useState<string>(
       storedForm._internalProposalForm.voteRewardsCoefficient
     ),
     executorDescription: useState<string>(
@@ -316,13 +316,13 @@ const FundDaoCreatingContextProvider: FC<
     rewardToken: useState<string>(
       storedForm._distributionProposalSettingsForm.rewardToken
     ),
-    creationReward: useState<number>(
+    creationReward: useState<string>(
       storedForm._distributionProposalSettingsForm.creationReward
     ),
-    executionReward: useState<number>(
+    executionReward: useState<string>(
       storedForm._distributionProposalSettingsForm.executionReward
     ),
-    voteRewardsCoefficient: useState<number>(
+    voteRewardsCoefficient: useState<string>(
       storedForm._distributionProposalSettingsForm.voteRewardsCoefficient
     ),
     executorDescription: useState<string>(
@@ -358,13 +358,13 @@ const FundDaoCreatingContextProvider: FC<
     rewardToken: useState<string>(
       storedForm._validatorsBalancesSettingsForm.rewardToken
     ),
-    creationReward: useState<number>(
+    creationReward: useState<string>(
       storedForm._validatorsBalancesSettingsForm.creationReward
     ),
-    executionReward: useState<number>(
+    executionReward: useState<string>(
       storedForm._validatorsBalancesSettingsForm.executionReward
     ),
-    voteRewardsCoefficient: useState<number>(
+    voteRewardsCoefficient: useState<string>(
       storedForm._validatorsBalancesSettingsForm.voteRewardsCoefficient
     ),
     executorDescription: useState<string>(
@@ -398,21 +398,19 @@ const FundDaoCreatingContextProvider: FC<
     rewardToken: useState<string>(
       storedForm._defaultProposalSettingForm.rewardToken
     ),
-    creationReward: useState<number>(
+    creationReward: useState<string>(
       storedForm._defaultProposalSettingForm.creationReward
     ),
-    executionReward: useState<number>(
+    executionReward: useState<string>(
       storedForm._defaultProposalSettingForm.executionReward
     ),
-    voteRewardsCoefficient: useState<number>(
+    voteRewardsCoefficient: useState<string>(
       storedForm._defaultProposalSettingForm.voteRewardsCoefficient
     ),
     executorDescription: useState<string>(
       storedForm._defaultProposalSettingForm.executorDescription
     ),
   }
-
-  console.log("_defaultProposalSettingForm: ", _defaultProposalSettingForm)
 
   const erc20 = useERC20(_userKeeperParams.tokenAddress[0])
   const erc721 = useErc721(_userKeeperParams.nftAddress[0])

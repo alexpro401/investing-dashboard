@@ -35,9 +35,9 @@ interface ICreateDaoProposalTypeArgs {
     minVotesForVoting: number
     minVotesForCreating: number
     rewardToken: string
-    creationReward: number
-    executionReward: number
-    voteRewardsCoefficient: number
+    creationReward: string
+    executionReward: string
+    voteRewardsCoefficient: string
   }
 }
 
@@ -183,16 +183,10 @@ const useCreateDaoProposalType = ({
                   String(minVotesForCreating)
                 ).toString(),
                 rewardToken: rewardToken || ZERO,
-                creationReward: parseUnits(
-                  String(creationReward),
-                  18
-                ).toString(),
-                executionReward: parseUnits(
-                  String(executionReward),
-                  18
-                ).toString(),
+                creationReward: parseUnits(creationReward, 18).toString(),
+                executionReward: parseUnits(executionReward, 18).toString(),
                 voteRewardsCoefficient: parseUnits(
-                  String(voteRewardsCoefficient),
+                  voteRewardsCoefficient,
                   18
                 ).toString(),
                 executorDescription: daoProposalTypeIPFSCode,

@@ -39,9 +39,9 @@ export type DaoProposal = {
     minVotesForVoting: number
     minVotesForCreating: number
     rewardToken: string
-    creationReward: number
-    executionReward: number
-    voteRewardsCoefficient: number
+    creationReward: string
+    executionReward: string
+    voteRewardsCoefficient: string
     executorDescription: string
   }
   _distributionProposalSettingsForm: {
@@ -55,9 +55,9 @@ export type DaoProposal = {
     minVotesForVoting: number
     minVotesForCreating: number
     rewardToken: string
-    creationReward: number
-    executionReward: number
-    voteRewardsCoefficient: number
+    creationReward: string
+    executionReward: string
+    voteRewardsCoefficient: string
     executorDescription: string
   }
   _validatorsBalancesSettingsForm: {
@@ -71,9 +71,9 @@ export type DaoProposal = {
     minVotesForVoting: number
     minVotesForCreating: number
     rewardToken: string
-    creationReward: number
-    executionReward: number
-    voteRewardsCoefficient: number
+    creationReward: string
+    executionReward: string
+    voteRewardsCoefficient: string
     executorDescription: string
   }
   _defaultProposalSettingForm: {
@@ -87,9 +87,9 @@ export type DaoProposal = {
     minVotesForVoting: number
     minVotesForCreating: number
     rewardToken: string
-    creationReward: number
-    executionReward: number
-    voteRewardsCoefficient: number
+    creationReward: string
+    executionReward: string
+    voteRewardsCoefficient: string
     executorDescription: string
   }
 }

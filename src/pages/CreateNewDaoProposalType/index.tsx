@@ -68,11 +68,9 @@ const CreateNewProposalType: React.FC = () => {
                 minVotesForVoting: Number(formatEther(minVotesForVoting)),
                 minVotesForCreating: Number(formatEther(minVotesForCreating)),
                 rewardToken: rewardToken === ZERO_ADDR ? "" : rewardToken,
-                creationReward: Number(formatUnits(creationReward, 18)),
-                executionReward: Number(formatUnits(executionReward, 18)),
-                voteRewardsCoefficient: Number(
-                  formatUnits(voteRewardsCoefficient, 18)
-                ),
+                creationReward: formatUnits(creationReward, 18),
+                executionReward: formatUnits(executionReward, 18),
+                voteRewardsCoefficient: formatUnits(voteRewardsCoefficient, 18),
               },
             }}
           >
