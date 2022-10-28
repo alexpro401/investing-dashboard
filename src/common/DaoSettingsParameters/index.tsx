@@ -25,7 +25,7 @@ import {
   useIsDaoFieldChanged,
 } from "context/FundDaoCreatingContext"
 import { useFormValidation } from "hooks/useFormValidation"
-import { EInputColors } from "fields/InputField"
+import { EInputBorderColors } from "fields/InputField"
 import { useERC20 } from "hooks/useERC20"
 import { readFromClipboard } from "utils/clipboard"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
@@ -161,9 +161,9 @@ const DaoSettingsParameters: FC<Props> = ({
             placeholder="1Y 6Mon 2w 1d"
             errorMessage={getFieldErrorMessage("duration")}
             onBlur={() => touchField("duration")}
-            color={
+            borderColor={
               isCreatingProposal && durationIsChanged
-                ? EInputColors.success
+                ? EInputBorderColors.success
                 : undefined
             }
             labelNodeRight={
@@ -178,9 +178,9 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Votes needed for quorum"
             errorMessage={getFieldErrorMessage("quorum")}
             onBlur={() => touchField("quorum")}
-            color={
+            borderColor={
               isCreatingProposal && quorumIsChanged
-                ? EInputColors.success
+                ? EInputBorderColors.success
                 : undefined
             }
             labelNodeRight={
@@ -214,9 +214,9 @@ const DaoSettingsParameters: FC<Props> = ({
               label="Length of voting period"
               errorMessage={getFieldErrorMessage("durationValidators")}
               onBlur={() => touchField("durationValidators")}
-              color={
+              borderColor={
                 isCreatingProposal && durationValidatorsIsChanged
-                  ? EInputColors.success
+                  ? EInputBorderColors.success
                   : undefined
               }
               labelNodeRight={
@@ -231,9 +231,9 @@ const DaoSettingsParameters: FC<Props> = ({
               label="Votes needed for quorum"
               errorMessage={getFieldErrorMessage("quorumValidators")}
               onBlur={() => touchField("quorumValidators")}
-              color={
+              borderColor={
                 isCreatingProposal && quorumValidatorsIsChanged
-                  ? EInputColors.success
+                  ? EInputBorderColors.success
                   : undefined
               }
               labelNodeRight={
@@ -281,9 +281,9 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Voting"
             errorMessage={getFieldErrorMessage("minVotesForVoting")}
             onBlur={() => touchField("minVotesForVoting")}
-            color={
+            borderColor={
               isCreatingProposal && minVotesForVotingIsChanged
-                ? EInputColors.success
+                ? EInputBorderColors.success
                 : undefined
             }
             labelNodeRight={
@@ -299,9 +299,9 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Creating a proposal"
             errorMessage={getFieldErrorMessage("minVotesForCreating")}
             onBlur={() => touchField("minVotesForCreating")}
-            color={
+            borderColor={
               isCreatingProposal && minVotesForCreatingIsChanged
-                ? EInputColors.success
+                ? EInputBorderColors.success
                 : undefined
             }
             labelNodeRight={
@@ -392,9 +392,9 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Amount of tokens for creator"
             errorMessage={getFieldErrorMessage("creationReward")}
             onBlur={() => touchField("creationReward")}
-            color={
+            borderColor={
               isCreatingProposal && creationRewardIsChanged
-                ? EInputColors.success
+                ? EInputBorderColors.success
                 : undefined
             }
             labelNodeRight={
@@ -410,9 +410,9 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Amount of tokens for the voter"
             errorMessage={getFieldErrorMessage("voteRewardsCoefficient")}
             onBlur={() => touchField("voteRewardsCoefficient")}
-            color={
+            borderColor={
               isCreatingProposal && voteRewardsCoefficientIsChanged
-                ? EInputColors.success
+                ? EInputBorderColors.success
                 : undefined
             }
             labelNodeRight={
@@ -427,9 +427,9 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Amount of tokens for tx. executor"
             errorMessage={getFieldErrorMessage("executionReward")}
             onBlur={() => touchField("executionReward")}
-            color={
+            borderColor={
               isCreatingProposal && executionRewardIsChanged
-                ? EInputColors.success
+                ? EInputBorderColors.success
                 : undefined
             }
             labelNodeRight={

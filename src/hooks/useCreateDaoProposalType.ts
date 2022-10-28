@@ -17,7 +17,7 @@ import { useTransactionAdder } from "state/transactions/hooks"
 import { SubmitState } from "constants/types"
 import { TransactionType } from "state/transactions/types"
 import { isTxMined, parseTransactionError } from "utils"
-import { ZERO } from "constants/index"
+import { ZERO_ADDR } from "constants/index"
 
 interface ICreateDaoProposalTypeArgs {
   proposalInfo: {
@@ -182,7 +182,7 @@ const useCreateDaoProposalType = ({
                 minVotesForCreating: parseEther(
                   String(minVotesForCreating)
                 ).toString(),
-                rewardToken: rewardToken || ZERO,
+                rewardToken: rewardToken || ZERO_ADDR,
                 creationReward: parseUnits(creationReward, 18).toString(),
                 executionReward: parseUnits(executionReward, 18).toString(),
                 voteRewardsCoefficient: parseUnits(

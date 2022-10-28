@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { useGovPoolContract, useGovSettingsContract } from "contracts"
+import useDaoSettingsContract from "./useDaoSettingsContract"
 
 interface IUseDaoPoolSetting {
   daoAddress: string
@@ -29,22 +29,19 @@ const useDaoPoolSetting = ({
   daoAddress,
   settingsId,
 }: IUseDaoPoolSetting): [IDaoSettings | undefined, boolean, boolean] => {
-  const govPoolContract = useGovPoolContract(daoAddress)
-
-  const [govSettingsAddress, setGovSettingsAddress] = useState<string>("")
-  const govSettingsContract = useGovSettingsContract(govSettingsAddress)
+  const daoSettingsContract = useDaoSettingsContract(daoAddress)
 
   const [result, setResult] = useState<IDaoSettings | undefined>(undefined)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<boolean>(false)
 
   const getGovSettings = useCallback(async () => {
-    if (!govPoolContract || !govSettingsContract) return
+    if (!daoSettingsContract) return
 
     try {
       setLoading(true)
       setError(false)
-      const _result = await govSettingsContract.settings(settingsId)
+      const _result = await daoSettingsContract.settings(settingsId)
 
       setResult(_result)
     } catch (error) {
@@ -53,26 +50,7 @@ const useDaoPoolSetting = ({
     } finally {
       setLoading(false)
     }
-  }, [govPoolContract, govSettingsContract, settingsId])
-
-  useEffect(() => {
-    const setupGovSettingsAddress = async () => {
-      if (!govPoolContract) return
-
-      try {
-        setLoading(true)
-        setError(false)
-        const _govSettingsAddress = await govPoolContract.govSetting()
-        setGovSettingsAddress(_govSettingsAddress)
-      } catch (error) {
-        console.log(error)
-        setError(true)
-      } finally {
-        setLoading(false)
-      }
-    }
-    setupGovSettingsAddress()
-  }, [govPoolContract])
+  }, [daoSettingsContract, settingsId])
 
   useEffect(() => {
     getGovSettings()
