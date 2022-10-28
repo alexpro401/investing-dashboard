@@ -15,6 +15,7 @@ interface Props {
   importToken: (token: Token) => void
 }
 
+// import token row view of the custom token
 const ImportRow: FC<Props> = ({ token, importing, importToken }) => {
   const { symbol, name, address, chainId } = token
 

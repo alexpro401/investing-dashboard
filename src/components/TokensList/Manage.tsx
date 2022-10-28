@@ -10,17 +10,34 @@ import useDebounce from "hooks/useDebounce"
 import Tokens from "./Tokens"
 import Lists from "./Lists"
 import { TokenList } from "lib/token-list"
+import { Token } from "lib/entities"
 
 interface Props {
   setImportList: (list: TokenList) => void
   setListUrl: (url: string) => void
+  mainQuery: string
+  setMainQuery: (query: string) => void
+  customToken?: Token
 }
 
-export const Manage: FC<Props> = ({ setImportList, setListUrl }) => {
-  const [searchQuery, setSearchQuery] = useState("")
+/*
+# explanaition of the main and local query params:
+  - mainQuery variable: it's a search query value that is used to filter the tokens
+  - all logic of mainQuery and tokens is in the parent component
+
+  - localQuery: it's a query that is used to filter the lists
+  - lists only can be controlled in the Lists component
+  - so the localQuery is used to control the search input in the Lists component
+*/
+
+export const Manage: FC<Props> = (props) => {
+  const { setImportList, setListUrl, mainQuery, setMainQuery, customToken } =
+    props
+
+  const [localQuery, setLocalQuery] = useState("")
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const debouncedQuery = useDebounce(searchQuery, 200)
+  const debouncedQuery = useDebounce(localQuery, 200)
 
   const root = useMemo(
     () => pathname.slice(0, pathname.indexOf("/modal")),
@@ -41,17 +58,23 @@ export const Manage: FC<Props> = ({ setImportList, setListUrl }) => {
     [root]
   ) as ITab[]
 
-  const searchTitle = useMemo(
-    () =>
-      isActiveRoute(pathname, manageTabs[0].source)
-        ? "https:// or ipfs://"
-        : "0x...",
-    [manageTabs, pathname]
-  )
+  // check which tab is active and generate search props data
+  const searchProps = useMemo(() => {
+    const isActiveList = isActiveRoute(pathname, manageTabs[0].source)
+    const placeholder = isActiveList ? "https:// or ipfs://" : "0x..."
+    const value = isActiveList ? localQuery : mainQuery
+    const handleChange = isActiveList ? setLocalQuery : setMainQuery
+
+    return {
+      placeholder,
+      value,
+      handleChange,
+    }
+  }, [mainQuery, manageTabs, pathname, localQuery, setMainQuery])
 
   // clear search query on tab change
   useEffect(() => {
-    setSearchQuery("")
+    setLocalQuery("")
   }, [pathname])
 
   const handleBack = useCallback(() => {
@@ -62,25 +85,25 @@ export const Manage: FC<Props> = ({ setImportList, setListUrl }) => {
     <S.Card>
       <S.CardHeader>
         <RouteTabs m="0 0 16px" tabs={manageTabs} />
-        <Search
-          placeholder={searchTitle}
-          value={searchQuery}
-          handleChange={setSearchQuery}
-          height="40px"
-        />
+        <Search {...searchProps} height="40px" />
       </S.CardHeader>
       <S.CardList style={{ minHeight: 400 }}>
         <Routes>
-          <Route
-            path={"tokens"}
-            element={<Tokens debouncedQuery={debouncedQuery} />}
-          />
           <Route
             path={"lists"}
             element={
               <Lists
                 setImportList={setImportList}
                 setListUrl={setListUrl}
+                debouncedQuery={debouncedQuery}
+              />
+            }
+          />
+          <Route
+            path={"tokens"}
+            element={
+              <Tokens
+                customToken={customToken}
                 debouncedQuery={debouncedQuery}
               />
             }

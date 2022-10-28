@@ -83,6 +83,10 @@ const TokenSelect: FC<Props> = ({ onSelect }) => {
     navigate("modal/import")
   }, [customToken, navigate])
 
+  const showDefaultView = useCallback(() => {
+    navigate("modal/search")
+  }, [navigate])
+
   const handleSelect = useCallback(
     (currency: Currency) => {
       const token = currency.isToken ? currency : undefined
@@ -187,6 +191,8 @@ const TokenSelect: FC<Props> = ({ onSelect }) => {
               {/* show import token view */}
               {customToken && (
                 <ImportToken
+                  confirmed={confirmed}
+                  setConfirmed={setConfirmed}
                   showImportToken={showImportToken}
                   token={customToken!}
                 />
@@ -201,6 +207,10 @@ const TokenSelect: FC<Props> = ({ onSelect }) => {
                 />
               )}
               {/* TODO: show no items view */}
+
+              {!customToken && !importList && (
+                <S.Error>Import failed! Reason: token not found</S.Error>
+              )}
             </S.CardList>
             <S.Footer>
               {customToken && (
@@ -219,6 +229,14 @@ const TokenSelect: FC<Props> = ({ onSelect }) => {
                   text="Import"
                 />
               )}
+              {!customToken && !importList && (
+                <AppButton
+                  onClick={showDefaultView}
+                  size="no-paddings"
+                  color="default"
+                  text="Search for a token"
+                />
+              )}
             </S.Footer>
           </S.Card>
         }
@@ -226,7 +244,13 @@ const TokenSelect: FC<Props> = ({ onSelect }) => {
       <Route
         path="modal/manage/*"
         element={
-          <Manage setImportList={setImportList} setListUrl={setListUrl} />
+          <Manage
+            customToken={customToken}
+            setImportList={setImportList}
+            setListUrl={setListUrl}
+            mainQuery={searchQuery}
+            setMainQuery={setSearchQuery}
+          />
         }
       />
     </Routes>

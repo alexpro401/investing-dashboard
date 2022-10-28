@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Flex } from "theme"
+import theme, { Flex } from "theme"
 import { motion } from "framer-motion"
 import { AppButton } from "common"
 
@@ -155,4 +155,18 @@ export const Footer = styled(Flex)`
 
 export const ImportButton = styled(AppButton)`
   flex: 1 0 auto;
+`
+
+export const Error = styled(Flex)`
+  width: 100%;
+  justify-content: center;
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 19px;
+  letter-spacing: 0.03em;
+  text-align: center;
+  font-feature-settings: "tnum" on, "lnum" on;
+  color: ${theme.statusColors.error};
 `

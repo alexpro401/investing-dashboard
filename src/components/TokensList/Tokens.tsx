@@ -1,20 +1,22 @@
+import { FC, useCallback, useMemo } from "react"
 import { useTryCustomToken, useUserTokens } from "hooks/useToken"
 import { Token } from "lib/entities"
 import { getTokenFilter } from "lib/hooks/useTokenList/filtering"
 import { useSortTokensByQuery } from "lib/hooks/useTokenList/sorting"
 import * as S from "modals/TokenSelect/styled"
-import { FC, useMemo, useState } from "react"
+import { useLocation, useNavigate } from "react-router-dom"
 import ImportRow from "./ImportRow"
-import ImportToken from "./ImportToken"
 import ManageToken from "./ManageToken"
 
 interface Props {
   debouncedQuery: string
+  customToken?: Token
 }
 
-const Tokens: FC<Props> = ({ debouncedQuery }) => {
+const Tokens: FC<Props> = ({ debouncedQuery, customToken }) => {
   const userTokens = useUserTokens()
-  const [importToken, setImportToken] = useState(false)
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
 
   const filteredTokens: Token[] = useMemo(() => {
     return Object.values(userTokens).filter(getTokenFilter(debouncedQuery))
@@ -25,20 +27,21 @@ const Tokens: FC<Props> = ({ debouncedQuery }) => {
     filteredTokens
   )
 
-  const customToken = useTryCustomToken(debouncedQuery)
-
-  const importContent = importToken ? (
-    <ImportToken
-      token={customToken!}
-      showImportToken={() => setImportToken(true)}
-    />
-  ) : (
-    <ImportRow importToken={() => setImportToken(true)} token={customToken!} />
+  const root = useMemo(
+    () => pathname.slice(0, pathname.indexOf("/modal")),
+    [pathname]
   )
+
+  const showImportToken = useCallback(() => {
+    if (!customToken) return
+    navigate(root + "/modal/import")
+  }, [customToken, navigate, root])
 
   return (
     <>
-      {customToken && importContent}
+      {customToken && (
+        <ImportRow importToken={showImportToken} token={customToken!} />
+      )}
       {!customToken &&
         filteredSortedTokens.map((token) => (
           <ManageToken key={token.address} token={token} />
