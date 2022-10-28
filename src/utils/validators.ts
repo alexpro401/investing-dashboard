@@ -1,7 +1,16 @@
 import { isBoolean, isDate, isEmpty, isNumber } from "lodash"
 
 import { Validator } from "hooks/useFormValidation"
-import { isAddress, isValidUrl } from "utils"
+import {
+  isAddress,
+  isValidUrl,
+  isValidUrlFacebook,
+  isValidUrlGithub,
+  isValidUrlLinkedin,
+  isValidUrlMedium,
+  isValidUrlTelegram,
+  isValidUrlTwitter,
+} from "utils"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ValidatorFunc = (...params: any[]) => Validator
@@ -34,6 +43,36 @@ export const maxLength: ValidatorFunc = (length: number) => (value) => ({
 export const isUrl: Validator = (value) => ({
   isValid: isValidUrl(value),
   message: "This field must be a valid URL",
+})
+
+export const isUrlFacebook = (value: string) => ({
+  isValid: isValidUrlFacebook(value),
+  message: "This field must be a valid facebook URL",
+})
+
+export const isUrlLinkedin = (value: string) => ({
+  isValid: isValidUrlLinkedin(value),
+  message: "This field must be a valid linkedin URL",
+})
+
+export const isUrlMedium = (value: string) => ({
+  isValid: isValidUrlMedium(value),
+  message: "This field must be a valid medium URL",
+})
+
+export const isUrlTelegram = (value: string) => ({
+  isValid: isValidUrlTelegram(value),
+  message: "This field must be a valid telegram URL",
+})
+
+export const isUrlTwitter = (value: string) => ({
+  isValid: isValidUrlTwitter(value),
+  message: "This field must be a valid twitter URL",
+})
+
+export const isUrlGithub = (value: string) => ({
+  isValid: isValidUrlGithub(value),
+  message: "This field must be a valid github URL",
 })
 
 export const isPercentage: Validator = (value) => ({

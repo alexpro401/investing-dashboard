@@ -9,7 +9,6 @@ import {
   getDefaultFieldErrorStyles,
 } from "fields/styled"
 import ExternalLink from "components/ExternalLink"
-import { ICON_NAMES } from "../../constants/icon-names"
 
 export const Container = styled(StepsControllerContext)`
   display: flex;

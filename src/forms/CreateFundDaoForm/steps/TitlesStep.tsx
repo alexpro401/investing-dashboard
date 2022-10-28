@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useState,
 } from "react"
 
 import {
@@ -22,6 +23,7 @@ import {
   OverlapInputField,
   TextareaField,
   ExternalDocumentField,
+  SocialLinkField,
 } from "fields"
 import Switch from "components/Switch"
 import Avatar from "components/Avatar"
@@ -36,6 +38,12 @@ import { useFormValidation } from "hooks/useFormValidation"
 import {
   isAddressValidator,
   isUrl,
+  isUrlFacebook,
+  isUrlGithub,
+  isUrlLinkedin,
+  isUrlMedium,
+  isUrlTelegram,
+  isUrlTwitter,
   minLength,
   required,
 } from "utils/validators"
@@ -43,17 +51,20 @@ import { isValidUrl } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
+import { SUPPORTED_SOCIALS } from "constants/socials"
 
 const TitlesStep: FC = () => {
   const daoPoolFormContext = useContext(FundDaoCreatingContext)
 
-  const { isErc20, isErc721, erc20, erc721 } = daoPoolFormContext
+  const { isErc20, isErc721, erc20, erc721, socialLinks } = daoPoolFormContext
 
   const { avatarUrl, daoName, websiteUrl, description, documents } =
     daoPoolFormContext
 
   const { tokenAddress, nftAddress, totalPowerInTokens, nftsTotalSupply } =
     daoPoolFormContext.userKeeperParams
+
+  const [isShowSocials, setIsShowSocials] = useState(false)
 
   const { chainId } = useActiveWeb3React()
 
@@ -84,6 +95,17 @@ const TitlesStep: FC = () => {
       daoName: daoName.get,
       websiteUrl: websiteUrl.get,
       description: description.get,
+
+      facebook: socialLinks.get?.[0]?.[1] || "",
+      linkedin: socialLinks.get?.[1]?.[1] || "",
+      medium: socialLinks.get?.[2]?.[1] || "",
+      telegram: socialLinks.get?.[3]?.[1] || "",
+      twitter: socialLinks.get?.[4]?.[1] || "",
+      github: socialLinks.get?.[5]?.[1] || "",
+      others: socialLinks.get
+        ?.slice(6, socialLinks.get.length)
+        ?.map((el) => ({ key: el[0], value: el[1] })),
+
       documents: documents.get,
 
       tokenAddress: tokenAddress.get,
@@ -97,6 +119,49 @@ const TitlesStep: FC = () => {
       daoName: { required, minLength: minLength(6) },
       websiteUrl: { required, isUrl },
       description: { required },
+
+      ...(socialLinks.get?.[0]?.[1]
+        ? {
+            facebook: { isUrl, isUrlFacebook },
+          }
+        : {}),
+      ...(socialLinks.get?.[1]?.[1]
+        ? {
+            linkedin: { isUrl, isUrlLinkedin },
+          }
+        : {}),
+      ...(socialLinks.get?.[2]?.[1]
+        ? {
+            medium: { isUrl, isUrlMedium },
+          }
+        : {}),
+      ...(socialLinks.get?.[3]?.[1]
+        ? {
+            telegram: { isUrl, isUrlTelegram },
+          }
+        : {}),
+      ...(socialLinks.get?.[4]?.[1]
+        ? {
+            twitter: { isUrl, isUrlTwitter },
+          }
+        : {}),
+      ...(socialLinks.get?.[5]?.[1]
+        ? {
+            github: { isUrl, isUrlGithub },
+          }
+        : {}),
+      ...(socialLinks.get
+        ?.slice(6, socialLinks.get.length)
+        ?.map((el) => ({ key: el[0], value: el[1] })).length
+        ? {
+            others: {
+              $every: {
+                isUrl,
+              },
+            },
+          }
+        : {}),
+
       documents: {
         required,
         $every: {
@@ -125,12 +190,25 @@ const TitlesStep: FC = () => {
     []
   )
 
-  const handleNextStep = () => {
+  const handleNextStep = useCallback(() => {
     touchForm()
     if (!isFieldsValid) return
 
     nextCb()
-  }
+  }, [isFieldsValid, nextCb, touchForm])
+
+  const handleAddSocials = useCallback(() => {
+    socialLinks.set([
+      ["facebook", ""],
+      ["linkedin", ""],
+      ["medium", ""],
+      ["telegram", ""],
+      ["twitter", ""],
+      ["github", ""],
+      ["other", ""],
+    ])
+    setIsShowSocials(true)
+  }, [socialLinks])
 
   return (
     <>
@@ -410,6 +488,82 @@ const TitlesStep: FC = () => {
               onBlur={() => touchField("description")}
             />
           </CardFormControl>
+          {!socialLinks.get.length ? (
+            <S.CardAddBtn
+              text={"+ Add social media"}
+              size="no-paddings"
+              color="default"
+              onClick={handleAddSocials}
+            />
+          ) : (
+            <></>
+          )}
+          <Collapse isOpen={!!socialLinks.get || isShowSocials}>
+            <CardFormControl>
+              {socialLinks.get.map(([key, value], idx) => (
+                <SocialLinkField
+                  key={idx}
+                  socialType={key}
+                  label={key}
+                  labelNodeRight={
+                    isFieldValid(
+                      key === "other" ? `others[${idx - 6}].value` : `${key}`
+                    ) ? (
+                      <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                    ) : (
+                      <></>
+                    )
+                  }
+                  value={value}
+                  setValue={(val) => {
+                    socialLinks.set((prevState) => {
+                      const nextState = [...prevState]
+                      nextState[idx][1] = val as string
+                      return nextState
+                    })
+                  }}
+                  onRemove={() => {
+                    socialLinks.set((prevState) => {
+                      let nextState = [...prevState]
+
+                      if (key === "other") {
+                        nextState = [...prevState.filter((el, i) => i !== idx)]
+                      } else {
+                        nextState[idx][1] = ""
+                      }
+
+                      return nextState
+                    })
+                  }}
+                  errorMessage={getFieldErrorMessage(
+                    key === "other" ? `others[${idx - 6}].value` : `${key}`
+                  )}
+                  onPaste={() => {
+                    touchField(
+                      key === "other" ? `others[${idx - 6}].value` : `${key}`
+                    )
+                  }}
+                />
+              ))}
+              {socialLinks.get.length ? (
+                <S.CardAddBtn
+                  text="+ Add other"
+                  size="no-paddings"
+                  color="default"
+                  onClick={() => {
+                    socialLinks.set((prevState) => {
+                      return [
+                        ...prevState,
+                        ["other", ""] as [SUPPORTED_SOCIALS, string],
+                      ]
+                    })
+                  }}
+                />
+              ) : (
+                <></>
+              )}
+            </CardFormControl>
+          </Collapse>
         </Card>
 
         <Card>
