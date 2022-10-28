@@ -1,10 +1,10 @@
 import { useWeb3React } from "@web3-react/core"
-import { Icon } from "common"
+import { AppButton, Icon } from "common"
 import Switch from "components/Switch"
 import { DefaultTokenIcon } from "components/TokenIcon"
 import { ICON_NAMES } from "constants/icon-names"
 import { PRODUCT_LIST_URLS } from "constants/lists"
-import { memo, useCallback, useMemo } from "react"
+import { memo, useCallback, useMemo, useState } from "react"
 import { useSelector } from "react-redux"
 import { useAppDispatch } from "state/hooks"
 import { disableList, enableList, removeList } from "state/lists/actions"
@@ -16,6 +16,7 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
   const { chainId } = useWeb3React()
   const listsByUrl = useSelector(selectListsByUrl)
   const dispatch = useAppDispatch()
+  const [isPopoverShown, setIsPopoverShown] = useState(false)
 
   const { current: list, pendingUpdate: pending } = listsByUrl[listUrl]
 
@@ -59,9 +60,28 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
         <S.ListRowName>{list.name}</S.ListRowName>
         <S.ListRowTokensCounter>
           {activeTokensOnThisChain} tokens{" "}
+          {isPopoverShown && (
+            <S.PopoverOverlay onClick={() => setIsPopoverShown(false)} />
+          )}
           <S.PopoverWrapper>
-            <Icon name={ICON_NAMES.settings} />
-            {/* <S.PopoverContent></S.PopoverContent> */}
+            <Icon
+              name={ICON_NAMES.settings}
+              onClick={() => setIsPopoverShown(true)}
+            />
+            {isPopoverShown && (
+              <S.PopoverContent>
+                <S.PopoverLink
+                  href={listUrl}
+                  target="_blank"
+                  rel="noopener noreply"
+                >
+                  <span>See</span> <Icon name={ICON_NAMES.externalLink} />
+                </S.PopoverLink>
+                <S.PopoverButton onClick={handleRemoveList}>
+                  Remove
+                </S.PopoverButton>
+              </S.PopoverContent>
+            )}
           </S.PopoverWrapper>
         </S.ListRowTokensCounter>
       </S.ListRowContent>

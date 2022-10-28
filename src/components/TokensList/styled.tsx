@@ -1,6 +1,7 @@
 import { AppButton } from "common"
 import styled from "styled-components"
 import theme, { Flex } from "theme"
+import polygon from "assets/icons/popover-polygon.svg"
 
 // TOKEN ITEM
 
@@ -342,12 +343,66 @@ export const PopoverContent = styled.div`
   position: absolute;
   width: 154px;
   height: 44px;
-  left: 5px;
-  top: 7px;
+  left: 18px;
+  top: -15px;
   z-index: 120;
 
   /* Additional color / tooltip */
 
   background: #28334a;
   border-radius: 16px;
+
+  &:before {
+    content: "";
+    margin: auto;
+    position: absolute;
+    left: -8px;
+    top: 0;
+    bottom: 0;
+    height: 11px;
+    width: 15px;
+    background: url(${polygon});
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 15px 11px;
+  }
+`
+
+export const PopoverLink = styled.a`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 150%;
+  color: ${theme.textColors.primary};
+  text-decoration: none;
+`
+
+export const PopoverButton = styled.button`
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 150%;
+  color: ${theme.statusColors.error};
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+`
+
+export const PopoverOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(27, 27, 27, 0.1);
+  backdrop-filter: blur(1px);
+  z-index: 80;
+  height: 100%;
+  width: 100%;
 `
