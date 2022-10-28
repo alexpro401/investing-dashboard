@@ -1,13 +1,12 @@
+import { useGovSettingsContract } from "contracts"
 import { useCallback, useEffect, useState } from "react"
-
-import useDaoSettingsContract from "./useDaoSettingsContract"
 
 interface IUseDaoPoolNewSettingsId {
   daoAddress: string
 }
 
 const useDaoPoolNewSettingId = ({ daoAddress }: IUseDaoPoolNewSettingsId) => {
-  const daoSettingsContract = useDaoSettingsContract(daoAddress)
+  const daoSettingsContract = useGovSettingsContract(daoAddress)
 
   const [result, setResult] = useState<number>(0)
   const [loading, setLoading] = useState<boolean>(false)

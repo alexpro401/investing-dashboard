@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import useDaoSettingsContract from "./useDaoSettingsContract"
+import { useGovPoolContract, useGovSettingsContract } from "contracts"
 
 interface IUseDaoPoolSetting {
   daoAddress: string
@@ -29,7 +29,7 @@ const useDaoPoolSetting = ({
   daoAddress,
   settingsId,
 }: IUseDaoPoolSetting): [IDaoSettings | undefined, boolean, boolean] => {
-  const daoSettingsContract = useDaoSettingsContract(daoAddress)
+  const daoSettingsContract = useGovSettingsContract(daoAddress)
 
   const [result, setResult] = useState<IDaoSettings | undefined>(undefined)
   const [loading, setLoading] = useState<boolean>(false)
@@ -57,6 +57,28 @@ const useDaoPoolSetting = ({
   }, [getGovSettings])
 
   return [result, loading, error]
+}
+
+export const useGovSettingsAddress = (daoAddress: string) => {
+  const govPoolContract = useGovPoolContract(daoAddress)
+
+  const [govSettingsAddress, setGovSettingsAddress] = useState<string>("")
+
+  useEffect(() => {
+    const setupGovSettingsAddress = async () => {
+      if (!govPoolContract) return
+
+      try {
+        const _govSettingsAddress = await govPoolContract.govSetting()
+        setGovSettingsAddress(_govSettingsAddress)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    setupGovSettingsAddress()
+  }, [govPoolContract])
+
+  return govSettingsAddress
 }
 
 export default useDaoPoolSetting
