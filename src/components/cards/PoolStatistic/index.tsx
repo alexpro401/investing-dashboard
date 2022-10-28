@@ -14,7 +14,7 @@ import { useERC20Data } from "state/erc20/hooks"
 import { formatNumber, normalizeBigNumber } from "utils"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
-import { getLastInArray, getPNL, getPriceLP, getUSDPrice } from "utils/formulas"
+import { getLastInArray, getPNL, getPriceLP } from "utils/formulas"
 
 const HeadNodesSkeleton: FC = () => (
   <Flex ai="center" jc="flex-start">
@@ -49,7 +49,7 @@ const PoolStatisticCard: FC<Props> = ({ data, index = 0, children }) => {
 
     return (
       <S.StatisticValue>
-        ${getUSDPrice(lastHistoryPoint ? lastHistoryPoint.usdTVL : 0)}
+        ${normalizeBigNumber(lastHistoryPoint.usdTVL, 18, 2)}
       </S.StatisticValue>
     )
   }, [lastHistoryPoint])
