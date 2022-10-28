@@ -21,6 +21,11 @@ enum INPUT_TYPES {
   number = "number",
 }
 
+export enum EInputBorderColors {
+  success = "success",
+  warning = "warning",
+}
+
 export interface Props<V extends string | number>
   extends HTMLAttributes<HTMLInputElement> {
   value: V
@@ -37,6 +42,7 @@ export interface Props<V extends string | number>
   tabindex?: number
   nodeLeft?: ReactNode
   nodeRight?: ReactNode
+  borderColor?: EInputBorderColors
   hint?: string
 }
 
@@ -57,6 +63,7 @@ function InputField<V extends string | number>({
   onChange,
   nodeLeft,
   nodeRight,
+  borderColor,
   hint,
   onBlur,
   ...rest
@@ -162,6 +169,7 @@ function InputField<V extends string | number>({
           disabled={isDisabled || isReadonly}
           isNodeLeftExist={!!nodeLeft}
           isNodeRightExist={!!nodeRight}
+          borderColor={borderColor}
           autoComplete="off"
           onBlur={handleBlur}
         />

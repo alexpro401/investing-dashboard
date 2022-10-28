@@ -125,7 +125,7 @@ const CreateNewProposalTypeForm: React.FC = () => {
       <AnimatePresence>
         {currentStep === STEPS.generalVotingSettings && (
           <S.StepsContainer>
-            <DefaultProposalStep />
+            <DefaultProposalStep isCreatingProposal />
           </S.StepsContainer>
         )}
         {currentStep === STEPS.basicInfo && (

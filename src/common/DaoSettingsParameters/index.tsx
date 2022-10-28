@@ -22,22 +22,27 @@ import {
 import {
   DaoProposalSettingsForm,
   FundDaoCreatingContext,
+  useIsDaoFieldChanged,
 } from "context/FundDaoCreatingContext"
 import { useFormValidation } from "hooks/useFormValidation"
-import * as S from "forms/CreateFundDaoForm/styled"
+import { EInputBorderColors } from "fields/InputField"
 import { useERC20 } from "hooks/useERC20"
 import { readFromClipboard } from "utils/clipboard"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
 
+import * as S from "./styled"
+
 interface Props extends HTMLAttributes<HTMLDivElement> {
   poolParameters: DaoProposalSettingsForm
   formValidation: ReturnType<typeof useFormValidation>
+  isCreatingProposal?: boolean
 }
 
 const DaoSettingsParameters: FC<Props> = ({
   poolParameters,
   formValidation,
+  isCreatingProposal = false,
 }) => {
   const {
     delegatedVotingAllowed,
@@ -62,6 +67,45 @@ const DaoSettingsParameters: FC<Props> = ({
 
   const { getFieldErrorMessage, touchField, isFieldValid } = formValidation
 
+  const quorumIsChanged = useIsDaoFieldChanged({
+    field: "defaultProposalSettingForm.quorum",
+  })
+
+  const durationIsChanged = useIsDaoFieldChanged({
+    field: "defaultProposalSettingForm.duration",
+  })
+
+  const durationValidatorsIsChanged = useIsDaoFieldChanged({
+    field: "defaultProposalSettingForm.durationValidators",
+  })
+
+  const quorumValidatorsIsChanged = useIsDaoFieldChanged({
+    field: "defaultProposalSettingForm.quorumValidators",
+  })
+
+  const minVotesForVotingIsChanged = useIsDaoFieldChanged({
+    field: "defaultProposalSettingForm.minVotesForVoting",
+  })
+
+  const minVotesForCreatingIsChanged = useIsDaoFieldChanged({
+    field: "defaultProposalSettingForm.minVotesForCreating",
+  })
+
+  const rewardTokenIsChanged = useIsDaoFieldChanged({
+    field: "defaultProposalSettingForm.rewardToken",
+  })
+
+  const creationRewardIsChanged = useIsDaoFieldChanged({
+    field: "defaultProposalSettingForm.creationReward",
+  })
+
+  const voteRewardsCoefficientIsChanged = useIsDaoFieldChanged({
+    field: "defaultProposalSettingForm.voteRewardsCoefficient",
+  })
+
+  const executionRewardIsChanged = useIsDaoFieldChanged({
+    field: "defaultProposalSettingForm.executionReward",
+  })
   const [, erc20TokenData] = useERC20(rewardToken.get)
 
   const { chainId } = useActiveWeb3React()
@@ -117,6 +161,16 @@ const DaoSettingsParameters: FC<Props> = ({
             placeholder="1Y 6Mon 2w 1d"
             errorMessage={getFieldErrorMessage("duration")}
             onBlur={() => touchField("duration")}
+            borderColor={
+              isCreatingProposal && durationIsChanged
+                ? EInputBorderColors.success
+                : undefined
+            }
+            labelNodeRight={
+              isCreatingProposal && isFieldValid("duration") ? (
+                <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+              ) : undefined
+            }
           />
           <InputField
             value={quorum.get}
@@ -124,6 +178,16 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Votes needed for quorum"
             errorMessage={getFieldErrorMessage("quorum")}
             onBlur={() => touchField("quorum")}
+            borderColor={
+              isCreatingProposal && quorumIsChanged
+                ? EInputBorderColors.success
+                : undefined
+            }
+            labelNodeRight={
+              isCreatingProposal && isFieldValid("quorum") ? (
+                <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+              ) : undefined
+            }
           />
         </CardFormControl>
       </Card>
@@ -150,6 +214,16 @@ const DaoSettingsParameters: FC<Props> = ({
               label="Length of voting period"
               errorMessage={getFieldErrorMessage("durationValidators")}
               onBlur={() => touchField("durationValidators")}
+              borderColor={
+                isCreatingProposal && durationValidatorsIsChanged
+                  ? EInputBorderColors.success
+                  : undefined
+              }
+              labelNodeRight={
+                isCreatingProposal && isFieldValid("durationValidators") ? (
+                  <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+                ) : undefined
+              }
             />
             <InputField
               value={quorumValidators.get}
@@ -157,6 +231,16 @@ const DaoSettingsParameters: FC<Props> = ({
               label="Votes needed for quorum"
               errorMessage={getFieldErrorMessage("quorumValidators")}
               onBlur={() => touchField("quorumValidators")}
+              borderColor={
+                isCreatingProposal && quorumValidatorsIsChanged
+                  ? EInputBorderColors.success
+                  : undefined
+              }
+              labelNodeRight={
+                isCreatingProposal && isFieldValid("quorumValidators") ? (
+                  <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+                ) : undefined
+              }
             />
           </CardFormControl>
         </Card>
@@ -197,6 +281,16 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Voting"
             errorMessage={getFieldErrorMessage("minVotesForVoting")}
             onBlur={() => touchField("minVotesForVoting")}
+            borderColor={
+              isCreatingProposal && minVotesForVotingIsChanged
+                ? EInputBorderColors.success
+                : undefined
+            }
+            labelNodeRight={
+              isCreatingProposal && isFieldValid("minVotesForVoting") ? (
+                <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+              ) : undefined
+            }
             hint="1 token=1 Voting Power"
           />
           <InputField
@@ -205,6 +299,16 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Creating a proposal"
             errorMessage={getFieldErrorMessage("minVotesForCreating")}
             onBlur={() => touchField("minVotesForCreating")}
+            borderColor={
+              isCreatingProposal && minVotesForCreatingIsChanged
+                ? EInputBorderColors.success
+                : undefined
+            }
+            labelNodeRight={
+              isCreatingProposal && isFieldValid("minVotesForCreating") ? (
+                <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+              ) : undefined
+            }
           />
         </CardFormControl>
       </Card>
@@ -236,7 +340,7 @@ const DaoSettingsParameters: FC<Props> = ({
             hint="Address of the ERC-20 token used for rewards — you will need to send enough of this token to the DAO treasury."
             labelNodeRight={
               isFieldValid("rewardToken") ? (
-                <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
               ) : (
                 <></>
               )
@@ -288,6 +392,16 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Amount of tokens for creator"
             errorMessage={getFieldErrorMessage("creationReward")}
             onBlur={() => touchField("creationReward")}
+            borderColor={
+              isCreatingProposal && creationRewardIsChanged
+                ? EInputBorderColors.success
+                : undefined
+            }
+            labelNodeRight={
+              isCreatingProposal && isFieldValid("creationReward") ? (
+                <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+              ) : undefined
+            }
             hint="Size of the reward for an accepted proposal."
           />
           <InputField
@@ -296,6 +410,16 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Amount of tokens for the voter"
             errorMessage={getFieldErrorMessage("voteRewardsCoefficient")}
             onBlur={() => touchField("voteRewardsCoefficient")}
+            borderColor={
+              isCreatingProposal && voteRewardsCoefficientIsChanged
+                ? EInputBorderColors.success
+                : undefined
+            }
+            labelNodeRight={
+              isCreatingProposal && isFieldValid("voteRewardsCoefficient") ? (
+                <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+              ) : undefined
+            }
           />
           <InputField
             value={executionReward.get}
@@ -303,6 +427,16 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Amount of tokens for tx. executor"
             errorMessage={getFieldErrorMessage("executionReward")}
             onBlur={() => touchField("executionReward")}
+            borderColor={
+              isCreatingProposal && executionRewardIsChanged
+                ? EInputBorderColors.success
+                : undefined
+            }
+            labelNodeRight={
+              isCreatingProposal && isFieldValid("executionReward") ? (
+                <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+              ) : undefined
+            }
             hint="Set % of memeber’s voting tokens to be received as reward (e.g. 1% = 1 reward token for every 100 voted with)"
           />
         </CardFormControl>
