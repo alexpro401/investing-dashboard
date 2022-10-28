@@ -20,6 +20,7 @@ import { isValidUrl, shortenAddress } from "utils"
 import { readFromClipboard } from "utils/clipboard"
 import { isEqual } from "lodash"
 import extractRootDomain from "utils/extractRootDomain"
+import { useEffectOnce } from "react-use"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   value: ExternalFileDocument
@@ -48,6 +49,12 @@ const ExternalDocumentField: FC<Props> = ({
   const croppedLink = useMemo(() => {
     return !!url ? extractRootDomain(url) : ""
   }, [url])
+
+  useEffectOnce(() => {
+    if (croppedLink) {
+      setIsShowUrlOverlap(true)
+    }
+  })
 
   const handleNameInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {

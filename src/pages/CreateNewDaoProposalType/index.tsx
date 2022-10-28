@@ -11,6 +11,7 @@ import useDaoPoolSetting from "hooks/useDaoPoolSetting"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
 import { ZERO_ADDR } from "constants/index"
+import { cutStringZeroes } from "utils"
 
 import * as S from "./styled"
 
@@ -68,9 +69,15 @@ const CreateNewProposalType: React.FC = () => {
                 minVotesForVoting: Number(formatEther(minVotesForVoting)),
                 minVotesForCreating: Number(formatEther(minVotesForCreating)),
                 rewardToken: rewardToken === ZERO_ADDR ? "" : rewardToken,
-                creationReward: formatUnits(creationReward, 18),
-                executionReward: formatUnits(executionReward, 18),
-                voteRewardsCoefficient: formatUnits(voteRewardsCoefficient, 18),
+                creationReward: cutStringZeroes(
+                  formatUnits(creationReward, 18)
+                ),
+                executionReward: cutStringZeroes(
+                  formatUnits(executionReward, 18)
+                ),
+                voteRewardsCoefficient: cutStringZeroes(
+                  formatUnits(voteRewardsCoefficient, 18)
+                ),
               },
             }}
           >

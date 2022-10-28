@@ -16,6 +16,8 @@ import {
   PoolsQueryByTypeWithSort,
   PoolsQueryWithSort,
 } from "queries/all-pools"
+import extractRootDomain from "./extractRootDomain"
+import { isEqual } from "lodash"
 
 export const delay = (ms: number): Promise<void> => {
   return new Promise((res) => setTimeout(res, ms))
@@ -41,6 +43,34 @@ export function isValidUrl(value: string): boolean {
   } catch (error) {
     return false
   }
+}
+
+export function isValidUrlFacebook(value: string): boolean {
+  return isValidUrl(value) && isEqual(extractRootDomain(value), "facebook.com")
+}
+
+export function isValidUrlLinkedin(value: string): boolean {
+  return isValidUrl(value) && isEqual(extractRootDomain(value), "linkedin.com")
+}
+
+export function isValidUrlMedium(value: string): boolean {
+  return isValidUrl(value) && isEqual(extractRootDomain(value), "medium.com")
+}
+
+export function isValidUrlTelegram(value: string): boolean {
+  return (
+    isValidUrl(value) &&
+    (isEqual(extractRootDomain(value), "telegram.com") ||
+      isEqual(extractRootDomain(value), "t.me"))
+  )
+}
+
+export function isValidUrlTwitter(value: string): boolean {
+  return isValidUrl(value) && isEqual(extractRootDomain(value), "twitter.com")
+}
+
+export function isValidUrlGithub(value: string): boolean {
+  return isValidUrl(value) && isEqual(extractRootDomain(value), "github.com")
 }
 
 export function shortenAddress(
@@ -131,6 +161,24 @@ export const normalizeBigNumber = (
   const amount = formatUnits(value || ZERO, decimals).toString()
 
   return humanizeBigNumber(amount, fix)
+}
+
+export const cutStringZeroes = (value: string): string => {
+  const splittedString = value.split(".")
+
+  if (splittedString[1] === "0") return splittedString[0]
+
+  if (splittedString[1]) {
+    const reversed = splittedString[1].split("").reverse()
+
+    while (reversed[0] === "0") {
+      reversed.shift()
+    }
+
+    return splittedString[0] + "." + reversed.reverse().join("")
+  }
+
+  return value
 }
 
 export function getTypedSignature(address, lib, nonce) {

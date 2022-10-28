@@ -10,6 +10,7 @@ const Welcome = lazy(() => import("pages/Welcome"))
 const TopMembers = lazy(() => import("pages/TopMembers"))
 const Invest = lazy(() => import("pages/Invest"))
 const Profile = lazy(() => import("pages/Profile"))
+const DaoProfile = lazy(() => import("pages/DaoProfile"))
 const CreateFund = lazy(() => import("pages/CreateFund"))
 const CreateFundDaoPool = lazy(() => import("pages/CreateFundDaoPool"))
 const CreateFundBasic = lazy(() => import("pages/CreateFundBasic"))
@@ -36,6 +37,9 @@ const WithdrawInvestmentProposal = lazy(
 )
 const CreateDaoProposalSelectType = lazy(
   () => import("pages/CreateDaoProposalSelectType")
+)
+const CreateDaoProposalValidatorSelectType = lazy(
+  () => import("pages/CreateDaoProposalValidatorSelectType")
 )
 const CreateNewDaoProposalType = lazy(
   () => import("pages/CreateNewDaoProposalType")
@@ -143,10 +147,17 @@ export default function Routes() {
                 />
                 <Route path="investment/*" element={<Investment />} />
 
+                {/* dao profile */}
+                <Route path="dao/:daoAddress" element={<DaoProfile />} />
+
                 {/* proposals */}
                 <Route
                   path="dao/:daoAddress/create-proposal"
                   element={<CreateDaoProposalSelectType />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-validator-proposal"
+                  element={<CreateDaoProposalValidatorSelectType />}
                 />
                 <Route
                   path="dao/:daoAddress/create-new-proposal-type"

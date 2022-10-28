@@ -8,6 +8,7 @@ export const INITIAL_DAO_PROPOSAL = {
   _daoName: "",
   _websiteUrl: "",
   _description: "",
+  _socialLinks: [],
   _documents: [{ name: "", url: "" }],
   _userKeeperParams: {
     tokenAddress: "",

@@ -1,3 +1,5 @@
+import { SUPPORTED_SOCIALS } from "constants/socials"
+
 export type ExternalFileDocument = {
   name: string
   url: string
@@ -13,6 +15,7 @@ export type DaoProposal = {
   _daoName: string
   _websiteUrl: string
   _description: string
+  _socialLinks: [SUPPORTED_SOCIALS, string][]
   _documents: ExternalFileDocument[]
   _userKeeperParams: {
     tokenAddress: string
