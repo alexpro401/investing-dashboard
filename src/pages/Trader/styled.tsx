@@ -1,15 +1,15 @@
-import styled from "styled-components"
-import { Flex, GradientBorder } from "theme"
-import ArrowOutlineRight from "assets/icons/ArrowOutlineRight"
+import styled, { css } from "styled-components"
 
-export const Container = styled(Flex)`
+import { AppButton } from "common"
+import { Flex } from "theme"
+
+export const Container = styled.div`
+  display: grid;
+  grid-template-rows: max-content 1fr;
+  grid-gap: 40px;
+  overflow: hidden;
+  padding: 16px 0 0;
   width: 100%;
-  padding: 16px 16px 80px;
-  flex-direction: column;
-  justify-content: flex-start;
-  max-height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
   height: calc(100vh - 94px);
 
   @media all and (display-mode: standalone) {
@@ -17,76 +17,41 @@ export const Container = styled(Flex)`
   }
 `
 
-export const Details = styled(GradientBorder)`
-  flex-direction: column;
-  padding: 0 16px 16px;
-  border-radius: 10px;
-  margin-top: 16px;
+export const Indents = styled.div`
   width: 100%;
-  position: relative;
-
-  &:after {
-    background: #181e2c;
-  }
+  padding: 0 16px 0;
 `
 
-export const ButtonContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: 1fr;
-  grid-gap: 16px;
-  width: 100%;
+const centerGridItem = css`
+  justify-content: center;
+  align-content: center;
 `
 
-export const DetailsEditLinkFrame = styled(Flex)`
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  z-index: 2;
-`
+export const List = {
+  Container: styled.div`
+    display: grid;
+    grid-template-rows: max-content 1fr;
+    grid-gap: 16px;
+    overflow: hidden;
+  `,
+  Header: styled(Flex).attrs(() => ({
+    full: true,
+    ai: "center",
+    jc: "space-between",
+  }))``,
+  Action: styled(AppButton).attrs(() => ({
+    color: "default",
+    size: "small",
+  }))`
+    padding: 0;
+  `,
+  Scroll: styled.div<{ center: boolean }>`
+    display: grid;
+    grid-template-rows: max-content;
+    grid-gap: 16px;
+    overflow-y: auto;
+    padding: 0 0 16px;
 
-export const OwnInvesting = styled(GradientBorder)`
-  padding: 16px;
-  margin-top: 16px;
-  border-radius: 10px;
-  width: 100%;
-
-  &:after {
-    background: #181e2c;
-  }
-`
-export const OwnInvestingLabel = styled.div`
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 11px;
-  line-height: 13px;
-  color: #788ab4;
-`
-export const OwnInvestingValue = styled.div`
-  margin-top: 8px;
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 19px;
-  color: #e4f2ff;
-`
-export const OwnInvestingLinkContainer = styled(Flex)`
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 17px;
-  color: #e4f2ff;
-`
-export const OwnInvestingLinkText = styled.span`
-  display: inline-block;
-  margin-right: 9px;
-`
-export const OwnInvestingLink = (props) => (
-  <OwnInvestingLinkContainer {...props}>
-    <OwnInvestingLinkText>Invest in my fund</OwnInvestingLinkText>
-    <ArrowOutlineRight color="#e4f2ff" width="4.7px" height="8px" />
-  </OwnInvestingLinkContainer>
-)
+    ${({ center }) => (center ? centerGridItem : "")};
+  `,
+}

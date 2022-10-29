@@ -136,17 +136,18 @@ const PoolStatisticCard: FC<Props> = ({ data, index = 0, children }) => {
     }
 
     return (
-      <Flex ai="center" jc="flex-start">
-        <TokenIcon address={data.baseToken} size={38} />
+      <Flex ai="center" jc="flex-end">
         <div>
-          <Flex ai="center" jc="flex-start" gap="4">
-            <S.Title>{formatNumber(priceLP, 2)}</S.Title>
+          <Flex ai="center" jc="flex-end" gap="4">
             <Text fz={10} lh="12px" color={getAmountColor(pnl)}>
+              {Number(pnl) > 0 ? "+" : null}
               {pnl}%
             </Text>
+            <S.Title>{formatNumber(priceLP, 2)}</S.Title>
           </Flex>
           <S.Description>{baseToken.symbol}</S.Description>
         </div>
+        <TokenIcon address={data.baseToken} size={38} m="0 0 0 8px" />
       </Flex>
     )
   }, [data, baseToken, priceLP, pnl])

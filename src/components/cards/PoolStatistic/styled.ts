@@ -19,21 +19,22 @@ export const Animation = styled(motion.div).attrs((p: { index: number }) => ({
 export const Title = styled(Text).attrs(() => ({
   color: "#ffffff",
   fw: 700,
-  fs: 16,
+  fz: 16,
   lh: "20px",
 }))``
 export const Description = styled(Text).attrs(() => ({
   block: true,
-  color: "#5a6071",
+  color: "#B1C7FC",
   fw: 400,
-  fs: 12,
-  lh: "12px",
+  fz: 13,
+  lh: "15px",
+  align: "right",
 }))``
 
 export const StatisticValue = styled(Text).attrs(() => ({
   block: true,
   color: "#f7f7f7",
   fw: 600,
-  fs: 16,
+  fz: 16,
   lh: "16px",
 }))``
