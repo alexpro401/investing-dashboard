@@ -29,7 +29,6 @@ const poolsClient = createClient({
 })
 
 const Profile: FC<Props> = () => {
-  console.log("Profile")
   const { account } = useWeb3React()
 
   const navigate = useNavigate()
