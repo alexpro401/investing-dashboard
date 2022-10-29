@@ -10,7 +10,7 @@ import OwnedPoolsList from "modals/OwnedPoolsList"
 
 import { selectPayload } from "state/pools/selectors"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-import { selectInvolvedPools } from "state/user/selectors"
+import { selectInvolvedPoolsData } from "state/user/selectors"
 
 import AddFund from "assets/icons/AddFund"
 
@@ -42,7 +42,7 @@ const Pools = ({}: IPortaitsProps) => {
 
   const [isModalOpen, setModal] = useState(false)
 
-  const { owned, managed } = useSelector(selectInvolvedPools(account))
+  const { owned, managed } = useSelector(selectInvolvedPoolsData(account))
   const { loading } = useSelector(selectPayload)
 
   const createFund = () => {
@@ -65,13 +65,15 @@ const Pools = ({}: IPortaitsProps) => {
     return null
   }, [owned, managed])
 
-  if (loading) {
+  if (loading && !(owned.length > 0 || managed.length > 0)) {
     return (
       <PortraitsPlus>
         <CircleSpinner color="#A4EBD4" size={16} loading />
       </PortraitsPlus>
     )
   }
+
+  console.log({ owned, managed })
 
   if (owned.length > 0 || managed.length > 0) {
     return (
