@@ -3,7 +3,6 @@ import { useWeb3React } from "@web3-react/core"
 import { useNavigate } from "react-router-dom"
 import { CircleSpinner } from "react-spinners-kit"
 import { useSelector } from "react-redux"
-import { createClient, Provider as GraphProvider } from "urql"
 
 import Icon from "components/Icon"
 import OwnedPoolsList from "modals/OwnedPoolsList"
@@ -15,11 +14,6 @@ import { selectInvolvedPoolsData } from "state/user/selectors"
 import AddFund from "assets/icons/AddFund"
 
 import { PortraitsPlus, Funds, FundWrapper } from "./styled"
-
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
 
 const FundItem = ({ pool }) => {
   const [{ poolMetadata }] = usePoolMetadata(pool.id, pool.descriptionURL)
@@ -73,8 +67,6 @@ const Pools = ({}: IPortaitsProps) => {
     )
   }
 
-  console.log({ owned, managed })
-
   if (owned.length > 0 || managed.length > 0) {
     return (
       <>
@@ -96,12 +88,4 @@ const Pools = ({}: IPortaitsProps) => {
   )
 }
 
-const PoolsWithProvider = () => {
-  return (
-    <GraphProvider value={poolsClient}>
-      <Pools />
-    </GraphProvider>
-  )
-}
-
-export default PoolsWithProvider
+export default Pools
