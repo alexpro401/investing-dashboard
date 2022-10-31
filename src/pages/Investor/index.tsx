@@ -1,15 +1,13 @@
 import { useWeb3React } from "@web3-react/core"
-import { useLocation, useNavigate, useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import { createClient, Provider as GraphProvider, useQuery } from "urql"
-import { useSelector } from "react-redux"
-import { useEffect, useMemo } from "react"
+import { useMemo } from "react"
 import { isEmpty, isNil } from "lodash"
 import { v4 as uuidv4 } from "uuid"
 import { PulseSpinner } from "react-spinners-kit"
 
 import { To, Text, Flex } from "theme"
 
-import { selectOwnedPools } from "state/user/selectors"
 import BarChart from "components/BarChart"
 import {
   Container,
@@ -23,8 +21,6 @@ import {
 } from "./styled"
 import Header from "components/Header/Layout"
 import { Profiles } from "components/Header/Components"
-import Pools from "components/Header/Pools"
-import { getRedirectedPoolAddress } from "utils"
 import ProfitLossChart from "components/ProfitLossChart"
 import { usePoolQuery, usePoolsByInvestors } from "hooks/usePool"
 import { InvestorQuery } from "queries"
@@ -44,7 +40,6 @@ const investorGraphClient = createClient({
 
 function Investor() {
   const navigate = useNavigate()
-  const { pathname } = useLocation()
   const { poolAddress } = useParams()
 
   const { account } = useWeb3React()
@@ -72,9 +67,6 @@ function Investor() {
     return investorData.investor.activePools
   }, [investorData, investorFetching])
 
-  const ownedPools = useSelector(selectOwnedPools)
-  const noPools = !ownedPools.basic.length && !ownedPools.invest.length
-
   const investors = useMemo(
     () => (isNil(account) ? [] : [String(account).toLocaleLowerCase()]),
     [account]
@@ -82,21 +74,9 @@ function Investor() {
   const [{ data: investorPools, fetching: fetchingInvestorPools }] =
     usePoolsByInvestors(investors)
 
-  useEffect(() => {
-    localStorage.setItem(`last-visited-profile-${account}`, pathname)
-  }, [pathname, account])
-
   const redirectToTrader = () => {
-    const redirectPath = getRedirectedPoolAddress(ownedPools)
-
-    if (!!redirectPath) {
-      const TRADER_PATH = `/me/trader/profile/${redirectPath[0]}/${redirectPath[1]}`
-
-      navigate(TRADER_PATH)
-    }
+    navigate("/me/trader")
   }
-
-  const leftIcon = noPools ? <Pools /> : <Profiles onClick={redirectToTrader} />
 
   const InvestorPools = useMemo(() => {
     if ((isNil(investorPools) && investorFetching) || isNil(account)) {
@@ -148,7 +128,9 @@ function Investor() {
 
   return (
     <>
-      <Header left={leftIcon}>My investor profile</Header>
+      <Header left={<Profiles onClick={redirectToTrader} />}>
+        My investor profile
+      </Header>
       <Container>
         <InvestorStatisticCard activePools={_activePools} />
 

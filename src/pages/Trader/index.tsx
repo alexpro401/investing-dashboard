@@ -2,11 +2,12 @@ import { isEmpty, map } from "lodash"
 import { useSelector } from "react-redux"
 import { useWeb3React } from "@web3-react/core"
 import { PulseSpinner } from "react-spinners-kit"
-import { useEffect, useMemo, useRef } from "react"
+import { useCallback, useEffect, useMemo, useRef } from "react"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { Text, To } from "theme"
 import Header from "components/Header/Layout"
+import { Profiles } from "components/Header/Components"
 import PoolStatisticCard from "components/cards/PoolStatistic"
 import TraderStatisticCard from "components/cards/TraderStatistic"
 
@@ -18,9 +19,11 @@ import {
   selectOwnedPoolsData,
   selectTotalOwnedPoolsStatistic,
 } from "state/user/selectors"
+import { useNavigate } from "react-router-dom"
 
 function Trader() {
   const { account } = useWeb3React()
+  const navigate = useNavigate()
 
   const totalStatistic = useSelector(selectTotalOwnedPoolsStatistic)
   const userStoreLoading = useSelector(selectLoadingState)
@@ -41,6 +44,10 @@ function Trader() {
   }, [scrollRef])
 
   const _poolsInView = useMemo(() => !isEmpty(pools), [loading, pools, account])
+
+  const redirectToInvestor = useCallback(() => {
+    navigate("/me/investor")
+  }, [navigate])
 
   const PoolsList = useMemo(() => {
     if (loading && isEmpty(pools)) {
@@ -64,7 +71,9 @@ function Trader() {
 
   return (
     <>
-      <Header>Personal trader profile</Header>
+      <Header left={<Profiles onClick={redirectToInvestor} />}>
+        Personal trader profile
+      </Header>
       <Container>
         <Indents>
           <TraderStatisticCard

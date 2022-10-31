@@ -3,7 +3,7 @@ import { GuardSpinner } from "react-spinners-kit"
 import { formatEther } from "@ethersproject/units"
 import { createClient, Provider as GraphProvider } from "urql"
 import { useState, useEffect, useCallback, useMemo } from "react"
-import { useLocation, useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 import { TabCard } from "pages/Investor/styled"
 
@@ -13,7 +13,6 @@ import TabsLight from "components/TabsLight"
 import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
 import PoolPnlInfo from "components/PoolPnlInfo"
-import { Profiles } from "components/Header/Components"
 import PoolLockedFunds from "components/PoolLockedFunds"
 import FundDetailsCard from "components/FundDetailsCard"
 import Button, { SecondaryButton } from "components/Button"
@@ -44,7 +43,6 @@ const poolsClient = createClient({
 
 function Pool() {
   const { account } = useWeb3React()
-  const { pathname } = useLocation()
   const { poolAddress, poolType } = useParams<{
     poolAddress: string
     poolType: string
@@ -53,10 +51,6 @@ function Pool() {
   const [commisionUnlockTime, setCommisionUnlockTime] = useState<number>(0)
   const [hasFee, setHasFee] = useState<boolean>(false)
   const [ownInvestUsd, setOwnInvestUsd] = useState<string>("0")
-
-  useEffect(() => {
-    localStorage.setItem(`last-visited-profile-${account}`, pathname)
-  }, [pathname, account])
 
   const traderPool = useTraderPool(poolAddress)
   const [poolData] = usePoolQuery(poolAddress)
@@ -224,7 +218,7 @@ function Pool() {
 
   return (
     <>
-      <Header left={<Profiles onClick={redirectToInvestor} />}>
+      <Header>
         My trader profile
         <Pools />
       </Header>
