@@ -45,7 +45,7 @@ import useSwap from "./useSwap"
 import { cutDecimalPlaces, fromBig } from "utils"
 import { useUserAgreement } from "state/user/hooks"
 import { useAllTokens } from "hooks/useToken"
-import { useAllTokenBalances, useAllTokenFundBalances } from "hooks/useBalance"
+import { useAllTokenFundBalances } from "hooks/useBalance"
 import { Currency } from "lib/entities"
 import useRiskyProposals from "hooks/useRiskyProposals"
 

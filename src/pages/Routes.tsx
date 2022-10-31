@@ -21,7 +21,6 @@ const Swap = lazy(() => import("pages/Swap"))
 const Wallet = lazy(() => import("pages/Wallet"))
 const Success = lazy(() => import("pages/Success"))
 const Notifications = lazy(() => import("pages/Notifications"))
-const TokenSelect = lazy(() => import("pages/TokenSelect")) // TODO: my trader profile
 const CreateRiskyProposal = lazy(() => import("pages/CreateRiskyProposal"))
 const InvestRiskyProposal = lazy(() => import("pages/InvestRiskyProposal"))
 const SwapRiskyProposal = lazy(() => import("pages/SwapRiskyProposal"))
@@ -81,11 +80,6 @@ export default function Routes() {
                 <Route path="notifications" element={<Notifications />} />
 
                 <Route path="wallet" element={<Wallet />} />
-
-                <Route
-                  path="select-token/:type/:poolAddress/:field/:address"
-                  element={<TokenSelect />}
-                />
 
                 <Route
                   path="pool/swap/:poolType/:poolToken/:inputToken/:outputToken/*"

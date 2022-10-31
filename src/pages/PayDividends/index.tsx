@@ -6,7 +6,6 @@ import { useWeb3React } from "@web3-react/core"
 import format from "date-fns/format"
 import formatDistanceToNow from "date-fns/formatDistanceToNow"
 
-import { Token } from "interfaces"
 import { DATE_TIME_FORMAT } from "constants/time"
 
 import ExternalLink from "components/ExternalLink"
@@ -53,7 +52,6 @@ function PayDividends() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const { poolAddress, proposalId } = useParams()
-  const [isOpen, setTokenSelectOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
   const { convertToDividends } = useConvertToDividendsContext()
   const [balances, balancesIsLoading] = useAllTokenBalances()
