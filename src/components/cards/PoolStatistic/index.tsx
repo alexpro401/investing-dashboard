@@ -124,7 +124,7 @@ const PoolStatisticCard: FC<Props> = ({ data, index = 0, children }) => {
         />
         <div>
           <S.Title>{data.ticker}</S.Title>
-          <S.Description>{data.name}</S.Description>
+          <S.Description align="left">{data.name}</S.Description>
         </div>
       </Flex>
     )

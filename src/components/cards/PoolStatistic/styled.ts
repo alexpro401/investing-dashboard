@@ -28,8 +28,9 @@ export const Description = styled(Text).attrs(() => ({
   fw: 400,
   fz: 13,
   lh: "15px",
-  align: "right",
-}))``
+}))<{ align?: string }>`
+  text-align: ${({ align }) => align ?? "right"};
+`
 
 export const StatisticValue = styled(Text).attrs(() => ({
   block: true,
