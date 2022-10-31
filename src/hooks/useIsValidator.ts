@@ -22,7 +22,7 @@ const useIsValidator = ({ daoAddress, userAddress }: IUseValidatorProps) => {
   )
 
   const [result, setResult] = useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<boolean>(false)
 
   const checkIfUserIsValidator = useCallback(async () => {

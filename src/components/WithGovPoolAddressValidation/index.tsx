@@ -16,7 +16,7 @@ const WithGovPoolAddressValidation: React.FC<IProps> = ({
 }) => {
   const poolRegistryContract = usePoolRegistryContract()
   const [loading, setLoading] = useState<boolean>(true)
-  const [isValid, setIsValid] = useState<boolean>(false)
+  const [isValid, setIsValid] = useState<boolean>(true)
 
   const checkGovAddressValidation = useCallback(async () => {
     if (!poolRegistryContract) return
