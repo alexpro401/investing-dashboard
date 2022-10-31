@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useMemo } from "react"
+import React, { useState, useEffect, useMemo, useRef, memo } from "react"
 import { useWeb3React } from "@web3-react/core"
-import { WhisperSpinner } from "react-spinners-kit"
+import { MetroSpinner } from "react-spinners-kit"
 import styled from "styled-components"
 
 import { Flex } from "theme"
-import dexe from "assets/icons/dexe.svg"
 import { useERC20 } from "hooks/useERC20"
 
 interface IconProps {
@@ -51,7 +50,7 @@ export const Loader = styled.div<IconProps>`
   min-width: ${(props) => (props.size ? props.size : 28)}px;
   margin: ${(props) => props.m};
   border-radius: 50px;
-  border: 2px solid #171b1f;
+  /* border: 2px solid #171b1f; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,18 +70,19 @@ interface IProps extends BaseProps {
   address?: string
 }
 
-const getIconsPathByChain = (id, address) => {
-  if (!address) return
+const getIconsPathByChain = (chainId, address) => {
+  if (!address || !chainId) return
 
   const a = address.toLowerCase()
 
-  if (a === "0xa651edbbf77e1a2678defae08a33c5004b491457") {
-    return dexe
+  switch (chainId) {
+    case 97:
+      return `https://pancake.kiemtienonline360.com/images/coins/${a}.png`
+      break
+    default:
+      return `https://pancake.kiemtienonline360.com/images/coins/${a}.png`
+      break
   }
-  if (id === 97) {
-    return `https://pancake.kiemtienonline360.com/images/coins/${a}.png`
-  }
-  return `https://pancake.kiemtienonline360.com/images/coins/${a}.png`
 }
 
 const setImageBroken = (chainId, account, address) => {
@@ -95,14 +95,21 @@ const checkImageBroken = (chainId, account, address) => {
   )
 }
 
-export const DefaultTokenIcon = ({ size, m, symbol }: IDefaultProps) => (
-  <Fallback m={m || "0 8px 0 0"} size={size}>
-    <SymbolLetter>{symbol[0].toLocaleUpperCase()}</SymbolLetter>
-  </Fallback>
-)
+export const DefaultTokenIcon = memo(function DefaultTokenIcon({
+  size,
+  m,
+  symbol,
+}: IDefaultProps) {
+  return (
+    <Fallback m={m!} size={size}>
+      <SymbolLetter>{symbol[0].toLocaleUpperCase()}</SymbolLetter>
+    </Fallback>
+  )
+})
 
-const TokenIcon: React.FC<IProps> = ({ size, address, m }) => {
+const TokenIcon: React.FC<IProps> = ({ size, address, m = "0 8px 0 0" }) => {
   const { account, chainId } = useWeb3React()
+  const ref = useRef() as React.MutableRefObject<HTMLImageElement>
   const src = getIconsPathByChain(chainId, address)
 
   const isBroken = useMemo(
@@ -118,6 +125,14 @@ const TokenIcon: React.FC<IProps> = ({ size, address, m }) => {
   useEffect(() => {
     if (!src) return
 
+    if (isBroken) {
+      setNoImage(true)
+      setLoadingState(false)
+      return
+    }
+
+    setLoadingState(true)
+
     const token = new Image()
     token.src = src
 
@@ -128,15 +143,15 @@ const TokenIcon: React.FC<IProps> = ({ size, address, m }) => {
     })
 
     const imageError: any = token.addEventListener("error", () => {
-      setImageBroken(chainId, account, address)
       setNoImage(true)
       setLoadingState(false)
+      setImageBroken(chainId, account, address)
     })
 
     return () => {
       token.removeEventListener(imageLoad, imageError)
     }
-  }, [account, address, chainId, src])
+  }, [account, address, chainId, isBroken, src])
 
   if (noImage && tokenData) {
     return <DefaultTokenIcon symbol={tokenData.symbol} m={m} size={size} />
@@ -144,13 +159,17 @@ const TokenIcon: React.FC<IProps> = ({ size, address, m }) => {
 
   if (isLoading) {
     return (
-      <Loader m={m || "0 8px 0 0"} size={size}>
-        <WhisperSpinner color="#A4EBD4" size={size ? size / 2 : 20} />
+      <Loader m={m!} size={size}>
+        <MetroSpinner color="#A4EBD4" size={size ? size / 2 : 12} />
       </Loader>
     )
   }
 
-  return <Icon m={m || "0 8px 0 0"} src={srcImg} size={size} />
+  return (
+    <>
+      <Icon ref={ref} m={m!} src={srcImg} size={size} />
+    </>
+  )
 }
 
 export default TokenIcon

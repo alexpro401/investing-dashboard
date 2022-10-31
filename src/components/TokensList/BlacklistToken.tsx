@@ -37,7 +37,7 @@ const BlacklistToken: FC<Props> = ({
 
   return (
     <S.TokenContainer disabled style={style} onClick={() => onClick(currency)}>
-      <TokenIcon address={address} size={32} />
+      <TokenIcon m="0 8px 0 0" address={address} size={32} />
       <S.TokenInfo>
         <Flex gap="4">
           <Icon name={ICON_NAMES.warn} style={iconStyle} />
@@ -48,7 +48,7 @@ const BlacklistToken: FC<Props> = ({
           <S.Blacklist>Blacklist</S.Blacklist>
         </Flex>
       </S.TokenInfo>
-      <Balance token={token} balance={balance} />
+      <Balance balance={balance} />
     </S.TokenContainer>
   )
 }

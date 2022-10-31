@@ -21,7 +21,8 @@ import {
 } from "utils/formulas"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import { usePoolContract, useTraderPool } from "hooks/usePool"
+import { usePoolContract } from "hooks/usePool"
+import { useTraderPoolContract } from "contracts"
 import { selectPriceFeedAddress } from "state/contracts/selectors"
 import { IInvestorProposal } from "interfaces/thegraphs/invest-pools"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
@@ -47,7 +48,7 @@ const poolsClient = createClient({
 const InvestPositionCard: React.FC<Props> = ({ position }) => {
   const navigate = useNavigate()
   const { account } = useActiveWeb3React()
-  const traderPool = useTraderPool(position.pool.id)
+  const traderPool = useTraderPoolContract(position.pool.id)
   const [, poolInfo] = usePoolContract(position.pool.id)
   const [{ priceUSD }] = usePoolPrice(position.pool.id)
   const [baseToken] = useERC20Data(position.pool.token)

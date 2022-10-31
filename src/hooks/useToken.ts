@@ -57,7 +57,7 @@ export function useAllTokens(): { [address: string]: Token } {
 
 export function useWhitelistTokens(): { [address: string]: Token } {
   const whitelistTokens = useCombinedWhiteList()
-  return useTokensFromMap(whitelistTokens, true)
+  return useTokensFromMap(whitelistTokens, false)
 }
 
 export function useUnsupportedTokens(): { [address: string]: Token } {

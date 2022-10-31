@@ -1,6 +1,6 @@
-import { useCallback, useMemo } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { Flex } from "theme"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, useLocation } from "react-router-dom"
 import { PulseSpinner } from "react-spinners-kit"
 
 import SwapPrice from "components/SwapPrice"
@@ -12,12 +12,12 @@ import Button, { SecondaryButton } from "components/Button"
 import CircularProgress from "components/CircularProgress"
 import TransactionSlippage from "components/TransactionSlippage"
 import Header from "components/Header/Layout"
+import TokenSelect from "modals/TokenSelect"
 
 import { createClient, Provider as GraphProvider } from "urql"
 
 import settings from "assets/icons/settings.svg"
 import close from "assets/icons/close-big.svg"
-import plus from "assets/icons/plus.svg"
 import swapPathIcon from "assets/icons/swap-path.svg"
 
 import {
@@ -44,16 +44,27 @@ import {
 import useSwap from "./useSwap"
 import { cutDecimalPlaces, fromBig } from "utils"
 import { useUserAgreement } from "state/user/hooks"
+import { useAllTokens } from "hooks/useToken"
+import { useAllTokenBalances, useAllTokenFundBalances } from "hooks/useBalance"
+import { Currency } from "lib/entities"
+import useRiskyProposals from "hooks/useRiskyProposals"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
 })
 
+enum ModalView {
+  FROM = "from",
+  TO = "to",
+  NONE = "none",
+}
+
 const Swap = () => {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const { poolType, poolToken, inputToken, outputToken } = useParams()
   const [
-    { from, to },
+    formState,
     {
       info,
       direction,
@@ -78,7 +89,17 @@ const Swap = () => {
     to: outputToken,
   })
 
+  const { from, to } = formState
+
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()
+  const [{ data: riskyProposals }] = useRiskyProposals(poolToken, true)
+  const allTokens = useAllTokens()
+  const [balances, balancesIsLoading] = useAllTokenFundBalances(poolToken)
+  const [modalView, setModalView] = useState(ModalView.NONE)
+
+  const riskyProposalTokens = useMemo(() => {
+    return riskyProposals.map((p) => p.proposalInfo.token.toLocaleLowerCase())
+  }, [riskyProposals])
 
   const onSubmit = useCallback(() => {
     agreed ? handleSubmit() : setShowAgreement(true)
@@ -90,13 +111,67 @@ const Swap = () => {
     )
   }, [from, navigate, poolToken, poolType, to])
 
-  const handleProposalRedirect = () => {
-    if (poolType === "INVEST_POOL") {
-      navigate(`/create-invest-proposal/${poolToken}`)
-    } else {
-      navigate(`/create-risky-proposal/${poolToken}/0x/1`)
-    }
-  }
+  const openTokenSearchModal = useCallback(
+    (field: ModalView) => {
+      setModalView(field)
+      navigate("modal/search")
+    },
+    [navigate]
+  )
+
+  const handleRiskyToken = useCallback(
+    (currency: Currency) => {
+      const token = currency.isToken ? currency : undefined
+
+      if (!token) return
+
+      const tokenAddress = token.address.toLocaleLowerCase()
+
+      const riskyIndex = riskyProposalTokens.indexOf(tokenAddress)
+
+      // if risky proposal not created yet redirect to create proposal page
+      if (riskyIndex === -1) {
+        navigate(`/create-risky-proposal/${poolToken}/${tokenAddress}/3`)
+        return
+      }
+
+      // if risky proposal with status "OPEN INVESTING" redirect to risky swap page
+      navigate(`/swap-risky-proposal/${poolToken}/${riskyIndex}/deposit`)
+
+      // TODO: if risky proposal limits outdated ...
+    },
+    [navigate, poolToken, riskyProposalTokens]
+  )
+
+  const handleTokenSelect = useCallback(
+    (currency: Currency, isRisky?: boolean) => {
+      if (isRisky && poolType === "BASIC_POOL") {
+        handleRiskyToken(currency)
+        return
+      }
+
+      if (!modalView) return
+
+      const rootPath = `/pool/swap/${poolType}/${poolToken}`
+      const token = currency.isToken ? currency : undefined
+
+      if (!token) return
+
+      if (modalView === ModalView.FROM) {
+        const address = formState[ModalView.TO].address
+        navigate(`${rootPath}/${token.address}/${address}`)
+      }
+      if (modalView === ModalView.TO) {
+        const address = formState[ModalView.FROM].address
+        navigate(`${rootPath}/${address}/${token.address}`)
+      }
+    },
+    [formState, handleRiskyToken, modalView, navigate, poolToken, poolType]
+  )
+
+  const handleModalClose = useCallback(() => {
+    navigate(pathname.slice(0, pathname.indexOf("/modal")))
+  }, [navigate, pathname])
 
   const symbol = useMemo(() => {
     if (direction === "deposit") {
@@ -265,12 +340,6 @@ const Swap = () => {
           <Title active>Swap</Title>
         </Flex>
         <IconsGroup>
-          <IconButton
-            size={9}
-            filled
-            media={plus}
-            onClick={handleProposalRedirect}
-          />
           <CircularProgress />
           <IconButton
             size={12}
@@ -289,9 +358,7 @@ const Swap = () => {
         address={from.address}
         symbol={from.symbol}
         decimal={from.decimals}
-        onSelect={() =>
-          navigate(`/select-token/${poolType}/${poolToken}/from/${outputToken}`)
-        }
+        onSelect={() => openTokenSearchModal(ModalView.FROM)}
         onChange={handleFromChange}
       />
 
@@ -307,9 +374,7 @@ const Swap = () => {
         address={to.address}
         symbol={to.symbol}
         decimal={to.decimals}
-        onSelect={() =>
-          navigate(`/select-token/${poolType}/${poolToken}/to/${inputToken}`)
-        }
+        onSelect={() => openTokenSearchModal(ModalView.TO)}
         onChange={handleToChange}
       />
 
@@ -370,6 +435,13 @@ const Swap = () => {
       >
         {form}
       </Container>
+      <TokenSelect
+        onClose={handleModalClose}
+        allBalances={balances}
+        balancesLoading={balancesIsLoading}
+        allTokens={allTokens}
+        onSelect={handleTokenSelect}
+      />
     </>
   )
 }

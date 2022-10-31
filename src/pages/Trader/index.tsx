@@ -24,7 +24,8 @@ import PerformanceFeeCard from "components/PerformanceFeeCard"
 import pencil from "assets/icons/pencil.svg"
 
 import { formatBigNumber } from "utils"
-import { usePoolQuery, usePoolContract, useTraderPool } from "hooks/usePool"
+import { usePoolQuery, usePoolContract } from "hooks/usePool"
+import { useTraderPoolContract } from "contracts"
 
 import {
   Container,
@@ -62,7 +63,7 @@ function Trader(props: Props) {
     localStorage.setItem(`last-visited-profile-${account}`, pathname)
   }, [pathname, account])
 
-  const traderPool = useTraderPool(poolAddress)
+  const traderPool = useTraderPoolContract(poolAddress)
   const [poolData] = usePoolQuery(poolAddress)
   const [, poolInfoData] = usePoolContract(poolAddress)
   const navigate = useNavigate()

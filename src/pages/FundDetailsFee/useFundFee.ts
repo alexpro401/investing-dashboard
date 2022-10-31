@@ -41,7 +41,8 @@ import { usePriceFeedContract } from "contracts"
 import { IUserFeeInfo } from "interfaces/contracts/ITraderPool"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import { usePoolContract, usePoolQuery, useTraderPool } from "hooks/usePool"
+import { usePoolContract, usePoolQuery } from "hooks/usePool"
+import { useTraderPoolContract } from "contracts"
 import usePayload from "hooks/usePayload"
 import useError from "hooks/useError"
 
@@ -99,7 +100,7 @@ function useFundFee(
   const priceFeed = usePriceFeedContract()
   const coreProperties = useCorePropertiesContract()
   const addTransaction = useTransactionAdder()
-  const traderPool = useTraderPool(poolAddress)
+  const traderPool = useTraderPoolContract(poolAddress)
   const [poolGraphData] = usePoolQuery(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
   const [baseToken] = useERC20Data(poolGraphData?.baseToken)

@@ -3,11 +3,9 @@ import { FC, useCallback, useMemo, useState } from "react"
 import TokensList from "components/TokensList"
 import Modal from "components/Modal"
 
-import { useTryCustomToken, useWhitelistTokens } from "hooks/useToken"
+import { useTryCustomToken } from "hooks/useToken"
 import { Currency, Token } from "lib/entities"
 import useDebounce from "hooks/useDebounce"
-import { useTokenBalancesWithLoadingIndicator } from "hooks/useBalance"
-import { useWeb3React } from "@web3-react/core"
 import { getTokenFilter } from "lib/hooks/useTokenList/filtering"
 import {
   tokenComparator,
@@ -28,13 +26,26 @@ import { useAllLists } from "state/lists/hooks"
 import { useFetchListCallback } from "hooks/useFetchListCallback"
 import { useAppDispatch } from "state/hooks"
 import { enableList, removeList } from "state/lists/actions"
+import { useAllTokenPrices } from "hooks/usePrice"
+import { CurrencyAmount } from "lib/entities/fractions/currencyAmount"
 
 interface Props {
-  onSelect: (token: Token) => void
+  whitelistOnly?: boolean
+  allTokens: { [address: string]: Token }
+  allBalances: { [tokenAddress: string]: CurrencyAmount<Token> | undefined }
+  balancesLoading: boolean
+  onSelect: (token: Token, isRisky?: boolean) => void
+  onClose: () => void
 }
 
-const TokenSelect: FC<Props> = ({ onSelect }) => {
-  const { account } = useWeb3React()
+const TokenSelect: FC<Props> = ({
+  whitelistOnly,
+  allTokens,
+  allBalances,
+  balancesLoading,
+  onClose,
+  onSelect,
+}) => {
   const [searchQuery, setSearchQuery] = useState("")
 
   const dispatch = useAppDispatch()
@@ -43,23 +54,10 @@ const TokenSelect: FC<Props> = ({ onSelect }) => {
   const isOpen = pathname.includes("modal")
 
   const debouncedQuery = useDebounce(searchQuery, 200)
-  const allTokens = useWhitelistTokens()
   const customToken = useTryCustomToken(debouncedQuery)
   const addToken = useAddUserToken()
 
-  const onClose = useCallback(() => {
-    navigate(pathname.slice(0, pathname.indexOf("/modal")))
-  }, [navigate, pathname])
-
-  const allTokensArray = useMemo(
-    () => Object.values(allTokens ?? {}),
-    [allTokens]
-  )
-
-  const [balances, balancesIsLoading] = useTokenBalancesWithLoadingIndicator(
-    account,
-    allTokensArray
-  )
+  const [prices] = useAllTokenPrices()
 
   const filteredTokens: Token[] = useMemo(() => {
     return Object.values(allTokens).filter(getTokenFilter(debouncedQuery))
@@ -67,10 +65,10 @@ const TokenSelect: FC<Props> = ({ onSelect }) => {
 
   const sortedTokens: Token[] = useMemo(
     () =>
-      !balancesIsLoading
-        ? [...filteredTokens].sort(tokenComparator.bind(null, balances))
+      !balancesLoading
+        ? [...filteredTokens].sort(tokenComparator.bind(null, allBalances))
         : [],
-    [balances, filteredTokens, balancesIsLoading]
+    [allBalances, filteredTokens, balancesLoading]
   )
 
   const filteredSortedTokens = useSortTokensByQuery(
@@ -88,15 +86,14 @@ const TokenSelect: FC<Props> = ({ onSelect }) => {
   }, [navigate])
 
   const handleSelect = useCallback(
-    (currency: Currency) => {
+    (currency: Currency, isRisky: boolean) => {
       const token = currency.isToken ? currency : undefined
 
       if (!token) return
 
-      onSelect(token)
-      onClose()
+      onSelect(token, isRisky)
     },
-    [onClose, onSelect]
+    [onSelect]
   )
 
   const handleImportToken = useCallback(
@@ -128,6 +125,7 @@ const TokenSelect: FC<Props> = ({ onSelect }) => {
 
   // monitor is list is loading
   const adding = Boolean(lists[listURL ?? ""]?.loadingRequestId)
+  // TODO: addError UI
   const [addError, setAddError] = useState<string | null>(null)
 
   const handleAddList = useCallback(() => {
@@ -163,7 +161,9 @@ const TokenSelect: FC<Props> = ({ onSelect }) => {
             <S.CardList style={{ minHeight: 400 }}>
               {!!filteredSortedTokens.length ? (
                 <TokensList
-                  balances={balances}
+                  prices={prices}
+                  whitelistOnly={whitelistOnly}
+                  balances={allBalances}
                   onSelect={handleSelect}
                   currencies={filteredSortedTokens}
                 />
@@ -245,6 +245,7 @@ const TokenSelect: FC<Props> = ({ onSelect }) => {
         path="modal/manage/*"
         element={
           <Manage
+            whitelistOnly={whitelistOnly}
             customToken={customToken}
             setImportList={setImportList}
             setListUrl={setListUrl}

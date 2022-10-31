@@ -19,9 +19,11 @@ function currencyKey(currency: Currency): string {
 }
 
 interface Props {
+  whitelistOnly?: boolean
   currencies: Token[]
   balances: { [tokenAddress: string]: CurrencyAmount<Token> | undefined }
-  onSelect: (token: Currency) => void
+  prices: { [tokenAddress: string]: CurrencyAmount<Token> | undefined }
+  onSelect: (token: Currency, isRisky: boolean) => void
 }
 
 interface TokenRowProps {
@@ -30,7 +32,13 @@ interface TokenRowProps {
   style: CSSProperties
 }
 
-const TokensList: React.FC<Props> = ({ currencies, balances, onSelect }) => {
+const TokensList: React.FC<Props> = ({
+  whitelistOnly,
+  currencies,
+  balances,
+  prices,
+  onSelect,
+}) => {
   const [showAlert] = useAlert()
   const userAddedTokens = useUserTokens()
 
@@ -62,8 +70,34 @@ const TokensList: React.FC<Props> = ({ currencies, balances, onSelect }) => {
     [showAlert]
   )
 
+  const onNotWhitelistSelect = useCallback(
+    (currency: Currency) => {
+      showAlert({
+        type: AlertType.warning,
+        content: (
+          <Text
+            color={theme.textColors.primary}
+          >{`Whitelist only tokens supported for this type of action. ${currency.symbol} is not in the whitelist`}</Text>
+        ),
+        hideDuration: 7000,
+      })
+    },
+    [showAlert]
+  )
+
   const whitelist = useWhitelistTokens()
   const blacklist = useUnsupportedTokens()
+
+  const handleSelect = useCallback(
+    (token: Currency, isRisky?: boolean) => {
+      if (whitelistOnly && isRisky) {
+        onNotWhitelistSelect(token)
+      } else {
+        onSelect(token, !!isRisky)
+      }
+    },
+    [onNotWhitelistSelect, onSelect, whitelistOnly]
+  )
 
   const Row = useCallback(
     ({ data, index, style }: TokenRowProps) => {
@@ -88,12 +122,14 @@ const TokensList: React.FC<Props> = ({ currencies, balances, onSelect }) => {
 
       return (
         <TokenRow
+          price={prices[address]}
+          whitelistOnly={whitelistOnly}
           balance={balances[address]}
           isRisky={!isWhitelisted}
           isUserAdded={isUserAdded}
           address={address}
           style={style}
-          onClick={onSelect}
+          onClick={handleSelect}
           currency={token}
         />
       )
@@ -102,8 +138,10 @@ const TokensList: React.FC<Props> = ({ currencies, balances, onSelect }) => {
       blacklist,
       whitelist,
       userAddedTokens,
+      prices,
+      whitelistOnly,
       balances,
-      onSelect,
+      handleSelect,
       onBlacklistSelect,
     ]
   )

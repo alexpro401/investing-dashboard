@@ -1,7 +1,7 @@
 import { useWeb3React } from "@web3-react/core"
 import { AppButton } from "common"
 import { DefaultTokenIcon } from "components/TokenIcon"
-import { PRODUCT_LIST_URLS, UNSUPPORTED_LIST_URLS } from "constants/lists"
+import { UNSUPPORTED_LIST_URLS } from "constants/lists"
 import { useFetchListCallback } from "hooks/useFetchListCallback"
 import { TokenList } from "lib/token-list"
 import parseENSAddress from "lib/utils/parseENSAddress"
@@ -13,12 +13,15 @@ import ListRow from "./ListRow"
 import * as S from "./styled"
 
 interface Props {
+  whitelistOnly?: boolean
   debouncedQuery: string
   setImportList: (list: TokenList) => void
   setListUrl: (url: string) => void
 }
 
-const Lists: FC<Props> = ({ debouncedQuery, setImportList, setListUrl }) => {
+const Lists: FC<Props> = (props) => {
+  const { whitelistOnly, debouncedQuery, setImportList, setListUrl } = props
+
   const { chainId } = useWeb3React()
   const lists = useAllLists()
   const navigate = useNavigate()
@@ -158,7 +161,11 @@ const Lists: FC<Props> = ({ debouncedQuery, setImportList, setListUrl }) => {
       )}
       {addError && <S.Error>{addError}</S.Error>}
       {sortedLists.map((listUrl) => (
-        <ListRow key={listUrl} listUrl={listUrl} />
+        <ListRow
+          whitelistOnly={whitelistOnly}
+          key={listUrl}
+          listUrl={listUrl}
+        />
       ))}
     </>
   )

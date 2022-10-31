@@ -7,6 +7,8 @@ import { useMultipleContractSingleData } from "state/multicall/hooks"
 import { isAddress } from "utils"
 import { Currency, Token } from "lib/entities"
 import { ZERO } from "constants/index"
+import { useWeb3React } from "@web3-react/core"
+import { useAllTokens } from "./useToken"
 
 const ERC20_INTERFACE = new Interface(ERC20)
 const TRADER_POOL_INTERFACE = new Interface(TraderPool)
@@ -190,6 +192,40 @@ export const useFundBalances = (
       }) ?? [],
     [account, currencies, tokenBalances]
   )
+}
+
+export function useAllTokenBalances(): [
+  { [tokenAddress: string]: CurrencyAmount<Token> | undefined },
+  boolean
+] {
+  const { account } = useWeb3React()
+  const allTokens = useAllTokens()
+  const allTokensArray = useMemo(
+    () => Object.values(allTokens ?? {}),
+    [allTokens]
+  )
+  const [balances, balancesIsLoading] = useTokenBalancesWithLoadingIndicator(
+    account ?? undefined,
+    allTokensArray
+  )
+  return [balances ?? {}, balancesIsLoading]
+}
+
+export function useAllTokenFundBalances(
+  poolAddress: string | undefined
+): [{ [tokenAddress: string]: CurrencyAmount<Token> | undefined }, boolean] {
+  const { account } = useWeb3React()
+  const allTokens = useAllTokens()
+  const allTokensArray = useMemo(
+    () => Object.values(allTokens ?? {}),
+    [allTokens]
+  )
+  const [balances, balancesIsLoading] = usePoolBalancesWithLoadingIndicator(
+    poolAddress,
+    account ?? undefined,
+    allTokensArray
+  )
+  return [balances ?? {}, balancesIsLoading]
 }
 
 export const useFundBalance = (

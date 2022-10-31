@@ -1,25 +1,28 @@
 import { parseEther } from "@ethersproject/units"
-import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
+import { Token } from "lib/entities"
+import { CurrencyAmount } from "lib/entities/fractions/currencyAmount"
 import { useMemo } from "react"
 import { normalizeBigNumber } from "utils"
+import { multiplyBignumbers } from "utils/formulas"
 import * as S from "./styled"
 
-export const Price = ({ address, balance }) => {
-  const usdPriceParams = useMemo(
-    () => ({
-      tokenAddress: address,
-      amount: parseEther(balance?.toSignificant(4) || "1"),
-    }),
-    [address, balance]
-  )
+export const Price = ({
+  balance,
+  price,
+}: {
+  balance?: CurrencyAmount<Token>
+  price?: CurrencyAmount<Token>
+}) => {
+  const tokensPrice = useMemo(() => {
+    const _tokenPrice = multiplyBignumbers(
+      [parseEther(balance?.toSignificant(4) || "1"), 18],
+      [parseEther(price?.toSignificant(4) || "1"), 18]
+    )
 
-  const price = useTokenPriceOutUSD(usdPriceParams)
+    if (_tokenPrice.isZero()) return null
 
-  return useMemo(
-    () =>
-      !price.isZero() ? (
-        <S.TokenPrice>${normalizeBigNumber(price, 18, 2)}</S.TokenPrice>
-      ) : null,
-    [price]
-  )
+    return normalizeBigNumber(_tokenPrice, 18, 2)
+  }, [balance, price])
+
+  return <S.TokenPrice>{tokensPrice && `$${tokensPrice}`}</S.TokenPrice>
 }

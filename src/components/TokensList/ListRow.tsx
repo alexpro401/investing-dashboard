@@ -1,24 +1,32 @@
+import { memo, useCallback, useMemo, useState } from "react"
 import { useWeb3React } from "@web3-react/core"
-import { AppButton, Icon } from "common"
+import { useSelector } from "react-redux"
+import { Icon } from "common"
+
 import Switch from "components/Switch"
 import { DefaultTokenIcon } from "components/TokenIcon"
+
 import { ICON_NAMES } from "constants/icon-names"
 import { PRODUCT_LIST_URLS } from "constants/lists"
-import { memo, useCallback, useMemo, useState } from "react"
-import { useSelector } from "react-redux"
 import { useAppDispatch } from "state/hooks"
 import { disableList, enableList, removeList } from "state/lists/actions"
 import { useIsListActive } from "state/lists/hooks"
 import { selectListsByUrl } from "state/lists/selectors"
 import * as S from "./styled"
 
-const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
+const ListRow = memo(function ListRow({
+  listUrl,
+  whitelistOnly,
+}: {
+  listUrl: string
+  whitelistOnly?: boolean
+}) {
   const { chainId } = useWeb3React()
   const listsByUrl = useSelector(selectListsByUrl)
   const dispatch = useAppDispatch()
   const [isPopoverShown, setIsPopoverShown] = useState(false)
 
-  const { current: list, pendingUpdate: pending } = listsByUrl[listUrl]
+  const { current: list } = listsByUrl[listUrl]
 
   const isLocked = useMemo(() => PRODUCT_LIST_URLS.includes(listUrl), [listUrl])
   const isActive = useIsListActive(listUrl)
@@ -34,6 +42,11 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
   }, [chainId, list])
 
   const handleRemoveList = useCallback(() => {
+    if (isLocked) {
+      window.alert("This list cannot be removed.")
+      return
+    }
+
     if (
       window.prompt(
         `Please confirm you would like to remove this list by typing REMOVE`
@@ -41,7 +54,7 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
     ) {
       dispatch(removeList(listUrl))
     }
-  }, [dispatch, listUrl])
+  }, [dispatch, listUrl, isLocked])
 
   const handleEnableList = useCallback(() => {
     dispatch(enableList(listUrl))
@@ -87,7 +100,7 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
       </S.ListRowContent>
       <Switch
         isOn={isActive}
-        disabled={isLocked}
+        disabled={isLocked && whitelistOnly}
         name={list.name}
         onChange={(_, v) => (v ? handleEnableList() : handleDisableList())}
       />

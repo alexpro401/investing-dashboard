@@ -1,6 +1,6 @@
 import { Flex } from "theme"
-import { useMemo, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useCallback, useMemo, useState } from "react"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
 import { useWeb3React } from "@web3-react/core"
 import format from "date-fns/format"
@@ -40,6 +40,9 @@ import usePayDividends from "./usePayDividends"
 import useConvertToDividendsContext, {
   ConvertToDividendsProvider,
 } from "modals/ConvertToDividends/useConvertToDividendsContext"
+import { useAllTokenBalances } from "hooks/useBalance"
+import { useAllTokens } from "hooks/useToken"
+import { Currency } from "lib/entities"
 
 const investPoolClient = createClient({
   url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",
@@ -47,10 +50,14 @@ const investPoolClient = createClient({
 
 function PayDividends() {
   const { chainId } = useWeb3React()
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
   const { poolAddress, proposalId } = useParams()
   const [isOpen, setTokenSelectOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
   const { convertToDividends } = useConvertToDividendsContext()
+  const [balances, balancesIsLoading] = useAllTokenBalances()
+  const allTokens = useAllTokens()
 
   const [
     { tokens, info, supplies },
@@ -63,17 +70,25 @@ function PayDividends() {
   ] = usePayDividends(poolAddress, proposalId)
 
   const openTokenSelect = (index: number) => {
-    setTokenSelectOpen(true)
     setActiveIndex(index)
+    navigate("modal/search")
   }
 
-  const closeTokenSelect = () => {
-    setTokenSelectOpen(false)
-  }
+  const handleModalClose = useCallback(() => {
+    navigate(pathname.slice(0, pathname.indexOf("/modal")))
+  }, [navigate, pathname])
 
-  const onTokenSelect = (token: Token) => {
-    handleDividendTokenSelect(token, activeIndex)
-  }
+  const onTokenSelect = useCallback(
+    (currency: Currency) => {
+      const token = currency.isToken ? currency : undefined
+
+      if (!token) return
+
+      handleDividendTokenSelect(token.address, activeIndex)
+      handleModalClose()
+    },
+    [activeIndex, handleDividendTokenSelect, handleModalClose]
+  )
 
   // TODO: check terms and conditions agreement
   const button = useMemo(() => {
@@ -254,11 +269,13 @@ function PayDividends() {
       >
         {form}
       </Container>
-      {/* <TokenSelect
+      <TokenSelect
+        allBalances={balances}
+        balancesLoading={balancesIsLoading}
+        allTokens={allTokens}
+        onClose={handleModalClose}
         onSelect={onTokenSelect}
-        isOpen={isOpen}
-        onClose={closeTokenSelect}
-      /> */}
+      />
     </>
   )
 }

@@ -88,7 +88,7 @@ export default function Routes() {
                 />
 
                 <Route
-                  path="pool/swap/:poolType/:poolToken/:inputToken/:outputToken"
+                  path="pool/swap/:poolType/:poolToken/:inputToken/:outputToken/*"
                   element={<Swap />}
                 />
 
@@ -123,7 +123,7 @@ export default function Routes() {
                   element={<WithdrawInvestmentProposal />}
                 />
                 <Route
-                  path="pay-dividends-investment-proposal/:poolAddress/:proposalId"
+                  path="pay-dividends-investment-proposal/:poolAddress/:proposalId/*"
                   element={<PayDividends />}
                 />
                 <Route path="create-fund" element={<CreateFund />} />

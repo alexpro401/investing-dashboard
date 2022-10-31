@@ -13,13 +13,15 @@ import { Balance } from "./Balance"
 import { CurrencyAmount } from "lib/entities/fractions/currencyAmount"
 
 interface Props {
+  whitelistOnly?: boolean
   address: string
   balance?: CurrencyAmount<Token>
+  price?: CurrencyAmount<Token>
   currency: Currency
   isUserAdded: boolean
   isRisky: boolean
   style: CSSProperties
-  onClick: (token: Currency) => void
+  onClick: (token: Currency, isRisky: boolean) => void
 }
 
 const iconStyle = {
@@ -28,8 +30,10 @@ const iconStyle = {
 }
 
 const TokenRow: FC<Props> = ({
+  whitelistOnly,
   address,
   balance,
+  price,
   currency,
   isUserAdded,
   isRisky,
@@ -40,11 +44,6 @@ const TokenRow: FC<Props> = ({
   const { chainId } = useWeb3React()
   const removeToken = useRemoveUserAddedToken()
 
-  const token = useMemo(
-    () => (currency.isToken ? currency : undefined),
-    [currency]
-  )
-
   const handleRemoveToken = useCallback(
     (event: MouseEvent<HTMLElement>) => {
       event.stopPropagation()
@@ -54,9 +53,22 @@ const TokenRow: FC<Props> = ({
     [chainId, currency.wrapped.address, removeToken]
   )
 
+  const handleSelect = useCallback(() => {
+    onClick(currency, isRisky)
+  }, [currency, isRisky, onClick])
+
+  const tokenIcon = useMemo(
+    () => <TokenIcon address={address} size={32} m="0 8px 0 0" />,
+    [address]
+  )
+
   return (
-    <S.TokenContainer style={style} onClick={() => onClick(currency)}>
-      <TokenIcon address={address} size={32} />
+    <S.TokenContainer
+      disabled={isRisky && whitelistOnly}
+      style={style}
+      onClick={handleSelect}
+    >
+      {tokenIcon}
       <S.TokenInfo>
         <Flex gap="4">
           {(isUserAdded || isRisky) && (
@@ -77,7 +89,7 @@ const TokenRow: FC<Props> = ({
           )}
         </Flex>
       </S.TokenInfo>
-      <Balance token={token} balance={balance} />
+      <Balance balance={balance} price={price} />
     </S.TokenContainer>
   )
 }

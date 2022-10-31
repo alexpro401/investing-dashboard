@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { parseEther } from "@ethersproject/units"
-import { useTraderPool } from "hooks/usePool"
+import { useTraderPoolContract } from "contracts"
 import useForceUpdate from "hooks/useForceUpdate"
 
 function usePoolPrice(
   address: string | undefined
 ): [{ priceUSD: BigNumber; priceBase: BigNumber }, () => void] {
   const [updateObserver, update] = useForceUpdate()
-  const traderPool = useTraderPool(address)
+  const traderPool = useTraderPoolContract(address)
   const [priceUSD, setPriceUSD] = useState(parseEther("1"))
   const [priceBase, setPriceBase] = useState(parseEther("1"))
 

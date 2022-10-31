@@ -13,6 +13,7 @@ import { TokenList } from "lib/token-list"
 import { Token } from "lib/entities"
 
 interface Props {
+  whitelistOnly?: boolean
   setImportList: (list: TokenList) => void
   setListUrl: (url: string) => void
   mainQuery: string
@@ -21,7 +22,7 @@ interface Props {
 }
 
 /*
-# explanaition of the main and local query params:
+# explanaition of the "main" and "local" query params:
   - mainQuery variable: it's a search query value that is used to filter the tokens
   - all logic of mainQuery and tokens is in the parent component
 
@@ -31,8 +32,14 @@ interface Props {
 */
 
 export const Manage: FC<Props> = (props) => {
-  const { setImportList, setListUrl, mainQuery, setMainQuery, customToken } =
-    props
+  const {
+    whitelistOnly,
+    mainQuery,
+    customToken,
+    setImportList,
+    setListUrl,
+    setMainQuery,
+  } = props
 
   const [localQuery, setLocalQuery] = useState("")
   const { pathname } = useLocation()
@@ -93,6 +100,7 @@ export const Manage: FC<Props> = (props) => {
             path={"lists"}
             element={
               <Lists
+                whitelistOnly={whitelistOnly}
                 setImportList={setImportList}
                 setListUrl={setListUrl}
                 debouncedQuery={debouncedQuery}
