@@ -26,6 +26,9 @@ const TokenSelect = lazy(() => import("pages/TokenSelect")) // TODO: my trader p
 const CreateRiskyProposal = lazy(() => import("pages/CreateRiskyProposal"))
 const InvestRiskyProposal = lazy(() => import("pages/InvestRiskyProposal"))
 const SwapRiskyProposal = lazy(() => import("pages/SwapRiskyProposal"))
+const ProposalVotingTerminal = lazy(
+  () => import("components/ProposalVotingTerminal")
+)
 const PayDividends = lazy(() => import("pages/PayDividends"))
 const CreateInvestmentProposal = lazy(
   () => import("pages/CreateInvestmentProposal")
@@ -75,6 +78,7 @@ export default function Routes() {
               <Route path="welcome" element={<Welcome />} />
 
               <Route element={<RequireAuth />}>
+                <Route path="vote" element={<ProposalVotingTerminal />} />
                 <Route path="me/investor" element={<Investor />} />
 
                 <Route path="me/trader" element={<Trader />} />
