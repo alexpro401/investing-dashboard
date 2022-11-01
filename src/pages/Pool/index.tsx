@@ -23,7 +23,8 @@ import PoolStatisticCard from "components/cards/PoolStatistic"
 import pencil from "assets/icons/pencil.svg"
 
 import { formatBigNumber } from "utils"
-import { usePoolQuery, usePoolContract, useTraderPool } from "hooks/usePool"
+import { usePoolQuery, usePoolContract } from "hooks/usePool"
+import { useTraderPoolContract } from "contracts"
 
 import {
   Container,
@@ -52,7 +53,7 @@ function Pool() {
   const [hasFee, setHasFee] = useState<boolean>(false)
   const [ownInvestUsd, setOwnInvestUsd] = useState<string>("0")
 
-  const traderPool = useTraderPool(poolAddress)
+  const traderPool = useTraderPoolContract(poolAddress)
   const [poolData] = usePoolQuery(poolAddress)
   const [, poolInfoData] = usePoolContract(poolAddress)
   const navigate = useNavigate()
