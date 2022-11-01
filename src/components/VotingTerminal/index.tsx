@@ -3,16 +3,16 @@ import ExchangeInput from "components/Exchange/ExchangeInput"
 import NftInput from "components/Exchange/NftInput"
 import * as S from "components/Exchange/styled"
 import { ZERO } from "constants/index"
-import useGovPoolTokensInfo from "hooks/useGovPoolTokensInfo"
 import { FC, useMemo } from "react"
 import { Flex } from "theme"
+import useVotingTerminal from "./useVotingTerminal"
 
 interface Props {
   daoPoolAddress?: string
 }
 
-const ProposalVotingTerminal: FC<Props> = ({ daoPoolAddress }) => {
-  const [govTokens, nftInfo] = useGovPoolTokensInfo(daoPoolAddress)
+const VotingTerminal: FC<Props> = ({ daoPoolAddress }) => {
+  const formInfo = useVotingTerminal(daoPoolAddress)
 
   const button = useMemo(() => {
     return (
@@ -25,20 +25,24 @@ const ProposalVotingTerminal: FC<Props> = ({ daoPoolAddress }) => {
   return (
     <S.Card>
       <S.CardHeader>
-        <S.Title active>Swap</S.Title>
+        <S.Title active>Vote to create</S.Title>
       </S.CardHeader>
 
       <ExchangeInput
         price={ZERO}
         amount={ZERO.toString()}
-        balance={ZERO}
-        address={govTokens.tokenAddress}
-        symbol={""}
-        decimal={18}
+        balance={formInfo.erc20.balance}
+        address={formInfo.erc20.address}
+        symbol={formInfo.erc20.symbol}
+        decimal={formInfo.erc20.decimal}
         onChange={() => {}}
       />
 
-      <NftInput price={ZERO} balance={ZERO} address={govTokens.nftAddress} />
+      <NftInput
+        price={ZERO}
+        balance={formInfo.erc721.balance}
+        address={formInfo.erc721.address}
+      />
 
       <Flex p="16px 0 0" full>
         {button}
@@ -47,4 +51,4 @@ const ProposalVotingTerminal: FC<Props> = ({ daoPoolAddress }) => {
   )
 }
 
-export default ProposalVotingTerminal
+export default VotingTerminal

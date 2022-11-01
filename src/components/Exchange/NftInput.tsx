@@ -64,8 +64,8 @@ const NftInput: React.FC<IToProps> = ({
         <Price>${formatBigNumber(price, 18, 2)} </Price>
 
         <Balance onClick={setMaxAmount}>
-          <Tokens>Available: {5}</Tokens>
-          <Max>Max</Max>
+          <Tokens>Available: {formatBigNumber(balance, 18, 0)}</Tokens>
+          <Max>All</Max>
         </Balance>
       </InputTop>
 

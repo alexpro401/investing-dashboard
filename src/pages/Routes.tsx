@@ -26,9 +26,7 @@ const TokenSelect = lazy(() => import("pages/TokenSelect")) // TODO: my trader p
 const CreateRiskyProposal = lazy(() => import("pages/CreateRiskyProposal"))
 const InvestRiskyProposal = lazy(() => import("pages/InvestRiskyProposal"))
 const SwapRiskyProposal = lazy(() => import("pages/SwapRiskyProposal"))
-const ProposalVotingTerminal = lazy(
-  () => import("components/ProposalVotingTerminal")
-)
+const VotingTerminal = lazy(() => import("components/VotingTerminal"))
 const PayDividends = lazy(() => import("pages/PayDividends"))
 const CreateInvestmentProposal = lazy(
   () => import("pages/CreateInvestmentProposal")
@@ -81,7 +79,7 @@ export default function Routes() {
                 <Route
                   path="vote"
                   element={
-                    <ProposalVotingTerminal daoPoolAddress="0x173D87d5621c566C494061Cbfc4309FBED1b31D4" />
+                    <VotingTerminal daoPoolAddress="0x173D87d5621c566C494061Cbfc4309FBED1b31D4" />
                   }
                 />
                 <Route path="me/investor" element={<Investor />} />
