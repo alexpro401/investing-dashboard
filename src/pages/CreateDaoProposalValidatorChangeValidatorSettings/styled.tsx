@@ -1,8 +1,6 @@
 import styled from "styled-components"
 import { motion } from "framer-motion"
 
-import { AppButton } from "common"
-
 export const PageHolder = styled(motion.div).attrs(() => ({
   initial: { opacity: 0 },
   animate: { opacity: 1 },
@@ -13,10 +11,6 @@ export const PageHolder = styled(motion.div).attrs(() => ({
   padding: 16px;
   height: calc(100vh - 94px);
   overflow-y: auto;
-`
-
-export const SubmitButton = styled(AppButton)`
-  width: 100%;
 `
 
 export const PageContent = styled.div`

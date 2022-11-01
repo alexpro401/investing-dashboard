@@ -21,9 +21,9 @@ const useIsValidator = ({ daoAddress, userAddress }: IUseValidatorProps) => {
     govValidatorContractAddress
   )
 
-  const [result, setResult] = useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<boolean>(false)
+  const [result, setResult] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   const checkIfUserIsValidator = useCallback(async () => {
     if (!govValidatorsContract) return

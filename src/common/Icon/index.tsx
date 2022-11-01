@@ -29,6 +29,7 @@ import {
   ModalCloseIcon,
   CircleWarningIcon,
   CircleInfoIcon,
+  ReloadIcon,
   ShareIcon,
 } from "assets/icons"
 
@@ -102,6 +103,8 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return CircleInfoIcon as unknown as ElementType
       case ICON_NAMES.warningCircled:
         return CircleWarningIcon as unknown as ElementType
+      case ICON_NAMES.reload:
+        return ReloadIcon as unknown as ElementType
       case ICON_NAMES.share:
         return ShareIcon as unknown as ElementType
       default:
