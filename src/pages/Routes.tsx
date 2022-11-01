@@ -78,7 +78,12 @@ export default function Routes() {
               <Route path="welcome" element={<Welcome />} />
 
               <Route element={<RequireAuth />}>
-                <Route path="vote" element={<ProposalVotingTerminal />} />
+                <Route
+                  path="vote"
+                  element={
+                    <ProposalVotingTerminal daoPoolAddress="0x173D87d5621c566C494061Cbfc4309FBED1b31D4" />
+                  }
+                />
                 <Route path="me/investor" element={<Investor />} />
 
                 <Route path="me/trader" element={<Trader />} />
