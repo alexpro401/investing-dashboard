@@ -54,6 +54,7 @@ import {
   GovUserKeeper,
   GovValidators,
 } from "interfaces/typechain"
+import { useGovUserKeeperAddress } from "hooks/useGovPool"
 
 type Address = string | undefined
 
@@ -163,5 +164,7 @@ export function useGovUserKeeperContract(address: Address) {
 }
 
 export function useGovValidatorsContract(address: Address) {
-  return useContract<GovValidators>(address, GovValidators_ABI)
+  const userKeeperAddress = useGovUserKeeperAddress(address)
+
+  return useContract<GovValidators>(userKeeperAddress, GovValidators_ABI)
 }
