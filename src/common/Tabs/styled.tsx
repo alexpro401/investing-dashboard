@@ -1,6 +1,14 @@
 import styled from "styled-components"
 import { motion } from "framer-motion"
 
+export const Container = styled.div`
+  display: grid;
+  grid-template-rows: 40px 1fr;
+  grid-gap: 16px;
+  width: 100%;
+  overflow: hidden;
+`
+
 export const List = styled(motion.div)<{
   count: number
   gap?: number
@@ -62,4 +70,8 @@ export const Tab = styled(motion.div)<{ active }>`
     transition: height ease-in-out 0.3s;
     z-index: 1;
   }
+`
+
+export const Content = styled.div`
+  width: 100%;
 `

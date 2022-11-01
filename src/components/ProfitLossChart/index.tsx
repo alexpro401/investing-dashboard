@@ -72,9 +72,14 @@ const Chart = ({ data, baseToken }) => {
 interface Props {
   address: string | undefined
   baseToken: string | undefined
+  tfPosition?: "top" | "bottom"
 }
 
-const ProfitLossChart: React.FC<Props> = ({ address, baseToken }) => {
+const ProfitLossChart: React.FC<Props> = ({
+  address,
+  baseToken,
+  tfPosition,
+}) => {
   const [timeframe, setTimeframe] = useState(TIMEFRAMES["D"])
   const [baseTokenData] = useERC20Data(baseToken)
 
@@ -88,10 +93,16 @@ const ProfitLossChart: React.FC<Props> = ({ address, baseToken }) => {
 
   return (
     <S.Container>
-      <TimeframeList current={timeframe} set={setTimeframe} />
+      {tfPosition === "top" && (
+        <TimeframeList current={timeframe} set={setTimeframe} />
+      )}
       <S.Body>
         <Chart data={historyFormated} baseToken={baseTokenData} />
       </S.Body>
+
+      {tfPosition === "bottom" && (
+        <TimeframeList current={timeframe} set={setTimeframe} />
+      )}
     </S.Container>
   )
 }

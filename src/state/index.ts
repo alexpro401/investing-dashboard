@@ -11,7 +11,7 @@ import ipfsMetadata from "./ipfsMetadata/reducer"
 import gas from "./gas/reducer"
 import erc20 from "./erc20/reducer"
 
-const RESET_KEY = "1666812103425"
+const RESET_KEY = "1667307571774"
 
 const PERSISTED_KEYS: string[] = [
   "user",

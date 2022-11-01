@@ -1,220 +1,177 @@
 import { useWeb3React } from "@web3-react/core"
 import { GuardSpinner } from "react-spinners-kit"
-import { formatEther } from "@ethersproject/units"
 import { createClient, Provider as GraphProvider } from "urql"
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { isNil } from "lodash"
+import { useSelector } from "react-redux"
 
-import { TabCard } from "pages/Investor/styled"
-
-import { Flex, Center } from "theme"
-import Pools from "components/Header/Pools"
+import { Center, Flex } from "theme"
 import Tabs from "common/Tabs"
+import Pools from "components/Header/Pools"
 import Header from "components/Header/Layout"
-import IconButton from "components/IconButton"
-import PoolPnlInfo from "components/PoolPnlInfo"
-import PoolLockedFunds from "components/PoolLockedFunds"
-import FundDetailsCard from "components/FundDetailsCard"
 import Button, { SecondaryButton } from "components/Button"
-import FundStatisticsCard from "components/FundStatisticsCard"
-import PerformanceFeeCard from "components/PerformanceFeeCard"
 import PoolStatisticCard from "components/cards/PoolStatistic"
 
-import pencil from "assets/icons/pencil.svg"
+import { Container, ButtonContainer, Indents, Label, Value } from "./styled"
 
-import { formatBigNumber } from "utils"
-import { usePoolQuery, usePoolContract, useTraderPool } from "hooks/usePool"
+import TabPoolPnl from "./tabs/Pnl"
+import TabPoolLockedFunds from "./tabs/LockedFunds"
+import TabPoolStatistic from "./tabs/Statistic"
+import TabPoolInfo from "./tabs/Info"
+import TabPoolHolders from "./tabs/Holders"
 
-import {
-  Container,
-  ButtonContainer,
-  Details,
-  DetailsEditLinkFrame,
-  OwnInvesting,
-  OwnInvestingLabel,
-  OwnInvestingValue,
-  OwnInvestingLink,
-} from "./styled"
+import { AppState } from "state"
+import { useERC20Data } from "state/erc20/hooks"
+import { usePoolMetadata } from "state/ipfsMetadata/hooks"
+import { selectPoolByAddress } from "state/pools/selectors"
+
+import { ZERO } from "constants/index"
+import { normalizeBigNumber } from "utils"
+import usePoolPrice from "hooks/usePoolPrice"
+import { multiplyBignumbers } from "utils/formulas"
+import { usePoolContract, useTraderPool } from "hooks/usePool"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-  requestPolicy: "network-only",
 })
 
 function Pool() {
-  const { account } = useWeb3React()
-  const { poolAddress, poolType } = useParams<{
-    poolAddress: string
-    poolType: string
-  }>()
-
-  const [commisionUnlockTime, setCommisionUnlockTime] = useState<number>(0)
-  const [hasFee, setHasFee] = useState<boolean>(false)
-  const [ownInvestUsd, setOwnInvestUsd] = useState<string>("0")
+  const navigate = useNavigate()
+  const { account, chainId } = useWeb3React()
+  const { poolAddress } = useParams()
 
   const traderPool = useTraderPool(poolAddress)
-  const [poolData] = usePoolQuery(poolAddress)
+  const poolData = useSelector((s: AppState) =>
+    selectPoolByAddress(s, poolAddress)
+  )
   const [, poolInfoData] = usePoolContract(poolAddress)
-  const navigate = useNavigate()
+  const [{ poolMetadata }] = usePoolMetadata(
+    poolData?.id,
+    poolData?.descriptionURL
+  )
 
-  const redirectToInvestor = useCallback(() => {
-    navigate("/me/investor")
-  }, [navigate])
+  const [{ priceUSD }] = usePoolPrice(poolAddress)
+  const [baseToken] = useERC20Data(poolData?.baseToken)
 
-  const handleBuyRedirect = () => {
-    navigate(`/pool/invest/${poolData?.id}`)
-  }
-
-  const commissionPercentage = useMemo<string>(() => {
-    if (!poolInfoData) return "0"
-
-    return formatBigNumber(poolInfoData?.parameters.commissionPercentage, 25, 0)
-  }, [poolInfoData])
+  const [isTrader, setIsTrader] = useState(false)
+  const [accountLPs, setAccountLPs] = useState(ZERO)
+  const accountLPsPrice = useMemo(() => {
+    if (accountLPs.isZero() || priceUSD.isZero()) {
+      return "0.0"
+    }
+    const BN = multiplyBignumbers([accountLPs, 18], [priceUSD, 18])
+    return normalizeBigNumber(BN, 18, 2)
+  }, [priceUSD, accountLPs])
 
   useEffect(() => {
     if (!traderPool || !account) return
     ;(async () => {
-      const isAdmin = await traderPool?.isTraderAdmin(account)
-      if (!isAdmin) redirectToInvestor()
-    })()
-  }, [traderPool, account, redirectToInvestor])
-
-  useEffect((): void => {
-    if (!traderPool || !account) return
-    ;(async () => {
-      const investors = await traderPool?.totalInvestors()
-
-      const limit = +formatEther(investors) + 1
-      const res = await traderPool?.getUsersInfo(account, 0, limit)
-
-      const commisionTime = res[1].commissionUnlockTimestamp.toString()
-
-      setCommisionUnlockTime(Number(commisionTime))
+      const isAdmin = await traderPool.isTraderAdmin(account)
+      setIsTrader(isAdmin)
+      const balance = await traderPool.balanceOf(account)
+      setAccountLPs(balance)
     })()
   }, [traderPool, account])
 
-  useEffect((): void => {
-    if (!traderPool) return
-    ;(async () => {
-      const investors = await traderPool?.totalInvestors()
+  const actions = useMemo(() => {
+    if (!poolData) {
+      return {
+        leftNode: { onClick: () => {}, text: "" },
+        rightNode: { onClick: () => {}, text: "" },
+      }
+    }
+    if (isTrader) {
+      return {
+        leftNode: {
+          onClick: () =>
+            navigate(
+              `/pool/swap/${poolData.type}/${poolData.id}/${poolData.baseToken}/0x`
+            ),
+          text: "Open new trade",
+        },
+        rightNode: {
+          onClick: () => navigate(`/fund-positions/${poolData.id}/open`),
+          text: `Positions`,
+        },
+      }
+    } else {
+      return {
+        leftNode: {
+          onClick: () => navigate(`/fund-positions/${poolData.id}/closed`),
+          text: "Fund positions",
+        },
+        rightNode: {
+          onClick: () => navigate(`/pool/invest/${poolData.id}`),
+          text: `Buy ${poolData.ticker}`,
+        },
+      }
+    }
+  }, [isTrader, poolData])
 
-      const limit = +formatEther(investors) + 1
-      const fees = await traderPool?.getReinvestCommissions([0, limit])
+  const PoolPageTabs = useMemo(() => {
+    const load = isNil(poolData) || isNil(poolInfoData)
 
-      setHasFee(fees.traderBaseCommission.gt(0))
-    })()
-  }, [traderPool])
-
-  useEffect((): void => {
-    if (!traderPool) return
-    ;(async () => {
-      const poolInfo = await traderPool?.getPoolInfo()
-
-      setOwnInvestUsd(formatBigNumber(poolInfo.traderUSD, 18, 3))
-    })()
-  }, [traderPool])
-
-  const body = !poolData ? (
-    <Center>
-      <GuardSpinner size={20} loading />
-    </Center>
-  ) : (
-    <Container
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-    >
-      <PoolStatisticCard data={poolData}>
-        <ButtonContainer>
-          <SecondaryButton
-            fz={14}
-            full
-            onClick={() =>
-              navigate(
-                `/pool/swap/${poolType}/${poolData.id}/${poolData.baseToken}/0x`
-              )
-            }
-          >
-            Open new trade
-          </SecondaryButton>
-          <Button
-            fz={14}
-            onClick={() => navigate(`/fund-positions/${poolData.id}/open`)}
-            full
-          >
-            Positions
-          </Button>
-        </ButtonContainer>
-      </PoolStatisticCard>
-
-      <TabCard>
+    return (
+      <Indents>
         <Tabs
           tabs={[
             {
-              name: "Profit & Loss",
-              child: (
-                <>
-                  <PoolPnlInfo address={poolAddress} />
-                </>
+              name: "P&L",
+              child: load ? (
+                <Center>
+                  <GuardSpinner size={20} loading />
+                </Center>
+              ) : (
+                <TabPoolPnl address={poolData.id} />
               ),
             },
             {
               name: "Locked funds",
               child: (
-                <>
-                  <PoolLockedFunds address={poolAddress} />
-                </>
+                <TabPoolLockedFunds
+                  address={poolData.id}
+                  poolData={poolData}
+                  poolInfo={poolInfoData}
+                  baseToken={baseToken}
+                  isTrader={isTrader}
+                  accountLPsPrice={accountLPsPrice}
+                />
               ),
             },
-          ]}
-        />
-      </TabCard>
-
-      <OwnInvesting>
-        <Flex dir="column" ai="flex-start">
-          <OwnInvestingLabel>My own investing</OwnInvestingLabel>
-          <OwnInvestingValue>$ {ownInvestUsd}</OwnInvestingValue>
-        </Flex>
-        <OwnInvestingLink onClick={handleBuyRedirect} />
-      </OwnInvesting>
-
-      <Details>
-        <DetailsEditLinkFrame>
-          <IconButton
-            filled
-            media={pencil}
-            onClick={() => {
-              navigate(`/fund-details/${poolData.id}/edit`)
-            }}
-            size={10}
-          />
-        </DetailsEditLinkFrame>
-        <Tabs
-          tabs={[
+            {
+              name: "About fund",
+              child: (
+                <TabPoolInfo
+                  data={poolData}
+                  poolInfo={poolInfoData}
+                  baseToken={baseToken}
+                  poolMetadata={poolMetadata}
+                  isTrader={isTrader}
+                />
+              ),
+            },
             {
               name: "Statistic",
-              child: <FundStatisticsCard data={poolData} info={poolInfoData} />,
+              child: (
+                <TabPoolStatistic poolData={poolData} poolInfo={poolInfoData} />
+              ),
             },
             {
-              name: "Details",
+              name: "Holders",
               child: (
-                <FundDetailsCard poolInfo={poolInfoData} pool={poolData}>
-                  <PerformanceFeeCard
-                    p="15px 0 0"
-                    hasFee={hasFee}
-                    poolAddress={poolAddress}
-                    commisionUnlockTime={commisionUnlockTime}
-                    performanceFeePercent={commissionPercentage}
-                  />
-                </FundDetailsCard>
+                <TabPoolHolders
+                  poolData={poolData}
+                  chainId={chainId}
+                  baseToken={baseToken}
+                />
               ),
             },
           ]}
         />
-      </Details>
-    </Container>
-  )
+      </Indents>
+    )
+  }, [poolData, poolInfoData, actions, accountLPs, chainId])
 
   return (
     <>
@@ -222,7 +179,38 @@ function Pool() {
         My trader profile
         <Pools />
       </Header>
-      {body}
+      <Container>
+        <Indents top>
+          <PoolStatisticCard data={poolData}>
+            <>
+              <ButtonContainer>
+                <SecondaryButton
+                  fz={14}
+                  full
+                  onClick={actions.leftNode.onClick}
+                >
+                  {actions.leftNode.text}
+                </SecondaryButton>
+                <Button fz={14} onClick={actions.rightNode.onClick} full>
+                  {actions.rightNode.text}
+                </Button>
+              </ButtonContainer>
+              {!isTrader && (
+                <>
+                  <hr />
+                  <Flex full ai="center" jc="space-between">
+                    <Label>Your share</Label>
+                    <Value.Medium color="#E4F2FF">
+                      {normalizeBigNumber(accountLPs, 18, 2)} {poolData.ticker}
+                    </Value.Medium>
+                  </Flex>
+                </>
+              )}
+            </>
+          </PoolStatisticCard>
+        </Indents>
+        {PoolPageTabs}
+      </Container>
     </>
   )
 }

@@ -7,6 +7,7 @@ import { ZERO } from "constants/index"
 import { PositionsByIdsQuery } from "queries"
 import { addBignumbers } from "utils/formulas"
 import { usePriceFeedContract } from "contracts"
+import { usePrevious } from "react-use"
 
 /**
  * Hook get pool positions, fetch positions tokens and prices of locked tokens in USD
@@ -21,6 +22,8 @@ const useOpenPositionsPriceOutUSD = (
 ) => {
   const [, setError] = useError()
   const priceFeed = usePriceFeedContract()
+
+  const prevPool = usePrevious(poolAddress)
 
   const [outUSDVolume, setOutUSD] = useState<BigNumber>(ZERO)
 
@@ -39,11 +42,21 @@ const useOpenPositionsPriceOutUSD = (
     return () => {
       setOutUSD(ZERO)
     }
-  }, [poolAddress])
+  }, [])
+  useEffect(() => {
+    setOutUSD(ZERO)
+  }, [loading])
 
   // Fetch prices of positions locked amounts in USD
   useEffect(() => {
-    if (loading || !priceFeed || !positionAmountsMap) {
+    if (
+      loading ||
+      !priceFeed ||
+      !positionAmountsMap ||
+      !data ||
+      !data.positions ||
+      (prevPool === poolAddress && !outUSDVolume.isZero())
+    ) {
       return
     }
 

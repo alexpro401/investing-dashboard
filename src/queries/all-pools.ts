@@ -73,6 +73,11 @@ const POOL = `
   investorsCount
   admins
   orderSize
+  investors {
+    id
+    activePools
+    allPools
+  }
   privateInvestors {
     id
     activePools

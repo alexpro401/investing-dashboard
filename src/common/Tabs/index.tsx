@@ -17,7 +17,7 @@ const Tabs: FC<IProps> = ({ tabs, gap }) => {
   const [activeTab, setTab] = useState(0)
 
   return (
-    <>
+    <S.Container>
       <S.List count={tabs.length} gap={gap}>
         {tabs.map(({ name }, index) => {
           return (
@@ -31,8 +31,8 @@ const Tabs: FC<IProps> = ({ tabs, gap }) => {
           )
         })}
       </S.List>
-      {tabs[activeTab].child}
-    </>
+      <S.Content>{tabs[activeTab].child}</S.Content>
+    </S.Container>
   )
 }
 

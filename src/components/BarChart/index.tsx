@@ -40,9 +40,10 @@ function prepareMonthlyHistory(payload) {
 interface IProps {
   address: string | undefined
   withTip?: boolean
+  m?: string
 }
 
-const BarChart: React.FC<IProps> = ({ address, withTip }) => {
+const BarChart: React.FC<IProps> = ({ address, withTip, m }) => {
   const [history] = usePriceHistory(
     address,
     [AGREGATION_CODES["1m"] - 1, AGREGATION_CODES["1m"]],
@@ -77,7 +78,7 @@ const BarChart: React.FC<IProps> = ({ address, withTip }) => {
   }
 
   return (
-    <S.Container>
+    <S.Container m={m}>
       {data.map((v, i) => (
         <S.Bar
           active={withTip}

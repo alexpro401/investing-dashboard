@@ -80,9 +80,10 @@ const Chart = ({ data }) => {
 
 interface Props {
   address: string | undefined
+  tfPosition?: "top" | "bottom"
 }
 
-const LockedFundsChart: React.FC<Props> = ({ address }) => {
+const LockedFundsChart: React.FC<Props> = ({ address, tfPosition }) => {
   const [timeframe, setTimeframe] = useState(TIMEFRAMES["D"])
 
   const [history] = usePriceHistory(
@@ -95,10 +96,15 @@ const LockedFundsChart: React.FC<Props> = ({ address }) => {
 
   return (
     <S.Container>
-      <TimeframeList current={timeframe} set={setTimeframe} />
+      {tfPosition === "top" && (
+        <TimeframeList current={timeframe} set={setTimeframe} />
+      )}
       <S.Body>
         <Chart data={historyFormated} />
       </S.Body>
+      {tfPosition === "bottom" && (
+        <TimeframeList current={timeframe} set={setTimeframe} />
+      )}
     </S.Container>
   )
 }
