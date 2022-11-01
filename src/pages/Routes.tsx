@@ -17,6 +17,7 @@ const CreateFundBasic = lazy(() => import("pages/CreateFundBasic"))
 const CreateFundInvestment = lazy(() => import("pages/CreateFundInvestment"))
 const Investor = lazy(() => import("pages/Investor"))
 const Trader = lazy(() => import("pages/Trader"))
+const Pool = lazy(() => import("pages/Pool"))
 const Swap = lazy(() => import("pages/Swap"))
 const Wallet = lazy(() => import("pages/Wallet"))
 const Success = lazy(() => import("pages/Success"))
@@ -73,9 +74,11 @@ export default function Routes() {
               <Route element={<RequireAuth />}>
                 <Route path="me/investor" element={<Investor />} />
 
+                <Route path="me/trader" element={<Trader />} />
+
                 <Route
                   path="me/trader/profile/:poolType/:poolAddress"
-                  element={<Trader />}
+                  element={<Pool />}
                 />
 
                 <Route path="notifications" element={<Notifications />} />

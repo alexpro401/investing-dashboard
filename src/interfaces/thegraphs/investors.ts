@@ -65,3 +65,16 @@ export interface InvestorRiskyPosition {
 export interface InvestorRiskyPositionWithVests extends InvestorRiskyPosition {
   vests: InvestorRiskyVest[]
 }
+
+export interface InvestorPoolQuery {
+  id: string
+  proposalContract: string
+  type: string
+  token: string
+}
+
+export interface IInvestorQuery {
+  id: string
+  activePools: InvestorPoolQuery[]
+  allPools: InvestorPoolQuery[]
+}

@@ -29,6 +29,7 @@ import {
   ModalCloseIcon,
   CircleWarningIcon,
   CircleInfoIcon,
+  ShareIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -101,6 +102,8 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return CircleInfoIcon as unknown as ElementType
       case ICON_NAMES.warningCircled:
         return CircleWarningIcon as unknown as ElementType
+      case ICON_NAMES.share:
+        return ShareIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }

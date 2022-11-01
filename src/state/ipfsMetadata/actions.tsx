@@ -22,7 +22,7 @@ export const removePool = createAction<{ params: IRemovePool }>(
 export const addUser = createAction<{ params: IUserMetadata }>("ipfs/add-user")
 
 // Update user data
-export const removeUser = createAction<{ params: { hash: string } }>(
+export const removeUser = createAction<{ params: { account: string } }>(
   "ipfs/remove-user"
 )
 

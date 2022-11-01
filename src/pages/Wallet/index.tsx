@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { Navigate, useNavigate } from "react-router-dom"
 import { useWeb3React } from "@web3-react/core"
 import { useSelector } from "react-redux"
@@ -75,22 +75,19 @@ const useUserSettings = (): [
   }
 ] => {
   const { account } = useWeb3React()
-
   const addTransaction = useTransactionAdder()
+  const userRegistry = useUserRegistryContract()
+  const [{ userMetadata }, { fetchUserMetadata }] = useUserMetadata(account)
 
-  const [isLoading, setLoading] = useState(true)
+  const [isLoading, setLoading] = useState(false)
   const [isUserEditing, setUserEditing] = useState(false)
   const [userName, setUserName] = useState("")
   const [userNameInitial, setUserNameInitial] = useState("")
   const [userAvatar, setUserAvatar] = useState("")
   const [userAvatarInitial, setUserAvatarInitial] = useState("")
   const [assets, setAssets] = useState<string[]>([])
-  const [profileURL, setProfileURL] = useState<string | null>(null)
-  const userRegistry = useUserRegistryContract()
 
-  const [{ userMetadata }] = useUserMetadata(profileURL)
-
-  const handleUserSubmit = async () => {
+  const handleUserSubmit = useCallback(async () => {
     setLoading(true)
     const isAvatarChanged = userAvatar !== userAvatarInitial
     const isNameChanged = userName !== userNameInitial
@@ -106,13 +103,12 @@ const useUserSettings = (): [
     const ipfsReceipt = await addUserMetadata(userName, actualAssets, account)
     const trx = await userRegistry?.changeProfile(ipfsReceipt.path)
 
-    setProfileURL(ipfsReceipt.path)
-
     const receipt = await addTransaction(trx, {
       type: TransactionType.UPDATED_USER_CREDENTIALS,
     })
 
     if (isTxMined(receipt)) {
+      await fetchUserMetadata(false)
       if (isAvatarChanged) {
         setUserAvatarInitial(userAvatar)
         setAssets(actualAssets)
@@ -125,24 +121,17 @@ const useUserSettings = (): [
       setLoading(false)
       setUserEditing(false)
     }
-  }
-
-  useEffect(() => {
-    if (!userRegistry || !account) return
-
-    const getUserInfo = async () => {
-      setLoading(true)
-      const userData = await userRegistry.userInfos(account)
-      setProfileURL(userData.profileURL)
-
-      setLoading(false)
-    }
-
-    getUserInfo().catch((error) => {
-      console.error(error)
-      setLoading(false)
-    })
-  }, [userRegistry, account])
+  }, [
+    account,
+    addTransaction,
+    assets,
+    fetchUserMetadata,
+    userAvatar,
+    userAvatarInitial,
+    userName,
+    userNameInitial,
+    userRegistry,
+  ])
 
   useEffect(() => {
     if (userMetadata !== null) {
@@ -158,6 +147,12 @@ const useUserSettings = (): [
           userMetadata.assets[userMetadata.assets.length - 1]
         )
       }
+    } else {
+      setUserName("")
+      setUserNameInitial("")
+      setAssets([])
+      setUserAvatar("")
+      setUserAvatarInitial("")
     }
   }, [userMetadata])
 

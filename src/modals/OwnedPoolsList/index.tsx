@@ -1,42 +1,44 @@
-import { FC, useState, useEffect, useRef } from "react"
-import { Flex } from "theme"
+import { FC, useEffect, useRef } from "react"
+import { useNavigate } from "react-router-dom"
+import { useWeb3React } from "@web3-react/core"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
-import Popover from "components/Popover"
+import { AppButton } from "common"
+import Modal from "components/Modal"
+import {
+  Scroll,
+  List,
+  ListHead,
+  ListPlaceholder,
+  AccountCard,
+  Divider,
+  PoolCard,
+  ButtonContainer,
+} from "./styled"
 
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
-
-import AddFund from "assets/icons/AddFund"
-import dexe from "assets/icons/dexe-dark.svg"
-
 import { getLastInArray, getPNL, getPriceLP, getUSDPrice } from "utils/formulas"
-
-import {
-  Container,
-  Header,
-  List,
-  PrimaryLabel,
-  SecondaryLabel,
-  Token,
-  EmptyText,
-  PlaceholderIcon,
-} from "./styled"
-import { useNavigate } from "react-router-dom"
 
 interface Props {
   isOpen: boolean
   toggle: () => void
-  pools: IPoolQuery[]
+  ownedPools: IPoolQuery[]
   managedPools: IPoolQuery[]
 }
 
-const OwnedPoolsList: FC<Props> = ({ isOpen, toggle, pools, managedPools }) => {
-  const [isDragAlloved, setDragAllowed] = useState(true)
+const OwnedPoolsList: FC<Props> = ({
+  isOpen,
+  toggle,
+  ownedPools,
+  managedPools,
+}) => {
   const navigate = useNavigate()
+  const { account } = useWeb3React()
+
   const scrollRef = useRef<any>(null)
 
-  const basicPools = pools.filter(({ type }) => type === "BASIC_POOL")
-  const investPools = pools.filter(({ type }) => type === "INVEST_POOL")
+  const basicPools = ownedPools.filter(({ type }) => type === "BASIC_POOL")
+  const investPools = ownedPools.filter(({ type }) => type === "INVEST_POOL")
 
   useEffect(() => {
     if (!scrollRef.current || !isOpen) return () => clearAllBodyScrollLocks()
@@ -55,14 +57,14 @@ const OwnedPoolsList: FC<Props> = ({ isOpen, toggle, pools, managedPools }) => {
     const lastHistoryPoint = getLastInArray(pool.priceHistory)
 
     return (
-      <Token
+      <PoolCard
         onClick={toggle}
         descriptionURL={pool.descriptionURL}
         baseAddress={pool.baseToken}
         poolType="BASIC_POOL"
         name={pool.name}
         symbol={pool.ticker}
-        pnl={`${pnl}%`}
+        pnl={String(pnl)}
         address={pool.id}
         key={pool.id}
         tvl={`$${getUSDPrice(lastHistoryPoint ? lastHistoryPoint.usdTVL : 0)}`}
@@ -76,14 +78,14 @@ const OwnedPoolsList: FC<Props> = ({ isOpen, toggle, pools, managedPools }) => {
     const lastHistoryPoint = getLastInArray(pool.priceHistory)
 
     return (
-      <Token
+      <PoolCard
         onClick={toggle}
         descriptionURL={pool.descriptionURL}
         baseAddress={pool.baseToken}
         poolType="INVEST_POOL"
         name={pool.name}
         symbol={pool.ticker}
-        pnl={`${pnl}%`}
+        pnl={String(pnl)}
         address={pool.id}
         key={pool.id}
         tvl={`$${getUSDPrice(lastHistoryPoint ? lastHistoryPoint.usdTVL : 0)}`}
@@ -97,14 +99,14 @@ const OwnedPoolsList: FC<Props> = ({ isOpen, toggle, pools, managedPools }) => {
     const lastHistoryPoint = getLastInArray(pool.priceHistory)
 
     return (
-      <Token
+      <PoolCard
         onClick={toggle}
         descriptionURL={pool.descriptionURL}
         baseAddress={pool.baseToken}
         poolType={pool.type}
         name={pool.name}
         symbol={pool.ticker}
-        pnl={`${pnl}%`}
+        pnl={String(pnl)}
         address={pool.id}
         key={pool.id}
         tvl={`$${getUSDPrice(lastHistoryPoint ? lastHistoryPoint.usdTVL : 0)}`}
@@ -113,75 +115,55 @@ const OwnedPoolsList: FC<Props> = ({ isOpen, toggle, pools, managedPools }) => {
   })
 
   return (
-    <Popover
-      noDrag={!isDragAlloved}
-      isOpen={isOpen}
-      toggle={toggle}
-      title={
-        <Flex ai="center">
-          All my funds <AddFund onClick={createFund} />
-        </Flex>
-      }
-      contentHeight={window.innerHeight - 100}
-    >
-      <Container
-        ref={scrollRef}
-        onTouchMove={(event) => {
-          event.stopPropagation()
-          setDragAllowed(false)
-        }}
-        onTouchEndCapture={() => {
-          setDragAllowed(true)
-        }}
-      >
-        <Header>
-          <PrimaryLabel>My whitelist funds</PrimaryLabel>
-          <SecondaryLabel>TVL</SecondaryLabel>
-          <SecondaryLabel>P&L</SecondaryLabel>
-        </Header>
-        <List>
-          {!basicPools.length ? (
-            <EmptyText>
-              <PlaceholderIcon src={dexe} />
-              You do not have open basic funds yet
-            </EmptyText>
-          ) : (
-            basicPoolsList
-          )}
-        </List>
-        <Header>
-          <PrimaryLabel>My investment funds</PrimaryLabel>
-          <SecondaryLabel>TVL</SecondaryLabel>
-          <SecondaryLabel>P&L</SecondaryLabel>
-        </Header>
-        <List>
-          {!investPools.length ? (
-            <EmptyText>
-              <PlaceholderIcon src={dexe} />
-              You do not have open investment funds yet
-            </EmptyText>
-          ) : (
-            investPoolsList
-          )}
-        </List>
-
-        <Header>
-          <PrimaryLabel>Management funds</PrimaryLabel>
-          <SecondaryLabel>TVL</SecondaryLabel>
-          <SecondaryLabel>P&L</SecondaryLabel>
-        </Header>
-        <List>
-          {!managedPools.length ? (
-            <EmptyText>
-              <PlaceholderIcon src={dexe} />
-              You do not have admined funds yet
-            </EmptyText>
-          ) : (
-            adminedPoolsList
-          )}
-        </List>
-      </Container>
-    </Popover>
+    <Modal isOpen={isOpen} toggle={toggle} title="All my funds">
+      <>
+        <AccountCard account={account} />
+        <Divider />
+        <Scroll ref={scrollRef}>
+          <List.Container>
+            <ListHead title="My basic funds" />
+            <List.Body>
+              {!basicPools.length ? (
+                <ListPlaceholder title="You do not have open basic funds yet" />
+              ) : (
+                basicPoolsList
+              )}
+            </List.Body>
+          </List.Container>
+          <Divider />
+          <List.Container>
+            <ListHead title="My investment funds" showLabels={false} />
+            <List.Body>
+              {!investPools.length ? (
+                <ListPlaceholder title="You do not have open investment funds yet" />
+              ) : (
+                investPoolsList
+              )}
+            </List.Body>
+          </List.Container>
+          <Divider />
+          <List.Container>
+            <ListHead title="Management funds" showLabels={false} />
+            <List.Body>
+              {!managedPools.length ? (
+                <ListPlaceholder title="You do not have admined funds yet" />
+              ) : (
+                adminedPoolsList
+              )}
+            </List.Body>
+          </List.Container>
+          <Divider />
+        </Scroll>
+        <ButtonContainer>
+          <AppButton
+            size="large"
+            color="secondary"
+            onClick={createFund}
+            text="Create new fund"
+          />
+        </ButtonContainer>
+      </>
+    </Modal>
   )
 }
 

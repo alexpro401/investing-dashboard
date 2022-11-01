@@ -26,7 +26,9 @@ import {
 } from "./invest-pools"
 
 import {
+  InvestorQuery,
   InvestorPositionsQuery,
+  InvestorPoolsPositionsQuery,
   InvestorPoolsInvestedForQuery,
   InvestorProposalsPositionsQuery,
 } from "./investors"
@@ -43,8 +45,10 @@ export {
   PoolsQueryWithSort,
   PoolsQueryByTypeWithSort,
   BasicPositionsQuery,
+  InvestorQuery,
   InvestProposalQuery,
   InvestorPositionsQuery,
+  InvestorPoolsPositionsQuery,
   InvestorPoolsInvestedForQuery,
   InvestorRiskyProposalsQuery,
   InvestorInvestProposalsQuery,
