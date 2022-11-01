@@ -19,7 +19,7 @@ export const SubmitButton = styled(AppButton)`
   width: 100%;
 `
 
-export const PageContext = styled.div`
+export const PageContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 15px;

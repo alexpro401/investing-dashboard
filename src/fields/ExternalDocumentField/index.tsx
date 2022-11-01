@@ -14,7 +14,7 @@ import { AppButton } from "common"
 
 import * as S from "./styled"
 
-import { ExternalFileDocument } from "context/FundDaoCreatingContext"
+import { ExternalFileDocument } from "types"
 import { ICON_NAMES } from "constants/icon-names"
 import { isValidUrl, shortenAddress } from "utils"
 import { readFromClipboard } from "utils/clipboard"

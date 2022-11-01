@@ -8,17 +8,15 @@ import {
   useEffect,
   useMemo,
   useState,
+  useContext,
 } from "react"
 import { useERC20 } from "hooks/useERC20"
 import { useErc721 } from "hooks/useErc721"
 import { useLocalStorage } from "react-use"
-import { isEqual } from "lodash"
+import { DaoProposal, ExternalFileDocument } from "types"
+import { INITIAL_DAO_PROPOSAL } from "constants/dao"
+import { get, isEqual } from "lodash"
 import { SUPPORTED_SOCIALS } from "constants/socials"
-
-export type ExternalFileDocument = {
-  name: string
-  url: string
-}
 
 export interface UserKeeperDeployParamsForm {
   tokenAddress: { get: string; set: Dispatch<SetStateAction<string>> }
@@ -50,9 +48,9 @@ export interface DaoProposalSettingsForm {
   minVotesForVoting: { get: number; set: Dispatch<SetStateAction<number>> }
   minVotesForCreating: { get: number; set: Dispatch<SetStateAction<number>> }
   rewardToken: { get: string; set: Dispatch<SetStateAction<string>> }
-  creationReward: { get: number; set: Dispatch<SetStateAction<number>> }
-  executionReward: { get: number; set: Dispatch<SetStateAction<number>> }
-  voteRewardsCoefficient: { get: number; set: Dispatch<SetStateAction<number>> }
+  creationReward: { get: string; set: Dispatch<SetStateAction<string>> }
+  executionReward: { get: string; set: Dispatch<SetStateAction<string>> }
+  voteRewardsCoefficient: { get: string; set: Dispatch<SetStateAction<string>> }
   executorDescription: { get: string; set: Dispatch<SetStateAction<string>> }
 }
 
@@ -95,98 +93,7 @@ interface FundDaoCreatingContext {
 
   clearFormStorage: () => void
   createdDaoAddress: { get: string; set: Dispatch<SetStateAction<string>> }
-}
-
-type StoredForm = {
-  _isErc20: boolean
-  _isErc721: boolean
-  _isCustomVoting: boolean
-  _isDistributionProposal: boolean
-  _isValidator: boolean
-  _avatarUrl: string
-  _daoName: string
-  _websiteUrl: string
-  _description: string
-  _socialLinks: [SUPPORTED_SOCIALS, string][]
-  _documents: ExternalFileDocument[]
-  _userKeeperParams: {
-    tokenAddress: string
-    nftAddress: string
-    totalPowerInTokens: number
-    nftsTotalSupply: number
-  }
-  _validatorsParams: {
-    name: string
-    symbol: string
-    duration: number
-    quorum: number
-    validators: string[]
-    balances: number[]
-  }
-  _internalProposalForm: {
-    earlyCompletion: boolean
-    delegatedVotingAllowed: boolean
-    validatorsVote: boolean
-    duration: number
-    durationValidators: number
-    quorum: number
-    quorumValidators: number
-    minVotesForVoting: number
-    minVotesForCreating: number
-    rewardToken: string
-    creationReward: number
-    executionReward: number
-    voteRewardsCoefficient: number
-    executorDescription: string
-  }
-  _distributionProposalSettingsForm: {
-    earlyCompletion: boolean
-    delegatedVotingAllowed: boolean
-    validatorsVote: boolean
-    duration: number
-    durationValidators: number
-    quorum: number
-    quorumValidators: number
-    minVotesForVoting: number
-    minVotesForCreating: number
-    rewardToken: string
-    creationReward: number
-    executionReward: number
-    voteRewardsCoefficient: number
-    executorDescription: string
-  }
-  _validatorsBalancesSettingsForm: {
-    earlyCompletion: boolean
-    delegatedVotingAllowed: boolean
-    validatorsVote: boolean
-    duration: number
-    durationValidators: number
-    quorum: number
-    quorumValidators: number
-    minVotesForVoting: number
-    minVotesForCreating: number
-    rewardToken: string
-    creationReward: number
-    executionReward: number
-    voteRewardsCoefficient: number
-    executorDescription: string
-  }
-  _defaultProposalSettingForm: {
-    earlyCompletion: boolean
-    delegatedVotingAllowed: boolean
-    validatorsVote: boolean
-    duration: number
-    durationValidators: number
-    quorum: number
-    quorumValidators: number
-    minVotesForVoting: number
-    minVotesForCreating: number
-    rewardToken: string
-    creationReward: number
-    executionReward: number
-    voteRewardsCoefficient: number
-    executorDescription: string
-  }
+  initialForm: DaoProposal
 }
 
 export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
@@ -215,107 +122,45 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
 
   clearFormStorage: () => {},
   createdDaoAddress: { get: "", set: () => {} },
+  initialForm: {} as DaoProposal,
 })
 
-const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
-  children,
-}) => {
+interface IFundDaoCreatingContextProviderProps
+  extends HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode
+  customLSKey?: string
+  daoProposal?: DaoProposal
+}
+
+const FundDaoCreatingContextProvider: FC<
+  IFundDaoCreatingContextProviderProps
+> = ({ children, customLSKey, daoProposal }) => {
   const [value, setValue, remove] = useLocalStorage(
-    "fund-dao-creating-form",
-    JSON.stringify({
-      _isErc20: true,
-      _isErc721: false,
-      _isCustomVoting: false,
-      _isDistributionProposal: false,
-      _isValidator: false,
-      _avatarUrl: "",
-      _daoName: "",
-      _websiteUrl: "",
-      _description: "",
-      _socialLinks: [],
-      _documents: [{ name: "", url: "" }],
-      _userKeeperParams: {
-        tokenAddress: "",
-        nftAddress: "",
-        totalPowerInTokens: 0,
-        nftsTotalSupply: 0,
-      },
-      _validatorsParams: {
-        name: "",
-        symbol: "",
-        duration: 0,
-        quorum: 0,
-        validators: [""],
-        balances: [0],
-      },
-      _internalProposalForm: {
-        earlyCompletion: false,
-        delegatedVotingAllowed: false,
-        validatorsVote: false,
-        duration: 0,
-        durationValidators: 0,
-        quorum: 0,
-        quorumValidators: 0,
-        minVotesForVoting: 0,
-        minVotesForCreating: 0,
-        rewardToken: "",
-        creationReward: 0,
-        executionReward: 0,
-        voteRewardsCoefficient: 0,
-        executorDescription: "internal",
-      },
-      _distributionProposalSettingsForm: {
-        earlyCompletion: false,
-        delegatedVotingAllowed: false,
-        validatorsVote: false,
-        duration: 0,
-        durationValidators: 0,
-        quorum: 0,
-        quorumValidators: 0,
-        minVotesForVoting: 0,
-        minVotesForCreating: 0,
-        rewardToken: "",
-        creationReward: 0,
-        executionReward: 0,
-        voteRewardsCoefficient: 0,
-        executorDescription: "DP",
-      },
-      _validatorsBalancesSettingsForm: {
-        earlyCompletion: false,
-        delegatedVotingAllowed: false,
-        validatorsVote: false,
-        duration: 0,
-        durationValidators: 0,
-        quorum: 0,
-        quorumValidators: 0,
-        minVotesForVoting: 0,
-        minVotesForCreating: 0,
-        rewardToken: "",
-        creationReward: 0,
-        executionReward: 0,
-        voteRewardsCoefficient: 0,
-        executorDescription: "validators",
-      },
-      _defaultProposalSettingForm: {
-        earlyCompletion: false,
-        delegatedVotingAllowed: false,
-        validatorsVote: false,
-        duration: 0,
-        durationValidators: 0,
-        quorum: 0,
-        quorumValidators: 0,
-        minVotesForVoting: 0,
-        minVotesForCreating: 0,
-        rewardToken: "",
-        creationReward: 0,
-        executionReward: 0,
-        voteRewardsCoefficient: 0,
-        executorDescription: "default",
-      },
-    })
+    customLSKey ? customLSKey : "fund-dao-creating-form",
+    JSON.stringify(daoProposal ? daoProposal : INITIAL_DAO_PROPOSAL)
   )
 
-  const storedForm = useMemo<StoredForm>(() => {
+  const initialForm = useMemo<DaoProposal>(() => {
+    if (customLSKey) {
+      const customFormFromLS = localStorage.getItem(customLSKey)
+
+      if (customFormFromLS) {
+        return JSON.parse(JSON.parse(customFormFromLS))
+      }
+
+      return daoProposal
+    } else {
+      const formFromLS = localStorage.getItem("fund-dao-creating-form")
+
+      if (formFromLS) {
+        return JSON.parse(JSON.parse(formFromLS))
+      }
+
+      return INITIAL_DAO_PROPOSAL
+    }
+  }, [customLSKey, daoProposal])
+
+  const storedForm = useMemo<DaoProposal>(() => {
     try {
       return value ? JSON.parse(value) : {}
     } catch (error) {
@@ -436,13 +281,13 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
       storedForm._internalProposalForm.minVotesForCreating
     ),
     rewardToken: useState<string>(storedForm._internalProposalForm.rewardToken),
-    creationReward: useState<number>(
+    creationReward: useState<string>(
       storedForm._internalProposalForm.creationReward
     ),
-    executionReward: useState<number>(
+    executionReward: useState<string>(
       storedForm._internalProposalForm.executionReward
     ),
-    voteRewardsCoefficient: useState<number>(
+    voteRewardsCoefficient: useState<string>(
       storedForm._internalProposalForm.voteRewardsCoefficient
     ),
     executorDescription: useState<string>(
@@ -480,13 +325,13 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
     rewardToken: useState<string>(
       storedForm._distributionProposalSettingsForm.rewardToken
     ),
-    creationReward: useState<number>(
+    creationReward: useState<string>(
       storedForm._distributionProposalSettingsForm.creationReward
     ),
-    executionReward: useState<number>(
+    executionReward: useState<string>(
       storedForm._distributionProposalSettingsForm.executionReward
     ),
-    voteRewardsCoefficient: useState<number>(
+    voteRewardsCoefficient: useState<string>(
       storedForm._distributionProposalSettingsForm.voteRewardsCoefficient
     ),
     executorDescription: useState<string>(
@@ -522,13 +367,13 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
     rewardToken: useState<string>(
       storedForm._validatorsBalancesSettingsForm.rewardToken
     ),
-    creationReward: useState<number>(
+    creationReward: useState<string>(
       storedForm._validatorsBalancesSettingsForm.creationReward
     ),
-    executionReward: useState<number>(
+    executionReward: useState<string>(
       storedForm._validatorsBalancesSettingsForm.executionReward
     ),
-    voteRewardsCoefficient: useState<number>(
+    voteRewardsCoefficient: useState<string>(
       storedForm._validatorsBalancesSettingsForm.voteRewardsCoefficient
     ),
     executorDescription: useState<string>(
@@ -562,13 +407,13 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
     rewardToken: useState<string>(
       storedForm._defaultProposalSettingForm.rewardToken
     ),
-    creationReward: useState<number>(
+    creationReward: useState<string>(
       storedForm._defaultProposalSettingForm.creationReward
     ),
-    executionReward: useState<number>(
+    executionReward: useState<string>(
       storedForm._defaultProposalSettingForm.executionReward
     ),
-    voteRewardsCoefficient: useState<number>(
+    voteRewardsCoefficient: useState<string>(
       storedForm._defaultProposalSettingForm.voteRewardsCoefficient
     ),
     executorDescription: useState<string>(
@@ -1081,12 +926,32 @@ const FundDaoCreatingContextProvider: FC<HTMLAttributes<HTMLDivElement>> = ({
             get: _createdDaoAddress,
             set: _setCreatedDaoAddress,
           },
+          initialForm,
         }}
       >
         {children}
       </FundDaoCreatingContext.Provider>
     </>
   )
+}
+
+export const useIsDaoFieldChanged = ({ field }: { field: string }): boolean => {
+  const [result, setResult] = useState<boolean>(false)
+
+  const contextValue = useContext(FundDaoCreatingContext)
+
+  useEffect(() => {
+    try {
+      const initialValue = get(contextValue.initialForm, "_" + field)
+      const currentValue = get(contextValue, field + ".get")
+
+      setResult(JSON.stringify(initialValue) !== JSON.stringify(currentValue))
+    } catch (error) {
+      setResult(false)
+    }
+  }, [field, contextValue])
+
+  return result
 }
 
 export default FundDaoCreatingContextProvider

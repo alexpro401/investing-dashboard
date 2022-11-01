@@ -369,18 +369,17 @@ export const Center = styled.div`
   flex-direction: column;
 `
 
-function getNumberColor(value?: string | number): string {
+export function getAmountColor(
+  value?: string | number,
+  initialColor?: string
+): string {
   const v = Number(value ?? 0)
 
-  if (v > 0) {
-    return "#83e5ca"
-  } else if (v < 0) {
-    return "#DB6D6D"
-  } else {
-    return "#616d8b"
-  }
+  if (v > 0) return colorsTheme.statusColors.success
+  if (v < 0) return colorsTheme.statusColors.error
+  return initialColor ?? colorsTheme.textColors.secondary
 }
 
 export const ColorizedNumber = styled.div<{ value: string | number }>`
-  color: ${(p) => getNumberColor(p.value)};
+  color: ${(p) => getAmountColor(p.value)};
 `

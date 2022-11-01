@@ -1,4 +1,4 @@
-// Pool risky proposals
+// InvestedFund risky proposals
 const RISKY_PROPOSAL_EXCHANGE = `
   id
   hash

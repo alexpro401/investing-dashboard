@@ -1,24 +1,25 @@
-import { useMemo } from "react"
+import { FC, useCallback, useMemo } from "react"
 import { GuardSpinner } from "react-spinners-kit"
-import { useParams, useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
+import { useWeb3React } from "@web3-react/core"
+import { isNil } from "lodash"
 
 import TabsLight from "components/TabsLight"
 import Header from "components/Header/Layout"
 import PoolPnlInfo from "components/PoolPnlInfo"
-import MemberMobile from "components/MemberMobile"
 import PoolLockedFunds from "components/PoolLockedFunds"
 import FundDetailsCard from "components/FundDetailsCard"
 import Button, { SecondaryButton } from "components/Button"
 import FundStatisticsCard from "components/FundStatisticsCard"
+import PoolStatisticCard from "components/cards/PoolStatistic"
 
 import { Center } from "theme"
-import { Container, ButtonContainer, Details } from "./styled"
+import { Container, Details, ButtonContainer } from "./styled"
 
 import { TabCard } from "pages/Investor/styled"
 
 import { shortenAddress } from "utils"
-import { useActiveWeb3React } from "hooks"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"
 
 interface Props {}
@@ -27,30 +28,31 @@ const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
 })
 
-const Profile: React.FC<Props> = () => {
-  const { account } = useActiveWeb3React()
-  const { poolAddress } = useParams<{
-    poolAddress: string
-  }>()
+const Profile: FC<Props> = () => {
+  const { account } = useWeb3React()
+
+  const navigate = useNavigate()
+  const { poolAddress } = useParams()
 
   const [poolData] = usePoolQuery(poolAddress)
   const [, poolInfoData] = usePoolContract(poolAddress)
-
-  const navigate = useNavigate()
 
   const isPoolOwner = useMemo(() => {
     if (!account || !poolInfoData) return false
     return account === poolInfoData.parameters.trader
   }, [account, poolInfoData])
 
-  const handleBuyRedirect = () => {
-    navigate(`/pool/invest/${poolData?.id}`)
-  }
+  const handleBuyRedirect = useCallback(() => {
+    if (isNil(poolData)) return
+    navigate(`/pool/invest/${poolData.id}`)
+  }, [poolData])
 
-  const handlePositionsRedirect = () => {
-    const tabPath = isPoolOwner ? "open" : "closed"
-    navigate(`/fund-positions/${poolData?.id}/${tabPath}`)
-  }
+  const handlePositionsRedirect = useCallback(() => {
+    if (!poolData) return
+
+    const filter = isPoolOwner ? "open" : "closed"
+    navigate(`/fund-positions/${poolData.id}/${filter}`)
+  }, [poolData])
 
   if (!poolData) {
     return (
@@ -69,7 +71,7 @@ const Profile: React.FC<Props> = () => {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        <MemberMobile data={poolData}>
+        <PoolStatisticCard data={poolData}>
           <ButtonContainer>
             <SecondaryButton
               onClick={handlePositionsRedirect}
@@ -83,7 +85,7 @@ const Profile: React.FC<Props> = () => {
               Buy {poolData.ticker}
             </Button>
           </ButtonContainer>
-        </MemberMobile>
+        </PoolStatisticCard>
 
         <TabCard>
           <TabsLight

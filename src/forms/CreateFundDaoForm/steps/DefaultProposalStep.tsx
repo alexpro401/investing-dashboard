@@ -9,7 +9,13 @@ import { DaoSettingsParameters } from "common"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isAddressValidator, isPercentage, required } from "utils/validators"
 
-const DefaultProposalStep: FC = () => {
+interface IDefaultProposalStepProps {
+  isCreatingProposal?: boolean
+}
+
+const DefaultProposalStep: FC<IDefaultProposalStepProps> = ({
+  isCreatingProposal = false,
+}) => {
   const { defaultProposalSettingForm } = useContext(FundDaoCreatingContext)
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
 
@@ -102,6 +108,7 @@ const DefaultProposalStep: FC = () => {
             <DaoSettingsParameters
               poolParameters={defaultProposalSettingForm}
               formValidation={formValidation}
+              isCreatingProposal={isCreatingProposal}
             />
           </>
         ) : (

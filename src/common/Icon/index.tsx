@@ -34,6 +34,8 @@ import {
   CircleWarningIcon,
   CircleInfoIcon,
   SettingsIcon,
+  ReloadIcon,
+  ShareIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -116,6 +118,10 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return CircleWarningIcon as unknown as ElementType
       case ICON_NAMES.settings:
         return SettingsIcon as unknown as ElementType
+      case ICON_NAMES.reload:
+        return ReloadIcon as unknown as ElementType
+      case ICON_NAMES.share:
+        return ShareIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }

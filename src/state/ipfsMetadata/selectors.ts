@@ -29,9 +29,10 @@ export const selectinvestProposalMetadata = (poolId, hash) =>
     return metadata.proposals[poolId][hash]
   })
 
-export const selectUserMetadata = (hash) =>
-  createSelector([selectIpfsMetadataState], (metadata) =>
-    metadata.user?.hash === hash ? metadata.user : null
+export const selectUserMetadata = (account) =>
+  createSelector(
+    [selectIpfsMetadataState],
+    (metadata) => metadata.user[account] ?? null
   )
 
 export const selectInsuranceAccidents = () =>

@@ -32,7 +32,7 @@ const CreateDaoProposalValidatorSelectType: React.FC = () => {
   const proceedToNextStep = useCallback(() => {
     //TODO NAVIGATE to path related to selected validator proposal type
     const nextProposalTypePath = {
-      [EValidatorProposalType.validatorSettings]: "/",
+      [EValidatorProposalType.validatorSettings]: `/dao/${daoAddress}/create-validator-proposal/validator-settings`,
       [EValidatorProposalType.votingSettings]: "/",
     }[selectedValidatorProposalType]
 
@@ -77,7 +77,7 @@ const CreateDaoProposalValidatorSelectType: React.FC = () => {
       <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
         <WithUserIsDaoValidatorValidation daoPoolAddress={daoAddress ?? ""}>
           <S.PageHolder>
-            <S.PageContext>
+            <S.PageContent>
               <TutorialCard
                 text={"Shape your DAO with your best ideas."}
                 linkText={"Read the tutorial"}
@@ -103,7 +103,7 @@ const CreateDaoProposalValidatorSelectType: React.FC = () => {
                 onClick={proceedToNextStep}
                 text={"Start creating proposal"}
               />
-            </S.PageContext>
+            </S.PageContent>
           </S.PageHolder>
         </WithUserIsDaoValidatorValidation>
       </WithGovPoolAddressValidation>

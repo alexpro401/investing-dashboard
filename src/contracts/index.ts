@@ -1,3 +1,4 @@
+import { useGovSettingsAddress } from "./../hooks/useDaoPoolSetting"
 import { useSelector } from "react-redux"
 import useContract, { useProposalAddress } from "hooks/useContract"
 
@@ -155,7 +156,9 @@ export function useGovPoolContract(address: Address) {
   return useContract<GovPool>(address, GovPool_ABI)
 }
 
-export function useGovSettingsContract(address: Address) {
+export function useGovSettingsContract(poolAddress: Address) {
+  const address = useGovSettingsAddress(poolAddress ?? "")
+
   return useContract<GovSettings>(address, GovSettings_ABI)
 }
 

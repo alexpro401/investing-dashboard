@@ -51,6 +51,13 @@ export const getDefaultFieldBorderStyles = () => {
   `
 }
 
+export const getFieldSuccessBorderStyles = () => {
+  return `
+    border: 1px solid ${theme.statusColors.success};
+    border-radius: 16px;
+  `
+}
+
 export const getDefaultFieldPlaceholderStyles = () => {
   return `
     color: ${fieldPlaceholderColor};

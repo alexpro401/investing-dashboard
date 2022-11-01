@@ -29,6 +29,7 @@ function DurationField<V extends string | number>({
   onChange,
   nodeLeft,
   nodeRight,
+  borderColor,
   ...rest
 }: Props<V>) {
   const [localValue, setLocalValue] = useState("")
@@ -211,6 +212,7 @@ function DurationField<V extends string | number>({
         onChange={onChange}
         nodeLeft={nodeLeft}
         nodeRight={nodeRight}
+        borderColor={borderColor}
       />
       <S.DropdownParsedVariants isOpen={isDropdownOpen && !!parsedDuration}>
         <AppButton

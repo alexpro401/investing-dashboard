@@ -172,6 +172,24 @@ export const normalizeBigNumber = (
   return humanizeBigNumber(amount, fix)
 }
 
+export const cutStringZeroes = (value: string): string => {
+  const splittedString = value.split(".")
+
+  if (splittedString[1] === "0") return splittedString[0]
+
+  if (splittedString[1]) {
+    const reversed = splittedString[1].split("").reverse()
+
+    while (reversed[0] === "0") {
+      reversed.shift()
+    }
+
+    return splittedString[0] + "." + reversed.reverse().join("")
+  }
+
+  return value
+}
+
 export function getTypedSignature(address, lib, nonce) {
   const signer = lib.getSigner(address)
 

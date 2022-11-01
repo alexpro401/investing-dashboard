@@ -152,7 +152,7 @@ function useFundFee(
   // Withdrawal optimization flag
   const [optimizeWithdrawal, setOptimizeWithdrawal] = useState<boolean>(true)
 
-  // Pool commission percentage
+  // InvestedFund commission percentage
   const fundCommissionPercentage = useMemo<IAmount>(() => {
     if (!poolInfo) return defaultAmountState
     const { commissionPercentage } = poolInfo?.parameters

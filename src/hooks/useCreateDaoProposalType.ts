@@ -1,13 +1,15 @@
 import { useCallback, useState, useEffect, useMemo, useContext } from "react"
-import { parseUnits } from "@ethersproject/units"
+import { parseEther, parseUnits } from "@ethersproject/units"
 import { useNavigate } from "react-router-dom"
 
-import { useGovPoolContract, useGovSettingsContract } from "contracts"
+import { useGovPoolContract } from "contracts"
 import { addDaoProposalTypeData } from "utils/ipfs"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovSettings } from "abi"
 import useGasTracker from "state/gas/hooks"
+import useDaoPoolSetting from "./useDaoPoolSetting"
+import useDaoPoolNewSettingId from "./useDaoPoolNewSettingId"
 import { DaoProposalCreatingContext } from "context/DaoProposalCreatingContext"
 import useError from "hooks/useError"
 import usePayload from "./usePayload"
@@ -15,6 +17,7 @@ import { useTransactionAdder } from "state/transactions/hooks"
 import { SubmitState } from "constants/types"
 import { TransactionType } from "state/transactions/types"
 import { isTxMined, parseTransactionError } from "utils"
+import { ZERO_ADDR } from "constants/index"
 
 interface ICreateDaoProposalTypeArgs {
   proposalInfo: {
@@ -32,9 +35,9 @@ interface ICreateDaoProposalTypeArgs {
     minVotesForVoting: number
     minVotesForCreating: number
     rewardToken: string
-    creationReward: number
-    executionReward: number
-    voteRewardsCoefficient: number
+    creationReward: string
+    executionReward: string
+    voteRewardsCoefficient: string
   }
 }
 
@@ -55,8 +58,15 @@ const useCreateDaoProposalType = ({
   const [, setPayload] = usePayload()
   const [, setError] = useError()
   const [gasTrackerResponse] = useGasTracker()
+  const [newSettingId, newSettingIdLoading, newSettingIdError] =
+    useDaoPoolNewSettingId({ daoAddress: daoPoolAddress })
+  const [daoDefaultSettings, settingsLoading, settingsError] =
+    useDaoPoolSetting({
+      daoAddress: daoPoolAddress,
+      settingsId: EExecutor.DEFAULT,
+    })
+
   const govPoolContract = useGovPoolContract(daoPoolAddress)
-  const govSettingsContract = useGovSettingsContract(govSettingsAddress)
 
   const transactionOptions = useMemo(() => {
     if (!gasTrackerResponse) return
@@ -109,7 +119,18 @@ const useCreateDaoProposalType = ({
 
   const createDaoProposalType = useCallback(
     async (args: ICreateDaoProposalTypeArgs) => {
-      if (!govPoolContract || !govSettingsContract) return
+      if (
+        !govPoolContract ||
+        newSettingIdLoading ||
+        newSettingIdError ||
+        settingsLoading ||
+        settingsError ||
+        !daoDefaultSettings
+      )
+        return
+
+      const { validatorsVote, durationValidators, quorumValidators } =
+        daoDefaultSettings
 
       const {
         proposalInfo: {
@@ -136,9 +157,6 @@ const useCreateDaoProposalType = ({
       try {
         setPayload(SubmitState.SIGN)
 
-        const { validatorsVote, durationValidators, quorumValidators } =
-          await govSettingsContract.settings(EExecutor.DEFAULT)
-
         let { path: daoProposalTypeIPFSCode } = await addDaoProposalTypeData({
           proposalName: proposalTypeName,
           proposalDescription: proposalTypeDescription,
@@ -151,34 +169,36 @@ const useCreateDaoProposalType = ({
           [
             [
               {
-                // TODO add real proposal data from form component
                 earlyCompletion,
                 delegatedVotingAllowed,
                 validatorsVote,
-                duration: 70,
+                duration,
                 durationValidators,
-                quorum: parseUnits("1", 25),
+                quorum: parseUnits(String(quorum), 25).toString(),
                 quorumValidators,
-                minVotesForVoting: 1,
-                minVotesForCreating: 1,
-                rewardToken: "0x0000000000000000000000000000000000000000",
-                creationReward: 0,
-                executionReward: 0,
-                voteRewardsCoefficient: 1,
+                minVotesForVoting: parseEther(
+                  String(minVotesForVoting)
+                ).toString(),
+                minVotesForCreating: parseEther(
+                  String(minVotesForCreating)
+                ).toString(),
+                rewardToken: rewardToken || ZERO_ADDR,
+                creationReward: parseUnits(creationReward, 18).toString(),
+                executionReward: parseUnits(executionReward, 18).toString(),
+                voteRewardsCoefficient: parseUnits(
+                  voteRewardsCoefficient,
+                  18
+                ).toString(),
                 executorDescription: daoProposalTypeIPFSCode,
               },
             ],
           ]
         )
 
-        const newSettingsIdBN = await govSettingsContract.newSettingsId()
-
-        const newSettings = newSettingsIdBN.toNumber()
-
         const encodedChangeExecuterMethod = encodeAbiMethod(
           GovSettings,
           "changeExecutors",
-          [[contractAddress], [newSettings]]
+          [[contractAddress], [newSettingId]]
         )
 
         let { path: daoProposalIPFSCode } = await addDaoProposalTypeData({
@@ -234,7 +254,6 @@ const useCreateDaoProposalType = ({
     },
     [
       govPoolContract,
-      govSettingsContract,
       govSettingsAddress,
       transactionOptions,
       tryEstimateGas,
@@ -244,6 +263,12 @@ const useCreateDaoProposalType = ({
       closeSuccessModalState,
       setSuccessModalState,
       navigate,
+      daoDefaultSettings,
+      newSettingId,
+      newSettingIdLoading,
+      newSettingIdError,
+      settingsLoading,
+      settingsError,
     ]
   )
 
