@@ -70,7 +70,10 @@ const PoolStatisticCard: FC<Props> = ({ data, index = 0, children }) => {
     if (isNil(lastHistoryPoint)) {
       return <Skeleton w="25px" h="16px" />
     }
-    if (BigNumber.from(lastHistoryPoint.percPNL).isZero()) {
+    if (
+      !lastHistoryPoint ||
+      BigNumber.from(lastHistoryPoint.percPNL).isZero()
+    ) {
       return <S.StatisticValue>0.0%</S.StatisticValue>
     }
 
