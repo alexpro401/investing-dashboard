@@ -99,8 +99,6 @@ const ValidatorField: React.FC<IValidatorFieldProps> = ({
 }) => {
   const addressIsEmpty = useMemo(() => address === "", [address])
 
-  console.log("amount >> ", amount)
-
   const handleChangeTokenInput = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setAmount(event.currentTarget.value)
