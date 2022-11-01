@@ -87,15 +87,6 @@ export function useManagedPools(
   return [pools, pool.fetching]
 }
 
-export function useUserInvolvedPools(
-  address: string | null | undefined
-): [{ ownedPools: IPoolQuery[]; managedPools: IPoolQuery[] }, boolean] {
-  const [ownedPools, ownedLoading] = useOwnedPools(address)
-  const [managedPools, managedLoading] = useManagedPools(address)
-
-  return [{ ownedPools, managedPools }, ownedLoading || managedLoading]
-}
-
 /**
  * Returns map of pool price history
  */

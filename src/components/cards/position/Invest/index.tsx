@@ -246,7 +246,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   // Commission data
 
   /**
-   * Pool commission percentage
+   * InvestedFund commission percentage
    */
   const commissionPercentage = useMemo(() => {
     if (!poolInfo || !poolInfo.parameters) {

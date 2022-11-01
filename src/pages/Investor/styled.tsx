@@ -67,8 +67,7 @@ export const Tab = styled(Flex)<{ active?: boolean }>`
 `
 
 export const TabCard = styled(GradientBorder)`
-  margin-bottom: 16px;
-  margin-top: 24px;
+  margin-top: 16px;
   padding: 0 0 6px;
   position: relative;
   border-radius: 16px;
@@ -109,13 +108,8 @@ export const MainValue = styled.div`
   color: #9ae2cb;
 `
 
-export const ButtonContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: 1fr;
-  grid-column-gap: 0px;
-  grid-row-gap: 0px;
-  grid-gap: 16px;
-  padding-top: 16px;
+export const PoolsList = styled.div<{ maxH: boolean }>`
   width: 100%;
+  height: ${({ maxH }) => (maxH ? "180px" : "initial")};
+  overflow-y: auto;
 `

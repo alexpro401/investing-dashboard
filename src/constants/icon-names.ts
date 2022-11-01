@@ -32,4 +32,5 @@ export enum ICON_NAMES {
   infoCircled = "info-circled",
   warningCircled = "warning-circled",
   reload = "reload",
+  share = "share",
 }

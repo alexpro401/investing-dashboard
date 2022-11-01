@@ -99,7 +99,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   const [youSizeLP, setYouSizeLP] = useState<string>("0")
   const [yourBalance, setYourBalance] = useState<BigNumber>(ZERO)
 
-  // Pool base token ticker
+  // InvestedFund base token ticker
   const baseTokenTicker = useMemo(() => {
     if (!baseTokenData || !baseTokenData.symbol) {
       return ""

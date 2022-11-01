@@ -64,7 +64,9 @@ const Welcome: React.FC = () => {
   useEffect(() => {
     if (!account) return
 
-    navigate(state.from.pathname, { replace: true })
+    const path = state?.from.pathname ?? "/"
+
+    navigate(path, { replace: true })
   }, [account, navigate, state])
 
   useEffect(() => {

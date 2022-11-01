@@ -10,9 +10,6 @@ import { shortenAddress } from "utils"
 
 export const TapBar = () => {
   const { account } = useWeb3React()
-  const lastVisitedProfile = localStorage.getItem(
-    `last-visited-profile-${account}`
-  )
 
   const isBarHidden = !account ? "hidden" : "visible"
 
@@ -26,11 +23,7 @@ export const TapBar = () => {
       }}
     >
       <NavItem path="/wallet" Icon={Wallet} text={shortenAddress(account, 3)} />
-      <NavItem
-        path={lastVisitedProfile || "/me/investor"}
-        Icon={Profile}
-        text="My profile"
-      />
+      <NavItem path="/me/trader" Icon={Profile} text="My profile" />
       <NavItem path="/" Icon={TopTraders} text="Traders" />
       <NavItem path="/insurance" Icon={Insurance} text="Insurance" />
     </MobileMenu>

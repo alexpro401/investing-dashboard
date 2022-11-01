@@ -1,132 +1,186 @@
 import styled from "styled-components"
-import { motion } from "framer-motion"
+import { v4 as uuidv4 } from "uuid"
 
 import { PoolType } from "constants/types"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 
-import { Flex, To } from "theme"
+import { Flex, To, Text, getAmountColor } from "theme"
 import TokenIcon from "components/TokenIcon"
 import Icon from "components/Icon"
+import { AppButton, Icon as CommonIcon } from "common"
+import AccountInfo from "components/AccountInfo"
+import { useAddToast } from "state/application/hooks"
+import { useCallback } from "react"
+import { copyToClipboard } from "utils/clipboard"
+import { shortenAddress } from "utils"
+import { ICON_NAMES } from "constants/icon-names"
+import { isNil } from "lodash"
+import dexe from "assets/icons/dexe-dark.svg"
 
-export const Container = styled.div`
-  padding: 16px 0 60px;
+export const Scroll = styled.div`
+  padding: 16px 0;
   position: relative;
-  height: 80%;
+  max-height: 393px;
   overflow-y: auto;
 `
 
-export const Header = styled(Flex)`
-  width: 100%;
-  padding: 16px;
+export const Account = {
+  Container: styled.div`
+    background: #141926;
+    border-radius: 24px;
+    padding: 11px 15px;
+    margin: 0 16px 16px;
+  `,
+  RightNode: styled(AppButton)`
+    padding: 0;
+  `,
+}
+
+export const AccountCard: React.FC<{
+  account?: string | null
+}> = ({ account }) => {
+  const addToast = useAddToast()
+
+  const copyAccountToClipboard = useCallback(async () => {
+    if (!isNil(account)) {
+      await copyToClipboard(account)
+      const _toast = {
+        type: "success",
+        content: "Address copied to clipboard.",
+      }
+      addToast(_toast, uuidv4(), 3000)
+    }
+  }, [account, addToast])
+
+  return (
+    <Account.Container>
+      <Flex full ai="center" jc="space-between">
+        <div onClick={copyAccountToClipboard}>
+          <AccountInfo account={account}>
+            <Flex ai="center" jc="flex-start" gap="3" m="2px 0 0">
+              <Text color="#B1C7FC" fz={13} lh="15px">
+                {shortenAddress(account, 2)}
+              </Text>
+              <CommonIcon name={ICON_NAMES.copy} color="#B1C7FC" />
+            </Flex>
+          </AccountInfo>
+        </div>
+        <Account.RightNode
+          color="default"
+          size="small"
+          text="Open trader profile"
+          routePath="/me/trader"
+        />
+      </Flex>
+    </Account.Container>
+  )
+}
+
+export const Divider = styled.div`
+  background: radial-gradient(
+      54.8% 53% at 50% 50%,
+      #587eb7 0%,
+      rgba(88, 126, 183, 0) 100%
+    ),
+    radial-gradient(
+      60% 51.57% at 50% 50%,
+      #6d99db 0%,
+      rgba(109, 153, 219, 0) 100%
+    ),
+    radial-gradient(
+      69.43% 69.43% at 50% 50%,
+      rgba(5, 5, 5, 0.5) 0%,
+      rgba(82, 82, 82, 0) 100%
+    );
+  opacity: 0.1;
+  width: fill-available;
+  margin-left: 63px;
+  height: 1px;
 `
 
-export const PrimaryLabel = styled(Flex)`
-  justify-content: flex-start;
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 12px;
-  letter-spacing: 0.03em;
-  color: #e4f2ff;
-  width: 200px;
+export const Row = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 25% 15%;
+  align-items: center;
 `
 
-export const PlaceholderIcon = styled.img`
-  height: 40px;
-  width: 40px;
-  margin-right: 9px;
-`
+export const List = {
+  Container: styled.div`
+    width: 100%;
 
-export const SecondaryLabel = styled(Flex)`
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 12px;
-  letter-spacing: 0.03em;
-  color: #616d8b;
-  flex: 1;
-  justify-content: flex-start;
+    &:not(:first-child) {
+      margin-top: 20px;
+    }
+  `,
+  Head: styled(Row)`
+    padding: 0 16px 16px;
+  `,
+  Body: styled.div`
+    padding: 0 16px 24px;
 
-  &:nth-child(3) {
-    justify-content: center;
+    & > * {
+      display: block;
+      &:not(:nth-child(1)) {
+        margin-top: 24px;
+      }
+    }
+  `,
+  Placeholder: styled(Flex).attrs(() => ({
+    full: true,
+    ai: "center",
+    jc: "flex-start",
+    gap: "8",
+  }))`
+    font-family: "Gilroy";
+    font-size: 13px;
+    line-height: 150%;
+    color: ${({ theme }) => theme.textColors.secondary};
+    height: 60px;
+  `,
+  PlaceholderIcon: styled.img`
+    height: 38px;
+    width: 38px;
+  `,
+}
+
+export const ListHead = ({ title, showLabels = true }) => (
+  <List.Head>
+    <Text block color="#E4F2FF">
+      {title}
+    </Text>
+    {showLabels && (
+      <>
+        <Text block color="#B1C7FC">
+          TVL
+        </Text>
+        <Text block color="#B1C7FC" align="right">
+          P&L
+        </Text>
+      </>
+    )}
+  </List.Head>
+)
+export const ListPlaceholder = ({ title }) => (
+  <div>
+    <List.Placeholder>
+      <List.PlaceholderIcon src={dexe} />
+      {title}
+    </List.Placeholder>
+  </div>
+)
+
+export const ButtonContainer = styled(Flex).attrs(() => ({
+  full: true,
+  m: "16px",
+}))`
+  & > * {
+    flex: 0 1 calc(100% - 32px);
   }
-  &:nth-child(4) {
-    justify-content: flex-end;
-  }
 `
 
-export const List = styled(motion.div)`
-  padding: 0 16px 30px;
-`
-
-const Row = styled(Flex)`
-  position: relative;
-  width: 100%;
-  padding: 10px 0;
-
-  &:after {
-    content: "";
-    bottom: 0;
-    position: absolute;
-    left: 30px;
-    right: 0;
-    background: rgba(90, 96, 113, 0.1);
-    height: 1px;
-  }
-`
-
-const Info = styled(Flex)`
-  width: 200px;
-  justify-content: flex-start;
-`
-
-const TokenData = styled(Flex)`
-  flex-direction: column;
-  align-items: flex-start;
-`
-
-const Symbol = styled.div`
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 20px;
-  letter-spacing: 1px;
-  color: #e4f2ff;
-`
-
-const Name = styled.div`
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 14px;
-  letter-spacing: 0.03em;
-  color: #616d8b;
-`
-
-const Value = styled(Flex)`
-  justify-content: flex-start;
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 100%;
-  color: #e4f2ff;
-  flex: 1;
-  &:nth-child(3) {
-    justify-content: center;
-  }
-  &:nth-child(4) {
-    justify-content: flex-end;
-  }
-`
-
-const Avatar = styled.div`
-  width: 40px;
-  height: 40px;
+const PoolIcons = styled.div`
+  width: 38px;
+  height: 38px;
   position: relative;
   margin-right: 9px;
 `
@@ -139,20 +193,7 @@ const BaseWrapper = styled.div`
   bottom: 0;
 `
 
-export const EmptyText = styled(Row)`
-  font-family: Gilroy;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 12px;
-  line-height: 130%;
-  color: #5a6071;
-  height: 60px;
-  align-items: space-between;
-  justify-content: flex-start;
-  width: 100%;
-`
-
-export const Token: React.FC<{
+export const PoolCard: React.FC<{
   baseAddress: string
   symbol: string
   name: string
@@ -177,24 +218,33 @@ export const Token: React.FC<{
   return (
     <To onClick={onClick} to={`/me/trader/profile/${poolType}/${address}`}>
       <Row>
-        <Info>
-          <Avatar>
+        <Flex jc="flex-start">
+          <PoolIcons>
             <Icon
-              size={40}
+              m="0"
+              size={34}
               source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
               address={address}
             />
             <BaseWrapper>
-              <TokenIcon size={20} address={baseAddress} />
+              <TokenIcon size={20} address={baseAddress} m="0" />
             </BaseWrapper>
-          </Avatar>
-          <TokenData>
-            <Symbol>{symbol}</Symbol>
-            <Name>{name}</Name>
-          </TokenData>
-        </Info>
-        <Value>{tvl}</Value>
-        <Value>{pnl}</Value>
+          </PoolIcons>
+          <Flex dir="column" ai="flex-start">
+            <Text color="#E4F2FF" fw={700} fz={16} lh="19px">
+              {symbol}
+            </Text>
+            <Text color="#B1C7FC" fz={13} lh="15px" p="2px 0 0">
+              {name}
+            </Text>
+          </Flex>
+        </Flex>
+        <Text color="#E4F2FF" fw={600} lh="17px">
+          {tvl}
+        </Text>
+        <Text color={getAmountColor(pnl)} fw={600} lh="17px" align="right">
+          {Number(pnl) <= 0 ? `${pnl}%` : `+${pnl}%`}
+        </Text>
       </Row>
     </To>
   )
