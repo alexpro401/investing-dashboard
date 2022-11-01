@@ -10,7 +10,7 @@ import { ICON_NAMES } from "constants/icon-names"
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
 
-import useDAODeposit from "hooks/useDAODeposit"
+import useGovPoolDeposit from "hooks/useGovPoolDeposit"
 import { parseEther } from "@ethersproject/units"
 
 enum EProposalType {
@@ -36,7 +36,7 @@ const CreateProposalSelectType: React.FC = () => {
     EProposalType.daoProfileModification
   )
 
-  const daoDeposit = useDAODeposit(daoAddress ?? "")
+  const daoDeposit = useGovPoolDeposit(daoAddress ?? "")
 
   useEffect(() => {
     if (!daoDeposit) return

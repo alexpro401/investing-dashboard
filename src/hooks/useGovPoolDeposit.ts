@@ -9,29 +9,21 @@ import { useTransactionAdder } from "state/transactions/hooks"
 import { SubmitState } from "constants/types"
 import { TransactionType } from "state/transactions/types"
 import { isTxMined, parseTransactionError } from "utils"
+import { useGovUserKeeperAddress } from "./useGovPool"
 
-const useDAODeposit = (daoPoolAddress: string) => {
-  const [userKeeperAddress, setUserKeeperAddress] = useState<string>("")
+const useGovPoolDeposit = (daoPoolAddress: string) => {
   const [tokenAddress, setTokenAddress] = useState<string>("")
 
   const [fromToken] = useERC20(tokenAddress)
   const govPoolContract = useGovPoolContract(daoPoolAddress)
-  const userKeeperContract = useGovUserKeeperContract(userKeeperAddress)
+  const userKeeperContract = useGovUserKeeperContract(daoPoolAddress)
+  const userKeeperAddress = useGovUserKeeperAddress(daoPoolAddress)
+
   const addTransaction = useTransactionAdder()
   const [, setPayload] = usePayload()
   const [, setError] = useError()
 
-  const updateUserKeeperContract = useCallback(async () => {
-    try {
-      if (!govPoolContract) return
-
-      const _userKeeperAddress = await govPoolContract.govUserKeeper()
-      setUserKeeperAddress(_userKeeperAddress)
-    } catch (error) {
-      console.log("updateUserKeeperContract error: ", error)
-    }
-  }, [govPoolContract])
-
+  // TODO: use instead useGovPoolTokensInfo hook
   const updateTokenAddress = useCallback(async () => {
     try {
       if (!userKeeperContract) return
@@ -42,10 +34,6 @@ const useDAODeposit = (daoPoolAddress: string) => {
       console.log("updateTokenAddress error: ", error)
     }
   }, [userKeeperContract])
-
-  useEffect(() => {
-    updateUserKeeperContract()
-  }, [updateUserKeeperContract])
 
   useEffect(() => {
     updateTokenAddress()
@@ -99,4 +87,4 @@ const useDAODeposit = (daoPoolAddress: string) => {
   return daoDeposit
 }
 
-export default useDAODeposit
+export default useGovPoolDeposit
