@@ -46,6 +46,7 @@ import {
   isUrlTwitter,
   minLength,
   required,
+  validateIfExist,
 } from "utils/validators"
 import { isValidUrl } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
@@ -104,7 +105,7 @@ const TitlesStep: FC = () => {
       github: socialLinks.get?.[5]?.[1] || "",
       others: socialLinks.get
         ?.slice(6, socialLinks.get.length)
-        ?.map((el) => ({ key: el[0], value: el[1] })),
+        ?.map((el) => el[1]),
 
       documents: documents.get,
 
@@ -150,13 +151,12 @@ const TitlesStep: FC = () => {
             github: { isUrl, isUrlGithub },
           }
         : {}),
-      ...(socialLinks.get
-        ?.slice(6, socialLinks.get.length)
-        ?.map((el) => ({ key: el[0], value: el[1] })).length
+      ...(socialLinks.get?.slice(6, socialLinks.get.length)?.map((el) => el[1])
+        .length
         ? {
             others: {
               $every: {
-                isUrl,
+                isUrl: validateIfExist(isUrl),
               },
             },
           }
