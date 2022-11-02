@@ -1,9 +1,11 @@
 import { FC } from "react"
+
 import { Card } from "common"
 import { Flex, Text } from "theme"
 import BarChart from "components/BarChart"
 import ProfitLossChart from "components/ProfitLossChart"
-import usePoolPnlInfo from "components/PoolPnlInfo/usePoolPnlInfo"
+
+import { usePoolPnlInfo } from "hooks/usePool"
 
 import { Indents, Label, Value } from "../styled"
 
@@ -17,22 +19,22 @@ const TabPoolPnl: FC<{ address: string }> = ({ address }) => {
     <>
       <Indents side={false}>
         <Card>
-          <Flex full ai="center" jc="space-between">
-            <div>
-              <Value.Big block color="#E4F2FF" p="0 0 4px">
-                + $200,00
-              </Value.Big>
-              <Label block>Total in USD</Label>
-            </div>
-            <div>
-              <Value.Big block color="#9AE2CB" p="0 0 4px">
-                + 234%
-              </Value.Big>
-              <Label block align="right">
-                {baseToken?.symbol}
-              </Label>
-            </div>
-          </Flex>
+          {/*<Flex full ai="center" jc="space-between">*/}
+          {/*  <div>*/}
+          {/*    <Value.Big block color="#E4F2FF" p="0 0 4px">*/}
+          {/*      + $200,00*/}
+          {/*    </Value.Big>*/}
+          {/*    <Label block>Total in USD</Label>*/}
+          {/*  </div>*/}
+          {/*  <div>*/}
+          {/*    <Value.Big block color="#9AE2CB" p="0 0 4px">*/}
+          {/*      + 234%*/}
+          {/*    </Value.Big>*/}
+          {/*    <Label block align="right">*/}
+          {/*      {baseToken?.symbol}*/}
+          {/*    </Label>*/}
+          {/*  </div>*/}
+          {/*</Flex>*/}
           <ProfitLossChart
             address={address}
             baseToken={poolData?.baseToken}
@@ -57,10 +59,10 @@ const TabPoolPnl: FC<{ address: string }> = ({ address }) => {
       </Indents>
       <Indents top side={false}>
         <Card>
-          <Flex full ai="center" jc="space-between">
-            <Value.Big color="#E4F2FF">December, 2022</Value.Big>
-            <Value.Big color="#9AE2CB">+ 234%</Value.Big>
-          </Flex>
+          {/*<Flex full ai="center" jc="space-between">*/}
+          {/*  <Value.Big color="#E4F2FF">December, 2022</Value.Big>*/}
+          {/*  <Value.Big color="#9AE2CB">+ 234%</Value.Big>*/}
+          {/*</Flex>*/}
           <BarChart address={address} />
         </Card>
       </Indents>
