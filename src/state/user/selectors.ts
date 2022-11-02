@@ -91,3 +91,8 @@ export const selectTermsState = createSelector(
   [selectUser],
   (user) => user.terms
 )
+
+export const selectUserTokens = createSelector(
+  [selectUser],
+  (user) => user.tokens
+)

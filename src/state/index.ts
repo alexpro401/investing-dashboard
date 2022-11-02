@@ -10,6 +10,9 @@ import application from "./application/reducer"
 import ipfsMetadata from "./ipfsMetadata/reducer"
 import gas from "./gas/reducer"
 import erc20 from "./erc20/reducer"
+import lists from "./lists/reducer"
+import multicall from "./multicall/reducer"
+import { updateVersion } from "./global/actions"
 
 const RESET_KEY = "1667307571774"
 
@@ -46,6 +49,8 @@ const store = configureStore({
     ipfsMetadata,
     gas,
     erc20,
+    lists,
+    multicall,
   },
   middleware: [
     ...getDefaultMiddleware({ thunk: false }),
@@ -59,6 +64,8 @@ const store = configureStore({
     namespace: process.env.REACT_APP_NAMESPACE || "DEXE",
   }),
 })
+
+store.dispatch(updateVersion())
 
 export default store
 

@@ -21,7 +21,6 @@ const Swap = lazy(() => import("pages/Swap"))
 const Wallet = lazy(() => import("pages/Wallet"))
 const Success = lazy(() => import("pages/Success"))
 const Notifications = lazy(() => import("pages/Notifications"))
-const TokenSelect = lazy(() => import("pages/TokenSelect")) // TODO: my trader profile
 const CreateRiskyProposal = lazy(() => import("pages/CreateRiskyProposal"))
 const InvestRiskyProposal = lazy(() => import("pages/InvestRiskyProposal"))
 const SwapRiskyProposal = lazy(() => import("pages/SwapRiskyProposal"))
@@ -83,12 +82,7 @@ export default function Routes() {
                 <Route path="wallet" element={<Wallet />} />
 
                 <Route
-                  path="select-token/:type/:poolAddress/:field/:address"
-                  element={<TokenSelect />}
-                />
-
-                <Route
-                  path="pool/swap/:poolType/:poolToken/:inputToken/:outputToken"
+                  path="pool/swap/:poolType/:poolToken/:inputToken/:outputToken/*"
                   element={<Swap />}
                 />
 
@@ -120,13 +114,16 @@ export default function Routes() {
                   element={<WithdrawInvestmentProposal />}
                 />
                 <Route
-                  path="pay-dividends-investment-proposal/:poolAddress/:proposalId"
+                  path="pay-dividends-investment-proposal/:poolAddress/:proposalId/*"
                   element={<PayDividends />}
                 />
                 <Route path="create-fund" element={<CreateFund />} />
-                <Route path="create-fund/basic" element={<CreateFundBasic />} />
                 <Route
-                  path="create-fund/investment"
+                  path="create-fund/basic/*"
+                  element={<CreateFundBasic />}
+                />
+                <Route
+                  path="create-fund/investment/*"
                   element={<CreateFundInvestment />}
                 />
                 <Route path="create-fund/dao" element={<CreateFundDaoPool />} />

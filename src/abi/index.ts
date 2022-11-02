@@ -31,6 +31,8 @@ import GovUserKeeper from "./GovUserKeeper.json"
 import GovValidators from "./GovValidators.json"
 import DistributionProposal from "./DistributionProposal.json"
 
+import Multicall from "./Multicall.json"
+
 export {
   ERC20,
   ERC721,
@@ -51,4 +53,5 @@ export {
   GovUserKeeper,
   GovValidators,
   DistributionProposal,
+  Multicall,
 }

@@ -1,5 +1,5 @@
-import { FC, useState, useCallback, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { FC, useState, useCallback, useEffect, useMemo } from "react"
+import { useLocation, useNavigate } from "react-router-dom"
 import { Flex } from "theme"
 import { useWeb3React } from "@web3-react/core"
 import { useSelector } from "react-redux"
@@ -22,7 +22,7 @@ import TokenSelect from "modals/TokenSelect"
 
 import { bigify, isTxMined } from "utils"
 import useContract from "hooks/useContract"
-import { Token } from "interfaces"
+import { Token } from "lib/entities"
 import { addFundMetadata } from "utils/ipfs"
 import { TraderPool, PoolFactory } from "abi"
 import { UpdateListType } from "constants/types"
@@ -56,6 +56,8 @@ import {
   ValidationError,
   InputRow,
 } from "./styled"
+import { useUserTokens, useWhitelistTokens } from "hooks/useToken"
+import { useAllTokenBalances } from "hooks/useBalance"
 
 const deployMethodByType = {
   basic: "deployBasicPool",
@@ -87,6 +89,7 @@ const CreateFund: FC<Props> = ({ presettedFundType = "basic" }) => {
   } = useCreateFundContext()
 
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const { chainId, account } = useWeb3React()
 
   const addTransaction = useTransactionAdder()
@@ -99,7 +102,6 @@ const CreateFund: FC<Props> = ({ presettedFundType = "basic" }) => {
   const [step, setStep] = useState(0)
   const [steps, setSteps] = useState<IStep[]>([])
   const [stepPending, setStepPending] = useState(false)
-  const [isOpen, setModalState] = useState(false)
   const [isCreating, setCreating] = useState(false)
   const [transactionFail, setTransactionFail] = useState(false)
   const [stepsFormating, setStepsFormating] = useState(false)
@@ -111,15 +113,29 @@ const CreateFund: FC<Props> = ({ presettedFundType = "basic" }) => {
 
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
-  const hideModal = () => setModalState(false)
+  const whitelistTokens = useWhitelistTokens()
+  const userTokens = useUserTokens()
+  const allTokens = useMemo(
+    () => ({ ...whitelistTokens, ...userTokens }),
+    [userTokens, whitelistTokens]
+  )
+  const [balances, balancesIsLoading] = useAllTokenBalances()
 
-  const handleTokenSelectOpen = () => {
-    setModalState(true)
-  }
+  const handleTokenSelectOpen = useCallback(() => {
+    navigate("modal/search")
+  }, [navigate])
 
-  const handleTokenSelect = (token: Token) => {
-    handleChange("baseToken", token)
-  }
+  const handleTokenSelectClose = useCallback(() => {
+    navigate(pathname.slice(0, pathname.indexOf("/modal")))
+  }, [navigate, pathname])
+
+  const handleTokenSelect = useCallback(
+    (token: Token) => {
+      handleChange("baseToken", token)
+      handleTokenSelectClose()
+    },
+    [handleChange, handleTokenSelectClose]
+  )
 
   const handlePoolCreate = useCallback(async () => {
     if (!account || !traderPoolFactory) return
@@ -393,9 +409,12 @@ const CreateFund: FC<Props> = ({ presettedFundType = "basic" }) => {
         </Stepper>
       )}
       <TokenSelect
+        allBalances={balances}
+        balancesLoading={balancesIsLoading}
+        whitelistOnly
+        allTokens={allTokens}
+        onClose={handleTokenSelectClose}
         onSelect={handleTokenSelect}
-        isOpen={isOpen}
-        onClose={hideModal}
       />
       <Body>
         <AvatarWrapper>

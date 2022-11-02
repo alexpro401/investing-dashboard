@@ -1,4 +1,3 @@
-import { BigNumber } from "@ethersproject/bignumber"
 import { TraderPool } from "interfaces/typechain"
 
 export type ITraderPoolExchangeAmount = Awaited<

@@ -1,4 +1,4 @@
-import { createContext, useContext, Component, ReactNode } from "react"
+import { createContext, useContext, useReducer, useCallback } from "react"
 import { Token } from "interfaces"
 import { sliderPropsByPeriodType } from "constants/index"
 import { IValidationError } from "constants/types"
@@ -59,65 +59,89 @@ const defaultContext = {
   handleValidate: () => false,
 }
 
-export const FundContext = createContext<IContext>(defaultContext)
+const FundContext = createContext<IContext>(defaultContext)
 
 export const useCreateFundContext = () => useContext(FundContext)
 
-interface Props {
-  children?: ReactNode
+type ActionMap<M extends { [index: string]: any }> = {
+  [Key in keyof M]: M[Key] extends undefined
+    ? {
+        type: Key
+      }
+    : {
+        type: Key
+        payload: M[Key]
+      }
 }
 
-class CreateFundContext extends Component<Props> {
-  static contextType = FundContext
+export enum CreateFundTypes {
+  CHANGE = "CHANGE",
+  SET_ERRORS = "SET_ERRORS",
+}
 
-  state = {
-    avatarBlobString: "",
-    fundType: "basic",
-    fundName: "",
-    fundSymbol: "",
-    ipfsHash: "",
-    description: "",
-    strategy: "",
-    trader: "",
-    privatePool: false,
-    totalLPEmission: "",
-    baseToken: {
-      address: "",
-      name: "",
-      symbol: "",
-      decimals: 0,
-    },
-    minimalInvestment: "",
-    commissionPeriod: 0,
-    commissionPercentage: 30,
-    managers: [],
-    investors: [],
-    validationErrors: [],
+type CreateFundPayload = {
+  [CreateFundTypes.CHANGE]: {
+    name: string
+    value: any
   }
-
-  // TODO: useCallback
-  handleChange = (name: string, value: any) => {
-    if (Object.prototype.toString.call(value) === "[object Array]") {
-      this.setState({
-        [name]: [...value],
-      })
-      return
-    }
-
-    this.setState({ [name]: value })
+  [CreateFundTypes.SET_ERRORS]: {
+    validationErrors: IValidationError[]
   }
+}
 
-  handleValidate = () => {
-    const {
-      fundName,
-      fundSymbol,
-      baseToken,
-      totalLPEmission,
-      minimalInvestment,
-      commissionPeriod,
-      commissionPercentage,
-    } = this.state
+type CreateFundActions =
+  ActionMap<CreateFundPayload>[keyof ActionMap<CreateFundPayload>]
 
+function createFundReducer(state: IState, action: CreateFundActions) {
+  switch (action.type) {
+    case CreateFundTypes.CHANGE:
+      if (
+        Object.prototype.toString.call(action.payload.value) ===
+        "[object Array]"
+      ) {
+        return {
+          ...state,
+          [action.payload.name]: [...action.payload.value],
+        }
+      }
+      return {
+        ...state,
+        [action.payload.name]: action.payload.value,
+      }
+    case CreateFundTypes.SET_ERRORS:
+      return {
+        ...state,
+        validationErrors: action.payload.validationErrors,
+      }
+
+    default:
+      return state
+  }
+}
+
+export function FundContextProvider({ children }) {
+  const [state, dispatch] = useReducer(createFundReducer, defaultState)
+  const {
+    fundName,
+    fundSymbol,
+    baseToken,
+    totalLPEmission,
+    minimalInvestment,
+    commissionPeriod,
+    commissionPercentage,
+  } = state
+
+  const handleChange = useCallback((name: string, value: any) => {
+    dispatch({
+      type: CreateFundTypes.CHANGE,
+      payload: {
+        name,
+        value,
+      },
+    })
+  }, [])
+
+  const handleValidate = useCallback(() => {
     const errors: IValidationError[] = []
 
     // FUND NAME
@@ -197,26 +221,29 @@ class CreateFundContext extends Component<Props> {
       })
     }
 
-    this.setState({ validationErrors: errors })
+    dispatch({
+      type: CreateFundTypes.SET_ERRORS,
+      payload: {
+        validationErrors: errors,
+      },
+    })
 
     return !errors.length
-  }
+  }, [
+    baseToken.address,
+    commissionPercentage,
+    commissionPeriod,
+    fundName,
+    fundSymbol,
+    minimalInvestment,
+    totalLPEmission,
+  ])
 
-  render() {
-    const { children } = this.props
-
-    return (
-      <FundContext.Provider
-        value={{
-          ...this.state,
-          handleChange: this.handleChange,
-          handleValidate: this.handleValidate,
-        }}
-      >
-        {children}
-      </FundContext.Provider>
-    )
-  }
+  return (
+    <FundContext.Provider value={{ ...state, handleChange, handleValidate }}>
+      {children}
+    </FundContext.Provider>
+  )
 }
 
-export default CreateFundContext
+export default FundContext

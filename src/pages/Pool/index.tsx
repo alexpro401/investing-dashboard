@@ -30,7 +30,8 @@ import { ZERO } from "constants/index"
 import { normalizeBigNumber } from "utils"
 import usePoolPrice from "hooks/usePoolPrice"
 import { multiplyBignumbers } from "utils/formulas"
-import { usePoolContract, useTraderPool } from "hooks/usePool"
+import { usePoolContract } from "hooks/usePool"
+import { useTraderPoolContract } from "contracts"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -42,7 +43,7 @@ function Pool() {
   const { account, chainId } = useWeb3React()
   const { poolAddress } = useParams()
 
-  const traderPool = useTraderPool(poolAddress)
+  const traderPool = useTraderPoolContract(poolAddress)
   const poolData = useSelector((s: AppState) =>
     selectPoolByAddress(s, poolAddress)
   )

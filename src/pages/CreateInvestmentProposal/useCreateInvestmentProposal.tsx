@@ -6,7 +6,8 @@ import {
   useState,
 } from "react"
 import { parseUnits, parseEther } from "@ethersproject/units"
-import { usePoolContract, useTraderPool } from "hooks/usePool"
+import { usePoolContract } from "hooks/usePool"
+import { useTraderPoolContract } from "contracts"
 import { useWeb3React } from "@web3-react/core"
 import getTime from "date-fns/getTime"
 import { addDays } from "date-fns/esm"
@@ -71,7 +72,7 @@ const useCreateInvestmentProposal = (
     []
   )
 
-  const traderPool = useTraderPool(poolAddress)
+  const traderPool = useTraderPoolContract(poolAddress)
   const investTraderPool = useInvestTraderPoolContract(poolAddress)
   const addTransaction = useTransactionAdder()
   const [, poolInfo] = usePoolContract(poolAddress)
@@ -124,7 +125,7 @@ const useCreateInvestmentProposal = (
   }, [investLPLimit, lpAmount])
 
   const handleSubmit = useCallback(async () => {
-    if (!investTraderPool || !traderPool) return
+    if (!investTraderPool || !traderPool || !account) return
     if (!handleValidate()) return
 
     try {

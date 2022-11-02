@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
-import { Contract } from "@ethersproject/contracts"
 import { parseUnits } from "@ethersproject/units"
 import { isEmpty } from "lodash"
 import axios from "axios"
@@ -9,12 +8,11 @@ import { IPosition } from "interfaces/thegraphs/all-pools"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { ILeverageInfo } from "interfaces/contracts/ITraderPool"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import useContract from "hooks/useContract"
 import { useQuery } from "urql"
 import { isAddress } from "utils"
-import { TraderPool } from "abi"
 import { PoolPositionLast, PoolQuery } from "queries"
 import { PoolsByInvestorsQuery } from "queries/all-pools"
+import { useTraderPoolContract } from "contracts"
 
 import { ZERO } from "constants/index"
 import { normalizeBigNumber } from "utils"
@@ -25,12 +23,6 @@ import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 import { useSelector } from "react-redux"
 import { AppState } from "state"
 import { selectPoolByAddress } from "state/pools/selectors"
-
-export function useTraderPool(address: string | undefined): Contract | null {
-  const traderPool = useContract(address, TraderPool)
-
-  return traderPool
-}
 
 /**
  * Returns TheGraph info about the pool
@@ -77,7 +69,7 @@ export function usePoolPosition(poolId, tokenId) {
 export function usePoolContract(
   address: string | undefined
 ): [ILeverageInfo | null, IPoolInfo | null, () => void] {
-  const traderPool = useTraderPool(address)
+  const traderPool = useTraderPoolContract(address)
   const [update, setUpdate] = useState(false)
   const [leverageInfo, setLeverageInfo] = useState<ILeverageInfo | null>(null)
   const [poolInfo, setPoolInfo] = useState<IPoolInfo | null>(null)
@@ -90,8 +82,8 @@ export function usePoolContract(
     if (!traderPool) return
     ;(async () => {
       try {
-        const leverage = await traderPool?.getLeverageInfo()
-        const poolInfo = await traderPool?.getPoolInfo()
+        const leverage = await traderPool.getLeverageInfo()
+        const poolInfo = await traderPool.getPoolInfo()
 
         setPoolInfo(poolInfo)
         setLeverageInfo(leverage)

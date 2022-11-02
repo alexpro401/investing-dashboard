@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react"
 import { useWeb3React } from "@web3-react/core"
 
 import useDebounce from "hooks/useDebounce"
+import useSWRImmutable from "swr/immutable"
 
 export default function useBlockNumber() {
   const { library } = useWeb3React()
@@ -30,4 +31,10 @@ export default function useBlockNumber() {
   }, [library, blockNumberCallback])
 
   return debounced
+}
+
+export const useCurrentBlock = (): number => {
+  const { chainId } = useWeb3React()
+  const { data: currentBlock = 0 } = useSWRImmutable(["blockNumber", chainId])
+  return currentBlock
 }
