@@ -34,10 +34,16 @@ const CardInfo: FC<Props> = (props) => {
       </S.Header>
       <S.Divider />
       <S.Content>
-        {statistic.map((item) => (
+        {statistic.map((item, i) => (
           <S.Item key={uuidv4()}>
-            <Flex ai="center" jc="flex-start" m="0 0 4px 0">
-              <Text color="#B1C7FC" fz={11} lh="20px" p="0 3px 0 0">
+            <Flex full ai="center" jc="flex-start" m="0 0 4px 0">
+              <Text
+                color="#B1C7FC"
+                fz={11}
+                lh="20px"
+                p="0 3px 0 0"
+                align={i + 1 < statistic.length ? "left" : "right"}
+              >
                 {item.label}
               </Text>
               {!isNil(item.info) ? (
@@ -45,7 +51,7 @@ const CardInfo: FC<Props> = (props) => {
               ) : null}
             </Flex>
 
-            <div>{item.value}</div>
+            <Flex full>{item.value}</Flex>
           </S.Item>
         ))}
       </S.Content>
