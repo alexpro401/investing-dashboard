@@ -8,7 +8,6 @@ export const PageHolder = styled(motion.div).attrs(() => ({
   transition: { duration: 0.2 },
 }))`
   width: 100%;
-  padding: 16px;
   height: calc(100vh - 94px);
   overflow-y: auto;
 `

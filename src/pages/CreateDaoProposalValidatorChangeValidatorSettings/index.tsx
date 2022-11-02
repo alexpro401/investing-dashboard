@@ -5,11 +5,12 @@ import { formatEther } from "@ethersproject/units"
 import Header from "components/Header/Layout"
 import WithUserIsDaoValidatorValidation from "components/WithUserIsDaoValidatorValidation"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
+import DaoProposalCreatingContextProvider from "context/DaoProposalCreatingContext"
 import ValidatorsListContextProvider from "context/ValidatorsListContext"
-import ValidatorsList from "components/ValidatorsList"
 import useGovPoolValidators from "hooks/useGovPoolValidators"
 import useGovValidatorsValidatorsToken from "hooks/useGovValidatorsValidatorsToken"
 import { cutStringZeroes } from "utils"
+import CreateGovProposalValidatorChangeValidatorSettingsForm from "forms/CreateGovProposalValidatorChangeValidatorSettingsForm"
 
 import * as S from "./styled"
 
@@ -39,17 +40,19 @@ const CreateDaoProposalValidatorChangeValidatorSettings: React.FC = () => {
         <WithUserIsDaoValidatorValidation daoPoolAddress={daoAddress ?? ""}>
           <S.PageHolder>
             <S.PageContent>
-              <ValidatorsListContextProvider
-                initialForm={{
-                  balances: balances,
-                  validators: validators,
-                  validatorTokenSymbol: tokenData
-                    ? tokenData.symbol ?? null
-                    : null,
-                }}
-              >
-                <ValidatorsList />
-              </ValidatorsListContextProvider>
+              <DaoProposalCreatingContextProvider>
+                <ValidatorsListContextProvider
+                  initialForm={{
+                    balances: balances,
+                    validators: validators,
+                    validatorTokenSymbol: tokenData
+                      ? tokenData.symbol ?? null
+                      : null,
+                  }}
+                >
+                  <CreateGovProposalValidatorChangeValidatorSettingsForm />
+                </ValidatorsListContextProvider>
+              </DaoProposalCreatingContextProvider>
             </S.PageContent>
           </S.PageHolder>
         </WithUserIsDaoValidatorValidation>

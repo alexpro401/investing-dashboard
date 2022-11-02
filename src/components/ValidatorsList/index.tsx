@@ -46,7 +46,7 @@ const ValidatorsList: React.FC = () => {
           const isHidden = hiddenIdxs.includes(idx)
 
           let errorMessage: string | undefined = undefined
-          if (address !== "" && !isAddress(address) && !isHidden) {
+          if (!isAddress(address) && !isHidden) {
             errorMessage = "Please enter valid address"
           } else if (
             validators.filter(
@@ -54,6 +54,12 @@ const ValidatorsList: React.FC = () => {
             ).length > 1
           ) {
             errorMessage = "Ця адреса дублюється"
+          } else if (
+            !balances[idx] ||
+            balances[idx] === "" ||
+            Number(balances[idx]) === 0
+          ) {
+            errorMessage = "Enter valid token amount"
           }
 
           return (
