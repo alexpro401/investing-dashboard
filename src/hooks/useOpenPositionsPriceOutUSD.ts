@@ -1,5 +1,6 @@
 import { useQuery } from "urql"
-import { useEffect, useState } from "react"
+import { isEmpty, isNil } from "lodash"
+import { useEffect, useMemo, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import useError from "hooks/useError"
@@ -7,7 +8,6 @@ import { ZERO } from "constants/index"
 import { PositionsByIdsQuery } from "queries"
 import { addBignumbers } from "utils/formulas"
 import { usePriceFeedContract } from "contracts"
-import { usePrevious } from "react-use"
 
 /**
  * Hook get pool positions, fetch positions tokens and prices of locked tokens in USD
@@ -23,18 +23,26 @@ const useOpenPositionsPriceOutUSD = (
   const [, setError] = useError()
   const priceFeed = usePriceFeedContract()
 
-  const prevPool = usePrevious(poolAddress)
-
   const [outUSDVolume, setOutUSD] = useState<BigNumber>(ZERO)
 
-  const [{ fetching: loading, data, error }] = useQuery({
-    pause: !positions,
-    query: PositionsByIdsQuery,
-    variables: {
+  const pause = useMemo(
+    () => isNil(positions) || isEmpty(positions) || isNil(poolAddress),
+    [positions, poolAddress]
+  )
+
+  const variables = useMemo(
+    () => ({
       idList: positions
         ? positions.map((pId) => `${poolAddress}${pId}${0}`.toLowerCase())
         : [],
-    },
+    }),
+    [positions, poolAddress]
+  )
+
+  const [{ fetching, data, error }] = useQuery({
+    query: PositionsByIdsQuery,
+    variables,
+    pause,
   })
 
   // Clear state to prevent memory leak
@@ -45,17 +53,16 @@ const useOpenPositionsPriceOutUSD = (
   }, [])
   useEffect(() => {
     setOutUSD(ZERO)
-  }, [loading])
+  }, [poolAddress, positionAmountsMap, positions])
 
   // Fetch prices of positions locked amounts in USD
   useEffect(() => {
     if (
-      loading ||
+      fetching ||
       !priceFeed ||
       !positionAmountsMap ||
       !data ||
-      !data.positions ||
-      (prevPool === poolAddress && !outUSDVolume.isZero())
+      !data.positions
     ) {
       return
     }
@@ -80,7 +87,7 @@ const useOpenPositionsPriceOutUSD = (
         console.error(error)
       }
     })()
-  }, [data, loading, priceFeed, positionAmountsMap])
+  }, [data, fetching, priceFeed, positionAmountsMap])
 
   // Clear error state
   useEffect(() => {
@@ -89,10 +96,10 @@ const useOpenPositionsPriceOutUSD = (
 
   // Set error
   useEffect(() => {
-    if (!loading && !!positions && error && error.message) {
+    if (!fetching && !!positions && error && error.message) {
       setError(error.message)
     }
-  }, [loading, positions, error, setError])
+  }, [fetching, positions, error, setError])
 
   return outUSDVolume
 }
