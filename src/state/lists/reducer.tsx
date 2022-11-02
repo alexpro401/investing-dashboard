@@ -1,7 +1,7 @@
 import { createReducer } from "@reduxjs/toolkit"
 import { DEFAULT_ACTIVE_LIST_URLS } from "constants/lists"
 import { DEFAULT_LIST_OF_LISTS } from "constants/lists"
-import { TokenList } from "lib/hooks/useTokenList/TokenList"
+import { TokenList } from "lib/token-list/TokenList"
 import { updateVersion } from "state/global/actions"
 
 import {

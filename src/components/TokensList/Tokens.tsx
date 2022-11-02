@@ -1,5 +1,5 @@
 import { FC, useCallback, useMemo } from "react"
-import { useTryCustomToken, useUserTokens } from "hooks/useToken"
+import { useUserTokens } from "hooks/useToken"
 import { Token } from "lib/entities"
 import { getTokenFilter } from "lib/hooks/useTokenList/filtering"
 import { useSortTokensByQuery } from "lib/hooks/useTokenList/sorting"
@@ -40,7 +40,7 @@ const Tokens: FC<Props> = ({ debouncedQuery, customToken }) => {
   return (
     <>
       {customToken && (
-        <ImportRow importToken={showImportToken} token={customToken!} />
+        <ImportRow importToken={showImportToken} token={customToken} />
       )}
       {!customToken &&
         filteredSortedTokens.map((token) => (

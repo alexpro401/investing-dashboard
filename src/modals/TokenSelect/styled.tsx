@@ -95,23 +95,20 @@ export const CardList = styled.div`
     content: "";
     height: 1px;
     background: radial-gradient(
-          54.8% 53% at 50% 50%,
-          #587eb7 0%,
-          rgba(88, 126, 183, 0) 100%
-        )
-        /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+        54.8% 53% at 50% 50%,
+        #587eb7 0%,
+        rgba(88, 126, 183, 0) 100%
+      )
       radial-gradient(
-          60% 51.57% at 50% 50%,
-          #6d99db 0%,
-          rgba(109, 153, 219, 0) 100%
-        )
-        /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+        60% 51.57% at 50% 50%,
+        #6d99db 0%,
+        rgba(109, 153, 219, 0) 100%
+      )
       radial-gradient(
-          69.43% 69.43% at 50% 50%,
-          rgba(5, 5, 5, 0.5) 0%,
-          rgba(82, 82, 82, 0) 100%
-        )
-        /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+        69.43% 69.43% at 50% 50%,
+        rgba(5, 5, 5, 0.5) 0%,
+        rgba(82, 82, 82, 0) 100%
+      );
     opacity: 0.1;
   }
 `
@@ -132,23 +129,20 @@ export const Footer = styled(Flex)`
     content: "";
     height: 1px;
     background: radial-gradient(
-          54.8% 53% at 50% 50%,
-          #587eb7 0%,
-          rgba(88, 126, 183, 0) 100%
-        )
-        /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+        54.8% 53% at 50% 50%,
+        #587eb7 0%,
+        rgba(88, 126, 183, 0) 100%
+      )
       radial-gradient(
-          60% 51.57% at 50% 50%,
-          #6d99db 0%,
-          rgba(109, 153, 219, 0) 100%
-        )
-        /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+        60% 51.57% at 50% 50%,
+        #6d99db 0%,
+        rgba(109, 153, 219, 0) 100%
+      )
       radial-gradient(
-          69.43% 69.43% at 50% 50%,
-          rgba(5, 5, 5, 0.5) 0%,
-          rgba(82, 82, 82, 0) 100%
-        )
-        /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+        69.43% 69.43% at 50% 50%,
+        rgba(5, 5, 5, 0.5) 0%,
+        rgba(82, 82, 82, 0) 100%
+      );
     opacity: 0.1;
   }
 `

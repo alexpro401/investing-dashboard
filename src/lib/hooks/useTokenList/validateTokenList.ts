@@ -1,4 +1,4 @@
-import type { TokenInfo, TokenList } from "lib/hooks/useTokenList/TokenList"
+import type { TokenInfo, TokenList } from "lib/token-list/TokenList"
 import type { Ajv, ValidateFunction } from "ajv"
 
 enum ValidationSchema {

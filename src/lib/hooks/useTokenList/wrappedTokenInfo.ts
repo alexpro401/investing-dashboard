@@ -1,5 +1,5 @@
 import { Currency, Token } from "lib/entities"
-import { Tags, TokenInfo, TokenList } from "lib/hooks/useTokenList/TokenList"
+import { Tags, TokenInfo, TokenList } from "lib/token-list/TokenList"
 
 import { isAddressChecksummed } from "utils"
 

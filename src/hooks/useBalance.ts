@@ -20,9 +20,7 @@ export const usePoolBalancesWithLoadingIndicator = (
 ): [{ [tokenAddress: string]: CurrencyAmount<Token> | undefined }, boolean] => {
   const validatedTokens: Token[] = useMemo(
     () =>
-      tokens?.filter(
-        (t?: Token): t is Token => isAddress(t?.address) !== false
-      ) ?? [],
+      tokens?.filter((t?: Token): t is Token => isAddress(t?.address)) ?? [],
     [tokens]
   )
 
@@ -76,9 +74,7 @@ export const useTokenBalancesWithLoadingIndicator = (
 ): [{ [tokenAddress: string]: CurrencyAmount<Token> | undefined }, boolean] => {
   const validatedTokens: Token[] = useMemo(
     () =>
-      tokens?.filter(
-        (t?: Token): t is Token => isAddress(t?.address) !== false
-      ) ?? [],
+      tokens?.filter((t?: Token): t is Token => isAddress(t?.address)) ?? [],
     [tokens]
   )
   const validatedTokenAddresses = useMemo(

@@ -1,5 +1,5 @@
 import { ActionCreatorWithPayload, createAction } from "@reduxjs/toolkit"
-import { TokenList } from "lib/hooks/useTokenList/TokenList"
+import { TokenList } from "lib/token-list/TokenList"
 
 export const fetchTokenList: Readonly<{
   pending: ActionCreatorWithPayload<{ url: string; requestId: string }>

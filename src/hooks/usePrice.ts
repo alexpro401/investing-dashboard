@@ -16,9 +16,7 @@ export const useTokenPricesWithLoadingIndicator = (
   const priceFeed = usePriceFeedContract()
   const validatedTokens: Token[] = useMemo(
     () =>
-      tokens?.filter(
-        (t?: Token): t is Token => isAddress(t?.address) !== false
-      ) ?? [],
+      tokens?.filter((t?: Token): t is Token => isAddress(t?.address)) ?? [],
     [tokens]
   )
   const validatedTokensMap = useMemo(

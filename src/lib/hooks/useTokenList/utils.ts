@@ -1,4 +1,4 @@
-import { TokenInfo, TokenList } from "lib/hooks/useTokenList/TokenList"
+import { TokenInfo, TokenList } from "lib/token-list/TokenList"
 import { WrappedTokenInfo } from "lib/hooks/useTokenList/wrappedTokenInfo"
 
 type TokenMap = Readonly<{

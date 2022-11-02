@@ -128,8 +128,6 @@ export const ListRow = styled(Flex)`
   width: fill-available;
   height: 64px;
 
-  /* Main color/dark gray */
-
   background: #141926;
   border-radius: 24px;
   box-sizing: border-box;
@@ -137,8 +135,6 @@ export const ListRow = styled(Flex)`
 
 // list row content
 export const ListRowContent = styled(Flex)`
-  /* Auto layout */
-
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -146,8 +142,6 @@ export const ListRowContent = styled(Flex)`
   gap: 8px;
 
   height: 40px;
-
-  /* Inside auto layout */
 
   flex: 1 0 auto;
   order: 0;
@@ -161,8 +155,6 @@ export const ListRowTokensCounter = styled(Flex)`
 
   height: 16px;
 
-  /* Inside auto layout */
-
   flex: none;
   order: 1;
   flex-grow: 0;
@@ -172,12 +164,9 @@ export const ListRowTokensCounter = styled(Flex)`
   font-weight: 400;
   font-size: 13px;
   line-height: 16px;
-  /* identical to box height */
 
   letter-spacing: 0.03em;
   font-feature-settings: "tnum" on, "lnum" on;
-
-  /* Text/2 */
 
   color: ${theme.textColors.secondary};
 `
@@ -219,12 +208,8 @@ export const StaticListCard = styled(Flex)`
   width: fill-available;
   height: 64px;
 
-  /* Main color/dark gray */
-
   background: #141926;
   border-radius: 24px;
-
-  /* Inside auto layout */
 
   flex: none;
   order: 3;
@@ -232,13 +217,9 @@ export const StaticListCard = styled(Flex)`
 `
 
 export const StaticListCardContent = styled(Flex)`
-  /* Auto layout */
   padding: 0px;
   gap: 8px;
-
   height: 40px;
-
-  /* Inside auto layout */
 
   flex: none;
   order: 0;
@@ -246,15 +227,11 @@ export const StaticListCardContent = styled(Flex)`
 `
 
 export const StaticListCardInfo = styled(Flex)`
-  /* Auto layout */
   flex-direction: column;
   align-items: flex-start;
   padding: 0px;
   gap: 4px;
-
   height: 40px;
-
-  /* Inside auto layout */
 
   flex: none;
   order: 1;
@@ -272,12 +249,7 @@ export const StaticListCardName = styled.div`
   max-width: 150px;
   overflow: hidden;
   text-overflow: ellipsis;
-
-  /* Text/main */
-
   color: ${theme.textColors.primary};
-
-  /* Inside auto layout */
 
   flex: none;
   order: 0;
@@ -290,16 +262,10 @@ export const StaticListCardTokens = styled.div`
   font-weight: 400;
   font-size: 13px;
   line-height: 16px;
-  /* identical to box height */
-
   letter-spacing: 0.03em;
   font-feature-settings: "tnum" on, "lnum" on;
 
-  /* Text/2 */
-
   color: #b1c7fc;
-
-  /* Inside auto layout */
 
   flex: none;
   order: 1;
@@ -312,16 +278,12 @@ export const StaticListCardLink = styled.a`
   font-weight: 500;
   font-size: 13px;
   line-height: 15px;
-  /* identical to box height */
-
   letter-spacing: 0.03em;
   font-feature-settings: "tnum" on, "lnum" on;
 
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
-
-  /* Text/link */
 
   color: ${theme.brandColors.secondary};
   text-decoration: none;
@@ -346,8 +308,6 @@ export const PopoverContent = styled.div`
   left: 18px;
   top: -15px;
   z-index: 120;
-
-  /* Additional color / tooltip */
 
   background: #28334a;
   border-radius: 16px;
