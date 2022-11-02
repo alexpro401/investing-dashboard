@@ -77,7 +77,7 @@ const RiskyInvestorPositionCard: FC<Props> = ({
   const navigateToPool = useCallback(
     (e: MouseEvent<HTMLElement>): void => {
       e.stopPropagation()
-      navigate(`/pool/profile/BASIC_POOL/${position.pool.id}`)
+      navigate(`/pool/profile/${position.pool.id}`)
     },
     [navigate, position]
   )

@@ -9,7 +9,6 @@ import { Content } from "theme/GlobalStyle"
 const Welcome = lazy(() => import("pages/Welcome"))
 const TopMembers = lazy(() => import("pages/TopMembers"))
 const Invest = lazy(() => import("pages/Invest"))
-const Profile = lazy(() => import("pages/Profile"))
 const DaoProfile = lazy(() => import("pages/DaoProfile"))
 const CreateFund = lazy(() => import("pages/CreateFund"))
 const CreateFundDaoPool = lazy(() => import("pages/CreateFundDaoPool"))
@@ -79,11 +78,6 @@ export default function Routes() {
 
                 <Route path="me/trader" element={<Trader />} />
 
-                <Route
-                  path="me/trader/profile/:poolType/:poolAddress"
-                  element={<Pool />}
-                />
-
                 <Route path="notifications" element={<Notifications />} />
 
                 <Route path="wallet" element={<Wallet />} />
@@ -99,10 +93,7 @@ export default function Routes() {
                 />
 
                 <Route path="pool/invest/:poolAddress" element={<Invest />} />
-                <Route
-                  path="pool/profile/:poolType/:poolAddress"
-                  element={<Profile />}
-                />
+                <Route path="pool/profile/:poolAddress" element={<Pool />} />
 
                 <Route
                   path="create-risky-proposal/:poolAddress/:tokenAddress/*"
