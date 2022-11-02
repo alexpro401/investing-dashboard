@@ -9,7 +9,6 @@ import { Content } from "theme/GlobalStyle"
 const Welcome = lazy(() => import("pages/Welcome"))
 const TopMembers = lazy(() => import("pages/TopMembers"))
 const Invest = lazy(() => import("pages/Invest"))
-const Profile = lazy(() => import("pages/Profile"))
 const DaoProfile = lazy(() => import("pages/DaoProfile"))
 const CreateFund = lazy(() => import("pages/CreateFund"))
 const CreateFundDaoPool = lazy(() => import("pages/CreateFundDaoPool"))
@@ -22,7 +21,6 @@ const Swap = lazy(() => import("pages/Swap"))
 const Wallet = lazy(() => import("pages/Wallet"))
 const Success = lazy(() => import("pages/Success"))
 const Notifications = lazy(() => import("pages/Notifications"))
-const TokenSelect = lazy(() => import("pages/TokenSelect")) // TODO: my trader profile
 const CreateRiskyProposal = lazy(() => import("pages/CreateRiskyProposal"))
 const InvestRiskyProposal = lazy(() => import("pages/InvestRiskyProposal"))
 const SwapRiskyProposal = lazy(() => import("pages/SwapRiskyProposal"))
@@ -79,30 +77,17 @@ export default function Routes() {
 
                 <Route path="me/trader" element={<Trader />} />
 
-                <Route
-                  path="me/trader/profile/:poolType/:poolAddress"
-                  element={<Pool />}
-                />
-
                 <Route path="notifications" element={<Notifications />} />
 
                 <Route path="wallet" element={<Wallet />} />
 
                 <Route
-                  path="select-token/:type/:poolAddress/:field/:address"
-                  element={<TokenSelect />}
-                />
-
-                <Route
-                  path="pool/swap/:poolType/:poolToken/:inputToken/:outputToken"
+                  path="pool/swap/:poolType/:poolToken/:inputToken/:outputToken/*"
                   element={<Swap />}
                 />
 
                 <Route path="pool/invest/:poolAddress" element={<Invest />} />
-                <Route
-                  path="pool/profile/:poolType/:poolAddress"
-                  element={<Profile />}
-                />
+                <Route path="pool/profile/:poolAddress" element={<Pool />} />
 
                 <Route
                   path="create-risky-proposal/:poolAddress/:tokenAddress/*"
@@ -129,13 +114,16 @@ export default function Routes() {
                   element={<WithdrawInvestmentProposal />}
                 />
                 <Route
-                  path="pay-dividends-investment-proposal/:poolAddress/:proposalId"
+                  path="pay-dividends-investment-proposal/:poolAddress/:proposalId/*"
                   element={<PayDividends />}
                 />
                 <Route path="create-fund" element={<CreateFund />} />
-                <Route path="create-fund/basic" element={<CreateFundBasic />} />
                 <Route
-                  path="create-fund/investment"
+                  path="create-fund/basic/*"
+                  element={<CreateFundBasic />}
+                />
+                <Route
+                  path="create-fund/investment/*"
                   element={<CreateFundInvestment />}
                 />
                 <Route path="create-fund/dao" element={<CreateFundDaoPool />} />

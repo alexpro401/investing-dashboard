@@ -6,12 +6,11 @@ import { Flex } from "theme"
 const Styled = {
   Tabs: styled(Flex)`
     justify-content: space-between;
-    width: calc(100% - 32px);
+    width: fill-available;
     padding: 0;
-    margin: 16px 16px 0;
-    background: #121722;
-    border: 1px solid rgba(41, 60, 84, 0.5);
-    border-radius: 12px;
+    background: #141926;
+    border-radius: 24px;
+    border: 2px solid #141926;
   `,
   Tab: styled(Link)<{ active?: boolean }>`
     display: flex;
@@ -28,9 +27,16 @@ const Styled = {
     border-radius: 12px;
     color: ${(props) => (props.active ? "#E4F2FF" : "#788ab4")};
     background: ${(props) => (props.active ? " #181e2c" : "transparent")};
-    transition: background ease-in-out 0.15s;
+    transition: all ease-in-out 0.15s;
     cursor: pointer;
     position: relative;
+
+    background: ${(props) => (props.active ? " #20283a" : "transparent")};
+    box-shadow: ${(props) =>
+      props.active
+        ? " 0px 3px 8px rgba(0, 0, 0, 0.12), 0px 3px 1px rgba(0, 0, 0, 0.04)"
+        : "none"};
+    border-radius: 24px;
   `,
   TabAmount: styled(Flex)`
     min-width: 12px;

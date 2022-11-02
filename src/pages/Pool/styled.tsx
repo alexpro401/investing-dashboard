@@ -1,34 +1,127 @@
 import styled from "styled-components"
-import { Flex, GradientBorder } from "theme"
-import ArrowOutlineRight from "assets/icons/ArrowOutlineRight"
+import { motion } from "framer-motion"
 
-export const Container = styled(Flex)`
+import { AppButton } from "common"
+import { Text } from "theme"
+
+export const Container = styled(motion.div).attrs(() => ({
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.2 },
+}))`
+  display: grid;
+  grid-template-rows: min-content 1fr;
+  grid-template-columns: 1fr;
+  grid-gap: 40px;
   width: 100%;
-  padding: 16px 16px 80px;
-  flex-direction: column;
-  justify-content: flex-start;
   max-height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
   height: calc(100vh - 94px);
+  overflow: hidden auto;
+  padding-bottom: 16px;
 
   @media all and (display-mode: standalone) {
     height: calc(100vh - 115px);
   }
 `
 
-export const Details = styled(GradientBorder)`
-  flex-direction: column;
-  padding: 0 16px 16px;
-  border-radius: 10px;
-  margin-top: 16px;
+export const Indents = styled.div<{ top?: boolean; side?: boolean }>`
   width: 100%;
-  position: relative;
-
-  &:after {
-    background: #181e2c;
-  }
+  margin-top: ${({ top = false }) => (top ? "16px" : "0")};
+  padding-left: ${({ side = true }) => (side ? "16px" : "0")};
+  padding-right: ${({ side = true }) => (side ? "16px" : "0")};
 `
+
+export const Label = styled(Text).attrs(() => ({
+  color: "#B1C7FC",
+  fz: 13,
+  fw: 500,
+  lh: "15px",
+}))``
+
+export const Value = {
+  Big: styled(Text).attrs(() => ({
+    fz: 16,
+    fw: 700,
+    lh: "19px",
+  }))``,
+  Medium: styled(Text).attrs(() => ({
+    fz: 13,
+    fw: 600,
+    lh: "16px",
+  }))``,
+  MediumThin: styled(Text).attrs(() => ({
+    fz: 13,
+    fw: 500,
+    lh: "19px",
+  }))``,
+}
+
+export const AppButtonFull = styled(AppButton)`
+  width: 100%;
+`
+export const AppLink = styled(AppButton).attrs(() => ({
+  color: "default",
+  size: "small",
+}))`
+  padding: 0;
+  border-radius: 0;
+`
+export const AppNavigation = styled(AppButton).attrs(() => ({
+  color: "default",
+  size: "x-small",
+  scheme: "filled",
+  iconSize: 26,
+}))`
+  padding: 4px 5.5px;
+  color: #e4f2ff;
+`
+
+export const GridTwoColumn = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 48px;
+`
+
+export const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  background: rgba(32, 41, 58, 0.6);
+  opacity: 0.5;
+`
+
+export const Link = styled.a`
+  display: block;
+  width: 100%;
+  text-decoration: none;
+  color: initial;
+`
+
+const BarContainer = styled.div`
+  background: #293c54;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  height: 3px;
+  width: 100%;
+`
+
+const BarProgress = styled.div<{ w: number }>`
+  background: #7fffd4;
+  box-shadow: 0 1px 4px rgba(164, 235, 212, 0.29),
+    0 2px 5px rgba(164, 235, 212, 0.14);
+  border-radius: 2px;
+  height: 3px;
+  width: ${(props) => props.w || 0}%;
+  transition: width 0.3s ease-in-out;
+`
+
+export const ProgressBar = ({ w }) => {
+  return (
+    <BarContainer>
+      <BarProgress w={w} />
+    </BarContainer>
+  )
+}
 
 export const ButtonContainer = styled.div`
   display: grid;
@@ -37,56 +130,3 @@ export const ButtonContainer = styled.div`
   grid-gap: 16px;
   width: 100%;
 `
-
-export const DetailsEditLinkFrame = styled(Flex)`
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  z-index: 2;
-`
-
-export const OwnInvesting = styled(GradientBorder)`
-  padding: 16px;
-  margin-top: 16px;
-  border-radius: 10px;
-  width: 100%;
-
-  &:after {
-    background: #181e2c;
-  }
-`
-export const OwnInvestingLabel = styled.div`
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 11px;
-  line-height: 13px;
-  color: #788ab4;
-`
-export const OwnInvestingValue = styled.div`
-  margin-top: 8px;
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 19px;
-  color: #e4f2ff;
-`
-export const OwnInvestingLinkContainer = styled(Flex)`
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 17px;
-  color: #e4f2ff;
-`
-export const OwnInvestingLinkText = styled.span`
-  display: inline-block;
-  margin-right: 9px;
-`
-export const OwnInvestingLink = (props) => (
-  <OwnInvestingLinkContainer {...props}>
-    <OwnInvestingLinkText>Invest in my fund</OwnInvestingLinkText>
-    <ArrowOutlineRight color="#e4f2ff" width="4.7px" height="8px" />
-  </OwnInvestingLinkContainer>
-)

@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useCallback, useMemo } from "react"
 import { useWeb3React } from "@web3-react/core"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -6,10 +6,12 @@ import {
   updateUserProMode,
   showAgreementModal,
   changeTermsAgreed,
+  addSerializedToken,
+  removeSerializedToken,
 } from "state/user/actions"
-import { IUserTerms } from "./types"
+import { IUserTerms, SerializedToken } from "./types"
 import { AppDispatch, AppState } from "state"
-import { selectTermsState } from "./selectors"
+import { selectTermsState, selectUserTokens } from "./selectors"
 import { TransactionType } from "state/transactions/types"
 import { useUserRegistryContract } from "contracts"
 import { useTransactionAdder } from "state/transactions/hooks"
@@ -18,8 +20,29 @@ import { getTypedSignature, isTxMined, parseTransactionError } from "utils"
 import usePayload from "hooks/usePayload"
 import useError from "hooks/useError"
 import { SubmitState } from "constants/types"
+import { Token } from "lib/entities"
 
 const privacyHash = process.env.REACT_APP_PRIVACY_POLICY_HASH
+
+function serializeToken(token: Token): SerializedToken {
+  return {
+    chainId: token.chainId,
+    address: token.address,
+    decimals: token.decimals,
+    symbol: token.symbol,
+    name: token.name,
+  }
+}
+
+function deserializeToken(serializedToken: SerializedToken): Token {
+  return new Token(
+    serializedToken.chainId,
+    serializedToken.address,
+    serializedToken.decimals,
+    serializedToken.symbol,
+    serializedToken.name
+  )
+}
 
 export function useUserProMode(): [boolean, () => void] {
   const dispatch = useDispatch<AppDispatch>()
@@ -129,4 +152,41 @@ export function useUserAgreement(): [IUserTerms, IMethods] {
   ])
 
   return [userTermsAgreement, { setShowAgreement, onAgree }]
+}
+
+export function useUserAddedTokens(): Token[] {
+  const { chainId } = useWeb3React()
+  const serializedTokensMap = useSelector(selectUserTokens)
+
+  return useMemo(() => {
+    if (!chainId) return []
+    const tokenMap: Token[] = serializedTokensMap?.[chainId]
+      ? Object.values(serializedTokensMap[chainId]).map(deserializeToken)
+      : []
+    return tokenMap
+  }, [serializedTokensMap, chainId])
+}
+
+export function useAddUserToken(): (token: Token) => void {
+  const dispatch = useDispatch<AppDispatch>()
+
+  return useCallback(
+    (token: Token) => {
+      dispatch(addSerializedToken({ serializedToken: serializeToken(token) }))
+    },
+    [dispatch]
+  )
+}
+
+export function useRemoveUserAddedToken(): (
+  chainId: number,
+  address: string
+) => void {
+  const dispatch = useDispatch<AppDispatch>()
+  return useCallback(
+    (chainId: number, address: string) => {
+      dispatch(removeSerializedToken({ chainId, address }))
+    },
+    [dispatch]
+  )
 }

@@ -2,6 +2,7 @@ import { useSelector } from "react-redux"
 import useContract, { useProposalAddress } from "hooks/useContract"
 import { useGovSettingsAddress } from "hooks/useDaoPoolSetting"
 import { useGovValidatorsContractAddress } from "hooks/useGovValidatorsContractAddress"
+import { useGovUserKeeperAddress } from "hooks/useGovPool"
 
 import {
   ERC20 as ERC20_ABI,
@@ -23,6 +24,7 @@ import {
   TraderPoolInvestProposal as TraderPoolInvestProposal_ABI,
   TraderPoolRiskyProposal as TraderPoolRiskyProposal_ABI,
   UserRegistry as UserRegistry_ABI,
+  Multicall as Multicall_ABI,
 } from "abi"
 
 import {
@@ -54,7 +56,10 @@ import {
   GovSettings,
   GovUserKeeper,
   GovValidators,
+  Multicall,
 } from "interfaces/typechain"
+import { useActiveWeb3React } from "hooks"
+import { getMulticallAddress } from "utils/addressHelpers"
 
 type Address = string | undefined
 
@@ -159,12 +164,20 @@ export function useGovSettingsContract(poolAddress: Address) {
   return useContract<GovSettings>(address, GovSettings_ABI)
 }
 
-export function useGovUserKeeperContract(address: Address) {
-  return useContract<GovUserKeeper>(address, GovUserKeeper_ABI)
+export function useGovUserKeeperContract(poolAddress: Address) {
+  const userKeeperAddress = useGovUserKeeperAddress(poolAddress)
+
+  return useContract<GovUserKeeper>(userKeeperAddress, GovUserKeeper_ABI)
 }
 
 export function useGovValidatorsContract(poolAddress: Address) {
   const address = useGovValidatorsContractAddress(poolAddress ?? "")
 
   return useContract<GovValidators>(address, GovValidators_ABI)
+}
+
+export function useMulticallContract() {
+  const { chainId } = useActiveWeb3React()
+
+  return useContract<Multicall>(getMulticallAddress(chainId), Multicall_ABI)
 }

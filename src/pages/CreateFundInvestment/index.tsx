@@ -1,5 +1,5 @@
 import Header from "components/Header/Layout"
-import CreateFundContext from "context/CreateFundContext"
+import { FundContextProvider } from "context/CreateFundContext"
 import CreateFundForm from "forms/CreateFundForm"
 
 import { FC } from "react"
@@ -17,9 +17,9 @@ const CreateFundDaoPool: FC = () => {
         transition={{ duration: 0.2 }}
         variants={opacityVariants}
       >
-        <CreateFundContext>
+        <FundContextProvider>
           <CreateFundForm presettedFundType="investment" />
-        </CreateFundContext>
+        </FundContextProvider>
       </S.Container>
     </>
   )

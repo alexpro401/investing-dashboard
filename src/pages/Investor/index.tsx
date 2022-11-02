@@ -112,10 +112,7 @@ function Investor() {
       return (
         <PoolsList maxH={investorPools.traderPools.length >= 3}>
           {investorPools.traderPools.map((traderPool) => (
-            <To
-              key={uuidv4()}
-              to={`/pool/profile/${traderPool.type}/${traderPool.id}`}
-            >
+            <To key={uuidv4()} to={`/pool/profile/${traderPool.id}`}>
               <InvestedFund data={traderPool} account={account} />
             </To>
           ))}
@@ -142,7 +139,7 @@ function Investor() {
             address={poolAddress}
             baseToken={poolData?.baseToken}
           />
-          <BarChart address={poolAddress} />
+          <BarChart address={poolAddress} m="44px 0 22px" />
           <Row>
             <MainText>P&L LP - $ETH</MainText>
             <MainValue>+ 13.1% (+112.132 ETH)</MainValue>

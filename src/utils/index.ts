@@ -37,6 +37,15 @@ export function isAddress(value: any): boolean {
   }
 }
 
+// returns the checksummed address if the address is valid, otherwise returns false
+export function isAddressChecksummed(value: any): string | false {
+  try {
+    return getAddress(value)
+  } catch {
+    return false
+  }
+}
+
 export function isValidUrl(value: string): boolean {
   try {
     return Boolean(new URL(value))

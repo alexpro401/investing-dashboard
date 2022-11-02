@@ -20,10 +20,10 @@ export function useERC20Balance(
   const [balance, setBalance] = useState<BigNumber | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const contract = useERC20Contract(address)
+  const contract = useERC20Contract(storedAddress)
 
   const init = useCallback(() => {
-    if (typeof address !== "string" || address.length !== 42) {
+    if (!isAddress(storedAddress)) {
       return
     }
     setLoading(true)
@@ -43,16 +43,19 @@ export function useERC20Balance(
         setLoading(false)
       }
     })()
-  }, [account, address, contract, library, storedAddress])
+  }, [account, contract, library, storedAddress])
 
   // check address and save
   useEffect(() => {
-    if (!address || String(address).toLocaleLowerCase() === storedAddress) {
+    if (!address || String(address).toLocaleLowerCase() === storedAddress)
       return
-    }
+
+    if (!isAddress(address)) return
 
     try {
       isAddress(address)
+      setBalance(null)
+      setLoading(true)
       setAddress(String(address).toLocaleLowerCase())
     } catch (e) {}
   }, [address, storedAddress])

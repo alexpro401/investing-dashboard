@@ -7,7 +7,8 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useActiveWeb3React } from "hooks"
 import { BasicPositionsQuery } from "queries"
 import useQueryPagination from "hooks/useQueryPagination"
-import { usePoolContract, useTraderPool } from "hooks/usePool"
+import { usePoolContract } from "hooks/usePool"
+import { useTraderPoolContract } from "contracts"
 
 import LoadMore from "components/LoadMore"
 import PoolPositionCard from "components/cards/position/Pool"
@@ -20,7 +21,7 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
   const navigate = useNavigate()
   const { account } = useActiveWeb3React()
 
-  const traderPool = useTraderPool(poolAddress)
+  const traderPool = useTraderPoolContract(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
 
   const [totalAccountInvestedLP, setTotalAccountInvestedLP] =

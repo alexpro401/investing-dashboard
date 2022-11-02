@@ -46,7 +46,9 @@ export const selectTotalOwnedPoolsStatistic = createSelector(
     forEach(ownedPools, function (pool) {
       const lastHistoryPoint = getLastInArray(pool.priceHistory)
 
-      if (isNil(lastHistoryPoint)) return
+      if (!lastHistoryPoint || isNil(lastHistoryPoint)) {
+        return
+      }
 
       state.usdTVL = addBignumbers(
         [BigNumber.from(lastHistoryPoint.usdTVL), 18],
@@ -88,4 +90,9 @@ export const selectLoadingState = createSelector(
 export const selectTermsState = createSelector(
   [selectUser],
   (user) => user.terms
+)
+
+export const selectUserTokens = createSelector(
+  [selectUser],
+  (user) => user.tokens
 )

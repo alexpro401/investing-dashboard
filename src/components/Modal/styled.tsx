@@ -14,7 +14,7 @@ export const Container = styled(motion.div)`
   height: fit-content;
   z-index: 100;
   padding: 0;
-  max-width: 343px;
+  max-width: 375px;
 `
 
 export const Overlay = styled(motion.div)`
@@ -34,14 +34,14 @@ export const Head = styled(Flex)`
   width: fill-available;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 16px;
+  padding: 16px;
 `
 
 export const Title = styled.div`
   font-family: "Gilroy";
   font-style: normal;
-  font-weight: 600;
-  font-size: 20px;
-  line-height: 150%;
-  color: #e4f2ff;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+  color: ${theme.textColors.primary};
 `

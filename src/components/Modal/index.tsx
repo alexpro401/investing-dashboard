@@ -1,8 +1,8 @@
+import { Icon } from "common"
+import { ICON_NAMES } from "constants/icon-names"
 import { FC, ReactNode } from "react"
 import { createPortal } from "react-dom"
 import * as S from "./styled"
-import { ICON_NAMES } from "constants/icon-names"
-import { Icon } from "common"
 
 const modalRoot = document.getElementById("modal")
 

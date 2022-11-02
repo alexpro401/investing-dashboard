@@ -12,9 +12,10 @@ export const Container = styled(motion.div)`
   bottom: 56px;
   left: 0;
   right: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 90;
+  width: 343px;
+  height: fit-content;
+  border-radius: 16px;
+  z-index: 101;
   background: rgba(13, 19, 32, 0.3);
   backdrop-filter: blur(1.5px);
 

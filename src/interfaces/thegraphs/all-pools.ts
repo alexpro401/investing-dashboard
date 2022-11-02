@@ -40,6 +40,7 @@ export interface IPoolQuery {
   investorsCount: number
   averagePositionTime: number
   priceHistory: IPriceHistory[]
+  investors: Investor[]
   privateInvestors: Investor[]
   admins: string[]
   orderSize: BigNumber

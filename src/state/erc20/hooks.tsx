@@ -56,12 +56,16 @@ export function useERC20Data(
 
   // check address and save
   useEffect(() => {
+    if (!isAddress(address)) {
+      setAddress("")
+      return
+    }
+
     if (!address || String(address).toLocaleLowerCase() === storedAddress) {
       return
     }
 
     try {
-      isAddress(address)
       setAddress(String(address).toLocaleLowerCase())
     } catch (e) {}
   }, [address, storedAddress])

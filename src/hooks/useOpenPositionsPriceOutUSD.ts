@@ -1,5 +1,6 @@
 import { useQuery } from "urql"
-import { useEffect, useState } from "react"
+import { isEmpty, isNil } from "lodash"
+import { useEffect, useMemo, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import useError from "hooks/useError"
@@ -24,14 +25,24 @@ const useOpenPositionsPriceOutUSD = (
 
   const [outUSDVolume, setOutUSD] = useState<BigNumber>(ZERO)
 
-  const [{ fetching: loading, data, error }] = useQuery({
-    pause: !positions,
-    query: PositionsByIdsQuery,
-    variables: {
+  const pause = useMemo(
+    () => isNil(positions) || isEmpty(positions) || isNil(poolAddress),
+    [positions, poolAddress]
+  )
+
+  const variables = useMemo(
+    () => ({
       idList: positions
         ? positions.map((pId) => `${poolAddress}${pId}${0}`.toLowerCase())
         : [],
-    },
+    }),
+    [positions, poolAddress]
+  )
+
+  const [{ fetching, data, error }] = useQuery({
+    query: PositionsByIdsQuery,
+    variables,
+    pause,
   })
 
   // Clear state to prevent memory leak
@@ -39,11 +50,20 @@ const useOpenPositionsPriceOutUSD = (
     return () => {
       setOutUSD(ZERO)
     }
-  }, [poolAddress])
+  }, [])
+  useEffect(() => {
+    setOutUSD(ZERO)
+  }, [poolAddress, positionAmountsMap, positions])
 
   // Fetch prices of positions locked amounts in USD
   useEffect(() => {
-    if (loading || !priceFeed || !positionAmountsMap) {
+    if (
+      fetching ||
+      !priceFeed ||
+      !positionAmountsMap ||
+      !data ||
+      !data.positions
+    ) {
       return
     }
 
@@ -67,7 +87,7 @@ const useOpenPositionsPriceOutUSD = (
         console.error(error)
       }
     })()
-  }, [data, loading, priceFeed, positionAmountsMap])
+  }, [data, fetching, priceFeed, positionAmountsMap])
 
   // Clear error state
   useEffect(() => {
@@ -76,10 +96,10 @@ const useOpenPositionsPriceOutUSD = (
 
   // Set error
   useEffect(() => {
-    if (!loading && !!positions && error && error.message) {
+    if (!fetching && !!positions && error && error.message) {
       setError(error.message)
     }
-  }, [loading, positions, error, setError])
+  }, [fetching, positions, error, setError])
 
   return outUSDVolume
 }

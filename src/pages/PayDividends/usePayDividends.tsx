@@ -66,7 +66,7 @@ const usePayDividends = (
   {
     updateAllowance: (address: string) => Promise<void>
     handleFromChange: (amount: string, index: number) => void
-    handleDividendTokenSelect: (token: Token, index: number) => void
+    handleDividendTokenSelect: (tokenAddress: string, index: number) => void
     handleSubmit: () => void
   }
 ] => {
@@ -380,10 +380,10 @@ const usePayDividends = (
   )
 
   const handleDividendTokenSelect = useCallback(
-    async (token: Token, index: number) => {
-      const tokenData = await fetchTokenData(token.address)
+    async (tokenAddress: string, index: number) => {
+      const tokenData = await fetchTokenData(tokenAddress)
 
-      if (dividendTokens.indexOf(token.address) >= 0) return
+      if (dividendTokens.indexOf(tokenAddress) >= 0) return
 
       if (index >= 0) {
         replaceTokenInList(index, tokenData)

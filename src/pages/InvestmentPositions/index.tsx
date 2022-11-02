@@ -22,7 +22,7 @@ const InvestmentPositions = () => {
 
   return (
     <>
-      <RouteTabs tabs={tabs} />
+      <RouteTabs m="16px 16px 0" tabs={tabs} />
       <Routes>
         <Route
           path="open"

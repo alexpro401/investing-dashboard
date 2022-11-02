@@ -15,7 +15,8 @@ import usePayload from "hooks/usePayload"
 import useError from "hooks/useError"
 import usePoolPrice from "hooks/usePoolPrice"
 import useAlert, { AlertType } from "hooks/useAlert"
-import { usePoolContract, useTraderPool } from "hooks/usePool"
+import { usePoolContract } from "hooks/usePool"
+import { useTraderPoolContract } from "contracts"
 import { useERC20 } from "hooks/useERC20"
 import { usePriceFeedContract } from "contracts"
 
@@ -48,6 +49,7 @@ import {
   divideBignumbers,
 } from "utils/formulas"
 import { ZERO } from "constants/index"
+import { ITraderPool } from "interfaces/typechain/BasicTraderPool"
 
 interface UseInvestProps {
   poolAddress: string | undefined
@@ -98,7 +100,7 @@ const useInvest = ({
   initialDirection,
 }: UseInvestProps): [ExchangeForm, UseInvestResponse] => {
   const { account, library } = useWeb3React()
-  const traderPool = useTraderPool(poolAddress)
+  const traderPool = useTraderPoolContract(poolAddress)
   const [leverageInfo, poolInfo] = usePoolContract(poolAddress)
   const addTransaction = useTransactionAdder()
   const [baseToken, baseTokenData, baseTokenBalance, updateBaseToken] =
@@ -435,7 +437,7 @@ const useInvest = ({
 
   const handleFromChange = useCallback(
     (v: string) => {
-      if (!poolInfo || !priceFeed || !traderPool) return
+      if (!poolInfo || !priceFeed || !traderPool || !account) return
 
       const amount = BigNumber.from(v)
       setFromAmount(amount.toString())
@@ -544,8 +546,10 @@ const useInvest = ({
   }, [fetchAndUpdateAllowance, fetchAndUpdateBalance, updateBaseToken])
 
   const getInvestTokensWithSlippage = useCallback(
-    async (amount: BigNumber) => {
-      if (!traderPool) return []
+    async (
+      amount: BigNumber
+    ): Promise<[ITraderPool.ReceptionsStructOutput, BigNumber[]]> => {
+      if (!traderPool) return new Promise((_, reject) => reject())
 
       const invest = await traderPool.getInvestTokens(amount.toHexString())
 
@@ -597,7 +601,7 @@ const useInvest = ({
 
   const getDivestTokens = useCallback(
     async (amount: BigNumber) => {
-      if (!traderPool) return
+      if (!traderPool || !account) return
       const divest = await traderPool.getDivestAmountsAndCommissions(
         account,
         amount.toHexString()
@@ -612,6 +616,9 @@ const useInvest = ({
 
     const amount = BigNumber.from(fromAmount)
     const divest = await getDivestTokens(amount)
+
+    if (!divest) return
+
     const withdrawResponse = await traderPool.divest(
       amount.toHexString(),
       divest.receptions.receivedAmounts,
@@ -699,6 +706,8 @@ const useInvest = ({
       if (!traderPool) return
 
       const divest = await getDivestTokens(amount)
+
+      if (!divest) return
 
       const withdrawResponse = await traderPool.estimateGas.divest(
         amount.toHexString(),
