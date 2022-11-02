@@ -38,4 +38,5 @@ export enum ICON_NAMES {
   settings = "settings",
   reload = "reload",
   share = "share",
+  flameGradient = "flame-gradient",
 }

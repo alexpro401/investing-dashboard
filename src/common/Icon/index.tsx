@@ -36,6 +36,7 @@ import {
   SettingsIcon,
   ReloadIcon,
   ShareIcon,
+  FlameGradientIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -122,6 +123,8 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return ReloadIcon as unknown as ElementType
       case ICON_NAMES.share:
         return ShareIcon as unknown as ElementType
+      case ICON_NAMES.flameGradient:
+        return FlameGradientIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }
