@@ -1,15 +1,13 @@
 import styled from "styled-components"
-import { Flex, GradientBorder } from "theme"
+import { GradientBorder } from "theme"
 
 const Styled = {
-  Container: styled(Flex)`
-    flex-direction: column;
+  Container: styled.div`
     width: 100%;
   `,
 
   Body: styled.div`
-    width: calc(100% + 10px);
-    overflow: "hidden";
+    overflow: hidden;
     height: 130px;
   `,
 

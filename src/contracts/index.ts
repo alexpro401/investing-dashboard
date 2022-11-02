@@ -1,6 +1,7 @@
 import { useGovSettingsAddress } from "./../hooks/useDaoPoolSetting"
 import { useSelector } from "react-redux"
 import useContract, { useProposalAddress } from "hooks/useContract"
+import { useGovUserKeeperAddress } from "hooks/useGovPool"
 
 import {
   ERC20 as ERC20_ABI,
@@ -162,8 +163,10 @@ export function useGovSettingsContract(poolAddress: Address) {
   return useContract<GovSettings>(address, GovSettings_ABI)
 }
 
-export function useGovUserKeeperContract(address: Address) {
-  return useContract<GovUserKeeper>(address, GovUserKeeper_ABI)
+export function useGovUserKeeperContract(poolAddress: Address) {
+  const userKeeperAddress = useGovUserKeeperAddress(poolAddress)
+
+  return useContract<GovUserKeeper>(userKeeperAddress, GovUserKeeper_ABI)
 }
 
 export function useGovValidatorsContract(address: Address) {

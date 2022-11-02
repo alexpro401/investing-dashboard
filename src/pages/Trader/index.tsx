@@ -60,7 +60,7 @@ function Trader() {
 
     return map(pools, function (pool, index) {
       return (
-        <To key={pool.id} to={`/me/trader/profile/${pool.type}/${pool.id}`}>
+        <To key={pool.id} to={`/pool/profile/${pool.id}`}>
           <Indents>
             <PoolStatisticCard data={pool} index={index} />
           </Indents>

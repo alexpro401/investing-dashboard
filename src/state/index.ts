@@ -14,7 +14,7 @@ import lists from "./lists/reducer"
 import multicall from "./multicall/reducer"
 import { updateVersion } from "./global/actions"
 
-const RESET_KEY = "1666812103425"
+const RESET_KEY = "1667307571774"
 
 const PERSISTED_KEYS: string[] = [
   "user",

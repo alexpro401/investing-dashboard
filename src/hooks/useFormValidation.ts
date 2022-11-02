@@ -210,7 +210,7 @@ export const useFormValidation = (
                 _fieldKey,
                 _fieldValue,
                 _accumulator,
-                _cachedResult
+                _cachedResult as ValidationFieldState
               )
 
               return {
@@ -252,7 +252,13 @@ export const useFormValidation = (
                   ...cloneDeep(validationState[fieldName]),
                 }
               : {
-                  ...cloneDeep(get(validationState[fieldName], validatorKey)),
+                  ...cloneDeep(
+                    get(
+                      validationState[fieldName],
+                      validatorKey,
+                      {} as ValidationFieldState
+                    )
+                  ),
                 }
 
           const fieldKey =
@@ -271,8 +277,8 @@ export const useFormValidation = (
             validator,
             fieldKey,
             fieldValue,
-            accumulator,
-            cachedResult
+            accumulator as ValidationFieldState,
+            cachedResult as ValidationFieldState
           )
 
           return {

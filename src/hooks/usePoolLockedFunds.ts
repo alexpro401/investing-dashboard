@@ -1,18 +1,12 @@
 import { useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
-import { usePoolContract, usePoolQuery } from "hooks/usePool"
 
 import { normalizeBigNumber } from "utils"
-import { useERC20Data } from "state/erc20/hooks"
 import { percentageOfBignumbers, subtractBignumbers } from "utils/formulas"
 import useOpenPositionsPriceOutUSD from "hooks/useOpenPositionsPriceOutUSD"
 import { ZERO } from "constants/index"
 
-function usePoolLockedFunds(poolAddress: string | undefined) {
-  const [poolData] = usePoolQuery(poolAddress)
-  const [, poolInfo] = usePoolContract(poolAddress)
-  const [baseToken] = useERC20Data(poolData?.baseToken)
-
+function usePoolLockedFunds(poolData, poolInfo, baseToken) {
   const _baseAndPositionBalances = useMemo(() => {
     if (!poolInfo) return []
 
@@ -31,14 +25,14 @@ function usePoolLockedFunds(poolAddress: string | undefined) {
 
     return new Map<string, BigNumber>(
       poolInfo.openPositions.map((p, i) => [
-        `${poolAddress}${p}${0}`.toLowerCase(),
+        `${poolData.id}${p}${0}`.toLowerCase(),
         _baseAndPositionBalances[i],
       ])
     )
-  }, [_baseAndPositionBalances, poolAddress, poolInfo])
+  }, [_baseAndPositionBalances, poolData, poolInfo])
 
   const lockedAmountUSD = useOpenPositionsPriceOutUSD(
-    poolAddress,
+    poolData.id,
     positionAmountsMap,
     poolInfo?.openPositions
   )

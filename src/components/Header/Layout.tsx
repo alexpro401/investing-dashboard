@@ -1,6 +1,6 @@
 import { FC, ReactNode } from "react"
 
-import Tabs from "components/Header/Tabs"
+import HeaderTabs from "components/Header/Tabs"
 import { More, GoBack } from "./Components"
 
 import { Container, Bar, Icons, Title } from "./styled"
@@ -30,7 +30,7 @@ const Layout: FC<Props> = ({ children, left, right, tabs }) => {
             <More />
           </Icons>
         </Bar>
-        {tabs !== undefined && !!tabs.length && <Tabs tabs={tabs} />}
+        {tabs !== undefined && !!tabs.length && <HeaderTabs tabs={tabs} />}
       </Container>
     </>
   )

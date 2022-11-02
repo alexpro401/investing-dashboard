@@ -34,6 +34,11 @@ export const selectInvestPools = createSelector(
   (pools) => pools[poolTypes.invest] || []
 )
 
+export const selectPoolByAddress = createSelector(
+  [selectPools, (state, address: string | undefined) => address],
+  (pools, address) => pools.filter((value) => value.id === address)[0]
+)
+
 export const selectBasicPoolByAddress = createSelector(
   [selectPools, (state, address: string | undefined) => address],
   (pools, address) =>
