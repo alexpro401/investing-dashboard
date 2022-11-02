@@ -6,6 +6,8 @@ import {
   updateUserProMode,
   changeTermsAgreed,
   showAgreementModal,
+  addSerializedToken,
+  removeSerializedToken,
 } from "./actions"
 import { IUserState } from "./types"
 
@@ -22,6 +24,7 @@ export const initialState: IUserState = {
     agreed: false,
     showAgreement: false,
   },
+  tokens: {},
 }
 
 export default createReducer(initialState, (builder) =>
@@ -44,4 +47,23 @@ export default createReducer(initialState, (builder) =>
     .addCase(showAgreementModal, (state, action) => {
       state.terms.showAgreement = action.payload.show
     })
+    .addCase(addSerializedToken, (state, { payload: { serializedToken } }) => {
+      if (!state.tokens) {
+        state.tokens = {}
+      }
+      state.tokens[serializedToken.chainId] =
+        state.tokens[serializedToken.chainId] || {}
+      state.tokens[serializedToken.chainId][serializedToken.address] =
+        serializedToken
+    })
+    .addCase(
+      removeSerializedToken,
+      (state, { payload: { address, chainId } }) => {
+        if (!state.tokens) {
+          state.tokens = {}
+        }
+        state.tokens[chainId] = state.tokens[chainId] || {}
+        delete state.tokens[chainId][address]
+      }
+    )
 )

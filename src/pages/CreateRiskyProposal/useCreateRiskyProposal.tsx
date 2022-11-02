@@ -8,7 +8,7 @@ import { addDays } from "date-fns/esm"
 
 import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
-import { useTraderPool } from "hooks/usePool"
+import { useTraderPoolContract } from "contracts"
 import { useBasicPoolContract } from "contracts"
 import { useTraderPoolRiskyProposalContract } from "contracts"
 
@@ -49,7 +49,7 @@ const useCreateRiskyProposal = (
   const riskyProposal = useTraderPoolRiskyProposalContract(poolAddress)
 
   const basicTraderPool = useBasicPoolContract(poolAddress)
-  const traderPool = useTraderPool(poolAddress)
+  const traderPool = useTraderPoolContract(poolAddress)
   const [, setError] = useError()
   const [isSubmiting, setSubmiting] = usePayload()
 

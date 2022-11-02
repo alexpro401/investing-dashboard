@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from "react"
-import { useTraderPoolRiskyProposalContract } from "contracts"
+import {
+  usePoolRegistryContract,
+  useTraderPoolRiskyProposalContract,
+} from "contracts"
 import { useProposalAddress } from "hooks/useContract"
 import { debounce } from "lodash"
 
@@ -10,16 +13,22 @@ import {
 
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
 import { TraderPoolRiskyProposal } from "interfaces/typechain"
+import { isAddress } from "utils"
 
 export function useRiskyProposals(
-  poolAddress?: string
+  poolAddress?: string,
+  fetchAll?: boolean
 ): [{ data: IRiskyProposalInfo; loading: boolean }, () => void] {
   const [proposals, setProposals] = useState<IRiskyProposalInfo>([])
   const [offset, setOffset] = useState<number>(0)
   const [fetching, setFetching] = useState<boolean>(true)
   const [allFetched, setAllFetched] = useState<boolean>(false)
+  const [isAddressValid, setAddressValid] = useState(false)
 
-  const riskyProposal = useTraderPoolRiskyProposalContract(poolAddress)
+  const poolRegistry = usePoolRegistryContract()
+  const riskyProposal = useTraderPoolRiskyProposalContract(
+    isAddressValid ? poolAddress : ""
+  )
 
   const fetchProposals = useCallback(async () => {
     if (riskyProposal !== null && !allFetched) {
@@ -43,6 +52,25 @@ export function useRiskyProposals(
       }
     }
   }, [allFetched, offset, riskyProposal])
+
+  useEffect(() => {
+    if (!poolRegistry || !poolAddress || !isAddress(poolAddress)) return
+
+    const fetch = async () => {
+      const isBasic = await poolRegistry.isBasicPool(poolAddress)
+      if (isBasic) {
+        setAddressValid(true)
+      }
+    }
+
+    fetch().catch(console.error)
+  }, [poolAddress, poolRegistry])
+
+  useEffect(() => {
+    if (!fetchAll || allFetched || fetching || !proposals.length) return
+
+    fetchProposals()
+  }, [allFetched, fetchAll, fetchProposals, fetching, proposals])
 
   useEffect(() => {
     if (!riskyProposal || proposals.length > 0) {

@@ -75,7 +75,7 @@ const List: React.FC<Props> = ({ poolType }) => {
         style={{ height: window.innerHeight - 117 }}
       >
         {pools[poolType].map((pool, index) => (
-          <To key={pool.id} to={`/pool/profile/${pool.type}/${pool.id}`}>
+          <To key={pool.id} to={`/pool/profile/${pool.id}`}>
             <Flex p="16px 0 0" full>
               <PoolStatisticCard data={pool} index={index} />
             </Flex>

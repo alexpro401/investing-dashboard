@@ -23,6 +23,7 @@ import {
   TraderPoolInvestProposal as TraderPoolInvestProposal_ABI,
   TraderPoolRiskyProposal as TraderPoolRiskyProposal_ABI,
   UserRegistry as UserRegistry_ABI,
+  Multicall as Multicall_ABI,
 } from "abi"
 
 import {
@@ -54,7 +55,10 @@ import {
   GovSettings,
   GovUserKeeper,
   GovValidators,
+  Multicall,
 } from "interfaces/typechain"
+import { useActiveWeb3React } from "hooks"
+import { getMulticallAddress } from "utils/addressHelpers"
 
 type Address = string | undefined
 
@@ -167,4 +171,10 @@ export function useGovUserKeeperContract(poolAddress: Address) {
 
 export function useGovValidatorsContract(address: Address) {
   return useContract<GovValidators>(address, GovValidators_ABI)
+}
+
+export function useMulticallContract() {
+  const { chainId } = useActiveWeb3React()
+
+  return useContract<Multicall>(getMulticallAddress(chainId), Multicall_ABI)
 }

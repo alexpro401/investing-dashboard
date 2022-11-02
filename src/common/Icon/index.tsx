@@ -25,10 +25,15 @@ import {
   MediumIcon,
   TelegramIcon,
   TwitterIcon,
-  GithubIcon,
+  WarnIcon,
   ModalCloseIcon,
+  SearchIcon,
+  ClearIcon,
+  WarnCircledIcon,
+  GithubIcon,
   CircleWarningIcon,
   CircleInfoIcon,
+  SettingsIcon,
   ReloadIcon,
   ShareIcon,
 } from "assets/icons"
@@ -95,14 +100,24 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return TelegramIcon as unknown as ElementType
       case ICON_NAMES.twitter:
         return TwitterIcon as unknown as ElementType
-      case ICON_NAMES.github:
-        return GithubIcon as unknown as ElementType
+      case ICON_NAMES.warn:
+        return WarnIcon as unknown as ElementType
       case ICON_NAMES.modalClose:
         return ModalCloseIcon as unknown as ElementType
+      case ICON_NAMES.search:
+        return SearchIcon as unknown as ElementType
+      case ICON_NAMES.clear:
+        return ClearIcon as unknown as ElementType
+      case ICON_NAMES.warnCircled:
+        return WarnCircledIcon as unknown as ElementType
+      case ICON_NAMES.github:
+        return GithubIcon as unknown as ElementType
       case ICON_NAMES.infoCircled:
         return CircleInfoIcon as unknown as ElementType
       case ICON_NAMES.warningCircled:
         return CircleWarningIcon as unknown as ElementType
+      case ICON_NAMES.settings:
+        return SettingsIcon as unknown as ElementType
       case ICON_NAMES.reload:
         return ReloadIcon as unknown as ElementType
       case ICON_NAMES.share:

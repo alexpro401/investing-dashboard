@@ -216,7 +216,7 @@ export const PoolCard: React.FC<{
 }) => {
   const [{ poolMetadata }] = usePoolMetadata(address, descriptionURL)
   return (
-    <To onClick={onClick} to={`/me/trader/profile/${poolType}/${address}`}>
+    <To onClick={onClick} to={`/pool/profile/${address}`}>
       <Row>
         <Flex jc="flex-start">
           <PoolIcons>
