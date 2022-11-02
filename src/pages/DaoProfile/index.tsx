@@ -9,7 +9,7 @@ import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidatio
 import * as S from "./styled"
 
 const DaoProfile: React.FC = () => {
-  const { daoAddress } = useParams<"daoAddress">()
+  const { daoAddress } = useParams()
 
   const [createProposalModalOpened, setCreateProposalModalOpened] =
     useState<boolean>(false)
@@ -26,15 +26,20 @@ const DaoProfile: React.FC = () => {
     <>
       <Header>Dao Profile</Header>
       <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
-        <Button onClick={handleOpenCreateProposalModal}>
-          + Create Proposal
-        </Button>
-        <ChooseDaoProposalAsPerson
-          isOpen={createProposalModalOpened}
-          daoAddress={daoAddress ?? ""}
-          toggle={handleCloseCreateProposalModal}
-        />
+        <S.Container>
+          <div style={{ backgroundColor: "cyan" }}>
+            <Button onClick={handleOpenCreateProposalModal}>
+              + Create Proposal
+            </Button>
+          </div>
+          <div style={{ minHeight: 1050, backgroundColor: "red" }}></div>
+        </S.Container>
       </WithGovPoolAddressValidation>
+      <ChooseDaoProposalAsPerson
+        isOpen={createProposalModalOpened}
+        daoAddress={daoAddress ?? ""}
+        toggle={handleCloseCreateProposalModal}
+      />
     </>
   )
 }
