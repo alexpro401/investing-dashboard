@@ -54,7 +54,6 @@
     "ipfs-http-client": "^56.0.0",
     "jsbi": "3.1.4",
     "lodash": "^4.17.21",
-    "lodash.debounce": "^4.0.8",
     "multicodec": "^3.2.1",
     "multihashes": "^4.0.3",
     "rc-slider": "^9.7.2",
