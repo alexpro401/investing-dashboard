@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
 import { BigNumber } from "@ethersproject/bignumber"
 
@@ -9,6 +9,12 @@ import {
   DaoProfileBuyTokenCard,
   DaoProfileTokensInTreasuryCard,
 } from "./components"
+import {
+  DaoProfileTabAbout,
+  DaoProfileTabBalance,
+  DaoProfileTabValidators,
+  DaoProfileTabUsedTokens,
+} from "./tabs"
 import { PageChart } from "./types"
 
 import Header from "components/Header/Layout"
@@ -18,6 +24,12 @@ import ChooseDaoProposalAsPerson from "modals/ChooseDaoProposalAsPerson"
 
 import { selectDexeAddress } from "state/contracts/selectors"
 import { useSelector } from "react-redux"
+import Tabs from "common/Tabs"
+import { Center, Flex } from "theme"
+import { GuardSpinner } from "react-spinners-kit"
+
+import { useGovPoolContract } from "contracts"
+import { isNil } from "lodash"
 
 const FakeTokensData = (dexeAddress) => [
   {
@@ -128,8 +140,8 @@ const FakeTokensData = (dexeAddress) => [
 
 const DaoProfile: React.FC = () => {
   const { daoAddress } = useParams()
-
   const dexeAddress = useSelector(selectDexeAddress)
+  const govPoolContract = useGovPoolContract(daoAddress)
 
   const isValidator = true
 
@@ -145,6 +157,59 @@ const DaoProfile: React.FC = () => {
   const handleCloseCreateProposalModal = useCallback(() => {
     setCreateProposalModalOpened(false)
   }, [])
+
+  const DaoProfilePageTabs = useMemo(() => {
+    const load = isNil(govPoolContract)
+
+    return (
+      <S.Indents>
+        <Tabs
+          tabs={[
+            {
+              name: "About DAO",
+              child: load ? (
+                <Center>
+                  <GuardSpinner size={20} loading />
+                </Center>
+              ) : (
+                <DaoProfileTabAbout />
+              ),
+            },
+            {
+              name: "My Balance",
+              child: load ? (
+                <Center>
+                  <GuardSpinner size={20} loading />
+                </Center>
+              ) : (
+                <DaoProfileTabBalance />
+              ),
+            },
+            {
+              name: "Validators",
+              child: load ? (
+                <Center>
+                  <GuardSpinner size={20} loading />
+                </Center>
+              ) : (
+                <DaoProfileTabValidators />
+              ),
+            },
+            {
+              name: "In treasury/used",
+              child: load ? (
+                <Center>
+                  <GuardSpinner size={20} loading />
+                </Center>
+              ) : (
+                <DaoProfileTabUsedTokens />
+              ),
+            },
+          ]}
+        />
+      </S.Indents>
+    )
+  }, [govPoolContract])
 
   return (
     <>
@@ -171,7 +236,7 @@ const DaoProfile: React.FC = () => {
               />
             </S.Indents>
           </S.Indents>
-          <div style={{ height: 1050, backgroundColor: "aquamarine" }}></div>
+          <Flex m="40px 0 0">{DaoProfilePageTabs}</Flex>
         </S.Container>
       </WithGovPoolAddressValidation>
       <ChooseDaoProposalAsPerson
