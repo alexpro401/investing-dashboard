@@ -8,16 +8,18 @@ interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const DaoProposalsList: FC<Props> = ({ ...rest }) => {
   return (
-    <S.Root {...rest}>
+    <>
       <Header>All Proposals</Header>
-      <DaoProposalCard />
-      <DaoProposalCard />
-      <DaoProposalCard />
-      <DaoProposalCard />
-      <DaoProposalCard />
-      <DaoProposalCard />
-      <DaoProposalCard />
-    </S.Root>
+      <S.DaoProposalsListBody>
+        <DaoProposalCard />
+        <DaoProposalCard />
+        <DaoProposalCard />
+        <DaoProposalCard />
+        <DaoProposalCard />
+        <DaoProposalCard />
+        <DaoProposalCard />
+      </S.DaoProposalsListBody>
+    </>
   )
 }
 
