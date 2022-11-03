@@ -32,17 +32,17 @@ export const Indents = styled.div<{ top?: boolean; side?: boolean }>`
   padding-right: ${({ side = true }) => (side ? "16px" : "0")};
 `
 
+export const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  background-color: #20293a;
+`
+
 export const CardButtons = styled.div`
   width: 100%;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 16px;
-`
-
-export const CardDivider = styled.div`
-  width: 100%;
-  height: 1px;
-  background-color: #20293a;
 `
 
 export const ValidatorVotingPower = styled(Text).attrs(() => ({
