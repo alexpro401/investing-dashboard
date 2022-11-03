@@ -5,8 +5,8 @@ import { formatEther } from "@ethersproject/units"
 import Header from "components/Header/Layout"
 import WithUserIsDaoValidatorValidation from "components/WithUserIsDaoValidatorValidation"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
-import DaoProposalCreatingContextProvider from "context/DaoProposalCreatingContext"
-import ValidatorsListContextProvider from "context/ValidatorsListContext"
+import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
+import ValidatorsListContextProvider from "context/govPool/proposals/ValidatorsListContext"
 import useGovPoolValidators from "hooks/useGovPoolValidators"
 import useGovValidatorsValidatorsToken from "hooks/useGovValidatorsValidatorsToken"
 import { cutStringZeroes } from "utils"
@@ -40,7 +40,7 @@ const CreateDaoProposalValidatorChangeValidatorSettings: React.FC = () => {
         <WithUserIsDaoValidatorValidation daoPoolAddress={daoAddress ?? ""}>
           <S.PageHolder>
             <S.PageContent>
-              <DaoProposalCreatingContextProvider>
+              <GovProposalCreatingContextProvider>
                 <ValidatorsListContextProvider
                   initialForm={{
                     balances: balances,
@@ -52,7 +52,7 @@ const CreateDaoProposalValidatorChangeValidatorSettings: React.FC = () => {
                 >
                   <CreateGovProposalValidatorChangeValidatorSettingsForm />
                 </ValidatorsListContextProvider>
-              </DaoProposalCreatingContextProvider>
+              </GovProposalCreatingContextProvider>
             </S.PageContent>
           </S.PageHolder>
         </WithUserIsDaoValidatorValidation>

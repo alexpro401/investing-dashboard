@@ -1,6 +1,6 @@
 import React, { useContext } from "react"
 
-import { ValidatorsListContext } from "context/ValidatorsListContext"
+import { ValidatorsListContext } from "context/govPool/proposals/ValidatorsListContext"
 import ValidatorField from "./ValidatorField/index"
 import { isAddress } from "utils"
 

@@ -21,6 +21,7 @@ const useGovValidatorsInternalSettings = (
 
     try {
       setLoading(true)
+      setError(false)
       const { duration, quorum } =
         await govValidatorsContract.internalProposalSettings()
       setResult({ duration, quorum })

@@ -5,8 +5,8 @@ import { parseEther } from "@ethersproject/units"
 
 import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
-import { DaoProposalCreatingContext } from "context/DaoProposalCreatingContext"
-import { ValidatorsListContext } from "context/ValidatorsListContext"
+import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
+import { ValidatorsListContext } from "context/govPool/proposals/ValidatorsListContext"
 import { ValidatorsStep } from "./steps"
 import useGovPoolCreateValidatorInternalProposal from "hooks/useGovPoolCreateValidatorInternalProposal"
 
@@ -26,7 +26,7 @@ const CreateGovProposalValidatorChangeValidatorSettingsForm: React.FC = () => {
   })
   const { balances, validators, hiddenIdxs } = useContext(ValidatorsListContext)
   const { proposalName, proposalDescription } = useContext(
-    DaoProposalCreatingContext
+    GovProposalCreatingContext
   )
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length, [])

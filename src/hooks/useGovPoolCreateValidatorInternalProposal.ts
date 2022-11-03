@@ -11,7 +11,7 @@ import { SubmitState } from "constants/types"
 import { isTxMined, parseTransactionError } from "utils"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
-import { DaoProposalCreatingContext } from "context/DaoProposalCreatingContext"
+import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { useActiveWeb3React } from "hooks"
 
 interface IProps {
@@ -28,7 +28,7 @@ const useGovPoolCreateValidatorInternalProposal = ({ daoAddress }: IProps) => {
   const [gasTrackerResponse] = useGasTracker()
   const addTransaction = useTransactionAdder()
   const { setSuccessModalState, closeSuccessModalState } = useContext(
-    DaoProposalCreatingContext
+    GovProposalCreatingContext
   )
 
   const transactionOptions = useMemo(() => {

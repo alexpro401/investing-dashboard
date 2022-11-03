@@ -10,7 +10,7 @@ import { GovSettings } from "abi"
 import useGasTracker from "state/gas/hooks"
 import useDaoPoolSetting from "./useDaoPoolSetting"
 import useDaoPoolNewSettingId from "./useDaoPoolNewSettingId"
-import { DaoProposalCreatingContext } from "context/DaoProposalCreatingContext"
+import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import useError from "hooks/useError"
 import usePayload from "./usePayload"
 import { useTransactionAdder } from "state/transactions/hooks"
@@ -51,7 +51,7 @@ const useCreateDaoProposalType = ({
   const navigate = useNavigate()
   const [govSettingsAddress, setGovSettingsAddress] = useState<string>("")
   const { setSuccessModalState, closeSuccessModalState } = useContext(
-    DaoProposalCreatingContext
+    GovProposalCreatingContext
   )
 
   const addTransaction = useTransactionAdder()

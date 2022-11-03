@@ -12,7 +12,7 @@ import {
 } from "common"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { CreateDaoCardStepNumber } from "forms/CreateFundDaoForm/components"
-import { DaoProposalChangeDaoSettingsCreatingContext } from "context/DaoProposalChangeDaoSettingsCreatingContext"
+import { ChangeGovSettingsContext } from "context/govPool/proposals/regular/ChangeGovSettingsContext"
 import {
   InputField,
   ExternalDocumentField,
@@ -48,7 +48,7 @@ const ChangeDAOSettings: React.FC = () => {
     description,
     websiteUrl,
     socialLinks,
-  } = useContext(DaoProposalChangeDaoSettingsCreatingContext)
+  } = useContext(ChangeGovSettingsContext)
 
   const [socialLinksOpened, setSocialLinksOpened] = useState<boolean>(false)
 
