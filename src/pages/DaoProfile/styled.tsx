@@ -78,6 +78,7 @@ const ChartFilterItemVariants = {
 export const ChartFilterItem = styled(Text).attrs((p) => ({
   block: true,
   fw: 500,
+  fz: "13",
   lh: "15px",
   variants: ChartFilterItemVariants,
   initial: ChartFilterItemVariants.hidden,
