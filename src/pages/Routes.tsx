@@ -174,7 +174,7 @@ export default function Routes() {
                 <Route path="/*" element={<TopMembers />} />
                 {/* Dao Proposals */}
                 <Route
-                  path="dao/:daoAddress/proposals"
+                  path="dao/:daoAddress/proposals/:status"
                   element={<DaoProposalsList />}
                 />
                 <Route
