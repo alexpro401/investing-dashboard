@@ -1,10 +1,14 @@
-import React, { useMemo, useState, useCallback } from "react"
+import React, { useMemo, useState, useCallback, useContext } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
+import { parseUnits } from "@ethersproject/units"
 
 import { VotingSettings } from "./steps"
 import StepsControllerContext from "context/StepsControllerContext"
+import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
+import { ChangeVotingSettingsContext } from "context/govPool/proposals/validators/ChangeVotingSettingsContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
+import useGovPoolCreateValidatorInternalProposal from "hooks/useGovPoolCreateValidatorInternalProposal"
 
 import * as S from "./styled"
 
@@ -17,12 +21,64 @@ const CreateGovProposalValidatorChangeVotingSettingsForm: React.FC = () => {
   const navigate = useNavigate()
   const { daoAddress } = useParams<"daoAddress">()
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.votingSettings)
+  const { proposalName, proposalDescription } = useContext(
+    GovProposalCreatingContext
+  )
+  const { duration, quorum, initialForm } = useContext(
+    ChangeVotingSettingsContext
+  )
+
+  const createProposal = useGovPoolCreateValidatorInternalProposal({
+    daoAddress: daoAddress ?? "",
+  })
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length, [])
   const currentStepNumber = useMemo(
     () => Object.values(STEPS).indexOf(currentStep) + 1,
     [currentStep]
   )
+
+  const handleCreateProposal = useCallback(() => {
+    const durationChanged = initialForm.duration !== duration.get
+    const quorumChanged = initialForm.quorum !== quorum.get
+
+    let internalProposalType = 0
+    const values: (number | string)[] = []
+
+    if (durationChanged && quorumChanged) {
+      internalProposalType = 2
+      values.push(duration.get, parseUnits(String(quorum.get), 25).toString())
+    } else if (durationChanged) {
+      internalProposalType = 0
+      values.push(duration.get)
+    } else if (quorumChanged) {
+      internalProposalType = 1
+      values.push(parseUnits(String(quorum.get), 25).toString())
+    }
+
+    console.log({
+      internalProposalType: internalProposalType,
+      values,
+      users: [],
+      proposalName: proposalName.get,
+      proposalDescription: proposalDescription.get,
+    })
+
+    createProposal({
+      internalProposalType: internalProposalType,
+      values,
+      users: [],
+      proposalName: proposalName.get,
+      proposalDescription: proposalDescription.get,
+    })
+  }, [
+    createProposal,
+    proposalName,
+    proposalDescription,
+    initialForm,
+    duration,
+    quorum,
+  ])
 
   const handlePrevStep = useCallback(() => {
     switch (currentStep) {
@@ -48,13 +104,13 @@ const CreateGovProposalValidatorChangeVotingSettingsForm: React.FC = () => {
         break
       }
       case STEPS.basicInfo: {
-        //TODO handle create proposal
+        handleCreateProposal()
         break
       }
       default:
         break
     }
-  }, [currentStep])
+  }, [currentStep, handleCreateProposal])
 
   return (
     <StepsControllerContext

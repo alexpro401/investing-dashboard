@@ -1,8 +1,9 @@
 import styled from "styled-components"
 import { motion } from "framer-motion"
 
+import theme from "theme"
 import { opacityVariants } from "motion/variants"
-import { AppButton } from "common"
+import { AppButton, Icon } from "common"
 
 export const StepsContainer = styled(motion.div).attrs(() => ({
   initial: { opacity: 0 },
@@ -24,4 +25,8 @@ export const StepsRoot = styled.div`
 `
 export const VotingSettingsModalButton = styled(AppButton)`
   font-size: 13px;
+`
+
+export const SuccessLabelIcon = styled(Icon)`
+  color: ${theme.statusColors.success};
 `

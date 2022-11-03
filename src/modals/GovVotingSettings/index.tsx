@@ -2,14 +2,14 @@ import React from "react"
 
 import { DaoVotingSettings } from "types"
 import Modal from "components/Modal"
-import { VotingSettings } from "common"
 
-// import * as S from "./styled"
+import * as S from "./styled"
 
 interface IGovVotingSettings
-  extends Partial<Omit<DaoVotingSettings, "executorDescription">> {
+  extends Partial<Omit<DaoVotingSettings, "executorDescription" | "quorum">> {
   isOpen: boolean
   toggle: () => void
+  quorum: string
 }
 
 const GovVotingSettings: React.FC<IGovVotingSettings> = ({
@@ -19,7 +19,7 @@ const GovVotingSettings: React.FC<IGovVotingSettings> = ({
 }) => {
   return (
     <Modal isOpen={isOpen} title="Current voting settings" toggle={toggle}>
-      <VotingSettings {...rest} />
+      <S.VotingSettings {...rest} />
     </Modal>
   )
 }
