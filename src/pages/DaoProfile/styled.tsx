@@ -1,6 +1,6 @@
 import { motion } from "framer-motion"
 import styled from "styled-components"
-import { Text } from "theme"
+import { Flex, Text } from "theme"
 
 const variants = {
   hidden: { opacity: 0 },
@@ -20,7 +20,7 @@ export const Container = styled(motion.div).attrs(() => ({
 
   margin: 0 auto;
   width: fill-available;
-  overflow-y: auto;
+  overflow: hidden auto;
   background-color: ${({ theme }) => theme.backgroundColors.primary};
   height: calc(100vh - 94px);
 
@@ -59,4 +59,31 @@ export const ValidatorVotingPower = styled(Text).attrs(() => ({
   text-fill-color: transparent;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+`
+
+export const ChartFilter = styled(Flex).attrs(() => ({
+  ai: "center",
+  jc: "center",
+}))`
+  padding: 2px;
+  background: #141926;
+  border-radius: 20px;
+`
+
+const ChartFilterItemVariants = {
+  visible: { backgroundColor: "#20283A", color: "#E4F2FF" },
+  hidden: { backgroundColor: "transparent", color: "#B1C7FC" },
+}
+
+export const ChartFilterItem = styled(Text).attrs((p) => ({
+  block: true,
+  fw: 500,
+  lh: "15px",
+  variants: ChartFilterItemVariants,
+  initial: ChartFilterItemVariants.hidden,
+  transition: { duration: 0.2 },
+}))`
+  padding: 2px 8px;
+  border-radius: 20px;
+  cursor: pointer;
 `

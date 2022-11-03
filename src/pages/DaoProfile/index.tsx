@@ -2,7 +2,8 @@ import React, { useCallback, useState } from "react"
 import { useParams } from "react-router-dom"
 
 import * as S from "./styled"
-import { DaoProfileStatisticCard } from "./components"
+import { DaoProfileStatisticCard, DaoProfileChart } from "./components"
+import { PageChart } from "./types"
 
 import Header from "components/Header/Layout"
 
@@ -13,6 +14,8 @@ const DaoProfile: React.FC = () => {
   const { daoAddress } = useParams()
 
   const isValidator = true
+
+  const [chart, setChart] = useState<PageChart>(PageChart.tvl)
 
   const [createProposalModalOpened, setCreateProposalModalOpened] =
     useState<boolean>(false)
@@ -35,6 +38,9 @@ const DaoProfile: React.FC = () => {
               isValidator={isValidator}
               handleOpenCreateProposalModal={handleOpenCreateProposalModal}
             />
+            <S.Indents top side={false}>
+              <DaoProfileChart chart={chart} setChart={setChart} />
+            </S.Indents>
           </S.Indents>
           <div style={{ height: 1050, backgroundColor: "aquamarine" }}></div>
         </S.Container>
