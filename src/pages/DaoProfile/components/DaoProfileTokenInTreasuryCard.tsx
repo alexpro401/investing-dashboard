@@ -36,7 +36,9 @@ const DaoProfileTokenInTreasuryCard: React.FC<Props> = ({ token, chainId }) => {
           <TokenIcon address={token.id} size={38} m="0" />
           <Flex dir="column" ai="flex-start" gap="4">
             <Flex ai="center" jc="flex-start" gap="4">
-              <TextValue fw={600}>{tokenData?.symbol}</TextValue>
+              <TextValue fw={600} lh={"19px"}>
+                {tokenData?.symbol}
+              </TextValue>
               <Icon name={ICON_NAMES.externalLink} color={"#788AB4"} />
             </Flex>
             <TextLabel fw={500}>{token.type}</TextLabel>
@@ -44,13 +46,17 @@ const DaoProfileTokenInTreasuryCard: React.FC<Props> = ({ token, chainId }) => {
         </SliderItemToken>
         <Flex dir="column" ai="flex-start" jc="center" gap="4">
           <TextValue fw={600}>${token.amountUsd}</TextValue>
-          <TextLabel fw={500}>{token.amount}</TextLabel>
+          <TextLabel fw={500} lh={"19px"}>
+            {token.amount}
+          </TextLabel>
         </Flex>
         <Flex dir="column" ai="flex-end" jc="center" gap="4">
           <TextValue fw={600}>{token.inTreasury}%</TextValue>
           <Flex ai="flex-end" jc="flex-end" gap="1">
             {token.inVoting > 20 ? <LockedIcon /> : null}
-            <TextLabel fw={500}>{token.inVoting} %</TextLabel>
+            <TextLabel fw={500} lh={"19px"}>
+              {token.inVoting} %
+            </TextLabel>
           </Flex>
         </Flex>
       </SliderItem>

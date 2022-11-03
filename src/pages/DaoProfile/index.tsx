@@ -236,7 +236,9 @@ const DaoProfile: React.FC = () => {
               />
             </S.Indents>
           </S.Indents>
-          <Flex m="40px 0 0">{DaoProfilePageTabs}</Flex>
+          <Flex full m="40px 0 16px">
+            {DaoProfilePageTabs}
+          </Flex>
         </S.Container>
       </WithGovPoolAddressValidation>
       <ChooseDaoProposalAsPerson
