@@ -2,13 +2,18 @@ import React, { useCallback, useState } from "react"
 import { useParams } from "react-router-dom"
 
 import * as S from "./styled"
-import { DaoProfileStatisticCard, DaoProfileChart } from "./components"
+import {
+  DaoProfileStatisticCard,
+  DaoProfileChart,
+  DaoProfileBuyTokenCard,
+} from "./components"
 import { PageChart } from "./types"
 
 import Header from "components/Header/Layout"
 
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import ChooseDaoProposalAsPerson from "modals/ChooseDaoProposalAsPerson"
+import { BigNumber } from "@ethersproject/bignumber"
 
 const DaoProfile: React.FC = () => {
   const { daoAddress } = useParams()
@@ -40,6 +45,12 @@ const DaoProfile: React.FC = () => {
             />
             <S.Indents top side={false}>
               <DaoProfileChart chart={chart} setChart={setChart} />
+            </S.Indents>
+            <S.Indents top side={false}>
+              <DaoProfileBuyTokenCard
+                total={BigNumber.from(100)}
+                available={BigNumber.from(34)}
+              />
             </S.Indents>
           </S.Indents>
           <div style={{ height: 1050, backgroundColor: "aquamarine" }}></div>

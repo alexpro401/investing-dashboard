@@ -1,6 +1,6 @@
 import { motion } from "framer-motion"
 import styled from "styled-components"
-import { Flex, Text } from "theme"
+import theme, { Flex, Text } from "theme"
 
 const variants = {
   hidden: { opacity: 0 },
@@ -87,3 +87,18 @@ export const ChartFilterItem = styled(Text).attrs((p) => ({
   border-radius: 20px;
   cursor: pointer;
 `
+
+const DaoProfileTextShared = {
+  fz: 13,
+  lg: "15px",
+}
+
+export const TextLabel = styled(Text).attrs(() => ({
+  ...DaoProfileTextShared,
+  color: theme.textColors.secondary,
+}))``
+
+export const TextValue = styled(Text).attrs(() => ({
+  ...DaoProfileTextShared,
+  color: theme.textColors.primary,
+}))``
