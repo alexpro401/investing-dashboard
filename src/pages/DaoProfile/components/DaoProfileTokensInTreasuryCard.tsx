@@ -45,8 +45,6 @@ const DaoProfileTokensInTreasuryCard: React.FC<Props> = ({ tokens }) => {
     )
   }, [tokens])
 
-  console.log(payload)
-
   return (
     <Card>
       <SliderHeader>
