@@ -14,10 +14,6 @@ export const Container = styled(motion.div).attrs(() => ({
   exit: "hidden",
   transition: { duration: 0.2 },
 }))`
-  display: grid;
-  grid-template-rows: max-content 1fr;
-  grid-gap: 40px;
-
   margin: 0 auto;
   width: fill-available;
   overflow: hidden auto;
@@ -103,3 +99,56 @@ export const TextValue = styled(Text).attrs(() => ({
   ...DaoProfileTextShared,
   color: theme.textColors.primary,
 }))``
+
+export const TreasuryRow = styled(Flex).attrs(() => ({
+  full: true,
+  ai: "center",
+  jc: "flex-start",
+}))`
+  & > *:nth-child(1) {
+    flex: 0 1 43%;
+    align-self: flex-start;
+  }
+  & > *:nth-child(2) {
+    flex: 0 1 40%;
+    align-self: flex-start;
+  }
+  & > *:nth-child(3) {
+    flex: 0 1 17%;
+    align-self: flex-end;
+  }
+`
+
+export const SliderContainer = styled(Flex).attrs(() => ({
+  full: true,
+}))`
+  .swiper-pagination {
+    position: initial;
+  }
+`
+
+export const SliderHeader = styled(TreasuryRow)`
+  & > *:nth-child(2) {
+    flex: 0 1 20%;
+  }
+  & > *:nth-child(3) {
+    flex: 0 1 37%;
+  }
+`
+export const SliderItem = styled(TreasuryRow).attrs(() => ({
+  p: "16px 0",
+}))`
+  min-height: 71px;
+  border-top: 1px solid #20293a;
+`
+
+export const SliderItemToken = styled(Flex).attrs(() => ({
+  ai: "center",
+  jc: "flex-start",
+  gap: "8",
+
+  target: "_blank",
+  rel: "noopener noreferrer",
+}))`
+  text-decoration: none;
+`

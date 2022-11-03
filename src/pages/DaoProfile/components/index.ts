@@ -1,3 +1,5 @@
 export { default as DaoProfileStatisticCard } from "./DaoProfileStatisticCard"
 export { default as DaoProfileChart } from "./DaoProfileChart"
 export { default as DaoProfileBuyTokenCard } from "./DaoProfileBuyTokenCard"
+export { default as DaoProfileTokenInTreasuryCard } from "./DaoProfileTokenInTreasuryCard"
+export { default as DaoProfileTokensInTreasuryCard } from "./DaoProfileTokensInTreasuryCard"
