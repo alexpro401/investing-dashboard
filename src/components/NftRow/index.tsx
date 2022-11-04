@@ -1,23 +1,25 @@
 import { FC, HTMLAttributes } from "react"
-import * as S from "./styled"
-import NftIcon from "components/NftIcon"
+
 import { INftTile } from "interfaces/exchange"
+
+import NftIcon from "components/NftIcon"
+
 import { normalizeBigNumber } from "utils"
+import * as S from "./styled"
 
 interface Props extends INftTile {
   isLocked?: boolean
 }
 
 /*
-  * NftTile component
-  representation of NFT row in the list of NFTs
+  * NftRow component - UI representation of NFT row in the list of DAO NFTs
 
   @param isLocked - used to show if the NFT is used in voting
   @param votingPower - used to show the voting power of the NFT
   @param tokenId - used to show the tokenId of the NFT
   @param tokenUri - used to show the tokenUri of the NFT
 */
-const NftTile: FC<Props & HTMLAttributes<HTMLDivElement>> = (props) => {
+const NftRow: FC<Props & HTMLAttributes<HTMLDivElement>> = (props) => {
   const { votingPower, tokenId, tokenUri, isLocked, ...rest } = props
 
   return (
@@ -33,4 +35,4 @@ const NftTile: FC<Props & HTMLAttributes<HTMLDivElement>> = (props) => {
   )
 }
 
-export default NftTile
+export default NftRow

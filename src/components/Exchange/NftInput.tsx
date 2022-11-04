@@ -3,7 +3,7 @@ import { ZERO } from "constants/index"
 
 import Ripple from "components/Ripple"
 import JazzIcon from "components/Icon/JazzIcon"
-import NftTile from "components/cards/NftTile"
+import NftRow from "components/NftRow"
 
 import angleIcon from "assets/icons/angle-down.svg"
 
@@ -70,12 +70,12 @@ const NftInput: React.FC<IToProps> = ({
         </S.ActiveSymbol>
       </S.InputBottom>
       <S.TokensContainer gap="8" p="16px 0 0">
-        <NftTile
+        <NftRow
           votingPower={ZERO}
           tokenId="1"
           tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
         />
-        <NftTile
+        <NftRow
           isLocked
           votingPower={ZERO}
           tokenId="1"
