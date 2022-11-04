@@ -50,12 +50,14 @@ const Table: React.FC<Props> = ({
   const Pagination = React.useMemo(() => {
     if (total <= limit) return null
 
+    const end = offset + limit <= total ? offset + limit : total
+
     return (
       <>
         <S.Divider />
         <Flex full ai="center" jc="center" gap="7" m="16px 0 0">
           <S.Title color={theme.textColors.primary}>
-            {offset + 1} - {offset + limit} of {total}
+            {offset + 1} - {end} of {total}
           </S.Title>
           <Flex ai="center" jc="center" gap="16">
             <S.NavButton
