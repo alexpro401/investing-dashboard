@@ -58,7 +58,6 @@ export function useERC20Data(
   // check address and save
   useEffect(() => {
     if (!isAddress(address)) {
-      setAddress("")
       return
     }
 
@@ -66,7 +65,6 @@ export function useERC20Data(
       String(address).toLocaleLowerCase() === storedAddress ||
       address === ZERO_ADDR
     ) {
-      setAddress("")
       return
     }
 
