@@ -5,3 +5,4 @@ export { default as DaoProfileTokenInTreasuryCard } from "./DaoProfileTokenInTre
 export { default as DaoProfileTokensInTreasuryCard } from "./DaoProfileTokensInTreasuryCard"
 export { default as DaoProfileEmptyBalanceCard } from "./DaoProfileEmptyBalanceCard"
 export { default as DaoProfileUserBalancesCard } from "./DaoProfileUserBalancesCard"
+export { default as DaoProfileValueWithActionCard } from "./DaoProfileValueWithActionCard"
