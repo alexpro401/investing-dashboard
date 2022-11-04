@@ -4,8 +4,8 @@ import { useParams } from "react-router-dom"
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import CreateProposalChangeDAOSettingsForm from "forms/CreateProposalChangeDAOSettingsForm"
-import DaoProposalCreatingContextProvider from "context/DaoProposalCreatingContext"
-import DaoProposalChangeDaoSettingsCreatingContextProvider from "context/DaoProposalChangeDaoSettingsCreatingContext"
+import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
+import ChangeGovSettingsContextProvider from "context/govPool/proposals/regular/ChangeGovSettingsContext"
 
 import * as S from "./styled"
 
@@ -17,11 +17,11 @@ const CreateDaoProposalChangeDaoSettings: React.FC = () => {
       <Header>Create proposal</Header>
       <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
         <S.PageHolder>
-          <DaoProposalChangeDaoSettingsCreatingContextProvider>
-            <DaoProposalCreatingContextProvider>
+          <ChangeGovSettingsContextProvider>
+            <GovProposalCreatingContextProvider>
               <CreateProposalChangeDAOSettingsForm />
-            </DaoProposalCreatingContextProvider>
-          </DaoProposalChangeDaoSettingsCreatingContextProvider>
+            </GovProposalCreatingContextProvider>
+          </ChangeGovSettingsContextProvider>
         </S.PageHolder>
       </WithGovPoolAddressValidation>
     </>

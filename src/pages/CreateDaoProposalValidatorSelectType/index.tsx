@@ -30,10 +30,9 @@ const CreateDaoProposalValidatorSelectType: React.FC = () => {
     useState<EValidatorProposalType>(EValidatorProposalType.validatorSettings)
 
   const proceedToNextStep = useCallback(() => {
-    //TODO NAVIGATE to path related to selected validator proposal type
     const nextProposalTypePath = {
       [EValidatorProposalType.validatorSettings]: `/dao/${daoAddress}/create-validator-proposal/validator-settings`,
-      [EValidatorProposalType.votingSettings]: "/",
+      [EValidatorProposalType.votingSettings]: `/dao/${daoAddress}/create-validator-proposal/voting-settings`,
     }[selectedValidatorProposalType]
 
     navigate(nextProposalTypePath)

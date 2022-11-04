@@ -5,6 +5,23 @@ export type ExternalFileDocument = {
   url: string
 }
 
+export type DaoVotingSettings = {
+  earlyCompletion: boolean
+  delegatedVotingAllowed: boolean
+  validatorsVote: boolean
+  duration: number
+  durationValidators: number
+  quorum: number
+  quorumValidators: number
+  minVotesForVoting: number
+  minVotesForCreating: number
+  rewardToken: string
+  creationReward: string
+  executionReward: string
+  voteRewardsCoefficient: string
+  executorDescription: string
+}
+
 export type DaoProposal = {
   _isErc20: boolean
   _isErc721: boolean
@@ -31,68 +48,8 @@ export type DaoProposal = {
     validators: string[]
     balances: number[]
   }
-  _internalProposalForm: {
-    earlyCompletion: boolean
-    delegatedVotingAllowed: boolean
-    validatorsVote: boolean
-    duration: number
-    durationValidators: number
-    quorum: number
-    quorumValidators: number
-    minVotesForVoting: number
-    minVotesForCreating: number
-    rewardToken: string
-    creationReward: string
-    executionReward: string
-    voteRewardsCoefficient: string
-    executorDescription: string
-  }
-  _distributionProposalSettingsForm: {
-    earlyCompletion: boolean
-    delegatedVotingAllowed: boolean
-    validatorsVote: boolean
-    duration: number
-    durationValidators: number
-    quorum: number
-    quorumValidators: number
-    minVotesForVoting: number
-    minVotesForCreating: number
-    rewardToken: string
-    creationReward: string
-    executionReward: string
-    voteRewardsCoefficient: string
-    executorDescription: string
-  }
-  _validatorsBalancesSettingsForm: {
-    earlyCompletion: boolean
-    delegatedVotingAllowed: boolean
-    validatorsVote: boolean
-    duration: number
-    durationValidators: number
-    quorum: number
-    quorumValidators: number
-    minVotesForVoting: number
-    minVotesForCreating: number
-    rewardToken: string
-    creationReward: string
-    executionReward: string
-    voteRewardsCoefficient: string
-    executorDescription: string
-  }
-  _defaultProposalSettingForm: {
-    earlyCompletion: boolean
-    delegatedVotingAllowed: boolean
-    validatorsVote: boolean
-    duration: number
-    durationValidators: number
-    quorum: number
-    quorumValidators: number
-    minVotesForVoting: number
-    minVotesForCreating: number
-    rewardToken: string
-    creationReward: string
-    executionReward: string
-    voteRewardsCoefficient: string
-    executorDescription: string
-  }
+  _internalProposalForm: DaoVotingSettings
+  _distributionProposalSettingsForm: DaoVotingSettings
+  _validatorsBalancesSettingsForm: DaoVotingSettings
+  _defaultProposalSettingForm: DaoVotingSettings
 }

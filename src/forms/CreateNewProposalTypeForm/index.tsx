@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { DefaultProposalStep } from "forms/CreateFundDaoForm/steps"
-import { DaoProposalCreatingContext } from "context/DaoProposalCreatingContext"
+import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import useCreateDaoProposalType from "hooks/useCreateDaoProposalType"
 
@@ -23,7 +23,7 @@ const CreateNewProposalTypeForm: React.FC = () => {
     daoPoolAddress: daoAddress ?? "",
   })
 
-  const daoProposalCreatingInfo = useContext(DaoProposalCreatingContext)
+  const daoProposalCreatingInfo = useContext(GovProposalCreatingContext)
   const firstStepSettings = useContext(FundDaoCreatingContext)
 
   const [currentStep, setCurrentStep] = useState<STEPS>(

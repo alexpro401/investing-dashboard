@@ -189,7 +189,7 @@ export const defaultButtonStyles = (
     justify-content: center;
     padding: 18px 30px;
     font-size: 16px;
-    line-height: 1;
+    line-height: 1.1;
     font-weight: 700;
     letter-spacing: 0;
     transition: ${appButtonTransitionDuration} ease-in;

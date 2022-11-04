@@ -103,8 +103,6 @@ const ValidatorsListContextProvider: React.FC<
           (el, index) => index !== idx
         )
 
-        newBalances.unshift("")
-
         return newBalances
       })
       _setHiddenIdxs((prevHiddenIndexes) => {
