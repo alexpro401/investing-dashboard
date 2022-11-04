@@ -1,7 +1,7 @@
 import { motion } from "framer-motion"
 import styled from "styled-components"
 import theme, { Flex, Text } from "theme"
-import { AppButton } from "../../common"
+import { AppButton } from "common"
 
 const variants = {
   hidden: { opacity: 0 },

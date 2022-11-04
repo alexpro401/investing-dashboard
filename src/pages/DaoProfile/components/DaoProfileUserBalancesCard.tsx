@@ -10,7 +10,7 @@ import Tooltip from "components/Tooltip"
 import ProgressLine from "components/ProgressLine"
 import { ICON_NAMES } from "constants/icon-names"
 import NftRow from "components/NftRow"
-import { ZERO } from "../../../constants"
+import { ZERO } from "constants/index"
 
 interface Props {}
 

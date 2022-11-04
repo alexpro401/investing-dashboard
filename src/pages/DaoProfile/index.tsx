@@ -1,6 +1,10 @@
 import React, { useCallback, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
 import { BigNumber } from "@ethersproject/bignumber"
+import { isNil } from "lodash"
+import { useSelector } from "react-redux"
+import { useWeb3React } from "@web3-react/core"
+import { GuardSpinner } from "react-spinners-kit"
 
 import * as S from "./styled"
 import {
@@ -18,19 +22,12 @@ import {
 import { PageChart } from "./types"
 
 import Header from "components/Header/Layout"
-
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import ChooseDaoProposalAsPerson from "modals/ChooseDaoProposalAsPerson"
-
 import { selectDexeAddress } from "state/contracts/selectors"
-import { useSelector } from "react-redux"
 import Tabs from "common/Tabs"
 import { Center, Flex } from "theme"
-import { GuardSpinner } from "react-spinners-kit"
-
 import { useGovPoolContract } from "contracts"
-import { isNil } from "lodash"
-import { useWeb3React } from "@web3-react/core"
 
 const FakeTokensData = (dexeAddress) => [
   {
