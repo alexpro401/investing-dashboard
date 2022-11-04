@@ -142,11 +142,7 @@ export const SliderItem = styled(TreasuryRow).attrs(() => ({
   border-top: 1px solid #20293a;
 `
 
-export const SliderItemToken = styled(Flex).attrs(() => ({
-  ai: "center",
-  jc: "flex-start",
-  gap: "8",
-
+export const FlexLink = styled(Flex).attrs(() => ({
   target: "_blank",
   rel: "noopener noreferrer",
 }))`
