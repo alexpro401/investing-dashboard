@@ -1,13 +1,10 @@
 import * as React from "react"
-import { Card } from "common"
-import { TextValue } from "../styled"
+import { DaoProfileEmptyBalanceCard } from "../components"
 
 const DaoProfileTabBalance: React.FC = () => {
   return (
     <>
-      <Card>
-        <TextValue>DaoProfileTabBalance</TextValue>
-      </Card>
+      <DaoProfileEmptyBalanceCard />
     </>
   )
 }

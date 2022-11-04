@@ -1,6 +1,7 @@
 import { motion } from "framer-motion"
 import styled from "styled-components"
 import theme, { Flex, Text } from "theme"
+import { AppButton } from "../../common"
 
 const variants = {
   hidden: { opacity: 0 },
@@ -147,4 +148,8 @@ export const FlexLink = styled(Flex).attrs(() => ({
   rel: "noopener noreferrer",
 }))`
   text-decoration: none;
+`
+
+export const AppLink = styled(AppButton)`
+  border-radius: 0;
 `
