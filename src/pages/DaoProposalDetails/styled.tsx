@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components"
-import { Icon } from "common"
+import { AppButton, Icon } from "common"
 
 export const DaoProposalDetails = styled.div`
   overflow: hidden auto;
@@ -125,6 +125,12 @@ export const DaoProposalDetailsRow = styled.div`
   }
 `
 
+export const DaoProposalDetailsTxRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 16px;
+`
+
 export const DaoProposalDetailsRowText = styled.span<{
   textType:
     | "label"
@@ -134,6 +140,7 @@ export const DaoProposalDetailsRowText = styled.span<{
     | "error"
     | "warning"
     | "info"
+  alignment?: "left" | "center" | "right"
 }>`
   font-weight: 500;
   font-size: 13px;
@@ -183,6 +190,45 @@ export const DaoProposalDetailsRowText = styled.span<{
       return ""
     }
   }}
+
+  ${(props) =>
+    props.alignment
+      ? css`
+          text-align: ${props.alignment};
+        `
+      : ""}
+`
+
+export const DaoProposalDetailsHistoryPaginationWrp = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & > * {
+    margin-right: 28px;
+  }
+`
+
+export const DaoProposalDetailsHistoryPaginationIndicator = styled.div`
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 15px;
+  color: ${(props) => props.theme.textColors.primary};
+  margin-right: 14px;
+`
+
+export const DaoProposalDetailsHistoryPaginationBtn = styled(AppButton).attrs(
+  () => ({
+    type: "button",
+    color: "default",
+    size: "no-paddings",
+  })
+)`
+  transform: scale(0.65);
+  color: ${(props) =>
+    props.disabled
+      ? props.theme.textColors.secondary
+      : props.theme.textColors.primary};
 `
 
 export const DaoProposalCardRowDivider = styled.div`
