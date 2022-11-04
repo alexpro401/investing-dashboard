@@ -29,6 +29,8 @@ export const NavButton = styled(AppButton).attrs(() => ({
   scheme: "filled",
   iconSize: 26,
 }))`
+  width: 16px;
+  height: 16px;
   padding: 4px 5.5px;
   color: #e4f2ff;
 `
