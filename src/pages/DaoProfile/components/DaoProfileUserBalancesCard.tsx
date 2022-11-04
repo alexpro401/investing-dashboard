@@ -3,12 +3,14 @@ import { v4 as uuidv4 } from "uuid"
 
 import theme, { Flex } from "theme"
 import { Card, Collapse, Icon } from "common"
-import { TextLabel, TextValue } from "../styled"
+import { Indents, TextLabel, TextValue } from "../styled"
 
 import Button from "components/Button"
 import Tooltip from "components/Tooltip"
 import ProgressLine from "components/ProgressLine"
 import { ICON_NAMES } from "constants/icon-names"
+import NftRow from "components/NftRow"
+import { ZERO } from "../../../constants"
 
 interface Props {}
 
@@ -66,52 +68,21 @@ const DaoProfileUserBalancesCard: FC<Props> = () => {
           </Flex>
         </Flex>
         <Collapse isOpen={showNftList} duration={0.3}>
-          <div
-            style={{
-              padding: "8px",
-              marginTop: "16px",
-              background: "#20283A",
-              borderRadius: "16px",
-            }}
-          >
-            <Flex full ai="center" jc="space-between">
-              <TextLabel fw={500}>#13 Voting Power: 100</TextLabel>
-              <Flex ai="center" jc="flex-end" gap="8">
-                <TextValue fw={600}>Available</TextValue>
-                <div
-                  style={{
-                    width: "32px",
-                    height: "32px",
-                    background: "black",
-                    borderRadius: "10px",
-                  }}
-                ></div>
-              </Flex>
-            </Flex>
-          </div>
-          <div
-            style={{
-              padding: "8px",
-              marginTop: "8px",
-              background: "#20283A",
-              borderRadius: "16px",
-            }}
-          >
-            <Flex full ai="center" jc="space-between">
-              <TextLabel fw={500}>#13 Voting Power: 100</TextLabel>
-              <Flex ai="center" jc="flex-end" gap="8">
-                <TextValue fw={600}>Available</TextValue>
-                <div
-                  style={{
-                    width: "32px",
-                    height: "32px",
-                    background: "black",
-                    borderRadius: "10px",
-                  }}
-                ></div>
-              </Flex>
-            </Flex>
-          </div>
+          <Indents top side={false}>
+            <NftRow
+              votingPower={ZERO}
+              tokenId="1"
+              tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
+            />
+          </Indents>
+          <Indents top side={false}>
+            <NftRow
+              isLocked
+              votingPower={ZERO}
+              tokenId="2"
+              tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
+            />
+          </Indents>
         </Collapse>
       </div>
       <Button
