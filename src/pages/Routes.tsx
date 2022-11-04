@@ -77,7 +77,7 @@ export default function Routes() {
                 <Route
                   path="vote"
                   element={
-                    <VotingTerminal daoPoolAddress="0x173D87d5621c566C494061Cbfc4309FBED1b31D4" />
+                    <VotingTerminal daoPoolAddress="0xf6880FC302E9555a37F41C9b9B5EEBE0C87aECD6" />
                   }
                 />
                 <Route path="me/investor" element={<Investor />} />

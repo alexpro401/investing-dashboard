@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import { motion } from "framer-motion"
-import { Flex, Text, GradientBorder, BasicCard } from "theme"
+import theme, { Flex, Text, GradientBorder, BasicCard } from "theme"
 import { FC, ReactNode, useState } from "react"
 import angle from "assets/icons/angle-up.svg"
 import tokenLines from "assets/icons/risky-tokens.svg"
@@ -451,8 +451,6 @@ export const InfoDropdown: FC<DropdownProps> = ({ left, right, children }) => {
 export const TokensContainer = styled(Flex)`
   width: 100%;
   flex-direction: column;
-  gap: 12px;
-  padding: 24px 0 0 12px;
 `
 
 export const TokenContainer = styled(Flex)`
@@ -545,6 +543,7 @@ export const DividendsToken = ({ token }: { token: DividendToken }) => {
   )
 }
 
+// TODO: replace with AppButton
 export const BlueButton = styled.button`
   background: none;
   outline: none;
@@ -556,4 +555,16 @@ export const BlueButton = styled.button`
   line-height: 19px;
   text-align: center;
   color: #2669eb;
+`
+
+export const NftCounter = styled.div`
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  color: ${theme.textColors.primary};
+  flex: none;
+  order: 0;
+  flex-grow: 0;
 `

@@ -1,24 +1,15 @@
 import { BigNumber } from "@ethersproject/bignumber"
+import { ZERO } from "constants/index"
 
 import Ripple from "components/Ripple"
+import JazzIcon from "components/Icon/JazzIcon"
+import NftTile from "components/cards/NftTile"
 
 import angleIcon from "assets/icons/angle-down.svg"
 
 import { formatBigNumber } from "utils"
 
-import {
-  InputContainer,
-  InputTop,
-  InputBottom,
-  Price,
-  Balance,
-  Tokens,
-  Max,
-  ActiveSymbol,
-  SymbolLabel,
-  Icon,
-} from "./styled"
-import JazzIcon from "components/Icon/JazzIcon"
+import * as S from "./styled"
 
 interface IToProps {
   price: BigNumber
@@ -41,44 +32,56 @@ const NftInput: React.FC<IToProps> = ({
 
   if (!address) {
     return (
-      <InputContainer>
-        <InputTop>
-          <Price>
+      <S.InputContainer>
+        <S.InputTop>
+          <S.Price>
             <Ripple width="67px" />
-          </Price>
-          <Balance>
+          </S.Price>
+          <S.Balance>
             <Ripple width="80px" />
-          </Balance>
-        </InputTop>
-        <InputBottom>
+          </S.Balance>
+        </S.InputTop>
+        <S.InputBottom>
           <Ripple width="120px" />
           <Ripple width="60px" />
-        </InputBottom>
-      </InputContainer>
+        </S.InputBottom>
+      </S.InputContainer>
     )
   }
 
   return (
-    <InputContainer>
-      <InputTop>
-        <Price>${formatBigNumber(price, 18, 2)} </Price>
+    <S.InputContainer height="fit-content">
+      <S.InputTop>
+        <S.Price>Voting power: {formatBigNumber(price, 18, 2)}</S.Price>
 
-        <Balance onClick={setMaxAmount}>
-          <Tokens>Available: {formatBigNumber(balance, 18, 0)}</Tokens>
-          <Max>All</Max>
-        </Balance>
-      </InputTop>
+        <S.Balance onClick={setMaxAmount}>
+          <S.Tokens>Available: {formatBigNumber(balance, 0, 0)}</S.Tokens>
+          <S.Max>All</S.Max>
+        </S.Balance>
+      </S.InputTop>
 
-      <InputBottom>
-        {/* button "choose" or total nft count */}
+      <S.InputBottom>
+        <S.NftCounter>2 NFT</S.NftCounter>
 
-        <ActiveSymbol onClick={onSelect}>
+        <S.ActiveSymbol onClick={onSelect}>
           <JazzIcon size={24} address={address || ""} />
-          <SymbolLabel>ERC-721</SymbolLabel>
-          {!!onSelect && <Icon src={angleIcon} />}
-        </ActiveSymbol>
-      </InputBottom>
-    </InputContainer>
+          <S.SymbolLabel>ERC-721</S.SymbolLabel>
+          {!!onSelect && <S.Icon src={angleIcon} />}
+        </S.ActiveSymbol>
+      </S.InputBottom>
+      <S.TokensContainer gap="8" p="16px 0 0">
+        <NftTile
+          votingPower={ZERO}
+          tokenId="1"
+          tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
+        />
+        <NftTile
+          votingPower={ZERO}
+          tokenId="1"
+          tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
+        />
+      </S.TokensContainer>
+    </S.InputContainer>
   )
 }
 
