@@ -22,7 +22,7 @@ const Table: React.FC<Props> = ({
   pagination = true,
   placeholder,
 }) => {
-  const total = Number(data) || 0
+  const total = Number(data.length) || 0
 
   const [offset, setOffset] = React.useState(0)
   const [limit, setLimit] = React.useState(10)
@@ -36,7 +36,7 @@ const Table: React.FC<Props> = ({
   }, [offset, limit])
 
   const onNext = React.useCallback(() => {
-    if (offset + limit <= total - limit) {
+    if (offset + limit <= total) {
       setOffset(offset + limit)
     }
   }, [offset, limit, total])
@@ -51,23 +51,26 @@ const Table: React.FC<Props> = ({
     if (total <= limit) return null
 
     return (
-      <Flex full ai="center" jc="center" gap="7" m="16px 0 0">
-        <S.Title color={theme.textColors.primary}>
-          {offset + 1} - {offset + limit} of {total}
-        </S.Title>
-        <Flex ai="center" jc="center" gap="16">
-          <S.NavButton
-            iconLeft={ICON_NAMES.angleLeft}
-            onClick={onPrev}
-            disabled={offset === 0}
-          />
-          <S.NavButton
-            iconRight={ICON_NAMES.angleRight}
-            onClick={onNext}
-            disabled={offset + limit >= total}
-          />
+      <>
+        <S.Divider />
+        <Flex full ai="center" jc="center" gap="7" m="16px 0 0">
+          <S.Title color={theme.textColors.primary}>
+            {offset + 1} - {offset + limit} of {total}
+          </S.Title>
+          <Flex ai="center" jc="center" gap="16">
+            <S.NavButton
+              iconLeft={ICON_NAMES.angleLeft}
+              onClick={onPrev}
+              disabled={offset === 0}
+            />
+            <S.NavButton
+              iconRight={ICON_NAMES.angleRight}
+              onClick={onNext}
+              disabled={offset + limit >= total}
+            />
+          </Flex>
         </Flex>
-      </Flex>
+      </>
     )
   }, [total, limit, offset])
 
@@ -81,7 +84,7 @@ const Table: React.FC<Props> = ({
           <S.Divider />
         </>
       )}
-      {isNil(data) || isEmpty(data) ? (
+      {isNil(dataInView) || isEmpty(dataInView) ? (
         <Flex full ai="center" jc="center" p="16px 0 0">
           {!isNil(placeholder) ? (
             placeholder
@@ -95,7 +98,7 @@ const Table: React.FC<Props> = ({
             <Flex full p="16px 0">
               {row(item, index)}
             </Flex>
-            <S.Divider />
+            {index + 1 < dataInView.length ? <S.Divider /> : null}
           </>
         ))
       )}
