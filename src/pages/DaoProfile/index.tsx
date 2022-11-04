@@ -30,6 +30,7 @@ import { GuardSpinner } from "react-spinners-kit"
 
 import { useGovPoolContract } from "contracts"
 import { isNil } from "lodash"
+import { useWeb3React } from "@web3-react/core"
 
 const FakeTokensData = (dexeAddress) => [
   {
@@ -139,6 +140,7 @@ const FakeTokensData = (dexeAddress) => [
 ]
 
 const DaoProfile: React.FC = () => {
+  const { chainId } = useWeb3React()
   const { daoAddress } = useParams()
   const dexeAddress = useSelector(selectDexeAddress)
   const govPoolContract = useGovPoolContract(daoAddress)
@@ -211,6 +213,7 @@ const DaoProfile: React.FC = () => {
                       amount: "1123412",
                     },
                   ]}
+                  chainId={chainId}
                 />
               ),
             },
@@ -221,7 +224,27 @@ const DaoProfile: React.FC = () => {
                   <GuardSpinner size={20} loading />
                 </Center>
               ) : (
-                <DaoProfileTabUsedTokens />
+                <DaoProfileTabUsedTokens
+                  data={[
+                    {
+                      id: "0x1230413asfadsfljk123041303asjk12",
+                      amount: "1230413",
+                    },
+                    {
+                      id: "1x1090423asfadsfljk109042303asjk10",
+                      amount: "1090423",
+                    },
+                    {
+                      id: "2x9820456asfadsfljk982045606asjk98",
+                      amount: "9820456",
+                    },
+                    {
+                      id: "3x1123412asfadsfljk112341232asjk11",
+                      amount: "1123412",
+                    },
+                  ]}
+                  chainId={chainId}
+                />
               ),
             },
           ]}
