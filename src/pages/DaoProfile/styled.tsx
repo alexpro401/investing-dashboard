@@ -91,14 +91,14 @@ const DaoProfileTextShared = {
   lg: "15px",
 }
 
-export const TextLabel = styled(Text).attrs(() => ({
+export const TextLabel = styled(Text).attrs((props) => ({
   ...DaoProfileTextShared,
-  color: theme.textColors.secondary,
+  color: props.color ?? theme.textColors.secondary,
 }))``
 
-export const TextValue = styled(Text).attrs(() => ({
+export const TextValue = styled(Text).attrs((props) => ({
   ...DaoProfileTextShared,
-  color: theme.textColors.primary,
+  color: props.color ?? theme.textColors.primary,
 }))``
 
 export const TreasuryRow = styled(Flex).attrs(() => ({
