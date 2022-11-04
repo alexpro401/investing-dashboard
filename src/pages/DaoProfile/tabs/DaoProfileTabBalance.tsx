@@ -32,6 +32,14 @@ const DaoProfileTabBalance: React.FC = () => {
           count={8}
         />
       </Indents>
+      <Indents top side={false}>
+        <DaoProfileValueWithActionCard
+          value="10 proposals"
+          info={<TextLabel>Voting history</TextLabel>}
+          onClick={() => alert("Handle voting history")}
+          actionText="Details"
+        />
+      </Indents>
     </>
   )
 }
