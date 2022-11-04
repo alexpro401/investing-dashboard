@@ -12,7 +12,7 @@ interface Props {
   info: React.ReactNode
   onClick: () => void
   actionText: string
-  count: React.ReactNode
+  count?: React.ReactNode
 }
 
 const DaoProfileValueWithActionCard: React.FC<Props> = ({
