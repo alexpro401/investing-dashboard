@@ -1,6 +1,7 @@
-import { useGovSettingsAddress } from "./../hooks/useDaoPoolSetting"
 import { useSelector } from "react-redux"
 import useContract, { useProposalAddress } from "hooks/useContract"
+import { useGovSettingsAddress } from "hooks/useDaoPoolSetting"
+import { useGovValidatorsContractAddress } from "hooks/useGovValidatorsContractAddress"
 import { useGovUserKeeperAddress } from "hooks/useGovPool"
 
 import {
@@ -169,7 +170,9 @@ export function useGovUserKeeperContract(poolAddress: Address) {
   return useContract<GovUserKeeper>(userKeeperAddress, GovUserKeeper_ABI)
 }
 
-export function useGovValidatorsContract(address: Address) {
+export function useGovValidatorsContract(poolAddress: Address) {
+  const address = useGovValidatorsContractAddress(poolAddress ?? "")
+
   return useContract<GovValidators>(address, GovValidators_ABI)
 }
 

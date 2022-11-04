@@ -12,7 +12,7 @@ export type ExternalFileDocument = {
   url: string
 }
 
-interface IDaoProposalChangeDaoSettingsCreatingContext {
+interface IChangeGovSettingsContext {
   avatarUrl: { get: string; set: Dispatch<SetStateAction<string>> }
   daoName: { get: string; set: Dispatch<SetStateAction<string>> }
   documents: {
@@ -30,12 +30,12 @@ interface IDaoProposalChangeDaoSettingsCreatingContext {
   }
 }
 
-interface IDaoProposalChangeDaoSettingsCreatingContextProviderProps {
+interface IChangeGovSettingsContextProviderProps {
   children: React.ReactNode
 }
 
-export const DaoProposalChangeDaoSettingsCreatingContext =
-  createContext<IDaoProposalChangeDaoSettingsCreatingContext>({
+export const ChangeGovSettingsContext =
+  createContext<IChangeGovSettingsContext>({
     avatarUrl: { get: "", set: () => {} },
     daoName: { get: "", set: () => {} },
     documents: {
@@ -47,8 +47,8 @@ export const DaoProposalChangeDaoSettingsCreatingContext =
     socialLinks: { get: [], set: () => {} },
   })
 
-const DaoProposalChangeDaoSettingsCreatingContextProvider: React.FC<
-  IDaoProposalChangeDaoSettingsCreatingContextProviderProps
+const ChangeGovSettingsContextProvider: React.FC<
+  IChangeGovSettingsContextProviderProps
 > = ({ children }) => {
   const [_avatarUrl, _setAvatarUrl] = useState<string>("")
   const [_daoName, _setDaoName] = useState<string>("")
@@ -76,7 +76,7 @@ const DaoProposalChangeDaoSettingsCreatingContextProvider: React.FC<
   }, [])
 
   return (
-    <DaoProposalChangeDaoSettingsCreatingContext.Provider
+    <ChangeGovSettingsContext.Provider
       value={{
         avatarUrl: { get: _avatarUrl, set: _setAvatarUrl },
         daoName: { get: _daoName, set: _setDaoName },
@@ -87,8 +87,8 @@ const DaoProposalChangeDaoSettingsCreatingContextProvider: React.FC<
       }}
     >
       {children}
-    </DaoProposalChangeDaoSettingsCreatingContext.Provider>
+    </ChangeGovSettingsContext.Provider>
   )
 }
 
-export default DaoProposalChangeDaoSettingsCreatingContextProvider
+export default ChangeGovSettingsContextProvider

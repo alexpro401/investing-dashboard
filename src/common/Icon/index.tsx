@@ -38,6 +38,7 @@ import {
   SettingsIcon,
   ReloadIcon,
   ShareIcon,
+  LockedIcon,
   FlameGradientIcon,
 } from "assets/icons"
 
@@ -131,6 +132,8 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return ShareIcon as unknown as ElementType
       case ICON_NAMES.flameGradient:
         return FlameGradientIcon as unknown as ElementType
+      case ICON_NAMES.locked:
+        return LockedIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }

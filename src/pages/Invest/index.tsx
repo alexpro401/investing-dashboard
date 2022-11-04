@@ -1,7 +1,9 @@
 import { useMemo } from "react"
 import { useParams } from "react-router-dom"
-
 import { Flex } from "theme"
+import { Icon } from "common"
+
+import { ICON_NAMES } from "constants/icon-names"
 import Token from "components/Token"
 import SwapPrice from "components/SwapPrice"
 import Header from "components/Header/Layout"
@@ -19,7 +21,6 @@ import { cutDecimalPlaces, fromBig, shortenAddress } from "utils"
 
 import close from "assets/icons/close-big.svg"
 import settings from "assets/icons/settings.svg"
-import LockedIcon from "assets/icons/LockedIcon"
 
 import {
   Container,
@@ -108,7 +109,7 @@ const Invest = () => {
           <Flex>
             <Flex ai="center">Unlock Token {from.symbol}</Flex>
             <Flex m="-3px 0 0 4px">
-              <LockedIcon />
+              <Icon name={ICON_NAMES.locked} />
             </Flex>
           </Flex>
         </SecondaryButton>

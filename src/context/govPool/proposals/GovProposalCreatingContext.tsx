@@ -18,7 +18,7 @@ const initialSuccessModalState = {
   onClick: () => {},
 }
 
-interface IDaoProposalCreatingContext {
+interface IGovProposalCreatingContext {
   contractAddress: { get: string; set: Dispatch<SetStateAction<string>> }
   proposalTypeName: { get: string; set: Dispatch<SetStateAction<string>> }
   proposalTypeDescription: {
@@ -33,13 +33,13 @@ interface IDaoProposalCreatingContext {
   closeSuccessModalState: () => void
 }
 
-interface IDaoProposalCreatingContextProviderProps {
+interface IGovProposalCreatingContextProviderProps {
   children: React.ReactNode
   isCreatingCustomProposal?: boolean
 }
 
-export const DaoProposalCreatingContext =
-  createContext<IDaoProposalCreatingContext>({
+export const GovProposalCreatingContext =
+  createContext<IGovProposalCreatingContext>({
     contractAddress: { get: "", set: () => {} },
     proposalTypeName: { get: "", set: () => {} },
     proposalTypeDescription: { get: "", set: () => {} },
@@ -51,8 +51,8 @@ export const DaoProposalCreatingContext =
     closeSuccessModalState: () => {},
   })
 
-const DaoProposalCreatingContextProvider: React.FC<
-  IDaoProposalCreatingContextProviderProps
+const GovProposalCreatingContextProvider: React.FC<
+  IGovProposalCreatingContextProviderProps
 > = ({ children }) => {
   const [_contractAddress, _setContractAddress] = useState<string>("")
   const [_proposalTypeName, _setProposalTypeName] = useState<string>("")
@@ -65,7 +65,7 @@ const DaoProposalCreatingContextProvider: React.FC<
     useState<ISuccessModalState>(initialSuccessModalState)
 
   return (
-    <DaoProposalCreatingContext.Provider
+    <GovProposalCreatingContext.Provider
       value={{
         contractAddress: { get: _contractAddress, set: _setContractAddress },
         proposalTypeName: { get: _proposalTypeName, set: _setProposalTypeName },
@@ -85,8 +85,8 @@ const DaoProposalCreatingContextProvider: React.FC<
       }}
     >
       {children}
-    </DaoProposalCreatingContext.Provider>
+    </GovProposalCreatingContext.Provider>
   )
 }
 
-export default DaoProposalCreatingContextProvider
+export default GovProposalCreatingContextProvider

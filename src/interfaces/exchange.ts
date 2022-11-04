@@ -43,3 +43,9 @@ export interface ExchangeForm {
   from: FormElement
   to: FormElement
 }
+
+export interface INftTile {
+  votingPower: BigNumber
+  tokenId: string
+  tokenUri: string
+}
