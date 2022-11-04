@@ -67,27 +67,11 @@ export const AppLink = styled(AppButton).attrs(() => ({
   padding: 0;
   border-radius: 0;
 `
-export const AppNavigation = styled(AppButton).attrs(() => ({
-  color: "default",
-  size: "x-small",
-  scheme: "filled",
-  iconSize: 26,
-}))`
-  padding: 4px 5.5px;
-  color: #e4f2ff;
-`
 
 export const GridTwoColumn = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 48px;
-`
-
-export const Divider = styled.div`
-  width: 100%;
-  height: 1px;
-  background: rgba(32, 41, 58, 0.6);
-  opacity: 0.5;
 `
 
 export const Link = styled.a`
