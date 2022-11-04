@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components"
+import { Icon } from "common"
 
 export const DaoProposalDetails = styled.div`
   overflow: hidden auto;
@@ -95,6 +96,9 @@ export const DaoProposalDetailsCard = styled.div`
 `
 
 export const DaoProposalDetailsCardTitle = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 600;
   font-size: 13px;
   line-height: 16px;
@@ -102,11 +106,23 @@ export const DaoProposalDetailsCardTitle = styled.span`
   margin-bottom: 12px;
 `
 
+export const DaoProposalDetailsCardTitleIcon = styled(Icon)`
+  color: ${(props) => props.theme.textColors.primary};
+  width: 1.25em;
+  height: 1.25em;
+`
+
 export const DaoProposalDetailsRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+
+  & > * {
+    &:first-child {
+      max-width: 60%;
+    }
+  }
 `
 
 export const DaoProposalDetailsRowText = styled.span<{
@@ -144,6 +160,7 @@ export const DaoProposalDetailsRowText = styled.span<{
       `
     } else if (props.textType === "value") {
       return css`
+        white-space: nowrap;
         color: ${(props) => props.theme.textColors.primary};
       `
     } else if (props.textType === "success") {
