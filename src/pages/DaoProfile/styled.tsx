@@ -169,3 +169,8 @@ export const Counter = styled.div`
   text-align: center;
   color: #ffffff;
 `
+
+export const Image = styled.img<{ w?: string; h?: string }>`
+  height: ${(p) => p.h ?? "120px"};
+  width: ${(p) => p.w ?? "120px"};
+`
