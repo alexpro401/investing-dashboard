@@ -1,5 +1,7 @@
 export { default as AngleLeftIcon } from "assets/icons/AngleLeftIcon"
 export { default as AngleRightIcon } from "assets/icons/AngleRightIcon"
+export { default as AngleUpIcon } from "assets/icons/AngleUpIcon"
+export { default as AngleDownIcon } from "assets/icons/AngleDownIcon"
 export { default as CloseIcon } from "assets/icons/CloseIcon"
 export { default as DollarOutlineIcon } from "assets/icons/DollarOutlineIcon"
 export { default as GlobeIcon } from "assets/icons/GlobeIcon"
