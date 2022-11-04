@@ -1,6 +1,5 @@
 /* eslint-disable */
 import { storiesOf } from '@storybook/react';
-import MemoLockedIcon from 'assets/icons/LockedIcon';
 import Grid from 'storybook/Grid';
 import { Flex } from 'theme';
 import Button, { SecondaryButton } from './index';
@@ -44,23 +43,6 @@ storiesOf('Form', module).add('Button', () => {
             >
                 Sell ETH
             </Button>
-            )
-        },
-        {
-            name: "With icon",
-            content: (
-            <SecondaryButton
-                size="large"
-                fz={22}
-                full
-              >
-                <Flex>
-                  <Flex ai="center">Unlock Token</Flex>
-                  <Flex m="-3px 0 0 4px">
-                    <MemoLockedIcon />
-                  </Flex>
-                </Flex>
-              </SecondaryButton>
             )
         },
         {
