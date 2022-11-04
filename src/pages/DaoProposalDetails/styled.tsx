@@ -22,6 +22,7 @@ export const DaoProposalDetailsProgressBar = styled.div`
   overflow: hidden;
   background: #131927;
   border-radius: 6px;
+  min-height: 3px;
   height: 3px;
   width: 100%;
 
@@ -109,14 +110,21 @@ export const DaoProposalDetailsRow = styled.div`
 `
 
 export const DaoProposalDetailsRowText = styled.span<{
-  type: "label" | "value" | "complex" | "success" | "error" | "warning" | "info"
+  textType:
+    | "label"
+    | "value"
+    | "complex"
+    | "success"
+    | "error"
+    | "warning"
+    | "info"
 }>`
   font-weight: 500;
   font-size: 13px;
   line-height: 150%;
 
   ${(props) => {
-    if (props.type === "complex") {
+    if (props.textType === "complex") {
       return css`
         display: flex;
         flex-direction: column;
@@ -130,29 +138,29 @@ export const DaoProposalDetailsRowText = styled.span<{
           color: ${(props) => props.theme.textColors.primary};
         }
       `
-    } else if (props.type === "label") {
+    } else if (props.textType === "label") {
       return css`
         color: ${(props) => props.theme.textColors.secondary};
       `
-    } else if (props.type === "value") {
+    } else if (props.textType === "value") {
       return css`
         color: ${(props) => props.theme.textColors.primary};
       `
-    } else if (props.type === "success") {
+    } else if (props.textType === "success") {
       return css`
-        color: ${(props) => props.theme.textColors.success};
+        color: ${(props) => props.theme.statusColors.success};
       `
-    } else if (props.type === "error") {
+    } else if (props.textType === "error") {
       return css`
-        color: ${(props) => props.theme.textColors.error};
+        color: ${(props) => props.theme.statusColors.error};
       `
-    } else if (props.type === "warning") {
+    } else if (props.textType === "warning") {
       return css`
-        color: ${(props) => props.theme.textColors.warning};
+        color: ${(props) => props.theme.statusColors.warning};
       `
-    } else if (props.type === "info") {
+    } else if (props.textType === "info") {
       return css`
-        color: ${(props) => props.theme.textColors.info};
+        color: ${(props) => props.theme.statusColors.info};
       `
     } else {
       return ""

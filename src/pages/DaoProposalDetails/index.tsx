@@ -2,12 +2,12 @@ import * as S from "./styled"
 
 import { FC, HTMLAttributes, useMemo, useState } from "react"
 import Header from "components/Header/Layout"
-import ExternalLink from "../../components/ExternalLink"
-import { shortenAddress } from "../../utils"
+import { DetailsTab, VotingSettingsTab, VotingHistoryTab } from "./components"
+import { AnimatePresence } from "framer-motion"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
-const DaoProposalDetails: FC<Props> = ({ ...rest }) => {
+const DaoProposalDetails: FC<Props> = ({}) => {
   const TABS = useMemo(
     () => [
       { label: "Proposal details", number: 1 },
@@ -58,129 +58,11 @@ const DaoProposalDetails: FC<Props> = ({ ...rest }) => {
             </S.DaoProposalDetailsTabsItem>
           ))}
         </S.DaoProposalDetailsTabs>
-        <S.DaoProposalDetailsCard>
-          <S.DaoProposalDetailsRow>
-            <S.DaoProposalDetailsRowText type="complex">
-              <p>Active settings</p>
-            </S.DaoProposalDetailsRowText>
-            <S.DaoProposalDetailsRowText type="success">
-              Proposed changes
-            </S.DaoProposalDetailsRowText>
-          </S.DaoProposalDetailsRow>
-
-          <S.DaoProposalCardRowDivider />
-
-          <S.DaoProposalDetailsRow>
-            <S.DaoProposalDetailsRowText type="complex">
-              <span>Length of voting period</span>
-              <p>1D/1H/1M</p>
-            </S.DaoProposalDetailsRowText>
-            <S.DaoProposalDetailsRowText type="success">
-              10D/1H/1M
-            </S.DaoProposalDetailsRowText>
-          </S.DaoProposalDetailsRow>
-
-          <S.DaoProposalCardRowDivider />
-
-          <S.DaoProposalDetailsRow>
-            <S.DaoProposalDetailsRowText type="complex">
-              <span>Min. voting power required for voting </span>
-              <p>100</p>
-            </S.DaoProposalDetailsRowText>
-            <S.DaoProposalDetailsRowText type="success">
-              50
-            </S.DaoProposalDetailsRowText>
-          </S.DaoProposalDetailsRow>
-        </S.DaoProposalDetailsCard>
-        <S.DaoProposalDetailsCard>
-          <S.DaoProposalDetailsRow>
-            <S.DaoProposalDetailsRowText type="label">
-              Contract address
-            </S.DaoProposalDetailsRowText>
-            <S.DaoProposalDetailsRowText type="value">
-              <ExternalLink href={""}>
-                {shortenAddress("0x987654321234567898765432123456789876543")}
-              </ExternalLink>
-            </S.DaoProposalDetailsRowText>
-          </S.DaoProposalDetailsRow>
-
-          <S.DaoProposalCardRowDivider />
-
-          <S.DaoProposalDetailsRow>
-            <S.DaoProposalDetailsRowText type="label">
-              value
-            </S.DaoProposalDetailsRowText>
-            <S.DaoProposalDetailsRowText type="value">
-              0.2 BNB
-            </S.DaoProposalDetailsRowText>
-          </S.DaoProposalDetailsRow>
-        </S.DaoProposalDetailsCard>
-        <S.DaoProposalDetailsCard>
-          <S.DaoProposalDetailsCardTitle>
-            Proposal Details
-          </S.DaoProposalDetailsCardTitle>
-
-          <S.DaoProposalDetailsRow>
-            <S.DaoProposalDetailsRowText type="label">
-              created
-            </S.DaoProposalDetailsRowText>
-            <S.DaoProposalDetailsRowText type="value">
-              <ExternalLink href={""}>
-                {shortenAddress("0x987654321234567898765432123456789876543")}
-              </ExternalLink>
-            </S.DaoProposalDetailsRowText>
-          </S.DaoProposalDetailsRow>
-
-          <S.DaoProposalDetailsRow>
-            <S.DaoProposalDetailsRowText type="label">
-              voting status
-            </S.DaoProposalDetailsRowText>
-            <S.DaoProposalDetailsRowText type="value">
-              <S.DaoProposalDetailsRowText type="value">
-                10.000/
-              </S.DaoProposalDetailsRowText>
-              <S.DaoProposalDetailsRowText type="label">
-                80.000
-              </S.DaoProposalDetailsRowText>
-            </S.DaoProposalDetailsRowText>
-          </S.DaoProposalDetailsRow>
-
-          <S.DaoProposalDetailsRow>
-            <S.DaoProposalDetailsRowText type="label">
-              Proposal type
-            </S.DaoProposalDetailsRowText>
-            <S.DaoProposalDetailsRowText type="value">
-              Changing voting options
-            </S.DaoProposalDetailsRowText>
-          </S.DaoProposalDetailsRow>
-
-          <S.DaoProposalDetailsRow>
-            <S.DaoProposalDetailsRowText type="label">
-              Addresses voted
-            </S.DaoProposalDetailsRowText>
-            <S.DaoProposalDetailsRowText type="value">
-              1
-            </S.DaoProposalDetailsRowText>
-          </S.DaoProposalDetailsRow>
-
-          <S.DaoProposalDetailsRow>
-            <S.DaoProposalDetailsRowText type="label">
-              My votes
-            </S.DaoProposalDetailsRowText>
-            <S.DaoProposalDetailsRowText type="value">
-              200
-            </S.DaoProposalDetailsRowText>
-          </S.DaoProposalDetailsRow>
-
-          <S.DaoProposalDetailsRow>
-            <S.DaoProposalDetailsRowText type="label">
-              Voted via delegate
-            </S.DaoProposalDetailsRowText>
-            <S.DaoProposalDetailsRowText type="value">
-              0
-            </S.DaoProposalDetailsRowText>
-          </S.DaoProposalDetailsRow>
-        </S.DaoProposalDetailsCard>
+        <AnimatePresence initial={false}>
+          {selectedTabNumber === TABS[0].number && <DetailsTab />}
+          {selectedTabNumber === TABS[1].number && <VotingSettingsTab />}
+          {selectedTabNumber === TABS[2].number && <VotingHistoryTab />}
+        </AnimatePresence>
       </S.DaoProposalDetails>
     </>
   )
