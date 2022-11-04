@@ -152,4 +152,20 @@ export const FlexLink = styled(Flex).attrs(() => ({
 
 export const AppLink = styled(AppButton)`
   border-radius: 0;
+  font-size: 13px;
+`
+
+export const Counter = styled.div`
+  height: 12px;
+  min-width: 12px;
+  padding: 0 2px;
+  border-radius: 6px;
+  background: linear-gradient(267.88deg, #d75e65 -0.85%, #e77171 98.22%);
+
+  font-family: "Gilroy";
+  font-weight: 700;
+  font-size: 9px;
+  line-height: 12px;
+  text-align: center;
+  color: #ffffff;
 `
