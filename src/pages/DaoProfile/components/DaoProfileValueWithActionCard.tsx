@@ -8,7 +8,7 @@ import { AppLink, Counter } from "../styled"
 import theme from "theme"
 
 interface Props {
-  value: string
+  value: React.ReactNode
   info: React.ReactNode
   onClick: () => void
   actionText: string
@@ -26,9 +26,13 @@ const DaoProfileValueWithActionCard: React.FC<Props> = ({
     <Card>
       <Flex full ai="center" jc="space-between">
         <Flex ai="flex-start" dir="column" gap="4">
-          <Text fz={16} lh="19px" fw={600} color={theme.textColors.primary}>
-            {value}
-          </Text>
+          {typeof value === "string" ? (
+            <Text fz={16} lh="19px" fw={600} color={theme.textColors.primary}>
+              {value}
+            </Text>
+          ) : (
+            <div>{value}</div>
+          )}
           {info}
         </Flex>
         <Flex ai="flex-center" jc="flex-end" gap="4">
