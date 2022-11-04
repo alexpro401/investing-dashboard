@@ -69,7 +69,7 @@ export const ChartFilter = styled(Flex).attrs(() => ({
 
 const ChartFilterItemVariants = {
   visible: { backgroundColor: "#20283A", color: "#E4F2FF" },
-  hidden: { backgroundColor: "transparent", color: "#B1C7FC" },
+  hidden: { backgroundColor: "rgba(0,0,0,0)", color: "#B1C7FC" },
 }
 
 export const ChartFilterItem = styled(Text).attrs((p) => ({
