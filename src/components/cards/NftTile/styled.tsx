@@ -1,7 +1,8 @@
 import styled from "styled-components"
 import theme, { Flex } from "theme"
 
-export const Container = styled(Flex)`
+export const Container = styled.div`
+  display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 8px 8px 8px 16px;
