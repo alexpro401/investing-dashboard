@@ -31,9 +31,9 @@ interface ICreateDaoProposalTypeArgs {
     earlyCompletion: boolean
     delegatedVotingAllowed: boolean
     duration: number
-    quorum: number
-    minVotesForVoting: number
-    minVotesForCreating: number
+    quorum: string
+    minVotesForVoting: string
+    minVotesForCreating: string
     rewardToken: string
     creationReward: string
     executionReward: string
@@ -149,6 +149,29 @@ const useCreateDaoProposalType = ({
         })
         daoProposalTypeIPFSCode = "ipfs://" + daoProposalTypeIPFSCode
 
+        console.log({
+          earlyCompletion,
+          delegatedVotingAllowed,
+          validatorsVote,
+          duration,
+          durationValidators: durationValidators.toNumber(),
+          quorum: parseUnits(quorum, 25).toString(),
+          quorumValidators,
+          minVotesForVoting: parseEther(minVotesForVoting).toString(),
+          minVotesForCreating: parseEther(minVotesForCreating).toString(),
+          rewardToken: rewardToken || ZERO_ADDR,
+          creationReward: parseUnits(creationReward, 18).toString(),
+          executionReward: parseUnits(executionReward, 18).toString(),
+          voteRewardsCoefficient: parseUnits(
+            voteRewardsCoefficient,
+            18
+          ).toString(),
+          executorDescription: daoProposalTypeIPFSCode,
+        })
+
+        console.log("newSettingId: ", newSettingId)
+        console.log("govSettingsAddress: ", govSettingsAddress)
+
         const encodedAddSettingsMethod = encodeAbiMethod(
           GovSettings,
           "addSettings",
@@ -159,15 +182,11 @@ const useCreateDaoProposalType = ({
                 delegatedVotingAllowed,
                 validatorsVote,
                 duration,
-                durationValidators,
-                quorum: parseUnits(String(quorum), 25).toString(),
+                durationValidators: durationValidators.toNumber(),
+                quorum: parseUnits(quorum, 25).toString(),
                 quorumValidators,
-                minVotesForVoting: parseEther(
-                  String(minVotesForVoting)
-                ).toString(),
-                minVotesForCreating: parseEther(
-                  String(minVotesForCreating)
-                ).toString(),
+                minVotesForVoting: parseEther(minVotesForVoting).toString(),
+                minVotesForCreating: parseEther(minVotesForCreating).toString(),
                 rewardToken: rewardToken || ZERO_ADDR,
                 creationReward: parseUnits(creationReward, 18).toString(),
                 executionReward: parseUnits(executionReward, 18).toString(),
@@ -181,10 +200,17 @@ const useCreateDaoProposalType = ({
           ]
         )
 
+        console.log("encodedAddSettingsMethod: ", encodedAddSettingsMethod)
+
         const encodedChangeExecuterMethod = encodeAbiMethod(
           GovSettings,
           "changeExecutors",
           [[contractAddress], [newSettingId]]
+        )
+
+        console.log(
+          "encodedChangeExecuterMethod: ",
+          encodedChangeExecuterMethod
         )
 
         let { path: daoProposalIPFSCode } = await addDaoProposalTypeData({
@@ -192,6 +218,8 @@ const useCreateDaoProposalType = ({
           proposalDescription: proposalDescription,
         })
         daoProposalIPFSCode = "ipfs://" + daoProposalIPFSCode
+
+        console.log("daoProposalIPFSCode: ", daoProposalIPFSCode)
 
         const gasLimit = await tryEstimateGas(
           daoProposalIPFSCode,
@@ -229,6 +257,7 @@ const useCreateDaoProposalType = ({
           })
         }
       } catch (error: any) {
+        console.log(error)
         setPayload(SubmitState.IDLE)
         if (!!error && !!error.data && !!error.data.message) {
           setError(error.data.message)

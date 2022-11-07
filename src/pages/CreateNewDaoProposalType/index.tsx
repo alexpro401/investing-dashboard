@@ -65,9 +65,13 @@ const CreateNewProposalType: React.FC = () => {
                 delegatedVotingAllowed,
                 validatorsVote,
                 duration: duration.toNumber(),
-                quorum: Number(formatUnits(quorum, 25)),
-                minVotesForVoting: Number(formatEther(minVotesForVoting)),
-                minVotesForCreating: Number(formatEther(minVotesForCreating)),
+                quorum: cutStringZeroes(formatUnits(quorum, 25)),
+                minVotesForVoting: cutStringZeroes(
+                  formatEther(minVotesForVoting)
+                ),
+                minVotesForCreating: cutStringZeroes(
+                  formatEther(minVotesForCreating)
+                ),
                 rewardToken: rewardToken === ZERO_ADDR ? "" : rewardToken,
                 creationReward: cutStringZeroes(
                   formatUnits(creationReward, 18)

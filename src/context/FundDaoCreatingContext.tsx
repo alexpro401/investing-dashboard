@@ -43,10 +43,10 @@ export interface DaoProposalSettingsForm {
   validatorsVote: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
   duration: { get: number; set: Dispatch<SetStateAction<number>> }
   durationValidators: { get: number; set: Dispatch<SetStateAction<number>> }
-  quorum: { get: number; set: Dispatch<SetStateAction<number>> }
-  quorumValidators: { get: number; set: Dispatch<SetStateAction<number>> }
-  minVotesForVoting: { get: number; set: Dispatch<SetStateAction<number>> }
-  minVotesForCreating: { get: number; set: Dispatch<SetStateAction<number>> }
+  quorum: { get: string; set: Dispatch<SetStateAction<string>> }
+  quorumValidators: { get: string; set: Dispatch<SetStateAction<string>> }
+  minVotesForVoting: { get: string; set: Dispatch<SetStateAction<string>> }
+  minVotesForCreating: { get: string; set: Dispatch<SetStateAction<string>> }
   rewardToken: { get: string; set: Dispatch<SetStateAction<string>> }
   creationReward: { get: string; set: Dispatch<SetStateAction<string>> }
   executionReward: { get: string; set: Dispatch<SetStateAction<string>> }
@@ -270,14 +270,14 @@ const FundDaoCreatingContextProvider: FC<
     durationValidators: useState<number>(
       storedForm._internalProposalForm.durationValidators
     ),
-    quorum: useState<number>(storedForm._internalProposalForm.quorum),
-    quorumValidators: useState<number>(
+    quorum: useState<string>(storedForm._internalProposalForm.quorum),
+    quorumValidators: useState<string>(
       storedForm._internalProposalForm.quorumValidators
     ),
-    minVotesForVoting: useState<number>(
+    minVotesForVoting: useState<string>(
       storedForm._internalProposalForm.minVotesForVoting
     ),
-    minVotesForCreating: useState<number>(
+    minVotesForCreating: useState<string>(
       storedForm._internalProposalForm.minVotesForCreating
     ),
     rewardToken: useState<string>(storedForm._internalProposalForm.rewardToken),
@@ -310,16 +310,16 @@ const FundDaoCreatingContextProvider: FC<
     durationValidators: useState<number>(
       storedForm._distributionProposalSettingsForm.durationValidators
     ),
-    quorum: useState<number>(
+    quorum: useState<string>(
       storedForm._distributionProposalSettingsForm.quorum
     ),
-    quorumValidators: useState<number>(
+    quorumValidators: useState<string>(
       storedForm._distributionProposalSettingsForm.quorumValidators
     ),
-    minVotesForVoting: useState<number>(
+    minVotesForVoting: useState<string>(
       storedForm._distributionProposalSettingsForm.minVotesForVoting
     ),
-    minVotesForCreating: useState<number>(
+    minVotesForCreating: useState<string>(
       storedForm._distributionProposalSettingsForm.minVotesForCreating
     ),
     rewardToken: useState<string>(
@@ -354,14 +354,14 @@ const FundDaoCreatingContextProvider: FC<
     durationValidators: useState<number>(
       storedForm._validatorsBalancesSettingsForm.durationValidators
     ),
-    quorum: useState<number>(storedForm._validatorsBalancesSettingsForm.quorum),
-    quorumValidators: useState<number>(
+    quorum: useState<string>(storedForm._validatorsBalancesSettingsForm.quorum),
+    quorumValidators: useState<string>(
       storedForm._validatorsBalancesSettingsForm.quorumValidators
     ),
-    minVotesForVoting: useState<number>(
+    minVotesForVoting: useState<string>(
       storedForm._validatorsBalancesSettingsForm.minVotesForVoting
     ),
-    minVotesForCreating: useState<number>(
+    minVotesForCreating: useState<string>(
       storedForm._validatorsBalancesSettingsForm.minVotesForCreating
     ),
     rewardToken: useState<string>(
@@ -394,14 +394,14 @@ const FundDaoCreatingContextProvider: FC<
     durationValidators: useState<number>(
       storedForm._defaultProposalSettingForm.durationValidators
     ),
-    quorum: useState<number>(storedForm._defaultProposalSettingForm.quorum),
-    quorumValidators: useState<number>(
+    quorum: useState<string>(storedForm._defaultProposalSettingForm.quorum),
+    quorumValidators: useState<string>(
       storedForm._defaultProposalSettingForm.quorumValidators
     ),
-    minVotesForVoting: useState<number>(
+    minVotesForVoting: useState<string>(
       storedForm._defaultProposalSettingForm.minVotesForVoting
     ),
-    minVotesForCreating: useState<number>(
+    minVotesForCreating: useState<string>(
       storedForm._defaultProposalSettingForm.minVotesForCreating
     ),
     rewardToken: useState<string>(

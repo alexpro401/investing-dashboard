@@ -65,16 +65,16 @@ const CreateDaoProposalValidatorSettings: React.FC = () => {
                     duration: validatorDaoSettings.duration.toNumber(),
                     durationValidators:
                       validatorDaoSettings.durationValidators.toNumber(),
-                    quorum: Number(
+                    quorum: cutStringZeroes(
                       formatUnits(validatorDaoSettings.quorum, 25)
                     ),
-                    quorumValidators: Number(
+                    quorumValidators: cutStringZeroes(
                       formatUnits(validatorDaoSettings.quorumValidators, 25)
                     ),
-                    minVotesForVoting: Number(
+                    minVotesForVoting: cutStringZeroes(
                       formatEther(validatorDaoSettings.minVotesForVoting)
                     ),
-                    minVotesForCreating: Number(
+                    minVotesForCreating: cutStringZeroes(
                       formatEther(validatorDaoSettings.minVotesForCreating)
                     ),
                     rewardToken:
