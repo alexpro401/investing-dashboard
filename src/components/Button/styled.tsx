@@ -70,7 +70,11 @@ export const Primary = styled(BaseButton)<{
     line-height: 22px;
     color: ${(props) => primaryTextColors[props.color]};
     font-size: ${(props) =>
-      props.size ? buttonFontSizes[props.size] : buttonFontSizes.normal};
+      props.fz
+        ? `${props.fz}px`
+        : props.size
+        ? buttonFontSizes[props.size]
+        : buttonFontSizes.normal};
   }
 `
 

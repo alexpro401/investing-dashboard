@@ -1,7 +1,10 @@
-import { createGlobalStyle } from "styled-components"
+import { createGlobalStyle, css } from "styled-components"
 import styled from "styled-components"
 import { device } from "theme"
 import { motion } from "framer-motion"
+
+import "swiper/swiper-bundle.min.css"
+import "swiper/swiper.min.css"
 
 export const GradientSVG = () => {
   const gradientTransform = `rotate(${180})`
@@ -20,6 +23,21 @@ export const GradientSVG = () => {
     </svg>
   )
 }
+
+const SwiperGlobalStyle = css`
+  :root {
+    --swiper-theme-color: #7fffd4;
+
+    --swiper-pagination-bullet-size: 4px;
+    --swiper-pagination-bullet-width: 4px;
+    --swiper-pagination-bullet-height: 4px;
+    --swiper-pagination-bullet-horizontal-gap: 4px;
+
+    --swiper-pagination-color: #7fffd4;
+    --swiper-pagination-bullet-inactive-opacity: 1;
+    --swiper-pagination-bullet-inactive-color: #293c54;
+  }
+`
 
 const GlobalStyle: any = createGlobalStyle`
   body {
@@ -93,6 +111,7 @@ const GlobalStyle: any = createGlobalStyle`
       );
     }
   }
+  ${SwiperGlobalStyle}
 `
 
 export const SpecialModalBackground = styled.div`
