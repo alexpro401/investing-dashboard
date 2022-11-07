@@ -93,8 +93,31 @@ const ValidatorsSettingsStep: React.FC = () => {
       <GovVotingSettings
         isOpen={previousSettingsOpened}
         toggle={() => setPreviousSettingsOpened((b) => !b)}
+        earlyCompletion={
+          initialForm._validatorsBalancesSettingsForm.earlyCompletion
+        }
+        delegatedVotingAllowed={
+          initialForm._validatorsBalancesSettingsForm.delegatedVotingAllowed
+        }
         duration={initialForm._validatorsBalancesSettingsForm.duration}
         quorum={"123"}
+        minVotesForVoting={
+          initialForm._validatorsBalancesSettingsForm.minVotesForVoting
+        }
+        minVotesForCreating={
+          initialForm._validatorsBalancesSettingsForm.minVotesForCreating
+        }
+        //rewardToken={initialForm._validatorsBalancesSettingsForm.rewardToken}
+        rewardToken={"0x78867bbeef44f2326bf8ddd1941a4439382ef2a7"}
+        creationReward={
+          initialForm._validatorsBalancesSettingsForm.creationReward
+        }
+        voteRewardsCoefficient={
+          initialForm._validatorsBalancesSettingsForm.voteRewardsCoefficient
+        }
+        executionReward={
+          initialForm._validatorsBalancesSettingsForm.executionReward
+        }
       />
       <S.StepsRoot>
         <Card>

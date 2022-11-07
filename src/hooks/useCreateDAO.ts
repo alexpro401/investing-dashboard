@@ -15,6 +15,7 @@ import { cloneDeep } from "lodash"
 import { IPoolFactory } from "interfaces/typechain/PoolFactory"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { BytesLike, ethers } from "ethers"
+import { ZERO_ADDR } from "constants/index"
 
 const useCreateDAO = () => {
   const {
@@ -95,8 +96,6 @@ const useCreateDAO = () => {
       // TODO: handle case when ipfs upload failed
       return
     }
-
-    const ZERO_ADDR = "0x0000000000000000000000000000000000000000"
 
     const defaultSettings = {
       earlyCompletion: defaultProposalSettingForm.earlyCompletion.get,

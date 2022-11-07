@@ -14,9 +14,9 @@ import CreateGovProposalValidatorSettingsForm from "forms/CreateGovProposalValid
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
 import { ZERO_ADDR } from "constants/index"
 import { cutStringZeroes } from "utils"
+import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 
 import * as S from "./styled"
-import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 
 const CreateDaoProposalValidatorSettings: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
