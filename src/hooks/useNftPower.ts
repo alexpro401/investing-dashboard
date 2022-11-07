@@ -25,7 +25,9 @@ const useNftsPowerNative = ({ daoPoolAddress, tokenIds }: Props) => {
   useEffect(() => {
     if (!nftInfo) return
 
-    const { isSupportPower, isSupportTotalSupply, totalSupply } = nftInfo
+    const isSupportTotalSupply = false
+
+    const { isSupportPower, totalSupply } = nftInfo
     const tokenId = tokenIds[0]!
 
     // TODO: check when nft with power method will be deployed
@@ -74,12 +76,9 @@ const useNftPower = ({ daoPoolAddress }: PropsBase) => {
   useEffect(() => {
     if (!nftInfo) return
 
-    const {
-      isSupportPower,
-      isSupportTotalSupply,
-      totalPowerInTokens,
-      totalSupply,
-    } = nftInfo
+    const isSupportTotalSupply = false
+
+    const { isSupportPower, totalPowerInTokens, totalSupply } = nftInfo
 
     // if not supported power and supply by ERC721
     if (
