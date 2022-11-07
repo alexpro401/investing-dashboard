@@ -91,6 +91,11 @@ const useCreateDAO = () => {
 
     await additionalData.uploadSelf()
 
+    if (!additionalData._path) {
+      // TODO: handle case when ipfs upload failed
+      return
+    }
+
     const ZERO_ADDR = "0x0000000000000000000000000000000000000000"
 
     const defaultSettings = {
@@ -232,6 +237,7 @@ const useCreateDAO = () => {
               ),
               18
             ).toString(),
+            executorDescription: "DP",
           }
         : {
             ...cloneDeep(defaultSettings),
@@ -247,6 +253,7 @@ const useCreateDAO = () => {
     }
 
     const POOL_PARAMETERS = {
+      name: daoName.get,
       settingsParams: {
         proposalSettings: [
           defaultSettings,
@@ -289,13 +296,10 @@ const useCreateDAO = () => {
     const gasLimit = await tryEstimateGas(POOL_PARAMETERS)
 
     try {
-      const transactionResponse = await factory.deployGovPool(
-        POOL_PARAMETERS as unknown as IPoolFactory.GovPoolDeployParamsStruct,
-        {
-          ...transactionOptions,
-          gasLimit,
-        }
-      )
+      const transactionResponse = await factory.deployGovPool(POOL_PARAMETERS, {
+        ...transactionOptions,
+        gasLimit,
+      })
 
       setPayload(SubmitState.WAIT_CONFIRM)
       const receipt = await addTransaction(transactionResponse, {

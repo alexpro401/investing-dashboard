@@ -69,8 +69,8 @@ export const useGovSettingsAddress = (daoAddress: string) => {
       if (!govPoolContract) return
 
       try {
-        const _govSettingsAddress = await govPoolContract.govSetting()
-        setGovSettingsAddress(_govSettingsAddress)
+        const { settings } = await govPoolContract.getHelperContracts()
+        setGovSettingsAddress(settings)
       } catch (error) {
         console.log(error)
       }
