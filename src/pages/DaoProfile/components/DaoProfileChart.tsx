@@ -46,8 +46,6 @@ const DaoProfileChart: React.FC<Props> = ({ chart, setChart }) => {
     activePoint[1](undefined)
   }, [chart])
 
-  console.log("DAO activePoint:", activePoint[0])
-
   const ChartActiveDotValues = React.useMemo(
     () => (
       <Flex dir="column" ai="flex-start" jc="center" gap="4">
