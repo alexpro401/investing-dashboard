@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useQuery } from "urql"
+import { createClient, useQuery } from "urql"
 
 import { usePoolRegistryContract } from "contracts"
 import { AppDispatch, AppState } from "state"
@@ -87,6 +87,10 @@ export function useManagedPools(
   return [pools, pool.fetching]
 }
 
+const allPoolsGraphClient = createClient({
+  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
+  requestPolicy: "network-only",
+})
 /**
  * Returns map of pool price history
  */
@@ -111,8 +115,8 @@ export function usePriceHistory(
       startDate,
       block,
     },
-    requestPolicy: "network-only",
     pause: pause || !address || !startDate,
+    context: allPoolsGraphClient,
   })
 
   useEffect(() => {

@@ -18,7 +18,7 @@ import {
   maxLength,
 } from "utils/validators"
 import { readFromClipboard } from "utils/clipboard"
-import { DaoProposalCreatingContext } from "context/DaoProposalCreatingContext"
+import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { CreateDaoCardStepNumber } from "forms/CreateFundDaoForm/components"
 import TransactionSent from "modals/TransactionSent"
@@ -45,7 +45,7 @@ const CreateDaoProposalGeneralForm: React.FC<
     proposalDescription,
     proposalName,
     successModalState,
-  } = useContext(DaoProposalCreatingContext)
+  } = useContext(GovProposalCreatingContext)
 
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
 
