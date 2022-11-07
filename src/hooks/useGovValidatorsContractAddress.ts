@@ -11,8 +11,8 @@ export const useGovValidatorsContractAddress = (daoAddress: string) => {
     if (!govPoolContract) return
 
     try {
-      const _govValidatorsAddress = await govPoolContract.govValidators()
-      setGovValidatorsAddress(_govValidatorsAddress)
+      const { validators } = await govPoolContract.getHelperContracts()
+      setGovValidatorsAddress(validators)
     } catch (error) {
       console.log(error)
     }

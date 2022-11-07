@@ -193,18 +193,18 @@ const CreateInsuranceAccidentForm: FC = () => {
       if (!isNil(ipfsResponse) && !isNil(ipfsResponse.path)) {
         setNewAccidentHash(ipfsResponse.path)
         setAccidentCreating(SubmitState.WAIT_CONFIRM)
-        const receipt = await insurance.proposeClaim(ipfsResponse.path)
+        // const receipt = await insurance.proposeClaim(ipfsResponse.path)
 
-        const tx = await addTransaction(receipt, {
-          type: TransactionType.INSURANCE_REGISTER_PROPOSAL_CLAIM,
-          pool: pool.get,
-        })
+        // const tx = await addTransaction(receipt, {
+        //   type: TransactionType.INSURANCE_REGISTER_PROPOSAL_CLAIM,
+        //   pool: pool.get,
+        // })
 
-        if (isTxMined(tx)) {
-          _clearState()
-          setAccidentCreating(SubmitState.SUCCESS)
-          setShowSuccessfullyCreatedModal(true)
-        }
+        // if (isTxMined(tx)) {
+        //   _clearState()
+        //   setAccidentCreating(SubmitState.SUCCESS)
+        //   setShowSuccessfullyCreatedModal(true)
+        // }
       }
     } catch (error: any) {
       if (!!error && !!error.data && !!error.data.message) {

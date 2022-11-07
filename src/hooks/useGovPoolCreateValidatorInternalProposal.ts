@@ -47,6 +47,7 @@ const useGovPoolCreateValidatorInternalProposal = ({ daoAddress }: IProps) => {
         const gas =
           await govValidatorsContract?.estimateGas.createInternalProposal(
             proposalType,
+            "example.com",
             values,
             users,
             transactionOptions
@@ -93,6 +94,7 @@ const useGovPoolCreateValidatorInternalProposal = ({ daoAddress }: IProps) => {
         const resultTransaction =
           await govValidatorsContract.createInternalProposal(
             internalProposalType,
+            "example.com",
             values,
             users,
             { ...transactionOptions, gasLimit, from: account }

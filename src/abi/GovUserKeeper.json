@@ -203,7 +203,7 @@
                 "type": "uint256"
             }
         ],
-        "name": "getNftsPowerInTokens",
+        "name": "getNftsPowerInTokensBySnapshot",
         "outputs": [
             {
                 "internalType": "uint256",
@@ -463,7 +463,12 @@
         "outputs": [
             {
                 "internalType": "uint256",
-                "name": "balance",
+                "name": "totalBalance",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "ownedBalance",
                 "type": "uint256"
             }
         ],
@@ -494,6 +499,11 @@
                 "internalType": "uint256[]",
                 "name": "nfts",
                 "type": "uint256[]"
+            },
+            {
+                "internalType": "uint256",
+                "name": "ownedLength",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -506,11 +516,6 @@
             {
                 "internalType": "bool",
                 "name": "isSupportPower",
-                "type": "bool"
-            },
-            {
-                "internalType": "bool",
-                "name": "isSupportTotalSupply",
                 "type": "bool"
             },
             {
@@ -537,11 +542,6 @@
         ],
         "name": "nftSnapshot",
         "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "totalSupply",
-                "type": "uint256"
-            },
             {
                 "internalType": "uint256",
                 "name": "totalNftsPower",
@@ -676,7 +676,12 @@
         "outputs": [
             {
                 "internalType": "uint256",
-                "name": "balance",
+                "name": "totalBalance",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "ownedBalance",
                 "type": "uint256"
             }
         ],
@@ -805,6 +810,40 @@
         "name": "updateMaxTokenLockedAmount",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            },
+            {
+                "internalType": "bool",
+                "name": "isMicropool",
+                "type": "bool"
+            },
+            {
+                "internalType": "bool",
+                "name": "useDelegated",
+                "type": "bool"
+            }
+        ],
+        "name": "votingPower",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "power",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256[]",
+                "name": "nftPower",
+                "type": "uint256[]"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {

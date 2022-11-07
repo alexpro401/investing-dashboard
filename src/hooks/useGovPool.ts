@@ -7,8 +7,8 @@ export const useGovUserKeeperAddress = (daoPoolAddress?: string) => {
 
   const updateUserKeeperContract = useCallback(async () => {
     try {
-      const _address = await govPoolContract!.govUserKeeper()
-      setUserKeeperAddress(_address)
+      const { userKeeper } = await govPoolContract!.getHelperContracts()
+      setUserKeeperAddress(userKeeper)
     } catch (error) {
       console.log("updateUserKeeperContract error: ", error)
     }
