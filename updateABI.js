@@ -36,7 +36,6 @@ const fileNames = getAllFiles(ABI_PATH)
   .map((f) => f.file.substring(0, f.file.length - 5))
 
 console.log(`ABI's found: (${fileNames.length}): `)
-console.log(fileNames)
 
 if (process.argv.length < 3) {
   console.log("!Error: not provided update ABI's path")
@@ -74,7 +73,7 @@ abiUpdateAllFilesList.map((f) => {
   )
 })
 
-exec(`yarn run lint-abi`, (error, stdout, stderr) => {
+exec(`yarn eslint src/abi/*.ts`, (error, stdout, stderr) => {
   if (error) {
     console.log(`error: ${error.message}`)
     return
