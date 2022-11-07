@@ -86,6 +86,8 @@ const RiskyInvestInput: React.FC<RiskyInvestProps> = ({
 
     return (
       <TokensContainer
+        gap="12"
+        p="24px 0 0 12px"
         initial="hidden"
         animate={isZero ? "hidden" : "visible"}
         variants={dropdownVariants}

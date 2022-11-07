@@ -43,6 +43,9 @@ const CreateDaoProposalValidatorSelectType = lazy(
 const CreateDaoProposalValidatorChangeValidatorSettings = lazy(
   () => import("pages/CreateDaoProposalValidatorChangeValidatorSettings")
 )
+const CreateDaoProposalValidatorChangeVotingSettings = lazy(
+  () => import("pages/CreateDaoProposalValidatorChangeVotingSettings")
+)
 const CreateNewDaoProposalType = lazy(
   () => import("pages/CreateNewDaoProposalType")
 )
@@ -161,6 +164,10 @@ export default function Routes() {
                   element={
                     <CreateDaoProposalValidatorChangeValidatorSettings />
                   }
+                />
+                <Route
+                  path="/dao/:daoAddress/create-validator-proposal/voting-settings"
+                  element={<CreateDaoProposalValidatorChangeVotingSettings />}
                 />
                 <Route
                   path="dao/:daoAddress/create-new-proposal-type"

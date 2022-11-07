@@ -11,9 +11,10 @@ interface Props {
   toggle: () => void
   title: string
   children?: ReactNode
+  maxWidth?: string
 }
 
-const Modal: FC<Props> = ({ children, isOpen, toggle, title }) => {
+const Modal: FC<Props> = ({ children, isOpen, toggle, title, maxWidth }) => {
   if (!modalRoot) return null
   return createPortal(
     <>
@@ -33,6 +34,7 @@ const Modal: FC<Props> = ({ children, isOpen, toggle, title }) => {
         }}
       />
       <S.Container
+        maxWidth={maxWidth}
         animate={isOpen ? "visible" : "hidden"}
         initial="hidden"
         variants={{

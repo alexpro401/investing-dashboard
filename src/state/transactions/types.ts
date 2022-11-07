@@ -52,6 +52,7 @@ export enum TransactionType {
   GOV_POOL_CREATE = 101,
   GOV_POOL_DEPOSIT = 102,
   GOV_POOL_CREATE_PROPOSAL_TYPE = 103,
+  GOV_POOL_CREATE_INTERNAL_PROPOSAL = 104,
 }
 
 export interface ApproveTransactionInfo {
@@ -234,6 +235,10 @@ export interface GovPoolCreateProposalTypeTransactionInfo {
   title: string
 }
 
+export interface GovPoolCreateIntenalProposalTransactionInfo {
+  type: TransactionType.GOV_POOL_CREATE_INTERNAL_PROPOSAL
+}
+
 export type TransactionInfo =
   | ApproveTransactionInfo
   | DepositLiquidityTransactionInfo
@@ -265,6 +270,7 @@ export type TransactionInfo =
   | GovPoolCreateTransactionInfo
   | GovPoolDepositTransactionInfo
   | GovPoolCreateProposalTypeTransactionInfo
+  | GovPoolCreateIntenalProposalTransactionInfo
 
 export interface TransactionDetails {
   hash: string

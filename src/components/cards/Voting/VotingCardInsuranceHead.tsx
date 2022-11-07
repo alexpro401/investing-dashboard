@@ -13,12 +13,9 @@ interface Props {
 }
 
 const VotingCardInsuranceHead: FC<Props> = ({ payload }) => {
-  const { accidentInfo } = payload
-  const { pool } = accidentInfo
-
-  const [, poolInfo] = usePoolContract(pool)
+  const [, poolInfo] = usePoolContract(payload?.accidentInfo?.pool)
   const [{ poolMetadata }] = usePoolMetadata(
-    pool,
+    payload?.accidentInfo?.pool,
     poolInfo?.parameters.descriptionURL
   )
   const [baseToken] = useERC20Data(poolInfo?.parameters.baseToken)
@@ -31,7 +28,7 @@ const VotingCardInsuranceHead: FC<Props> = ({ payload }) => {
             m="0"
             size={24}
             source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
-            address={pool}
+            address={payload?.accidentInfo?.pool ?? ""}
           />
           <Text fz={16} fw={600} lh="19px" color="#E4F2FF">
             {poolInfo?.ticker ?? ""}

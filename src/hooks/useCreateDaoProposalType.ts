@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, useMemo, useContext } from "react"
+import { useCallback, useMemo, useContext } from "react"
 import { parseEther, parseUnits } from "@ethersproject/units"
 import { useNavigate } from "react-router-dom"
 
@@ -8,9 +8,9 @@ import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovSettings } from "abi"
 import useGasTracker from "state/gas/hooks"
-import useDaoPoolSetting from "./useDaoPoolSetting"
+import useDaoPoolSetting, { useGovSettingsAddress } from "./useDaoPoolSetting"
 import useDaoPoolNewSettingId from "./useDaoPoolNewSettingId"
-import { DaoProposalCreatingContext } from "context/DaoProposalCreatingContext"
+import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import useError from "hooks/useError"
 import usePayload from "./usePayload"
 import { useTransactionAdder } from "state/transactions/hooks"
@@ -49,9 +49,9 @@ const useCreateDaoProposalType = ({
   daoPoolAddress,
 }: IUseCreateDaoProposalTypeProps) => {
   const navigate = useNavigate()
-  const [govSettingsAddress, setGovSettingsAddress] = useState<string>("")
+  const govSettingsAddress = useGovSettingsAddress(daoPoolAddress)
   const { setSuccessModalState, closeSuccessModalState } = useContext(
-    DaoProposalCreatingContext
+    GovProposalCreatingContext
   )
 
   const addTransaction = useTransactionAdder()
@@ -102,20 +102,6 @@ const useCreateDaoProposalType = ({
     },
     [govPoolContract, transactionOptions]
   )
-
-  useEffect(() => {
-    const setupGovSettingsAddress = async () => {
-      if (!govPoolContract) return
-
-      try {
-        const _govSettingsAddress = await govPoolContract.govSetting()
-        setGovSettingsAddress(_govSettingsAddress)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    setupGovSettingsAddress()
-  }, [govPoolContract])
 
   const createDaoProposalType = useCallback(
     async (args: ICreateDaoProposalTypeArgs) => {
