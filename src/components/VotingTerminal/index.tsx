@@ -18,7 +18,7 @@ const VotingTerminal: FC<Props> = ({ daoPoolAddress, withDelegated }) => {
 
   const button = useMemo(() => {
     return (
-      <Button size="large" theme="primary" onClick={() => {}} fz={22} full>
+      <Button size="large" theme="primary" onClick={() => {}} full>
         Confirm voting & Create proposal
       </Button>
     )

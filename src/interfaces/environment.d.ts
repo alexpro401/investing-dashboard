@@ -19,6 +19,8 @@ declare global {
       REACT_APP_IPFS_PROJECT_ID: string
       REACT_APP_IPFS_PROJECT_SECRET: string
 
+      REACT_APP_MORALIS_API_KEY: string
+
       REACT_APP_PRIVACY_POLICY_HASH: string
     }
   }
