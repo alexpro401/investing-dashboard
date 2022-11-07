@@ -133,7 +133,7 @@ export const CHART_FALLBACK_DATA = Array(25).fill({
 
 export const CHART_ITEM_THEME = {
   default: {
-    isAnimationActive: true,
+    isAnimationActive: false,
     baseLine: 2,
     type: "monotone",
     strokeWidth: 2,

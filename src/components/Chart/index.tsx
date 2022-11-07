@@ -25,6 +25,7 @@ interface Props {
   nodeHeadLeft?: React.ReactNode
   nodeHeadRight?: React.ReactNode
   height: string
+  data?: any[]
   chart: any
   chartItems: any[]
   timeframe?: {
@@ -41,6 +42,7 @@ const Chart: React.FC<Props> = ({
   nodeHeadRight,
 
   height,
+  data,
   chart,
   chartItems,
   timeframe,
@@ -48,6 +50,14 @@ const Chart: React.FC<Props> = ({
   children,
 }) => {
   const CurrentChart = charts[type]
+
+  const _animationMode = React.useState(true)
+  const _activePoint = React.useState<any>()
+  React.useEffect(() => {
+    if (!isNil(_activePoint[0])) {
+      _activePoint[1](undefined)
+    }
+  }, [chartItems])
 
   const NodeHead = React.useMemo(() => {
     const leftExist = !isNil(nodeHeadLeft)
@@ -86,29 +96,48 @@ const Chart: React.FC<Props> = ({
     return DirectionByTimeframePosition[timeframePosition]
   }, [timeframe, timeframePosition])
 
-  const _chart = React.useMemo(() => {
-    if (isNil(chart.data)) {
-      return {
-        ...chart,
-        data: CHART_FALLBACK_DATA,
-      }
+  const _data = React.useMemo(() => {
+    if (isNil(data) || isEmpty(data)) {
+      return CHART_FALLBACK_DATA
     }
-    return chart
-  }, [chart])
+    return data
+  }, [data])
 
   const _chartItems = React.useMemo(() => {
-    if (isNil(chart.data) || isNil(chartItems) || isEmpty(chartItems)) {
+    if (
+      isNil(data) ||
+      isEmpty(data) ||
+      isNil(chartItems) ||
+      isEmpty(chartItems)
+    ) {
       return [CHART_FALLBACK_ITEM]
     }
     return chartItems
-  }, [chart, chartItems])
+  }, [data, chartItems])
+
+  const _chart = React.useMemo(
+    () => ({
+      ...chart,
+      onClick: (point) => {
+        chart.onClick(point)
+        _activePoint[1](point)
+      },
+    }),
+    [chart]
+  )
 
   return (
     <div>
       {NodeHead}
       <S.Container h={height} dir={_nodesDirection}>
         <React.Suspense fallback={<ChartFallback />}>
-          <CurrentChart chart={_chart} chartItems={_chartItems}>
+          <CurrentChart
+            data={_data}
+            chart={_chart}
+            chartItems={_chartItems}
+            activePoint={_activePoint[0]}
+            animationMode={_animationMode[0]}
+          >
             {children}
           </CurrentChart>
         </React.Suspense>
