@@ -20,15 +20,14 @@ interface Props {
 
 const VotingCard: FC<Props> = ({ nodeHead, payload, shorten = false }) => {
   const { chainId } = useActiveWeb3React()
-  const { creator } = payload
 
   const creatorURL = useMemo(() => {
-    if (!creator || isNil(chainId)) {
+    if (!payload || isNil(payload?.creator) || isNil(chainId)) {
       return ""
     }
 
-    return getExplorerLink(chainId, creator, ExplorerDataType.ADDRESS)
-  }, [creator, chainId])
+    return getExplorerLink(chainId, payload?.creator, ExplorerDataType.ADDRESS)
+  }, [payload, chainId])
 
   const votingCount = useMemo(() => {
     return 200
@@ -70,7 +69,7 @@ const VotingCard: FC<Props> = ({ nodeHead, payload, shorten = false }) => {
           <Flex dir="column" gap="4" ai="flex-start">
             <S.Value>
               <AppButton
-                text={shortenAddress(creator)}
+                text={shortenAddress(payload?.creator ?? "")}
                 href={creatorURL}
                 iconRight={ICON_NAMES.externalLink}
                 size="no-paddings"
