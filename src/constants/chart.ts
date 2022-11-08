@@ -48,7 +48,7 @@ export enum TIMEFRAME {
  * @key - timeframe
  * @value - [min aggregation code, max aggregation code]
  */
-export const TIMEFRAME_AGGREGATION_CODE = {
+export const TIMEFRAME_AGGREGATION_CODE: Record<string, [number, number]> = {
   [TIMEFRAME.d]: [AGGREGATION_CODE.min5, AGGREGATION_CODE.h1],
   [TIMEFRAME.w]: [AGGREGATION_CODE.min15, AGGREGATION_CODE.d1],
   [TIMEFRAME.m]: [AGGREGATION_CODE.h1, AGGREGATION_CODE.d1],

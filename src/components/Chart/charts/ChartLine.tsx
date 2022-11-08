@@ -10,6 +10,7 @@ interface Props {
   chart: any
   chartItems: any[]
   activePoint: any
+  enableActivePoint: boolean
   children: React.ReactNode
 }
 
@@ -18,11 +19,12 @@ const ChartLine: React.FC<Props> = ({
   chart,
   chartItems,
   activePoint,
+  enableActivePoint,
   children,
 }) => {
   const getActiveDot = React.useCallback(
     (line) => {
-      if (isNil(activePoint)) {
+      if (isNil(activePoint) || !enableActivePoint) {
         return {}
       }
 
@@ -36,7 +38,7 @@ const ChartLine: React.FC<Props> = ({
         ),
       }
     },
-    [activePoint]
+    [activePoint, enableActivePoint]
   )
 
   return (

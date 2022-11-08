@@ -1,5 +1,5 @@
 import * as React from "react"
-import { isEmpty, isNil } from "lodash"
+import { isEmpty, isFunction, isNil } from "lodash"
 
 import * as S from "./styled"
 import { ChartFallback, Timeframe } from "./components"
@@ -33,6 +33,7 @@ interface Props {
     set: React.Dispatch<React.SetStateAction<TIMEFRAME>>
   }
   timeframePosition?: "top" | "bottom"
+  enableActivePoint?: boolean
   children?: React.ReactNode
 }
 
@@ -47,6 +48,7 @@ const Chart: React.FC<Props> = ({
   chartItems,
   timeframe,
   timeframePosition,
+  enableActivePoint = false,
   children,
 }) => {
   const CurrentChart = charts[type]
@@ -119,11 +121,15 @@ const Chart: React.FC<Props> = ({
     () => ({
       ...chart,
       onClick: (point) => {
-        chart.onClick(point)
-        _activePoint[1](point)
+        if (!isNil(chart.onClick) && isFunction(chart.onClick)) {
+          chart.onClick(point)
+        }
+        if (enableActivePoint) {
+          _activePoint[1](point)
+        }
       },
     }),
-    [chart]
+    [chart, enableActivePoint]
   )
 
   return (
@@ -137,6 +143,7 @@ const Chart: React.FC<Props> = ({
             chartItems={_chartItems}
             activePoint={_activePoint[0]}
             animationMode={_animationMode[0]}
+            enableActivePoint={enableActivePoint}
           >
             {children}
           </CurrentChart>
@@ -149,4 +156,4 @@ const Chart: React.FC<Props> = ({
   )
 }
 
-export default Chart
+export default React.memo(Chart)
