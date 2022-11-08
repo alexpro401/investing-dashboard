@@ -34,6 +34,7 @@ import {
   GovPoolDepositTransactionInfo,
   GovPoolCreateProposalTypeTransactionInfo,
   GovPoolCreateIntenalProposalTransactionInfo,
+  GovPoolCreateValidatorProposalTransactionInfo,
 } from "state/transactions/types"
 import { formatBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
@@ -344,6 +345,12 @@ const GovPoolCreateInternalProposal: React.FC<{
   return <>Successfully created new internal proposal</>
 }
 
+const GovPoolCreateValidatorProposal: React.FC<{
+  info: GovPoolCreateValidatorProposalTransactionInfo
+}> = ({ info }) => {
+  return <>Successfully created new validator proposal</>
+}
+
 const TransactionSummary: React.FC<IProps> = ({ info }) => {
   switch (info.type) {
     case TransactionType.APPROVAL:
@@ -406,6 +413,8 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <GovPoolCreateProposalTypeSummary info={info} />
     case TransactionType.GOV_POOL_CREATE_INTERNAL_PROPOSAL:
       return <GovPoolCreateInternalProposal info={info} />
+    case TransactionType.GOV_POOL_CREATE_VALIDATOR_PROPOSAL:
+      return <GovPoolCreateValidatorProposal info={info} />
     default:
       return null
   }

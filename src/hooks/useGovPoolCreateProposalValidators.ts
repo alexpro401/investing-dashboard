@@ -1,12 +1,20 @@
-import { useCallback, useMemo } from "react"
+import { useCallback, useMemo, useContext } from "react"
 import { parseUnits } from "@ethersproject/units"
+import { useNavigate } from "react-router-dom"
 
 import { useGovPoolContract } from "contracts"
 import { useGovValidatorsContractAddress } from "./useGovValidatorsContractAddress"
+import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { addDaoProposalData } from "utils/ipfs"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovValidators } from "abi"
 import useGasTracker from "state/gas/hooks"
+import useError from "hooks/useError"
+import usePayload from "./usePayload"
+import { useTransactionAdder } from "state/transactions/hooks"
+import { SubmitState } from "constants/types"
+import { isTxMined, parseTransactionError } from "utils"
+import { TransactionType } from "state/transactions/types"
 
 interface ICreateProposalArgs {
   proposalName: string
@@ -16,10 +24,17 @@ interface ICreateProposalArgs {
 }
 
 const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
+  const navigate = useNavigate()
   const govPoolContract = useGovPoolContract(govPoolAddress)
   const govValidatorsAddress = useGovValidatorsContractAddress(govPoolAddress)
 
+  const [, setPayload] = usePayload()
+  const [, setError] = useError()
+  const addTransaction = useTransactionAdder()
   const [gasTrackerResponse] = useGasTracker()
+  const { setSuccessModalState, closeSuccessModalState } = useContext(
+    GovProposalCreatingContext
+  )
 
   const transactionOptions = useMemo(() => {
     if (!gasTrackerResponse) return
@@ -62,6 +77,8 @@ const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
       const { proposalName, proposalDescription, users, balances } = args
 
       try {
+        setPayload(SubmitState.SIGN)
+
         let { path: daoProposalIPFSCode } = await addDaoProposalData({
           proposalName,
           proposalDescription,
@@ -87,12 +104,50 @@ const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
           { ...transactionOptions, gasLimit }
         )
 
-        console.log("TODO")
-      } catch (error) {
+        setPayload(SubmitState.WAIT_CONFIRM)
+
+        const receipt = await addTransaction(resultTransaction, {
+          type: TransactionType.GOV_POOL_CREATE_VALIDATOR_PROPOSAL,
+        })
+
+        if (isTxMined(receipt)) {
+          setPayload(SubmitState.SUCCESS)
+          setSuccessModalState({
+            opened: true,
+            title: "Success",
+            text: "Congrats! You just successfully created a proposal and voted for it. Follow the proposal’s status at All proposals.",
+            image: "",
+            buttonText: "Proposals",
+            onClick: () => {
+              //TODO redirect to real validators proposals list
+              navigate("/")
+              closeSuccessModalState()
+            },
+          })
+        }
+      } catch (error: any) {
         console.log(error)
+        setPayload(SubmitState.IDLE)
+        if (!!error && !!error.data && !!error.data.message) {
+          setError(error.data.message)
+        } else {
+          const errorMessage = parseTransactionError(error.toString())
+          !!errorMessage && setError(errorMessage)
+        }
       }
     },
-    [govPoolContract, govValidatorsAddress, transactionOptions, tryEstimateGas]
+    [
+      govPoolContract,
+      govValidatorsAddress,
+      transactionOptions,
+      tryEstimateGas,
+      setError,
+      setPayload,
+      addTransaction,
+      closeSuccessModalState,
+      navigate,
+      setSuccessModalState,
+    ]
   )
 
   return createProposal

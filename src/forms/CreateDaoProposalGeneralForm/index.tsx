@@ -8,7 +8,6 @@ import {
   CardFormControl,
   AppButton,
 } from "common"
-import Button from "components/Button"
 import { InputField, TextareaField } from "fields"
 import { useFormValidation } from "hooks/useFormValidation"
 import {
@@ -117,17 +116,14 @@ const CreateDaoProposalGeneralForm: React.FC<
         title={successModalState.title}
         description={successModalState.text}
       >
-        <Button
+        <S.SuccessModalButton
           onClick={() => {
             successModalState.onClick()
           }}
+          text={successModalState.buttonText}
+          type="button"
           size="large"
-          theme="primary"
-          fz={22}
-          full
-        >
-          {successModalState.buttonText}
-        </Button>
+        />
       </TransactionSent>
       <S.StepsRoot>
         <Card>

@@ -41,13 +41,13 @@ interface ICreateDaoProposalTypeArgs {
   }
 }
 
-interface IUseCreateDaoProposalTypeProps {
+interface IUseGovPoolCreateProposalTypeProps {
   daoPoolAddress: string
 }
 
-const useCreateDaoProposalType = ({
+const useGovPoolCreateProposalType = ({
   daoPoolAddress,
-}: IUseCreateDaoProposalTypeProps) => {
+}: IUseGovPoolCreateProposalTypeProps) => {
   const navigate = useNavigate()
   const govSettingsAddress = useGovSettingsAddress(daoPoolAddress)
   const { setSuccessModalState, closeSuccessModalState } = useContext(
@@ -227,6 +227,8 @@ const useCreateDaoProposalType = ({
           [encodedAddSettingsMethod, encodedChangeExecuterMethod]
         )
 
+        console.log("gasLimit: ", gasLimit)
+
         const resultTransaction = await govPoolContract.createProposal(
           daoProposalIPFSCode,
           [govSettingsAddress, govSettingsAddress],
@@ -290,4 +292,4 @@ const useCreateDaoProposalType = ({
   return createDaoProposalType
 }
 
-export default useCreateDaoProposalType
+export default useGovPoolCreateProposalType
