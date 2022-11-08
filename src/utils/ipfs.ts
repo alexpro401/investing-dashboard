@@ -127,7 +127,7 @@ export const addInsuranceProposalData = (payload) => {
   return client.add(dataString)
 }
 
-export const addDaoProposalTypeData = ({
+export const addDaoProposalData = ({
   proposalName,
   proposalDescription,
 }: {

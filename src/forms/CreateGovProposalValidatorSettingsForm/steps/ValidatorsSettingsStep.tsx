@@ -107,8 +107,7 @@ const ValidatorsSettingsStep: React.FC = () => {
         minVotesForCreating={
           initialForm._validatorsBalancesSettingsForm.minVotesForCreating
         }
-        //rewardToken={initialForm._validatorsBalancesSettingsForm.rewardToken}
-        rewardToken={"0x78867bbeef44f2326bf8ddd1941a4439382ef2a7"}
+        rewardToken={initialForm._validatorsBalancesSettingsForm.rewardToken}
         creationReward={
           initialForm._validatorsBalancesSettingsForm.creationReward
         }
