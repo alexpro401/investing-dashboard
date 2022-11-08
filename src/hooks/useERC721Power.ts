@@ -1,12 +1,9 @@
 import { BigNumberish } from "@ethersproject/bignumber"
-import { ZERO_ADDR, ZERO } from "constants/index"
+import { ZERO } from "constants/index"
 import { useERC721Contract } from "contracts"
 import { useEffect, useState } from "react"
 import { divideBignumbers } from "utils/formulas"
 import useGovPoolTokensInfo from "./useGovPoolTokensInfo"
-
-// TODO: get power of NFTs list using multicall hook
-// const useNftPowers = () => {}
 
 interface PropsBase {
   daoPoolAddress?: string
@@ -16,7 +13,8 @@ interface Props extends PropsBase {
   tokenIds: BigNumberish[]
 }
 
-const useNftsPowerNative = ({ daoPoolAddress, tokenIds }: Props) => {
+// TODO: get power of NFTs list using multicall hook
+const useERC721Power = ({ daoPoolAddress, tokenIds }: Props) => {
   const [power, setPower] = useState(ZERO)
 
   const [{ nftAddress }, nftInfo] = useGovPoolTokensInfo(daoPoolAddress)
@@ -25,6 +23,7 @@ const useNftsPowerNative = ({ daoPoolAddress, tokenIds }: Props) => {
   useEffect(() => {
     if (!nftInfo) return
 
+    // TODO: check with contract method
     const isSupportTotalSupply = false
 
     const { isSupportPower, totalSupply } = nftInfo
@@ -60,57 +59,4 @@ const useNftsPowerNative = ({ daoPoolAddress, tokenIds }: Props) => {
   }, [nftCollection, nftInfo, tokenIds])
 }
 
-interface Props {
-  daoPoolAddress?: string
-  tokenId?: BigNumberish
-}
-
-// @param daoPoolAddress the address of the DAO pool
-// @param tokenId the id of the NFT used only for ERC721 with getMaxPowerForNft method
-const useNftPower = ({ daoPoolAddress }: PropsBase) => {
-  const [power, setPower] = useState(ZERO)
-
-  const [{ nftAddress }, nftInfo] = useGovPoolTokensInfo(daoPoolAddress)
-  const nftCollection = useERC721Contract(nftAddress)
-
-  useEffect(() => {
-    if (!nftInfo) return
-
-    const isSupportTotalSupply = false
-
-    const { isSupportPower, totalPowerInTokens, totalSupply } = nftInfo
-
-    // if not supported power and supply by ERC721
-    if (
-      !isSupportPower &&
-      !isSupportTotalSupply &&
-      !totalPowerInTokens.isZero() &&
-      !totalSupply.isZero()
-    ) {
-      setPower(divideBignumbers([totalPowerInTokens, 18], [totalSupply, 0]))
-      return
-    }
-
-    // if only supply supported by ERC721
-    if (!isSupportPower && isSupportTotalSupply && nftCollection) {
-      ;(async () => {
-        try {
-          const supply = await nftCollection.totalSupply()
-
-          if (supply.isZero()) return
-          setPower(divideBignumbers([totalPowerInTokens, 18], [supply, 0]))
-          return
-        } catch {}
-      })()
-    }
-  }, [nftInfo, nftCollection])
-
-  // NFT's not enabled by DAO pool
-  if (nftAddress === ZERO_ADDR) {
-    return null
-  }
-
-  return power
-}
-
-export default useNftPower
+export default useERC721Power

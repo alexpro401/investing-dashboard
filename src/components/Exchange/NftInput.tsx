@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 import { ZERO } from "constants/index"
 
@@ -12,25 +13,28 @@ import { formatBigNumber } from "utils"
 import * as S from "./styled"
 
 interface IToProps {
-  price: BigNumber
   balance: BigNumber
   address: string
   selectedNfts: number[]
-  onChange?: (amount: string) => void
+  nftPowerMap: Record<number, BigNumber>
   onSelect?: () => void
+  onSelectAll?: () => void
 }
 
 const NftInput: React.FC<IToProps> = ({
-  price,
   balance,
   address,
   selectedNfts,
-  onChange,
+  nftPowerMap,
+  onSelectAll,
   onSelect,
 }) => {
-  const setMaxAmount = () => {
-    !!onChange && onChange(balance.toString())
-  }
+  const totalPower = useMemo(() => {
+    return selectedNfts.reduce(
+      (acc, id) => acc.add(nftPowerMap[id] || ZERO),
+      ZERO
+    )
+  }, [nftPowerMap, selectedNfts])
 
   if (!address) {
     return (
@@ -54,9 +58,9 @@ const NftInput: React.FC<IToProps> = ({
   return (
     <S.InputContainer height="fit-content">
       <S.InputTop>
-        <S.Price>Voting power: {formatBigNumber(price, 18, 2)}</S.Price>
+        <S.Price>Voting power: {formatBigNumber(totalPower, 18, 2)}</S.Price>
 
-        <S.Balance onClick={setMaxAmount}>
+        <S.Balance onClick={onSelectAll}>
           <S.Tokens>Available: {formatBigNumber(balance, 0, 0)}</S.Tokens>
           <S.Max>All</S.Max>
         </S.Balance>
@@ -77,7 +81,7 @@ const NftInput: React.FC<IToProps> = ({
         {selectedNfts.map((id) => (
           <NftRow
             key={id}
-            votingPower={ZERO}
+            votingPower={nftPowerMap[id] || ZERO}
             tokenId={id.toString()}
             tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
           />

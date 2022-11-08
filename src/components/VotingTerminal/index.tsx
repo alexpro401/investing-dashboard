@@ -19,14 +19,16 @@ const VotingTerminal: FC<Props> = ({ daoPoolAddress }) => {
   const {
     formInfo,
     allNftsId,
-    selectedNfts,
-    handleSelect,
     withDelegated,
-    toggleDelegated,
     selectOpen,
+    nftPowerMap,
+    ERC20Amount,
+    ERC721Amount,
+    ERC20Price,
+    toggleDelegated,
     setSelectOpen,
     handleERC20Change,
-    ERC20Amount,
+    handleERC721Change,
   } = useVotingTerminal(daoPoolAddress)
 
   const button = useMemo(() => {
@@ -77,14 +79,14 @@ const VotingTerminal: FC<Props> = ({ daoPoolAddress }) => {
   const selectNfts = useCallback(
     (ids: string[]) => {
       setSelectOpen(false)
-      handleSelect(ids)
+      handleERC721Change(ids)
     },
-    [handleSelect, setSelectOpen]
+    [handleERC721Change, setSelectOpen]
   )
 
   const selectedNftsStrings = useMemo(
-    () => selectedNfts.map((id) => id.toString()),
-    [selectedNfts]
+    () => ERC721Amount.map((id) => id.toString()),
+    [ERC721Amount]
   )
 
   return (
@@ -108,7 +110,7 @@ const VotingTerminal: FC<Props> = ({ daoPoolAddress }) => {
 
         {formInfo.erc20.address !== ZERO_ADDR && (
           <ExchangeInput
-            price={ZERO}
+            price={ERC20Price}
             amount={ERC20Amount.toString()}
             balance={formInfo.erc20.balance || ZERO}
             address={formInfo.erc20.address}
@@ -122,9 +124,10 @@ const VotingTerminal: FC<Props> = ({ daoPoolAddress }) => {
 
         {formInfo.erc721.address !== ZERO_ADDR && (
           <NftInput
-            selectedNfts={selectedNfts}
+            nftPowerMap={nftPowerMap}
+            selectedNfts={ERC721Amount}
+            onSelectAll={() => selectNfts(allNftsId)}
             onSelect={() => setSelectOpen(true)}
-            price={ZERO}
             balance={formInfo.erc721.balance || ZERO}
             address={formInfo.erc721.address}
           />

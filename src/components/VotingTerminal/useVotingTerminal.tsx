@@ -3,13 +3,15 @@ import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
 import { useDelegatedERC721Tokens, useERC721Tokens } from "hooks/useERC721List"
 import useGovBalance from "hooks/useGovBalance"
 import useGovPoolTokensInfo from "hooks/useGovPoolTokensInfo"
-import useNftPower from "hooks/useNftPower"
 import {
   IGovNftBalance,
   IGovTokenBalance,
 } from "interfaces/contracts/IGovUserKeeper"
 import { useCallback, useMemo, useState } from "react"
 import { useERC20Data } from "state/erc20/hooks"
+import useGovVotingPower from "hooks/useGovVotingPower"
+import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
+import { multiplyBignumbers } from "utils/formulas"
 
 // fetches tokens & nfts balance for specific user of specific DAO pool
 const useGovMemberBalance = (
@@ -74,17 +76,24 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
 
   // form state
   const [ERC20Amount, setERC20Amount] = useState(ZERO)
-  const [ERC721Amount, setERC721Amount] = useState<BigNumberish>(ZERO)
-
-  const [selectedNfts, setSelectedNfts] = useState<number[]>([])
+  const [ERC20Price, setERC20Price] = useState(ZERO)
+  const [ERC721Amount, setERC721Amount] = useState<number[]>([])
 
   const [{ tokenAddress, nftAddress }] = useGovPoolTokensInfo(daoPoolAddress)
   const { ERC20Balance, ERC721Balance } = useGovMemberBalance(
     daoPoolAddress,
     withDelegated
   )
-  const power = useNftPower({ daoPoolAddress })
+
   const [fromData] = useERC20Data(tokenAddress)
+  const priceUSD = useTokenPriceOutUSD({ tokenAddress })
+
+  // get power for all nfts
+  const userOwnedPower = useGovVotingPower({ daoPoolAddress })
+  const userDelegatedPower = useGovVotingPower({
+    daoPoolAddress,
+    isMicroPool: true,
+  })
 
   // user nfts ids lists
   const userTokens = useERC721Tokens(daoPoolAddress)
@@ -99,22 +108,49 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
     return [...userTokens].map((v) => v.toString())
   }, [userTokens, delegatedTokens, withDelegated])
 
-  const handleSelect = useCallback((ids: string[]) => {
-    setSelectedNfts(ids.map((nft) => Number(nft)))
-  }, [])
-
-  const toggleDelegated = (state: boolean) => {
-    if (!state) {
-      setSelectedNfts((prev) =>
-        prev.filter((id) => !delegatedTokens.includes(id))
+  // merge all power in one
+  const allNftsPower = useMemo(() => {
+    if (withDelegated) {
+      return [...userOwnedPower.nftPower, ...userDelegatedPower.nftPower].map(
+        (v) => v.toString()
       )
     }
-    setWithDelegated(state)
-  }
 
-  const handleERC20Change = useCallback((targetValue: BigNumberish) => {
-    const amount = BigNumber.from(targetValue)
-    setERC20Amount(amount)
+    return [...userOwnedPower.nftPower].map((v) => v.toString())
+  }, [userDelegatedPower.nftPower, userOwnedPower.nftPower, withDelegated])
+
+  const nftPowerMap = useMemo(() => {
+    return allNftsId.reduce((acc, id, index) => {
+      return {
+        ...acc,
+        [id]: allNftsPower[index],
+      }
+    }, {})
+  }, [allNftsId, allNftsPower])
+
+  const toggleDelegated = useCallback(
+    (state: boolean) => {
+      if (!state) {
+        setERC721Amount((prev) =>
+          prev.filter((id) => !delegatedTokens.includes(id))
+        )
+      }
+      setWithDelegated(state)
+    },
+    [delegatedTokens]
+  )
+
+  const handleERC20Change = useCallback(
+    (targetValue: BigNumberish) => {
+      const amount = BigNumber.from(targetValue)
+      setERC20Amount(amount)
+      setERC20Price(multiplyBignumbers([amount, 18], [priceUSD, 18]))
+    },
+    [priceUSD]
+  )
+
+  const handleERC721Change = useCallback((ids: string[]) => {
+    setERC721Amount(ids.map((nft) => Number(nft)))
   }, [])
 
   // UI data
@@ -136,14 +172,16 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
   return {
     formInfo,
     allNftsId,
-    selectedNfts,
-    handleSelect,
+    ERC721Amount,
+    handleERC721Change,
     withDelegated,
     toggleDelegated,
     selectOpen,
     setSelectOpen,
     handleERC20Change,
     ERC20Amount,
+    ERC20Price,
+    nftPowerMap,
   }
 }
 
