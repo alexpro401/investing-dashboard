@@ -5,6 +5,7 @@ import { useMemo } from "react"
 export const useAPI = () => {
   // TODO: active nft API will be stored in the redux store "user"
   // TODO: create hook to get user active nft API
+  // TODO: useUserActiveAPI()
   const enabledNftApi = "Moralis"
 
   return useMemo(

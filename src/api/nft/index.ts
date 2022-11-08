@@ -15,7 +15,7 @@ interface NftAPI {
     account: string,
     chainId: number,
     contractAddress: string
-  ) => Promise<string[]>
+  ) => Promise<number[]>
 
   // @returns an array of NFT metadata for the given NFT collection contract
   getNftsMetadataByContract: (
