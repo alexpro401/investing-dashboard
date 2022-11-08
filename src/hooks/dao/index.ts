@@ -1,10 +1,10 @@
 export * from "./proposals"
 export { default as useCreateDAO } from "./useCreateDAO"
-export { default as useDaoPoolNewSettingId } from "./useDaoPoolNewSettingId"
+export { default as useGovSettingsNewSettingId } from "./useGovSettingsNewSettingId"
 export {
-  default as useDaoPoolSetting,
+  default as useGovPoolSetting,
   useGovSettingsAddress,
-} from "./useDaoPoolSetting"
+} from "./useGovPoolSetting"
 export * from "./useGovPool"
 export { default as useGovPoolDeposit } from "./useGovPoolDeposit"
 export { default as useGovPoolTokensInfo } from "./useGovPoolTokensInfo"

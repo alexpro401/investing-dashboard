@@ -10,7 +10,7 @@ import ValidatorsListContextProvider from "context/govPool/proposals/ValidatorsL
 import {
   useGovPoolValidators,
   useGovValidatorsValidatorsToken,
-  useDaoPoolSetting,
+  useGovPoolSetting,
 } from "hooks/dao"
 import CreateGovProposalValidatorSettingsForm from "forms/CreateGovProposalValidatorSettingsForm"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
@@ -25,7 +25,7 @@ const CreateDaoProposalValidatorSettings: React.FC = () => {
 
   const [validatorsFromGraph] = useGovPoolValidators(daoAddress ?? "")
   const tokenData = useGovValidatorsValidatorsToken(daoAddress ?? "")
-  const [validatorDaoSettings] = useDaoPoolSetting({
+  const [validatorDaoSettings] = useGovPoolSetting({
     daoAddress: daoAddress ?? "",
     settingsId: EExecutor.VALIDATORS,
   })

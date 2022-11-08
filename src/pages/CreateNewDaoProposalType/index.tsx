@@ -7,7 +7,7 @@ import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidatio
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
 import FundDaoCreatingContextProvider from "context/FundDaoCreatingContext"
 import CreateNewProposalTypeForm from "forms/CreateNewProposalTypeForm"
-import { useDaoPoolSetting } from "hooks/dao"
+import { useGovPoolSetting } from "hooks/dao"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
 import { ZERO_ADDR } from "constants/index"
@@ -17,7 +17,7 @@ import * as S from "./styled"
 
 const CreateNewProposalType: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
-  const [daoSettings, loading] = useDaoPoolSetting({
+  const [daoSettings, loading] = useGovPoolSetting({
     daoAddress: daoAddress ?? "",
     settingsId: EExecutor.DEFAULT,
   })

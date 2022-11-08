@@ -9,8 +9,8 @@ import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovSettings } from "abi"
 import useGasTracker from "state/gas/hooks"
 import {
-  useDaoPoolNewSettingId,
-  useDaoPoolSetting,
+  useGovSettingsNewSettingId,
+  useGovPoolSetting,
   useGovSettingsAddress,
 } from "hooks/dao"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
@@ -62,9 +62,9 @@ const useGovPoolCreateProposalType = ({
   const [, setError] = useError()
   const [gasTrackerResponse] = useGasTracker()
   const [newSettingId, newSettingIdLoading, newSettingIdError] =
-    useDaoPoolNewSettingId({ daoAddress: daoPoolAddress })
+    useGovSettingsNewSettingId({ daoAddress: daoPoolAddress })
   const [daoDefaultSettings, settingsLoading, settingsError] =
-    useDaoPoolSetting({
+    useGovPoolSetting({
       daoAddress: daoPoolAddress,
       settingsId: EExecutor.DEFAULT,
     })
