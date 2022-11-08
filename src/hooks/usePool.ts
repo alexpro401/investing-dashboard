@@ -233,25 +233,25 @@ export const usePoolPriceHistory = (
   address: string | undefined,
   tf: TIMEFRAME
 ) => {
-  const [history] = usePriceHistory(
+  const [history, fetching] = usePriceHistory(
     address,
     TIMEFRAME_AGGREGATION_CODE[tf],
     TIMEFRAME_LIMIT_CODE[tf],
     TIMEFRAME_FROM_DATE[tf]
   )
 
-  return generatePoolPnlHistory(history)
+  return [generatePoolPnlHistory(history), fetching]
 }
 
 export const usePoolLockedFundsHistory = (
   address: string | undefined,
   tf: TIMEFRAME
 ) => {
-  const [history] = usePriceHistory(
+  const [history, fetching] = usePriceHistory(
     address,
     TIMEFRAME_AGGREGATION_CODE[tf],
     TIMEFRAME_LIMIT_CODE[tf],
     TIMEFRAME_FROM_DATE[tf]
   )
-  return generateLockedFundsChartData(history)
+  return [generateLockedFundsChartData(history), fetching]
 }

@@ -105,6 +105,7 @@ const DaoProfileChart: React.FC<Props> = ({ chart, setChart }) => {
         chartItems={ActiveLines[chart]}
         nodeHeadLeft={ChartActiveDotValues}
         nodeHeadRight={ChartToggle}
+        loading={false}
       />
     </Card>
   )

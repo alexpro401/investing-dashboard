@@ -46,7 +46,7 @@ const TabPoolLockedFunds: FC<{
   ] = usePoolLockedFunds(poolData, poolInfo, baseToken)
 
   const [tf, setTf] = useState(TIMEFRAME.d)
-  const data = usePoolLockedFundsHistory(address, tf)
+  const [data, fetching] = usePoolLockedFundsHistory(address, tf)
 
   const onTerminalNavigate = useCallback(() => {
     if (isNil(address)) return
@@ -82,18 +82,19 @@ const TabPoolLockedFunds: FC<{
               {
                 isAnimationActive: true,
                 type: "linear",
-                dataKey: "investorsUSD",
-                stroke: "#9AE2CB",
+                dataKey: "traderUSDValue",
+                stroke: "#ffffff",
               },
               {
                 isAnimationActive: true,
                 type: "linear",
-                dataKey: "traderUSDValue",
-                stroke: "#ffffff",
+                dataKey: "investorsUSD",
+                stroke: "#9AE2CB",
               },
             ]}
             timeframe={{ get: tf, set: setTf }}
             timeframePosition="bottom"
+            loading={fetching}
           >
             <Tooltip
               content={(p) => {

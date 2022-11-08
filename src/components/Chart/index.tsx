@@ -34,6 +34,7 @@ interface Props {
   }
   timeframePosition?: "top" | "bottom"
   enableActivePoint?: boolean
+  loading?: boolean
   children?: React.ReactNode
 }
 
@@ -49,9 +50,12 @@ const Chart: React.FC<Props> = ({
   timeframe,
   timeframePosition,
   enableActivePoint = false,
+  loading,
   children,
 }) => {
   const CurrentChart = charts[type]
+
+  const _loading = React.useMemo(() => !isNil(loading) && loading, [loading])
 
   const _animationMode = React.useState(true)
   const _activePoint = React.useState<any>()
@@ -136,18 +140,22 @@ const Chart: React.FC<Props> = ({
     <div>
       {NodeHead}
       <S.Container h={height} dir={_nodesDirection}>
-        <React.Suspense fallback={<ChartFallback />}>
-          <CurrentChart
-            data={_data}
-            chart={_chart}
-            chartItems={_chartItems}
-            activePoint={_activePoint[0]}
-            animationMode={_animationMode[0]}
-            enableActivePoint={enableActivePoint}
-          >
-            {children}
-          </CurrentChart>
-        </React.Suspense>
+        {_loading ? (
+          <ChartFallback />
+        ) : (
+          <React.Suspense fallback={<ChartFallback />}>
+            <CurrentChart
+              data={_data}
+              chart={_chart}
+              chartItems={_chartItems}
+              activePoint={_activePoint[0]}
+              animationMode={_animationMode[0]}
+              enableActivePoint={enableActivePoint}
+            >
+              {children}
+            </CurrentChart>
+          </React.Suspense>
+        )}
         {!isNil(timeframe) && (
           <Timeframe current={timeframe.get} set={timeframe.set} />
         )}
