@@ -11,10 +11,10 @@ export type DaoVotingSettings = {
   validatorsVote: boolean
   duration: number
   durationValidators: number
-  quorum: number
-  quorumValidators: number
-  minVotesForVoting: number
-  minVotesForCreating: number
+  quorum: string
+  quorumValidators: string
+  minVotesForVoting: string
+  minVotesForCreating: string
   rewardToken: string
   creationReward: string
   executionReward: string

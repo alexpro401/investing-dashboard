@@ -15,6 +15,7 @@ import { cloneDeep } from "lodash"
 import { IPoolFactory } from "interfaces/typechain/PoolFactory"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { BytesLike, ethers } from "ethers"
+import { ZERO_ADDR } from "constants/index"
 
 const useCreateDAO = () => {
   const {
@@ -96,8 +97,6 @@ const useCreateDAO = () => {
       return
     }
 
-    const ZERO_ADDR = "0x0000000000000000000000000000000000000000"
-
     const defaultSettings = {
       earlyCompletion: defaultProposalSettingForm.earlyCompletion.get,
       delegatedVotingAllowed:
@@ -107,36 +106,30 @@ const useCreateDAO = () => {
       durationValidators: isValidator.get
         ? defaultProposalSettingForm.durationValidators.get
         : defaultProposalSettingForm.duration.get,
-      quorum: parseUnits(
-        String(defaultProposalSettingForm.quorum.get),
-        25
-      ).toString(),
+      quorum: parseUnits(defaultProposalSettingForm.quorum.get, 25).toString(),
       quorumValidators: isValidator.get
         ? parseUnits(
-            String(defaultProposalSettingForm.quorumValidators.get),
+            defaultProposalSettingForm.quorumValidators.get,
             25
           ).toString()
-        : parseUnits(
-            String(defaultProposalSettingForm.quorum.get),
-            25
-          ).toString(),
+        : parseUnits(defaultProposalSettingForm.quorum.get, 25).toString(),
       minVotesForVoting: parseEther(
-        String(defaultProposalSettingForm.minVotesForVoting.get)
+        defaultProposalSettingForm.minVotesForVoting.get
       ).toString(),
       minVotesForCreating: parseEther(
-        String(defaultProposalSettingForm.minVotesForCreating.get)
+        defaultProposalSettingForm.minVotesForCreating.get
       ).toString(),
       rewardToken: defaultProposalSettingForm.rewardToken.get || ZERO_ADDR,
       creationReward: parseUnits(
-        String(defaultProposalSettingForm.creationReward.get),
+        defaultProposalSettingForm.creationReward.get,
         18
       ).toString(),
       executionReward: parseUnits(
-        String(defaultProposalSettingForm.executionReward.get),
+        defaultProposalSettingForm.executionReward.get,
         18
       ).toString(),
       voteRewardsCoefficient: parseUnits(
-        String(defaultProposalSettingForm.voteRewardsCoefficient.get),
+        defaultProposalSettingForm.voteRewardsCoefficient.get,
         18
       ).toString(),
       executorDescription: "default",
@@ -153,36 +146,30 @@ const useCreateDAO = () => {
             durationValidators: isValidator.get
               ? internalProposalForm.durationValidators.get
               : internalProposalForm.duration.get,
-            quorum: parseUnits(
-              String(internalProposalForm.quorum.get),
-              25
-            ).toString(),
+            quorum: parseUnits(internalProposalForm.quorum.get, 25).toString(),
             quorumValidators: isValidator.get
               ? parseUnits(
-                  String(internalProposalForm.quorumValidators.get),
+                  internalProposalForm.quorumValidators.get,
                   25
                 ).toString()
-              : parseUnits(
-                  String(internalProposalForm.quorum.get),
-                  25
-                ).toString(),
+              : parseUnits(internalProposalForm.quorum.get, 25).toString(),
             minVotesForVoting: parseEther(
-              String(internalProposalForm.minVotesForVoting.get)
+              internalProposalForm.minVotesForVoting.get
             ).toString(),
             minVotesForCreating: parseEther(
-              String(internalProposalForm.minVotesForCreating.get)
+              internalProposalForm.minVotesForCreating.get
             ).toString(),
             rewardToken: internalProposalForm.rewardToken.get || ZERO_ADDR,
             creationReward: parseUnits(
-              String(internalProposalForm.creationReward.get),
+              internalProposalForm.creationReward.get,
               18
             ).toString(),
             executionReward: parseUnits(
-              String(internalProposalForm.executionReward.get),
+              internalProposalForm.executionReward.get,
               18
             ).toString(),
             voteRewardsCoefficient: parseUnits(
-              String(internalProposalForm.voteRewardsCoefficient.get),
+              internalProposalForm.voteRewardsCoefficient.get,
               18
             ).toString(),
             executorDescription: "internal",
@@ -203,38 +190,36 @@ const useCreateDAO = () => {
               ? distributionProposalSettingsForm.durationValidators.get
               : distributionProposalSettingsForm.duration.get,
             quorum: parseUnits(
-              String(distributionProposalSettingsForm.quorum.get),
+              distributionProposalSettingsForm.quorum.get,
               25
             ).toString(),
             quorumValidators: isValidator.get
               ? parseUnits(
-                  String(distributionProposalSettingsForm.quorumValidators.get),
+                  distributionProposalSettingsForm.quorumValidators.get,
                   25
                 ).toString()
               : parseUnits(
-                  String(distributionProposalSettingsForm.quorum.get),
+                  distributionProposalSettingsForm.quorum.get,
                   25
                 ).toString(),
             minVotesForVoting: parseEther(
-              String(distributionProposalSettingsForm.minVotesForVoting.get)
+              distributionProposalSettingsForm.minVotesForVoting.get
             ).toString(),
             minVotesForCreating: parseEther(
-              String(distributionProposalSettingsForm.minVotesForCreating.get)
+              distributionProposalSettingsForm.minVotesForCreating.get
             ).toString(),
             rewardToken:
               distributionProposalSettingsForm.rewardToken.get || ZERO_ADDR,
             creationReward: parseUnits(
-              String(distributionProposalSettingsForm.creationReward.get),
+              distributionProposalSettingsForm.creationReward.get,
               18
             ).toString(),
             executionReward: parseUnits(
-              String(distributionProposalSettingsForm.executionReward.get),
+              distributionProposalSettingsForm.executionReward.get,
               18
             ).toString(),
             voteRewardsCoefficient: parseUnits(
-              String(
-                distributionProposalSettingsForm.voteRewardsCoefficient.get
-              ),
+              distributionProposalSettingsForm.voteRewardsCoefficient.get,
               18
             ).toString(),
             executorDescription: "DP",

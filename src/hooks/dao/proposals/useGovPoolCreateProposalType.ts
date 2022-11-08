@@ -3,14 +3,14 @@ import { parseEther, parseUnits } from "@ethersproject/units"
 import { useNavigate } from "react-router-dom"
 
 import { useGovPoolContract } from "contracts"
-import { addDaoProposalTypeData } from "utils/ipfs"
+import { addDaoProposalData } from "utils/ipfs"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovSettings } from "abi"
 import useGasTracker from "state/gas/hooks"
 import {
-  useDaoPoolNewSettingId,
-  useDaoPoolSetting,
+  useGovSettingsNewSettingId,
+  useGovPoolSetting,
   useGovSettingsAddress,
 } from "hooks/dao"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
@@ -34,9 +34,9 @@ interface ICreateDaoProposalTypeArgs {
     earlyCompletion: boolean
     delegatedVotingAllowed: boolean
     duration: number
-    quorum: number
-    minVotesForVoting: number
-    minVotesForCreating: number
+    quorum: string
+    minVotesForVoting: string
+    minVotesForCreating: string
     rewardToken: string
     creationReward: string
     executionReward: string
@@ -44,13 +44,13 @@ interface ICreateDaoProposalTypeArgs {
   }
 }
 
-interface IUseCreateDaoProposalTypeProps {
+interface IUseGovPoolCreateProposalTypeProps {
   daoPoolAddress: string
 }
 
-const useCreateDaoProposalType = ({
+const useGovPoolCreateProposalType = ({
   daoPoolAddress,
-}: IUseCreateDaoProposalTypeProps) => {
+}: IUseGovPoolCreateProposalTypeProps) => {
   const navigate = useNavigate()
   const govSettingsAddress = useGovSettingsAddress(daoPoolAddress)
   const { setSuccessModalState, closeSuccessModalState } = useContext(
@@ -62,9 +62,9 @@ const useCreateDaoProposalType = ({
   const [, setError] = useError()
   const [gasTrackerResponse] = useGasTracker()
   const [newSettingId, newSettingIdLoading, newSettingIdError] =
-    useDaoPoolNewSettingId({ daoAddress: daoPoolAddress })
+    useGovSettingsNewSettingId({ daoAddress: daoPoolAddress })
   const [daoDefaultSettings, settingsLoading, settingsError] =
-    useDaoPoolSetting({
+    useGovPoolSetting({
       daoAddress: daoPoolAddress,
       settingsId: EExecutor.DEFAULT,
     })
@@ -146,7 +146,7 @@ const useCreateDaoProposalType = ({
       try {
         setPayload(SubmitState.SIGN)
 
-        let { path: daoProposalTypeIPFSCode } = await addDaoProposalTypeData({
+        let { path: daoProposalTypeIPFSCode } = await addDaoProposalData({
           proposalName: proposalTypeName,
           proposalDescription: proposalTypeDescription,
         })
@@ -162,15 +162,11 @@ const useCreateDaoProposalType = ({
                 delegatedVotingAllowed,
                 validatorsVote,
                 duration,
-                durationValidators,
-                quorum: parseUnits(String(quorum), 25).toString(),
+                durationValidators: durationValidators.toNumber(),
+                quorum: parseUnits(quorum, 25).toString(),
                 quorumValidators,
-                minVotesForVoting: parseEther(
-                  String(minVotesForVoting)
-                ).toString(),
-                minVotesForCreating: parseEther(
-                  String(minVotesForCreating)
-                ).toString(),
+                minVotesForVoting: parseEther(minVotesForVoting).toString(),
+                minVotesForCreating: parseEther(minVotesForCreating).toString(),
                 rewardToken: rewardToken || ZERO_ADDR,
                 creationReward: parseUnits(creationReward, 18).toString(),
                 executionReward: parseUnits(executionReward, 18).toString(),
@@ -190,7 +186,7 @@ const useCreateDaoProposalType = ({
           [[contractAddress], [newSettingId]]
         )
 
-        let { path: daoProposalIPFSCode } = await addDaoProposalTypeData({
+        let { path: daoProposalIPFSCode } = await addDaoProposalData({
           proposalName: proposalName,
           proposalDescription: proposalDescription,
         })
@@ -232,6 +228,7 @@ const useCreateDaoProposalType = ({
           })
         }
       } catch (error: any) {
+        console.log(error)
         setPayload(SubmitState.IDLE)
         if (!!error && !!error.data && !!error.data.message) {
           setError(error.data.message)
@@ -264,4 +261,4 @@ const useCreateDaoProposalType = ({
   return createDaoProposalType
 }
 
-export default useCreateDaoProposalType
+export default useGovPoolCreateProposalType

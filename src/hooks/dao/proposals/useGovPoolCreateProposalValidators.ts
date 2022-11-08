@@ -1,33 +1,37 @@
 import { useCallback, useMemo, useContext } from "react"
 import { parseUnits } from "@ethersproject/units"
-import { BigNumberish } from "@ethersproject/bignumber"
 import { useNavigate } from "react-router-dom"
 
-import { useGovValidatorsContract } from "contracts"
+import { useGovPoolContract } from "contracts"
+import { useGovValidatorsContractAddress } from "../useGovValidatorsContractAddress"
+import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
+import { addDaoProposalData } from "utils/ipfs"
+import { encodeAbiMethod } from "utils/encodeAbi"
+import { GovValidators } from "abi"
+import useGasTracker from "state/gas/hooks"
 import useError from "hooks/useError"
 import usePayload from "../../usePayload"
-import useGasTracker from "state/gas/hooks"
+import { useTransactionAdder } from "state/transactions/hooks"
 import { SubmitState } from "constants/types"
 import { isTxMined, parseTransactionError } from "utils"
-import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
-import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
-import { useActiveWeb3React } from "hooks"
-import { addDaoProposalData } from "utils/ipfs"
 
-interface IProps {
-  daoAddress: string
+interface ICreateProposalArgs {
+  proposalName: string
+  proposalDescription: string
+  users: string[]
+  balances: string[]
 }
 
-const useGovPoolCreateValidatorInternalProposal = ({ daoAddress }: IProps) => {
+const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
   const navigate = useNavigate()
-  const { account } = useActiveWeb3React()
-  const govValidatorsContract = useGovValidatorsContract(daoAddress)
+  const govPoolContract = useGovPoolContract(govPoolAddress)
+  const govValidatorsAddress = useGovValidatorsContractAddress(govPoolAddress)
 
   const [, setPayload] = usePayload()
   const [, setError] = useError()
-  const [gasTrackerResponse] = useGasTracker()
   const addTransaction = useTransactionAdder()
+  const [gasTrackerResponse] = useGasTracker()
   const { setSuccessModalState, closeSuccessModalState } = useContext(
     GovProposalCreatingContext
   )
@@ -42,22 +46,17 @@ const useGovPoolCreateValidatorInternalProposal = ({ daoAddress }: IProps) => {
 
   const tryEstimateGas = useCallback(
     async (
-      proposalType: number,
-      daoProposalIPFSCode: string,
-      values: BigNumberish[],
-      users: string[]
+      daoProposalTypeIPFSCode: string,
+      encodedChangeBalancesMethod: any
     ) => {
-      if (!govValidatorsContract) return
-
       try {
-        const gas =
-          await govValidatorsContract?.estimateGas.createInternalProposal(
-            proposalType,
-            daoProposalIPFSCode,
-            values,
-            users,
-            transactionOptions
-          )
+        const gas = await govPoolContract?.estimateGas.createProposal(
+          daoProposalTypeIPFSCode,
+          [govValidatorsAddress],
+          [0],
+          [encodedChangeBalancesMethod],
+          transactionOptions
+        )
 
         if (!gas?._isBigNumber) {
           return
@@ -68,24 +67,14 @@ const useGovPoolCreateValidatorInternalProposal = ({ daoAddress }: IProps) => {
         return
       }
     },
-    [govValidatorsContract, transactionOptions]
+    [govPoolContract, transactionOptions, govValidatorsAddress]
   )
 
-  const createFunction = useCallback(
-    async ({
-      internalProposalType,
-      values,
-      users,
-      proposalName,
-      proposalDescription,
-    }: {
-      internalProposalType: number
-      values: BigNumberish[]
-      users: string[]
-      proposalName: string
-      proposalDescription: string
-    }) => {
-      if (!govValidatorsContract || !account) return
+  const createProposal = useCallback(
+    async (args: ICreateProposalArgs) => {
+      if (!govPoolContract || !govValidatorsAddress) return
+
+      const { proposalName, proposalDescription, users, balances } = args
 
       try {
         setPayload(SubmitState.SIGN)
@@ -96,26 +85,29 @@ const useGovPoolCreateValidatorInternalProposal = ({ daoAddress }: IProps) => {
         })
         daoProposalIPFSCode = "ipfs://" + daoProposalIPFSCode
 
-        const gasLimit = await tryEstimateGas(
-          internalProposalType,
-          daoProposalIPFSCode,
-          values,
-          users
+        const encodedChangeBalancesMethod = encodeAbiMethod(
+          GovValidators,
+          "changeBalances",
+          [balances, users]
         )
 
-        const resultTransaction =
-          await govValidatorsContract.createInternalProposal(
-            internalProposalType,
-            daoProposalIPFSCode,
-            values,
-            users,
-            { ...transactionOptions, gasLimit, from: account }
-          )
+        const gasLimit = await tryEstimateGas(
+          daoProposalIPFSCode,
+          encodedChangeBalancesMethod
+        )
+
+        const resultTransaction = await govPoolContract.createProposal(
+          daoProposalIPFSCode,
+          [govValidatorsAddress],
+          [0],
+          [encodedChangeBalancesMethod],
+          { ...transactionOptions, gasLimit }
+        )
 
         setPayload(SubmitState.WAIT_CONFIRM)
 
         const receipt = await addTransaction(resultTransaction, {
-          type: TransactionType.GOV_POOL_CREATE_INTERNAL_PROPOSAL,
+          type: TransactionType.GOV_POOL_CREATE_VALIDATOR_PROPOSAL,
         })
 
         if (isTxMined(receipt)) {
@@ -125,7 +117,7 @@ const useGovPoolCreateValidatorInternalProposal = ({ daoAddress }: IProps) => {
             title: "Success",
             text: "Congrats! You just successfully created a proposal and voted for it. Follow the proposal’s status at All proposals.",
             image: "",
-            buttonText: "Validator proposals",
+            buttonText: "Proposals",
             onClick: () => {
               //TODO redirect to real validators proposals list
               navigate("/")
@@ -145,20 +137,20 @@ const useGovPoolCreateValidatorInternalProposal = ({ daoAddress }: IProps) => {
       }
     },
     [
-      govValidatorsContract,
-      setPayload,
-      setError,
+      govPoolContract,
+      govValidatorsAddress,
       transactionOptions,
       tryEstimateGas,
-      navigate,
+      setError,
+      setPayload,
       addTransaction,
       closeSuccessModalState,
+      navigate,
       setSuccessModalState,
-      account,
     ]
   )
 
-  return createFunction
+  return createProposal
 }
 
-export default useGovPoolCreateValidatorInternalProposal
+export default useGovPoolCreateProposalValidators

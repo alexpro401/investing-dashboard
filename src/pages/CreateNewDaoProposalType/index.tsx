@@ -7,7 +7,7 @@ import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidatio
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
 import FundDaoCreatingContextProvider from "context/FundDaoCreatingContext"
 import CreateNewProposalTypeForm from "forms/CreateNewProposalTypeForm"
-import { useDaoPoolSetting } from "hooks/dao"
+import { useGovPoolSetting } from "hooks/dao"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
 import { ZERO_ADDR } from "constants/index"
@@ -17,7 +17,7 @@ import * as S from "./styled"
 
 const CreateNewProposalType: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
-  const [daoSettings, loading] = useDaoPoolSetting({
+  const [daoSettings, loading] = useGovPoolSetting({
     daoAddress: daoAddress ?? "",
     settingsId: EExecutor.DEFAULT,
   })
@@ -65,9 +65,13 @@ const CreateNewProposalType: React.FC = () => {
                 delegatedVotingAllowed,
                 validatorsVote,
                 duration: duration.toNumber(),
-                quorum: Number(formatUnits(quorum, 25)),
-                minVotesForVoting: Number(formatEther(minVotesForVoting)),
-                minVotesForCreating: Number(formatEther(minVotesForCreating)),
+                quorum: cutStringZeroes(formatUnits(quorum, 25)),
+                minVotesForVoting: cutStringZeroes(
+                  formatEther(minVotesForVoting)
+                ),
+                minVotesForCreating: cutStringZeroes(
+                  formatEther(minVotesForCreating)
+                ),
                 rewardToken: rewardToken === ZERO_ADDR ? "" : rewardToken,
                 creationReward: cutStringZeroes(
                   formatUnits(creationReward, 18)
