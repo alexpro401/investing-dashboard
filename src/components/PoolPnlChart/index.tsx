@@ -2,13 +2,13 @@ import * as React from "react"
 import { Tooltip } from "recharts"
 
 import Chart from "components/Chart"
+import { ChartTooltipPnl } from "components/Chart/tooltips"
 import { useERC20Data } from "state/erc20/hooks"
 import { usePoolPriceHistory } from "hooks/usePool"
 import { CHART_TYPE, TIMEFRAME } from "constants/chart"
 
 import S from "./styled"
 import theme from "theme"
-import PNLTooltip from "./PNLTooltip"
 
 interface Props {
   address: string | undefined
@@ -47,7 +47,7 @@ const PoolPnlChart: React.FC<Props> = ({ address, baseToken, tfPosition }) => {
           {" "}
           <Tooltip
             content={(p) => {
-              return <PNLTooltip {...p} baseToken={baseTokenData} />
+              return <ChartTooltipPnl {...p} baseToken={baseTokenData} />
             }}
           />
         </Chart>

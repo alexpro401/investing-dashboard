@@ -6,7 +6,7 @@ import { DATE_FORMAT } from "constants/time"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 
 import { Flex } from "theme"
-import { TooltipStyled as TS } from "./styled"
+import { Styled as S } from "./styled"
 
 function getAmountSymbol(amount: number, withMinus = false): string {
   if (amount > 0) return "+"
@@ -14,7 +14,7 @@ function getAmountSymbol(amount: number, withMinus = false): string {
   return ""
 }
 
-const PNLTooltip = (props) => {
+const ChartTooltipPnl = (props) => {
   const { active, payload, baseToken } = props
   const history = (payload && payload[0]?.payload) ?? null
 
@@ -42,28 +42,28 @@ const PNLTooltip = (props) => {
 
   if (active && payload && payload.length && baseToken) {
     return (
-      <TS.Container>
-        <TS.Content>
-          <TS.Date>{date}</TS.Date>
+      <S.Container>
+        <S.Content>
+          <S.Date>{date}</S.Date>
           <Flex full m="4px 0 0" jc="space-between">
-            <TS.Label>{baseToken.symbol ?? ""}</TS.Label>
-            <TS.Value amount={pnlBase.number}>
+            <S.Label>{baseToken.symbol ?? ""}</S.Label>
+            <S.Value amount={pnlBase.number}>
               {getAmountSymbol(pnlBase.number)}
               {pnlBase.format}%
-            </TS.Value>
+            </S.Value>
           </Flex>
           <Flex full m="4px 0 0" jc="space-between">
-            <TS.Label>USD</TS.Label>
-            <TS.Value amount={absPnlUsd.number}>
+            <S.Label>USD</S.Label>
+            <S.Value amount={absPnlUsd.number}>
               {getAmountSymbol(absPnlUsd.number, true)}${absPnlUsd.format}
-            </TS.Value>
+            </S.Value>
           </Flex>
-        </TS.Content>
-      </TS.Container>
+        </S.Content>
+      </S.Container>
     )
   }
 
   return null
 }
 
-export default PNLTooltip
+export default ChartTooltipPnl
