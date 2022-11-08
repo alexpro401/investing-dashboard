@@ -7,8 +7,10 @@ import WithUserIsDaoValidatorValidation from "components/WithUserIsDaoValidatorV
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
 import ValidatorsListContextProvider from "context/govPool/proposals/ValidatorsListContext"
-import useGovPoolValidators from "hooks/useGovPoolValidators"
-import useGovValidatorsValidatorsToken from "hooks/useGovValidatorsValidatorsToken"
+import {
+  useGovPoolValidators,
+  useGovValidatorsValidatorsToken,
+} from "hooks/dao"
 import { cutStringZeroes } from "utils"
 import CreateGovProposalValidatorChangeValidatorSettingsForm from "forms/CreateGovProposalValidatorChangeValidatorSettingsForm"
 

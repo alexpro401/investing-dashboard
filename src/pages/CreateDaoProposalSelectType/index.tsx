@@ -10,7 +10,7 @@ import { ICON_NAMES } from "constants/icon-names"
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
 
-import useGovPoolDeposit from "hooks/useGovPoolDeposit"
+import { useGovPoolDeposit } from "hooks/dao"
 import { parseEther } from "@ethersproject/units"
 
 enum EProposalType {

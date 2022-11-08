@@ -10,7 +10,7 @@ import DaoValidatorProposalChangeVotingSettingsContextProvider from "context/gov
 import CreateGovProposalValidatorChangeVotingSettingsForm from "forms/CreateGovProposalValidatorChangeVotingSettingsForm"
 
 import * as S from "./styled"
-import useGovValidatorsInternalSettings from "hooks/useGovValidatorsInternalSettings"
+import { useGovValidatorsInternalSettings } from "hooks/dao"
 
 const CreateDaoProposalValidatorChangeVotingSettings: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()

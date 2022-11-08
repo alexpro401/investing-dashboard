@@ -1,9 +1,7 @@
-import { BigNumber } from "@ethersproject/bignumber"
-import { ZERO_ADDR } from "./../constants/index"
+import { ZERO_ADDR } from "constants/index"
 import { useCallback, useEffect, useState } from "react"
 import { useGovUserKeeperContract } from "contracts"
 import { useWeb3React } from "@web3-react/core"
-import { ZERO } from "constants/index"
 
 type methods = "tokenBalance" | "nftBalance" | "nftExactBalance"
 
