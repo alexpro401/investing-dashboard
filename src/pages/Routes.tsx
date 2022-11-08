@@ -53,7 +53,8 @@ const CreateDaoProposalChangeDaoSettings = lazy(
   () => import("pages/CreateDaoProposalChangeDaoSettings")
 )
 /* dao proposals */
-const DaoProposalsList = lazy(() => import("pages/DaoProposalsList"))
+
+const DaoProposals = lazy(() => import("pages/DaoProposals"))
 const DaoProposalDetails = lazy(() => import("pages/DaoProposalDetails"))
 // const Insurance = lazy(() => import("pages/Insurance"))
 
@@ -181,8 +182,8 @@ export default function Routes() {
                 <Route path="/*" element={<TopMembers />} />
                 {/* Dao Proposals */}
                 <Route
-                  path="dao/:daoAddress/proposals/:status"
-                  element={<DaoProposalsList />}
+                  path="dao/:daoAddress/proposals/*"
+                  element={<DaoProposals />}
                 />
                 <Route
                   path="dao/:daoAddress/proposal/:proposalId"

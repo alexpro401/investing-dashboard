@@ -78,23 +78,28 @@ const useCreateDAO = () => {
 
     setPayload(SubmitState.SIGN)
 
-    const additionalData = new IpfsEntity(
-      JSON.stringify({
-        avatarUrl: avatarUrl.get,
-        daoName: daoName.get,
-        websiteUrl: websiteUrl.get,
-        description: description.get,
-        socialLinks: socialLinks.get,
-        documents: documents.get,
-      })
-    )
+    // const additionalData = new IpfsEntity(
+    //   JSON.stringify({
+    //     avatarUrl: avatarUrl.get,
+    //     daoName: daoName.get,
+    //     websiteUrl: websiteUrl.get,
+    //     description: description.get,
+    //     socialLinks: socialLinks.get,
+    //     documents: documents.get,
+    //   })
+    // )
+    //
+    // await additionalData.uploadSelf()
 
-    await additionalData.uploadSelf()
+    // if (!additionalData._path) {
+    //   // TODO: handle case when ipfs upload failed
+    //   return
+    // }
 
-    if (!additionalData._path) {
-      // TODO: handle case when ipfs upload failed
-      return
-    }
+    // if (!additionalData._path) {
+    //   // TODO: handle case when ipfs upload failed
+    //   return
+    // }
 
     const ZERO_ADDR = "0x0000000000000000000000000000000000000000"
 
@@ -290,7 +295,7 @@ const useCreateDAO = () => {
             ? 0
             : userKeeperParams.nftsTotalSupply.get,
       },
-      descriptionURL: additionalData._path,
+      descriptionURL: "DescriptionUrl", // FIXME
     }
 
     const gasLimit = await tryEstimateGas(POOL_PARAMETERS)
@@ -307,18 +312,27 @@ const useCreateDAO = () => {
       })
 
       if (isTxMined(receipt)) {
-        const data = receipt?.logs[receipt?.logs.length - 1].data
+        const logs = receipt?.logs
+
+        const eventSignature =
+          "0x40a4c9bd9ae408645df62dd0e125a5068d6fb4366db9d9c309d8147c5f25263a"
+
+        const data = logs?.find((log) =>
+          log.topics.includes(eventSignature)
+        )?.data
+
+        if (!data) throw new Error("data not found")
+
         const abiCoder = new ethers.utils.AbiCoder()
         const govPoolAddress = abiCoder.decode(
-          ["address", "address", "address"],
+          ["string", "address", "address", "address"],
           data as BytesLike
-        )[0]
+        )[1]
 
         createdDaoAddress.set(govPoolAddress)
         setPayload(SubmitState.SUCCESS)
       }
     } catch (error: any) {
-      console.log(error)
       setPayload(SubmitState.IDLE)
       if (!!error && !!error.data && !!error.data.message) {
         setError(error.data.message)
