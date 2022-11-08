@@ -8,11 +8,14 @@ import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovSettings } from "abi"
 import useGasTracker from "state/gas/hooks"
-import useDaoPoolSetting, { useGovSettingsAddress } from "./useDaoPoolSetting"
-import useDaoPoolNewSettingId from "./useDaoPoolNewSettingId"
+import {
+  useDaoPoolNewSettingId,
+  useDaoPoolSetting,
+  useGovSettingsAddress,
+} from "hooks/dao"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import useError from "hooks/useError"
-import usePayload from "./usePayload"
+import usePayload from "hooks/usePayload"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { SubmitState } from "constants/types"
 import { TransactionType } from "state/transactions/types"

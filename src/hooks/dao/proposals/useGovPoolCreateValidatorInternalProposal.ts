@@ -5,14 +5,14 @@ import { useNavigate } from "react-router-dom"
 
 import { useGovValidatorsContract } from "contracts"
 import useError from "hooks/useError"
-import usePayload from "./usePayload"
+import usePayload from "../../usePayload"
 import useGasTracker from "state/gas/hooks"
 import { SubmitState } from "constants/types"
 import { isTxMined, parseTransactionError } from "utils"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
-import { useActiveWeb3React } from "hooks"
+import { useActiveWeb3React } from "hooks/index"
 
 interface IProps {
   daoAddress: string
