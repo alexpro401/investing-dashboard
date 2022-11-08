@@ -7,7 +7,7 @@ import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { DefaultProposalStep } from "forms/CreateFundDaoForm/steps"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
-import useCreateDaoProposalType from "hooks/useCreateDaoProposalType"
+import { useCreateDaoProposalType } from "hooks/dao"
 
 import * as S from "./styled"
 

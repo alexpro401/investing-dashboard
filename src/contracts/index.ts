@@ -1,8 +1,10 @@
 import { useSelector } from "react-redux"
 import useContract, { useProposalAddress } from "hooks/useContract"
-import { useGovSettingsAddress } from "hooks/useDaoPoolSetting"
-import { useGovValidatorsContractAddress } from "hooks/useGovValidatorsContractAddress"
-import { useGovUserKeeperAddress } from "hooks/useGovPool"
+import {
+  useGovSettingsAddress,
+  useGovUserKeeperAddress,
+  useGovValidatorsContractAddress,
+} from "hooks/dao"
 
 import {
   ERC20 as ERC20_ABI,

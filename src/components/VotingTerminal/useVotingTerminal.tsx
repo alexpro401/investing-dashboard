@@ -1,6 +1,5 @@
 import { BigNumber } from "@ethersproject/bignumber"
-import useGovBalance from "hooks/useGovBalance"
-import useGovPoolTokensInfo from "hooks/useGovPoolTokensInfo"
+import { useGovBalance, useGovPoolTokensInfo } from "hooks/dao"
 import useNftPower from "hooks/useNftPower"
 import { useMemo } from "react"
 import { useERC20Data } from "state/erc20/hooks"

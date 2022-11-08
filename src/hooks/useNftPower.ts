@@ -3,7 +3,7 @@ import { ZERO_ADDR, ZERO } from "constants/index"
 import { useERC721Contract } from "contracts"
 import { useEffect, useState } from "react"
 import { divideBignumbers } from "utils/formulas"
-import useGovPoolTokensInfo from "./useGovPoolTokensInfo"
+import useGovPoolTokensInfo from "./dao/useGovPoolTokensInfo"
 
 // TODO: get power of NFTs list using multicall hook
 // const useNftPowers = () => {}

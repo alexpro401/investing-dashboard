@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { useERC20Contract } from "contracts"
-import useGovValidatorsValidatorsToken from "hooks/useGovValidatorsValidatorsToken"
+import { useGovValidatorsValidatorsToken } from "hooks/dao"
 
 const useGovValidatorsTokenTotalSupply = (
   govPoolAddress: string
