@@ -10,7 +10,7 @@ import { ICON_NAMES } from "constants/icon-names"
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
 
-import { useGovPoolDeposit } from "hooks/dao"
+import { useGovPoolCreateProposal, useGovPoolDeposit } from "hooks/dao"
 import { parseEther } from "@ethersproject/units"
 
 enum EProposalType {
@@ -35,6 +35,20 @@ const CreateProposalSelectType: React.FC = () => {
   const [selectedProposalType, setSelectedProposalType] = useState(
     EProposalType.daoProfileModification
   )
+  const {
+    descriptionURL,
+    executors,
+    values,
+    data,
+
+    createNewDaoProposalType,
+    createInternalValidatorProposal,
+    createInsuranceProposal,
+    createInternalProposal,
+    createDistributionProposal,
+    createValidatorProposal,
+    createCustomProposal,
+  } = useGovPoolCreateProposal(daoAddress)
 
   const daoDeposit = useGovPoolDeposit(daoAddress ?? "")
 
@@ -50,6 +64,49 @@ const CreateProposalSelectType: React.FC = () => {
   }, [daoDeposit])
 
   const proceedToNextStep = useCallback(() => {
+    // TEMP: create hardcoded proposals
+    switch (selectedProposalType) {
+      case EProposalType.daoProfileModification: {
+        descriptionURL.set("")
+        executors.set([])
+        values.set([])
+        data.set([])
+        break
+      }
+      case EProposalType.chaningVotingSettings: {
+        descriptionURL.set("")
+        executors.set([])
+        values.set([])
+        data.set([])
+        break
+      }
+      case EProposalType.tokenDistribution: {
+        descriptionURL.set("")
+        executors.set([])
+        values.set([])
+        data.set([])
+
+        createDistributionProposal()
+        break
+      }
+      case EProposalType.validatorSettings: {
+        descriptionURL.set("")
+        executors.set([])
+        values.set([])
+        data.set([])
+
+        createValidatorProposal()
+        break
+      }
+      case EProposalType.changeTokenPrice: {
+        descriptionURL.set("")
+        executors.set([])
+        values.set([])
+        data.set([])
+        break
+      }
+    }
+
     //TODO NAVIGATE to path related to selected proposal type
     const nextProposalTypePath = {
       [EProposalType.daoProfileModification]: `/dao/${daoAddress}/create-proposal-change-dao-settings`,
