@@ -26,7 +26,7 @@ export const TapBar = () => {
       <NavItem path="/wallet" Icon={Wallet} text={shortenAddress(account, 3)} />
       <NavItem path="/me/trader" Icon={Profile} text="My profile" />
       <NavItem path="/" Icon={TopTraders} text="Traders" />
-      <NavItem path="/dao/list" Icon={Dao} text="DAO" />
+      <NavItem path="/dao/list/top" Icon={Dao} text="DAO" />
       <NavItem path="/insurance" Icon={Insurance} text="Insurance" />
     </MobileMenu>
   )
