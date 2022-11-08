@@ -9,7 +9,7 @@ interface Props {
   data: any[]
   chart: any
   chartItems: any[]
-  activePoint: any
+  activePoint?: any
   enableActivePoint: boolean
   children: React.ReactNode
 }

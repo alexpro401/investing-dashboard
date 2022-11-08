@@ -31,7 +31,7 @@ interface Props {
   data: any[]
   chart: any
   chartItems: any[]
-  activePoint: any
+  activePoint?: any
   animationMode: boolean
   enableActivePoint: boolean
   children: React.ReactNode

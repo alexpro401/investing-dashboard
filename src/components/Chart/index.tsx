@@ -33,7 +33,10 @@ interface Props {
     set: React.Dispatch<React.SetStateAction<TIMEFRAME>>
   }
   timeframePosition?: "top" | "bottom"
-  enableActivePoint?: boolean
+  activePoint?: {
+    get: any
+    set: React.Dispatch<React.SetStateAction<any>>
+  }
   loading?: boolean
   children?: React.ReactNode
 }
@@ -49,21 +52,19 @@ const Chart: React.FC<Props> = ({
   chartItems,
   timeframe,
   timeframePosition,
-  enableActivePoint = false,
+  activePoint,
   loading,
   children,
 }) => {
   const CurrentChart = charts[type]
 
   const _loading = React.useMemo(() => !isNil(loading) && loading, [loading])
+  const _enableActivePoint = React.useMemo(
+    () => !isNil(activePoint),
+    [activePoint]
+  )
 
   const _animationMode = React.useState(true)
-  const _activePoint = React.useState<any>()
-  React.useEffect(() => {
-    if (!isNil(_activePoint[0])) {
-      _activePoint[1](undefined)
-    }
-  }, [chartItems])
 
   const NodeHead = React.useMemo(() => {
     const leftExist = !isNil(nodeHeadLeft)
@@ -128,12 +129,9 @@ const Chart: React.FC<Props> = ({
         if (!isNil(chart.onClick) && isFunction(chart.onClick)) {
           chart.onClick(point)
         }
-        if (enableActivePoint) {
-          _activePoint[1](point)
-        }
       },
     }),
-    [chart, enableActivePoint]
+    [chart, _enableActivePoint]
   )
 
   return (
@@ -148,9 +146,9 @@ const Chart: React.FC<Props> = ({
               data={_data}
               chart={_chart}
               chartItems={_chartItems}
-              activePoint={_activePoint[0]}
+              activePoint={!isNil(activePoint) && activePoint.get}
               animationMode={_animationMode[0]}
-              enableActivePoint={enableActivePoint}
+              enableActivePoint={_enableActivePoint}
             >
               {children}
             </CurrentChart>
