@@ -1,14 +1,19 @@
 import * as React from "react"
 import { v4 as uuidv4 } from "uuid"
 import { isEmpty, map, reduce } from "lodash"
+import { useWeb3React } from "@web3-react/core"
 import { Swiper, SwiperSlide } from "swiper/react"
 
 import { Pagination } from "swiper"
 
 import { Card } from "common"
-import { SliderContainer, SliderHeader, TextLabel } from "../styled"
+import {
+  AppButtonFull,
+  SliderContainer,
+  SliderHeader,
+  TextLabel,
+} from "../styled"
 import DaoProfileTokenInTreasuryCard from "./DaoProfileTokenInTreasuryCard"
-import { useWeb3React } from "@web3-react/core"
 
 interface Props {
   tokens: Array<any>
@@ -74,6 +79,11 @@ const DaoProfileTokensInTreasuryCard: React.FC<Props> = ({ tokens }) => {
           ))}
         </Swiper>
       </SliderContainer>
+      <AppButtonFull
+        color="secondary"
+        onClick={() => alert("Deposit dao treasury 💸")}
+        text="Пополнить трежери DAO"
+      />
     </Card>
   )
 }
