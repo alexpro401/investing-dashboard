@@ -19,7 +19,7 @@ import { ICON_NAMES } from "constants/icon-names"
 import { EInputBorderColors } from "fields/InputField"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
-import useGovValidatorsTokenTotalSupply from "hooks/useGovValidatorsTokenTotalSupply"
+import { useGovValidatorsTokenTotalSupply } from "hooks/dao"
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 import { cutStringZeroes } from "utils"
 

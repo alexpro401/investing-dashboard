@@ -7,7 +7,7 @@ import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidatio
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
 import FundDaoCreatingContextProvider from "context/FundDaoCreatingContext"
 import CreateNewProposalTypeForm from "forms/CreateNewProposalTypeForm"
-import useDaoPoolSetting from "hooks/useDaoPoolSetting"
+import { useDaoPoolSetting } from "hooks/dao"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
 import { ZERO_ADDR } from "constants/index"

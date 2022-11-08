@@ -153,7 +153,7 @@ export const getLP = (baseTVL: string, supply: string): string => {
   return (Number(baseTVL) / Number(supply)).toFixed(2)
 }
 
-export const formateChartData = (data) => {
+export const generatePoolPnlHistory = (data) => {
   if (!data) return undefined
 
   return data.reverse().map((v) => {
@@ -168,7 +168,7 @@ export const formateChartData = (data) => {
   })
 }
 
-export const formatLockedFundsChartData = (data) => {
+export const generateLockedFundsChartData = (data) => {
   if (!data || data.length === 0) {
     return []
   }

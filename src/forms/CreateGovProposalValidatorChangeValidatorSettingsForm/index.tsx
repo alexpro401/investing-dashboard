@@ -8,7 +8,7 @@ import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { ValidatorsListContext } from "context/govPool/proposals/ValidatorsListContext"
 import { ValidatorsStep } from "./steps"
-import useGovPoolCreateValidatorInternalProposal from "hooks/useGovPoolCreateValidatorInternalProposal"
+import { useGovPoolCreateValidatorInternalProposal } from "hooks/dao"
 
 import * as S from "./styled"
 

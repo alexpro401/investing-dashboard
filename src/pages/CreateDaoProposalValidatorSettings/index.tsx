@@ -7,9 +7,11 @@ import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidatio
 import FundDaoCreatingContextProvider from "context/FundDaoCreatingContext"
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
 import ValidatorsListContextProvider from "context/govPool/proposals/ValidatorsListContext"
-import useGovPoolValidators from "hooks/useGovPoolValidators"
-import useGovValidatorsValidatorsToken from "hooks/useGovValidatorsValidatorsToken"
-import useDaoPoolSetting from "hooks/useDaoPoolSetting"
+import {
+  useGovPoolValidators,
+  useGovValidatorsValidatorsToken,
+  useDaoPoolSetting,
+} from "hooks/dao"
 import CreateGovProposalValidatorSettingsForm from "forms/CreateGovProposalValidatorSettingsForm"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
 import { ZERO_ADDR } from "constants/index"

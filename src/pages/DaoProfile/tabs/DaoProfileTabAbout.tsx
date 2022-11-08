@@ -1,14 +1,16 @@
 import * as React from "react"
 import { map } from "lodash"
+import { format } from "date-fns"
 import { v4 as uuidv4 } from "uuid"
 
 import { Flex } from "theme"
 import { Card, Icon } from "common"
-import { Divider, TextValue } from "../styled"
+import { Divider, TextLabel, TextValue } from "../styled"
 
 import ExternalLink from "components/ExternalLink"
 
 import { shortenAddress } from "utils"
+import { DATE_FORMAT } from "constants/time"
 import { ICON_NAMES } from "constants/icon-names"
 
 const links = [
@@ -91,9 +93,13 @@ const DaoProfileTabAbout: React.FC = () => {
           </p>
         </TextValue>
         <Divider />
+        <Flex full ai="center" jc="space-between">
+          <TextLabel>Creation day</TextLabel>
+          <TextValue>{format(new Date().getTime(), DATE_FORMAT)}</TextValue>
+        </Flex>
         {map(links, (link) => (
           <Flex key={uuidv4()} full ai="center" jc="space-between">
-            <TextValue>{link.name}</TextValue>
+            <TextLabel>{link.name}</TextLabel>
             <ExternalLink href={link.url} color="#2669EB">
               {shortenAddress(link.url, 8)}
             </ExternalLink>
@@ -102,7 +108,7 @@ const DaoProfileTabAbout: React.FC = () => {
         <Divider />
         {map(customSocials, (link) => (
           <Flex key={uuidv4()} full ai="center" jc="space-between">
-            <TextValue>{link.name}</TextValue>
+            <TextLabel>{link.name}</TextLabel>
             <ExternalLink href={link.url} color="#2669EB">
               {shortenAddress(link.url, 8)}
             </ExternalLink>

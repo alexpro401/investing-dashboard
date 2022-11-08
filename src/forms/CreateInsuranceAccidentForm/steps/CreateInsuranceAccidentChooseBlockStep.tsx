@@ -1,37 +1,48 @@
-import { FC, useCallback, useContext, useEffect, useState } from "react"
+import {
+  FC,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import { createClient, Provider as GraphProvider } from "urql"
-import { isNil, isEmpty } from "lodash"
+import { isEmpty, isNil } from "lodash"
+import { Tooltip } from "recharts"
+import { format } from "date-fns"
 
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
 
 import { Card, CardDescription, CardHead } from "common"
 
 import {
-  StepsRoot,
   StepsBottomNavigation,
+  StepsRoot,
 } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
-import InsuranceAccidentChart from "components/InsuranceAccidentChart"
 import InsuranceAccidentExist from "modals/InsuranceAccidentExist"
 import { usePoolContract } from "hooks/usePool"
 
 import {
-  TIMEFRAME_AGREGATION_CODES,
+  CHART_TYPE,
+  TIMEFRAME,
   TIMEFRAME_FROM_DATE,
   TIMEFRAME_LIMIT_CODE,
-  TIMEFRAMES,
-} from "constants/history"
+  TIMEFRAME_AGGREGATION_CODE,
+} from "constants/chart"
 import { usePriceHistory } from "state/pools/hooks"
-import { formateChartData, getLP, getPNL } from "utils/formulas"
+import { generatePoolPnlHistory, getLP, getPNL } from "utils/formulas"
 import { useERC20Data } from "state/erc20/hooks"
-import TimeframeList from "components/TimeframeList"
 import { expandTimestamp } from "utils"
 import Input from "components/Input"
-import { format } from "date-fns"
-import { DATE_TIME_FORMAT } from "constants/time"
+import { DATE_FORMAT, DATE_TIME_FORMAT } from "constants/time"
 import DatePicker from "components/DatePicker"
 import { InputGroup } from "../styled"
 import Skeleton from "components/Skeleton"
+import Chart from "components/Chart"
+import theme, { Flex, Text } from "theme"
+import { ChartTooltipPnl } from "components/Chart/tooltips"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -53,7 +64,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
   const [pause, setPause] = useState(true)
   const [history, historyLoading] = usePriceHistory(
     pool.get,
-    TIMEFRAME_AGREGATION_CODES[timeframe.get],
+    TIMEFRAME_AGGREGATION_CODE[timeframe.get],
     TIMEFRAME_LIMIT_CODE[timeframe.get],
     !isNil(date.get) && !isEmpty(date.get)
       ? Number(date.get)
@@ -62,7 +73,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
     pause
   )
 
-  const historyFormatted = formateChartData(
+  const historyFormatted = generatePoolPnlHistory(
     !isEmpty(data.get) ? data.get : undefined
   )
 
@@ -93,7 +104,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
     }
 
     if (isEmpty(forPool.get) || pool.get !== forPool.get) {
-      timeframe.set(TIMEFRAMES["M"])
+      timeframe.set(TIMEFRAME.m)
       data.set([])
       date.set("")
       block.set("")
@@ -134,11 +145,11 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
     if (name === "block") {
       block.set(!value || value.length === 0 ? "" : value)
       date.set("")
-      timeframe.set(TIMEFRAMES["M"])
+      timeframe.set(TIMEFRAME.m)
     } else if (name === "date") {
       date.set(value)
       block.set("")
-      timeframe.set(TIMEFRAMES["M"])
+      timeframe.set(TIMEFRAME.m)
     }
     setPause(false)
   }, [])
@@ -149,6 +160,29 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
     block.set("")
     setPause(false)
   }, [])
+
+  const chartNodeLeft = useMemo(() => {
+    let price: ReactNode = <Skeleton w="100px" h="19px" />
+    let date: ReactNode = <Skeleton w="120px" h="15px" />
+
+    if (!isEmpty(point.get) && !isNil(point.get.payload.price)) {
+      price = point.get.payload.price
+    }
+    if (!isEmpty(point.get) && !isNil(point.get.payload.timestamp)) {
+      date = format(expandTimestamp(point.get.payload.timestamp), DATE_FORMAT)
+    }
+
+    return (
+      <Flex dir="column" ai="flex-start" jc="center">
+        <Text fz={16} fw={700} lh="19px" color="#E4F2FF">
+          ${price}
+        </Text>
+        <Text fz={13} fw={500} lh="15px" color="#B1C7FC">
+          {date}
+        </Text>
+      </Flex>
+    )
+  }, [point])
 
   return (
     <>
@@ -175,19 +209,40 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
         </Card>
 
         <Card>
-          <InsuranceAccidentChart
+          <Chart
+            nodeHeadLeft={chartNodeLeft}
+            type={CHART_TYPE.area}
+            height={"130px"}
+            activePoint={point}
             data={historyFormatted}
-            baseToken={baseTokenData}
-            onPointClick={onChoosePoint}
-            activeDot={point.get}
+            chart={{
+              onClick: onChoosePoint,
+              stackOffset: "silhouette",
+            }}
+            chartItems={[
+              {
+                type: "linear",
+                dataKey: "price",
+                legendType: "triangle",
+                isAnimationActive: false,
+                stroke: theme.statusColors.success,
+              },
+            ]}
+            timeframe={{ get: timeframe.get, set: onTimeframeChange }}
+            timeframePosition="bottom"
             loading={
               historyLoading ||
               isNil(historyFormatted) ||
               isEmpty(historyFormatted)
             }
-          />
+          >
+            <Tooltip
+              content={(p) => {
+                return <ChartTooltipPnl {...p} baseToken={baseTokenData} />
+              }}
+            />
+          </Chart>
 
-          <TimeframeList current={timeframe.get} set={onTimeframeChange} />
           <InputGroup>
             {isEmpty(block.get) ? (
               <Skeleton h="50px" w="100%" radius="16px 0 0 16px" />
