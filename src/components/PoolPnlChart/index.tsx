@@ -20,7 +20,7 @@ const PoolPnlChart: React.FC<Props> = ({ address, baseToken, tfPosition }) => {
   const [tf, setTf] = React.useState(TIMEFRAME.d)
   const [baseTokenData] = useERC20Data(baseToken)
 
-  const data = usePoolPriceHistory(address, tf)
+  const [data, fetching] = usePoolPriceHistory(address, tf)
 
   return (
     <S.Container>
@@ -43,6 +43,7 @@ const PoolPnlChart: React.FC<Props> = ({ address, baseToken, tfPosition }) => {
           ]}
           timeframe={{ get: tf, set: setTf }}
           timeframePosition={tfPosition}
+          loading={fetching}
         >
           {" "}
           <Tooltip
