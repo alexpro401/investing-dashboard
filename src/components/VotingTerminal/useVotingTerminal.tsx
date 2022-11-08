@@ -1,4 +1,5 @@
 import { ZERO } from "constants/index"
+import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
 import { useDelegatedERC721Tokens, useERC721Tokens } from "hooks/useERC721List"
 import useGovBalance from "hooks/useGovBalance"
 import useGovPoolTokensInfo from "hooks/useGovPoolTokensInfo"
@@ -40,8 +41,10 @@ const useGovMemberBalance = (
 
   const ERC20Balance = useMemo(() => {
     if (withDelegated) {
-      return tokenBalance?.totalBalance.add(
-        tokenBalanceDelegated?.totalBalance || ZERO
+      return (
+        tokenBalance?.totalBalance.add(
+          tokenBalanceDelegated?.totalBalance || ZERO
+        ) || ZERO
       )
     }
 
@@ -68,6 +71,10 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
   // UI controlls
   const [withDelegated, setWithDelegated] = useState(false)
   const [selectOpen, setSelectOpen] = useState(false)
+
+  // form state
+  const [ERC20Amount, setERC20Amount] = useState(ZERO)
+  const [ERC721Amount, setERC721Amount] = useState<BigNumberish>(ZERO)
 
   const [selectedNfts, setSelectedNfts] = useState<number[]>([])
 
@@ -105,6 +112,11 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
     setWithDelegated(state)
   }
 
+  const handleERC20Change = useCallback((targetValue: BigNumberish) => {
+    const amount = BigNumber.from(targetValue)
+    setERC20Amount(amount)
+  }, [])
+
   // UI data
   const formInfo = useMemo(() => {
     return {
@@ -130,6 +142,8 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
     toggleDelegated,
     selectOpen,
     setSelectOpen,
+    handleERC20Change,
+    ERC20Amount,
   }
 }
 

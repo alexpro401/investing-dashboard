@@ -1,4 +1,3 @@
-import Button from "components/Button"
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import NftInput from "components/Exchange/NftInput"
 import * as S from "components/Exchange/styled"
@@ -10,6 +9,7 @@ import useVotingTerminal from "./useVotingTerminal"
 import Tooltip from "components/Tooltip"
 import { v4 as uuidv4 } from "uuid"
 import Switch from "components/Switch"
+import { ICON_NAMES } from "constants/icon-names"
 
 interface Props {
   daoPoolAddress?: string
@@ -25,15 +25,53 @@ const VotingTerminal: FC<Props> = ({ daoPoolAddress }) => {
     toggleDelegated,
     selectOpen,
     setSelectOpen,
+    handleERC20Change,
+    ERC20Amount,
   } = useVotingTerminal(daoPoolAddress)
 
   const button = useMemo(() => {
+    // not enough token balance
+    if (formInfo.erc20.balance.lt(ERC20Amount)) {
+      return (
+        <S.SubmitButton
+          disabled
+          color="secondary"
+          type="button"
+          size="large"
+          text="Inuficient token balance"
+        />
+      )
+    }
+
     return (
-      <Button size="large" theme="primary" onClick={() => {}} full>
-        Confirm voting & Create proposal
-      </Button>
+      <S.SubmitButton
+        color="secondary"
+        type="button"
+        size="large"
+        onClick={() => {}}
+        text="Unlock NFT"
+        iconRight={ICON_NAMES.locked}
+        iconSize={14}
+      />
     )
-  }, [])
+    return (
+      <S.SubmitButton
+        color="secondary"
+        type="button"
+        size="large"
+        onClick={() => {}}
+        text="Select amount"
+      />
+    )
+    return (
+      <S.SubmitButton
+        type="button"
+        size="large"
+        onClick={() => {}}
+        text="Confirm voting & Create proposal"
+      />
+    )
+  }, [ERC20Amount, formInfo.erc20.balance])
 
   // wrapper function to close modal on submit
   const selectNfts = useCallback(
@@ -71,12 +109,12 @@ const VotingTerminal: FC<Props> = ({ daoPoolAddress }) => {
         {formInfo.erc20.address !== ZERO_ADDR && (
           <ExchangeInput
             price={ZERO}
-            amount={ZERO.toString()}
+            amount={ERC20Amount.toString()}
             balance={formInfo.erc20.balance || ZERO}
             address={formInfo.erc20.address}
             symbol={formInfo.erc20.symbol}
             decimal={formInfo.erc20.decimal}
-            onChange={() => {}}
+            onChange={handleERC20Change}
           />
         )}
 

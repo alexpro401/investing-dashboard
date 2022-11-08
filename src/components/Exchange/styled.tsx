@@ -8,6 +8,7 @@ import { dropdownVariants } from "motion/variants"
 import { BigNumberInput } from "big-number-input"
 import TokenIcon from "components/TokenIcon"
 import { DividendToken } from "interfaces"
+import { AppButton } from "common"
 
 export const InputContainer = styled(GradientBorder)<{ height?: string }>`
   flex-direction: column;
@@ -576,4 +577,9 @@ export const TooltipText = styled.div`
   font-size: 13px;
   line-height: 16px;
   color: ${theme.textColors.secondary};
+`
+
+export const SubmitButton = styled(AppButton)`
+  width: fill-available;
+  grid-gap: 3px;
 `
