@@ -149,29 +149,6 @@ const useGovPoolCreateProposalType = ({
         })
         daoProposalTypeIPFSCode = "ipfs://" + daoProposalTypeIPFSCode
 
-        console.log({
-          earlyCompletion,
-          delegatedVotingAllowed,
-          validatorsVote,
-          duration,
-          durationValidators: durationValidators.toNumber(),
-          quorum: parseUnits(quorum, 25).toString(),
-          quorumValidators,
-          minVotesForVoting: parseEther(minVotesForVoting).toString(),
-          minVotesForCreating: parseEther(minVotesForCreating).toString(),
-          rewardToken: rewardToken || ZERO_ADDR,
-          creationReward: parseUnits(creationReward, 18).toString(),
-          executionReward: parseUnits(executionReward, 18).toString(),
-          voteRewardsCoefficient: parseUnits(
-            voteRewardsCoefficient,
-            18
-          ).toString(),
-          executorDescription: daoProposalTypeIPFSCode,
-        })
-
-        console.log("newSettingId: ", newSettingId)
-        console.log("govSettingsAddress: ", govSettingsAddress)
-
         const encodedAddSettingsMethod = encodeAbiMethod(
           GovSettings,
           "addSettings",
@@ -200,17 +177,10 @@ const useGovPoolCreateProposalType = ({
           ]
         )
 
-        console.log("encodedAddSettingsMethod: ", encodedAddSettingsMethod)
-
         const encodedChangeExecuterMethod = encodeAbiMethod(
           GovSettings,
           "changeExecutors",
           [[contractAddress], [newSettingId]]
-        )
-
-        console.log(
-          "encodedChangeExecuterMethod: ",
-          encodedChangeExecuterMethod
         )
 
         let { path: daoProposalIPFSCode } = await addDaoProposalData({
@@ -219,15 +189,11 @@ const useGovPoolCreateProposalType = ({
         })
         daoProposalIPFSCode = "ipfs://" + daoProposalIPFSCode
 
-        console.log("daoProposalIPFSCode: ", daoProposalIPFSCode)
-
         const gasLimit = await tryEstimateGas(
           daoProposalIPFSCode,
           govSettingsAddress,
           [encodedAddSettingsMethod, encodedChangeExecuterMethod]
         )
-
-        console.log("gasLimit: ", gasLimit)
 
         const resultTransaction = await govPoolContract.createProposal(
           daoProposalIPFSCode,
