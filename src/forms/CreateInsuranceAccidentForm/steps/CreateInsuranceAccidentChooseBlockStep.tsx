@@ -22,7 +22,7 @@ import {
   TIMEFRAMES,
 } from "constants/history"
 import { usePriceHistory } from "state/pools/hooks"
-import { formateChartData, getLP, getPNL } from "utils/formulas"
+import { generatePoolPnlHistory, getLP, getPNL } from "utils/formulas"
 import { useERC20Data } from "state/erc20/hooks"
 import TimeframeList from "components/TimeframeList"
 import { expandTimestamp } from "utils"
@@ -62,7 +62,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
     pause
   )
 
-  const historyFormatted = formateChartData(
+  const historyFormatted = generatePoolPnlHistory(
     !isEmpty(data.get) ? data.get : undefined
   )
 
