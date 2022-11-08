@@ -1,4 +1,5 @@
-import { AppButton } from "common"
+import { AppButton, Icon } from "common"
+import { ICON_NAMES } from "constants/icon-names"
 import styled from "styled-components"
 import { Flex } from "theme"
 
@@ -47,7 +48,21 @@ export const Container = styled(Flex)`
   }
 `
 
-export const Card = styled(Flex)<{ url: string }>`
+export const Check = styled(Icon).attrs({ name: ICON_NAMES.tileCheck })`
+  position: absolute;
+  right: 8px;
+  top: 8px;
+
+  & > circle {
+    fill: none;
+    stroke: #181e2c;
+  }
+  & > path {
+    fill: none;
+  }
+`
+
+export const Card = styled(Flex)<{ url: string; isSelected?: boolean }>`
   box-sizing: border-box;
   width: 148px;
   height: 148px;
@@ -69,6 +84,25 @@ export const Card = styled(Flex)<{ url: string }>`
 
   &:nth-child(odd) {
     justify-self: end;
+  }
+
+  ${Check} {
+    & > path {
+      stroke: ${({ isSelected }) => (isSelected ? "#7fffd4" : "none")};
+    }
+    & > circle {
+      fill: ${({ isSelected }) => (isSelected ? "#141926" : "#141926")};
+      stroke: ${({ isSelected }) => (isSelected ? "#7fffd4" : "#181e2c")};
+    }
+  }
+
+  &:hover {
+    ${Check} {
+      & > circle {
+        fill: #141926;
+        stroke: #7fffd4;
+      }
+    }
   }
 `
 

@@ -15,6 +15,7 @@ interface IToProps {
   price: BigNumber
   balance: BigNumber
   address: string
+  selectedNfts: number[]
   onChange?: (amount: string) => void
   onSelect?: () => void
 }
@@ -23,6 +24,7 @@ const NftInput: React.FC<IToProps> = ({
   price,
   balance,
   address,
+  selectedNfts,
   onChange,
   onSelect,
 }) => {
@@ -61,7 +63,9 @@ const NftInput: React.FC<IToProps> = ({
       </S.InputTop>
 
       <S.InputBottom>
-        <S.NftCounter>2 NFT</S.NftCounter>
+        <S.NftCounter>
+          {selectedNfts.length} NFT{selectedNfts.length > 1 ? "s" : ""}
+        </S.NftCounter>
 
         <S.ActiveSymbol onClick={onSelect}>
           <JazzIcon size={24} address={address || ""} />
@@ -69,18 +73,15 @@ const NftInput: React.FC<IToProps> = ({
           {!!onSelect && <S.Icon src={angleIcon} />}
         </S.ActiveSymbol>
       </S.InputBottom>
-      <S.TokensContainer gap="8" p="16px 0 0">
-        <NftRow
-          votingPower={ZERO}
-          tokenId="1"
-          tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
-        />
-        <NftRow
-          isLocked
-          votingPower={ZERO}
-          tokenId="1"
-          tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
-        />
+      <S.TokensContainer gap="8" p={!selectedNfts.length ? "0" : "16px 0 0"}>
+        {selectedNfts.map((id) => (
+          <NftRow
+            key={id}
+            votingPower={ZERO}
+            tokenId={id.toString()}
+            tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
+          />
+        ))}
       </S.TokensContainer>
     </S.InputContainer>
   )
