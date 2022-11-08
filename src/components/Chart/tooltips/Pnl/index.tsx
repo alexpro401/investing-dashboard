@@ -7,6 +7,7 @@ import { expandTimestamp, normalizeBigNumber } from "utils"
 
 import { Flex } from "theme"
 import { Styled as S } from "./styled"
+import { isNil } from "lodash"
 
 function getAmountSymbol(amount: number, withMinus = false): string {
   if (amount > 0) return "+"
@@ -16,7 +17,17 @@ function getAmountSymbol(amount: number, withMinus = false): string {
 
 const ChartTooltipPnl = (props) => {
   const { active, payload, baseToken } = props
-  const history = (payload && payload[0]?.payload) ?? null
+  const history = useMemo(() => {
+    if (
+      isNil(payload) ||
+      isNil(payload[0]?.payload) ||
+      (!isNil(payload[0]?.payload.isFallback) && payload[0]?.payload.isFallback)
+    ) {
+      return null
+    }
+
+    return payload[0]?.payload
+  }, [payload])
 
   const date = useMemo<string>(() => {
     if (!history) return ""
@@ -40,7 +51,7 @@ const ChartTooltipPnl = (props) => {
     return { format: String(Math.abs(Number(res))), number: Number(res) }
   }, [history])
 
-  if (active && payload && payload.length && baseToken) {
+  if (active && payload && payload.length && baseToken && !history.isFallback) {
     return (
       <S.Container>
         <S.Content>
