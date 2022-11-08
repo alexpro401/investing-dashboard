@@ -15,7 +15,7 @@ import { useForm } from "hooks/useForm"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
-import useCreateDAO from "hooks/useCreateDAO"
+import { useCreateDAO } from "hooks/dao"
 
 enum STEPS {
   titles = "titles",
