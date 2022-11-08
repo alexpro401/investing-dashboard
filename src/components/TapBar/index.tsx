@@ -4,6 +4,7 @@ import Wallet from "assets/menu/mobile/Wallet"
 import Profile from "assets/menu/mobile/Profile"
 import TopTraders from "assets/menu/mobile/TopTraders"
 import Insurance from "assets/menu/mobile/Insurance"
+import Dao from "assets/menu/mobile/Dao"
 
 import { MobileMenu, NavItem } from "./styled"
 import { shortenAddress } from "utils"
@@ -25,6 +26,7 @@ export const TapBar = () => {
       <NavItem path="/wallet" Icon={Wallet} text={shortenAddress(account, 3)} />
       <NavItem path="/me/trader" Icon={Profile} text="My profile" />
       <NavItem path="/" Icon={TopTraders} text="Traders" />
+      <NavItem path="/dao/list" Icon={Dao} text="DAO" />
       <NavItem path="/insurance" Icon={Insurance} text="Insurance" />
     </MobileMenu>
   )
