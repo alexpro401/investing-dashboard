@@ -1,8 +1,7 @@
 import { isNil } from "lodash"
-import { FC, useCallback } from "react"
+import { FC, useCallback, useState } from "react"
 import { useNavigate } from "react-router-dom"
-
-import LockedFundsChart from "components/LockedFundsChart"
+import { Tooltip } from "recharts"
 
 import { Flex } from "theme"
 import { Card } from "common"
@@ -11,6 +10,10 @@ import usePoolLockedFunds from "hooks/usePoolLockedFunds"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { Token } from "interfaces"
+import { CHART_TYPE, TIMEFRAME } from "constants/chart"
+import { usePoolLockedFundsHistory } from "hooks/usePool"
+import Chart from "components/Chart"
+import { TooltipLockedFundsChart } from "../components"
 
 const TabPoolLockedFunds: FC<{
   address: string
@@ -42,6 +45,9 @@ const TabPoolLockedFunds: FC<{
     },
   ] = usePoolLockedFunds(poolData, poolInfo, baseToken)
 
+  const [tf, setTf] = useState(TIMEFRAME.d)
+  const data = usePoolLockedFundsHistory(address, tf)
+
   const onTerminalNavigate = useCallback(() => {
     if (isNil(address)) return
     navigate(`/pool/invest/${address}`)
@@ -65,7 +71,36 @@ const TabPoolLockedFunds: FC<{
               <Label align="right">My funds</Label>
             </div>
           </Flex>
-          <LockedFundsChart address={address} tfPosition="bottom" />
+          <Chart
+            type={CHART_TYPE.area}
+            height={"130px"}
+            data={data}
+            chart={{
+              stackOffset: "silhouette",
+            }}
+            chartItems={[
+              {
+                isAnimationActive: true,
+                type: "linear",
+                dataKey: "investorsUSD",
+                stroke: "#9AE2CB",
+              },
+              {
+                isAnimationActive: true,
+                type: "linear",
+                dataKey: "traderUSDValue",
+                stroke: "#ffffff",
+              },
+            ]}
+            timeframe={{ get: tf, set: setTf }}
+            timeframePosition="bottom"
+          >
+            <Tooltip
+              content={(p) => {
+                return <TooltipLockedFundsChart {...p} />
+              }}
+            />
+          </Chart>
         </Card>
         <Indents top side={false}>
           <Card>

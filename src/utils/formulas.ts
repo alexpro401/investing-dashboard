@@ -168,7 +168,7 @@ export const formateChartData = (data) => {
   })
 }
 
-export const formatLockedFundsChartData = (data) => {
+export const generateLockedFundsChartData = (data) => {
   if (!data || data.length === 0) {
     return []
   }

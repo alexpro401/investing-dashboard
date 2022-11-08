@@ -5,9 +5,9 @@ import { DATE_FORMAT } from "constants/time"
 import { expandTimestamp } from "utils"
 
 import { Flex } from "theme"
-import { TooltipStyled as TS } from "./styled"
+import { Styled as S } from "./styled"
 
-const PNLTooltip = (props) => {
+const TooltipLockedFundsChart = (props) => {
   const { active, payload } = props
   const data = (payload && payload[0]?.payload) ?? null
 
@@ -18,23 +18,23 @@ const PNLTooltip = (props) => {
 
   if (active && payload && payload.length) {
     return (
-      <TS.Container>
-        <TS.Content>
-          <TS.Date>{date}</TS.Date>
+      <S.Container>
+        <S.Content>
+          <S.Date>{date}</S.Date>
           <Flex full m="4px 0 0" jc="space-between">
-            <TS.Label>Trader</TS.Label>
-            <TS.Value type="trader">${data.traderUSDValue}</TS.Value>
+            <S.Label>Trader</S.Label>
+            <S.Value type="trader">${data.traderUSDValue}</S.Value>
           </Flex>
           <Flex full m="4px 0 0" jc="space-between">
-            <TS.Label>Investors</TS.Label>
-            <TS.Value type="investors">${data.investorsUSD}</TS.Value>
+            <S.Label>Investors</S.Label>
+            <S.Value type="investors">${data.investorsUSD}</S.Value>
           </Flex>
-        </TS.Content>
-      </TS.Container>
+        </S.Content>
+      </S.Container>
     )
   }
 
   return null
 }
 
-export default PNLTooltip
+export default TooltipLockedFundsChart
