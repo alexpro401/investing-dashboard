@@ -20,10 +20,10 @@ import { EInputBorderColors } from "fields/InputField"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
 import useGovValidatorsTokenTotalSupply from "hooks/useGovValidatorsTokenTotalSupply"
-
-import * as S from "../styled"
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 import { cutStringZeroes } from "utils"
+
+import * as S from "../styled"
 
 const VotingSettings: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()

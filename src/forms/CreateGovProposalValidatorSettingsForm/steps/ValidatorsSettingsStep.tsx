@@ -1,4 +1,6 @@
 import React, { useCallback, useContext, useMemo, useState } from "react"
+import { useParams } from "react-router-dom"
+import { parseUnits, formatUnits } from "@ethersproject/units"
 
 import {
   StepsNavigation,
@@ -18,15 +20,21 @@ import GovVotingSettings from "modals/GovVotingSettings"
 import { ICON_NAMES } from "constants/icon-names"
 import { readFromClipboard } from "utils/clipboard"
 import { useFormValidation } from "hooks/useFormValidation"
+import useGovUserKeeperGetTotalVoteWeight from "hooks/useGovUserKeeperGetTotalVoteWeight"
 import { required, isAddressValidator } from "utils/validators"
+import { cutStringZeroes } from "utils"
+import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 
 import * as S from "../styled"
 
 const ValidatorsSettingsStep: React.FC = () => {
+  const { daoAddress } = useParams<"daoAddress">()
+
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
   const { validators, balances, handleChangeValidator, hiddenIdxs } =
     useContext(ValidatorsListContext)
   const { initialForm } = useContext(FundDaoCreatingContext)
+  const totalVoteWeight = useGovUserKeeperGetTotalVoteWeight(daoAddress ?? "")
 
   const [previousSettingsOpened, setPreviousSettingsOpened] = useState(false)
   const { isFieldsValid, touchForm } = useFormValidation(
@@ -88,6 +96,27 @@ const ValidatorsSettingsStep: React.FC = () => {
     }
   }, [handleChangeValidator])
 
+  const regularQuorum = useMemo(() => {
+    if (!totalVoteWeight) return "0"
+
+    const quorumBN = parseUnits(
+      initialForm._validatorsBalancesSettingsForm.quorum.toString(),
+      18
+    )
+
+    // quorum_votes = (validator_total_supply * validators_quorum) / 100
+    const multiplyResult = multiplyBignumbers(
+      [quorumBN, 18],
+      [totalVoteWeight, 18]
+    )
+    const quorumResult = divideBignumbers(
+      [multiplyResult, 18],
+      [parseUnits("100"), 18]
+    )
+
+    return cutStringZeroes(formatUnits(quorumResult, 18))
+  }, [totalVoteWeight, initialForm])
+
   return (
     <>
       <GovVotingSettings
@@ -100,7 +129,7 @@ const ValidatorsSettingsStep: React.FC = () => {
           initialForm._validatorsBalancesSettingsForm.delegatedVotingAllowed
         }
         duration={initialForm._validatorsBalancesSettingsForm.duration}
-        quorum={"123"}
+        quorum={regularQuorum}
         minVotesForVoting={
           initialForm._validatorsBalancesSettingsForm.minVotesForVoting
         }
