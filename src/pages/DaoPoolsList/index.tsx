@@ -11,10 +11,18 @@ import { ITab } from "interfaces"
 import DaoPoolsListFiltered from "./List"
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import TutorialCard from "components/TutorialCard"
+import {
+  selectGovPoolsByNameSubstring,
+  selectPayload,
+} from "state/govPools/selectors"
+import { useSelector } from "react-redux"
 
 const DaoPoolsList: React.FC = () => {
-  const loading = true
-  const pools = [] as { id: string }[]
+  const { loading } = useSelector(selectPayload)
+
+  const search = React.useState("")
+
+  const pools = useSelector((s) => selectGovPoolsByNameSubstring(s, search[0]))
 
   const scrollRef = React.useRef(null)
   React.useEffect(() => {

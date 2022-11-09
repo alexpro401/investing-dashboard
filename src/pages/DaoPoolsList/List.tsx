@@ -7,6 +7,7 @@ import { Indents } from "./styled"
 
 import { Text, To } from "theme"
 import { Card } from "common"
+import { shortenAddress } from "utils"
 
 const DaoPoolsListFiltered = ({ loading, pools }) => {
   return React.useMemo<JSX.Element>(() => {
@@ -24,7 +25,9 @@ const DaoPoolsListFiltered = ({ loading, pools }) => {
           <To key={uuidv4()} to={`/dao/${pool.id}`}>
             <Indents>
               <Card>
-                <Text>Pool card</Text>
+                <Text>
+                  {isEmpty(pool.name) ? shortenAddress(pool.id) : pool.name}
+                </Text>
               </Card>
             </Indents>
           </To>
