@@ -14,6 +14,10 @@ declare global {
       REACT_APP_INVEST_POOLS_API_URL: string
       REACT_APP_INVESTORS_API_URL: string
       REACT_APP_INTERACTIONS_API_URL: string
+
+      REACT_APP_DAO_VALIDATORS_API_URL: string
+      REACT_APP_DAO_POOLS_API_URL: string
+
       REACT_APP_MAIN_ASSET_ADDRESS: string
 
       REACT_APP_IPFS_PROJECT_ID: string
