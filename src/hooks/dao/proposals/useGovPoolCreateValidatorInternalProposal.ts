@@ -12,7 +12,8 @@ import { isTxMined, parseTransactionError } from "utils"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
-import { useActiveWeb3React } from "hooks/index"
+import { useActiveWeb3React } from "hooks"
+import { addDaoProposalData } from "utils/ipfs"
 
 interface IProps {
   daoAddress: string
@@ -40,14 +41,19 @@ const useGovPoolCreateValidatorInternalProposal = ({ daoAddress }: IProps) => {
   }, [gasTrackerResponse])
 
   const tryEstimateGas = useCallback(
-    async (proposalType: number, values: BigNumberish[], users: string[]) => {
+    async (
+      proposalType: number,
+      daoProposalIPFSCode: string,
+      values: BigNumberish[],
+      users: string[]
+    ) => {
       if (!govValidatorsContract) return
 
       try {
         const gas =
           await govValidatorsContract?.estimateGas.createInternalProposal(
             proposalType,
-            "example.com",
+            daoProposalIPFSCode,
             values,
             users,
             transactionOptions
@@ -84,17 +90,23 @@ const useGovPoolCreateValidatorInternalProposal = ({ daoAddress }: IProps) => {
       try {
         setPayload(SubmitState.SIGN)
 
+        let { path: daoProposalIPFSCode } = await addDaoProposalData({
+          proposalName,
+          proposalDescription,
+        })
+        daoProposalIPFSCode = "ipfs://" + daoProposalIPFSCode
+
         const gasLimit = await tryEstimateGas(
           internalProposalType,
+          daoProposalIPFSCode,
           values,
           users
         )
 
-        //TODO handle proposal name and proposal description
         const resultTransaction =
           await govValidatorsContract.createInternalProposal(
             internalProposalType,
-            "example.com",
+            daoProposalIPFSCode,
             values,
             users,
             { ...transactionOptions, gasLimit, from: account }

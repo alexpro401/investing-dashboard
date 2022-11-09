@@ -14,7 +14,7 @@ import {
   InsuranceAccidentChartPoint,
 } from "interfaces/insurance"
 import { IPriceHistory } from "interfaces/thegraphs/all-pools"
-import { TIMEFRAMES } from "constants/history"
+import { TIMEFRAME } from "constants/chart"
 
 export interface InsuranceAccidentForm {
   pool: {
@@ -70,8 +70,8 @@ export interface Chart {
     set: Dispatch<SetStateAction<InsuranceAccidentChartPoint>>
   }
   timeframe: {
-    get: string
-    set: Dispatch<SetStateAction<string>>
+    get: TIMEFRAME
+    set: Dispatch<SetStateAction<TIMEFRAME>>
   }
   data: {
     get: IPriceHistory[]
@@ -120,7 +120,7 @@ export const InsuranceAccidentCreatingContext =
     chart: {
       point: { get: {} as InsuranceAccidentChartPoint, set: () => {} },
       data: { get: [] as IPriceHistory[], set: () => {} },
-      timeframe: { get: "", set: () => {} },
+      timeframe: { get: TIMEFRAME.m, set: () => {} },
       forPool: { get: "", set: () => {} },
     },
     _clearState: () => {},
@@ -155,7 +155,7 @@ const InsuranceAccidentCreatingContextProvider: FC<
       {} as InsuranceAccidentChartPoint
     ),
     data: useState<IPriceHistory[]>([] as IPriceHistory[]),
-    timeframe: useState<string>(TIMEFRAMES["M"]),
+    timeframe: useState<TIMEFRAME>(TIMEFRAME.m),
     forPool: useState<string>(""),
   }
 
@@ -172,7 +172,7 @@ const InsuranceAccidentCreatingContextProvider: FC<
     investorsInfo[1]({} as InsuranceAccidentInvestors)
     chart.point[1]({} as InsuranceAccidentChartPoint)
     chart.data[1]([] as IPriceHistory[])
-    chart.timeframe[1](TIMEFRAMES["M"])
+    chart.timeframe[1](TIMEFRAME.m)
     chart.forPool[1]("")
   }, [])
 

@@ -112,7 +112,7 @@ const CreateProposalSelectType: React.FC = () => {
       [EProposalType.daoProfileModification]: `/dao/${daoAddress}/create-proposal-change-dao-settings`,
       [EProposalType.chaningVotingSettings]: "/",
       [EProposalType.tokenDistribution]: "/",
-      [EProposalType.validatorSettings]: "/",
+      [EProposalType.validatorSettings]: `/dao/${daoAddress}/create-proposal-validator-settings`,
       [EProposalType.changeTokenPrice]: "/",
     }[selectedProposalType]
 

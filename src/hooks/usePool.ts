@@ -3,12 +3,13 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { parseUnits } from "@ethersproject/units"
 import { isEmpty } from "lodash"
 import axios from "axios"
+import { useQuery } from "urql"
+import { useSelector } from "react-redux"
 
 import { IPosition } from "interfaces/thegraphs/all-pools"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { ILeverageInfo } from "interfaces/contracts/ITraderPool"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import { useQuery } from "urql"
 import { isAddress } from "utils"
 import { PoolPositionLast, PoolQuery } from "queries"
 import { PoolsByInvestorsQuery } from "queries/all-pools"
@@ -19,10 +20,21 @@ import { normalizeBigNumber } from "utils"
 import usePoolPrice from "hooks/usePoolPrice"
 import { useERC20Data } from "state/erc20/hooks"
 import { usePriceFeedContract } from "contracts"
-import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
-import { useSelector } from "react-redux"
+import {
+  divideBignumbers,
+  generateLockedFundsChartData,
+  generatePoolPnlHistory,
+  multiplyBignumbers,
+} from "utils/formulas"
 import { AppState } from "state"
 import { selectPoolByAddress } from "state/pools/selectors"
+import {
+  TIMEFRAME_AGGREGATION_CODE,
+  TIMEFRAME_FROM_DATE,
+  TIMEFRAME_LIMIT_CODE,
+  TIMEFRAME,
+} from "constants/chart"
+import { usePriceHistory } from "state/pools/hooks"
 
 /**
  * Returns TheGraph info about the pool
@@ -215,4 +227,31 @@ export const usePoolPnlInfo = (address: string | undefined) => {
     { poolData, baseToken },
     { totalPnlPercentage, totalPnlBase, totalUSDPnlPerc, totalUSDPnlUSD },
   ]
+}
+
+export const usePoolPriceHistory = (
+  address: string | undefined,
+  tf: TIMEFRAME
+) => {
+  const [history, fetching] = usePriceHistory(
+    address,
+    TIMEFRAME_AGGREGATION_CODE[tf],
+    TIMEFRAME_LIMIT_CODE[tf],
+    TIMEFRAME_FROM_DATE[tf]
+  )
+
+  return [generatePoolPnlHistory(history), fetching]
+}
+
+export const usePoolLockedFundsHistory = (
+  address: string | undefined,
+  tf: TIMEFRAME
+) => {
+  const [history, fetching] = usePriceHistory(
+    address,
+    TIMEFRAME_AGGREGATION_CODE[tf],
+    TIMEFRAME_LIMIT_CODE[tf],
+    TIMEFRAME_FROM_DATE[tf]
+  )
+  return [generateLockedFundsChartData(history), fetching]
 }
