@@ -10,8 +10,13 @@ import { ICON_NAMES } from "constants/icon-names"
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
 
-import { useGovPoolCreateProposal, useGovPoolDeposit } from "hooks/dao"
+import {
+  useGovPool,
+  useGovPoolCreateProposal,
+  useGovPoolDeposit,
+} from "hooks/dao"
 import { parseEther } from "@ethersproject/units"
+import { EExecutor } from "../../interfaces/contracts/IGovPoolSettings"
 
 enum EProposalType {
   daoProfileModification = "daoProfileModification",
@@ -35,6 +40,25 @@ const CreateProposalSelectType: React.FC = () => {
   const [selectedProposalType, setSelectedProposalType] = useState(
     EProposalType.daoProfileModification
   )
+
+  const {
+    govPoolContract,
+
+    init,
+
+    settings,
+    userKeeper,
+    validators,
+    distributionProposal,
+
+    govValidatorsContract,
+    govUserKeeperContract,
+    govSettingsContract,
+    distributionProposalContract,
+  } = useGovPool(daoAddress)
+
+  init()
+
   const {
     descriptionURL,
     executors,
@@ -63,47 +87,84 @@ const CreateProposalSelectType: React.FC = () => {
     }
   }, [daoDeposit])
 
-  const proceedToNextStep = useCallback(() => {
+  const proceedToNextStep = useCallback(async () => {
     // TEMP: create hardcoded proposals
     switch (selectedProposalType) {
       case EProposalType.daoProfileModification: {
-        descriptionURL.set("")
-        executors.set([])
-        values.set([])
-        data.set([])
-        break
+        await createInternalProposal(
+          "",
+          [daoAddress as string],
+          [0],
+          [
+            (
+              await govPoolContract?.populateTransaction.editDescriptionURL("")
+            )?.data as string,
+          ]
+        )
+        return
       }
       case EProposalType.chaningVotingSettings: {
-        descriptionURL.set("")
-        executors.set([])
-        values.set([])
-        data.set([])
-        break
+        // internal
+        await createInternalProposal(
+          "",
+          [settings as string],
+          [0],
+          [
+            (
+              await govSettingsContract?.populateTransaction.editSettings(
+                [EExecutor.INTERNAL],
+                [
+                  {
+                    // fill by custom settings
+                  },
+                ]
+              )
+            )?.data as string,
+          ]
+        )
+        return
       }
       case EProposalType.tokenDistribution: {
-        descriptionURL.set("")
-        executors.set([])
-        values.set([])
-        data.set([])
-
-        createDistributionProposal()
-        break
+        // token distribution
+        await createInternalProposal(
+          "",
+          [daoAddress as string],
+          [0],
+          [
+            (
+              await govPoolContract?.populateTransaction.editDescriptionURL("")
+            )?.data as string,
+          ]
+        )
+        return
       }
       case EProposalType.validatorSettings: {
-        descriptionURL.set("")
-        executors.set([])
-        values.set([])
-        data.set([])
-
-        createValidatorProposal()
-        break
+        // validators
+        await createInternalProposal(
+          "",
+          [daoAddress as string],
+          [0],
+          [
+            (
+              await govPoolContract?.populateTransaction.editDescriptionURL("")
+            )?.data as string,
+          ]
+        )
+        return
       }
       case EProposalType.changeTokenPrice: {
-        descriptionURL.set("")
-        executors.set([])
-        values.set([])
-        data.set([])
-        break
+        // not exist yet
+        await createInternalProposal(
+          "",
+          [daoAddress as string],
+          [0],
+          [
+            (
+              await govPoolContract?.populateTransaction.editDescriptionURL("")
+            )?.data as string,
+          ]
+        )
+        return
       }
     }
 
@@ -117,7 +178,17 @@ const CreateProposalSelectType: React.FC = () => {
     }[selectedProposalType]
 
     navigate(nextProposalTypePath)
-  }, [navigate, selectedProposalType, daoAddress])
+  }, [
+    selectedProposalType,
+    daoAddress,
+    navigate,
+    descriptionURL,
+    executors,
+    values,
+    data,
+    createDistributionProposal,
+    createValidatorProposal,
+  ])
 
   const proposalTypes = useMemo<IProposalType[]>(
     () => [

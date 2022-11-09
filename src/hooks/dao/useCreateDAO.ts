@@ -79,23 +79,23 @@ const useCreateDAO = () => {
 
     setPayload(SubmitState.SIGN)
 
-    const additionalData = new IpfsEntity(
-      JSON.stringify({
-        avatarUrl: avatarUrl.get,
-        daoName: daoName.get,
-        websiteUrl: websiteUrl.get,
-        description: description.get,
-        socialLinks: socialLinks.get,
-        documents: documents.get,
-      })
-    )
-
-    await additionalData.uploadSelf()
-
-    if (!additionalData._path) {
-      // TODO: handle case when ipfs upload failed
-      return
-    }
+    // const additionalData = new IpfsEntity(
+    //   JSON.stringify({
+    //     avatarUrl: avatarUrl.get,
+    //     daoName: daoName.get,
+    //     websiteUrl: websiteUrl.get,
+    //     description: description.get,
+    //     socialLinks: socialLinks.get,
+    //     documents: documents.get,
+    //   })
+    // )
+    //
+    // await additionalData.uploadSelf()
+    //
+    // if (!additionalData._path) {
+    //   // TODO: handle case when ipfs upload failed
+    //   return
+    // }
 
     const defaultSettings = {
       earlyCompletion: defaultProposalSettingForm.earlyCompletion.get,
@@ -275,7 +275,7 @@ const useCreateDAO = () => {
             ? 0
             : userKeeperParams.nftsTotalSupply.get,
       },
-      descriptionURL: additionalData._path,
+      descriptionURL: "additionalData._path",
     }
 
     const gasLimit = await tryEstimateGas(POOL_PARAMETERS)

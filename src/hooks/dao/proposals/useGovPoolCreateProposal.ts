@@ -49,19 +49,109 @@ export const useGovPoolCreateProposal = (
     }
   }, [gasTrackerResponse])
 
-  const createNewDaoProposalType = async () => {}
+  const createNewDaoProposalType = async (
+    descriptionURL: string,
+    executors: string[],
+    values: number[],
+    data: string[]
+  ) => {
+    await govPoolContract?.createProposal(
+      descriptionURL,
+      executors,
+      values,
+      data
+    )
+  }
 
-  const createInternalValidatorProposal = async () => {}
+  const createInternalValidatorProposal = async (
+    descriptionURL: string,
+    executors: string[],
+    values: number[],
+    data: string[]
+  ) => {
+    await govPoolContract?.createProposal(
+      descriptionURL,
+      executors,
+      values,
+      data
+    )
+  }
 
-  const createInsuranceProposal = async () => {}
+  const createInsuranceProposal = async (
+    descriptionURL: string,
+    executors: string[],
+    values: number[],
+    data: string[]
+  ) => {
+    await govPoolContract?.createProposal(
+      descriptionURL,
+      executors,
+      values,
+      data
+    )
+  }
 
-  const createInternalProposal = async () => {}
+  const createInternalProposal = async (
+    descriptionURL: string,
+    executors: string[],
+    values: number[],
+    data: string[]
+  ) => {
+    console.log({
+      descriptionURL,
+      executors,
+      values,
+      data,
+    })
+    await govPoolContract?.createProposal(
+      descriptionURL,
+      executors,
+      values,
+      data
+    )
+  }
 
-  const createDistributionProposal = async () => {}
+  const createDistributionProposal = async (
+    descriptionURL: string,
+    executors: string[],
+    values: number[],
+    data: string[]
+  ) => {
+    await govPoolContract?.createProposal(
+      descriptionURL,
+      executors,
+      values,
+      data
+    )
+  }
 
-  const createValidatorProposal = async () => {}
+  const createValidatorProposal = async (
+    descriptionURL: string,
+    executors: string[],
+    values: number[],
+    data: string[]
+  ) => {
+    await govPoolContract?.createProposal(
+      descriptionURL,
+      executors,
+      values,
+      data
+    )
+  }
 
-  const createCustomProposal = async () => {}
+  const createCustomProposal = async (
+    descriptionURL: string,
+    executors: string[],
+    values: number[],
+    data: string[]
+  ) => {
+    await govPoolContract?.createProposal(
+      descriptionURL,
+      executors,
+      values,
+      data
+    )
+  }
 
   return {
     descriptionURL: { get: _descriptionURL, set: _setDescriptionURL },
