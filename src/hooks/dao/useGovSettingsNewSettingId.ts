@@ -1,11 +1,13 @@
 import { useGovSettingsContract } from "contracts"
 import { useCallback, useEffect, useState } from "react"
 
-interface IUseDaoPoolNewSettingsId {
+interface IUseGovSettingsNewSettingId {
   daoAddress: string
 }
 
-const useDaoPoolNewSettingId = ({ daoAddress }: IUseDaoPoolNewSettingsId) => {
+const useGovSettingsNewSettingId = ({
+  daoAddress,
+}: IUseGovSettingsNewSettingId) => {
   const daoSettingsContract = useGovSettingsContract(daoAddress)
 
   const [result, setResult] = useState<number>(0)
@@ -37,4 +39,4 @@ const useDaoPoolNewSettingId = ({ daoAddress }: IUseDaoPoolNewSettingsId) => {
   return [result, loading, error]
 }
 
-export default useDaoPoolNewSettingId
+export default useGovSettingsNewSettingId

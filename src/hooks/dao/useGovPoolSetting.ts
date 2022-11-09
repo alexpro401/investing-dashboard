@@ -3,12 +3,12 @@ import { BigNumber } from "@ethersproject/bignumber"
 
 import { useGovPoolContract, useGovSettingsContract } from "contracts"
 
-interface IUseDaoPoolSetting {
+interface IUseGovPoolSetting {
   daoAddress: string
   settingsId: number
 }
 
-interface IDaoSettings {
+interface IGovSettings {
   earlyCompletion: boolean
   delegatedVotingAllowed: boolean
   validatorsVote: boolean
@@ -25,13 +25,13 @@ interface IDaoSettings {
   executorDescription: string
 }
 
-const useDaoPoolSetting = ({
+const useGovPoolSetting = ({
   daoAddress,
   settingsId,
-}: IUseDaoPoolSetting): [IDaoSettings | undefined, boolean, boolean] => {
+}: IUseGovPoolSetting): [IGovSettings | undefined, boolean, boolean] => {
   const daoSettingsContract = useGovSettingsContract(daoAddress)
 
-  const [result, setResult] = useState<IDaoSettings | undefined>(undefined)
+  const [result, setResult] = useState<IGovSettings | undefined>(undefined)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<boolean>(false)
 
@@ -81,4 +81,4 @@ export const useGovSettingsAddress = (daoAddress: string) => {
   return govSettingsAddress
 }
 
-export default useDaoPoolSetting
+export default useGovPoolSetting
