@@ -32,7 +32,9 @@ const useGovPoolVotingAssets = (govPoolAddress: string) => {
     if (!govUserKeeperContract) return
     try {
       const _tokenAddress = await govUserKeeperContract.tokenAddress()
-      setTokenAddress(_tokenAddress)
+      if (_tokenAddress !== ZERO_ADDR) {
+        setTokenAddress(_tokenAddress)
+      }
     } catch (error: any) {
       _throwTxError(error)
     }
@@ -41,8 +43,10 @@ const useGovPoolVotingAssets = (govPoolAddress: string) => {
   const updateNftAddress = useCallback(async () => {
     if (!govUserKeeperContract) return
     try {
-      const _tokenAddress = await govUserKeeperContract.nftAddress()
-      setNftAddress(_tokenAddress)
+      const _nftAddress = await govUserKeeperContract.nftAddress()
+      if (_nftAddress !== ZERO_ADDR) {
+        setNftAddress(_nftAddress)
+      }
     } catch (error: any) {
       _throwTxError(error)
     }
