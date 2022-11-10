@@ -1,40 +1,38 @@
 import { useCallback, useMemo, useContext } from "react"
-import { parseUnits } from "@ethersproject/units"
 import { useNavigate } from "react-router-dom"
+import { parseUnits } from "@ethersproject/units"
 
 import { useGovPoolContract } from "contracts"
-import { useGovValidatorsContractAddress } from "../useGovValidatorsContractAddress"
-import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { addDaoProposalData } from "utils/ipfs"
+import { IpfsEntity } from "utils/ipfsEntity"
+import { IGovPoolDescription } from "types/dao.types"
 import { encodeAbiMethod } from "utils/encodeAbi"
-import { GovValidators } from "abi"
-import useGasTracker from "state/gas/hooks"
+import { GovPool } from "abi"
 import useError from "hooks/useError"
-import usePayload from "../../usePayload"
+import usePayload from "hooks/usePayload"
+import useGasTracker from "state/gas/hooks"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { SubmitState } from "constants/types"
-import { isTxMined, parseTransactionError } from "utils"
 import { TransactionType } from "state/transactions/types"
+import { isTxMined, parseTransactionError } from "utils"
+import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 
-interface ICreateProposalArgs {
+interface ICreateProposalChangeDaoSettingsArgs extends IGovPoolDescription {
   proposalName: string
   proposalDescription: string
-  users: string[]
-  balances: string[]
 }
 
-const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
+const useGovPoolCreateProposalChangeDaoSettings = (govPoolAddress: string) => {
   const navigate = useNavigate()
   const govPoolContract = useGovPoolContract(govPoolAddress)
-  const govValidatorsAddress = useGovValidatorsContractAddress(govPoolAddress)
+  const { setSuccessModalState, closeSuccessModalState } = useContext(
+    GovProposalCreatingContext
+  )
 
   const [, setPayload] = usePayload()
   const [, setError] = useError()
   const addTransaction = useTransactionAdder()
   const [gasTrackerResponse] = useGasTracker()
-  const { setSuccessModalState, closeSuccessModalState } = useContext(
-    GovProposalCreatingContext
-  )
 
   const transactionOptions = useMemo(() => {
     if (!gasTrackerResponse) return
@@ -45,16 +43,13 @@ const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
   }, [gasTrackerResponse])
 
   const tryEstimateGas = useCallback(
-    async (
-      daoProposalTypeIPFSCode: string,
-      encodedChangeBalancesMethod: any
-    ) => {
+    async (daoProposalIPFSCode: string, encodedNewFovPoolDescription: any) => {
       try {
         const gas = await govPoolContract?.estimateGas.createProposal(
-          daoProposalTypeIPFSCode,
-          [govValidatorsAddress],
+          daoProposalIPFSCode,
+          [govPoolAddress],
           [0],
-          [encodedChangeBalancesMethod],
+          [encodedNewFovPoolDescription],
           transactionOptions
         )
 
@@ -67,14 +62,23 @@ const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
         return
       }
     },
-    [govPoolContract, transactionOptions, govValidatorsAddress]
+    [govPoolContract, transactionOptions, govPoolAddress]
   )
 
   const createProposal = useCallback(
-    async (args: ICreateProposalArgs) => {
-      if (!govPoolContract || !govValidatorsAddress) return
+    async (args: ICreateProposalChangeDaoSettingsArgs) => {
+      if (!govPoolContract) return
 
-      const { proposalName, proposalDescription, users, balances } = args
+      const {
+        proposalName,
+        proposalDescription,
+        avatarUrl,
+        daoName,
+        websiteUrl,
+        description,
+        socialLinks,
+        documents,
+      } = args
 
       try {
         setPayload(SubmitState.SIGN)
@@ -85,31 +89,45 @@ const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
         })
         daoProposalIPFSCode = "ipfs://" + daoProposalIPFSCode
 
-        console.log({ balances, users })
+        const newGovPoolDescriptionIpfEntity = new IpfsEntity<string>(
+          JSON.stringify({
+            avatarUrl,
+            daoName,
+            websiteUrl,
+            description,
+            socialLinks,
+            documents,
+          })
+        )
 
-        const encodedChangeBalancesMethod = encodeAbiMethod(
-          GovValidators,
-          "changeBalances",
-          [balances, users]
+        await newGovPoolDescriptionIpfEntity.uploadSelf()
+
+        const newGovPoolDescription =
+          "ipfs://" + newGovPoolDescriptionIpfEntity._path
+
+        const encodedNewFovPoolDescription = encodeAbiMethod(
+          GovPool,
+          "editDescriptionURL",
+          [newGovPoolDescription]
         )
 
         const gasLimit = await tryEstimateGas(
           daoProposalIPFSCode,
-          encodedChangeBalancesMethod
+          encodedNewFovPoolDescription
         )
 
         const resultTransaction = await govPoolContract.createProposal(
           daoProposalIPFSCode,
-          [govValidatorsAddress],
+          [govPoolAddress],
           [0],
-          [encodedChangeBalancesMethod],
+          [encodedNewFovPoolDescription],
           { ...transactionOptions, gasLimit }
         )
 
         setPayload(SubmitState.WAIT_CONFIRM)
-
         const receipt = await addTransaction(resultTransaction, {
-          type: TransactionType.GOV_POOL_CREATE_VALIDATOR_PROPOSAL,
+          type: TransactionType.GOV_POOL_CREATE_CHANGE_DAO_SETTINGS_PROPOSAL,
+          title: proposalName,
         })
 
         if (isTxMined(receipt)) {
@@ -119,9 +137,9 @@ const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
             title: "Success",
             text: "Congrats! You just successfully created a proposal and voted for it. Follow the proposal’s status at All proposals.",
             image: "",
-            buttonText: "Proposals",
+            buttonText: "All proposals",
             onClick: () => {
-              //TODO redirect to real validators proposals list
+              //TODO redirect to real proposals list
               navigate("/")
               closeSuccessModalState()
             },
@@ -140,14 +158,14 @@ const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
     },
     [
       govPoolContract,
-      govValidatorsAddress,
+      govPoolAddress,
       transactionOptions,
       tryEstimateGas,
-      setError,
-      setPayload,
       addTransaction,
       closeSuccessModalState,
       navigate,
+      setPayload,
+      setError,
       setSuccessModalState,
     ]
   )
@@ -155,4 +173,4 @@ const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
   return createProposal
 }
 
-export default useGovPoolCreateProposalValidators
+export default useGovPoolCreateProposalChangeDaoSettings

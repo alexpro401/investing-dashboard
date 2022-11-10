@@ -53,3 +53,12 @@ export type DaoProposal = {
   _validatorsBalancesSettingsForm: DaoVotingSettings
   _defaultProposalSettingForm: DaoVotingSettings
 }
+
+export interface IGovPoolDescription {
+  avatarUrl: string
+  daoName: string
+  description: string
+  documents: ExternalFileDocument[]
+  socialLinks: [SUPPORTED_SOCIALS, string][]
+  websiteUrl: string
+}

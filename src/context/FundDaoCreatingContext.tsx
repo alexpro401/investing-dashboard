@@ -191,6 +191,8 @@ const FundDaoCreatingContextProvider: FC<
     storedForm._documents
   )
 
+  console.log("_socialLinks: ", _socialLinks)
+
   const _handleChangeDocuments = useCallback((value, idx?: number) => {
     _setDocuments((prev) => {
       if (Array.isArray(value)) {
