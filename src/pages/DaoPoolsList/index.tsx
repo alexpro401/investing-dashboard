@@ -46,8 +46,6 @@ const DaoPoolsList: React.FC = () => {
       return <Text color="#B1C7FC">No DAO pools</Text>
     }
 
-    console.log(pools)
-
     return (
       <>
         {map(pools, (pool, index) => (
