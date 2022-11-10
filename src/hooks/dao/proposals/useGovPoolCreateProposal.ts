@@ -66,7 +66,7 @@ export const useGovPoolCreateProposal = (
       data: string[]
     ) => {
       try {
-        const gas = await govPoolContract?.estimateGas.createProposal(
+        const gas = await govPoolContract!.estimateGas.createProposal(
           descriptionURL,
           executors,
           values,
@@ -83,7 +83,7 @@ export const useGovPoolCreateProposal = (
         return
       }
     },
-    [transactionOptions]
+    [transactionOptions, govPoolContract]
   )
 
   const createProposal = useCallback(
@@ -93,6 +93,8 @@ export const useGovPoolCreateProposal = (
       values: number[],
       data: string[]
     ) => {
+      if (!govPoolContract) return
+
       try {
         const gasLimit = await tryEstimateGas(
           descriptionURL,
@@ -101,7 +103,7 @@ export const useGovPoolCreateProposal = (
           data
         )
 
-        const txResult = await govPoolContract?.createProposal(
+        const txResult = await govPoolContract.createProposal(
           descriptionURL,
           executors,
           values,
@@ -142,46 +144,54 @@ export const useGovPoolCreateProposal = (
   // creating proposals
 
   const createNewDaoProposalType = useCallback(async () => {
+    if (!govPoolContract) return
+
     await createProposal(
       "",
       [daoPoolAddress as string],
       [0],
       [
         (
-          await govPoolContract?.populateTransaction.editDescriptionURL("")
+          await govPoolContract.populateTransaction.editDescriptionURL("")
         )?.data as string,
       ]
     )
-  }, [createProposal, daoPoolAddress])
+  }, [createProposal, daoPoolAddress, govPoolContract])
 
   const createInternalValidatorProposal = useCallback(async () => {
+    if (!govPoolContract) return
+
     await createProposal(
       "",
       [daoPoolAddress as string],
       [0],
       [
         (
-          await govPoolContract?.populateTransaction.editDescriptionURL("")
+          await govPoolContract.populateTransaction.editDescriptionURL("")
         )?.data as string,
       ]
     )
-  }, [createProposal, daoPoolAddress])
+  }, [createProposal, daoPoolAddress, govPoolContract])
 
   // can be called only on dexe dao pool
   const createInsuranceProposal = useCallback(async () => {
+    if (!govPoolContract) return
+
     await createProposal(
       "",
       [daoPoolAddress as string],
       [0],
       [
         (
-          await govPoolContract?.populateTransaction.editDescriptionURL("")
+          await govPoolContract.populateTransaction.editDescriptionURL("")
         )?.data as string,
       ]
     )
-  }, [createProposal, daoPoolAddress])
+  }, [createProposal, daoPoolAddress, govPoolContract])
 
   const createInternalProposal = useCallback(async () => {
+    if (!govPoolContract) return
+
     if (!daoPoolAddress) throw new Error("GovPool is not defined")
 
     try {
@@ -206,9 +216,10 @@ export const useGovPoolCreateProposal = (
 
       await createProposal(descriptionURL, executors, values, data)
     } catch (error) {}
-  }, [createProposal, daoPoolAddress])
+  }, [createProposal, daoPoolAddress, govPoolContract])
 
   const createDistributionProposal = useCallback(async () => {
+    if (!govPoolContract || !distributionProposalContract) return
     if (!daoPoolAddress) throw new Error("GovPool is not defined")
 
     try {
@@ -223,7 +234,7 @@ export const useGovPoolCreateProposal = (
 
       // if (!additionalData._path) throw new Error("uploaded data has no path")
 
-      const latestProposalId = await govPoolContract?.latestProposalId()
+      const latestProposalId = await govPoolContract.latestProposalId()
 
       const erc20Token = getERC20Contract(
         "0x6De41c91D028c963f374850D76A93B102F65aE50",
@@ -248,7 +259,7 @@ export const useGovPoolCreateProposal = (
           )
         )?.data as string,
         (
-          await distributionProposalContract?.populateTransaction.execute(
+          await distributionProposalContract.populateTransaction.execute(
             latestProposalId!.add(1).toString(),
             "0x6De41c91D028c963f374850D76A93B102F65aE50",
             0
@@ -262,12 +273,15 @@ export const useGovPoolCreateProposal = (
     account,
     createProposal,
     daoPoolAddress,
+    distributionProposalContract,
     distributionProposalAddress,
     govPoolContract,
     library,
   ])
 
   const createValidatorProposal = useCallback(async () => {
+    if (!govValidatorsContract) return
+
     if (!daoPoolAddress) throw new Error("GovPool is not defined")
 
     try {
@@ -287,7 +301,7 @@ export const useGovPoolCreateProposal = (
       const values = [0]
       const data = [
         (
-          await govValidatorsContract?.populateTransaction.changeBalances(
+          await govValidatorsContract.populateTransaction.changeBalances(
             [
               parseUnits(
                 "0.0001", // will be from input
@@ -303,20 +317,22 @@ export const useGovPoolCreateProposal = (
 
       await createProposal(descriptionURL, executors, values, data)
     } catch (error) {}
-  }, [createProposal, daoPoolAddress, validatorsAddress])
+  }, [createProposal, daoPoolAddress, validatorsAddress, govValidatorsContract])
 
   const createCustomProposal = useCallback(async () => {
+    if (!govPoolContract) return
+
     await createProposal(
       "",
       [daoPoolAddress as string],
       [0],
       [
         (
-          await govPoolContract?.populateTransaction.editDescriptionURL("")
+          await govPoolContract.populateTransaction.editDescriptionURL("")
         )?.data as string,
       ]
     )
-  }, [createProposal, daoPoolAddress])
+  }, [createProposal, daoPoolAddress, govPoolContract])
 
   return {
     createProposal,

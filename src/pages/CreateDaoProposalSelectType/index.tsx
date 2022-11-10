@@ -99,6 +99,7 @@ const CreateProposalSelectType: React.FC = () => {
 
     navigate(nextProposalTypePath)
   }, [
+    createInternalProposal,
     selectedProposalType,
     daoAddress,
     navigate,
