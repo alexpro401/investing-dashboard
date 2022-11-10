@@ -1,10 +1,11 @@
-import * as nft from "./nft"
+import { Moralis } from "./nft"
 
 export * from "./useAPI"
 
-// TODO: create objects here
 const api = {
-  nft,
+  nft: {
+    Moralis: new Moralis(),
+  },
 }
 
 export default api

@@ -10,7 +10,7 @@ export const useAPI = () => {
 
   return useMemo(
     () => ({
-      nft: new api.nft[enabledNftApi](),
+      nft: api.nft[enabledNftApi],
     }),
     []
   )

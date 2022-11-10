@@ -7,6 +7,7 @@ interface ERC721Metadata {
   uri?: string | null
 }
 
+// represents nft api boilerplate
 interface NftAPI {
   readonly api: AxiosInstance
 
@@ -24,6 +25,6 @@ interface NftAPI {
   ) => Promise<ERC721Metadata[]>
 }
 
-export default NftAPI
-
 export { Moralis }
+
+export default NftAPI

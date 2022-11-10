@@ -1,8 +1,11 @@
 import { isEqual } from "lodash"
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios"
 import NftAPI from "api/nft"
-import { differenceInMilliseconds, differenceInSeconds } from "date-fns/esm"
+import { differenceInMilliseconds } from "date-fns/esm"
 
+// Moralis api is not supported to receive chainId with type of number,
+// used here to wrap chainId to specific string
+// more info here: https://docs.moralis.io/reference/nft-api
 const MORALIS_NETWORK_BY_CHAIN = {
   1: "eth",
   56: "bsc",
