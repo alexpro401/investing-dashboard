@@ -28,7 +28,7 @@ function calculateTotalPower(
   power: BigNumber,
   nftPower: BigNumber[]
 ): BigNumber {
-  if (!isEmpty(nftPower)) return power
+  if (isEmpty(nftPower)) return power
 
   return reduce(
     nftPower,
