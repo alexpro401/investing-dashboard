@@ -1,4 +1,5 @@
 import { FC, ReactNode, useMemo } from "react"
+import { isEmpty, isFunction, isNil } from "lodash"
 
 import { Flex } from "theme"
 import { CardInfo } from "common"
@@ -11,7 +12,7 @@ import { normalizeBigNumber } from "utils"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
 import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
-import { isEmpty } from "lodash"
+import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
 
 const HeadLeftNodeSkeleton: FC = () => (
   <Flex ai="center" jc="flex-start">
@@ -22,6 +23,17 @@ const HeadLeftNodeSkeleton: FC = () => (
     </Flex>
   </Flex>
 )
+
+function getStatisticNode(s, formatter) {
+  if (s.loading) return <Skeleton variant="text" h="16px" w="70px" />
+
+  const formattedValue =
+    isNil(formatter) || !isFunction(formatter)
+      ? normalizeBigNumber(s.value, 18, 0)
+      : formatter(s.value)
+
+  return <S.StatisticValue>{formattedValue}</S.StatisticValue>
+}
 
 interface Props {
   data: IGovPoolQuery
@@ -40,8 +52,8 @@ const GovPoolStatisticCard: FC<Props> = ({
     daoAddress: data.id,
     address: account,
   })
-
   const [assetsExisting, assets] = useGovPoolVotingAssets(data.id)
+  const [statistic] = useGovPoolStatistic(data.id)
 
   const userVotingPower = useMemo(() => {
     if (UserVotingPowerLoading) {
@@ -50,60 +62,38 @@ const GovPoolStatisticCard: FC<Props> = ({
     return normalizeBigNumber(UserVotingPower.total, 18, 0)
   }, [UserVotingPower, UserVotingPowerLoading])
 
-  const TVL = useMemo(() => {
-    // if (isNil(lastHistoryPoint)) {
-    //   return <Skeleton w="25px" h="16px" />
-    // }
-
-    return <S.StatisticValue>${24888}</S.StatisticValue>
-  }, [])
-
-  const MC_TVL = useMemo(() => {
-    // if (isNil(lastHistoryPoint)) {
-    //   return <Skeleton w="25px" h="16px" />
-    // }
-
-    return <S.StatisticValue>{0.9421}</S.StatisticValue>
-  }, [])
-
-  const Members = useMemo(() => {
-    // if (isNil(lastHistoryPoint)) {
-    //   return <Skeleton w="25px" h="16px" />
-    // }
-
-    return <S.StatisticValue>{24888}</S.StatisticValue>
-  }, [])
-
-  const LAU = useMemo(() => {
-    // if (isNil(data)) return <Skeleton w="25px" h="16px" />
-
-    return <S.StatisticValue>{10}%</S.StatisticValue>
-  }, [])
-
   const userStatistic = useMemo(
     () => [
       {
         label: "TVL",
-        value: TVL,
+        value: getStatisticNode(
+          statistic.tvl,
+          (v) => `$${normalizeBigNumber(v, 18, 2)}`
+        ),
         info: <>Info about TVL</>,
       },
       {
         label: "MC/TVL",
-        value: MC_TVL,
+        value: getStatisticNode(statistic.mc_tvl, (v) =>
+          normalizeBigNumber(v, 18, 2)
+        ),
         info: <>Info about MC/TVL</>,
       },
       {
         label: "Members",
-        value: Members,
+        value: getStatisticNode(statistic.members, (v) => String(v)),
         info: <>Info about Members</>,
       },
       {
         label: "LAU",
-        value: LAU,
+        value: getStatisticNode(
+          statistic.lau,
+          (v) => `${normalizeBigNumber(v, 18, 0)}%`
+        ),
         info: <>Info about LAU</>,
       },
     ],
-    [TVL, MC_TVL, Members, LAU]
+    [statistic]
   )
 
   const leftNode = useMemo(() => {
