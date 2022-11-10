@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
-import { isEmpty, reduce } from "lodash"
+import { reduce } from "lodash"
 
 import { useGovUserKeeperContract } from "contracts"
 import { addBignumbers } from "utils/formulas"
 import { parseTransactionError } from "utils"
 import useError from "hooks/useError"
+import { ZERO } from "constants/index"
 
 interface IUseGovPoolUserVotingPower {
   daoAddress: string
@@ -15,26 +16,15 @@ interface IUseGovPoolUserVotingPower {
 interface IPowers {
   power: BigNumber | undefined
   nftPower: BigNumber[] | undefined
-  total: BigNumber | undefined
+  totalNftPower: BigNumber | undefined
+  totalPower: BigNumber | undefined
 }
 
 const initialState = {
   power: undefined,
   nftPower: undefined,
-  total: undefined,
-}
-
-function calculateTotalPower(
-  power: BigNumber,
-  nftPower: BigNumber[]
-): BigNumber {
-  if (isEmpty(nftPower)) return power
-
-  return reduce(
-    nftPower,
-    (acc, nftPowerItem) => addBignumbers([acc, 18], [nftPowerItem, 18]),
-    power
-  )
+  totalNftPower: undefined,
+  totalPower: undefined,
 }
 
 const useGovPoolUserVotingPower = ({
@@ -59,12 +49,19 @@ const useGovPoolUserVotingPower = ({
         false
       )
 
-      const total = calculateTotalPower(power, nftPower)
+      const totalNftPower = reduce(
+        nftPower,
+        (acc, nftPowerItem) => addBignumbers([acc, 18], [nftPowerItem, 18]),
+        ZERO
+      )
+
+      const totalPower = addBignumbers([power, 18], [totalNftPower, 18])
 
       setResult({
         power,
         nftPower,
-        total,
+        totalNftPower,
+        totalPower,
       })
     } catch (error: any) {
       if (!!error && !!error.data && !!error.data.message) {

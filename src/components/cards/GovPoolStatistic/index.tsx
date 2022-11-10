@@ -53,6 +53,7 @@ const GovPoolStatisticCard: FC<Props> = ({
     daoAddress: data.id,
     address: account,
   })
+
   const [assetsExisting, assets] = useGovPoolVotingAssets(data.id)
   const [statistic] = useGovPoolStatistic(data.id)
   const [ipfs, ipfsLoading] = useGovPoolIpfsData(data.id)
@@ -61,7 +62,7 @@ const GovPoolStatisticCard: FC<Props> = ({
     if (UserVotingPowerLoading) {
       return <Skeleton variant="text" h="16px" w="70px" />
     }
-    return normalizeBigNumber(UserVotingPower.total, 18, 0)
+    return normalizeBigNumber(UserVotingPower.totalPower, 18, 0)
   }, [UserVotingPower, UserVotingPowerLoading])
 
   const userStatistic = useMemo(
