@@ -1,10 +1,12 @@
 import * as React from "react"
-import { isEmpty, isNil, map } from "lodash"
+import { isEmpty, isNil } from "lodash"
 import { useSelector } from "react-redux"
-import { v4 as uuidv4 } from "uuid"
 import { useWeb3React } from "@web3-react/core"
 import { PulseSpinner } from "react-spinners-kit"
+import AutoSizer from "react-virtualized-auto-sizer"
+import { areEqual, FixedSizeList } from "react-window"
 
+import { Text, To } from "theme"
 import { Container, Indents, Action, List } from "./styled"
 
 import Header from "components/Header/Layout"
@@ -16,7 +18,6 @@ import {
   selectGovPoolsByNameSubstring,
   selectPayload,
 } from "state/govPools/selectors"
-import { Text, To } from "theme"
 import GovPoolStatisticCard from "components/cards/GovPoolStatistic"
 
 const DaoPoolsList: React.FC = () => {
@@ -37,6 +38,18 @@ const DaoPoolsList: React.FC = () => {
     },
   ]
 
+  const PoolRow = ({ data, index, style }) => {
+    const pool = data[index]
+
+    return (
+      <Indents style={style}>
+        <To to={`/dao/${pool.id}`}>
+          <GovPoolStatisticCard data={pool} account={account} index={index} />
+        </To>
+      </Indents>
+    )
+  }
+
   const PoolsList = React.useMemo(() => {
     if (loading && (isEmpty(pools) || isNil(pools))) {
       return <PulseSpinner />
@@ -47,19 +60,19 @@ const DaoPoolsList: React.FC = () => {
     }
 
     return (
-      <>
-        {map(pools, (pool, index) => (
-          <To key={uuidv4()} to={`/dao/${pool.id}`}>
-            <Indents key={uuidv4()}>
-              <GovPoolStatisticCard
-                data={pool}
-                account={account}
-                index={index}
-              />
-            </Indents>
-          </To>
-        ))}
-      </>
+      <AutoSizer>
+        {({ height, width }) => (
+          <FixedSizeList
+            itemData={pools}
+            itemCount={pools.length}
+            itemSize={136 + 16}
+            height={height}
+            width={width}
+          >
+            {React.memo(PoolRow, areEqual)}
+          </FixedSizeList>
+        )}
+      </AutoSizer>
     )
   }, [pools, loading])
 
