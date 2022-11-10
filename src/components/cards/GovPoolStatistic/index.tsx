@@ -1,4 +1,4 @@
-import { FC, ReactNode, useMemo } from "react"
+import { FC, ReactNode, useEffect, useMemo, useState } from "react"
 import { isEmpty, isFunction, isNil } from "lodash"
 
 import { Flex } from "theme"
@@ -13,6 +13,7 @@ import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
 import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
+import useGovPoolIpfsData from "hooks/dao/useGovPoolIpfsData"
 
 const HeadLeftNodeSkeleton: FC = () => (
   <Flex ai="center" jc="flex-start">
@@ -54,6 +55,7 @@ const GovPoolStatisticCard: FC<Props> = ({
   })
   const [assetsExisting, assets] = useGovPoolVotingAssets(data.id)
   const [statistic] = useGovPoolStatistic(data.id)
+  const [ipfs, ipfsLoading] = useGovPoolIpfsData(data.id)
 
   const userVotingPower = useMemo(() => {
     if (UserVotingPowerLoading) {
@@ -97,7 +99,11 @@ const GovPoolStatisticCard: FC<Props> = ({
   )
 
   const leftNode = useMemo(() => {
-    if (!data || !assets.token || !assets.nft) return <HeadLeftNodeSkeleton />
+    if (!data || !assets.token || !assets.nft || ipfsLoading) {
+      return <HeadLeftNodeSkeleton />
+    }
+
+    const iconSource = !ipfs || !ipfs.avatarUrl ? "" : ipfs.avatarUrl
 
     const name =
       String(data.name).length > 20
@@ -117,14 +123,14 @@ const GovPoolStatisticCard: FC<Props> = ({
 
     return (
       <Flex ai="center" jc="flex-start">
-        <Icon size={38} m="0 8px 0 0" source={""} address={""} />
+        <Icon size={38} m="0 8px 0 0" source={iconSource} address={data.id} />
         <Flex dir="column" ai="flex-start" gap="4">
           <S.Title>{name ?? "111PG DAO"}</S.Title>
           <S.Description align="left">{subTitle}</S.Description>
         </Flex>
       </Flex>
     )
-  }, [data, assetsExisting, assets])
+  }, [data, assetsExisting, assets, ipfs, ipfsLoading])
 
   const rightNode = useMemo(() => {
     return (
