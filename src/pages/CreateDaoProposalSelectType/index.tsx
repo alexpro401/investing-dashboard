@@ -16,7 +16,6 @@ import {
   useGovPoolDeposit,
 } from "hooks/dao"
 import { parseEther } from "@ethersproject/units"
-import { EExecutor } from "../../interfaces/contracts/IGovPoolSettings"
 
 enum EProposalType {
   daoProfileModification = "daoProfileModification",

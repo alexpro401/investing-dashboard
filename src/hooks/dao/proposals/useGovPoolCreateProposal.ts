@@ -1,15 +1,15 @@
 import { useActiveWeb3React } from "hooks"
 import { useEffect, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { useGovPool } from "../useGovPool"
-import usePayload from "../../usePayload"
-import useError from "../../useError"
-import useGasTracker from "../../../state/gas/hooks"
-import { useTransactionAdder } from "../../../state/transactions/hooks"
+import { useGovPool } from "hooks/dao/useGovPool"
+import usePayload from "hooks/usePayload"
+import useError from "hooks/useError"
+import useGasTracker from "state/gas/hooks"
+import { useTransactionAdder } from "state/transactions/hooks"
 import { parseUnits } from "@ethersproject/units"
-import { SubmitState } from "../../../constants/types"
-import { TransactionType } from "../../../state/transactions/types"
-import { isTxMined, parseTransactionError } from "../../../utils"
+import { SubmitState } from "constants/types"
+import { TransactionType } from "state/transactions/types"
+import { isTxMined, parseTransactionError } from "utils"
 
 export const useGovPoolCreateProposal = (
   daoPoolAddress: string | undefined
