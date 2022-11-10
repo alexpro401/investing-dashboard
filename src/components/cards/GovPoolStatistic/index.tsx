@@ -7,6 +7,10 @@ import Skeleton from "components/Skeleton"
 
 import * as S from "./styled"
 
+import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
+import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
+import { normalizeBigNumber } from "utils"
+
 const HeadLeftNodeSkeleton: FC = () => (
   <Flex ai="center" jc="flex-start">
     <Skeleton variant="circle" w="38px" h="38px" />
@@ -18,11 +22,30 @@ const HeadLeftNodeSkeleton: FC = () => (
 )
 
 interface Props {
+  data: IGovPoolQuery
+  account?: string | null
   index?: number
   children?: ReactNode
 }
 
-const GovPoolStatisticCard: FC<Props> = ({ index = 0, children }) => {
+const GovPoolStatisticCard: FC<Props> = ({
+  data,
+  account,
+  index = 0,
+  children,
+}) => {
+  const [UserVotingPower, UserVotingPowerLoading] = useGovPoolUserVotingPower({
+    daoAddress: data.id,
+    address: account,
+  })
+
+  const userVotingPower = useMemo(() => {
+    if (UserVotingPowerLoading) {
+      return <Skeleton variant="text" h="16px" w="70px" />
+    }
+    return normalizeBigNumber(UserVotingPower.total, 18, 0)
+  }, [UserVotingPower, UserVotingPowerLoading])
+
   const TVL = useMemo(() => {
     // if (isNil(lastHistoryPoint)) {
     //   return <Skeleton w="25px" h="16px" />
@@ -80,27 +103,29 @@ const GovPoolStatisticCard: FC<Props> = ({ index = 0, children }) => {
   )
 
   const leftNode = useMemo(() => {
-    // if (!data) return <HeadLeftNodeSkeleton />
+    if (!data) return <HeadLeftNodeSkeleton />
+
+    const { name } = data
 
     return (
       <Flex ai="center" jc="flex-start">
         <Icon size={38} m="0 8px 0 0" source={""} address={""} />
         <div>
-          <S.Title>111PG DAO</S.Title>
+          <S.Title>{name ?? "111PG DAO"}</S.Title>
           <S.Description align="left">111PG tokens & NFT</S.Description>
         </div>
       </Flex>
     )
-  }, [])
+  }, [data])
 
   const rightNode = useMemo(() => {
     return (
-      <Flex ai="flex-end" jc="flex-start" dir="column">
-        <S.VotingPowerValue>8878</S.VotingPowerValue>
+      <Flex ai="flex-end" jc="flex-start" dir="column" gap="4">
+        <S.VotingPowerValue>{userVotingPower}</S.VotingPowerValue>
         <S.Description>My voting power</S.Description>
       </Flex>
     )
-  }, [])
+  }, [userVotingPower])
 
   return (
     <S.Animation index={index}>
