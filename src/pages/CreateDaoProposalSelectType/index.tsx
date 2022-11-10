@@ -10,11 +10,7 @@ import { ICON_NAMES } from "constants/icon-names"
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
 
-import {
-  useGovPool,
-  useGovPoolCreateProposal,
-  useGovPoolDeposit,
-} from "hooks/dao"
+import { useGovPoolCreateProposal, useGovPoolDeposit } from "hooks/dao"
 import { parseEther } from "@ethersproject/units"
 
 enum EProposalType {
@@ -41,29 +37,6 @@ const CreateProposalSelectType: React.FC = () => {
   )
 
   const {
-    govPoolContract,
-
-    init,
-
-    settings,
-    userKeeper,
-    validators,
-    distributionProposal,
-
-    govValidatorsContract,
-    govUserKeeperContract,
-    govSettingsContract,
-    distributionProposalContract,
-  } = useGovPool(daoAddress)
-
-  init()
-
-  const {
-    descriptionURL,
-    executors,
-    values,
-    data,
-
     createNewDaoProposalType,
     createInternalValidatorProposal,
     createInsuranceProposal,
@@ -129,10 +102,6 @@ const CreateProposalSelectType: React.FC = () => {
     selectedProposalType,
     daoAddress,
     navigate,
-    descriptionURL,
-    executors,
-    values,
-    data,
     createDistributionProposal,
     createValidatorProposal,
   ])
