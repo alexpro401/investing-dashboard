@@ -4,6 +4,7 @@ import React, {
   useState,
   Dispatch,
   SetStateAction,
+  useEffect,
 } from "react"
 import { SUPPORTED_SOCIALS } from "constants/socials"
 
@@ -32,6 +33,14 @@ interface IChangeGovSettingsContext {
 
 interface IChangeGovSettingsContextProviderProps {
   children: React.ReactNode
+  initialForm: {
+    avatarUrl: string
+    daoName: string
+    documents: ExternalFileDocument[]
+    websiteUrl: string
+    description: string
+    socialLinks: [SUPPORTED_SOCIALS, string][]
+  }
 }
 
 export const ChangeGovSettingsContext =
@@ -49,7 +58,7 @@ export const ChangeGovSettingsContext =
 
 const ChangeGovSettingsContextProvider: React.FC<
   IChangeGovSettingsContextProviderProps
-> = ({ children }) => {
+> = ({ children, initialForm }) => {
   const [_avatarUrl, _setAvatarUrl] = useState<string>("")
   const [_daoName, _setDaoName] = useState<string>("")
   const [_documents, _setDocuments] = useState<ExternalFileDocument[]>([
@@ -60,6 +69,15 @@ const ChangeGovSettingsContextProvider: React.FC<
   const [_socialLinks, _setSocialLinks] = useState<
     [SUPPORTED_SOCIALS, string][]
   >([])
+
+  useEffect(() => {
+    _setAvatarUrl(initialForm.avatarUrl ?? "")
+    _setDaoName(initialForm.daoName ?? "")
+    _setDocuments(initialForm.documents ?? [{ name: "", url: "" }])
+    _setWebsiteUrl(initialForm.websiteUrl ?? "")
+    _setDescriptionUrl(initialForm.description ?? "")
+    _setSocialLinks(initialForm.socialLinks ?? [])
+  }, [initialForm])
 
   const _handleChangeDocuments = useCallback((value, idx?: number) => {
     _setDocuments((prev) => {

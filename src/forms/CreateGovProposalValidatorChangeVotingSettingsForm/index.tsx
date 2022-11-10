@@ -56,14 +56,6 @@ const CreateGovProposalValidatorChangeVotingSettingsForm: React.FC = () => {
       values.push(parseUnits(String(quorum.get), 25).toString())
     }
 
-    console.log({
-      internalProposalType: internalProposalType,
-      values,
-      users: [],
-      proposalName: proposalName.get,
-      proposalDescription: proposalDescription.get,
-    })
-
     createProposal({
       internalProposalType: internalProposalType,
       values,
