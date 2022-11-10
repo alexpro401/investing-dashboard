@@ -18,6 +18,7 @@ import {
 } from "queries/all-pools"
 import extractRootDomain from "./extractRootDomain"
 import { isEqual } from "lodash"
+import { ERC20 as ERC20Types } from "interfaces/typechain"
 
 export const delay = (ms: number): Promise<void> => {
   return new Promise((res) => setTimeout(res, ms))
@@ -199,6 +200,17 @@ export function getTypedSignature(address, lib, nonce) {
 
 export function getERC20Contract(address, lib, account) {
   return getContract(address, ERC20, lib, account)
+}
+
+export const approve = async (
+  address: string,
+  lib: any,
+  account: string,
+  spender: string,
+  amount: BigNumber
+) => {
+  const contract = getERC20Contract(address, lib, account) as ERC20Types
+  return contract.approve(spender, amount)
 }
 
 export function getAllowance(

@@ -11,6 +11,7 @@ import angleIcon from "assets/icons/angle-down.svg"
 import { formatBigNumber } from "utils"
 
 import * as S from "./styled"
+import { AppButton } from "common"
 
 interface IToProps {
   balance: BigNumber
@@ -67,9 +68,19 @@ const NftInput: React.FC<IToProps> = ({
       </S.InputTop>
 
       <S.InputBottom>
-        <S.NftCounter>
-          {selectedNfts.length} NFT{selectedNfts.length > 1 ? "s" : ""}
-        </S.NftCounter>
+        {!selectedNfts.length ? (
+          <AppButton
+            type="button"
+            color="default"
+            size="no-paddings"
+            onClick={onSelect}
+            text={"Choose"}
+          />
+        ) : (
+          <S.NftCounter>
+            {selectedNfts.length} NFT{selectedNfts.length > 1 ? "s" : ""}
+          </S.NftCounter>
+        )}
 
         <S.ActiveSymbol onClick={onSelect}>
           <JazzIcon size={24} address={address || ""} />

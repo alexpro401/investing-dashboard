@@ -3,9 +3,9 @@ import NftInput from "components/Exchange/NftInput"
 import * as S from "components/Exchange/styled"
 import { ZERO, ZERO_ADDR } from "constants/index"
 import NftSelect from "modals/NftSelect"
-import { FC, useCallback, useMemo, useState } from "react"
+import { FC, useCallback, useMemo } from "react"
 import { Flex } from "theme"
-import useVotingTerminal from "./useVotingTerminal"
+import useVotingTerminal, { ButtonTypes } from "./useVotingTerminal"
 import Tooltip from "components/Tooltip"
 import { v4 as uuidv4 } from "uuid"
 import Switch from "components/Switch"
@@ -22,6 +22,7 @@ const VotingTerminal: FC<Props> = ({ daoPoolAddress }) => {
     withDelegated,
     selectOpen,
     nftPowerMap,
+    buttonType,
     ERC20Amount,
     ERC721Amount,
     ERC20Price,
@@ -29,11 +30,13 @@ const VotingTerminal: FC<Props> = ({ daoPoolAddress }) => {
     setSelectOpen,
     handleERC20Change,
     handleERC721Change,
+    handleApprove,
+    handleSubmit,
   } = useVotingTerminal(daoPoolAddress)
 
   const button = useMemo(() => {
     // not enough token balance
-    if (formInfo.erc20.balance.lt(ERC20Amount)) {
+    if (buttonType === ButtonTypes.INUFICIENT_TOKEN_BALANCE) {
       return (
         <S.SubmitButton
           disabled
@@ -45,35 +48,42 @@ const VotingTerminal: FC<Props> = ({ daoPoolAddress }) => {
       )
     }
 
+    if (buttonType === ButtonTypes.UNLOCK) {
+      return (
+        <S.SubmitButton
+          color="secondary"
+          type="button"
+          size="large"
+          onClick={handleApprove}
+          text="Approve token"
+          iconRight={ICON_NAMES.locked}
+          iconSize={14}
+        />
+      )
+    }
+
+    if (buttonType === ButtonTypes.EMPTY_AMOUNT) {
+      return (
+        <S.SubmitButton
+          disabled
+          color="secondary"
+          type="button"
+          size="large"
+          onClick={() => {}}
+          text="Select amount"
+        />
+      )
+    }
+
     return (
       <S.SubmitButton
-        color="secondary"
         type="button"
         size="large"
-        onClick={() => {}}
-        text="Unlock NFT"
-        iconRight={ICON_NAMES.locked}
-        iconSize={14}
+        onClick={handleSubmit}
+        text="Confirm voting"
       />
     )
-    return (
-      <S.SubmitButton
-        color="secondary"
-        type="button"
-        size="large"
-        onClick={() => {}}
-        text="Select amount"
-      />
-    )
-    return (
-      <S.SubmitButton
-        type="button"
-        size="large"
-        onClick={() => {}}
-        text="Confirm voting & Create proposal"
-      />
-    )
-  }, [ERC20Amount, formInfo.erc20.balance])
+  }, [buttonType, handleApprove, handleSubmit])
 
   // wrapper function to close modal on submit
   const selectNfts = useCallback(

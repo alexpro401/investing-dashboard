@@ -58,7 +58,7 @@ const NftSelect: FC<Props> = ({
         ))}
       </S.Container>
       <S.Button
-        disabled={!selectedNfts.length}
+        disabled={!selectedNfts.length && !defaultValue.length}
         type="button"
         size="large"
         onClick={() => handleSelect(selectedNfts)}
