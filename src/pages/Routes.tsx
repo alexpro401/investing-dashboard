@@ -148,8 +148,8 @@ export default function Routes() {
                 />
                 <Route path="investment/*" element={<Investment />} />
 
-                <Route path="dao/list/*" element={<DaoPoolsList />} />
                 {/* dao profile */}
+                <Route path="dao/list/:filter" element={<DaoPoolsList />} />
                 <Route path="dao/:daoAddress" element={<DaoProfile />} />
 
                 {/* proposals */}
