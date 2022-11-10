@@ -1,36 +1,30 @@
 import * as React from "react"
-import { isEmpty, isNil } from "lodash"
-import { Route, Routes } from "react-router-dom"
-import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
+import { isEmpty, isNil, map } from "lodash"
+import { useSelector } from "react-redux"
+import { v4 as uuidv4 } from "uuid"
+import { useWeb3React } from "@web3-react/core"
+import { PulseSpinner } from "react-spinners-kit"
 
 import { Container, Indents, Action, List } from "./styled"
 
 import Header from "components/Header/Layout"
 import RouteTabs from "components/RouteTabs"
 import { ITab } from "interfaces"
-import DaoPoolsListFiltered from "./List"
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import TutorialCard from "components/TutorialCard"
 import {
   selectGovPoolsByNameSubstring,
   selectPayload,
 } from "state/govPools/selectors"
-import { useSelector } from "react-redux"
+import { Text, To } from "theme"
+import GovPoolStatisticCard from "components/cards/GovPoolStatistic"
 
 const DaoPoolsList: React.FC = () => {
-  const { loading } = useSelector(selectPayload)
+  const { account } = useWeb3React()
 
   const search = React.useState("")
-
+  const { loading } = useSelector(selectPayload)
   const pools = useSelector((s) => selectGovPoolsByNameSubstring(s, search[0]))
-
-  const scrollRef = React.useRef(null)
-  React.useEffect(() => {
-    if (!scrollRef.current) return
-    disableBodyScroll(scrollRef.current)
-
-    return () => clearAllBodyScrollLocks()
-  }, [scrollRef])
 
   const tabs: ITab[] = [
     {
@@ -42,6 +36,34 @@ const DaoPoolsList: React.FC = () => {
       source: `/dao/list/voting-power`,
     },
   ]
+
+  const PoolsList = React.useMemo(() => {
+    if (loading && (isEmpty(pools) || isNil(pools))) {
+      return <PulseSpinner />
+    }
+
+    if (!loading && isEmpty(pools)) {
+      return <Text color="#B1C7FC">No DAO pools</Text>
+    }
+
+    console.log(pools)
+
+    return (
+      <>
+        {map(pools, (pool, index) => (
+          <To key={uuidv4()} to={`/dao/${pool.id}`}>
+            <Indents key={uuidv4()}>
+              <GovPoolStatisticCard
+                data={pool}
+                account={account}
+                index={index}
+              />
+            </Indents>
+          </To>
+        ))}
+      </>
+    )
+  }, [pools, loading])
 
   return (
     <>
@@ -62,21 +84,8 @@ const DaoPoolsList: React.FC = () => {
               <Action text="+ Create new" routePath="/create-fund" />
             </List.Header>
           </Indents>
-          <List.Scroll ref={scrollRef} center={isNil(pools) || isEmpty(pools)}>
-            <Routes>
-              <Route
-                path="top"
-                element={
-                  <DaoPoolsListFiltered pools={pools} loading={loading} />
-                }
-              />
-              <Route
-                path="voting-power"
-                element={
-                  <DaoPoolsListFiltered pools={pools} loading={loading} />
-                }
-              />
-            </Routes>
+          <List.Scroll center={isNil(pools) || isEmpty(pools)}>
+            {PoolsList}
           </List.Scroll>
         </List.Container>
       </Container>

@@ -1,6 +1,5 @@
 import { motion } from "framer-motion"
 import styled, { css } from "styled-components"
-import { Flex } from "theme"
 import { AppButton } from "common"
 
 const variants = {
