@@ -5,6 +5,7 @@ import { reduce } from "lodash"
 import { IPayload } from "interfaces"
 
 import { addPools, setLoading } from "./actions"
+import { ZERO_ADDR } from "constants/index"
 
 export interface poolsState {
   payload: IPayload
@@ -26,8 +27,12 @@ export default createReducer(initialState, (builder) =>
       state.data = reduce(
         action.payload.data,
         (acc, pool) => {
-          acc[pool.id] = pool
-          return acc
+          if (pool.id === ZERO_ADDR) {
+            return acc
+          } else {
+            acc[pool.id] = pool
+            return acc
+          }
         },
         state.data
       )
