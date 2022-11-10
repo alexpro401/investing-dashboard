@@ -7,16 +7,18 @@ import Skeleton from "components/Skeleton"
 
 import * as S from "./styled"
 
-import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
-import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
 import { normalizeBigNumber } from "utils"
+import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
+import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
+import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
+import { isEmpty } from "lodash"
 
 const HeadLeftNodeSkeleton: FC = () => (
   <Flex ai="center" jc="flex-start">
     <Skeleton variant="circle" w="38px" h="38px" />
-    <Flex dir="column" ai="flex-start" jc="space-between" m="0 0 0 10px">
-      <Skeleton variant="text" h="21px" w="121px" />
-      <Skeleton variant="text" h="17px" w="50px" m="4px 0 0" />
+    <Flex dir="column" ai="flex-start" m="0 0 0 8px" gap="4">
+      <Skeleton variant="text" h="20px" w="121px" />
+      <Skeleton variant="text" h="16px" w="50px" />
     </Flex>
   </Flex>
 )
@@ -38,6 +40,8 @@ const GovPoolStatisticCard: FC<Props> = ({
     daoAddress: data.id,
     address: account,
   })
+
+  const [assetsExisting, assets] = useGovPoolVotingAssets(data.id)
 
   const userVotingPower = useMemo(() => {
     if (UserVotingPowerLoading) {
@@ -103,20 +107,34 @@ const GovPoolStatisticCard: FC<Props> = ({
   )
 
   const leftNode = useMemo(() => {
-    if (!data) return <HeadLeftNodeSkeleton />
+    if (!data || !assets.token || !assets.nft) return <HeadLeftNodeSkeleton />
 
-    const { name } = data
+    const name =
+      String(data.name).length > 20
+        ? String(data.name).slice(0, 18) + "..."
+        : data.name
+
+    let subTitle = ""
+    if (assetsExisting.haveToken) {
+      subTitle += `${assets.token?.symbol} `
+    }
+    if (assetsExisting.haveNft) {
+      if (!isEmpty(subTitle)) {
+        subTitle += "& "
+      }
+      subTitle += "NFT"
+    }
 
     return (
       <Flex ai="center" jc="flex-start">
         <Icon size={38} m="0 8px 0 0" source={""} address={""} />
-        <div>
+        <Flex dir="column" ai="flex-start" gap="4">
           <S.Title>{name ?? "111PG DAO"}</S.Title>
-          <S.Description align="left">111PG tokens & NFT</S.Description>
-        </div>
+          <S.Description align="left">{subTitle}</S.Description>
+        </Flex>
       </Flex>
     )
-  }, [data])
+  }, [data, assetsExisting, assets])
 
   const rightNode = useMemo(() => {
     return (
