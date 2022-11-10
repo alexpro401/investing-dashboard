@@ -10,9 +10,6 @@ import { ICON_NAMES } from "constants/icon-names"
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
 
-import { useGovPoolDeposit } from "hooks/dao"
-import { parseEther } from "@ethersproject/units"
-
 enum EProposalType {
   daoProfileModification = "daoProfileModification",
   chaningVotingSettings = "chaningVotingSettings",
@@ -36,24 +33,11 @@ const CreateProposalSelectType: React.FC = () => {
     EProposalType.daoProfileModification
   )
 
-  const daoDeposit = useGovPoolDeposit(daoAddress ?? "")
-
-  useEffect(() => {
-    if (!daoDeposit) return
-    ;async () => {
-      daoDeposit(
-        "0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3",
-        parseEther("1"),
-        []
-      )
-    }
-  }, [daoDeposit])
-
   const proceedToNextStep = useCallback(() => {
     //TODO NAVIGATE to path related to selected proposal type
     const nextProposalTypePath = {
       [EProposalType.daoProfileModification]: `/dao/${daoAddress}/create-proposal-change-dao-settings`,
-      [EProposalType.chaningVotingSettings]: "/",
+      [EProposalType.chaningVotingSettings]: `dao/${daoAddress}/create-proposal-change-voting-settings`,
       [EProposalType.tokenDistribution]: "/",
       [EProposalType.validatorSettings]: `/dao/${daoAddress}/create-proposal-validator-settings`,
       [EProposalType.changeTokenPrice]: "/",
