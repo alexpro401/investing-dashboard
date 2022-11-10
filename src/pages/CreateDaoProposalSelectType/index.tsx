@@ -20,7 +20,7 @@ import { EExecutor } from "../../interfaces/contracts/IGovPoolSettings"
 
 enum EProposalType {
   daoProfileModification = "daoProfileModification",
-  chaningVotingSettings = "chaningVotingSettings",
+  changingVotingSettings = "changingVotingSettings",
   tokenDistribution = "tokenDistribution",
   validatorSettings = "validatorSettings",
   changeTokenPrice = "changeTokenPrice",
@@ -91,79 +91,27 @@ const CreateProposalSelectType: React.FC = () => {
     // TEMP: create hardcoded proposals
     switch (selectedProposalType) {
       case EProposalType.daoProfileModification: {
-        await createInternalProposal(
-          "",
-          [daoAddress as string],
-          [0],
-          [
-            (
-              await govPoolContract?.populateTransaction.editDescriptionURL("")
-            )?.data as string,
-          ]
-        )
+        await createInternalProposal()
         return
       }
-      case EProposalType.chaningVotingSettings: {
+      case EProposalType.changingVotingSettings: {
         // internal
-        await createInternalProposal(
-          "",
-          [settings as string],
-          [0],
-          [
-            (
-              await govSettingsContract?.populateTransaction.editSettings(
-                [EExecutor.INTERNAL],
-                [
-                  {
-                    // fill by custom settings
-                  },
-                ]
-              )
-            )?.data as string,
-          ]
-        )
+        await createInternalProposal()
         return
       }
       case EProposalType.tokenDistribution: {
         // token distribution
-        await createInternalProposal(
-          "",
-          [daoAddress as string],
-          [0],
-          [
-            (
-              await govPoolContract?.populateTransaction.editDescriptionURL("")
-            )?.data as string,
-          ]
-        )
+        await createDistributionProposal()
         return
       }
       case EProposalType.validatorSettings: {
         // validators
-        await createInternalProposal(
-          "",
-          [daoAddress as string],
-          [0],
-          [
-            (
-              await govPoolContract?.populateTransaction.editDescriptionURL("")
-            )?.data as string,
-          ]
-        )
+        await createValidatorProposal()
         return
       }
       case EProposalType.changeTokenPrice: {
         // not exist yet
-        await createInternalProposal(
-          "",
-          [daoAddress as string],
-          [0],
-          [
-            (
-              await govPoolContract?.populateTransaction.editDescriptionURL("")
-            )?.data as string,
-          ]
-        )
+        await createInternalProposal()
         return
       }
     }
@@ -171,7 +119,7 @@ const CreateProposalSelectType: React.FC = () => {
     //TODO NAVIGATE to path related to selected proposal type
     const nextProposalTypePath = {
       [EProposalType.daoProfileModification]: `/dao/${daoAddress}/create-proposal-change-dao-settings`,
-      [EProposalType.chaningVotingSettings]: "/",
+      [EProposalType.changingVotingSettings]: "/",
       [EProposalType.tokenDistribution]: "/",
       [EProposalType.validatorSettings]: `/dao/${daoAddress}/create-proposal-validator-settings`,
       [EProposalType.changeTokenPrice]: "/",
@@ -205,7 +153,7 @@ const CreateProposalSelectType: React.FC = () => {
         iconName: ICON_NAMES.fileDock,
       },
       {
-        type: EProposalType.chaningVotingSettings,
+        type: EProposalType.changingVotingSettings,
         title: "Changing voting settings",
         description: (
           <>
