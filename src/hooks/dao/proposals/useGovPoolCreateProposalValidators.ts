@@ -85,8 +85,6 @@ const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
         })
         daoProposalIPFSCode = "ipfs://" + daoProposalIPFSCode
 
-        console.log({ balances, users })
-
         const encodedChangeBalancesMethod = encodeAbiMethod(
           GovValidators,
           "changeBalances",
