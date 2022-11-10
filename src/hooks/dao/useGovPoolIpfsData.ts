@@ -3,11 +3,22 @@ import { useCallback, useEffect, useState } from "react"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { useGovPoolContract } from "contracts"
 
-const useGovPoolIpfsData = (daoAddress): [data: any, loading: boolean] => {
+interface GovPoolIpfsData {
+  avatarUrl: string
+  daoName: string
+  websiteUrl: string
+  description: string
+  socialLinks: string[]
+  documents: any[]
+}
+
+const useGovPoolIpfsData = (
+  daoAddress
+): [data: GovPoolIpfsData | undefined, loading: boolean] => {
   const govPoolContract = useGovPoolContract(daoAddress)
 
   const [loading, setLoading] = useState(true)
-  const [ipfsData, setIpfsData] = useState()
+  const [ipfsData, setIpfsData] = useState<GovPoolIpfsData | undefined>()
 
   const getDescriptionURL = useCallback(async () => {
     if (!govPoolContract) return
