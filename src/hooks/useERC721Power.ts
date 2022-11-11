@@ -1,9 +1,9 @@
+import { useGovPoolVotingAssets } from "hooks/dao"
 import { BigNumberish } from "@ethersproject/bignumber"
 import { ZERO } from "constants/index"
 import { useERC721Contract } from "contracts"
 import { useEffect, useState } from "react"
 import { divideBignumbers } from "utils/formulas"
-import useGovPoolTokensInfo from "./dao/useGovPoolTokensInfo"
 
 interface PropsBase {
   daoPoolAddress?: string
@@ -17,7 +17,7 @@ interface Props extends PropsBase {
 const useERC721Power = ({ daoPoolAddress, tokenIds }: Props) => {
   const [power, setPower] = useState(ZERO)
 
-  const [{ nftAddress }, nftInfo] = useGovPoolTokensInfo(daoPoolAddress)
+  const [{ nftAddress }, { nftInfo }] = useGovPoolVotingAssets(daoPoolAddress)
   const nftCollection = useERC721Contract(nftAddress)
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import { ZERO_ADDR } from "constants/index"
 import { useMemo, useState } from "react"
 import { useAPI } from "api"
 import { useActiveWeb3React } from "hooks"
-import { useGovPoolTokensInfo, useGovBalance } from "hooks/dao"
+import { useGovPoolVotingAssets, useGovBalance } from "hooks/dao"
 import { useDebounce } from "react-use"
 
 // user WALLET tokens + DAO pool tokens
@@ -22,7 +22,7 @@ export const useERC721Tokens = (daoPoolAddress?: string) => {
 
 // only user WALLET tokens
 export const useOwnedERC721Tokens = (daoPoolAddress?: string) => {
-  const [{ nftAddress }] = useGovPoolTokensInfo(daoPoolAddress)
+  const [{ nftAddress }] = useGovPoolVotingAssets(daoPoolAddress)
   const { account, chainId } = useActiveWeb3React()
   const [ids, setIds] = useState<number[]>([])
   const api = useAPI()

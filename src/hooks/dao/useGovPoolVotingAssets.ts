@@ -1,23 +1,57 @@
-import { useCallback, useState, useEffect } from "react"
+import { useCallback, useState, useEffect, useMemo } from "react"
 import { isEmpty, isEqual } from "lodash"
 
 import useError from "hooks/useError"
 import { useERC20 } from "hooks/useERC20"
 import { useErc721 } from "hooks/useErc721"
 
-import { ZERO_ADDR } from "constants/index"
+import { Token } from "interfaces"
+import { ZERO, ZERO_ADDR } from "constants/index"
 import { parseTransactionError } from "utils"
 import { useGovUserKeeperContract } from "contracts"
 
-const useGovPoolVotingAssets = (govPoolAddress: string) => {
+const initialNftInfo = {
+  isSupportPower: false,
+  totalPowerInTokens: ZERO,
+  totalSupply: ZERO,
+}
+
+interface TokensData {
+  tokenAddress: string
+  nftAddress: string
+  haveToken: boolean
+  haveNft: boolean
+}
+
+interface NftData {
+  name: string
+  symbol: string
+  isEnumerable: boolean
+}
+
+interface Info {
+  token: Token | null
+  nft: NftData
+  nftInfo: typeof initialNftInfo
+}
+
+const useGovPoolVotingAssets = (
+  govPoolAddress?: string
+): [TokensData, Info] => {
   const [, setError] = useError()
   const govUserKeeperContract = useGovUserKeeperContract(govPoolAddress)
 
   const [tokenAddress, setTokenAddress] = useState<string>("")
   const [nftAddress, setNftAddress] = useState<string>("")
+  const [nftInfo, setNftInfo] = useState(initialNftInfo)
 
   const [, token] = useERC20(tokenAddress)
-  const nft = useErc721(nftAddress)
+  const { name, symbol, isEnumerable } = useErc721(nftAddress)
+
+  const nft = useMemo(
+    () => ({ name, symbol, isEnumerable }),
+    [name, symbol, isEnumerable]
+  )
 
   const _throwTxError = useCallback((error) => {
     if (!!error && !!error.data && !!error.data.message) {
@@ -52,10 +86,25 @@ const useGovPoolVotingAssets = (govPoolAddress: string) => {
     }
   }, [govUserKeeperContract])
 
+  const updateNftInfo = useCallback(async () => {
+    try {
+      const { isSupportPower, totalPowerInTokens, totalSupply } =
+        await govUserKeeperContract!.nftInfo()
+
+      setNftInfo({ isSupportPower, totalPowerInTokens, totalSupply })
+    } catch (error: any) {
+      _throwTxError(error)
+    }
+  }, [govUserKeeperContract])
+
   useEffect(() => {
     if (!govUserKeeperContract) return
     ;(async () => {
-      await Promise.all([updateTokenAddress(), updateNftAddress()])
+      await Promise.all([
+        updateTokenAddress(),
+        updateNftAddress(),
+        updateNftInfo(),
+      ])
     })()
   }, [govUserKeeperContract])
 
@@ -66,7 +115,7 @@ const useGovPoolVotingAssets = (govPoolAddress: string) => {
       tokenAddress,
       nftAddress,
     },
-    { token, nft },
+    { token, nft, nftInfo },
   ]
 }
 

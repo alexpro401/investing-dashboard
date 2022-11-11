@@ -16,7 +16,7 @@ import { multiplyBignumbers } from "utils/formulas"
 import useERC20Allowance from "hooks/useERC20Allowance"
 import { useERC20 } from "hooks/useERC20"
 
-import { useGovPoolTokensInfo, useGovUserKeeperAddress } from "hooks/dao"
+import { useGovUserKeeperAddress, useGovPoolVotingAssets } from "hooks/dao"
 import useERC721Allowance from "hooks/useERC721Allowance"
 
 export enum ButtonTypes {
@@ -38,7 +38,7 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
   const [ERC721Amount, setERC721Amount] = useState<number[]>([])
 
   const userKeeperAddress = useGovUserKeeperAddress(daoPoolAddress)
-  const [{ tokenAddress, nftAddress }] = useGovPoolTokensInfo(daoPoolAddress)
+  const [{ tokenAddress, nftAddress }] = useGovPoolVotingAssets(daoPoolAddress)
   const { vote, voteDelegated } = useGovPoolVote(daoPoolAddress)
   const { ERC20Balance, ERC721Balance, tokenBalance, tokenBalanceDelegated } =
     useGovPoolMemberBalance(daoPoolAddress, withDelegated)
