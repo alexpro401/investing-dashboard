@@ -20,13 +20,20 @@ import usersImageUrl from "assets/images/users.svg"
 import { shortenAddress } from "utils"
 import { ICON_NAMES } from "constants/icon-names"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
+import { useNavigate } from "react-router-dom"
 
 interface Props {
   data: any[]
   chainId?: number
+  daoAddress?: string
 }
 
-const DaoProfileTabUsedTokens: React.FC<Props> = ({ data, chainId }) => {
+const DaoProfileTabUsedTokens: React.FC<Props> = ({
+  data,
+  chainId,
+  daoAddress,
+}) => {
+  const navigate = useNavigate()
   const total = data.length ?? 0
 
   const TableHead = React.useMemo(
@@ -92,7 +99,7 @@ const DaoProfileTabUsedTokens: React.FC<Props> = ({ data, chainId }) => {
           </>
         }
         info={<TextLabel>Delegated by me</TextLabel>}
-        onClick={() => alert("Handle voters managing")}
+        onClick={() => navigate(`dao/${daoAddress ?? ""}/delegated/out`)}
         actionText="Manage"
       />
       <Indents top side={false}>
@@ -109,7 +116,7 @@ const DaoProfileTabUsedTokens: React.FC<Props> = ({ data, chainId }) => {
             </>
           }
           info={<TextLabel>Delegated to me</TextLabel>}
-          onClick={() => alert("Handle voting Details")}
+          onClick={() => navigate(`dao/${daoAddress ?? ""}/delegated/in`)}
           actionText="Details"
         />
       </Indents>
