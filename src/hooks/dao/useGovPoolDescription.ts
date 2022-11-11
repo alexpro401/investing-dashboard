@@ -31,10 +31,9 @@ const useGovPoolDescriptionUrl = (govPoolAddress: string) => {
     if (!descriptionUrl || descriptionUrl === "") return
 
     try {
-      const ipfsEntity = new IpfsEntity<IGovPoolDescription>(
-        undefined,
-        parseIpfsString(descriptionUrl)
-      )
+      const ipfsEntity = new IpfsEntity<IGovPoolDescription>({
+        path: parseIpfsString(descriptionUrl),
+      })
 
       const _govPoolDescription = await ipfsEntity.load()
       setDescriptionObject(_govPoolDescription)

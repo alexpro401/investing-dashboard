@@ -10,9 +10,11 @@ import GovPoolStatisticCard from "components/cards/GovPoolStatistic"
 const DaoProfileStatisticCard = ({
   isValidator,
   handleOpenCreateProposalModal,
+  account,
+  govPoolQuery,
 }) => {
   return (
-    <GovPoolStatisticCard>
+    <GovPoolStatisticCard account={account} data={govPoolQuery}>
       <>
         <S.CardButtons>
           <SecondaryButton full fz={14} onClick={handleOpenCreateProposalModal}>
