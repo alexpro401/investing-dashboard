@@ -79,23 +79,23 @@ const useCreateDAO = () => {
 
     setPayload(SubmitState.SIGN)
 
-    const additionalData = new IpfsEntity({
-      data: JSON.stringify({
-        avatarUrl: avatarUrl.get,
-        daoName: daoName.get,
-        websiteUrl: websiteUrl.get,
-        description: description.get,
-        socialLinks: socialLinks.get,
-        documents: documents.get,
-      }),
-    })
-
-    await additionalData.uploadSelf()
-
-    if (!additionalData._path) {
-      // TODO: handle case when ipfs upload failed
-      return
-    }
+    // const additionalData = new IpfsEntity(
+    //   JSON.stringify({
+    //     avatarUrl: avatarUrl.get,
+    //     daoName: daoName.get,
+    //     websiteUrl: websiteUrl.get,
+    //     description: description.get,
+    //     socialLinks: socialLinks.get,
+    //     documents: documents.get,
+    //   })
+    // )
+    //
+    // await additionalData.uploadSelf()
+    //
+    // if (!additionalData._path) {
+    //   // TODO: handle case when ipfs upload failed
+    //   return
+    // }
 
     const defaultSettings = {
       earlyCompletion: defaultProposalSettingForm.earlyCompletion.get,
@@ -275,7 +275,7 @@ const useCreateDAO = () => {
             ? 0
             : userKeeperParams.nftsTotalSupply.get,
       },
-      descriptionURL: additionalData._path,
+      descriptionURL: "additionalData._path",
     }
 
     const gasLimit = await tryEstimateGas(POOL_PARAMETERS)
@@ -318,51 +318,13 @@ const useCreateDAO = () => {
   }, [
     account,
     addTransaction,
-    avatarUrl.get,
+    createdDaoAddress,
     daoName.get,
-    defaultProposalSettingForm.creationReward.get,
-    defaultProposalSettingForm.delegatedVotingAllowed.get,
-    defaultProposalSettingForm.duration.get,
-    defaultProposalSettingForm.durationValidators.get,
-    defaultProposalSettingForm.earlyCompletion.get,
-    defaultProposalSettingForm.executionReward.get,
-    defaultProposalSettingForm.minVotesForCreating.get,
-    defaultProposalSettingForm.minVotesForVoting.get,
-    defaultProposalSettingForm.quorum.get,
-    defaultProposalSettingForm.quorumValidators.get,
-    defaultProposalSettingForm.rewardToken.get,
-    defaultProposalSettingForm.validatorsVote.get,
-    defaultProposalSettingForm.voteRewardsCoefficient.get,
-    description.get,
-    distributionProposalSettingsForm.creationReward.get,
-    distributionProposalSettingsForm.delegatedVotingAllowed.get,
-    distributionProposalSettingsForm.duration.get,
-    distributionProposalSettingsForm.durationValidators.get,
-    distributionProposalSettingsForm.earlyCompletion.get,
-    distributionProposalSettingsForm.executionReward.get,
-    distributionProposalSettingsForm.minVotesForCreating.get,
-    distributionProposalSettingsForm.minVotesForVoting.get,
-    distributionProposalSettingsForm.quorum.get,
-    distributionProposalSettingsForm.quorumValidators.get,
-    distributionProposalSettingsForm.rewardToken.get,
-    distributionProposalSettingsForm.validatorsVote.get,
-    distributionProposalSettingsForm.voteRewardsCoefficient.get,
-    documents.get,
+    defaultProposalSettingForm,
+    distributionProposalSettingsForm,
     erc721.isEnumerable,
     factory,
-    internalProposalForm.creationReward.get,
-    internalProposalForm.delegatedVotingAllowed.get,
-    internalProposalForm.duration.get,
-    internalProposalForm.durationValidators.get,
-    internalProposalForm.earlyCompletion.get,
-    internalProposalForm.executionReward.get,
-    internalProposalForm.minVotesForCreating.get,
-    internalProposalForm.minVotesForVoting.get,
-    internalProposalForm.quorum.get,
-    internalProposalForm.quorumValidators.get,
-    internalProposalForm.rewardToken.get,
-    internalProposalForm.validatorsVote.get,
-    internalProposalForm.voteRewardsCoefficient.get,
+    internalProposalForm,
     isCustomVoting.get,
     isDistributionProposal.get,
     isErc721.get,
@@ -371,17 +333,8 @@ const useCreateDAO = () => {
     setPayload,
     transactionOptions,
     tryEstimateGas,
-    userKeeperParams.nftAddress.get,
-    userKeeperParams.nftsTotalSupply.get,
-    userKeeperParams.tokenAddress.get,
-    userKeeperParams.totalPowerInTokens.get,
-    validatorsParams.balances.get,
-    validatorsParams.duration.get,
-    validatorsParams.name.get,
-    validatorsParams.quorum.get,
-    validatorsParams.symbol.get,
-    validatorsParams.validators.get,
-    websiteUrl.get,
+    userKeeperParams,
+    validatorsParams,
   ])
 
   return createPool
