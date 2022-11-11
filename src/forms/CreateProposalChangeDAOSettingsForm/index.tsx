@@ -1,10 +1,13 @@
-import React, { useState, useMemo, useCallback } from "react"
+import React, { useState, useMemo, useCallback, useContext } from "react"
 import { AnimatePresence } from "framer-motion"
 import { useNavigate, useParams } from "react-router-dom"
 
 import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { ChangeDAOSettings } from "./steps"
+import { useGovPoolCreateProposalChangeDaoSettings } from "hooks/dao/proposals"
+import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
+import { ChangeGovSettingsContext } from "context/govPool/proposals/regular/ChangeGovSettingsContext"
 
 import * as S from "./styled"
 
@@ -16,6 +19,20 @@ enum STEPS {
 const CreateProposalChangeDAOSettingsForm: React.FC = () => {
   const navigate = useNavigate()
   const { daoAddress } = useParams<"daoAddress">()
+  const createProposal = useGovPoolCreateProposalChangeDaoSettings(
+    daoAddress ?? ""
+  )
+  const { proposalName, proposalDescription } = useContext(
+    GovProposalCreatingContext
+  )
+  const {
+    avatarUrl,
+    daoName,
+    description,
+    documents,
+    socialLinks,
+    websiteUrl,
+  } = useContext(ChangeGovSettingsContext)
 
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.daoSettings)
 
@@ -26,8 +43,27 @@ const CreateProposalChangeDAOSettingsForm: React.FC = () => {
   )
 
   const handleCreateChangeDaoSettingsProposal = useCallback(() => {
-    console.log("TO DO")
-  }, [])
+    createProposal({
+      proposalName: proposalName.get,
+      proposalDescription: proposalDescription.get,
+      avatarUrl: avatarUrl.get,
+      daoName: daoName.get,
+      description: description.get,
+      documents: documents.get,
+      socialLinks: socialLinks.get,
+      websiteUrl: websiteUrl.get,
+    })
+  }, [
+    createProposal,
+    proposalName,
+    proposalDescription,
+    avatarUrl,
+    daoName,
+    description,
+    documents,
+    socialLinks,
+    websiteUrl,
+  ])
 
   const handlePrevStep = useCallback(() => {
     switch (currentStep) {
@@ -53,7 +89,6 @@ const CreateProposalChangeDAOSettingsForm: React.FC = () => {
         break
       }
       case STEPS.basicInfo: {
-        //TODO handle create change settings DAO proposal
         handleCreateChangeDaoSettingsProposal()
         break
       }
