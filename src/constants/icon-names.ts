@@ -40,4 +40,5 @@ export enum ICON_NAMES {
   share = "share",
   locked = "locked",
   flameGradient = "flame-gradient",
+  tileCheck = "tile-check",
 }

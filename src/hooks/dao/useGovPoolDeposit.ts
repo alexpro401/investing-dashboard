@@ -1,4 +1,5 @@
-import { useCallback, useState, useEffect } from "react"
+import { useGovPoolVotingAssets } from "hooks/dao"
+import { useCallback } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { useGovUserKeeperContract, useGovPoolContract } from "contracts"
@@ -12,8 +13,7 @@ import { isTxMined, parseTransactionError } from "utils"
 import { useGovUserKeeperAddress } from "./useGovPool"
 
 const useGovPoolDeposit = (daoPoolAddress: string) => {
-  const [tokenAddress, setTokenAddress] = useState<string>("")
-
+  const [{ tokenAddress }] = useGovPoolVotingAssets(daoPoolAddress)
   const [fromToken] = useERC20(tokenAddress)
   const govPoolContract = useGovPoolContract(daoPoolAddress)
   const userKeeperContract = useGovUserKeeperContract(daoPoolAddress)
@@ -22,22 +22,6 @@ const useGovPoolDeposit = (daoPoolAddress: string) => {
   const addTransaction = useTransactionAdder()
   const [, setPayload] = usePayload()
   const [, setError] = useError()
-
-  // TODO: use instead useGovPoolTokensInfo hook
-  const updateTokenAddress = useCallback(async () => {
-    try {
-      if (!userKeeperContract) return
-
-      const _tokenAddress = await userKeeperContract.tokenAddress()
-      setTokenAddress(_tokenAddress)
-    } catch (error) {
-      console.log("updateTokenAddress error: ", error)
-    }
-  }, [userKeeperContract])
-
-  useEffect(() => {
-    updateTokenAddress()
-  }, [updateTokenAddress])
 
   const daoDeposit = useCallback(
     async (account: string, amount: BigNumber, nftIds: number[]) => {
