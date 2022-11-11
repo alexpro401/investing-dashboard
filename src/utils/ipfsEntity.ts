@@ -29,7 +29,9 @@ export class IpfsEntity<T> {
     },
   })
 
-  constructor(data?: T, path?: string) {
+  constructor(args: { data?: T; path?: string }) {
+    const { data, path } = args
+
     this._rawData = data
     this._path = path
   }

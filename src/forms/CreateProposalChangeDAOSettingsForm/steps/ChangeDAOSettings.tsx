@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react"
+import React, { useCallback, useContext, useEffect, useState } from "react"
 
 import {
   AppButton,
@@ -35,9 +35,9 @@ import {
   isUrlGithub,
 } from "utils/validators"
 import { isValidUrl } from "utils"
+import { SUPPORTED_SOCIALS } from "constants/socials"
 
 import * as S from "../styled"
-import { SUPPORTED_SOCIALS } from "constants/socials"
 
 const ChangeDAOSettings: React.FC = () => {
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
@@ -89,32 +89,32 @@ const ChangeDAOSettings: React.FC = () => {
       websiteUrl: { required, isUrl, maxLength: maxLength(200) },
       description: { required, maxLength: maxLength(1000) },
 
-      ...(socialLinks.get?.[0]?.[1]
+      ...(!!socialLinks.get?.[0]?.[1]
         ? {
             facebook: { isUrl, isUrlFacebook },
           }
         : {}),
-      ...(socialLinks.get?.[1]?.[1]
+      ...(!!socialLinks.get?.[1]?.[1]
         ? {
             linkedin: { isUrl, isUrlLinkedin },
           }
         : {}),
-      ...(socialLinks.get?.[2]?.[1]
+      ...(!!socialLinks.get?.[2]?.[1]
         ? {
             medium: { isUrl, isUrlMedium },
           }
         : {}),
-      ...(socialLinks.get?.[3]?.[1]
+      ...(!!socialLinks.get?.[3]?.[1]
         ? {
             telegram: { isUrl, isUrlTelegram },
           }
         : {}),
-      ...(socialLinks.get?.[4]?.[1]
+      ...(!!socialLinks.get?.[4]?.[1]
         ? {
             twitter: { isUrl, isUrlTwitter },
           }
         : {}),
-      ...(socialLinks.get?.[5]?.[1]
+      ...(!!socialLinks.get?.[5]?.[1]
         ? {
             github: { isUrl, isUrlGithub },
           }
@@ -125,7 +125,9 @@ const ChangeDAOSettings: React.FC = () => {
         ? {
             others: {
               $every: {
-                isUrl,
+                value: {
+                  isUrl,
+                },
               },
             },
           }
@@ -152,6 +154,12 @@ const ChangeDAOSettings: React.FC = () => {
       ["other", ""],
     ])
     setSocialLinksOpened(true)
+  }, [socialLinks])
+
+  useEffect(() => {
+    if (socialLinks.get.length > 0) {
+      setSocialLinksOpened(true)
+    }
   }, [socialLinks])
 
   return (

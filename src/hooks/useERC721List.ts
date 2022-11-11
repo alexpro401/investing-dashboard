@@ -1,10 +1,9 @@
-import useGovBalance from "hooks/useGovBalance"
 import { IGovNftExactBalance } from "./../interfaces/contracts/IGovUserKeeper"
 import { ZERO_ADDR } from "constants/index"
 import { useMemo, useState } from "react"
 import { useAPI } from "api"
 import { useActiveWeb3React } from "hooks"
-import useGovPoolTokensInfo from "./useGovPoolTokensInfo"
+import { useGovPoolTokensInfo, useGovBalance } from "hooks/dao"
 import { useDebounce } from "react-use"
 
 // user WALLET tokens + DAO pool tokens

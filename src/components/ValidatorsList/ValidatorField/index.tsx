@@ -75,6 +75,7 @@ interface IValidatorFieldProps {
   token: string | null
   isHidden: boolean
   isInitial: boolean
+  onlyAddress?: boolean
   setAddress: (value: string) => void
   handleDelete: () => void
   handleHide: () => void
@@ -85,7 +86,7 @@ interface IValidatorFieldProps {
 }
 
 const ValidatorField: React.FC<IValidatorFieldProps> = ({
-  address,
+  address = "",
   token,
   isHidden,
   isInitial,

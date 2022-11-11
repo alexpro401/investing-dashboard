@@ -25,7 +25,7 @@ const CreateRiskyProposal = lazy(() => import("pages/CreateRiskyProposal"))
 const InvestRiskyProposal = lazy(() => import("pages/InvestRiskyProposal"))
 const SwapRiskyProposal = lazy(() => import("pages/SwapRiskyProposal"))
 const PayDividends = lazy(() => import("pages/PayDividends"))
-const VotingTerminal = lazy(() => import("components/VotingTerminal"))
+const VotingTerminalPage = lazy(() => import("pages/VotingTerminal"))
 const CreateInvestmentProposal = lazy(
   () => import("pages/CreateInvestmentProposal")
 )
@@ -40,6 +40,9 @@ const CreateDaoProposalSelectType = lazy(
 )
 const CreateDaoProposalValidatorSelectType = lazy(
   () => import("pages/CreateDaoProposalValidatorSelectType")
+)
+const CreateDaoProposalValidatorSettings = lazy(
+  () => import("pages/CreateDaoProposalValidatorSettings")
 )
 const CreateDaoProposalValidatorChangeValidatorSettings = lazy(
   () => import("pages/CreateDaoProposalValidatorChangeValidatorSettings")
@@ -62,6 +65,7 @@ const InsuranceCreate = lazy(() => import("pages/InsuranceCreate"))
 const FundPositions = lazy(() => import("pages/FundPositions"))
 const FundDetails = lazy(() => import("pages/FundDetails")) // TODO: my trader profile
 const Investment = lazy(() => import("pages/Investment"))
+const DaoPoolsList = lazy(() => import("pages/DaoPoolsList"))
 
 function Layout() {
   return <Outlet />
@@ -79,10 +83,8 @@ export default function Routes() {
               <Route element={<RequireAuth />}>
                 <Route path="me/investor" element={<Investor />} />
                 <Route
-                  path="vote"
-                  element={
-                    <VotingTerminal daoPoolAddress="0x85076c78189e585dF902Da1FB4BA188886377C95" />
-                  }
+                  path="dao/:daoPoolAddress/vote/:proposalId"
+                  element={<VotingTerminalPage />}
                 />
 
                 <Route path="me/trader" element={<Trader />} />
@@ -152,6 +154,7 @@ export default function Routes() {
                 <Route path="investment/*" element={<Investment />} />
 
                 {/* dao profile */}
+                <Route path="dao/list/:filter" element={<DaoPoolsList />} />
                 <Route path="dao/:daoAddress" element={<DaoProfile />} />
 
                 {/* proposals */}
@@ -180,6 +183,10 @@ export default function Routes() {
                 <Route
                   path="dao/:daoAddress/create-proposal-change-dao-settings"
                   element={<CreateDaoProposalChangeDaoSettings />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal-validator-settings"
+                  element={<CreateDaoProposalValidatorSettings />}
                 />
 
                 <Route path="/*" element={<TopMembers />} />

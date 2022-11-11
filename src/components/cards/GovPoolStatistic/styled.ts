@@ -43,7 +43,7 @@ export const VotingPowerValue = styled(Text).attrs(({ theme }) => ({
   color: theme.statusColors.success,
   fw: 700,
   fz: 16,
-  lh: "20px",
+  lh: "16px",
 }))`
   letter-spacing: 1px;
 `

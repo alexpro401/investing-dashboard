@@ -8,9 +8,9 @@ import WithUserIsDaoValidatorValidation from "components/WithUserIsDaoValidatorV
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
 import DaoValidatorProposalChangeVotingSettingsContextProvider from "context/govPool/proposals/validators/ChangeVotingSettingsContext"
 import CreateGovProposalValidatorChangeVotingSettingsForm from "forms/CreateGovProposalValidatorChangeVotingSettingsForm"
+import { useGovValidatorsInternalSettings } from "hooks/dao"
 
 import * as S from "./styled"
-import useGovValidatorsInternalSettings from "hooks/useGovValidatorsInternalSettings"
 
 const CreateDaoProposalValidatorChangeVotingSettings: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
