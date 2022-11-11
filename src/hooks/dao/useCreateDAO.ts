@@ -79,16 +79,16 @@ const useCreateDAO = () => {
 
     setPayload(SubmitState.SIGN)
 
-    const additionalData = new IpfsEntity(
-      JSON.stringify({
+    const additionalData = new IpfsEntity({
+      data: JSON.stringify({
         avatarUrl: avatarUrl.get,
         daoName: daoName.get,
         websiteUrl: websiteUrl.get,
         description: description.get,
         socialLinks: socialLinks.get,
         documents: documents.get,
-      })
-    )
+      }),
+    })
 
     await additionalData.uploadSelf()
 
