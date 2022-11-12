@@ -49,14 +49,24 @@ const CreateDaoProposalValidatorChangeValidatorSettings = lazy(
 const CreateDaoProposalValidatorChangeVotingSettings = lazy(
   () => import("pages/CreateDaoProposalValidatorChangeVotingSettings")
 )
-const CreateNewDaoProposalType = lazy(
-  () => import("pages/CreateNewDaoProposalType")
-)
+const CreateDaoProposalType = lazy(() => import("pages/CreateDaoProposalType"))
 const CreateDaoProposalChangeDaoSettings = lazy(
   () => import("pages/CreateDaoProposalChangeDaoSettings")
 )
 const CreateDaoProposalChangeVotingSettings = lazy(
   () => import("pages/CreateDaoProposalChangeVotingSettings")
+)
+const DaoProposalChangeGlobalVotingSettings = lazy(
+  () =>
+    import(
+      "pages/CreateDaoProposalChangeVotingSettings/subpages/GlobalVotingSettings"
+    )
+)
+const DaoProposalChangeTokenDistribution = lazy(
+  () =>
+    import(
+      "pages/CreateDaoProposalChangeVotingSettings/subpages/TokenDistribution"
+    )
 )
 // const Insurance = lazy(() => import("pages/Insurance"))
 
@@ -174,7 +184,7 @@ export default function Routes() {
                 />
                 <Route
                   path="dao/:daoAddress/create-new-proposal-type"
-                  element={<CreateNewDaoProposalType />}
+                  element={<CreateDaoProposalType />}
                 />
                 <Route
                   path="dao/:daoAddress/create-proposal-change-dao-settings"
@@ -187,6 +197,14 @@ export default function Routes() {
                 <Route
                   path="dao/:daoAddress/create-proposal-change-voting-settings"
                   element={<CreateDaoProposalChangeVotingSettings />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal-global-voting-options"
+                  element={<DaoProposalChangeGlobalVotingSettings />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal-token-distribution"
+                  element={<DaoProposalChangeTokenDistribution />}
                 />
 
                 <Route path="/*" element={<TopMembers />} />

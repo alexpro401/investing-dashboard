@@ -55,6 +55,7 @@ export enum TransactionType {
   GOV_POOL_CREATE_INTERNAL_PROPOSAL = 104,
   GOV_POOL_CREATE_VALIDATOR_PROPOSAL = 105,
   GOV_POOL_CREATE_CHANGE_DAO_SETTINGS_PROPOSAL = 106,
+  GOV_POOL_CREATE_CHANGE_VOTING_SETTINGS_PROPOSAL = 107,
 }
 
 export interface ApproveTransactionInfo {
@@ -249,6 +250,10 @@ export interface GovPoolCreateChangeDaoSettingsProposalTransactionInfo {
   type: TransactionType.GOV_POOL_CREATE_CHANGE_DAO_SETTINGS_PROPOSAL
 }
 
+export interface GovPoolCreateChangeVotingSettingsProposalTransactionInfo {
+  type: TransactionType.GOV_POOL_CREATE_CHANGE_VOTING_SETTINGS_PROPOSAL
+}
+
 export type TransactionInfo =
   | ApproveTransactionInfo
   | DepositLiquidityTransactionInfo
@@ -283,6 +288,7 @@ export type TransactionInfo =
   | GovPoolCreateIntenalProposalTransactionInfo
   | GovPoolCreateValidatorProposalTransactionInfo
   | GovPoolCreateChangeDaoSettingsProposalTransactionInfo
+  | GovPoolCreateChangeVotingSettingsProposalTransactionInfo
 
 export interface TransactionDetails {
   hash: string

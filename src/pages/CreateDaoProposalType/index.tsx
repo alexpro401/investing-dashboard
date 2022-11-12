@@ -15,7 +15,7 @@ import { cutStringZeroes } from "utils"
 
 import * as S from "./styled"
 
-const CreateNewProposalType: React.FC = () => {
+const CreateDaoProposalType: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
   const [daoSettings, loading] = useGovPoolSetting({
     daoAddress: daoAddress ?? "",
@@ -95,4 +95,4 @@ const CreateNewProposalType: React.FC = () => {
   )
 }
 
-export default CreateNewProposalType
+export default CreateDaoProposalType

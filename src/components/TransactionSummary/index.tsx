@@ -36,6 +36,7 @@ import {
   GovPoolCreateIntenalProposalTransactionInfo,
   GovPoolCreateValidatorProposalTransactionInfo,
   GovPoolCreateChangeDaoSettingsProposalTransactionInfo,
+  GovPoolCreateChangeVotingSettingsProposalTransactionInfo,
 } from "state/transactions/types"
 import { formatBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
@@ -358,6 +359,12 @@ const GovPoolCreateChangeDaoSettingsProposal: React.FC<{
   return <>Successfully created new proposal for changing DAO settings</>
 }
 
+const GovPoolCreateChangeVotingSettingsProposal: React.FC<{
+  info: GovPoolCreateChangeVotingSettingsProposalTransactionInfo
+}> = ({ info }) => {
+  return <>Successfully created new proposal for changing DAO voting settings</>
+}
+
 const TransactionSummary: React.FC<IProps> = ({ info }) => {
   switch (info.type) {
     case TransactionType.APPROVAL:
@@ -424,6 +431,8 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <GovPoolCreateValidatorProposal info={info} />
     case TransactionType.GOV_POOL_CREATE_CHANGE_DAO_SETTINGS_PROPOSAL:
       return <GovPoolCreateChangeDaoSettingsProposal info={info} />
+    case TransactionType.GOV_POOL_CREATE_CHANGE_VOTING_SETTINGS_PROPOSAL:
+      return <GovPoolCreateChangeVotingSettingsProposal info={info} />
     default:
       return null
   }

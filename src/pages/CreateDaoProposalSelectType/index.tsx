@@ -37,7 +37,7 @@ const CreateProposalSelectType: React.FC = () => {
     //TODO NAVIGATE to path related to selected proposal type
     const nextProposalTypePath = {
       [EProposalType.daoProfileModification]: `/dao/${daoAddress}/create-proposal-change-dao-settings`,
-      [EProposalType.chaningVotingSettings]: `dao/${daoAddress}/create-proposal-change-voting-settings`,
+      [EProposalType.chaningVotingSettings]: `/dao/${daoAddress}/create-proposal-change-voting-settings`,
       [EProposalType.tokenDistribution]: "/",
       [EProposalType.validatorSettings]: `/dao/${daoAddress}/create-proposal-validator-settings`,
       [EProposalType.changeTokenPrice]: "/",
