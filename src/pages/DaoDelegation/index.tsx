@@ -31,11 +31,10 @@ const DaoDelegation: React.FC = () => {
   return (
     <>
       <Header>Dao Profile</Header>
-
+      <S.Indents top>
+        <RouteTabs tabs={tabs} />
+      </S.Indents>
       <S.Container>
-        <S.Indents top>
-          <RouteTabs tabs={tabs} />
-        </S.Indents>
         <Routes>
           <Route path="out" element={<DaoDelegationOut />} />
           <Route path="in" element={<DaoDelegationIn />} />
