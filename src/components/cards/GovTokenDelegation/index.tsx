@@ -47,10 +47,11 @@ const CustomLabel = ({ viewBox, total }) => {
   )
 }
 
-const GovTokenDelegationCard: React.FC<{ data: any; chainId?: number }> = ({
-  data,
-  chainId,
-}) => {
+const GovTokenDelegationCard: React.FC<{
+  data: any
+  chainId?: number
+  showMore?: boolean
+}> = ({ data, chainId, showMore }) => {
   const toExplorerLink = React.useMemo(() => {
     if (isNil(data) || isNil(chainId)) {
       return ""
@@ -58,7 +59,7 @@ const GovTokenDelegationCard: React.FC<{ data: any; chainId?: number }> = ({
     return getExplorerLink(chainId, data.to.id, ExplorerDataType.ADDRESS)
   }, [data, chainId])
 
-  const showMore = React.useState(false)
+  const _showMore = React.useState(showMore ?? false)
 
   return (
     <S.Container>
@@ -108,13 +109,15 @@ const GovTokenDelegationCard: React.FC<{ data: any; chainId?: number }> = ({
         </Text>
       </Flex>
       <div>
-        <Collapse isOpen={showMore[0]}>Collapse content</Collapse>
+        <Collapse isOpen={_showMore[0]}>Collapse content</Collapse>
 
-        <S.CollapseButton onClick={() => showMore[1]((p) => !p)}>
-          <Icon
-            name={showMore[0] ? ICON_NAMES.angleUp : ICON_NAMES.angleDown}
-          />
-        </S.CollapseButton>
+        {(isNil(showMore) || !showMore) && (
+          <S.CollapseButton onClick={() => _showMore[1]((p) => !p)}>
+            <Icon
+              name={_showMore[0] ? ICON_NAMES.angleUp : ICON_NAMES.angleDown}
+            />
+          </S.CollapseButton>
+        )}
       </div>
     </S.Container>
   )
