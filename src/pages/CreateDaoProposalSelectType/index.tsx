@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 
 import Header from "components/Header/Layout"
@@ -6,13 +6,14 @@ import TutorialCard from "components/TutorialCard"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import { SelectableCard, Icon, Collapse } from "common"
 import { ICON_NAMES } from "constants/icon-names"
+import { useGovPoolCreateProposal } from "hooks/dao"
 
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
 
 enum EProposalType {
   daoProfileModification = "daoProfileModification",
-  chaningVotingSettings = "chaningVotingSettings",
+  changingVotingSettings = "changingVotingSettings",
   tokenDistribution = "tokenDistribution",
   validatorSettings = "validatorSettings",
   changeTokenPrice = "changeTokenPrice",
@@ -33,18 +34,65 @@ const CreateProposalSelectType: React.FC = () => {
     EProposalType.daoProfileModification
   )
 
-  const proceedToNextStep = useCallback(() => {
+  const {
+    createNewDaoProposalType,
+    createInternalValidatorProposal,
+    createInsuranceProposal,
+    createInternalProposal,
+    createDistributionProposal,
+    createValidatorProposal,
+    createCustomProposal,
+  } = useGovPoolCreateProposal(daoAddress)
+
+  const proceedToNextStep = useCallback(async () => {
     //TODO NAVIGATE to path related to selected proposal type
     const nextProposalTypePath = {
       [EProposalType.daoProfileModification]: `/dao/${daoAddress}/create-proposal-change-dao-settings`,
-      [EProposalType.chaningVotingSettings]: `/dao/${daoAddress}/create-proposal-change-voting-settings`,
+      [EProposalType.changingVotingSettings]: `/dao/${daoAddress}/create-proposal-change-voting-settings`,
       [EProposalType.tokenDistribution]: "/",
       [EProposalType.validatorSettings]: `/dao/${daoAddress}/create-proposal-validator-settings`,
       [EProposalType.changeTokenPrice]: "/",
     }[selectedProposalType]
 
-    navigate(nextProposalTypePath)
-  }, [navigate, selectedProposalType, daoAddress])
+    if (nextProposalTypePath !== "/") {
+      return navigate(nextProposalTypePath)
+    }
+
+    // TEMP: create hardcoded proposals
+    switch (selectedProposalType) {
+      case EProposalType.daoProfileModification: {
+        await createInternalProposal()
+        return
+      }
+      case EProposalType.changingVotingSettings: {
+        // internal
+        await createInternalProposal()
+        return
+      }
+      case EProposalType.tokenDistribution: {
+        // token distribution
+        await createDistributionProposal()
+        return
+      }
+      case EProposalType.validatorSettings: {
+        // validators
+        await createValidatorProposal()
+        return
+      }
+      case EProposalType.changeTokenPrice: {
+        // not exist yet
+        await createInternalProposal()
+        return
+      }
+    }
+  }, [
+    createInternalProposal,
+    selectedProposalType,
+    daoAddress,
+    navigate,
+    createDistributionProposal,
+    createValidatorProposal,
+  ])
 
   const proposalTypes = useMemo<IProposalType[]>(
     () => [
@@ -61,7 +109,7 @@ const CreateProposalSelectType: React.FC = () => {
         iconName: ICON_NAMES.fileDock,
       },
       {
-        type: EProposalType.chaningVotingSettings,
+        type: EProposalType.changingVotingSettings,
         title: "Changing voting settings",
         description: (
           <>

@@ -89,16 +89,16 @@ const useGovPoolCreateProposalChangeDaoSettings = (govPoolAddress: string) => {
         })
         daoProposalIPFSCode = "ipfs://" + daoProposalIPFSCode
 
-        const newGovPoolDescriptionIpfEntity = new IpfsEntity<string>(
-          JSON.stringify({
+        const newGovPoolDescriptionIpfEntity = new IpfsEntity<string>({
+          data: JSON.stringify({
             avatarUrl,
             daoName,
             websiteUrl,
             description,
             socialLinks,
             documents,
-          })
-        )
+          }),
+        })
 
         await newGovPoolDescriptionIpfEntity.uploadSelf()
 

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 
 import { useGovValidatorsContract } from "contracts"
 import useError from "hooks/useError"
-import usePayload from "../../usePayload"
+import usePayload from "hooks/usePayload"
 import useGasTracker from "state/gas/hooks"
 import { SubmitState } from "constants/types"
 import { isTxMined, parseTransactionError } from "utils"

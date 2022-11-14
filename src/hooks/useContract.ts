@@ -8,7 +8,7 @@ import { isAddress } from "utils"
 import { useTraderPoolContract } from "contracts"
 
 const provider = new JsonRpcProvider(
-  "https://data-seed-prebsc-1-s1.binance.org:8545/"
+  "https://data-seed-prebsc-1-s1.binance.org:8545"
 )
 
 export default function useContract<T extends Contract = Contract>(

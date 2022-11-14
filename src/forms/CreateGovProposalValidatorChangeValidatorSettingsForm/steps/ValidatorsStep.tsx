@@ -2,7 +2,7 @@ import React, { useContext, useCallback } from "react"
 
 import { StepsNavigation, CardHead, Card, CardDescription } from "common"
 import ValidatorsList from "components/ValidatorsList"
-import { CreateDaoCardStepNumber } from "forms/CreateFundDaoForm/components"
+import { CreateDaoCardStepNumber } from "common"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { ValidatorsListContext } from "context/govPool/proposals/ValidatorsListContext"
 import { useFormValidation } from "hooks/useFormValidation"
