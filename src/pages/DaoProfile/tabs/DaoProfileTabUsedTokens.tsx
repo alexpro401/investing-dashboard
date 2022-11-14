@@ -99,7 +99,7 @@ const DaoProfileTabUsedTokens: React.FC<Props> = ({
           </>
         }
         info={<TextLabel>Delegated by me</TextLabel>}
-        onClick={() => navigate(`dao/${daoAddress ?? ""}/delegated/out`)}
+        onClick={() => navigate(`/dao/${daoAddress ?? ""}/delegation/out`)}
         actionText="Manage"
       />
       <Indents top side={false}>
@@ -116,7 +116,7 @@ const DaoProfileTabUsedTokens: React.FC<Props> = ({
             </>
           }
           info={<TextLabel>Delegated to me</TextLabel>}
-          onClick={() => navigate(`dao/${daoAddress ?? ""}/delegated/in`)}
+          onClick={() => navigate(`/dao/${daoAddress ?? ""}/delegation/in`)}
           actionText="Details"
         />
       </Indents>
