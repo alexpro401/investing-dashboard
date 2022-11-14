@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Card, Collapse, Icon } from "common"
+import { Collapse, Icon } from "common"
 import theme, { Flex, Text } from "theme"
 import { shortenAddress } from "utils"
 import ExternalLink from "components/ExternalLink"
@@ -10,6 +10,8 @@ import * as S from "./styled"
 import { CHART_TYPE } from "constants/chart"
 import Chart from "components/Chart"
 import { ICON_NAMES } from "constants/icon-names"
+import NftRow from "components/NftRow"
+import { ZERO } from "constants/index"
 
 const chartData = [
   {
@@ -127,11 +129,24 @@ const GovTokenDelegationCard: React.FC<{
         </Flex>
         <div>
           <Collapse isOpen={_showMore[0]}>
-            <div>
-              <Card>First asset</Card>
-              <Card>Second asset</Card>
-              <Card>Third asset</Card>
-            </div>
+            <Flex full dir={"column"} gap={"8"} m={"0 0 12px"}>
+              <NftRow
+                isLocked
+                votingPower={ZERO}
+                tokenId="0"
+                tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
+              />
+              <NftRow
+                votingPower={ZERO}
+                tokenId="1"
+                tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
+              />
+              <NftRow
+                votingPower={ZERO}
+                tokenId="2"
+                tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
+              />
+            </Flex>
             <S.ActionBase
               onClick={() => alert("Wanna withdraw from DAO pool? 😑")}
               text={"Withdraw available"}
