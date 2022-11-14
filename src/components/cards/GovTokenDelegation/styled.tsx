@@ -1,7 +1,17 @@
 import styled from "styled-components"
+import { motion } from "framer-motion"
 import { Card } from "common"
+import { opacityVariants } from "motion/variants"
 
-export const Container = styled(Card)`
+export const Container = styled(motion.div).attrs(() => ({
+  variants: opacityVariants,
+  initial: "hidden",
+  animate: "visible",
+}))`
+  width: 100%;
+`
+export const Content = styled(Card)`
+  width: 100%;
   padding-bottom: 0;
 `
 

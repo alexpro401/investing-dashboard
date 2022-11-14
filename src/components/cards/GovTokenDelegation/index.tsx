@@ -63,62 +63,64 @@ const GovTokenDelegationCard: React.FC<{
 
   return (
     <S.Container>
-      <Flex full ai="center" jc="space-between">
-        <Text fw={500} fz={13} color={theme.textColors.secondary}>
-          Delegated to
-        </Text>
-        <ExternalLink href={toExplorerLink} color={theme.textColors.primary}>
-          {shortenAddress(data.to.id, 4)}
-        </ExternalLink>
-      </Flex>
-      <div style={{ height: "80px", width: "200px", margin: "0 auto" }}>
-        <Chart
-          type={CHART_TYPE.straightAnglePie}
-          height={"80px"}
-          data={chartData}
-          chart={{
-            dataKey: "value",
-            outerRadius: 70,
-            innerRadius: 60,
-            cornerRadius: 10,
-            strokeWidth: 0,
-            paddingAngle: 2,
-          }}
-          chartItems={[]}
-        >
-          <Label
-            position="center"
-            width={200}
-            content={(p) => (
-              <CustomLabel
-                viewBox={p.viewBox}
-                total={chartData[0].value + chartData[1].value}
-              />
-            )}
-          ></Label>
-        </Chart>
-      </div>
-      <Flex full>
-        <Text color={theme.textColors.primary} fz={13}>
-          <S.LegendDot color={theme.brandColors.secondary} />
-          Used in Voting: 75,000
-        </Text>
-        <Text color={theme.textColors.primary} fz={13}>
-          <S.LegendDot color={theme.statusColors.success} />
-          Available: 25,000
-        </Text>
-      </Flex>
-      <div>
-        <Collapse isOpen={_showMore[0]}>Collapse content</Collapse>
+      <S.Content>
+        <Flex full ai="center" jc="space-between">
+          <Text fw={500} fz={13} color={theme.textColors.secondary}>
+            Delegated to
+          </Text>
+          <ExternalLink href={toExplorerLink} color={theme.textColors.primary}>
+            {shortenAddress(data.to.id, 4)}
+          </ExternalLink>
+        </Flex>
+        <div style={{ height: "80px", width: "200px", margin: "0 auto" }}>
+          <Chart
+            type={CHART_TYPE.straightAnglePie}
+            height={"80px"}
+            data={chartData}
+            chart={{
+              dataKey: "value",
+              outerRadius: 70,
+              innerRadius: 60,
+              cornerRadius: 10,
+              strokeWidth: 0,
+              paddingAngle: 2,
+            }}
+            chartItems={[]}
+          >
+            <Label
+              position="center"
+              width={200}
+              content={(p) => (
+                <CustomLabel
+                  viewBox={p.viewBox}
+                  total={chartData[0].value + chartData[1].value}
+                />
+              )}
+            ></Label>
+          </Chart>
+        </div>
+        <Flex full>
+          <Text color={theme.textColors.primary} fz={13}>
+            <S.LegendDot color={theme.brandColors.secondary} />
+            Used in Voting: 75,000
+          </Text>
+          <Text color={theme.textColors.primary} fz={13}>
+            <S.LegendDot color={theme.statusColors.success} />
+            Available: 25,000
+          </Text>
+        </Flex>
+        <div>
+          <Collapse isOpen={_showMore[0]}>Collapse content</Collapse>
 
-        {(isNil(showMore) || !showMore) && (
-          <S.CollapseButton onClick={() => _showMore[1]((p) => !p)}>
-            <Icon
-              name={_showMore[0] ? ICON_NAMES.angleUp : ICON_NAMES.angleDown}
-            />
-          </S.CollapseButton>
-        )}
-      </div>
+          {(isNil(showMore) || !showMore) && (
+            <S.CollapseButton onClick={() => _showMore[1]((p) => !p)}>
+              <Icon
+                name={_showMore[0] ? ICON_NAMES.angleUp : ICON_NAMES.angleDown}
+              />
+            </S.CollapseButton>
+          )}
+        </div>
+      </S.Content>
     </S.Container>
   )
 }
