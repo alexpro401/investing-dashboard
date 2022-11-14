@@ -11,6 +11,8 @@ import { v4 as uuidv4 } from "uuid"
 import Switch from "components/Switch"
 import { ICON_NAMES } from "constants/icon-names"
 import { useParams } from "react-router-dom"
+import { Container } from "components/Exchange/styled"
+import Header from "components/Header/Layout"
 
 interface Props {
   daoPoolAddress?: string
@@ -165,7 +167,19 @@ export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
 const VotingTerminalPage = () => {
   const params = useParams()
 
-  return <VotingTerminal {...params} />
+  return (
+    <>
+      <Header>Vote for proposal</Header>
+      <Container
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        <VotingTerminal {...params} />
+      </Container>
+    </>
+  )
 }
 
 export default VotingTerminalPage
