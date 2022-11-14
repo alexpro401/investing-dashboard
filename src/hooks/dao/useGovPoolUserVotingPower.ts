@@ -11,25 +11,27 @@ import { ZERO } from "constants/index"
 interface IUseGovPoolUserVotingPower {
   daoAddress: string
   address?: string | null
+  isMicroPool?: boolean
+  useDelegated?: boolean
 }
 
 interface IPowers {
-  power: BigNumber | undefined
-  nftPower: BigNumber[] | undefined
-  totalNftPower: BigNumber | undefined
-  totalPower: BigNumber | undefined
+  power: BigNumber
+  nftPower: BigNumber[]
+  totalNftPower: BigNumber
 }
 
 const initialState = {
-  power: undefined,
-  nftPower: undefined,
-  totalNftPower: undefined,
-  totalPower: undefined,
+  power: ZERO,
+  totalNftPower: ZERO,
+  nftPower: [],
 }
 
 const useGovPoolUserVotingPower = ({
   daoAddress,
   address,
+  isMicroPool,
+  useDelegated,
 }: IUseGovPoolUserVotingPower): [result: IPowers, loading: boolean] => {
   const [, setError] = useError()
   const govUserKeeperContract = useGovUserKeeperContract(daoAddress)
@@ -45,8 +47,8 @@ const useGovPoolUserVotingPower = ({
 
       const { power, nftPower } = await govUserKeeperContract.votingPower(
         address,
-        false,
-        false
+        isMicroPool || false,
+        useDelegated || false
       )
 
       const totalNftPower = reduce(
@@ -55,13 +57,10 @@ const useGovPoolUserVotingPower = ({
         ZERO
       )
 
-      const totalPower = addBignumbers([power, 18], [totalNftPower, 18])
-
       setResult({
         power,
         nftPower,
         totalNftPower,
-        totalPower,
       })
     } catch (error: any) {
       if (!!error && !!error.data && !!error.data.message) {
@@ -73,7 +72,7 @@ const useGovPoolUserVotingPower = ({
     } finally {
       setLoading(false)
     }
-  }, [govUserKeeperContract, address, setError])
+  }, [govUserKeeperContract, address, isMicroPool, useDelegated, setError])
 
   useEffect(() => {
     if (!govUserKeeperContract || !daoAddress || !address) {
