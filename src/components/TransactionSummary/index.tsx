@@ -36,6 +36,8 @@ import {
   GovPoolCreateIntenalProposalTransactionInfo,
   GovPoolCreateValidatorProposalTransactionInfo,
   GovPoolCreateChangeDaoSettingsProposalTransactionInfo,
+  GovPoolVoteTransactionInfo,
+  GovPoolWithdrawTransactionInfo,
 } from "state/transactions/types"
 import { formatBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
@@ -340,22 +342,37 @@ const GovPoolCreateProposalTypeSummary: React.FC<{
   return <>Successfully created new proposal: {`"${title}"`}</>
 }
 
+// TODO: add "Summary" ending for this variable
 const GovPoolCreateInternalProposal: React.FC<{
   info: GovPoolCreateIntenalProposalTransactionInfo
 }> = ({ info }) => {
   return <>Successfully created new internal proposal</>
 }
 
+// TODO: add "Summary" ending for this variable
 const GovPoolCreateValidatorProposal: React.FC<{
   info: GovPoolCreateValidatorProposalTransactionInfo
 }> = ({ info }) => {
   return <>Successfully created new validator proposal</>
 }
 
+// TODO: add "Summary" ending for this variable
 const GovPoolCreateChangeDaoSettingsProposal: React.FC<{
   info: GovPoolCreateChangeDaoSettingsProposalTransactionInfo
 }> = ({ info }) => {
   return <>Successfully created new proposal for changing DAO settings</>
+}
+
+const GovPoolVoteSummary: React.FC<{
+  info: GovPoolVoteTransactionInfo
+}> = ({ info }) => {
+  return <>Successfully voted for proposal</>
+}
+
+const GovPoolWithdrawSummary: React.FC<{
+  info: GovPoolWithdrawTransactionInfo
+}> = ({ info }) => {
+  return <>Successfully withdrawn from DAO pool</>
 }
 
 const TransactionSummary: React.FC<IProps> = ({ info }) => {
@@ -424,6 +441,10 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <GovPoolCreateValidatorProposal info={info} />
     case TransactionType.GOV_POOL_CREATE_CHANGE_DAO_SETTINGS_PROPOSAL:
       return <GovPoolCreateChangeDaoSettingsProposal info={info} />
+    case TransactionType.GOV_POOL_VOTE:
+      return <GovPoolVoteSummary info={info} />
+    case TransactionType.GOV_POOL_WITHDRAW:
+      return <GovPoolWithdrawSummary info={info} />
     default:
       return null
   }
