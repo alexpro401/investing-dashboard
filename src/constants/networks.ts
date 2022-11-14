@@ -5,5 +5,5 @@ export const BSC_RPC_URLS = [
 ]
 
 export const BSC_TESTNET_RPC_URLS = [
-  "https://nd-453-172-311.p2pify.com/05ce2844b67ab5a8d9a01a453b22fc08",
+  "https://data-seed-prebsc-1-s1.binance.org:8545",
 ]
