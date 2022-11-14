@@ -291,14 +291,6 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
       const depositNfts = ownedERC721Selected
       const voteNftIds = ERC721Amount
 
-      console.log({
-        proposalId,
-        depositAmount: depositAmount.toString(),
-        depositNfts,
-        voteAmount: voteAmount.toString(),
-        voteNftIds,
-      })
-
       return vote(
         proposalId,
         depositAmount,
