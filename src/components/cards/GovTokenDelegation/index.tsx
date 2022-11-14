@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Collapse, Icon } from "common"
+import { Card, Collapse, Icon } from "common"
 import theme, { Flex, Text } from "theme"
 import { shortenAddress } from "utils"
 import ExternalLink from "components/ExternalLink"
@@ -50,8 +50,8 @@ const CustomLabel = ({ viewBox, total }) => {
 const GovTokenDelegationCard: React.FC<{
   data: any
   chainId?: number
-  showMore?: boolean
-}> = ({ data, chainId, showMore }) => {
+  alwaysShowMore?: boolean
+}> = ({ data, chainId, alwaysShowMore }) => {
   const toExplorerLink = React.useMemo(() => {
     if (isNil(data) || isNil(chainId)) {
       return ""
@@ -59,7 +59,22 @@ const GovTokenDelegationCard: React.FC<{
     return getExplorerLink(chainId, data.to.id, ExplorerDataType.ADDRESS)
   }, [data, chainId])
 
-  const _showMore = React.useState(showMore ?? false)
+  const _showMore = React.useState(
+    !isNil(alwaysShowMore) ? alwaysShowMore : false
+  )
+
+  const CollapseTrigger = React.useMemo(() => {
+    if (isNil(alwaysShowMore) || !alwaysShowMore) {
+      return (
+        <S.CollapseButton onClick={() => _showMore[1]((p) => !p)}>
+          <Icon
+            name={_showMore[0] ? ICON_NAMES.angleUp : ICON_NAMES.angleDown}
+          />
+        </S.CollapseButton>
+      )
+    }
+    return null
+  }, [alwaysShowMore, _showMore])
 
   return (
     <S.Container>
@@ -72,7 +87,7 @@ const GovTokenDelegationCard: React.FC<{
             {shortenAddress(data.to.id, 4)}
           </ExternalLink>
         </Flex>
-        <div style={{ height: "80px", width: "200px", margin: "0 auto" }}>
+        <S.ChartContainer>
           <Chart
             type={CHART_TYPE.straightAnglePie}
             height={"80px"}
@@ -89,7 +104,6 @@ const GovTokenDelegationCard: React.FC<{
           >
             <Label
               position="center"
-              width={200}
               content={(p) => (
                 <CustomLabel
                   viewBox={p.viewBox}
@@ -98,7 +112,7 @@ const GovTokenDelegationCard: React.FC<{
               )}
             ></Label>
           </Chart>
-        </div>
+        </S.ChartContainer>
         <Flex full>
           <Text color={theme.textColors.primary} fz={13}>
             <S.LegendDot color={theme.brandColors.secondary} />
@@ -110,15 +124,23 @@ const GovTokenDelegationCard: React.FC<{
           </Text>
         </Flex>
         <div>
-          <Collapse isOpen={_showMore[0]}>Collapse content</Collapse>
+          <Collapse isOpen={_showMore[0]}>
+            <div>
+              <Card>First asset</Card>
+              <Card>Second asset</Card>
+              <Card>Third asset</Card>
+            </div>
+            <S.ActionBase
+              onClick={() => alert("Wanna withdraw from DAO pool? 😑")}
+              text={"Withdraw available"}
+            />
+            <S.ActionSecondary
+              onClick={() => alert("Yes, do it one more time 🫡")}
+              text={"Delegate more"}
+            />
+          </Collapse>
 
-          {(isNil(showMore) || !showMore) && (
-            <S.CollapseButton onClick={() => _showMore[1]((p) => !p)}>
-              <Icon
-                name={_showMore[0] ? ICON_NAMES.angleUp : ICON_NAMES.angleDown}
-              />
-            </S.CollapseButton>
-          )}
+          {CollapseTrigger}
         </div>
       </S.Content>
     </S.Container>
