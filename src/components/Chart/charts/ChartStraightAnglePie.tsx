@@ -8,11 +8,22 @@ interface Props {
   children: React.ReactNode
 }
 
-const ChartStraightAnglePie: React.FC<Props> = ({ data, chart, children }) => {
+const ChartStraightAnglePie: React.FC<Props> = ({
+  data,
+  chart,
+  chartItems,
+  children,
+}) => {
   return (
     <ResponsiveContainer>
-      <PieChart height={80}>
-        <Pie data={data} {...chart} startAngle={180} endAngle={0} cy="100%">
+      <PieChart height={80} {...chart}>
+        <Pie
+          data={data}
+          {...chartItems[0]}
+          startAngle={180}
+          endAngle={0}
+          cy="100%"
+        >
           {children}
         </Pie>
       </PieChart>

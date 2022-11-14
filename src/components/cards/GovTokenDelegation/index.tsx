@@ -92,15 +92,17 @@ const GovTokenDelegationCard: React.FC<{
             type={CHART_TYPE.straightAnglePie}
             height={"80px"}
             data={chartData}
-            chart={{
-              dataKey: "value",
-              outerRadius: 70,
-              innerRadius: 60,
-              cornerRadius: 10,
-              strokeWidth: 0,
-              paddingAngle: 2,
-            }}
-            chartItems={[]}
+            chart={{ layout: "centric" }}
+            chartItems={[
+              {
+                dataKey: "value",
+                outerRadius: 70,
+                innerRadius: 60,
+                cornerRadius: 10,
+                strokeWidth: 0,
+                paddingAngle: 2,
+              },
+            ]}
           >
             <Label
               position="center"
