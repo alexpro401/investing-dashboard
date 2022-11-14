@@ -7,7 +7,7 @@ import PoolPnlChart from "components/PoolPnlChart"
 
 import { usePoolPnlInfo } from "hooks/usePool"
 
-import { Indents, Label, Value } from "../styled"
+import { Indents, Label } from "../styled"
 
 const TabPoolPnl: FC<{ address: string }> = ({ address }) => {
   const [
