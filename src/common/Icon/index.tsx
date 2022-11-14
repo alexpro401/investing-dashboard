@@ -41,6 +41,7 @@ import {
   LockedIcon,
   FlameGradientIcon,
   TileCheckIcon,
+  ArrowIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -137,6 +138,8 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return LockedIcon as unknown as ElementType
       case ICON_NAMES.tileCheck:
         return TileCheckIcon as unknown as ElementType
+      case ICON_NAMES.arrow:
+        return ArrowIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }
