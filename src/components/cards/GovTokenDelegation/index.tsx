@@ -12,6 +12,8 @@ import Chart from "components/Chart"
 import { ICON_NAMES } from "constants/icon-names"
 import ERC721Row from "components/ERC721Row"
 import { ZERO } from "constants/index"
+import ERC20Row from "components/ERC20Row"
+import { parseEther } from "@ethersproject/units"
 
 const chartData = [
   {
@@ -141,9 +143,17 @@ const GovTokenDelegationCard: React.FC<{
                 tokenId="1"
                 tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
               />
-              <ERC721Row
-                votingPower={ZERO}
-                tokenId="2"
+              <ERC20Row
+                isLocked
+                delegated={ZERO}
+                available={ZERO}
+                tokenId="0x78867bbeef44f2326bf8ddd1941a4439382ef2a7"
+                tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
+              />
+              <ERC20Row
+                delegated={parseEther("23000.2314")}
+                available={parseEther("2700.123")}
+                tokenId="0x78867bbeef44f2326bf8ddd1941a4439382ef2a7"
                 tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
               />
             </Flex>
