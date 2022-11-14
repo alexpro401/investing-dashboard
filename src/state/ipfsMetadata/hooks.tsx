@@ -237,7 +237,7 @@ export const useInsuranceAccidents = (): [
   const [loading, setLoading] = useState<boolean>(true)
   const [total, setTotal] = useState<number>(0)
   const [offset, setOffset] = useState<number>(0)
-  const [limit, setLimit] = useState<number>(DEFAULT_PAGINATION_COUNT)
+  const [limit] = useState<number>(DEFAULT_PAGINATION_COUNT)
 
   const [searchPool, setSearchPool] = useState("")
 

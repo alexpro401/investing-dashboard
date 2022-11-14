@@ -3,11 +3,11 @@ import { FC } from "react"
 import { Card } from "common"
 import { Flex, Text } from "theme"
 import BarChart from "components/BarChart"
-import ProfitLossChart from "components/ProfitLossChart"
+import PoolPnlChart from "components/PoolPnlChart"
 
 import { usePoolPnlInfo } from "hooks/usePool"
 
-import { Indents, Label, Value } from "../styled"
+import { Indents, Label } from "../styled"
 
 const TabPoolPnl: FC<{ address: string }> = ({ address }) => {
   const [
@@ -35,7 +35,7 @@ const TabPoolPnl: FC<{ address: string }> = ({ address }) => {
           {/*    </Label>*/}
           {/*  </div>*/}
           {/*</Flex>*/}
-          <ProfitLossChart
+          <PoolPnlChart
             address={address}
             baseToken={poolData?.baseToken}
             tfPosition="bottom"

@@ -5,7 +5,6 @@ import { ICON_NAMES } from "constants/icon-names"
 import { SUPPORTED_SOCIALS } from "constants/socials"
 import { useCallback, useMemo } from "react"
 import { readFromClipboard } from "utils/clipboard"
-import { isValidUrl } from "utils"
 import { AppButton } from "common"
 
 interface Props<V extends string | number> extends InputFieldProps<V> {
@@ -43,7 +42,7 @@ function SocialLinkField<V extends string | number>({
   const handlePaste = useCallback(async () => {
     const clipboardValue = await readFromClipboard()
 
-    if (isValidUrl(clipboardValue) && setValue) {
+    if (setValue) {
       setValue(clipboardValue as V)
 
       if (onPaste) {

@@ -22,6 +22,7 @@ const Modal: FC<Props> = ({ children, isOpen, toggle, title, maxWidth }) => {
         onClick={toggle}
         animate={isOpen ? "visible" : "hidden"}
         initial="hidden"
+        transition={{ duration: 0.05 }}
         variants={{
           visible: {
             opacity: 0.4,
@@ -37,6 +38,7 @@ const Modal: FC<Props> = ({ children, isOpen, toggle, title, maxWidth }) => {
         maxWidth={maxWidth}
         animate={isOpen ? "visible" : "hidden"}
         initial="hidden"
+        transition={{ duration: 0.1 }}
         variants={{
           visible: {
             opacity: 1,

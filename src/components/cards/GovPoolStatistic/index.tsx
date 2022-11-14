@@ -1,4 +1,5 @@
-import { FC, ReactNode, useMemo } from "react"
+import { FC, ReactNode, useEffect, useMemo, useState } from "react"
+import { isEmpty, isFunction, isNil } from "lodash"
 
 import { Flex } from "theme"
 import { CardInfo } from "common"
@@ -7,100 +8,139 @@ import Skeleton from "components/Skeleton"
 
 import * as S from "./styled"
 
+import { normalizeBigNumber } from "utils"
+import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
+import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
+import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
+import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
+import useGovPoolIpfsData from "hooks/dao/useGovPoolIpfsData"
+
 const HeadLeftNodeSkeleton: FC = () => (
   <Flex ai="center" jc="flex-start">
     <Skeleton variant="circle" w="38px" h="38px" />
-    <Flex dir="column" ai="flex-start" jc="space-between" m="0 0 0 10px">
-      <Skeleton variant="text" h="21px" w="121px" />
-      <Skeleton variant="text" h="17px" w="50px" m="4px 0 0" />
+    <Flex dir="column" ai="flex-start" m="0 0 0 8px" gap="4">
+      <Skeleton variant="text" h="20px" w="121px" />
+      <Skeleton variant="text" h="16px" w="50px" />
     </Flex>
   </Flex>
 )
 
+function getStatisticNode(s, formatter) {
+  if (s.loading) return <Skeleton variant="text" h="16px" w="70px" />
+
+  const formattedValue =
+    isNil(formatter) || !isFunction(formatter)
+      ? normalizeBigNumber(s.value, 18, 0)
+      : formatter(s.value)
+
+  return <S.StatisticValue>{formattedValue}</S.StatisticValue>
+}
+
 interface Props {
+  data: IGovPoolQuery
+  account?: string | null
   index?: number
   children?: ReactNode
 }
 
-const GovPoolStatisticCard: FC<Props> = ({ index = 0, children }) => {
-  const TVL = useMemo(() => {
-    // if (isNil(lastHistoryPoint)) {
-    //   return <Skeleton w="25px" h="16px" />
-    // }
+const GovPoolStatisticCard: FC<Props> = ({
+  data,
+  account,
+  index = 0,
+  children,
+}) => {
+  const [UserVotingPower, UserVotingPowerLoading] = useGovPoolUserVotingPower({
+    daoAddress: data.id,
+    address: account,
+  })
 
-    return <S.StatisticValue>${24888}</S.StatisticValue>
-  }, [])
+  const [assetsExisting, assets] = useGovPoolVotingAssets(data.id)
+  const [statistic] = useGovPoolStatistic(data.id)
+  const [ipfs, ipfsLoading] = useGovPoolIpfsData(data.id)
 
-  const MC_TVL = useMemo(() => {
-    // if (isNil(lastHistoryPoint)) {
-    //   return <Skeleton w="25px" h="16px" />
-    // }
-
-    return <S.StatisticValue>{0.9421}</S.StatisticValue>
-  }, [])
-
-  const Members = useMemo(() => {
-    // if (isNil(lastHistoryPoint)) {
-    //   return <Skeleton w="25px" h="16px" />
-    // }
-
-    return <S.StatisticValue>{24888}</S.StatisticValue>
-  }, [])
-
-  const LAU = useMemo(() => {
-    // if (isNil(data)) return <Skeleton w="25px" h="16px" />
-
-    return <S.StatisticValue>{10}%</S.StatisticValue>
-  }, [])
+  const userVotingPower = useMemo(() => {
+    if (UserVotingPowerLoading) {
+      return <Skeleton variant="text" h="16px" w="70px" />
+    }
+    return normalizeBigNumber(UserVotingPower.totalPower, 18, 0)
+  }, [UserVotingPower, UserVotingPowerLoading])
 
   const userStatistic = useMemo(
     () => [
       {
         label: "TVL",
-        value: TVL,
+        value: getStatisticNode(
+          statistic.tvl,
+          (v) => `$${normalizeBigNumber(v, 18, 2)}`
+        ),
         info: <>Info about TVL</>,
       },
       {
         label: "MC/TVL",
-        value: MC_TVL,
+        value: getStatisticNode(statistic.mc_tvl, (v) =>
+          normalizeBigNumber(v, 18, 2)
+        ),
         info: <>Info about MC/TVL</>,
       },
       {
         label: "Members",
-        value: Members,
+        value: getStatisticNode(statistic.members, (v) => String(v)),
         info: <>Info about Members</>,
       },
       {
         label: "LAU",
-        value: LAU,
+        value: getStatisticNode(
+          statistic.lau,
+          (v) => `${normalizeBigNumber(v, 18, 0)}%`
+        ),
         info: <>Info about LAU</>,
       },
     ],
-    [TVL, MC_TVL, Members, LAU]
+    [statistic]
   )
 
   const leftNode = useMemo(() => {
-    // if (!data) return <HeadLeftNodeSkeleton />
+    if (!data || !assets.token || !assets.nft || ipfsLoading) {
+      return <HeadLeftNodeSkeleton />
+    }
+
+    const iconSource = !ipfs || !ipfs.avatarUrl ? "" : ipfs.avatarUrl
+
+    const name =
+      String(data.name).length > 20
+        ? String(data.name).slice(0, 18) + "..."
+        : data.name
+
+    let subTitle = ""
+    if (assetsExisting.haveToken) {
+      subTitle += `${assets.token?.symbol} `
+    }
+    if (assetsExisting.haveNft) {
+      if (!isEmpty(subTitle)) {
+        subTitle += "& "
+      }
+      subTitle += "NFT"
+    }
 
     return (
       <Flex ai="center" jc="flex-start">
-        <Icon size={38} m="0 8px 0 0" source={""} address={""} />
-        <div>
-          <S.Title>111PG DAO</S.Title>
-          <S.Description align="left">111PG tokens & NFT</S.Description>
-        </div>
+        <Icon size={38} m="0 8px 0 0" source={iconSource} address={data.id} />
+        <Flex dir="column" ai="flex-start" gap="4">
+          <S.Title>{name ?? "111PG DAO"}</S.Title>
+          <S.Description align="left">{subTitle}</S.Description>
+        </Flex>
       </Flex>
     )
-  }, [])
+  }, [data, assetsExisting, assets, ipfs, ipfsLoading])
 
   const rightNode = useMemo(() => {
     return (
-      <Flex ai="flex-end" jc="flex-start" dir="column">
-        <S.VotingPowerValue>8878</S.VotingPowerValue>
+      <Flex ai="flex-end" jc="flex-start" dir="column" gap="4">
+        <S.VotingPowerValue>{userVotingPower}</S.VotingPowerValue>
         <S.Description>My voting power</S.Description>
       </Flex>
     )
-  }, [])
+  }, [userVotingPower])
 
   return (
     <S.Animation index={index}>

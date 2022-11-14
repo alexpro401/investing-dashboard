@@ -1,6 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { AppState } from "state"
 import { InsuranceAccident } from "interfaces/insurance"
+import { isNil } from "lodash"
 
 const selectIpfsMetadataState = (state: AppState) => state.ipfsMetadata
 
@@ -54,6 +55,9 @@ export const selectInsuranceAccidentByPool = (pool?: string) => {
     // eslint-disable-next-line prefer-const
     let result = {} as InsuranceAccident
     for (const ia of Object.values(metadata.insuranceAccidents)) {
+      if (isNil(ia) || isNil(ia.accidentInfo)) {
+        break
+      }
       if (ia.accidentInfo.pool === pool) {
         result = ia
         break

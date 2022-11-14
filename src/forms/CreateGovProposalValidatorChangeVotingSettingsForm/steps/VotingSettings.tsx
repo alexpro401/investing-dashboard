@@ -14,16 +14,16 @@ import { DurationField, InputField } from "fields"
 import GovVotingSettings from "modals/GovVotingSettings"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { ChangeVotingSettingsContext } from "context/govPool/proposals/validators/ChangeVotingSettingsContext"
-import { CreateDaoCardStepNumber } from "forms/CreateFundDaoForm/components"
+import { CreateDaoCardStepNumber } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 import { EInputBorderColors } from "fields/InputField"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
-import useGovValidatorsTokenTotalSupply from "hooks/useGovValidatorsTokenTotalSupply"
-
-import * as S from "../styled"
+import { useGovValidatorsTokenTotalSupply } from "hooks/dao"
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 import { cutStringZeroes } from "utils"
+
+import * as S from "../styled"
 
 const VotingSettings: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()

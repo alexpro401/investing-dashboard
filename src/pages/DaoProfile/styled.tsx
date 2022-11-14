@@ -154,6 +154,11 @@ export const AppLink = styled(AppButton)`
   border-radius: 0;
   font-size: 13px;
 `
+export const AppButtonFull = styled(AppButton)`
+  width: 100%;
+  font-size: 13px;
+  font-weight: 600;
+`
 
 export const Counter = styled.div`
   height: 12px;

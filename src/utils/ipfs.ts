@@ -55,6 +55,10 @@ const stringify = (json) => {
   }
 }
 
+export const parseIpfsString = (ipfsString: string): string => {
+  return ipfsString.replace("ipfs://", "")
+}
+
 export const getIpfsData = async (hash) => {
   try {
     if (!!hash && hash.length === 46) {
@@ -127,7 +131,7 @@ export const addInsuranceProposalData = (payload) => {
   return client.add(dataString)
 }
 
-export const addDaoProposalTypeData = ({
+export const addDaoProposalData = ({
   proposalName,
   proposalDescription,
 }: {

@@ -34,6 +34,7 @@ import {
 } from "./investors"
 
 import { UserTransactionsQuery } from "./interactions"
+import { GovPoolQuery, GovPoolsQuery } from "./gov-pools"
 
 export {
   PoolQuery,
@@ -60,4 +61,6 @@ export {
   PoolPositionLast,
   PositionsByIdsQuery,
   InvestorProposalsPositionsQuery,
+  GovPoolQuery,
+  GovPoolsQuery,
 }

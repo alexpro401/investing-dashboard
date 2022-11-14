@@ -4,10 +4,10 @@ import { useNavigate, useParams } from "react-router-dom"
 
 import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
-import { DefaultProposalStep } from "forms/CreateFundDaoForm/steps"
+import { DefaultProposalStep } from "common"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
-import useCreateDaoProposalType from "hooks/useCreateDaoProposalType"
+import { useGovPoolCreateProposalType } from "hooks/dao"
 
 import * as S from "./styled"
 
@@ -19,7 +19,7 @@ enum STEPS {
 const CreateNewProposalTypeForm: React.FC = () => {
   const navigate = useNavigate()
   const { daoAddress } = useParams<"daoAddress">()
-  const createDaoProposalType = useCreateDaoProposalType({
+  const createDaoProposalType = useGovPoolCreateProposalType({
     daoPoolAddress: daoAddress ?? "",
   })
 

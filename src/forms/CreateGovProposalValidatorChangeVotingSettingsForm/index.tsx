@@ -8,7 +8,7 @@ import StepsControllerContext from "context/StepsControllerContext"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { ChangeVotingSettingsContext } from "context/govPool/proposals/validators/ChangeVotingSettingsContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
-import useGovPoolCreateValidatorInternalProposal from "hooks/useGovPoolCreateValidatorInternalProposal"
+import { useGovPoolCreateValidatorInternalProposal } from "hooks/dao"
 
 import * as S from "./styled"
 
@@ -55,14 +55,6 @@ const CreateGovProposalValidatorChangeVotingSettingsForm: React.FC = () => {
       internalProposalType = 1
       values.push(parseUnits(String(quorum.get), 25).toString())
     }
-
-    console.log({
-      internalProposalType: internalProposalType,
-      values,
-      users: [],
-      proposalName: proposalName.get,
-      proposalDescription: proposalDescription.get,
-    })
 
     createProposal({
       internalProposalType: internalProposalType,

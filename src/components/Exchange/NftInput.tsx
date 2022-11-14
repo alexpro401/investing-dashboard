@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 import { ZERO } from "constants/index"
 
@@ -10,25 +11,31 @@ import angleIcon from "assets/icons/angle-down.svg"
 import { formatBigNumber } from "utils"
 
 import * as S from "./styled"
+import { AppButton } from "common"
 
 interface IToProps {
-  price: BigNumber
   balance: BigNumber
   address: string
-  onChange?: (amount: string) => void
+  selectedNfts: number[]
+  nftPowerMap: Record<number, BigNumber>
   onSelect?: () => void
+  onSelectAll?: () => void
 }
 
 const NftInput: React.FC<IToProps> = ({
-  price,
   balance,
   address,
-  onChange,
+  selectedNfts,
+  nftPowerMap,
+  onSelectAll,
   onSelect,
 }) => {
-  const setMaxAmount = () => {
-    !!onChange && onChange(balance.toString())
-  }
+  const totalPower = useMemo(() => {
+    return selectedNfts.reduce(
+      (acc, id) => acc.add(nftPowerMap[id] || ZERO),
+      ZERO
+    )
+  }, [nftPowerMap, selectedNfts])
 
   if (!address) {
     return (
@@ -52,16 +59,28 @@ const NftInput: React.FC<IToProps> = ({
   return (
     <S.InputContainer height="fit-content">
       <S.InputTop>
-        <S.Price>Voting power: {formatBigNumber(price, 18, 2)}</S.Price>
+        <S.Price>Voting power: {formatBigNumber(totalPower, 18, 2)}</S.Price>
 
-        <S.Balance onClick={setMaxAmount}>
+        <S.Balance onClick={onSelectAll}>
           <S.Tokens>Available: {formatBigNumber(balance, 0, 0)}</S.Tokens>
           <S.Max>All</S.Max>
         </S.Balance>
       </S.InputTop>
 
       <S.InputBottom>
-        <S.NftCounter>2 NFT</S.NftCounter>
+        {!selectedNfts.length ? (
+          <AppButton
+            type="button"
+            color="default"
+            size="no-paddings"
+            onClick={onSelect}
+            text={"Choose"}
+          />
+        ) : (
+          <S.NftCounter>
+            {selectedNfts.length} NFT{selectedNfts.length > 1 ? "s" : ""}
+          </S.NftCounter>
+        )}
 
         <S.ActiveSymbol onClick={onSelect}>
           <JazzIcon size={24} address={address || ""} />
@@ -69,18 +88,15 @@ const NftInput: React.FC<IToProps> = ({
           {!!onSelect && <S.Icon src={angleIcon} />}
         </S.ActiveSymbol>
       </S.InputBottom>
-      <S.TokensContainer gap="8" p="16px 0 0">
-        <NftRow
-          votingPower={ZERO}
-          tokenId="1"
-          tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
-        />
-        <NftRow
-          isLocked
-          votingPower={ZERO}
-          tokenId="1"
-          tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
-        />
+      <S.TokensContainer gap="8" p={!selectedNfts.length ? "0" : "16px 0 0"}>
+        {selectedNfts.map((id) => (
+          <NftRow
+            key={id}
+            votingPower={nftPowerMap[id] || ZERO}
+            tokenId={id.toString()}
+            tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
+          />
+        ))}
       </S.TokensContainer>
     </S.InputContainer>
   )

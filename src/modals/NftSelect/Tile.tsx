@@ -5,6 +5,8 @@ import * as S from "./styled"
 
 interface Props extends INftTile {
   isSelected?: boolean
+  onSelect: (tokenId: string) => void
+  onDeselect: (tokenId: string) => void
 }
 
 const Tile: FC<Props> = ({
@@ -12,9 +14,20 @@ const Tile: FC<Props> = ({
   tokenId,
   tokenUri,
   isSelected = false,
+  onSelect,
+  onDeselect,
 }) => {
+  const handleClick = () => {
+    if (isSelected) {
+      onDeselect(tokenId)
+    } else {
+      onSelect(tokenId)
+    }
+  }
+
   return (
-    <S.Card url={tokenUri}>
+    <S.Card url={tokenUri} isSelected={isSelected} onClick={handleClick}>
+      <S.Check />
       <S.CardInfo>
         <S.NftId>#{tokenId}</S.NftId>
         <S.VotingPowerAmount>
