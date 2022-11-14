@@ -38,9 +38,9 @@ export const useGovPool = (address?: string) => {
   const [distributionProposalAddress, setDistributionProposalAddress] =
     useState("")
 
-  const govValidatorsContract = useGovValidatorsContract(validatorsAddress)
-  const govUserKeeperContract = useGovUserKeeperContract(userKeeperAddress)
-  const govSettingsContract = useGovSettingsContract(settingsAddress)
+  const govValidatorsContract = useGovValidatorsContract(address)
+  const govUserKeeperContract = useGovUserKeeperContract(address)
+  const govSettingsContract = useGovSettingsContract(address)
   const distributionProposalContract = useDistributionProposalContract(
     distributionProposalAddress
   )

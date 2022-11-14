@@ -73,7 +73,7 @@ const useGovPoolUserVotingPower = ({
     } finally {
       setLoading(false)
     }
-  }, [govUserKeeperContract, address])
+  }, [govUserKeeperContract, address, setError])
 
   useEffect(() => {
     if (!govUserKeeperContract || !daoAddress || !address) {
