@@ -7,17 +7,18 @@ import {
 } from "hooks/useERC721List"
 import { useCallback, useMemo, useState } from "react"
 import {
-  useGovUserKeeperVotingPower,
+  useGovPoolUserVotingPower,
   useGovPoolVote,
   useGovPoolMemberBalance,
 } from "hooks/dao"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { multiplyBignumbers } from "utils/formulas"
 import useERC20Allowance from "hooks/useERC20Allowance"
-import { useERC20 } from "hooks/useERC20"
+import { useERC20Data } from "state/erc20/hooks"
 
 import { useGovUserKeeperAddress, useGovPoolVotingAssets } from "hooks/dao"
 import useERC721Allowance from "hooks/useERC721Allowance"
+import { useActiveWeb3React } from "hooks"
 
 export enum ButtonTypes {
   UNLOCK = "UNLOCK",
@@ -28,6 +29,7 @@ export enum ButtonTypes {
 
 // controller for page Voting Terminal
 const useVotingTerminal = (daoPoolAddress?: string) => {
+  const { account } = useActiveWeb3React()
   // UI controlls
   const [withDelegated, setWithDelegated] = useState(false)
   const [selectOpen, setSelectOpen] = useState(false)
@@ -43,14 +45,16 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
   const { ERC20Balance, ERC721Balance, tokenBalance, tokenBalanceDelegated } =
     useGovPoolMemberBalance(daoPoolAddress, withDelegated)
 
-  const [, fromData, accountBalance] = useERC20(tokenAddress)
+  const [fromData] = useERC20Data(tokenAddress)
   const priceUSD = useTokenPriceOutUSD({ tokenAddress })
 
   const ERC721OwnedBalance = useOwnedERC721Tokens(daoPoolAddress)
 
   const ERC20LockedBalance = useMemo(
-    () => tokenBalance?.totalBalance.sub(accountBalance) || ZERO,
-    [accountBalance, tokenBalance]
+    () =>
+      tokenBalance?.totalBalance.sub(tokenBalance?.ownedBalance || ZERO) ||
+      ZERO,
+    [tokenBalance]
   )
 
   const ERC20LockedAndDelegatedBalance = useMemo(
@@ -69,9 +73,13 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
   } = useERC721Allowance(nftAddress, ERC721OwnedBalance, userKeeperAddress)
 
   // get power for all nfts
-  const userOwnedPower = useGovUserKeeperVotingPower({ daoPoolAddress })
-  const userDelegatedPower = useGovUserKeeperVotingPower({
-    daoPoolAddress,
+  const [userOwnedPower] = useGovPoolUserVotingPower({
+    daoAddress: daoPoolAddress || "",
+    address: account,
+  })
+  const [userDelegatedPower] = useGovPoolUserVotingPower({
+    address: account,
+    daoAddress: daoPoolAddress || "",
     isMicroPool: true,
   })
 
@@ -123,16 +131,8 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
       return ERC20Amount.gt(tokenBalanceDelegated?.totalBalance || ZERO)
     }
 
-    const userLockedBalance = tokenBalance?.totalBalance.sub(accountBalance)
-
-    return ERC20Amount.gt(ZERO) && userLockedBalance?.gt(ZERO)
-  }, [
-    ERC20Amount,
-    accountBalance,
-    tokenBalance,
-    tokenBalanceDelegated,
-    withDelegated,
-  ])
+    return ERC20Amount.gt(ZERO) && ERC20LockedBalance.gt(ZERO)
+  }, [ERC20Amount, tokenBalanceDelegated, withDelegated, ERC20LockedBalance])
 
   const isOwnedERC20Used = useMemo(() => {
     if (withDelegated) {
@@ -290,6 +290,14 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
 
       const depositNfts = ownedERC721Selected
       const voteNftIds = ERC721Amount
+
+      console.log({
+        proposalId,
+        depositAmount: depositAmount.toString(),
+        depositNfts,
+        voteAmount: voteAmount.toString(),
+        voteNftIds,
+      })
 
       return vote(
         proposalId,
