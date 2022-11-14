@@ -16,14 +16,8 @@ const ChartStraightAnglePie: React.FC<Props> = ({
 }) => {
   return (
     <ResponsiveContainer>
-      <PieChart height={80} {...chart}>
-        <Pie
-          data={data}
-          {...chartItems[0]}
-          startAngle={180}
-          endAngle={0}
-          cy="100%"
-        >
+      <PieChart {...chart}>
+        <Pie data={data} {...chartItems[0]} startAngle={180} endAngle={0}>
           {children}
         </Pie>
       </PieChart>

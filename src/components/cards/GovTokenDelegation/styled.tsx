@@ -18,8 +18,23 @@ export const Content = styled(Card)`
 
 export const ChartContainer = styled.div`
   height: 80px;
-  width: 200px;
+  width: 280px;
   margin: 0 auto;
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 79px;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(24, 30, 44, 0) 58.53%,
+      #181e2c 92.23%
+    );
+  }
 `
 
 export const LegendDot = styled.div<{ color: string }>`

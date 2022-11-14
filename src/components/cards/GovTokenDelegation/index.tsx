@@ -36,7 +36,7 @@ const CustomLabel = ({ viewBox, total }) => {
       textAnchor="middle"
       dominantBaseline="central"
     >
-      <text x={cx} y={cy - 10} fill={theme.textColors.primary}>
+      <text x={cx} y={cy - 20} fill={theme.textColors.primary}>
         <tspan
           x={cx}
           dy="0em"
@@ -96,15 +96,16 @@ const GovTokenDelegationCard: React.FC<{
             type={CHART_TYPE.straightAnglePie}
             height={"80px"}
             data={chartData}
-            chart={{ layout: "centric" }}
+            chart={{ layout: "centric", height: 80 }}
             chartItems={[
               {
                 dataKey: "value",
-                outerRadius: 70,
-                innerRadius: 60,
+                outerRadius: 75,
+                innerRadius: 65,
                 cornerRadius: 10,
                 strokeWidth: 0,
                 paddingAngle: 2,
+                cy: "100%",
               },
             ]}
           >
@@ -131,7 +132,7 @@ const GovTokenDelegationCard: React.FC<{
         </Flex>
         <div>
           <Collapse isOpen={_showMore[0]}>
-            <Flex full dir={"column"} gap={"8"} m={"0 0 12px"}>
+            <Flex full dir={"column"} gap={"8"} m={"18px 0 16px"}>
               <ERC721Row
                 isLocked
                 votingPower={ZERO}
@@ -145,16 +146,10 @@ const GovTokenDelegationCard: React.FC<{
               />
               <ERC20Row
                 isLocked
-                delegated={ZERO}
-                available={ZERO}
-                tokenId="0x78867bbeef44f2326bf8ddd1941a4439382ef2a7"
-                tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
-              />
-              <ERC20Row
                 delegated={parseEther("23000.2314")}
                 available={parseEther("2700.123")}
                 tokenId="0x78867bbeef44f2326bf8ddd1941a4439382ef2a7"
-                tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
+                tokenUri=""
               />
             </Flex>
             <S.ActionBase
