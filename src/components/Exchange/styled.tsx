@@ -8,6 +8,7 @@ import { dropdownVariants } from "motion/variants"
 import { BigNumberInput } from "big-number-input"
 import TokenIcon from "components/TokenIcon"
 import { DividendToken } from "interfaces"
+import { AppButton } from "common"
 
 export const InputContainer = styled(GradientBorder)<{ height?: string }>`
   flex-direction: column;
@@ -567,4 +568,18 @@ export const NftCounter = styled.div`
   flex: none;
   order: 0;
   flex-grow: 0;
+`
+
+export const TooltipText = styled.div`
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 16px;
+  color: ${theme.textColors.secondary};
+`
+
+export const SubmitButton = styled(AppButton)`
+  width: fill-available;
+  grid-gap: 3px;
 `
