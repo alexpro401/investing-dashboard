@@ -1,5 +1,5 @@
 import { FC } from "react"
-import * as S from "../styled"
+import * as S from "./styled"
 
 interface Props {
   number: number

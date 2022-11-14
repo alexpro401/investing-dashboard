@@ -19,7 +19,7 @@ import {
 import { readFromClipboard } from "utils/clipboard"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
-import { CreateDaoCardStepNumber } from "forms/CreateFundDaoForm/components"
+import { CreateDaoCardStepNumber } from "common"
 import TransactionSent from "modals/TransactionSent"
 
 import * as S from "./styled"

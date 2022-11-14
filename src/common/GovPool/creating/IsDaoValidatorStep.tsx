@@ -15,7 +15,7 @@ import { AddressAmountField, InputField, DurationField } from "fields"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
 
-import * as S from "forms/CreateFundDaoForm/styled"
+import * as S from "./styled"
 
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 import { useFormValidation } from "hooks/useFormValidation"
