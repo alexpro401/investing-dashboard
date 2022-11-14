@@ -4,7 +4,7 @@ import { ZERO } from "constants/index"
 
 import Ripple from "components/Ripple"
 import JazzIcon from "components/Icon/JazzIcon"
-import NftRow from "components/NftRow"
+import ERC721Row from "components/ERC721Row"
 
 import angleIcon from "assets/icons/angle-down.svg"
 
@@ -90,7 +90,7 @@ const NftInput: React.FC<IToProps> = ({
       </S.InputBottom>
       <S.TokensContainer gap="8" p={!selectedNfts.length ? "0" : "16px 0 0"}>
         {selectedNfts.map((id) => (
-          <NftRow
+          <ERC721Row
             key={id}
             votingPower={nftPowerMap[id] || ZERO}
             tokenId={id.toString()}

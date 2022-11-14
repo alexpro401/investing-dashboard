@@ -10,7 +10,7 @@ import * as S from "./styled"
 import { CHART_TYPE } from "constants/chart"
 import Chart from "components/Chart"
 import { ICON_NAMES } from "constants/icon-names"
-import NftRow from "components/NftRow"
+import ERC721Row from "components/ERC721Row"
 import { ZERO } from "constants/index"
 
 const chartData = [
@@ -130,18 +130,18 @@ const GovTokenDelegationCard: React.FC<{
         <div>
           <Collapse isOpen={_showMore[0]}>
             <Flex full dir={"column"} gap={"8"} m={"0 0 12px"}>
-              <NftRow
+              <ERC721Row
                 isLocked
                 votingPower={ZERO}
                 tokenId="0"
                 tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
               />
-              <NftRow
+              <ERC721Row
                 votingPower={ZERO}
                 tokenId="1"
                 tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
               />
-              <NftRow
+              <ERC721Row
                 votingPower={ZERO}
                 tokenId="2"
                 tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"

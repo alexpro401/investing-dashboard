@@ -9,7 +9,7 @@ import Button from "components/Button"
 import Tooltip from "components/Tooltip"
 import ProgressLine from "components/ProgressLine"
 import { ICON_NAMES } from "constants/icon-names"
-import NftRow from "components/NftRow"
+import ERC721Row from "components/ERC721Row"
 import { ZERO } from "constants/index"
 
 interface Props {}
@@ -69,14 +69,14 @@ const DaoProfileUserBalancesCard: FC<Props> = () => {
         </Flex>
         <Collapse isOpen={showNftList} duration={0.3}>
           <Indents top side={false}>
-            <NftRow
+            <ERC721Row
               votingPower={ZERO}
               tokenId="1"
               tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
             />
           </Indents>
           <Indents top side={false}>
-            <NftRow
+            <ERC721Row
               isLocked
               votingPower={ZERO}
               tokenId="2"
