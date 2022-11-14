@@ -11,7 +11,6 @@ export const useErc721 = (address: string) => {
   const [isEnumerable, setIsEnumerable] = useState(false)
 
   const getName = useCallback(async () => {
-    console.log("Getting name")
     const _res = await contract?.name()
     setName(_res || "")
   }, [contract])
