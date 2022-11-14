@@ -11,7 +11,7 @@ import {
   Collapse,
 } from "common"
 import { stepsControllerContext } from "context/StepsControllerContext"
-import { CreateDaoCardStepNumber } from "forms/CreateFundDaoForm/components"
+import { CreateDaoCardStepNumber } from "common"
 import { ChangeGovSettingsContext } from "context/govPool/proposals/regular/ChangeGovSettingsContext"
 import {
   InputField,

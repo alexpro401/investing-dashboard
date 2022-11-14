@@ -28,7 +28,7 @@ import { selectDexeAddress } from "state/contracts/selectors"
 import Tabs from "common/Tabs"
 import { Center, Flex } from "theme"
 import { useGovPoolContract } from "contracts"
-import { selectGovPoolByAddress } from "../../state/govPools/selectors"
+import { selectGovPoolByAddress } from "state/govPools/selectors"
 
 const FakeTokensData = (dexeAddress) => [
   {

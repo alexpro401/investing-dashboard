@@ -1,6 +1,6 @@
 import styled from "styled-components"
 
-import { Icon } from "common"
+import { Icon } from "common/index"
 import theme from "theme"
 
 export const SuccessLabelIcon = styled(Icon)`

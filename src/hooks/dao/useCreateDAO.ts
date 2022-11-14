@@ -7,15 +7,13 @@ import useGasTracker from "state/gas/hooks"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 import { isTxMined, parseTransactionError } from "utils"
-import usePayload from "../usePayload"
+import usePayload from "hooks/usePayload"
 import { SubmitState } from "constants/types"
 import useError from "hooks/useError"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { cloneDeep } from "lodash"
-import { IPoolFactory } from "interfaces/typechain/PoolFactory"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { BytesLike, ethers } from "ethers"
-import { ZERO_ADDR } from "constants/index"
 
 const useCreateDAO = () => {
   const {
@@ -79,23 +77,25 @@ const useCreateDAO = () => {
 
     setPayload(SubmitState.SIGN)
 
-    // const additionalData = new IpfsEntity(
-    //   JSON.stringify({
-    //     avatarUrl: avatarUrl.get,
-    //     daoName: daoName.get,
-    //     websiteUrl: websiteUrl.get,
-    //     description: description.get,
-    //     socialLinks: socialLinks.get,
-    //     documents: documents.get,
-    //   })
-    // )
-    //
-    // await additionalData.uploadSelf()
-    //
-    // if (!additionalData._path) {
-    //   // TODO: handle case when ipfs upload failed
-    //   return
-    // }
+    const additionalData = new IpfsEntity({
+      data: JSON.stringify({
+        avatarUrl: avatarUrl.get,
+        daoName: daoName.get,
+        websiteUrl: websiteUrl.get,
+        description: description.get,
+        socialLinks: socialLinks.get,
+        documents: documents.get,
+      }),
+    })
+
+    await additionalData.uploadSelf()
+
+    if (!additionalData._path) {
+      // TODO: handle case when ipfs upload failed
+      return
+    }
+
+    const ZERO_ADDR = "0x0000000000000000000000000000000000000000"
 
     const defaultSettings = {
       earlyCompletion: defaultProposalSettingForm.earlyCompletion.get,
@@ -106,30 +106,36 @@ const useCreateDAO = () => {
       durationValidators: isValidator.get
         ? defaultProposalSettingForm.durationValidators.get
         : defaultProposalSettingForm.duration.get,
-      quorum: parseUnits(defaultProposalSettingForm.quorum.get, 25).toString(),
+      quorum: parseUnits(
+        String(defaultProposalSettingForm.quorum.get),
+        25
+      ).toString(),
       quorumValidators: isValidator.get
         ? parseUnits(
-            defaultProposalSettingForm.quorumValidators.get,
+            String(defaultProposalSettingForm.quorumValidators.get),
             25
           ).toString()
-        : parseUnits(defaultProposalSettingForm.quorum.get, 25).toString(),
+        : parseUnits(
+            String(defaultProposalSettingForm.quorum.get),
+            25
+          ).toString(),
       minVotesForVoting: parseEther(
-        defaultProposalSettingForm.minVotesForVoting.get
+        String(defaultProposalSettingForm.minVotesForVoting.get)
       ).toString(),
       minVotesForCreating: parseEther(
-        defaultProposalSettingForm.minVotesForCreating.get
+        String(defaultProposalSettingForm.minVotesForCreating.get)
       ).toString(),
       rewardToken: defaultProposalSettingForm.rewardToken.get || ZERO_ADDR,
       creationReward: parseUnits(
-        defaultProposalSettingForm.creationReward.get,
+        String(defaultProposalSettingForm.creationReward.get),
         18
       ).toString(),
       executionReward: parseUnits(
-        defaultProposalSettingForm.executionReward.get,
+        String(defaultProposalSettingForm.executionReward.get),
         18
       ).toString(),
       voteRewardsCoefficient: parseUnits(
-        defaultProposalSettingForm.voteRewardsCoefficient.get,
+        String(defaultProposalSettingForm.voteRewardsCoefficient.get),
         18
       ).toString(),
       executorDescription: "default",
@@ -146,30 +152,36 @@ const useCreateDAO = () => {
             durationValidators: isValidator.get
               ? internalProposalForm.durationValidators.get
               : internalProposalForm.duration.get,
-            quorum: parseUnits(internalProposalForm.quorum.get, 25).toString(),
+            quorum: parseUnits(
+              String(internalProposalForm.quorum.get),
+              25
+            ).toString(),
             quorumValidators: isValidator.get
               ? parseUnits(
-                  internalProposalForm.quorumValidators.get,
+                  String(internalProposalForm.quorumValidators.get),
                   25
                 ).toString()
-              : parseUnits(internalProposalForm.quorum.get, 25).toString(),
+              : parseUnits(
+                  String(internalProposalForm.quorum.get),
+                  25
+                ).toString(),
             minVotesForVoting: parseEther(
-              internalProposalForm.minVotesForVoting.get
+              String(internalProposalForm.minVotesForVoting.get)
             ).toString(),
             minVotesForCreating: parseEther(
-              internalProposalForm.minVotesForCreating.get
+              String(internalProposalForm.minVotesForCreating.get)
             ).toString(),
             rewardToken: internalProposalForm.rewardToken.get || ZERO_ADDR,
             creationReward: parseUnits(
-              internalProposalForm.creationReward.get,
+              String(internalProposalForm.creationReward.get),
               18
             ).toString(),
             executionReward: parseUnits(
-              internalProposalForm.executionReward.get,
+              String(internalProposalForm.executionReward.get),
               18
             ).toString(),
             voteRewardsCoefficient: parseUnits(
-              internalProposalForm.voteRewardsCoefficient.get,
+              String(internalProposalForm.voteRewardsCoefficient.get),
               18
             ).toString(),
             executorDescription: "internal",
@@ -190,36 +202,38 @@ const useCreateDAO = () => {
               ? distributionProposalSettingsForm.durationValidators.get
               : distributionProposalSettingsForm.duration.get,
             quorum: parseUnits(
-              distributionProposalSettingsForm.quorum.get,
+              String(distributionProposalSettingsForm.quorum.get),
               25
             ).toString(),
             quorumValidators: isValidator.get
               ? parseUnits(
-                  distributionProposalSettingsForm.quorumValidators.get,
+                  String(distributionProposalSettingsForm.quorumValidators.get),
                   25
                 ).toString()
               : parseUnits(
-                  distributionProposalSettingsForm.quorum.get,
+                  String(distributionProposalSettingsForm.quorum.get),
                   25
                 ).toString(),
             minVotesForVoting: parseEther(
-              distributionProposalSettingsForm.minVotesForVoting.get
+              String(distributionProposalSettingsForm.minVotesForVoting.get)
             ).toString(),
             minVotesForCreating: parseEther(
-              distributionProposalSettingsForm.minVotesForCreating.get
+              String(distributionProposalSettingsForm.minVotesForCreating.get)
             ).toString(),
             rewardToken:
               distributionProposalSettingsForm.rewardToken.get || ZERO_ADDR,
             creationReward: parseUnits(
-              distributionProposalSettingsForm.creationReward.get,
+              String(distributionProposalSettingsForm.creationReward.get),
               18
             ).toString(),
             executionReward: parseUnits(
-              distributionProposalSettingsForm.executionReward.get,
+              String(distributionProposalSettingsForm.executionReward.get),
               18
             ).toString(),
             voteRewardsCoefficient: parseUnits(
-              distributionProposalSettingsForm.voteRewardsCoefficient.get,
+              String(
+                distributionProposalSettingsForm.voteRewardsCoefficient.get
+              ),
               18
             ).toString(),
             executorDescription: "DP",
@@ -275,7 +289,7 @@ const useCreateDAO = () => {
             ? 0
             : userKeeperParams.nftsTotalSupply.get,
       },
-      descriptionURL: "additionalData._path",
+      descriptionURL: additionalData._path,
     }
 
     const gasLimit = await tryEstimateGas(POOL_PARAMETERS)
@@ -292,18 +306,27 @@ const useCreateDAO = () => {
       })
 
       if (isTxMined(receipt)) {
-        const data = receipt?.logs[receipt?.logs.length - 1].data
+        const logs = receipt?.logs
+
+        const eventSignature =
+          "0x40a4c9bd9ae408645df62dd0e125a5068d6fb4366db9d9c309d8147c5f25263a"
+
+        const data = logs?.find((log) =>
+          log.topics.includes(eventSignature)
+        )?.data
+
+        if (!data) throw new Error("data not found")
+
         const abiCoder = new ethers.utils.AbiCoder()
         const govPoolAddress = abiCoder.decode(
-          ["address", "address", "address"],
+          ["string", "address", "address", "address"],
           data as BytesLike
-        )[0]
+        )[1]
 
         createdDaoAddress.set(govPoolAddress)
         setPayload(SubmitState.SUCCESS)
       }
     } catch (error: any) {
-      console.log(error)
       setPayload(SubmitState.IDLE)
       if (!!error && !!error.data && !!error.data.message) {
         setError(error.data.message)

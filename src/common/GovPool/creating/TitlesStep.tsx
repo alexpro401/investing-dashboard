@@ -29,7 +29,7 @@ import Switch from "components/Switch"
 import Avatar from "components/Avatar"
 import { CreateDaoCardStepNumber } from "../components"
 
-import * as S from "../styled"
+import * as S from "./styled"
 
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { ICON_NAMES } from "constants/icon-names"
@@ -117,8 +117,8 @@ const TitlesStep: FC = () => {
     {
       avatarUrl: { required },
       daoName: { required, minLength: minLength(6) },
-      websiteUrl: { required, isUrl },
-      description: { required },
+      ...(websiteUrl.get ? { websiteUrl: { required, isUrl } } : {}),
+      ...(description.get ? { description: { required } } : {}),
 
       ...(socialLinks.get?.[0]?.[1]
         ? {
@@ -162,13 +162,17 @@ const TitlesStep: FC = () => {
           }
         : {}),
 
-      documents: {
-        required,
-        $every: {
-          name: { required },
-          url: { required, isUrl },
-        },
-      },
+      ...(documents.get.length > 1
+        ? {
+            documents: {
+              required,
+              $every: {
+                name: { required },
+                url: { required, isUrl },
+              },
+            },
+          }
+        : {}),
 
       ...(isErc20.get
         ? { tokenAddress: { required, isAddressValidator } }

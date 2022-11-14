@@ -1,15 +1,92 @@
 import { FC, useContext } from "react"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
-import { AppButton, Card, CardDescription, CardHead, Icon } from "common"
+import {
+  AppButton,
+  Card,
+  CardDescription,
+  CardHead,
+  Collapse,
+  DaoSettingsParameters,
+  Icon,
+} from "common"
 import { CreateDaoCardStepNumber } from "../components"
 
-import * as S from "../styled"
+import * as S from "./styled"
 import { ICON_NAMES } from "constants/icon-names"
 import Switch from "components/Switch"
 import useAlert, { AlertType } from "hooks/useAlert"
+import { stepsControllerContext } from "context/StepsControllerContext"
+import { useFormValidation } from "hooks/useFormValidation"
+import { isPercentage, required } from "utils/validators"
 
 const IsCustomVotingStep: FC = () => {
-  const { isCustomVoting } = useContext(FundDaoCreatingContext)
+  const { isCustomVoting, internalProposalForm } = useContext(
+    FundDaoCreatingContext
+  )
+  const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
+
+  const {
+    delegatedVotingAllowed,
+    duration,
+    quorum,
+
+    earlyCompletion,
+
+    minVotesForVoting,
+    minVotesForCreating,
+
+    rewardToken,
+    creationReward,
+    voteRewardsCoefficient,
+    executionReward,
+
+    durationValidators,
+    quorumValidators,
+  } = internalProposalForm
+
+  const formValidation = useFormValidation(
+    {
+      delegatedVotingAllowed: delegatedVotingAllowed.get,
+      duration: duration.get,
+      quorum: quorum.get,
+
+      earlyCompletion: earlyCompletion.get,
+
+      minVotesForVoting: minVotesForVoting.get,
+      minVotesForCreating: minVotesForCreating.get,
+
+      rewardToken: rewardToken.get,
+      creationReward: creationReward.get,
+      voteRewardsCoefficient: voteRewardsCoefficient.get,
+      executionReward: executionReward.get,
+
+      durationValidators: durationValidators.get,
+      quorumValidators: quorumValidators.get,
+    },
+    {
+      delegatedVotingAllowed: { required },
+      duration: { required },
+      quorum: { required, isPercentage },
+      earlyCompletion: { required },
+      minVotesForVoting: { required },
+      minVotesForCreating: { required },
+
+      creationReward: { required },
+      voteRewardsCoefficient: { required },
+      executionReward: { required },
+      durationValidators: { required },
+      quorumValidators: { required, isPercentage },
+    }
+  )
+
+  const handleNextStep = () => {
+    if (isCustomVoting.get) {
+      formValidation.touchForm()
+      if (!formValidation.isFieldsValid) return
+    }
+
+    nextCb()
+  }
 
   const [showAlert] = useAlert()
 
@@ -88,8 +165,35 @@ const IsCustomVotingStep: FC = () => {
             </p>
           </CardDescription>
         </Card>
+
+        <Collapse isOpen={isCustomVoting.get}>
+          {internalProposalForm && (
+            <>
+              <Card>
+                <CardHead
+                  nodeLeft={
+                    <CreateDaoCardStepNumber number={currentStepNumber} />
+                  }
+                  title="Internal voting settings"
+                />
+                <CardDescription>
+                  <p>
+                    Configure the settings for proposals, voting, vote
+                    delegation, and rewards for active members.
+                  </p>
+                </CardDescription>
+              </Card>
+              <S.ConditionalParameters>
+                <DaoSettingsParameters
+                  poolParameters={internalProposalForm}
+                  formValidation={formValidation}
+                />
+              </S.ConditionalParameters>
+            </>
+          )}
+        </Collapse>
       </S.StepsRoot>
-      <S.StepsBottomNavigation />
+      <S.StepsBottomNavigation customNextCb={handleNextStep} />
     </>
   )
 }
