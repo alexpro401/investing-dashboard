@@ -94,7 +94,7 @@ const DaoDelegationOut: React.FC = () => {
           <GovTokenDelegationCard
             data={delegationHistory}
             chainId={chainId}
-            showMore={delegationHistories.length === 1}
+            alwaysShowMore={delegationHistories.length === 1}
           />
         </S.Indents>
       ))}
