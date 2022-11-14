@@ -15,6 +15,6 @@ export { default as useGovValidatorsTokenTotalSupply } from "./useGovValidatorsT
 export { default as useGovValidatorsValidatorsToken } from "./useGovValidatorsValidatorsToken"
 export { default as useGovPoolDescription } from "./useGovPoolDescription"
 export { default as useGovPoolVote } from "./useGovPoolVote"
-export { default as useGovUserKeeperVotingPower } from "./useGovUserKeeperVotingPower"
+export { default as useGovPoolUserVotingPower } from "./useGovPoolUserVotingPower"
 export { default as useGovPoolMemberBalance } from "./useGovPoolMemberBalance"
 export { default as useGovPoolVotingAssets } from "./useGovPoolVotingAssets"

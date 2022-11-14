@@ -1,26 +1,22 @@
 import { FC, useContext } from "react"
 import { CreateDaoCardStepNumber } from "../components"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
-import {
-  AppButton,
-  Card,
-  CardDescription,
-  CardHead,
-  DaoSettingsParameters,
-  StepsNavigation,
-} from "common"
-
-import * as S from "../styled"
-
-import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 import { stepsControllerContext } from "context/StepsControllerContext"
+import { Card, CardDescription, CardHead, StepsNavigation } from "common"
+import * as S from "./styled"
+import CreateFundDocsImage from "assets/others/create-fund-docs.png"
+import { DaoSettingsParameters } from "common"
 import { useFormValidation } from "hooks/useFormValidation"
-import { isPercentage, required } from "utils/validators"
+import { isAddressValidator, isPercentage, required } from "utils/validators"
 
-const DistributionProposalStep: FC = () => {
-  const { distributionProposalSettingsForm } = useContext(
-    FundDaoCreatingContext
-  )
+interface IDefaultProposalStepProps {
+  isCreatingProposal?: boolean
+}
+
+const DefaultProposalStep: FC<IDefaultProposalStepProps> = ({
+  isCreatingProposal = false,
+}) => {
+  const { defaultProposalSettingForm } = useContext(FundDaoCreatingContext)
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
 
   const {
@@ -40,7 +36,7 @@ const DistributionProposalStep: FC = () => {
 
     durationValidators,
     quorumValidators,
-  } = distributionProposalSettingsForm
+  } = defaultProposalSettingForm
 
   const formValidation = useFormValidation(
     {
@@ -68,6 +64,12 @@ const DistributionProposalStep: FC = () => {
       earlyCompletion: { required },
       minVotesForVoting: { required },
       minVotesForCreating: { required },
+
+      ...(rewardToken.get
+        ? {
+            rewardToken: { isAddressValidator },
+          }
+        : {}),
       creationReward: { required },
       voteRewardsCoefficient: { required },
       executionReward: { required },
@@ -86,36 +88,27 @@ const DistributionProposalStep: FC = () => {
   return (
     <>
       <S.StepsRoot>
-        {distributionProposalSettingsForm ? (
+        {defaultProposalSettingForm ? (
           <>
             <Card>
               <CardHead
                 nodeLeft={
                   <CreateDaoCardStepNumber number={currentStepNumber} />
                 }
-                title="Changing General voting settings*"
+                title="General voting settings"
               />
               <CardDescription>
                 <p>
-                  Configure the settings for proposals to change the General
-                  voting settings (the ones you set up in the previous step).
+                  Configure the settings for proposals, voting, vote delegation,
+                  and rewards for active members.
                 </p>
-                <br />
-                <p>
-                  By default, these proposals use the general voting settings.
-                </p>
-                <br />
-                <AppButton
-                  text="Why you may need this?"
-                  color="default"
-                  size="no-paddings"
-                />
               </CardDescription>
             </Card>
             <S.CenteredImage src={CreateFundDocsImage} />
             <DaoSettingsParameters
-              poolParameters={distributionProposalSettingsForm}
+              poolParameters={defaultProposalSettingForm}
               formValidation={formValidation}
+              isCreatingProposal={isCreatingProposal}
             />
           </>
         ) : (
@@ -127,4 +120,4 @@ const DistributionProposalStep: FC = () => {
   )
 }
 
-export default DistributionProposalStep
+export default DefaultProposalStep

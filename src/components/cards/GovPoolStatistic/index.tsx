@@ -62,7 +62,7 @@ const GovPoolStatisticCard: FC<Props> = ({
     if (UserVotingPowerLoading) {
       return <Skeleton variant="text" h="16px" w="70px" />
     }
-    return normalizeBigNumber(UserVotingPower.totalPower, 18, 0)
+    return normalizeBigNumber(UserVotingPower.power, 18, 0)
   }, [UserVotingPower, UserVotingPowerLoading])
 
   const userStatistic = useMemo(
