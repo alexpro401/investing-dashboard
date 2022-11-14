@@ -2,12 +2,12 @@ import * as React from "react"
 import * as S from "../styled"
 import { isEmpty, isNil, map } from "lodash"
 import { useWeb3React } from "@web3-react/core"
+import { PulseSpinner } from "react-spinners-kit"
 
 import { Card } from "common"
 import { ZERO } from "constants/index"
 import theme, { Center, Flex, Text } from "theme"
 import GovDelegateeCard from "components/cards/GovDelegatee"
-import { PulseSpinner } from "react-spinners-kit"
 
 const delegationHistories = [
   {
@@ -81,27 +81,25 @@ const DaoDelegationIn: React.FC = () => {
     }, 1250)
   }, [])
 
-  const Delegations = React.useMemo(() => {
-    if (_loading[0] && (isEmpty(_data[0]) || isNil(_data[0]))) {
-      return (
+  if (_loading[0] && (isEmpty(_data[0]) || isNil(_data[0]))) {
+    return (
+      <S.List>
         <Center>
           <PulseSpinner color={theme.statusColors.success} />
         </Center>
-      )
-    }
+      </S.List>
+    )
+  }
 
-    if (!_loading[0] && isEmpty(_data[0])) {
-      return (
+  if (!_loading[0] && isEmpty(_data[0])) {
+    return (
+      <S.List>
         <Center>
           <Text color={theme.textColors.secondary}>No Delegations</Text>
         </Center>
-      )
-    }
-
-    return map(_data[0], (dh, index) => (
-      <GovDelegateeCard data={dh} chainId={chainId} key={index} />
-    ))
-  }, [_loading, _data])
+      </S.List>
+    )
+  }
 
   return (
     <S.List>
@@ -112,7 +110,9 @@ const DaoDelegationIn: React.FC = () => {
             <Text color={theme.textColors.primary}>Total delegate: 90,000</Text>
           </Flex>
           <Flex full dir={"column"} gap={"8"}>
-            {Delegations}
+            {map(_data[0], (dh, index) => (
+              <GovDelegateeCard data={dh} chainId={chainId} key={index} />
+            ))}
           </Flex>
         </Card>
       </S.Indents>
