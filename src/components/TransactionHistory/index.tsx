@@ -26,6 +26,7 @@ import Withdraw from "assets/icons/Withdraw"
 import Swap from "assets/icons/Swap"
 import Expand from "assets/icons/Expand"
 import Shrink from "assets/icons/Shrink"
+import { Transaction } from "interfaces/thegraphs/interactions"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_INTERACTIONS_API_URL || "",
@@ -62,7 +63,7 @@ const TransactionHistory: FC<IProps> = ({ open, setOpen }) => {
     [account, filter]
   )
 
-  const [{ data, loading }, fetchMore] = useQueryPagination(
+  const [{ data, loading }, fetchMore] = useQueryPagination<Transaction>(
     UserTransactionsQuery,
     variables,
     !account || !filter,
