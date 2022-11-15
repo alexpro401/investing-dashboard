@@ -1,11 +1,14 @@
 import * as React from "react"
+import { v4 as uuidv4 } from "uuid"
+import { isEmpty, isNil, map } from "lodash"
+import { Label } from "recharts"
+import { parseEther } from "@ethersproject/units"
+
 import { Collapse, Icon } from "common"
 import theme, { Flex, Text } from "theme"
 import { shortenAddress } from "utils"
 import ExternalLink from "components/ExternalLink"
-import { isNil } from "lodash"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { Label } from "recharts"
 import * as S from "./styled"
 import { CHART_TYPE } from "constants/chart"
 import Chart from "components/Chart"
@@ -13,8 +16,8 @@ import { ICON_NAMES } from "constants/icon-names"
 import ERC721Row from "components/ERC721Row"
 import { ZERO } from "constants/index"
 import ERC20Row from "components/ERC20Row"
-import { parseEther } from "@ethersproject/units"
 import { IGovPoolDelegationHistoryQuery } from "interfaces/thegraphs/gov-pools"
+import useGovPoolWithdrawableAssets from "hooks/dao/useGovPoolWithdrawableAssets"
 
 const chartData = [
   {
@@ -52,11 +55,23 @@ const CustomLabel = ({ viewBox, total }) => {
   )
 }
 
-const GovTokenDelegationCard: React.FC<{
+interface IProps {
   data: IGovPoolDelegationHistoryQuery
   chainId?: number
   alwaysShowMore?: boolean
-}> = ({ data, chainId, alwaysShowMore }) => {
+}
+
+const GovTokenDelegationCard: React.FC<IProps> = ({
+  data,
+  chainId,
+  alwaysShowMore,
+}) => {
+  const [withdrawableAssets] = useGovPoolWithdrawableAssets(
+    data.pool.id,
+    data.from.id,
+    data.to.id
+  )
+
   const toExplorerLink = React.useMemo(() => {
     if (isNil(data) || isNil(chainId)) {
       return ""
@@ -132,20 +147,19 @@ const GovTokenDelegationCard: React.FC<{
         <div>
           <Collapse isOpen={_showMore[0]}>
             <Flex full dir={"column"} gap={"8"} m={"18px 0 16px"}>
-              <ERC721Row
-                isLocked
-                votingPower={ZERO}
-                tokenId="0"
-                tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
-              />
-              <ERC721Row
-                votingPower={ZERO}
-                tokenId="1"
-                tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
-              />
+              {!isEmpty(data.nfts) &&
+                map(data.nfts, (nft) => (
+                  <ERC721Row
+                    key={uuidv4()}
+                    isLocked
+                    votingPower={ZERO}
+                    tokenId={nft}
+                    tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
+                  />
+                ))}
               <ERC20Row
                 isLocked
-                delegated={parseEther("23000.2314")}
+                delegated={parseEther(data.amount)}
                 available={parseEther("2700.123")}
                 tokenId="0x78867bbeef44f2326bf8ddd1941a4439382ef2a7"
                 tokenUri=""
