@@ -1,5 +1,6 @@
 import { FC, useMemo, useState, useEffect, useRef } from "react"
 import { PulseSpinner } from "react-spinners-kit"
+import { v4 as uuidv4 } from "uuid"
 import { createClient, Provider as GraphProvider } from "urql"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
@@ -88,15 +89,15 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
   const prepareNewData = (d) =>
     d.proposals.map((p) => ({
       id: String(p.id).slice(42),
-      poolAddress: p.basicPool.id,
+      ...p,
     }))
 
-  const [{ data, loading }, fetchMore] = useQueryPagination(
-    InvestorRiskyProposalsQuery,
-    variables,
-    isNil(activePools),
-    prepareNewData
-  )
+  const [{ data, loading }, fetchMore] = useQueryPagination<{
+    id: string
+    basicPool: {
+      id: string
+    }
+  }>(InvestorRiskyProposalsQuery, variables, isNil(activePools), prepareNewData)
 
   const loader = useRef<any>()
 
@@ -129,10 +130,10 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
       <S.List ref={loader}>
         {data.map((p) => (
           <RiskyProposalCardInitializer
-            key={p.poolAddress + p.id}
+            key={uuidv4()}
             account={account}
             proposalId={Number(p.id) - 1}
-            poolAddress={p.poolAddress}
+            poolAddress={p.basicPool.id}
           />
         ))}
         <LoadMore
