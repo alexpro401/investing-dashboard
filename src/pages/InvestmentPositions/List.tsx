@@ -4,6 +4,7 @@ import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { InvestorPositionsQuery } from "queries"
 import useQueryPagination from "hooks/useQueryPagination"
+import { IInvestorProposal } from "interfaces/thegraphs/invest-pools"
 
 import LoadMore from "components/LoadMore"
 import InvestPositionCard from "components/cards/position/Invest"
@@ -25,7 +26,7 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
 
   const prepareNewData = (d) => d.investorPoolPositions
 
-  const [{ data, loading }, fetchMore] = useQueryPagination(
+  const [{ data, loading }, fetchMore] = useQueryPagination<IInvestorProposal>(
     InvestorPositionsQuery,
     variables,
     !account,
