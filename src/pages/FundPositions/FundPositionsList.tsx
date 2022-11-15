@@ -15,6 +15,7 @@ import PoolPositionCard from "components/cards/position/Pool"
 
 import S, { BecomeInvestor } from "./styled"
 import { ZERO } from "constants/index"
+import { IPosition } from "interfaces/thegraphs/all-pools"
 
 const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
   const { poolAddress } = useParams()
@@ -37,7 +38,7 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
 
   const prepareNewData = (d) => d.positions
 
-  const [{ data, loading }, fetchMore] = useQueryPagination(
+  const [{ data, loading }, fetchMore] = useQueryPagination<IPosition>(
     BasicPositionsQuery,
     variables,
     !poolAddress,
