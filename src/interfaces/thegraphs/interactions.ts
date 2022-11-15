@@ -21,8 +21,8 @@ export interface Transaction {
   type: string[]
   user: string
   interactionsCount: string
-  exchange: Array<Pick<Exchange, "id" | "fromToken" | "toToken">>
-  vest: Array<Pick<Vest, "id" | "pool" | "baseAmount">>
+  exchange: Exchange[]
+  vest: Vest[]
   poolCreate: { id: string }[]
   proposalEdit: { id: string }[]
   riskyProposalCreate: { id: string }[]

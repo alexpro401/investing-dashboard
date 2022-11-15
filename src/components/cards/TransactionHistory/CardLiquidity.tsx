@@ -13,18 +13,13 @@ import { expandTimestamp, formatBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
 import S from "./styled"
-
-interface IVest {
-  id: string
-  pool: string
-  baseAmount: BigNumber
-}
+import { Vest } from "interfaces/thegraphs/interactions"
 
 interface IProps {
   hash: string
-  info: IVest
+  info: Vest
   chainId?: number
-  timestamp?: number
+  timestamp?: string
   isInvest: boolean
 }
 
@@ -45,12 +40,12 @@ const TransactionHistoryCardLiquidity: React.FC<IProps> = ({
 
   const amount = useMemo<string>(() => {
     if (!info || !info.baseAmount) return ""
-    return formatBigNumber(info.baseAmount)
+    return formatBigNumber(BigNumber.from(info.baseAmount))
   }, [info])
 
   const datetime = useMemo<string>(() => {
     if (!timestamp) return ""
-    return format(expandTimestamp(timestamp), DATE_TIME_FORMAT)
+    return format(expandTimestamp(Number(timestamp)), DATE_TIME_FORMAT)
   }, [timestamp])
 
   return (
