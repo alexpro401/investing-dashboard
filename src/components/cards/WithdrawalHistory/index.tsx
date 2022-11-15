@@ -3,6 +3,7 @@ import { format } from "date-fns"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { useActiveWeb3React } from "hooks"
+import { DATE_FORMAT } from "constants/time"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
@@ -45,7 +46,7 @@ const WithdrawalHistory: FC<IProps> = ({ payload, ...rest }) => {
 
     return format(
       expandTimestamp(Number(normalizeBigNumber(payload.day, 18, 0)) * 86400),
-      "MMM dd, y"
+      DATE_FORMAT
     )
   }, [payload])
 
