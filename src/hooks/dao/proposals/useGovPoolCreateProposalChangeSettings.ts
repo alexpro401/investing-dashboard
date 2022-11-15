@@ -7,7 +7,7 @@ import { addDaoProposalData } from "utils/ipfs"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovSettings } from "abi"
 import useGasTracker from "state/gas/hooks"
-import { useGovSettingsNewSettingId, useGovSettingsAddress } from "hooks/dao"
+import { useGovSettingsAddress } from "hooks/dao"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
@@ -17,15 +17,13 @@ import { TransactionType } from "state/transactions/types"
 import { isTxMined, parseTransactionError } from "utils"
 import { ZERO_ADDR } from "constants/index"
 
-interface ICreateDaoProposalTypeArgs {
+interface ICreateProposalChangeSettingsArgs {
   proposalInfo: {
-    contractAddress: string
-    proposalTypeName: string
     proposalName: string
     proposalDescription: string
-    proposalTypeDescription: string
   }
-  proposalSettings: {
+  settingId: number
+  setting: {
     earlyCompletion: boolean
     delegatedVotingAllowed: boolean
     validatorsVote: boolean
@@ -39,16 +37,17 @@ interface ICreateDaoProposalTypeArgs {
     creationReward: string
     executionReward: string
     voteRewardsCoefficient: string
+    executorDescription: string
   }
 }
 
-interface IUseGovPoolCreateProposalTypeProps {
+interface IUseGovPoolCreateProposalChangeSettings {
   daoPoolAddress: string
 }
 
-const useGovPoolCreateProposalType = ({
+const useGovPoolCreateProposalChangeSettings = ({
   daoPoolAddress,
-}: IUseGovPoolCreateProposalTypeProps) => {
+}: IUseGovPoolCreateProposalChangeSettings) => {
   const navigate = useNavigate()
   const govSettingsAddress = useGovSettingsAddress(daoPoolAddress)
   const { setSuccessModalState, closeSuccessModalState } = useContext(
@@ -59,8 +58,6 @@ const useGovPoolCreateProposalType = ({
   const [, setPayload] = usePayload()
   const [, setError] = useError()
   const [gasTrackerResponse] = useGasTracker()
-  const [newSettingId, newSettingIdLoading, newSettingIdError] =
-    useGovSettingsNewSettingId({ daoAddress: daoPoolAddress })
 
   const govPoolContract = useGovPoolContract(daoPoolAddress)
 
@@ -76,14 +73,14 @@ const useGovPoolCreateProposalType = ({
     async (
       daoProposalTypeIPFSCode: string,
       govSettingsAddress: string,
-      [encodedAddSettingsMethod, encodedChangeExecuterMethod]: any[]
+      encodedChangeSettingsMethod: any
     ) => {
       try {
         const gas = await govPoolContract?.estimateGas.createProposal(
           daoProposalTypeIPFSCode,
-          [govSettingsAddress, govSettingsAddress],
-          [0, 0],
-          [encodedAddSettingsMethod, encodedChangeExecuterMethod],
+          [govSettingsAddress],
+          [0],
+          [encodedChangeSettingsMethod],
           transactionOptions
         )
 
@@ -100,47 +97,38 @@ const useGovPoolCreateProposalType = ({
   )
 
   const createDaoProposalType = useCallback(
-    async (args: ICreateDaoProposalTypeArgs) => {
-      if (!govPoolContract || newSettingIdLoading || newSettingIdError) return
+    async (args: ICreateProposalChangeSettingsArgs) => {
+      if (!govPoolContract) return
 
       const {
-        proposalInfo: {
-          contractAddress,
-          proposalDescription,
-          proposalName,
-          proposalTypeName,
-          proposalTypeDescription,
-        },
-        proposalSettings: {
+        proposalInfo: { proposalDescription, proposalName },
+        settingId,
+        setting: {
           earlyCompletion,
           delegatedVotingAllowed,
           validatorsVote,
           duration,
-          durationValidators,
           quorum,
-          quorumValidators,
           minVotesForVoting,
           minVotesForCreating,
           rewardToken,
           creationReward,
           executionReward,
           voteRewardsCoefficient,
+          executorDescription,
+          durationValidators,
+          quorumValidators,
         },
       } = args
 
       try {
         setPayload(SubmitState.SIGN)
 
-        let { path: daoProposalTypeIPFSCode } = await addDaoProposalData({
-          proposalName: proposalTypeName,
-          proposalDescription: proposalTypeDescription,
-        })
-        daoProposalTypeIPFSCode = "ipfs://" + daoProposalTypeIPFSCode
-
-        const encodedAddSettingsMethod = encodeAbiMethod(
+        const encodedChangeSettingsMethod = encodeAbiMethod(
           GovSettings,
-          "addSettings",
+          "editSettings",
           [
+            [settingId],
             [
               {
                 earlyCompletion,
@@ -159,16 +147,10 @@ const useGovPoolCreateProposalType = ({
                   voteRewardsCoefficient,
                   18
                 ).toString(),
-                executorDescription: daoProposalTypeIPFSCode,
+                executorDescription,
               },
             ],
           ]
-        )
-
-        const encodedChangeExecuterMethod = encodeAbiMethod(
-          GovSettings,
-          "changeExecutors",
-          [[contractAddress], [newSettingId]]
         )
 
         let { path: daoProposalIPFSCode } = await addDaoProposalData({
@@ -180,20 +162,20 @@ const useGovPoolCreateProposalType = ({
         const gasLimit = await tryEstimateGas(
           daoProposalIPFSCode,
           govSettingsAddress,
-          [encodedAddSettingsMethod, encodedChangeExecuterMethod]
+          encodedChangeSettingsMethod
         )
 
         const resultTransaction = await govPoolContract.createProposal(
           daoProposalIPFSCode,
-          [govSettingsAddress, govSettingsAddress],
-          [0, 0],
-          [encodedAddSettingsMethod, encodedChangeExecuterMethod],
+          [govSettingsAddress],
+          [0],
+          [encodedChangeSettingsMethod],
           { ...transactionOptions, gasLimit }
         )
 
         setPayload(SubmitState.WAIT_CONFIRM)
         const receipt = await addTransaction(resultTransaction, {
-          type: TransactionType.GOV_POOL_CREATE_PROPOSAL_TYPE,
+          type: TransactionType.GOV_POOL_CREATE_CHANGE_VOTING_SETTINGS_PROPOSAL,
           title: proposalName,
         })
 
@@ -234,13 +216,10 @@ const useGovPoolCreateProposalType = ({
       closeSuccessModalState,
       setSuccessModalState,
       navigate,
-      newSettingId,
-      newSettingIdLoading,
-      newSettingIdError,
     ]
   )
 
   return createDaoProposalType
 }
 
-export default useGovPoolCreateProposalType
+export default useGovPoolCreateProposalChangeSettings

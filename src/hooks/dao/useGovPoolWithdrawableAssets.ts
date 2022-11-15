@@ -1,68 +1,39 @@
-import { useCallback, useState, useEffect } from "react"
-import { isNil } from "lodash"
-
-import useError from "hooks/useError"
-import { ZERO } from "constants/index"
-import { parseTransactionError } from "utils"
+import { IGovPoolWithdrawableAssets } from "interfaces/contracts/IGovPool"
 import { useGovPoolContract } from "contracts"
-import { BigNumber } from "@ethersproject/bignumber"
+import { useCallback, useEffect, useState } from "react"
 
-interface WithdrawableAssets {
-  tokens: BigNumber
-  nfts: any[]
+interface Props {
+  daoPoolAddress?: string
+  delegator?: string | null
+  delegatee?: string | null
 }
 
-const useGovPoolWithdrawableAssets = (
-  govPoolAddress?: string,
-  from?: string,
-  to?: string
-): [WithdrawableAssets, (from?: string, to?: string) => void] => {
-  const [, setError] = useError()
-  const govPoolContract = useGovPoolContract(govPoolAddress)
+const useGovPoolWithdrawableAssets = ({
+  daoPoolAddress,
+  delegator,
+  delegatee = "0x0000000000000000000000000000000000000000",
+}: Props) => {
+  const [withdrawableAssets, setWithdrawableAssets] =
+    useState<IGovPoolWithdrawableAssets>()
+  const govPool = useGovPoolContract(daoPoolAddress)
 
-  const [tokens, setTokens] = useState(ZERO)
-  const [nfts, setNfts] = useState<any[]>([])
+  const getWithdrawableAssets = useCallback(async () => {
+    if (!govPool || !delegator || !delegatee) return
 
-  const _throwTxError = useCallback((error) => {
-    if (!!error && !!error.data && !!error.data.message) {
-      setError(error.data.message)
-    } else {
-      const errorMessage = parseTransactionError(error.toString())
-      !!errorMessage && setError(errorMessage)
+    try {
+      const data = await govPool.getWithdrawableAssets(delegator, delegatee)
+
+      setWithdrawableAssets(data)
+    } catch (error) {
+      console.error(error)
     }
-  }, [])
-
-  const updateWithdrawableAssets = useCallback(
-    async (_from?: string, _to?: string) => {
-      if (!govPoolContract || !from || !to) return
-      try {
-        const assets = await govPoolContract.getWithdrawableAssets(
-          _from ?? from,
-          _to ?? to
-        )
-        if (!isNil(assets)) {
-          setTokens(assets.tokens)
-          setNfts(assets.nfts)
-        }
-      } catch (error: any) {
-        _throwTxError(error)
-      }
-    },
-    [govPoolContract, from, to]
-  )
+  }, [delegatee, delegator, govPool])
 
   useEffect(() => {
-    if (!govPoolContract || !from || !to) return
-    ;(async () => await updateWithdrawableAssets())()
-  }, [govPoolContract, from, to])
+    getWithdrawableAssets()
+  }, [getWithdrawableAssets])
 
-  return [
-    {
-      tokens,
-      nfts,
-    },
-    updateWithdrawableAssets,
-  ]
+  return withdrawableAssets
 }
 
 export default useGovPoolWithdrawableAssets

@@ -47,6 +47,7 @@ const CreateNewProposalTypeForm: React.FC = () => {
 
     const {
       defaultProposalSettingForm: {
+        validatorsVote,
         earlyCompletion,
         delegatedVotingAllowed,
         duration,
@@ -57,6 +58,8 @@ const CreateNewProposalTypeForm: React.FC = () => {
         creationReward,
         executionReward,
         voteRewardsCoefficient,
+        durationValidators,
+        quorumValidators,
       },
     } = firstStepSettings
 
@@ -71,8 +74,11 @@ const CreateNewProposalTypeForm: React.FC = () => {
       proposalSettings: {
         earlyCompletion: earlyCompletion.get,
         delegatedVotingAllowed: delegatedVotingAllowed.get,
+        validatorsVote: validatorsVote.get,
         duration: duration.get,
+        durationValidators: durationValidators.get,
         quorum: quorum.get,
+        quorumValidators: quorumValidators.get,
         minVotesForVoting: minVotesForVoting.get,
         minVotesForCreating: minVotesForCreating.get,
         rewardToken: rewardToken.get,

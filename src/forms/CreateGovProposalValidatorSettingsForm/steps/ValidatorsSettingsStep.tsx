@@ -104,7 +104,7 @@ const ValidatorsSettingsStep: React.FC = () => {
       18
     )
 
-    // quorum_votes = (validator_total_supply * validators_quorum) / 100
+    // quorum_votes = (users_total_supply * quorum) / 100
     const multiplyResult = multiplyBignumbers(
       [quorumBN, 18],
       [totalVoteWeight, 18]
