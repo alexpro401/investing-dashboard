@@ -1,6 +1,7 @@
 import { FC, useMemo, useState, useEffect, useRef } from "react"
 import { createClient, Provider as GraphProvider } from "urql"
 import { PulseSpinner } from "react-spinners-kit"
+import { v4 as uuidv4 } from "uuid"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { InvestorInvestProposalsQuery } from "queries"
@@ -14,6 +15,7 @@ import InvestProposalCard from "components/cards/proposal/Invest"
 import { RequestDividendsProvider } from "modals/RequestDividend/useRequestDividendsContext"
 
 import S from "./styled"
+import { IInvestProposal } from "interfaces/thegraphs/invest-pools"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",
@@ -66,10 +68,10 @@ const InvestmentInvestProposalsList: FC<IProps> = ({
   const normalizeCollection = (d) =>
     d.proposals.map((p) => ({
       id: String(p.id).slice(42),
-      poolAddress: p.investPool.id,
+      ...p,
     }))
 
-  const [{ data, loading }, fetchMore] = useQueryPagination(
+  const [{ data, loading }, fetchMore] = useQueryPagination<IInvestProposal>(
     InvestorInvestProposalsQuery(invested),
     variables,
     !activePools,
@@ -107,9 +109,9 @@ const InvestmentInvestProposalsList: FC<IProps> = ({
       <S.List ref={loader}>
         {data.map((p) => (
           <InvestProposalCardInitializer
-            key={p.poolAddress + p.id}
+            key={uuidv4()}
             proposalId={Number(p.id) - 1}
-            poolAddress={p.poolAddress}
+            poolAddress={p.investPool.id}
           />
         ))}
         <LoadMore
