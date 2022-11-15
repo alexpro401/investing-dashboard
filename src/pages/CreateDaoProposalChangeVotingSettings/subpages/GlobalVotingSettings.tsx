@@ -1,5 +1,5 @@
-import React from "react"
-import { useParams } from "react-router-dom"
+import React, { useEffect } from "react"
+import { useParams, useLocation } from "react-router-dom"
 import { formatUnits, formatEther } from "@ethersproject/units"
 
 import Header from "components/Header/Layout"
@@ -7,7 +7,7 @@ import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidatio
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
 import FundDaoCreatingContextProvider from "context/FundDaoCreatingContext"
 import CreateDaoProposalGlobalVotingSettingsForm from "forms/CreateDaoProposalGlobalVotingSettingsForm"
-import { useGovPoolSetting } from "hooks/dao"
+import { useGovPoolSetting, useGovPoolValidatorsCount } from "hooks/dao"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { cutStringZeroes } from "utils"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
@@ -16,14 +16,24 @@ import { ZERO_ADDR } from "constants/index"
 import * as S from "../styled"
 
 const GlobalVotingSettings: React.FC = () => {
+  const location = useLocation()
   const { daoAddress } = useParams<"daoAddress">()
 
   const [daoSettings, loading] = useGovPoolSetting({
     daoAddress: daoAddress ?? "",
     settingsId: EExecutor.DEFAULT,
   })
+  const validatorsCount = useGovPoolValidatorsCount(daoAddress)
 
-  if (loading || !daoSettings) return null
+  useEffect(() => {
+    localStorage.removeItem("creating-proposal-global-voting-settings")
+
+    return () => {
+      localStorage.removeItem("creating-proposal-global-voting-settings")
+    }
+  }, [location])
+
+  if (loading || !daoSettings || validatorsCount === null) return null
 
   const {
     earlyCompletion,
@@ -38,6 +48,8 @@ const GlobalVotingSettings: React.FC = () => {
     executionReward,
     voteRewardsCoefficient,
     executorDescription,
+    durationValidators,
+    quorumValidators,
   } = daoSettings
 
   return (
@@ -50,13 +62,18 @@ const GlobalVotingSettings: React.FC = () => {
               customLSKey={"creating-proposal-global-voting-settings"}
               daoProposal={{
                 ...INITIAL_DAO_PROPOSAL,
+                _isValidator: validatorsCount > 0,
                 _defaultProposalSettingForm: {
                   ...INITIAL_DAO_PROPOSAL._defaultProposalSettingForm,
                   earlyCompletion,
                   delegatedVotingAllowed,
                   validatorsVote,
                   duration: duration.toNumber(),
+                  durationValidators: durationValidators.toNumber(),
                   quorum: cutStringZeroes(formatUnits(quorum, 25)),
+                  quorumValidators: cutStringZeroes(
+                    formatUnits(quorumValidators, 25)
+                  ),
                   minVotesForVoting: cutStringZeroes(
                     formatEther(minVotesForVoting)
                   ),

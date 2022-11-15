@@ -5,7 +5,7 @@ import { AnimatePresence } from "framer-motion"
 import StepsControllerContext from "context/StepsControllerContext"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
-import { DefaultProposalStep } from "common"
+import { IsDistributionProposalStep } from "common"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { useGovPoolCreateProposalChangeSettings } from "hooks/dao/proposals"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
@@ -17,13 +17,15 @@ enum STEPS {
   basicInfo = "basicInfo",
 }
 
-const CreateDaoProposalGlobalVotingSettings: React.FC = () => {
+const CreateDaoProposalChangeTokenDistributionForm: React.FC = () => {
   const navigate = useNavigate()
   const { daoAddress } = useParams<"daoAddress">()
   const createProposal = useGovPoolCreateProposalChangeSettings({
     daoPoolAddress: daoAddress ?? "",
   })
-  const { defaultProposalSettingForm } = useContext(FundDaoCreatingContext)
+  const { distributionProposalSettingsForm } = useContext(
+    FundDaoCreatingContext
+  )
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
   )
@@ -54,14 +56,14 @@ const CreateDaoProposalGlobalVotingSettings: React.FC = () => {
       executorDescription,
       durationValidators,
       quorumValidators,
-    } = defaultProposalSettingForm
+    } = distributionProposalSettingsForm
 
     createProposal({
       proposalInfo: {
         proposalName: proposalName.get,
         proposalDescription: proposalDescription.get,
       },
-      settingId: EExecutor.DEFAULT,
+      settingId: EExecutor.DISTRIBUTION,
       setting: {
         earlyCompletion: earlyCompletion.get,
         delegatedVotingAllowed: delegatedVotingAllowed.get,
@@ -83,7 +85,7 @@ const CreateDaoProposalGlobalVotingSettings: React.FC = () => {
     createProposal,
     proposalName,
     proposalDescription,
-    defaultProposalSettingForm,
+    distributionProposalSettingsForm,
   ])
 
   const handlePrevStep = useCallback(() => {
@@ -128,7 +130,7 @@ const CreateDaoProposalGlobalVotingSettings: React.FC = () => {
       <AnimatePresence>
         {currentStep === STEPS.globalVotingSettings && (
           <S.StepsContainer>
-            <DefaultProposalStep isCreatingProposal />
+            <IsDistributionProposalStep isCreatingProposal />
           </S.StepsContainer>
         )}
         {currentStep === STEPS.basicInfo && (
@@ -141,4 +143,4 @@ const CreateDaoProposalGlobalVotingSettings: React.FC = () => {
   )
 }
 
-export default CreateDaoProposalGlobalVotingSettings
+export default CreateDaoProposalChangeTokenDistributionForm

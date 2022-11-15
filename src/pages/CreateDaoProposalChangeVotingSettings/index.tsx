@@ -8,7 +8,7 @@ import {
   SelectableCard,
   StepsNavigation,
 } from "common"
-import { CreateDaoCardStepNumber } from "forms/CreateFundDaoForm/components"
+import { CreateDaoCardStepNumber } from "common"
 import RadioButton from "components/RadioButton"
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"

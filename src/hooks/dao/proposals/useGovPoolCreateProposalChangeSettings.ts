@@ -4,11 +4,10 @@ import { useNavigate } from "react-router-dom"
 
 import { useGovPoolContract } from "contracts"
 import { addDaoProposalData } from "utils/ipfs"
-import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovSettings } from "abi"
 import useGasTracker from "state/gas/hooks"
-import { useGovPoolSetting, useGovSettingsAddress } from "hooks/dao"
+import { useGovSettingsAddress } from "hooks/dao"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
@@ -27,8 +26,11 @@ interface ICreateProposalChangeSettingsArgs {
   setting: {
     earlyCompletion: boolean
     delegatedVotingAllowed: boolean
+    validatorsVote: boolean
     duration: number
+    durationValidators: number
     quorum: string
+    quorumValidators: string
     minVotesForVoting: string
     minVotesForCreating: string
     rewardToken: string
@@ -56,11 +58,6 @@ const useGovPoolCreateProposalChangeSettings = ({
   const [, setPayload] = usePayload()
   const [, setError] = useError()
   const [gasTrackerResponse] = useGasTracker()
-  const [daoDefaultSettings, settingsLoading, settingsError] =
-    useGovPoolSetting({
-      daoAddress: daoPoolAddress,
-      settingsId: EExecutor.DEFAULT,
-    })
 
   const govPoolContract = useGovPoolContract(daoPoolAddress)
 
@@ -101,16 +98,7 @@ const useGovPoolCreateProposalChangeSettings = ({
 
   const createDaoProposalType = useCallback(
     async (args: ICreateProposalChangeSettingsArgs) => {
-      if (
-        !govPoolContract ||
-        settingsLoading ||
-        settingsError ||
-        !daoDefaultSettings
-      )
-        return
-
-      const { validatorsVote, durationValidators, quorumValidators } =
-        daoDefaultSettings
+      if (!govPoolContract) return
 
       const {
         proposalInfo: { proposalDescription, proposalName },
@@ -118,6 +106,7 @@ const useGovPoolCreateProposalChangeSettings = ({
         setting: {
           earlyCompletion,
           delegatedVotingAllowed,
+          validatorsVote,
           duration,
           quorum,
           minVotesForVoting,
@@ -127,6 +116,8 @@ const useGovPoolCreateProposalChangeSettings = ({
           executionReward,
           voteRewardsCoefficient,
           executorDescription,
+          durationValidators,
+          quorumValidators,
         },
       } = args
 
@@ -144,9 +135,9 @@ const useGovPoolCreateProposalChangeSettings = ({
                 delegatedVotingAllowed,
                 validatorsVote,
                 duration,
-                durationValidators: durationValidators.toNumber(),
+                durationValidators,
                 quorum: parseUnits(quorum, 25).toString(),
-                quorumValidators,
+                quorumValidators: parseUnits(quorumValidators, 25).toString(),
                 minVotesForVoting: parseEther(minVotesForVoting).toString(),
                 minVotesForCreating: parseEther(minVotesForCreating).toString(),
                 rewardToken: rewardToken || ZERO_ADDR,
@@ -225,9 +216,6 @@ const useGovPoolCreateProposalChangeSettings = ({
       closeSuccessModalState,
       setSuccessModalState,
       navigate,
-      daoDefaultSettings,
-      settingsLoading,
-      settingsError,
     ]
   )
 
