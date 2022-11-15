@@ -1,22 +1,28 @@
 import { useEffect, useState, useCallback } from "react"
-import { useQuery } from "urql"
+import { CombinedError, useQuery } from "urql"
 import { debounce } from "lodash"
 import { usePrevious } from "react-use"
 
 import useError from "hooks/useError"
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
 
-const useQueryPagination = (
+type Result<T> = [
+  { data: T[]; error?: CombinedError; loading: boolean },
+  () => void,
+  () => void
+]
+
+const useQueryPagination = <T = any>(
   query,
   variables,
   pause,
-  prepareNewData: (d: any) => any,
+  prepareNewData: (d: any) => T[],
   limit = DEFAULT_PAGINATION_COUNT,
   initialOffset = 0
-): any => {
+): Result<T> => {
   const [, setError] = useError()
   const [offset, setOffset] = useState(initialOffset)
-  const [result, setResult] = useState<any[]>([])
+  const [result, setResult] = useState<T[]>([])
 
   const [{ fetching, data, error }] = useQuery({
     query,
