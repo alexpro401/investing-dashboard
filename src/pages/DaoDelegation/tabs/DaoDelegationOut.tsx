@@ -33,13 +33,12 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress }) => {
     [account, govPoolAddress]
   )
 
-  const [{ data, loading }, fetchMore] =
-    useQueryPagination<IGovPoolDelegationHistoryQuery>(
-      GovPoolDelegationHistoryByUserQuery(true),
-      variables,
-      pause,
-      (d) => d.delegationHistories
-    )
+  const [{ data, loading }, fetchMore] = useQueryPagination(
+    GovPoolDelegationHistoryByUserQuery(true),
+    variables,
+    pause,
+    (d) => d.delegationHistories
+  )
 
   const loader = React.useRef<any>()
 
