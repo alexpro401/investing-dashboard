@@ -29,7 +29,7 @@ export const INITIAL_DAO_PROPOSAL: DaoProposal = {
   _internalProposalForm: {
     earlyCompletion: false,
     delegatedVotingAllowed: false,
-    validatorsVote: false,
+    validatorsVote: true,
     duration: 0,
     durationValidators: 0,
     quorum: "0",
@@ -45,7 +45,7 @@ export const INITIAL_DAO_PROPOSAL: DaoProposal = {
   _distributionProposalSettingsForm: {
     earlyCompletion: false,
     delegatedVotingAllowed: false,
-    validatorsVote: false,
+    validatorsVote: true,
     duration: 0,
     durationValidators: 0,
     quorum: "0",
@@ -61,7 +61,7 @@ export const INITIAL_DAO_PROPOSAL: DaoProposal = {
   _validatorsBalancesSettingsForm: {
     earlyCompletion: false,
     delegatedVotingAllowed: false,
-    validatorsVote: false,
+    validatorsVote: true,
     duration: 0,
     durationValidators: 0,
     quorum: "0",
@@ -77,7 +77,7 @@ export const INITIAL_DAO_PROPOSAL: DaoProposal = {
   _defaultProposalSettingForm: {
     earlyCompletion: false,
     delegatedVotingAllowed: false,
-    validatorsVote: false,
+    validatorsVote: true,
     duration: 0,
     durationValidators: 0,
     quorum: "0",
