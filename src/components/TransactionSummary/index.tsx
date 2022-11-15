@@ -38,6 +38,7 @@ import {
   GovPoolCreateChangeDaoSettingsProposalTransactionInfo,
   GovPoolVoteTransactionInfo,
   GovPoolWithdrawTransactionInfo,
+  GovPoolCreateChangeVotingSettingsProposalTransactionInfo,
 } from "state/transactions/types"
 import { formatBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
@@ -342,37 +343,40 @@ const GovPoolCreateProposalTypeSummary: React.FC<{
   return <>Successfully created new proposal: {`"${title}"`}</>
 }
 
-// TODO: add "Summary" ending for this variable
-const GovPoolCreateInternalProposal: React.FC<{
+const GovPoolCreateInternalProposalSummary: React.FC<{
   info: GovPoolCreateIntenalProposalTransactionInfo
-}> = ({ info }) => {
+}> = () => {
   return <>Successfully created new internal proposal</>
 }
 
-// TODO: add "Summary" ending for this variable
-const GovPoolCreateValidatorProposal: React.FC<{
+const GovPoolCreateValidatorProposalSummary: React.FC<{
   info: GovPoolCreateValidatorProposalTransactionInfo
-}> = ({ info }) => {
+}> = () => {
   return <>Successfully created new validator proposal</>
 }
 
-// TODO: add "Summary" ending for this variable
-const GovPoolCreateChangeDaoSettingsProposal: React.FC<{
+const GovPoolCreateChangeDaoSettingsProposalSummary: React.FC<{
   info: GovPoolCreateChangeDaoSettingsProposalTransactionInfo
-}> = ({ info }) => {
+}> = () => {
   return <>Successfully created new proposal for changing DAO settings</>
 }
 
 const GovPoolVoteSummary: React.FC<{
   info: GovPoolVoteTransactionInfo
-}> = ({ info }) => {
+}> = () => {
   return <>Successfully voted for proposal</>
 }
 
 const GovPoolWithdrawSummary: React.FC<{
   info: GovPoolWithdrawTransactionInfo
-}> = ({ info }) => {
+}> = () => {
   return <>Successfully withdrawn from DAO pool</>
+}
+
+const GovPoolCreateChangeVotingSettingsProposal: React.FC<{
+  info: GovPoolCreateChangeVotingSettingsProposalTransactionInfo
+}> = () => {
+  return <>Successfully created new proposal for changing DAO voting settings</>
 }
 
 const TransactionSummary: React.FC<IProps> = ({ info }) => {
@@ -436,15 +440,17 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
     case TransactionType.GOV_POOL_CREATE_PROPOSAL_TYPE:
       return <GovPoolCreateProposalTypeSummary info={info} />
     case TransactionType.GOV_POOL_CREATE_INTERNAL_PROPOSAL:
-      return <GovPoolCreateInternalProposal info={info} />
+      return <GovPoolCreateInternalProposalSummary info={info} />
     case TransactionType.GOV_POOL_CREATE_VALIDATOR_PROPOSAL:
-      return <GovPoolCreateValidatorProposal info={info} />
+      return <GovPoolCreateValidatorProposalSummary info={info} />
     case TransactionType.GOV_POOL_CREATE_CHANGE_DAO_SETTINGS_PROPOSAL:
-      return <GovPoolCreateChangeDaoSettingsProposal info={info} />
+      return <GovPoolCreateChangeDaoSettingsProposalSummary info={info} />
     case TransactionType.GOV_POOL_VOTE:
       return <GovPoolVoteSummary info={info} />
     case TransactionType.GOV_POOL_WITHDRAW:
       return <GovPoolWithdrawSummary info={info} />
+    case TransactionType.GOV_POOL_CREATE_CHANGE_VOTING_SETTINGS_PROPOSAL:
+      return <GovPoolCreateChangeVotingSettingsProposal info={info} />
     default:
       return null
   }

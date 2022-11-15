@@ -1,4 +1,4 @@
-import { FC, useContext } from "react"
+import React, { useContext } from "react"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import {
   AppButton,
@@ -21,7 +21,13 @@ import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 
-const IsDistributionProposalStep: FC = () => {
+interface IIsDistributionProposalStepProps {
+  isCreatingProposal?: boolean
+}
+
+const IsDistributionProposalStep: React.FC<
+  IIsDistributionProposalStepProps
+> = ({ isCreatingProposal = false }) => {
   const { isDistributionProposal, distributionProposalSettingsForm } =
     useContext(FundDaoCreatingContext)
 
@@ -120,7 +126,7 @@ const IsDistributionProposalStep: FC = () => {
       <S.StepsRoot>
         <Card>
           <CardHead
-            nodeLeft={<CreateDaoCardStepNumber number={6} />}
+            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
             title="Token distribution proposal settings"
           />
           <CardDescription>
@@ -150,61 +156,40 @@ const IsDistributionProposalStep: FC = () => {
           </CardDescription>
         </Card>
 
-        <Card>
-          <CardHead
-            nodeLeft={<Icon name={ICON_NAMES.cog} />}
-            title="Set custom voting settings"
-            nodeRight={
-              <Switch
-                isOn={isDistributionProposal.get}
-                onChange={(n, v) => isDistributionProposal.set(v)}
-                name={
-                  "Turn on to set custom voting settings for changing general voting settings."
-                }
-              />
-            }
-          />
-          <CardDescription>
-            <p>
-              Adding validators activates two-stage voting for enhanced DAO
-              security. You can also add this function after the DAO is created,
-              by voting.
-            </p>
-          </CardDescription>
-        </Card>
+        {!isCreatingProposal && (
+          <Card>
+            <CardHead
+              nodeLeft={<Icon name={ICON_NAMES.cog} />}
+              title="Set custom voting settings"
+              nodeRight={
+                <Switch
+                  isOn={isDistributionProposal.get}
+                  onChange={(n, v) => isDistributionProposal.set(v)}
+                  name={
+                    "Turn on to set custom voting settings for changing general voting settings."
+                  }
+                />
+              }
+            />
+            <CardDescription>
+              <p>
+                Adding validators activates two-stage voting for enhanced DAO
+                security. You can also add this function after the DAO is
+                created, by voting.
+              </p>
+            </CardDescription>
+          </Card>
+        )}
 
         <Collapse isOpen={isDistributionProposal.get}>
           {distributionProposalSettingsForm && (
             <>
-              <Card>
-                <CardHead
-                  nodeLeft={
-                    <CreateDaoCardStepNumber number={currentStepNumber} />
-                  }
-                  title="Changing General voting settings*"
-                />
-                <CardDescription>
-                  <p>
-                    Configure the settings for proposals to change the General
-                    voting settings (the ones you set up in the previous step).
-                  </p>
-                  <br />
-                  <p>
-                    By default, these proposals use the general voting settings.
-                  </p>
-                  <br />
-                  <AppButton
-                    text="Why you may need this?"
-                    color="default"
-                    size="no-paddings"
-                  />
-                </CardDescription>
-              </Card>
               <S.CenteredImage src={CreateFundDocsImage} />
               <S.ConditionalParameters>
                 <DaoSettingsParameters
                   poolParameters={distributionProposalSettingsForm}
                   formValidation={formValidation}
+                  isCreatingProposal={isCreatingProposal}
                 />
               </S.ConditionalParameters>
             </>
