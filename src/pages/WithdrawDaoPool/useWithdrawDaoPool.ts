@@ -1,11 +1,10 @@
 import { ZERO } from "constants/index"
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
-import { useLockedERC721Tokens } from "hooks/useERC721List"
 import { useCallback, useMemo, useState } from "react"
 import {
   useGovPoolUserVotingPower,
-  useGovPoolMemberBalance,
   useGovPoolWithdraw,
+  useGovPoolWithdrawableAssets,
 } from "hooks/dao"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { multiplyBignumbers } from "utils/formulas"
@@ -33,22 +32,23 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
   const [ERC721Amount, setERC721Amount] = useState<number[]>([])
 
   const [{ tokenAddress, nftAddress }] = useGovPoolVotingAssets(daoPoolAddress)
-  const { tokenBalance, nftBalance } = useGovPoolMemberBalance(daoPoolAddress)
 
   const [fromData] = useERC20Data(tokenAddress)
   const priceUSD = useTokenPriceOutUSD({ tokenAddress })
 
+  const withdrawableAssets = useGovPoolWithdrawableAssets({
+    daoPoolAddress,
+    delegator: account,
+  })
+
   const ERC20Balance = useMemo(
-    () =>
-      tokenBalance?.totalBalance.sub(tokenBalance?.ownedBalance || ZERO) ||
-      ZERO,
-    [tokenBalance]
+    () => withdrawableAssets?.tokens || ZERO,
+    [withdrawableAssets]
   )
 
   const ERC721Balance = useMemo(
-    () =>
-      nftBalance?.totalBalance.sub(nftBalance?.ownedBalance || ZERO) || ZERO,
-    [nftBalance]
+    () => withdrawableAssets?.nfts[1] || ZERO,
+    [withdrawableAssets]
   )
 
   // get power for all nfts
@@ -57,13 +57,10 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
     address: account,
   })
 
-  // DAO pool nfts ids lists
-  const lockedERC721 = useLockedERC721Tokens(daoPoolAddress)
-
   // merge all lists in one
   const allNftsId = useMemo(() => {
-    return lockedERC721.map((v) => v.toString())
-  }, [lockedERC721])
+    return withdrawableAssets?.nfts[0].map((v) => v.toString()) || []
+  }, [withdrawableAssets])
 
   // merge all power in one
   const allNftsPower = useMemo(() => {
