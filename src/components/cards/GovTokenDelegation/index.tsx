@@ -63,9 +63,7 @@ const GovTokenDelegationCard: React.FC<{
     return getExplorerLink(chainId, data.to.id, ExplorerDataType.ADDRESS)
   }, [data, chainId])
 
-  const _showMore = React.useState(
-    !isNil(alwaysShowMore) ? alwaysShowMore : false
-  )
+  const _showMore = React.useState(!isNil(alwaysShowMore))
 
   const CollapseTrigger = React.useMemo(() => {
     if (isNil(alwaysShowMore) || !alwaysShowMore) {
