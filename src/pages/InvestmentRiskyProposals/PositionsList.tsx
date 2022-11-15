@@ -99,12 +99,13 @@ const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
     [closed, account]
   )
 
-  const [{ data, loading }, fetchMore] = useQueryPagination(
-    InvestorProposalsPositionsQuery,
-    variables,
-    pause,
-    (d) => d.proposalPositions
-  )
+  const [{ data, loading }, fetchMore] =
+    useQueryPagination<InvestorRiskyPositionWithVests>(
+      InvestorProposalsPositionsQuery,
+      variables,
+      pause,
+      (d) => d.proposalPositions
+    )
 
   const loader = useRef<any>()
 
