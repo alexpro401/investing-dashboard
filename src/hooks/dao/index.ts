@@ -20,3 +20,4 @@ export { default as useGovPoolUserVotingPower } from "./useGovPoolUserVotingPowe
 export { default as useGovPoolMemberBalance } from "./useGovPoolMemberBalance"
 export { default as useGovPoolVotingAssets } from "./useGovPoolVotingAssets"
 export { default as useGovPoolValidatorsCount } from "./useGovPoolValidatorsCount"
+export { default as useGovPoolWithdrawableAssets } from "./useGovPoolWithdrawableAssets"
