@@ -1,5 +1,5 @@
 import { IGovPool } from "interfaces/typechain/GovPool"
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { DateUtil } from "utils"
 import { IpfsEntity } from "utils/ipfsEntity"
 
@@ -20,13 +20,7 @@ export const useGovPoolProposal = (
     ) as string
   }, [proposalView])
 
-  const init = async () => {
-    try {
-      await loadDetailsFromIpfs()
-    } catch (error) {}
-  }
-
-  const loadDetailsFromIpfs = async () => {
+  const loadDetailsFromIpfs = useCallback(async () => {
     try {
       const entity = new IpfsEntity<{ name: string; description: string }>({
         path: proposalView.proposal.descriptionURL,
@@ -37,7 +31,13 @@ export const useGovPoolProposal = (
       setName(response.name)
       setDescription(response.description)
     } catch (error) {}
-  }
+  }, [proposalView])
+
+  const init = useCallback(async () => {
+    try {
+      await loadDetailsFromIpfs()
+    } catch (error) {}
+  }, [loadDetailsFromIpfs])
 
   useEffect(() => {
     init()
