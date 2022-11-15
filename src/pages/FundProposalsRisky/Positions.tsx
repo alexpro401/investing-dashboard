@@ -13,6 +13,7 @@ import LoadMore from "components/LoadMore"
 import RiskyPositionCard from "components/cards/position/Risky"
 
 import S from "./styled"
+import { IRiskyPosition } from "../../interfaces/thegraphs/basic-pools"
 
 const poolClient = createClient({
   url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
@@ -40,7 +41,7 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
     [closed, poolAddress]
   )
 
-  const [{ data, loading }, fetchMore] = useQueryPagination(
+  const [{ data, loading }, fetchMore] = useQueryPagination<IRiskyPosition>(
     RiskyPositionsQuery,
     variables,
     !poolAddress,
