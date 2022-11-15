@@ -1,6 +1,7 @@
 import * as React from "react"
 import { isNil } from "lodash"
 import { format } from "date-fns"
+import { BigNumber } from "@ethersproject/bignumber"
 
 import * as S from "./styled"
 import { Icon } from "common"
@@ -9,11 +10,12 @@ import theme, { Flex, Text } from "theme"
 import { DATE_FORMAT } from "constants/time"
 import { ICON_NAMES } from "constants/icon-names"
 import ExternalLink from "components/ExternalLink"
-import { expandTimestamp, shortenAddress } from "utils"
+import { expandTimestamp, formatBigNumber, shortenAddress } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
+import { IGovPoolDelegationHistoryQuery } from "interfaces/thegraphs/gov-pools"
 
 const GovDelegateeCard: React.FC<{
-  data: any
+  data: IGovPoolDelegationHistoryQuery
   chainId?: number
 }> = ({ data, chainId }) => {
   const senderExplorerLink = React.useMemo(() => {
@@ -44,11 +46,11 @@ const GovDelegateeCard: React.FC<{
               dir={data.isDelegate ? "top-right" : "bottom-left"}
             />
             <Text color={theme.textColors.primary} fz={13}>
-              100 Votes
+              {formatBigNumber(BigNumber.from(data.amount), 18, 2)} Votes
             </Text>
           </Flex>
           <Text color={theme.textColors.secondary} fz={13}>
-            {format(expandTimestamp(data.timestamp.toString()), DATE_FORMAT)}
+            {format(expandTimestamp(Number(data.timestamp)), DATE_FORMAT)}
           </Text>
         </Flex>
       </S.Content>

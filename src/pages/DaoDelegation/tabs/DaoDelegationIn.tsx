@@ -11,11 +11,21 @@ import GovDelegateeCard from "components/cards/GovDelegatee"
 import { GovPoolDelegationHistoryByUserQuery } from "queries"
 import useQueryPagination from "hooks/useQueryPagination"
 import LoadMore from "components/LoadMore"
+import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
+import { normalizeBigNumber } from "utils"
+import { IGovPoolDelegationHistoryQuery } from "interfaces/thegraphs/gov-pools"
 
 const DaoDelegationIn: React.FC<{ govPoolAddress?: string }> = ({
   govPoolAddress,
 }) => {
   const { chainId, account } = useWeb3React()
+
+  const [{ power }] = useGovPoolUserVotingPower({
+    daoAddress: govPoolAddress ?? "",
+    address: account ?? "",
+    isMicroPool: true,
+    useDelegated: false,
+  })
 
   const variables = React.useMemo(
     () => ({
@@ -71,7 +81,9 @@ const DaoDelegationIn: React.FC<{ govPoolAddress?: string }> = ({
         <Card>
           <Flex full ai={"center"} jc={"space-between"}>
             <Text color={theme.textColors.primary}>Total addresses: 90</Text>
-            <Text color={theme.textColors.primary}>Total delegate: 90,000</Text>
+            <Text color={theme.textColors.primary}>
+              Total delegate: {normalizeBigNumber(power, 18, 2)}
+            </Text>
           </Flex>
           <Flex full dir={"column"} gap={"8"}>
             {map(data, (dh, index) => (
