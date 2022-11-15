@@ -66,11 +66,11 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
   chainId,
   alwaysShowMore,
 }) => {
-  const [withdrawableAssets] = useGovPoolWithdrawableAssets(
-    data.pool.id,
-    data.from.id,
-    data.to.id
-  )
+  const withdrawableAssets = useGovPoolWithdrawableAssets({
+    daoPoolAddress: data.pool.id,
+    delegator: data.from.id,
+    delegatee: data.to.id,
+  })
 
   const toExplorerLink = React.useMemo(() => {
     if (isNil(data) || isNil(chainId)) {
