@@ -29,6 +29,17 @@ const POOL = `
   executors {${POOL_EXECUTOR}}
 `
 
+const DELEGATION_HISTORY = `
+  id
+  pool { id }
+  timestamp
+  from { id }
+  to { id }
+  isDelegate
+  amount
+  nfts
+`
+
 const GovPoolQuery = `
   query ($address: String!) {
     traderPool(id: $address) {
@@ -45,4 +56,19 @@ const GovPoolsQuery = `
   }
 `
 
-export { GovPoolQuery, GovPoolsQuery }
+const GovPoolDelegationHistoryByUserQuery = (isUserDelegator = true) => `
+  query ($offset: Int!, $limit: Int!, $address: String!, $account: String!) {
+    delegationHistories(
+      skip: $offset, first: $limit, 
+      orderBy: timestamp, orderDirection: asc,
+      where: {
+        pool: $address,
+        ${isUserDelegator ? "from: $account" : "to: $account"}
+      }
+    ) {
+      ${DELEGATION_HISTORY}
+    }
+  }
+`
+
+export { GovPoolQuery, GovPoolsQuery, GovPoolDelegationHistoryByUserQuery }

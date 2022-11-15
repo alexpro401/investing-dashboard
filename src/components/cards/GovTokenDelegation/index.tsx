@@ -14,6 +14,7 @@ import ERC721Row from "components/ERC721Row"
 import { ZERO } from "constants/index"
 import ERC20Row from "components/ERC20Row"
 import { parseEther } from "@ethersproject/units"
+import { IGovPoolDelegationHistoryQuery } from "interfaces/thegraphs/gov-pools"
 
 const chartData = [
   {
@@ -52,7 +53,7 @@ const CustomLabel = ({ viewBox, total }) => {
 }
 
 const GovTokenDelegationCard: React.FC<{
-  data: any
+  data: IGovPoolDelegationHistoryQuery
   chainId?: number
   alwaysShowMore?: boolean
 }> = ({ data, chainId, alwaysShowMore }) => {

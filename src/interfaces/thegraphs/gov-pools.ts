@@ -28,3 +28,20 @@ export interface IGovPoolQuery {
   settings: IGovPoolSettings[]
   executors: IGovPoolExecutor[]
 }
+
+export interface IGovPoolDelegationHistoryQuery {
+  id: string
+  pool: {
+    id: string
+  }
+  timestamp: string
+  from: {
+    id: string
+  }
+  to: {
+    id: string
+  }
+  isDelegate: boolean
+  amount: string
+  nfts: string[]
+}
