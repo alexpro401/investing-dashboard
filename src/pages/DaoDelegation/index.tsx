@@ -1,15 +1,16 @@
 import * as React from "react"
 import { Route, Routes, useParams } from "react-router-dom"
-import { useWeb3React } from "@web3-react/core"
 import { createClient, Provider as GraphProvider } from "urql"
 
 import * as S from "./styled"
 import { DaoDelegationOut, DaoDelegationIn } from "./tabs"
 
 import Header from "components/Header/Layout"
-import { useGovPoolContract } from "contracts"
 import RouteTabs from "components/RouteTabs"
 import { ITab } from "interfaces"
+import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
+import { useERC20 } from "hooks/useERC20"
+import { useErc721 } from "hooks/useErc721"
 
 const govPoolsClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -17,10 +18,13 @@ const govPoolsClient = createClient({
 })
 
 const DaoDelegation: React.FC = () => {
-  const { chainId } = useWeb3React()
   const params = useParams<"daoAddress">()
 
-  const govPoolContract = useGovPoolContract(params.daoAddress)
+  const [{ tokenAddress, nftAddress }] = useGovPoolVotingAssets(
+    params.daoAddress
+  )
+  const [, token, tokenBalance] = useERC20(tokenAddress)
+  const nft = useErc721(nftAddress)
 
   const tabs: ITab[] = [
     {
