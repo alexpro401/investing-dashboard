@@ -26,6 +26,7 @@ const InvestRiskyProposal = lazy(() => import("pages/InvestRiskyProposal"))
 const SwapRiskyProposal = lazy(() => import("pages/SwapRiskyProposal"))
 const PayDividends = lazy(() => import("pages/PayDividends"))
 const VotingTerminalPage = lazy(() => import("pages/VotingTerminal"))
+const WithdrawDaoPoolPage = lazy(() => import("pages/WithdrawDaoPool"))
 const CreateInvestmentProposal = lazy(
   () => import("pages/CreateInvestmentProposal")
 )
@@ -98,6 +99,10 @@ export default function Routes() {
                 <Route
                   path="dao/:daoPoolAddress/vote/:proposalId"
                   element={<VotingTerminalPage />}
+                />
+                <Route
+                  path="dao/:daoPoolAddress/withdraw"
+                  element={<WithdrawDaoPoolPage />}
                 />
 
                 <Route path="me/trader" element={<Trader />} />
