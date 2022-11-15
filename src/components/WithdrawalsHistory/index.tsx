@@ -9,6 +9,7 @@ import LoadMore from "components/LoadMore"
 import WithdrawalHistoryCard from "components/cards/WithdrawalHistory"
 
 import S from "./styled"
+import { IFeeHistory } from "interfaces/thegraphs/all-pools"
 
 interface IProps {
   unlockDate: string
@@ -21,7 +22,7 @@ const WithdrawalsHistory: FC<IProps> = ({ unlockDate, poolAddress }) => {
     [poolAddress]
   )
 
-  const [{ data, loading }, fetchMore] = useQueryPagination(
+  const [{ data, loading }, fetchMore] = useQueryPagination<IFeeHistory>(
     FundFeeHistoryQuery,
     variables,
     !poolAddress,
