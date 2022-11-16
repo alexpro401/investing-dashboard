@@ -56,6 +56,7 @@
     "lodash": "^4.17.21",
     "multicodec": "^3.2.1",
     "multihashes": "^4.0.3",
+    "polished": "^4.2.2",
     "rc-slider": "^9.7.2",
     "react": "^18.2.0",
     "react-calendar": "^3.7.0",
