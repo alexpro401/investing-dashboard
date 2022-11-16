@@ -34,7 +34,10 @@ const DaoPoolClaim: React.FC = () => {
           <RouteTabs tabs={tabs} />
         </S.Indents>
         <Routes>
-          <Route path="distribution" element={<DaoClaimTabDistribution />} />
+          <Route
+            path="distribution"
+            element={<DaoClaimTabDistribution daoAddress={daoAddress} />}
+          />
           <Route path="rewards" element={<DaoClaimTabRewards />} />
         </Routes>
       </S.Container>
