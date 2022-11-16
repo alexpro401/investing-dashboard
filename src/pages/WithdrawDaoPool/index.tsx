@@ -1,43 +1,40 @@
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import NftInput from "components/Exchange/NftInput"
-import * as S from "components/Exchange/styled"
 import { ZERO, ZERO_ADDR } from "constants/index"
 import NftSelect from "modals/NftSelect"
 import { FC, useCallback, useMemo } from "react"
 import { Flex } from "theme"
-import useVotingTerminal, { ButtonTypes } from "./useVotingTerminal"
-import Tooltip from "components/Tooltip"
-import { v4 as uuidv4 } from "uuid"
-import Switch from "components/Switch"
-import { ICON_NAMES } from "constants/icon-names"
+import useWithdrawDaoPool, { ButtonTypes } from "./useWithdrawDaoPool"
 import { useParams } from "react-router-dom"
-import { Container } from "components/Exchange/styled"
+import * as S from "components/Exchange/styled"
 import Header from "components/Header/Layout"
+import { shortenAddress } from "utils"
+import Avatar from "components/Avatar"
+import { useUserMetadata } from "state/ipfsMetadata/hooks"
 
 interface Props {
   daoPoolAddress?: string
-  proposalId?: string
 }
 
-// VotingTerminal - card component. can be used as separate element on the page
-export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
+// WithdrawDaoPool - card component. can be used as separate element on the page
+export const WithdrawDaoPool: FC<Props> = ({ daoPoolAddress }) => {
   const {
+    account,
     formInfo,
     allNftsId,
-    withDelegated,
     selectOpen,
     nftPowerMap,
     buttonType,
     ERC20Amount,
     ERC721Amount,
     ERC20Price,
-    toggleDelegated,
     setSelectOpen,
     handleERC20Change,
     handleERC721Change,
-    handleApprove,
     handleSubmit,
-  } = useVotingTerminal(daoPoolAddress)
+  } = useWithdrawDaoPool(daoPoolAddress)
+
+  const [{ userAvatar }] = useUserMetadata(account)
 
   const button = useMemo(() => {
     // not enough token balance
@@ -49,20 +46,6 @@ export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
           type="button"
           size="large"
           text="Inuficient token balance"
-        />
-      )
-    }
-
-    if (buttonType === ButtonTypes.UNLOCK) {
-      return (
-        <S.SubmitButton
-          color="secondary"
-          type="button"
-          size="large"
-          onClick={handleApprove}
-          text="Approve token"
-          iconRight={ICON_NAMES.locked}
-          iconSize={14}
         />
       )
     }
@@ -84,11 +67,11 @@ export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
       <S.SubmitButton
         type="button"
         size="large"
-        onClick={() => handleSubmit(proposalId)}
-        text="Confirm voting"
+        onClick={() => handleSubmit()}
+        text="Confirm withdraw"
       />
     )
-  }, [buttonType, handleApprove, handleSubmit, proposalId])
+  }, [buttonType, handleSubmit])
 
   // wrapper function to close modal on submit
   const selectNfts = useCallback(
@@ -108,20 +91,8 @@ export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
     <>
       <S.Card>
         <S.CardHeader>
-          <S.Title active>Vote to create</S.Title>
+          <S.Title active>Withdrawal</S.Title>
         </S.CardHeader>
-
-        <Flex p="0 8px 12px 8px" full ai="center">
-          <Flex gap="6" ai="center">
-            <Tooltip id={uuidv4()}>text</Tooltip>
-            <S.TooltipText>Voting with delegated tokens</S.TooltipText>
-          </Flex>
-          <Switch
-            isOn={withDelegated}
-            name={uuidv4()}
-            onChange={(n, v) => toggleDelegated(v)}
-          />
-        </Flex>
 
         {formInfo.erc20.address !== ZERO_ADDR && (
           <ExchangeInput
@@ -135,18 +106,34 @@ export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
           />
         )}
 
+        {formInfo.erc721.address !== ZERO_ADDR && (
+          <>
+            <Flex full p="4px" />
+            <NftInput
+              nftPowerMap={nftPowerMap}
+              selectedNfts={ERC721Amount}
+              onSelectAll={() => selectNfts(allNftsId)}
+              onSelect={() => setSelectOpen(true)}
+              balance={formInfo.erc721.balance || ZERO}
+              address={formInfo.erc721.address}
+            />
+          </>
+        )}
+
         <Flex full p="4px" />
 
-        {formInfo.erc721.address !== ZERO_ADDR && (
-          <NftInput
-            nftPowerMap={nftPowerMap}
-            selectedNfts={ERC721Amount}
-            onSelectAll={() => selectNfts(allNftsId)}
-            onSelect={() => setSelectOpen(true)}
-            balance={formInfo.erc721.balance || ZERO}
-            address={formInfo.erc721.address}
-          />
-        )}
+        <ExchangeInput
+          price={ZERO}
+          customPrice={<S.InfoGrey>Tokens/votes to withdraw</S.InfoGrey>}
+          amount={formInfo.address.totalPower.toString()}
+          balance={ZERO}
+          symbol={shortenAddress(account, 3)}
+          decimal={18}
+          customIcon={
+            <Avatar url={userAvatar ?? ""} address={account} size={26} />
+          }
+          customBalance={<S.InfoGrey>My wallet</S.InfoGrey>}
+        />
 
         <Flex p="16px 0 0" full>
           {button}
@@ -163,23 +150,23 @@ export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
   )
 }
 
-// wrapps VotingTerminal with router params and layout
-const VotingTerminalPage = () => {
+// wrapps WithdrawDaoPool with router params and layout
+const WithdrawDaoPoolPage = () => {
   const params = useParams()
 
   return (
     <>
-      <Header>Vote for proposal</Header>
-      <Container
+      <Header>Withdraw from DAO pool</Header>
+      <S.Container
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        <VotingTerminal {...params} />
-      </Container>
+        <WithdrawDaoPool {...params} />
+      </S.Container>
     </>
   )
 }
 
-export default VotingTerminalPage
+export default WithdrawDaoPoolPage

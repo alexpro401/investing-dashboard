@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 
 import Header from "components/Header/Layout"
@@ -6,12 +6,10 @@ import TutorialCard from "components/TutorialCard"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import { SelectableCard, Icon, Collapse } from "common"
 import { ICON_NAMES } from "constants/icon-names"
+import { useGovPoolCreateProposal } from "hooks/dao"
 
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
-
-import { useGovPoolCreateProposal, useGovPoolDeposit } from "hooks/dao"
-import { parseEther } from "@ethersproject/units"
 
 enum EProposalType {
   daoProfileModification = "daoProfileModification",
@@ -46,20 +44,20 @@ const CreateProposalSelectType: React.FC = () => {
     createCustomProposal,
   } = useGovPoolCreateProposal(daoAddress)
 
-  const daoDeposit = useGovPoolDeposit(daoAddress ?? "")
-
-  useEffect(() => {
-    if (!daoDeposit) return
-    ;async () => {
-      daoDeposit(
-        "0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3",
-        parseEther("1"),
-        []
-      )
-    }
-  }, [daoDeposit])
-
   const proceedToNextStep = useCallback(async () => {
+    //TODO NAVIGATE to path related to selected proposal type
+    const nextProposalTypePath = {
+      [EProposalType.daoProfileModification]: `/dao/${daoAddress}/create-proposal-change-dao-settings`,
+      [EProposalType.changingVotingSettings]: `/dao/${daoAddress}/create-proposal-change-voting-settings`,
+      [EProposalType.tokenDistribution]: "/",
+      [EProposalType.validatorSettings]: `/dao/${daoAddress}/create-proposal-validator-settings`,
+      [EProposalType.changeTokenPrice]: "/",
+    }[selectedProposalType]
+
+    if (nextProposalTypePath !== "/") {
+      return navigate(nextProposalTypePath)
+    }
+
     // TEMP: create hardcoded proposals
     switch (selectedProposalType) {
       case EProposalType.daoProfileModification: {
@@ -87,17 +85,6 @@ const CreateProposalSelectType: React.FC = () => {
         return
       }
     }
-
-    //TODO NAVIGATE to path related to selected proposal type
-    const nextProposalTypePath = {
-      [EProposalType.daoProfileModification]: `/dao/${daoAddress}/create-proposal-change-dao-settings`,
-      [EProposalType.changingVotingSettings]: "/",
-      [EProposalType.tokenDistribution]: "/",
-      [EProposalType.validatorSettings]: `/dao/${daoAddress}/create-proposal-validator-settings`,
-      [EProposalType.changeTokenPrice]: "/",
-    }[selectedProposalType]
-
-    navigate(nextProposalTypePath)
   }, [
     createInternalProposal,
     selectedProposalType,

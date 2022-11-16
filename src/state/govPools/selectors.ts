@@ -27,7 +27,8 @@ export const selectGovPoolsByNameSubstring = createSelector(
 
 export const selectGovPoolByAddress = createSelector(
   [selectGovPools, (state, address: string | undefined) => address],
-  (govPoolsData, address) => govPoolsData[address ?? ""] || undefined
+  (govPoolsData, address) =>
+    govPoolsData[address?.toLowerCase() ?? ""] || undefined
 )
 
 export const selectPayload = createSelector(

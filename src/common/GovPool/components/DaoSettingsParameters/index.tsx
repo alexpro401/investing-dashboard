@@ -210,7 +210,7 @@ const DaoSettingsParameters: FC<Props> = ({
             <p>Set parameters for a second voting stage for validators.</p>
           </CardDescription>
           <CardFormControl>
-            <InputField
+            <DurationField
               value={durationValidators.get}
               setValue={durationValidators.set}
               label="Length of voting period"

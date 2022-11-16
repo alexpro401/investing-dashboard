@@ -17,7 +17,7 @@ interface Props<V> extends HTMLAttributes<HTMLDivElement> {
   description?: ReactNode
   value: V
   valueToSet: V
-  setValue: Dispatch<SetStateAction<V>>
+  setValue: (v: V) => void
 }
 
 function SelectableCard<V>({

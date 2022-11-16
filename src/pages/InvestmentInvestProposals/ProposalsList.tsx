@@ -1,6 +1,7 @@
 import { FC, useMemo, useState, useEffect, useRef } from "react"
-import { createClient, Provider as GraphProvider } from "urql"
+import { createClient } from "urql"
 import { PulseSpinner } from "react-spinners-kit"
+import { v4 as uuidv4 } from "uuid"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { InvestorInvestProposalsQuery } from "queries"
@@ -14,9 +15,12 @@ import InvestProposalCard from "components/cards/proposal/Invest"
 import { RequestDividendsProvider } from "modals/RequestDividend/useRequestDividendsContext"
 
 import S from "./styled"
+import { IInvestProposal } from "interfaces/thegraphs/invest-pools"
+import { map } from "lodash"
 
-const poolsClient = createClient({
+const investPoolsClient = createClient({
   url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",
+  requestPolicy: "network-only",
 })
 
 interface IInvestProposalCardInitializer {
@@ -53,7 +57,7 @@ function InvestProposalCardInitializer({
 }
 
 interface IProps {
-  activePools: string[]
+  activePools?: string[]
   invested: boolean
 }
 
@@ -61,20 +65,14 @@ const InvestmentInvestProposalsList: FC<IProps> = ({
   activePools,
   invested,
 }) => {
-  const variables = useMemo(() => ({ activePools }), [activePools])
-
-  const normalizeCollection = (d) =>
-    d.proposals.map((p) => ({
-      id: String(p.id).slice(42),
-      poolAddress: p.investPool.id,
-    }))
-
-  const [{ data, loading }, fetchMore] = useQueryPagination(
-    InvestorInvestProposalsQuery(invested),
-    variables,
-    !activePools,
-    normalizeCollection
-  )
+  const [{ data, loading }, fetchMore] = useQueryPagination<IInvestProposal>({
+    query: InvestorInvestProposalsQuery(invested),
+    variables: useMemo(() => ({ activePools }), [activePools]),
+    pause: !activePools,
+    context: investPoolsClient,
+    formatter: (d) =>
+      map(d.proposals, (p) => ({ id: String(p.id).slice(42), ...p })),
+  })
 
   const loader = useRef<any>()
 
@@ -104,32 +102,24 @@ const InvestmentInvestProposalsList: FC<IProps> = ({
 
   return (
     <>
-      <S.List ref={loader}>
-        {data.map((p) => (
-          <InvestProposalCardInitializer
-            key={p.poolAddress + p.id}
-            proposalId={Number(p.id) - 1}
-            poolAddress={p.poolAddress}
+      <RequestDividendsProvider>
+        <S.List ref={loader}>
+          {data.map((p) => (
+            <InvestProposalCardInitializer
+              key={uuidv4()}
+              proposalId={Number(p.id) - 1}
+              poolAddress={p.investPool.id}
+            />
+          ))}
+          <LoadMore
+            isLoading={loading && !!data.length}
+            handleMore={fetchMore}
+            r={loader}
           />
-        ))}
-        <LoadMore
-          isLoading={loading && !!data.length}
-          handleMore={fetchMore}
-          r={loader}
-        />
-      </S.List>
+        </S.List>
+      </RequestDividendsProvider>
     </>
   )
 }
 
-const InvestmentInvestProposalsListWithProvider = (props) => {
-  return (
-    <GraphProvider value={poolsClient}>
-      <RequestDividendsProvider>
-        <InvestmentInvestProposalsList {...props} />
-      </RequestDividendsProvider>
-    </GraphProvider>
-  )
-}
-
-export default InvestmentInvestProposalsListWithProvider
+export default InvestmentInvestProposalsList

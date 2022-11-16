@@ -1,6 +1,6 @@
 import { FC, useMemo, useEffect, useRef } from "react"
 import { PulseSpinner } from "react-spinners-kit"
-import { createClient, Provider as GraphProvider } from "urql"
+import { createClient } from "urql"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 import { isNil } from "lodash"
 
@@ -17,8 +17,9 @@ import RiskyInvestorPositionCard from "components/cards/position/RiskyInvestor"
 
 import S from "./styled"
 
-const poolsClient = createClient({
-  url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
+const investorsClient = createClient({
+  url: process.env.REACT_APP_INVESTORS_API_URL || "",
+  requestPolicy: "network-only",
 })
 
 interface IRiskyCardInitializer {
@@ -86,25 +87,21 @@ interface IProps {
 const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
   const { account } = useActiveWeb3React()
 
-  const variables = useMemo(
-    () => ({
-      address: String(account).toLocaleLowerCase(),
-      type: "RISKY_PROPOSAL",
-      closed,
-    }),
-    [closed, account]
-  )
-  const pause = useMemo(
-    () => isNil(closed) || isNil(account),
-    [closed, account]
-  )
-
-  const [{ data, loading }, fetchMore] = useQueryPagination(
-    InvestorProposalsPositionsQuery,
-    variables,
-    pause,
-    (d) => d.proposalPositions
-  )
+  const [{ data, loading }, fetchMore] =
+    useQueryPagination<InvestorRiskyPositionWithVests>({
+      query: InvestorProposalsPositionsQuery,
+      variables: useMemo(
+        () => ({
+          address: String(account).toLocaleLowerCase(),
+          type: "RISKY_PROPOSAL",
+          closed,
+        }),
+        [closed, account]
+      ),
+      pause: isNil(closed) || isNil(account),
+      context: investorsClient,
+      formatter: (d) => d.proposalPositions,
+    })
 
   const loader = useRef<any>()
 
@@ -134,20 +131,18 @@ const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
   }
 
   return (
-    <GraphProvider value={poolsClient}>
-      <>
-        <S.List ref={loader}>
-          {data.map((p) => (
-            <RiskyPositionCardInitializer key={p.id} position={p} />
-          ))}
-          <LoadMore
-            isLoading={loading && !!data.length}
-            handleMore={fetchMore}
-            r={loader}
-          />
-        </S.List>
-      </>
-    </GraphProvider>
+    <>
+      <S.List ref={loader}>
+        {data.map((p) => (
+          <RiskyPositionCardInitializer key={p.id} position={p} />
+        ))}
+        <LoadMore
+          isLoading={loading && !!data.length}
+          handleMore={fetchMore}
+          r={loader}
+        />
+      </S.List>
+    </>
   )
 }
 

@@ -4,10 +4,17 @@ import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { InvestorPositionsQuery } from "queries"
 import useQueryPagination from "hooks/useQueryPagination"
+import { IInvestorProposal } from "interfaces/thegraphs/invest-pools"
 
 import LoadMore from "components/LoadMore"
 import InvestPositionCard from "components/cards/position/Invest"
 import S from "./styled"
+import { createClient } from "urql"
+
+const investorsClient = createClient({
+  url: process.env.REACT_APP_INVESTORS_API_URL || "",
+  requestPolicy: "network-only",
+})
 
 interface IProps {
   account?: string | null
@@ -15,22 +22,16 @@ interface IProps {
 }
 
 const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
-  const variables = useMemo(
-    () => ({
-      address: String(account).toLowerCase(),
-      closed,
-    }),
-    [closed, account]
-  )
-
-  const prepareNewData = (d) => d.investorPoolPositions
-
-  const [{ data, loading }, fetchMore] = useQueryPagination(
-    InvestorPositionsQuery,
-    variables,
-    !account,
-    prepareNewData
-  )
+  const [{ data, loading }, fetchMore] = useQueryPagination<IInvestorProposal>({
+    query: InvestorPositionsQuery,
+    variables: useMemo(
+      () => ({ address: String(account).toLowerCase(), closed }),
+      [closed, account]
+    ),
+    pause: !account,
+    context: investorsClient,
+    formatter: (d) => d.investorPoolPositions,
+  })
 
   const loader = useRef<any>()
 

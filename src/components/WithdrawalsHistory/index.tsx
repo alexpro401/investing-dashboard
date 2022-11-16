@@ -9,6 +9,13 @@ import LoadMore from "components/LoadMore"
 import WithdrawalHistoryCard from "components/cards/WithdrawalHistory"
 
 import S from "./styled"
+import { IFeeHistory } from "interfaces/thegraphs/all-pools"
+import { createClient } from "urql"
+
+const allPoolsClient = createClient({
+  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
+  requestPolicy: "network-only",
+})
 
 interface IProps {
   unlockDate: string
@@ -16,17 +23,13 @@ interface IProps {
 }
 
 const WithdrawalsHistory: FC<IProps> = ({ unlockDate, poolAddress }) => {
-  const variables = useMemo<{ address: string }>(
-    () => ({ address: poolAddress }),
-    [poolAddress]
-  )
-
-  const [{ data, loading }, fetchMore] = useQueryPagination(
-    FundFeeHistoryQuery,
-    variables,
-    !poolAddress,
-    (d) => d.feeHistories
-  )
+  const [{ data, loading }, fetchMore] = useQueryPagination<IFeeHistory>({
+    query: FundFeeHistoryQuery,
+    variables: useMemo(() => ({ address: poolAddress }), [poolAddress]),
+    pause: !poolAddress,
+    context: allPoolsClient,
+    formatter: (d) => d.feeHistories,
+  })
 
   const loader = useRef<any>()
   const showLoader = useMemo<boolean>(
