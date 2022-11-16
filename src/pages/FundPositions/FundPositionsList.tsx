@@ -16,6 +16,12 @@ import PoolPositionCard from "components/cards/position/Pool"
 import S, { BecomeInvestor } from "./styled"
 import { ZERO } from "constants/index"
 import { IPosition } from "interfaces/thegraphs/all-pools"
+import { createClient } from "urql"
+
+const allPoolsClient = createClient({
+  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
+  requestPolicy: "network-only",
+})
 
 const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
   const { poolAddress } = useParams()
@@ -28,22 +34,16 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
   const [totalAccountInvestedLP, setTotalAccountInvestedLP] =
     useState<BigNumber>(ZERO)
 
-  const variables = useMemo(
-    () => ({
-      address: poolAddress,
-      closed,
-    }),
-    [closed, poolAddress]
-  )
-
-  const prepareNewData = (d) => d.positions
-
-  const [{ data, loading }, fetchMore] = useQueryPagination<IPosition>(
-    BasicPositionsQuery,
-    variables,
-    !poolAddress,
-    prepareNewData
-  )
+  const [{ data, loading }, fetchMore] = useQueryPagination<IPosition>({
+    query: BasicPositionsQuery,
+    variables: useMemo(
+      () => ({ address: poolAddress, closed }),
+      [closed, poolAddress]
+    ),
+    pause: !poolAddress,
+    context: allPoolsClient,
+    formatter: (d) => d.positions,
+  })
 
   const loader = useRef<any>()
 

@@ -1,6 +1,6 @@
 import { FC, useMemo, useRef, useEffect } from "react"
 import { PulseSpinner } from "react-spinners-kit"
-import { createClient, Provider as GraphProvider } from "urql"
+import { createClient } from "urql"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { useActiveWeb3React } from "hooks"
@@ -13,10 +13,12 @@ import LoadMore from "components/LoadMore"
 import RiskyPositionCard from "components/cards/position/Risky"
 
 import S from "./styled"
-import { IRiskyPosition } from "../../interfaces/thegraphs/basic-pools"
+import { IRiskyPosition } from "interfaces/thegraphs/basic-pools"
+import { map } from "lodash"
 
-const poolClient = createClient({
+const basicPoolClient = createClient({
   url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
+  requestPolicy: "network-only",
 })
 
 interface IProps {
@@ -33,20 +35,16 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
     poolInfo?.parameters.descriptionURL
   )
 
-  const variables = useMemo(
-    () => ({
-      poolAddressList: [poolAddress],
-      closed,
-    }),
-    [closed, poolAddress]
-  )
-
-  const [{ data, loading }, fetchMore] = useQueryPagination<IRiskyPosition>(
-    RiskyPositionsQuery,
-    variables,
-    !poolAddress,
-    (d) =>
-      d.proposalPositions.map((p) => ({
+  const [{ data, loading }, fetchMore] = useQueryPagination<IRiskyPosition>({
+    query: RiskyPositionsQuery,
+    variables: useMemo(
+      () => ({ poolAddressList: [poolAddress], closed }),
+      [closed, poolAddress]
+    ),
+    pause: !poolAddress,
+    context: basicPoolClient,
+    formatter: (d) =>
+      map(d.proposalPositions, (p) => ({
         ...p,
         proposal: {
           ...p.proposal,
@@ -54,8 +52,8 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
             ? p.proposal.exchanges[0].exchanges
             : [],
         },
-      }))
-  )
+      })),
+  })
 
   const loader = useRef<any>()
 
@@ -116,12 +114,4 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
   )
 }
 
-const FundPositionssRiskyWithPorvider = (props) => {
-  return (
-    <GraphProvider value={poolClient}>
-      <FundPositionsRisky {...props} />
-    </GraphProvider>
-  )
-}
-
-export default FundPositionssRiskyWithPorvider
+export default FundPositionsRisky

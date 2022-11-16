@@ -1,7 +1,7 @@
 import { FC, useMemo, useState, useEffect, useRef } from "react"
 import { PulseSpinner } from "react-spinners-kit"
 import { v4 as uuidv4 } from "uuid"
-import { createClient, Provider as GraphProvider } from "urql"
+import { createClient } from "urql"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { useActiveWeb3React } from "hooks"
@@ -15,10 +15,11 @@ import RiskyProposalCard from "components/cards/proposal/Risky"
 
 import S from "./styled"
 import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
-import { isNil } from "lodash"
+import { isNil, map } from "lodash"
 
-const poolsClient = createClient({
+const basicPoolsClient = createClient({
   url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
+  requestPolicy: "network-only",
 })
 
 interface IRiskyCardInitializer {
@@ -81,23 +82,22 @@ interface IProps {
 const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
   const { account } = useActiveWeb3React()
 
-  const variables = useMemo(
-    () => ({ activePools: activePools ?? [] }),
-    [activePools]
-  )
-
-  const prepareNewData = (d) =>
-    d.proposals.map((p) => ({
-      id: String(p.id).slice(42),
-      ...p,
-    }))
-
   const [{ data, loading }, fetchMore] = useQueryPagination<{
     id: string
     basicPool: {
       id: string
     }
-  }>(InvestorRiskyProposalsQuery, variables, isNil(activePools), prepareNewData)
+  }>({
+    query: InvestorRiskyProposalsQuery,
+    variables: useMemo(
+      () => ({ activePools: activePools ?? [] }),
+      [activePools]
+    ),
+    pause: isNil(activePools),
+    context: basicPoolsClient,
+    formatter: (d) =>
+      map(d.proposals, (p) => ({ id: String(p.id).slice(42), ...p })),
+  })
 
   const loader = useRef<any>()
 
@@ -146,12 +146,4 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
   )
 }
 
-const InvestmentRiskyProposalsListWithProvider = (props) => {
-  return (
-    <GraphProvider value={poolsClient}>
-      <InvestmentRiskyProposalsList {...props} />
-    </GraphProvider>
-  )
-}
-
-export default InvestmentRiskyProposalsListWithProvider
+export default InvestmentRiskyProposalsList

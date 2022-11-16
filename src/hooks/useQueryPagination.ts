@@ -1,7 +1,8 @@
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useMemo } from "react"
 import { CombinedError, useQuery } from "urql"
 import { debounce } from "lodash"
 import { usePrevious } from "react-use"
+import { UseQueryArgs } from "urql/dist/types/hooks/useQuery"
 
 import useError from "hooks/useError"
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
@@ -12,23 +13,41 @@ type Result<T> = [
   () => void
 ]
 
-const useQueryPagination = <T = any>(
-  query,
-  variables,
-  pause,
-  prepareNewData: (d: any) => T[],
-  limit = DEFAULT_PAGINATION_COUNT,
-  initialOffset = 0
+interface QueryArgs<T> extends UseQueryArgs {
+  formatter: (d: any) => T[]
+}
+
+interface PaginationArgs {
+  limit: number
+  initialOffset: number
+}
+
+const paginationDefault: PaginationArgs = {
+  limit: DEFAULT_PAGINATION_COUNT,
+  initialOffset: 0,
+}
+
+const useQueryPagination = <T>(
+  { formatter, variables, ...queryArgs }: QueryArgs<T>,
+  pagination = paginationDefault
 ): Result<T> => {
   const [, setError] = useError()
-  const [offset, setOffset] = useState(initialOffset)
+  const [offset, setOffset] = useState(pagination.initialOffset)
   const [result, setResult] = useState<T[]>([])
 
+  const _variables = useMemo(
+    () => ({
+      ...variables,
+      limit: pagination.limit,
+      offset,
+    }),
+    [variables, offset, pagination]
+  )
+
   const [{ fetching, data, error }] = useQuery({
-    query,
-    pause,
-    variables: { limit, offset, ...(variables ?? {}) },
-    requestPolicy: "network-only", // disable "urql" library cache
+    ...queryArgs,
+    variables: _variables,
+    requestPolicy: "network-only",
   })
 
   const prevFetching = usePrevious(fetching)
@@ -50,17 +69,17 @@ const useQueryPagination = <T = any>(
         (data !== undefined && prevFetching === undefined)) &&
       !error
     ) {
-      const newPieceOfData = prepareNewData(data)
+      const newPieceOfData = formatter(data)
       if (newPieceOfData.length > 0) {
         setResult((d) => [...d, ...newPieceOfData])
       }
     }
-  }, [fetching, data, error, prepareNewData, offset, prevFetching])
+  }, [fetching, data, error, formatter, offset, prevFetching])
 
   // Clear state when query or variables changed
   useEffect(() => {
     reset()
-  }, [query, variables, reset])
+  }, [queryArgs.query, variables, reset])
 
   // Clear error state
   useEffect(() => {
