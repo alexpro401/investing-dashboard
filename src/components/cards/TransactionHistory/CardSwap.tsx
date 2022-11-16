@@ -11,18 +11,13 @@ import { DATE_TIME_FORMAT } from "constants/time"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
 import S from "./styled"
-
-interface ITransactionSwap {
-  id: string
-  fromToken: string
-  toToken: string
-}
+import { Exchange } from "interfaces/thegraphs/interactions"
 
 interface IProps {
   hash: string
-  info: ITransactionSwap
+  info: Exchange
   chainId?: number
-  timestamp?: number
+  timestamp?: string
 }
 
 const TransactionHistoryCardSwap: React.FC<IProps> = ({
@@ -41,7 +36,7 @@ const TransactionHistoryCardSwap: React.FC<IProps> = ({
 
   const datetime = useMemo<string>(() => {
     if (!timestamp) return ""
-    return format(expandTimestamp(timestamp), DATE_TIME_FORMAT)
+    return format(expandTimestamp(Number(timestamp)), DATE_TIME_FORMAT)
   }, [timestamp])
 
   return (
