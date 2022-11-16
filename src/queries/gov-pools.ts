@@ -1,9 +1,17 @@
+const DISTRIBUTION_PROPOSAL = `
+  id
+  token
+  amount
+  proposal { id }
+`
+
 const POOL_VOTER = `
   id
   receivedDelegation
   receivedNFTDelegation
   totalDPClaimed
   totalClaimedUSD
+  claimedDPs {${DISTRIBUTION_PROPOSAL}}
 `
 
 const POOL_SETTINGS = `
@@ -29,6 +37,34 @@ const POOL = `
   executors {${POOL_EXECUTOR}}
 `
 
+const PROPOSAL_VOTE = `
+  id
+  hash
+  timestamp
+  personalAmount
+  delegatedAmount
+  voter { id }
+  proposal { id }
+`
+
+const PROPOSAL = `
+  id
+  proposalId
+  isDP
+  creator
+  executor
+  executionTimestamp
+  currentVotes
+  quorum
+  description
+  votersVoted
+  pool { id }
+  distributionProposal {${DISTRIBUTION_PROPOSAL}}
+  settings {${POOL_SETTINGS}}
+  voters { id }
+  votes {${PROPOSAL_VOTE}}
+`
+
 const GovPoolQuery = `
   query ($address: String!) {
     traderPool(id: $address) {
@@ -45,4 +81,34 @@ const GovPoolsQuery = `
   }
 `
 
-export { GovPoolQuery, GovPoolsQuery }
+const GovVoterInPoolQuery = `
+  query ($voter: String!, $pool: String!) {
+    voterInPools(where: { pool: $pool, voter: $voter }) {
+      ${POOL_VOTER}
+    }
+  }
+`
+
+const GovProposalsWithDistributionQuery = `
+  query (
+    $offset: Int!, $limit: Int!, 
+    $isDP: Boolean!, $pool: String!,
+    $excludeIds: [String]!, $voters: [String]!, $executorExclude: String! 
+  ) {
+    proposals(
+      skip: $offset, first: $limit, 
+      orderBy: id, orderDirection: asc, 
+      where: {
+        isDP: $isDP, pool: $pool,
+        id_not_in: $excludeIds, voters_contains: $voters, executor_not: $executorExclude
+      }
+    ) {${PROPOSAL}}
+  }
+`
+
+export {
+  GovPoolQuery,
+  GovPoolsQuery,
+  GovVoterInPoolQuery,
+  GovProposalsWithDistributionQuery,
+}
