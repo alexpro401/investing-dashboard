@@ -107,7 +107,7 @@ const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
         setPayload(SubmitState.WAIT_CONFIRM)
 
         const receipt = await addTransaction(resultTransaction, {
-          type: TransactionType.GOV_POOL_CREATE_VALIDATOR_PROPOSAL,
+          type: TransactionType.GOV_POOL_CREATE_PROPOSAL,
         })
 
         if (isTxMined(receipt)) {

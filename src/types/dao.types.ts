@@ -62,3 +62,8 @@ export interface IGovPoolDescription {
   socialLinks: [SUPPORTED_SOCIALS, string][]
   websiteUrl: string
 }
+
+export interface IProposalIPFS {
+  proposalName: string
+  proposalDescription: string
+}

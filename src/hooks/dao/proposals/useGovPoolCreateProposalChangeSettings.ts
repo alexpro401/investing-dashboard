@@ -175,8 +175,7 @@ const useGovPoolCreateProposalChangeSettings = ({
 
         setPayload(SubmitState.WAIT_CONFIRM)
         const receipt = await addTransaction(resultTransaction, {
-          type: TransactionType.GOV_POOL_CREATE_CHANGE_VOTING_SETTINGS_PROPOSAL,
-          title: proposalName,
+          type: TransactionType.GOV_POOL_CREATE_PROPOSAL,
         })
 
         if (isTxMined(receipt)) {
