@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react"
 import { parseUnits } from "@ethersproject/units"
+import { TransactionReceipt } from "@ethersproject/providers"
 
 import { useActiveWeb3React } from "hooks"
 import { useGovPool } from "hooks/dao/useGovPool"
@@ -72,23 +73,23 @@ export const useGovPoolCreateProposal = (
     [transactionOptions, govPoolContract]
   )
 
-  const createProposal = useCallback(
+  const createGovProposal = useCallback(
     async (
       { proposalName, proposalDescription }: IProposalIPFS,
       executors: string[],
       values: number[],
       data: string[]
-    ) => {
+    ): Promise<TransactionReceipt | undefined> => {
       if (!govPoolContract) return
 
       try {
-        const descriptionIPFSEntity = new IpfsEntity<IProposalIPFS>({
-          data: { proposalName, proposalDescription },
+        const descriptionIPFSEntity = new IpfsEntity({
+          data: JSON.stringify({ proposalName, proposalDescription }),
         })
 
         await descriptionIPFSEntity.uploadSelf()
 
-        const descriptionUrl = descriptionIPFSEntity._path
+        const descriptionUrl = "ipfs://" + descriptionIPFSEntity._path
 
         if (!descriptionUrl)
           throw new Error("uploaded ipfs proposal description has no path")
@@ -117,7 +118,10 @@ export const useGovPoolCreateProposal = (
         if (isTxMined(receipt)) {
           setPayload(SubmitState.SUCCESS)
         }
+
+        return receipt
       } catch (error: any) {
+        console.log(error)
         setPayload(SubmitState.IDLE)
         if (!!error && !!error.data && !!error.data.message) {
           setError(error.data.message)
@@ -125,6 +129,7 @@ export const useGovPoolCreateProposal = (
           const errorMessage = parseTransactionError(error.toString())
           !!errorMessage && setError(errorMessage)
         }
+        return undefined
       }
     },
     [
@@ -138,12 +143,11 @@ export const useGovPoolCreateProposal = (
   )
 
   // creating proposals
-
   // can be called only on dexe dao pool
   const createInsuranceProposal = useCallback(async () => {
     if (!govPoolContract) return
 
-    await createProposal(
+    await createGovProposal(
       { proposalName: "", proposalDescription: "" },
       [daoPoolAddress as string],
       [0],
@@ -153,24 +157,13 @@ export const useGovPoolCreateProposal = (
         )?.data as string,
       ]
     )
-  }, [createProposal, daoPoolAddress, govPoolContract])
+  }, [createGovProposal, daoPoolAddress, govPoolContract])
 
   const createDistributionProposal = useCallback(async () => {
     if (!govPoolContract || !distributionProposalContract) return
     if (!daoPoolAddress) throw new Error("GovPool is not defined")
 
     try {
-      // const additionalData = new IpfsEntity(
-      //   JSON.stringify({
-      //     name: "",
-      //     description: "",
-      //   })
-      // )
-      //
-      // await additionalData.uploadSelf()
-
-      // if (!additionalData._path) throw new Error("uploaded data has no path")
-
       const latestProposalId = await govPoolContract.latestProposalId()
 
       const erc20Token = getERC20Contract(
@@ -203,7 +196,7 @@ export const useGovPoolCreateProposal = (
         )?.data as string,
       ]
 
-      await createProposal(
+      await createGovProposal(
         { proposalName: "", proposalDescription: "" },
         executors,
         values,
@@ -212,7 +205,7 @@ export const useGovPoolCreateProposal = (
     } catch (error) {}
   }, [
     account,
-    createProposal,
+    createGovProposal,
     daoPoolAddress,
     distributionProposalContract,
     distributionProposalAddress,
@@ -223,7 +216,7 @@ export const useGovPoolCreateProposal = (
   const createCustomProposal = useCallback(async () => {
     if (!govPoolContract) return
 
-    await createProposal(
+    await createGovProposal(
       { proposalName: "", proposalDescription: "" },
       [daoPoolAddress as string],
       [0],
@@ -233,10 +226,10 @@ export const useGovPoolCreateProposal = (
         )?.data as string,
       ]
     )
-  }, [createProposal, daoPoolAddress, govPoolContract])
+  }, [createGovProposal, daoPoolAddress, govPoolContract])
 
   return {
-    createProposal,
+    createGovProposal,
     createInsuranceProposal,
     createDistributionProposal,
     createCustomProposal,

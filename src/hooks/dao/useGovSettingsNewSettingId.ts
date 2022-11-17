@@ -7,10 +7,10 @@ interface IUseGovSettingsNewSettingId {
 
 const useGovSettingsNewSettingId = ({
   daoAddress,
-}: IUseGovSettingsNewSettingId) => {
+}: IUseGovSettingsNewSettingId): [number | null, boolean, boolean] => {
   const daoSettingsContract = useGovSettingsContract(daoAddress)
 
-  const [result, setResult] = useState<number>(0)
+  const [result, setResult] = useState<number | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<boolean>(false)
 
