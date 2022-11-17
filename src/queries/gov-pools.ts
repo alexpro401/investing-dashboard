@@ -106,9 +106,36 @@ const GovProposalsWithDistributionQuery = `
   }
 `
 
+const GovProposalsWithRewardsQuery = `
+  query(
+    $offset: Int!, $limit: Int!, 
+    $executorExclude: String!, $voters: [String]!, $pool: String!
+  ) {
+    proposals(
+      skip: $offset, first: $limit,
+      orderBy: id, orderDirection: asc,
+      where: { executor_not: $executorExclude, voters_contains: $voters, pool: $pool }
+    ) {
+      voters {
+        pools {
+          proposals(where: { claimedReward: 0 }) {
+            id 
+            totalVoteAmount
+            totalDelegatedVoteAmount
+            claimedReward
+            claimedDpRewardUSD
+            proposal { id }
+          }
+        }
+      }
+    }
+  }
+`
+
 export {
   GovPoolQuery,
   GovPoolsQuery,
   GovVoterInPoolQuery,
+  GovProposalsWithRewardsQuery,
   GovProposalsWithDistributionQuery,
 }

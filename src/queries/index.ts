@@ -38,6 +38,7 @@ import {
   GovPoolQuery,
   GovPoolsQuery,
   GovVoterInPoolQuery,
+  GovProposalsWithRewardsQuery,
   GovProposalsWithDistributionQuery,
 } from "./gov-pools"
 
@@ -69,5 +70,6 @@ export {
   GovPoolQuery,
   GovPoolsQuery,
   GovVoterInPoolQuery,
+  GovProposalsWithRewardsQuery,
   GovProposalsWithDistributionQuery,
 }
