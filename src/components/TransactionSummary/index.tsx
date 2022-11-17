@@ -39,6 +39,7 @@ import {
   GovPoolVoteTransactionInfo,
   GovPoolWithdrawTransactionInfo,
   GovPoolCreateChangeVotingSettingsProposalTransactionInfo,
+  GovPoolDelegateTransactionInfo,
 } from "state/transactions/types"
 import { formatBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
@@ -373,10 +374,16 @@ const GovPoolWithdrawSummary: React.FC<{
   return <>Successfully withdrawn from DAO pool</>
 }
 
-const GovPoolCreateChangeVotingSettingsProposal: React.FC<{
+const GovPoolCreateChangeVotingSettingsProposalSummary: React.FC<{
   info: GovPoolCreateChangeVotingSettingsProposalTransactionInfo
 }> = () => {
   return <>Successfully created new proposal for changing DAO voting settings</>
+}
+
+const GovPoolDelegateSummary: React.FC<{
+  info: GovPoolDelegateTransactionInfo
+}> = () => {
+  return <>Successfully delegated tokens</>
 }
 
 const TransactionSummary: React.FC<IProps> = ({ info }) => {
@@ -450,7 +457,9 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
     case TransactionType.GOV_POOL_WITHDRAW:
       return <GovPoolWithdrawSummary info={info} />
     case TransactionType.GOV_POOL_CREATE_CHANGE_VOTING_SETTINGS_PROPOSAL:
-      return <GovPoolCreateChangeVotingSettingsProposal info={info} />
+      return <GovPoolCreateChangeVotingSettingsProposalSummary info={info} />
+    case TransactionType.GOV_POOL_DELEGATE:
+      return <GovPoolDelegateSummary info={info} />
     default:
       return null
   }
