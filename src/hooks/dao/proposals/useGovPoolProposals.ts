@@ -7,7 +7,7 @@ export const useGovPoolProposals = (govPoolAddress: string) => {
   const [isLoadFailed, setIsLoadFailed] = useState(false)
 
   const [proposalViews, setProposalViews] = useState<
-    (IGovPool.ProposalViewStructOutput & { id: string })[]
+    IGovPool.ProposalViewStructOutput[]
   >([])
 
   const { govPoolContract } = useGovPool(govPoolAddress)
@@ -18,17 +18,7 @@ export const useGovPoolProposals = (govPoolAddress: string) => {
         const data = await govPoolContract?.getProposals(offset, limit)
 
         if (data) {
-          setProposalViews(
-            data.map(
-              (el, i) =>
-                ({
-                  id: offset + i + 1,
-                  ...el,
-                } as unknown as IGovPool.ProposalViewStructOutput & {
-                  id: string
-                })
-            )
-          )
+          setProposalViews(data)
         }
       } catch (error) {
         setIsLoadFailed(true)
@@ -46,20 +36,4 @@ export const useGovPoolProposals = (govPoolAddress: string) => {
 
     loadProposals,
   }
-}
-
-enum ExecutorType {
-  DEFAULT = "0",
-  INTERNAL = "1",
-  DISTRIBUTION = "2",
-  VALIDATORS = "3",
-}
-
-const govPoolProposals = {
-  [ExecutorType.INTERNAL]: {
-    changeInternalDuration: "change-internal-duration",
-    changeInternalQuorum: "change-internal-quorum",
-    changeInternalDurationAndQuorum: "change-internal-duration-and-quorum",
-    changeInternalBalances: "change-internal-balances",
-  },
 }

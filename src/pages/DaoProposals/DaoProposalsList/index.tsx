@@ -15,8 +15,11 @@ const DaoProposalsList: FC<Props> = () => {
   const { proposalViews, loadProposals, isLoaded, isLoadFailed } =
     useGovPoolProposals(daoAddress!)
 
+  const paginationOffset = 0
+  const paginationPageLimit = 15
+
   useEffectOnce(() => {
-    loadProposals()
+    loadProposals(paginationOffset, paginationPageLimit)
   })
 
   return (
@@ -27,7 +30,11 @@ const DaoProposalsList: FC<Props> = () => {
         ) : (
           <S.DaoProposalsListBody>
             {proposalViews.map((proposalView, idx) => (
-              <DaoProposalCard key={idx} proposalView={proposalView} />
+              <DaoProposalCard
+                key={idx}
+                proposalId={paginationOffset + idx + 1}
+                proposalView={proposalView}
+              />
             ))}
           </S.DaoProposalsListBody>
         )

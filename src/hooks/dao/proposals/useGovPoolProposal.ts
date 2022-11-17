@@ -9,32 +9,36 @@ const investorGraphClient = createClient({
 })
 
 export const useGovPoolProposal = (
-  proposalId: string,
+  proposalId: number,
   govPoolAddress: string,
   proposalView: IGovPool.ProposalViewStructOutput
 ) => {
   const [{ data }] = useQuery({
     query: `
       query {
-        proposals (where: { proposalId: ${proposalId} }) {
-          id
-          proposalId
-          creator
-          votersVoted
-          pool {
+        daoPools(where: { id: "${govPoolAddress}" }) {
+          proposals(where: { proposalId: "${proposalId}" }) {
             id
-          }
+            proposalId
+            creator
+            votersVoted
+          } 
         }
       }
     `,
     context: investorGraphClient,
   })
 
+  const graphGovPoolProposal = useMemo(
+    () => data?.daoPools?.[0]?.proposals?.[0],
+    [data]
+  )
+
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
-  const creator = useMemo(() => data?.proposals?.[0]?.creator, [data])
+  const creator = useMemo(() => graphGovPoolProposal?.creator, [data])
   const votedAddresses = useMemo(
-    () => data?.proposals?.[0]?.votersVoted,
+    () => graphGovPoolProposal?.votersVoted,
     [data]
   )
 
@@ -77,6 +81,8 @@ export const useGovPoolProposal = (
     init()
   }, [init, proposalView])
 
+  const votesTotalNeed = useMemo(() => 222, [])
+
   const votesFor = useMemo(
     () => proposalView.proposal.core.votesFor.toNumber(),
     [proposalView]
@@ -90,6 +96,7 @@ export const useGovPoolProposal = (
 
     proposalType,
     voteEnd,
+    votesTotalNeed,
     votesFor,
   }
 }

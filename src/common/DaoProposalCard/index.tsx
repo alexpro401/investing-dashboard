@@ -8,14 +8,22 @@ import { useGovPoolProposal } from "hooks/dao"
 import { useParams } from "react-router-dom"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
-  proposalView: IGovPool.ProposalViewStructOutput & { id: string }
+  proposalId: number
+  proposalView: IGovPool.ProposalViewStructOutput
 }
 
-const DaoProposalCard: FC<Props> = ({ proposalView, ...rest }) => {
+const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
   const { daoAddress } = useParams()
 
-  const { creator, votedAddresses, name, proposalType, voteEnd, votesFor } =
-    useGovPoolProposal("1", daoAddress!, proposalView)
+  const {
+    creator,
+    votedAddresses,
+    name,
+    proposalType,
+    voteEnd,
+    votesFor,
+    votesTotalNeed,
+  } = useGovPoolProposal(proposalId, daoAddress!, proposalView)
 
   return (
     <S.Root {...rest}>
@@ -37,13 +45,15 @@ const DaoProposalCard: FC<Props> = ({ proposalView, ...rest }) => {
         <S.DaoProposalCardBlockInfo alignRight={true}>
           <S.DaoProposalCardBlockInfoValue>
             {votesFor}/
-            <S.DaoVotingStatusCounterTotal>222</S.DaoVotingStatusCounterTotal>
+            <S.DaoVotingStatusCounterTotal>
+              {votesTotalNeed}
+            </S.DaoVotingStatusCounterTotal>
           </S.DaoProposalCardBlockInfoValue>
           <S.DaoProposalCardBlockInfoLabel>
             Voting status
           </S.DaoProposalCardBlockInfoLabel>
         </S.DaoProposalCardBlockInfo>
-        <S.DaoVotingProgressBar progress={(222 / 100) * votesFor} />
+        <S.DaoVotingProgressBar progress={(votesTotalNeed / 100) * votesFor} />
         <S.DaoProposalCardBlockInfo>
           <S.DaoProposalCardBlockInfoValue>
             {proposalType}
