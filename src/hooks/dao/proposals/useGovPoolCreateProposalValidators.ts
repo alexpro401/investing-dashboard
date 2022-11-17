@@ -7,7 +7,7 @@ import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposa
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovValidators } from "abi"
 import usePayload from "hooks/usePayload"
-import { useGovPoolCreateProposal } from "hooks/dao"
+import { useGovPoolCreateProposal, useGovPoolLatestProposalId } from "hooks/dao"
 import { SubmitState } from "constants/types"
 import { isTxMined } from "utils"
 
@@ -23,6 +23,7 @@ const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
   const govPoolContract = useGovPoolContract(govPoolAddress)
   const govValidatorsAddress = useGovValidatorsContractAddress(govPoolAddress)
   const { createGovProposal } = useGovPoolCreateProposal(govPoolAddress)
+  const { updateLatesProposalId } = useGovPoolLatestProposalId(govPoolAddress)
 
   const [, setPayload] = usePayload()
   const { setSuccessModalState, closeSuccessModalState } = useContext(
@@ -51,15 +52,16 @@ const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
       )
 
       if (isTxMined(receipt)) {
+        const latestProposalId = await updateLatesProposalId()
+
         setSuccessModalState({
           opened: true,
           title: "Success",
-          text: "Congrats! You just successfully created a proposal and voted for it. Follow the proposal’s status at All proposals.",
+          text: "Congrats! You just successfully created a proposal. Now you should vote for it",
           image: "",
-          buttonText: "Proposals",
+          buttonText: "Vote",
           onClick: () => {
-            //TODO redirect to real validators proposals list
-            navigate("/")
+            navigate(`/dao/${govPoolAddress}/vote/${latestProposalId}`)
             closeSuccessModalState()
           },
         })
@@ -73,6 +75,8 @@ const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
       navigate,
       setSuccessModalState,
       createGovProposal,
+      updateLatesProposalId,
+      govPoolAddress,
     ]
   )
 

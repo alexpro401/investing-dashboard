@@ -8,7 +8,7 @@ import { GovSettings } from "abi"
 import { useGovSettingsAddress } from "hooks/dao"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import usePayload from "hooks/usePayload"
-import { useGovPoolCreateProposal } from "hooks/dao"
+import { useGovPoolCreateProposal, useGovPoolLatestProposalId } from "hooks/dao"
 import { SubmitState } from "constants/types"
 import { isTxMined } from "utils"
 import { ZERO_ADDR } from "constants/index"
@@ -47,6 +47,8 @@ const useGovPoolCreateProposalChangeSettings = ({
   const navigate = useNavigate()
   const govSettingsAddress = useGovSettingsAddress(daoPoolAddress)
   const { createGovProposal } = useGovPoolCreateProposal(daoPoolAddress)
+  const { updateLatesProposalId } = useGovPoolLatestProposalId(daoPoolAddress)
+
   const { setSuccessModalState, closeSuccessModalState } = useContext(
     GovProposalCreatingContext
   )
@@ -119,15 +121,16 @@ const useGovPoolCreateProposalChangeSettings = ({
       )
 
       if (isTxMined(receipt)) {
+        const latestProposalId = await updateLatesProposalId()
+
         setSuccessModalState({
           opened: true,
           title: "Success",
-          text: "Congrats! You just successfully created a proposal and voted for it. Follow the proposal’s status at All proposals.",
+          text: "Congrats! You just successfully created a proposal. Now you should vote for it",
           image: "",
-          buttonText: "All proposals",
+          buttonText: "Vote",
           onClick: () => {
-            //TODO redirect to real proposals list
-            navigate("/")
+            navigate(`/dao/${daoPoolAddress}/vote/${latestProposalId}`)
             closeSuccessModalState()
           },
         })
@@ -141,6 +144,8 @@ const useGovPoolCreateProposalChangeSettings = ({
       setSuccessModalState,
       navigate,
       createGovProposal,
+      updateLatesProposalId,
+      daoPoolAddress,
     ]
   )
 

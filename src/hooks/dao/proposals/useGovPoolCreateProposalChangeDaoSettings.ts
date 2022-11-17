@@ -7,7 +7,7 @@ import { IGovPoolDescription } from "types/dao.types"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovPool } from "abi"
 import usePayload from "hooks/usePayload"
-import { useGovPoolCreateProposal } from "hooks/dao"
+import { useGovPoolCreateProposal, useGovPoolLatestProposalId } from "hooks/dao"
 import { SubmitState } from "constants/types"
 import { isTxMined } from "utils"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
@@ -21,6 +21,8 @@ const useGovPoolCreateProposalChangeDaoSettings = (govPoolAddress: string) => {
   const navigate = useNavigate()
   const { createGovProposal } = useGovPoolCreateProposal(govPoolAddress)
   const govPoolContract = useGovPoolContract(govPoolAddress)
+  const { updateLatesProposalId } = useGovPoolLatestProposalId(govPoolAddress)
+
   const { setSuccessModalState, closeSuccessModalState } = useContext(
     GovProposalCreatingContext
   )
@@ -72,15 +74,16 @@ const useGovPoolCreateProposalChangeDaoSettings = (govPoolAddress: string) => {
       )
 
       if (isTxMined(receipt)) {
+        const latestProposalId = await updateLatesProposalId()
+
         setSuccessModalState({
           opened: true,
           title: "Success",
-          text: "Congrats! You just successfully created a proposal and voted for it. Follow the proposal’s status at All proposals.",
+          text: "Congrats! You just successfully created a proposal. Now you should vote for it",
           image: "",
-          buttonText: "All proposals",
+          buttonText: "Vote",
           onClick: () => {
-            //TODO redirect to real proposals list
-            navigate("/")
+            navigate(`/dao/${govPoolAddress}/vote/${latestProposalId}`)
             closeSuccessModalState()
           },
         })
@@ -94,6 +97,7 @@ const useGovPoolCreateProposalChangeDaoSettings = (govPoolAddress: string) => {
       setPayload,
       setSuccessModalState,
       createGovProposal,
+      updateLatesProposalId,
     ]
   )
 
