@@ -77,7 +77,9 @@ export const DaoVotingStatusCounterTotal = styled.span`
   color: #b1c7fc;
 `
 
-export const DaoVotingProgressBar = styled.div`
+export const DaoVotingProgressBar = styled.div<{
+  progress: number
+}>`
   position: relative;
   grid-column: 1 / -1;
   background: #293c54;
@@ -89,7 +91,7 @@ export const DaoVotingProgressBar = styled.div`
     top: 0;
     left: 0;
     height: 100%;
-    width: 50%;
+    width: ${(props) => `${props.progress}%`};
     background: linear-gradient(65.03deg, #a4ebd4 12.07%, #63b49b 78.73%);
     box-shadow: 0px 1px 4px rgba(164, 235, 212, 0.29),
       0px 2px 5px rgba(164, 235, 212, 0.14);

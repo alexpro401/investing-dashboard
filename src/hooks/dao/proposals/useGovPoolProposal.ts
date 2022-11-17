@@ -2,12 +2,41 @@ import { IGovPool } from "interfaces/typechain/GovPool"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { DateUtil } from "utils"
 import { IpfsEntity } from "utils/ipfsEntity"
+import { createClient, useQuery } from "urql"
+
+const investorGraphClient = createClient({
+  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
+})
 
 export const useGovPoolProposal = (
+  proposalId: string,
+  govPoolAddress: string,
   proposalView: IGovPool.ProposalViewStructOutput
 ) => {
+  const [{ data }] = useQuery({
+    query: `
+      query {
+        proposals (where: { proposalId: ${proposalId} }) {
+          id
+          proposalId
+          creator
+          votersVoted
+          pool {
+            id
+          }
+        }
+      }
+    `,
+    context: investorGraphClient,
+  })
+
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
+  const creator = useMemo(() => data?.proposals?.[0]?.creator, [data])
+  const votedAddresses = useMemo(
+    () => data?.proposals?.[0]?.votersVoted,
+    [data]
+  )
 
   const proposalType = useMemo(() => {
     return proposalView.proposal.core.settings.executorDescription
@@ -33,11 +62,16 @@ export const useGovPoolProposal = (
     } catch (error) {}
   }, [proposalView])
 
+  const loadDetailsFromSubgraph = useCallback(async () => {
+    // await fetching()
+  }, [])
+
   const init = useCallback(async () => {
     try {
       await loadDetailsFromIpfs()
+      await loadDetailsFromSubgraph()
     } catch (error) {}
-  }, [loadDetailsFromIpfs])
+  }, [loadDetailsFromIpfs, loadDetailsFromSubgraph])
 
   useEffect(() => {
     init()
@@ -49,6 +83,8 @@ export const useGovPoolProposal = (
   )
 
   return {
+    creator,
+    votedAddresses,
     name,
     description,
 

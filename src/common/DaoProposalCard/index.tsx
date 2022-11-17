@@ -5,14 +5,17 @@ import { ICON_NAMES } from "constants/icon-names"
 import { shortenAddress } from "utils"
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { useGovPoolProposal } from "hooks/dao"
+import { useParams } from "react-router-dom"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
-  proposalView: IGovPool.ProposalViewStructOutput
+  proposalView: IGovPool.ProposalViewStructOutput & { id: string }
 }
 
 const DaoProposalCard: FC<Props> = ({ proposalView, ...rest }) => {
-  const { name, description, proposalType, voteEnd, votesFor } =
-    useGovPoolProposal(proposalView)
+  const { daoAddress } = useParams()
+
+  const { creator, votedAddresses, name, proposalType, voteEnd, votesFor } =
+    useGovPoolProposal("1", daoAddress!, proposalView)
 
   return (
     <S.Root {...rest}>
@@ -25,7 +28,7 @@ const DaoProposalCard: FC<Props> = ({ proposalView, ...rest }) => {
       <S.DaoProposalCardBody>
         <S.DaoProposalCardBlockInfo>
           <S.DaoProposalCardBlockInfoAddress href={""}>
-            {shortenAddress("0x1234567890")}
+            {shortenAddress(creator)}
           </S.DaoProposalCardBlockInfoAddress>
           <S.DaoProposalCardBlockInfoLabel>
             Created by
@@ -40,7 +43,7 @@ const DaoProposalCard: FC<Props> = ({ proposalView, ...rest }) => {
             Voting status
           </S.DaoProposalCardBlockInfoLabel>
         </S.DaoProposalCardBlockInfo>
-        <S.DaoVotingProgressBar />
+        <S.DaoVotingProgressBar progress={(222 / 100) * votesFor} />
         <S.DaoProposalCardBlockInfo>
           <S.DaoProposalCardBlockInfoValue>
             {proposalType}
@@ -50,7 +53,9 @@ const DaoProposalCard: FC<Props> = ({ proposalView, ...rest }) => {
           </S.DaoProposalCardBlockInfoLabel>
         </S.DaoProposalCardBlockInfo>
         <S.DaoProposalCardBlockInfo alignRight={true}>
-          <S.DaoProposalCardBlockInfoValue>20</S.DaoProposalCardBlockInfoValue>
+          <S.DaoProposalCardBlockInfoValue>
+            {votedAddresses}
+          </S.DaoProposalCardBlockInfoValue>
           <S.DaoProposalCardBlockInfoLabel>
             Voted addresses
           </S.DaoProposalCardBlockInfoLabel>
