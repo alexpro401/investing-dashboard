@@ -46,6 +46,7 @@ import {
   isUrlTwitter,
   minLength,
   required,
+  validateIfExist,
 } from "utils/validators"
 import { isValidUrl } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
@@ -104,7 +105,7 @@ const TitlesStep: FC = () => {
       github: socialLinks.get?.[5]?.[1] || "",
       others: socialLinks.get
         ?.slice(6, socialLinks.get.length)
-        ?.map((el) => ({ key: el[0], value: el[1] })),
+        ?.map((el) => el[1]),
 
       documents: documents.get,
 
@@ -150,13 +151,12 @@ const TitlesStep: FC = () => {
             github: { isUrl, isUrlGithub },
           }
         : {}),
-      ...(socialLinks.get
-        ?.slice(6, socialLinks.get.length)
-        ?.map((el) => ({ key: el[0], value: el[1] })).length
+      ...(socialLinks.get?.slice(6, socialLinks.get.length)?.map((el) => el[1])
+        .length
         ? {
             others: {
               $every: {
-                isUrl,
+                isUrl: validateIfExist(isUrl),
               },
             },
           }
@@ -330,17 +330,14 @@ const TitlesStep: FC = () => {
                 nodeRight={
                   <AppButton
                     type="button"
-                    text={erc20TokenData?.name ? "Paste another" : "Paste"}
+                    text={"Paste"}
                     color="default"
                     size="no-paddings"
-                    onClick={() =>
-                      erc20TokenData?.name
-                        ? tokenAddress.set("")
-                        : pasteFromClipboard(tokenAddress.set)
-                    }
+                    onClick={() => pasteFromClipboard(tokenAddress.set)}
                   />
                 }
                 overlapNodeLeft={
+                  tokenAddress.get &&
                   erc20TokenData?.name &&
                   erc20TokenData?.symbol && (
                     <TokenChip
@@ -351,6 +348,7 @@ const TitlesStep: FC = () => {
                   )
                 }
                 overlapNodeRight={
+                  tokenAddress.get &&
                   erc20TokenData?.name &&
                   erc20TokenData?.symbol && (
                     <AppButton
@@ -364,7 +362,7 @@ const TitlesStep: FC = () => {
                     />
                   )
                 }
-                disabled={!!erc20TokenData?.name}
+                disabled={!!tokenAddress.get && !!erc20TokenData?.name}
               />
             </CardFormControl>
           </Collapse>

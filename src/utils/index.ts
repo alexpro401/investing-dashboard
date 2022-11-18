@@ -492,3 +492,5 @@ export const getDaysToDate = (date): number => {
 
   return Math.floor(Number(date) / 86400)
 }
+
+export * from "./date.util"

@@ -16,6 +16,7 @@ import {
   useGovUserKeeperContract,
   useGovValidatorsContract,
 } from "contracts"
+import { IpfsEntity } from "utils/ipfsEntity"
 
 export const useGovPoolCreateProposal = (
   daoPoolAddress: string | undefined
@@ -195,18 +196,18 @@ export const useGovPoolCreateProposal = (
     if (!daoPoolAddress) throw new Error("GovPool is not defined")
 
     try {
-      // const additionalData = new IpfsEntity(
-      //   JSON.stringify({
-      //     name: "",
-      //     description: "",
-      //   })
-      // )
-      //
-      // await additionalData.uploadSelf()
+      const additionalData = new IpfsEntity({
+        data: JSON.stringify({
+          name: "Internal Proposal Name",
+          description: "Lorem ipsum dolor sit amet",
+        }),
+      })
 
-      // if (!additionalData._path) throw new Error("uploaded data has no path")
+      await additionalData.uploadSelf()
 
-      const descriptionURL = "additionalData._path"
+      if (!additionalData._path) throw new Error("uploaded data has no path")
+
+      const descriptionURL = additionalData._path
       const executors = [daoPoolAddress]
       const values = [0]
       const data = [
@@ -223,16 +224,16 @@ export const useGovPoolCreateProposal = (
     if (!daoPoolAddress) throw new Error("GovPool is not defined")
 
     try {
-      // const additionalData = new IpfsEntity(
-      //   JSON.stringify({
-      //     name: "",
-      //     description: "",
-      //   })
-      // )
-      //
-      // await additionalData.uploadSelf()
+      const additionalData = new IpfsEntity({
+        data: JSON.stringify({
+          name: "",
+          description: "",
+        }),
+      })
 
-      // if (!additionalData._path) throw new Error("uploaded data has no path")
+      await additionalData.uploadSelf()
+
+      if (!additionalData._path) throw new Error("uploaded data has no path")
 
       const latestProposalId = await govPoolContract.latestProposalId()
 
@@ -242,7 +243,7 @@ export const useGovPoolCreateProposal = (
         account
       ) as ERC20
 
-      const descriptionURL = "additionalData._path"
+      const descriptionURL = additionalData._path
       const executors = [
         "0x6De41c91D028c963f374850D76A93B102F65aE50",
         distributionProposalAddress,
@@ -285,18 +286,18 @@ export const useGovPoolCreateProposal = (
     if (!daoPoolAddress) throw new Error("GovPool is not defined")
 
     try {
-      // const additionalData = new IpfsEntity(
-      //   JSON.stringify({
-      //     name: "",
-      //     description: "",
-      //   })
-      // )
-      //
-      // await additionalData.uploadSelf()
+      const additionalData = new IpfsEntity({
+        data: JSON.stringify({
+          name: "",
+          description: "",
+        }),
+      })
 
-      // if (!additionalData._path) throw new Error("uploaded data has no path")
+      await additionalData.uploadSelf()
 
-      const descriptionURL = "additionalData._path"
+      if (!additionalData._path) throw new Error("uploaded data has no path")
+
+      const descriptionURL = additionalData._path
       const executors = [validatorsAddress]
       const values = [0]
       const data = [
@@ -322,16 +323,30 @@ export const useGovPoolCreateProposal = (
   const createCustomProposal = useCallback(async () => {
     if (!govPoolContract) return
 
-    await createProposal(
-      "",
-      [daoPoolAddress as string],
-      [0],
-      [
-        (
-          await govPoolContract.populateTransaction.editDescriptionURL("")
-        )?.data as string,
+    if (!daoPoolAddress) throw new Error("GovPool is not defined")
+
+    try {
+      const additionalData = new IpfsEntity({
+        data: JSON.stringify({
+          name: "",
+          description: "",
+        }),
+      })
+
+      await additionalData.uploadSelf()
+
+      if (!additionalData._path) throw new Error("uploaded data has no path")
+
+      const descriptionURL = additionalData._path
+      const executors = [daoPoolAddress as string]
+      const values = [0]
+      const data = [
+        (await govPoolContract.populateTransaction.editDescriptionURL(""))
+          ?.data as string,
       ]
-    )
+
+      await createProposal(descriptionURL, executors, values, data)
+    } catch (error) {}
   }, [createProposal, daoPoolAddress, govPoolContract])
 
   return {
