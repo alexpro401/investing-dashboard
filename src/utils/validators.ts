@@ -45,6 +45,18 @@ export const isUrl: Validator = (value) => ({
   message: "This field must be a valid URL",
 })
 
+export const validateIfExist: (cb: Validator) => Validator = (
+  cb: Validator
+): Validator => {
+  return (value) => {
+    console.log("value", value, Boolean(value))
+    return {
+      isValid: !!value ? cb(value).isValid : true,
+      message: cb(value).message,
+    }
+  }
+}
+
 export const isUrlFacebook = (value: string) => ({
   isValid: isValidUrlFacebook(value),
   message: "This field must be a valid facebook URL",

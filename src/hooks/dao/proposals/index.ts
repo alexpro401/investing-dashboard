@@ -5,3 +5,5 @@ export { default as useGovPoolCreateProposalChangeDaoSettings } from "./useGovPo
 export { default as useGovPoolCreateProposalChangeSettings } from "./useGovPoolCreateProposalChangeSettings"
 
 export * from "./useGovPoolCreateProposal"
+export * from "./useGovPoolProposals"
+export * from "./useGovPoolProposal"
