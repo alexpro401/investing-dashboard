@@ -16,10 +16,7 @@ import { multiplyBignumbers } from "utils/formulas"
 import useERC20Allowance from "hooks/useERC20Allowance"
 import { useERC20Data } from "state/erc20/hooks"
 
-import {
-  useGovUserKeeperContractAddress,
-  useGovPoolVotingAssets,
-} from "hooks/dao"
+import { useGovPoolHelperContracts, useGovPoolVotingAssets } from "hooks/dao"
 import useERC721Allowance from "hooks/useERC721Allowance"
 import { useActiveWeb3React } from "hooks"
 
@@ -42,7 +39,7 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
   const [ERC20Price, setERC20Price] = useState(ZERO)
   const [ERC721Amount, setERC721Amount] = useState<number[]>([])
 
-  const userKeeperAddress = useGovUserKeeperContractAddress(daoPoolAddress)
+  const { govUserKeeperAddress } = useGovPoolHelperContracts(daoPoolAddress)
   const [{ tokenAddress, nftAddress }] = useGovPoolVotingAssets(daoPoolAddress)
   const { vote, voteDelegated } = useGovPoolVote(daoPoolAddress)
   const { ERC20Balance, ERC721Balance, tokenBalance, tokenBalanceDelegated } =
@@ -68,12 +65,12 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
   )
 
   const { allowances: ERC20Allowances, updateAllowance: updateERC20Allowance } =
-    useERC20Allowance([tokenAddress], userKeeperAddress)
+    useERC20Allowance([tokenAddress], govUserKeeperAddress)
 
   const {
     allowances: ERC721Allowances,
     updateAllowance: updateERC721Allowance,
-  } = useERC721Allowance(nftAddress, ERC721OwnedBalance, userKeeperAddress)
+  } = useERC721Allowance(nftAddress, ERC721OwnedBalance, govUserKeeperAddress)
 
   // get power for all nfts
   const [userOwnedPower] = useGovPoolUserVotingPower({
@@ -178,9 +175,9 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
 
   const unapprowedERC721Selected = useMemo(() => {
     return ownedERC721Selected.filter(
-      (id) => ERC721Allowances[id] !== userKeeperAddress
+      (id) => ERC721Allowances[id] !== govUserKeeperAddress
     )
-  }, [ERC721Allowances, ownedERC721Selected, userKeeperAddress])
+  }, [ERC721Allowances, ownedERC721Selected, govUserKeeperAddress])
 
   // UI data
   const formInfo = useMemo(() => {

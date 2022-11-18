@@ -10,14 +10,14 @@ import { useTransactionAdder } from "state/transactions/hooks"
 import { SubmitState } from "constants/types"
 import { TransactionType } from "state/transactions/types"
 import { isTxMined, parseTransactionError } from "utils"
-import { useGovUserKeeperContractAddress } from "./useGovUserKeeperContractAddress"
+import { useGovPoolHelperContracts } from "."
 
 const useGovPoolDeposit = (daoPoolAddress: string) => {
   const [{ tokenAddress }] = useGovPoolVotingAssets(daoPoolAddress)
   const [fromToken] = useERC20(tokenAddress)
   const govPoolContract = useGovPoolContract(daoPoolAddress)
   const userKeeperContract = useGovUserKeeperContract(daoPoolAddress)
-  const userKeeperAddress = useGovUserKeeperContractAddress(daoPoolAddress)
+  const { govUserKeeperAddress } = useGovPoolHelperContracts(daoPoolAddress)
 
   const addTransaction = useTransactionAdder()
   const [, setPayload] = usePayload()
@@ -31,7 +31,7 @@ const useGovPoolDeposit = (daoPoolAddress: string) => {
 
         setPayload(SubmitState.SIGN)
 
-        await fromToken.approve(userKeeperAddress, amount)
+        await fromToken.approve(govUserKeeperAddress, amount)
 
         const transactionResponse = await govPoolContract.deposit(
           account,
@@ -61,7 +61,7 @@ const useGovPoolDeposit = (daoPoolAddress: string) => {
       govPoolContract,
       userKeeperContract,
       fromToken,
-      userKeeperAddress,
+      govUserKeeperAddress,
       addTransaction,
       setError,
       setPayload,

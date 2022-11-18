@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react"
+import { useCallback, useMemo } from "react"
 import { parseUnits } from "@ethersproject/units"
 import { TransactionReceipt } from "@ethersproject/providers"
 
@@ -21,16 +21,12 @@ export const useGovPoolCreateProposal = (
 ) => {
   const { account, library } = useActiveWeb3React()
 
-  const { govPoolContract, distributionProposalAddress, init } =
+  const { govPoolContract, distributionProposalAddress } =
     useGovPool(daoPoolAddress)
 
   const distributionProposalContract = useDistributionProposalContract(
     distributionProposalAddress
   )
-
-  useEffect(() => {
-    init()
-  }, [daoPoolAddress, init])
 
   const [, setPayload] = usePayload()
   const [, setError] = useError()

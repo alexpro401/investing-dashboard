@@ -8,7 +8,7 @@ import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovSettings } from "abi"
 import {
   useGovSettingsNewSettingId,
-  useGovSettingsContractAddress,
+  useGovPoolHelperContracts,
   useGovPoolCreateProposal,
   useGovPoolLatestProposalId,
 } from "hooks/dao"
@@ -51,7 +51,7 @@ const useGovPoolCreateProposalType = ({
   daoPoolAddress,
 }: IUseGovPoolCreateProposalTypeProps) => {
   const navigate = useNavigate()
-  const govSettingsAddress = useGovSettingsContractAddress(daoPoolAddress)
+  const { govSettingsAddress } = useGovPoolHelperContracts(daoPoolAddress)
   const { createGovProposal } = useGovPoolCreateProposal(daoPoolAddress)
   const { updateLatesProposalId } = useGovPoolLatestProposalId(daoPoolAddress)
 

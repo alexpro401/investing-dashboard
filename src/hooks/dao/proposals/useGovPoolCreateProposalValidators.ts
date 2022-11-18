@@ -2,7 +2,7 @@ import { useCallback, useContext } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { useGovPoolContract } from "contracts"
-import { useGovValidatorsContractAddress } from "../useGovValidatorsContractAddress"
+import { useGovPoolHelperContracts } from ".."
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovValidators } from "abi"
@@ -21,7 +21,7 @@ interface ICreateProposalArgs {
 const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
   const navigate = useNavigate()
   const govPoolContract = useGovPoolContract(govPoolAddress)
-  const govValidatorsAddress = useGovValidatorsContractAddress(govPoolAddress)
+  const { govValidatorsAddress } = useGovPoolHelperContracts(govPoolAddress)
   const { createGovProposal } = useGovPoolCreateProposal(govPoolAddress)
   const { updateLatesProposalId } = useGovPoolLatestProposalId(govPoolAddress)
 
