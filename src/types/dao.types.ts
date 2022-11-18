@@ -67,3 +67,19 @@ export interface IProposalIPFS {
   proposalName: string
   proposalDescription: string
 }
+
+export enum ExecutorType {
+  DEFAULT = "0",
+  INTERNAL = "1",
+  DISTRIBUTION = "2",
+  VALIDATORS = "3",
+}
+
+export const govPoolProposals = {
+  [ExecutorType.INTERNAL]: {
+    changeInternalDuration: "change-internal-duration",
+    changeInternalQuorum: "change-internal-quorum",
+    changeInternalDurationAndQuorum: "change-internal-duration-and-quorum",
+    changeInternalBalances: "change-internal-balances",
+  },
+}

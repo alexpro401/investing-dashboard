@@ -179,6 +179,7 @@ const DaoSettingsParameters: FC<Props> = ({
             label="Votes needed for quorum"
             errorMessage={getFieldErrorMessage("quorum")}
             onBlur={() => touchField("quorum")}
+            nodeRight={"%"}
             borderColor={
               isCreatingProposal && quorumIsChanged
                 ? EInputBorderColors.success
