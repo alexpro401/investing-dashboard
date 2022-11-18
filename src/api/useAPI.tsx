@@ -11,6 +11,10 @@ export const useAPI = () => {
   return useMemo(
     () => ({
       nft: api.nft[enabledNftApi],
+      // TODO
+      kattana: {
+        treasury: api.kattana.Treasury,
+      },
     }),
     []
   )
