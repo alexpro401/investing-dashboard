@@ -1,10 +1,15 @@
-import { FC } from "react"
+import { FC, HTMLAttributes } from "react"
 import * as S from "../styled"
 import ExternalLink from "components/ExternalLink"
 import { shortenAddress } from "utils"
 import { ProposalDetailsCard } from "./index"
+import { useGovPoolProposal } from "hooks/dao"
 
-const DetailsTab: FC = () => {
+interface Props extends HTMLAttributes<HTMLDivElement> {
+  govPoolProposal: ReturnType<typeof useGovPoolProposal>
+}
+
+const DetailsTab: FC<Props> = ({ govPoolProposal }) => {
   return (
     <>
       <S.DaoProposalDetailsCard>
@@ -44,12 +49,16 @@ const DetailsTab: FC = () => {
       <S.DaoProposalDetailsCard>
         <S.DaoProposalDetailsRow>
           <S.DaoProposalDetailsRowText textType="label">
-            Contract address
+            Contract addresses
           </S.DaoProposalDetailsRowText>
           <S.DaoProposalDetailsRowText textType="value">
-            <ExternalLink href={""}>
-              {shortenAddress("0x987654321234567898765432123456789876543")}
-            </ExternalLink>
+            [
+            {govPoolProposal.executors.map((el, idx) => (
+              <ExternalLink href={"#"} key={idx}>
+                {shortenAddress(el)}
+              </ExternalLink>
+            ))}
+            ]
           </S.DaoProposalDetailsRowText>
         </S.DaoProposalDetailsRow>
 
@@ -64,7 +73,7 @@ const DetailsTab: FC = () => {
           </S.DaoProposalDetailsRowText>
         </S.DaoProposalDetailsRow>
       </S.DaoProposalDetailsCard>
-      <ProposalDetailsCard />
+      <ProposalDetailsCard govPoolProposal={govPoolProposal} />
     </>
   )
 }

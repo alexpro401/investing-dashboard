@@ -4,10 +4,36 @@ import { FC, HTMLAttributes, useMemo, useState } from "react"
 import Header from "components/Header/Layout"
 import { DetailsTab, VotingSettingsTab, VotingHistoryTab } from "./components"
 import { AnimatePresence } from "framer-motion"
+import { useGovPoolProposal, useGovPoolProposals } from "hooks/dao"
+import { useParams } from "react-router-dom"
+import { useEffectOnce } from "react-use"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const DaoProposalDetails: FC<Props> = ({}) => {
+  const { daoAddress, proposalId } = useParams<{
+    daoAddress: string
+    proposalId: string
+  }>()
+
+  // TEMP
+
+  const { proposalViews, loadProposals, isLoaded, isLoadFailed } =
+    useGovPoolProposals(daoAddress!)
+
+  const paginationOffset = +proposalId! - 1
+  const paginationPageLimit = 1
+
+  useEffectOnce(() => {
+    loadProposals(paginationOffset, paginationPageLimit)
+  })
+
+  const govPoolProposal = useGovPoolProposal(
+    Number(proposalId),
+    daoAddress!,
+    proposalViews[0]
+  )
+
   const TABS = useMemo(
     () => [
       { label: "Proposal details", number: 1 },
@@ -25,27 +51,12 @@ const DaoProposalDetails: FC<Props> = ({}) => {
       <S.DaoProposalDetails>
         <S.DaoProposalDetailsTitleWrp>
           <S.DaoProposalDetailsTitle>
-            Attracting more members to govern DAO
+            {govPoolProposal.name}
           </S.DaoProposalDetailsTitle>
         </S.DaoProposalDetailsTitleWrp>
         <S.DaoProposalDetailsProgressBar />
         <S.DaoProposalDetailsCard>
-          <p>
-            📌 Concise proposal description and reasoning It’s no secret that
-            our DAO hit a roadblock in getting proposals accepted, specifically
-            getting quorum of votes. This is mainly because the voting period is
-            only 5 days.
-          </p>
-          <p>
-            📌 Proposed solution To involve more members in voting, we discussed
-            and decided to change the following: Length of voting period from 5
-            to 10 days Minimum voting power required for voting from 100 to 50
-          </p>
-          <p>
-            📌 Conclusion Changing these parameters will allow our DAO to
-            involve more members in governance and will give them more time to
-            vote. readmore
-          </p>
+          {govPoolProposal.description}
         </S.DaoProposalDetailsCard>
         <S.DaoProposalDetailsTabs>
           {TABS.map((el) => (
@@ -59,7 +70,9 @@ const DaoProposalDetails: FC<Props> = ({}) => {
           ))}
         </S.DaoProposalDetailsTabs>
         <AnimatePresence initial={false}>
-          {selectedTabNumber === TABS[0].number && <DetailsTab />}
+          {selectedTabNumber === TABS[0].number && (
+            <DetailsTab govPoolProposal={govPoolProposal} />
+          )}
           {selectedTabNumber === TABS[1].number && <VotingSettingsTab />}
           {selectedTabNumber === TABS[2].number && <VotingHistoryTab />}
         </AnimatePresence>

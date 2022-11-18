@@ -2,11 +2,14 @@ import * as S from "../styled"
 
 import { FC, HTMLAttributes } from "react"
 import ExternalLink from "components/ExternalLink"
-import { shortenAddress } from "utils"
+import { formatNumber, shortenAddress } from "utils"
+import { useGovPoolProposal } from "hooks/dao"
 
-interface Props extends HTMLAttributes<HTMLDivElement> {}
+interface Props extends HTMLAttributes<HTMLDivElement> {
+  govPoolProposal: ReturnType<typeof useGovPoolProposal>
+}
 
-const DaoProposalDetailsCard: FC<Props> = ({}) => {
+const DaoProposalDetailsCard: FC<Props> = ({ govPoolProposal }) => {
   return (
     <S.DaoProposalDetailsCard>
       <S.DaoProposalDetailsCardTitle>
@@ -18,8 +21,8 @@ const DaoProposalDetailsCard: FC<Props> = ({}) => {
           created
         </S.DaoProposalDetailsRowText>
         <S.DaoProposalDetailsRowText textType="value">
-          <ExternalLink href={""}>
-            {shortenAddress("0x987654321234567898765432123456789876543")}
+          <ExternalLink href={"#"}>
+            {shortenAddress(govPoolProposal.creator)}
           </ExternalLink>
         </S.DaoProposalDetailsRowText>
       </S.DaoProposalDetailsRow>
@@ -30,10 +33,10 @@ const DaoProposalDetailsCard: FC<Props> = ({}) => {
         </S.DaoProposalDetailsRowText>
         <S.DaoProposalDetailsRowText textType="value">
           <S.DaoProposalDetailsRowText textType="value">
-            10.000/
+            {govPoolProposal.votesFor}/
           </S.DaoProposalDetailsRowText>
           <S.DaoProposalDetailsRowText textType="label">
-            80.000
+            {formatNumber(String(govPoolProposal.votesTotalNeed), 2)}
           </S.DaoProposalDetailsRowText>
         </S.DaoProposalDetailsRowText>
       </S.DaoProposalDetailsRow>
@@ -43,7 +46,7 @@ const DaoProposalDetailsCard: FC<Props> = ({}) => {
           Proposal type
         </S.DaoProposalDetailsRowText>
         <S.DaoProposalDetailsRowText textType="value">
-          Changing voting options
+          {govPoolProposal.proposalType}
         </S.DaoProposalDetailsRowText>
       </S.DaoProposalDetailsRow>
 
@@ -52,7 +55,7 @@ const DaoProposalDetailsCard: FC<Props> = ({}) => {
           Addresses voted
         </S.DaoProposalDetailsRowText>
         <S.DaoProposalDetailsRowText textType="value">
-          1
+          {govPoolProposal.votedAddresses}
         </S.DaoProposalDetailsRowText>
       </S.DaoProposalDetailsRow>
 

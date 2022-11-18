@@ -16,6 +16,7 @@ export const useGovPoolProposals = (govPoolAddress: string) => {
     async (offset = 0, limit = 15) => {
       try {
         const data = await govPoolContract?.getProposals(offset, limit)
+        console.log(data)
 
         if (data) {
           setProposalViews(data)

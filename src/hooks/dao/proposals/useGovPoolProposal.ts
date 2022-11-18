@@ -36,27 +36,37 @@ export const useGovPoolProposal = (
 
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
-  const creator = useMemo(() => graphGovPoolProposal?.creator, [data])
+  const creator = useMemo(
+    () => graphGovPoolProposal?.creator,
+    [graphGovPoolProposal]
+  )
   const votedAddresses = useMemo(
     () => graphGovPoolProposal?.votersVoted,
-    [data]
+    [graphGovPoolProposal]
   )
 
   const proposalType = useMemo(() => {
-    return proposalView.proposal.core.settings.executorDescription
+    return proposalView?.proposal.core.settings.executorDescription
   }, [proposalView])
 
   const voteEnd = useMemo(() => {
-    return DateUtil.fromTimestamp(
-      proposalView.proposal.core.voteEnd.toNumber(),
-      "dd/mm/yy hh:mm:ss"
-    ) as string
+    return proposalView?.proposal
+      ? (DateUtil.fromTimestamp(
+          proposalView?.proposal.core.voteEnd.toNumber(),
+          "dd/mm/yy hh:mm:ss"
+        ) as string)
+      : ""
   }, [proposalView])
+
+  const executors = useMemo(
+    () => proposalView?.proposal.executors || [],
+    [proposalView]
+  )
 
   const loadDetailsFromIpfs = useCallback(async () => {
     try {
       const entity = new IpfsEntity<{ name: string; description: string }>({
-        path: proposalView.proposal.descriptionURL,
+        path: proposalView?.proposal.descriptionURL,
       })
 
       const response = await entity.load()
@@ -84,7 +94,7 @@ export const useGovPoolProposal = (
   const votesTotalNeed = useMemo(() => 222, [])
 
   const votesFor = useMemo(
-    () => proposalView.proposal.core.votesFor.toNumber(),
+    () => proposalView?.proposal.core.votesFor.toNumber(),
     [proposalView]
   )
 
@@ -93,6 +103,7 @@ export const useGovPoolProposal = (
     votedAddresses,
     name,
     description,
+    executors,
 
     proposalType,
     voteEnd,

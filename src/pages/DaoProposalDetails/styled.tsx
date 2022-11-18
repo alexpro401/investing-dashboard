@@ -168,6 +168,8 @@ export const DaoProposalDetailsRowText = styled.span<{
       `
     } else if (props.textType === "value") {
       return css`
+        display: flex;
+        align-items: baseline;
         white-space: nowrap;
         color: ${(props) => props.theme.textColors.primary};
       `
