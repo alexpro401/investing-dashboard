@@ -16,7 +16,10 @@ import { multiplyBignumbers } from "utils/formulas"
 import useERC20Allowance from "hooks/useERC20Allowance"
 import { useERC20Data } from "state/erc20/hooks"
 
-import { useGovUserKeeperAddress, useGovPoolVotingAssets } from "hooks/dao"
+import {
+  useGovUserKeeperContractAddress,
+  useGovPoolVotingAssets,
+} from "hooks/dao"
 import useERC721Allowance from "hooks/useERC721Allowance"
 import { useActiveWeb3React } from "hooks"
 
@@ -39,7 +42,7 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
   const [ERC20Price, setERC20Price] = useState(ZERO)
   const [ERC721Amount, setERC721Amount] = useState<number[]>([])
 
-  const userKeeperAddress = useGovUserKeeperAddress(daoPoolAddress)
+  const userKeeperAddress = useGovUserKeeperContractAddress(daoPoolAddress)
   const [{ tokenAddress, nftAddress }] = useGovPoolVotingAssets(daoPoolAddress)
   const { vote, voteDelegated } = useGovPoolVote(daoPoolAddress)
   const { ERC20Balance, ERC721Balance, tokenBalance, tokenBalanceDelegated } =

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 import { useGovPoolContract } from "contracts"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovSettings } from "abi"
-import { useGovSettingsAddress } from "hooks/dao"
+import { useGovSettingsContractAddress } from "hooks/dao"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import usePayload from "hooks/usePayload"
 import { useGovPoolCreateProposal, useGovPoolLatestProposalId } from "hooks/dao"
@@ -45,7 +45,7 @@ const useGovPoolCreateProposalChangeSettings = ({
   daoPoolAddress,
 }: IUseGovPoolCreateProposalChangeSettings) => {
   const navigate = useNavigate()
-  const govSettingsAddress = useGovSettingsAddress(daoPoolAddress)
+  const govSettingsAddress = useGovSettingsContractAddress(daoPoolAddress)
   const { createGovProposal } = useGovPoolCreateProposal(daoPoolAddress)
   const { updateLatesProposalId } = useGovPoolLatestProposalId(daoPoolAddress)
 
