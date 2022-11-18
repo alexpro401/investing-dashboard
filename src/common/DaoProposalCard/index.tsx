@@ -5,7 +5,9 @@ import { normalizeBigNumber, shortenAddress } from "utils"
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { useGovPoolProposal } from "hooks/dao"
 import { useParams } from "react-router-dom"
-import { GovProposalCardHead } from "common/dao"
+import { GovProposalCardHead, GovProposalCardBlockInfo } from "common/dao"
+import ProgressLine from "components/ProgressLine"
+import { Flex } from "theme"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   proposalId: number
@@ -34,42 +36,48 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
         pool={"0xc2e7418baf7eff866da0198c7e8ace4453a6f0a4"}
       />
       <S.DaoProposalCardBody>
-        <S.DaoProposalCardBlockInfo>
-          <S.DaoProposalCardBlockInfoAddress href={""}>
-            {shortenAddress(creator)}
-          </S.DaoProposalCardBlockInfoAddress>
-          <S.DaoProposalCardBlockInfoLabel>
-            Created by
-          </S.DaoProposalCardBlockInfoLabel>
-        </S.DaoProposalCardBlockInfo>
-        <S.DaoProposalCardBlockInfo alignRight={true}>
-          <S.DaoProposalCardBlockInfoValue>
-            {votesFor}/
-            <S.DaoVotingStatusCounterTotal>
-              {votesTotalNeed}
-            </S.DaoVotingStatusCounterTotal>
-          </S.DaoProposalCardBlockInfoValue>
-          <S.DaoProposalCardBlockInfoLabel>
-            Voting status
-          </S.DaoProposalCardBlockInfoLabel>
-        </S.DaoProposalCardBlockInfo>
-        <S.DaoVotingProgressBar progress={(votesTotalNeed / 100) * votesFor} />
-        <S.DaoProposalCardBlockInfo>
-          <S.DaoProposalCardBlockInfoValue>
-            {proposalType}
-          </S.DaoProposalCardBlockInfoValue>
-          <S.DaoProposalCardBlockInfoLabel>
-            Voting type
-          </S.DaoProposalCardBlockInfoLabel>
-        </S.DaoProposalCardBlockInfo>
-        <S.DaoProposalCardBlockInfo alignRight={true}>
-          <S.DaoProposalCardBlockInfoValue>
-            {votedAddresses}
-          </S.DaoProposalCardBlockInfoValue>
-          <S.DaoProposalCardBlockInfoLabel>
-            Voted addresses
-          </S.DaoProposalCardBlockInfoLabel>
-        </S.DaoProposalCardBlockInfo>
+        <GovProposalCardBlockInfo
+          label={"Created by"}
+          value={
+            <S.DaoProposalCardBlockInfoAddress href={""}>
+              {shortenAddress(creator)}
+            </S.DaoProposalCardBlockInfoAddress>
+          }
+        />
+        <GovProposalCardBlockInfo
+          label={"Voting status"}
+          value={
+            <>
+              {normalizeBigNumber(votesFor, 18, 2)}/
+              <S.DaoVotingStatusCounterTotal>
+                {votesTotalNeed}
+              </S.DaoVotingStatusCounterTotal>
+            </>
+          }
+          align={"right"}
+        />
+        <S.DaoVotingProgressBar>
+          <Flex full ai={"center"} jc={"space-between"} gap={"3"}>
+            <div style={{ width: "50%" }}>
+              <ProgressLine
+                w={
+                  (votesTotalNeed / 100) *
+                  Number(normalizeBigNumber(votesFor, 18, 2))
+                }
+              />
+            </div>
+            <div style={{ width: "50%" }}>
+              <ProgressLine w={0} />
+            </div>
+          </Flex>
+        </S.DaoVotingProgressBar>
+        <GovProposalCardBlockInfo label={"Voting type"} value={proposalType} />
+        <GovProposalCardBlockInfo
+          label={"Voted addresses"}
+          value={votedAddresses}
+          align={"right"}
+        />
+
         <S.DaoCenteredButton text={voteEnd} />
       </S.DaoProposalCardBody>
     </S.Root>

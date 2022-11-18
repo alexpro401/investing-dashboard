@@ -84,7 +84,7 @@ export const useGovPoolProposal = (
   const votesTotalNeed = useMemo(() => 222, [])
 
   const votesFor = useMemo(
-    () => proposalView.proposal.core.votesFor.toNumber(),
+    () => proposalView.proposal.core.votesFor,
     [proposalView]
   )
 
