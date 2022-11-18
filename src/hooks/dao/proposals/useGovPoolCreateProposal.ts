@@ -12,7 +12,6 @@ import { SubmitState } from "constants/types"
 import { TransactionType } from "state/transactions/types"
 import { getERC20Contract, isTxMined, parseTransactionError } from "utils"
 import { ERC20 } from "interfaces/typechain"
-import { useDistributionProposalContract } from "contracts"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { IProposalIPFS } from "types/dao.types"
 
@@ -21,12 +20,11 @@ export const useGovPoolCreateProposal = (
 ) => {
   const { account, library } = useActiveWeb3React()
 
-  const { govPoolContract, distributionProposalAddress } =
-    useGovPool(daoPoolAddress)
-
-  const distributionProposalContract = useDistributionProposalContract(
-    distributionProposalAddress
-  )
+  const {
+    govPoolContract,
+    distributionProposalContract,
+    distributionProposalAddress,
+  } = useGovPool(daoPoolAddress)
 
   const [, setPayload] = usePayload()
   const [, setError] = useError()
