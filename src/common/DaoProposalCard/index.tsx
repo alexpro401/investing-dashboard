@@ -1,11 +1,11 @@
 import * as S from "./styled"
 
-import { FC, HTMLAttributes } from "react"
-import { ICON_NAMES } from "constants/icon-names"
-import { shortenAddress } from "utils"
+import { FC, HTMLAttributes, useState } from "react"
+import { normalizeBigNumber, shortenAddress } from "utils"
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { useGovPoolProposal } from "hooks/dao"
 import { useParams } from "react-router-dom"
+import { GovProposalCardHead } from "common/dao"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   proposalId: number
@@ -24,15 +24,15 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
     votesFor,
     votesTotalNeed,
   } = useGovPoolProposal(proposalId, daoAddress!, proposalView)
+  const isInsurance = useState(false)
 
   return (
     <S.Root {...rest}>
-      <S.DaoProposalCardHead>
-        <S.DaoProposalCardHeadTitleWrp>
-          <S.DaoProposalCardHeadTitle>{name}</S.DaoProposalCardHeadTitle>
-        </S.DaoProposalCardHeadTitleWrp>
-        <S.DaoProposalCardHeadIcon name={ICON_NAMES.arrowDownFilled} />
-      </S.DaoProposalCardHead>
+      <GovProposalCardHead
+        isInsurance={isInsurance[0]}
+        name={name}
+        pool={"0xc2e7418baf7eff866da0198c7e8ace4453a6f0a4"}
+      />
       <S.DaoProposalCardBody>
         <S.DaoProposalCardBlockInfo>
           <S.DaoProposalCardBlockInfoAddress href={""}>
