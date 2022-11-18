@@ -3,24 +3,40 @@ import * as S from "./styled"
 import { FC, HTMLAttributes } from "react"
 import { ICON_NAMES } from "constants/icon-names"
 import { shortenAddress } from "utils"
+import { IGovPool } from "interfaces/typechain/GovPool"
+import { useGovPoolProposal } from "hooks/dao"
+import { useParams } from "react-router-dom"
 
-interface Props extends HTMLAttributes<HTMLDivElement> {}
+interface Props extends HTMLAttributes<HTMLDivElement> {
+  proposalId: number
+  proposalView: IGovPool.ProposalViewStructOutput
+}
 
-const DaoProposalCard: FC<Props> = ({ ...rest }) => {
+const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
+  const { daoAddress } = useParams()
+
+  const {
+    creator,
+    votedAddresses,
+    name,
+    proposalType,
+    voteEnd,
+    votesFor,
+    votesTotalNeed,
+  } = useGovPoolProposal(proposalId, daoAddress!, proposalView)
+
   return (
     <S.Root {...rest}>
       <S.DaoProposalCardHead>
         <S.DaoProposalCardHeadTitleWrp>
-          <S.DaoProposalCardHeadTitle>
-            Quarterly distribution of the farming proposal
-          </S.DaoProposalCardHeadTitle>
+          <S.DaoProposalCardHeadTitle>{name}</S.DaoProposalCardHeadTitle>
         </S.DaoProposalCardHeadTitleWrp>
         <S.DaoProposalCardHeadIcon name={ICON_NAMES.arrowDownFilled} />
       </S.DaoProposalCardHead>
       <S.DaoProposalCardBody>
         <S.DaoProposalCardBlockInfo>
           <S.DaoProposalCardBlockInfoAddress href={""}>
-            {shortenAddress("0x1234567890")}
+            {shortenAddress(creator)}
           </S.DaoProposalCardBlockInfoAddress>
           <S.DaoProposalCardBlockInfoLabel>
             Created by
@@ -28,29 +44,33 @@ const DaoProposalCard: FC<Props> = ({ ...rest }) => {
         </S.DaoProposalCardBlockInfo>
         <S.DaoProposalCardBlockInfo alignRight={true}>
           <S.DaoProposalCardBlockInfoValue>
-            111/
-            <S.DaoVotingStatusCounterTotal>222</S.DaoVotingStatusCounterTotal>
+            {votesFor}/
+            <S.DaoVotingStatusCounterTotal>
+              {votesTotalNeed}
+            </S.DaoVotingStatusCounterTotal>
           </S.DaoProposalCardBlockInfoValue>
           <S.DaoProposalCardBlockInfoLabel>
             Voting status
           </S.DaoProposalCardBlockInfoLabel>
         </S.DaoProposalCardBlockInfo>
-        <S.DaoVotingProgressBar />
+        <S.DaoVotingProgressBar progress={(votesTotalNeed / 100) * votesFor} />
         <S.DaoProposalCardBlockInfo>
           <S.DaoProposalCardBlockInfoValue>
-            Any other Proposal
+            {proposalType}
           </S.DaoProposalCardBlockInfoValue>
           <S.DaoProposalCardBlockInfoLabel>
             Voting type
           </S.DaoProposalCardBlockInfoLabel>
         </S.DaoProposalCardBlockInfo>
         <S.DaoProposalCardBlockInfo alignRight={true}>
-          <S.DaoProposalCardBlockInfoValue>20</S.DaoProposalCardBlockInfoValue>
+          <S.DaoProposalCardBlockInfoValue>
+            {votedAddresses}
+          </S.DaoProposalCardBlockInfoValue>
           <S.DaoProposalCardBlockInfoLabel>
             Voted addresses
           </S.DaoProposalCardBlockInfoLabel>
         </S.DaoProposalCardBlockInfo>
-        <S.DaoCenteredButton text={"Voting ends for 1D : 1H : 1M"} />
+        <S.DaoCenteredButton text={voteEnd} />
       </S.DaoProposalCardBody>
     </S.Root>
   )

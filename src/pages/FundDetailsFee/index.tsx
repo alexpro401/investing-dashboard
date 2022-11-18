@@ -13,7 +13,7 @@ import Switch from "components/Switch"
 import Tooltip from "components/Tooltip"
 import Accordion from "components/Accordion"
 import AmountRow from "components/Amount/Row"
-import ProfitLossChart from "components/ProfitLossChart"
+import PoolPnlChart from "components/PoolPnlChart"
 import WithdrawalsHistory from "components/WithdrawalsHistory"
 
 import useFundFee from "./useFundFee"
@@ -110,10 +110,7 @@ const FundDetailsFee: FC = () => {
             </S.MainCardHeaderRight>
           </Flex>
 
-          <ProfitLossChart
-            address={poolAddress}
-            baseToken={poolData?.baseToken}
-          />
+          <PoolPnlChart address={poolAddress} baseToken={poolData?.baseToken} />
 
           <Flex full dir="column">
             <AmountRow

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 
-import { useGovPoolContract, useGovValidatorsContract } from "contracts"
+import { useGovValidatorsContract } from "contracts"
 import { useActiveWeb3React } from "hooks"
 import { getTokenBalance } from "utils"
 
@@ -12,14 +12,7 @@ interface IUseValidatorProps {
 const useIsValidator = ({ daoAddress, userAddress }: IUseValidatorProps) => {
   const { library } = useActiveWeb3React()
 
-  const govPoolContract = useGovPoolContract(daoAddress)
-
-  const [govValidatorContractAddress, setGovValidatorContractAddress] =
-    useState<string>("")
-
-  const govValidatorsContract = useGovValidatorsContract(
-    govValidatorContractAddress
-  )
+  const govValidatorsContract = useGovValidatorsContract(daoAddress)
 
   const [result, setResult] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -47,17 +40,6 @@ const useIsValidator = ({ daoAddress, userAddress }: IUseValidatorProps) => {
       setLoading(false)
     }
   }, [govValidatorsContract, userAddress, library])
-
-  const setupGovValidatorsContract = useCallback(async () => {
-    if (!govPoolContract) return
-
-    const _govValidatorsContractAddress = await govPoolContract.govValidators()
-    setGovValidatorContractAddress(_govValidatorsContractAddress)
-  }, [govPoolContract])
-
-  useEffect(() => {
-    setupGovValidatorsContract()
-  }, [govPoolContract, setupGovValidatorsContract])
 
   useEffect(() => {
     checkIfUserIsValidator()

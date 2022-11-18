@@ -1,13 +1,6 @@
 import { PulseSpinner } from "react-spinners-kit"
-import { createClient, Provider as GraphProvider } from "urql"
-import {
-  FC,
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useMemo,
-  useRef,
-} from "react"
+import { createClient } from "urql"
+import { FC, Dispatch, SetStateAction, useMemo, useRef } from "react"
 
 import useTransactionHistoryUI from "./useTransactionHistoryUI"
 
@@ -26,19 +19,16 @@ import Withdraw from "assets/icons/Withdraw"
 import Swap from "assets/icons/Swap"
 import Expand from "assets/icons/Expand"
 import Shrink from "assets/icons/Shrink"
+import { Transaction } from "interfaces/thegraphs/interactions"
 
-const poolsClient = createClient({
+const interactionsClient = createClient({
   url: process.env.REACT_APP_INTERACTIONS_API_URL || "",
+  requestPolicy: "network-only",
 })
 
 interface IProps {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
-}
-
-interface IVariables {
-  address: string | null | undefined
-  transactionTypes: TransactionType[]
 }
 
 const TransactionHistory: FC<IProps> = ({ open, setOpen }) => {
@@ -47,27 +37,19 @@ const TransactionHistory: FC<IProps> = ({ open, setOpen }) => {
   const scrollRef = useRef<any>(null)
   const titleRef = useRef<any>(null)
 
-  const toggleOpen = useCallback(() => {
-    setOpen((prev) => !prev)
-  }, [setOpen])
-
   const [{ filter, scrollH, variants }, { setFilter }] =
     useTransactionHistoryUI(scrollRef, titleRef, open)
 
-  const variables = useMemo<IVariables>(
-    () => ({
-      address: account,
-      transactionTypes: [filter],
-    }),
-    [account, filter]
-  )
-
-  const [{ data, loading }, fetchMore] = useQueryPagination(
-    UserTransactionsQuery,
-    variables,
-    !account || !filter,
-    (d) => d.transactions
-  )
+  const [{ data, loading }, fetchMore] = useQueryPagination<Transaction>({
+    query: UserTransactionsQuery,
+    variables: useMemo(
+      () => ({ address: account, transactionTypes: [filter] }),
+      [account, filter]
+    ),
+    pause: useMemo(() => !account || !filter, [account, filter]),
+    context: interactionsClient,
+    formatter: (d) => d.transactions,
+  })
 
   return (
     <S.Container>
@@ -88,24 +70,30 @@ const TransactionHistory: FC<IProps> = ({ open, setOpen }) => {
       >
         <S.Header>
           <S.HeaderButton
-            onClick={() => setFilter(TransactionType.INVEST)}
+            onClick={() => {
+              setFilter(TransactionType.INVEST)
+            }}
             focused={filter === TransactionType.INVEST}
           >
             Investing <Invest active={filter === TransactionType.INVEST} />
           </S.HeaderButton>
           <S.HeaderButton
-            onClick={() => setFilter(TransactionType.SWAP)}
+            onClick={() => {
+              setFilter(TransactionType.SWAP)
+            }}
             focused={filter === TransactionType.SWAP}
           >
             Swap <Swap active={filter === TransactionType.SWAP} />
           </S.HeaderButton>
           <S.HeaderButton
-            onClick={() => setFilter(TransactionType.DIVEST)}
+            onClick={() => {
+              setFilter(TransactionType.DIVEST)
+            }}
             focused={filter === TransactionType.DIVEST}
           >
             Withdraw <Withdraw active={filter === TransactionType.DIVEST} />
           </S.HeaderButton>
-          <S.HeaderButton onClick={toggleOpen}>
+          <S.HeaderButton onClick={() => setOpen((prev) => !prev)}>
             {open ? <Shrink /> : <Expand />}
           </S.HeaderButton>
         </S.Header>
@@ -144,12 +132,4 @@ const TransactionHistory: FC<IProps> = ({ open, setOpen }) => {
   )
 }
 
-const TransactionHistoryWithProvider = (props) => {
-  return (
-    <GraphProvider value={poolsClient}>
-      <TransactionHistory {...props} />
-    </GraphProvider>
-  )
-}
-
-export default TransactionHistoryWithProvider
+export default TransactionHistory

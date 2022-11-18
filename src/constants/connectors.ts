@@ -6,7 +6,8 @@ import metamaskIcon from "assets/wallets/metamask.svg"
 import walletconnectIcon from "assets/wallets/walletconnect.svg"
 
 const BSC_NETWORK_URL = "https://bsc-dataseed.binance.org/"
-const BSC_TESTNET_URL = "https://data-seed-prebsc-1-s1.binance.org:8545"
+const BSC_TESTNET_URL =
+  "https://nd-027-868-988.p2pify.com/c0fd39a4c89c17c07e885517f619f415"
 
 const SUPPORTED_CHAINS = [97]
 

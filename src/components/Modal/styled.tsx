@@ -2,7 +2,7 @@ import styled from "styled-components"
 import theme, { Flex } from "theme"
 import { motion } from "framer-motion"
 
-export const Container = styled(motion.div)`
+export const Container = styled(motion.div)<{ maxWidth?: string }>`
   background: ${theme.backgroundColors.secondary};
   border-radius: 20px;
   position: absolute;
@@ -14,7 +14,7 @@ export const Container = styled(motion.div)`
   height: fit-content;
   z-index: 100;
   padding: 0;
-  max-width: 375px;
+  max-width: ${({ maxWidth }) => maxWidth || "375px"};
 `
 
 export const Overlay = styled(motion.div)`

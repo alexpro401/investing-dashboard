@@ -8,6 +8,8 @@ import formatDistanceToNow from "date-fns/formatDistanceToNow"
 
 import { DATE_TIME_FORMAT } from "constants/time"
 
+import { Icon } from "common"
+import { ICON_NAMES } from "constants/icon-names"
 import ExternalLink from "components/ExternalLink"
 import IconButton from "components/IconButton"
 import DividendsInput from "components/Exchange/DividendsInput"
@@ -15,7 +17,6 @@ import Button, { SecondaryButton } from "components/Button"
 import CircularProgress from "components/CircularProgress"
 import Header from "components/Header/Layout"
 import TokenSelect from "modals/TokenSelect"
-import LockedIcon from "assets/icons/LockedIcon"
 
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
@@ -117,7 +118,7 @@ function PayDividends() {
           <Flex>
             <Flex ai="center">Unlock Token {lockedTokens[0].data.symbol}</Flex>
             <Flex m="-3px 0 0 4px">
-              <LockedIcon />
+              <Icon name={ICON_NAMES.locked} />
             </Flex>
           </Flex>
         </SecondaryButton>

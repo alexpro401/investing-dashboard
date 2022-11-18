@@ -2,9 +2,10 @@ import { TransactionType } from "state/transactions/types"
 
 import CardSwap from "./CardSwap"
 import CardLiquidity from "./CardLiquidity"
+import { Transaction } from "interfaces/thegraphs/interactions"
 
 interface IProps {
-  payload: any
+  payload: Transaction
   chainId?: number
 }
 

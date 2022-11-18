@@ -2,14 +2,15 @@ import { Flex } from "theme"
 import { useMemo } from "react"
 import { createClient, Provider as GraphProvider } from "urql"
 import { BigNumber } from "@ethersproject/bignumber"
+import { Icon } from "common"
 
+import { ICON_NAMES } from "constants/icon-names"
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import Button, { SecondaryButton } from "components/Button"
 import TransactionSlippage from "components/TransactionSlippage"
 
 import { formatBigNumber } from "utils"
 
-import LockedIcon from "assets/icons/LockedIcon"
 import multiplier from "assets/icons/10x-staking.svg"
 
 import { Card, CardHeader, Title } from "components/Exchange/styled"
@@ -73,7 +74,7 @@ function Management() {
       return (
         <SecondaryButton size="large" onClick={approve} fz={22} full>
           <Flex>
-            Unlock DEXE <LockedIcon />
+            Unlock DEXE <Icon name={ICON_NAMES.locked} />
           </Flex>
         </SecondaryButton>
       )

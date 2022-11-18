@@ -51,7 +51,10 @@ export enum TransactionType {
   INVEST_PROPOSAL_CONVERT_TO_DIVIDENDS = 100,
   GOV_POOL_CREATE = 101,
   GOV_POOL_DEPOSIT = 102,
-  GOV_POOL_CREATE_PROPOSAL_TYPE = 103,
+
+  GOV_POOL_CREATE_PROPOSAL = 103,
+  GOV_POOL_VOTE = 107,
+  GOV_POOL_WITHDRAW = 107,
 }
 
 export interface ApproveTransactionInfo {
@@ -229,9 +232,17 @@ export interface GovPoolDepositTransactionInfo {
   type: TransactionType.GOV_POOL_DEPOSIT
 }
 
-export interface GovPoolCreateProposalTypeTransactionInfo {
-  type: TransactionType.GOV_POOL_CREATE_PROPOSAL_TYPE
+export interface GovPoolCreateProposalTransactionInfo {
+  type: TransactionType.GOV_POOL_CREATE_PROPOSAL
   title: string
+}
+
+export interface GovPoolVoteTransactionInfo {
+  type: TransactionType.GOV_POOL_VOTE
+}
+
+export interface GovPoolWithdrawTransactionInfo {
+  type: TransactionType.GOV_POOL_WITHDRAW
 }
 
 export type TransactionInfo =
@@ -264,7 +275,9 @@ export type TransactionInfo =
   | ConvertInvestProposalToDividendsTransactionInfo
   | GovPoolCreateTransactionInfo
   | GovPoolDepositTransactionInfo
-  | GovPoolCreateProposalTypeTransactionInfo
+  | GovPoolVoteTransactionInfo
+  | GovPoolWithdrawTransactionInfo
+  | GovPoolCreateProposalTransactionInfo
 
 export interface TransactionDetails {
   hash: string

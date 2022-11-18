@@ -21,7 +21,7 @@ import {
 } from "./styled"
 import Header from "components/Header/Layout"
 import { Profiles } from "components/Header/Components"
-import ProfitLossChart from "components/ProfitLossChart"
+import PoolPnlChart from "components/PoolPnlChart"
 import { usePoolQuery, usePoolsByInvestors } from "hooks/usePool"
 import { InvestorQuery } from "queries"
 import { IInvestorQuery } from "interfaces/thegraphs/investors"
@@ -135,10 +135,7 @@ function Investor() {
           <TabContainer>
             <Tab active>Profit & Loss</Tab>
           </TabContainer>
-          <ProfitLossChart
-            address={poolAddress}
-            baseToken={poolData?.baseToken}
-          />
+          <PoolPnlChart address={poolAddress} baseToken={poolData?.baseToken} />
           <BarChart address={poolAddress} m="44px 0 22px" />
           <Row>
             <MainText>P&L LP - $ETH</MainText>

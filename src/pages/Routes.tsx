@@ -25,6 +25,8 @@ const CreateRiskyProposal = lazy(() => import("pages/CreateRiskyProposal"))
 const InvestRiskyProposal = lazy(() => import("pages/InvestRiskyProposal"))
 const SwapRiskyProposal = lazy(() => import("pages/SwapRiskyProposal"))
 const PayDividends = lazy(() => import("pages/PayDividends"))
+const VotingTerminalPage = lazy(() => import("pages/VotingTerminal"))
+const WithdrawDaoPoolPage = lazy(() => import("pages/WithdrawDaoPool"))
 const CreateInvestmentProposal = lazy(
   () => import("pages/CreateInvestmentProposal")
 )
@@ -40,17 +42,37 @@ const CreateDaoProposalSelectType = lazy(
 const CreateDaoProposalValidatorSelectType = lazy(
   () => import("pages/CreateDaoProposalValidatorSelectType")
 )
+const CreateDaoProposalValidatorSettings = lazy(
+  () => import("pages/CreateDaoProposalValidatorSettings")
+)
 const CreateDaoProposalValidatorChangeValidatorSettings = lazy(
   () => import("pages/CreateDaoProposalValidatorChangeValidatorSettings")
 )
-const CreateNewDaoProposalType = lazy(
-  () => import("pages/CreateNewDaoProposalType")
+const CreateDaoProposalValidatorChangeVotingSettings = lazy(
+  () => import("pages/CreateDaoProposalValidatorChangeVotingSettings")
 )
+const CreateDaoProposalType = lazy(() => import("pages/CreateDaoProposalType"))
 const CreateDaoProposalChangeDaoSettings = lazy(
   () => import("pages/CreateDaoProposalChangeDaoSettings")
 )
+const CreateDaoProposalChangeVotingSettings = lazy(
+  () => import("pages/CreateDaoProposalChangeVotingSettings")
+)
+const DaoProposalChangeGlobalVotingSettings = lazy(
+  () =>
+    import(
+      "pages/CreateDaoProposalChangeVotingSettings/subpages/GlobalVotingSettings"
+    )
+)
+const DaoProposalChangeTokenDistribution = lazy(
+  () =>
+    import(
+      "pages/CreateDaoProposalChangeVotingSettings/subpages/TokenDistribution"
+    )
+)
 /* dao proposals */
-const DaoProposalsList = lazy(() => import("pages/DaoProposalsList"))
+
+const DaoProposals = lazy(() => import("pages/DaoProposals"))
 const DaoProposalDetails = lazy(() => import("pages/DaoProposalDetails"))
 // const Insurance = lazy(() => import("pages/Insurance"))
 
@@ -61,6 +83,7 @@ const InsuranceCreate = lazy(() => import("pages/InsuranceCreate"))
 const FundPositions = lazy(() => import("pages/FundPositions"))
 const FundDetails = lazy(() => import("pages/FundDetails")) // TODO: my trader profile
 const Investment = lazy(() => import("pages/Investment"))
+const DaoPoolsList = lazy(() => import("pages/DaoPoolsList"))
 
 function Layout() {
   return <Outlet />
@@ -77,6 +100,14 @@ export default function Routes() {
 
               <Route element={<RequireAuth />}>
                 <Route path="me/investor" element={<Investor />} />
+                <Route
+                  path="dao/:daoPoolAddress/vote/:proposalId"
+                  element={<VotingTerminalPage />}
+                />
+                <Route
+                  path="dao/:daoPoolAddress/withdraw"
+                  element={<WithdrawDaoPoolPage />}
+                />
 
                 <Route path="me/trader" element={<Trader />} />
 
@@ -145,6 +176,7 @@ export default function Routes() {
                 <Route path="investment/*" element={<Investment />} />
 
                 {/* dao profile */}
+                <Route path="dao/list/:filter" element={<DaoPoolsList />} />
                 <Route path="dao/:daoAddress" element={<DaoProfile />} />
 
                 {/* proposals */}
@@ -163,19 +195,39 @@ export default function Routes() {
                   }
                 />
                 <Route
+                  path="/dao/:daoAddress/create-validator-proposal/voting-settings"
+                  element={<CreateDaoProposalValidatorChangeVotingSettings />}
+                />
+                <Route
                   path="dao/:daoAddress/create-new-proposal-type"
-                  element={<CreateNewDaoProposalType />}
+                  element={<CreateDaoProposalType />}
                 />
                 <Route
                   path="dao/:daoAddress/create-proposal-change-dao-settings"
                   element={<CreateDaoProposalChangeDaoSettings />}
                 />
+                <Route
+                  path="dao/:daoAddress/create-proposal-validator-settings"
+                  element={<CreateDaoProposalValidatorSettings />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal-change-voting-settings"
+                  element={<CreateDaoProposalChangeVotingSettings />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal-global-voting-options"
+                  element={<DaoProposalChangeGlobalVotingSettings />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal-token-distribution"
+                  element={<DaoProposalChangeTokenDistribution />}
+                />
 
                 <Route path="/*" element={<TopMembers />} />
                 {/* Dao Proposals */}
                 <Route
-                  path="dao/:daoAddress/proposals/:status"
-                  element={<DaoProposalsList />}
+                  path="dao/:daoAddress/proposals/*"
+                  element={<DaoProposals />}
                 />
                 <Route
                   path="dao/:daoAddress/proposal/:proposalId"

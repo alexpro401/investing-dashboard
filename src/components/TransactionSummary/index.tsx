@@ -32,7 +32,9 @@ import {
   ConvertInvestProposalToDividendsTransactionInfo,
   GovPoolCreateTransactionInfo,
   GovPoolDepositTransactionInfo,
-  GovPoolCreateProposalTypeTransactionInfo,
+  GovPoolVoteTransactionInfo,
+  GovPoolWithdrawTransactionInfo,
+  GovPoolCreateProposalTransactionInfo,
 } from "state/transactions/types"
 import { formatBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
@@ -331,10 +333,22 @@ const GovPoolDepositSummary: React.FC<{
   return <>Successfully deposited.</>
 }
 
-const GovPoolCreateProposalTypeSummary: React.FC<{
-  info: GovPoolCreateProposalTypeTransactionInfo
-}> = ({ info: { title } }) => {
-  return <>Successfully created new proposal: {`"${title}"`}</>
+const GovPoolVoteSummary: React.FC<{
+  info: GovPoolVoteTransactionInfo
+}> = () => {
+  return <>Successfully voted for proposal</>
+}
+
+const GovPoolWithdrawSummary: React.FC<{
+  info: GovPoolWithdrawTransactionInfo
+}> = () => {
+  return <>Successfully withdrawn from DAO pool</>
+}
+
+const GovPoolCreateProposalSummary: React.FC<{
+  info: GovPoolCreateProposalTransactionInfo
+}> = ({ info }) => {
+  return <>Transaction completed successfully.</>
 }
 
 const TransactionSummary: React.FC<IProps> = ({ info }) => {
@@ -395,8 +409,12 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <GovPoolCreateSummary info={info} />
     case TransactionType.GOV_POOL_DEPOSIT:
       return <GovPoolDepositSummary info={info} />
-    case TransactionType.GOV_POOL_CREATE_PROPOSAL_TYPE:
-      return <GovPoolCreateProposalTypeSummary info={info} />
+    case TransactionType.GOV_POOL_VOTE:
+      return <GovPoolVoteSummary info={info} />
+    case TransactionType.GOV_POOL_WITHDRAW:
+      return <GovPoolWithdrawSummary info={info} />
+    case TransactionType.GOV_POOL_CREATE_PROPOSAL:
+      return <GovPoolCreateProposalSummary info={info} />
     default:
       return null
   }

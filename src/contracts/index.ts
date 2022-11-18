@@ -1,7 +1,6 @@
-import { useGovSettingsAddress } from "./../hooks/useDaoPoolSetting"
 import { useSelector } from "react-redux"
 import useContract, { useProposalAddress } from "hooks/useContract"
-import { useGovUserKeeperAddress } from "hooks/useGovPool"
+import { useGovPoolHelperContracts } from "hooks/dao"
 
 import {
   ERC20 as ERC20_ABI,
@@ -149,8 +148,15 @@ export function useUserRegistryContract() {
   )
 }
 
-export function useDistributionProposalContract(address: Address) {
-  return useContract<DistributionProposal>(address, DistributionProposal_ABI)
+export function useDistributionProposalContract(poolAddress: Address) {
+  const { govDistributionProposalAddress } = useGovPoolHelperContracts(
+    poolAddress ?? ""
+  )
+
+  return useContract<DistributionProposal>(
+    govDistributionProposalAddress,
+    DistributionProposal_ABI
+  )
 }
 
 export function useGovPoolContract(address: Address) {
@@ -158,19 +164,21 @@ export function useGovPoolContract(address: Address) {
 }
 
 export function useGovSettingsContract(poolAddress: Address) {
-  const address = useGovSettingsAddress(poolAddress ?? "")
+  const { govSettingsAddress } = useGovPoolHelperContracts(poolAddress ?? "")
 
-  return useContract<GovSettings>(address, GovSettings_ABI)
+  return useContract<GovSettings>(govSettingsAddress, GovSettings_ABI)
 }
 
 export function useGovUserKeeperContract(poolAddress: Address) {
-  const userKeeperAddress = useGovUserKeeperAddress(poolAddress)
+  const { govUserKeeperAddress } = useGovPoolHelperContracts(poolAddress ?? "")
 
-  return useContract<GovUserKeeper>(userKeeperAddress, GovUserKeeper_ABI)
+  return useContract<GovUserKeeper>(govUserKeeperAddress, GovUserKeeper_ABI)
 }
 
-export function useGovValidatorsContract(address: Address) {
-  return useContract<GovValidators>(address, GovValidators_ABI)
+export function useGovValidatorsContract(poolAddress: Address) {
+  const { govValidatorsAddress } = useGovPoolHelperContracts(poolAddress ?? "")
+
+  return useContract<GovValidators>(govValidatorsAddress, GovValidators_ABI)
 }
 
 export function useMulticallContract() {

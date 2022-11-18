@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { AGREGATION_CODES } from "constants/history"
+import { AGGREGATION_CODE } from "constants/chart"
 import { opacityVariants } from "motion/variants"
 import { usePriceHistory } from "state/pools/hooks"
 import { Flex } from "theme"
@@ -46,7 +46,7 @@ interface IProps {
 const BarChart: React.FC<IProps> = ({ address, withTip, m }) => {
   const [history] = usePriceHistory(
     address,
-    [AGREGATION_CODES["1m"] - 1, AGREGATION_CODES["1m"]],
+    [AGGREGATION_CODE.m1 - 1, AGGREGATION_CODE.m1],
     12,
     daysAgoTimestamp(getPassedDaysInTheYear())
   )

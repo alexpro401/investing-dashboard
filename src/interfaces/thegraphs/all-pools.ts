@@ -77,3 +77,11 @@ export interface IPosition {
     descriptionURL: string
   }
 }
+
+export interface IFeeHistory {
+  id: string
+  PNL: BigNumber
+  day: BigNumber
+  fundProfit: BigNumber
+  perfomanceFee: BigNumber
+}

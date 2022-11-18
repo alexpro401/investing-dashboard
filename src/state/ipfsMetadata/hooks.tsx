@@ -237,7 +237,7 @@ export const useInsuranceAccidents = (): [
   const [loading, setLoading] = useState<boolean>(true)
   const [total, setTotal] = useState<number>(0)
   const [offset, setOffset] = useState<number>(0)
-  const [limit, setLimit] = useState<number>(DEFAULT_PAGINATION_COUNT)
+  const [limit] = useState<number>(DEFAULT_PAGINATION_COUNT)
 
   const [searchPool, setSearchPool] = useState("")
 
@@ -268,7 +268,7 @@ export const useInsuranceAccidents = (): [
   const fetchTotalCount = useCallback(async () => {
     if (isNil(insurance)) return
 
-    const totalActiveAccidents = await insurance.ongoingClaimsCount()
+    const totalActiveAccidents = await insurance.acceptedClaimsCount()
     setTotal(Number(totalActiveAccidents.toString()))
 
     return totalActiveAccidents
@@ -279,7 +279,7 @@ export const useInsuranceAccidents = (): [
 
     setLoading(true)
 
-    const activeAccidents = await insurance.listOngoingClaims(offset, limit)
+    const activeAccidents = await insurance.listAcceptedClaims(offset, limit)
 
     for (const accidentId of activeAccidents) {
       await _saveAccidentToStore(accidentId)
@@ -299,7 +299,7 @@ export const useInsuranceAccidents = (): [
 
     setTotal(totalNormalized)
 
-    const activeAccidents = await insurance.listOngoingClaims(
+    const activeAccidents = await insurance.listAcceptedClaims(
       offset,
       totalNormalized
     )

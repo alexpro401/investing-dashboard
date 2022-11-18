@@ -72,7 +72,6 @@ export default function Updater(): null {
         )
         switch (bump) {
           case VersionUpgrade.NONE:
-            console.log("bump none")
             break
           // throw new Error("unexpected no version bump")
           case VersionUpgrade.PATCH:
@@ -83,7 +82,6 @@ export default function Updater(): null {
             )
             // automatically update minor/patch as long as bump matches the min update
             if (bump >= min) {
-              console.log("bump")
               dispatch(acceptListUpdate(listUrl))
             } else {
               console.error(

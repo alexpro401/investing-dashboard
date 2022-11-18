@@ -3,6 +3,8 @@ import {
   AngleLeftOutlinedIcon,
   AngleRightIcon,
   AngleRightOutlinedIcon,
+  AngleUpIcon,
+  AngleDownIcon,
   CloseIcon,
   DollarOutlineIcon,
   ExternalLinkIcon,
@@ -36,6 +38,9 @@ import {
   SettingsIcon,
   ReloadIcon,
   ShareIcon,
+  LockedIcon,
+  FlameGradientIcon,
+  TileCheckIcon,
   ExclamationCircle,
 } from "assets/icons"
 
@@ -53,6 +58,10 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return AngleLeftIcon as unknown as ElementType
       case ICON_NAMES.angleRight:
         return AngleRightIcon as unknown as ElementType
+      case ICON_NAMES.angleUp:
+        return AngleUpIcon as unknown as ElementType
+      case ICON_NAMES.angleDown:
+        return AngleDownIcon as unknown as ElementType
       case ICON_NAMES.close:
         return CloseIcon as unknown as ElementType
       case ICON_NAMES.dollarOutline:
@@ -123,6 +132,12 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return ReloadIcon as unknown as ElementType
       case ICON_NAMES.share:
         return ShareIcon as unknown as ElementType
+      case ICON_NAMES.flameGradient:
+        return FlameGradientIcon as unknown as ElementType
+      case ICON_NAMES.locked:
+        return LockedIcon as unknown as ElementType
+      case ICON_NAMES.tileCheck:
+        return TileCheckIcon as unknown as ElementType
       case ICON_NAMES.exclamationCircle:
         return ExclamationCircle as unknown as ElementType
       default:

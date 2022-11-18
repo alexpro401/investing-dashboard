@@ -5,6 +5,23 @@ export type ExternalFileDocument = {
   url: string
 }
 
+export type DaoVotingSettings = {
+  earlyCompletion: boolean
+  delegatedVotingAllowed: boolean
+  validatorsVote: boolean
+  duration: number
+  durationValidators: number
+  quorum: string
+  quorumValidators: string
+  minVotesForVoting: string
+  minVotesForCreating: string
+  rewardToken: string
+  creationReward: string
+  executionReward: string
+  voteRewardsCoefficient: string
+  executorDescription: string
+}
+
 export type DaoProposal = {
   _isErc20: boolean
   _isErc721: boolean
@@ -31,119 +48,38 @@ export type DaoProposal = {
     validators: string[]
     balances: number[]
   }
-  _internalProposalForm: {
-    earlyCompletion: boolean
-    delegatedVotingAllowed: boolean
-    validatorsVote: boolean
-    duration: number
-    durationValidators: number
-    quorum: number
-    quorumValidators: number
-    minVotesForVoting: number
-    minVotesForCreating: number
-    rewardToken: string
-    creationReward: string
-    executionReward: string
-    voteRewardsCoefficient: string
-    executorDescription: string
-  }
-  _distributionProposalSettingsForm: {
-    earlyCompletion: boolean
-    delegatedVotingAllowed: boolean
-    validatorsVote: boolean
-    duration: number
-    durationValidators: number
-    quorum: number
-    quorumValidators: number
-    minVotesForVoting: number
-    minVotesForCreating: number
-    rewardToken: string
-    creationReward: string
-    executionReward: string
-    voteRewardsCoefficient: string
-    executorDescription: string
-  }
-  _validatorsBalancesSettingsForm: {
-    earlyCompletion: boolean
-    delegatedVotingAllowed: boolean
-    validatorsVote: boolean
-    duration: number
-    durationValidators: number
-    quorum: number
-    quorumValidators: number
-    minVotesForVoting: number
-    minVotesForCreating: number
-    rewardToken: string
-    creationReward: string
-    executionReward: string
-    voteRewardsCoefficient: string
-    executorDescription: string
-  }
-  _defaultProposalSettingForm: {
-    earlyCompletion: boolean
-    delegatedVotingAllowed: boolean
-    validatorsVote: boolean
-    duration: number
-    durationValidators: number
-    quorum: number
-    quorumValidators: number
-    minVotesForVoting: number
-    minVotesForCreating: number
-    rewardToken: string
-    creationReward: string
-    executionReward: string
-    voteRewardsCoefficient: string
-    executorDescription: string
-  }
+  _internalProposalForm: DaoVotingSettings
+  _distributionProposalSettingsForm: DaoVotingSettings
+  _validatorsBalancesSettingsForm: DaoVotingSettings
+  _defaultProposalSettingForm: DaoVotingSettings
 }
 
-export type ProposalSettings = {
-  earlyCompletion: boolean
-  delegatedVotingAllowed: boolean
-  validatorsVote: boolean
-  duration: number
-  durationValidators: number
-  quorum: number
-  quorumValidators: number
-  minVotesForVoting: number
-  minVotesForCreating: number
-  rewardToken: string
-  creationReward: number
-  executionReward: number
-  voteRewardsCoefficient: number
-  executorDescription: string
+export interface IGovPoolDescription {
+  avatarUrl: string
+  daoName: string
+  description: string
+  documents: ExternalFileDocument[]
+  socialLinks: [SUPPORTED_SOCIALS, string][]
+  websiteUrl: string
 }
 
-export type ProposalCore = {
-  settings: ProposalSettings
-  executed: boolean
-  voteEnd: number
-  votesFor: number
-  nftPowerSnapshotId: number
-  proposalId: number
+export interface IProposalIPFS {
+  proposalName: string
+  proposalDescription: string
 }
 
-export type Proposal = {
-  core: ProposalCore
-  descriptionURL: string
-  executors: string[]
-  values: number[]
-  data: string
+export enum ExecutorType {
+  DEFAULT = "0",
+  INTERNAL = "1",
+  DISTRIBUTION = "2",
+  VALIDATORS = "3",
 }
 
-export type ExternalProposalCore = {
-  executed: boolean
-  voteEnd: number
-  quorum: number
-  votesFor: number
-  snapshotId: number
-}
-
-export type ExternalProposal = {
-  core: ExternalProposalCore
-}
-
-export type ProposalView = {
-  proposal: Proposal
-  validatorProposal: ExternalProposal
+export const govPoolProposals = {
+  [ExecutorType.INTERNAL]: {
+    changeInternalDuration: "change-internal-duration",
+    changeInternalQuorum: "change-internal-quorum",
+    changeInternalDurationAndQuorum: "change-internal-duration-and-quorum",
+    changeInternalBalances: "change-internal-balances",
+  },
 }
