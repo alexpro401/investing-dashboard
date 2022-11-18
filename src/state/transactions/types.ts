@@ -51,13 +51,10 @@ export enum TransactionType {
   INVEST_PROPOSAL_CONVERT_TO_DIVIDENDS = 100,
   GOV_POOL_CREATE = 101,
   GOV_POOL_DEPOSIT = 102,
-  GOV_POOL_CREATE_PROPOSAL_TYPE = 103,
-  GOV_POOL_CREATE_INTERNAL_PROPOSAL = 104,
-  GOV_POOL_CREATE_VALIDATOR_PROPOSAL = 105,
-  GOV_POOL_CREATE_CHANGE_DAO_SETTINGS_PROPOSAL = 106,
+
+  GOV_POOL_CREATE_PROPOSAL = 103,
   GOV_POOL_VOTE = 107,
   GOV_POOL_WITHDRAW = 107,
-  GOV_POOL_CREATE_CHANGE_VOTING_SETTINGS_PROPOSAL = 107,
 }
 
 export interface ApproveTransactionInfo {
@@ -235,21 +232,9 @@ export interface GovPoolDepositTransactionInfo {
   type: TransactionType.GOV_POOL_DEPOSIT
 }
 
-export interface GovPoolCreateProposalTypeTransactionInfo {
-  type: TransactionType.GOV_POOL_CREATE_PROPOSAL_TYPE
+export interface GovPoolCreateProposalTransactionInfo {
+  type: TransactionType.GOV_POOL_CREATE_PROPOSAL
   title: string
-}
-
-export interface GovPoolCreateIntenalProposalTransactionInfo {
-  type: TransactionType.GOV_POOL_CREATE_INTERNAL_PROPOSAL
-}
-
-export interface GovPoolCreateValidatorProposalTransactionInfo {
-  type: TransactionType.GOV_POOL_CREATE_VALIDATOR_PROPOSAL
-}
-
-export interface GovPoolCreateChangeDaoSettingsProposalTransactionInfo {
-  type: TransactionType.GOV_POOL_CREATE_CHANGE_DAO_SETTINGS_PROPOSAL
 }
 
 export interface GovPoolVoteTransactionInfo {
@@ -258,10 +243,6 @@ export interface GovPoolVoteTransactionInfo {
 
 export interface GovPoolWithdrawTransactionInfo {
   type: TransactionType.GOV_POOL_WITHDRAW
-}
-
-export interface GovPoolCreateChangeVotingSettingsProposalTransactionInfo {
-  type: TransactionType.GOV_POOL_CREATE_CHANGE_VOTING_SETTINGS_PROPOSAL
 }
 
 export type TransactionInfo =
@@ -294,13 +275,9 @@ export type TransactionInfo =
   | ConvertInvestProposalToDividendsTransactionInfo
   | GovPoolCreateTransactionInfo
   | GovPoolDepositTransactionInfo
-  | GovPoolCreateProposalTypeTransactionInfo
-  | GovPoolCreateIntenalProposalTransactionInfo
-  | GovPoolCreateValidatorProposalTransactionInfo
-  | GovPoolCreateChangeDaoSettingsProposalTransactionInfo
   | GovPoolVoteTransactionInfo
   | GovPoolWithdrawTransactionInfo
-  | GovPoolCreateChangeVotingSettingsProposalTransactionInfo
+  | GovPoolCreateProposalTransactionInfo
 
 export interface TransactionDetails {
   hash: string

@@ -5,57 +5,21 @@ import {
   useGovUserKeeperContract,
   useGovValidatorsContract,
 } from "contracts"
-import { useCallback, useEffect, useState } from "react"
-
-export const useGovUserKeeperAddress = (daoPoolAddress?: string) => {
-  const [userKeeperAddress, setUserKeeperAddress] = useState("")
-  const govPoolContract = useGovPoolContract(daoPoolAddress)
-
-  const updateUserKeeperContract = useCallback(async () => {
-    try {
-      const { userKeeper } = await govPoolContract!.getHelperContracts()
-      setUserKeeperAddress(userKeeper)
-    } catch (error) {
-      console.log("updateUserKeeperContract error: ", error)
-    }
-  }, [govPoolContract])
-
-  useEffect(() => {
-    if (!govPoolContract) return
-
-    updateUserKeeperContract()
-  }, [govPoolContract, updateUserKeeperContract])
-
-  return userKeeperAddress
-}
+import { useGovPoolHelperContracts } from "./useGovPoolHelperContracts"
 
 export const useGovPool = (address?: string) => {
   const govPoolContract = useGovPoolContract(address)
-
-  const [settingsAddress, setSettingsAddress] = useState("")
-  const [userKeeperAddress, setUserKeeperAddress] = useState("")
-  const [validatorsAddress, setValidatorsAddress] = useState("")
-  const [distributionProposalAddress, setDistributionProposalAddress] =
-    useState("")
+  const {
+    govSettingsAddress: settingsAddress,
+    govUserKeeperAddress: userKeeperAddress,
+    govValidatorsAddress: validatorsAddress,
+    govDistributionProposalAddress: distributionProposalAddress,
+  } = useGovPoolHelperContracts(address)
 
   const govValidatorsContract = useGovValidatorsContract(address)
   const govUserKeeperContract = useGovUserKeeperContract(address)
   const govSettingsContract = useGovSettingsContract(address)
-  const distributionProposalContract = useDistributionProposalContract(
-    distributionProposalAddress
-  )
-
-  const init = async () => {
-    if (!govPoolContract) return
-
-    const { settings, userKeeper, validators, distributionProposal } =
-      await govPoolContract.getHelperContracts()
-
-    setSettingsAddress(settings)
-    setUserKeeperAddress(userKeeper)
-    setValidatorsAddress(validators)
-    setDistributionProposalAddress(distributionProposal)
-  }
+  const distributionProposalContract = useDistributionProposalContract(address)
 
   return {
     govPoolContract,
@@ -69,7 +33,5 @@ export const useGovPool = (address?: string) => {
     govUserKeeperContract,
     govSettingsContract,
     distributionProposalContract,
-
-    init,
   }
 }
