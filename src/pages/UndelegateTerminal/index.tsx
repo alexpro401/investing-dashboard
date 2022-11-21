@@ -17,8 +17,11 @@ interface Props {
   delegatee?: string
 }
 
-// DelegateTerminal - card component. can be used as separate element on the page
-export const DelegateTerminal: FC<Props> = ({ daoPoolAddress, delegatee }) => {
+// UndelegateTerminal - card component. can be used as separate element on the page
+export const UndelegateTerminal: FC<Props> = ({
+  daoPoolAddress,
+  delegatee,
+}) => {
   const {
     formInfo,
     allNftsId,
@@ -131,7 +134,7 @@ export const DelegateTerminal: FC<Props> = ({ daoPoolAddress, delegatee }) => {
 }
 
 // wrapps DelegateTerminal with router params and layout
-const DelegateTerminalPage = () => {
+const UndelegateTerminalPage = () => {
   const params = useParams()
 
   return (
@@ -143,10 +146,10 @@ const DelegateTerminalPage = () => {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        <DelegateTerminal {...params} />
+        <UndelegateTerminal {...params} />
       </Container>
     </>
   )
 }
 
-export default DelegateTerminalPage
+export default UndelegateTerminalPage

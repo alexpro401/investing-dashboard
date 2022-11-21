@@ -24,7 +24,7 @@ const CreateDaoProposalValidatorSettings: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
 
   const [validatorsFromGraph] = useGovPoolValidators(daoAddress ?? "")
-  const tokenData = useGovValidatorsValidatorsToken(daoAddress ?? "")
+  const [, tokenData] = useGovValidatorsValidatorsToken(daoAddress ?? "")
   const [validatorDaoSettings] = useGovPoolSetting({
     daoAddress: daoAddress ?? "",
     settingsId: EExecutor.VALIDATORS,
