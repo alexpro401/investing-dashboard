@@ -6,6 +6,7 @@ import TokenIcon from "components/TokenIcon"
 import { usePoolContract } from "hooks/usePool"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { useERC20Data } from "state/erc20/hooks"
+import { ICON_NAMES } from "constants/icon-names"
 
 interface Props {
   name: string
@@ -22,25 +23,30 @@ const GovProposalCardHeadInsurance: React.FC<Props> = ({ pool }) => {
 
   return (
     <S.Content>
-      <Flex gap="4" ai="center">
-        <Icon
-          m="0"
-          size={19}
-          source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
-          address={pool ?? ""}
-        />
-        <Text fz={16} fw={600} lh="19px" color={theme.textColors.primary}>
-          {poolInfo?.ticker ?? ""}
-        </Text>
-        <Text fz={16} fw={500} lh="19px" color={theme.textColors.secondary}>
-          {poolInfo?.name ?? ""}
-        </Text>
-      </Flex>
-      <Flex gap="4" ai="center">
-        <Text fz={16} fw={600} lh="19px" color={theme.textColors.primary}>
-          {baseToken?.symbol}
-        </Text>
-        <TokenIcon address={baseToken?.address ?? ""} m="0" size={19} />
+      <Flex full ai="center" jc={"space-between"} gap={"4"}>
+        <Flex full>
+          <Flex gap="4" ai="center">
+            <Icon
+              m="0"
+              size={19}
+              source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
+              address={pool ?? ""}
+            />
+            <Text fz={16} fw={600} lh="19px" color={theme.textColors.primary}>
+              {poolInfo?.ticker ?? ""}
+            </Text>
+            <Text fz={16} fw={500} lh="19px" color={theme.textColors.secondary}>
+              {poolInfo?.name ?? ""}
+            </Text>
+          </Flex>
+          <Flex gap="4" ai="center">
+            <Text fz={16} fw={600} lh="19px" color={theme.textColors.primary}>
+              {baseToken?.symbol}
+            </Text>
+            <TokenIcon address={baseToken?.address ?? ""} m="0" size={19} />
+          </Flex>
+        </Flex>
+        <S.HeadIcon name={ICON_NAMES.angleRight} />
       </Flex>
     </S.Content>
   )
