@@ -58,17 +58,13 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
         />
         <S.DaoVotingProgressBar>
           <Flex full ai={"center"} jc={"space-between"} gap={"3"}>
-            <div style={{ width: "50%" }}>
-              <ProgressLine
-                w={
-                  (votesTotalNeed / 100) *
-                  Number(normalizeBigNumber(votesFor, 18, 2))
-                }
-              />
-            </div>
-            <div style={{ width: "50%" }}>
-              <ProgressLine w={0} />
-            </div>
+            <ProgressLine
+              w={
+                (votesTotalNeed / 100) *
+                Number(normalizeBigNumber(votesFor, 18, 2))
+              }
+            />
+            <ProgressLine w={0} />
           </Flex>
         </S.DaoVotingProgressBar>
         <GovProposalCardBlockInfo label={"Voting type"} value={proposalType} />
