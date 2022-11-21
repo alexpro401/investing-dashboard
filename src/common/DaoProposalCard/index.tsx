@@ -1,13 +1,14 @@
 import * as S from "./styled"
 
-import { FC, HTMLAttributes, useState } from "react"
+import { FC, HTMLAttributes } from "react"
 import { normalizeBigNumber, shortenAddress } from "utils"
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { useGovPoolProposal } from "hooks/dao"
 import { useParams } from "react-router-dom"
-import { GovProposalCardHead, GovProposalCardBlockInfo } from "common/dao"
+import { GovProposalCardHead } from "common/dao"
 import ProgressLine from "components/ProgressLine"
 import { Flex } from "theme"
+import TokenIcon from "components/TokenIcon"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   proposalId: number
@@ -16,7 +17,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 
 const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
   const { daoAddress } = useParams()
-
+  console.log(proposalView)
   const {
     creator,
     votedAddresses,
@@ -25,37 +26,40 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
     voteEnd,
     votesFor,
     votesTotalNeed,
+    executed,
+    isInsurance,
+    isDistribution,
   } = useGovPoolProposal(proposalId, daoAddress!, proposalView)
-  const isInsurance = useState(false)
 
   return (
     <S.Root {...rest}>
       <GovProposalCardHead
-        isInsurance={isInsurance[0]}
+        isInsurance={isInsurance}
         name={name}
         pool={"0xc2e7418baf7eff866da0198c7e8ace4453a6f0a4"}
       />
       <S.DaoProposalCardBody>
-        <GovProposalCardBlockInfo
-          label={"Created by"}
-          value={
-            <S.DaoProposalCardBlockInfoAddress href={""}>
-              {shortenAddress(creator)}
-            </S.DaoProposalCardBlockInfoAddress>
-          }
-        />
-        <GovProposalCardBlockInfo
-          label={"Voting status"}
-          value={
-            <>
-              {normalizeBigNumber(votesFor, 18, 2)}/
-              <S.DaoVotingStatusCounterTotal>
-                {votesTotalNeed}
-              </S.DaoVotingStatusCounterTotal>
-            </>
-          }
-          align={"right"}
-        />
+        <S.DaoProposalCardBlockInfo>
+          <S.DaoProposalCardBlockInfoAddress href={""}>
+            {shortenAddress(creator)}
+          </S.DaoProposalCardBlockInfoAddress>
+          <S.DaoProposalCardBlockInfoLabel>
+            Created by
+          </S.DaoProposalCardBlockInfoLabel>
+        </S.DaoProposalCardBlockInfo>
+
+        <S.DaoProposalCardBlockInfo alignRight>
+          <S.DaoProposalCardBlockInfoValue>
+            {normalizeBigNumber(votesFor, 18, 2)}/
+            <S.DaoVotingStatusCounterTotal>
+              {votesTotalNeed}
+            </S.DaoVotingStatusCounterTotal>
+          </S.DaoProposalCardBlockInfoValue>
+          <S.DaoProposalCardBlockInfoLabel>
+            Voting status
+          </S.DaoProposalCardBlockInfoLabel>
+        </S.DaoProposalCardBlockInfo>
+
         <S.DaoVotingProgressBar>
           <Flex full ai={"center"} jc={"space-between"} gap={"3"}>
             <ProgressLine
@@ -67,12 +71,48 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
             <ProgressLine w={0} />
           </Flex>
         </S.DaoVotingProgressBar>
-        <GovProposalCardBlockInfo label={"Voting type"} value={proposalType} />
-        <GovProposalCardBlockInfo
-          label={"Voted addresses"}
-          value={votedAddresses}
-          align={"right"}
-        />
+
+        <S.DaoProposalCardBlockInfo>
+          {isDistribution ? (
+            <Flex full ai={"center"} jc={"flex-start"} gap={"4"}>
+              <TokenIcon address={""} m="0" size={20} />
+              <S.DaoProposalCardBlockInfoAddress href={""}>
+                TOken Name
+              </S.DaoProposalCardBlockInfoAddress>
+            </Flex>
+          ) : (
+            <S.DaoProposalCardBlockInfoValue>
+              {proposalType}
+            </S.DaoProposalCardBlockInfoValue>
+          )}
+          <S.DaoProposalCardBlockInfoLabel>
+            {isDistribution ? proposalType : "Voting type"}
+          </S.DaoProposalCardBlockInfoLabel>
+        </S.DaoProposalCardBlockInfo>
+
+        <S.DaoProposalCardBlockInfo alignRight>
+          <S.DaoProposalCardBlockInfoValue success={executed}>
+            {executed ? (
+              <>
+                {isDistribution ? (
+                  <>
+                    10000
+                    <S.DaoVotingStatusCounterTotal>
+                      &nbsp;(~$ 1000)
+                    </S.DaoVotingStatusCounterTotal>
+                  </>
+                ) : (
+                  "1 DEXE"
+                )}
+              </>
+            ) : (
+              votedAddresses
+            )}
+          </S.DaoProposalCardBlockInfoValue>
+          <S.DaoProposalCardBlockInfoLabel>
+            {executed ? "My Reward" : "Voted addresses"}
+          </S.DaoProposalCardBlockInfoLabel>
+        </S.DaoProposalCardBlockInfo>
 
         <S.DaoCenteredButton text={voteEnd} />
       </S.DaoProposalCardBody>

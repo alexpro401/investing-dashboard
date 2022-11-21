@@ -15,6 +15,31 @@ export const DaoProposalCardBody = styled.div`
   grid-gap: 16px;
 `
 
+export const DaoProposalCardBlockInfo = styled.div<{
+  alignRight?: boolean
+}>`
+  display: flex;
+  flex-direction: column;
+  align-items: ${({ alignRight = false }) =>
+    alignRight ? "flex-end" : "flex-start"};
+  gap: 4px;
+`
+export const DaoProposalCardBlockInfoLabel = styled.span`
+  color: ${(props) => props.theme.textColors.secondary};
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 15px;
+`
+export const DaoProposalCardBlockInfoValue = styled.span<{ success?: boolean }>`
+  color: ${(props) =>
+    props.success
+      ? props.theme.brandColors.primary
+      : props.theme.textColors.primary};
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+`
+
 export const DaoProposalCardBlockInfoAddress = styled(ExternalLink)`
   font-weight: 600;
   font-size: 16px;

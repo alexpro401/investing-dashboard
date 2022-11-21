@@ -88,6 +88,11 @@ export const useGovPoolProposal = (
     [proposalView]
   )
 
+  const executed = useMemo(
+    () => proposalView.proposal.core.executed,
+    [proposalView]
+  )
+
   const isInsurance = useMemo(() => {
     return false
   }, [proposalView])
@@ -106,7 +111,7 @@ export const useGovPoolProposal = (
     voteEnd,
     votesTotalNeed,
     votesFor,
-
+    executed,
     isInsurance,
     isDistribution,
   }
