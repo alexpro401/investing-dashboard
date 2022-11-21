@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components"
 import { AppButton, Icon } from "common"
+import { VotingTerminal } from "pages/VotingTerminal"
 
 export const DaoProposalDetails = styled.div`
   overflow: hidden auto;
@@ -240,3 +241,5 @@ export const DaoProposalCardRowDivider = styled.div`
   width: 100%;
   height: 1px;
 `
+
+export const DaoProposalVotingTerminal = styled(VotingTerminal)``

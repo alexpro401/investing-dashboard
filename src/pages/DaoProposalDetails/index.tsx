@@ -7,6 +7,7 @@ import { AnimatePresence } from "framer-motion"
 import { useGovPoolProposal, useGovPoolProposals } from "hooks/dao"
 import { useParams } from "react-router-dom"
 import { useEffectOnce } from "react-use"
+import dao from "../../assets/menu/mobile/Dao"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -76,6 +77,10 @@ const DaoProposalDetails: FC<Props> = ({}) => {
           {selectedTabNumber === TABS[1].number && <VotingSettingsTab />}
           {selectedTabNumber === TABS[2].number && <VotingHistoryTab />}
         </AnimatePresence>
+        <S.DaoProposalVotingTerminal
+          proposalId={proposalId}
+          daoPoolAddress={daoAddress}
+        />
       </S.DaoProposalDetails>
     </>
   )

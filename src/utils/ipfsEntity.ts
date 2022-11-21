@@ -57,7 +57,9 @@ export class IpfsEntity<T> {
   async load(): Promise<T> {
     if (!this._path) throw new Error("No path provided to load from")
 
-    const { data } = await this._axios.post(`api/v0/cat?arg=${this._path}`)
+    const { data } = await this._axios.post(
+      `api/v0/cat?arg=${this._path.replace("ipfs://", "")}`
+    )
 
     return data as T
   }

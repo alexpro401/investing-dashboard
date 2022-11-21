@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import ExternalLink from "components/ExternalLink"
 import { AppButton, Icon } from "common"
+import { NavLink } from "react-router-dom"
 
 export const Root = styled.div`
   background: ${(props) => props.theme.backgroundColors.secondary};
@@ -8,7 +9,7 @@ export const Root = styled.div`
   color: ${(props) => props.theme.textColors.primary};
 `
 
-export const DaoProposalCardHead = styled.div`
+export const DaoProposalCardHead = styled(NavLink)`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -80,6 +81,7 @@ export const DaoVotingStatusCounterTotal = styled.span`
 export const DaoVotingProgressBar = styled.div<{
   progress: number
 }>`
+  overflow: hidden;
   position: relative;
   grid-column: 1 / -1;
   background: #293c54;

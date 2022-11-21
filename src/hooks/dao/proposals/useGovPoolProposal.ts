@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { DateUtil } from "utils"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { createClient, useQuery } from "urql"
+import { parseUnits } from "@ethersproject/units"
 
 const investorGraphClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -94,7 +95,7 @@ export const useGovPoolProposal = (
   const votesTotalNeed = useMemo(() => 222, [])
 
   const votesFor = useMemo(
-    () => proposalView?.proposal.core.votesFor.toNumber(),
+    () => proposalView?.proposal?.core?.votesFor.toString() || 0,
     [proposalView]
   )
 

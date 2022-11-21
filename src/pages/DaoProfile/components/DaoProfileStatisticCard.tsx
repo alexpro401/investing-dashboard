@@ -1,6 +1,6 @@
 import { Icon } from "common"
 import * as S from "../styled"
-import Button, { SecondaryButton } from "components/Button"
+import { SecondaryButton } from "components/Button"
 import { Flex, Text } from "theme"
 import Tooltip from "components/Tooltip"
 import { v4 as uuidv4 } from "uuid"
@@ -20,13 +20,10 @@ const DaoProfileStatisticCard = ({
           <SecondaryButton full fz={14} onClick={handleOpenCreateProposalModal}>
             + New Proposal
           </SecondaryButton>
-          <Button
-            full
-            fz={14}
-            onClick={() => alert("Redirect to all proposals")}
-          >
-            All proposals
-          </Button>
+          <S.CardAppButton
+            routePath={`/dao/${govPoolQuery.id}/proposals/opened`}
+            text="All proposals"
+          />
         </S.CardButtons>
         {isValidator && (
           <>
