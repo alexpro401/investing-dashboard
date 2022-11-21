@@ -17,7 +17,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 
 const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
   const { daoAddress } = useParams()
-  console.log(proposalView)
+
   const {
     creator,
     votedAddresses,
