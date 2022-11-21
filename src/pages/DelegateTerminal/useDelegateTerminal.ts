@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from "react"
 import {
   useGovPoolUserVotingPower,
   useGovPoolMemberBalance,
-  useGovUserKeeperAddress,
+  useGovPoolHelperContracts,
   useGovPoolVotingAssets,
   useGovPoolDelegate,
 } from "hooks/dao"
@@ -36,7 +36,7 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
   const [ERC721Amount, setERC721Amount] = useState<number[]>([])
 
   const { delegate } = useGovPoolDelegate(daoPoolAddress)
-  const userKeeperAddress = useGovUserKeeperAddress(daoPoolAddress)
+  const { govUserKeeperAddress } = useGovPoolHelperContracts(daoPoolAddress)
   const [{ tokenAddress, nftAddress }] = useGovPoolVotingAssets(daoPoolAddress)
   const { ERC20Balance, ERC721Balance, tokenBalance } =
     useGovPoolMemberBalance(daoPoolAddress)
@@ -54,12 +54,12 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
   )
 
   const { allowances: ERC20Allowances, updateAllowance: updateERC20Allowance } =
-    useERC20Allowance([tokenAddress], userKeeperAddress)
+    useERC20Allowance([tokenAddress], govUserKeeperAddress)
 
   const {
     allowances: ERC721Allowances,
     updateAllowance: updateERC721Allowance,
-  } = useERC721Allowance(nftAddress, ERC721OwnedBalance, userKeeperAddress)
+  } = useERC721Allowance(nftAddress, ERC721OwnedBalance, govUserKeeperAddress)
 
   // get power for all nfts
   const [userOwnedPower] = useGovPoolUserVotingPower({
@@ -113,9 +113,9 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
 
   const unapprowedERC721Selected = useMemo(() => {
     return ownedERC721Selected.filter(
-      (id) => ERC721Allowances[id] !== userKeeperAddress
+      (id) => ERC721Allowances[id] !== govUserKeeperAddress
     )
-  }, [ERC721Allowances, ownedERC721Selected, userKeeperAddress])
+  }, [ERC721Allowances, ownedERC721Selected, govUserKeeperAddress])
 
   const totalPower = useMemo(() => {
     return ERC721Amount.reduce(
