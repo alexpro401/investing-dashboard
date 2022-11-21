@@ -63,6 +63,11 @@ export interface IGovPoolDescription {
   websiteUrl: string
 }
 
+export interface IProposalIPFS {
+  proposalName: string
+  proposalDescription: string
+}
+
 export enum ExecutorType {
   DEFAULT = "0",
   INTERNAL = "1",
