@@ -34,15 +34,7 @@ const CreateProposalSelectType: React.FC = () => {
     EProposalType.daoProfileModification
   )
 
-  const {
-    createNewDaoProposalType,
-    createInternalValidatorProposal,
-    createInsuranceProposal,
-    createInternalProposal,
-    createDistributionProposal,
-    createValidatorProposal,
-    createCustomProposal,
-  } = useGovPoolCreateProposal(daoAddress)
+  const { createDistributionProposal } = useGovPoolCreateProposal(daoAddress)
 
   const proceedToNextStep = useCallback(async () => {
     //TODO NAVIGATE to path related to selected proposal type
@@ -60,39 +52,13 @@ const CreateProposalSelectType: React.FC = () => {
 
     // TEMP: create hardcoded proposals
     switch (selectedProposalType) {
-      case EProposalType.daoProfileModification: {
-        await createInternalProposal()
-        return
-      }
-      case EProposalType.changingVotingSettings: {
-        // internal
-        await createInternalProposal()
-        return
-      }
       case EProposalType.tokenDistribution: {
         // token distribution
         await createDistributionProposal()
         return
       }
-      case EProposalType.validatorSettings: {
-        // validators
-        await createValidatorProposal()
-        return
-      }
-      case EProposalType.changeTokenPrice: {
-        // not exist yet
-        await createInternalProposal()
-        return
-      }
     }
-  }, [
-    createInternalProposal,
-    selectedProposalType,
-    daoAddress,
-    navigate,
-    createDistributionProposal,
-    createValidatorProposal,
-  ])
+  }, [selectedProposalType, daoAddress, navigate, createDistributionProposal])
 
   const proposalTypes = useMemo<IProposalType[]>(
     () => [
