@@ -40,6 +40,7 @@ import {
   GovPoolWithdrawTransactionInfo,
   GovPoolCreateChangeVotingSettingsProposalTransactionInfo,
   GovPoolDelegateTransactionInfo,
+  GovPoolUndelegateTransactionInfo,
 } from "state/transactions/types"
 import { formatBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
@@ -386,6 +387,12 @@ const GovPoolDelegateSummary: React.FC<{
   return <>Successfully delegated tokens</>
 }
 
+const GovPoolUndelegateSummary: React.FC<{
+  info: GovPoolUndelegateTransactionInfo
+}> = () => {
+  return <>Successfully undelegated tokens</>
+}
+
 const TransactionSummary: React.FC<IProps> = ({ info }) => {
   switch (info.type) {
     case TransactionType.APPROVAL:
@@ -460,6 +467,8 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <GovPoolCreateChangeVotingSettingsProposalSummary info={info} />
     case TransactionType.GOV_POOL_DELEGATE:
       return <GovPoolDelegateSummary info={info} />
+    case TransactionType.GOV_POOL_UNDELEGATE:
+      return <GovPoolUndelegateSummary info={info} />
     default:
       return null
   }

@@ -5,20 +5,20 @@ import { ZERO, ZERO_ADDR } from "constants/index"
 import NftSelect from "modals/NftSelect"
 import { FC, useCallback, useMemo } from "react"
 import { Flex } from "theme"
-import useDelegateTerminal, { ButtonTypes } from "./useDelegateTerminal"
-import { ICON_NAMES } from "constants/icon-names"
+import useUndelegateTerminal, { ButtonTypes } from "./useUndelegateTerminal"
 import { useParams } from "react-router-dom"
 import { Container } from "components/Exchange/styled"
 import Header from "components/Header/Layout"
 import WalletInput from "components/Exchange/WalletInput"
-import ExternalLink from "components/ExternalLink"
+import { shortenAddress } from "utils"
 
 interface Props {
   daoPoolAddress?: string
+  delegatee?: string
 }
 
 // DelegateTerminal - card component. can be used as separate element on the page
-export const DelegateTerminal: FC<Props> = ({ daoPoolAddress }) => {
+export const DelegateTerminal: FC<Props> = ({ daoPoolAddress, delegatee }) => {
   const {
     formInfo,
     allNftsId,
@@ -31,39 +31,10 @@ export const DelegateTerminal: FC<Props> = ({ daoPoolAddress }) => {
     setSelectOpen,
     handleERC20Change,
     handleERC721Change,
-    handleApprove,
     handleSubmit,
-    setDelegatee,
-  } = useDelegateTerminal(daoPoolAddress)
+  } = useUndelegateTerminal(daoPoolAddress, delegatee)
 
   const button = useMemo(() => {
-    // not enough token balance
-    if (buttonType === ButtonTypes.INUFICIENT_TOKEN_BALANCE) {
-      return (
-        <S.SubmitButton
-          disabled
-          color="secondary"
-          type="button"
-          size="large"
-          text="Inuficient token balance"
-        />
-      )
-    }
-
-    if (buttonType === ButtonTypes.UNLOCK) {
-      return (
-        <S.SubmitButton
-          color="secondary"
-          type="button"
-          size="large"
-          onClick={handleApprove}
-          text="Approve token"
-          iconRight={ICON_NAMES.locked}
-          iconSize={14}
-        />
-      )
-    }
-
     if (buttonType === ButtonTypes.EMPTY_AMOUNT) {
       return (
         <S.SubmitButton
@@ -82,10 +53,10 @@ export const DelegateTerminal: FC<Props> = ({ daoPoolAddress }) => {
         type="button"
         size="large"
         onClick={handleSubmit}
-        text="Confirm Delegate"
+        text="Confirm Withdraw"
       />
     )
-  }, [buttonType, handleApprove, handleSubmit])
+  }, [buttonType, handleSubmit])
 
   // wrapper function to close modal on submit
   const selectNfts = useCallback(
@@ -105,21 +76,8 @@ export const DelegateTerminal: FC<Props> = ({ daoPoolAddress }) => {
     <>
       <S.Card>
         <S.CardHeader>
-          <S.Title active>Delegate</S.Title>
+          <S.Title active>Withdraw</S.Title>
         </S.CardHeader>
-
-        <S.DescriptionContainer>
-          You can delegate your votes to another DAO member so they can vote on
-          your behalf.{" "}
-          <ExternalLink removeIcon href="#" fz="13px" fw="400">
-            Details
-          </ExternalLink>
-          <br />
-          <br />
-          Adjust your token delegation below.
-        </S.DescriptionContainer>
-
-        <Flex p="8px" full ai="center"></Flex>
 
         {formInfo.erc20.address !== ZERO_ADDR && (
           <ExchangeInput
@@ -133,28 +91,28 @@ export const DelegateTerminal: FC<Props> = ({ daoPoolAddress }) => {
           />
         )}
 
-        {formInfo.erc721.address !== ZERO_ADDR && (
-          <>
-            <Flex full p="4px" />
-            <NftInput
-              nftPowerMap={nftPowerMap}
-              selectedNfts={ERC721Amount}
-              onSelectAll={() => selectNfts(allNftsId)}
-              onSelect={() => setSelectOpen(true)}
-              balance={formInfo.erc721.balance || ZERO}
-              address={formInfo.erc721.address}
-            />
-          </>
-        )}
+        {formInfo.erc721.address !== ZERO_ADDR &&
+          !formInfo.erc721.balance.isZero() && (
+            <>
+              <Flex full p="4px" />
+              <NftInput
+                nftPowerMap={nftPowerMap}
+                selectedNfts={ERC721Amount}
+                onSelectAll={() => selectNfts(allNftsId)}
+                onSelect={() => setSelectOpen(true)}
+                balance={formInfo.erc721.balance || ZERO}
+                address={formInfo.erc721.address}
+              />
+            </>
+          )}
 
         <Flex full p="4px" />
 
         <WalletInput
-          address={formInfo.address.delegatee}
+          address={formInfo.address.address}
           amount={formInfo.address.totalPower.toString()}
           nodeLeft="Votes to be received"
           nodeRight="Receiver address"
-          onChange={setDelegatee}
         />
 
         <Flex p="16px 0 0" full>
@@ -178,7 +136,7 @@ const DelegateTerminalPage = () => {
 
   return (
     <>
-      <Header>Delegate DAO tokens</Header>
+      <Header>{shortenAddress(params.delegatee, 5)}</Header>
       <Container
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

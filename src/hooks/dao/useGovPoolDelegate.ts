@@ -49,7 +49,42 @@ const useGovPoolDelegate = (daoPoolAddress?: string) => {
     [addTransaction, govPool, setError, setPayload]
   )
 
-  return { delegate }
+  const undelegate = useCallback(
+    async (delegatee: string, tokens: BigNumberish, nfts: BigNumberish[]) => {
+      if (!govPool) return
+      setPayload(SubmitState.SIGN)
+
+      try {
+        setPayload(SubmitState.WAIT_CONFIRM)
+        const transactionResponse = await govPool.undelegate(
+          delegatee,
+          tokens,
+          nfts
+        )
+
+        const receipt = await addTransaction(transactionResponse, {
+          type: TransactionType.GOV_POOL_UNDELEGATE,
+        })
+
+        if (isTxMined(receipt)) {
+          setPayload(SubmitState.SUCCESS)
+        }
+      } catch (error: any) {
+        setPayload(SubmitState.IDLE)
+        if (!!error && !!error.data && !!error.data.message) {
+          setError(error.data.message)
+        } else {
+          const errorMessage = parseTransactionError(error.toString())
+          !!errorMessage && setError(errorMessage)
+        }
+      } finally {
+        setPayload(SubmitState.IDLE)
+      }
+    },
+    [addTransaction, govPool, setError, setPayload]
+  )
+
+  return { delegate, undelegate }
 }
 
 export default useGovPoolDelegate

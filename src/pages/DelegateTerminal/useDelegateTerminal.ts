@@ -23,7 +23,7 @@ export enum ButtonTypes {
   SUBMIT = "SUBMIT",
 }
 
-// controller for page Voting Terminal
+// controller for page Delegate Terminal
 const useDelegateTerminal = (daoPoolAddress?: string) => {
   const { account } = useActiveWeb3React()
   // UI controlls

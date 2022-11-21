@@ -28,6 +28,7 @@ const PayDividends = lazy(() => import("pages/PayDividends"))
 const VotingTerminalPage = lazy(() => import("pages/VotingTerminal"))
 const WithdrawDaoPoolPage = lazy(() => import("pages/WithdrawDaoPool"))
 const DelegateTerminalPage = lazy(() => import("pages/DelegateTerminal"))
+const UndelegateTerminalPage = lazy(() => import("pages/UndelegateTerminal"))
 const CreateInvestmentProposal = lazy(
   () => import("pages/CreateInvestmentProposal")
 )
@@ -112,6 +113,10 @@ export default function Routes() {
                 <Route
                   path="dao/:daoPoolAddress/delegate"
                   element={<DelegateTerminalPage />}
+                />
+                <Route
+                  path="dao/:daoPoolAddress/undelegate/:delegatee"
+                  element={<UndelegateTerminalPage />}
                 />
 
                 <Route path="me/trader" element={<Trader />} />
