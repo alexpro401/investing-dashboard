@@ -41,4 +41,5 @@ export enum ICON_NAMES {
   locked = "locked",
   flameGradient = "flame-gradient",
   tileCheck = "tile-check",
+  metamask = "metamask",
 }
