@@ -7,7 +7,7 @@ import { useGovValidatorsValidatorsToken } from "hooks/dao"
 const useGovValidatorsTokenTotalSupply = (
   govPoolAddress: string
 ): [BigNumber | null, boolean, boolean] => {
-  const validatorsToken = useGovValidatorsValidatorsToken(govPoolAddress)
+  const [, validatorsToken] = useGovValidatorsValidatorsToken(govPoolAddress)
   const validatorsTokenContract = useERC20Contract(
     validatorsToken ? validatorsToken.address : ""
   )

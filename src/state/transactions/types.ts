@@ -54,7 +54,10 @@ export enum TransactionType {
 
   GOV_POOL_CREATE_PROPOSAL = 103,
   GOV_POOL_VOTE = 107,
-  GOV_POOL_WITHDRAW = 107,
+  GOV_POOL_WITHDRAW = 108,
+  GOV_POOL_CREATE_CHANGE_VOTING_SETTINGS_PROPOSAL = 109,
+  GOV_POOL_DELEGATE = 110,
+  GOV_POOL_UNDELEGATE = 110,
 }
 
 export interface ApproveTransactionInfo {
@@ -245,6 +248,18 @@ export interface GovPoolWithdrawTransactionInfo {
   type: TransactionType.GOV_POOL_WITHDRAW
 }
 
+export interface GovPoolCreateChangeVotingSettingsProposalTransactionInfo {
+  type: TransactionType.GOV_POOL_CREATE_CHANGE_VOTING_SETTINGS_PROPOSAL
+}
+
+export interface GovPoolDelegateTransactionInfo {
+  type: TransactionType.GOV_POOL_DELEGATE
+}
+
+export interface GovPoolUndelegateTransactionInfo {
+  type: TransactionType.GOV_POOL_UNDELEGATE
+}
+
 export type TransactionInfo =
   | ApproveTransactionInfo
   | DepositLiquidityTransactionInfo
@@ -277,6 +292,9 @@ export type TransactionInfo =
   | GovPoolDepositTransactionInfo
   | GovPoolVoteTransactionInfo
   | GovPoolWithdrawTransactionInfo
+  | GovPoolCreateChangeVotingSettingsProposalTransactionInfo
+  | GovPoolDelegateTransactionInfo
+  | GovPoolUndelegateTransactionInfo
   | GovPoolCreateProposalTransactionInfo
 
 export interface TransactionDetails {

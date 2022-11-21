@@ -34,6 +34,9 @@ import {
   GovPoolDepositTransactionInfo,
   GovPoolVoteTransactionInfo,
   GovPoolWithdrawTransactionInfo,
+  GovPoolCreateChangeVotingSettingsProposalTransactionInfo,
+  GovPoolDelegateTransactionInfo,
+  GovPoolUndelegateTransactionInfo,
   GovPoolCreateProposalTransactionInfo,
 } from "state/transactions/types"
 import { formatBigNumber } from "utils"
@@ -345,10 +348,28 @@ const GovPoolWithdrawSummary: React.FC<{
   return <>Successfully withdrawn from DAO pool</>
 }
 
+const GovPoolCreateChangeVotingSettingsProposalSummary: React.FC<{
+  info: GovPoolCreateChangeVotingSettingsProposalTransactionInfo
+}> = () => {
+  return <>Successfully created new proposal for changing DAO voting settings</>
+}
+
 const GovPoolCreateProposalSummary: React.FC<{
   info: GovPoolCreateProposalTransactionInfo
 }> = ({ info }) => {
   return <>Transaction completed successfully.</>
+}
+
+const GovPoolDelegateSummary: React.FC<{
+  info: GovPoolDelegateTransactionInfo
+}> = () => {
+  return <>Successfully delegated tokens</>
+}
+
+const GovPoolUndelegateSummary: React.FC<{
+  info: GovPoolUndelegateTransactionInfo
+}> = () => {
+  return <>Successfully undelegated tokens</>
 }
 
 const TransactionSummary: React.FC<IProps> = ({ info }) => {
@@ -413,6 +434,12 @@ const TransactionSummary: React.FC<IProps> = ({ info }) => {
       return <GovPoolVoteSummary info={info} />
     case TransactionType.GOV_POOL_WITHDRAW:
       return <GovPoolWithdrawSummary info={info} />
+    case TransactionType.GOV_POOL_CREATE_CHANGE_VOTING_SETTINGS_PROPOSAL:
+      return <GovPoolCreateChangeVotingSettingsProposalSummary info={info} />
+    case TransactionType.GOV_POOL_DELEGATE:
+      return <GovPoolDelegateSummary info={info} />
+    case TransactionType.GOV_POOL_UNDELEGATE:
+      return <GovPoolUndelegateSummary info={info} />
     case TransactionType.GOV_POOL_CREATE_PROPOSAL:
       return <GovPoolCreateProposalSummary info={info} />
     default:

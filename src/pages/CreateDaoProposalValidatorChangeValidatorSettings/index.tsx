@@ -20,7 +20,7 @@ const CreateDaoProposalValidatorChangeValidatorSettings: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
 
   const [validatorsFromGraph] = useGovPoolValidators(daoAddress ?? "")
-  const tokenData = useGovValidatorsValidatorsToken(daoAddress ?? "")
+  const [, tokenData] = useGovValidatorsValidatorsToken(daoAddress ?? "")
 
   const balances = useMemo<string[]>(
     () =>
