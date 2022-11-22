@@ -1,19 +1,21 @@
-import axios from "axios"
 import { useCallback } from "react"
-import { ChainNameById } from "constants/chains"
+import { useAPI } from "api"
 
 function useTokenRating() {
-  return useCallback(async (chainId, tokenAddress) => {
-    const price = await axios.get(
-      `https://api-staging.kattana.trade/tokens/${ChainNameById[chainId]}/${tokenAddress}/score`
-    )
+  const { TokenAPI } = useAPI()
 
-    if (price && price.data.points) {
-      return price.data.points
-    } else {
-      return 0
-    }
-  }, [])
+  return useCallback(
+    async (chainId, tokenAddress) => {
+      const price = await TokenAPI.getTokenScore(chainId, tokenAddress)
+
+      if (price && price.points) {
+        return price.points
+      } else {
+        return 0
+      }
+    },
+    [TokenAPI]
+  )
 }
 
 export default useTokenRating

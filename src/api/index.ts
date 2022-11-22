@@ -1,5 +1,5 @@
 import { Moralis } from "./nft"
-import { TreasuryAPI } from "./kattana"
+import { Kattana } from "./token"
 
 export * from "./useAPI"
 
@@ -7,8 +7,8 @@ const api = {
   nft: {
     Moralis: new Moralis(),
   },
-  kattana: {
-    Treasury: new TreasuryAPI(),
+  token: {
+    Kattana: new Kattana(),
   },
 }
 
