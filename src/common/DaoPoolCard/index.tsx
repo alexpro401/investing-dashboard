@@ -11,6 +11,7 @@ import useGovPoolIpfsData from "hooks/dao/useGovPoolIpfsData"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
 import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
 import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
+import { isNil } from "lodash"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   data: IGovPoolQuery
@@ -26,28 +27,29 @@ const DaoPoolCard: React.FC<Props> = ({
   children,
   ...rest
 }) => {
-  const { id } = data
+  const id = React.useMemo(() => data?.id ?? "", [data])
 
   const [ipfs] = useGovPoolIpfsData(id)
   const [assetsExisting, assets] = useGovPoolVotingAssets(id)
-  const [{ tvl, mc_tvl, members, lau }] = useGovPoolStatistic(id)
+  const [{ tvl, mc_tvl, members, lau }] = useGovPoolStatistic(data)
   const [userVotingPower] = useGovPoolUserVotingPower({
     daoAddress: id,
     address: account,
   })
 
-  const poolName = React.useMemo(
-    () =>
-      String(data.name).length > 20
-        ? String(data.name).slice(0, 18) + "..."
-        : data.name ?? "",
-    [data]
-  )
+  const poolName = React.useMemo(() => {
+    if (isNil(data)) return ""
+
+    return String(data.name).length > 20
+      ? String(data.name).slice(0, 18) + "..."
+      : data.name ?? ""
+  }, [data])
 
   const poolAssets = React.useMemo(() => {
-    let subTitle = ""
+    let subTitle = " "
+
     if (assetsExisting.haveToken) {
-      subTitle += `${assets.token?.symbol} `
+      subTitle = `${assets.token?.symbol} `
     }
     if (assetsExisting.haveNft) {
       if (subTitle.length === 0) {
@@ -57,7 +59,7 @@ const DaoPoolCard: React.FC<Props> = ({
     }
 
     return subTitle
-  }, [data])
+  }, [assetsExisting, assets])
 
   return (
     <S.Animation index={index}>
@@ -67,7 +69,7 @@ const DaoPoolCard: React.FC<Props> = ({
             <Icon
               size={38}
               m="0 8px 0 0"
-              address={data.id}
+              address={data?.id}
               source={ipfs?.avatarUrl ?? ""}
             />
             <Flex dir="column" ai="flex-start" gap="4">

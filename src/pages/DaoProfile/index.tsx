@@ -28,7 +28,14 @@ import { selectDexeAddress } from "state/contracts/selectors"
 import Tabs from "common/Tabs"
 import { Center, Flex } from "theme"
 import { useGovPoolContract } from "contracts"
-import { selectGovPoolByAddress } from "state/govPools/selectors"
+
+import { createClient, useQuery } from "urql"
+import { GovPoolQuery } from "queries"
+import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
+
+const govPoolsClient = createClient({
+  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
+})
 
 const FakeTokensData = (dexeAddress) => [
   {
@@ -141,7 +148,13 @@ const DaoProfile: React.FC = () => {
   const { account, chainId } = useWeb3React()
   const { daoAddress } = useParams()
   const dexeAddress = useSelector(selectDexeAddress)
-  const govPoolQuery = useSelector((s) => selectGovPoolByAddress(s, daoAddress))
+
+  const [govPoolQuery] = useQuery<{ daoPool: IGovPoolQuery }>({
+    query: GovPoolQuery,
+    variables: useMemo(() => ({ address: daoAddress }), [daoAddress]),
+    context: govPoolsClient,
+  })
+
   const govPoolContract = useGovPoolContract(daoAddress)
 
   const isValidator = true
@@ -262,7 +275,7 @@ const DaoProfile: React.FC = () => {
               isValidator={isValidator}
               handleOpenCreateProposalModal={handleOpenCreateProposalModal}
               account={account}
-              govPoolQuery={govPoolQuery}
+              govPoolQuery={govPoolQuery.data?.daoPool}
             />
             <S.Indents top side={false}>
               <DaoProfileChart chart={chart} setChart={setChart} />
