@@ -1,4 +1,5 @@
-const ROOT = ""
+const ROOT =
+  "https://raw.githubusercontent.com/dexe-network/investing-dashboard/master/public"
 
 const DEXE_DEFAULT = `${ROOT}/lists/dexe-default.tokenlist.json`
 const DEXE_WHITELIST = `${ROOT}/lists/dexe-whitelist.tokenlist.json`
