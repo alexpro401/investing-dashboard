@@ -73,7 +73,8 @@ export function useERC721Contract(address: Address) {
 export function useContractsRegistryContract() {
   return useContract<ContractsRegistry>(
     process.env.REACT_APP_CONTRACTS_REGISTRY_ADDRESS,
-    ContractsRegistry_ABI
+    ContractsRegistry_ABI,
+    true
   )
 }
 
@@ -109,14 +110,16 @@ export function usePoolFactoryContract() {
 export function usePoolRegistryContract() {
   return useContract<PoolRegistry>(
     useSelector(selectPoolRegistryAddress),
-    PoolRegistry_ABI
+    PoolRegistry_ABI,
+    true
   )
 }
 
 export function usePriceFeedContract() {
   return useContract<PriceFeed>(
     useSelector(selectPriceFeedAddress),
-    PriceFeed_ABI
+    PriceFeed_ABI,
+    true
   )
 }
 

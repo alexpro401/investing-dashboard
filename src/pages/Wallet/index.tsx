@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 import { Navigate, useNavigate } from "react-router-dom"
 import { useWeb3React } from "@web3-react/core"
-import { useSelector } from "react-redux"
 import { PulseSpinner } from "react-spinners-kit"
 
 import Avatar from "components/Avatar"
@@ -10,10 +9,7 @@ import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
 import TransactionHistory from "components/TransactionHistory"
 
-import { Insurance } from "abi"
-import { selectInsuranceAddress } from "state/contracts/selectors"
-import useContract from "hooks/useContract"
-import { useUserRegistryContract } from "contracts"
+import { useInsuranceContract, useUserRegistryContract } from "contracts"
 import useCopyClipboard from "hooks/useCopyClipboard"
 
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
@@ -188,13 +184,16 @@ export default function Wallet() {
 
   const [insuranceAmount, setInsuranceAmount] = useState(ZERO)
 
-  const insuranceAddress = useSelector(selectInsuranceAddress)
-  const insurance = useContract(insuranceAddress, Insurance)
+  const insurance = useInsuranceContract()
 
   const [txHistoryOpen, setTxHistoryOpen] = useState<boolean>(false)
 
   const fetchInsuranceBalance = useCallback(async () => {
+    if (!account) return
+
     const userInsurance = await insurance?.getInsurance(account)
+
+    if (!userInsurance) return
     setInsuranceAmount(userInsurance[1])
   }, [account, insurance])
 

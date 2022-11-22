@@ -1,14 +1,11 @@
 import { useState, useEffect, useCallback } from "react"
 import { useSelector } from "react-redux"
 import { useWeb3React } from "@web3-react/core"
-import { Insurance, PriceFeed } from "abi"
 
 import { useERC20 } from "hooks/useERC20"
-import useContract from "hooks/useContract"
 import {
   selectDexeAddress,
   selectInsuranceAddress,
-  selectPriceFeedAddress,
 } from "state/contracts/selectors"
 
 import { divideBignumbers } from "utils/formulas"
@@ -26,6 +23,7 @@ import { SubmitState, SwapDirection } from "constants/types"
 
 import { getAllowance, parseTransactionError, isTxMined } from "utils"
 import { BigNumber } from "@ethersproject/bignumber"
+import { useInsuranceContract, usePriceFeedContract } from "contracts"
 
 const useInsuranceManagement = () => {
   const { account, library } = useWeb3React()
@@ -46,12 +44,11 @@ const useInsuranceManagement = () => {
   const [isSlippageOpen, setSlippageOpen] = useState(false)
   const [, setLoading] = usePayload()
 
-  const priceFeedAddress = useSelector(selectPriceFeedAddress)
   const insuranceAddress = useSelector(selectInsuranceAddress)
   const dexeAddress = useSelector(selectDexeAddress)
 
-  const priceFeed = useContract(priceFeedAddress, PriceFeed)
-  const insurance = useContract(insuranceAddress, Insurance)
+  const priceFeed = usePriceFeedContract()
+  const insurance = useInsuranceContract()
 
   const [fromToken, , fromBalance, refetchBalance] = useERC20(dexeAddress)
 
@@ -78,7 +75,7 @@ const useInsuranceManagement = () => {
   }, [dexeAddress, insuranceAmount, priceFeed])
 
   const fetchInsuranceBalance = useCallback(async () => {
-    if (!insurance) return
+    if (!insurance || !account) return
 
     const userInsurance = await insurance.getInsurance(account)
     setStakeAmount(userInsurance[0])
@@ -198,6 +195,8 @@ const useInsuranceManagement = () => {
           dexeAddress,
           amount
         )
+
+        if (!price) return
         setInPrice(price[0])
       }
 
@@ -220,6 +219,8 @@ const useInsuranceManagement = () => {
           dexeAddress,
           amount
         )
+
+        if (!price) return
         setOutPrice(price[0])
       }
 

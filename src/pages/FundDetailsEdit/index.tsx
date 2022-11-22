@@ -41,9 +41,7 @@ import { arrayDifference } from "utils/array"
 import { getIpfsData, addFundMetadata } from "utils/ipfs"
 import { useUpdateFundContext } from "context/UpdateFundContext"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"
-import useContract from "hooks/useContract"
 import { useAddToast } from "state/application/hooks"
-import { TraderPool } from "abi"
 
 import { useERC20Data } from "state/erc20/hooks"
 import { UpdateListType } from "constants/types"
@@ -51,6 +49,7 @@ import { useUserAgreement } from "state/user/hooks"
 import { addPool } from "state/ipfsMetadata/actions"
 import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
+import { useTraderPoolContract } from "contracts"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -64,7 +63,7 @@ const FundDetailsEdit: FC = () => {
   const [poolData] = usePoolQuery(poolAddress)
   const [, poolInfoData] = usePoolContract(poolAddress)
   const [baseData] = useERC20Data(poolData?.baseToken)
-  const traderPool = useContract(poolData?.id, TraderPool)
+  const traderPool = useTraderPoolContract(poolData?.id)
 
   const {
     loading,

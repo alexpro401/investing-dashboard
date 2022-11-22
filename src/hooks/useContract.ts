@@ -20,11 +20,13 @@ export default function useContract<T extends Contract = Contract>(
 
     if (!library && !provider) return
 
+    const lib = withSignerIfPossible ? provider || library : library || provider
+
     try {
       return getContract(
         address,
         ABI,
-        library || provider,
+        lib,
         withSignerIfPossible && account ? account : undefined
       )
     } catch (error) {

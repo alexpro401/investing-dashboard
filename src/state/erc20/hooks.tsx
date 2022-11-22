@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
-import { ERC20 } from "abi"
 import { isAddress } from "utils"
 import { Token } from "interfaces"
 import { useActiveWeb3React } from "hooks"
-import useContract from "hooks/useContract"
 
 import { addToken } from "state/erc20/actions"
 import { selectERC20Data } from "state/erc20/selectors"
 import { ZERO_ADDR } from "constants/index"
+import { useERC20Contract } from "contracts"
 
 export function useERC20Data(
   address: string | undefined
@@ -20,7 +19,7 @@ export function useERC20Data(
   const [storedAddress, setAddress] = useState("")
   const [loading, setLoading] = useState(true)
 
-  const contract = useContract(storedAddress, ERC20)
+  const contract = useERC20Contract(storedAddress)
   const ERC20Data = useSelector(selectERC20Data(chainId, storedAddress))
 
   const init = useCallback(async () => {
