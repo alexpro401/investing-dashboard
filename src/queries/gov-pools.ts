@@ -38,8 +38,12 @@ const GovPoolQuery = `
 `
 
 const GovPoolsQuery = `
-  query {
-    daoPools(first: 100, orderBy: creationTime, orderDirection: asc) {
+  query($offset: Int!, $limit: Int!, $excludeIds: [String]!) {
+    daoPools(
+    skip: $offset, first: $limit, 
+    orderBy: creationTime, orderDirection: asc, 
+    where: { id_not_in: $excludeIds }
+  ) {
       ${POOL}
     }
   }

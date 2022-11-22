@@ -67,8 +67,8 @@ const DaoPoolCard: React.FC<Props> = ({
             <Icon
               size={38}
               m="0 8px 0 0"
-              source={ipfs?.avatarUrl ?? ""}
               address={data.id}
+              source={ipfs?.avatarUrl ?? ""}
             />
             <Flex dir="column" ai="flex-start" gap="4">
               <S.DaoPoolCardTitle>{poolName}</S.DaoPoolCardTitle>
@@ -129,4 +129,4 @@ const DaoPoolCard: React.FC<Props> = ({
   )
 }
 
-export default DaoPoolCard
+export default React.memo(DaoPoolCard)

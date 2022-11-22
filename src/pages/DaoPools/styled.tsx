@@ -42,6 +42,7 @@ export const Action = styled(AppButton).attrs(() => ({
 `
 
 const centerGridItem = css`
+  display: flex;
   justify-content: center;
   align-content: center;
 `
@@ -59,9 +60,6 @@ export const List = {
     gap: 19px;
   `,
   Scroll: styled.div<{ center: boolean }>`
-    display: grid;
-    grid-template-rows: max-content;
-    grid-gap: 16px;
     overflow-y: auto;
     padding: 0 0 16px;
 
