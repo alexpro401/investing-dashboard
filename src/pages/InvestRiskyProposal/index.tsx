@@ -2,12 +2,13 @@ import { Flex } from "theme"
 import { useCallback, useMemo } from "react"
 import { useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
+import { BigNumber } from "@ethersproject/bignumber"
 
 import IconButton from "components/IconButton"
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import RiskyInvestInput from "components/Exchange/RiskyInvestInput"
 import ExchangeDivider from "components/Exchange/Divider"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 import CircularProgress from "components/CircularProgress"
 import TransactionSlippage from "components/TransactionSlippage"
 import Header from "components/Header/Layout"
@@ -71,34 +72,52 @@ function InvestRiskyProposal() {
   const button = useMemo(() => {
     if (fromAmount === "0" || toAmount === "0") {
       return (
-        <SecondaryButton
-          theme="disabled"
+        <AppButton
+          disabled
           size="large"
+          color="secondary"
           onClick={onSubmit}
-          fz={22}
+          text="Enter amount to swap"
           full
-        >
-          Enter amount to swap
-        </SecondaryButton>
+        />
+      )
+    }
+
+    if (
+      BigNumber.from(formWithDirection.from.amount).gt(
+        BigNumber.from(formWithDirection.from.balance)
+      )
+    ) {
+      return (
+        <AppButton
+          disabled
+          size="large"
+          color="secondary"
+          onClick={onSubmit}
+          text="Inuficient balance"
+          full
+        />
       )
     }
 
     return (
-      <Button
+      <AppButton
         size="large"
-        theme={direction === "deposit" ? "primary" : "warn"}
+        color={direction === "deposit" ? "primary" : "error"}
+        text={
+          direction === "deposit"
+            ? `Stake ${formWithDirection.to.symbol}`
+            : `Unstake ${formWithDirection.from.symbol}`
+        }
         onClick={onSubmit}
-        fz={22}
         full
-      >
-        {direction === "deposit"
-          ? `Stake ${formWithDirection.to.symbol}`
-          : `Unstake ${formWithDirection.from.symbol}`}
-      </Button>
+      />
     )
   }, [
     direction,
     formWithDirection.from.symbol,
+    formWithDirection.from.amount,
+    formWithDirection.from.balance,
     formWithDirection.to.symbol,
     fromAmount,
     toAmount,

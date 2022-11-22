@@ -5,7 +5,7 @@ import { createClient, Provider as GraphProvider } from "urql"
 import Modal from "components/Modal"
 import Token from "components/Token"
 
-import Button from "components/Button"
+import { AppButton } from "common"
 import {
   InfoRow,
   InfoGrey,
@@ -130,16 +130,13 @@ const RequestDividend: FC<Props> = ({ isOpen, onClose, params }) => {
         >
           {withdrawsList}
         </InfoDropdown>
-        <Button
-          m="10px 0 0"
-          size="large"
-          theme="primary"
+        <AppButton
+          size="medium"
+          color="primary"
           onClick={handleSubmit}
-          fz={22}
           full
-        >
-          Confirm withdraw
-        </Button>
+          text="Confirm withdraw"
+        />
       </S.Body>
     </Modal>
   )

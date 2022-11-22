@@ -1,6 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber"
 import { ZERO } from "constants/index"
-import { useProposalAddress } from "hooks/useContract"
+import useProposalAddress from "hooks/useProposalAddress"
 import useInvestProposalData from "hooks/useInvestProposalData"
 import { FC, useEffect, useState } from "react"
 import { normalizeBigNumber } from "utils"

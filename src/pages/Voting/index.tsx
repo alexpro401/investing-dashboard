@@ -11,7 +11,7 @@ import {
   Container,
   Amount,
   BtnContainer,
-  ButtonsConteiner,
+  ButtonsContainer,
 } from "./styled"
 import VotingCard from "components/cards/Voting"
 import VotingCardInsuranceHead from "components/cards/Voting/VotingCardInsuranceHead"
@@ -19,7 +19,7 @@ import VotingCardInsuranceHead from "components/cards/Voting/VotingCardInsurance
 import Icon from "components/Icon"
 import Confirm from "components/Confirm"
 import LoadMore from "components/LoadMore"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 
 import { SubmitState } from "constants/types"
 import TransactionSent from "modals/TransactionSent"
@@ -103,10 +103,15 @@ const Voting: FC<Props> = ({ data, loading, fetchMore }) => {
         isOpen={successState}
         toggle={() => setSuccessState(false)}
       >
-        <ButtonsConteiner>
-          <SecondaryButton size="big">Go to disscuss</SecondaryButton>
-          <Button size="big">Close</Button>
-        </ButtonsConteiner>
+        <ButtonsContainer>
+          <AppButton
+            full
+            size="small"
+            text="Go to disscuss"
+            color="secondary"
+          />
+          <AppButton full size="small" text="Close" color="primary" />
+        </ButtonsContainer>
       </TransactionSent>
 
       <Confirm
@@ -125,9 +130,13 @@ const Voting: FC<Props> = ({ data, loading, fetchMore }) => {
           </Container>
         </VoicePoverContainer>
         <BtnContainer>
-          <Button onClick={handleVote} full size="big">
-            {confirmStates[votingState]?.button}
-          </Button>
+          <AppButton
+            onClick={handleVote}
+            full
+            size="medium"
+            color="primary"
+            text={confirmStates[votingState]?.button}
+          />
         </BtnContainer>
       </Confirm>
     </>

@@ -114,3 +114,9 @@ export const ButtonContainer = styled.div`
   grid-gap: 16px;
   width: 100%;
 `
+
+export const Divider = styled.div`
+  height: 1px;
+  width: 100%;
+  background: #20293a;
+`

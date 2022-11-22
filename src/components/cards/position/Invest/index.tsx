@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState, MouseEvent } from "react"
-import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { parseEther, parseUnits } from "@ethersproject/units"
@@ -7,10 +6,8 @@ import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { createClient, Provider as GraphProvider } from "urql"
 import { format } from "date-fns/esm"
 
-import { PriceFeed } from "abi"
 import { ZERO } from "constants/index"
 import { useActiveWeb3React } from "hooks"
-import useContract from "hooks/useContract"
 import { DATE_FORMAT } from "constants/time"
 import usePoolPrice from "hooks/usePoolPrice"
 import { useERC20Data } from "state/erc20/hooks"
@@ -22,8 +19,7 @@ import {
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { usePoolContract } from "hooks/usePool"
-import { useTraderPoolContract } from "contracts"
-import { selectPriceFeedAddress } from "state/contracts/selectors"
+import { usePriceFeedContract, useTraderPoolContract } from "contracts"
 import { IInvestorProposal } from "interfaces/thegraphs/invest-pools"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 
@@ -52,8 +48,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   const [, poolInfo] = usePoolContract(position.pool.id)
   const [{ priceUSD }] = usePoolPrice(position.pool.id)
   const [baseToken] = useERC20Data(position.pool.token)
-  const priceFeedAddress = useSelector(selectPriceFeedAddress)
-  const priceFeed = useContract(priceFeedAddress, PriceFeed)
+  const priceFeed = usePriceFeedContract()
 
   const [{ poolMetadata }] = usePoolMetadata(
     position.pool.id,
@@ -69,7 +64,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   const markPriceOpenUSD = useTokenPriceOutUSD({
     tokenAddress: position.pool.token,
   })
-  const [pnlUSDCurrent, setPnlUSDCurrent] = useState<BigNumber>(ZERO)
+  const [, setPnlUSDCurrent] = useState<BigNumber>(ZERO)
   const [commissionUnlockTimestamp, setCommissionUnlockTimestamp] =
     useState<BigNumber>(ZERO)
 

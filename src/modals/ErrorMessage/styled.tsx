@@ -15,6 +15,7 @@ export const Text = styled.div`
   line-height: 17px;
   text-align: center;
   letter-spacing: 0.03em;
+  padding: 0 0 16px;
 
   color: #e4f2ff;
 `
