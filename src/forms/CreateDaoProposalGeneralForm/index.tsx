@@ -20,7 +20,8 @@ import { readFromClipboard } from "utils/clipboard"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { CreateDaoCardStepNumber } from "common"
-import TransactionSent from "modals/TransactionSent"
+
+import { CreatingProposalSuccessModal } from "common/GovProposal"
 
 import * as S from "./styled"
 
@@ -43,7 +44,6 @@ const CreateDaoProposalGeneralForm: React.FC<
     proposalTypeDescription,
     proposalDescription,
     proposalName,
-    successModalState,
   } = useContext(GovProposalCreatingContext)
 
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
@@ -108,23 +108,7 @@ const CreateDaoProposalGeneralForm: React.FC<
 
   return (
     <>
-      <TransactionSent
-        isOpen={successModalState.opened}
-        toggle={() => {
-          successModalState.onClick()
-        }}
-        title={successModalState.title}
-        description={successModalState.text}
-      >
-        <S.SuccessModalButton
-          onClick={() => {
-            successModalState.onClick()
-          }}
-          text={successModalState.buttonText}
-          type="button"
-          size="large"
-        />
-      </TransactionSent>
+      <CreatingProposalSuccessModal />
       <S.StepsRoot>
         <Card>
           <CardHead

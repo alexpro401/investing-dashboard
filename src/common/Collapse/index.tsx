@@ -1,10 +1,11 @@
+import React, { FC, HTMLAttributes, useMemo } from "react"
 import { AnimatePresence, motion, MotionProps } from "framer-motion"
-import { FC, HTMLAttributes, useMemo } from "react"
 import { v4 as uuidv4 } from "uuid"
 
 type Props = {
   isOpen: boolean
   duration?: number
+  cRef?: React.Ref<HTMLDivElement>
 } & HTMLAttributes<HTMLDivElement> &
   MotionProps
 
@@ -12,6 +13,7 @@ const Collapse: FC<Props> = ({
   isOpen,
   duration = 0.15,
   children,
+  cRef,
   ...rest
 }) => {
   const uid = useMemo(() => uuidv4(), [])
@@ -29,6 +31,7 @@ const Collapse: FC<Props> = ({
             collapsed: { opacity: 0, height: 0 },
           }}
           transition={{ duration: duration }}
+          ref={cRef ?? undefined}
           {...rest}
         >
           {children}
