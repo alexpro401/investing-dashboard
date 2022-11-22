@@ -2,12 +2,13 @@ import { createSelector } from "@reduxjs/toolkit"
 import { filter } from "lodash"
 
 import { AppState } from "state"
+import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 
 const selectGovPoolsState = (state: AppState) => state.govPools
 
 export const selectGovPools = createSelector(
   [selectGovPoolsState],
-  (govPools) => govPools.data || {}
+  (govPools) => (govPools.data || {}) as Record<string, IGovPoolQuery>
 )
 
 export const selectGovPoolsByNameSubstring = createSelector(
@@ -16,10 +17,10 @@ export const selectGovPoolsByNameSubstring = createSelector(
     filter(
       govPools,
       (pool) =>
-        String(pool.name).includes(query) ||
-        String(pool.name).toLocaleLowerCase().includes(query) ||
-        String(pool.name).includes(String(query).toLocaleLowerCase()) ||
         String(pool.name)
+          .toLocaleLowerCase()
+          .includes(String(query).toLocaleLowerCase()) ||
+        String(pool.id)
           .toLocaleLowerCase()
           .includes(String(query).toLocaleLowerCase())
     )
