@@ -7,7 +7,7 @@ import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
 import ExchangeDivider from "components/Exchange/Divider"
 import CircularProgress from "components/CircularProgress"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import TransactionSlippage from "components/TransactionSlippage"
 
@@ -47,22 +47,37 @@ function InvestInvestmentProposal() {
   const button = useMemo(() => {
     if (fromAmount.isZero() || toAmount.isZero()) {
       return (
-        <SecondaryButton
-          theme="disabled"
+        <AppButton
+          disabled
           size="large"
-          onClick={handleSubmit}
-          fz={22}
+          color="secondary"
+          text="Enter amount to swap"
+          onClick={() => {}}
           full
-        >
-          Enter amount to swap
-        </SecondaryButton>
+        />
+      )
+    }
+
+    if (formData.from.balance.lt(formData.from.amount)) {
+      return (
+        <AppButton
+          disabled
+          size="large"
+          color="secondary"
+          full
+          text="Insufficient balance"
+        />
       )
     }
 
     return (
-      <Button size="large" theme="primary" onClick={handleSubmit} fz={22} full>
-        {`Stake ${formData.to.symbol}`}
-      </Button>
+      <AppButton
+        size="large"
+        color="primary"
+        onClick={handleSubmit}
+        full
+        text={`Stake ${formData.to.symbol}`}
+      />
     )
   }, [formData.to.symbol, fromAmount, handleSubmit, toAmount])
 

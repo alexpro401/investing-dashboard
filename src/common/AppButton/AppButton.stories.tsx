@@ -37,7 +37,9 @@ const List = styled(Flex)`
     flex-direction: column;
 `
 
-const Button = styled(AppButton)`
+const Button = styled(AppButton).attrs(() => ({
+    full: true,
+}))`
     width: fill-available;
 `
 

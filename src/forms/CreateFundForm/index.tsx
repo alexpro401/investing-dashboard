@@ -5,7 +5,7 @@ import { useWeb3React } from "@web3-react/core"
 import { useSelector } from "react-redux"
 import { PulseSpinner } from "react-spinners-kit"
 
-import Button from "components/Button"
+import { AppButton } from "common"
 import Avatar from "components/Avatar"
 import AddressChips from "components/AddressChips"
 import Input from "components/Input"
@@ -601,17 +601,18 @@ const CreateFund: FC<Props> = ({ presettedFundType = "basic" }) => {
           </Step>
         </Steps>
         <Flex full p="0 16px 42px">
-          <Button
+          <AppButton
             full
-            size="large"
             onClick={() => (agreed ? handleSubmit() : setShowAgreement(true))}
-          >
-            {stepsFormating ? (
-              <PulseSpinner color="#34455F" size={20} loading />
-            ) : (
-              "Create fund"
-            )}
-          </Button>
+            text="Create fund"
+            size="large"
+            color="primary"
+            iconRight={
+              stepsFormating && (
+                <PulseSpinner color="#34455F" size={12} loading />
+              )
+            }
+          />
         </Flex>
       </Body>
     </>

@@ -8,7 +8,7 @@ import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { Flex } from "theme"
 import Icon from "components/Icon"
 import Amount from "components/Amount"
-import Button from "components/Button"
+import { AppButton } from "common"
 import Switch from "components/Switch"
 import Tooltip from "components/Tooltip"
 import Accordion from "components/Accordion"
@@ -201,9 +201,13 @@ const FundDetailsFee: FC = () => {
           </S.OptimizeWithdrawal>
 
           <Flex full m="24px 0 0">
-            <Button onClick={onSubmit} full size="large">
-              Request Performance Fee
-            </Button>
+            <AppButton
+              onClick={onSubmit}
+              full
+              size="large"
+              color="primary"
+              text="Request Performance Fee"
+            />
           </Flex>
         </S.MainCard>
 

@@ -20,7 +20,7 @@ import {
 } from "./styled"
 import { Flex } from "theme"
 import SwitchRow, { InputText } from "components/SwitchRow"
-import Button from "components/Button"
+import { AppButton } from "common"
 import Avatar from "components/Avatar"
 import TextArea from "components/TextArea"
 import Input from "components/Input"
@@ -678,17 +678,18 @@ const FundDetailsEdit: FC = () => {
           </Step>
         </Steps>
         <Flex full p="0 16px 61px">
-          <Button
+          <AppButton
             full
             size="large"
+            color="primary"
             onClick={() => (agreed ? handleSubmit() : setShowAgreement(true))}
-          >
-            {stepsFormating ? (
-              <PulseSpinner color="#34455F" size={20} loading />
-            ) : (
-              "Confirm changes"
-            )}
-          </Button>
+            text="Confirm changes"
+            iconRight={
+              stepsFormating && (
+                <PulseSpinner color="#34455F" size={15} loading />
+              )
+            }
+          />
         </Flex>
       </Container>
     </>

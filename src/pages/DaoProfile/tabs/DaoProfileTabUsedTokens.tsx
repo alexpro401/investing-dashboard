@@ -14,7 +14,7 @@ import {
 import { DaoProfileValueWithActionCard } from "../components"
 
 import Table from "components/Table"
-import Button from "components/Button"
+import { AppButton } from "common"
 import usersImageUrl from "assets/images/users.svg"
 
 import { shortenAddress } from "utils"
@@ -124,13 +124,13 @@ const DaoProfileTabUsedTokens: React.FC<Props> = ({ data, chainId }) => {
         </Card>
       </Indents>
       <Indents top side={false}>
-        <Button
+        <AppButton
           full
-          size="big"
+          size="medium"
+          color="primary"
           onClick={() => alert("Redirect to delegating terminal")}
-        >
-          Delegate to address
-        </Button>
+          text="Delegate to address"
+        />
       </Indents>
     </>
   )

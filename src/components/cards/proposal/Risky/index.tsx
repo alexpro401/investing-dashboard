@@ -31,7 +31,7 @@ import Tooltip from "components/Tooltip"
 import TokenIcon from "components/TokenIcon"
 import IconButton from "components/IconButton"
 import ExternalLink from "components/ExternalLink"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 
 import S, { TraderRating, TraderLPSize, TraderInfoBadge } from "./styled"
 import RiskyCardSettings from "./Settings"
@@ -418,16 +418,6 @@ const RiskyProposalCard: FC<Props> = ({
     }
   }
 
-  const InvestButton = canInvest ? (
-    <Button full size="small" br="12px" onClick={onInvest}>
-      {isTrader ? "Terminal" : "Stake LP"}
-    </Button>
-  ) : (
-    <SecondaryButton full size="small" br="12px">
-      {isTrader ? "Terminal" : "Stake LP"}
-    </SecondaryButton>
-  )
-
   return (
     <>
       <SharedS.Card>
@@ -545,7 +535,16 @@ const RiskyProposalCard: FC<Props> = ({
             label={`Position size (${proposalSymbol})`}
             amount={positionSize}
           />
-          <Flex full>{InvestButton}</Flex>
+          <Flex full>
+            <AppButton
+              full
+              text={isTrader ? "Terminal" : "Stake LP"}
+              onClick={() => onInvest}
+              size="x-small"
+              disabled={!canInvest}
+              color={canInvest ? "primary" : "secondary"}
+            />
+          </Flex>
         </SharedS.Body>
 
         {!isTrader && (

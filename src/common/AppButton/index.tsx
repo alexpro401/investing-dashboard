@@ -34,6 +34,7 @@ type Props<R extends string, H extends string> = {
   href?: H
   routePath?: R
   disabled?: boolean
+  full?: boolean
 } & (R extends string
   ? Omit<LinkProps, "to">
   : H extends string
@@ -52,6 +53,7 @@ const AppButton = <R extends string, H extends string>({
   href,
   routePath,
   disabled,
+  full,
   children,
   ...rest
 }: Props<R, H>) => {
@@ -130,6 +132,7 @@ const AppButton = <R extends string, H extends string>({
 
   return (
     <S.ButtonType
+      full={full}
       scheme={scheme}
       modifications={btnModifications}
       states={btnStates}

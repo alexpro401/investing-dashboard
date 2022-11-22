@@ -5,7 +5,7 @@ import { GuardSpinner } from "react-spinners-kit"
 
 import Header from "components/Header/Layout"
 import Icon from "components/Icon"
-import Button from "components/Button"
+import { AppButton } from "common"
 
 import { useTraderPoolContract, usePoolRegistryContract } from "contracts"
 import { PoolType } from "constants/types"
@@ -149,9 +149,13 @@ const Success: FC<SuccessProps> = () => {
           </BottomSideContent>
 
           <ButtonsContainer>
-            <Button onClick={handleDepositRedirect} size="large" full>
-              Deposit funds
-            </Button>
+            <AppButton
+              onClick={handleDepositRedirect}
+              size="large"
+              color="primary"
+              full
+              text="Deposit funds"
+            />
           </ButtonsContainer>
         </Body>
       </SuccessContainer>
