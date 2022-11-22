@@ -88,8 +88,6 @@ export const useGovPoolCreateProposal = (
         if (!descriptionUrl)
           throw new Error("uploaded ipfs proposal description has no path")
 
-        console.log("data: ", JSON.stringify(data))
-
         const gasLimit = await tryEstimateGas(
           descriptionUrl,
           executors,
