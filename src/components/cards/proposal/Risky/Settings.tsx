@@ -19,7 +19,7 @@ import { expandTimestamp, isTxMined, normalizeBigNumber } from "utils"
 import Input from "components/Input"
 import Tooltip from "components/Tooltip"
 import DatePicker from "components/DatePicker"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 
 import { Flex } from "theme"
 import { accordionSummaryVariants } from "motion/variants"
@@ -310,18 +310,23 @@ const RiskyCardSettings: FC<Props> = ({
         </Flex>
       </div>
       <S.ButtonGroup>
-        <SecondaryButton full size="small" onClick={handleCancel}>
-          Сancel
-        </SecondaryButton>
-        {isSubmiting ? (
-          <SecondaryButton full size="small">
-            Apply changes
-          </SecondaryButton>
-        ) : (
-          <Button full size="small" onClick={handleSubmit}>
-            Apply changes
-          </Button>
-        )}
+        <AppButton
+          full
+          color="secondary"
+          type="button"
+          size="x-small"
+          text="Cancel"
+          onClick={() => handleCancel()}
+        />
+        <AppButton
+          full
+          color="primary"
+          type="button"
+          size="x-small"
+          text="Apply changes"
+          onClick={() => handleSubmit()}
+          disabled={isSubmiting}
+        />
       </S.ButtonGroup>
     </S.Container>
   )

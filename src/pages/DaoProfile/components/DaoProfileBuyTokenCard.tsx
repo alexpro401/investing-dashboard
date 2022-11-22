@@ -6,7 +6,7 @@ import { Flex } from "theme"
 import { Card, Icon } from "common"
 import { TextLabel, TextValue } from "../styled"
 
-import Button from "components/Button"
+import { AppButton } from "common"
 import TokenIcon from "components/TokenIcon"
 import ProgressLine from "components/ProgressLine"
 
@@ -65,13 +65,12 @@ const DaoProfileBuyTokenCard: FC<Props> = ({ total, available }) => {
           <TextLabel fw={400}>Available to buy</TextLabel>
         </Flex>
       </Flex>
-      <Button
+      <AppButton
+        text="Buy 111PG token"
+        size="small"
         full
-        fz={13}
         onClick={() => alert("Redirect to 'Buy DAO token' terminal 🤑")}
-      >
-        Buy 111PG token
-      </Button>
+      />
     </Card>
   )
 }

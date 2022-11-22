@@ -36,7 +36,7 @@ import { DATE_TIME_FORMAT } from "constants/time"
 import { format } from "date-fns"
 import { useInvestProposalWithdraws } from "hooks/useInvestProposalData"
 import { useERC20Data } from "state/erc20/hooks"
-import { useProposalAddress } from "hooks/useContract"
+import useProposalAddress from "hooks/useProposalAddress"
 
 interface WithdrawInfo {
   tvl: {

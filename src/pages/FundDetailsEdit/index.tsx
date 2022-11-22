@@ -20,7 +20,7 @@ import {
 } from "./styled"
 import { Flex } from "theme"
 import SwitchRow, { InputText } from "components/SwitchRow"
-import Button from "components/Button"
+import { AppButton } from "common"
 import Avatar from "components/Avatar"
 import TextArea from "components/TextArea"
 import Input from "components/Input"
@@ -41,9 +41,7 @@ import { arrayDifference } from "utils/array"
 import { getIpfsData, addFundMetadata } from "utils/ipfs"
 import { useUpdateFundContext } from "context/UpdateFundContext"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"
-import useContract from "hooks/useContract"
 import { useAddToast } from "state/application/hooks"
-import { TraderPool } from "abi"
 
 import { useERC20Data } from "state/erc20/hooks"
 import { UpdateListType } from "constants/types"
@@ -51,6 +49,7 @@ import { useUserAgreement } from "state/user/hooks"
 import { addPool } from "state/ipfsMetadata/actions"
 import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
+import { useTraderPoolContract } from "contracts"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -64,7 +63,7 @@ const FundDetailsEdit: FC = () => {
   const [poolData] = usePoolQuery(poolAddress)
   const [, poolInfoData] = usePoolContract(poolAddress)
   const [baseData] = useERC20Data(poolData?.baseToken)
-  const traderPool = useContract(poolData?.id, TraderPool)
+  const traderPool = useTraderPoolContract(poolData?.id)
 
   const {
     loading,
@@ -678,17 +677,18 @@ const FundDetailsEdit: FC = () => {
           </Step>
         </Steps>
         <Flex full p="0 16px 61px">
-          <Button
+          <AppButton
             full
             size="large"
+            color="primary"
             onClick={() => (agreed ? handleSubmit() : setShowAgreement(true))}
-          >
-            {stepsFormating ? (
-              <PulseSpinner color="#34455F" size={20} loading />
-            ) : (
-              "Confirm changes"
-            )}
-          </Button>
+            text="Confirm changes"
+            iconRight={
+              stepsFormating && (
+                <PulseSpinner color="#34455F" size={15} loading />
+              )
+            }
+          />
         </Flex>
       </Container>
     </>

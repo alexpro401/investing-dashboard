@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { Flex } from "theme"
 
 export const Body = styled.div`
   margin: 0 auto;
@@ -73,13 +74,14 @@ export const Amount = styled.div`
   transform: translateY(2px);
 `
 
-export const BtnContainer = styled.div`
+export const BtnContainer = styled(Flex)`
   width: fill-available;
   padding: 0 44px;
   box-sizing: border-box;
 `
 
-export const ButtonsConteiner = styled.div`
+export const ButtonsContainer = styled.div`
+  gap: 8px;
   width: fill-available;
   display: flex;
   justify-content: space-between;

@@ -13,7 +13,7 @@ import { ICON_NAMES } from "constants/icon-names"
 import ExternalLink from "components/ExternalLink"
 import IconButton from "components/IconButton"
 import DividendsInput from "components/Exchange/DividendsInput"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 import CircularProgress from "components/CircularProgress"
 import Header from "components/Header/Layout"
 import TokenSelect from "modals/TokenSelect"
@@ -97,9 +97,13 @@ function PayDividends() {
 
     if (inufficientTokens.length) {
       return (
-        <SecondaryButton theme="disabled" size="large" fz={22} full>
-          insufficient balance
-        </SecondaryButton>
+        <AppButton
+          disabled
+          size="large"
+          full
+          text="insufficient balance"
+          color="secondary"
+        />
       )
     }
 
@@ -109,19 +113,14 @@ function PayDividends() {
 
     if (lockedTokens.length) {
       return (
-        <SecondaryButton
+        <AppButton
           size="large"
+          color="secondary"
           onClick={() => updateAllowance(lockedTokens[0].data.address)}
-          fz={22}
+          text={`Unlock Token ${lockedTokens[0].data.symbol}`}
           full
-        >
-          <Flex>
-            <Flex ai="center">Unlock Token {lockedTokens[0].data.symbol}</Flex>
-            <Flex m="-3px 0 0 4px">
-              <Icon name={ICON_NAMES.locked} />
-            </Flex>
-          </Flex>
-        </SecondaryButton>
+          iconRight={ICON_NAMES.locked}
+        />
       )
     }
 
@@ -130,16 +129,24 @@ function PayDividends() {
 
     if (disabled) {
       return (
-        <SecondaryButton theme="disabled" size="large" fz={22} full>
-          Enter amount
-        </SecondaryButton>
+        <AppButton
+          disabled
+          size="large"
+          color="secondary"
+          full
+          text="Enter amount"
+        />
       )
     }
 
     return (
-      <Button size="large" theme="primary" onClick={handleSubmit} fz={22} full>
-        Pay dividends
-      </Button>
+      <AppButton
+        size="large"
+        color="primary"
+        onClick={handleSubmit}
+        full
+        text="Pay dividends"
+      />
     )
   }, [handleSubmit, tokens, updateAllowance])
 

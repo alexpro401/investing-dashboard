@@ -9,7 +9,7 @@ import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
 import ExchangeDivider from "components/Exchange/Divider"
 import CircularProgress from "components/CircularProgress"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 import ExchangeInput from "components/Exchange/ExchangeInput"
 
 import { useUserAgreement } from "state/user/hooks"
@@ -56,36 +56,38 @@ function WithdrawInvestmentProposal() {
   const button = useMemo(() => {
     if (from.amount === "0") {
       return (
-        <SecondaryButton
-          theme="disabled"
+        <AppButton
+          disabled
           size="large"
+          color="secondary"
           onClick={onSubmit}
-          fz={22}
+          text="Enter amount to swap"
           full
-        >
-          Enter amount to swap
-        </SecondaryButton>
+        />
       )
     }
 
     if (BigNumber.from(from.amount).gt(from.balance)) {
       return (
-        <SecondaryButton
-          theme="disabled"
+        <AppButton
+          disabled
           size="large"
+          color="secondary"
           onClick={() => {}}
-          fz={22}
+          text="Inuficient funds"
           full
-        >
-          Inuficient funds
-        </SecondaryButton>
+        />
       )
     }
 
     return (
-      <Button size="large" theme="primary" onClick={onSubmit} fz={22} full>
-        Confirm withdraw
-      </Button>
+      <AppButton
+        size="large"
+        color="primary"
+        onClick={onSubmit}
+        text="Confirm withdraw"
+        full
+      />
     )
   }, [onSubmit, from.amount, from.balance])
 

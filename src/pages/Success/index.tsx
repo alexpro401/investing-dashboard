@@ -5,7 +5,7 @@ import { GuardSpinner } from "react-spinners-kit"
 
 import Header from "components/Header/Layout"
 import Icon from "components/Icon"
-import Button from "components/Button"
+import { AppButton } from "common"
 
 import { useTraderPoolContract, usePoolRegistryContract } from "contracts"
 import { PoolType } from "constants/types"
@@ -40,6 +40,8 @@ import {
   TelegramIcon,
   ButtonsContainer,
 } from "./styled"
+import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
+import { useActiveWeb3React } from "hooks"
 
 interface SuccessProps {}
 
@@ -52,6 +54,7 @@ const CheckList = [
 const Success: FC<SuccessProps> = () => {
   const { poolAddress } = useParams()
   const navigate = useNavigate()
+  const { chainId } = useActiveWeb3React()
 
   const [poolInfo, setPoolInfo] = useState<IPoolInfo | null>(null)
   const [, setPoolType] = useState<PoolType | null>(null)
@@ -112,7 +115,11 @@ const Success: FC<SuccessProps> = () => {
 
           <TopSideContent>
             <AddressContainer
-              href={`https://bscscan.com/address/${poolAddress}`}
+              href={getExplorerLink(
+                chainId || 56,
+                poolAddress,
+                ExplorerDataType.ADDRESS
+              )}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -149,9 +156,13 @@ const Success: FC<SuccessProps> = () => {
           </BottomSideContent>
 
           <ButtonsContainer>
-            <Button onClick={handleDepositRedirect} size="large" full>
-              Deposit funds
-            </Button>
+            <AppButton
+              onClick={handleDepositRedirect}
+              size="large"
+              color="primary"
+              full
+              text="Deposit funds"
+            />
           </ButtonsContainer>
         </Body>
       </SuccessContainer>

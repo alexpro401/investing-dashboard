@@ -1,3 +1,4 @@
+import { useUserRegistryContract } from "contracts"
 import {
   Dispatch,
   SetStateAction,
@@ -8,8 +9,6 @@ import {
 import { useSelector } from "react-redux"
 import { useWeb3React } from "@web3-react/core"
 
-import { UserRegistry } from "abi"
-import useContract from "hooks/useContract"
 import { isTxMined, parseTransactionError } from "utils"
 import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
@@ -62,7 +61,7 @@ export default function usePrivacyPolicyAgreed(): [IPayload, IMethods] {
   const { account } = useWeb3React()
 
   const userRegistryAddress = useSelector(selectUserRegistryAddress)
-  const userRegistry = useContract(userRegistryAddress, UserRegistry)
+  const userRegistry = useUserRegistryContract()
 
   const addTransaction = useTransactionAdder()
   const sign = usePrivacyPolicySign()

@@ -1,6 +1,6 @@
 import { FC } from "react"
 
-import Button from "components/Button"
+import { AppButton } from "common"
 import { BodyItem } from "components/cards/proposal/styled"
 import { BigNumber } from "@ethersproject/bignumber"
 
@@ -78,17 +78,15 @@ const BodyInvestor: FC<Props> = ({
           <BodyItem label="Custodian" amount={"-"} />
           <BodyItem label="LP price ($)" amount={poolPriceUSD} />
           <div>
-            <Button
+            <AppButton
               full
-              size="small"
-              br="10px"
               onClick={(e) => {
                 e?.stopPropagation()
                 onInvest()
               }}
-            >
-              Stake LP
-            </Button>
+              size="x-small"
+              text="Stake LP"
+            />
           </div>
         </>
       )}
