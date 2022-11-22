@@ -1,4 +1,4 @@
-interface ITreasuryToken {
+export interface ITreasuryToken {
   balance: string
   balance_24h: string
   contract_address: string

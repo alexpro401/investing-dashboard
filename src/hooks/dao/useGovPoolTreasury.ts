@@ -4,7 +4,9 @@ import { useAPI } from "api"
 import { useActiveWeb3React } from "hooks"
 import { ITreasuryTokensList } from "api/kattana/types"
 
-const useGovPoolTreasury = (govPoolAddress: string | undefined) => {
+const useGovPoolTreasury = (
+  govPoolAddress: string | undefined
+): [ITreasuryTokensList | undefined, boolean, () => void] => {
   const {
     kattana: {
       treasury: { getGovPoolTreasuryTokensList },
@@ -16,11 +18,12 @@ const useGovPoolTreasury = (govPoolAddress: string | undefined) => {
   const [loading, setLoading] = useState<boolean>(false)
 
   const setupGovPoolTreasuryTokens = useCallback(async () => {
-    if (!chainId || !govPoolAddress) return
+    if (!chainId || !govPoolAddress || loading) return
 
     setLoading(true)
 
     try {
+      // console.log({ chainId, govPoolAddress })
       const result = await getGovPoolTreasuryTokensList(
         56,
         //govPoolAddress
@@ -34,11 +37,13 @@ const useGovPoolTreasury = (govPoolAddress: string | undefined) => {
     } finally {
       setLoading(false)
     }
-  }, [chainId, govPoolAddress, getGovPoolTreasuryTokensList])
+  }, [chainId, govPoolAddress, getGovPoolTreasuryTokensList, loading])
 
   useEffect(() => {
-    setupGovPoolTreasuryTokens()
-  }, [setupGovPoolTreasuryTokens])
+    if (chainId && govPoolAddress) {
+      setupGovPoolTreasuryTokens()
+    }
+  }, [chainId, govPoolAddress])
 
   const update = useCallback(() => {
     setupGovPoolTreasuryTokens()
