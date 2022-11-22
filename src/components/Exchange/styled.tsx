@@ -583,3 +583,20 @@ export const SubmitButton = styled(AppButton)`
   width: fill-available;
   grid-gap: 3px;
 `
+
+export const DescriptionContainer = styled.p`
+  padding: 0;
+  margin: 0;
+  width: fill-available;
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 150%;
+  color: ${theme.textColors.secondary};
+
+  & > a {
+    display: inline;
+    color: ${theme.brandColors.secondary};
+  }
+`
