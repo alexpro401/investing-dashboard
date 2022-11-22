@@ -4,6 +4,7 @@ import Modal from "components/Modal"
 import Tile from "./Tile"
 import * as S from "./styled"
 
+// TODO: replace with real images
 const url =
   "https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
 

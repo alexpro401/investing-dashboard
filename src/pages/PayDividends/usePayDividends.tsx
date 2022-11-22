@@ -34,7 +34,7 @@ import {
 
 import { multiplyBignumbers } from "utils/formulas"
 import { useERC20Data } from "state/erc20/hooks"
-import { useProposalAddress } from "hooks/useContract"
+import useProposalAddress from "hooks/useProposalAddress"
 
 interface FetchedTokenData {
   balance: BigNumber

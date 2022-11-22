@@ -1,10 +1,8 @@
 import { FC, ReactNode } from "react"
 import { createPortal } from "react-dom"
 import { CircleSpinner } from "react-spinners-kit"
-import { Flex } from "theme"
 
 import IconButton from "components/IconButton"
-import Button, { SecondaryButton } from "components/Button"
 
 import close from "assets/icons/close-gray.svg"
 import check from "assets/icons/stepper-check.svg"
@@ -26,6 +24,7 @@ import {
   Line,
   Track,
 } from "./styled"
+import { AppButton } from "common"
 
 const stepperRoot = document.getElementById("stepper")
 
@@ -94,22 +93,32 @@ const Stepper: FC<Props> = ({
   }
 
   const buttonWithFailed = failed ? (
-    <Button onClick={onSubmit} size="large" fz={16} full>
-      Try again
-    </Button>
+    <AppButton
+      onClick={onSubmit}
+      text="Try again"
+      size="medium"
+      color="error"
+      full
+    />
   ) : (
-    <Button onClick={onSubmit} size="large" fz={16} full>
-      {steps[current].buttonText}
-    </Button>
+    <AppButton
+      onClick={onSubmit}
+      text={steps[current].buttonText}
+      size="medium"
+      full
+    />
   )
 
   const buttonWithPending = pending ? (
-    <SecondaryButton theme="disabled" size="large" fz={16} full>
-      <Flex>
-        <Flex p="0 4px 0 0">Loading</Flex>
-        <CircleSpinner color="#616D8B" size={8} />
-      </Flex>
-    </SecondaryButton>
+    <AppButton
+      disabled
+      onClick={onSubmit}
+      text="Loading"
+      size="medium"
+      color="secondary"
+      full
+      iconRight={<CircleSpinner color="#0D1320" size={10} />}
+    />
   ) : (
     buttonWithFailed
   )

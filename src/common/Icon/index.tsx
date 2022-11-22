@@ -42,6 +42,8 @@ import {
   FlameGradientIcon,
   TileCheckIcon,
   ArrowIcon,
+  MetamaskIcon,
+  PlusIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -140,6 +142,10 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return TileCheckIcon as unknown as ElementType
       case ICON_NAMES.arrow:
         return ArrowIcon as unknown as ElementType
+      case ICON_NAMES.metamask:
+        return MetamaskIcon as unknown as ElementType
+      case ICON_NAMES.plus:
+        return PlusIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }

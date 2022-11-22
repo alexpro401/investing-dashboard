@@ -4,7 +4,7 @@ import { useUserAgreement } from "state/user/hooks"
 
 import Modal from "components/Modal"
 import Checkbox from "components/Checkbox"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 
 import S from "./styled"
 
@@ -24,18 +24,15 @@ const TermsAgreement: React.FC<Props> = () => {
   }
 
   const button = useMemo(() => {
-    if (agree) {
-      return (
-        <Button full onClick={onAgree}>
-          Sing and proceed
-        </Button>
-      )
-    }
-
     return (
-      <SecondaryButton full disabled>
-        Sing and proceed
-      </SecondaryButton>
+      <AppButton
+        disabled={!agree}
+        color={agree ? "primary" : "secondary"}
+        size="medium"
+        full
+        onClick={onAgree}
+        text="Sing and proceed"
+      />
     )
   }, [agree, onAgree])
 

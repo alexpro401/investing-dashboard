@@ -5,7 +5,7 @@ import theme, { Flex } from "theme"
 import { Card, Collapse, Icon } from "common"
 import { Indents, TextLabel, TextValue } from "../styled"
 
-import Button from "components/Button"
+import { AppButton } from "common"
 import Tooltip from "components/Tooltip"
 import ProgressLine from "components/ProgressLine"
 import { ICON_NAMES } from "constants/icon-names"
@@ -72,6 +72,7 @@ const DaoProfileUserBalancesCard: FC<Props> = () => {
             <ERC721Row
               votingPower={ZERO}
               tokenId="1"
+              // TODO: replace with real nft images
               tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
             />
           </Indents>
@@ -85,13 +86,13 @@ const DaoProfileUserBalancesCard: FC<Props> = () => {
           </Indents>
         </Collapse>
       </div>
-      <Button
+      <AppButton
         full
-        fz={13}
+        color="secondary"
+        size="small"
         onClick={() => alert("Redirect to 'withdraw DAO tokens' terminal 🤑")}
-      >
-        Withdraw available assets
-      </Button>
+        text="Withdraw available assets"
+      />
     </Card>
   )
 }

@@ -271,6 +271,7 @@ interface AppButtonStyledProps {
   scheme: SCHEMES
   size: SIZES
   coloring: COLORS
+  full?: boolean
 }
 
 export const ButtonType = styled.button<AppButtonStyledProps>`
@@ -282,6 +283,8 @@ export const ButtonType = styled.button<AppButtonStyledProps>`
       props.size,
       props.coloring
     )}
+
+  width: ${(props) => (props.full ? "fill-available" : "min-content")};
 `
 
 export const HrefType = styled.a<AppButtonStyledProps>`

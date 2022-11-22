@@ -1,7 +1,6 @@
 import { useMemo } from "react"
 import { useParams } from "react-router-dom"
 import { Flex } from "theme"
-import { Icon } from "common"
 
 import { ICON_NAMES } from "constants/icon-names"
 import Token from "components/Token"
@@ -10,7 +9,7 @@ import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
 import ExchangeDivider from "components/Exchange/Divider"
 import CircularProgress from "components/CircularProgress"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import TransactionSlippage from "components/TransactionSlippage"
 
@@ -78,54 +77,55 @@ const Invest = () => {
   const button = useMemo(() => {
     if (from.amount === "0") {
       return (
-        <SecondaryButton
-          theme="disabled"
+        <AppButton
+          disabled
           size="large"
+          color="secondary"
+          text="Enter amount to swap"
           onClick={() => {}}
-          fz={22}
           full
-        >
-          Enter amount to swap
-        </SecondaryButton>
+        />
       )
     }
 
     if (from.balance.lt(from.amount)) {
       return (
-        <SecondaryButton theme="disabled" size="large" fz={22} full>
-          Insufficient balance
-        </SecondaryButton>
+        <AppButton
+          disabled
+          size="large"
+          color="secondary"
+          full
+          text="Insufficient balance"
+        />
       )
     }
 
     if (isAllowanceNeeded) {
       return (
-        <SecondaryButton
+        <AppButton
+          color="secondary"
+          type="button"
           size="large"
+          text={`Unlock Token ${from.symbol}`}
+          style={{ fontWeight: 600 }}
+          iconRight={ICON_NAMES.locked}
+          iconSize={17}
           onClick={() => (agreed ? updateAllowance() : setShowAgreement(true))}
-          fz={22}
           full
-        >
-          <Flex>
-            <Flex ai="center">Unlock Token {from.symbol}</Flex>
-            <Flex m="-3px 0 0 4px">
-              <Icon name={ICON_NAMES.locked} />
-            </Flex>
-          </Flex>
-        </SecondaryButton>
+        />
       )
     }
 
     return (
-      <Button
+      <AppButton
         size="large"
-        theme={direction === "deposit" ? "primary" : "warn"}
+        color={direction === "deposit" ? "primary" : "error"}
+        text={
+          direction === "deposit" ? `Buy ${to.symbol}` : `Sell ${from.symbol}`
+        }
         onClick={handleSubmit}
-        fz={22}
         full
-      >
-        {direction === "deposit" ? `Buy ${to.symbol}` : `Sell ${from.symbol}`}
-      </Button>
+      />
     )
   }, [
     from,

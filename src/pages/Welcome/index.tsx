@@ -4,7 +4,7 @@ import { Flex } from "theme"
 import { useWeb3React } from "@web3-react/core"
 import { CubeSpinner } from "react-spinners-kit"
 import { useConnectWalletContext } from "context/ConnectWalletContext"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 import ConnectWallet from "modals/ConnectWallet"
 import { getRedirectedPoolAddress } from "utils"
 import { useSelector } from "react-redux"
@@ -154,28 +154,25 @@ const Welcome: React.FC = () => {
               </Socials>
             </Content>
             <Buttons>
-              <Button
+              <AppButton
                 full
-                size="big"
-                m="0"
+                size="large"
+                text="Become a trader"
                 onClick={() => {
                   toggleConnectWallet(true)
                   setLoginPath(getTraderPath())
                 }}
-              >
-                Become a trader
-              </Button>
-              <SecondaryButton
+              />
+              <AppButton
                 full
-                size="big"
-                m="0"
+                size="large"
+                color="secondary"
+                text="Investing"
                 onClick={() => {
                   toggleConnectWallet(true)
                   setLoginPath(LoginPathMapper.investor)
                 }}
-              >
-                Investing
-              </SecondaryButton>
+              />
             </Buttons>
             <LoginContainer
               onClick={() => {

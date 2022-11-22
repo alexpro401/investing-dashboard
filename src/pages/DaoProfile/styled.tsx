@@ -179,3 +179,23 @@ export const Image = styled.img<{ w?: string; h?: string }>`
   height: ${(p) => p.h ?? "120px"};
   width: ${(p) => p.w ?? "120px"};
 `
+
+export const NewProposal = styled(AppButton).attrs(() => ({
+  color: "secondary",
+  type: "button",
+  size: "small",
+  text: "+ New proposal",
+}))`
+  font-weight: 600;
+  color: ${theme.textColors.primary};
+  width: fill-available;
+`
+
+export const AllProposals = styled(AppButton).attrs(() => ({
+  color: "primary",
+  type: "button",
+  size: "small",
+  text: "All proposals",
+}))`
+  width: fill-available;
+`
