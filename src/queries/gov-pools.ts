@@ -31,7 +31,7 @@ const POOL = `
 
 const GovPoolQuery = `
   query ($address: String!) {
-    traderPool(id: $address) {
+    daoPool(id: $address) {
       ${POOL}
     }
   }
