@@ -21,24 +21,19 @@ interface Props {
 const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress }) => {
   const { chainId, account } = useWeb3React()
 
-  const variables = React.useMemo(
-    () => ({
-      address: govPoolAddress,
-      account,
-    }),
-    [account, govPoolAddress]
-  )
-  const pause = React.useMemo(
-    () => isNil(account) || isNil(govPoolAddress),
-    [account, govPoolAddress]
-  )
-
-  const [{ data, loading }, fetchMore] = useQueryPagination(
-    GovPoolDelegationHistoryByUserQuery(true),
-    variables,
-    pause,
-    (d) => d.delegationHistories
-  )
+  const [{ data, loading }, fetchMore] =
+    useQueryPagination<IGovPoolDelegationHistoryQuery>({
+      query: GovPoolDelegationHistoryByUserQuery(true),
+      variables: React.useMemo(
+        () => ({
+          address: govPoolAddress,
+          account,
+        }),
+        [account, govPoolAddress]
+      ),
+      pause: isNil(account) || isNil(govPoolAddress),
+      formatter: (d) => d.delegationHistories,
+    })
 
   const loader = React.useRef<any>()
 

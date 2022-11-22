@@ -27,24 +27,19 @@ const DaoDelegationIn: React.FC<{ govPoolAddress?: string }> = ({
     useDelegated: false,
   })
 
-  const variables = React.useMemo(
-    () => ({
-      address: govPoolAddress,
-      account,
-    }),
-    [account, govPoolAddress]
-  )
-  const pause = React.useMemo(
-    () => isNil(account) || isNil(govPoolAddress),
-    [account, govPoolAddress]
-  )
-
-  const [{ data, loading }, fetchMore] = useQueryPagination(
-    GovPoolDelegationHistoryByUserQuery(false),
-    variables,
-    pause,
-    (d) => d.delegationHistories
-  )
+  const [{ data, loading }, fetchMore] =
+    useQueryPagination<IGovPoolDelegationHistoryQuery>({
+      query: GovPoolDelegationHistoryByUserQuery(false),
+      variables: React.useMemo(
+        () => ({
+          address: govPoolAddress,
+          account,
+        }),
+        [account, govPoolAddress]
+      ),
+      pause: isNil(account) || isNil(govPoolAddress),
+      formatter: (d) => d.delegationHistories,
+    })
 
   const loader = React.useRef<any>()
 
