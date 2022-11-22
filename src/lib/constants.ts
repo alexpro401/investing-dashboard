@@ -1,10 +1,5 @@
 import JSBI from "jsbi"
 
-export enum SupportedChainId {
-  BSC = 56,
-  BSC_TESTNET = 97,
-}
-
 // exports for external consumption
 export type BigintIsh = JSBI | string | number
 

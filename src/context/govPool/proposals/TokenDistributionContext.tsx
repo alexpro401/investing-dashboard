@@ -1,6 +1,6 @@
 import React, { useState, createContext, Dispatch, SetStateAction } from "react"
 
-import { ITreasuryToken } from "api/kattana/types"
+import { ITreasuryToken } from "api/token/types"
 
 interface ITokenDistributionCreatingContext {
   selectedTreasuryToken: {

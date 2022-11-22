@@ -7,14 +7,12 @@ export const useAPI = () => {
   // TODO: create hook to get user active nft API
   // TODO: useUserActiveAPI()
   const enabledNftApi = "Moralis"
+  const enabledTokenApi = "Kattana"
 
   return useMemo(
     () => ({
-      nft: api.nft[enabledNftApi],
-      // TODO
-      kattana: {
-        treasury: api.kattana.Treasury,
-      },
+      NFTAPI: api.nft[enabledNftApi],
+      TokenAPI: api.token[enabledTokenApi],
     }),
     []
   )
