@@ -1,4 +1,4 @@
-const ROOT = "https://localhost:3000"
+const ROOT = ""
 
 const DEXE_DEFAULT = `${ROOT}/lists/dexe-default.tokenlist.json`
 const DEXE_WHITELIST = `${ROOT}/lists/dexe-whitelist.tokenlist.json`
