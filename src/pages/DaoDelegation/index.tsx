@@ -10,7 +10,6 @@ import RouteTabs from "components/RouteTabs"
 import { ITab } from "interfaces"
 import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
 import { useERC20 } from "hooks/useERC20"
-import { useErc721 } from "hooks/useErc721"
 
 const govPoolsClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -20,11 +19,8 @@ const govPoolsClient = createClient({
 const DaoDelegation: React.FC = () => {
   const params = useParams<"daoAddress">()
 
-  const [{ tokenAddress, nftAddress }] = useGovPoolVotingAssets(
-    params.daoAddress
-  )
-  const [, token, tokenBalance] = useERC20(tokenAddress)
-  const nft = useErc721(nftAddress)
+  const [{ tokenAddress }] = useGovPoolVotingAssets(params.daoAddress)
+  const [, token] = useERC20(tokenAddress)
 
   const tabs: ITab[] = [
     {
@@ -39,7 +35,7 @@ const DaoDelegation: React.FC = () => {
 
   return (
     <>
-      <Header>Dao Profile</Header>
+      <Header>Delegation</Header>
       <S.Indents top>
         <RouteTabs tabs={tabs} />
       </S.Indents>
@@ -51,7 +47,12 @@ const DaoDelegation: React.FC = () => {
           />
           <Route
             path="in"
-            element={<DaoDelegationIn govPoolAddress={params.daoAddress} />}
+            element={
+              <DaoDelegationIn
+                govPoolAddress={params.daoAddress}
+                token={token}
+              />
+            }
           />
         </Routes>
       </S.Container>

@@ -5,7 +5,6 @@ import { useWeb3React } from "@web3-react/core"
 import { PulseSpinner } from "react-spinners-kit"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
-import { Card } from "common"
 import theme, { Center, Flex, Text } from "theme"
 import GovDelegateeCard from "components/cards/GovDelegatee"
 import { GovPoolDelegationHistoryByUserQuery } from "queries"
@@ -14,9 +13,16 @@ import LoadMore from "components/LoadMore"
 import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
 import { normalizeBigNumber } from "utils"
 import { IGovPoolDelegationHistoryQuery } from "interfaces/thegraphs/gov-pools"
+import { Token } from "interfaces"
 
-const DaoDelegationIn: React.FC<{ govPoolAddress?: string }> = ({
+interface DaoDelegationInProps {
+  token: Token | null
+  govPoolAddress?: string
+}
+
+const DaoDelegationIn: React.FC<DaoDelegationInProps> = ({
   govPoolAddress,
+  token,
 }) => {
   const { chainId, account } = useWeb3React()
 
@@ -73,24 +79,27 @@ const DaoDelegationIn: React.FC<{ govPoolAddress?: string }> = ({
   return (
     <S.List ref={loader}>
       <S.Indents top>
-        <Card>
-          <Flex full ai={"center"} jc={"space-between"}>
-            <Text color={theme.textColors.primary}>Total addresses: 90</Text>
-            <Text color={theme.textColors.primary}>
-              Total delegate: {normalizeBigNumber(power, 18, 2)}
-            </Text>
-          </Flex>
-          <Flex full dir={"column"} gap={"8"}>
-            {map(data, (dh, index) => (
-              <GovDelegateeCard data={dh} chainId={chainId} key={index} />
-            ))}
-            <LoadMore
-              isLoading={loading && !!data.length}
-              handleMore={fetchMore}
-              r={loader}
+        <Flex full ai={"center"} jc={"space-between"} m={"0 0 16px"}>
+          <Text color={theme.textColors.primary}>Total addresses: 90</Text>
+          <Text color={theme.textColors.primary}>
+            Total delegate: {normalizeBigNumber(power, 18, 2)}
+          </Text>
+        </Flex>
+        <Flex full dir={"column"} gap={"8"}>
+          {map(data, (dh, index) => (
+            <GovDelegateeCard
+              data={dh}
+              chainId={chainId}
+              key={index}
+              token={token}
             />
-          </Flex>
-        </Card>
+          ))}
+          <LoadMore
+            isLoading={loading && !!data.length}
+            handleMore={fetchMore}
+            r={loader}
+          />
+        </Flex>
       </S.Indents>
     </S.List>
   )

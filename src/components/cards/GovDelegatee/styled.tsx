@@ -1,36 +1,48 @@
 import styled from "styled-components"
 import { motion } from "framer-motion"
-import { AppButton, Card } from "common"
+import { Card } from "common"
+import { Text } from "theme"
 import { opacityVariants } from "motion/variants"
 
-export const Container = styled(motion.a).attrs(() => ({
+export const Root = styled(motion.div).attrs(() => ({
   variants: opacityVariants,
   initial: "hidden",
   animate: "visible",
-  target: "_blank",
-  rel: "noopener noreferrer",
 }))`
   display: block;
   width: 100%;
   text-decoration: none;
+  cursor: pointer;
 `
 
-export const Content = styled(Card)`
+export const GovDelegateeCardContent = styled(Card)`
   width: 100%;
-  background-color: ${({ theme }) => theme.textColors.secondaryNegative};
+  background-color: ${({ theme }) => theme.backgroundColors.secondary};
 `
 
-export const ActionBase = styled(AppButton)`
+export const GovDelegateeCardDivider = styled.div`
   width: 100%;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 16px;
+  height: 1px;
+  background: ${({ theme }) => theme.textColors.secondaryNegative};
 `
 
-export const ActionSecondary = styled(ActionBase).attrs(() => ({
-  color: "default",
+export const GovDelegateeCardLabel = styled(Text).attrs(({ theme }) => ({
+  color: theme.textColors.secondary,
+  fz: 13,
+  fw: 500,
+}))``
+
+export const GovDelegateeCardValue = styled(Text).attrs(() => ({
+  fz: 13,
+  fw: 600,
+}))``
+
+export const GovDelegateeCardValueNfts = styled(Text).attrs(() => ({
+  fz: 13,
+  fw: 600,
 }))`
-  color: ${({ theme }) => theme.textColors.secondary};
-  margin-top: 4px;
-  font-weight: 600;
+  max-width: 70%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  text-align: right;
 `
