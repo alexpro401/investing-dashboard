@@ -40,12 +40,11 @@ const DaoClaimTabRewards: React.FC<Props> = ({ daoAddress }) => {
       context: govPoolsClient,
       formatter: (d) => d.proposals,
     })
-  console.log(data)
 
   const listRef = React.useRef<any>()
 
   const ListContent = React.useMemo(() => {
-    if (loading && isNil(data)) {
+    if (loading && (isNil(data) || isEmpty(data))) {
       return (
         <Center>
           <PulseSpinner />

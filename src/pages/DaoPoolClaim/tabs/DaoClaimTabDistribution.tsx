@@ -18,7 +18,7 @@ const DaoClaimTabDistribution: React.FC<Props> = ({ daoAddress }) => {
   const listRef = React.useRef<any>()
 
   const ListContent = React.useMemo(() => {
-    if (loading && isNil(data)) {
+    if (loading && (isNil(data) || isEmpty(data))) {
       return (
         <Center>
           <PulseSpinner />
