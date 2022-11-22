@@ -72,6 +72,7 @@ const DaoProfileUserBalancesCard: FC<Props> = () => {
             <NftRow
               votingPower={ZERO}
               tokenId="1"
+              // TODO: replace with real nft images
               tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
             />
           </Indents>

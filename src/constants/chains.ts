@@ -3,6 +3,8 @@ export enum SupportedChainId {
   BINANCE_SMART_CHAIN_TESTNET = 97,
 }
 
+export const SUPPORTED_CHAINS = [97]
+
 export const FAST_INTERVAL = 10000
 export const SLOW_INTERVAL = 60000
 

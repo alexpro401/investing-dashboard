@@ -1,6 +1,9 @@
 import { useSelector } from "react-redux"
-import useContract, { useProposalAddress } from "hooks/useContract"
+import useContract from "hooks/useContract"
 import { useGovPoolHelperContracts } from "hooks/dao"
+import { useActiveWeb3React } from "hooks"
+import { getMulticallAddress } from "utils/addressHelpers"
+import useProposalAddress from "hooks/useProposalAddress"
 
 import {
   ERC20 as ERC20_ABI,
@@ -56,8 +59,6 @@ import {
   GovValidators,
   Multicall,
 } from "interfaces/typechain"
-import { useActiveWeb3React } from "hooks"
-import { getMulticallAddress } from "utils/addressHelpers"
 
 type Address = string | undefined
 
