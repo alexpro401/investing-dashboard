@@ -2,10 +2,9 @@ import { FC, useState, useCallback, useEffect, useMemo } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { Flex } from "theme"
 import { useWeb3React } from "@web3-react/core"
-import { useSelector } from "react-redux"
 import { PulseSpinner } from "react-spinners-kit"
 
-import Button from "components/Button"
+import { AppButton } from "common"
 import Avatar from "components/Avatar"
 import AddressChips from "components/AddressChips"
 import Input from "components/Input"
@@ -21,16 +20,13 @@ import ExternalLink from "components/ExternalLink"
 import TokenSelect from "modals/TokenSelect"
 
 import { bigify, isTxMined } from "utils"
-import useContract from "hooks/useContract"
 import { Token } from "lib/entities"
 import { addFundMetadata } from "utils/ipfs"
-import { TraderPool, PoolFactory } from "abi"
 import { UpdateListType } from "constants/types"
 import { useUserAgreement } from "state/user/hooks"
 import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { useCreateFundContext } from "context/CreateFundContext"
-import { selectPoolFactoryAddress } from "state/contracts/selectors"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { sliderPropsByPeriodType, performanceFees } from "constants/index"
 
@@ -58,6 +54,7 @@ import {
 } from "./styled"
 import { useUserTokens, useWhitelistTokens } from "hooks/useToken"
 import { useAllTokenBalances } from "hooks/useBalance"
+import { usePoolFactoryContract, useTraderPoolContract } from "contracts"
 
 const deployMethodByType = {
   basic: "deployBasicPool",
@@ -107,9 +104,8 @@ const CreateFund: FC<Props> = ({ presettedFundType = "basic" }) => {
   const [stepsFormating, setStepsFormating] = useState(false)
   const [contractAddress, setCreactedAddress] = useState("")
 
-  const poolFactoryAddress = useSelector(selectPoolFactoryAddress)
-  const traderPoolFactory = useContract(poolFactoryAddress, PoolFactory)
-  const traderPool = useContract(contractAddress, TraderPool)
+  const traderPoolFactory = usePoolFactoryContract()
+  const traderPool = useTraderPoolContract(contractAddress)
 
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
@@ -601,17 +597,18 @@ const CreateFund: FC<Props> = ({ presettedFundType = "basic" }) => {
           </Step>
         </Steps>
         <Flex full p="0 16px 42px">
-          <Button
+          <AppButton
             full
-            size="large"
             onClick={() => (agreed ? handleSubmit() : setShowAgreement(true))}
-          >
-            {stepsFormating ? (
-              <PulseSpinner color="#34455F" size={20} loading />
-            ) : (
-              "Create fund"
-            )}
-          </Button>
+            text="Create fund"
+            size="large"
+            color="primary"
+            iconRight={
+              stepsFormating && (
+                <PulseSpinner color="#34455F" size={12} loading />
+              )
+            }
+          />
         </Flex>
       </Body>
     </>

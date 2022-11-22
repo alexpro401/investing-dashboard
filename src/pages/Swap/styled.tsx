@@ -1,3 +1,5 @@
+import { AppButton } from "common"
+import { ICON_NAMES } from "constants/icon-names"
 import styled from "styled-components"
 import { Flex } from "theme"
 
@@ -41,4 +43,19 @@ export const SwapPathDescription = styled.div`
   font-size: 11px;
   line-height: 130%;
   color: #788ab4;
+`
+
+export const CreateProposal = styled(AppButton).attrs(() => ({
+  text: "Create proposal",
+  type: "button",
+  color: "default",
+  size: "no-paddings",
+  iconLeft: ICON_NAMES.plus,
+  iconSize: 26,
+}))`
+  padding: 16px 0 0;
+
+  & > svg {
+    transform: translate(2px, -2px);
+  }
 `

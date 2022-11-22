@@ -1,5 +1,5 @@
 import Header from "components/Header/Layout"
-import Button from "components/Button"
+import { AppButton } from "common"
 import { Collapse, Icon, SelectableCard } from "common"
 
 import { FC, useState } from "react"
@@ -144,9 +144,13 @@ const CreateFund: FC = () => {
           </SelectableCard>
         </S.FundTypeCards>
         <Flex full p="12px 16px 42px" m="auto 0 0 0">
-          <Button full size="large" onClick={proceedToCreate}>
-            Create fund
-          </Button>
+          <AppButton
+            full
+            size="large"
+            color="primary"
+            onClick={proceedToCreate}
+            text="Create fund"
+          />
         </Flex>
       </S.Container>
     </>

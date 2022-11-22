@@ -1,11 +1,11 @@
 import { Icon } from "common"
 import * as S from "../styled"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 import { Flex, Text } from "theme"
 import Tooltip from "components/Tooltip"
 import { v4 as uuidv4 } from "uuid"
 import { ICON_NAMES } from "constants/icon-names"
-import GovPoolStatisticCard from "components/cards/GovPoolStatistic"
+import { DaoPoolCard } from "common"
 
 const DaoProfileStatisticCard = ({
   isValidator,
@@ -14,19 +14,11 @@ const DaoProfileStatisticCard = ({
   govPoolQuery,
 }) => {
   return (
-    <GovPoolStatisticCard account={account} data={govPoolQuery}>
-      <>
+    <DaoPoolCard account={account} data={govPoolQuery}>
+      <Flex full dir={"column"} p={"12px"} gap={"12"}>
         <S.CardButtons>
-          <SecondaryButton full fz={14} onClick={handleOpenCreateProposalModal}>
-            + New Proposal
-          </SecondaryButton>
-          <Button
-            full
-            fz={14}
-            onClick={() => alert("Redirect to all proposals")}
-          >
-            All proposals
-          </Button>
+          <S.NewProposal onClick={handleOpenCreateProposalModal} />
+          <S.AllProposals onClick={() => alert("Redirect to all proposals")} />
         </S.CardButtons>
         {isValidator && (
           <>
@@ -46,8 +38,8 @@ const DaoProfileStatisticCard = ({
             </Flex>
           </>
         )}
-      </>
-    </GovPoolStatisticCard>
+      </Flex>
+    </DaoPoolCard>
   )
 }
 

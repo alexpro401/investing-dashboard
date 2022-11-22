@@ -6,7 +6,7 @@ import { Icon } from "common"
 
 import { ICON_NAMES } from "constants/icon-names"
 import ExchangeInput from "components/Exchange/ExchangeInput"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 import TransactionSlippage from "components/TransactionSlippage"
 
 import { formatBigNumber } from "utils"
@@ -58,38 +58,38 @@ function Management() {
       (direction === "withdraw" && toAmount === "0")
     ) {
       return (
-        <SecondaryButton
-          theme="disabled"
+        <AppButton
+          disabled
           size="large"
+          color="secondary"
           onClick={handleSubmit}
-          fz={22}
+          text="Enter amount to stake"
           full
-        >
-          Enter amount to stake
-        </SecondaryButton>
+        />
       )
     }
 
     if (direction === "deposit" && BigNumber.from(allowance).lt(fromAmount)) {
       return (
-        <SecondaryButton size="large" onClick={approve} fz={22} full>
-          <Flex>
-            Unlock DEXE <Icon name={ICON_NAMES.locked} />
-          </Flex>
-        </SecondaryButton>
+        <AppButton
+          size="large"
+          color="secondary"
+          onClick={approve}
+          text="Unlock DEXE"
+          iconRight={ICON_NAMES.locked}
+          full
+        />
       )
     }
 
     return (
-      <Button
+      <AppButton
         size="large"
-        theme={direction === "deposit" ? "primary" : "warn"}
+        color={direction === "deposit" ? "primary" : "error"}
+        text={direction === "deposit" ? `Stake DEXE` : `Unstake DEXE`}
         onClick={handleSubmit}
-        fz={22}
         full
-      >
-        {direction === "deposit" ? `Stake DEXE` : `Unstake DEXE`}
-      </Button>
+      />
     )
   }, [allowance, approve, direction, fromAmount, handleSubmit, toAmount])
 

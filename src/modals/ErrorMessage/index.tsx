@@ -1,7 +1,7 @@
 import Confirm from "components/Confirm"
 import { FC, useCallback } from "react"
 
-import Button from "components/Button"
+import { AppButton } from "common"
 
 import useError from "hooks/useError"
 
@@ -20,9 +20,13 @@ const ErrorMessage: FC = () => {
     <Confirm title="Error" isOpen={!!error.length} toggle={closeModal}>
       <Icon src={warn} />
       <Text>{error}</Text>
-      <Button m="24px 0 0" full onClick={closeModal}>
-        Dismiss
-      </Button>
+      <AppButton
+        size="medium"
+        color="secondary"
+        text="Dismiss"
+        full
+        onClick={closeModal}
+      />
     </Confirm>
   )
 }

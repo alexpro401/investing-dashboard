@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 
 import { Text } from "theme"
 import * as S from "./styled"
-import Button from "components/Button"
+import { AppButton } from "common"
 import Confirm from "components/Confirm"
 import confirmModalImage from "assets/images/confirm-modal.png"
 
@@ -28,15 +28,13 @@ const InsuranceAccidentExist: FC<Props> = ({ isOpen, onClose }) => {
         vote for it.
       </Text>
 
-      <Button
-        m="16px 0 0"
-        size="big"
-        theme="primary"
+      <AppButton
+        text="Vote for the proposal"
+        size="medium"
+        color="primary"
         onClick={navigateToProposal}
         full
-      >
-        Vote for the proposal
-      </Button>
+      />
     </Confirm>
   )
 }

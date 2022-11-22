@@ -2,7 +2,7 @@ import { FC, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 
 import Modal from "components/Modal"
-import Button from "components/Button"
+import { AppButton } from "common"
 import S from "./styled"
 
 interface IProps {
@@ -35,9 +35,9 @@ const ProposeToInvest: FC<IProps> = ({
           fund investor to see them
         </S.ModalText>
         <S.ButtonContainer>
-          <Button full onClick={onInvest}>
+          <AppButton size="medium" color="primary" full onClick={onInvest}>
             Buy {ticker}
-          </Button>
+          </AppButton>
         </S.ButtonContainer>
       </Modal>
     </>
