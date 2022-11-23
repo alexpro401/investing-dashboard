@@ -8,6 +8,7 @@ declare global {
       REACT_APP_ETHERSCAN_API_KEY: string
 
       REACT_APP_CONTRACTS_REGISTRY_ADDRESS: string
+      REACT_APP_DEXE_DAO_ADDRESS: string
 
       REACT_APP_ALL_POOLS_API_URL: string
       REACT_APP_BASIC_POOLS_API_URL: string
