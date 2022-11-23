@@ -74,7 +74,7 @@ export const useGovPoolCreateProposal = (
       values: number[],
       data: string[]
     ): Promise<TransactionReceipt | undefined> => {
-      if (!govPoolContract) return
+      if (!govPoolContract || !account) return
 
       try {
         const descriptionIPFSEntity = new IpfsEntity({
@@ -100,7 +100,7 @@ export const useGovPoolCreateProposal = (
           executors,
           values,
           data,
-          { ...transactionOptions, gasLimit }
+          { ...transactionOptions, gasLimit, from: account }
         )
 
         setPayload(SubmitState.WAIT_CONFIRM)
@@ -133,6 +133,7 @@ export const useGovPoolCreateProposal = (
       setPayload,
       transactionOptions,
       tryEstimateGas,
+      account,
     ]
   )
 

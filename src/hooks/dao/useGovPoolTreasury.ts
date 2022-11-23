@@ -19,11 +19,7 @@ const useGovPoolTreasury = (
     setLoading(true)
 
     try {
-      const result = await TokenAPI.getWalletBalances(
-        56,
-        //TODO: govPoolAddress
-        "0x05c12E9fAC51646710C4de014Bef33cFe158c08d"
-      )
+      const result = await TokenAPI.getWalletBalances(chainId, govPoolAddress)
 
       setTreasury(result)
     } catch (error) {

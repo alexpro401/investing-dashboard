@@ -140,13 +140,16 @@ function SelectField<T>({
         }
         cRef={inputFieldRef}
       />
+
       <S.ListCollapse isOpen={isOpened} cRef={listRef}>
-        {innerList.map((item, index) => (
-          <S.ListItem key={index} onClick={() => handleSelectItem(item)}>
-            {renderItem(item)}
-          </S.ListItem>
-        ))}
+        {isOpened &&
+          innerList.map((item, index) => (
+            <S.ListItem key={index} onClick={() => handleSelectItem(item)}>
+              {renderItem(item)}
+            </S.ListItem>
+          ))}
       </S.ListCollapse>
+
       <Collapse isOpen={!!errorMessage} duration={0.3}>
         <S.ErrorMessage>{errorMessage}</S.ErrorMessage>
       </Collapse>
