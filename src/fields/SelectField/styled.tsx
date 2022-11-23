@@ -57,6 +57,7 @@ export const ListCollapse = styled(Collapse)`
   left: 0;
   width: 100%;
   z-index: 2;
+  overflow: hidden;
 `
 
 export const ListItem = styled(motion.li).attrs(() => ({
