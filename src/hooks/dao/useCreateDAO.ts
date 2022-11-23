@@ -252,6 +252,7 @@ const useCreateDAO = () => {
     }
 
     const POOL_PARAMETERS = {
+      nftMultiplierAddress: ZERO_ADDR,
       name: daoName.get,
       settingsParams: {
         proposalSettings: [
@@ -355,6 +356,7 @@ const useCreateDAO = () => {
     isDistributionProposal.get,
     distributionProposalSettingsForm,
     validatorsParams,
+    userKeeperParams,
     isErc721.get,
     erc721.isEnumerable,
     tryEstimateGas,
