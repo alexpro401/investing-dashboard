@@ -46,13 +46,13 @@ const DaoPoolCard: React.FC<Props> = ({
   }, [data])
 
   const poolAssets = React.useMemo(() => {
-    let subTitle = " "
+    let subTitle = ""
 
     if (assetsExisting.haveToken) {
       subTitle = `${assets.token?.symbol} `
     }
     if (assetsExisting.haveNft) {
-      if (subTitle.length === 0) {
+      if (subTitle.length > 0) {
         subTitle += "& "
       }
       subTitle += "NFT"
