@@ -20,6 +20,11 @@ import extractRootDomain from "./extractRootDomain"
 import { isEqual } from "lodash"
 import { ERC20 as ERC20Types } from "interfaces/typechain"
 
+const BILLION = 1000000000
+const MILLION = 1000000
+const THOUSAND = 1000
+const TEN_THOUSAND = 10000
+
 export const delay = (ms: number): Promise<void> => {
   return new Promise((res) => setTimeout(res, ms))
 }
@@ -134,6 +139,54 @@ const humanizeBigNumber = (amount: string | number, limit = 6): string => {
   return Number(amount).toFixed(limit)
 }
 
+//TODO REWRITE
+export const formatFiatNumber = (amount: string | number, decimals = 2) => {
+  if (!amount) return "0.00"
+
+  const stringAmount = cutStringZeroes(amount.toString())
+  const amountArray = stringAmount.split(".")
+
+  if (Number(stringAmount) >= BILLION) {
+    return (Number(amountArray[0]) / BILLION).toFixed(decimals) + "b"
+  }
+
+  if (Number(stringAmount) >= MILLION) {
+    return (Number(amountArray[0]) / MILLION).toFixed(decimals) + "m"
+  }
+
+  if (Number(stringAmount) >= THOUSAND) {
+    return (Number(amountArray[0]) / THOUSAND).toFixed(decimals) + "k"
+  }
+
+  return Number(stringAmount).toFixed(decimals)
+}
+
+//TODO REWRITE
+export const formatTokenNumber = (
+  amount: BigNumber,
+  decimals = 18,
+  fix = 2
+) => {
+  if (!amount) return "0.00"
+
+  const stringAmount = cutStringZeroes(formatUnits(amount, decimals).toString())
+  const amountArray = stringAmount.split(".")
+
+  const integerPart = amountArray[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  const floatPart = amountArray[1]
+    ? amountArray[1].length > fix
+      ? amountArray[1].slice(0, fix)
+      : amountArray[1]
+    : null
+
+  if (Number(stringAmount) >= TEN_THOUSAND) {
+    return integerPart
+  }
+
+  return floatPart ? integerPart + "." + floatPart : integerPart
+}
+
+//TODO REWRITE
 export const formatNumber = (amount: string, decimals = 2) => {
   if (!amount) return "0.00"
 

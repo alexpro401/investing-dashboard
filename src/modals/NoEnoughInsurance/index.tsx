@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 
 import { Text } from "theme"
 import * as S from "./styled"
-import Button from "components/Button"
+import { AppButton } from "common"
 import Confirm from "components/Confirm"
 import confirmModalImage from "assets/images/confirm-modal.png"
 
@@ -34,15 +34,13 @@ const NoEnoughInsurance: FC<Props> = ({ isOpen, onClose }) => {
         </ul>
       </Text>
 
-      <Button
-        m="16px 0 0"
-        size="big"
-        theme="primary"
+      <AppButton
+        size="medium"
+        color="primary"
         onClick={navigateToStake}
         full
-      >
-        Stake 100 DEXE
-      </Button>
+        text="Stake 100 DEXE"
+      />
     </Confirm>
   )
 }

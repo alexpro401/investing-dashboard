@@ -7,22 +7,18 @@ import {
   useCallback,
 } from "react"
 import { format } from "date-fns"
-import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { PriceFeed } from "abi"
 import { ZERO } from "constants/index"
 import { useActiveWeb3React } from "hooks"
-import useContract from "hooks/useContract"
 import { useERC20Data } from "state/erc20/hooks"
 import { DATE_TIME_FORMAT } from "constants/time"
 import { percentageOfBignumbers } from "utils/formulas"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import { selectPriceFeedAddress } from "state/contracts/selectors"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
 import { Flex } from "theme"
@@ -31,7 +27,7 @@ import Tooltip from "components/Tooltip"
 import TokenIcon from "components/TokenIcon"
 import IconButton from "components/IconButton"
 import ExternalLink from "components/ExternalLink"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 
 import S, { TraderRating, TraderLPSize, TraderInfoBadge } from "./styled"
 import RiskyCardSettings from "./Settings"
@@ -42,6 +38,7 @@ import settingsGreenIcon from "assets/icons/settings-green.svg"
 import useTokenRating from "hooks/useTokenRating"
 import { TraderPoolRiskyProposal } from "interfaces/typechain"
 import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
+import { usePriceFeedContract } from "contracts"
 
 const MAX_INVESTORS_COUNT = 1000
 
@@ -65,8 +62,7 @@ const RiskyProposalCard: FC<Props> = ({
   const navigate = useNavigate()
   const { account, chainId } = useActiveWeb3React()
   const [proposalToken] = useERC20Data(proposal.proposalInfo.token)
-  const priceFeedAddress = useSelector(selectPriceFeedAddress)
-  const priceFeed = useContract(priceFeedAddress, PriceFeed)
+  const priceFeed = usePriceFeedContract()
   const getTokenRating = useTokenRating()
 
   const [{ poolMetadata }] = usePoolMetadata(
@@ -418,16 +414,6 @@ const RiskyProposalCard: FC<Props> = ({
     }
   }
 
-  const InvestButton = canInvest ? (
-    <Button full size="small" br="12px" onClick={onInvest}>
-      {isTrader ? "Terminal" : "Stake LP"}
-    </Button>
-  ) : (
-    <SecondaryButton full size="small" br="12px">
-      {isTrader ? "Terminal" : "Stake LP"}
-    </SecondaryButton>
-  )
-
   return (
     <>
       <SharedS.Card>
@@ -545,7 +531,16 @@ const RiskyProposalCard: FC<Props> = ({
             label={`Position size (${proposalSymbol})`}
             amount={positionSize}
           />
-          <Flex full>{InvestButton}</Flex>
+          <Flex full>
+            <AppButton
+              full
+              text={isTrader ? "Terminal" : "Stake LP"}
+              onClick={() => onInvest}
+              size="x-small"
+              disabled={!canInvest}
+              color={canInvest ? "primary" : "secondary"}
+            />
+          </Flex>
         </SharedS.Body>
 
         {!isTrader && (

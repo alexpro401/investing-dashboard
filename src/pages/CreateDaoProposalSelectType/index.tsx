@@ -6,7 +6,6 @@ import TutorialCard from "components/TutorialCard"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import { SelectableCard, Icon, Collapse } from "common"
 import { ICON_NAMES } from "constants/icon-names"
-import { useGovPoolCreateProposal } from "hooks/dao"
 
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
@@ -34,14 +33,12 @@ const CreateProposalSelectType: React.FC = () => {
     EProposalType.daoProfileModification
   )
 
-  const { createDistributionProposal } = useGovPoolCreateProposal(daoAddress)
-
   const proceedToNextStep = useCallback(async () => {
     //TODO NAVIGATE to path related to selected proposal type
     const nextProposalTypePath = {
       [EProposalType.daoProfileModification]: `/dao/${daoAddress}/create-proposal-change-dao-settings`,
       [EProposalType.changingVotingSettings]: `/dao/${daoAddress}/create-proposal-change-voting-settings`,
-      [EProposalType.tokenDistribution]: "/",
+      [EProposalType.tokenDistribution]: `/dao/${daoAddress}/create-proposal-token-distribution`,
       [EProposalType.validatorSettings]: `/dao/${daoAddress}/create-proposal-validator-settings`,
       [EProposalType.changeTokenPrice]: "/",
     }[selectedProposalType]
@@ -49,16 +46,7 @@ const CreateProposalSelectType: React.FC = () => {
     if (nextProposalTypePath !== "/") {
       return navigate(nextProposalTypePath)
     }
-
-    // TEMP: create hardcoded proposals
-    switch (selectedProposalType) {
-      case EProposalType.tokenDistribution: {
-        // token distribution
-        await createDistributionProposal()
-        return
-      }
-    }
-  }, [selectedProposalType, daoAddress, navigate, createDistributionProposal])
+  }, [selectedProposalType, daoAddress, navigate])
 
   const proposalTypes = useMemo<IProposalType[]>(
     () => [

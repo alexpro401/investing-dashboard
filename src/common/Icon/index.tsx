@@ -41,6 +41,8 @@ import {
   LockedIcon,
   FlameGradientIcon,
   TileCheckIcon,
+  MetamaskIcon,
+  PlusIcon,
   ExclamationCircle,
 } from "assets/icons"
 
@@ -138,6 +140,10 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return LockedIcon as unknown as ElementType
       case ICON_NAMES.tileCheck:
         return TileCheckIcon as unknown as ElementType
+      case ICON_NAMES.metamask:
+        return MetamaskIcon as unknown as ElementType
+      case ICON_NAMES.plus:
+        return PlusIcon as unknown as ElementType
       case ICON_NAMES.exclamationCircle:
         return ExclamationCircle as unknown as ElementType
       default:

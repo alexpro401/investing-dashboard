@@ -1,4 +1,4 @@
-import { AnchorHTMLAttributes, HTMLAttributes, useMemo } from "react"
+import { AnchorHTMLAttributes, HTMLAttributes, ReactNode, useMemo } from "react"
 import { LinkProps } from "react-router-dom"
 
 import * as S from "./styled"
@@ -23,8 +23,8 @@ export type COLORS =
 export type SIZES = "large" | "medium" | "small" | "x-small" | "no-paddings"
 
 type Props<R extends string, H extends string> = {
-  iconLeft?: ICON_NAMES
-  iconRight?: ICON_NAMES
+  iconLeft?: ICON_NAMES | ReactNode
+  iconRight?: ICON_NAMES | ReactNode
   iconSize?: number
   text?: string
   scheme?: SCHEMES
@@ -34,6 +34,7 @@ type Props<R extends string, H extends string> = {
   href?: H
   routePath?: R
   disabled?: boolean
+  full?: boolean
 } & (R extends string
   ? Omit<LinkProps, "to">
   : H extends string
@@ -52,6 +53,7 @@ const AppButton = <R extends string, H extends string>({
   href,
   routePath,
   disabled,
+  full,
   children,
   ...rest
 }: Props<R, H>) => {
@@ -70,11 +72,31 @@ const AppButton = <R extends string, H extends string>({
     [isDisabled]
   )
 
+  const leftIcon = useMemo(() => {
+    if (!iconLeft) return <></>
+
+    if (Object.values(ICON_NAMES).includes(iconLeft as ICON_NAMES)) {
+      return <S.AppButtonIcon name={iconLeft as ICON_NAMES} size={iconSize} />
+    }
+
+    return iconLeft
+  }, [iconLeft, iconSize])
+
+  const rightIcon = useMemo(() => {
+    if (!iconRight) return <></>
+
+    if (Object.values(ICON_NAMES).includes(iconRight as ICON_NAMES)) {
+      return <S.AppButtonIcon name={iconRight as ICON_NAMES} size={iconSize} />
+    }
+
+    return iconRight
+  }, [iconRight, iconSize])
+
   const ButtonInner = (
     <>
-      {iconLeft ? <S.AppButtonIcon name={iconLeft} size={iconSize} /> : <></>}
+      {leftIcon}
       {children || text ? <S.AppButtonText>{text}</S.AppButtonText> : <></>}
-      {iconRight ? <S.AppButtonIcon name={iconRight} size={iconSize} /> : <></>}
+      {rightIcon}
     </>
   )
 
@@ -110,6 +132,7 @@ const AppButton = <R extends string, H extends string>({
 
   return (
     <S.ButtonType
+      full={full}
       scheme={scheme}
       modifications={btnModifications}
       states={btnStates}

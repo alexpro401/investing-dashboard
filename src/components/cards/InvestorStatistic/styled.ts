@@ -1,5 +1,6 @@
+import { AppButton } from "common"
 import styled from "styled-components"
-import { Text } from "theme"
+import theme, { Text } from "theme"
 
 export const ButtonContainer = styled.div`
   display: grid;
@@ -14,3 +15,23 @@ export const InvestorStatisticValue = styled(Text).attrs(() => ({
   fs: 16,
   lh: "16px",
 }))``
+
+export const NewInvestment = styled(AppButton).attrs(() => ({
+  color: "secondary",
+  type: "button",
+  size: "small",
+  text: "+ New investment",
+}))`
+  font-weight: 600;
+  color: ${theme.textColors.primary};
+  width: fill-available;
+`
+
+export const MyInvestments = styled(AppButton).attrs(() => ({
+  color: "primary",
+  type: "button",
+  size: "small",
+  text: "My investments",
+}))`
+  width: fill-available;
+`

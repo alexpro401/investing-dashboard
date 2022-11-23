@@ -13,7 +13,7 @@ import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 import { normalizeBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
-import { useProposalAddress } from "hooks/useContract"
+import useProposalAddress from "hooks/useProposalAddress"
 
 export interface DividendToken {
   icon: JSX.Element

@@ -9,7 +9,7 @@ import { DATE_TIME_FORMAT } from "constants/time"
 import { Flex } from "theme"
 import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
-import Button from "components/Button"
+import { AppButton } from "common"
 import Input from "components/Input"
 import TextArea from "components/TextArea"
 import Tooltip from "components/Tooltip"
@@ -93,15 +93,13 @@ const CreateInvestmentProposal: FC = () => {
       title="Success"
       description="You have successfully created an invest proposal."
     >
-      <Button
+      <AppButton
         onClick={handleInvestRedirect}
-        size="large"
-        theme="primary"
-        fz={22}
+        size="medium"
+        color="primary"
         full
-      >
-        Invest in proposal
-      </Button>
+        text="Invest in proposal"
+      />
     </TransactionSent>
   )
 
@@ -227,9 +225,13 @@ const CreateInvestmentProposal: FC = () => {
                 {getFieldErrors("lpAmount")}
               </Row>
               <Flex full p="20px 0 0">
-                <Button onClick={handleSubmit} full size="large">
-                  Create investment proposal
-                </Button>
+                <AppButton
+                  onClick={handleSubmit}
+                  full
+                  size="large"
+                  color="primary"
+                  text="Create investment proposal"
+                />
               </Flex>
             </Body>
           </Content>

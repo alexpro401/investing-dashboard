@@ -14,8 +14,7 @@ import { createClient, Provider as GraphProvider } from "urql"
 import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
 import Checkbox from "components/Checkbox"
-import TokensList from "components/TokensList"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 import Input from "components/Input"
 import TokenIcon from "components/TokenIcon"
 import Slider from "components/Slider"
@@ -166,17 +165,23 @@ const CreateRiskyProposal: FC = () => {
             />
           </Flex>
           <Flex full>
-            <SecondaryButton
-              size="small"
-              m="0 8px 0 0"
-              full
-              onClick={() => navigate(-1)}
-            >
-              Return
-            </SecondaryButton>
-            <Button size="small" m="0 0 0 8px" full onClick={handleNextStep}>
-              Continue
-            </Button>
+            <Flex full p="0 8px 0 0">
+              <AppButton
+                size="small"
+                color="secondary"
+                full
+                onClick={() => navigate(-1)}
+                text="Cancel"
+              />
+            </Flex>
+            <Flex full p="0 0 0 8px">
+              <AppButton
+                size="small"
+                full
+                onClick={handleNextStep}
+                text="Continue"
+              />
+            </Flex>
           </Flex>
         </Body>
       ),
@@ -341,15 +346,15 @@ const CreateRiskyProposal: FC = () => {
               />
             </Row>
             <Flex full p="20px 0 0">
-              <Button
+              <AppButton
                 onClick={() =>
                   agreed ? handleSubmit() : setShowAgreement(true)
                 }
                 full
                 size="large"
-              >
-                Create risky proposal
-              </Button>
+                color="primary"
+                text="Create risky proposal"
+              />
             </Flex>
           </Body>
         </>
@@ -364,15 +369,13 @@ const CreateRiskyProposal: FC = () => {
       title="Success"
       description="You have successfully created a risk proposal. Deposit LP or trade your token"
     >
-      <Button
+      <AppButton
         onClick={handleSwapRedirect}
         size="large"
-        theme="primary"
-        fz={22}
+        color="primary"
         full
-      >
-        Open new trade
-      </Button>
+        text="Open new trade"
+      />
     </TransactionSent>
   )
 

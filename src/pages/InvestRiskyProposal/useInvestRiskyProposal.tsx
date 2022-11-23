@@ -39,7 +39,7 @@ import { parseEther, parseUnits } from "@ethersproject/units"
 import { ZERO } from "constants/index"
 import useRiskyPosition from "hooks/useRiskyPosition"
 import { useERC20Data } from "state/erc20/hooks"
-import { useProposalAddress } from "hooks/useContract"
+import useProposalAddress from "hooks/useProposalAddress"
 import {
   IDivestAmountsAndCommissions,
   IInvestTokens,

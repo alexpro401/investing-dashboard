@@ -10,10 +10,17 @@ import { Center, Flex } from "theme"
 import Tabs from "common/Tabs"
 import Pools from "components/Header/Pools"
 import Header from "components/Header/Layout"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 import PoolStatisticCard from "components/cards/PoolStatistic"
 
-import { Container, ButtonContainer, Indents, Label, Value } from "./styled"
+import {
+  Container,
+  ButtonContainer,
+  Indents,
+  Label,
+  Value,
+  Divider,
+} from "./styled"
 
 import TabPoolPnl from "./tabs/Pnl"
 import TabPoolLockedFunds from "./tabs/LockedFunds"
@@ -109,7 +116,7 @@ function Pool() {
         },
       }
     }
-  }, [isTrader, poolData])
+  }, [isTrader, poolData, navigate])
 
   const PoolPageTabs = useMemo(() => {
     const load = isNil(poolData) || isNil(poolInfoData)
@@ -173,7 +180,15 @@ function Pool() {
         />
       </Indents>
     )
-  }, [poolData, poolInfoData, actions, accountLPs, chainId])
+  }, [
+    poolData,
+    poolInfoData,
+    baseToken,
+    isTrader,
+    accountLPsPrice,
+    poolMetadata,
+    chainId,
+  ])
 
   return (
     <>
@@ -186,20 +201,24 @@ function Pool() {
           <PoolStatisticCard data={poolData}>
             <>
               <ButtonContainer>
-                <SecondaryButton
-                  fz={14}
+                <AppButton
+                  color="secondary"
+                  size="small"
                   full
                   onClick={actions.leftNode.onClick}
-                >
-                  {actions.leftNode.text}
-                </SecondaryButton>
-                <Button fz={14} onClick={actions.rightNode.onClick} full>
-                  {actions.rightNode.text}
-                </Button>
+                  text={actions.leftNode.text}
+                />
+                <AppButton
+                  color="primary"
+                  size="small"
+                  onClick={actions.rightNode.onClick}
+                  full
+                  text={actions.rightNode.text}
+                />
               </ButtonContainer>
               {!isTrader && (
                 <>
-                  <hr />
+                  <Divider />
                   <Flex full ai="center" jc="space-between">
                     <Label>Your share</Label>
                     <Value.Medium color="#E4F2FF">

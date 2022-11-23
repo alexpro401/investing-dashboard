@@ -73,6 +73,9 @@ const DaoProposalChangeTokenDistribution = lazy(
       "pages/CreateDaoProposalChangeVotingSettings/subpages/TokenDistribution"
     )
 )
+const DaoProposalTokenDistribution = lazy(
+  () => import("pages/CreateDaoProposalTokenDistribution")
+)
 /* dao proposals */
 
 const DaoProposals = lazy(() => import("pages/DaoProposals"))
@@ -194,7 +197,7 @@ export default function Routes() {
                 <Route path="dao/list/:filter" element={<DaoPoolsList />} />
                 <Route path="dao/:daoAddress" element={<DaoProfile />} />
 
-                {/* proposals */}
+                {/* create proposals */}
                 <Route
                   path="dao/:daoAddress/create-proposal"
                   element={<CreateDaoProposalSelectType />}
@@ -234,8 +237,12 @@ export default function Routes() {
                   element={<DaoProposalChangeGlobalVotingSettings />}
                 />
                 <Route
-                  path="dao/:daoAddress/create-proposal-token-distribution"
+                  path="dao/:daoAddress/create-proposal-change-token-distribution"
                   element={<DaoProposalChangeTokenDistribution />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal-token-distribution"
+                  element={<DaoProposalTokenDistribution />}
                 />
 
                 <Route path="/*" element={<TopMembers />} />

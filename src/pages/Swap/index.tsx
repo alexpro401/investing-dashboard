@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react"
-import { Flex } from "theme"
+import { Flex, To } from "theme"
 import { useParams, useNavigate, useLocation } from "react-router-dom"
 import { PulseSpinner } from "react-spinners-kit"
 
@@ -8,7 +8,7 @@ import SwapPath from "components/SwapPrice/SwapPath"
 import IconButton from "components/IconButton"
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import ExchangeDivider from "components/Exchange/Divider"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 import CircularProgress from "components/CircularProgress"
 import TransactionSlippage from "components/TransactionSlippage"
 import Header from "components/Header/Layout"
@@ -33,13 +33,7 @@ import {
   InfoWhite,
 } from "components/Exchange/styled"
 
-import {
-  SwapPriceBody,
-  SwapRouteBody,
-  SwapPathTitle,
-  SwapPathIcon,
-  SwapPathDescription,
-} from "./styled"
+import * as S from "./styled"
 
 import useSwap from "./useSwap"
 import { cutDecimalPlaces, fromBig } from "utils"
@@ -48,6 +42,7 @@ import { useAllTokens } from "hooks/useToken"
 import { useAllTokenFundBalances } from "hooks/useBalance"
 import { Currency } from "lib/entities"
 import useRiskyProposals from "hooks/useRiskyProposals"
+import usePoolType, { POOL_TYPE } from "hooks/usePoolType"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -62,7 +57,8 @@ enum ModalView {
 const Swap = () => {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const { poolType, poolToken, inputToken, outputToken } = useParams()
+  const { poolToken, inputToken, outputToken } = useParams()
+  const poolType = usePoolType(poolToken)
   const [
     formState,
     {
@@ -192,32 +188,29 @@ const Swap = () => {
   const button = useMemo(() => {
     if (from.amount === "0" || to.amount === "0") {
       return (
-        <SecondaryButton
-          theme="disabled"
+        <AppButton
+          disabled
           size="large"
+          color="secondary"
           onClick={onSubmit}
-          fz={22}
+          text="Enter amount to swap"
           full
-        >
-          Enter amount to swap
-        </SecondaryButton>
+        />
       )
     }
 
     return (
-      <Button
+      <AppButton
         size="large"
-        theme={direction === "deposit" ? "primary" : "warn"}
+        color={direction === "deposit" ? "primary" : "error"}
         onClick={onSubmit}
-        fz={22}
         full
-      >
-        {direction === "deposit" ? (
-          <Flex gap="6">Buy token {symbol}</Flex>
-        ) : (
-          <Flex gap="6">Sell token {symbol}</Flex>
-        )}
-      </Button>
+        text={
+          direction === "deposit"
+            ? `Buy token ${symbol}`
+            : `Sell token ${symbol}`
+        }
+      />
     )
   }, [from.amount, to.amount, direction, onSubmit, symbol])
 
@@ -387,25 +380,25 @@ const Swap = () => {
           gasPrice={gasPrice}
           isExpandable
         >
-          <SwapPriceBody>
+          <S.SwapPriceBody>
             {expectedOutput}
             {priceImpactUI}
             {expectedOutputWithSlippage}
-          </SwapPriceBody>
-          <SwapRouteBody>
-            <SwapPathTitle>
-              <SwapPathIcon src={swapPathIcon} />
+          </S.SwapPriceBody>
+          <S.SwapRouteBody>
+            <S.SwapPathTitle>
+              <S.SwapPathIcon src={swapPathIcon} />
               Swap Route
-            </SwapPathTitle>
+            </S.SwapPathTitle>
             {!!swapPath.length && <SwapPath path={swapPath} />}
             {!!swapPath.length && (
-              <SwapPathDescription>
+              <S.SwapPathDescription>
                 Best price route costs - ${gasPrice} in gas. This route
                 optimizes your total output by considering split routes,
                 multiple hops, and the gas cost of each step.
-              </SwapPathDescription>
+              </S.SwapPathDescription>
             )}
-          </SwapRouteBody>
+          </S.SwapRouteBody>
         </SwapPrice>
       )}
 
@@ -414,6 +407,12 @@ const Swap = () => {
       </Flex>
 
       {infoCard}
+
+      {poolType === POOL_TYPE.INVEST && (
+        <To to={`/create-invest-proposal/${poolToken}`}>
+          <S.CreateProposal />
+        </To>
+      )}
 
       <TransactionSlippage
         slippage={slippage}
