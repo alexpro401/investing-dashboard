@@ -45,4 +45,12 @@ const GovPoolsQuery = `
   }
 `
 
-export { GovPoolQuery, GovPoolsQuery }
+const GovPoolExecutorsQuery = `
+  query ($address: String!) {
+    daoPools(id: $address) {
+      executors {${POOL_EXECUTOR}}
+    }
+  }
+`
+
+export { GovPoolQuery, GovPoolsQuery, GovPoolExecutorsQuery }

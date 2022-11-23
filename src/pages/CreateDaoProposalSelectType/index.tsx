@@ -6,6 +6,7 @@ import TutorialCard from "components/TutorialCard"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import { SelectableCard, Icon, Collapse } from "common"
 import { ICON_NAMES } from "constants/icon-names"
+import { useGovPoolExecutors } from "hooks/dao"
 
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
@@ -32,6 +33,7 @@ const CreateProposalSelectType: React.FC = () => {
   const [selectedProposalType, setSelectedProposalType] = useState(
     EProposalType.daoProfileModification
   )
+  const [] = useGovPoolExecutors(daoAddress)
 
   const proceedToNextStep = useCallback(async () => {
     //TODO NAVIGATE to path related to selected proposal type
