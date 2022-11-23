@@ -64,7 +64,7 @@ const DaoProposalDetailsCard: FC<Props> = ({ govPoolProposal }) => {
           My votes
         </S.DaoProposalDetailsRowText>
         <S.DaoProposalDetailsRowText textType="error">
-          {govPoolProposal.myVotesAmount}
+          {fromBig(govPoolProposal.myVotesAmount)}
         </S.DaoProposalDetailsRowText>
       </S.DaoProposalDetailsRow>
 

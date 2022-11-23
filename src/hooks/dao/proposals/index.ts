@@ -8,3 +8,4 @@ export { default as useGovPoolCreateDistributionProposal } from "./useGovPoolCre
 export * from "./useGovPoolCreateProposal"
 export * from "./useGovPoolProposals"
 export * from "./useGovPoolProposal"
+export * from "./useGovPoolProposalVotingHistory"

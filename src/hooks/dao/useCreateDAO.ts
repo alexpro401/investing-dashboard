@@ -297,6 +297,7 @@ const useCreateDAO = () => {
     try {
       const transactionResponse = await factory.deployGovPool(POOL_PARAMETERS, {
         ...transactionOptions,
+        from: account,
         gasLimit,
       })
 

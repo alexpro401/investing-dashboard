@@ -77,7 +77,9 @@ const DaoProposalDetails: FC<Props> = ({}) => {
           {selectedTabNumber === TABS[1].number && (
             <VotingSettingsTab govPoolProposal={govPoolProposal} />
           )}
-          {selectedTabNumber === TABS[2].number && <VotingHistoryTab />}
+          {selectedTabNumber === TABS[2].number && (
+            <VotingHistoryTab govPoolProposal={govPoolProposal} />
+          )}
         </AnimatePresence>
         <S.DaoProposalVotingTerminal
           proposalId={proposalId}

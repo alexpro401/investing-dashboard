@@ -4,6 +4,8 @@ import { bigify, DateUtil } from "utils"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { createClient, useQuery } from "urql"
 import { useActiveWeb3React } from "../../index"
+import { useGovPool } from "../useGovPool"
+import { BigNumber } from "@ethersproject/bignumber"
 
 const GovPoolGraphClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -14,6 +16,7 @@ export const useGovPoolProposal = (
   govPoolAddress: string,
   proposalView: IGovPool.ProposalViewStructOutput
 ) => {
+  const { govPoolContract } = useGovPool(govPoolAddress)
   const { account } = useActiveWeb3React()
 
   const [{ data }] = useQuery({
@@ -31,6 +34,9 @@ export const useGovPoolProposal = (
 
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
+
+  const [myVotesAmount, setMyVotesAmount] = useState<BigNumber>()
+
   const creator = useMemo(
     () => graphGovPoolProposal?.creator,
     [graphGovPoolProposal]
@@ -79,11 +85,26 @@ export const useGovPoolProposal = (
     } catch (error) {}
   }, [proposalView])
 
+  const loadProposalTotalVotes = useCallback(async () => {
+    try {
+      const amounts = await govPoolContract?.getTotalVotes(
+        proposalId,
+        account!,
+        false
+      )
+      const accountVotesAmount = amounts?.[1]
+      setMyVotesAmount(accountVotesAmount)
+    } catch (error) {
+      console.error({ error })
+    }
+  }, [account, govPoolContract, proposalId])
+
   const init = useCallback(async () => {
     try {
       await loadDetailsFromIpfs()
+      await loadProposalTotalVotes()
     } catch (error) {}
-  }, [loadDetailsFromIpfs])
+  }, [loadDetailsFromIpfs, loadProposalTotalVotes])
 
   useEffect(() => {
     init()
@@ -96,21 +117,9 @@ export const useGovPoolProposal = (
     [proposalView]
   )
 
-  const myVotesAmount = useMemo(() => {
-    // const myVotes = graphGovPoolProposal?.votes.filter((el) =>
-    //   el.voter.id.includes(account)
-    // )
-    //
-    // console.log(myVotes)
-    //
-    // return myVotes?.reduce((acc, curr) => {
-    //   return (acc += +curr)
-    // }, 0)
-
-    return 0
-  }, [])
-
   return {
+    govPoolAddress,
+    proposalId,
     creator,
     votedAddresses,
     name,
