@@ -15,6 +15,26 @@
                 "internalType": "uint64",
                 "name": "startTimestamp",
                 "type": "uint64"
+            },
+            {
+                "internalType": "address",
+                "name": "_collateralToken",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_maxPower",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_reductionPercent",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_requiredCollateral",
+                "type": "uint256"
             }
         ],
         "stateMutability": "nonpayable",
@@ -247,11 +267,6 @@
                 "internalType": "uint256",
                 "name": "",
                 "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -424,11 +439,6 @@
                 "internalType": "uint256",
                 "name": "newPower",
                 "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "collateral",
-                "type": "uint256"
             }
         ],
         "stateMutability": "nonpayable",
@@ -588,32 +598,6 @@
     {
         "inputs": [
             {
-                "internalType": "address",
-                "name": "_collateralToken",
-                "type": "address"
-            }
-        ],
-        "name": "setCollateralToken",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_maxPower",
-                "type": "uint256"
-            }
-        ],
-        "name": "setMaxPower",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
                 "internalType": "uint256",
                 "name": "_maxPower",
                 "type": "uint256"
@@ -643,32 +627,6 @@
             }
         ],
         "name": "setNftRequiredCollateral",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_reductionPercent",
-                "type": "uint256"
-            }
-        ],
-        "name": "setReductionPercent",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "setRequiredCollateral",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -770,6 +728,19 @@
     {
         "inputs": [],
         "name": "totalCollateral",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "totalPower",
         "outputs": [
             {
                 "internalType": "uint256",
