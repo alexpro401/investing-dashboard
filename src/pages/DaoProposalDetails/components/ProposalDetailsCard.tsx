@@ -2,7 +2,7 @@ import * as S from "../styled"
 
 import { FC, HTMLAttributes } from "react"
 import ExternalLink from "components/ExternalLink"
-import { formatNumber, shortenAddress } from "utils"
+import { fromBig, shortenAddress } from "utils"
 import { useGovPoolProposal } from "hooks/dao"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -33,10 +33,10 @@ const DaoProposalDetailsCard: FC<Props> = ({ govPoolProposal }) => {
         </S.DaoProposalDetailsRowText>
         <S.DaoProposalDetailsRowText textType="value">
           <S.DaoProposalDetailsRowText textType="value">
-            {govPoolProposal.votesFor}/
+            <>{fromBig(govPoolProposal.votesFor)}/</>
           </S.DaoProposalDetailsRowText>
           <S.DaoProposalDetailsRowText textType="label">
-            {formatNumber(String(govPoolProposal.votesTotalNeed), 2)}
+            {fromBig(govPoolProposal.votesTotalNeed)}
           </S.DaoProposalDetailsRowText>
         </S.DaoProposalDetailsRowText>
       </S.DaoProposalDetailsRow>
@@ -64,7 +64,7 @@ const DaoProposalDetailsCard: FC<Props> = ({ govPoolProposal }) => {
           My votes
         </S.DaoProposalDetailsRowText>
         <S.DaoProposalDetailsRowText textType="error">
-          200
+          {govPoolProposal.myVotesAmount}
         </S.DaoProposalDetailsRowText>
       </S.DaoProposalDetailsRow>
 

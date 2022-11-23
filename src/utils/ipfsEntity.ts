@@ -11,6 +11,8 @@ const auth =
       process.env.REACT_APP_IPFS_PROJECT_SECRET
   ).toString("base64")
 
+const PREFIX = "ipfs://"
+
 export class IpfsEntity<T> {
   _rawData?: T
   _path?: string
@@ -28,6 +30,10 @@ export class IpfsEntity<T> {
       authorization: auth,
     },
   })
+
+  get path() {
+    return `${PREFIX}${this._path?.replace(PREFIX, "")}`
+  }
 
   constructor(args: { data?: T; path?: string }) {
     const { data, path } = args
@@ -58,7 +64,7 @@ export class IpfsEntity<T> {
     if (!this._path) throw new Error("No path provided to load from")
 
     const { data } = await this._axios.post(
-      `api/v0/cat?arg=${this._path.replace("ipfs://", "")}`
+      `api/v0/cat?arg=${this._path.replace(PREFIX, "")}`
     )
 
     return data as T

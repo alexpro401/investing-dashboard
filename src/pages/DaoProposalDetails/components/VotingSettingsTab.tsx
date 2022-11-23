@@ -1,11 +1,16 @@
-import { FC } from "react"
+import { FC, HTMLAttributes } from "react"
 
 import * as S from "../styled"
 import { ICON_NAMES } from "constants/icon-names"
-import Switch from "components/Switch"
-import { TokenChip } from "common"
+import { VotingSettings } from "common"
+import { useGovPoolProposal } from "hooks/dao"
+import { fromBig } from "utils"
 
-const VotingSettingsTab: FC = () => {
+interface Props extends HTMLAttributes<HTMLDivElement> {
+  govPoolProposal: ReturnType<typeof useGovPoolProposal>
+}
+
+const VotingSettingsTab: FC<Props> = ({ govPoolProposal }) => {
   return (
     <>
       <S.DaoProposalDetailsCard>
@@ -15,90 +20,20 @@ const VotingSettingsTab: FC = () => {
           />
           Proposal settings
         </S.DaoProposalDetailsCardTitle>
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="label">
-            Early vote completion
-          </S.DaoProposalDetailsRowText>
-          <Switch
-            isOn={true}
-            onChange={(n, v) => {}}
-            name={"early-vote-completion"}
-          />
-        </S.DaoProposalDetailsRow>
-        <S.DaoProposalCardRowDivider />
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="label">
-            Voting with delegated tokens
-          </S.DaoProposalDetailsRowText>
-          <Switch
-            isOn={true}
-            onChange={(n, v) => {}}
-            name={"early-vote-completion"}
-          />
-        </S.DaoProposalDetailsRow>
-        <S.DaoProposalCardRowDivider />
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="label">
-            Length of voting period
-          </S.DaoProposalDetailsRowText>
-          <S.DaoProposalDetailsRowText textType="value">
-            1D/1H/1M
-          </S.DaoProposalDetailsRowText>
-        </S.DaoProposalDetailsRow>
-        <S.DaoProposalCardRowDivider />
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="label">
-            Min. voting power required for voting
-          </S.DaoProposalDetailsRowText>
-          <S.DaoProposalDetailsRowText textType="value">
-            1
-          </S.DaoProposalDetailsRowText>
-        </S.DaoProposalDetailsRow>
-        <S.DaoProposalCardRowDivider />
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="label">
-            Min. voting power required for creating a proposal
-          </S.DaoProposalDetailsRowText>
-          <S.DaoProposalDetailsRowText textType="value">
-            111
-          </S.DaoProposalDetailsRowText>
-        </S.DaoProposalDetailsRow>
-        <S.DaoProposalCardRowDivider />
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="label">
-            ERC-20 token for rewards
-          </S.DaoProposalDetailsRowText>
-          <S.DaoProposalDetailsRowText textType="value">
-            <TokenChip name={"DEXE"} symbol={"DEXE"} link={"#"} />
-          </S.DaoProposalDetailsRowText>
-        </S.DaoProposalDetailsRow>
-        <S.DaoProposalCardRowDivider />
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="label">
-            Tokens reward for creator
-          </S.DaoProposalDetailsRowText>
-          <S.DaoProposalDetailsRowText textType="value">
-            111 DEXE
-          </S.DaoProposalDetailsRowText>
-        </S.DaoProposalDetailsRow>
-        <S.DaoProposalCardRowDivider />
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="label">
-            Tokens reward for the voter
-          </S.DaoProposalDetailsRowText>
-          <S.DaoProposalDetailsRowText textType="value">
-            0.1%
-          </S.DaoProposalDetailsRowText>
-        </S.DaoProposalDetailsRow>
-        <S.DaoProposalCardRowDivider />
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="label">
-            Tokens reward for member executing proposal tx.
-          </S.DaoProposalDetailsRowText>
-          <S.DaoProposalDetailsRowText textType="value">
-            10,000 DEXE
-          </S.DaoProposalDetailsRowText>
-        </S.DaoProposalDetailsRow>
+        <VotingSettings
+          earlyCompletion={govPoolProposal.proposalSettings.earlyCompletion}
+          delegatedVotingAllowed={
+            govPoolProposal.proposalSettings.delegatedVotingAllowed
+          }
+          duration={govPoolProposal.proposalSettings.duration.toNumber()}
+          quorum={fromBig(govPoolProposal.proposalSettings.quorum)}
+          minVotesForVoting={govPoolProposal.proposalSettings.minVotesForVoting.toString()}
+          minVotesForCreating={govPoolProposal.proposalSettings.minVotesForCreating.toString()}
+          rewardToken={govPoolProposal.proposalSettings.rewardToken}
+          creationReward={govPoolProposal.proposalSettings.creationReward.toString()}
+          voteRewardsCoefficient={govPoolProposal.proposalSettings.voteRewardsCoefficient.toString()}
+          executionReward={govPoolProposal.proposalSettings.executionReward.toString()}
+        />
       </S.DaoProposalDetailsCard>
     </>
   )

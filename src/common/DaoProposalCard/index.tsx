@@ -2,7 +2,7 @@ import * as S from "./styled"
 
 import { FC, HTMLAttributes } from "react"
 import { ICON_NAMES } from "constants/icon-names"
-import { shortenAddress } from "utils"
+import { fromBig, shortenAddress } from "utils"
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { useGovPoolProposal } from "hooks/dao"
 import { useParams } from "react-router-dom"
@@ -45,9 +45,9 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
         <S.DaoProposalCardBlockInfo alignRight={true}>
           <S.DaoProposalCardBlockInfoValue>
             <>
-              {votesFor}/
+              {fromBig(votesFor)}/
               <S.DaoVotingStatusCounterTotal>
-                {votesTotalNeed}
+                {fromBig(votesTotalNeed)}
               </S.DaoVotingStatusCounterTotal>
             </>
           </S.DaoProposalCardBlockInfoValue>
@@ -55,7 +55,9 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
             Voting status
           </S.DaoProposalCardBlockInfoLabel>
         </S.DaoProposalCardBlockInfo>
-        <S.DaoVotingProgressBar progress={(votesTotalNeed / 100) * +votesFor} />
+        <S.DaoVotingProgressBar
+          progress={(+votesTotalNeed / 100) * +votesFor}
+        />
         <S.DaoProposalCardBlockInfo>
           <S.DaoProposalCardBlockInfoValue>
             {proposalType}

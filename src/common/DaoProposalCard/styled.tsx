@@ -13,9 +13,11 @@ export const DaoProposalCardHead = styled(NavLink)`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  text-decoration: none;
   padding: 16px;
   border-bottom: 1px solid #293c54;
   margin-bottom: 16px;
+  color: ${(props) => props.theme.textColors.primary};
 `
 
 export const DaoProposalCardHeadTitleWrp = styled.div`

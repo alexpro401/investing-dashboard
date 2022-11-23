@@ -1,11 +1,11 @@
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { DateUtil } from "utils"
+import { bigify, DateUtil } from "utils"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { createClient, useQuery } from "urql"
-import { parseUnits } from "@ethersproject/units"
+import { useActiveWeb3React } from "../../index"
 
-const investorGraphClient = createClient({
+const GovPoolGraphClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
 })
 
@@ -14,26 +14,20 @@ export const useGovPoolProposal = (
   govPoolAddress: string,
   proposalView: IGovPool.ProposalViewStructOutput
 ) => {
+  const { account } = useActiveWeb3React()
+
   const [{ data }] = useQuery({
     query: `
       query {
-        daoPools(where: { id: "${govPoolAddress}" }) {
-          proposals(where: { proposalId: "${proposalId}" }) {
-            id
-            proposalId
-            creator
-            votersVoted
-          } 
+        proposals(where: { pool: "${govPoolAddress}", proposalId: "${proposalId}" }) {
+          id
         }
       }
     `,
-    context: investorGraphClient,
+    context: GovPoolGraphClient,
   })
 
-  const graphGovPoolProposal = useMemo(
-    () => data?.daoPools?.[0]?.proposals?.[0],
-    [data]
-  )
+  const graphGovPoolProposal = useMemo(() => data?.proposals?.[0], [data])
 
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
@@ -42,7 +36,7 @@ export const useGovPoolProposal = (
     [graphGovPoolProposal]
   )
   const votedAddresses = useMemo(
-    () => graphGovPoolProposal?.votersVoted,
+    () => graphGovPoolProposal?.voters?.length || 0,
     [graphGovPoolProposal]
   )
 
@@ -64,40 +58,57 @@ export const useGovPoolProposal = (
     [proposalView]
   )
 
+  const proposalSettings = useMemo(
+    () => proposalView?.proposal?.core?.settings || {},
+    [proposalView]
+  )
+
   const loadDetailsFromIpfs = useCallback(async () => {
     try {
-      const entity = new IpfsEntity<{ name: string; description: string }>({
+      const entity = new IpfsEntity<{
+        proposalName: string
+        proposalDescription: string
+      }>({
         path: proposalView?.proposal.descriptionURL,
       })
 
       const response = await entity.load()
 
-      setName(response.name)
-      setDescription(response.description)
+      setName(response.proposalName)
+      setDescription(response.proposalDescription)
     } catch (error) {}
   }, [proposalView])
-
-  const loadDetailsFromSubgraph = useCallback(async () => {
-    // await fetching()
-  }, [])
 
   const init = useCallback(async () => {
     try {
       await loadDetailsFromIpfs()
-      await loadDetailsFromSubgraph()
     } catch (error) {}
-  }, [loadDetailsFromIpfs, loadDetailsFromSubgraph])
+  }, [loadDetailsFromIpfs])
 
   useEffect(() => {
     init()
   }, [init, proposalView])
 
-  const votesTotalNeed = useMemo(() => 222, [])
+  const votesTotalNeed = useMemo(() => bigify("222", 18), [])
 
   const votesFor = useMemo(
-    () => proposalView?.proposal?.core?.votesFor.toString() || 0,
+    () => proposalView?.proposal?.core?.votesFor || 0,
     [proposalView]
   )
+
+  const myVotesAmount = useMemo(() => {
+    // const myVotes = graphGovPoolProposal?.votes.filter((el) =>
+    //   el.voter.id.includes(account)
+    // )
+    //
+    // console.log(myVotes)
+    //
+    // return myVotes?.reduce((acc, curr) => {
+    //   return (acc += +curr)
+    // }, 0)
+
+    return 0
+  }, [])
 
   return {
     creator,
@@ -105,10 +116,12 @@ export const useGovPoolProposal = (
     name,
     description,
     executors,
+    proposalSettings,
 
     proposalType,
     voteEnd,
     votesTotalNeed,
     votesFor,
+    myVotesAmount,
   }
 }
