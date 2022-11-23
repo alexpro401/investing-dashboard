@@ -1,11 +1,12 @@
+import React, { FC, HTMLAttributes, useMemo } from "react"
 import { AnimatePresence, motion, MotionProps } from "framer-motion"
-import { FC, HTMLAttributes, useMemo } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { accordionBaseVariants } from "motion/variants"
 
 type Props = {
   isOpen: boolean
   duration?: number
+  cRef?: React.Ref<HTMLDivElement>
 } & HTMLAttributes<HTMLDivElement> &
   MotionProps
 
@@ -13,6 +14,7 @@ const Collapse: FC<Props> = ({
   isOpen,
   duration = 0.15,
   children,
+  cRef,
   ...rest
 }) => {
   const uid = useMemo(() => uuidv4(), [])
@@ -27,6 +29,7 @@ const Collapse: FC<Props> = ({
           exit="hidden"
           variants={accordionBaseVariants}
           transition={{ duration: duration }}
+          ref={cRef ?? undefined}
           {...rest}
         >
           {children}

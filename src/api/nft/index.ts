@@ -1,11 +1,6 @@
 import { AxiosInstance } from "axios"
 import Moralis from "./Moralis"
-
-interface ERC721Metadata {
-  id: string
-  hash?: string | null
-  uri?: string | null
-}
+import { ERC721Metadata } from "./types"
 
 // represents nft api boilerplate
 interface NftAPI {

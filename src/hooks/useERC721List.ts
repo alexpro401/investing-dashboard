@@ -25,16 +25,16 @@ export const useOwnedERC721Tokens = (daoPoolAddress?: string) => {
   const [{ nftAddress }] = useGovPoolVotingAssets(daoPoolAddress)
   const { account, chainId } = useActiveWeb3React()
   const [ids, setIds] = useState<number[]>([])
-  const api = useAPI()
+  const { NFTAPI } = useAPI()
 
   const [] = useDebounce(
     async () => {
-      if (!api || !account || !chainId) return
+      if (!NFTAPI || !account || !chainId) return
 
       if (!nftAddress || nftAddress === ZERO_ADDR) return
 
       try {
-        const data = await api.nft.getNftsByWallet(
+        const data = await NFTAPI.getNftsByWallet(
           account!,
           chainId!,
           nftAddress
@@ -46,7 +46,7 @@ export const useOwnedERC721Tokens = (daoPoolAddress?: string) => {
       }
     },
     100,
-    [api, account, chainId, nftAddress]
+    [NFTAPI, account, chainId, nftAddress]
   )
 
   return ids

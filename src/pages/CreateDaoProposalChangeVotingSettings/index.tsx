@@ -98,7 +98,9 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
         selectedCard.specification ===
         EDefaultVotingSettingsType.tokenDistribution
       ) {
-        return navigate(`/dao/${daoAddress}/create-proposal-token-distribution`)
+        return navigate(
+          `/dao/${daoAddress}/create-proposal-change-token-distribution`
+        )
       }
     }
 

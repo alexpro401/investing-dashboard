@@ -21,3 +21,4 @@ export { default as useGovPoolWithdrawableAssets } from "./useGovPoolWithdrawabl
 export { default as useGovPoolDelegate } from "./useGovPoolDelegate"
 export { default as useGovValidatorsVote } from "./useGovValidatorsVote"
 export { default as useGovPoolLatestProposalId } from "./useGovPoolLatestProposalId"
+export { default as useGovPoolTreasury } from "./useGovPoolTreasury"
