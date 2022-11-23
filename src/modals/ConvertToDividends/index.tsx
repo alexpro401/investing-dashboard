@@ -2,7 +2,7 @@ import Confirm from "components/Confirm"
 import { FC } from "react"
 import { IConvertToDividendsParams } from "./useConvertToDividendsContext"
 import * as S from "./styled"
-import Button from "components/Button"
+import { AppButton } from "common"
 import useConvertToDividends from "./useConvertToDividends"
 import TokenIcon from "components/TokenIcon"
 
@@ -33,16 +33,13 @@ const ConvertToDividends: FC<Props> = (props) => {
           </>
         )}
       </S.BalanceRow>
-      <Button
-        m="10px 0 0"
-        size="large"
-        theme="primary"
+      <AppButton
+        size="medium"
+        color="primary"
         onClick={submit}
-        fz={22}
         full
-      >
-        Convert balance to dividends
-      </Button>
+        text="Convert balance to dividends"
+      />
     </Confirm>
   )
 }

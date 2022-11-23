@@ -1,6 +1,9 @@
 import { useSelector } from "react-redux"
-import useContract, { useProposalAddress } from "hooks/useContract"
+import useContract from "hooks/useContract"
 import { useGovPoolHelperContracts } from "hooks/dao"
+import { useActiveWeb3React } from "hooks"
+import { getMulticallAddress } from "utils/addressHelpers"
+import useProposalAddress from "hooks/useProposalAddress"
 
 import {
   ERC20 as ERC20_ABI,
@@ -56,8 +59,6 @@ import {
   GovValidators,
   Multicall,
 } from "interfaces/typechain"
-import { useActiveWeb3React } from "hooks"
-import { getMulticallAddress } from "utils/addressHelpers"
 
 type Address = string | undefined
 
@@ -72,7 +73,8 @@ export function useERC721Contract(address: Address) {
 export function useContractsRegistryContract() {
   return useContract<ContractsRegistry>(
     process.env.REACT_APP_CONTRACTS_REGISTRY_ADDRESS,
-    ContractsRegistry_ABI
+    ContractsRegistry_ABI,
+    true
   )
 }
 
@@ -108,14 +110,16 @@ export function usePoolFactoryContract() {
 export function usePoolRegistryContract() {
   return useContract<PoolRegistry>(
     useSelector(selectPoolRegistryAddress),
-    PoolRegistry_ABI
+    PoolRegistry_ABI,
+    true
   )
 }
 
 export function usePriceFeedContract() {
   return useContract<PriceFeed>(
     useSelector(selectPriceFeedAddress),
-    PriceFeed_ABI
+    PriceFeed_ABI,
+    true
   )
 }
 
@@ -155,30 +159,39 @@ export function useDistributionProposalContract(poolAddress: Address) {
 
   return useContract<DistributionProposal>(
     govDistributionProposalAddress,
-    DistributionProposal_ABI
+    DistributionProposal_ABI,
+    true
   )
 }
 
 export function useGovPoolContract(address: Address) {
-  return useContract<GovPool>(address, GovPool_ABI)
+  return useContract<GovPool>(address, GovPool_ABI, true)
 }
 
 export function useGovSettingsContract(poolAddress: Address) {
   const { govSettingsAddress } = useGovPoolHelperContracts(poolAddress ?? "")
 
-  return useContract<GovSettings>(govSettingsAddress, GovSettings_ABI)
+  return useContract<GovSettings>(govSettingsAddress, GovSettings_ABI, true)
 }
 
 export function useGovUserKeeperContract(poolAddress: Address) {
   const { govUserKeeperAddress } = useGovPoolHelperContracts(poolAddress ?? "")
 
-  return useContract<GovUserKeeper>(govUserKeeperAddress, GovUserKeeper_ABI)
+  return useContract<GovUserKeeper>(
+    govUserKeeperAddress,
+    GovUserKeeper_ABI,
+    true
+  )
 }
 
 export function useGovValidatorsContract(poolAddress: Address) {
   const { govValidatorsAddress } = useGovPoolHelperContracts(poolAddress ?? "")
 
-  return useContract<GovValidators>(govValidatorsAddress, GovValidators_ABI)
+  return useContract<GovValidators>(
+    govValidatorsAddress,
+    GovValidators_ABI,
+    true
+  )
 }
 
 export function useMulticallContract() {

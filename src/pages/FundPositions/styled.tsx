@@ -1,7 +1,7 @@
 import { FC } from "react"
 import styled, { css } from "styled-components"
 
-import Button from "components/Button"
+import { AppButton } from "common"
 import { Flex, GradientBorder } from "theme"
 
 const ContainerBase = css`
@@ -102,9 +102,13 @@ export const BecomeInvestor: FC<IBecomeInvestor> = ({
         The trader has {positionCount} open positions, but you need to be a fund
         investor to see them
       </ActionStyled.Text>
-      <Button size="big" full onClick={action}>
-        Buy {symbol}
-      </Button>
+      <AppButton
+        size="medium"
+        color="primary"
+        full
+        onClick={action}
+        text={`Buy ${symbol}`}
+      />
     </ActionStyled.Container>
   </ActionStyled.Backdrop>
 )

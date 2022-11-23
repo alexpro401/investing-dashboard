@@ -3,8 +3,8 @@ import Modal from "styled-react-modal"
 import styled from "styled-components"
 import Cropper from "react-easy-crop"
 import close from "assets/icons/close.svg"
-import { AllocateSlider } from "modals/CreateFund/styled"
-import Button from "components/Button"
+import SliderInput from "components/SliderInput"
+import { AppButton } from "common"
 import getCroppedImg from "modals/ImageCropper/cropImage"
 
 const StyledModal = Modal.styled`
@@ -117,7 +117,7 @@ const ImageCropper: React.FC<{
         onZoomChange={setZoom}
       />
       <SliderContainer>
-        <AllocateSlider
+        <SliderInput
           debounce={false}
           min={1}
           max={5}
@@ -135,9 +135,13 @@ const ImageCropper: React.FC<{
         />
       </SliderContainer>
       <ButtonsContainer>
-        <Button full onClick={onUploadClick}>
-          Upload
-        </Button>
+        <AppButton
+          color="secondary"
+          size="medium"
+          full
+          onClick={onUploadClick}
+          text="Upload"
+        />
       </ButtonsContainer>
     </StyledModal>
   )

@@ -1,8 +1,7 @@
 import { FC, useMemo } from "react"
 import { v4 as uuidv4 } from "uuid"
-import { ButtonContainer, InvestorStatisticValue } from "./styled"
+import * as S from "./styled"
 import { Flex, Text, To } from "theme"
-import Button, { SecondaryButton } from "components/Button"
 import { CardInfo } from "common"
 import Skeleton from "components/Skeleton"
 import AccountInfo from "components/AccountInfo"
@@ -35,7 +34,9 @@ const InvestorStatisticCard: FC<Props> = ({ activePools }) => {
     if (isNil(activePools)) {
       return <Skeleton w="25px" h="16px" />
     }
-    return <InvestorStatisticValue>{activePools.length}</InvestorStatisticValue>
+    return (
+      <S.InvestorStatisticValue>{activePools.length}</S.InvestorStatisticValue>
+    )
   }, [activePools])
 
   const totalInvested = useMemo(() => {
@@ -43,12 +44,12 @@ const InvestorStatisticCard: FC<Props> = ({ activePools }) => {
       return <Skeleton w="45px" h="16px" />
     }
     const res = normalizeBigNumber(totalInvestUSD, 18, 2)
-    return <InvestorStatisticValue>${res}</InvestorStatisticValue>
+    return <S.InvestorStatisticValue>${res}</S.InvestorStatisticValue>
   }, [totalInvestUSD, totalLoading])
 
   const tv = useMemo(() => {
     if (isEmpty(activePools)) {
-      return <InvestorStatisticValue>$0.0</InvestorStatisticValue>
+      return <S.InvestorStatisticValue>$0.0</S.InvestorStatisticValue>
     }
 
     if (tvLoading) {
@@ -56,7 +57,7 @@ const InvestorStatisticCard: FC<Props> = ({ activePools }) => {
     }
 
     const res = normalizeBigNumber(tvUSD, 18, 2)
-    return <InvestorStatisticValue>${res}</InvestorStatisticValue>
+    return <S.InvestorStatisticValue>${res}</S.InvestorStatisticValue>
   }, [activePools, tvUSD, tvLoading])
 
   const userStatistic = useMemo(
@@ -71,7 +72,7 @@ const InvestorStatisticCard: FC<Props> = ({ activePools }) => {
       },
       {
         label: "P&L",
-        value: <InvestorStatisticValue>12.38%</InvestorStatisticValue>,
+        value: <S.InvestorStatisticValue>12.38%</S.InvestorStatisticValue>,
       },
       {
         label: "Pools",
@@ -115,18 +116,14 @@ const InvestorStatisticCard: FC<Props> = ({ activePools }) => {
         nodeHeadRight={rightNode}
         statistic={userStatistic}
       >
-        <ButtonContainer>
+        <S.ButtonContainer>
           <To to="/">
-            <SecondaryButton full fz={14}>
-              New investment
-            </SecondaryButton>
+            <S.NewInvestment />
           </To>
           <To to="/investment/positions/open">
-            <Button full fz={14}>
-              My investments
-            </Button>
+            <S.MyInvestments />
           </To>
-        </ButtonContainer>
+        </S.ButtonContainer>
       </CardInfo>
     </>
   )

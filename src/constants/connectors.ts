@@ -1,3 +1,5 @@
+import { FAST_INTERVAL, SUPPORTED_CHAINS } from "constants/chains"
+import { BSC_RPC_URLS, BSC_TESTNET_RPC_URLS } from "./networks"
 import { InjectedConnector } from "@web3-react/injected-connector"
 import { NetworkConnector } from "@web3-react/network-connector"
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector"
@@ -5,16 +7,9 @@ import { WalletConnectConnector } from "@web3-react/walletconnect-connector"
 import metamaskIcon from "assets/wallets/metamask.svg"
 import walletconnectIcon from "assets/wallets/walletconnect.svg"
 
-const BSC_NETWORK_URL = "https://bsc-dataseed.binance.org/"
-const BSC_TESTNET_URL =
-  "https://nd-027-868-988.p2pify.com/c0fd39a4c89c17c07e885517f619f415"
-
-const SUPPORTED_CHAINS = [97]
-
-const POLLING_INTERVAL = 12000
 export const RPC_URLS = {
-  56: BSC_NETWORK_URL,
-  97: BSC_TESTNET_URL,
+  56: BSC_RPC_URLS[0],
+  97: BSC_TESTNET_RPC_URLS[0],
 }
 
 export const injected = new InjectedConnector({
@@ -32,7 +27,7 @@ export const walletconnect = new WalletConnectConnector({
   bridge: "https://bridge.walletconnect.org",
   supportedChainIds: SUPPORTED_CHAINS,
   qrcode: true,
-  pollingInterval: POLLING_INTERVAL,
+  pollingInterval: FAST_INTERVAL,
 })
 
 export const connectorsByName = {

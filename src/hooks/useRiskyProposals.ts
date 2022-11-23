@@ -3,7 +3,7 @@ import {
   usePoolRegistryContract,
   useTraderPoolRiskyProposalContract,
 } from "contracts"
-import { useProposalAddress } from "hooks/useContract"
+import useProposalAddress from "hooks/useProposalAddress"
 import { debounce } from "lodash"
 
 import {

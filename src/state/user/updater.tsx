@@ -1,13 +1,10 @@
 import { useEffect } from "react"
 import { useWeb3React } from "@web3-react/core"
-import { useSelector, useDispatch } from "react-redux"
+import { useDispatch } from "react-redux"
 
-import useContract from "hooks/useContract"
 import { AppDispatch } from "state"
-import { UserRegistry } from "abi"
 import { addOwnedPools, changeTermsAgreed } from "state/user/actions"
-import { selectUserRegistryAddress } from "state/contracts/selectors"
-import { usePoolRegistryContract } from "contracts"
+import { usePoolRegistryContract, useUserRegistryContract } from "contracts"
 
 export const UserPoolsUpdater: React.FC = () => {
   const { account } = useWeb3React()
@@ -52,8 +49,7 @@ export const UserPoolsUpdater: React.FC = () => {
 export const UserTermsUpdater: React.FC = () => {
   const { account } = useWeb3React()
 
-  const userRegistryAddress = useSelector(selectUserRegistryAddress)
-  const userRegistry = useContract(userRegistryAddress, UserRegistry)
+  const userRegistry = useUserRegistryContract()
 
   const dispatch = useDispatch<AppDispatch>()
 

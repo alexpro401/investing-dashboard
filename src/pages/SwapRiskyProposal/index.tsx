@@ -8,7 +8,7 @@ import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
 import ExchangeDivider from "components/Exchange/Divider"
 import CircularProgress from "components/CircularProgress"
-import Button, { SecondaryButton } from "components/Button"
+import { AppButton } from "common"
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import TransactionSlippage from "components/TransactionSlippage"
 
@@ -99,32 +99,29 @@ const SwapRiskyProposal = () => {
   const button = useMemo(() => {
     if (from.amount === "0" || to.amount === "0") {
       return (
-        <SecondaryButton
-          theme="disabled"
+        <AppButton
+          disabled
           size="large"
+          color="secondary"
+          text="Enter amount to swap"
           onClick={onSubmit}
-          fz={22}
           full
-        >
-          Enter amount to swap
-        </SecondaryButton>
+        />
       )
     }
 
     return (
-      <Button
+      <AppButton
         size="large"
-        theme={params.direction === "deposit" ? "primary" : "warn"}
+        color={params.direction === "deposit" ? "primary" : "error"}
+        text={
+          params.direction === "deposit"
+            ? `Buy token ${to.symbol}`
+            : `Sell token ${from.symbol}`
+        }
         onClick={onSubmit}
-        fz={22}
         full
-      >
-        {params.direction === "deposit" ? (
-          <Flex gap="6">Buy token {to.symbol}</Flex>
-        ) : (
-          <Flex gap="6">Sell token {from.symbol}</Flex>
-        )}
-      </Button>
+      />
     )
   }, [
     from.amount,

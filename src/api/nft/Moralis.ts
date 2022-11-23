@@ -2,54 +2,7 @@ import { isEqual } from "lodash"
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios"
 import NftAPI from "api/nft"
 import { differenceInMilliseconds } from "date-fns/esm"
-
-// Moralis api is not supported to receive chainId with type of number,
-// used here to wrap chainId to specific string
-// more info here: https://docs.moralis.io/reference/nft-api
-const MORALIS_NETWORK_BY_CHAIN = {
-  1: "eth",
-  56: "bsc",
-  97: "bsc testnet",
-}
-
-const MORALIS_REFETCH_INTERVAL = 60 * 5 * 1000 // 5 minutes
-
-// Base structure of the moralis NFT API
-interface MoralisAPIResponse<T> {
-  status: string
-  total: number
-  page: number
-  page_size: number
-  cursor: string
-  result: T
-}
-
-// Base structure of an NFT API endpoint
-interface NftMetadata {
-  token_address: string
-  token_id: string
-  owner_of?: string | null
-  block_number?: string | null
-  block_number_minted?: string | null
-  token_hash?: string | null
-  amount?: string | null
-  contract_type: string
-  name: string
-  symbol: string
-  token_uri?: string | null
-  metadata?: string | null
-  last_token_uri_sync?: string | null
-  last_metadata_sync?: string | null
-  minter_address?: string | null
-}
-
-// endpoint: /getwalletnfts
-interface GetNftsByWalletResponse extends NftMetadata {}
-
-// endpoint: /getcontractnfts
-interface GetNftsByContractResponse extends NftMetadata {
-  updated_at?: string | null
-}
+import * as NftTypes from "./types"
 
 class MoralisNftAPI implements NftAPI {
   readonly api: AxiosInstance
@@ -69,7 +22,7 @@ class MoralisNftAPI implements NftAPI {
 
   initCache = () => {
     try {
-      const dataString = localStorage.getItem("api-cache")
+      const dataString = localStorage.getItem("api-cache-moralis")
       if (!dataString) return
 
       const data = JSON.parse(dataString)
@@ -88,7 +41,7 @@ class MoralisNftAPI implements NftAPI {
       differenceInMilliseconds(
         new Date(),
         new Date(this.cache[url].timestamp)
-      ) < MORALIS_REFETCH_INTERVAL
+      ) < NftTypes.REFETCH_INTERVAL
 
     if (isDataFresh) {
       return Promise.resolve(this.cache[url].data)
@@ -113,10 +66,10 @@ class MoralisNftAPI implements NftAPI {
     contractAddress: string
   ) => {
     const result = await this.fetch<
-      MoralisAPIResponse<GetNftsByWalletResponse[]>
+      NftTypes.MoralisAPIResponse<NftTypes.GetNftsByWalletResponse[]>
     >(`/${account}/nft`, {
       params: {
-        chain: MORALIS_NETWORK_BY_CHAIN[chainId],
+        chain: NftTypes.MORALIS_NETWORK_BY_CHAIN[chainId],
         format: "decimal",
         token_addresses: contractAddress,
       },
@@ -131,10 +84,10 @@ class MoralisNftAPI implements NftAPI {
     contractAddress: string
   ) => {
     const result = await this.fetch<
-      MoralisAPIResponse<GetNftsByContractResponse[]>
+      NftTypes.MoralisAPIResponse<NftTypes.GetNftsByContractResponse[]>
     >(`/nft/${contractAddress}`, {
       params: {
-        chain: MORALIS_NETWORK_BY_CHAIN[chainId],
+        chain: NftTypes.MORALIS_NETWORK_BY_CHAIN[chainId],
         format: "decimal",
         token_addresses: contractAddress,
       },
