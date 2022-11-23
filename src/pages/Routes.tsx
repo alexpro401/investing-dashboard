@@ -76,6 +76,9 @@ const DaoProposalChangeTokenDistribution = lazy(
 const DaoProposalTokenDistribution = lazy(
   () => import("pages/CreateDaoProposalTokenDistribution")
 )
+const CreateDaoCustomProposal = lazy(
+  () => import("pages/CreateDaoCustomProposal")
+)
 /* dao proposals */
 
 const DaoProposals = lazy(() => import("pages/DaoProposals"))
@@ -243,6 +246,10 @@ export default function Routes() {
                 <Route
                   path="dao/:daoAddress/create-proposal-token-distribution"
                   element={<DaoProposalTokenDistribution />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-custom-proposal/:executorAddress"
+                  element={<CreateDaoCustomProposal />}
                 />
 
                 <Route path="/*" element={<TopMembers />} />

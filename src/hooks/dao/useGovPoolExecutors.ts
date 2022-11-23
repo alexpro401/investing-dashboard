@@ -6,29 +6,7 @@ import { GovPoolExecutorsQuery } from "queries/gov-pools"
 import { isAddress } from "utils"
 import { useGovPoolHelperContracts } from "hooks/dao"
 import { selectInsuranceAddress } from "state/contracts/selectors"
-
-interface IExecutorSettings {
-  executorDescription: string
-  id: string
-  settingsId: string
-  __typename: string
-}
-
-interface IExecutor {
-  executorAddress: string
-  id: string
-  settings: IExecutorSettings
-  __typename: string
-}
-
-type IExecutorType =
-  | "profile"
-  | "change-settings"
-  | "change-validator-balances"
-  | "distribution"
-  | "add-token"
-  | "custom"
-  | "insurance"
+import { IExecutor, IExecutorType } from "types/dao.types"
 
 interface IExecutorExtended extends IExecutor {
   type: IExecutorType
@@ -116,8 +94,6 @@ const useGovPoolExecutors = (
     insuranceAddress,
     govPoolAddress,
   ])
-
-  console.log("executors: ", executors)
 
   return [executors, fetching]
 }

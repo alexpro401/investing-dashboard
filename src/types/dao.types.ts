@@ -83,3 +83,26 @@ export const govPoolProposals = {
     changeInternalBalances: "change-internal-balances",
   },
 }
+
+export interface IExecutorSettings {
+  executorDescription: string
+  id: string
+  settingsId: string
+  __typename: string
+}
+
+export interface IExecutor {
+  executorAddress: string
+  id: string
+  settings: IExecutorSettings
+  __typename: string
+}
+
+export type IExecutorType =
+  | "profile"
+  | "change-settings"
+  | "change-validator-balances"
+  | "distribution"
+  | "add-token"
+  | "custom"
+  | "insurance"
