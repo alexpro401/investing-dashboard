@@ -27,6 +27,9 @@ const useGovPoolIpfsData = (
     try {
       setLoading(true)
       const _descriptionURL = await govPoolContract.descriptionURL()
+      if (!_descriptionURL.includes("ipfs://")) {
+        return
+      }
       const GovPoolIpfsEntity = new IpfsEntity<GovPoolIpfsData>({
         path: parseIpfsString(_descriptionURL),
       })
