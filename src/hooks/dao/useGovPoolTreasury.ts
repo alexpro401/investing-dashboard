@@ -23,12 +23,7 @@ const useGovPoolTreasury = (
     setLoading(true)
 
     try {
-      // console.log({ chainId, govPoolAddress })
-      const result = await getGovPoolTreasuryTokensList(
-        56,
-        //govPoolAddress
-        "0x05c12E9fAC51646710C4de014Bef33cFe158c08d"
-      )
+      const result = await getGovPoolTreasuryTokensList(chainId, govPoolAddress)
 
       setTreasury(result?.data ?? undefined)
     } catch (error) {

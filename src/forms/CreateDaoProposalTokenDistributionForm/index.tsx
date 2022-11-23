@@ -1,10 +1,12 @@
 import React, { useContext, useCallback } from "react"
 import { useParams } from "react-router-dom"
-import { parseUnits, formatUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 import { useActiveWeb3React } from "hooks"
 
-import { useGovPoolTreasury } from "hooks/dao"
+import {
+  useGovPoolTreasury,
+  useGovPoolCreateDistributionProposal,
+} from "hooks/dao"
 import { CreatingProposalSuccessModal } from "common/GovProposal"
 import {
   Card,
@@ -21,13 +23,7 @@ import { TokenDistributionCreatingContext } from "context/govPool/proposals/Toke
 import { useFormValidation } from "hooks/useFormValidation"
 import { required, minLength, maxLength } from "utils/validators"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import {
-  formatNumber,
-  formatBigNumber,
-  cutStringZeroes,
-  formatFiatNumber,
-  formatTokenNumber,
-} from "utils"
+import { formatFiatNumber, formatTokenNumber } from "utils"
 
 import * as S from "./styled"
 
@@ -41,6 +37,7 @@ const CreateDaoProposalTokenDistribution: React.FC = () => {
   const { selectedTreasuryToken, tokenAmount } = useContext(
     TokenDistributionCreatingContext
   )
+  const createProposal = useGovPoolCreateDistributionProposal(daoAddress ?? "")
 
   const { getFieldErrorMessage, touchField, isFieldsValid, touchForm } =
     useFormValidation(
@@ -68,10 +65,27 @@ const CreateDaoProposalTokenDistribution: React.FC = () => {
 
   const handleCreateProposal = useCallback(() => {
     touchForm()
+
+    if (!selectedTreasuryToken.get) return
+
     if (isFieldsValid) {
-      //TODO handle create
+      createProposal({
+        proposalName: proposalName.get,
+        proposalDescription: proposalDescription.get,
+        tokenAddress: selectedTreasuryToken.get.contract_address,
+        tokenDecimals: selectedTreasuryToken.get.contract_decimals,
+        tokenAmount: tokenAmount.get,
+      })
     }
-  }, [touchForm, isFieldsValid])
+  }, [
+    touchForm,
+    isFieldsValid,
+    createProposal,
+    proposalName,
+    proposalDescription,
+    selectedTreasuryToken,
+    tokenAmount,
+  ])
 
   return (
     <S.StepsContainer>

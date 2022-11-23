@@ -159,30 +159,39 @@ export function useDistributionProposalContract(poolAddress: Address) {
 
   return useContract<DistributionProposal>(
     govDistributionProposalAddress,
-    DistributionProposal_ABI
+    DistributionProposal_ABI,
+    true
   )
 }
 
 export function useGovPoolContract(address: Address) {
-  return useContract<GovPool>(address, GovPool_ABI)
+  return useContract<GovPool>(address, GovPool_ABI, true)
 }
 
 export function useGovSettingsContract(poolAddress: Address) {
   const { govSettingsAddress } = useGovPoolHelperContracts(poolAddress ?? "")
 
-  return useContract<GovSettings>(govSettingsAddress, GovSettings_ABI)
+  return useContract<GovSettings>(govSettingsAddress, GovSettings_ABI, true)
 }
 
 export function useGovUserKeeperContract(poolAddress: Address) {
   const { govUserKeeperAddress } = useGovPoolHelperContracts(poolAddress ?? "")
 
-  return useContract<GovUserKeeper>(govUserKeeperAddress, GovUserKeeper_ABI)
+  return useContract<GovUserKeeper>(
+    govUserKeeperAddress,
+    GovUserKeeper_ABI,
+    true
+  )
 }
 
 export function useGovValidatorsContract(poolAddress: Address) {
   const { govValidatorsAddress } = useGovPoolHelperContracts(poolAddress ?? "")
 
-  return useContract<GovValidators>(govValidatorsAddress, GovValidators_ABI)
+  return useContract<GovValidators>(
+    govValidatorsAddress,
+    GovValidators_ABI,
+    true
+  )
 }
 
 export function useMulticallContract() {
