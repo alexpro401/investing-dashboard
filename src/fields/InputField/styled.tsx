@@ -42,6 +42,7 @@ export const Input = styled(motion.input)<{
   isNodeLeftExist?: boolean
   isNodeRightExist?: boolean
   borderColor?: EInputBorderColors
+  isReadonly?: boolean
 }>`
   background: none;
   border: none;
@@ -88,7 +89,7 @@ export const Input = styled(motion.input)<{
 
   &:disabled {
     cursor: default;
-    filter: grayscale(100%);
+    ${(props) => (!props.isReadonly ? "filter: grayscale(100%);" : "")}
   }
 
   &[type="number"] {

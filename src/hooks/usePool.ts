@@ -35,6 +35,7 @@ import {
   TIMEFRAME,
 } from "constants/chart"
 import { usePriceHistory } from "state/pools/hooks"
+import { useAPI } from "api"
 
 /**
  * Returns TheGraph info about the pool
@@ -124,6 +125,8 @@ export function usePoolsByInvestors(investors: string[]) {
 export const usePoolPnlInfo = (address: string | undefined) => {
   const priceFeed = usePriceFeedContract()
 
+  const { TokenAPI } = useAPI()
+
   const poolData = useSelector((s: AppState) => selectPoolByAddress(s, address))
 
   const [{ priceUSD }] = usePoolPrice(address)
@@ -193,16 +196,16 @@ export const usePoolPnlInfo = (address: string | undefined) => {
     ;(async () => {
       try {
         const { baseToken, creationTime } = poolData
-        const price = await axios.get(
-          `https://api-staging.kattana.trade/historical_price/${baseToken}/${creationTime}`
-        )
+        const price = await TokenAPI.getHistoricalPrices(baseToken, [
+          creationTime,
+        ])
 
         setInitialPriceUSD(BigNumber.from(price[baseToken][creationTime]))
       } catch (error) {
         console.error(error)
       }
     })()
-  }, [poolData])
+  }, [poolData, TokenAPI])
 
   // Fetch price of base token
   useEffect(() => {

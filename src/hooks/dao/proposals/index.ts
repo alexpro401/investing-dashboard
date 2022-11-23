@@ -3,6 +3,7 @@ export { default as useGovPoolCreateProposalValidators } from "./useGovPoolCreat
 export { default as useGovPoolCreateValidatorInternalProposal } from "./useGovPoolCreateValidatorInternalProposal"
 export { default as useGovPoolCreateProposalChangeDaoSettings } from "./useGovPoolCreateProposalChangeDaoSettings"
 export { default as useGovPoolCreateProposalChangeSettings } from "./useGovPoolCreateProposalChangeSettings"
+export { default as useGovPoolCreateDistributionProposal } from "./useGovPoolCreateDistributionProposal"
 
 export * from "./useGovPoolCreateProposal"
 export * from "./useGovPoolProposals"

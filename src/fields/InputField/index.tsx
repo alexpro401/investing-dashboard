@@ -44,6 +44,7 @@ export interface Props<V extends string | number>
   nodeRight?: ReactNode
   borderColor?: EInputBorderColors
   hint?: string
+  cRef?: React.MutableRefObject<HTMLDivElement | null>
 }
 
 function InputField<V extends string | number>({
@@ -65,10 +66,11 @@ function InputField<V extends string | number>({
   nodeRight,
   borderColor,
   hint,
+  cRef,
   onBlur,
   ...rest
 }: Props<V>) {
-  const rootEl = useRef(null)
+  const rootEl = useRef<HTMLDivElement | null>(null)
 
   const uid = useMemo(() => uuidv4(), [])
   const [isFocused, setIsFocused] = useState(false)
@@ -145,7 +147,13 @@ function InputField<V extends string | number>({
 
   return (
     <S.Root
-      ref={rootEl}
+      ref={(node) => {
+        rootEl.current = node
+
+        if (cRef) {
+          cRef.current = node
+        }
+      }}
       isReadonly={isReadonly}
       isDisabled={isDisabled}
       onFocus={() => setIsFocused(true)}
@@ -166,6 +174,7 @@ function InputField<V extends string | number>({
           type={type}
           min={min}
           max={max}
+          isReadonly={isReadonly}
           disabled={isDisabled || isReadonly}
           isNodeLeftExist={!!nodeLeft}
           isNodeRightExist={!!nodeRight}
