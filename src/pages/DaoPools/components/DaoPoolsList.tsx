@@ -64,7 +64,7 @@ const DaoPoolsList: React.FC<Props> = () => {
       {data.map((pool, index) => (
         <Indents key={pool.id} top={index > 0}>
           <To to={`/dao/${pool.id}`}>
-            <DaoPoolCard data={pool} account={account} index={index} />
+            <DaoPoolCard data={pool} account={account} />
           </To>
         </Indents>
       ))}
