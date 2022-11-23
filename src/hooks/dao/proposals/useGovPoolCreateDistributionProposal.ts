@@ -47,16 +47,6 @@ const useGovPoolCreateDistributionProposal = (govPoolAddress: string) => {
       try {
         setPayload(SubmitState.SIGN)
 
-        console.log({
-          proposalName,
-          proposalDescription,
-          tokenAddress,
-          tokenAmount,
-          tokenDecimals,
-        })
-
-        console.log(parseUnits(tokenAmount, tokenDecimals).toString())
-
         const latestProposalId = await updateLatesProposalId()
 
         if (!latestProposalId) {
