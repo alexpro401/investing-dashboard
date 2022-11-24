@@ -1,8 +1,27 @@
+import { BigNumber } from "@ethersproject/bignumber"
+
 import { SUPPORTED_SOCIALS } from "constants/socials"
 
 export type ExternalFileDocument = {
   name: string
   url: string
+}
+
+export interface IGovSettingsFromContract {
+  earlyCompletion: boolean
+  delegatedVotingAllowed: boolean
+  validatorsVote: boolean
+  duration: BigNumber
+  durationValidators: BigNumber
+  quorum: BigNumber
+  quorumValidators: BigNumber
+  minVotesForVoting: BigNumber
+  minVotesForCreating: BigNumber
+  rewardToken: string
+  creationReward: BigNumber
+  executionReward: BigNumber
+  voteRewardsCoefficient: BigNumber
+  executorDescription: string
 }
 
 export type DaoVotingSettings = {

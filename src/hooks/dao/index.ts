@@ -24,3 +24,4 @@ export { default as useGovPoolLatestProposalId } from "./useGovPoolLatestProposa
 export { default as useGovPoolTreasury } from "./useGovPoolTreasury"
 export { default as useGovPoolExecutors } from "./useGovPoolExecutors"
 export { default as useGovPoolCustomExecutors } from "./useGovPoolCustomExecutors"
+export { default as useGovPoolExecutorSettings } from "./useGovPoolExecutorSettings"

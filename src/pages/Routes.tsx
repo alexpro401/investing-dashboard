@@ -73,14 +73,17 @@ const DaoProposalChangeTokenDistribution = lazy(
       "pages/CreateDaoProposalChangeVotingSettings/subpages/TokenDistribution"
     )
 )
+const DaoProposalChangeCustomSettings = lazy(
+  () =>
+    import(
+      "pages/CreateDaoProposalChangeVotingSettings/subpages/CustomSettings"
+    )
+)
 const DaoProposalTokenDistribution = lazy(
   () => import("pages/CreateDaoProposalTokenDistribution")
 )
 const CreateDaoCustomProposal = lazy(
   () => import("pages/CreateDaoCustomProposal")
-)
-const CreateDaoProposalChangeCustomSettings = lazy(
-  () => import("pages/CreateDaoProposalChangeCustomSettings")
 )
 /* dao proposals */
 
@@ -247,16 +250,16 @@ export default function Routes() {
                   element={<DaoProposalChangeTokenDistribution />}
                 />
                 <Route
+                  path="dao/:daoAddress/change-custom-settings/:executorAddress"
+                  element={<DaoProposalChangeCustomSettings />}
+                />
+                <Route
                   path="dao/:daoAddress/create-proposal-token-distribution"
                   element={<DaoProposalTokenDistribution />}
                 />
                 <Route
                   path="dao/:daoAddress/create-custom-proposal/:executorAddress"
                   element={<CreateDaoCustomProposal />}
-                />
-                <Route
-                  path="dao/:daoAddress/change-custom-settings/:executorAddress"
-                  element={<CreateDaoProposalChangeCustomSettings />}
                 />
 
                 <Route path="/*" element={<TopMembers />} />
