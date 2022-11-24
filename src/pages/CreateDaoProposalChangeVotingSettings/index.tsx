@@ -13,6 +13,7 @@ import RadioButton from "components/RadioButton"
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import StepsControllerContext from "context/StepsControllerContext"
+import { useGovPoolCustomExecutors } from "hooks/dao"
 
 import * as S from "./styled"
 
@@ -30,6 +31,7 @@ interface IDefaultVotingSettingsType {
 interface ISelectedCard {
   type: "default" | "custom"
   specification?: EDefaultVotingSettingsType
+  executorAddress?: string
 }
 
 const CreateDaoProposalChangeVotingSettings: React.FC = () => {
@@ -39,6 +41,7 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
     type: "default",
     specification: EDefaultVotingSettingsType.changeVotingSettings,
   })
+  const [customExecutors] = useGovPoolCustomExecutors(daoAddress)
 
   const handleSelectDefaultVotingType = useCallback(
     (specification: EDefaultVotingSettingsType): void => {
@@ -46,6 +49,10 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
     },
     []
   )
+
+  const handleSelectCustomProposal = useCallback((executorAddress: string) => {
+    setSelectedCard({ type: "custom", executorAddress })
+  }, [])
 
   const defaultVotingSettingsTypes = useMemo<IDefaultVotingSettingsType[]>(
     () => [
@@ -104,8 +111,14 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
       }
     }
 
-    if (selectedCard && selectedCard.type === "custom") {
-      // TODO handle custom proposals
+    if (
+      selectedCard &&
+      selectedCard.type === "custom" &&
+      selectedCard.executorAddress
+    ) {
+      navigate(
+        `/dao/${daoAddress}/change-custom-settings/${selectedCard.executorAddress}`
+      )
       return
     }
   }, [navigate, daoAddress, selectedCard])
@@ -151,6 +164,27 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
                 />
               )
             })}
+            {customExecutors.map(
+              ({ id, proposalName, proposalDescription, executorAddress }) => {
+                return (
+                  <SelectableCard
+                    key={id}
+                    value={selectedCard?.executorAddress as string}
+                    setValue={handleSelectCustomProposal}
+                    valueToSet={executorAddress}
+                    nodeLeft={
+                      <RadioButton
+                        selected={selectedCard?.executorAddress ?? ""}
+                        value={executorAddress}
+                        onChange={() => {}}
+                      />
+                    }
+                    title={proposalName}
+                    description={proposalDescription}
+                  />
+                )
+              }
+            )}
             <StepsNavigation />
           </S.PageContent>
         </S.PageHolder>
