@@ -1,9 +1,11 @@
 import { FC, HTMLAttributes, useMemo, useState } from "react"
 import * as S from "../styled"
 import ExternalLink from "components/ExternalLink"
-import { shortenAddress } from "utils"
+import { DateUtil, fromBig, shortenAddress } from "utils"
 import { ICON_NAMES } from "constants/icon-names"
 import { useGovPoolProposal, useGovPoolProposalVotingHistory } from "hooks/dao"
+import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
+import { useActiveWeb3React } from "hooks"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   govPoolProposal: ReturnType<typeof useGovPoolProposal>
@@ -13,12 +15,14 @@ const VotingHistoryTab: FC<Props> = ({ govPoolProposal }) => {
   const [offset, setOffset] = useState(0)
   const limit = useMemo(() => 15, [])
 
-  const { historyList, isLoading, error } = useGovPoolProposalVotingHistory(
+  const { proposalVotes, isLoading, error } = useGovPoolProposalVotingHistory(
     govPoolProposal.govPoolAddress,
     govPoolProposal.proposalId,
     offset,
     limit
   )
+
+  const { chainId } = useActiveWeb3React()
 
   return (
     <>
@@ -35,21 +39,32 @@ const VotingHistoryTab: FC<Props> = ({ govPoolProposal }) => {
           </S.DaoProposalDetailsRowText>
         </S.DaoProposalDetailsTxRow>
         <S.DaoProposalCardRowDivider />
-        {isLoading! &&
-          historyList?.length &&
-          historyList.map((el) => (
+        {!isLoading &&
+          proposalVotes?.length &&
+          proposalVotes.map((el) => (
             <>
               <S.DaoProposalDetailsTxRow>
                 <S.DaoProposalDetailsRowText textType="label">
-                  <ExternalLink href={"#"}>
-                    {shortenAddress("0x000000000000000000000")}
+                  <ExternalLink
+                    href={getExplorerLink(
+                      chainId!,
+                      el.voterAddress,
+                      ExplorerDataType.ADDRESS
+                    )}
+                  >
+                    {shortenAddress(el.voterAddress)}
                   </ExternalLink>
                 </S.DaoProposalDetailsRowText>
                 <S.DaoProposalDetailsRowText textType="value">
-                  100,000
+                  {fromBig(el.personalAmount)}
                 </S.DaoProposalDetailsRowText>
                 <S.DaoProposalDetailsRowText textType="label" alignment="right">
-                  Jun 10, 2022, 14:29
+                  {
+                    DateUtil.fromTimestamp(
+                      el.timestamp,
+                      "MMM dd, y hh:mm"
+                    ) as string
+                  }
                 </S.DaoProposalDetailsRowText>
               </S.DaoProposalDetailsTxRow>
               <S.DaoProposalCardRowDivider />

@@ -17,32 +17,38 @@ export const useGovPoolProposalVotingHistory = (
     }000000`
   }, [govPoolAddress, proposalId])
 
-  console.log(ID)
-
   const [{ data, fetching, error }] = useQuery({
     query: `
       query {
-        proposalVotes(where:{proposal:"${ID}"}, first:100, skip:0){
-            id
-            voter{
-              voter{
-                voter{
+        proposalVotes(where:{proposal: "${ID}"}, first:${limit}, skip:${offset}) {
+            voter {
+              voter {
+                voter {
                   id
                 }
               }
-            },
-            personalAmount,
-            delegatedAmount
-          }
+            }
+            personalAmount
+            timestamp
+        }
       }
     `,
     context: GovPoolGraphClient,
   })
 
-  console.log(data)
+  const proposalVotes = useMemo(() => {
+    return data?.proposalVotes?.length
+      ? data?.proposalVotes?.map((el) => ({
+          delegatedAmount: el?.delegatedAmount || "",
+          personalAmount: el?.personalAmount || "",
+          voterAddress: el?.voter?.voter?.voter?.id || "",
+          timestamp: el?.timestamp || 0,
+        }))
+      : []
+  }, [data])
 
   return {
-    historyList: data,
+    proposalVotes,
     isLoading: fetching,
     error,
   }

@@ -311,7 +311,7 @@ const useCreateDAO = () => {
         const logs = receipt?.logs
 
         const eventSignature =
-          "0x40a4c9bd9ae408645df62dd0e125a5068d6fb4366db9d9c309d8147c5f25263a"
+          "0x1c4fe3cb721cec58479040064cec69b10ec801c7ac5198dce8335e2f65c76dbf"
 
         const data = logs?.find((log) =>
           log.topics.includes(eventSignature)
@@ -321,7 +321,15 @@ const useCreateDAO = () => {
 
         const abiCoder = new ethers.utils.AbiCoder()
         const govPoolAddress = abiCoder.decode(
-          ["string", "address", "address", "address"],
+          [
+            "string",
+            "address",
+            "address",
+            "address",
+            "address",
+            "address",
+            "address",
+          ],
           data as BytesLike
         )[1]
 
