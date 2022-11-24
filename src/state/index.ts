@@ -15,7 +15,7 @@ import multicall from "./multicall/reducer"
 import govPools from "./govPools/reducer"
 import { updateVersion } from "./global/actions"
 
-const RESET_KEY = "1667990740875"
+const RESET_KEY = "1669198332611"
 
 const PERSISTED_KEYS: string[] = [
   "user",

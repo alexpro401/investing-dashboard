@@ -19,6 +19,32 @@
         "type": "event"
     },
     {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "token",
+                "type": "address"
+            }
+        ],
+        "name": "SetERC20",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "token",
+                "type": "address"
+            }
+        ],
+        "name": "SetERC721",
+        "type": "event"
+    },
+    {
         "inputs": [
             {
                 "internalType": "address",
@@ -142,6 +168,42 @@
         "name": "delegateTokens",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            }
+        ],
+        "name": "delegations",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "delegatee",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "delegatedTokens",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256[]",
+                        "name": "delegatedNfts",
+                        "type": "uint256[]"
+                    }
+                ],
+                "internalType": "struct IGovUserKeeper.DelegationInfoView[]",
+                "name": "delegationsInfo",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -544,7 +606,7 @@
         "outputs": [
             {
                 "internalType": "uint256",
-                "name": "totalNftsPower",
+                "name": "",
                 "type": "uint256"
             }
         ],
@@ -808,6 +870,19 @@
             }
         ],
         "name": "updateMaxTokenLockedAmount",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256[]",
+                "name": "nftIds",
+                "type": "uint256[]"
+            }
+        ],
+        "name": "updateNftPowers",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
