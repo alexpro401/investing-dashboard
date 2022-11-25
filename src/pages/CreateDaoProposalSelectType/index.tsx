@@ -45,16 +45,18 @@ const CreateProposalSelectType: React.FC = () => {
   const proceedToNextStep = useCallback(async () => {
     //TODO NAVIGATE to path related to selected proposal type
     if (selectedCard.type === "default" && selectedCard.specification) {
+      const slug = `/dao/${daoAddress}/create-proposal`
+
       const nextProposalTypePath = {
-        [EProposalType.daoProfileModification]: `/dao/${daoAddress}/create-proposal-change-dao-settings`,
-        [EProposalType.changingVotingSettings]: `/dao/${daoAddress}/create-proposal-change-voting-settings`,
-        [EProposalType.tokenDistribution]: `/dao/${daoAddress}/create-proposal-token-distribution`,
-        [EProposalType.validatorSettings]: `/dao/${daoAddress}/create-proposal-validator-settings`,
+        [EProposalType.daoProfileModification]: "/change-dao-settings",
+        [EProposalType.changingVotingSettings]: "/change-voting-settings",
+        [EProposalType.tokenDistribution]: "/token-distribution",
+        [EProposalType.validatorSettings]: "/validator-settings",
         [EProposalType.changeTokenPrice]: "/",
       }[selectedCard.specification]
 
       if (nextProposalTypePath !== "/") {
-        return navigate(nextProposalTypePath)
+        return navigate(slug + nextProposalTypePath)
       }
 
       return
@@ -179,7 +181,7 @@ const CreateProposalSelectType: React.FC = () => {
                 Choose type of proposal
               </S.CreateProposalSelectTypeTitle>
               <S.CreateProposalSelectTypeCreateNew
-                to={`/dao/${daoAddress}/create-new-proposal-type`}
+                to={`/dao/${daoAddress}/create-proposal/custom`}
               >
                 + Create new
               </S.CreateProposalSelectTypeCreateNew>

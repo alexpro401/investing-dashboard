@@ -7,8 +7,8 @@ import {
   CardDescription,
   SelectableCard,
   StepsNavigation,
+  CreateDaoCardStepNumber,
 } from "common"
-import { CreateDaoCardStepNumber } from "common"
 import RadioButton from "components/RadioButton"
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
@@ -97,7 +97,7 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
         EDefaultVotingSettingsType.changeVotingSettings
       ) {
         return navigate(
-          `/dao/${daoAddress}/create-proposal-global-voting-options`
+          `/dao/${daoAddress}/create-proposal/change-voting-settings/global-voting`
         )
       }
 
@@ -106,7 +106,7 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
         EDefaultVotingSettingsType.tokenDistribution
       ) {
         return navigate(
-          `/dao/${daoAddress}/create-proposal-change-token-distribution`
+          `/dao/${daoAddress}/create-proposal/change-voting-settings/token-distribution`
         )
       }
     }
@@ -117,7 +117,7 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
       selectedCard.executorAddress
     ) {
       navigate(
-        `/dao/${daoAddress}/change-custom-settings/${selectedCard.executorAddress}`
+        `/dao/${daoAddress}/create-proposal/change-voting-settings/custom/${selectedCard.executorAddress}`
       )
       return
     }

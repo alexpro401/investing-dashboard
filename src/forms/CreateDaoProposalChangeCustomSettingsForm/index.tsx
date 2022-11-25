@@ -95,7 +95,7 @@ const CreateDaoProposalChangeCustomSettingsForm: React.FC = () => {
     switch (currentStep) {
       case STEPS.customSettings: {
         if (daoAddress) {
-          navigate(`/dao/${daoAddress}/create-proposal-change-voting-settings`)
+          navigate(`/dao/${daoAddress}/create-proposal/change-voting-settings`)
         }
         break
       }

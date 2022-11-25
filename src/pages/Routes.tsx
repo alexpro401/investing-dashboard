@@ -82,8 +82,8 @@ const DaoProposalChangeCustomSettings = lazy(
 const DaoProposalTokenDistribution = lazy(
   () => import("pages/CreateDaoProposalTokenDistribution")
 )
-const CreateDaoCustomProposal = lazy(
-  () => import("pages/CreateDaoCustomProposal")
+const CreateDaoCustomProposalSelectType = lazy(
+  () => import("pages/CreateDaoCustomProposalSelectType")
 )
 /* dao proposals */
 
@@ -211,6 +211,44 @@ export default function Routes() {
                   path="dao/:daoAddress/create-proposal"
                   element={<CreateDaoProposalSelectType />}
                 />
+
+                {/* default proposals */}
+                <Route
+                  path="dao/:daoAddress/create-proposal/custom"
+                  element={<CreateDaoProposalType />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal/change-dao-settings"
+                  element={<CreateDaoProposalChangeDaoSettings />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal/validator-settings"
+                  element={<CreateDaoProposalValidatorSettings />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal/token-distribution"
+                  element={<DaoProposalTokenDistribution />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal/change-voting-settings"
+                  element={<CreateDaoProposalChangeVotingSettings />}
+                />
+
+                {/* change voting settings */}
+                <Route
+                  path="dao/:daoAddress/create-proposal/change-voting-settings/global-voting"
+                  element={<DaoProposalChangeGlobalVotingSettings />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal/change-voting-settings/token-distribution"
+                  element={<DaoProposalChangeTokenDistribution />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal/change-voting-settings/custom/:executorAddress"
+                  element={<DaoProposalChangeCustomSettings />}
+                />
+
+                {/* internal proposals */}
                 <Route
                   path="dao/:daoAddress/create-validator-proposal"
                   element={<CreateDaoProposalValidatorSelectType />}
@@ -225,44 +263,13 @@ export default function Routes() {
                   path="/dao/:daoAddress/create-validator-proposal/voting-settings"
                   element={<CreateDaoProposalValidatorChangeVotingSettings />}
                 />
-                <Route
-                  path="dao/:daoAddress/create-new-proposal-type"
-                  element={<CreateDaoProposalType />}
-                />
-                <Route
-                  path="dao/:daoAddress/create-proposal-change-dao-settings"
-                  element={<CreateDaoProposalChangeDaoSettings />}
-                />
-                <Route
-                  path="dao/:daoAddress/create-proposal-validator-settings"
-                  element={<CreateDaoProposalValidatorSettings />}
-                />
-                <Route
-                  path="dao/:daoAddress/create-proposal-change-voting-settings"
-                  element={<CreateDaoProposalChangeVotingSettings />}
-                />
-                <Route
-                  path="dao/:daoAddress/create-proposal-global-voting-options"
-                  element={<DaoProposalChangeGlobalVotingSettings />}
-                />
-                <Route
-                  path="dao/:daoAddress/create-proposal-change-token-distribution"
-                  element={<DaoProposalChangeTokenDistribution />}
-                />
-                <Route
-                  path="dao/:daoAddress/change-custom-settings/:executorAddress"
-                  element={<DaoProposalChangeCustomSettings />}
-                />
-                <Route
-                  path="dao/:daoAddress/create-proposal-token-distribution"
-                  element={<DaoProposalTokenDistribution />}
-                />
+
+                {/* creating custom proposals */}
                 <Route
                   path="dao/:daoAddress/create-custom-proposal/:executorAddress"
-                  element={<CreateDaoCustomProposal />}
+                  element={<CreateDaoCustomProposalSelectType />}
                 />
 
-                <Route path="/*" element={<TopMembers />} />
                 {/* Dao Proposals */}
                 <Route
                   path="dao/:daoAddress/proposals/*"
@@ -272,6 +279,8 @@ export default function Routes() {
                   path="dao/:daoAddress/proposal/:proposalId"
                   element={<DaoProposalDetails />}
                 />
+
+                <Route path="/*" element={<TopMembers />} />
               </Route>
 
               <Route path="privacy-policy" element={<PrivacyPolicy />} />
