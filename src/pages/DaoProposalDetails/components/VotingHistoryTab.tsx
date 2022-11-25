@@ -13,14 +13,15 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 
 const VotingHistoryTab: FC<Props> = ({ govPoolProposal }) => {
   const [offset, setOffset] = useState(0)
-  const limit = useMemo(() => 15, [])
+  const limit = useMemo(() => 1, [])
 
-  const { proposalVotes, isLoading, error } = useGovPoolProposalVotingHistory(
-    govPoolProposal.govPoolAddress,
-    govPoolProposal.proposalId,
-    offset,
-    limit
-  )
+  const { proposalVotes, isLoading, error, totalVotesCount } =
+    useGovPoolProposalVotingHistory(
+      govPoolProposal.govPoolAddress,
+      govPoolProposal.proposalId,
+      offset,
+      limit
+    )
 
   const { chainId } = useActiveWeb3React()
 
@@ -70,18 +71,23 @@ const VotingHistoryTab: FC<Props> = ({ govPoolProposal }) => {
               <S.DaoProposalCardRowDivider />
             </>
           ))}
-        <S.DaoProposalDetailsHistoryPaginationWrp>
-          <S.DaoProposalDetailsHistoryPaginationIndicator>
-            1 - 10 of 1111
-          </S.DaoProposalDetailsHistoryPaginationIndicator>
-          <S.DaoProposalDetailsHistoryPaginationBtn
-            iconRight={ICON_NAMES.angleLeft}
-            disabled={true}
-          />
-          <S.DaoProposalDetailsHistoryPaginationBtn
-            iconRight={ICON_NAMES.angleRight}
-          />
-        </S.DaoProposalDetailsHistoryPaginationWrp>
+        {totalVotesCount > limit && (
+          <S.DaoProposalDetailsHistoryPaginationWrp>
+            <S.DaoProposalDetailsHistoryPaginationIndicator>
+              {`${offset} - ${offset + limit} of ${totalVotesCount}`}
+            </S.DaoProposalDetailsHistoryPaginationIndicator>
+            <S.DaoProposalDetailsHistoryPaginationBtn
+              iconRight={ICON_NAMES.angleLeft}
+              onClick={() => setOffset(+offset - +limit)}
+              disabled={offset === 0}
+            />
+            <S.DaoProposalDetailsHistoryPaginationBtn
+              iconRight={ICON_NAMES.angleRight}
+              onClick={() => setOffset(+offset + +limit)}
+              disabled={offset === totalVotesCount - 1}
+            />
+          </S.DaoProposalDetailsHistoryPaginationWrp>
+        )}
       </S.DaoProposalDetailsCard>
     </>
   )

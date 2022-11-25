@@ -30,6 +30,9 @@ export const useGovPoolProposalVotingHistory = (
             }
             personalAmount
             timestamp
+            proposal {
+              votesCount
+            }
         }
       }
     `,
@@ -47,9 +50,15 @@ export const useGovPoolProposalVotingHistory = (
       : []
   }, [data])
 
+  const totalVotesCount = useMemo(
+    () => data?.proposalVotes?.[0]?.proposal?.votesCount,
+    [data]
+  )
+
   return {
     proposalVotes,
     isLoading: fetching,
     error,
+    totalVotesCount,
   }
 }
