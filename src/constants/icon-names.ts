@@ -43,4 +43,5 @@ export enum ICON_NAMES {
   tileCheck = "tile-check",
   metamask = "metamask",
   plus = "plus",
+  exclamationCircle = "exclamation-circle",
 }

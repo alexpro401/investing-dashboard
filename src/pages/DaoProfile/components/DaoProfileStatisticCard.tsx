@@ -18,7 +18,9 @@ const DaoProfileStatisticCard = ({
       <Flex full dir={"column"} p={"12px"} gap={"12"}>
         <S.CardButtons>
           <S.NewProposal onClick={handleOpenCreateProposalModal} />
-          <S.AllProposals onClick={() => alert("Redirect to all proposals")} />
+          <S.AllProposals
+            routePath={`/dao/${govPoolQuery.id}/proposals/opened`}
+          />
         </S.CardButtons>
         {isValidator && (
           <>

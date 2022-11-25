@@ -117,6 +117,16 @@ export interface IExecutor {
   __typename: string
 }
 
+export enum ProposalState {
+  Voting = "0",
+  WaitingForVotingTransfer = "1",
+  ValidatorVoting = "2",
+  Defeated = "3",
+  Succeeded = "4",
+  Executed = "5",
+  Undefined = "6",
+}
+
 export type IExecutorType =
   | "profile"
   | "change-settings"
