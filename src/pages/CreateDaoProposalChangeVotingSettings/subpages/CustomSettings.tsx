@@ -1,5 +1,5 @@
-import React from "react"
-import { useParams } from "react-router-dom"
+import React, { useEffect } from "react"
+import { useParams, useLocation } from "react-router-dom"
 import { formatUnits, formatEther } from "@ethersproject/units"
 
 import Header from "components/Header/Layout"
@@ -18,6 +18,7 @@ import { ZERO_ADDR } from "constants/index"
 import * as S from "../styled"
 
 const CustomSettings: React.FC = () => {
+  const location = useLocation()
   const { daoAddress, executorAddress } = useParams<
     "daoAddress" | "executorAddress"
   >()
@@ -26,6 +27,18 @@ const CustomSettings: React.FC = () => {
     executorAddress
   )
   const validatorsCount = useGovPoolValidatorsCount(daoAddress)
+
+  useEffect(() => {
+    localStorage.removeItem(
+      `proposal-change-custom-settings-${executorAddress}`
+    )
+
+    return () => {
+      localStorage.removeItem(
+        `proposal-change-custom-settings-${executorAddress}`
+      )
+    }
+  }, [location, executorAddress])
 
   if (!executorSettings || validatorsCount === null) return null
 

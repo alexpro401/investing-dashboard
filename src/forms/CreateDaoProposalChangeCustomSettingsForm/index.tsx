@@ -5,6 +5,12 @@ import { AnimatePresence } from "framer-motion"
 import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { DefaultProposalStep } from "common"
+import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
+import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import {
+  useGovPoolCreateProposalChangeSettings,
+  useGovPoolExecutorToSettings,
+} from "hooks/dao"
 
 import * as S from "./styled"
 
@@ -15,8 +21,18 @@ enum STEPS {
 
 const CreateDaoProposalChangeCustomSettingsForm: React.FC = () => {
   const navigate = useNavigate()
-  const { daoAddress } = useParams<"daoAddress">()
+  const { daoAddress, executorAddress } = useParams<
+    "daoAddress" | "executorAddress"
+  >()
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.customSettings)
+  const { defaultProposalSettingForm } = useContext(FundDaoCreatingContext)
+  const { proposalName, proposalDescription } = useContext(
+    GovProposalCreatingContext
+  )
+  const createProposal = useGovPoolCreateProposalChangeSettings({
+    daoPoolAddress: daoAddress ?? "",
+  })
+  const [settingId] = useGovPoolExecutorToSettings(daoAddress, executorAddress)
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length + 1, [])
   const currentStepNumber = useMemo(
@@ -25,8 +41,55 @@ const CreateDaoProposalChangeCustomSettingsForm: React.FC = () => {
   )
 
   const handleCreateProposal = useCallback(() => {
-    //TODO
-  }, [])
+    if (!settingId) return
+
+    const {
+      earlyCompletion,
+      delegatedVotingAllowed,
+      validatorsVote,
+      duration,
+      quorum,
+      minVotesForVoting,
+      minVotesForCreating,
+      rewardToken,
+      creationReward,
+      executionReward,
+      voteRewardsCoefficient,
+      executorDescription,
+      durationValidators,
+      quorumValidators,
+    } = defaultProposalSettingForm
+
+    createProposal({
+      proposalInfo: {
+        proposalName: proposalName.get,
+        proposalDescription: proposalDescription.get,
+      },
+      settingId,
+      setting: {
+        earlyCompletion: earlyCompletion.get,
+        delegatedVotingAllowed: delegatedVotingAllowed.get,
+        validatorsVote: validatorsVote.get,
+        duration: duration.get,
+        quorum: quorum.get,
+        minVotesForVoting: minVotesForVoting.get,
+        minVotesForCreating: minVotesForCreating.get,
+        rewardToken: rewardToken.get,
+        creationReward: creationReward.get,
+        executionReward: executionReward.get,
+        voteRewardsCoefficient: voteRewardsCoefficient.get,
+        executorDescription: executorDescription.get,
+        durationValidators: durationValidators.get,
+        quorumValidators: quorumValidators.get,
+      },
+    })
+  }, [
+    createProposal,
+    proposalName,
+    proposalDescription,
+    defaultProposalSettingForm,
+    settingId,
+  ])
 
   const handlePrevStep = useCallback(() => {
     switch (currentStep) {
