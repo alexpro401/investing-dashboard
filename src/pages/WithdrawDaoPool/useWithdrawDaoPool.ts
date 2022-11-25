@@ -31,7 +31,8 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
   const [ERC20Price, setERC20Price] = useState(ZERO)
   const [ERC721Amount, setERC721Amount] = useState<number[]>([])
 
-  const [{ tokenAddress, nftAddress }] = useGovPoolVotingAssets(daoPoolAddress)
+  const [{ tokenAddress, nftAddress, haveToken, haveNft }] =
+    useGovPoolVotingAssets(daoPoolAddress)
 
   const [fromData] = useERC20Data(tokenAddress)
   const priceUSD = useTokenPriceOutUSD({ tokenAddress })
@@ -86,6 +87,8 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
   // UI data
   const formInfo = useMemo(() => {
     return {
+      haveToken,
+      haveNft,
       erc20: {
         address: tokenAddress,
         symbol: fromData?.symbol,
@@ -101,6 +104,8 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
       },
     }
   }, [
+    haveToken,
+    haveNft,
     fromData,
     nftAddress,
     tokenAddress,

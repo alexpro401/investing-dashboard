@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useContext } from "react"
+import { useNavigate } from "react-router-dom"
 import { parseUnits } from "@ethersproject/units"
 import { BigNumberish } from "@ethersproject/bignumber"
-import { useNavigate } from "react-router-dom"
 
 import { useGovValidatorsContract } from "contracts"
 import useError from "hooks/useError"
@@ -13,6 +13,7 @@ import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { useActiveWeb3React } from "hooks"
+import { useGovPoolLatestProposalId } from "hooks/dao"
 import { addDaoProposalData } from "utils/ipfs"
 
 interface IProps {
@@ -31,6 +32,7 @@ const useGovPoolCreateValidatorInternalProposal = ({ daoAddress }: IProps) => {
   const { setSuccessModalState, closeSuccessModalState } = useContext(
     GovProposalCreatingContext
   )
+  const { updateLatesProposalId } = useGovPoolLatestProposalId(daoAddress)
 
   const transactionOptions = useMemo(() => {
     if (!gasTrackerResponse) return
@@ -119,16 +121,20 @@ const useGovPoolCreateValidatorInternalProposal = ({ daoAddress }: IProps) => {
         })
 
         if (isTxMined(receipt)) {
+          const latestProposalId = await updateLatesProposalId()
           setPayload(SubmitState.SUCCESS)
+
           setSuccessModalState({
             opened: true,
             title: "Success",
-            text: "Congrats! You just successfully created a proposal and voted for it. Follow the proposal’s status at All proposals.",
+            text: "Congrats! You just successfully created an internal proposal. Now you should vote for it",
             image: "",
-            buttonText: "Validator proposals",
+            buttonText: "Vote",
             onClick: () => {
-              //TODO redirect to real validators proposals list
-              navigate("/")
+              navigate({
+                pathname: `/dao/${daoAddress}/validators-vote/${latestProposalId}`,
+                search: "?isInternal=true",
+              })
               closeSuccessModalState()
             },
           })
@@ -145,6 +151,8 @@ const useGovPoolCreateValidatorInternalProposal = ({ daoAddress }: IProps) => {
       }
     },
     [
+      daoAddress,
+      updateLatesProposalId,
       govValidatorsContract,
       setPayload,
       setError,
