@@ -83,8 +83,18 @@ const DaoProposalTokenDistribution = lazy(
   () => import("pages/CreateDaoProposalTokenDistribution")
 )
 const CreateDaoCustomProposalSelectType = lazy(
-  () => import("pages/CreateDaoCustomProposalSelectType")
+  () => import("pages/CreateDaoCustomProposal")
 )
+const CreateDaoCustomProposalAbi = lazy(
+  () => import("pages/CreateDaoCustomProposal/subpages/Abi")
+)
+const CreateDaoCustomProposalWalletConnect = lazy(
+  () => import("pages/CreateDaoCustomProposal/subpages/WalletConnect")
+)
+const CreateDaoCustomProposalManual = lazy(
+  () => import("pages/CreateDaoCustomProposal/subpages/Manual")
+)
+
 /* dao proposals */
 
 const DaoProposals = lazy(() => import("pages/DaoProposals"))
@@ -268,6 +278,18 @@ export default function Routes() {
                 <Route
                   path="dao/:daoAddress/create-custom-proposal/:executorAddress"
                   element={<CreateDaoCustomProposalSelectType />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-custom-proposal/abi/:executorAddress"
+                  element={<CreateDaoCustomProposalAbi />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-custom-proposal/wallet-connect/:executorAddress"
+                  element={<CreateDaoCustomProposalWalletConnect />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-custom-proposal/manual/:executorAddress"
+                  element={<CreateDaoCustomProposalManual />}
                 />
 
                 {/* Dao Proposals */}

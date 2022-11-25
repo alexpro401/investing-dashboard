@@ -87,38 +87,26 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
   const handleNextStep = useCallback(() => {
     if (!selectedCard) return
 
-    if (
-      selectedCard &&
-      selectedCard.type === "default" &&
-      selectedCard.specification
-    ) {
+    const slug = `/dao/${daoAddress}/create-proposal/change-voting-settings`
+
+    if (selectedCard.type === "default" && selectedCard.specification) {
       if (
         selectedCard.specification ===
         EDefaultVotingSettingsType.changeVotingSettings
       ) {
-        return navigate(
-          `/dao/${daoAddress}/create-proposal/change-voting-settings/global-voting`
-        )
+        return navigate(slug + "/global-voting")
       }
 
       if (
         selectedCard.specification ===
         EDefaultVotingSettingsType.tokenDistribution
       ) {
-        return navigate(
-          `/dao/${daoAddress}/create-proposal/change-voting-settings/token-distribution`
-        )
+        return navigate(slug + "/token-distribution")
       }
     }
 
-    if (
-      selectedCard &&
-      selectedCard.type === "custom" &&
-      selectedCard.executorAddress
-    ) {
-      navigate(
-        `/dao/${daoAddress}/create-proposal/change-voting-settings/custom/${selectedCard.executorAddress}`
-      )
+    if (selectedCard.type === "custom" && selectedCard.executorAddress) {
+      navigate(slug + `/custom/${selectedCard.executorAddress}`)
       return
     }
   }, [navigate, daoAddress, selectedCard])

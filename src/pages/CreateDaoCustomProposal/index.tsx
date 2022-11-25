@@ -42,7 +42,19 @@ const CreateDaoCustomProposal: React.FC = () => {
   }, [navigate, daoAddress])
 
   const handleNextStep = useCallback(() => {
-    //TODO
+    const slug = `/dao/${daoAddress}/create-custom-proposal`
+
+    if (selectedCard === ECustomProposalTypes.walletConnect) {
+      return navigate(slug + `/wallet-connect/${executorAddress}`)
+    }
+
+    if (selectedCard === ECustomProposalTypes.abi) {
+      return navigate(slug + `/abi/${executorAddress}`)
+    }
+
+    if (selectedCard === ECustomProposalTypes.manual) {
+      return navigate(slug + `/manual/${executorAddress}`)
+    }
   }, [navigate, daoAddress, selectedCard, executorAddress])
 
   const customProposalSelectTypes = useMemo<ICustomProposalSelectType[]>(
