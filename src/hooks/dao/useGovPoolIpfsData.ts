@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
 
-import { parseIpfsString } from "utils/ipfs"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { useGovPoolContract } from "contracts"
 
@@ -27,9 +26,16 @@ const useGovPoolIpfsData = (
     try {
       setLoading(true)
       const _descriptionURL = await govPoolContract.descriptionURL()
+
+      if (!_descriptionURL.includes("ipfs://")) {
+        setLoading(false)
+        return
+      }
+
       const GovPoolIpfsEntity = new IpfsEntity<GovPoolIpfsData>({
-        path: parseIpfsString(_descriptionURL),
+        path: _descriptionURL,
       })
+
       const govPoolIpfsData = await GovPoolIpfsEntity.load()
 
       setIpfsData(govPoolIpfsData)

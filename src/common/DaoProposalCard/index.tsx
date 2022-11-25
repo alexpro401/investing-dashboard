@@ -2,7 +2,7 @@ import * as S from "./styled"
 
 import { FC, HTMLAttributes } from "react"
 import { ICON_NAMES } from "constants/icon-names"
-import { shortenAddress } from "utils"
+import { fromBig, shortenAddress } from "utils"
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { useGovPoolProposal } from "hooks/dao"
 import { useParams } from "react-router-dom"
@@ -27,7 +27,7 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
 
   return (
     <S.Root {...rest}>
-      <S.DaoProposalCardHead>
+      <S.DaoProposalCardHead to={`/dao/${daoAddress}/proposal/${proposalId}`}>
         <S.DaoProposalCardHeadTitleWrp>
           <S.DaoProposalCardHeadTitle>{name}</S.DaoProposalCardHeadTitle>
         </S.DaoProposalCardHeadTitleWrp>
@@ -44,16 +44,20 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
         </S.DaoProposalCardBlockInfo>
         <S.DaoProposalCardBlockInfo alignRight={true}>
           <S.DaoProposalCardBlockInfoValue>
-            {votesFor}/
-            <S.DaoVotingStatusCounterTotal>
-              {votesTotalNeed}
-            </S.DaoVotingStatusCounterTotal>
+            <>
+              {fromBig(votesFor)}/
+              <S.DaoVotingStatusCounterTotal>
+                {fromBig(votesTotalNeed)}
+              </S.DaoVotingStatusCounterTotal>
+            </>
           </S.DaoProposalCardBlockInfoValue>
           <S.DaoProposalCardBlockInfoLabel>
             Voting status
           </S.DaoProposalCardBlockInfoLabel>
         </S.DaoProposalCardBlockInfo>
-        <S.DaoVotingProgressBar progress={(votesTotalNeed / 100) * votesFor} />
+        <S.DaoVotingProgressBar
+          progress={(+votesTotalNeed / 100) * +votesFor}
+        />
         <S.DaoProposalCardBlockInfo>
           <S.DaoProposalCardBlockInfoValue>
             {proposalType}

@@ -1,10 +1,13 @@
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { DateUtil } from "utils"
+import { bigify, DateUtil } from "utils"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { createClient, useQuery } from "urql"
+import { useActiveWeb3React } from "../../index"
+import { useGovPool } from "../useGovPool"
+import { BigNumber } from "@ethersproject/bignumber"
 
-const investorGraphClient = createClient({
+const GovPoolGraphClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
 })
 
@@ -13,90 +16,121 @@ export const useGovPoolProposal = (
   govPoolAddress: string,
   proposalView: IGovPool.ProposalViewStructOutput
 ) => {
+  const { govPoolContract } = useGovPool(govPoolAddress)
+  const { account } = useActiveWeb3React()
+
   const [{ data }] = useQuery({
     query: `
       query {
-        daoPools(where: { id: "${govPoolAddress}" }) {
-          proposals(where: { proposalId: "${proposalId}" }) {
-            id
-            proposalId
-            creator
-            votersVoted
-          } 
+        proposals(where: { pool: "${govPoolAddress}", proposalId: "${proposalId}" }) {
+          id
         }
       }
     `,
-    context: investorGraphClient,
+    context: GovPoolGraphClient,
   })
 
-  const graphGovPoolProposal = useMemo(
-    () => data?.daoPools?.[0]?.proposals?.[0],
-    [data]
-  )
+  const graphGovPoolProposal = useMemo(() => data?.proposals?.[0], [data])
 
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
-  const creator = useMemo(() => graphGovPoolProposal?.creator, [data])
+
+  const [myVotesAmount, setMyVotesAmount] = useState<BigNumber>()
+
+  const creator = useMemo(
+    () => graphGovPoolProposal?.creator,
+    [graphGovPoolProposal]
+  )
   const votedAddresses = useMemo(
-    () => graphGovPoolProposal?.votersVoted,
-    [data]
+    () => graphGovPoolProposal?.voters?.length || 0,
+    [graphGovPoolProposal]
   )
 
   const proposalType = useMemo(() => {
-    return proposalView.proposal.core.settings.executorDescription
+    return proposalView?.proposal.core.settings.executorDescription
   }, [proposalView])
 
   const voteEnd = useMemo(() => {
-    return DateUtil.fromTimestamp(
-      proposalView.proposal.core.voteEnd.toNumber(),
-      "dd/mm/yy hh:mm:ss"
-    ) as string
+    return proposalView?.proposal
+      ? (DateUtil.fromTimestamp(
+          proposalView?.proposal.core.voteEnd.toNumber(),
+          "dd/mm/yy hh:mm:ss"
+        ) as string)
+      : ""
   }, [proposalView])
+
+  const executors = useMemo(
+    () => proposalView?.proposal.executors || [],
+    [proposalView]
+  )
+
+  const proposalSettings = useMemo(
+    () => proposalView?.proposal?.core?.settings || {},
+    [proposalView]
+  )
 
   const loadDetailsFromIpfs = useCallback(async () => {
     try {
-      const entity = new IpfsEntity<{ name: string; description: string }>({
-        path: proposalView.proposal.descriptionURL,
+      const entity = new IpfsEntity<{
+        proposalName: string
+        proposalDescription: string
+      }>({
+        path: proposalView?.proposal.descriptionURL,
       })
 
       const response = await entity.load()
 
-      setName(response.name)
-      setDescription(response.description)
+      setName(response.proposalName)
+      setDescription(response.proposalDescription)
     } catch (error) {}
   }, [proposalView])
 
-  const loadDetailsFromSubgraph = useCallback(async () => {
-    // await fetching()
-  }, [])
+  const loadProposalTotalVotes = useCallback(async () => {
+    try {
+      const amounts = await govPoolContract?.getTotalVotes(
+        proposalId,
+        account!,
+        false
+      )
+      const accountVotesAmount = amounts?.[1]
+      setMyVotesAmount(accountVotesAmount)
+    } catch (error) {
+      console.error({ error })
+    }
+  }, [account, govPoolContract, proposalId])
 
   const init = useCallback(async () => {
     try {
       await loadDetailsFromIpfs()
-      await loadDetailsFromSubgraph()
+      await loadProposalTotalVotes()
     } catch (error) {}
-  }, [loadDetailsFromIpfs, loadDetailsFromSubgraph])
+  }, [loadDetailsFromIpfs, loadProposalTotalVotes])
 
   useEffect(() => {
     init()
   }, [init, proposalView])
 
-  const votesTotalNeed = useMemo(() => 222, [])
+  const votesTotalNeed = useMemo(() => bigify("222", 18), [])
 
   const votesFor = useMemo(
-    () => proposalView.proposal.core.votesFor.toNumber(),
+    () => proposalView?.proposal?.core?.votesFor || 0,
     [proposalView]
   )
 
   return {
+    govPoolAddress,
+    proposalId,
     creator,
     votedAddresses,
     name,
     description,
+    executors,
+    proposalSettings,
 
     proposalType,
     voteEnd,
     votesTotalNeed,
     votesFor,
+    myVotesAmount,
   }
 }

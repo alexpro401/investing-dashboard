@@ -83,3 +83,13 @@ export const govPoolProposals = {
     changeInternalBalances: "change-internal-balances",
   },
 }
+
+export enum ProposalState {
+  Voting = "0",
+  WaitingForVotingTransfer = "1",
+  ValidatorVoting = "2",
+  Defeated = "3",
+  Succeeded = "4",
+  Executed = "5",
+  Undefined = "6",
+}
