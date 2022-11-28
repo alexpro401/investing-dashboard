@@ -10,8 +10,15 @@ import { Indents, TextLabel } from "../styled"
 
 import { Flex } from "theme"
 import Tooltip from "components/Tooltip"
+import { useNavigate } from "react-router-dom"
 
-const DaoProfileTabBalance: React.FC = () => {
+interface Props {
+  daoAddress?: string
+}
+
+const DaoProfileTabBalance: React.FC<Props> = ({ daoAddress }) => {
+  const navigate = useNavigate()
+
   return (
     <>
       <DaoProfileEmptyBalanceCard />
@@ -27,7 +34,7 @@ const DaoProfileTabBalance: React.FC = () => {
               <TextLabel>Received rewards</TextLabel>
             </Flex>
           }
-          onClick={() => alert("Handle claim")}
+          onClick={() => navigate(`/dao/${daoAddress}/claim/rewards`)}
           actionText="Claim"
           count={8}
         />

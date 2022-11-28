@@ -117,6 +117,19 @@ export const useGovPoolProposal = (
     [proposalView]
   )
 
+  const executed = useMemo(
+    () => proposalView.proposal.core.executed,
+    [proposalView]
+  )
+
+  const isInsurance = useMemo(() => {
+    return false
+  }, [proposalView])
+
+  const isDistribution = useMemo(() => {
+    return true
+  }, [proposalView])
+
   return {
     govPoolAddress,
     proposalId,
@@ -132,5 +145,9 @@ export const useGovPoolProposal = (
     votesTotalNeed,
     votesFor,
     myVotesAmount,
+
+    executed,
+    isInsurance,
+    isDistribution,
   }
 }
