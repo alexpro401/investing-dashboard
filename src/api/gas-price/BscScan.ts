@@ -1,16 +1,10 @@
 import { isEqual } from "lodash"
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios"
 import { differenceInMilliseconds } from "date-fns/esm"
-import TokenAPI from "."
-import {
-  ChainNameById,
-  ITokenHistoricalPrices,
-  ITokenScore,
-  ITreasuryTokensList,
-  REFETCH_INTERVAL,
-} from "./types"
+import GasPrice from "."
+import { GasPriceResponse, REFETCH_INTERVAL } from "./types"
 
-class KattanaTokenAPI implements TokenAPI {
+class BscScanGasPriceAPI implements GasPrice {
   readonly api: AxiosInstance
   cache = {}
 
@@ -18,16 +12,19 @@ class KattanaTokenAPI implements TokenAPI {
     this.initCache()
 
     this.api = axios.create({
-      baseURL: "https://api-staging.kattana.trade",
+      baseURL: "https://api.bscscan.com/api",
       headers: {
         accept: "application/json",
+      },
+      params: {
+        apikey: process.env.REACT_APP_BSCSCAN_API_KEY,
       },
     })
   }
 
   initCache = () => {
     try {
-      const dataString = localStorage.getItem("api-cache-kattana")
+      const dataString = localStorage.getItem("api-cache-bscscan")
       if (!dataString) return
 
       const data = JSON.parse(dataString)
@@ -59,32 +56,14 @@ class KattanaTokenAPI implements TokenAPI {
       data: response.data,
       timestamp: new Date(),
     }
-    localStorage.setItem("api-cache-kattana", JSON.stringify(this.cache))
+    localStorage.setItem("api-cache-bscscan", JSON.stringify(this.cache))
 
     return response.data
   }
 
-  getWalletBalances = async (chainId: number, govPoolAddress: string) => {
-    return await this.fetch<ITreasuryTokensList>(
-      `/balances/${chainId}/${govPoolAddress}`
-    )
-  }
-
-  getHistoricalPrices = async (token: string, dates: number[]) => {
-    const creationTime = dates.reduce((memo, date) => {
-      return (memo += memo.length ? `,${date}` : `${date}`)
-    }, "")
-
-    return await this.fetch<ITokenHistoricalPrices>(
-      `/historical_price/${token}/${creationTime}`
-    )
-  }
-
-  getTokenScore = async (chainId: number, token: string) => {
-    return await this.fetch<ITokenScore>(
-      `/tokens/${ChainNameById[chainId]}/${token}/score`
-    )
+  getGasPrice = () => {
+    return this.fetch<GasPriceResponse>("?module=gastracker&action=gasoracle")
   }
 }
 
-export default KattanaTokenAPI
+export default BscScanGasPriceAPI

@@ -5,7 +5,7 @@ declare global {
       REACT_APP_UPDATE_INTERVAL: string
 
       REACT_APP_INFURA_ID: string
-      REACT_APP_ETHERSCAN_API_KEY: string
+      REACT_APP_BSCSCAN_API_KEY: string
 
       REACT_APP_CONTRACTS_REGISTRY_ADDRESS: string
       REACT_APP_DEXE_DAO_ADDRESS: string

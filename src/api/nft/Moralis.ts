@@ -54,7 +54,7 @@ class MoralisNftAPI implements NftAPI {
       data: response.data,
       timestamp: new Date(),
     }
-    localStorage.setItem("api-cache", JSON.stringify(this.cache))
+    localStorage.setItem("api-cache-moralis", JSON.stringify(this.cache))
 
     return response.data
   }

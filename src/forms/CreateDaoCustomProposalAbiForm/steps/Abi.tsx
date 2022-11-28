@@ -8,8 +8,15 @@ import {
 import { ICON_NAMES } from "constants/icon-names"
 import { AdvancedABIContext } from "context/govPool/proposals/custom/AdvancedABIContext"
 import { OverlapInputField, TextareaField } from "fields"
+import useABI from "hooks/useABI"
 import { useFormValidation } from "hooks/useFormValidation"
-import React, { Dispatch, SetStateAction, useCallback, useContext } from "react"
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+} from "react"
 import { useParams } from "react-router-dom"
 import theme from "theme"
 import { isAddress, shortenAddress } from "utils"
@@ -22,6 +29,17 @@ const AbiStep: React.FC = () => {
   const { daoAddress, executorAddress } = useParams<
     "daoAddress" | "executorAddress"
   >()
+
+  const getABI = useABI()
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const data = await getABI("0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82")
+        console.log(data)
+      } catch (e) {}
+    })()
+  }, [getABI])
 
   const { contractAdresses, modal, onContractAddressDelete } =
     useContext(AdvancedABIContext)
