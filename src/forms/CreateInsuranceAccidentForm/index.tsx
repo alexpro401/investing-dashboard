@@ -42,8 +42,6 @@ import { encodeAbiMethod } from "utils/encodeAbi"
 import { Insurance as Insurance_ABI } from "abi"
 import { divideBignumbers } from "utils/formulas"
 
-console.log(process.env.REACT_APP_DEXE_DAO_ADDRESS)
-
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
 })
