@@ -84,8 +84,9 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
       isNil(account) ||
       isNil(investorsInfo.get) ||
       isEmpty(investorsInfo.get)
-    )
+    ) {
       return ZERO
+    }
 
     return BigNumber.from(
       investorsInfo.get[String(account).toLocaleLowerCase()]

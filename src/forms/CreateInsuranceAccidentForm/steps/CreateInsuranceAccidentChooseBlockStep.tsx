@@ -79,7 +79,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
 
   useEffect(() => {
     if (history && history.length > 0) {
-      const activeLabel = 1
+      const activeLabel = history.length - 1
       const payload = history[activeLabel] ?? {}
       const price = getLP(String(payload?.baseTVL), String(payload?.supply))
 
@@ -131,10 +131,11 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
         point.get.activeLabel !== p.activeLabel &&
         !isNil(p.activePayload[0].payload)
       ) {
-        point.set({
+        const chosenPoint = {
           payload: p.activePayload[0].payload ?? {},
           activeLabel: p.activeLabel,
-        })
+        }
+        point.set(chosenPoint)
       }
     },
     [point]

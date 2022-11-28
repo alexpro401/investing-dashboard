@@ -25,7 +25,6 @@ import CreateInsuranceAccidentCheckSettingsStep from "./steps/CreateInsuranceAcc
 import CreateInsuranceAccidentAddDescriptionStep from "./steps/CreateInsuranceAccidentAddDescriptionStep"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { AnimatePresence } from "framer-motion"
-import { addInsuranceProposalData } from "utils/ipfs"
 import { InsuranceAccident } from "interfaces/insurance"
 import { useWeb3React } from "@web3-react/core"
 import { useFormValidation } from "hooks/useFormValidation"
@@ -37,6 +36,9 @@ import usePayload from "hooks/usePayload"
 import { SubmitState } from "constants/types"
 import CreateInsuranceAccidentCreatedSuccessfully from "./components/CreateInsuranceAccidentCreatedSuccessfully"
 import { ZERO } from "constants/index"
+import { IpfsEntity } from "utils/ipfsEntity"
+import { useSelector } from "react-redux"
+import { selectInsuranceAddress } from "../../state/contracts/selectors"
 
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
@@ -106,6 +108,7 @@ const CreateInsuranceAccidentForm: FC = () => {
   const [insuranceBalances, insuranceLoading] = useInsurance()
   const insurance = useInsuranceContract()
   const addTransaction = useTransactionAdder()
+  const insuranceAddress = useSelector(selectInsuranceAddress)
 
   const [newAccidentHash, setNewAccidentHash] = useState("")
   const [showSuccessfullyCreatedModal, setShowSuccessfullyCreatedModal] =
@@ -169,29 +172,34 @@ const CreateInsuranceAccidentForm: FC = () => {
     formController.disableForm()
     setAccidentCreating(SubmitState.SIGN)
     try {
-      const insuranceProposalData = {
-        creator: account,
-        accidentInfo: {
-          pool: pool.get,
-          block: block.get,
-          date: date.get,
-          description: description.get,
-          chat: chat.get,
+      const insuranceProposalData = new IpfsEntity<InsuranceAccident>({
+        data: {
+          creator: account,
+          timestamp: new Date().getTime() / 1000,
+          accidentInfo: {
+            pool: pool.get,
+            block: block.get,
+            date: date.get,
+            description: description.get,
+            chat: chat.get,
+          },
+          investorsTotals: investorsTotals.get,
+          investorsInfo: investorsInfo.get,
+          chart: {
+            data: chart.data.get,
+            point: chart.point.get,
+            forPool: chart.forPool.get,
+            timeframe: chart.timeframe.get,
+          },
         },
-        investorsTotals: investorsTotals.get,
-        investorsInfo: investorsInfo.get,
-        chart: {
-          data: chart.data.get,
-          point: chart.point.get,
-          forPool: chart.forPool.get,
-          timeframe: chart.timeframe.get,
-        },
-      } as unknown as InsuranceAccident
+      })
 
-      const ipfsResponse = await addInsuranceProposalData(insuranceProposalData)
+      await insuranceProposalData.uploadSelf()
 
-      if (!isNil(ipfsResponse) && !isNil(ipfsResponse.path)) {
-        setNewAccidentHash(ipfsResponse.path)
+      console.log("_path", insuranceProposalData._path)
+
+      if (!isNil(insuranceProposalData._path)) {
+        setNewAccidentHash(insuranceProposalData._path)
         setAccidentCreating(SubmitState.WAIT_CONFIRM)
         // const receipt = await insurance.proposeClaim(ipfsResponse.path)
 

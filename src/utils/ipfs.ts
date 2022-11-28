@@ -121,16 +121,6 @@ export const addUserMetadata = (name, assets, account) => {
   return client.add(dataString)
 }
 
-export const addInsuranceProposalData = (payload) => {
-  const data = {
-    ...payload,
-    timestamp: new Date().getTime() / 1000,
-  }
-  const dataString = stringify(data)
-
-  return client.add(dataString)
-}
-
 export const addDaoProposalData = ({
   proposalName,
   proposalDescription,

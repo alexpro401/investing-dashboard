@@ -44,16 +44,24 @@ function useInvestorsInAccident() {
 
   const investors = useMemo(() => {
     if (
+      isNil(account) ||
       isNil(poolInvestors.data) ||
       isNil(poolInvestors.data.traderPoolHistories)
     ) {
       return undefined
     }
 
-    return poolInvestors.data?.traderPoolHistories.reduce((acc, h) => {
-      return [...acc, ...h.investors]
-    }, [] as string[])
-  }, [poolInvestors])
+    const _investors = poolInvestors.data?.traderPoolHistories.reduce(
+      (acc, h) => [...acc, ...h.investors],
+      [] as string[]
+    )
+
+    if (!_investors?.includes(String(account).toLocaleLowerCase())) {
+      return [String(account).toLocaleLowerCase(), ..._investors]
+    }
+
+    return _investors
+  }, [poolInvestors, account])
 
   const [insuranceHistory] = useInvestorsInsuranceHistory(date.get, investors)
 
