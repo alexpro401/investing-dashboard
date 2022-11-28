@@ -1,11 +1,9 @@
 import { useMemo } from "react"
-import { useSelector } from "react-redux"
 import { createClient, useQuery } from "urql"
 
 import { GovPoolExecutorsQuery } from "queries/gov-pools"
 import { isAddress } from "utils"
-import { useGovPoolHelperContracts } from "hooks/dao"
-import { selectInsuranceAddress } from "state/contracts/selectors"
+import { useGovPoolExecutorType } from "hooks/dao"
 import { IExecutor, IExecutorType } from "types/dao.types"
 
 interface IExecutorExtended extends IExecutor {
@@ -32,68 +30,30 @@ const useGovPoolExecutors = (
     },
     context: daoGraphClient,
   })
-  const {
-    govSettingsAddress,
-    govUserKeeperAddress,
-    govValidatorsAddress,
-    govDistributionProposalAddress,
-  } = useGovPoolHelperContracts(govPoolAddress)
-  const insuranceAddress = useSelector(selectInsuranceAddress)
 
-  const executors = useMemo<IExecutorExtended[]>(() => {
+  const searchedExecutors = useMemo(() => {
     if (!data || !govPoolAddress) return []
 
     const daoPools = data.daoPools
 
     if (daoPools.length === 0) return []
 
-    const searchedDaoPool = daoPools[0]
+    return daoPools[0].executors
+  }, [data, govPoolAddress])
 
-    return searchedDaoPool.executors.map((executor) => {
-      let type: IExecutorType = "custom"
+  const executorTypes = useGovPoolExecutorType(
+    govPoolAddress ?? "",
+    searchedExecutors.map((ex) => ex.executorAddress)
+  )
 
-      if (govPoolAddress.toLowerCase() === executor.executorAddress) {
-        type = "profile"
-      }
-
-      if (govSettingsAddress === executor.executorAddress) {
-        type = "change-settings"
-      }
-
-      if (govDistributionProposalAddress === executor.executorAddress) {
-        type = "distribution"
-      }
-
-      if (govValidatorsAddress === executor.executorAddress) {
-        type = "change-validator-balances"
-      }
-
-      if (govUserKeeperAddress === executor.executorAddress) {
-        type = "add-token"
-      }
-
-      if (
-        insuranceAddress === executor.executorAddress &&
-        govPoolAddress.toLowerCase() ===
-          process.env.REACT_APP_DEXE_DAO_ADDRESS.toLowerCase()
-      ) {
-        type = "insurance"
-      }
-
-      return {
-        ...executor,
-        type,
-      }
-    })
-  }, [
-    data,
-    govSettingsAddress,
-    govValidatorsAddress,
-    govUserKeeperAddress,
-    govDistributionProposalAddress,
-    insuranceAddress,
-    govPoolAddress,
-  ])
+  const executors = useMemo(() => {
+    return searchedExecutors.map((ex) => ({
+      ...ex,
+      type:
+        executorTypes.find((el) => el.executorAddress === ex.executorAddress)
+          ?.type ?? "custom",
+    }))
+  }, [searchedExecutors, executorTypes])
 
   return [executors, fetching]
 }
