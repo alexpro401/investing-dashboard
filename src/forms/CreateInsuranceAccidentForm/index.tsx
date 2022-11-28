@@ -42,6 +42,8 @@ import { encodeAbiMethod } from "utils/encodeAbi"
 import { Insurance as Insurance_ABI } from "abi"
 import { divideBignumbers } from "utils/formulas"
 
+console.log(process.env.REACT_APP_DEXE_DAO_ADDRESS)
+
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
 })
@@ -248,7 +250,7 @@ const CreateInsuranceAccidentForm: FC = () => {
         )
 
         const receipt = await govPool.createProposal(
-          insuranceProposalData._path,
+          "ipfs://" + insuranceProposalData._path,
           [insuranceAddress],
           [BigNumber.from(0).toHexString()],
           [encodedProposalExecution]
