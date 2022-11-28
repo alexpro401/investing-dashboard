@@ -7,6 +7,7 @@ import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { AbiStep } from "./steps"
 
 import * as S from "./styled"
+import AdvancedABIContextProvider from "context/govPool/proposals/custom/AdvancedABIContext"
 
 enum STEPS {
   abiInfo = "abiInfo",
@@ -71,7 +72,9 @@ const CreateDaoCustomProposalAbiForm: React.FC = () => {
       <AnimatePresence>
         {currentStep === STEPS.abiInfo && (
           <S.StepsContainer>
-            <AbiStep />
+            <AdvancedABIContextProvider>
+              <AbiStep />
+            </AdvancedABIContextProvider>
           </S.StepsContainer>
         )}
         {currentStep === STEPS.basicInfo && (
