@@ -1,5 +1,5 @@
-import { isEmpty, isNil } from "lodash"
-import { BigNumber } from "@ethersproject/bignumber"
+import { isEmpty, isNil, reduce } from "lodash"
+import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
 import { createClient, Provider as GraphProvider } from "urql"
 import {
   FC,
@@ -25,11 +25,10 @@ import CreateInsuranceAccidentCheckSettingsStep from "./steps/CreateInsuranceAcc
 import CreateInsuranceAccidentAddDescriptionStep from "./steps/CreateInsuranceAccidentAddDescriptionStep"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { AnimatePresence } from "framer-motion"
-import { InsuranceAccident } from "interfaces/insurance"
 import { useWeb3React } from "@web3-react/core"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isUrl, required } from "utils/validators"
-import { useInsuranceContract } from "contracts"
+import { useGovPoolContract } from "contracts"
 import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
 import usePayload from "hooks/usePayload"
@@ -38,7 +37,10 @@ import CreateInsuranceAccidentCreatedSuccessfully from "./components/CreateInsur
 import { ZERO } from "constants/index"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { useSelector } from "react-redux"
-import { selectInsuranceAddress } from "../../state/contracts/selectors"
+import { selectInsuranceAddress } from "state/contracts/selectors"
+import { encodeAbiMethod } from "utils/encodeAbi"
+import { Insurance as Insurance_ABI } from "abi"
+import { divideBignumbers } from "utils/formulas"
 
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
@@ -106,9 +108,9 @@ const CreateInsuranceAccidentForm: FC = () => {
   const [showAlert] = useAlert()
   const [, setError] = useError()
   const [insuranceBalances, insuranceLoading] = useInsurance()
-  const insurance = useInsuranceContract()
   const addTransaction = useTransactionAdder()
   const insuranceAddress = useSelector(selectInsuranceAddress)
+  const govPool = useGovPoolContract(process.env.REACT_APP_DEXE_DAO_ADDRESS)
 
   const [newAccidentHash, setNewAccidentHash] = useState("")
   const [showSuccessfullyCreatedModal, setShowSuccessfullyCreatedModal] =
@@ -165,16 +167,16 @@ const CreateInsuranceAccidentForm: FC = () => {
 
   const submit = useCallback(async () => {
     touchForm()
-    if (!account || !isFieldsValid || !insurance) {
+    if (!account || !isFieldsValid || !govPool) {
       return
     }
 
     formController.disableForm()
     setAccidentCreating(SubmitState.SIGN)
     try {
-      const insuranceProposalData = new IpfsEntity<InsuranceAccident>({
-        data: {
-          creator: account,
+      const insuranceProposalData = new IpfsEntity({
+        data: JSON.stringify({
+          creator: String(account).toLocaleLowerCase(),
           timestamp: new Date().getTime() / 1000,
           accidentInfo: {
             pool: pool.get,
@@ -191,28 +193,76 @@ const CreateInsuranceAccidentForm: FC = () => {
             forPool: chart.forPool.get,
             timeframe: chart.timeframe.get,
           },
-        },
+        }),
       })
 
       await insuranceProposalData.uploadSelf()
 
-      console.log("_path", insuranceProposalData._path)
-
       if (!isNil(insuranceProposalData._path)) {
         setNewAccidentHash(insuranceProposalData._path)
         setAccidentCreating(SubmitState.WAIT_CONFIRM)
-        // const receipt = await insurance.proposeClaim(ipfsResponse.path)
 
-        // const tx = await addTransaction(receipt, {
-        //   type: TransactionType.INSURANCE_REGISTER_PROPOSAL_CLAIM,
-        //   pool: pool.get,
-        // })
+        const investorsWithAmounts = reduce(
+          Object.keys(investorsInfo.get),
+          (acc, investorKey) => {
+            const investorData = investorsInfo.get[investorKey]
 
-        // if (isTxMined(tx)) {
-        //   _clearState()
-        //   setAccidentCreating(SubmitState.SUCCESS)
-        //   setShowSuccessfullyCreatedModal(true)
-        // }
+            const {
+              poolPositionBeforeAccident,
+              poolPositionOnAccidentCreation,
+            } = investorData
+
+            const { totalLPInvestVolume, totalLPDivestVolume } =
+              poolPositionOnAccidentCreation
+
+            const _inDayLPAmount = BigNumber.from(
+              poolPositionBeforeAccident.lpHistory[0].currentLpAmount
+            )
+
+            const _currentLPAmount = divideBignumbers(
+              [BigNumber.from(totalLPInvestVolume), 18],
+              [BigNumber.from(totalLPDivestVolume), 18]
+            )
+
+            const loss = divideBignumbers(
+              [_inDayLPAmount, 18],
+              [_currentLPAmount, 18]
+            )
+
+            acc.investors.push(investorKey)
+            acc.amounts.push(loss.toString())
+
+            return acc
+          },
+          { investors: [] as string[], amounts: [] as BigNumberish[] }
+        )
+
+        const encodedProposalExecution = encodeAbiMethod(
+          Insurance_ABI,
+          "acceptClaim",
+          [
+            insuranceProposalData._path,
+            investorsWithAmounts.investors,
+            investorsWithAmounts.amounts,
+          ]
+        )
+
+        const receipt = await govPool.createProposal(
+          insuranceProposalData._path,
+          [insuranceAddress],
+          [BigNumber.from(0).toHexString()],
+          [encodedProposalExecution]
+        )
+
+        const tx = await addTransaction(receipt, {
+          type: TransactionType.INSURANCE_REGISTER_PROPOSAL_CLAIM,
+          pool: pool.get,
+        })
+
+        if (isTxMined(tx)) {
+          setAccidentCreating(SubmitState.SUCCESS)
+          setShowSuccessfullyCreatedModal(true)
+        }
       }
     } catch (error: any) {
       if (!!error && !!error.data && !!error.data.message) {
@@ -233,12 +283,12 @@ const CreateInsuranceAccidentForm: FC = () => {
     date,
     description,
     formController,
-    insurance,
     investorsInfo,
     investorsTotals,
     isFieldsValid,
     touchForm,
     pool,
+    govPool,
   ])
 
   const handleNextStep = () => {
