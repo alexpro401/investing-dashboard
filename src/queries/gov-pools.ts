@@ -152,6 +152,7 @@ export {
   GovPoolQuery,
   GovPoolsQuery,
   GovVoterInPoolQuery,
+  GovPoolExecutorQuery,
   GovPoolExecutorsQuery,
   GovProposalsWithRewardsQuery,
   GovProposalsWithDistributionQuery,
