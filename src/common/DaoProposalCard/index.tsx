@@ -1,7 +1,6 @@
 import * as S from "./styled"
 
 import { FC, HTMLAttributes } from "react"
-import { ICON_NAMES } from "constants/icon-names"
 import { normalizeBigNumber, fromBig, shortenAddress } from "utils"
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { useGovPoolProposal } from "hooks/dao"
@@ -66,7 +65,7 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
           <Flex full ai={"center"} jc={"space-between"} gap={"3"}>
             <ProgressLine
               w={
-                (votesTotalNeed / 100) *
+                (+fromBig(votesTotalNeed) / 100) *
                 Number(normalizeBigNumber(votesFor, 18, 2))
               }
             />

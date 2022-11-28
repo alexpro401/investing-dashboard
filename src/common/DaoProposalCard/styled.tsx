@@ -82,6 +82,11 @@ export const DaoVotingStatusCounterTotal = styled.span`
   color: #b1c7fc;
 `
 
+export const DaoVotingProgressBar = styled.div`
+  position: relative;
+  grid-column: 1 / -1;
+`
+
 export const DaoCenteredButton = styled(AppButton)`
   grid-column: 1 / -1;
   width: 100%;

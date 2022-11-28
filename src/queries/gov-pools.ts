@@ -89,7 +89,6 @@ const GovPoolExecutorsQuery = `
   }
 `
 
-
 const GovVoterInPoolQuery = `
   query ($voter: String!, $pool: String!) {
     voterInPools(where: { pool: $pool, voter: $voter }) {
