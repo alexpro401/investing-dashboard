@@ -1,37 +1,26 @@
 import { useCallback, useEffect, useState } from "react"
-import { BigNumber } from "@ethersproject/bignumber"
 
-import { useGovPoolContract, useGovSettingsContract } from "contracts"
+import { useGovSettingsContract } from "contracts"
+import { IGovSettingsFromContract } from "types/dao.types"
 
 interface IUseGovPoolSetting {
   daoAddress: string
   settingsId: number
 }
 
-interface IGovSettings {
-  earlyCompletion: boolean
-  delegatedVotingAllowed: boolean
-  validatorsVote: boolean
-  duration: BigNumber
-  durationValidators: BigNumber
-  quorum: BigNumber
-  quorumValidators: BigNumber
-  minVotesForVoting: BigNumber
-  minVotesForCreating: BigNumber
-  rewardToken: string
-  creationReward: BigNumber
-  executionReward: BigNumber
-  voteRewardsCoefficient: BigNumber
-  executorDescription: string
-}
-
 const useGovPoolSetting = ({
   daoAddress,
   settingsId,
-}: IUseGovPoolSetting): [IGovSettings | undefined, boolean, boolean] => {
+}: IUseGovPoolSetting): [
+  IGovSettingsFromContract | undefined,
+  boolean,
+  boolean
+] => {
   const daoSettingsContract = useGovSettingsContract(daoAddress)
 
-  const [result, setResult] = useState<IGovSettings | undefined>(undefined)
+  const [result, setResult] = useState<IGovSettingsFromContract | undefined>(
+    undefined
+  )
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<boolean>(false)
 

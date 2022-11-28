@@ -1,7 +1,7 @@
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import NftInput from "components/Exchange/NftInput"
 import * as S from "components/Exchange/styled"
-import { ZERO, ZERO_ADDR } from "constants/index"
+import { ZERO } from "constants/index"
 import NftSelect from "modals/NftSelect"
 import { FC, useCallback, useMemo } from "react"
 import { Flex } from "theme"
@@ -82,7 +82,7 @@ export const UndelegateTerminal: FC<Props> = ({
           <S.Title active>Withdraw</S.Title>
         </S.CardHeader>
 
-        {formInfo.erc20.address !== ZERO_ADDR && (
+        {formInfo.haveToken && (
           <ExchangeInput
             price={ERC20Price}
             amount={ERC20Amount.toString()}
@@ -94,20 +94,19 @@ export const UndelegateTerminal: FC<Props> = ({
           />
         )}
 
-        {formInfo.erc721.address !== ZERO_ADDR &&
-          !formInfo.erc721.balance.isZero() && (
-            <>
-              <Flex full p="4px" />
-              <NftInput
-                nftPowerMap={nftPowerMap}
-                selectedNfts={ERC721Amount}
-                onSelectAll={() => selectNfts(allNftsId)}
-                onSelect={() => setSelectOpen(true)}
-                balance={formInfo.erc721.balance || ZERO}
-                address={formInfo.erc721.address}
-              />
-            </>
-          )}
+        {formInfo.haveNft && !formInfo.erc721.balance.isZero() && (
+          <>
+            <Flex full p="4px" />
+            <NftInput
+              nftPowerMap={nftPowerMap}
+              selectedNfts={ERC721Amount}
+              onSelectAll={() => selectNfts(allNftsId)}
+              onSelect={() => setSelectOpen(true)}
+              balance={formInfo.erc721.balance || ZERO}
+              address={formInfo.erc721.address}
+            />
+          </>
+        )}
 
         <Flex full p="4px" />
 

@@ -1,14 +1,15 @@
+import { FC, useMemo } from "react"
+import { useParams, useLocation } from "react-router-dom"
+
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import * as S from "components/Exchange/styled"
 import { ZERO } from "constants/index"
-import { FC, useMemo } from "react"
 import { Flex } from "theme"
 import useValidatorsVote, { ButtonTypes } from "./useValidatorsVote"
-import { useParams } from "react-router-dom"
 import { Container } from "components/Exchange/styled"
 import Header from "components/Header/Layout"
 
-interface Props {
+export interface Props {
   daoPoolAddress?: string
   proposalId?: string
   isInternal?: boolean
@@ -75,7 +76,13 @@ export const ValidatorsVote: FC<Props> = ({
 
 // wrapps DelegateTerminal with router params and layout
 const ValidatorsVotePage = () => {
-  const params = useParams()
+  const { daoPoolAddress, proposalId } = useParams<
+    "daoPoolAddress" | "proposalId"
+  >()
+  const searchParams = useLocation().search
+
+  const isInternal =
+    new URLSearchParams(searchParams).get("isInternal") === "true"
 
   return (
     <>
@@ -86,7 +93,11 @@ const ValidatorsVotePage = () => {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        <ValidatorsVote {...params} />
+        <ValidatorsVote
+          daoPoolAddress={daoPoolAddress}
+          proposalId={proposalId}
+          isInternal={isInternal}
+        />
       </Container>
     </>
   )

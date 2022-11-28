@@ -40,7 +40,8 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
   const [ERC721Amount, setERC721Amount] = useState<number[]>([])
 
   const { govUserKeeperAddress } = useGovPoolHelperContracts(daoPoolAddress)
-  const [{ tokenAddress, nftAddress }] = useGovPoolVotingAssets(daoPoolAddress)
+  const [{ haveToken, haveNft, tokenAddress, nftAddress }] =
+    useGovPoolVotingAssets(daoPoolAddress)
   const { vote, voteDelegated } = useGovPoolVote(daoPoolAddress)
   const { ERC20Balance, ERC721Balance, tokenBalance, tokenBalanceDelegated } =
     useGovPoolMemberBalance(daoPoolAddress, withDelegated)
@@ -182,6 +183,8 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
   // UI data
   const formInfo = useMemo(() => {
     return {
+      haveToken,
+      haveNft,
       erc20: {
         address: tokenAddress,
         symbol: fromData?.symbol,
@@ -193,7 +196,15 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
         balance: ERC721Balance,
       },
     }
-  }, [fromData, nftAddress, tokenAddress, ERC20Balance, ERC721Balance])
+  }, [
+    fromData,
+    nftAddress,
+    tokenAddress,
+    ERC20Balance,
+    ERC721Balance,
+    haveToken,
+    haveNft,
+  ])
 
   // UI button variations
   const buttonType = useMemo(() => {

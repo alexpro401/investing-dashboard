@@ -37,7 +37,8 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
 
   const { delegate } = useGovPoolDelegate(daoPoolAddress)
   const { govUserKeeperAddress } = useGovPoolHelperContracts(daoPoolAddress)
-  const [{ tokenAddress, nftAddress }] = useGovPoolVotingAssets(daoPoolAddress)
+  const [{ tokenAddress, nftAddress, haveToken, haveNft }] =
+    useGovPoolVotingAssets(daoPoolAddress)
   const { ERC20Balance, ERC721Balance, tokenBalance } =
     useGovPoolMemberBalance(daoPoolAddress)
 
@@ -127,6 +128,8 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
   // UI data
   const formInfo = useMemo(() => {
     return {
+      haveToken,
+      haveNft,
       erc20: {
         address: tokenAddress,
         symbol: fromData?.symbol,
@@ -143,6 +146,8 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
       },
     }
   }, [
+    haveToken,
+    haveNft,
     tokenAddress,
     fromData,
     ERC20Balance,
