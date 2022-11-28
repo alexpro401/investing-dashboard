@@ -6,6 +6,7 @@ import TutorialCard from "components/TutorialCard"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import { SelectableCard, Icon, Collapse } from "common"
 import { ICON_NAMES } from "constants/icon-names"
+import { useGovPoolCustomExecutors } from "hooks/dao"
 
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
@@ -26,29 +27,49 @@ interface IProposalType {
   guide?: JSX.Element
 }
 
+interface ISelectedCard {
+  type: "default" | "custom"
+  specification?: EProposalType
+  executorAddress?: string
+}
+
 const CreateProposalSelectType: React.FC = () => {
   const navigate = useNavigate()
   const { daoAddress } = useParams<"daoAddress">()
-  const [selectedProposalType, setSelectedProposalType] = useState(
-    EProposalType.daoProfileModification
-  )
+  const [selectedCard, setSelectedCard] = useState<ISelectedCard>({
+    type: "default",
+    specification: EProposalType.daoProfileModification,
+  })
+  const [customExecutors] = useGovPoolCustomExecutors(daoAddress)
 
   const proceedToNextStep = useCallback(async () => {
     //TODO NAVIGATE to path related to selected proposal type
-    const nextProposalTypePath = {
-      [EProposalType.daoProfileModification]: `/dao/${daoAddress}/create-proposal-change-dao-settings`,
-      [EProposalType.changingVotingSettings]: `/dao/${daoAddress}/create-proposal-change-voting-settings`,
-      [EProposalType.tokenDistribution]: `/dao/${daoAddress}/create-proposal-token-distribution`,
-      [EProposalType.validatorSettings]: `/dao/${daoAddress}/create-proposal-validator-settings`,
-      [EProposalType.changeTokenPrice]: "/",
-    }[selectedProposalType]
+    if (selectedCard.type === "default" && selectedCard.specification) {
+      const slug = `/dao/${daoAddress}/create-proposal`
 
-    if (nextProposalTypePath !== "/") {
-      return navigate(nextProposalTypePath)
+      const nextProposalTypePath = {
+        [EProposalType.daoProfileModification]: "/change-dao-settings",
+        [EProposalType.changingVotingSettings]: "/change-voting-settings",
+        [EProposalType.tokenDistribution]: "/token-distribution",
+        [EProposalType.validatorSettings]: "/validator-settings",
+        [EProposalType.changeTokenPrice]: "/",
+      }[selectedCard.specification]
+
+      if (nextProposalTypePath !== "/") {
+        return navigate(slug + nextProposalTypePath)
+      }
+
+      return
     }
-  }, [selectedProposalType, daoAddress, navigate])
 
-  const proposalTypes = useMemo<IProposalType[]>(
+    if (selectedCard.type === "custom" && selectedCard.executorAddress) {
+      navigate(
+        `/dao/${daoAddress}/create-custom-proposal/${selectedCard.executorAddress}`
+      )
+    }
+  }, [selectedCard, daoAddress, navigate])
+
+  const defaultProposalTypes = useMemo<IProposalType[]>(
     () => [
       {
         type: EProposalType.daoProfileModification,
@@ -127,6 +148,17 @@ const CreateProposalSelectType: React.FC = () => {
     []
   )
 
+  const handleSelectDefaultVotingType = useCallback(
+    (specification: EProposalType): void => {
+      setSelectedCard({ type: "default", specification })
+    },
+    []
+  )
+
+  const handleSelectCustomProposal = useCallback((executorAddress: string) => {
+    setSelectedCard({ type: "custom", executorAddress })
+  }, [])
+
   return (
     <>
       <Header>Create proposal</Header>
@@ -149,29 +181,43 @@ const CreateProposalSelectType: React.FC = () => {
                 Choose type of proposal
               </S.CreateProposalSelectTypeTitle>
               <S.CreateProposalSelectTypeCreateNew
-                to={`/dao/${daoAddress}/create-new-proposal-type`}
+                to={`/dao/${daoAddress}/create-proposal/custom`}
               >
                 + Create new
               </S.CreateProposalSelectTypeCreateNew>
             </S.CreateProposalSelectTypeHeader>
-            {proposalTypes.map(
+            {defaultProposalTypes.map(
               ({ description, guide, iconName, title, type }) => {
                 return (
                   <SelectableCard
                     key={type}
-                    value={selectedProposalType}
-                    setValue={setSelectedProposalType}
+                    value={selectedCard?.specification as EProposalType}
+                    setValue={handleSelectDefaultVotingType}
                     valueToSet={type}
                     headNodeLeft={<Icon name={iconName} />}
                     title={title}
                     description={description}
                   >
                     {guide && (
-                      <Collapse isOpen={selectedProposalType === type}>
+                      <Collapse isOpen={selectedCard?.specification === type}>
                         <S.ProposalTypeGuide>{guide}</S.ProposalTypeGuide>
                       </Collapse>
                     )}
                   </SelectableCard>
+                )
+              }
+            )}
+            {customExecutors.map(
+              ({ id, proposalName, proposalDescription, executorAddress }) => {
+                return (
+                  <SelectableCard
+                    key={id}
+                    value={selectedCard?.executorAddress as string}
+                    setValue={handleSelectCustomProposal}
+                    valueToSet={executorAddress}
+                    title={proposalName}
+                    description={proposalDescription}
+                  />
                 )
               }
             )}

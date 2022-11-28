@@ -92,7 +92,7 @@ const CreateDaoProposalChangeTokenDistributionForm: React.FC = () => {
     switch (currentStep) {
       case STEPS.globalVotingSettings: {
         if (daoAddress) {
-          navigate(`/dao/${daoAddress}/create-proposal-change-voting-settings`)
+          navigate(`/dao/${daoAddress}/create-proposal/change-voting-settings`)
         }
         break
       }

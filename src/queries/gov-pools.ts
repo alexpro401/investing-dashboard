@@ -81,6 +81,15 @@ const GovPoolsQuery = `
   }
 `
 
+const GovPoolExecutorsQuery = `
+  query ($address: String!) {
+    daoPools(id: $address) {
+      executors {${POOL_EXECUTOR}}
+    }
+  }
+`
+
+
 const GovVoterInPoolQuery = `
   query ($voter: String!, $pool: String!) {
     voterInPools(where: { pool: $pool, voter: $voter }) {
@@ -135,6 +144,7 @@ const GovProposalsWithRewardsQuery = `
 export {
   GovPoolQuery,
   GovPoolsQuery,
+  GovPoolExecutorsQuery,
   GovVoterInPoolQuery,
   GovProposalsWithRewardsQuery,
   GovProposalsWithDistributionQuery,

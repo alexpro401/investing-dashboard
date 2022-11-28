@@ -1,11 +1,41 @@
 import styled from "styled-components"
 import ExternalLink from "components/ExternalLink"
-import { AppButton } from "common"
+import { AppButton, Icon } from "common"
+import { NavLink } from "react-router-dom"
 
 export const Root = styled.div`
   background: ${(props) => props.theme.backgroundColors.secondary};
   border-radius: 20px;
   color: ${(props) => props.theme.textColors.primary};
+`
+
+export const DaoProposalCardHead = styled(NavLink)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-decoration: none;
+  padding: 16px;
+  border-bottom: 1px solid #293c54;
+  margin-bottom: 16px;
+  color: ${(props) => props.theme.textColors.primary};
+`
+
+export const DaoProposalCardHeadTitleWrp = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80%;
+`
+
+export const DaoProposalCardHeadTitle = styled.span`
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  white-space: nowrap;
+`
+
+export const DaoProposalCardHeadIcon = styled(Icon)`
+  color: #788ab4;
+  width: 8px;
 `
 
 export const DaoProposalCardBody = styled.div`
@@ -50,11 +80,6 @@ export const DaoProposalCardBlockInfoAddress = styled(ExternalLink)`
 export const DaoVotingStatusCounterTotal = styled.span`
   font: inherit;
   color: #b1c7fc;
-`
-
-export const DaoVotingProgressBar = styled.div`
-  position: relative;
-  grid-column: 1 / -1;
 `
 
 export const DaoCenteredButton = styled(AppButton)`

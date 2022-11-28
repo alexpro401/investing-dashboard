@@ -1,7 +1,8 @@
 import * as S from "./styled"
 
 import { FC, HTMLAttributes } from "react"
-import { normalizeBigNumber, shortenAddress } from "utils"
+import { ICON_NAMES } from "constants/icon-names"
+import { normalizeBigNumber, fromBig, shortenAddress } from "utils"
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { useGovPoolProposal } from "hooks/dao"
 import { useParams } from "react-router-dom"
@@ -50,16 +51,17 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
 
         <S.DaoProposalCardBlockInfo alignRight>
           <S.DaoProposalCardBlockInfoValue>
-            {normalizeBigNumber(votesFor, 18, 2)}/
-            <S.DaoVotingStatusCounterTotal>
-              {votesTotalNeed}
-            </S.DaoVotingStatusCounterTotal>
+            <>
+              {fromBig(votesFor)}/
+              <S.DaoVotingStatusCounterTotal>
+                {fromBig(votesTotalNeed)}
+              </S.DaoVotingStatusCounterTotal>
+            </>
           </S.DaoProposalCardBlockInfoValue>
           <S.DaoProposalCardBlockInfoLabel>
             Voting status
           </S.DaoProposalCardBlockInfoLabel>
         </S.DaoProposalCardBlockInfo>
-
         <S.DaoVotingProgressBar>
           <Flex full ai={"center"} jc={"space-between"} gap={"3"}>
             <ProgressLine
@@ -71,7 +73,6 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
             <ProgressLine w={0} />
           </Flex>
         </S.DaoVotingProgressBar>
-
         <S.DaoProposalCardBlockInfo>
           {isDistribution ? (
             <Flex full ai={"center"} jc={"flex-start"} gap={"4"}>

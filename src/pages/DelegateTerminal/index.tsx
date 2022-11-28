@@ -1,7 +1,7 @@
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import NftInput from "components/Exchange/NftInput"
 import * as S from "components/Exchange/styled"
-import { ZERO, ZERO_ADDR } from "constants/index"
+import { ZERO } from "constants/index"
 import NftSelect from "modals/NftSelect"
 import { FC, useCallback, useMemo } from "react"
 import { Flex } from "theme"
@@ -121,7 +121,7 @@ export const DelegateTerminal: FC<Props> = ({ daoPoolAddress }) => {
 
         <Flex p="8px" full ai="center"></Flex>
 
-        {formInfo.erc20.address !== ZERO_ADDR && (
+        {formInfo.haveToken && (
           <ExchangeInput
             price={ERC20Price}
             amount={ERC20Amount.toString()}
@@ -133,7 +133,7 @@ export const DelegateTerminal: FC<Props> = ({ daoPoolAddress }) => {
           />
         )}
 
-        {formInfo.erc721.address !== ZERO_ADDR && (
+        {formInfo.haveNft && (
           <>
             <Flex full p="4px" />
             <NftInput

@@ -1,8 +1,27 @@
+import { BigNumber } from "@ethersproject/bignumber"
+
 import { SUPPORTED_SOCIALS } from "constants/socials"
 
 export type ExternalFileDocument = {
   name: string
   url: string
+}
+
+export interface IGovSettingsFromContract {
+  earlyCompletion: boolean
+  delegatedVotingAllowed: boolean
+  validatorsVote: boolean
+  duration: BigNumber
+  durationValidators: BigNumber
+  quorum: BigNumber
+  quorumValidators: BigNumber
+  minVotesForVoting: BigNumber
+  minVotesForCreating: BigNumber
+  rewardToken: string
+  creationReward: BigNumber
+  executionReward: BigNumber
+  voteRewardsCoefficient: BigNumber
+  executorDescription: string
 }
 
 export type DaoVotingSettings = {
@@ -83,3 +102,36 @@ export const govPoolProposals = {
     changeInternalBalances: "change-internal-balances",
   },
 }
+
+export interface IExecutorSettings {
+  executorDescription: string
+  id: string
+  settingsId: string
+  __typename: string
+}
+
+export interface IExecutor {
+  executorAddress: string
+  id: string
+  settings: IExecutorSettings
+  __typename: string
+}
+
+export enum ProposalState {
+  Voting = "0",
+  WaitingForVotingTransfer = "1",
+  ValidatorVoting = "2",
+  Defeated = "3",
+  Succeeded = "4",
+  Executed = "5",
+  Undefined = "6",
+}
+
+export type IExecutorType =
+  | "profile"
+  | "change-settings"
+  | "change-validator-balances"
+  | "distribution"
+  | "add-token"
+  | "custom"
+  | "insurance"
