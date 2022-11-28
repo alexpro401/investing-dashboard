@@ -1,11 +1,12 @@
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { bigify, DateUtil } from "utils"
+import { DateUtil } from "utils"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { createClient, useQuery } from "urql"
-import { useActiveWeb3React } from "../../index"
-import { useGovPool } from "../useGovPool"
+import { useActiveWeb3React } from "hooks"
+import { useGovPoolExecutor, useGovPool } from "hooks/dao"
 import { BigNumber } from "@ethersproject/bignumber"
+import { useERC20 } from "../../useERC20"
 
 const GovPoolGraphClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -24,6 +25,12 @@ export const useGovPoolProposal = (
       query {
         proposals(where: { pool: "${govPoolAddress}", proposalId: "${proposalId}" }) {
           id
+          executor
+          creator
+          voters
+          distributionProposal {
+            token
+          }
         }
       }
     `,
@@ -37,6 +44,11 @@ export const useGovPoolProposal = (
 
   const [myVotesAmount, setMyVotesAmount] = useState<BigNumber>()
 
+  const requiredQuorum = useMemo(
+    () => proposalView?.requiredQuorum,
+    [proposalView]
+  )
+
   const creator = useMemo(
     () => graphGovPoolProposal?.creator,
     [graphGovPoolProposal]
@@ -45,10 +57,6 @@ export const useGovPoolProposal = (
     () => graphGovPoolProposal?.voters?.length || 0,
     [graphGovPoolProposal]
   )
-
-  const proposalType = useMemo(() => {
-    return proposalView?.proposal.core.settings.executorDescription
-  }, [proposalView])
 
   const voteEnd = useMemo(() => {
     return proposalView?.proposal
@@ -63,6 +71,18 @@ export const useGovPoolProposal = (
     () => proposalView?.proposal.executors || [],
     [proposalView]
   )
+
+  const [executor] = useGovPoolExecutor(
+    (govPoolAddress || "").toLowerCase(),
+    (executors[executors.length - 1] || "").toLowerCase()
+  )
+
+  const proposalType = useMemo(() => {
+    return proposalView?.proposal.core.settings.executorDescription.toLowerCase() ===
+      "internal"
+      ? executor?.type
+      : proposalView?.proposal.core.settings.executorDescription
+  }, [executor, proposalView])
 
   const proposalSettings = useMemo(
     () => proposalView?.proposal?.core?.settings || {},
@@ -110,7 +130,7 @@ export const useGovPoolProposal = (
     init()
   }, [init, proposalView])
 
-  const votesTotalNeed = useMemo(() => bigify("222", 18), [])
+  const votesTotalNeed = useMemo(() => requiredQuorum, [requiredQuorum])
 
   const votesFor = useMemo(
     () => proposalView?.proposal?.core?.votesFor || 0,
@@ -118,7 +138,7 @@ export const useGovPoolProposal = (
   )
 
   const executed = useMemo(
-    () => proposalView.proposal.core.executed,
+    () => proposalView?.proposal?.core?.executed,
     [proposalView]
   )
 
@@ -127,8 +147,15 @@ export const useGovPoolProposal = (
   }, [proposalView])
 
   const isDistribution = useMemo(() => {
-    return true
-  }, [proposalView])
+    return executor?.type === "distribution"
+  }, [executor])
+
+  const distributionProposalTokenAddress = useMemo(
+    () => graphGovPoolProposal?.distributionProposal?.[0]?.token,
+    [graphGovPoolProposal]
+  )
+
+  const distributionProposalToken = useERC20(distributionProposalTokenAddress)
 
   return {
     govPoolAddress,
@@ -139,6 +166,9 @@ export const useGovPoolProposal = (
     description,
     executors,
     proposalSettings,
+    requiredQuorum,
+    distributionProposalTokenAddress,
+    distributionProposalToken,
 
     proposalType,
     voteEnd,
