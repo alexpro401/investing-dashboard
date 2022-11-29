@@ -1,12 +1,11 @@
 import * as React from "react"
 import { v4 as uuidv4 } from "uuid"
-import { isEmpty, isNil, map } from "lodash"
+import { isEmpty, isNil, map, reduce } from "lodash"
 import { Label } from "recharts"
-import { parseEther } from "@ethersproject/units"
 
 import { Collapse, Icon } from "common"
 import theme, { Flex, Text } from "theme"
-import { shortenAddress } from "utils"
+import { normalizeBigNumber, shortenAddress } from "utils"
 import ExternalLink from "components/ExternalLink"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import * as S from "./styled"
@@ -20,18 +19,8 @@ import { IGovPoolDelegationHistoryQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolWithdrawableAssets from "hooks/dao/useGovPoolWithdrawableAssets"
 import { Token } from "interfaces"
 
-const chartData = [
-  {
-    name: "Used in voting",
-    value: 75000,
-    fill: theme.brandColors.secondary,
-  },
-  {
-    name: "Available",
-    value: 25000,
-    fill: theme.statusColors.success,
-  },
-]
+import useGovPoolDelegations from "hooks/dao/useGovPoolDelegations"
+import { addBignumbers, subtractBignumbers } from "utils/formulas"
 
 const CustomLabel = ({ viewBox, total }) => {
   const { cx, cy } = viewBox
@@ -75,12 +64,69 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
     delegatee: data.to.id,
   })
 
+  const delegations = useGovPoolDelegations({
+    daoPoolAddress: data.pool.id,
+    user: data.from.id,
+  })
+
   const toExplorerLink = React.useMemo(() => {
     if (isNil(data) || isNil(chainId)) {
       return ""
     }
     return getExplorerLink(chainId, data.to.id, ExplorerDataType.ADDRESS)
   }, [data, chainId])
+
+  const usedInVoting = React.useMemo(() => {
+    if (isNil(withdrawableAssets) || isNil(delegations)) {
+      return ZERO
+    }
+
+    const _currentDelegations = reduce(
+      delegations,
+      (acc, delegation) => {
+        if (
+          String(delegation.delegatee).toLocaleLowerCase() ===
+          String(data.to.id).toLocaleLowerCase()
+        ) {
+          return addBignumbers([acc, 18], [delegation.delegatedTokens, 18])
+        }
+
+        return acc
+      },
+      ZERO
+    )
+
+    return subtractBignumbers(
+      [_currentDelegations, 18],
+      [withdrawableAssets.tokens, 18]
+    )
+  }, [withdrawableAssets, delegations])
+
+  const available = React.useMemo(() => {
+    if (isNil(withdrawableAssets)) return ZERO
+    return withdrawableAssets.tokens
+  }, [withdrawableAssets])
+
+  const total = React.useMemo(
+    () => addBignumbers([usedInVoting, 18], [available, 18]),
+    [usedInVoting, available]
+  )
+
+  const chartData = React.useMemo(
+    () => [
+      {
+        name: "Used in voting",
+        value: Number(normalizeBigNumber(usedInVoting, 18, 0)),
+        fill: theme.brandColors.secondary,
+      },
+      {
+        name: "Available",
+        value: Number(normalizeBigNumber(available, 18, 0)),
+        fill: theme.statusColors.success,
+      },
+    ],
+    [usedInVoting, available]
+  )
 
   const _showMore = React.useState(!isNil(alwaysShowMore))
 
@@ -131,7 +177,7 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
               content={(p) => (
                 <CustomLabel
                   viewBox={p.viewBox}
-                  total={chartData[0].value + chartData[1].value}
+                  total={normalizeBigNumber(total, 18, 3)}
                 />
               )}
             ></Label>
@@ -140,11 +186,11 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
         <Flex full>
           <Text color={theme.textColors.primary} fz={13}>
             <S.LegendDot color={theme.brandColors.secondary} />
-            Used in Voting: 75,000
+            Used in Voting: {normalizeBigNumber(usedInVoting, 18, 3)}
           </Text>
           <Text color={theme.textColors.primary} fz={13}>
             <S.LegendDot color={theme.statusColors.success} />
-            Available: 25,000
+            Available: {normalizeBigNumber(available, 18, 3)}
           </Text>
         </Flex>
         <div>
@@ -162,8 +208,8 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
                 ))}
               <ERC20Row
                 isLocked
-                delegated={parseEther(data.amount)}
-                available={parseEther("2700.123")}
+                delegated={data.amount}
+                available={withdrawableAssets?.tokens ?? ZERO}
                 tokenId={token?.address ?? ""}
                 tokenUri=""
               />
