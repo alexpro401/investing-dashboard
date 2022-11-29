@@ -107,13 +107,12 @@ const GovPoolDelegationHistoryByUserQuery = (isUserDelegator = true) => `
   }
 `
 
-
 const GovPoolExecutorQuery = `
-query ($address: String!, $executorAddress: String!) {
-  daoPools(id: $address) {
-    executors(where: { executorAddress: $executorAddress }) {${POOL_EXECUTOR}}
+  query ($address: String!, $executorAddress: String!) {
+    daoPools(id: $address) {
+      executors(where: { executorAddress: $executorAddress }) {${POOL_EXECUTOR}}
+    }
   }
-}
 `
 
 const GovPoolExecutorsQuery = `
@@ -176,11 +175,12 @@ const GovProposalsWithRewardsQuery = `
 `
 
 export {
-GovPoolQuery,
-GovPoolsQuery,
-GovPoolDelegationHistoryByUserQuery,
-GovPoolExecutorQuery,
-GovPoolExecutorsQuery,
-GovProposalsWithRewardsQuery,
-GovProposalsWithDistributionQuery
+  GovPoolQuery,
+  GovPoolsQuery,
+  GovVoterInPoolQuery,
+  GovPoolDelegationHistoryByUserQuery,
+  GovPoolExecutorQuery,
+  GovPoolExecutorsQuery,
+  GovProposalsWithRewardsQuery,
+  GovProposalsWithDistributionQuery,
 }
