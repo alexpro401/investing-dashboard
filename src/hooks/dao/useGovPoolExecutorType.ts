@@ -72,13 +72,13 @@ function useGovPoolExecutorType<T extends string | string[]>(
     if (Array.isArray(executorAddresses)) {
       return executorAddresses.map((executorAddress) => ({
         executorAddress,
-        type: typeFromExecutor(executorAddress),
+        type: typeFromExecutor(executorAddress.toLowerCase()),
       }))
     }
 
     return {
       executorAddress: executorAddresses,
-      type: typeFromExecutor(executorAddresses),
+      type: typeFromExecutor(executorAddresses.toLowerCase()),
     }
   }, [executorAddresses, typeFromExecutor])
 

@@ -63,6 +63,16 @@ const useGovPoolExecutor = (
   const handleParseExecutor = useCallback(async () => {
     if (!searchedExecutor) return
 
+    if (executorType !== "custom") {
+      setExecutor({
+        ...searchedExecutor,
+        type: executorType,
+        proposalDescription: "",
+        proposalName: "",
+      })
+      return
+    }
+
     setLoading(true)
     try {
       const ipfsExecutorDescription = new IpfsEntity<{
