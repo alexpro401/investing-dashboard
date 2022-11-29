@@ -17,10 +17,10 @@ export const useGovPoolHelperContracts = (daoAddress: string | undefined) => {
     try {
       const { validators, userKeeper, settings, distributionProposal } =
         await govPoolContract.getHelperContracts()
-      setGovValidatorsAddress(validators)
-      setGovUserKeeperAddress(userKeeper)
-      setGovSettingsAddress(settings)
-      setGovDistributionProposalAddress(distributionProposal)
+      setGovValidatorsAddress(validators.toLowerCase())
+      setGovUserKeeperAddress(userKeeper.toLowerCase())
+      setGovSettingsAddress(settings.toLowerCase())
+      setGovDistributionProposalAddress(distributionProposal.toLowerCase())
     } catch (error) {
       console.log(error)
     }

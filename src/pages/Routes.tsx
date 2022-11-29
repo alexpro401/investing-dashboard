@@ -73,9 +73,28 @@ const DaoProposalChangeTokenDistribution = lazy(
       "pages/CreateDaoProposalChangeVotingSettings/subpages/TokenDistribution"
     )
 )
+const DaoProposalChangeCustomSettings = lazy(
+  () =>
+    import(
+      "pages/CreateDaoProposalChangeVotingSettings/subpages/CustomSettings"
+    )
+)
 const DaoProposalTokenDistribution = lazy(
   () => import("pages/CreateDaoProposalTokenDistribution")
 )
+const CreateDaoCustomProposalSelectType = lazy(
+  () => import("pages/CreateDaoCustomProposal")
+)
+const CreateDaoCustomProposalAbi = lazy(
+  () => import("pages/CreateDaoCustomProposal/subpages/Abi")
+)
+const CreateDaoCustomProposalWalletConnect = lazy(
+  () => import("pages/CreateDaoCustomProposal/subpages/WalletConnect")
+)
+const CreateDaoCustomProposalManual = lazy(
+  () => import("pages/CreateDaoCustomProposal/subpages/Manual")
+)
+
 /* dao proposals */
 
 const DaoProposals = lazy(() => import("pages/DaoProposals"))
@@ -91,6 +110,7 @@ const FundDetails = lazy(() => import("pages/FundDetails")) // TODO: my trader p
 const Investment = lazy(() => import("pages/Investment"))
 const DaoPoolsList = lazy(() => import("pages/DaoPoolsList"))
 const DaoDelegation = lazy(() => import("pages/DaoDelegation"))
+const DaoPoolClaim = lazy(() => import("pages/DaoPoolClaim"))
 
 function Layout() {
   return <Outlet />
@@ -201,12 +221,54 @@ export default function Routes() {
                   path="dao/:daoAddress/delegation/*"
                   element={<DaoDelegation />}
                 />
+                <Route
+                  path="dao/:daoAddress/claim/*"
+                  element={<DaoPoolClaim />}
+                />
 
                 {/* create proposals */}
                 <Route
                   path="dao/:daoAddress/create-proposal"
                   element={<CreateDaoProposalSelectType />}
                 />
+
+                {/* default proposals */}
+                <Route
+                  path="dao/:daoAddress/create-proposal/custom"
+                  element={<CreateDaoProposalType />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal/change-dao-settings"
+                  element={<CreateDaoProposalChangeDaoSettings />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal/validator-settings"
+                  element={<CreateDaoProposalValidatorSettings />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal/token-distribution"
+                  element={<DaoProposalTokenDistribution />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal/change-voting-settings"
+                  element={<CreateDaoProposalChangeVotingSettings />}
+                />
+
+                {/* change voting settings */}
+                <Route
+                  path="dao/:daoAddress/create-proposal/change-voting-settings/global-voting"
+                  element={<DaoProposalChangeGlobalVotingSettings />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal/change-voting-settings/token-distribution"
+                  element={<DaoProposalChangeTokenDistribution />}
+                />
+                <Route
+                  path="dao/:daoAddress/create-proposal/change-voting-settings/custom/:executorAddress"
+                  element={<DaoProposalChangeCustomSettings />}
+                />
+
+                {/* internal proposals */}
                 <Route
                   path="dao/:daoAddress/create-validator-proposal"
                   element={<CreateDaoProposalValidatorSelectType />}
@@ -221,36 +283,25 @@ export default function Routes() {
                   path="/dao/:daoAddress/create-validator-proposal/voting-settings"
                   element={<CreateDaoProposalValidatorChangeVotingSettings />}
                 />
+
+                {/* creating custom proposals */}
                 <Route
-                  path="dao/:daoAddress/create-new-proposal-type"
-                  element={<CreateDaoProposalType />}
+                  path="dao/:daoAddress/create-custom-proposal/:executorAddress"
+                  element={<CreateDaoCustomProposalSelectType />}
                 />
                 <Route
-                  path="dao/:daoAddress/create-proposal-change-dao-settings"
-                  element={<CreateDaoProposalChangeDaoSettings />}
+                  path="dao/:daoAddress/create-custom-proposal/abi/:executorAddress"
+                  element={<CreateDaoCustomProposalAbi />}
                 />
                 <Route
-                  path="dao/:daoAddress/create-proposal-validator-settings"
-                  element={<CreateDaoProposalValidatorSettings />}
+                  path="dao/:daoAddress/create-custom-proposal/wallet-connect/:executorAddress"
+                  element={<CreateDaoCustomProposalWalletConnect />}
                 />
                 <Route
-                  path="dao/:daoAddress/create-proposal-change-voting-settings"
-                  element={<CreateDaoProposalChangeVotingSettings />}
-                />
-                <Route
-                  path="dao/:daoAddress/create-proposal-global-voting-options"
-                  element={<DaoProposalChangeGlobalVotingSettings />}
-                />
-                <Route
-                  path="dao/:daoAddress/create-proposal-change-token-distribution"
-                  element={<DaoProposalChangeTokenDistribution />}
-                />
-                <Route
-                  path="dao/:daoAddress/create-proposal-token-distribution"
-                  element={<DaoProposalTokenDistribution />}
+                  path="dao/:daoAddress/create-custom-proposal/manual/:executorAddress"
+                  element={<CreateDaoCustomProposalManual />}
                 />
 
-                <Route path="/*" element={<TopMembers />} />
                 {/* Dao Proposals */}
                 <Route
                   path="dao/:daoAddress/proposals/*"
@@ -260,6 +311,8 @@ export default function Routes() {
                   path="dao/:daoAddress/proposal/:proposalId"
                   element={<DaoProposalDetails />}
                 />
+
+                <Route path="/*" element={<TopMembers />} />
               </Route>
 
               <Route path="privacy-policy" element={<PrivacyPolicy />} />

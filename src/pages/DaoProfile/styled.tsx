@@ -46,6 +46,10 @@ export const CardButtons = styled.div`
   grid-gap: 16px;
 `
 
+export const CardAppButton = styled(AppButton)`
+  width: 100%;
+`
+
 export const ValidatorVotingPower = styled(Text).attrs(() => ({
   fw: 700,
   fz: 13,

@@ -183,7 +183,7 @@ const DaoProfile: React.FC = () => {
                   <GuardSpinner size={20} loading />
                 </Center>
               ) : (
-                <DaoProfileTabBalance />
+                <DaoProfileTabBalance daoAddress={daoAddress} />
               ),
             },
             {

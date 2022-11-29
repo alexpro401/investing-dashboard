@@ -37,6 +37,9 @@ import { UserTransactionsQuery } from "./interactions"
 import {
   GovPoolQuery,
   GovPoolsQuery,
+  GovVoterInPoolQuery,
+  GovProposalsWithRewardsQuery,
+  GovProposalsWithDistributionQuery,
   GovPoolDelegationHistoryByUserQuery,
 } from "./gov-pools"
 
@@ -67,5 +70,8 @@ export {
   InvestorProposalsPositionsQuery,
   GovPoolQuery,
   GovPoolsQuery,
+  GovVoterInPoolQuery,
+  GovProposalsWithRewardsQuery,
+  GovProposalsWithDistributionQuery,
   GovPoolDelegationHistoryByUserQuery,
 }

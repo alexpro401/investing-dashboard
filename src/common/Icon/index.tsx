@@ -44,6 +44,7 @@ import {
   ArrowIcon,
   MetamaskIcon,
   PlusIcon,
+  ExclamationCircle,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -146,6 +147,8 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return MetamaskIcon as unknown as ElementType
       case ICON_NAMES.plus:
         return PlusIcon as unknown as ElementType
+      case ICON_NAMES.exclamationCircle:
+        return ExclamationCircle as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }
