@@ -1,5 +1,5 @@
 import { FC, HTMLAttributes } from "react"
-import { BigNumber } from "@ethersproject/bignumber"
+import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
 
 import * as S from "./styled"
 import NftIcon from "components/NftIcon"
@@ -13,7 +13,7 @@ import theme from "theme"
 
 interface Props extends Omit<INftTile, "votingPower"> {
   isLocked?: boolean
-  delegated: BigNumber
+  delegated: BigNumberish
   available: BigNumber
 }
 
@@ -33,6 +33,7 @@ const ERC20Row: FC<Props & HTMLAttributes<HTMLDivElement>> = ({
   ...rest
 }) => {
   const [tokenData] = useERC20Data(tokenId)
+
   return (
     <S.Container {...rest}>
       <div>
