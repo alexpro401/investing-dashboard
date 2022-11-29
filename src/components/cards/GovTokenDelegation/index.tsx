@@ -18,6 +18,7 @@ import { ZERO } from "constants/index"
 import ERC20Row from "components/ERC20Row"
 import { IGovPoolDelegationHistoryQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolWithdrawableAssets from "hooks/dao/useGovPoolWithdrawableAssets"
+import { Token } from "interfaces"
 
 const chartData = [
   {
@@ -59,12 +60,14 @@ interface IProps {
   data: IGovPoolDelegationHistoryQuery
   chainId?: number
   alwaysShowMore?: boolean
+  token: Token | null
 }
 
 const GovTokenDelegationCard: React.FC<IProps> = ({
   data,
   chainId,
   alwaysShowMore,
+  token,
 }) => {
   const withdrawableAssets = useGovPoolWithdrawableAssets({
     daoPoolAddress: data.pool.id,
@@ -161,7 +164,7 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
                 isLocked
                 delegated={parseEther(data.amount)}
                 available={parseEther("2700.123")}
-                tokenId="0x78867bbeef44f2326bf8ddd1941a4439382ef2a7"
+                tokenId={token?.address ?? ""}
                 tokenUri=""
               />
             </Flex>

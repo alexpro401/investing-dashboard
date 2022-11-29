@@ -43,7 +43,12 @@ const DaoDelegation: React.FC = () => {
         <Routes>
           <Route
             path="out"
-            element={<DaoDelegationOut govPoolAddress={params.daoAddress} />}
+            element={
+              <DaoDelegationOut
+                govPoolAddress={params.daoAddress}
+                token={token}
+              />
+            }
           />
           <Route
             path="in"

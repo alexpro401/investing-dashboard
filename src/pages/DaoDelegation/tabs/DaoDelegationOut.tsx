@@ -13,12 +13,14 @@ import useQueryPagination from "hooks/useQueryPagination"
 import { GovPoolDelegationHistoryByUserQuery } from "queries"
 import GovTokenDelegationCard from "components/cards/GovTokenDelegation"
 import { IGovPoolDelegationHistoryQuery } from "interfaces/thegraphs/gov-pools"
+import { Token } from "interfaces"
 
 interface Props {
   govPoolAddress?: string
+  token: Token | null
 }
 
-const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress }) => {
+const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress, token }) => {
   const { chainId, account } = useWeb3React()
 
   const [{ data, loading }, fetchMore] =
@@ -72,6 +74,7 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress }) => {
             data={dh}
             chainId={chainId}
             alwaysShowMore={data.length === 1 ? true : undefined}
+            token={token}
           />
         </S.Indents>
       ))}
