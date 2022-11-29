@@ -109,6 +109,7 @@ const FundPositions = lazy(() => import("pages/FundPositions"))
 const FundDetails = lazy(() => import("pages/FundDetails")) // TODO: my trader profile
 const Investment = lazy(() => import("pages/Investment"))
 const DaoPoolsList = lazy(() => import("pages/DaoPoolsList"))
+const DaoPoolClaim = lazy(() => import("pages/DaoPoolClaim"))
 
 function Layout() {
   return <Outlet />
@@ -215,6 +216,10 @@ export default function Routes() {
                 {/* dao profile */}
                 <Route path="dao/list/:filter" element={<DaoPoolsList />} />
                 <Route path="dao/:daoAddress" element={<DaoProfile />} />
+                <Route
+                  path="dao/:daoAddress/claim/*"
+                  element={<DaoPoolClaim />}
+                />
 
                 {/* create proposals */}
                 <Route
