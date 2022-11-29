@@ -81,11 +81,8 @@ export const useGovPoolProposal = (
   )
 
   const proposalType = useMemo(() => {
-    return proposalView?.proposal.core.settings.executorDescription.toLowerCase() ===
-      "internal"
-      ? executor?.type
-      : proposalView?.proposal.core.settings.executorDescription
-  }, [executor, proposalView])
+    return executor?.type
+  }, [executor])
 
   const proposalSettings = useMemo(
     () => proposalView?.proposal?.core?.settings || {},
@@ -163,6 +160,8 @@ export const useGovPoolProposal = (
   )
 
   return {
+    proposalView,
+
     govPoolAddress,
     proposalId,
     creator,

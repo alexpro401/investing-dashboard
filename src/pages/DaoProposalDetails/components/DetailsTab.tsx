@@ -1,15 +1,63 @@
-import { FC, HTMLAttributes } from "react"
+import { FC, HTMLAttributes, useEffect, useMemo } from "react"
 import * as S from "../styled"
 import ExternalLink from "components/ExternalLink"
 import { shortenAddress } from "utils"
 import { ProposalDetailsCard } from "./index"
 import { useGovPoolProposal } from "hooks/dao"
+import { ethers } from "ethers"
+import { IExecutorType } from "../../../types"
+import { useEffectOnce } from "react-use"
+import { IpfsEntity } from "../../../utils/ipfsEntity"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   govPoolProposal: ReturnType<typeof useGovPoolProposal>
 }
 
 const DetailsTab: FC<Props> = ({ govPoolProposal }) => {
+  useEffectOnce(() => {
+    console.log(govPoolProposal.proposalView)
+  })
+
+  const proposalTypeDataDecodingMap = useMemo<Record<IExecutorType, string[]>>(
+    () => ({
+      ["profile"]: ["string"], // description ipfs path
+      ["change-settings"]: [],
+      ["change-validator-balances"]: [],
+      ["distribution"]: [],
+      ["add-token"]: [],
+      ["custom"]: [],
+      ["insurance"]: [],
+    }),
+    []
+  )
+
+  const abiCoder = useMemo(() => new ethers.utils.AbiCoder(), [])
+
+  useEffect(() => {
+    decodeProposalData()
+  }, [abiCoder, govPoolProposal, proposalTypeDataDecodingMap])
+
+  const decodeProposalData = async () => {
+    try {
+      if (!govPoolProposal.proposalType) return
+
+      const decodedData = abiCoder.decode(
+        proposalTypeDataDecodingMap[govPoolProposal.proposalType],
+        "0x" + govPoolProposal.proposalView.proposal.data[0].slice(10)
+      )
+
+      if (govPoolProposal.proposalType === "profile") {
+        const profileChangingOptionsIpfs = new IpfsEntity({
+          path: decodedData[0],
+        })
+
+        console.log(await profileChangingOptionsIpfs.load())
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <>
       <S.DaoProposalDetailsCard>
