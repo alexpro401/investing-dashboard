@@ -87,6 +87,13 @@ function InputField<V extends string | number>({
     [readonly]
   )
 
+  const normalizeNumber = useCallback(
+    (_value: string) => {
+      return isNaN(Number(_value)) ? value : _value
+    },
+    [value]
+  )
+
   const normalizeRange = useCallback(
     (value: string | number): string => {
       let result = value
@@ -107,7 +114,7 @@ function InputField<V extends string | number>({
     (event: FormEvent<HTMLInputElement>) => {
       const eventTarget = event.currentTarget
       if (isNumberType) {
-        eventTarget.value = normalizeRange(eventTarget.value)
+        eventTarget.value = normalizeRange(normalizeNumber(eventTarget.value))
       }
       if (value === eventTarget.value) return
 
@@ -171,7 +178,7 @@ function InputField<V extends string | number>({
           }}
           placeholder={placeholder}
           tabIndex={isDisabled || isReadonly ? -1 : tabindex}
-          type={type}
+          type="text"
           min={min}
           max={max}
           isReadonly={isReadonly}

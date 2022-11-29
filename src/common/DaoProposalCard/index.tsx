@@ -9,7 +9,7 @@ import { GovProposalCardHead } from "common/dao"
 import ProgressLine from "components/ProgressLine"
 import { Flex } from "theme"
 import TokenIcon from "components/TokenIcon"
-import getExplorerLink, { ExplorerDataType } from "../../utils/getExplorerLink"
+import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useWeb3React } from "@web3-react/core"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -34,8 +34,6 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
     distributionProposalTokenAddress,
     distributionProposalToken,
   } = useGovPoolProposal(proposalId, daoAddress || "", proposalView)
-
-  const [, tokenData] = distributionProposalToken
 
   const { chainId } = useWeb3React()
 
@@ -90,15 +88,19 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
         <S.DaoProposalCardBlockInfo>
           {isDistribution ? (
             <Flex full ai={"center"} jc={"flex-start"} gap={"4"}>
-              <TokenIcon address={tokenData?.address} m="0" size={20} />
+              <TokenIcon
+                address={distributionProposalTokenAddress}
+                m="0"
+                size={20}
+              />
               <S.DaoProposalCardBlockInfoAddress
                 href={getExplorerLink(
                   chainId || 1,
-                  tokenData?.address,
+                  distributionProposalTokenAddress,
                   ExplorerDataType.ADDRESS
                 )}
               >
-                {tokenData?.name}
+                {distributionProposalToken.name}
               </S.DaoProposalCardBlockInfoAddress>
             </Flex>
           ) : (

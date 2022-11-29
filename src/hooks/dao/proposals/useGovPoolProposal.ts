@@ -4,9 +4,12 @@ import { DateUtil } from "utils"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { createClient, useQuery } from "urql"
 import { useActiveWeb3React } from "hooks"
-import { useGovPoolExecutor, useGovPool } from "hooks/dao"
+import {
+  useGovPoolExecutor,
+  useGovPool,
+  useDistributionProposalToken,
+} from "hooks/dao"
 import { BigNumber } from "@ethersproject/bignumber"
-import { useERC20 } from "../../useERC20"
 
 const GovPoolGraphClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -155,7 +158,9 @@ export const useGovPoolProposal = (
     [graphGovPoolProposal]
   )
 
-  const distributionProposalToken = useERC20(distributionProposalTokenAddress)
+  const distributionProposalToken = useDistributionProposalToken(
+    distributionProposalTokenAddress
+  )
 
   return {
     govPoolAddress,
