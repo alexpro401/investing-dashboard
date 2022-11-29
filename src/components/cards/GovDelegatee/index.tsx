@@ -104,7 +104,7 @@ const GovDelegateeCard: React.FC<GovDelegateeCardProps> = ({
                     <span key={uuidv4()}>
                       <>{index > 0 && ","}</>
                       &nbsp;
-                      <>{nftId}</>
+                      <>#{nftId}</>
                     </span>
                   ))}
                 </S.GovDelegateeCardValueNfts>
