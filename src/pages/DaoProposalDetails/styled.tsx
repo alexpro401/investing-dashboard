@@ -116,7 +116,7 @@ export const DaoProposalDetailsCardTitleIcon = styled(Icon)`
 export const DaoProposalDetailsRow = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   gap: 16px;
 
   & > * {
@@ -201,6 +201,32 @@ export const DaoProposalDetailsRowText = styled.span<{
           text-align: ${props.alignment};
         `
       : ""}
+  
+  a {
+    text-decoration: none;
+    font: inherit;
+    color: inherit;
+  }
+`
+
+export const DaoProposalDetailsRowExternalCroppedLinkWrp = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 30vw;
+`
+
+export const DaoProposalDetailsRowExternalCroppedLink = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
+export const DaoProposalDetailsRowAvatarImg = styled.img`
+  overflow: hidden;
+  object-fit: cover;
+  object-position: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
 `
 
 export const DaoProposalDetailsHistoryPaginationWrp = styled.div`

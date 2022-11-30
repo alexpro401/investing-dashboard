@@ -1,98 +1,46 @@
-import { FC, HTMLAttributes, useEffect, useMemo } from "react"
+import { FC, HTMLAttributes } from "react"
 import * as S from "../styled"
 import ExternalLink from "components/ExternalLink"
 import { shortenAddress } from "utils"
 import { ProposalDetailsCard } from "./index"
 import { useGovPoolProposal } from "hooks/dao"
-import { ethers } from "ethers"
-import { IExecutorType } from "../../../types"
-import { useEffectOnce } from "react-use"
-import { IpfsEntity } from "../../../utils/ipfsEntity"
+import {
+  GovPoolProposalProfile,
+  GovPoolProposalDistribution,
+  GovPoolProposalChangeSettings,
+  GovPoolProposalChangeValidatorBalances,
+  GovPoolProposalAddToken,
+  GovPoolProposalCustom,
+  GovPoolProposalInsurance,
+} from "./DetailsTabVariants"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   govPoolProposal: ReturnType<typeof useGovPoolProposal>
 }
 
 const DetailsTab: FC<Props> = ({ govPoolProposal }) => {
-  useEffectOnce(() => {
-    console.log(govPoolProposal.proposalView)
-  })
-
-  const proposalTypeDataDecodingMap = useMemo<Record<IExecutorType, string[]>>(
-    () => ({
-      ["profile"]: ["string"], // description ipfs path
-      ["change-settings"]: [],
-      ["change-validator-balances"]: [],
-      ["distribution"]: [],
-      ["add-token"]: [],
-      ["custom"]: [],
-      ["insurance"]: [],
-    }),
-    []
-  )
-
-  const abiCoder = useMemo(() => new ethers.utils.AbiCoder(), [])
-
-  useEffect(() => {
-    decodeProposalData()
-  }, [abiCoder, govPoolProposal, proposalTypeDataDecodingMap])
-
-  const decodeProposalData = async () => {
-    try {
-      if (!govPoolProposal.proposalType) return
-
-      const decodedData = abiCoder.decode(
-        proposalTypeDataDecodingMap[govPoolProposal.proposalType],
-        "0x" + govPoolProposal.proposalView.proposal.data[0].slice(10)
-      )
-
-      if (govPoolProposal.proposalType === "profile") {
-        const profileChangingOptionsIpfs = new IpfsEntity({
-          path: decodedData[0],
-        })
-
-        console.log(await profileChangingOptionsIpfs.load())
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   return (
     <>
       <S.DaoProposalDetailsCard>
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="complex">
-            <p>Active settings</p>
-          </S.DaoProposalDetailsRowText>
-          <S.DaoProposalDetailsRowText textType="success">
-            Proposed changes
-          </S.DaoProposalDetailsRowText>
-        </S.DaoProposalDetailsRow>
-
-        <S.DaoProposalCardRowDivider />
-
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="complex">
-            <span>Length of voting period</span>
-            <p>1D/1H/1M</p>
-          </S.DaoProposalDetailsRowText>
-          <S.DaoProposalDetailsRowText textType="success">
-            10D/1H/1M
-          </S.DaoProposalDetailsRowText>
-        </S.DaoProposalDetailsRow>
-
-        <S.DaoProposalCardRowDivider />
-
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="complex">
-            <span>Min. voting power required for voting </span>
-            <p>100</p>
-          </S.DaoProposalDetailsRowText>
-          <S.DaoProposalDetailsRowText textType="success">
-            50
-          </S.DaoProposalDetailsRowText>
-        </S.DaoProposalDetailsRow>
+        {govPoolProposal.proposalType === "profile" ? (
+          <GovPoolProposalProfile govPoolProposal={govPoolProposal} />
+        ) : govPoolProposal.proposalType === "distribution" ? (
+          <GovPoolProposalDistribution />
+        ) : govPoolProposal.proposalType === "change-settings" ? (
+          <GovPoolProposalChangeSettings govPoolProposal={govPoolProposal} />
+        ) : govPoolProposal.proposalType === "change-validator-balances" ? (
+          <GovPoolProposalChangeValidatorBalances
+            govPoolProposal={govPoolProposal}
+          />
+        ) : govPoolProposal.proposalType === "add-token" ? (
+          <GovPoolProposalAddToken govPoolProposal={govPoolProposal} />
+        ) : govPoolProposal.proposalType === "custom" ? (
+          <GovPoolProposalCustom govPoolProposal={govPoolProposal} />
+        ) : govPoolProposal.proposalType === "insurance" ? (
+          <GovPoolProposalInsurance govPoolProposal={govPoolProposal} />
+        ) : (
+          <></>
+        )}
       </S.DaoProposalDetailsCard>
       <S.DaoProposalDetailsCard>
         <S.DaoProposalDetailsRow>

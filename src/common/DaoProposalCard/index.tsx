@@ -37,12 +37,14 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
 
   const { chainId } = useWeb3React()
 
+  console.log("normalizeBigNumber", +normalizeBigNumber(votesFor, 18, 2))
+
   return (
     <S.Root {...rest}>
       <GovProposalCardHead
         isInsurance={isInsurance}
         name={name}
-        pool={"0xc2e7418baf7eff866da0198c7e8ace4453a6f0a4"}
+        pool={daoAddress}
         to={`/dao/${daoAddress}/proposal/${proposalId}`}
       />
       <S.DaoProposalCardBody>

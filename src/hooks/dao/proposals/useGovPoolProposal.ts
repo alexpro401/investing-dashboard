@@ -160,6 +160,7 @@ export const useGovPoolProposal = (
   )
 
   return {
+    govPoolContract,
     proposalView,
 
     govPoolAddress,

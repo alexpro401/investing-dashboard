@@ -4,7 +4,6 @@ import {
   HTMLAttributes,
   ReactNode,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from "react"
@@ -16,9 +15,8 @@ import * as S from "./styled"
 
 import { ExternalFileDocument } from "types"
 import { ICON_NAMES } from "constants/icon-names"
-import { isValidUrl, shortenAddress } from "utils"
+import { isValidUrl } from "utils"
 import { readFromClipboard } from "utils/clipboard"
-import { isEqual } from "lodash"
 import extractRootDomain from "utils/extractRootDomain"
 import { useEffectOnce } from "react-use"
 
