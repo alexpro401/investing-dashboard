@@ -1,6 +1,7 @@
 import styled, { css } from "styled-components"
 import { AppButton, Icon } from "common"
 import { VotingTerminal } from "pages/VotingTerminal"
+import { GradientBorder } from "../../theme"
 
 export const DaoProposalDetails = styled.div`
   overflow: hidden auto;
@@ -269,3 +270,38 @@ export const DaoProposalCardRowDivider = styled.div`
 `
 
 export const DaoProposalVotingTerminal = styled(VotingTerminal)``
+
+export const DaoProposalDPActiveSymbol = styled(GradientBorder)`
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 9px 5px 5px;
+  min-height: 37px;
+  box-shadow: inset -44px 7px 11px rgba(0, 0, 0, 0.03);
+  border-radius: 19px;
+
+  &:after {
+    background: #121928;
+  }
+`
+
+export const DaoProposalDPSymbolLabel = styled.span`
+  font-family: "Gilroy", Sans-Serif, Arial;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 15px;
+  letter-spacing: 0.3px;
+  color: #e4f2ff;
+  white-space: nowrap;
+  margin: 4px 0 0 4px;
+`
+
+export const DaoProposalDPAmountValue = styled.span`
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  color: ${(props) => props.theme.textColors.primary};
+`

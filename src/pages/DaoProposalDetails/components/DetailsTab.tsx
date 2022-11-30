@@ -25,7 +25,7 @@ const DetailsTab: FC<Props> = ({ govPoolProposal }) => {
         {govPoolProposal.proposalType === "profile" ? (
           <GovPoolProposalProfile govPoolProposal={govPoolProposal} />
         ) : govPoolProposal.proposalType === "distribution" ? (
-          <GovPoolProposalDistribution />
+          <GovPoolProposalDistribution govPoolProposal={govPoolProposal} />
         ) : govPoolProposal.proposalType === "change-settings" ? (
           <GovPoolProposalChangeSettings govPoolProposal={govPoolProposal} />
         ) : govPoolProposal.proposalType === "change-validator-balances" ? (

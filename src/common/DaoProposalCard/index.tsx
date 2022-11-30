@@ -32,6 +32,7 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
     isInsurance,
     isDistribution,
     distributionProposalTokenAddress,
+    distributionProposalTokenAmount,
     distributionProposalToken,
   } = useGovPoolProposal(proposalId, daoAddress || "", proposalView)
 

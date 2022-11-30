@@ -99,6 +99,7 @@ const GovPoolProposalProfile: FC<Props> = ({ govPoolProposal, ...rest }) => {
           Proposed changes
         </S.DaoProposalDetailsRowText>
       </S.DaoProposalDetailsRow>
+
       {!isEqual(
         proposedGovPoolDescription?.avatarUrl,
         actualGovPoolDescription?.avatarUrl

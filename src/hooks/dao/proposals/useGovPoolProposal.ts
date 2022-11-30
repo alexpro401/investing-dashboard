@@ -33,6 +33,7 @@ export const useGovPoolProposal = (
           voters
           distributionProposal {
             token
+            amount
           }
         }
       }
@@ -155,6 +156,11 @@ export const useGovPoolProposal = (
     [graphGovPoolProposal]
   )
 
+  const distributionProposalTokenAmount = useMemo(
+    () => graphGovPoolProposal?.distributionProposal?.[0]?.amount,
+    [graphGovPoolProposal]
+  )
+
   const distributionProposalToken = useDistributionProposalToken(
     distributionProposalTokenAddress
   )
@@ -173,6 +179,7 @@ export const useGovPoolProposal = (
     proposalSettings,
     requiredQuorum,
     distributionProposalTokenAddress,
+    distributionProposalTokenAmount,
     distributionProposalToken,
 
     proposalType,
