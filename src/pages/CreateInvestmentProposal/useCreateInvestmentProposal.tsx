@@ -13,7 +13,6 @@ import getTime from "date-fns/getTime"
 import { addDays } from "date-fns/esm"
 import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
-import { addInvestProposalMetadata } from "utils/ipfs"
 import { shortTimestamp } from "utils"
 import {
   useInvestTraderPoolContract,
@@ -25,6 +24,7 @@ import { IValidationError, SubmitState } from "constants/types"
 import { ZERO } from "constants/index"
 import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
+import { IpfsEntity } from "utils/ipfsEntity"
 
 const useCreateInvestmentProposal = (
   poolAddress: string | undefined
@@ -138,16 +138,21 @@ const useCreateInvestmentProposal = (
         amount
       )
 
-      const ipfsReceipt = await addInvestProposalMetadata(
-        ticker,
-        description,
-        account
-      )
+      const investProposalIpfsEntity = new IpfsEntity({
+        data: JSON.stringify({
+          ticker,
+          account,
+          description,
+          timestamp: new Date().getTime() / 1000,
+        }),
+      })
+
+      await investProposalIpfsEntity.uploadSelf()
 
       const investLPLimitHex = parseUnits(investLPLimit, 18).toHexString()
 
       const createReceipt = await investTraderPool.createProposal(
-        ipfsReceipt.path,
+        investProposalIpfsEntity._path as string,
         amount,
         { timestampLimit, investLPLimit: investLPLimitHex },
         divests.receptions.receivedAmounts
@@ -158,7 +163,7 @@ const useCreateInvestmentProposal = (
       const receipt = await addTransaction(createReceipt, {
         type: TransactionType.INVEST_PROPOSAL_CREATE,
         amount,
-        ipfsPath: ipfsReceipt.path,
+        ipfsPath: investProposalIpfsEntity._path,
         investLpAmountRaw: investLPLimitHex,
       })
 

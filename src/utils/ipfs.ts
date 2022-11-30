@@ -69,18 +69,6 @@ export const getIpfsData = async (hash) => {
   }
 }
 
-export const addInvestProposalMetadata = (ticker, description, account) => {
-  const data = {
-    timestamp: new Date().getTime() / 1000,
-    account,
-    description,
-    ticker,
-  }
-  const dataString = stringify(data)
-
-  return client.add(dataString)
-}
-
 export const addInsuranceProposalData = (payload) => {
   const data = {
     ...payload,
