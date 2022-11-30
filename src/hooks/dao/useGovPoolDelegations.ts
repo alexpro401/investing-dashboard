@@ -1,4 +1,4 @@
-import { IGovNftDelegations } from "interfaces/contracts/IGovUserKeeper"
+import { IGovDelegations } from "interfaces/contracts/IGovUserKeeper"
 import { useGovUserKeeperContract } from "contracts"
 import { useCallback, useEffect, useState } from "react"
 
@@ -8,7 +8,7 @@ interface Props {
 }
 
 const useGovPoolDelegations = ({ daoPoolAddress, user }: Props) => {
-  const [delegations, setDelegations] = useState<IGovNftDelegations>()
+  const [delegations, setDelegations] = useState<IGovDelegations>()
   const userKeeper = useGovUserKeeperContract(daoPoolAddress)
 
   const getDelegations = useCallback(async () => {

@@ -9,6 +9,4 @@ export type IGovNftExactBalance = Awaited<
   ReturnType<GovUserKeeper["nftExactBalance"]>
 >
 
-export type IGovNftDelegations = Awaited<
-  ReturnType<GovUserKeeper["delegations"]>
->
+export type IGovDelegations = Awaited<ReturnType<GovUserKeeper["delegations"]>>
