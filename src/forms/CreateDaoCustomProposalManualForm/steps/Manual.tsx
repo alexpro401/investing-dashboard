@@ -50,11 +50,6 @@ const ManualStep: React.FC = () => {
             required,
           },
         },
-        values: {
-          $every: {
-            required,
-          },
-        },
       }
     )
 
@@ -153,8 +148,6 @@ const ManualStep: React.FC = () => {
               label="Value"
               type="number"
               value={contract.value}
-              errorMessage={getFieldErrorMessage(`values[${index}]`)}
-              onBlur={() => touchField(`values[${index}]`)}
               setValue={(value) =>
                 contracts.set(index, {
                   ...contract,
