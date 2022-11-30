@@ -21,6 +21,7 @@ import { Token } from "interfaces"
 
 import useGovPoolDelegations from "hooks/dao/useGovPoolDelegations"
 import { addBignumbers, subtractBignumbers } from "utils/formulas"
+import { useNavigate } from "react-router-dom"
 
 const CustomLabel = ({ viewBox, total }) => {
   const { cx, cy } = viewBox
@@ -58,6 +59,8 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
   alwaysShowMore,
   token,
 }) => {
+  const navigate = useNavigate()
+
   const withdrawableAssets = useGovPoolWithdrawableAssets({
     daoPoolAddress: data.pool.id,
     delegator: data.from.id,
@@ -129,6 +132,14 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
   )
 
   const _showMore = React.useState(!isNil(alwaysShowMore))
+
+  const onUndelegationTerminalNavigate = React.useCallback(() => {
+    navigate(`/dao/${data.pool.id}/undelegate/${data.to.id}`)
+  }, [data.pool.id, data.to.id])
+
+  const onDelegationTerminalNavigate = React.useCallback(() => {
+    navigate(`/dao/${data.pool.id}/delegate`)
+  }, [data.pool.id])
 
   const CollapseTrigger = React.useMemo(() => {
     if (isNil(alwaysShowMore) || !alwaysShowMore) {
@@ -215,11 +226,11 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
               />
             </Flex>
             <S.ActionBase
-              onClick={() => alert("Wanna withdraw from DAO pool? 😑")}
+              onClick={onUndelegationTerminalNavigate}
               text={"Withdraw available"}
             />
             <S.ActionSecondary
-              onClick={() => alert("Yes, do it one more time 🫡")}
+              onClick={onDelegationTerminalNavigate}
               text={"Delegate more"}
             />
           </Collapse>
