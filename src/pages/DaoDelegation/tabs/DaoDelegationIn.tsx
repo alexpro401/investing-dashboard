@@ -86,11 +86,11 @@ const DaoDelegationIn: React.FC<DaoDelegationInProps> = ({
           </Text>
         </Flex>
         <Flex full dir={"column"} gap={"8"}>
-          {map(data, (dh, index) => (
+          {map(data, (dh) => (
             <GovDelegateeCard
               data={dh}
               chainId={chainId}
-              key={index}
+              key={dh.id}
               token={token}
             />
           ))}
