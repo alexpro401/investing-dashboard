@@ -75,6 +75,10 @@ function InputField<V extends string | number>({
   const uid = useMemo(() => uuidv4(), [])
   const [isFocused, setIsFocused] = useState(false)
 
+  const inputType = useMemo(
+    () => (type === INPUT_TYPES.number ? INPUT_TYPES.text : type),
+    [type]
+  )
   const isNumberType = useMemo(() => type === INPUT_TYPES.number, [type])
 
   const isDisabled = useMemo(
@@ -85,6 +89,13 @@ function InputField<V extends string | number>({
   const isReadonly = useMemo(
     () => ["", "readonly", true].includes(readonly as string | boolean),
     [readonly]
+  )
+
+  const normalizeNumber = useCallback(
+    (_value: string) => {
+      return isNaN(Number(_value)) ? value : _value
+    },
+    [value]
   )
 
   const normalizeRange = useCallback(
@@ -107,7 +118,7 @@ function InputField<V extends string | number>({
     (event: FormEvent<HTMLInputElement>) => {
       const eventTarget = event.currentTarget
       if (isNumberType) {
-        eventTarget.value = normalizeRange(eventTarget.value)
+        eventTarget.value = normalizeRange(normalizeNumber(eventTarget.value))
       }
       if (value === eventTarget.value) return
 
@@ -119,7 +130,7 @@ function InputField<V extends string | number>({
         onInput(event)
       }
     },
-    [isNumberType, normalizeRange, onInput, setValue, value]
+    [isNumberType, normalizeRange, normalizeNumber, onInput, setValue, value]
   )
 
   const handleChange = useCallback(
@@ -171,7 +182,8 @@ function InputField<V extends string | number>({
           }}
           placeholder={placeholder}
           tabIndex={isDisabled || isReadonly ? -1 : tabindex}
-          type={type}
+          type={inputType}
+          inputMode={isNumberType ? "decimal" : undefined}
           min={min}
           max={max}
           isReadonly={isReadonly}

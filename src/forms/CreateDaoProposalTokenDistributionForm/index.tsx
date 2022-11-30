@@ -27,7 +27,7 @@ import { formatFiatNumber, formatTokenNumber } from "utils"
 
 import * as S from "./styled"
 
-const CreateDaoProposalTokenDistribution: React.FC = () => {
+const CreateDaoProposalTokenDistributionForm: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
   const [treasury] = useGovPoolTreasury(daoAddress)
   const { chainId } = useActiveWeb3React()
@@ -175,6 +175,7 @@ const CreateDaoProposalTokenDistribution: React.FC = () => {
             />
             <InputField
               value={tokenAmount.get}
+              type={"number"}
               setValue={tokenAmount.set}
               label="Amount of token"
               errorMessage={getFieldErrorMessage("tokenAmount")}
@@ -225,4 +226,4 @@ const CreateDaoProposalTokenDistribution: React.FC = () => {
   )
 }
 
-export default CreateDaoProposalTokenDistribution
+export default CreateDaoProposalTokenDistributionForm
