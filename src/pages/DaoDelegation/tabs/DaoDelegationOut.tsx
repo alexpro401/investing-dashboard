@@ -1,5 +1,4 @@
 import * as React from "react"
-import { v4 as uuidv4 } from "uuid"
 import { isEmpty, isNil, map } from "lodash"
 import { useWeb3React } from "@web3-react/core"
 import { PulseSpinner } from "react-spinners-kit"
@@ -69,7 +68,7 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress, token }) => {
   return (
     <S.List ref={loader}>
       {map(data, (dh) => (
-        <S.Indents top key={uuidv4()}>
+        <S.Indents top key={dh.id}>
           <GovTokenDelegationCard
             data={dh}
             chainId={chainId}
