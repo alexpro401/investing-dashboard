@@ -1,1 +1,1 @@
-export const REFETCH_INTERVAL = 60 * 1 * 1000 // 1 minute
+export const REFETCH_INTERVAL = 60 * 30 * 1000 // 30 minutes

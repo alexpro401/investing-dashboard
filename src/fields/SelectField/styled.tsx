@@ -56,7 +56,7 @@ export const ListCollapse = styled(Collapse)`
   top: calc(100% + 5px);
   left: 0;
   width: 100%;
-  z-index: 2;
+  z-index: 3;
   overflow: hidden;
 `
 

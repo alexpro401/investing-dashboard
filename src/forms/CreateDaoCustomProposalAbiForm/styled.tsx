@@ -34,7 +34,7 @@ export const Address = styled.div`
   color: ${({ theme }) => theme.textColors.primary};
 `
 
-export const ButtonsContainer = styled(Flex)`
+export const CardFooter = styled(Flex)`
   width: fill-available;
   justify-content: space-around;
 `
@@ -50,4 +50,14 @@ export const NodeRightContainer = styled(motion.div)`
 
 export const NodeRightIcon = styled(Icon)`
   color: ${theme.textColors.secondary};
+`
+
+export const SelectItem = styled.div`
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  color: ${theme.textColors.primary};
+  padding: 4px 0;
 `

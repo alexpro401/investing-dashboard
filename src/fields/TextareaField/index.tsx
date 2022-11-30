@@ -103,6 +103,7 @@ function TextareaField<V extends string | number>({
             height: isToggled
               ? "56px"
               : `${Math.max(textareaRef?.current?.scrollHeight || 0, 56)}px`,
+            maxHeight: "200px",
           }}
           transition={{ duration: 0.05 }}
         />
