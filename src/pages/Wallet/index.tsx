@@ -14,7 +14,6 @@ import useCopyClipboard from "hooks/useCopyClipboard"
 
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
-import { addUserMetadata } from "utils/ipfs"
 import { formatBigNumber, shortenAddress, isTxMined } from "utils"
 
 import { useUserMetadata } from "state/ipfsMetadata/hooks"
@@ -55,6 +54,7 @@ import {
 } from "./styled"
 import { useUserAgreement } from "state/user/hooks"
 import { ZERO } from "constants/index"
+import { IpfsEntity } from "utils/ipfsEntity"
 
 const useUserSettings = (): [
   {
@@ -96,14 +96,26 @@ const useUserSettings = (): [
 
     const actualAssets = isAvatarChanged ? [...assets, userAvatar] : assets
 
-    const ipfsReceipt = await addUserMetadata(userName, actualAssets, account)
-    const trx = await userRegistry?.changeProfile(ipfsReceipt.path)
+    const userIpfsDataEntity = new IpfsEntity({
+      data: JSON.stringify({
+        timestamp: new Date().getTime() / 1000,
+        name: userName,
+        assets: actualAssets,
+        account,
+      }),
+    })
 
-    const receipt = await addTransaction(trx, {
+    await userIpfsDataEntity.uploadSelf()
+
+    const receipt = await userRegistry?.changeProfile(
+      userIpfsDataEntity._path as string
+    )
+
+    const tx = await addTransaction(receipt, {
       type: TransactionType.UPDATED_USER_CREDENTIALS,
     })
 
-    if (isTxMined(receipt)) {
+    if (isTxMined(tx)) {
       await fetchUserMetadata(false)
       if (isAvatarChanged) {
         setUserAvatarInitial(userAvatar)
