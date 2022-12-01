@@ -25,35 +25,25 @@ const useGovPoolExecutors = (
   const [{ data, fetching }] = useQuery<IExecutorsQueryData>({
     query: GovPoolExecutorsQuery,
     pause: !isAddress(govPoolAddress),
-    variables: {
-      address: govPoolAddress,
-    },
+    variables: useMemo(() => ({ address: govPoolAddress }), [govPoolAddress]),
     context: daoGraphClient,
   })
 
-  const searchedExecutors = useMemo(() => {
-    if (!data || !govPoolAddress) return []
-
-    const daoPools = data.daoPools
-
-    if (daoPools.length === 0) return []
-
-    return daoPools[0].executors
-  }, [data, govPoolAddress])
-
   const executorTypes = useGovPoolExecutorType(
     govPoolAddress ?? "",
-    searchedExecutors.map((ex) => ex.executorAddress)
+    !data ? [] : data.daoPools[0].executors.map((ex) => ex.executorAddress)
   )
 
   const executors = useMemo(() => {
+    const searchedExecutors = !data ? [] : data.daoPools[0].executors
+
     return searchedExecutors.map((ex) => ({
       ...ex,
       type:
         executorTypes.find((el) => el.executorAddress === ex.executorAddress)
           ?.type ?? "custom",
     }))
-  }, [searchedExecutors, executorTypes])
+  }, [data, executorTypes])
 
   return [executors, fetching]
 }

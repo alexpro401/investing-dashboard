@@ -49,7 +49,7 @@ function useGovPoolExecutorType<T extends string | string[]>(
       }
 
       if (
-        insuranceAddress === executorAddress &&
+        insuranceAddress.toLowerCase() === executorAddress &&
         govPoolAddress.toLowerCase() ===
           process.env.REACT_APP_DEXE_DAO_ADDRESS.toLowerCase()
       ) {

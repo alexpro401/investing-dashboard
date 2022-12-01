@@ -82,9 +82,9 @@ const GovPoolsQuery = `
 `
 
 const GovPoolExecutorQuery = `
-query ($address: String!, $executorAddress: String!) {
-  daoPools(id: $address) {
-    executors(where: { executorAddress: $executorAddress }) {${POOL_EXECUTOR}}
+  query ($address: String!, $executorAddress: String!) {
+    daoPools(id: $address) {
+      executors(where: { executorAddress: $executorAddress }) {${POOL_EXECUTOR}}
   }
 }
 `

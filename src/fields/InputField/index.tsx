@@ -29,7 +29,7 @@ export enum EInputBorderColors {
 export interface Props<V extends string | number>
   extends HTMLAttributes<HTMLInputElement> {
   value: V
-  setValue?: Dispatch<SetStateAction<V>>
+  setValue?: (value: V) => void
   type?: string
   label?: string
   labelNodeRight?: ReactNode

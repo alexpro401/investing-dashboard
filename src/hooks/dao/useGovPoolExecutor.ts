@@ -30,12 +30,14 @@ const useGovPoolExecutor = (
   const [{ data, fetching }] = useQuery<IExecutorQueryData>({
     query: GovPoolExecutorQuery,
     pause: !isAddress(govPoolAddress),
-    variables: {
-      address: govPoolAddress,
-      executorAddress,
-    },
+    variables: useMemo(
+      () => ({ address: govPoolAddress, executorAddress }),
+      [govPoolAddress, executorAddress]
+    ),
     context: daoGraphClient,
   })
+  const [lastExecutorAddressSnapshot, setLastExecutorAddressSnapshot] =
+    useState<IExecutor | undefined>(undefined)
 
   const searchedExecutor = useMemo(() => {
     if (!data || !govPoolAddress) return undefined
@@ -62,6 +64,9 @@ const useGovPoolExecutor = (
 
   const handleParseExecutor = useCallback(async () => {
     if (!searchedExecutor) return
+    if (loading) return
+
+    setLastExecutorAddressSnapshot(searchedExecutor)
 
     if (executorType !== "custom") {
       setExecutor({
@@ -101,11 +106,16 @@ const useGovPoolExecutor = (
     } finally {
       setLoading(false)
     }
-  }, [searchedExecutor, executorType])
+  }, [searchedExecutor, executorType, loading])
 
   useEffect(() => {
-    handleParseExecutor()
-  }, [handleParseExecutor])
+    if (
+      JSON.stringify(lastExecutorAddressSnapshot) !==
+      JSON.stringify(searchedExecutor)
+    ) {
+      handleParseExecutor()
+    }
+  }, [handleParseExecutor, lastExecutorAddressSnapshot, searchedExecutor])
 
   return [executor, fetching || loading || false]
 }

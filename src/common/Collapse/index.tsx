@@ -27,8 +27,15 @@ const Collapse: FC<Props> = ({
           animate="open"
           exit="collapsed"
           variants={{
-            open: { opacity: 1, height: "auto" },
-            collapsed: { opacity: 0, height: 0 },
+            open: {
+              opacity: 1,
+              height: "auto",
+            },
+            collapsed: {
+              opacity: 0,
+              height: 0,
+              transitionEnd: { display: "none" },
+            },
           }}
           transition={{ duration: duration }}
           ref={cRef ?? undefined}
