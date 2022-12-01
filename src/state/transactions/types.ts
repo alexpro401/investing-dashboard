@@ -57,7 +57,7 @@ export enum TransactionType {
   GOV_POOL_WITHDRAW = 108,
   GOV_POOL_CREATE_CHANGE_VOTING_SETTINGS_PROPOSAL = 109,
   GOV_POOL_DELEGATE = 110,
-  GOV_POOL_UNDELEGATE = 110,
+  GOV_POOL_UNDELEGATE = 111,
 }
 
 export interface ApproveTransactionInfo {

@@ -243,6 +243,7 @@ const DaoProfile: React.FC = () => {
                     },
                   ]}
                   chainId={chainId}
+                  daoAddress={daoAddress}
                 />
               ),
             },
@@ -250,7 +251,7 @@ const DaoProfile: React.FC = () => {
         />
       </S.Indents>
     )
-  }, [govPoolContract])
+  }, [govPoolContract, daoAddress])
 
   return (
     <>

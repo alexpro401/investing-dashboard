@@ -38,7 +38,7 @@ import MinInvestIcon from "assets/icons/MinInvestAmount"
 
 import { bigify, formatBigNumber, shortenAddress, isTxMined } from "utils"
 import { arrayDifference } from "utils/array"
-import { getIpfsData, addFundMetadata } from "utils/ipfs"
+import { getIpfsData } from "utils/ipfs"
 import { useUpdateFundContext } from "context/UpdateFundContext"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"
 import { useAddToast } from "state/application/hooks"
@@ -50,6 +50,7 @@ import { addPool } from "state/ipfsMetadata/actions"
 import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { useTraderPoolContract } from "contracts"
+import { IpfsEntity } from "utils/ipfsEntity"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -137,17 +138,23 @@ const FundDetailsEdit: FC = () => {
       if (avatarBlobString !== "") {
         assetsParam.push(avatarBlobString)
       }
-      ipfsReceipt = await addFundMetadata(
-        assetsParam,
-        description,
-        strategy,
-        account
-      )
+      const poolIpfsMetadataEntity = new IpfsEntity({
+        data: JSON.stringify({
+          assets: assetsParam,
+          description,
+          strategy,
+          account,
+          timestamp: new Date().getTime() / 1000,
+        }),
+      })
+
+      await poolIpfsMetadataEntity.uploadSelf()
+      ipfsReceipt = poolIpfsMetadataEntity._path
     } else {
       ipfsReceipt = poolInfoData.parameters.descriptionURL
     }
 
-    const descriptionURL = ipfsChanged ? ipfsReceipt.path : ipfsReceipt
+    const descriptionURL = ipfsReceipt
     const totalEmission = bigify(totalLPEmission, 18).toHexString()
     const minInvest = bigify(minimalInvestment, 18).toHexString()
 
