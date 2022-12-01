@@ -38,8 +38,6 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
 
   const { chainId } = useWeb3React()
 
-  console.log("normalizeBigNumber", +normalizeBigNumber(votesFor, 18, 2))
-
   return (
     <S.Root {...rest}>
       <GovProposalCardHead

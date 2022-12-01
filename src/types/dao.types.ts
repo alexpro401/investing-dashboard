@@ -127,6 +127,19 @@ export enum ProposalState {
   Undefined = "6",
 }
 
+export type ProposalStatuses = "opened" | "ended" | "completed"
+
+export const proposalStatusToStates: Record<ProposalStatuses, ProposalState[]> =
+  {
+    opened: [
+      ProposalState.Voting,
+      ProposalState.WaitingForVotingTransfer,
+      ProposalState.ValidatorVoting,
+    ],
+    ended: [ProposalState.Defeated],
+    completed: [ProposalState.Succeeded, ProposalState.Executed],
+  }
+
 export type IExecutorType =
   | "profile"
   | "change-settings"

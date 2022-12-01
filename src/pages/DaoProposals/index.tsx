@@ -1,6 +1,6 @@
 import * as S from "./styled"
 
-import { FC, HTMLAttributes, lazy } from "react"
+import { FC, HTMLAttributes } from "react"
 import Header from "components/Header/Layout"
 import { Routes, Route, useParams } from "react-router-dom"
 import DaoProposalsList from "pages/DaoProposals/DaoProposalsList"
@@ -30,9 +30,12 @@ const DaoProposals: FC<Props> = () => {
       <Header tabs={TABS}>All Proposals</Header>
       <S.Root>
         <Routes>
-          <Route path="opened" element={<DaoProposalsList />} />
-          <Route path="ended" element={<DaoProposalsList />} />
-          <Route path="completed" element={<DaoProposalsList />} />
+          <Route path="opened" element={<DaoProposalsList status="opened" />} />
+          <Route path="ended" element={<DaoProposalsList status="ended" />} />
+          <Route
+            path="completed"
+            element={<DaoProposalsList status="completed" />}
+          />
         </Routes>
       </S.Root>
     </>
