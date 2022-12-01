@@ -61,3 +61,13 @@ export const SelectItem = styled.div`
   color: ${theme.textColors.primary};
   padding: 4px 0;
 `
+
+export const FieldNodeRight = styled.div`
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  text-align: right;
+  color: #788ab4;
+`

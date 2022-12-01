@@ -7,10 +7,11 @@ import { InputField } from "fields"
 import { replaceAt } from "utils/array"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import useAlert, { AlertType } from "hooks/useAlert"
+import { isArray } from "lodash"
 
 interface Props {
   allowedMethods?: string[]
-  abi: any[]
+  abi: string
   isOpen: boolean
   onClose: () => void
   onSubmit: (method: string, encodedData: string) => void
@@ -26,7 +27,7 @@ const ABIConstructor: FC<Props> = ({
   const [selectedMethod, setSelectedMethod] = useState("")
   const [selectedMethodInputs, setSelectedMethodInputs] = useState<any[]>([])
   const [isParseError, setParseError] = useState(false)
-  const [alert, hideAlert] = useAlert()
+  const [alert] = useAlert()
 
   const handleInputChange = (index: number, value: string) => {
     setSelectedMethodInputs((prev) => replaceAt([...prev], index, value))
@@ -53,21 +54,27 @@ const ABIConstructor: FC<Props> = ({
   }
 
   const filteredWritableMethods = useMemo(() => {
-    if (!abi) return []
+    try {
+      const abiParsed = JSON.parse(abi)
 
-    if (allowedMethods.length) {
-      return abi.filter((method) => {
-        return (
-          method.type === "function" &&
-          method.stateMutability !== "view" &&
-          allowedMethods.includes(method.name)
-        )
-      })
+      if (!isArray(abiParsed)) return []
+
+      if (allowedMethods.length) {
+        return abiParsed.filter((method) => {
+          return (
+            method.type === "function" &&
+            method.stateMutability !== "view" &&
+            allowedMethods.includes(method.name)
+          )
+        })
+      }
+
+      return abiParsed.filter(
+        (item) => item.type === "function" && item.stateMutability !== "view"
+      )
+    } catch {
+      return []
     }
-
-    return abi.filter(
-      (item) => item.type === "function" && item.stateMutability !== "view"
-    )
   }, [abi, allowedMethods])
 
   // reset state on method change
@@ -85,6 +92,11 @@ const ABIConstructor: FC<Props> = ({
     >
       <S.Container>
         <S.List>
+          {!filteredWritableMethods.length && (
+            <S.ErrorContainer>
+              No methods found from provided ABI
+            </S.ErrorContainer>
+          )}
           {filteredWritableMethods.map((item) => (
             <S.Card
               key={item.name}

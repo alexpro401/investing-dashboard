@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Flex } from "theme"
+import theme, { Flex } from "theme"
 
 export const Container = styled(Flex)`
   width: 100%;
@@ -87,4 +87,15 @@ export const Footer = styled(Flex)`
     background: #28334a;
     opacity: 0.3;
   }
+`
+
+export const ErrorContainer = styled.div`
+  padding: 30px 0;
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 150%;
+  text-align: center;
+  color: ${theme.textColors.primary};
 `

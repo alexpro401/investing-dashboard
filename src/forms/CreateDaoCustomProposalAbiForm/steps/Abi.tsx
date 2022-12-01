@@ -7,7 +7,13 @@ import {
 } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 import { AdvancedABIContext } from "context/govPool/proposals/custom/AdvancedABIContext"
-import { OverlapInputField, SelectField, TextareaField } from "fields"
+import {
+  InputField,
+  OverlapInputField,
+  SelectField,
+  TextareaField,
+} from "fields"
+import JSONField from "fields/JSONField"
 import { useAbiList } from "hooks/useABI"
 import { useFormValidation } from "hooks/useFormValidation"
 import ABIConstructor from "modals/ABIConstructor"
@@ -17,6 +23,7 @@ import React, {
   useCallback,
   useContext,
   useMemo,
+  useState,
 } from "react"
 import { useParams } from "react-router-dom"
 import theme from "theme"
@@ -25,6 +32,46 @@ import { readFromClipboard } from "utils/clipboard"
 import { required, isAddressValidator } from "utils/validators"
 
 import * as S from "../styled"
+
+const useAbiKeeper = (addresses: string[], executors: string[]) => {
+  const [storedAbi, setStoredAbi] = useState<Record<string, string>>({})
+
+  const abis = useAbiList(addresses)
+  const executorsAbis = useAbiList(executors)
+
+  const handleCustomAbi = useCallback(
+    (address: string, abi: string) => {
+      setStoredAbi((prev) => ({ ...prev, [address]: abi }))
+    },
+    [setStoredAbi]
+  )
+
+  const abisWithCustom = useMemo(() => {
+    return addresses.map((address, index) => {
+      if (address in storedAbi) {
+        return storedAbi[address]
+      }
+
+      return abis[index]
+    })
+  }, [abis, addresses, storedAbi])
+
+  const executorsAbisWithCustom = useMemo(() => {
+    return executors.map((address, index) => {
+      if (address in storedAbi) {
+        return storedAbi[address]
+      }
+
+      return executorsAbis[index]
+    })
+  }, [executors, executorsAbis, storedAbi])
+
+  return {
+    abis: abisWithCustom,
+    executorsAbis: executorsAbisWithCustom,
+    handleCustomAbi,
+  }
+}
 
 const AbiStep: React.FC = () => {
   const { daoAddress, executorAddress } = useParams<
@@ -42,18 +89,29 @@ const AbiStep: React.FC = () => {
 
   const {
     contractAdresses,
+    contractValues,
     executorSelectedAddress,
+    executorValue,
     encodedMethods,
     modal,
     onContractAddressDelete,
+    onContractAddressAdd,
   } = useContext(AdvancedABIContext)
 
-  const abis = useAbiList(contractAdresses.get)
-  const executorAbis = useAbiList(executors)
+  const adresses = useMemo(
+    () => contractAdresses.get.map((a) => a[1]),
+    [contractAdresses.get]
+  )
+
+  const { abis, executorsAbis, handleCustomAbi } = useAbiKeeper(
+    adresses,
+    executors
+  )
 
   const { getFieldErrorMessage, touchField } = useFormValidation(
     {
       contractAdresses: contractAdresses.get,
+      abi: abis,
     },
     {
       contractAdresses: { required, isAddressValidator },
@@ -87,6 +145,14 @@ const AbiStep: React.FC = () => {
       <S.ContractCard>
         <CardHead title="Executor contract" />
 
+        <InputField
+          placeholder="Value (optional)"
+          type="text"
+          value={executorValue.get}
+          setValue={(value) => executorValue.set(value as string)}
+          nodeRight={<S.FieldNodeRight>BNB</S.FieldNodeRight>}
+        />
+
         <SelectField
           placeholder="Contract address"
           selected={executorSelectedAddress.get}
@@ -100,14 +166,12 @@ const AbiStep: React.FC = () => {
           )}
         />
 
-        <TextareaField
-          value={JSON.stringify(
-            executorAbis[executors.indexOf(executorSelectedAddress.get)]
-          )}
-          setValue={() => {}}
-          label="ABI"
-          errorMessage={getFieldErrorMessage("abi")}
-          onBlur={() => touchField("abi")}
+        <JSONField
+          placeholder="ABI"
+          value={executorsAbis[executors.indexOf(executorSelectedAddress.get)]}
+          setValue={(value) =>
+            handleCustomAbi(executorSelectedAddress.get, value)
+          }
         />
 
         <OverlapInputField
@@ -142,36 +206,43 @@ const AbiStep: React.FC = () => {
       </S.ContractCard>
     ),
     [
-      executorSelectedAddress,
       executors,
-      executorAbis,
-      getFieldErrorMessage,
+      executorsAbis,
+      executorValue,
+      executorSelectedAddress,
       encodedMethods.get,
       modal.get,
-      touchField,
+      handleCustomAbi,
       handleOpenContractMethodSelector,
     ]
   )
 
   const addressCardRenderer = useCallback(
-    (contractAddress: string, index: number) => (
-      <S.ContractCard key={contractAddress}>
+    ([id, address]: [id: string, address: string], index: number) => (
+      <S.ContractCard key={id}>
         <CardHead title={`Contract ${index + 1}`} />
+        <InputField
+          placeholder="Value (optional)"
+          type="text"
+          value={contractValues.get[index]}
+          setValue={(value) => contractValues.set(index, value as string)}
+          nodeRight={<S.FieldNodeRight>BNB</S.FieldNodeRight>}
+        />
         <OverlapInputField
           readonly
-          value={contractAddress}
-          setValue={(value) => contractAdresses.set(index, value as string)}
+          value={address}
+          setValue={(value) => contractAdresses.set(index, id, value as string)}
           label="Contract address"
           errorMessage={getFieldErrorMessage("contractAdresses")}
           onBlur={() => touchField("contractAdresses")}
           overlapNodeLeft={
-            isAddress(contractAddress) ? (
-              <S.Address>{shortenAddress(contractAddress, 4)}</S.Address>
+            isAddress(address) ? (
+              <S.Address>{shortenAddress(address, 4)}</S.Address>
             ) : null
           }
           nodeLeft={null}
           nodeRight={
-            !isAddress(contractAddress) ? (
+            !isAddress(address) ? (
               <AppButton
                 type="button"
                 text="Paste"
@@ -179,7 +250,7 @@ const AbiStep: React.FC = () => {
                 size="no-paddings"
                 onClick={() =>
                   pasteFromClipboard((value) =>
-                    contractAdresses.set(index, value as string)
+                    contractAdresses.set(index, id, value as string)
                   )
                 }
               />
@@ -190,18 +261,16 @@ const AbiStep: React.FC = () => {
                 text="Clear"
                 color="default"
                 size="no-paddings"
-                onClick={() => contractAdresses.set(index, "")}
+                onClick={() => contractAdresses.set(index, id, "")}
               />
             )
           }
         />
 
         <TextareaField
-          value={JSON.stringify(abis[index]) || ""}
-          setValue={() => {}}
-          label="ABI"
-          errorMessage={getFieldErrorMessage("abi")}
-          onBlur={() => touchField("abi")}
+          placeholder="ABI"
+          value={abis[index]}
+          setValue={(value) => handleCustomAbi(address, value)}
         />
 
         <OverlapInputField
@@ -209,17 +278,16 @@ const AbiStep: React.FC = () => {
           label=""
           placeholder="Contract method"
           setValue={() => {}}
-          onClick={() => handleOpenContractMethodSelector(contractAddress)}
+          onClick={() => handleOpenContractMethodSelector(address)}
           value={
-            (contractAddress in encodedMethods.get &&
-              encodedMethods.get[contractAddress][0]) ||
+            (address in encodedMethods.get && encodedMethods.get[address][0]) ||
             ""
           }
           overlapNodeLeft={
             (
               <S.SelectItem>
-                {contractAddress in encodedMethods.get &&
-                  encodedMethods.get[contractAddress][0]}
+                {address in encodedMethods.get &&
+                  encodedMethods.get[address][0]}
               </S.SelectItem>
             ) || null
           }
@@ -246,15 +314,17 @@ const AbiStep: React.FC = () => {
       </S.ContractCard>
     ),
     [
-      abis,
-      contractAdresses,
-      encodedMethods.get,
+      contractValues,
       getFieldErrorMessage,
-      handleOpenContractMethodSelector,
+      abis,
+      encodedMethods.get,
       modal.get,
-      onContractAddressDelete,
-      pasteFromClipboard,
+      contractAdresses,
       touchField,
+      pasteFromClipboard,
+      handleCustomAbi,
+      handleOpenContractMethodSelector,
+      onContractAddressDelete,
     ]
   )
 
@@ -279,9 +349,7 @@ const AbiStep: React.FC = () => {
             text="+ Add more contract adresses"
             color="default"
             size="no-paddings"
-            onClick={() =>
-              contractAdresses.set(contractAdresses.get.length, "")
-            }
+            onClick={onContractAddressAdd}
           />
         </S.CardFooter>
       </Card>
@@ -292,12 +360,10 @@ const AbiStep: React.FC = () => {
 
       <ABIConstructor
         abi={
-          abis[contractAdresses.get.indexOf(modal.get)] ||
-          executorAbis[executors.indexOf(modal.get)]
+          abis[adresses.indexOf(modal.get)] ||
+          executorsAbis[executors.indexOf(modal.get)]
         }
-        allowedMethods={
-          contractAdresses.get.indexOf(modal.get) > -1 ? ["approve"] : []
-        }
+        allowedMethods={adresses.indexOf(modal.get) > -1 ? ["approve"] : []}
         onSubmit={handleConstructorSubmit}
         isOpen={modal.get !== ""}
         onClose={() => modal.set("")}

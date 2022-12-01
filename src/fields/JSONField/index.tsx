@@ -23,7 +23,7 @@ interface Props<V extends string | number>
   tabindex?: number
 }
 
-function TextareaField<V extends string | number>({
+function JSONField<V extends string | number>({
   value,
   setValue,
   label,
@@ -88,7 +88,8 @@ function TextareaField<V extends string | number>({
   return (
     <S.Root isReadonly={isReadonly} isDisabled={isDisabled}>
       <S.TextAreaWrp>
-        <S.TextArea
+        <S.CodeArea id={`text-area-field--${uid}`}>{value}</S.CodeArea>
+        {/* <S.TextArea
           ref={textareaRef}
           id={`text-area-field--${uid}`}
           value={value}
@@ -103,7 +104,7 @@ function TextareaField<V extends string | number>({
             height: "140px",
           }}
           transition={{ duration: 0.05 }}
-        />
+        /> */}
         {label ? (
           <S.Label
             htmlFor={`text-area-field--${uid}`}
@@ -122,4 +123,4 @@ function TextareaField<V extends string | number>({
   )
 }
 
-export default TextareaField
+export default JSONField
