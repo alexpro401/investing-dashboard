@@ -138,8 +138,14 @@ function Investor() {
           <TabContainer>
             <Tab active>Profit & Loss</Tab>
           </TabContainer>
-          <PoolPnlChart address={poolAddress} baseToken={poolData?.baseToken} />
-          <BarChart address={poolAddress} m="44px 0 22px" />
+          <Flex full dir={"column"} p={"0 16px"}>
+            <PoolPnlChart
+              address={poolAddress}
+              baseToken={poolData?.baseToken}
+              tfPosition="bottom"
+            />
+            <BarChart address={poolAddress} m="4px 0 12px" />
+          </Flex>
           <Row>
             <MainText>P&L LP - $ETH</MainText>
             <MainValue>+ 13.1% (+112.132 ETH)</MainValue>
