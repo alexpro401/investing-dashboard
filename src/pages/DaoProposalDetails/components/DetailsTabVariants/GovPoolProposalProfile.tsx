@@ -7,7 +7,7 @@ import {
   useState,
 } from "react"
 import { useGovPoolProposal } from "hooks/dao"
-import { IExecutorType, IGovPoolDescription } from "types"
+import { IGovPoolDescription, proposalTypeDataDecodingMap } from "types"
 import { ethers } from "ethers"
 import { IpfsEntity } from "utils/ipfsEntity"
 import * as S from "../../styled"
@@ -26,19 +26,6 @@ const GovPoolProposalProfile: FC<Props> = ({ govPoolProposal, ...rest }) => {
 
   const [proposedGovPoolDescription, setProposedGovPoolDescription] =
     useState<IGovPoolDescription>()
-
-  const proposalTypeDataDecodingMap = useMemo<Record<IExecutorType, string[]>>(
-    () => ({
-      ["profile"]: ["string"], // description ipfs path
-      ["change-settings"]: [],
-      ["change-validator-balances"]: [],
-      ["distribution"]: [],
-      ["add-token"]: [],
-      ["custom"]: [],
-      ["insurance"]: [],
-    }),
-    []
-  )
 
   const abiCoder = useMemo(() => new ethers.utils.AbiCoder(), [])
 
@@ -61,7 +48,7 @@ const GovPoolProposalProfile: FC<Props> = ({ govPoolProposal, ...rest }) => {
     } catch (error) {
       console.log(error)
     }
-  }, [abiCoder, govPoolProposal, proposalTypeDataDecodingMap])
+  }, [abiCoder, govPoolProposal])
 
   const loadGovPoolActualDescription = useCallback(async () => {
     try {
