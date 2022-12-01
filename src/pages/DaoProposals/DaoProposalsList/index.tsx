@@ -18,8 +18,6 @@ const DaoProposalsList: FC<Props> = ({ status }) => {
   const { proposalViews, loadProposals, isLoaded, isLoadFailed } =
     useGovPoolProposals(daoAddress!)
 
-  console.log(proposalViews)
-
   const paginationOffset = 0
   const paginationPageLimit = 500
 

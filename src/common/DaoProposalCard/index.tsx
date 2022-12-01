@@ -1,6 +1,6 @@
 import * as S from "./styled"
 
-import { FC, HTMLAttributes } from "react"
+import { FC, HTMLAttributes, useMemo } from "react"
 import { normalizeBigNumber, fromBig, shortenAddress } from "utils"
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { useGovPoolProposal } from "hooks/dao"
@@ -11,6 +11,7 @@ import { Flex } from "theme"
 import TokenIcon from "components/TokenIcon"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useWeb3React } from "@web3-react/core"
+import { ProposalState } from "types"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   proposalId: number
@@ -32,11 +33,48 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
     isInsurance,
     isDistribution,
     distributionProposalTokenAddress,
-    distributionProposalTokenAmount,
     distributionProposalToken,
   } = useGovPoolProposal(proposalId, daoAddress || "", proposalView)
 
   const { chainId } = useWeb3React()
+
+  const isProposalStateVoting = useMemo(
+    () => String(proposalView.proposalState) === ProposalState.Voting,
+    [proposalView.proposalState]
+  )
+  const isProposalStateWaitingForVotingTransfer = useMemo(
+    () =>
+      String(proposalView.proposalState) ===
+      ProposalState.WaitingForVotingTransfer,
+    [proposalView.proposalState]
+  )
+  const isProposalStateValidatorVoting = useMemo(
+    () => String(proposalView.proposalState) === ProposalState.ValidatorVoting,
+    [proposalView.proposalState]
+  )
+  const isProposalStateDefeated = useMemo(
+    () => String(proposalView.proposalState) === ProposalState.Defeated,
+    [proposalView.proposalState]
+  )
+  const isProposalStateSucceeded = useMemo(
+    () => String(proposalView.proposalState) === ProposalState.Succeeded,
+    [proposalView.proposalState]
+  )
+  const isProposalStateExecuted = useMemo(
+    () => String(proposalView.proposalState) === ProposalState.Executed,
+    [proposalView.proposalState]
+  )
+  const isProposalStateUndefined = useMemo(
+    () => String(proposalView.proposalState) === ProposalState.Undefined,
+    [proposalView.proposalState]
+  )
+
+  const isShowExecuteBtn = useMemo(() => {
+    return false
+  }, [])
+  const isShowTransferToSecondStepBtn = useMemo(() => {
+    return false
+  }, [])
 
   return (
     <S.Root {...rest}>
