@@ -3,7 +3,6 @@ import { parseEther, parseUnits } from "@ethersproject/units"
 import { useNavigate } from "react-router-dom"
 
 import { useGovPoolContract } from "contracts"
-import { addDaoProposalData } from "utils/ipfs"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovSettings } from "abi"
 import {
@@ -17,6 +16,7 @@ import usePayload from "hooks/usePayload"
 import { SubmitState } from "constants/types"
 import { isTxMined } from "utils"
 import { ZERO_ADDR } from "constants/index"
+import { IpfsEntity } from "utils/ipfsEntity"
 
 interface ICreateDaoProposalTypeArgs {
   proposalInfo: {
@@ -97,11 +97,17 @@ const useGovPoolCreateProposalType = ({
 
       setPayload(SubmitState.SIGN)
 
-      let { path: daoProposalTypeIPFSCode } = await addDaoProposalData({
-        proposalName: proposalTypeName,
-        proposalDescription: proposalTypeDescription,
+      const daoProposalIpfsEntity = new IpfsEntity({
+        data: JSON.stringify({
+          proposalName: proposalTypeName,
+          proposalDescription: proposalTypeDescription,
+          timestamp: new Date().getTime() / 1000,
+        }),
       })
-      daoProposalTypeIPFSCode = "ipfs://" + daoProposalTypeIPFSCode
+
+      await daoProposalIpfsEntity.uploadSelf()
+
+      const daoProposalTypeIPFSCode = "ipfs://" + daoProposalIpfsEntity._path
 
       const encodedAddSettingsMethod = encodeAbiMethod(
         GovSettings,
