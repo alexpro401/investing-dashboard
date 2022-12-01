@@ -5,6 +5,7 @@ import theme from "theme"
 export enum CHART_TYPE {
   area = "ChartArea",
   line = "ChartLine",
+  straightAnglePie = "ChartStraightAnglePie",
 }
 
 /**

@@ -4,6 +4,15 @@ import ExternalLink from "components/ExternalLink"
 import { shortenAddress } from "utils"
 import { ProposalDetailsCard } from "./index"
 import { useGovPoolProposal } from "hooks/dao"
+import {
+  GovPoolProposalProfile,
+  GovPoolProposalDistribution,
+  GovPoolProposalChangeSettings,
+  GovPoolProposalChangeValidatorBalances,
+  GovPoolProposalAddToken,
+  GovPoolProposalCustom,
+  GovPoolProposalInsurance,
+} from "./DetailsTabVariants"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   govPoolProposal: ReturnType<typeof useGovPoolProposal>
@@ -13,38 +22,25 @@ const DetailsTab: FC<Props> = ({ govPoolProposal }) => {
   return (
     <>
       <S.DaoProposalDetailsCard>
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="complex">
-            <p>Active settings</p>
-          </S.DaoProposalDetailsRowText>
-          <S.DaoProposalDetailsRowText textType="success">
-            Proposed changes
-          </S.DaoProposalDetailsRowText>
-        </S.DaoProposalDetailsRow>
-
-        <S.DaoProposalCardRowDivider />
-
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="complex">
-            <span>Length of voting period</span>
-            <p>1D/1H/1M</p>
-          </S.DaoProposalDetailsRowText>
-          <S.DaoProposalDetailsRowText textType="success">
-            10D/1H/1M
-          </S.DaoProposalDetailsRowText>
-        </S.DaoProposalDetailsRow>
-
-        <S.DaoProposalCardRowDivider />
-
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="complex">
-            <span>Min. voting power required for voting </span>
-            <p>100</p>
-          </S.DaoProposalDetailsRowText>
-          <S.DaoProposalDetailsRowText textType="success">
-            50
-          </S.DaoProposalDetailsRowText>
-        </S.DaoProposalDetailsRow>
+        {govPoolProposal.proposalType === "profile" ? (
+          <GovPoolProposalProfile govPoolProposal={govPoolProposal} />
+        ) : govPoolProposal.proposalType === "distribution" ? (
+          <GovPoolProposalDistribution govPoolProposal={govPoolProposal} />
+        ) : govPoolProposal.proposalType === "change-settings" ? (
+          <GovPoolProposalChangeSettings govPoolProposal={govPoolProposal} />
+        ) : govPoolProposal.proposalType === "change-validator-balances" ? (
+          <GovPoolProposalChangeValidatorBalances
+            govPoolProposal={govPoolProposal}
+          />
+        ) : govPoolProposal.proposalType === "add-token" ? (
+          <GovPoolProposalAddToken govPoolProposal={govPoolProposal} />
+        ) : govPoolProposal.proposalType === "custom" ? (
+          <GovPoolProposalCustom govPoolProposal={govPoolProposal} />
+        ) : govPoolProposal.proposalType === "insurance" ? (
+          <GovPoolProposalInsurance govPoolProposal={govPoolProposal} />
+        ) : (
+          <></>
+        )}
       </S.DaoProposalDetailsCard>
       <S.DaoProposalDetailsCard>
         <S.DaoProposalDetailsRow>

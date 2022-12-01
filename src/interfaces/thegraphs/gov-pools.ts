@@ -48,6 +48,43 @@ export interface IGovPoolQuery {
   executors: IGovPoolExecutor[]
 }
 
+export interface IGovPoolDelegationHistoryQuery {
+  id: string
+  pool: {
+    id: string
+  }
+  timestamp: string
+  from: {
+    id: string
+  }
+  to: {
+    id: string
+  }
+  isDelegate: boolean
+  amount: BigNumberish
+  nfts: string[]
+}
+
+export interface IGovVoterInPoolPairsQuery {
+  id: string
+  from: {
+    id: string
+    pool: { id: string }
+    voter: {
+      id: string
+    }
+  }
+  to: {
+    id: string
+    voter: {
+      id: string
+    }
+  }
+  delegateAmount: BigNumberish
+  delegateNfts: BigNumberish[]
+  history?: IGovPoolDelegationHistoryQuery[]
+}
+
 export interface IGovProposalVoteQuery {
   id: string
   hash: string
