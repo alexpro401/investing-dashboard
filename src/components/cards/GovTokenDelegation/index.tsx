@@ -1,7 +1,8 @@
 import * as React from "react"
-import { v4 as uuidv4 } from "uuid"
-import { isEmpty, isNil, map, reduce } from "lodash"
 import { Label } from "recharts"
+import { v4 as uuidv4 } from "uuid"
+import { useNavigate } from "react-router-dom"
+import { isEmpty, isNil, map, reduce } from "lodash"
 
 import { Collapse, Icon } from "common"
 import theme, { Flex, Text } from "theme"
@@ -15,13 +16,12 @@ import { ICON_NAMES } from "constants/icon-names"
 import ERC721Row from "components/ERC721Row"
 import { ZERO } from "constants/index"
 import ERC20Row from "components/ERC20Row"
-import { IGovPoolDelegationHistoryQuery } from "interfaces/thegraphs/gov-pools"
+import { IGovVoterInPoolPairsQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolWithdrawableAssets from "hooks/dao/useGovPoolWithdrawableAssets"
 import { Token } from "interfaces"
 
 import useGovPoolDelegations from "hooks/dao/useGovPoolDelegations"
 import { addBignumbers, subtractBignumbers } from "utils/formulas"
-import { useNavigate } from "react-router-dom"
 
 const CustomLabel = ({ viewBox, total }) => {
   const { cx, cy } = viewBox
@@ -47,7 +47,7 @@ const CustomLabel = ({ viewBox, total }) => {
 }
 
 interface IProps {
-  data: IGovPoolDelegationHistoryQuery
+  data: IGovVoterInPoolPairsQuery
   chainId?: number
   alwaysShowMore?: boolean
   token: Token | null
@@ -62,21 +62,21 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
   const navigate = useNavigate()
 
   const withdrawableAssets = useGovPoolWithdrawableAssets({
-    daoPoolAddress: data.pool.id,
-    delegator: data.from.id,
-    delegatee: data.to.id,
+    daoPoolAddress: data.from.pool.id,
+    delegator: data.from.voter.id,
+    delegatee: data.to.voter.id,
   })
 
   const delegations = useGovPoolDelegations({
-    daoPoolAddress: data.pool.id,
-    user: data.from.id,
+    daoPoolAddress: data.from.pool.id,
+    user: data.from.voter.id,
   })
 
   const toExplorerLink = React.useMemo(() => {
     if (isNil(data) || isNil(chainId)) {
       return ""
     }
-    return getExplorerLink(chainId, data.to.id, ExplorerDataType.ADDRESS)
+    return getExplorerLink(chainId, data.to.voter.id, ExplorerDataType.ADDRESS)
   }, [data, chainId])
 
   const usedInVoting = React.useMemo(() => {
@@ -89,7 +89,7 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
       (acc, delegation) => {
         if (
           String(delegation.delegatee).toLocaleLowerCase() ===
-          String(data.to.id).toLocaleLowerCase()
+          String(data.to.voter.id).toLocaleLowerCase()
         ) {
           return addBignumbers([acc, 18], [delegation.delegatedTokens, 18])
         }
@@ -134,12 +134,12 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
   const _showMore = React.useState(!isNil(alwaysShowMore))
 
   const onUndelegationTerminalNavigate = React.useCallback(() => {
-    navigate(`/dao/${data.pool.id}/undelegate/${data.to.id}`)
-  }, [data.pool.id, data.to.id])
+    navigate(`/dao/${data.from.pool.id}/undelegate/${data.to.voter.id}`)
+  }, [data.from.pool.id, data.to.voter.id])
 
   const onDelegationTerminalNavigate = React.useCallback(() => {
-    navigate(`/dao/${data.pool.id}/delegate`)
-  }, [data.pool.id])
+    navigate(`/dao/${data.from.pool.id}/delegate`)
+  }, [data.from.pool.id])
 
   const CollapseTrigger = React.useMemo(() => {
     if (isNil(alwaysShowMore) || !alwaysShowMore) {
@@ -162,7 +162,7 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
             Delegated to
           </Text>
           <ExternalLink href={toExplorerLink} color={theme.textColors.primary}>
-            {shortenAddress(data.to.id, 4)}
+            {shortenAddress(data.to.voter.id, 4)}
           </ExternalLink>
         </Flex>
         <S.ChartContainer>
@@ -207,19 +207,19 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
         <div>
           <Collapse isOpen={_showMore[0]}>
             <Flex full dir={"column"} gap={"8"} m={"18px 0 16px"}>
-              {!isEmpty(data.nfts) &&
-                map(data.nfts, (nft) => (
+              {!isEmpty(data.delegateNfts) &&
+                map(data.delegateNfts, (nft) => (
                   <ERC721Row
                     key={uuidv4()}
                     isLocked
                     votingPower={ZERO}
-                    tokenId={nft}
+                    tokenId={nft as string}
                     tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
                   />
                 ))}
               <ERC20Row
                 isLocked
-                delegated={data.amount}
+                delegated={data.delegateAmount}
                 available={withdrawableAssets?.tokens ?? ZERO}
                 tokenId={token?.address ?? ""}
                 tokenUri=""

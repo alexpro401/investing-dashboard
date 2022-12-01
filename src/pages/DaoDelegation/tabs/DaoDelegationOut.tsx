@@ -1,18 +1,19 @@
 import * as React from "react"
-import { isEmpty, isNil, map } from "lodash"
 import { useWeb3React } from "@web3-react/core"
 import { PulseSpinner } from "react-spinners-kit"
+import { BigNumber } from "@ethersproject/bignumber"
+import { isEmpty, isNil, map, filter } from "lodash"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import * as S from "../styled"
 import theme, { Center, Text } from "theme"
 
-import LoadMore from "components/LoadMore"
-import useQueryPagination from "hooks/useQueryPagination"
-import { GovPoolDelegationHistoryByUserQuery } from "queries"
-import GovTokenDelegationCard from "components/cards/GovTokenDelegation"
-import { IGovPoolDelegationHistoryQuery } from "interfaces/thegraphs/gov-pools"
 import { Token } from "interfaces"
+import LoadMore from "components/LoadMore"
+import { GovPoolActiveDelegations } from "queries"
+import useQueryPagination from "hooks/useQueryPagination"
+import GovTokenDelegationCard from "components/cards/GovTokenDelegation"
+import { IGovVoterInPoolPairsQuery } from "interfaces/thegraphs/gov-pools"
 
 interface Props {
   govPoolAddress?: string
@@ -23,17 +24,31 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress, token }) => {
   const { chainId, account } = useWeb3React()
 
   const [{ data, loading }, fetchMore] =
-    useQueryPagination<IGovPoolDelegationHistoryQuery>({
-      query: GovPoolDelegationHistoryByUserQuery(true),
+    useQueryPagination<IGovVoterInPoolPairsQuery>({
+      query: GovPoolActiveDelegations(true),
       variables: React.useMemo(
         () => ({
-          address: govPoolAddress,
-          account,
+          account: String(account)
+            .toLocaleLowerCase()
+            .concat(
+              String(govPoolAddress).replace("0x", "").toLocaleLowerCase()
+            ),
         }),
         [account, govPoolAddress]
       ),
       pause: isNil(account) || isNil(govPoolAddress),
-      formatter: (d) => d.delegationHistories,
+      formatter: (newDataSlice, loadedData) => {
+        const withAmounts = filter(
+          newDataSlice.voterInPoolPairs,
+          (dh) =>
+            BigNumber.from(dh.delegateAmount).gt(0) ||
+            dh.delegateNfts.length > 0
+        )
+
+        return loadedData.length > 0
+          ? filter(withAmounts, (dh) => loadedData.includes(dh))
+          : withAmounts
+      },
     })
 
   const loader = React.useRef<any>()

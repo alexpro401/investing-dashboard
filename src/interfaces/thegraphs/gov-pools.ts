@@ -61,8 +61,28 @@ export interface IGovPoolDelegationHistoryQuery {
     id: string
   }
   isDelegate: boolean
-  amount: string
-  nfts: string[]
+  amount: BigNumberish
+  nfts: BigNumberish[]
+}
+
+export interface IGovVoterInPoolPairsQuery {
+  id: string
+  from: {
+    id: string
+    pool: { id: string }
+    voter: {
+      id: string
+    }
+  }
+  to: {
+    id: string
+    voter: {
+      id: string
+    }
+  }
+  delegateAmount: BigNumberish
+  delegateNfts: BigNumberish[]
+  history?: IGovPoolDelegationHistoryQuery[]
 }
 
 export interface IGovProposalVoteQuery {

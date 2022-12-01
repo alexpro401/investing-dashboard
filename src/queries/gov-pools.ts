@@ -48,6 +48,14 @@ const DELEGATION_HISTORY = `
   nfts
 `
 
+const VOTER_IN_POOL_PAIR = `
+  id
+  from { id, pool { id }, voter { id } }
+  to { id, voter { id } }
+  delegateAmount
+  delegateNfts
+`
+
 const PROPOSAL_VOTE = `
   id
   hash
@@ -100,11 +108,23 @@ const GovPoolDelegationHistoryByUserQuery = (isUserDelegator = true) => `
       where: {
         pool: $address,
         ${isUserDelegator ? "from: $account," : "to: $account,"}
-        ${isUserDelegator ? "isDelegate: false," : "isDelegate: true,"}
+        ${isUserDelegator ? "isDelegate: true," : "isDelegate: false,"}
       }
     ) {
       ${DELEGATION_HISTORY}
     }
+  }
+`
+
+const GovPoolActiveDelegations = (isUserDelegator = true) => `
+  query ($offset: Int!, $limit: Int!, $account: String!) {
+    voterInPoolPairs(
+      skip: $offset, first: $limit, 
+      orderBy: id, orderDirection: asc,
+      where: { 
+        ${isUserDelegator ? "from: $account" : "to: $account"},
+      }
+    ) { ${VOTER_IN_POOL_PAIR} }
   }
 `
 
@@ -182,6 +202,7 @@ export {
   GovPoolDelegationHistoryByUserQuery,
   GovPoolExecutorQuery,
   GovPoolExecutorsQuery,
+  GovPoolActiveDelegations,
   GovProposalsWithRewardsQuery,
   GovProposalsWithDistributionQuery,
 }

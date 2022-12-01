@@ -14,7 +14,7 @@ type Result<T> = [
 ]
 
 interface QueryArgs<T> extends UseQueryArgs {
-  formatter: (d: any) => T[]
+  formatter: (newDataSlice: any, loadedData?: any) => T[]
 }
 
 interface PaginationArgs {
@@ -69,7 +69,7 @@ const useQueryPagination = <T>(
         (data !== undefined && prevFetching === undefined)) &&
       !error
     ) {
-      const newPieceOfData = formatter(data)
+      const newPieceOfData = formatter(data, result)
       if (newPieceOfData.length > 0) {
         setResult((d) => [...d, ...newPieceOfData])
       }
