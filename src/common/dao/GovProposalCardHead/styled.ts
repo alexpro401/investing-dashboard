@@ -1,7 +1,8 @@
 import styled from "styled-components"
 import { Icon } from "common"
+import { NavLink } from "react-router-dom"
 
-export const Container = styled.div`
+export const Container = styled(NavLink)`
   border-bottom: 1px solid #293c54;
   margin-bottom: 16px;
 `
@@ -12,6 +13,8 @@ export const Content = styled.div`
   align-items: center;
   gap: 8px;
   padding: 16px;
+  color: ${(props) => props.theme.textColors.primary};
+  text-decoration: none;
 `
 
 export const TitleWrapper = styled.div`

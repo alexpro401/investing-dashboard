@@ -547,3 +547,8 @@ export const getDaysToDate = (date): number => {
 }
 
 export * from "./date.util"
+
+export const createContentLink = (content: string) => {
+  const blob = new Blob([content], { type: "text/plain" })
+  return URL.createObjectURL(blob)
+}

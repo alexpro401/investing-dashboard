@@ -135,3 +135,16 @@ export type IExecutorType =
   | "add-token"
   | "custom"
   | "insurance"
+
+export const proposalTypeDataDecodingMap: Record<IExecutorType, string[]> = {
+  ["profile"]: ["string"], // description ipfs path
+  ["change-settings"]: [
+    "uint256[]",
+    "tuple(bool,bool,bool,uint64,uint64,uint128,uint128,uint256,uint256,address,uint256,uint256,uint256,string)[]",
+  ],
+  ["change-validator-balances"]: [],
+  ["distribution"]: [],
+  ["add-token"]: [],
+  ["custom"]: [],
+  ["insurance"]: [],
+}
