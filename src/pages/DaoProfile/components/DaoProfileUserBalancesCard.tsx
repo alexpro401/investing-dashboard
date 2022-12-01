@@ -9,7 +9,7 @@ import { AppButton } from "common"
 import Tooltip from "components/Tooltip"
 import ProgressLine from "components/ProgressLine"
 import { ICON_NAMES } from "constants/icon-names"
-import NftRow from "components/NftRow"
+import ERC721Row from "components/ERC721Row"
 import { ZERO } from "constants/index"
 
 interface Props {}
@@ -69,7 +69,7 @@ const DaoProfileUserBalancesCard: FC<Props> = () => {
         </Flex>
         <Collapse isOpen={showNftList} duration={0.3}>
           <Indents top side={false}>
-            <NftRow
+            <ERC721Row
               votingPower={ZERO}
               tokenId="1"
               // TODO: replace with real nft images
@@ -77,7 +77,7 @@ const DaoProfileUserBalancesCard: FC<Props> = () => {
             />
           </Indents>
           <Indents top side={false}>
-            <NftRow
+            <ERC721Row
               isLocked
               votingPower={ZERO}
               tokenId="2"
