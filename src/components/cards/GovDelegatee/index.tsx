@@ -1,21 +1,20 @@
 import * as React from "react"
-import { isNil } from "lodash"
 import { format } from "date-fns"
+import { isNil, map } from "lodash"
 import { BigNumber } from "@ethersproject/bignumber"
-import { v4 as uuidv4 } from "uuid"
 
 import * as S from "./styled"
 import theme, { Flex } from "theme"
 import { Icon, Collapse } from "common"
 
+import { Token } from "interfaces"
+import { ZERO } from "constants/index"
 import { DATE_FORMAT } from "constants/time"
 import { ICON_NAMES } from "constants/icon-names"
 import ExternalLink from "components/ExternalLink"
 import { expandTimestamp, formatBigNumber, shortenAddress } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { IGovPoolDelegationHistoryQuery } from "interfaces/thegraphs/gov-pools"
-import { ZERO } from "constants/index"
-import { Token } from "interfaces"
 
 interface GovDelegateeCardProps {
   data: IGovPoolDelegationHistoryQuery
@@ -100,8 +99,8 @@ const GovDelegateeCard: React.FC<GovDelegateeCardProps> = ({
               <Flex full ai={"flex-start"} jc={"space-between"}>
                 <S.GovDelegateeCardLabel>NFT received</S.GovDelegateeCardLabel>
                 <S.GovDelegateeCardValueNfts color={_valueColor}>
-                  {data.nfts.map((nftId, index) => (
-                    <span key={uuidv4()}>
+                  {map(data.nfts, (nftId, index) => (
+                    <span key={nftId}>
                       <>{index > 0 && ","}</>
                       &nbsp;
                       <>#{nftId}</>

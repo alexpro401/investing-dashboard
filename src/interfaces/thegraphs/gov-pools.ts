@@ -62,7 +62,7 @@ export interface IGovPoolDelegationHistoryQuery {
   }
   isDelegate: boolean
   amount: BigNumberish
-  nfts: BigNumberish[]
+  nfts: string[]
 }
 
 export interface IGovVoterInPoolPairsQuery {

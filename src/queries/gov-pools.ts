@@ -108,7 +108,6 @@ const GovPoolDelegationHistoryByUserQuery = (isUserDelegator = true) => `
       where: {
         pool: $address,
         ${isUserDelegator ? "from: $account," : "to: $account,"}
-        ${isUserDelegator ? "isDelegate: true," : "isDelegate: false,"}
       }
     ) {
       ${DELEGATION_HISTORY}
