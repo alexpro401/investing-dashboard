@@ -77,6 +77,17 @@ export const DelegateTerminal: FC<Props> = ({ daoPoolAddress }) => {
       )
     }
 
+    if (buttonType === ButtonTypes.DEPOSIT) {
+      return (
+        <S.SubmitButton
+          type="button"
+          size="large"
+          onClick={handleSubmit}
+          text="Deposit"
+        />
+      )
+    }
+
     return (
       <S.SubmitButton
         type="button"

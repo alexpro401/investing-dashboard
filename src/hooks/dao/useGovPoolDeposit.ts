@@ -1,23 +1,17 @@
-import { useGovPoolVotingAssets } from "hooks/dao"
 import { useCallback } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { useGovUserKeeperContract, useGovPoolContract } from "contracts"
-import { useERC20 } from "../useERC20"
 import useError from "hooks/useError"
 import usePayload from "../usePayload"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { SubmitState } from "constants/types"
 import { TransactionType } from "state/transactions/types"
 import { isTxMined, parseTransactionError } from "utils"
-import { useGovPoolHelperContracts } from "."
 
 const useGovPoolDeposit = (daoPoolAddress: string) => {
-  const [{ tokenAddress }] = useGovPoolVotingAssets(daoPoolAddress)
-  const [fromToken] = useERC20(tokenAddress)
   const govPoolContract = useGovPoolContract(daoPoolAddress)
   const userKeeperContract = useGovUserKeeperContract(daoPoolAddress)
-  const { govUserKeeperAddress } = useGovPoolHelperContracts(daoPoolAddress)
 
   const addTransaction = useTransactionAdder()
   const [, setPayload] = usePayload()
@@ -26,12 +20,9 @@ const useGovPoolDeposit = (daoPoolAddress: string) => {
   const daoDeposit = useCallback(
     async (account: string, amount: BigNumber, nftIds: number[]) => {
       try {
-        if (!account || !govPoolContract || !userKeeperContract || !fromToken)
-          return
+        if (!account || !govPoolContract || !userKeeperContract) return
 
         setPayload(SubmitState.SIGN)
-
-        await fromToken.approve(govUserKeeperAddress, amount)
 
         const transactionResponse = await govPoolContract.deposit(
           account,
@@ -57,15 +48,7 @@ const useGovPoolDeposit = (daoPoolAddress: string) => {
         }
       }
     },
-    [
-      govPoolContract,
-      userKeeperContract,
-      fromToken,
-      govUserKeeperAddress,
-      addTransaction,
-      setError,
-      setPayload,
-    ]
+    [govPoolContract, userKeeperContract, addTransaction, setError, setPayload]
   )
 
   return daoDeposit

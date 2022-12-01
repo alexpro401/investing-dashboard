@@ -8,6 +8,8 @@ import {
   useGovPoolHelperContracts,
   useGovPoolVotingAssets,
   useGovPoolDelegate,
+  useGovPoolWithdrawableAssets,
+  useGovPoolDeposit,
 } from "hooks/dao"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { multiplyBignumbers } from "utils/formulas"
@@ -20,6 +22,7 @@ export enum ButtonTypes {
   UNLOCK = "UNLOCK",
   INUFICIENT_TOKEN_BALANCE = "INUFICIENT_TOKEN_BALANCE",
   EMPTY_AMOUNT = "EMPTY_AMOUNT",
+  DEPOSIT = "DEPOSIT",
   SUBMIT = "SUBMIT",
 }
 
@@ -37,6 +40,15 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
 
   const { delegate } = useGovPoolDelegate(daoPoolAddress)
   const { govUserKeeperAddress } = useGovPoolHelperContracts(daoPoolAddress)
+  const deposit = useGovPoolDeposit(daoPoolAddress ?? "")
+  const withdrawableAssets = useGovPoolWithdrawableAssets({
+    daoPoolAddress,
+    delegator: account,
+  })
+  const depositedERC20Balance = withdrawableAssets?.tokens || ZERO
+  const depositedERC721Tokens =
+    withdrawableAssets?.nfts[0].map((v) => v.toNumber()) || []
+
   const [{ tokenAddress, nftAddress, haveToken, haveNft }] =
     useGovPoolVotingAssets(daoPoolAddress)
   const { ERC20Balance, ERC721Balance, tokenBalance } =
@@ -108,15 +120,29 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
     ERC20LockedBalance,
   ])
 
+  const isERC20Deposited = useMemo(() => {
+    return ERC20Amount.lt(depositedERC20Balance)
+  }, [ERC20Amount, depositedERC20Balance])
+
   const ownedERC721Selected = useMemo(() => {
     return ERC721Amount.filter((id) => ERC721OwnedBalance.includes(id))
   }, [ERC721Amount, ERC721OwnedBalance])
 
   const unapprowedERC721Selected = useMemo(() => {
     return ownedERC721Selected.filter(
-      (id) => ERC721Allowances[id] !== govUserKeeperAddress
+      (id) =>
+        ERC721Allowances[id].toLocaleLowerCase() !==
+        govUserKeeperAddress.toLocaleLowerCase()
     )
   }, [ERC721Allowances, ownedERC721Selected, govUserKeeperAddress])
+
+  const undepositedERC721Selected = useMemo(() => {
+    return ERC721Amount.filter(
+      (id) =>
+        !depositedERC721Tokens.includes(id) &&
+        !unapprowedERC721Selected.includes(id)
+    )
+  }, [ERC721Amount, depositedERC721Tokens, unapprowedERC721Selected])
 
   const totalPower = useMemo(() => {
     return ERC721Amount.reduce(
@@ -171,13 +197,19 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
       return ButtonTypes.UNLOCK
     }
 
+    if (!isERC20Deposited || !!undepositedERC721Selected.length) {
+      return ButtonTypes.DEPOSIT
+    }
+
     return ButtonTypes.SUBMIT
   }, [
     ERC20Amount,
-    ERC721Amount.length,
     ERC20Balance,
     isERC20Approved,
+    isERC20Deposited,
+    ERC721Amount.length,
     unapprowedERC721Selected.length,
+    undepositedERC721Selected.length,
   ])
 
   const handleERC20Change = useCallback(
@@ -217,7 +249,35 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
     updateERC721Allowance,
   ])
 
+  const handleDeposit = useCallback(() => {
+    if (!account) return
+
+    const erc20 = !isERC20Deposited
+      ? ERC20Amount.sub(depositedERC20Balance)
+      : ZERO
+
+    const erc721 = undepositedERC721Selected.length
+      ? undepositedERC721Selected
+      : []
+
+    console.log(erc20, erc721)
+
+    return deposit(account, erc20, erc721)
+  }, [
+    ERC20Amount,
+    account,
+    deposit,
+    depositedERC20Balance,
+    isERC20Deposited,
+    undepositedERC721Selected,
+  ])
+
   const handleSubmit = useCallback(async () => {
+    if (!isERC20Deposited || !!undepositedERC721Selected.length) {
+      await handleDeposit()
+      return
+    }
+
     if (!delegatee) return
 
     const erc20Amount = ERC20Amount
@@ -225,7 +285,15 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
     const depositNfts = ownedERC721Selected
 
     await delegate(delegatee, erc20Amount, depositNfts)
-  }, [delegatee, ownedERC721Selected, ERC20Amount, delegate])
+  }, [
+    isERC20Deposited,
+    undepositedERC721Selected.length,
+    delegatee,
+    ERC20Amount,
+    ownedERC721Selected,
+    delegate,
+    handleDeposit,
+  ])
 
   return {
     formInfo,
