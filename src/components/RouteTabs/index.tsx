@@ -11,7 +11,7 @@ interface IProps {
   tabs: ITab[]
 }
 
-const RouteTabs: FC<IProps> = ({ tabs, m = "0" }) => {
+const RouteTabs: FC<IProps> = ({ tabs, m = "0", ...rest }) => {
   const { pathname } = useLocation()
 
   return (
@@ -22,6 +22,7 @@ const RouteTabs: FC<IProps> = ({ tabs, m = "0" }) => {
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: -20, opacity: 0 }}
         transition={{ duration: 0.2 }}
+        {...rest}
       >
         {tabs.map((tab, tabIndex) => (
           <S.Tab

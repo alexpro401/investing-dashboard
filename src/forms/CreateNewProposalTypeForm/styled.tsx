@@ -2,6 +2,7 @@ import styled from "styled-components"
 import { motion } from "framer-motion"
 
 import { opacityVariants } from "motion/variants"
+import { Flex } from "theme"
 
 export const StepsContainer = styled(motion.div).attrs(() => ({
   initial: { opacity: 0 },
@@ -13,4 +14,17 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   display: flex;
   flex-direction: column;
   height: 100%;
+`
+
+export const StepsRoot = styled.div`
+  display: flex;
+  flex-direction: column;
+  transform: scale(1);
+  gap: 16px;
+  padding: 14px 16px 20px;
+`
+
+export const ButtonsContainer = styled(Flex)`
+  width: fill-available;
+  justify-content: space-around;
 `

@@ -1,4 +1,4 @@
-// interfaces for api's like bscscan, etherscan, etc
+export const REFETCH_INTERVAL = 60 * 1 * 1000 // 1 minute
 
 export interface GasPriceResponse {
   LastBlock: string

@@ -25,7 +25,7 @@ const Modal: FC<Props> = ({ children, isOpen, toggle, title, maxWidth }) => {
         transition={{ duration: 0.05 }}
         variants={{
           visible: {
-            opacity: 0.4,
+            opacity: 1,
             display: "block",
           },
           hidden: {

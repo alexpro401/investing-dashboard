@@ -79,7 +79,7 @@ function Investor() {
   }
 
   const InvestorPools = useMemo(() => {
-    if ((isNil(investorPools) && investorFetching) || isNil(account)) {
+    if ((isNil(investorPools) && fetchingInvestorPools) || isNil(account)) {
       return (
         <PoolsList maxH={false}>
           <Flex full p="16px" ai="center" jc="center">
@@ -90,10 +90,8 @@ function Investor() {
     }
 
     if (
-      (isNil(investorPools) ||
-        isEmpty(investorPools.traderPools) ||
-        isNil(account)) &&
-      !investorFetching
+      !fetchingInvestorPools &&
+      (isNil(investorPools) || isEmpty(investorPools.traderPools))
     ) {
       return (
         <PoolsList maxH={false}>
@@ -110,13 +108,18 @@ function Investor() {
       !isNil(account)
     ) {
       return (
-        <PoolsList maxH={investorPools.traderPools.length >= 3}>
-          {investorPools.traderPools.map((traderPool) => (
-            <To key={uuidv4()} to={`/pool/profile/${traderPool.id}`}>
-              <InvestedFund data={traderPool} account={account} />
-            </To>
-          ))}
-        </PoolsList>
+        <>
+          <TabContainer>
+            <Tab active>Funds I invest in</Tab>
+          </TabContainer>
+          <PoolsList maxH={investorPools.traderPools.length >= 3}>
+            {investorPools.traderPools.map((traderPool) => (
+              <To key={uuidv4()} to={`/pool/profile/${traderPool.id}`}>
+                <InvestedFund data={traderPool} account={account} />
+              </To>
+            ))}
+          </PoolsList>
+        </>
       )
     }
 
@@ -135,8 +138,14 @@ function Investor() {
           <TabContainer>
             <Tab active>Profit & Loss</Tab>
           </TabContainer>
-          <PoolPnlChart address={poolAddress} baseToken={poolData?.baseToken} />
-          <BarChart address={poolAddress} m="44px 0 22px" />
+          <Flex full dir={"column"} p={"0 16px"}>
+            <PoolPnlChart
+              address={poolAddress}
+              baseToken={poolData?.baseToken}
+              tfPosition="bottom"
+            />
+            <BarChart address={poolAddress} m="4px 0 12px" />
+          </Flex>
           <Row>
             <MainText>P&L LP - $ETH</MainText>
             <MainValue>+ 13.1% (+112.132 ETH)</MainValue>
@@ -146,12 +155,7 @@ function Investor() {
             <MainValue>+ 19.1% - 19.1 USD </MainValue>
           </Row>
         </TabCard>
-        <TabCard>
-          <TabContainer>
-            <Tab active>Funds I invest in</Tab>
-          </TabContainer>
-          {InvestorPools}
-        </TabCard>
+        <TabCard>{InvestorPools}</TabCard>
       </Container>
     </>
   )

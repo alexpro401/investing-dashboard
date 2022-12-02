@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { uniqBy } from "lodash"
 
 import Header from "components/Header/Layout"
 import TutorialCard from "components/TutorialCard"
@@ -41,6 +42,10 @@ const CreateProposalSelectType: React.FC = () => {
     specification: EProposalType.daoProfileModification,
   })
   const [customExecutors] = useGovPoolCustomExecutors(daoAddress)
+
+  const customExecutorsFiltered = useMemo(() => {
+    return uniqBy(customExecutors, "settings.settingsId")
+  }, [customExecutors])
 
   const proceedToNextStep = useCallback(async () => {
     //TODO NAVIGATE to path related to selected proposal type
@@ -207,7 +212,7 @@ const CreateProposalSelectType: React.FC = () => {
                 )
               }
             )}
-            {customExecutors.map(
+            {customExecutorsFiltered.map(
               ({ id, proposalName, proposalDescription, executorAddress }) => {
                 return (
                   <SelectableCard

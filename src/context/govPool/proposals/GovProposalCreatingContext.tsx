@@ -19,7 +19,6 @@ const initialSuccessModalState = {
 }
 
 interface IGovProposalCreatingContext {
-  contractAddress: { get: string; set: Dispatch<SetStateAction<string>> }
   proposalTypeName: { get: string; set: Dispatch<SetStateAction<string>> }
   proposalTypeDescription: {
     get: string
@@ -40,7 +39,6 @@ interface IGovProposalCreatingContextProviderProps {
 
 export const GovProposalCreatingContext =
   createContext<IGovProposalCreatingContext>({
-    contractAddress: { get: "", set: () => {} },
     proposalTypeName: { get: "", set: () => {} },
     proposalTypeDescription: { get: "", set: () => {} },
     proposalName: { get: "", set: () => {} },
@@ -54,7 +52,6 @@ export const GovProposalCreatingContext =
 const GovProposalCreatingContextProvider: React.FC<
   IGovProposalCreatingContextProviderProps
 > = ({ children }) => {
-  const [_contractAddress, _setContractAddress] = useState<string>("")
   const [_proposalTypeName, _setProposalTypeName] = useState<string>("")
   const [_proposalTypeDescritpion, _setProposalTypeDescritpion] =
     useState<string>("")
@@ -67,7 +64,6 @@ const GovProposalCreatingContextProvider: React.FC<
   return (
     <GovProposalCreatingContext.Provider
       value={{
-        contractAddress: { get: _contractAddress, set: _setContractAddress },
         proposalTypeName: { get: _proposalTypeName, set: _setProposalTypeName },
         proposalTypeDescription: {
           get: _proposalTypeDescritpion,

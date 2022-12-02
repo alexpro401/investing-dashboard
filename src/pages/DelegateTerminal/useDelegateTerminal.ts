@@ -281,6 +281,8 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
 
     const depositNfts = ownedERC721Selected
 
+    // TODO: deposit
+
     await delegate(delegatee, erc20Amount, depositNfts)
   }, [
     isERC20Deposited,

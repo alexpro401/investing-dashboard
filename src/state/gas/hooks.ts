@@ -1,5 +1,5 @@
 import { useWeb3React } from "@web3-react/core"
-import { GasPriceResponse } from "interfaces/explorer"
+import { GasPriceResponse } from "api/gas-price/types"
 import { useCallback } from "react"
 import { useSelector } from "react-redux"
 import { selectGasByChain } from "./selectors"

@@ -26,7 +26,7 @@ const GovPoolProposalChangeSettings: FC<Props> = ({ govPoolProposal }) => {
   const { chainId } = useWeb3React()
 
   const actualGovPoolSettings = useMemo(
-    () => govPoolProposal.proposalView?.proposal?.core?.settings,
+    () => govPoolProposal.coreSettings,
     [govPoolProposal]
   )
 
@@ -35,13 +35,13 @@ const GovPoolProposalChangeSettings: FC<Props> = ({ govPoolProposal }) => {
 
   const abiCoder = useMemo(() => new ethers.utils.AbiCoder(), [])
 
-  const decodeProposalData = useCallback(async () => {
+  const decodeProposalData = useCallback(() => {
     try {
       if (!govPoolProposal.proposalType) return
 
       const decodedData = abiCoder.decode(
         proposalTypeDataDecodingMap[govPoolProposal.proposalType],
-        "0x" + govPoolProposal.proposalView.proposal.data[0].slice(10)
+        "0x" + govPoolProposal.wrappedProposalView.proposal.data[0].slice(10)
       )
 
       setProposedGovPoolSettings({
