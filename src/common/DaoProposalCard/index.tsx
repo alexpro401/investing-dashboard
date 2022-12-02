@@ -1,6 +1,6 @@
 import * as S from "./styled"
 
-import { FC, HTMLAttributes, useMemo } from "react"
+import { FC, HTMLAttributes, useCallback, useMemo } from "react"
 import { normalizeBigNumber, fromBig, shortenAddress } from "utils"
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { useGovPoolProposal } from "hooks/dao"
@@ -12,6 +12,8 @@ import TokenIcon from "components/TokenIcon"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useWeb3React } from "@web3-react/core"
 import { ProposalState } from "types"
+import { isEqual } from "lodash"
+import { ZERO_ADDR } from "constants/index"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   proposalId: number
@@ -34,6 +36,11 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
     isDistribution,
     distributionProposalTokenAddress,
     distributionProposalToken,
+    rewardTokenAddress,
+
+    moveProposalToValidators,
+    claimRewards,
+    executeAndClaim,
   } = useGovPoolProposal(proposalId, daoAddress || "", proposalView)
 
   const { chainId } = useWeb3React()
@@ -64,17 +71,57 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
     () => String(proposalView.proposalState) === ProposalState.Executed,
     [proposalView.proposalState]
   )
-  const isProposalStateUndefined = useMemo(
-    () => String(proposalView.proposalState) === ProposalState.Undefined,
-    [proposalView.proposalState]
-  )
 
-  const isShowExecuteBtn = useMemo(() => {
-    return false
-  }, [])
-  const isShowTransferToSecondStepBtn = useMemo(() => {
-    return false
-  }, [])
+  const cardBtnText = useMemo(() => {
+    if (isProposalStateVoting) {
+      return voteEnd
+    } else if (isProposalStateWaitingForVotingTransfer) {
+      return "Start second step (validators)"
+    } else if (isProposalStateValidatorVoting) {
+      return `Second step ${voteEnd}`
+    } else if (isProposalStateSucceeded) {
+      return "Execute"
+    } else if (isProposalStateExecuted) {
+      if (rewardTokenAddress && !isEqual(rewardTokenAddress, ZERO_ADDR)) {
+        return "Claim"
+      } else {
+        return ""
+      }
+    } else {
+      return ""
+    }
+  }, [
+    isProposalStateExecuted,
+    isProposalStateSucceeded,
+    isProposalStateValidatorVoting,
+    isProposalStateVoting,
+    isProposalStateWaitingForVotingTransfer,
+    rewardTokenAddress,
+    voteEnd,
+  ])
+
+  const handleCardBtnClick = useCallback(async () => {
+    if (isProposalStateWaitingForVotingTransfer) {
+      await moveProposalToValidators()
+    } else if (isProposalStateSucceeded) {
+      await executeAndClaim()
+    } else if (
+      isProposalStateExecuted &&
+      !!rewardTokenAddress &&
+      !isEqual(rewardTokenAddress, ZERO_ADDR)
+    ) {
+      // TODO: check if user already claimed
+      await claimRewards()
+    }
+  }, [
+    claimRewards,
+    executeAndClaim,
+    isProposalStateExecuted,
+    isProposalStateSucceeded,
+    isProposalStateWaitingForVotingTransfer,
+    moveProposalToValidators,
+    rewardTokenAddress,
+  ])
 
   return (
     <S.Root {...rest}>
@@ -176,7 +223,12 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
           </S.DaoProposalCardBlockInfoLabel>
         </S.DaoProposalCardBlockInfo>
 
-        <S.DaoCenteredButton text={voteEnd} />
+        {!isProposalStateDefeated && cardBtnText && (
+          <S.DaoCenteredButton
+            text={cardBtnText}
+            onClick={handleCardBtnClick}
+          />
+        )}
       </S.DaoProposalCardBody>
     </S.Root>
   )

@@ -10,6 +10,7 @@ import {
   useDistributionProposalToken,
 } from "hooks/dao"
 import { BigNumber } from "@ethersproject/bignumber"
+import { ProposalState } from "types"
 
 const GovPoolGraphClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -20,7 +21,13 @@ export const useGovPoolProposal = (
   govPoolAddress: string,
   proposalView: IGovPool.ProposalViewStructOutput
 ) => {
-  const { govPoolContract } = useGovPool(govPoolAddress)
+  const {
+    govPoolContract,
+    moveProposalToValidators: _moveProposalToValidators,
+    execute: _execute,
+    executeAndClaim: _executeAndClaim,
+    claimRewards: _claimRewards,
+  } = useGovPool(govPoolAddress)
   const { account } = useActiveWeb3React()
 
   const [{ data }] = useQuery({
@@ -63,9 +70,13 @@ export const useGovPoolProposal = (
   )
 
   const voteEnd = useMemo(() => {
+    const isValidatorsVoting =
+      String(proposalView?.proposalState) === ProposalState.ValidatorVoting
     return proposalView?.proposal
       ? (DateUtil.fromTimestamp(
-          proposalView?.proposal.core.voteEnd.toNumber(),
+          isValidatorsVoting
+            ? proposalView?.validatorProposal?.core?.voteEnd.toNumber()
+            : proposalView?.proposal.core.voteEnd.toNumber(),
           "dd/mm/yy hh:mm:ss"
         ) as string)
       : ""
@@ -107,10 +118,12 @@ export const useGovPoolProposal = (
   }, [proposalView])
 
   const loadProposalTotalVotes = useCallback(async () => {
+    if (!account) return
+
     try {
       const amounts = await govPoolContract?.getTotalVotes(
         proposalId,
-        account!,
+        account,
         false
       )
       const accountVotesAmount = amounts?.[1]
@@ -145,7 +158,7 @@ export const useGovPoolProposal = (
 
   const isInsurance = useMemo(() => {
     return false
-  }, [proposalView])
+  }, [])
 
   const isDistribution = useMemo(() => {
     return executor?.type === "distribution"
@@ -165,6 +178,27 @@ export const useGovPoolProposal = (
     distributionProposalTokenAddress
   )
 
+  const rewardTokenAddress = useMemo(
+    () => proposalView.proposal.core.settings.rewardToken,
+    [proposalView]
+  )
+
+  const moveProposalToValidators = useCallback(async () => {
+    await _moveProposalToValidators(String(proposalId))
+  }, [_moveProposalToValidators, proposalId])
+
+  const execute = useCallback(async () => {
+    await _execute(String(proposalId))
+  }, [_execute, proposalId])
+
+  const executeAndClaim = useCallback(async () => {
+    await _executeAndClaim(String(proposalId))
+  }, [_executeAndClaim, proposalId])
+
+  const claimRewards = useCallback(async () => {
+    await _claimRewards([String(proposalId)])
+  }, [_claimRewards, proposalId])
+
   return {
     govPoolContract,
     proposalView,
@@ -181,6 +215,7 @@ export const useGovPoolProposal = (
     distributionProposalTokenAddress,
     distributionProposalTokenAmount,
     distributionProposalToken,
+    rewardTokenAddress,
 
     proposalType,
     voteEnd,
@@ -191,5 +226,10 @@ export const useGovPoolProposal = (
     executed,
     isInsurance,
     isDistribution,
+
+    moveProposalToValidators,
+    execute,
+    executeAndClaim,
+    claimRewards,
   }
 }

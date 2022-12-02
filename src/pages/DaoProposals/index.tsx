@@ -2,7 +2,7 @@ import * as S from "./styled"
 
 import { FC, HTMLAttributes } from "react"
 import Header from "components/Header/Layout"
-import { Routes, Route, useParams, Outlet, Navigate } from "react-router-dom"
+import { Routes, Route, useParams, Navigate } from "react-router-dom"
 import DaoProposalsList from "pages/DaoProposals/DaoProposalsList"
 import * as React from "react"
 
@@ -68,7 +68,7 @@ const DaoProposals: FC<Props> = () => {
             element={
               <>
                 <S.PageSubTabs tabs={ENDED_TABS} />
-                <DaoProposalsList status="ended" />
+                <DaoProposalsList status="ended-passed" />
               </>
             }
           />
@@ -77,7 +77,7 @@ const DaoProposals: FC<Props> = () => {
             element={
               <>
                 <S.PageSubTabs tabs={ENDED_TABS} />
-                <DaoProposalsList status="ended" />
+                <DaoProposalsList status="ended-rejected" />
               </>
             }
           />
@@ -96,7 +96,7 @@ const DaoProposals: FC<Props> = () => {
             element={
               <>
                 <S.PageSubTabs tabs={COMPLETED_TABS} />
-                <DaoProposalsList status="completed" />
+                <DaoProposalsList status="completed-all" />
               </>
             }
           />
@@ -105,7 +105,7 @@ const DaoProposals: FC<Props> = () => {
             element={
               <>
                 <S.PageSubTabs tabs={COMPLETED_TABS} />
-                <DaoProposalsList status="completed" />
+                <DaoProposalsList status="completed-rewards" />
               </>
             }
           />
