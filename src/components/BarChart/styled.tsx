@@ -50,10 +50,9 @@ function getBr(r) {
 }
 
 const Styled = {
-  Container: styled(Flex)<{ m?: string }>`
+  Container: styled(Flex)`
     width: 100%;
     justify-content: space-between;
-    margin: ${({ m }) => m ?? "0"};
   `,
   Tip: styled.img`
     position: absolute;

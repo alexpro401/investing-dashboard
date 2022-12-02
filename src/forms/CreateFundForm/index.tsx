@@ -21,7 +21,6 @@ import TokenSelect from "modals/TokenSelect"
 
 import { bigify, isTxMined } from "utils"
 import { Token } from "lib/entities"
-import { addFundMetadata } from "utils/ipfs"
 import { UpdateListType } from "constants/types"
 import { useUserAgreement } from "state/user/hooks"
 import { TransactionType } from "state/transactions/types"
@@ -55,6 +54,7 @@ import {
 import { useUserTokens, useWhitelistTokens } from "hooks/useToken"
 import { useAllTokenBalances } from "hooks/useBalance"
 import { usePoolFactoryContract, useTraderPoolContract } from "contracts"
+import { IpfsEntity } from "utils/ipfsEntity"
 
 const deployMethodByType = {
   basic: "deployBasicPool",
@@ -136,19 +136,24 @@ const CreateFund: FC<Props> = ({ presettedFundType = "basic" }) => {
   const handlePoolCreate = useCallback(async () => {
     if (!account || !traderPoolFactory) return
 
-    const ipfsReceipt = await addFundMetadata(
-      [avatarBlobString],
-      description,
-      strategy,
-      account
-    )
+    const poolIpfsMetadataEntity = new IpfsEntity({
+      data: JSON.stringify({
+        assets: [avatarBlobString],
+        description,
+        strategy,
+        account,
+        timestamp: new Date().getTime() / 1000,
+      }),
+    })
+
+    await poolIpfsMetadataEntity.uploadSelf()
 
     const totalEmission = bigify(totalLPEmission, 18).toHexString()
     const minInvest = bigify(minimalInvestment, 18).toHexString()
     const percentage = bigify(commissionPercentage.toString(), 25).toHexString()
 
     const poolParameters = {
-      descriptionURL: ipfsReceipt.path,
+      descriptionURL: poolIpfsMetadataEntity._path,
       trader: account,
       privatePool: isInvestorsAdded,
       totalLPEmission: totalEmission,

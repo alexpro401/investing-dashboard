@@ -1,16 +1,19 @@
 import { ICON_NAMES } from "constants/icon-names"
-import { FC } from "react"
+import { FC, ReactNode } from "react"
+import { isNil } from "lodash"
 import * as S from "./styled"
 
 interface Props {
   url: string
+  round?: boolean
   isLocked?: boolean
+  iconNode?: ReactNode
 }
 
-const NftIcon: FC<Props> = ({ url, isLocked }) => {
+const NftIcon: FC<Props> = ({ url, isLocked, round, iconNode }) => {
   return (
-    <S.Container locked={isLocked}>
-      <S.NftIcon src={url}></S.NftIcon>
+    <S.Container locked={isLocked} round={round}>
+      {!isNil(iconNode) ? iconNode : <S.NftIcon src={url}></S.NftIcon>}
       {isLocked && <S.LockedIcon name={ICON_NAMES.locked} />}
     </S.Container>
   )
