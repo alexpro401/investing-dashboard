@@ -37,6 +37,12 @@ const useGovPoolMemberBalance = (
     isMicroPool: true,
   })
 
+  const tokenBalanceLocked = useMemo(() => {
+    if (!tokenBalance) return ZERO
+
+    return tokenBalance.totalBalance.sub(tokenBalance.ownedBalance)
+  }, [tokenBalance])
+
   const ERC20Balance = useMemo(() => {
     if (withDelegated) {
       return (
@@ -65,6 +71,7 @@ const useGovPoolMemberBalance = (
     ERC20Balance,
     ERC721Balance,
     tokenBalance,
+    tokenBalanceLocked,
     tokenBalanceDelegated,
     nftBalance,
     nftBalanceWithDelegated,

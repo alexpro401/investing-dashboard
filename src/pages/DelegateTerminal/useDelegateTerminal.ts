@@ -41,30 +41,27 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
   const { delegate } = useGovPoolDelegate(daoPoolAddress)
   const { govUserKeeperAddress } = useGovPoolHelperContracts(daoPoolAddress)
   const deposit = useGovPoolDeposit(daoPoolAddress ?? "")
+
+  // TODO: realtime update
   const withdrawableAssets = useGovPoolWithdrawableAssets({
     daoPoolAddress,
     delegator: account,
   })
   const depositedERC20Balance = withdrawableAssets?.tokens || ZERO
-  const depositedERC721Tokens =
-    withdrawableAssets?.nfts[0].map((v) => v.toNumber()) || []
+  const depositedERC721Tokens = useMemo(
+    () => withdrawableAssets?.nfts[0].map((v) => v.toNumber()) || [],
+    [withdrawableAssets]
+  )
 
   const [{ tokenAddress, nftAddress, haveToken, haveNft }] =
     useGovPoolVotingAssets(daoPoolAddress)
-  const { ERC20Balance, ERC721Balance, tokenBalance } =
+  const { ERC20Balance, ERC721Balance, tokenBalance, tokenBalanceLocked } =
     useGovPoolMemberBalance(daoPoolAddress)
 
   const [fromData] = useERC20Data(tokenAddress)
   const priceUSD = useTokenPriceOutUSD({ tokenAddress })
 
   const ERC721OwnedBalance = useOwnedERC721Tokens(daoPoolAddress)
-
-  const ERC20LockedBalance = useMemo(
-    () =>
-      tokenBalance?.totalBalance.sub(tokenBalance?.ownedBalance || ZERO) ||
-      ZERO,
-    [tokenBalance]
-  )
 
   const { allowances: ERC20Allowances, updateAllowance: updateERC20Allowance } =
     useERC20Allowance([tokenAddress], govUserKeeperAddress)
@@ -103,25 +100,25 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
   }, [allNftsId, allNftsPower])
 
   const isOwnedERC20Used = useMemo(() => {
-    return ERC20Amount.gt(ERC20LockedBalance)
-  }, [ERC20Amount, ERC20LockedBalance])
+    return ERC20Amount.gt(tokenBalanceLocked)
+  }, [ERC20Amount, tokenBalanceLocked])
 
   const isERC20Approved = useMemo(() => {
     if (!isOwnedERC20Used) return true
 
     return ERC20Allowances[tokenAddress]?.gte(
-      ERC20Amount.sub(ERC20LockedBalance)
+      ERC20Amount.sub(tokenBalanceLocked)
     )
   }, [
     ERC20Amount,
     ERC20Allowances,
     isOwnedERC20Used,
     tokenAddress,
-    ERC20LockedBalance,
+    tokenBalanceLocked,
   ])
 
   const isERC20Deposited = useMemo(() => {
-    return ERC20Amount.lt(depositedERC20Balance)
+    return ERC20Amount.lte(depositedERC20Balance)
   }, [ERC20Amount, depositedERC20Balance])
 
   const ownedERC721Selected = useMemo(() => {
@@ -228,7 +225,7 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
   const handleApprove = useCallback(() => {
     // approve erc20
     if (!isERC20Approved) {
-      const amount = ERC20Amount.sub(ERC20LockedBalance)
+      const amount = ERC20Amount.sub(tokenBalanceLocked)
 
       updateERC20Allowance(tokenAddress, amount)
       return
@@ -242,7 +239,7 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
   }, [
     isERC20Approved,
     unapprowedERC721Selected,
-    ERC20LockedBalance,
+    tokenBalanceLocked,
     ERC20Amount,
     updateERC20Allowance,
     tokenAddress,
