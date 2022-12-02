@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit"
-import { GasPriceResponse } from "interfaces/explorer"
+import { GasPriceResponse } from "api/gas-price/types"
 import { updateGasData } from "./actions"
 
 export interface GasState {

@@ -18,8 +18,8 @@ export const Container = styled(motion.div)<{ maxWidth?: string }>`
 `
 
 export const Overlay = styled(motion.div)`
-  background: rgba(27, 27, 27, 0.6);
-  backdrop-filter: blur(6px);
+  background: rgba(34, 41, 58, 0.6);
+  backdrop-filter: blur(3px);
   position: absolute;
   top: 0;
   right: 0;
