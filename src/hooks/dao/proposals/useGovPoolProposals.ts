@@ -1,39 +1,59 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useGovPool } from "hooks/dao"
-import { IGovPool } from "interfaces/typechain/GovPool"
+import { WrappedProposalView } from "types"
+import { isEqual } from "lodash"
 
-export const useGovPoolProposals = (govPoolAddress: string) => {
+export const useGovPoolProposals = (
+  govPoolAddress?: string,
+  _offset?: number,
+  _limit?: number
+) => {
+  const { getProposals } = useGovPool(govPoolAddress)
+
+  const [offset, setOffset] = useState(_offset || 0)
+  const [limit, setLimit] = useState(_limit || 500)
+
   const [isLoaded, setIsLoaded] = useState(false)
   const [isLoadFailed, setIsLoadFailed] = useState(false)
 
-  const [proposalViews, setProposalViews] = useState<
-    IGovPool.ProposalViewStructOutput[]
+  const [wrappedProposalViews, setWrappedProposalViews] = useState<
+    WrappedProposalView[]
   >([])
 
-  const { govPoolContract } = useGovPool(govPoolAddress)
+  const loadProposals = useCallback(async () => {
+    try {
+      const data = await getProposals(offset, limit)
 
-  const loadProposals = useCallback(
-    async (offset = 0, limit = 15) => {
-      try {
-        const data = await govPoolContract?.getProposals(offset, limit)
+      if (data) {
+        setWrappedProposalViews((prev) => {
+          const next = data.map(
+            (el, idx) =>
+              ({
+                ...el,
+                proposalId: offset + idx + 1,
+              } as WrappedProposalView)
+          )
 
-        if (data) {
-          setProposalViews(data)
-        }
-      } catch (error) {
-        setIsLoadFailed(true)
+          return isEqual(prev, next) ? prev : next
+        })
       }
-      setIsLoaded(true)
-    },
-    [govPoolContract]
-  )
+    } catch (error) {
+      setIsLoadFailed(true)
+    }
+    setIsLoaded(true)
+  }, [getProposals, limit, offset])
+
+  useEffect(() => {
+    loadProposals()
+  }, [offset, limit, loadProposals])
 
   return {
     isLoaded,
     isLoadFailed,
 
-    proposalViews,
+    wrappedProposalViews,
 
-    loadProposals,
+    setOffset,
+    setLimit,
   }
 }

@@ -15,12 +15,12 @@ const VotingHistoryTab: FC<Props> = ({ govPoolProposal }) => {
   const [offset, setOffset] = useState(0)
   const limit = useMemo(() => 1, [])
 
-  const { proposalVotes, isLoading, error, totalVotesCount } =
+  const { proposalVotes, isLoading, totalVotesCount } =
     useGovPoolProposalVotingHistory(
-      govPoolProposal.govPoolAddress,
-      govPoolProposal.proposalId,
       offset,
-      limit
+      limit,
+      govPoolProposal.govPoolAddress,
+      String(govPoolProposal?.wrappedProposalView?.proposalId)
     )
 
   const { chainId } = useActiveWeb3React()
