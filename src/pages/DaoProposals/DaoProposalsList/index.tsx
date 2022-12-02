@@ -16,7 +16,7 @@ const DaoProposalsList: FC<Props> = () => {
     useGovPoolProposals(daoAddress!)
 
   const paginationOffset = 0
-  const paginationPageLimit = 15
+  const paginationPageLimit = 500
 
   useEffectOnce(() => {
     loadProposals(paginationOffset, paginationPageLimit)
@@ -27,7 +27,7 @@ const DaoProposalsList: FC<Props> = () => {
       {isLoaded ? (
         isLoadFailed ? (
           <p>Oops... Something went wrong</p>
-        ) : (
+        ) : proposalViews.length ? (
           <S.DaoProposalsListBody>
             {proposalViews.map((proposalView, idx) => (
               <DaoProposalCard
@@ -37,6 +37,8 @@ const DaoProposalsList: FC<Props> = () => {
               />
             ))}
           </S.DaoProposalsListBody>
+        ) : (
+          <p>{"There's no proposals, yet"}</p>
         )
       ) : (
         <>
