@@ -1,3 +1,15 @@
+import { useParams } from "react-router-dom"
+import theme from "theme"
+
+import {
+  FC,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useMemo,
+} from "react"
+
 import {
   AppButton,
   Card,
@@ -5,79 +17,38 @@ import {
   CardHead,
   CreateDaoCardStepNumber,
 } from "common"
-import { ICON_NAMES } from "constants/icon-names"
-import { AdvancedABIContext } from "context/govPool/proposals/custom/AdvancedABIContext"
+
 import {
   InputField,
   OverlapInputField,
   SelectField,
   TextareaField,
 } from "fields"
-import JSONField from "fields/JSONField"
-import { useAbiList } from "hooks/useABI"
-import { useFormValidation } from "hooks/useFormValidation"
+
 import ABIConstructor from "modals/ABIConstructor"
-import React, {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from "react"
-import { useParams } from "react-router-dom"
-import theme from "theme"
+
+import { ICON_NAMES } from "constants/icon-names"
+import { AdvancedABIContext } from "context/govPool/proposals/custom/AdvancedABIContext"
+
+import { useFormValidation } from "hooks/useFormValidation"
+import useAbiKeeper from "hooks/useAbiKeeper"
+
 import { isAddress, shortenAddress } from "utils"
 import { readFromClipboard } from "utils/clipboard"
 import { required, isAddressValidator } from "utils/validators"
 
 import * as S from "../styled"
 
-const useAbiKeeper = (addresses: string[], executors: string[]) => {
-  const [storedAbi, setStoredAbi] = useState<Record<string, string>>({})
+// TODO: improvements
+// 1. save selected method & params decoded in context - needed to parse data in preview
+// 2. improve ABI form fields - add loading state, add clear button, add paste button
 
-  const abis = useAbiList(addresses)
-  const executorsAbis = useAbiList(executors)
-
-  const handleCustomAbi = useCallback(
-    (address: string, abi: string) => {
-      setStoredAbi((prev) => ({ ...prev, [address]: abi }))
-    },
-    [setStoredAbi]
-  )
-
-  const abisWithCustom = useMemo(() => {
-    return addresses.map((address, index) => {
-      if (address in storedAbi) {
-        return storedAbi[address]
-      }
-
-      return abis[index]
-    })
-  }, [abis, addresses, storedAbi])
-
-  const executorsAbisWithCustom = useMemo(() => {
-    return executors.map((address, index) => {
-      if (address in storedAbi) {
-        return storedAbi[address]
-      }
-
-      return executorsAbis[index]
-    })
-  }, [executors, executorsAbis, storedAbi])
-
-  return {
-    abis: abisWithCustom,
-    executorsAbis: executorsAbisWithCustom,
-    handleCustomAbi,
-  }
-}
-
-const AbiStep: React.FC = () => {
+const AbiStep: FC = () => {
   const { daoAddress, executorAddress } = useParams<
     "daoAddress" | "executorAddress"
   >()
 
+  // TODO: Dummy data -> replace to hook data
   const executors = useMemo(
     () => [
       "0x8eff9efd56581bb5b8ac5f5220fab9a7349160e3",
@@ -111,7 +82,6 @@ const AbiStep: React.FC = () => {
   const { getFieldErrorMessage, touchField } = useFormValidation(
     {
       contractAdresses: contractAdresses.get,
-      abi: abis,
     },
     {
       contractAdresses: { required, isAddressValidator },
@@ -166,12 +136,12 @@ const AbiStep: React.FC = () => {
           )}
         />
 
-        <JSONField
-          placeholder="ABI"
+        <TextareaField
           value={executorsAbis[executors.indexOf(executorSelectedAddress.get)]}
           setValue={(value) =>
-            handleCustomAbi(executorSelectedAddress.get, value)
+            handleCustomAbi(executorSelectedAddress.get, value as string)
           }
+          label="ABI"
         />
 
         <OverlapInputField
@@ -206,10 +176,10 @@ const AbiStep: React.FC = () => {
       </S.ContractCard>
     ),
     [
-      executors,
-      executorsAbis,
       executorValue,
       executorSelectedAddress,
+      executors,
+      executorsAbis,
       encodedMethods.get,
       modal.get,
       handleCustomAbi,

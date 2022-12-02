@@ -11,8 +11,13 @@ const useABI = () => {
       try {
         const response = await ContractAPI.getContractABI(abi)
 
-        return JSON.parse(response.result)
-      } catch {
+        if (response.status === "1") {
+          return JSON.parse(response.result)
+        }
+
+        return null
+      } catch (error) {
+        console.error(error)
         return null
       }
     },
