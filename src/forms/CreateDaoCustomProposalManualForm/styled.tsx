@@ -48,3 +48,7 @@ export const ButtonsContainer = styled(Flex)`
   width: fill-available;
   justify-content: space-around;
 `
+
+export const SelectFieldAddress = styled.span`
+  color: ${({ theme }) => theme.textColors.primary};
+`

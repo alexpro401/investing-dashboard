@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from "react"
+import React, { useContext, useCallback, useMemo } from "react"
 import { useParams } from "react-router-dom"
 
 import {
@@ -11,13 +11,16 @@ import {
 } from "common"
 import { useFormValidation } from "hooks/useFormValidation"
 import { AdvancedManualContext } from "context/govPool/proposals/custom/AdvancedManualContext"
-import { OverlapInputField, TextareaField, InputField } from "fields"
-import { isAddress, shortenAddress } from "utils"
+import { TextareaField, InputField, SelectField } from "fields"
+import { shortenAddress } from "utils"
 import { stepsControllerContext } from "context/StepsControllerContext"
-import { readFromClipboard } from "utils/clipboard"
 import theme from "theme"
 import { ICON_NAMES } from "constants/icon-names"
 import { isAddressValidator, required } from "utils/validators"
+import {
+  useGovPoolSettingsIdToExecutors,
+  useGovPoolExecutorToSettings,
+} from "hooks/dao"
 
 import * as S from "../styled"
 
@@ -25,6 +28,17 @@ const ManualStep: React.FC = () => {
   const { daoAddress, executorAddress } = useParams<
     "daoAddress" | "executorAddress"
   >()
+
+  const [settingsId] = useGovPoolExecutorToSettings(daoAddress, executorAddress)
+  const [executors] = useGovPoolSettingsIdToExecutors(
+    daoAddress,
+    settingsId ? settingsId.toString() : undefined
+  )
+
+  const executorsShorten = useMemo(
+    () => (executors ? executors.map((el) => el.executorAddress) : []),
+    [executors]
+  )
 
   const { contracts, onContractDelete, onContractAdd } = useContext(
     AdvancedManualContext
@@ -53,10 +67,6 @@ const ManualStep: React.FC = () => {
       }
     )
 
-  const pasteFromClipboard = useCallback(async (dispatchCb: any) => {
-    dispatchCb(await readFromClipboard())
-  }, [])
-
   const handleNextStep = useCallback(() => {
     touchForm()
     if (!isFieldsValid) return
@@ -79,58 +89,32 @@ const ManualStep: React.FC = () => {
         return (
           <S.ContractCard key={contract.id}>
             <CardHead title={`Contract ${index + 1}`} />
-            <OverlapInputField
-              readonly
-              value={contract.contractAddress}
-              setValue={(value) =>
+            <SelectField
+              placeholder="Contract address"
+              selected={contract.contractAddress ?? undefined}
+              setSelected={(newSelectedAddress) => {
                 contracts.set(index, {
                   ...contract,
-                  contractAddress: value as string,
+                  contractAddress: newSelectedAddress ?? "",
                 })
-              }
-              label="Contract address"
+              }}
+              list={executorsShorten}
               errorMessage={getFieldErrorMessage(`contractAddresses[${index}]`)}
               onBlur={() => touchField(`contractAdresses[${index}]`)}
-              overlapNodeLeft={
-                isAddress(contract.contractAddress) ? (
-                  <S.Address>
-                    {shortenAddress(contract.contractAddress, 4)}
-                  </S.Address>
+              renderSelected={(address) =>
+                address ? (
+                  <S.SelectFieldAddress>
+                    {shortenAddress(address)}
+                  </S.SelectFieldAddress>
                 ) : null
               }
-              nodeLeft={null}
-              nodeRight={
-                contract.contractAddress === "" ? (
-                  <AppButton
-                    type="button"
-                    text="Paste"
-                    color="default"
-                    size="no-paddings"
-                    onClick={() =>
-                      pasteFromClipboard((value) =>
-                        contracts.set(index, {
-                          ...contract,
-                          contractAddress: value as string,
-                        })
-                      )
-                    }
-                  />
-                ) : (
-                  <AppButton
-                    style={{ color: theme.statusColors.error }}
-                    type="button"
-                    text="Clear"
-                    color="default"
-                    size="no-paddings"
-                    onClick={() =>
-                      contracts.set(index, {
-                        ...contract,
-                        contractAddress: "",
-                      })
-                    }
-                  />
+              renderItem={(item) => {
+                return (
+                  <S.SelectFieldAddress>
+                    {shortenAddress(item)}
+                  </S.SelectFieldAddress>
                 )
-              }
+              }}
             />
             <TextareaField
               value={contract.transactionData}

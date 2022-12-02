@@ -1,10 +1,10 @@
 import { useMemo } from "react"
 import { createClient, useQuery } from "urql"
 
-import { GovPoolExecutorsQuery } from "queries/gov-pools"
+import { IExecutor, IExecutorType } from "types/dao.types"
+import { GovPoolExecutorsBySettingIdQuery } from "queries/gov-pools"
 import { isAddress } from "utils"
 import { useGovPoolExecutorType } from "hooks/dao"
-import { IExecutor, IExecutorType } from "types/dao.types"
 
 interface IExecutorExtended extends IExecutor {
   type: IExecutorType
@@ -19,17 +19,22 @@ const daoGraphClient = createClient({
   requestPolicy: "network-only",
 })
 
-const useGovPoolExecutors = (
-  govPoolAddress?: string
+const useGovPoolSettingsIdToExecutors = (
+  govPoolAddress: string | undefined,
+  settingsId: string | undefined
 ): [IExecutorExtended[], boolean] => {
   const [{ data, fetching }] = useQuery<IExecutorsQueryData>({
-    query: GovPoolExecutorsQuery,
-    pause: !isAddress(govPoolAddress),
-    variables: useMemo(() => ({ address: govPoolAddress }), [govPoolAddress]),
+    query: GovPoolExecutorsBySettingIdQuery,
+    pause: !isAddress(govPoolAddress) || !settingsId,
+    variables: useMemo(
+      () => ({
+        address: govPoolAddress?.toLowerCase(),
+        settingsId: settingsId,
+      }),
+      [govPoolAddress, settingsId]
+    ),
     context: daoGraphClient,
   })
-
-  console.log("data: ", data)
 
   const executorTypes = useGovPoolExecutorType(
     govPoolAddress ?? "",
@@ -50,4 +55,4 @@ const useGovPoolExecutors = (
   return [executors, fetching]
 }
 
-export default useGovPoolExecutors
+export default useGovPoolSettingsIdToExecutors
