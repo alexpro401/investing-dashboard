@@ -15,6 +15,7 @@ import {
   Card,
   CardDescription,
   CardHead,
+  CollapsedCard,
   CreateDaoCardStepNumber,
 } from "common"
 
@@ -112,9 +113,7 @@ const AbiStep: FC = () => {
 
   const executorCardRenderer = useCallback(
     () => (
-      <S.ContractCard>
-        <CardHead title="Executor contract" />
-
+      <CollapsedCard title="Executor contract">
         <InputField
           placeholder="Value (optional)"
           type="text"
@@ -173,7 +172,7 @@ const AbiStep: FC = () => {
             </S.NodeRightContainer>
           }
         />
-      </S.ContractCard>
+      </CollapsedCard>
     ),
     [
       executorValue,
@@ -189,8 +188,7 @@ const AbiStep: FC = () => {
 
   const addressCardRenderer = useCallback(
     ([id, address]: [id: string, address: string], index: number) => (
-      <S.ContractCard key={id}>
-        <CardHead title={`Contract ${index + 1}`} />
+      <CollapsedCard key={id} title={`Contract ${index + 1}`}>
         <InputField
           placeholder="Value (optional)"
           type="text"
@@ -281,7 +279,7 @@ const AbiStep: FC = () => {
             onClick={() => onContractAddressDelete(index)}
           />
         </S.CardFooter>
-      </S.ContractCard>
+      </CollapsedCard>
     ),
     [
       contractValues,

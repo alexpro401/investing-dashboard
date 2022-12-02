@@ -39,10 +39,6 @@ export const CardFooter = styled(Flex)`
   justify-content: space-around;
 `
 
-export const ContractCard = styled(Card)`
-  gap: 16px;
-`
-
 export const NodeRightContainer = styled(motion.div)`
   padding: 5px;
   cursor: pointer;
