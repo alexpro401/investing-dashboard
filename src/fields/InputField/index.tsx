@@ -29,7 +29,7 @@ export enum EInputBorderColors {
 export interface Props<V extends string | number>
   extends HTMLAttributes<HTMLInputElement> {
   value: V
-  setValue?: Dispatch<SetStateAction<V>>
+  setValue?: (value: V) => void
   type?: string
   label?: string
   labelNodeRight?: ReactNode
@@ -75,6 +75,10 @@ function InputField<V extends string | number>({
   const uid = useMemo(() => uuidv4(), [])
   const [isFocused, setIsFocused] = useState(false)
 
+  const inputType = useMemo(
+    () => (type === INPUT_TYPES.number ? INPUT_TYPES.text : type),
+    [type]
+  )
   const isNumberType = useMemo(() => type === INPUT_TYPES.number, [type])
 
   const isDisabled = useMemo(
@@ -126,7 +130,7 @@ function InputField<V extends string | number>({
         onInput(event)
       }
     },
-    [isNumberType, normalizeRange, onInput, setValue, value]
+    [isNumberType, normalizeRange, normalizeNumber, onInput, setValue, value]
   )
 
   const handleChange = useCallback(
@@ -178,7 +182,8 @@ function InputField<V extends string | number>({
           }}
           placeholder={placeholder}
           tabIndex={isDisabled || isReadonly ? -1 : tabindex}
-          type="text"
+          type={inputType}
+          inputMode={isNumberType ? "decimal" : undefined}
           min={min}
           max={max}
           isReadonly={isReadonly}

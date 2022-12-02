@@ -20,7 +20,7 @@ import { ZERO_ADDR } from "constants/index"
 
 interface ICreateDaoProposalTypeArgs {
   proposalInfo: {
-    contractAddress: string
+    executors: string[]
     proposalTypeName: string
     proposalName: string
     proposalDescription: string
@@ -72,7 +72,7 @@ const useGovPoolCreateProposalType = ({
 
       const {
         proposalInfo: {
-          contractAddress,
+          executors,
           proposalDescription,
           proposalName,
           proposalTypeName,
@@ -134,7 +134,7 @@ const useGovPoolCreateProposalType = ({
       const encodedChangeExecuterMethod = encodeAbiMethod(
         GovSettings,
         "changeExecutors",
-        [[contractAddress], [newSettingId]]
+        [executors, executors.map(() => newSettingId)]
       )
 
       const receipt = await createGovProposal(

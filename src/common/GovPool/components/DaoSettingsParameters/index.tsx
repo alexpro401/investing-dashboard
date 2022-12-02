@@ -176,6 +176,7 @@ const DaoSettingsParameters: FC<Props> = ({
           <InputField
             value={quorum.get}
             setValue={quorum.set}
+            type={"number"}
             label="Votes needed for quorum"
             errorMessage={getFieldErrorMessage("quorum")}
             onBlur={() => touchField("quorum")}
@@ -230,6 +231,7 @@ const DaoSettingsParameters: FC<Props> = ({
             <InputField
               value={quorumValidators.get}
               setValue={quorumValidators.set}
+              type={"number"}
               label="Votes needed for quorum"
               errorMessage={getFieldErrorMessage("quorumValidators")}
               onBlur={() => touchField("quorumValidators")}
@@ -280,6 +282,7 @@ const DaoSettingsParameters: FC<Props> = ({
           <InputField
             value={minVotesForVoting.get}
             setValue={minVotesForVoting.set}
+            type={"number"}
             label="Voting"
             errorMessage={getFieldErrorMessage("minVotesForVoting")}
             onBlur={() => touchField("minVotesForVoting")}
@@ -298,6 +301,7 @@ const DaoSettingsParameters: FC<Props> = ({
           <InputField
             value={minVotesForCreating.get}
             setValue={minVotesForCreating.set}
+            type={"number"}
             label="Creating a proposal"
             errorMessage={getFieldErrorMessage("minVotesForCreating")}
             onBlur={() => touchField("minVotesForCreating")}
@@ -394,6 +398,7 @@ const DaoSettingsParameters: FC<Props> = ({
               <InputField
                 value={creationReward.get}
                 setValue={creationReward.set}
+                type={"number"}
                 label="Amount of tokens for creator"
                 errorMessage={getFieldErrorMessage("creationReward")}
                 onBlur={() => touchField("creationReward")}
@@ -412,6 +417,7 @@ const DaoSettingsParameters: FC<Props> = ({
               <InputField
                 value={voteRewardsCoefficient.get}
                 setValue={voteRewardsCoefficient.set}
+                type={"number"}
                 label="Amount of tokens for the voter"
                 errorMessage={getFieldErrorMessage("voteRewardsCoefficient")}
                 onBlur={() => touchField("voteRewardsCoefficient")}
@@ -430,6 +436,7 @@ const DaoSettingsParameters: FC<Props> = ({
               <InputField
                 value={executionReward.get}
                 setValue={executionReward.set}
+                type={"number"}
                 label="Amount of tokens for tx. executor"
                 errorMessage={getFieldErrorMessage("executionReward")}
                 onBlur={() => touchField("executionReward")}

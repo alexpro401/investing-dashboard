@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react"
+import { useSelector } from "react-redux"
 
 import { usePoolRegistryContract } from "contracts"
 import Page404 from "components/Page404"
+import { selectGovPoolByAddress } from "state/govPools/selectors"
 
 import image404Src from "assets/others/create-fund-docs.png"
 
@@ -17,6 +19,9 @@ const WithGovPoolAddressValidation: React.FC<IProps> = ({
   const poolRegistryContract = usePoolRegistryContract()
   const [loading, setLoading] = useState<boolean>(true)
   const [isValid, setIsValid] = useState<boolean>(true)
+  const govPoolFromRedux = useSelector((s) =>
+    selectGovPoolByAddress(s, daoPoolAddress)
+  )
 
   const checkGovAddressValidation = useCallback(async () => {
     if (!poolRegistryContract) return
@@ -24,19 +29,23 @@ const WithGovPoolAddressValidation: React.FC<IProps> = ({
     setLoading(true)
 
     try {
-      const _isValid = await poolRegistryContract.isGovPool(daoPoolAddress)
+      if (govPoolFromRedux) {
+        setIsValid(true)
+      } else {
+        const _isValid = await poolRegistryContract.isGovPool(daoPoolAddress)
 
-      setIsValid(_isValid)
+        setIsValid(_isValid)
+      }
     } catch (error) {
       setIsValid(false)
     } finally {
       setLoading(false)
     }
-  }, [daoPoolAddress, poolRegistryContract])
+  }, [daoPoolAddress, poolRegistryContract, govPoolFromRedux])
 
   useEffect(() => {
     checkGovAddressValidation()
-  }, [daoPoolAddress, checkGovAddressValidation, poolRegistryContract])
+  }, [checkGovAddressValidation])
 
   if (loading) {
     return <></>

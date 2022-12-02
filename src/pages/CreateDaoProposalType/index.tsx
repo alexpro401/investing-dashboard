@@ -5,6 +5,7 @@ import { formatUnits, formatEther } from "@ethersproject/units"
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
+import CreateCustomProposalTypeContextProvider from "context/govPool/proposals/regular/CreateCustomProposalType"
 import FundDaoCreatingContextProvider from "context/FundDaoCreatingContext"
 import CreateNewProposalTypeForm from "forms/CreateNewProposalTypeForm"
 import { useGovPoolSetting, useGovPoolValidatorsCount } from "hooks/dao"
@@ -93,9 +94,11 @@ const CreateDaoProposalType: React.FC = () => {
               },
             }}
           >
-            <GovProposalCreatingContextProvider>
-              <CreateNewProposalTypeForm />
-            </GovProposalCreatingContextProvider>
+            <CreateCustomProposalTypeContextProvider>
+              <GovProposalCreatingContextProvider>
+                <CreateNewProposalTypeForm />
+              </GovProposalCreatingContextProvider>
+            </CreateCustomProposalTypeContextProvider>
           </FundDaoCreatingContextProvider>
         </S.CreateNewDaoProposalTypePageHolder>
       </WithGovPoolAddressValidation>

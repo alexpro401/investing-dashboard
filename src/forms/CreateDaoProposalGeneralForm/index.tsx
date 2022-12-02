@@ -1,4 +1,4 @@
-import React, { useContext, useCallback, Dispatch, SetStateAction } from "react"
+import React, { useContext, useCallback } from "react"
 
 import {
   Card,
@@ -6,7 +6,7 @@ import {
   CardHead,
   StepsNavigation,
   CardFormControl,
-  AppButton,
+  CreateDaoCardStepNumber,
 } from "common"
 import { InputField, TextareaField } from "fields"
 import { useFormValidation } from "hooks/useFormValidation"
@@ -16,30 +16,22 @@ import {
   minLength,
   maxLength,
 } from "utils/validators"
-import { readFromClipboard } from "utils/clipboard"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
-import { CreateDaoCardStepNumber } from "common"
 
 import { CreatingProposalSuccessModal } from "common/GovProposal"
 
 import * as S from "./styled"
 
 interface ICreateDaoProposalGeneralFormProps {
-  withContractName?: boolean
   withProposalTypeName?: boolean
   withProposalTypeDescription?: boolean
 }
 
 const CreateDaoProposalGeneralForm: React.FC<
   ICreateDaoProposalGeneralFormProps
-> = ({
-  withContractName = false,
-  withProposalTypeName = false,
-  withProposalTypeDescription = false,
-}) => {
+> = ({ withProposalTypeName = false, withProposalTypeDescription = false }) => {
   const {
-    contractAddress,
     proposalTypeName,
     proposalTypeDescription,
     proposalDescription,
@@ -51,7 +43,6 @@ const CreateDaoProposalGeneralForm: React.FC<
   const { getFieldErrorMessage, touchField, isFieldsValid, touchForm } =
     useFormValidation(
       {
-        ...(withContractName ? { contractAddress: contractAddress.get } : {}),
         ...(withProposalTypeName
           ? { proposalTypeName: proposalTypeName.get }
           : {}),
@@ -62,9 +53,6 @@ const CreateDaoProposalGeneralForm: React.FC<
         description: proposalDescription.get,
       },
       {
-        ...(withContractName
-          ? { contractAddress: { required, isAddressValidator } }
-          : {}),
         ...(withProposalTypeName
           ? {
               proposalTypeName: {
@@ -91,13 +79,6 @@ const CreateDaoProposalGeneralForm: React.FC<
         },
       }
     )
-
-  const pasteFromClipboard = useCallback(
-    async (dispatchCb: Dispatch<SetStateAction<any>>) => {
-      dispatchCb(await readFromClipboard())
-    },
-    []
-  )
 
   const handleNextStepCb = useCallback(() => {
     touchForm()
@@ -126,24 +107,6 @@ const CreateDaoProposalGeneralForm: React.FC<
             </p>
           </CardDescription>
           <CardFormControl>
-            {withContractName && (
-              <InputField
-                value={contractAddress.get}
-                setValue={contractAddress.set}
-                label="Contract address"
-                errorMessage={getFieldErrorMessage("contractAddress")}
-                onBlur={() => touchField("contractAddress")}
-                nodeRight={
-                  <AppButton
-                    type="button"
-                    text="Paste"
-                    color="default"
-                    size="no-paddings"
-                    onClick={() => pasteFromClipboard(contractAddress.set)}
-                  />
-                }
-              />
-            )}
             <InputField
               value={proposalName.get}
               setValue={proposalName.set}
