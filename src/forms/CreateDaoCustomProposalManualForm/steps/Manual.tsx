@@ -8,6 +8,7 @@ import {
   CardHead,
   CreateDaoCardStepNumber,
   StepsNavigation,
+  CollapsedCard,
 } from "common"
 import { useFormValidation } from "hooks/useFormValidation"
 import { AdvancedManualContext } from "context/govPool/proposals/custom/AdvancedManualContext"
@@ -87,8 +88,7 @@ const ManualStep: React.FC = () => {
       </Card>
       {contracts.get.map((contract, index) => {
         return (
-          <S.ContractCard key={contract.id}>
-            <CardHead title={`Contract ${index + 1}`} />
+          <CollapsedCard key={contract.id} title={`Contract ${index + 1}`}>
             <SelectField
               placeholder="Contract address"
               selected={contract.contractAddress ?? undefined}
@@ -153,7 +153,7 @@ const ManualStep: React.FC = () => {
                 onClick={() => onContractDelete(index)}
               />
             </S.ButtonsContainer>
-          </S.ContractCard>
+          </CollapsedCard>
         )
       })}
       <Card>

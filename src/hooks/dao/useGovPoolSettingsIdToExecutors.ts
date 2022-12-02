@@ -11,7 +11,7 @@ interface IExecutorExtended extends IExecutor {
 }
 
 interface IExecutorsQueryData {
-  daoPools: { executors: IExecutor[] }[]
+  daoPool: { executors: IExecutor[] }
 }
 
 const daoGraphClient = createClient({
@@ -38,11 +38,11 @@ const useGovPoolSettingsIdToExecutors = (
 
   const executorTypes = useGovPoolExecutorType(
     govPoolAddress ?? "",
-    !data ? [] : data.daoPools[0].executors.map((ex) => ex.executorAddress)
+    !data ? [] : data.daoPool.executors.map((ex) => ex.executorAddress)
   )
 
   const executors = useMemo(() => {
-    const searchedExecutors = !data ? [] : data.daoPools[0].executors
+    const searchedExecutors = !data ? [] : data.daoPool.executors
 
     return searchedExecutors.map((ex) => ({
       ...ex,

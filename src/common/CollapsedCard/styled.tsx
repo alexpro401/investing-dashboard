@@ -47,7 +47,7 @@ export const CollCardTitle = styled.span`
 `
 
 export const CustomCollapse = styled(Collapse)`
-  gap: 12px;
-  display: flex;
+  gap: 16px;
+  display: flex !important;
   flex-direction: column;
 `

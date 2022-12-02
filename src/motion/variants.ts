@@ -71,6 +71,7 @@ export const accordionBaseVariants = {
   hidden: {
     opacity: 0,
     height: 0,
+    overflow: "hidden",
     transitionEnd: {
       display: "none",
     },

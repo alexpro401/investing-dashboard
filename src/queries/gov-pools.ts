@@ -129,14 +129,14 @@ const GovPoolActiveDelegations = (isUserDelegator = true) => `
 
 const GovPoolExecutorQuery = `
   query ($address: String!, $executorAddress: String!) {
-    daoPools(id: $address) {
+    daoPool(id: $address) {
       executors(where: { executorAddress: $executorAddress }) {${POOL_EXECUTOR}}
   }
 `
 
 const GovPoolExecutorsQuery = `
   query ($address: String!) {
-    daoPools(id: $address) {
+    daoPool(id: $address) {
       executors {${POOL_EXECUTOR}}
     }
   }
@@ -144,7 +144,7 @@ const GovPoolExecutorsQuery = `
 
 const GovPoolExecutorsBySettingIdQuery = `
   query ($address: String!, $settingsId: String!) {
-    daoPools(id: $address) {
+    daoPool(id: $address) {
       executors(where: { settings_: { settingsId: $settingsId } }) {${POOL_EXECUTOR}}
     }
   }

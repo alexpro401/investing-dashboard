@@ -2,8 +2,7 @@ import styled from "styled-components"
 import { motion } from "framer-motion"
 
 import { opacityVariants } from "motion/variants"
-import theme, { Flex } from "theme"
-import { Card, Icon } from "common"
+import { Flex } from "theme"
 
 export const StepsContainer = styled(motion.div).attrs(() => ({
   initial: { opacity: 0 },
@@ -23,10 +22,6 @@ export const StepsRoot = styled.div`
   transform: scale(1);
   gap: 16px;
   padding: 14px 16px 20px;
-`
-
-export const ContractCard = styled(Card)`
-  gap: 16px;
 `
 
 export const Address = styled.div`
