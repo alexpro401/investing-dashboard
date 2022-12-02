@@ -29,8 +29,6 @@ const useGovPoolExecutors = (
     context: daoGraphClient,
   })
 
-  console.log("data: ", data)
-
   const executorTypes = useGovPoolExecutorType(
     govPoolAddress ?? "",
     !data ? [] : data.daoPool.executors.map((ex) => ex.executorAddress)
