@@ -1,12 +1,16 @@
-import React, { useState, useMemo, useCallback } from "react"
+import React, { useState, useMemo, useCallback, useContext } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 
 import { ManualStep } from "./steps"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import StepsControllerContext from "context/StepsControllerContext"
+import { AdvancedManualContext } from "context/govPool/proposals/custom/AdvancedManualContext"
+import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
+import { useGovPoolCreateCustomProposalManual } from "hooks/dao"
 
 import * as S from "./styled"
+import { parseEther } from "@ethersproject/units"
 
 enum STEPS {
   manualInfo = "manualInfo",
@@ -18,14 +22,31 @@ const CreateDaoCustomProposalManualForm: React.FC = () => {
   const { daoAddress, executorAddress } = useParams<
     "daoAddress" | "executorAddress"
   >()
+  const { contracts } = useContext(AdvancedManualContext)
+  const { proposalName, proposalDescription } = useContext(
+    GovProposalCreatingContext
+  )
 
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.manualInfo)
+  const createProposal = useGovPoolCreateCustomProposalManual(daoAddress)
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length + 1, [])
   const currentStepNumber = useMemo(
     () => Object.values(STEPS).indexOf(currentStep) + 2,
     [currentStep]
   )
+
+  const handeCreateProposal = useCallback(() => {
+    createProposal({
+      executors: contracts.get.map((el) => el.contractAddress),
+      values: contracts.get.map((el) =>
+        isNaN(Number(el.value)) ? "0" : parseEther(el.value).toString()
+      ),
+      data: contracts.get.map((el) => el.transactionData),
+      proposalName: proposalName.get,
+      proposalDescription: proposalDescription.get,
+    })
+  }, [createProposal, contracts, proposalName, proposalDescription])
 
   const handlePrevStep = useCallback(() => {
     switch (currentStep) {
@@ -53,13 +74,13 @@ const CreateDaoCustomProposalManualForm: React.FC = () => {
         break
       }
       case STEPS.basicInfo: {
-        //TODO handle create proposal here
+        handeCreateProposal()
         break
       }
       default:
         break
     }
-  }, [currentStep])
+  }, [currentStep, handeCreateProposal])
 
   return (
     <StepsControllerContext
