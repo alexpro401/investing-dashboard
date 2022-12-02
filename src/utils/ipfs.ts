@@ -10,16 +10,6 @@ export interface AddResult {
   mtime?: any
 }
 
-// @params assets - base64 string array. last item represents current avatar
-interface FundMetadataAdder {
-  (
-    assets: string[],
-    description: string,
-    strategy: string,
-    account: string
-  ): Promise<AddResult>
-}
-
 const auth =
   "Basic " +
   Buffer.from(
@@ -77,48 +67,6 @@ export const getIpfsData = async (hash) => {
     console.log(e)
     return false
   }
-}
-
-export const addFundMetadata: FundMetadataAdder = (
-  assets,
-  description,
-  strategy,
-  account
-) => {
-  const data = {
-    timestamp: new Date().getTime() / 1000,
-    account,
-    description,
-    strategy,
-    assets,
-  }
-  const dataString = stringify(data)
-
-  return client.add(dataString)
-}
-
-export const addInvestProposalMetadata = (ticker, description, account) => {
-  const data = {
-    timestamp: new Date().getTime() / 1000,
-    account,
-    description,
-    ticker,
-  }
-  const dataString = stringify(data)
-
-  return client.add(dataString)
-}
-
-export const addUserMetadata = (name, assets, account) => {
-  const data = {
-    timestamp: new Date().getTime() / 1000,
-    account,
-    name,
-    assets,
-  }
-  const dataString = stringify(data)
-
-  return client.add(dataString)
 }
 
 export const addInsuranceProposalData = (payload) => {

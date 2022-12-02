@@ -1,6 +1,7 @@
 import React, { FC, HTMLAttributes, useMemo } from "react"
 import { AnimatePresence, motion, MotionProps } from "framer-motion"
 import { v4 as uuidv4 } from "uuid"
+import { accordionBaseVariants } from "motion/variants"
 
 type Props = {
   isOpen: boolean
@@ -20,31 +21,19 @@ const Collapse: FC<Props> = ({
 
   return (
     <AnimatePresence initial={false}>
-      {isOpen ? (
+      {isOpen && (
         <motion.div
           key={`collapse-${uid}`}
-          initial="collapsed"
-          animate="open"
-          exit="collapsed"
-          variants={{
-            open: {
-              opacity: 1,
-              height: "auto",
-            },
-            collapsed: {
-              opacity: 0,
-              height: 0,
-              transitionEnd: { display: "none" },
-            },
-          }}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          variants={accordionBaseVariants}
           transition={{ duration: duration }}
           ref={cRef ?? undefined}
           {...rest}
         >
           {children}
         </motion.div>
-      ) : (
-        <></>
       )}
     </AnimatePresence>
   )

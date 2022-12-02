@@ -9,6 +9,8 @@ import { GovProposalCardHead } from "common/dao"
 import ProgressLine from "components/ProgressLine"
 import { Flex } from "theme"
 import TokenIcon from "components/TokenIcon"
+import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
+import { useWeb3React } from "@web3-react/core"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   proposalId: number
@@ -25,22 +27,36 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
     proposalType,
     voteEnd,
     votesFor,
-    votesTotalNeed,
+    requiredQuorum,
     executed,
     isInsurance,
     isDistribution,
-  } = useGovPoolProposal(proposalId, daoAddress!, proposalView)
+    distributionProposalTokenAddress,
+    distributionProposalTokenAmount,
+    distributionProposalToken,
+  } = useGovPoolProposal(proposalId, daoAddress || "", proposalView)
+
+  const { chainId } = useWeb3React()
+
+  console.log("normalizeBigNumber", +normalizeBigNumber(votesFor, 18, 2))
 
   return (
     <S.Root {...rest}>
       <GovProposalCardHead
         isInsurance={isInsurance}
         name={name}
-        pool={"0xc2e7418baf7eff866da0198c7e8ace4453a6f0a4"}
+        pool={daoAddress}
+        to={`/dao/${daoAddress}/proposal/${proposalId}`}
       />
       <S.DaoProposalCardBody>
         <S.DaoProposalCardBlockInfo>
-          <S.DaoProposalCardBlockInfoAddress href={""}>
+          <S.DaoProposalCardBlockInfoAddress
+            href={getExplorerLink(
+              chainId || 1,
+              creator,
+              ExplorerDataType.ADDRESS
+            )}
+          >
             {shortenAddress(creator)}
           </S.DaoProposalCardBlockInfoAddress>
           <S.DaoProposalCardBlockInfoLabel>
@@ -53,7 +69,7 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
             <>
               {fromBig(votesFor)}/
               <S.DaoVotingStatusCounterTotal>
-                {fromBig(votesTotalNeed)}
+                {normalizeBigNumber(requiredQuorum)}
               </S.DaoVotingStatusCounterTotal>
             </>
           </S.DaoProposalCardBlockInfoValue>
@@ -65,7 +81,7 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
           <Flex full ai={"center"} jc={"space-between"} gap={"3"}>
             <ProgressLine
               w={
-                (+fromBig(votesTotalNeed) / 100) *
+                (+normalizeBigNumber(requiredQuorum) / 100) *
                 Number(normalizeBigNumber(votesFor, 18, 2))
               }
             />
@@ -75,9 +91,19 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
         <S.DaoProposalCardBlockInfo>
           {isDistribution ? (
             <Flex full ai={"center"} jc={"flex-start"} gap={"4"}>
-              <TokenIcon address={""} m="0" size={20} />
-              <S.DaoProposalCardBlockInfoAddress href={""}>
-                TOken Name
+              <TokenIcon
+                address={distributionProposalTokenAddress}
+                m="0"
+                size={20}
+              />
+              <S.DaoProposalCardBlockInfoAddress
+                href={getExplorerLink(
+                  chainId || 1,
+                  distributionProposalTokenAddress,
+                  ExplorerDataType.ADDRESS
+                )}
+              >
+                {distributionProposalToken.name}
               </S.DaoProposalCardBlockInfoAddress>
             </Flex>
           ) : (
@@ -86,7 +112,7 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
             </S.DaoProposalCardBlockInfoValue>
           )}
           <S.DaoProposalCardBlockInfoLabel>
-            {isDistribution ? proposalType : "Voting type"}
+            {isDistribution ? `Voting type: Token Distribution` : "Voting type"}
           </S.DaoProposalCardBlockInfoLabel>
         </S.DaoProposalCardBlockInfo>
 
