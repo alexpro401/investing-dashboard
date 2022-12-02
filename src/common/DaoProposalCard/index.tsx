@@ -2,7 +2,6 @@ import * as S from "./styled"
 
 import { FC, HTMLAttributes, useCallback, useMemo } from "react"
 import { normalizeBigNumber, fromBig, shortenAddress } from "utils"
-import { IGovPool } from "interfaces/typechain/GovPool"
 import { useGovPoolProposal } from "hooks/dao"
 import { useParams } from "react-router-dom"
 import { GovProposalCardHead } from "common/dao"
@@ -11,16 +10,15 @@ import { Flex } from "theme"
 import TokenIcon from "components/TokenIcon"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useWeb3React } from "@web3-react/core"
-import { ProposalState } from "types"
+import { WrappedProposalView } from "types"
 import { isEqual } from "lodash"
 import { ZERO_ADDR } from "constants/index"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
-  proposalId: number
-  proposalView: IGovPool.ProposalViewStructOutput
+  wrappedProposalView: WrappedProposalView
 }
 
-const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
+const DaoProposalCard: FC<Props> = ({ wrappedProposalView, ...rest }) => {
   const { daoAddress } = useParams()
 
   const {
@@ -37,40 +35,21 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
     distributionProposalTokenAddress,
     distributionProposalToken,
     rewardTokenAddress,
-
+    isProposalStateVoting,
+    isProposalStateWaitingForVotingTransfer,
+    isProposalStateValidatorVoting,
+    isProposalStateDefeated,
+    isProposalStateSucceeded,
+    isProposalStateExecuted,
     moveProposalToValidators,
     claimRewards,
     executeAndClaim,
-  } = useGovPoolProposal(proposalId, daoAddress || "", proposalView)
+    progress,
+  } = useGovPoolProposal(wrappedProposalView, daoAddress)
+
+  console.log(progress)
 
   const { chainId } = useWeb3React()
-
-  const isProposalStateVoting = useMemo(
-    () => String(proposalView.proposalState) === ProposalState.Voting,
-    [proposalView.proposalState]
-  )
-  const isProposalStateWaitingForVotingTransfer = useMemo(
-    () =>
-      String(proposalView.proposalState) ===
-      ProposalState.WaitingForVotingTransfer,
-    [proposalView.proposalState]
-  )
-  const isProposalStateValidatorVoting = useMemo(
-    () => String(proposalView.proposalState) === ProposalState.ValidatorVoting,
-    [proposalView.proposalState]
-  )
-  const isProposalStateDefeated = useMemo(
-    () => String(proposalView.proposalState) === ProposalState.Defeated,
-    [proposalView.proposalState]
-  )
-  const isProposalStateSucceeded = useMemo(
-    () => String(proposalView.proposalState) === ProposalState.Succeeded,
-    [proposalView.proposalState]
-  )
-  const isProposalStateExecuted = useMemo(
-    () => String(proposalView.proposalState) === ProposalState.Executed,
-    [proposalView.proposalState]
-  )
 
   const cardBtnText = useMemo(() => {
     if (isProposalStateVoting) {
@@ -129,7 +108,7 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
         isInsurance={isInsurance}
         name={name}
         pool={daoAddress}
-        to={`/dao/${daoAddress}/proposal/${proposalId}`}
+        to={`/dao/${daoAddress}/proposal/${wrappedProposalView.proposalId}`}
       />
       <S.DaoProposalCardBody>
         <S.DaoProposalCardBlockInfo>
@@ -162,13 +141,14 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
         </S.DaoProposalCardBlockInfo>
         <S.DaoVotingProgressBar>
           <Flex full ai={"center"} jc={"space-between"} gap={"3"}>
-            <ProgressLine
-              w={
-                (+normalizeBigNumber(requiredQuorum) / 100) *
-                Number(normalizeBigNumber(votesFor, 18, 2))
-              }
-            />
-            <ProgressLine w={0} />
+            {isProposalStateValidatorVoting ? (
+              <>
+                <ProgressLine w={100} />
+                <ProgressLine w={100} />
+              </>
+            ) : (
+              <ProgressLine w={progress} />
+            )}
           </Flex>
         </S.DaoVotingProgressBar>
         <S.DaoProposalCardBlockInfo>

@@ -7,7 +7,6 @@ import { DetailsTab, VotingSettingsTab, VotingHistoryTab } from "./components"
 import { AnimatePresence } from "framer-motion"
 import { useGovPoolProposal, useGovPoolProposals } from "hooks/dao"
 import { useParams } from "react-router-dom"
-import { useEffectOnce } from "react-use"
 import { ErrorText } from "components/AddressChips/styled"
 import { Icon } from "common"
 import { ICON_NAMES } from "constants/icon-names"
@@ -24,20 +23,15 @@ const DaoProposalDetails: FC<Props> = ({}) => {
 
   // TEMP
 
-  const { proposalViews, loadProposals, isLoaded, isLoadFailed } =
-    useGovPoolProposals(daoAddress!)
-
-  const paginationOffset = +proposalId! - 1
-  const paginationPageLimit = 1
-
-  useEffectOnce(() => {
-    loadProposals(paginationOffset, paginationPageLimit)
-  })
+  const { wrappedProposalViews, isLoaded, isLoadFailed } = useGovPoolProposals(
+    daoAddress,
+    proposalId ? +proposalId - 1 : 1,
+    1
+  )
 
   const govPoolProposal = useGovPoolProposal(
-    Number(proposalId),
-    daoAddress!,
-    proposalViews[0]
+    wrappedProposalViews[0],
+    daoAddress
   )
 
   const TABS = useMemo(

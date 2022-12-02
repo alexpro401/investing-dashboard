@@ -6,14 +6,14 @@ const GovPoolGraphClient = createClient({
 })
 
 export const useGovPoolProposalVotingHistory = (
-  govPoolAddress: string,
-  proposalId,
   offset = 0,
-  limit = 15
+  limit = 15,
+  govPoolAddress?: string,
+  proposalId?: string
 ) => {
   const ID = useMemo(() => {
     return `${govPoolAddress}${
-      +proposalId < 10 ? `0${proposalId}` : proposalId
+      Number(proposalId) < 10 ? `0${proposalId}` : proposalId
     }000000`
   }, [govPoolAddress, proposalId])
 

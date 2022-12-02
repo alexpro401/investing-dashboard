@@ -15,12 +15,16 @@ import extractRootDomain from "utils/extractRootDomain"
 import { createContentLink } from "utils"
 import ExternalLink from "components/ExternalLink"
 import { isEqual } from "lodash"
+import { useEffectOnce } from "react-use"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   govPoolProposal: ReturnType<typeof useGovPoolProposal>
 }
 
-const GovPoolProposalProfile: FC<Props> = ({ govPoolProposal, ...rest }) => {
+const GovPoolProposalProfile: FC<Props> = ({ govPoolProposal }) => {
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [isLoadFailed, setIsLoadFailed] = useState(false)
+
   const [actualGovPoolDescription, setActualGovPoolDescription] =
     useState<IGovPoolDescription>()
 
@@ -35,7 +39,7 @@ const GovPoolProposalProfile: FC<Props> = ({ govPoolProposal, ...rest }) => {
 
       const decodedData = abiCoder.decode(
         proposalTypeDataDecodingMap[govPoolProposal.proposalType],
-        "0x" + govPoolProposal.proposalView.proposal.data[0].slice(10)
+        "0x" + govPoolProposal.wrappedProposalView.proposal.data[0].slice(10)
       )
 
       if (govPoolProposal.proposalType === "profile") {
@@ -52,16 +56,28 @@ const GovPoolProposalProfile: FC<Props> = ({ govPoolProposal, ...rest }) => {
 
   const loadGovPoolActualDescription = useCallback(async () => {
     try {
-      const descriptionURL =
-        await govPoolProposal.govPoolContract?.descriptionURL()
       const actualDescriptionIpfsEntity = new IpfsEntity<IGovPoolDescription>({
-        path: descriptionURL,
+        path: govPoolProposal.govPoolDescriptionURL,
       })
       setActualGovPoolDescription(await actualDescriptionIpfsEntity.load())
     } catch (error) {
       console.error(error)
     }
   }, [govPoolProposal])
+
+  const init = useCallback(async () => {
+    try {
+      await Promise.all([decodeProposalData, loadGovPoolActualDescription])
+    } catch (error) {
+      console.log(error)
+      setIsLoadFailed(true)
+    }
+    setIsLoaded(true)
+  }, [decodeProposalData, loadGovPoolActualDescription])
+
+  useEffectOnce(() => {
+    init()
+  })
 
   useEffect(() => {
     loadGovPoolActualDescription()

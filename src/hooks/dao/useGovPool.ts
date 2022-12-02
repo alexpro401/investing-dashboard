@@ -6,7 +6,7 @@ import {
   useGovValidatorsContract,
 } from "contracts"
 import { useGovPoolHelperContracts } from "./useGovPoolHelperContracts"
-import { useCallback, useMemo } from "react"
+import { useCallback, useMemo, useState } from "react"
 import usePayload from "hooks/usePayload"
 import useError from "hooks/useError"
 import useGasTracker from "state/gas/hooks"
@@ -17,6 +17,8 @@ import { SubmitState } from "constants/types"
 import { TransactionType } from "state/transactions/types"
 import { isTxMined, parseTransactionError } from "utils"
 import { get } from "lodash"
+import { IGovPool } from "interfaces/typechain/GovPool"
+import { useEffectOnce } from "react-use"
 
 export const useGovPool = (address?: string) => {
   const { account } = useActiveWeb3React()
@@ -34,6 +36,8 @@ export const useGovPool = (address?: string) => {
   const govUserKeeperContract = useGovUserKeeperContract(address)
   const govSettingsContract = useGovSettingsContract(address)
   const distributionProposalContract = useDistributionProposalContract(address)
+
+  const [descriptionUrl, setDescriptionUrl] = useState<string>("")
 
   const [, setPayload] = usePayload()
   const [, setError] = useError()
@@ -260,8 +264,43 @@ export const useGovPool = (address?: string) => {
     ]
   )
 
+  const loadStaticDetails = useCallback(async () => {
+    if (!govPoolContract) return
+
+    const data = await govPoolContract.descriptionURL()
+    setDescriptionUrl(data)
+  }, [govPoolContract, setDescriptionUrl])
+
+  useEffectOnce(() => {
+    loadStaticDetails()
+  })
+
+  const getProposals = useCallback(
+    async (
+      offset: number,
+      limit: number
+    ): Promise<IGovPool.ProposalViewStructOutput[]> => {
+      return (await govPoolContract?.getProposals(
+        offset,
+        limit
+      )) as IGovPool.ProposalViewStructOutput[]
+    },
+    [govPoolContract]
+  )
+
+  const getCurrentAccountTotalVotes = useCallback(
+    async (proposalId: number) => {
+      if (!account || !govPoolContract) return
+
+      return await govPoolContract?.getTotalVotes(proposalId, account, false)
+    },
+    [account, govPoolContract]
+  )
+
   return {
     govPoolContract,
+
+    descriptionUrl,
 
     settingsAddress,
     userKeeperAddress,
@@ -273,9 +312,11 @@ export const useGovPool = (address?: string) => {
     govSettingsContract,
     distributionProposalContract,
 
+    getProposals,
     moveProposalToValidators,
     execute,
     executeAndClaim,
     claimRewards,
+    getCurrentAccountTotalVotes,
   }
 }

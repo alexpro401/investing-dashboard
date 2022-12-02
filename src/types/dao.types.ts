@@ -1,6 +1,7 @@
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { SUPPORTED_SOCIALS } from "constants/socials"
+import { IGovPool } from "../interfaces/typechain/GovPool"
 
 export type ExternalFileDocument = {
   name: string
@@ -167,4 +168,8 @@ export const proposalTypeDataDecodingMap: Record<IExecutorType, string[]> = {
   ["add-token"]: [],
   ["custom"]: [],
   ["insurance"]: [],
+}
+
+export type WrappedProposalView = IGovPool.ProposalViewStructOutput & {
+  proposalId: number
 }

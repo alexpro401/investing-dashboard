@@ -1,4 +1,3 @@
-import { IGovPool } from "interfaces/typechain/GovPool"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { DateUtil } from "utils"
 import { IpfsEntity } from "utils/ipfsEntity"
@@ -10,30 +9,35 @@ import {
   useDistributionProposalToken,
 } from "hooks/dao"
 import { BigNumber } from "@ethersproject/bignumber"
-import { ProposalState } from "types"
+import { ProposalState, WrappedProposalView } from "types"
 
 const GovPoolGraphClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
 })
 
+const GovPoolValidatorsGraphClient = createClient({
+  url: process.env.REACT_APP_DAO_VALIDATORS_API_URL || "",
+})
+
 export const useGovPoolProposal = (
-  proposalId: number,
-  govPoolAddress: string,
-  proposalView: IGovPool.ProposalViewStructOutput
+  wrappedProposalView: WrappedProposalView,
+  govPoolAddress?: string
 ) => {
   const {
-    govPoolContract,
+    descriptionUrl: _descriptionUrl,
     moveProposalToValidators: _moveProposalToValidators,
     execute: _execute,
     executeAndClaim: _executeAndClaim,
     claimRewards: _claimRewards,
+    getCurrentAccountTotalVotes: _getCurrentAccountTotalVotes,
   } = useGovPool(govPoolAddress)
+
   const { account } = useActiveWeb3React()
 
-  const [{ data }] = useQuery({
+  const [{ data: daoPoolGraph }] = useQuery({
     query: `
       query {
-        proposals(where: { pool: "${govPoolAddress}", proposalId: "${proposalId}" }) {
+        proposals(where: { pool: "${govPoolAddress}", proposalId: "${wrappedProposalView?.proposalId}" }) {
           id
           executor
           creator
@@ -48,16 +52,48 @@ export const useGovPoolProposal = (
     context: GovPoolGraphClient,
   })
 
-  const graphGovPoolProposal = useMemo(() => data?.proposals?.[0], [data])
+  const [{ data: daoPoolValidatorsGraph }] = useQuery({
+    query: `
+      query {
+        proposals(where: { pool: "${govPoolAddress}", proposalId: "${wrappedProposalView?.proposalId}", isInternal: false }) {
+          id
+          totalVote
+        }
+      }
+    `,
+    context: GovPoolValidatorsGraphClient,
+  })
+
+  const graphGovPoolProposal = useMemo(
+    () => daoPoolGraph?.proposals?.[0],
+    [daoPoolGraph]
+  )
+
+  const graphGovPoolValidatorProposal = useMemo(
+    () => daoPoolValidatorsGraph?.proposals?.[0],
+    [daoPoolValidatorsGraph]
+  )
+
+  console.log(graphGovPoolValidatorProposal)
 
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
 
   const [myVotesAmount, setMyVotesAmount] = useState<BigNumber>()
 
+  const coreSettings = useMemo(
+    () => wrappedProposalView?.proposal.core.settings,
+    [wrappedProposalView]
+  )
+
+  const govPoolDescriptionURL = useMemo(
+    () => _descriptionUrl,
+    [_descriptionUrl]
+  )
+
   const requiredQuorum = useMemo(
-    () => proposalView?.requiredQuorum,
-    [proposalView]
+    () => wrappedProposalView?.requiredQuorum,
+    [wrappedProposalView]
   )
 
   const creator = useMemo(
@@ -71,20 +107,21 @@ export const useGovPoolProposal = (
 
   const voteEnd = useMemo(() => {
     const isValidatorsVoting =
-      String(proposalView?.proposalState) === ProposalState.ValidatorVoting
-    return proposalView?.proposal
+      String(wrappedProposalView?.proposalState) ===
+      ProposalState.ValidatorVoting
+    return wrappedProposalView?.proposal
       ? (DateUtil.fromTimestamp(
           isValidatorsVoting
-            ? proposalView?.validatorProposal?.core?.voteEnd.toNumber()
-            : proposalView?.proposal.core.voteEnd.toNumber(),
+            ? wrappedProposalView?.validatorProposal?.core?.voteEnd.toNumber()
+            : wrappedProposalView?.proposal.core.voteEnd.toNumber(),
           "dd/mm/yy hh:mm:ss"
         ) as string)
       : ""
-  }, [proposalView])
+  }, [wrappedProposalView])
 
   const executors = useMemo(
-    () => proposalView?.proposal.executors || [],
-    [proposalView]
+    () => wrappedProposalView?.proposal.executors || [],
+    [wrappedProposalView]
   )
 
   const [executor] = useGovPoolExecutor(
@@ -97,63 +134,18 @@ export const useGovPoolProposal = (
   }, [executor])
 
   const proposalSettings = useMemo(
-    () => proposalView?.proposal?.core?.settings || {},
-    [proposalView]
+    () => wrappedProposalView?.proposal?.core?.settings || {},
+    [wrappedProposalView]
   )
 
-  const loadDetailsFromIpfs = useCallback(async () => {
-    try {
-      const entity = new IpfsEntity<{
-        proposalName: string
-        proposalDescription: string
-      }>({
-        path: proposalView?.proposal.descriptionURL,
-      })
-
-      const response = await entity.load()
-
-      setName(response.proposalName)
-      setDescription(response.proposalDescription)
-    } catch (error) {}
-  }, [proposalView])
-
-  const loadProposalTotalVotes = useCallback(async () => {
-    if (!account) return
-
-    try {
-      const amounts = await govPoolContract?.getTotalVotes(
-        proposalId,
-        account,
-        false
-      )
-      const accountVotesAmount = amounts?.[1]
-      setMyVotesAmount(accountVotesAmount)
-    } catch (error) {
-      console.error({ error })
-    }
-  }, [account, govPoolContract, proposalId])
-
-  const init = useCallback(async () => {
-    try {
-      await loadDetailsFromIpfs()
-      await loadProposalTotalVotes()
-    } catch (error) {}
-  }, [loadDetailsFromIpfs, loadProposalTotalVotes])
-
-  useEffect(() => {
-    init()
-  }, [init, proposalView])
-
-  const votesTotalNeed = useMemo(() => requiredQuorum, [requiredQuorum])
-
   const votesFor = useMemo(
-    () => proposalView?.proposal?.core?.votesFor || 0,
-    [proposalView]
+    () => wrappedProposalView?.proposal?.core?.votesFor || 0,
+    [wrappedProposalView]
   )
 
   const executed = useMemo(
-    () => proposalView?.proposal?.core?.executed,
-    [proposalView]
+    () => wrappedProposalView?.proposal?.core?.executed,
+    [wrappedProposalView]
   )
 
   const isInsurance = useMemo(() => {
@@ -179,32 +171,124 @@ export const useGovPoolProposal = (
   )
 
   const rewardTokenAddress = useMemo(
-    () => proposalView.proposal.core.settings.rewardToken,
-    [proposalView]
+    () => wrappedProposalView?.proposal.core.settings.rewardToken,
+    [wrappedProposalView]
   )
 
+  const isProposalStateVoting = useMemo(
+    () => String(wrappedProposalView?.proposalState) === ProposalState.Voting,
+    [wrappedProposalView]
+  )
+  const isProposalStateWaitingForVotingTransfer = useMemo(
+    () =>
+      String(wrappedProposalView?.proposalState) ===
+      ProposalState.WaitingForVotingTransfer,
+    [wrappedProposalView]
+  )
+  const isProposalStateValidatorVoting = useMemo(
+    () =>
+      String(wrappedProposalView?.proposalState) ===
+      ProposalState.ValidatorVoting,
+    [wrappedProposalView]
+  )
+  const isProposalStateDefeated = useMemo(
+    () => String(wrappedProposalView?.proposalState) === ProposalState.Defeated,
+    [wrappedProposalView]
+  )
+  const isProposalStateSucceeded = useMemo(
+    () =>
+      String(wrappedProposalView?.proposalState) === ProposalState.Succeeded,
+    [wrappedProposalView]
+  )
+  const isProposalStateExecuted = useMemo(
+    () => String(wrappedProposalView?.proposalState) === ProposalState.Executed,
+    [wrappedProposalView]
+  )
+
+  const votesTotalNeed = useMemo(
+    () =>
+      isProposalStateValidatorVoting
+        ? wrappedProposalView.requiredValidatorsQuorum
+        : wrappedProposalView.requiredQuorum,
+    [isProposalStateValidatorVoting, wrappedProposalView]
+  )
+
+  const progress = useMemo(() => {
+    return isProposalStateValidatorVoting
+      ? graphGovPoolValidatorProposal?.totalVote
+          .mul(100)
+          .div(wrappedProposalView.requiredValidatorsQuorum)
+          .toNumber()
+      : wrappedProposalView?.proposal.core.votesFor
+          .mul(100)
+          .div(wrappedProposalView.requiredQuorum)
+          .toNumber()
+  }, [
+    graphGovPoolValidatorProposal.totalVote,
+    isProposalStateValidatorVoting,
+    wrappedProposalView,
+  ])
+
   const moveProposalToValidators = useCallback(async () => {
-    await _moveProposalToValidators(String(proposalId))
-  }, [_moveProposalToValidators, proposalId])
+    await _moveProposalToValidators(String(wrappedProposalView?.proposalId))
+  }, [_moveProposalToValidators, wrappedProposalView])
 
   const execute = useCallback(async () => {
-    await _execute(String(proposalId))
-  }, [_execute, proposalId])
+    await _execute(String(wrappedProposalView?.proposalId))
+  }, [_execute, wrappedProposalView])
 
   const executeAndClaim = useCallback(async () => {
-    await _executeAndClaim(String(proposalId))
-  }, [_executeAndClaim, proposalId])
+    await _executeAndClaim(String(wrappedProposalView?.proposalId))
+  }, [_executeAndClaim, wrappedProposalView])
 
   const claimRewards = useCallback(async () => {
-    await _claimRewards([String(proposalId)])
-  }, [_claimRewards, proposalId])
+    await _claimRewards([String(wrappedProposalView?.proposalId)])
+  }, [_claimRewards, wrappedProposalView])
+
+  const loadDetailsFromIpfs = useCallback(async () => {
+    try {
+      const entity = new IpfsEntity<{
+        proposalName: string
+        proposalDescription: string
+      }>({
+        path: wrappedProposalView?.proposal.descriptionURL,
+      })
+
+      const response = await entity.load()
+
+      setName(response.proposalName)
+      setDescription(response.proposalDescription)
+    } catch (error) {}
+  }, [wrappedProposalView])
+
+  const loadProposalTotalVotes = useCallback(async () => {
+    if (!account) return
+
+    try {
+      const amounts = await _getCurrentAccountTotalVotes(
+        wrappedProposalView?.proposalId
+      )
+      setMyVotesAmount(amounts?.[1])
+    } catch (error) {
+      console.error({ error })
+    }
+  }, [_getCurrentAccountTotalVotes, account, wrappedProposalView])
+
+  const init = useCallback(async () => {
+    try {
+      await loadDetailsFromIpfs()
+      await loadProposalTotalVotes()
+    } catch (error) {}
+  }, [loadDetailsFromIpfs, loadProposalTotalVotes])
+
+  useEffect(() => {
+    init()
+  }, [init, wrappedProposalView])
 
   return {
-    govPoolContract,
-    proposalView,
+    wrappedProposalView,
 
     govPoolAddress,
-    proposalId,
     creator,
     votedAddresses,
     name,
@@ -216,20 +300,26 @@ export const useGovPoolProposal = (
     distributionProposalTokenAmount,
     distributionProposalToken,
     rewardTokenAddress,
-
+    coreSettings,
+    isProposalStateVoting,
+    isProposalStateWaitingForVotingTransfer,
+    isProposalStateValidatorVoting,
+    isProposalStateDefeated,
+    isProposalStateSucceeded,
+    isProposalStateExecuted,
     proposalType,
     voteEnd,
     votesTotalNeed,
     votesFor,
     myVotesAmount,
-
     executed,
     isInsurance,
     isDistribution,
-
     moveProposalToValidators,
     execute,
     executeAndClaim,
     claimRewards,
+    govPoolDescriptionURL,
+    progress,
   }
 }
