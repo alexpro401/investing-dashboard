@@ -1,6 +1,7 @@
 import styled, { css } from "styled-components"
 import { AppButton, Icon } from "common"
 import { VotingTerminal } from "pages/VotingTerminal"
+import { GradientBorder } from "theme"
 
 export const DaoProposalDetails = styled.div`
   overflow: hidden auto;
@@ -116,7 +117,7 @@ export const DaoProposalDetailsCardTitleIcon = styled(Icon)`
 export const DaoProposalDetailsRow = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   gap: 16px;
 
   & > * {
@@ -201,6 +202,32 @@ export const DaoProposalDetailsRowText = styled.span<{
           text-align: ${props.alignment};
         `
       : ""}
+  
+  a {
+    text-decoration: none;
+    font: inherit;
+    color: inherit;
+  }
+`
+
+export const DaoProposalDetailsRowExternalCroppedLinkWrp = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 30vw;
+`
+
+export const DaoProposalDetailsRowExternalCroppedLink = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
+export const DaoProposalDetailsRowAvatarImg = styled.img`
+  overflow: hidden;
+  object-fit: cover;
+  object-position: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
 `
 
 export const DaoProposalDetailsHistoryPaginationWrp = styled.div`
@@ -243,3 +270,38 @@ export const DaoProposalCardRowDivider = styled.div`
 `
 
 export const DaoProposalVotingTerminal = styled(VotingTerminal)``
+
+export const DaoProposalDPActiveSymbol = styled(GradientBorder)`
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 9px 5px 5px;
+  min-height: 37px;
+  box-shadow: inset -44px 7px 11px rgba(0, 0, 0, 0.03);
+  border-radius: 19px;
+
+  &:after {
+    background: #121928;
+  }
+`
+
+export const DaoProposalDPSymbolLabel = styled.span`
+  font-family: "Gilroy", Sans-Serif, Arial;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 15px;
+  letter-spacing: 0.3px;
+  color: #e4f2ff;
+  white-space: nowrap;
+  margin: 4px 0 0 4px;
+`
+
+export const DaoProposalDPAmountValue = styled.span`
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  color: ${(props) => props.theme.textColors.primary};
+`

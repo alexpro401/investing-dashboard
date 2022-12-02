@@ -1,0 +1,7 @@
+export { default as GovPoolProposalProfile } from "./GovPoolProposalProfile"
+export { default as GovPoolProposalInsurance } from "./GovPoolProposalInsurance"
+export { default as GovPoolProposalDistribution } from "./GovPoolProposalDistribution"
+export { default as GovPoolProposalCustom } from "./GovPoolProposalCustom"
+export { default as GovPoolProposalChangeValidatorBalances } from "./GovPoolProposalChangeValidatorBalances"
+export { default as GovPoolProposalChangeSettings } from "./GovPoolProposalChangeSettings"
+export { default as GovPoolProposalAddToken } from "./GovPoolProposalAddToken"

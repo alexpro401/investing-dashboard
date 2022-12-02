@@ -25,14 +25,14 @@ const VotingSettingsTab: FC<Props> = ({ govPoolProposal }) => {
           delegatedVotingAllowed={
             govPoolProposal.proposalSettings.delegatedVotingAllowed
           }
-          duration={govPoolProposal.proposalSettings.duration.toNumber()}
-          quorum={fromBig(govPoolProposal.proposalSettings.quorum)}
-          minVotesForVoting={govPoolProposal.proposalSettings.minVotesForVoting.toString()}
-          minVotesForCreating={govPoolProposal.proposalSettings.minVotesForCreating.toString()}
-          rewardToken={govPoolProposal.proposalSettings.rewardToken}
-          creationReward={govPoolProposal.proposalSettings.creationReward.toString()}
-          voteRewardsCoefficient={govPoolProposal.proposalSettings.voteRewardsCoefficient.toString()}
-          executionReward={govPoolProposal.proposalSettings.executionReward.toString()}
+          duration={govPoolProposal.proposalSettings?.duration?.toNumber()}
+          quorum={fromBig(govPoolProposal?.proposalSettings?.quorum)}
+          minVotesForVoting={govPoolProposal?.proposalSettings?.minVotesForVoting?.toString()}
+          minVotesForCreating={govPoolProposal?.proposalSettings?.minVotesForCreating?.toString()}
+          rewardToken={govPoolProposal?.proposalSettings?.rewardToken}
+          creationReward={govPoolProposal?.proposalSettings?.creationReward?.toString()}
+          voteRewardsCoefficient={govPoolProposal?.proposalSettings?.voteRewardsCoefficient?.toString()}
+          executionReward={govPoolProposal?.proposalSettings?.executionReward?.toString()}
         />
       </S.DaoProposalDetailsCard>
     </>

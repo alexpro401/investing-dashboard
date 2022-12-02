@@ -1,6 +1,7 @@
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { SUPPORTED_SOCIALS } from "constants/socials"
+import { IGovPool } from "../interfaces/typechain/GovPool"
 
 export type ExternalFileDocument = {
   name: string
@@ -127,6 +128,26 @@ export enum ProposalState {
   Undefined = "6",
 }
 
+export type ProposalStatuses =
+  | "opened"
+  | "ended-passed"
+  | "ended-rejected"
+  | "completed-all"
+  | "completed-rewards"
+
+export const proposalStatusToStates: Record<ProposalStatuses, ProposalState[]> =
+  {
+    opened: [
+      ProposalState.Voting,
+      ProposalState.WaitingForVotingTransfer,
+      ProposalState.ValidatorVoting,
+    ],
+    "ended-passed": [ProposalState.Succeeded],
+    "ended-rejected": [ProposalState.Defeated],
+    "completed-all": [ProposalState.Succeeded, ProposalState.Executed],
+    "completed-rewards": [ProposalState.Succeeded, ProposalState.Executed],
+  }
+
 export type IExecutorType =
   | "profile"
   | "change-settings"
@@ -135,3 +156,20 @@ export type IExecutorType =
   | "add-token"
   | "custom"
   | "insurance"
+
+export const proposalTypeDataDecodingMap: Record<IExecutorType, string[]> = {
+  ["profile"]: ["string"], // description ipfs path
+  ["change-settings"]: [
+    "uint256[]",
+    "tuple(bool,bool,bool,uint64,uint64,uint128,uint128,uint256,uint256,address,uint256,uint256,uint256,string)[]",
+  ],
+  ["change-validator-balances"]: [],
+  ["distribution"]: [],
+  ["add-token"]: [],
+  ["custom"]: [],
+  ["insurance"]: [],
+}
+
+export type WrappedProposalView = IGovPool.ProposalViewStructOutput & {
+  proposalId: number
+}

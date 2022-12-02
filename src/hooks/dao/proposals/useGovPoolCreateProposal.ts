@@ -71,7 +71,7 @@ export const useGovPoolCreateProposal = (
     async (
       { proposalName, proposalDescription }: IProposalIPFS,
       executors: string[],
-      values: number[],
+      values: (number | string)[],
       data: string[]
     ): Promise<TransactionReceipt | undefined> => {
       if (!govPoolContract || !account) return
@@ -91,6 +91,7 @@ export const useGovPoolCreateProposal = (
         const gasLimit = await tryEstimateGas(
           descriptionUrl,
           executors,
+          //@ts-ignore
           values,
           data
         )
@@ -208,25 +209,9 @@ export const useGovPoolCreateProposal = (
     library,
   ])
 
-  const createCustomProposal = useCallback(async () => {
-    if (!govPoolContract) return
-
-    await createGovProposal(
-      { proposalName: "", proposalDescription: "" },
-      [daoPoolAddress as string],
-      [0],
-      [
-        (
-          await govPoolContract.populateTransaction.editDescriptionURL("")
-        )?.data as string,
-      ]
-    )
-  }, [createGovProposal, daoPoolAddress, govPoolContract])
-
   return {
     createGovProposal,
     createInsuranceProposal,
     createDistributionProposal,
-    createCustomProposal,
   }
 }

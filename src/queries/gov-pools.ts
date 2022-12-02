@@ -37,6 +37,25 @@ const POOL = `
   executors {${POOL_EXECUTOR}}
 `
 
+const DELEGATION_HISTORY = `
+  id
+  pool { id }
+  timestamp
+  from { id }
+  to { id }
+  isDelegate
+  amount
+  nfts
+`
+
+const VOTER_IN_POOL_PAIR = `
+  id
+  from { id, pool { id }, voter { id } }
+  to { id, voter { id } }
+  delegateAmount
+  delegateNfts
+`
+
 const PROPOSAL_VOTE = `
   id
   hash
@@ -81,18 +100,52 @@ const GovPoolsQuery = `
   }
 `
 
-const GovPoolExecutorQuery = `
-query ($address: String!, $executorAddress: String!) {
-  daoPools(id: $address) {
-    executors(where: { executorAddress: $executorAddress }) {${POOL_EXECUTOR}}
+const GovPoolDelegationHistoryByUserQuery = (isUserDelegator = true) => `
+  query ($offset: Int!, $limit: Int!, $address: String!, $account: String!) {
+    delegationHistories(
+      skip: $offset, first: $limit, 
+      orderBy: timestamp, orderDirection: asc,
+      where: {
+        pool: $address,
+        ${isUserDelegator ? "from: $account," : "to: $account,"}
+      }
+    ) {
+      ${DELEGATION_HISTORY}
+    }
   }
-}
+`
+
+const GovPoolActiveDelegations = (isUserDelegator = true) => `
+  query ($offset: Int!, $limit: Int!, $account: String!) {
+    voterInPoolPairs(
+      skip: $offset, first: $limit, 
+      orderBy: id, orderDirection: asc,
+      where: { 
+        ${isUserDelegator ? "from: $account" : "to: $account"},
+      }
+    ) { ${VOTER_IN_POOL_PAIR} }
+  }
+`
+
+const GovPoolExecutorQuery = `
+  query ($address: String!, $executorAddress: String!) {
+    daoPool(id: $address) {
+      executors(where: { executorAddress: $executorAddress }) {${POOL_EXECUTOR}}
+  }
 `
 
 const GovPoolExecutorsQuery = `
   query ($address: String!) {
-    daoPools(id: $address) {
+    daoPool(id: $address) {
       executors {${POOL_EXECUTOR}}
+    }
+  }
+`
+
+const GovPoolExecutorsBySettingIdQuery = `
+  query ($address: String!, $settingsId: String!) {
+    daoPool(id: $address) {
+      executors(where: { settings_: { settingsId: $settingsId } }) {${POOL_EXECUTOR}}
     }
   }
 `
@@ -152,8 +205,11 @@ export {
   GovPoolQuery,
   GovPoolsQuery,
   GovVoterInPoolQuery,
+  GovPoolDelegationHistoryByUserQuery,
   GovPoolExecutorQuery,
   GovPoolExecutorsQuery,
+  GovPoolExecutorsBySettingIdQuery,
+  GovPoolActiveDelegations,
   GovProposalsWithRewardsQuery,
   GovProposalsWithDistributionQuery,
 }

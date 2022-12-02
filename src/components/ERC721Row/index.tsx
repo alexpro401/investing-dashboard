@@ -12,14 +12,14 @@ interface Props extends INftTile {
 }
 
 /*
-  * NftRow component - UI representation of NFT row in the list of DAO NFTs
+  * ERC721Row component - UI representation of NFT row in the list of DAO NFTs
 
   @param isLocked - used to show if the NFT is used in voting
   @param votingPower - used to show the voting power of the NFT
   @param tokenId - used to show the tokenId of the NFT
   @param tokenUri - used to show the tokenUri of the NFT
 */
-const NftRow: FC<Props & HTMLAttributes<HTMLDivElement>> = (props) => {
+const ERC721Row: FC<Props & HTMLAttributes<HTMLDivElement>> = (props) => {
   const { votingPower, tokenId, tokenUri, isLocked, ...rest } = props
 
   return (
@@ -35,4 +35,4 @@ const NftRow: FC<Props & HTMLAttributes<HTMLDivElement>> = (props) => {
   )
 }
 
-export default NftRow
+export default ERC721Row

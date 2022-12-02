@@ -1,7 +1,7 @@
 import { FC, useMemo } from "react"
 import { v4 as uuidv4 } from "uuid"
 import * as S from "./styled"
-import { Flex, Text, To } from "theme"
+import { Flex, Text } from "theme"
 import { CardInfo } from "common"
 import Skeleton from "components/Skeleton"
 import AccountInfo from "components/AccountInfo"
@@ -117,12 +117,11 @@ const InvestorStatisticCard: FC<Props> = ({ activePools }) => {
         statistic={userStatistic}
       >
         <S.ButtonContainer>
-          <To to="/">
-            <S.NewInvestment />
-          </To>
-          <To to="/investment/positions/open">
-            <S.MyInvestments />
-          </To>
+          <S.NewInvestment text={"+ New investment"} routePath="/" />
+          <S.MyInvestments
+            text={"My investments"}
+            routePath="/investment/positions/open"
+          />
         </S.ButtonContainer>
       </CardInfo>
     </>

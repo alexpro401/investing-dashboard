@@ -102,6 +102,8 @@ const ValidatorField: React.FC<IValidatorFieldProps> = ({
 
   const handleChangeTokenInput = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (isNaN(Number(event.currentTarget.value))) return
+
       setAmount(event.currentTarget.value)
     },
     [setAmount]
@@ -138,6 +140,8 @@ const ValidatorField: React.FC<IValidatorFieldProps> = ({
               isHidden={isHidden}
               disabled={isHidden}
               value={amount}
+              type={"text"}
+              inputMode={"decimal"}
               onChange={handleChangeTokenInput}
               placeholder={"amount"}
             />
