@@ -136,7 +136,7 @@ export default function Routes() {
                   element={<WithdrawDaoPoolPage />}
                 />
                 <Route
-                  path="dao/:daoPoolAddress/delegate"
+                  path="dao/:daoPoolAddress/delegate/:delegatee"
                   element={<DelegateTerminalPage />}
                 />
                 <Route

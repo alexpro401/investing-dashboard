@@ -138,6 +138,7 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
   }, [data.from.pool.id, data.to.voter.id])
 
   const onDelegationTerminalNavigate = React.useCallback(() => {
+    // TODO: pass delegatee address
     navigate(`/dao/${data.from.pool.id}/delegate`)
   }, [data.from.pool.id])
 

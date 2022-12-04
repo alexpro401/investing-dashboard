@@ -6,13 +6,11 @@ import { useTransactionAdder } from "state/transactions/hooks"
 import { SubmitState } from "constants/types"
 import usePayload from "hooks/usePayload"
 import { isTxMined } from "utils"
-import { ZERO, ZERO_ADDR } from "constants/index"
-import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
+import { ZERO_ADDR } from "constants/index"
+import { BigNumberish } from "@ethersproject/bignumber"
 import { useSingleContractMultipleData } from "state/multicall/hooks"
 import { useCallback, useMemo } from "react"
 import { useActiveWeb3React } from "hooks"
-import JSBI from "jsbi"
-import fromRawAmount from "lib/utils/fromRaw"
 
 const useERC721Allowance = (
   collectionAddress: string,

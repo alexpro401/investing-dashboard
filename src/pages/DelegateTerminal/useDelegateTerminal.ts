@@ -8,7 +8,6 @@ import {
   useGovPoolHelperContracts,
   useGovPoolVotingAssets,
   useGovPoolDelegate,
-  useGovPoolWithdrawableAssets,
   useGovPoolDeposit,
 } from "hooks/dao"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
@@ -17,6 +16,9 @@ import useERC20Allowance from "hooks/useERC20Allowance"
 import { useERC20Data } from "state/erc20/hooks"
 import useERC721Allowance from "hooks/useERC721Allowance"
 import { useActiveWeb3React } from "hooks"
+import { useGovPoolWithdrawableAssetsQuery } from "hooks/dao/useGovPoolWithdrawableAssets"
+import { useNavigate } from "react-router-dom"
+import { isAddress } from "utils"
 
 export enum ButtonTypes {
   UNLOCK = "UNLOCK",
@@ -27,11 +29,17 @@ export enum ButtonTypes {
 }
 
 // controller for page Delegate Terminal
-const useDelegateTerminal = (daoPoolAddress?: string) => {
+const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
   const { account } = useActiveWeb3React()
-  // UI controlls
   const [selectOpen, setSelectOpen] = useState(false)
-  const [delegatee, setDelegatee] = useState<string | undefined>()
+
+  const navigate = useNavigate()
+
+  const setDelegatee = useCallback(
+    (value: string) =>
+      isAddress(value) && navigate(`/dao/${daoPoolAddress}/delegate/${value}`),
+    [daoPoolAddress, navigate]
+  )
 
   // form state
   const [ERC20Amount, setERC20Amount] = useState(ZERO)
@@ -42,14 +50,17 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
   const { govUserKeeperAddress } = useGovPoolHelperContracts(daoPoolAddress)
   const deposit = useGovPoolDeposit(daoPoolAddress ?? "")
 
-  // TODO: realtime update
-  const withdrawableAssets = useGovPoolWithdrawableAssets({
+  const withdrawableAssets = useGovPoolWithdrawableAssetsQuery({
     daoPoolAddress,
-    delegator: account,
-  })
-  const depositedERC20Balance = withdrawableAssets?.tokens || ZERO
+    params: useMemo(() => [{ delegator: account }], [account]),
+  })[0]
+
+  const depositedERC20Balance = withdrawableAssets[0] || ZERO
   const depositedERC721Tokens = useMemo(
-    () => withdrawableAssets?.nfts[0].map((v) => v.toNumber()) || [],
+    () =>
+      ((withdrawableAssets[1] && withdrawableAssets[1][0]) || []).map((v) =>
+        v.toNumber!()
+      ),
     [withdrawableAssets]
   )
 
