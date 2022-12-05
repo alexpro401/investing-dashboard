@@ -5,7 +5,6 @@ import theme, { Text } from "theme"
 export const ButtonContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: 1fr;
   grid-gap: 16px;
   width: 100%;
 `
@@ -20,7 +19,6 @@ export const NewInvestment = styled(AppButton).attrs(() => ({
   color: "secondary",
   type: "button",
   size: "small",
-  text: "+ New investment",
 }))`
   font-weight: 600;
   color: ${theme.textColors.primary};
@@ -31,7 +29,6 @@ export const MyInvestments = styled(AppButton).attrs(() => ({
   color: "primary",
   type: "button",
   size: "small",
-  text: "My investments",
 }))`
   width: fill-available;
 `

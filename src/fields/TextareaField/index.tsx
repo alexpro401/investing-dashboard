@@ -100,9 +100,7 @@ function TextareaField<V extends string | number>({
           onBlur={handleBlur}
           // FIXME
           animate={{
-            height: isToggled
-              ? "56px"
-              : `${Math.max(textareaRef?.current?.scrollHeight || 0, 56)}px`,
+            height: "140px",
           }}
           transition={{ duration: 0.05 }}
         />

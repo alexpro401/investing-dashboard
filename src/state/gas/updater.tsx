@@ -1,6 +1,5 @@
 import { useWeb3React } from "@web3-react/core"
-import axios from "axios"
-import { GasPriceResponse } from "interfaces/explorer"
+import { useAPI } from "api"
 import { FC, useCallback, useEffect, useMemo } from "react"
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "state"
@@ -9,21 +8,11 @@ import { updateGasData } from "./actions"
 export const GasPriceUpdater: FC = () => {
   const { chainId } = useWeb3React()
   const dispatch = useDispatch<AppDispatch>()
+  const { GasPriceAPI } = useAPI()
 
   const fetchGasDataBSC = useCallback(async () => {
-    const response = await axios.get<{
-      message: string
-      result: GasPriceResponse
-    }>(
-      `https://api.bscscan.com/api?module=gastracker&action=gasoracle&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`
-    )
-
-    if (response.data.message === "OK") {
-      return response.data.result
-    }
-
-    return null
-  }, [])
+    return await GasPriceAPI.getGasPrice()
+  }, [GasPriceAPI])
 
   const trackerByChain = useMemo(() => {
     return {
@@ -45,10 +34,10 @@ export const GasPriceUpdater: FC = () => {
     }
   }, [chainId, dispatch, trackerByChain])
 
-  // update gas price every 1 minute
+  // update gas price every 1,5 minutes
   useEffect(() => {
     handleGasUpdate().catch(console.error)
-    const interval = setInterval(handleGasUpdate, 60 * 1000)
+    const interval = setInterval(handleGasUpdate, 90 * 1000)
 
     return () => clearInterval(interval)
   }, [handleGasUpdate])

@@ -1,5 +1,5 @@
 import { createAction } from "@reduxjs/toolkit"
-import { GasPriceResponse } from "interfaces/explorer"
+import { GasPriceResponse } from "api/gas-price/types"
 
 // Update gas data
 export const updateGasData = createAction<{

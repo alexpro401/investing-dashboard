@@ -57,9 +57,9 @@ const Alert: React.FC = () => {
             <S.Title>{title || "Action unavailable"}</S.Title>
             <Icon onClick={hideAlert} name={ICON_NAMES.modalClose} />
           </S.Header>
-          <Flex>
-            <S.Content ref={contentRef}>{content}</S.Content>
-          </Flex>
+          {/* <Flex> */}
+          <S.Content ref={contentRef}>{content}</S.Content>
+          {/* </Flex> */}
         </S.Body>
       </S.Container>
     </>,

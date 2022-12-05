@@ -69,7 +69,7 @@ const BarChart: React.FC<IProps> = ({ address, withTip, m }) => {
   if (!data) {
     const fallbackData = Array(12).fill(null)
     return (
-      <S.Container>
+      <S.Container m={m}>
         {fallbackData.map((v, i) => (
           <S.Bar key={i} perc={v} />
         ))}

@@ -114,7 +114,9 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
 
   const unapprowedERC721Selected = useMemo(() => {
     return ownedERC721Selected.filter(
-      (id) => ERC721Allowances[id] !== govUserKeeperAddress
+      (id) =>
+        ERC721Allowances[id].toLocaleLowerCase() !==
+        govUserKeeperAddress.toLocaleLowerCase()
     )
   }, [ERC721Allowances, ownedERC721Selected, govUserKeeperAddress])
 
@@ -223,6 +225,8 @@ const useDelegateTerminal = (daoPoolAddress?: string) => {
     const erc20Amount = ERC20Amount
 
     const depositNfts = ownedERC721Selected
+
+    // TODO: deposit
 
     await delegate(delegatee, erc20Amount, depositNfts)
   }, [delegatee, ownedERC721Selected, ERC20Amount, delegate])

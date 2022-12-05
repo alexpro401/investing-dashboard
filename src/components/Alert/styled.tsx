@@ -71,6 +71,7 @@ export const Content = styled.div`
   line-height: 16px;
   letter-spacing: 0.03em;
   color: ${theme.textColors.primary};
+  max-width: 100%;
 `
 
 export const Close = styled.div`

@@ -59,7 +59,7 @@ class KattanaTokenAPI implements TokenAPI {
       data: response.data,
       timestamp: new Date(),
     }
-    localStorage.setItem("api-cache", JSON.stringify(this.cache))
+    localStorage.setItem("api-cache-kattana", JSON.stringify(this.cache))
 
     return response.data
   }

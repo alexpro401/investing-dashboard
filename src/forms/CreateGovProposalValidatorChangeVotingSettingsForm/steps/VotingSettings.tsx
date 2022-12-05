@@ -147,6 +147,7 @@ const VotingSettings: React.FC = () => {
             <InputField
               value={quorum.get}
               setValue={quorum.set}
+              type={"number"}
               label="Votes needed for quorum"
               errorMessage={getFieldErrorMessage("quorum")}
               onBlur={() => touchField("quorum")}

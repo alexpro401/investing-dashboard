@@ -15,7 +15,7 @@ interface IResultExecutor extends IExecutor {
 }
 
 interface IExecutorQueryData {
-  daoPools: { executors: IExecutor[] }[]
+  daoPool: { executors: IExecutor[] }
 }
 
 const daoGraphClient = createClient({
@@ -30,24 +30,25 @@ const useGovPoolExecutor = (
   const [{ data, fetching }] = useQuery<IExecutorQueryData>({
     query: GovPoolExecutorQuery,
     pause: !isAddress(govPoolAddress),
-    variables: {
-      address: govPoolAddress,
-      executorAddress,
-    },
+    variables: useMemo(
+      () => ({ address: govPoolAddress, executorAddress }),
+      [govPoolAddress, executorAddress]
+    ),
     context: daoGraphClient,
   })
+  const [lastExecutorAddressSnapshot, setLastExecutorAddressSnapshot] =
+    useState<IExecutor | undefined>(undefined)
 
   const searchedExecutor = useMemo(() => {
     if (!data || !govPoolAddress) return undefined
 
-    const daoPools = data.daoPools
+    const daoPool = data.daoPool
 
-    if (daoPools.length === 0) return undefined
+    if (!daoPool) return undefined
 
-    if (!daoPools[0].executors || daoPools[0].executors.length === 0)
-      return undefined
+    if (!daoPool.executors || daoPool.executors.length === 0) return undefined
 
-    return daoPools[0].executors[0]
+    return daoPool.executors[0]
   }, [data, govPoolAddress])
 
   const { type: executorType } = useGovPoolExecutorType(
@@ -62,6 +63,19 @@ const useGovPoolExecutor = (
 
   const handleParseExecutor = useCallback(async () => {
     if (!searchedExecutor) return
+    if (loading) return
+
+    setLastExecutorAddressSnapshot(searchedExecutor)
+
+    if (executorType !== "custom") {
+      setExecutor({
+        ...searchedExecutor,
+        type: executorType,
+        proposalDescription: "",
+        proposalName: "",
+      })
+      return
+    }
 
     setLoading(true)
     try {
@@ -91,11 +105,16 @@ const useGovPoolExecutor = (
     } finally {
       setLoading(false)
     }
-  }, [searchedExecutor, executorType])
+  }, [searchedExecutor, executorType, loading])
 
   useEffect(() => {
-    handleParseExecutor()
-  }, [handleParseExecutor])
+    if (
+      JSON.stringify(lastExecutorAddressSnapshot) !==
+      JSON.stringify(searchedExecutor)
+    ) {
+      handleParseExecutor()
+    }
+  }, [handleParseExecutor, lastExecutorAddressSnapshot, searchedExecutor])
 
   return [executor, fetching || loading || false]
 }

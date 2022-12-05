@@ -1,8 +1,7 @@
 import * as S from "./styled"
 
-import { FC, HTMLAttributes } from "react"
+import { FC, HTMLAttributes, useCallback, useMemo } from "react"
 import { normalizeBigNumber, fromBig, shortenAddress } from "utils"
-import { IGovPool } from "interfaces/typechain/GovPool"
 import { useGovPoolProposal } from "hooks/dao"
 import { useParams } from "react-router-dom"
 import { GovProposalCardHead } from "common/dao"
@@ -11,13 +10,15 @@ import { Flex } from "theme"
 import TokenIcon from "components/TokenIcon"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useWeb3React } from "@web3-react/core"
+import { WrappedProposalView } from "types"
+import { isEqual } from "lodash"
+import { ZERO_ADDR } from "constants/index"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
-  proposalId: number
-  proposalView: IGovPool.ProposalViewStructOutput
+  wrappedProposalView: WrappedProposalView
 }
 
-const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
+const DaoProposalCard: FC<Props> = ({ wrappedProposalView, ...rest }) => {
   const { daoAddress } = useParams()
 
   const {
@@ -32,13 +33,74 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
     isInsurance,
     isDistribution,
     distributionProposalTokenAddress,
-    distributionProposalTokenAmount,
     distributionProposalToken,
-  } = useGovPoolProposal(proposalId, daoAddress || "", proposalView)
+    rewardTokenAddress,
+    isProposalStateVoting,
+    isProposalStateWaitingForVotingTransfer,
+    isProposalStateValidatorVoting,
+    isProposalStateDefeated,
+    isProposalStateSucceeded,
+    isProposalStateExecuted,
+    moveProposalToValidators,
+    claimRewards,
+    executeAndClaim,
+    progress,
+  } = useGovPoolProposal(wrappedProposalView, daoAddress)
+
+  console.log(progress)
 
   const { chainId } = useWeb3React()
 
-  console.log("normalizeBigNumber", +normalizeBigNumber(votesFor, 18, 2))
+  const cardBtnText = useMemo(() => {
+    if (isProposalStateVoting) {
+      return voteEnd
+    } else if (isProposalStateWaitingForVotingTransfer) {
+      return "Start second step (validators)"
+    } else if (isProposalStateValidatorVoting) {
+      return `Second step ${voteEnd}`
+    } else if (isProposalStateSucceeded) {
+      return "Execute"
+    } else if (isProposalStateExecuted) {
+      if (rewardTokenAddress && !isEqual(rewardTokenAddress, ZERO_ADDR)) {
+        return "Claim"
+      } else {
+        return ""
+      }
+    } else {
+      return ""
+    }
+  }, [
+    isProposalStateExecuted,
+    isProposalStateSucceeded,
+    isProposalStateValidatorVoting,
+    isProposalStateVoting,
+    isProposalStateWaitingForVotingTransfer,
+    rewardTokenAddress,
+    voteEnd,
+  ])
+
+  const handleCardBtnClick = useCallback(async () => {
+    if (isProposalStateWaitingForVotingTransfer) {
+      await moveProposalToValidators()
+    } else if (isProposalStateSucceeded) {
+      await executeAndClaim()
+    } else if (
+      isProposalStateExecuted &&
+      !!rewardTokenAddress &&
+      !isEqual(rewardTokenAddress, ZERO_ADDR)
+    ) {
+      // TODO: check if user already claimed
+      await claimRewards()
+    }
+  }, [
+    claimRewards,
+    executeAndClaim,
+    isProposalStateExecuted,
+    isProposalStateSucceeded,
+    isProposalStateWaitingForVotingTransfer,
+    moveProposalToValidators,
+    rewardTokenAddress,
+  ])
 
   return (
     <S.Root {...rest}>
@@ -46,7 +108,7 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
         isInsurance={isInsurance}
         name={name}
         pool={daoAddress}
-        to={`/dao/${daoAddress}/proposal/${proposalId}`}
+        to={`/dao/${daoAddress}/proposal/${wrappedProposalView.proposalId}`}
       />
       <S.DaoProposalCardBody>
         <S.DaoProposalCardBlockInfo>
@@ -79,13 +141,14 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
         </S.DaoProposalCardBlockInfo>
         <S.DaoVotingProgressBar>
           <Flex full ai={"center"} jc={"space-between"} gap={"3"}>
-            <ProgressLine
-              w={
-                (+normalizeBigNumber(requiredQuorum) / 100) *
-                Number(normalizeBigNumber(votesFor, 18, 2))
-              }
-            />
-            <ProgressLine w={0} />
+            {isProposalStateValidatorVoting ? (
+              <>
+                <ProgressLine w={100} />
+                <ProgressLine w={100} />
+              </>
+            ) : (
+              <ProgressLine w={progress} />
+            )}
           </Flex>
         </S.DaoVotingProgressBar>
         <S.DaoProposalCardBlockInfo>
@@ -140,7 +203,12 @@ const DaoProposalCard: FC<Props> = ({ proposalId, proposalView, ...rest }) => {
           </S.DaoProposalCardBlockInfoLabel>
         </S.DaoProposalCardBlockInfo>
 
-        <S.DaoCenteredButton text={voteEnd} />
+        {!isProposalStateDefeated && cardBtnText && (
+          <S.DaoCenteredButton
+            text={cardBtnText}
+            onClick={handleCardBtnClick}
+          />
+        )}
       </S.DaoProposalCardBody>
     </S.Root>
   )
