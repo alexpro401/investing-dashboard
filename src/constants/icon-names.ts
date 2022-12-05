@@ -45,4 +45,6 @@ export enum ICON_NAMES {
   metamask = "metamask",
   plus = "plus",
   exclamationCircle = "exclamation-circle",
+  clockCircle = "clock-circle",
+  successCircle = "success-circle",
 }
