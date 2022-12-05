@@ -23,7 +23,7 @@ const TransactionWait: React.FC<IProps> = ({ addedTime }) => {
   return (
     <TransactionWaitContainer>
       <TransactionWaitContent>
-        {time} - <TransactionWaitProgress /> 1 min
+        {time} - 1 min <TransactionWaitProgress />
       </TransactionWaitContent>
     </TransactionWaitContainer>
   )
