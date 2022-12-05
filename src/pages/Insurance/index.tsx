@@ -7,20 +7,22 @@ import { Flex, Text } from "theme"
 import Header from "components/Header/Layout"
 import { AppButton, Card, CardDescription, CardHead } from "common"
 
-import Voting from "pages/Voting"
 import Management from "pages/Management"
 
 import * as S from "./styled"
+import InsuranceProposals from "./InsuranceProposals"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
 })
 
 const Insurance = () => {
-  const [
-    { checkingInvestmentStatus, accidentsResponse },
-    { onInsuranceCreateNavigate, fetchInsuranceAccidents },
-  ] = useInsurancePage()
+  const [{ checkingInvestmentStatus }, { onInsuranceCreateNavigate }] =
+    useInsurancePage()
+
+  const daoPool = String(
+    process.env.REACT_APP_DEXE_DAO_ADDRESS
+  ).toLocaleLowerCase()
 
   return (
     <>
@@ -57,22 +59,10 @@ const Insurance = () => {
                 text="View all"
                 size="x-small"
                 iconRight={ICON_NAMES.angleRightOutlined}
-                routePath="/insurance"
+                routePath={`/dao/${daoPool}/proposals/opened`}
               />
             </Flex>
-            <Flex full m="8px 0 0">
-              <Text fz={13} lh="150%" color="#B1C7FC">
-                Description Sed ut perspiciatis, unde omnis iste natus error sit
-                voluptatem accusantium doloremque
-              </Text>
-            </Flex>
-            <Flex full m="16px 0 0">
-              <Voting
-                data={accidentsResponse?.data}
-                loading={accidentsResponse?.loading ?? true}
-                fetchMore={fetchInsuranceAccidents}
-              />
-            </Flex>
+            <InsuranceProposals />
           </Flex>
         </S.Content>
       </S.Container>
