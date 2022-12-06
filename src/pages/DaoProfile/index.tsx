@@ -276,7 +276,7 @@ const DaoProfile: React.FC = () => {
               isValidator={isValidator}
               handleOpenCreateProposalModal={handleOpenCreateProposalModal}
               account={account}
-              govPoolQuery={govPoolQuery.data?.daoPool}
+              govPoolQuery={govPoolQuery.data?.daoPool ?? ({} as IGovPoolQuery)}
             />
             <S.Indents top side={false}>
               <DaoProfileChart chart={chart} setChart={setChart} />
