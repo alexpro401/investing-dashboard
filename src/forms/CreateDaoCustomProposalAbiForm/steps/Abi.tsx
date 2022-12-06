@@ -82,15 +82,10 @@ const AbiStep: FC = () => {
     [contractAdresses.get]
   )
 
-  // temporary
-  const abis = useMemo<any[]>(() => [], [])
-  const executorsAbis = useMemo<any[]>(() => [], [])
-  const handleCustomAbi = useCallback((...params: any[]) => {}, [])
-
-  // const { abis, executorsAbis, handleCustomAbi } = useAbiKeeper(
-  //   adresses,
-  //   executorsShorten
-  // )
+  const { abis, executorsAbis, handleCustomAbi } = useAbiKeeper(
+    adresses,
+    executorsShorten
+  )
 
   console.log("adresses: ", adresses)
 
@@ -262,7 +257,7 @@ const AbiStep: FC = () => {
         <TextareaField
           placeholder="ABI"
           value={abis[index]}
-          setValue={(value) => handleCustomAbi(address, value)}
+          setValue={(value) => handleCustomAbi(address, value as string)}
         />
 
         <OverlapInputField

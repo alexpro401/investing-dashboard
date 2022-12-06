@@ -1,4 +1,5 @@
 import { useAPI } from "api"
+import { isEqual } from "lodash"
 import { useCallback, useEffect, useState } from "react"
 import { isAddress } from "utils"
 
@@ -7,7 +8,6 @@ const useABI = () => {
 
   const fetch = useCallback(
     async (abi: string): Promise<JSON | null> => {
-      console.log("abi", abi)
       try {
         const response = await ContractAPI.getContractABI(abi)
 
@@ -42,18 +42,22 @@ export const useAbiList = (abis: string[]) => {
       })
     )
       .then((values) => {
-        setAbiList(
-          values.map((v) => {
-            if (!v) {
-              return ""
-            }
+        const formated = values.map((v) => {
+          if (!v) {
+            return ""
+          }
+          return JSON.stringify(v, undefined, 4)
+        })
 
-            return JSON.stringify(v, undefined, 4)
-          })
-        )
+        // *hint
+        // if the values are the same, don't update the state
+        // this will prevent the infinite loop
+        if (isEqual(formated, abiList)) return
+
+        setAbiList(formated)
       })
       .catch(console.error)
-  }, [abis, getABI])
+  }, [abiList, abis, getABI])
 
   return abiList
 }
