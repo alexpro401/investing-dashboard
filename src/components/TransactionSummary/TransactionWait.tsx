@@ -6,7 +6,6 @@ import { TransactionInfo } from "state/transactions/types"
 import {
   TransactionWaitContainer,
   TransactionWaitContent,
-  TransactionWaitFooter,
   TransactionWaitProgress,
 } from "./styled"
 
@@ -24,11 +23,8 @@ const TransactionWait: React.FC<IProps> = ({ addedTime }) => {
   return (
     <TransactionWaitContainer>
       <TransactionWaitContent>
-        Your transaction has been sent to the network
+        {time} - 1 min <TransactionWaitProgress />
       </TransactionWaitContent>
-      <TransactionWaitFooter>
-        {time} - <TransactionWaitProgress /> 1 min
-      </TransactionWaitFooter>
     </TransactionWaitContainer>
   )
 }

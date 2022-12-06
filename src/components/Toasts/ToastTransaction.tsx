@@ -11,6 +11,7 @@ import TransactionWait from "components/TransactionSummary/TransactionWait"
 import { useActiveWeb3React } from "hooks"
 import { useTransaction } from "state/transactions/hooks"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
+import theme from "theme"
 
 interface IProps {
   hash: string
@@ -32,9 +33,9 @@ const ToastTransaction: FC<IProps> = ({ hash, onClose, visible }) => {
     }
 
     return ToastType.Warning
-    /* 
-      No need dependency, otherwise React will 
-      re-render content of 'wait toast' after transaction is confirmed 
+    /*
+      No need dependency, otherwise React will
+      re-render content of 'wait toast' after transaction is confirmed
     */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -50,14 +51,14 @@ const ToastTransaction: FC<IProps> = ({ hash, onClose, visible }) => {
       case ToastType.Warning:
         return (
           <TransactionErrorContent>
-            Your transaction don&apos;t sent to the network
+            Your transaction didn&apos;t send to the network
           </TransactionErrorContent>
         )
       default:
         return null
     }
-    /* 
-      No need dependency, otherwise React will 
+    /*
+      No need dependency, otherwise React will
       re-render content of 'wait toast' after transaction is confirmed
     */
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -68,21 +69,22 @@ const ToastTransaction: FC<IProps> = ({ hash, onClose, visible }) => {
   return (
     <>
       <ToastBase type={type} onClose={onClose} visible={visible}>
-        <TransactionBody>{body}</TransactionBody>
-        {type !== ToastType.Waiting && chainId && (
+        {type !== ToastType.Waiting && chainId ? (
           <>
             <ExternalLink
-              color={type === ToastType.Success ? "#9AE2CB" : "#e4f2ff"}
-              iconColor={type === ToastType.Success ? "#9AE2CB" : "#e4f2ff"}
+              color={theme.textColors.primary}
+              iconColor={theme.textColors.primary}
               href={getExplorerLink(
                 chainId,
                 hash,
                 ExplorerDataType.TRANSACTION
               )}
             >
-              View on bscscan
+              <TransactionBody>{body}</TransactionBody>
             </ExternalLink>
           </>
+        ) : (
+          <TransactionBody>{body}</TransactionBody>
         )}
       </ToastBase>
     </>

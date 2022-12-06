@@ -1,7 +1,7 @@
 import styled from "styled-components"
 import { motion } from "framer-motion"
 
-import { GradientBorder, Flex } from "theme"
+import theme from "theme"
 
 export const ToastsContainer = styled(motion.div)<{ height: string | number }>`
   width: 100%;
@@ -24,48 +24,46 @@ export const ToastsInner = styled.div`
   }
 `
 
-export const Container = styled(GradientBorder)<{ width?: string }>`
+export const Container = styled(motion.div)<{ width?: string }>`
   width: ${({ width }) => (width ? width : "210px")};
   position: relative;
-  padding: 16px 24px 16px 11px;
+  padding: 12px;
   margin: 16px 16px 0;
   border-radius: 16px;
-
-  &:after {
-    background: #181e2c;
-  }
+  background: ${theme.textColors.secondaryNegative};
 `
 
 export const Close = styled.div`
-  position: absolute;
   height: 24px;
   width: 24px;
-  top: 2px;
-  right: 6px;
+  margin: -6px -6px 0 0;
 `
 
-export const Body = styled(Flex)`
-  align-items: flex-start;
+export const Body = styled.div`
   width: 100%;
 `
 
 export const Icon = styled.img`
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
 `
 
 export const Content = styled.div`
   width: 100%;
   font-family: "Gilroy";
   font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 16px;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 15px;
   letter-spacing: 0.03em;
-  color: #e4f2ff;
+  color: ${theme.textColors.primary};
+  margin-top: 8px;
 `
 
-export const TransactionBody = styled(Flex)``
+export const TransactionBody = styled.span`
+  display: inline-block;
+  margin-right: 3px;
+`
 
 export const TransactionErrorContent = styled.div`
   margin-bottom: 16px;
