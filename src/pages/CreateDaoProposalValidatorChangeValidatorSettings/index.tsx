@@ -13,13 +13,17 @@ import {
 } from "hooks/dao"
 import { cutStringZeroes } from "utils"
 import CreateGovProposalValidatorChangeValidatorSettingsForm from "forms/CreateGovProposalValidatorChangeValidatorSettingsForm"
+import Skeleton from "components/Skeleton"
+import { Flex } from "theme"
 
 import * as S from "./styled"
 
 const CreateDaoProposalValidatorChangeValidatorSettings: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
 
-  const [validatorsFromGraph] = useGovPoolValidators(daoAddress ?? "")
+  const [validatorsFromGraph, validatorsLoading] = useGovPoolValidators(
+    daoAddress ?? ""
+  )
   const [, tokenData] = useGovValidatorsValidatorsToken(daoAddress ?? "")
 
   const balances = useMemo<string[]>(
@@ -35,28 +39,47 @@ const CreateDaoProposalValidatorChangeValidatorSettings: React.FC = () => {
     [validatorsFromGraph]
   )
 
+  const loader = useMemo(
+    () => (
+      <Flex gap={"24"} full m="16px 0 0 0" dir="column" ai={"center"}>
+        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+      </Flex>
+    ),
+    []
+  )
+
   return (
     <>
       <Header>Create proposal</Header>
-      <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
-        <WithUserIsDaoValidatorValidation daoPoolAddress={daoAddress ?? ""}>
-          <S.PageHolder>
-            <S.PageContent>
-              <GovProposalCreatingContextProvider>
-                <ValidatorsListContextProvider
-                  initialForm={{
-                    balances: balances,
-                    validators: validators,
-                    validatorTokenSymbol: tokenData
-                      ? tokenData.symbol ?? null
-                      : null,
-                  }}
-                >
-                  <CreateGovProposalValidatorChangeValidatorSettingsForm />
-                </ValidatorsListContextProvider>
-              </GovProposalCreatingContextProvider>
-            </S.PageContent>
-          </S.PageHolder>
+      <WithGovPoolAddressValidation
+        daoPoolAddress={daoAddress ?? ""}
+        loader={loader}
+      >
+        <WithUserIsDaoValidatorValidation
+          daoPoolAddress={daoAddress ?? ""}
+          loader={loader}
+        >
+          {validatorsLoading && loader}
+          {!validatorsLoading && (
+            <S.PageHolder>
+              <S.PageContent>
+                <GovProposalCreatingContextProvider>
+                  <ValidatorsListContextProvider
+                    initialForm={{
+                      balances: balances,
+                      validators: validators,
+                      validatorTokenSymbol: tokenData
+                        ? tokenData.symbol ?? null
+                        : null,
+                    }}
+                  >
+                    <CreateGovProposalValidatorChangeValidatorSettingsForm />
+                  </ValidatorsListContextProvider>
+                </GovProposalCreatingContextProvider>
+              </S.PageContent>
+            </S.PageHolder>
+          )}
         </WithUserIsDaoValidatorValidation>
       </WithGovPoolAddressValidation>
     </>

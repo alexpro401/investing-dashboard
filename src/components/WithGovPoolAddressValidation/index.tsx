@@ -10,11 +10,13 @@ import image404Src from "assets/others/create-fund-docs.png"
 interface IProps {
   daoPoolAddress: string
   children: React.ReactNode
+  loader?: React.ReactNode
 }
 
 const WithGovPoolAddressValidation: React.FC<IProps> = ({
   daoPoolAddress,
   children,
+  loader,
 }) => {
   const poolRegistryContract = usePoolRegistryContract()
   const [loading, setLoading] = useState<boolean>(true)
@@ -29,6 +31,7 @@ const WithGovPoolAddressValidation: React.FC<IProps> = ({
     setLoading(true)
 
     try {
+      await new Promise((res) => setTimeout(res, 2000))
       if (govPoolFromRedux) {
         setIsValid(true)
       } else {
@@ -48,7 +51,7 @@ const WithGovPoolAddressValidation: React.FC<IProps> = ({
   }, [checkGovAddressValidation])
 
   if (loading) {
-    return <></>
+    return <>{loader ?? ""}</>
   }
 
   if (!isValid) {

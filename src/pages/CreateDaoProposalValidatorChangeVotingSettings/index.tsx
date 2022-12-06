@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 import { useParams } from "react-router-dom"
 import { formatUnits } from "@ethersproject/units"
 
@@ -9,38 +9,58 @@ import GovProposalCreatingContextProvider from "context/govPool/proposals/GovPro
 import DaoValidatorProposalChangeVotingSettingsContextProvider from "context/govPool/proposals/validators/ChangeVotingSettingsContext"
 import CreateGovProposalValidatorChangeVotingSettingsForm from "forms/CreateGovProposalValidatorChangeVotingSettingsForm"
 import { useGovValidatorsInternalSettings } from "hooks/dao"
+import Skeleton from "components/Skeleton"
+import { Flex } from "theme"
 
 import * as S from "./styled"
 
 const CreateDaoProposalValidatorChangeVotingSettings: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
-  const [proposalInternalSettings] = useGovValidatorsInternalSettings(
-    daoAddress ?? ""
+  const [proposalInternalSettings, proposalInternalSettingsLoading] =
+    useGovValidatorsInternalSettings(daoAddress ?? "")
+
+  const loader = useMemo(
+    () => (
+      <Flex gap={"24"} full m="16px 0 0 0" dir="column" ai={"center"}>
+        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"160px"} />
+      </Flex>
+    ),
+    []
   )
 
   return (
     <>
       <Header>Create proposal</Header>
-      <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
-        <WithUserIsDaoValidatorValidation daoPoolAddress={daoAddress ?? ""}>
-          <S.PageHolder>
-            <S.PageContent>
-              <GovProposalCreatingContextProvider>
-                {proposalInternalSettings && (
-                  <DaoValidatorProposalChangeVotingSettingsContextProvider
-                    initialForm={{
-                      duration: proposalInternalSettings.duration.toNumber(),
-                      quorum: Number(
-                        formatUnits(proposalInternalSettings.quorum, 25)
-                      ),
-                    }}
-                  >
-                    <CreateGovProposalValidatorChangeVotingSettingsForm />
-                  </DaoValidatorProposalChangeVotingSettingsContextProvider>
-                )}
-              </GovProposalCreatingContextProvider>
-            </S.PageContent>
-          </S.PageHolder>
+      <WithGovPoolAddressValidation
+        daoPoolAddress={daoAddress ?? ""}
+        loader={loader}
+      >
+        <WithUserIsDaoValidatorValidation
+          daoPoolAddress={daoAddress ?? ""}
+          loader={loader}
+        >
+          {proposalInternalSettingsLoading && loader}
+          {!proposalInternalSettingsLoading && (
+            <S.PageHolder>
+              <S.PageContent>
+                <GovProposalCreatingContextProvider>
+                  {proposalInternalSettings && (
+                    <DaoValidatorProposalChangeVotingSettingsContextProvider
+                      initialForm={{
+                        duration: proposalInternalSettings.duration.toNumber(),
+                        quorum: Number(
+                          formatUnits(proposalInternalSettings.quorum, 25)
+                        ),
+                      }}
+                    >
+                      <CreateGovProposalValidatorChangeVotingSettingsForm />
+                    </DaoValidatorProposalChangeVotingSettingsContextProvider>
+                  )}
+                </GovProposalCreatingContextProvider>
+              </S.PageContent>
+            </S.PageHolder>
+          )}
         </WithUserIsDaoValidatorValidation>
       </WithGovPoolAddressValidation>
     </>

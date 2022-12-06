@@ -15,15 +15,13 @@ const useGovPoolCustomExecutors = (
 ): [ICustomExecutor[], boolean] => {
   const [executors] = useGovPoolExecutors(govPoolAddress)
   const [customExecutors, setCustomExecutors] = useState<ICustomExecutor[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
   const [lastExecutorsSnapshot, setLastExecutorsSnapshot] = useState<
     (IExecutor & { type: IExecutorType })[] | undefined
   >(undefined)
 
   const handleSetupCustomExecutors = useCallback(async () => {
     if (!executors || executors.length === 0) return
-
-    if (loading) return
 
     setLoading(true)
     setLastExecutorsSnapshot(executors)
@@ -78,7 +76,7 @@ const useGovPoolCustomExecutors = (
 
     setLoading(false)
     setCustomExecutors(_customExecutors)
-  }, [executors, loading])
+  }, [executors])
 
   useEffect(() => {
     if (JSON.stringify(lastExecutorsSnapshot) !== JSON.stringify(executors)) {
