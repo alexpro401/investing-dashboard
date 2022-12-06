@@ -25,9 +25,9 @@ export const ToastsInner = styled.div`
 `
 
 export const Container = styled(motion.div)<{ width?: string }>`
-  width: ${({ width }) => (width ? width : "210px")};
+  width: calc(100vw - 32px);
+  max-width: 460px;
   position: relative;
-  padding: 12px;
   margin: 16px 16px 0;
   border-radius: 16px;
   background: ${theme.textColors.secondaryNegative};
@@ -40,7 +40,7 @@ export const Close = styled.div`
 `
 
 export const Body = styled.div`
-  width: 100%;
+  padding: 12px;
 `
 
 export const Icon = styled.img`
