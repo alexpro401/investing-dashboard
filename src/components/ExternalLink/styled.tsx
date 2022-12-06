@@ -17,6 +17,7 @@ export const Text = styled.span<{
   iconPosition: string
   removeIcon: boolean
 }>`
+  display: inline-block;
   color: inherit;
   order: ${({ iconPosition }) => (iconPosition === "right" ? "0" : "1")};
   margin-top: ${({ removeIcon }) => (removeIcon ? 0 : "3px")};

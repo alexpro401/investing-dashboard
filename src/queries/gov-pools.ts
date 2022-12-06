@@ -131,6 +131,7 @@ const GovPoolExecutorQuery = `
   query ($address: String!, $executorAddress: String!) {
     daoPool(id: $address) {
       executors(where: { executorAddress: $executorAddress }) {${POOL_EXECUTOR}}
+    }
   }
 `
 
