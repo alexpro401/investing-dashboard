@@ -1,13 +1,20 @@
 import { Icon } from "common"
 import * as S from "../styled"
-import { AppButton } from "common"
 import { Flex, Text } from "theme"
 import Tooltip from "components/Tooltip"
 import { v4 as uuidv4 } from "uuid"
 import { ICON_NAMES } from "constants/icon-names"
 import { DaoPoolCard } from "common"
+import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
+import { Web3ReactContextInterface } from "@web3-react/core/dist/types"
 
-const DaoProfileStatisticCard = ({
+interface Props extends Pick<Web3ReactContextInterface, "account"> {
+  isValidator: boolean
+  handleOpenCreateProposalModal: () => void
+  govPoolQuery: IGovPoolQuery
+}
+
+const DaoProfileStatisticCard: React.FC<Props> = ({
   isValidator,
   handleOpenCreateProposalModal,
   account,
@@ -19,7 +26,7 @@ const DaoProfileStatisticCard = ({
         <S.CardButtons>
           <S.NewProposal onClick={handleOpenCreateProposalModal} />
           <S.AllProposals
-            routePath={`/dao/${govPoolQuery.id}/proposals/opened`}
+            routePath={`/dao/${govPoolQuery?.id}/proposals/opened`}
           />
         </S.CardButtons>
         {isValidator && (

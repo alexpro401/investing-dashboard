@@ -31,7 +31,6 @@ import { GasPriceUpdater } from "state/gas/updater"
 import { PoolListUpdater } from "state/pools/updater"
 import MulticallUpdater from "state/multicall/updater"
 import ListsUpdater from "state/lists/updater"
-import { GovPoolsUpdater } from "state/govPools/updater"
 
 import { usePollBlockNumber } from "state/block/hooks"
 
@@ -81,7 +80,6 @@ const GlobalComponents = () => (
     <ErrorMessage />
     <MulticallUpdater />
     <ListsUpdater />
-    <GovPoolsUpdater />
   </>
 )
 
