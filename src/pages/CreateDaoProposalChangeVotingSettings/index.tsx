@@ -7,12 +7,13 @@ import {
   CardDescription,
   SelectableCard,
   StepsNavigation,
+  CreateDaoCardStepNumber,
 } from "common"
-import { CreateDaoCardStepNumber } from "common"
 import RadioButton from "components/RadioButton"
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import StepsControllerContext from "context/StepsControllerContext"
+import { useGovPoolCustomExecutors } from "hooks/dao"
 
 import * as S from "./styled"
 
@@ -30,6 +31,7 @@ interface IDefaultVotingSettingsType {
 interface ISelectedCard {
   type: "default" | "custom"
   specification?: EDefaultVotingSettingsType
+  executorAddress?: string
 }
 
 const CreateDaoProposalChangeVotingSettings: React.FC = () => {
@@ -39,6 +41,7 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
     type: "default",
     specification: EDefaultVotingSettingsType.changeVotingSettings,
   })
+  const [customExecutors] = useGovPoolCustomExecutors(daoAddress)
 
   const handleSelectDefaultVotingType = useCallback(
     (specification: EDefaultVotingSettingsType): void => {
@@ -46,6 +49,10 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
     },
     []
   )
+
+  const handleSelectCustomProposal = useCallback((executorAddress: string) => {
+    setSelectedCard({ type: "custom", executorAddress })
+  }, [])
 
   const defaultVotingSettingsTypes = useMemo<IDefaultVotingSettingsType[]>(
     () => [
@@ -80,32 +87,26 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
   const handleNextStep = useCallback(() => {
     if (!selectedCard) return
 
-    if (
-      selectedCard &&
-      selectedCard.type === "default" &&
-      selectedCard.specification
-    ) {
+    const slug = `/dao/${daoAddress}/create-proposal/change-voting-settings`
+
+    if (selectedCard.type === "default" && selectedCard.specification) {
       if (
         selectedCard.specification ===
         EDefaultVotingSettingsType.changeVotingSettings
       ) {
-        return navigate(
-          `/dao/${daoAddress}/create-proposal-global-voting-options`
-        )
+        return navigate(slug + "/global-voting")
       }
 
       if (
         selectedCard.specification ===
         EDefaultVotingSettingsType.tokenDistribution
       ) {
-        return navigate(
-          `/dao/${daoAddress}/create-proposal-change-token-distribution`
-        )
+        return navigate(slug + "/token-distribution")
       }
     }
 
-    if (selectedCard && selectedCard.type === "custom") {
-      // TODO handle custom proposals
+    if (selectedCard.type === "custom" && selectedCard.executorAddress) {
+      navigate(slug + `/custom/${selectedCard.executorAddress}`)
       return
     }
   }, [navigate, daoAddress, selectedCard])
@@ -151,6 +152,27 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
                 />
               )
             })}
+            {customExecutors.map(
+              ({ id, proposalName, proposalDescription, executorAddress }) => {
+                return (
+                  <SelectableCard
+                    key={id}
+                    value={selectedCard?.executorAddress as string}
+                    setValue={handleSelectCustomProposal}
+                    valueToSet={executorAddress}
+                    nodeLeft={
+                      <RadioButton
+                        selected={selectedCard?.executorAddress ?? ""}
+                        value={executorAddress}
+                        onChange={() => {}}
+                      />
+                    }
+                    title={proposalName}
+                    description={proposalDescription}
+                  />
+                )
+              }
+            )}
             <StepsNavigation />
           </S.PageContent>
         </S.PageHolder>

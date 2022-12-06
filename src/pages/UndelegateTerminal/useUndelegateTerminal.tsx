@@ -29,7 +29,8 @@ const useUndelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
   const [ERC721Amount, setERC721Amount] = useState<number[]>([])
 
   const { undelegate } = useGovPoolDelegate(daoPoolAddress)
-  const [{ tokenAddress, nftAddress }] = useGovPoolVotingAssets(daoPoolAddress)
+  const [{ tokenAddress, nftAddress, haveToken, haveNft }] =
+    useGovPoolVotingAssets(daoPoolAddress)
 
   const withdrawableAssets = useGovPoolWithdrawableAssets({
     daoPoolAddress,
@@ -80,6 +81,8 @@ const useUndelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
   // UI data
   const formInfo = useMemo(() => {
     return {
+      haveToken,
+      haveNft,
       erc20: {
         address: tokenAddress,
         symbol: fromData?.symbol,
@@ -96,6 +99,8 @@ const useUndelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
       },
     }
   }, [
+    haveToken,
+    haveNft,
     tokenAddress,
     fromData,
     ERC20Balance,

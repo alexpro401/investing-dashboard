@@ -34,7 +34,15 @@ import {
 } from "./investors"
 
 import { UserTransactionsQuery } from "./interactions"
-import { GovPoolQuery, GovPoolsQuery } from "./gov-pools"
+import {
+  GovPoolQuery,
+  GovPoolsQuery,
+  GovVoterInPoolQuery,
+  GovPoolActiveDelegations,
+  GovProposalsWithRewardsQuery,
+  GovProposalsWithDistributionQuery,
+  GovPoolDelegationHistoryByUserQuery,
+} from "./gov-pools"
 
 export {
   PoolQuery,
@@ -63,4 +71,9 @@ export {
   InvestorProposalsPositionsQuery,
   GovPoolQuery,
   GovPoolsQuery,
+  GovVoterInPoolQuery,
+  GovPoolActiveDelegations,
+  GovProposalsWithRewardsQuery,
+  GovProposalsWithDistributionQuery,
+  GovPoolDelegationHistoryByUserQuery,
 }

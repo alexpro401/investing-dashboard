@@ -41,12 +41,16 @@ import {
   LockedIcon,
   FlameGradientIcon,
   TileCheckIcon,
+  ArrowIcon,
   MetamaskIcon,
   PlusIcon,
+  ExclamationCircle,
+  ClockCircledIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
 import { ICON_NAMES } from "constants/icon-names"
+import SuccessCircledIcon from "../../assets/icons/SuccessCircledIcon"
 
 interface Props extends HTMLAttributes<HTMLOrSVGElement> {
   name: ICON_NAMES
@@ -139,10 +143,18 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return LockedIcon as unknown as ElementType
       case ICON_NAMES.tileCheck:
         return TileCheckIcon as unknown as ElementType
+      case ICON_NAMES.arrow:
+        return ArrowIcon as unknown as ElementType
       case ICON_NAMES.metamask:
         return MetamaskIcon as unknown as ElementType
       case ICON_NAMES.plus:
         return PlusIcon as unknown as ElementType
+      case ICON_NAMES.exclamationCircle:
+        return ExclamationCircle as unknown as ElementType
+      case ICON_NAMES.clockCircle:
+        return ClockCircledIcon as unknown as ElementType
+      case ICON_NAMES.successCircle:
+        return SuccessCircledIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }

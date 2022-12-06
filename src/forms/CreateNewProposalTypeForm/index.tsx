@@ -7,12 +7,15 @@ import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { DefaultProposalStep } from "common"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import { createCustomProposalTypeContext } from "context/govPool/proposals/regular/CreateCustomProposalType"
 import { useGovPoolCreateProposalType } from "hooks/dao"
+import { ExecutorsStep } from "./steps"
 
 import * as S from "./styled"
 
 enum STEPS {
   generalVotingSettings = "generalVotingSettings",
+  executors = "executors",
   basicInfo = "basicInfo",
 }
 
@@ -25,6 +28,7 @@ const CreateNewProposalTypeForm: React.FC = () => {
 
   const daoProposalCreatingInfo = useContext(GovProposalCreatingContext)
   const firstStepSettings = useContext(FundDaoCreatingContext)
+  const { executorAddresses } = useContext(createCustomProposalTypeContext)
 
   const [currentStep, setCurrentStep] = useState<STEPS>(
     STEPS.generalVotingSettings
@@ -38,7 +42,6 @@ const CreateNewProposalTypeForm: React.FC = () => {
 
   const handleCreateDaoProposalType = useCallback(() => {
     const {
-      contractAddress,
       proposalDescription,
       proposalName,
       proposalTypeName,
@@ -65,7 +68,7 @@ const CreateNewProposalTypeForm: React.FC = () => {
 
     createDaoProposalType({
       proposalInfo: {
-        contractAddress: contractAddress.get,
+        executors: executorAddresses.get.map((el) => el.address),
         proposalDescription: proposalDescription.get,
         proposalName: proposalName.get,
         proposalTypeName: proposalTypeName.get,
@@ -87,7 +90,12 @@ const CreateNewProposalTypeForm: React.FC = () => {
         voteRewardsCoefficient: voteRewardsCoefficient.get,
       },
     })
-  }, [createDaoProposalType, daoProposalCreatingInfo, firstStepSettings])
+  }, [
+    createDaoProposalType,
+    daoProposalCreatingInfo,
+    firstStepSettings,
+    executorAddresses,
+  ])
 
   const handlePrevStep = useCallback(() => {
     switch (currentStep) {
@@ -97,8 +105,12 @@ const CreateNewProposalTypeForm: React.FC = () => {
         }
         break
       }
-      case STEPS.basicInfo: {
+      case STEPS.executors: {
         setCurrentStep(STEPS.generalVotingSettings)
+        break
+      }
+      case STEPS.basicInfo: {
+        setCurrentStep(STEPS.executors)
         break
       }
       default:
@@ -109,6 +121,10 @@ const CreateNewProposalTypeForm: React.FC = () => {
   const handleNextStep = useCallback(() => {
     switch (currentStep) {
       case STEPS.generalVotingSettings: {
+        setCurrentStep(STEPS.executors)
+        break
+      }
+      case STEPS.executors: {
         setCurrentStep(STEPS.basicInfo)
         break
       }
@@ -134,10 +150,14 @@ const CreateNewProposalTypeForm: React.FC = () => {
             <DefaultProposalStep isCreatingProposal />
           </S.StepsContainer>
         )}
+        {currentStep === STEPS.executors && (
+          <S.StepsContainer>
+            <ExecutorsStep />
+          </S.StepsContainer>
+        )}
         {currentStep === STEPS.basicInfo && (
           <S.StepsContainer>
             <CreateDaoProposalGeneralForm
-              withContractName
               withProposalTypeName
               withProposalTypeDescription
             />

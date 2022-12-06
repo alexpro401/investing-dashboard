@@ -1,10 +1,6 @@
 import styled from "styled-components"
 
 export const Container = styled.a<{ color: string; fw?: string; fz?: string }>`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 3px;
   color: ${({ color }) => color ?? "white"};
 
   font-family: "Gilroy";
@@ -27,9 +23,11 @@ export const Text = styled.span<{
 `
 
 const IconContainer = styled.div<{ iconPosition: string }>`
+  display: inline-block;
   order: ${({ iconPosition }) => (iconPosition === "right" ? "1" : "0")};
   width: 15px;
   height: 15px;
+  transform: translateY(3px);
 
   svg {
     width: 100%;

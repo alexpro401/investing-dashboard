@@ -14,10 +14,14 @@ import {
 
 const ChartArea = React.lazy(() => import(`./charts/ChartArea`))
 const ChartLine = React.lazy(() => import(`./charts/ChartLine`))
+const ChartStraightAnglePie = React.lazy(
+  () => import(`./charts/ChartStraightAnglePie`)
+)
 
 const charts = {
   [CHART_TYPE.area]: ChartArea,
   [CHART_TYPE.line]: ChartLine,
+  [CHART_TYPE.straightAnglePie]: ChartStraightAnglePie,
 }
 
 interface Props {

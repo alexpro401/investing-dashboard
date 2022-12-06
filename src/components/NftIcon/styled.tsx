@@ -21,18 +21,18 @@ export const NftIcon = styled.img`
   width: 32px;
 `
 
-export const Container = styled.div<{ locked?: boolean }>`
+export const Container = styled.div<{ locked?: boolean; round?: boolean }>`
   position: relative;
   overflow: hidden;
   width: 32px;
   height: 32px;
   background: #000000;
-  border-radius: 10px;
+  border-radius: ${({ round }) => (round ? "50%" : "10px")};
   flex: none;
   order: 1;
   flex-grow: 0;
 
-  ${NftIcon} {
+  ${NftIcon}, img {
     opacity: ${({ locked }) => (locked ? 0.6 : 1)};
     filter: ${({ locked }) => (locked ? "blur(0.3px)" : "none")};
   }
