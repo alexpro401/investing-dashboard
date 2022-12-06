@@ -1,3 +1,4 @@
+import * as S from "./styled"
 import * as React from "react"
 import { Flex, Text } from "theme"
 import { DaoProposalCard } from "common"
@@ -30,14 +31,14 @@ const InsuranceProposals = () => {
             </Text>
           </Flex>
         ) : proposalsToShow.length ? (
-          <div>
+          <S.InsuranceProposalsList>
             {proposalsToShow.map((wrappedProposalView, idx) => (
               <DaoProposalCard
                 key={idx}
                 wrappedProposalView={wrappedProposalView}
               />
             ))}
-          </div>
+          </S.InsuranceProposalsList>
         ) : (
           <Flex full m="8px 0 0">
             <Text fz={13} lh="150%" color="#B1C7FC">
