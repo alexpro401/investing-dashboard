@@ -1,23 +1,41 @@
 import * as S from "./styled"
 
-import { FC, HTMLAttributes, useMemo } from "react"
+import {
+  FC,
+  HTMLAttributes,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import { DaoProposalCard } from "common"
-import { useGovPoolProposals } from "hooks/dao"
+import { useGovPool, useGovPoolProposals } from "hooks/dao"
 import Skeleton from "components/Skeleton"
-import { useParams } from "react-router-dom"
-import { ProposalState, ProposalStatuses, proposalStatusToStates } from "types"
+import {
+  ProposalState,
+  ProposalStatuses,
+  proposalStatusToStates,
+  WrappedProposalView,
+} from "types"
+import { BigNumber } from "ethers"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   status?: ProposalStatuses
+  govPoolAddress?: string
 }
 
-const DaoProposalsList: FC<Props> = ({ status }) => {
-  const { daoAddress } = useParams()
+const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
+  const { pendingRewards } = useGovPool(govPoolAddress)
 
   const { wrappedProposalViews, isLoaded, isLoadFailed } =
-    useGovPoolProposals(daoAddress)
+    useGovPoolProposals(govPoolAddress)
 
-  const proposalsToShow = useMemo(() => {
+  const [
+    filteredProposalViewsWithRewards,
+    setFilteredProposalViewsWithRewards,
+  ] = useState<WrappedProposalView[]>([])
+
+  const filteredWrappedProposalViews = useMemo(() => {
     if (status) {
       return wrappedProposalViews.filter((el) =>
         proposalStatusToStates[status].includes(
@@ -29,17 +47,45 @@ const DaoProposalsList: FC<Props> = ({ status }) => {
     }
   }, [wrappedProposalViews, status])
 
+  const filterProposalViewsWithRewards = useCallback(async () => {
+    for (const el of filteredWrappedProposalViews) {
+      const rewards = await pendingRewards(Number(el.proposalId))
+
+      if (BigNumber.isBigNumber(rewards) && rewards.gt(0)) {
+        setFilteredProposalViewsWithRewards((prev) => [
+          ...prev,
+          { ...el, currentAccountRewards: rewards },
+        ])
+      }
+    }
+  }, [pendingRewards, filteredWrappedProposalViews])
+
+  const proposalsViewsToShow = useMemo(() => {
+    if (status === "completed-rewards") {
+      return filteredProposalViewsWithRewards
+    } else {
+      return filteredWrappedProposalViews
+    }
+  }, [filteredProposalViewsWithRewards, filteredWrappedProposalViews, status])
+
+  useEffect(() => {
+    if (status === "completed-rewards") {
+      filterProposalViewsWithRewards()
+    }
+  }, [filterProposalViewsWithRewards, status])
+
   return (
     <>
       {isLoaded ? (
         isLoadFailed ? (
           <p>Oops... Something went wrong</p>
-        ) : proposalsToShow.length ? (
+        ) : proposalsViewsToShow.length ? (
           <S.DaoProposalsListBody>
-            {proposalsToShow.map((wrappedProposalView, idx) => (
+            {proposalsViewsToShow.map((wrappedProposalView, idx) => (
               <DaoProposalCard
                 key={idx}
                 wrappedProposalView={wrappedProposalView}
+                govPoolAddress={govPoolAddress}
               />
             ))}
           </S.DaoProposalsListBody>

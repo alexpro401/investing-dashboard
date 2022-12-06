@@ -78,7 +78,7 @@ const SuccessStep: FC<Props> = () => {
           <S.SuccessLinkBtn
             text="Go to DAO profile"
             size="large"
-            routePath={"/me/investor"}
+            routePath={`/dao/${createdDaoAddress.get}`}
             onClick={clearFormStorage}
           />
         </S.SuccessFooter>

@@ -28,7 +28,7 @@ function useGovPoolExecutorType<T extends string | string[]>(
     (executorAddress: string): IExecutorType => {
       let type: IExecutorType = "custom"
 
-      if (govPoolAddress.toLowerCase() === executorAddress) {
+      if (govPoolAddress?.toLowerCase() === executorAddress) {
         type = "profile"
       }
 
@@ -49,8 +49,8 @@ function useGovPoolExecutorType<T extends string | string[]>(
       }
 
       if (
-        insuranceAddress.toLowerCase() === executorAddress &&
-        govPoolAddress.toLowerCase() ===
+        insuranceAddress?.toLowerCase() === executorAddress &&
+        govPoolAddress?.toLowerCase() ===
           process.env.REACT_APP_DEXE_DAO_ADDRESS.toLowerCase()
       ) {
         type = "insurance"
@@ -70,15 +70,19 @@ function useGovPoolExecutorType<T extends string | string[]>(
 
   const result = useMemo(() => {
     if (Array.isArray(executorAddresses)) {
-      return executorAddresses.map((executorAddress) => ({
-        executorAddress,
-        type: typeFromExecutor(executorAddress.toLowerCase()),
-      }))
+      return (
+        executorAddresses?.map((executorAddress) => ({
+          executorAddress,
+          type: typeFromExecutor(executorAddress?.toLowerCase()),
+        })) || []
+      )
     }
 
     return {
       executorAddress: executorAddresses,
-      type: typeFromExecutor(executorAddresses.toLowerCase()),
+      ...(!!executorAddresses
+        ? { type: typeFromExecutor(executorAddresses?.toLowerCase()) }
+        : {}),
     }
   }, [executorAddresses, typeFromExecutor])
 
