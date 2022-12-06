@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { opacityVariants } from "motion/variants"
 import { Flex } from "theme"
 import { Icon, AppButton } from "common"
+import { getDefaultFieldErrorStyles } from "fields/styled"
 
 export const StepsContainer = styled(motion.div).attrs(() => ({
   initial: { opacity: 0 },
@@ -43,6 +44,16 @@ export const ChangeDaoAvatarBtn = styled.button`
   font-weight: 600;
   border: none;
   margin-top: 8px;
+`
+
+export const ChangeFundDaoAvatarActions = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+
+export const ChangeFundDaoAvatarBtnErrorMessage = styled.span`
+  ${getDefaultFieldErrorStyles};
 `
 
 export const FieldValidIcon = styled(Icon)`
