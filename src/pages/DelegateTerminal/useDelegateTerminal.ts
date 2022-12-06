@@ -56,17 +56,17 @@ const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
   })[0]
 
   const depositedERC20Balance = withdrawableAssets[0] || ZERO
-  const depositedERC721Tokens = useMemo(
-    () =>
-      ((withdrawableAssets[1] && withdrawableAssets[1][0]) || []).map((v) =>
-        v.toNumber!()
-      ),
-    [withdrawableAssets]
-  )
+  const depositedERC721Tokens = useMemo(() => {
+    try {
+      return withdrawableAssets[1][0].map((v: BigNumber) => v.toNumber())
+    } catch (error) {
+      return []
+    }
+  }, [withdrawableAssets])
 
   const [{ tokenAddress, nftAddress, haveToken, haveNft }] =
     useGovPoolVotingAssets(daoPoolAddress)
-  const { ERC20Balance, ERC721Balance, tokenBalance, tokenBalanceLocked } =
+  const { ERC20Balance, ERC721Balance, tokenBalanceLocked } =
     useGovPoolMemberBalance(daoPoolAddress)
 
   const [fromData] = useERC20Data(tokenAddress)
@@ -268,8 +268,6 @@ const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
       ? undepositedERC721Selected
       : []
 
-    console.log(erc20, erc721)
-
     return deposit(account, erc20, erc721)
   }, [
     ERC20Amount,
@@ -290,7 +288,7 @@ const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
 
     const erc20Amount = ERC20Amount
 
-    const depositNfts = ownedERC721Selected
+    const depositNfts = ERC721Amount
 
     // TODO: deposit
 
@@ -300,7 +298,7 @@ const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
     undepositedERC721Selected.length,
     delegatee,
     ERC20Amount,
-    ownedERC721Selected,
+    ERC721Amount,
     delegate,
     handleDeposit,
   ])
