@@ -23,7 +23,9 @@ const POOL_SETTINGS = `
 const POOL_EXECUTOR = `
   id
   executorAddress
-  settings {${POOL_SETTINGS}}
+  settings {
+    ${POOL_SETTINGS}
+}
 `
 
 const POOL = `
@@ -131,6 +133,7 @@ const GovPoolExecutorQuery = `
   query ($address: String!, $executorAddress: String!) {
     daoPool(id: $address) {
       executors(where: { executorAddress: $executorAddress }) {${POOL_EXECUTOR}}
+    }
   }
 `
 

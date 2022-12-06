@@ -172,4 +172,5 @@ export const proposalTypeDataDecodingMap: Record<IExecutorType, string[]> = {
 
 export type WrappedProposalView = IGovPool.ProposalViewStructOutput & {
   proposalId: number
+  currentAccountRewards?: BigNumber
 }
