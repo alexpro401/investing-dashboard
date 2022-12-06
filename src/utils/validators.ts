@@ -1,7 +1,10 @@
 import { isBoolean, isDate, isEmpty, isNumber } from "lodash"
+import { BigNumber } from "@ethersproject/bignumber"
+import { formatUnits, parseUnits } from "@ethersproject/units"
 
 import { Validator } from "hooks/useFormValidation"
 import {
+  cutStringZeroes,
   isAddress,
   isValidUrl,
   isValidUrlFacebook,
@@ -91,3 +94,14 @@ export const isPercentage: Validator = (value) => ({
   isValid: +value >= 0 && +value <= 100,
   message: "This field must be a valid percentage",
 })
+
+export const isBnLte: ValidatorFunc =
+  (comparableString: string, decimals: number, message?: string) =>
+  (string: string) => ({
+    isValid: parseUnits(string, decimals).lte(
+      parseUnits(comparableString, decimals)
+    ),
+    message:
+      message ??
+      `This field must be less than ${cutStringZeroes(comparableString)}`,
+  })

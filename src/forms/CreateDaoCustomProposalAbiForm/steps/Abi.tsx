@@ -1,6 +1,3 @@
-import { useParams } from "react-router-dom"
-import theme from "theme"
-
 import {
   FC,
   Dispatch,
@@ -9,6 +6,8 @@ import {
   useContext,
   useMemo,
 } from "react"
+import { useParams } from "react-router-dom"
+import theme from "theme"
 
 import {
   AppButton,
@@ -17,6 +16,7 @@ import {
   CardHead,
   CollapsedCard,
   CreateDaoCardStepNumber,
+  StepsNavigation,
 } from "common"
 
 import {
@@ -30,9 +30,14 @@ import ABIConstructor from "modals/ABIConstructor"
 
 import { ICON_NAMES } from "constants/icon-names"
 import { AdvancedABIContext } from "context/govPool/proposals/custom/AdvancedABIContext"
+import { stepsControllerContext } from "context/StepsControllerContext"
 
 import { useFormValidation } from "hooks/useFormValidation"
 import useAbiKeeper from "hooks/useAbiKeeper"
+import {
+  useGovPoolSettingsIdToExecutors,
+  useGovPoolExecutorToSettings,
+} from "hooks/dao"
 
 import { isAddress, shortenAddress } from "utils"
 import { readFromClipboard } from "utils/clipboard"
@@ -49,14 +54,16 @@ const AbiStep: FC = () => {
     "daoAddress" | "executorAddress"
   >()
 
-  // TODO: Dummy data -> replace to hook data
-  const executors = useMemo(
-    () => [
-      "0x8eff9efd56581bb5b8ac5f5220fab9a7349160e3",
-      "0xCC09139C13775Fd660A0601a055520F7967cf63f",
-      "0x36119c25B7710fcbDEf1408cfaD2F24D4A95A41b",
-    ],
-    []
+  const [settingsId] = useGovPoolExecutorToSettings(daoAddress, executorAddress)
+  const [executors] = useGovPoolSettingsIdToExecutors(
+    daoAddress,
+    settingsId ? settingsId.toString() : undefined
+  )
+  const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
+
+  const executorsShorten = useMemo(
+    () => (executors ? executors.map((el) => el.executorAddress) : []),
+    [executors]
   )
 
   const {
@@ -75,19 +82,34 @@ const AbiStep: FC = () => {
     [contractAdresses.get]
   )
 
-  const { abis, executorsAbis, handleCustomAbi } = useAbiKeeper(
-    adresses,
-    executors
-  )
+  // temporary
+  const abis = useMemo<any[]>(() => [], [])
+  const executorsAbis = useMemo<any[]>(() => [], [])
+  const handleCustomAbi = useCallback((...params: any[]) => {}, [])
 
-  const { getFieldErrorMessage, touchField } = useFormValidation(
-    {
-      contractAdresses: contractAdresses.get,
-    },
-    {
-      contractAdresses: { required, isAddressValidator },
-    }
-  )
+  // const { abis, executorsAbis, handleCustomAbi } = useAbiKeeper(
+  //   adresses,
+  //   executorsShorten
+  // )
+
+  console.log("adresses: ", adresses)
+
+  const { getFieldErrorMessage, touchField, isFieldsValid, touchForm } =
+    useFormValidation(
+      {
+        contractAdresses: contractAdresses.get,
+      },
+      {
+        contractAdresses: { required, isAddressValidator },
+      }
+    )
+
+  const handleNextStep = useCallback(() => {
+    touchForm()
+    if (!isFieldsValid) return
+
+    nextCb()
+  }, [nextCb, touchForm, isFieldsValid])
 
   const pasteFromClipboard = useCallback(
     async (dispatchCb: Dispatch<SetStateAction<any>>) => {
@@ -126,7 +148,7 @@ const AbiStep: FC = () => {
           placeholder="Contract address"
           selected={executorSelectedAddress.get}
           setSelected={(value) => executorSelectedAddress.set(value!)}
-          list={executors}
+          list={executorsShorten}
           renderItem={(item) => (
             <S.SelectItem>{shortenAddress(item, 5)}</S.SelectItem>
           )}
@@ -136,7 +158,9 @@ const AbiStep: FC = () => {
         />
 
         <TextareaField
-          value={executorsAbis[executors.indexOf(executorSelectedAddress.get)]}
+          value={
+            executorsAbis[executorsShorten.indexOf(executorSelectedAddress.get)]
+          }
           setValue={(value) =>
             handleCustomAbi(executorSelectedAddress.get, value as string)
           }
@@ -177,7 +201,7 @@ const AbiStep: FC = () => {
     [
       executorValue,
       executorSelectedAddress,
-      executors,
+      executorsShorten,
       executorsAbis,
       encodedMethods.get,
       modal.get,
@@ -300,7 +324,7 @@ const AbiStep: FC = () => {
     <S.StepsRoot>
       <Card>
         <CardHead
-          nodeLeft={<CreateDaoCardStepNumber number={2} />}
+          nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
           title="Конструктор транзакции ABI"
         />
         <CardDescription>
@@ -329,13 +353,14 @@ const AbiStep: FC = () => {
       <ABIConstructor
         abi={
           abis[adresses.indexOf(modal.get)] ||
-          executorsAbis[executors.indexOf(modal.get)]
+          executorsAbis[executorsShorten.indexOf(modal.get)]
         }
         allowedMethods={adresses.indexOf(modal.get) > -1 ? ["approve"] : []}
         onSubmit={handleConstructorSubmit}
         isOpen={modal.get !== ""}
         onClose={() => modal.set("")}
       />
+      <StepsNavigation customNextCb={handleNextStep} />
     </S.StepsRoot>
   )
 }

@@ -7,12 +7,13 @@ import {
   useGovPoolHelperContracts,
   useGovPoolLatestProposalId,
 } from "hooks/dao"
-import { DistributionProposal } from "abi"
+import { DistributionProposal, ERC20 } from "abi"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { parseUnits } from "@ethersproject/units"
 import { isTxMined, parseTransactionError } from "utils"
 import usePayload from "hooks/usePayload"
 import useError from "hooks/useError"
+import { useNativeToken } from "hooks/useNativeToken"
 import { SubmitState } from "constants/types"
 
 interface ICreateProposalDistributionArgs {
@@ -32,6 +33,7 @@ const useGovPoolCreateDistributionProposal = (govPoolAddress: string) => {
   const { setSuccessModalState, closeSuccessModalState } = useContext(
     GovProposalCreatingContext
   )
+  const nativeToken = useNativeToken()
 
   const [, setPayload] = usePayload()
   const [, setError] = useError()
@@ -47,28 +49,42 @@ const useGovPoolCreateDistributionProposal = (govPoolAddress: string) => {
       try {
         setPayload(SubmitState.SIGN)
 
+        const isTokenNative = nativeToken.address === tokenAddress
+
         const latestProposalId = await updateLatesProposalId()
 
         if (!latestProposalId) {
           throw new Error("invalid proposal id")
         }
 
+        const tokenAmountBN = parseUnits(tokenAmount, tokenDecimals).toString()
+
         const encodedExecute = encodeAbiMethod(
           DistributionProposal,
           "execute",
-          [
-            latestProposalId.toNumber() + 1,
-            tokenAddress,
-            parseUnits(tokenAmount, tokenDecimals).toString(),
-          ]
+          [latestProposalId.toNumber() + 1, tokenAddress, tokenAmountBN]
         )
 
-        const receipt = await createGovProposal(
-          { proposalName, proposalDescription },
-          [govDistributionProposalAddress],
-          [0],
-          [encodedExecute]
-        )
+        const encodedTransfer = isTokenNative
+          ? ""
+          : encodeAbiMethod(ERC20, "transfer", [
+              govDistributionProposalAddress,
+              tokenAmountBN,
+            ])
+
+        const receipt = await (isTokenNative
+          ? createGovProposal(
+              { proposalName, proposalDescription },
+              [govDistributionProposalAddress],
+              [tokenAmountBN],
+              [encodedExecute]
+            )
+          : createGovProposal(
+              { proposalName, proposalDescription },
+              [tokenAddress, govDistributionProposalAddress],
+              [0, 0],
+              [encodedTransfer, encodedExecute]
+            ))
 
         if (isTxMined(receipt)) {
           setSuccessModalState({
@@ -106,6 +122,7 @@ const useGovPoolCreateDistributionProposal = (govPoolAddress: string) => {
       setSuccessModalState,
       setPayload,
       setError,
+      nativeToken,
     ]
   )
 
