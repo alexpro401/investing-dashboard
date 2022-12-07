@@ -4,12 +4,11 @@ import useInsurancePage from "./useInsurancePage"
 
 import { Flex, Text } from "theme"
 import Header from "components/Header/Layout"
-import { Card, CardDescription, CardHead } from "common"
+import { Card, CardDescription, CardHead, DaoProposalsList } from "common"
 
 import Management from "pages/Management"
 
 import * as S from "./styled"
-import InsuranceProposals from "./InsuranceProposals"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -60,7 +59,12 @@ const Insurance = () => {
                 routePath={`/dao/${daoPool}/proposals/opened`}
               />
             </Flex>
-            <InsuranceProposals />
+            <S.InsuranceProposalsList>
+              <DaoProposalsList
+                govPoolAddress={process.env.REACT_APP_DEXE_DAO_ADDRESS}
+                status={"opened"}
+              />
+            </S.InsuranceProposalsList>
           </S.Indents>
         </S.Content>
       </S.Container>
