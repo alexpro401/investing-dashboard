@@ -13,12 +13,16 @@ import {
   DaoProfileBuyTokenCard,
   DaoProfileTokensInTreasuryCard,
 } from "./components"
-import {
-  DaoProfileTabAbout,
-  DaoProfileTabBalance,
-  DaoProfileTabValidators,
-  DaoProfileTabUsedTokens,
-} from "./tabs"
+const DaoProfileTabAbout = React.lazy(() => import("./tabs/DaoProfileTabAbout"))
+const DaoProfileTabBalance = React.lazy(
+  () => import("./tabs/DaoProfileTabBalance")
+)
+const DaoProfileTabValidators = React.lazy(
+  () => import("./tabs/DaoProfileTabValidators")
+)
+const DaoProfileTabUsedTokens = React.lazy(
+  () => import("./tabs/DaoProfileTabUsedTokens")
+)
 import { PageChart } from "./types"
 
 import Header from "components/Header/Layout"
@@ -26,9 +30,24 @@ import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidatio
 import ChooseDaoProposalAsPerson from "modals/ChooseDaoProposalAsPerson"
 import { selectDexeAddress } from "state/contracts/selectors"
 import Tabs from "common/Tabs"
-import { Center, Flex } from "theme"
+import { Flex } from "theme"
 import { useGovPoolContract } from "contracts"
-import { selectGovPoolByAddress } from "state/govPools/selectors"
+
+import { createClient, useQuery } from "urql"
+import { GovPoolQuery } from "queries"
+import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
+
+const govPoolsClient = createClient({
+  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
+})
+
+const TabFallback = () => (
+  <div style={{ width: "100%", height: "50vh" }}>
+    <Flex full ai={"flex-start"} jc={"center"}>
+      <GuardSpinner size={20} loading />
+    </Flex>
+  </div>
+)
 
 const FakeTokensData = (dexeAddress) => [
   {
@@ -141,7 +160,13 @@ const DaoProfile: React.FC = () => {
   const { account, chainId } = useWeb3React()
   const { daoAddress } = useParams()
   const dexeAddress = useSelector(selectDexeAddress)
-  const govPoolQuery = useSelector((s) => selectGovPoolByAddress(s, daoAddress))
+
+  const [govPoolQuery] = useQuery<{ daoPool: IGovPoolQuery }>({
+    query: GovPoolQuery,
+    variables: useMemo(() => ({ address: daoAddress }), [daoAddress]),
+    context: govPoolsClient,
+  })
+
   const govPoolContract = useGovPoolContract(daoAddress)
 
   const isValidator = true
@@ -168,83 +193,75 @@ const DaoProfile: React.FC = () => {
           tabs={[
             {
               name: "About DAO",
-              child: load ? (
-                <Center>
-                  <GuardSpinner size={20} loading />
-                </Center>
-              ) : (
-                <DaoProfileTabAbout />
+              child: (
+                <React.Suspense fallback={<TabFallback />}>
+                  <DaoProfileTabAbout />
+                </React.Suspense>
               ),
             },
             {
               name: "My Balance",
-              child: load ? (
-                <Center>
-                  <GuardSpinner size={20} loading />
-                </Center>
-              ) : (
-                <DaoProfileTabBalance daoAddress={daoAddress} />
+              child: (
+                <React.Suspense fallback={<TabFallback />}>
+                  <DaoProfileTabBalance daoAddress={daoAddress} />
+                </React.Suspense>
               ),
             },
             {
               name: "Validators",
-              child: load ? (
-                <Center>
-                  <GuardSpinner size={20} loading />
-                </Center>
-              ) : (
-                <DaoProfileTabValidators
-                  data={[
-                    {
-                      id: "0x1230413asfadsfljk123041303asjk12",
-                      amount: "1230413",
-                    },
-                    {
-                      id: "1x1090423asfadsfljk109042303asjk10",
-                      amount: "1090423",
-                    },
-                    {
-                      id: "2x9820456asfadsfljk982045606asjk98",
-                      amount: "9820456",
-                    },
-                    {
-                      id: "3x1123412asfadsfljk112341232asjk11",
-                      amount: "1123412",
-                    },
-                  ]}
-                  chainId={chainId}
-                />
+              child: (
+                <React.Suspense fallback={<TabFallback />}>
+                  <DaoProfileTabValidators
+                    data={[
+                      {
+                        id: "0x1230413asfadsfljk123041303asjk12",
+                        amount: "1230413",
+                      },
+                      {
+                        id: "1x1090423asfadsfljk109042303asjk10",
+                        amount: "1090423",
+                      },
+                      {
+                        id: "2x9820456asfadsfljk982045606asjk98",
+                        amount: "9820456",
+                      },
+                      {
+                        id: "3x1123412asfadsfljk112341232asjk11",
+                        amount: "1123412",
+                      },
+                    ]}
+                    chainId={chainId}
+                  />
+                </React.Suspense>
               ),
             },
             {
               name: "In treasury/used",
-              child: load ? (
-                <Center>
-                  <GuardSpinner size={20} loading />
-                </Center>
-              ) : (
-                <DaoProfileTabUsedTokens
-                  data={[
-                    {
-                      id: "0x1230413asfadsfljk123041303asjk12",
-                      amount: "1230413",
-                    },
-                    {
-                      id: "1x1090423asfadsfljk109042303asjk10",
-                      amount: "1090423",
-                    },
-                    {
-                      id: "2x9820456asfadsfljk982045606asjk98",
-                      amount: "9820456",
-                    },
-                    {
-                      id: "3x1123412asfadsfljk112341232asjk11",
-                      amount: "1123412",
-                    },
-                  ]}
-                  chainId={chainId}
-                  daoAddress={daoAddress}
-                />
+              child: (
+                <React.Suspense fallback={<TabFallback />}>
+                  <DaoProfileTabUsedTokens
+                    data={[
+                      {
+                        id: "0x1230413asfadsfljk123041303asjk12",
+                        amount: "1230413",
+                      },
+                      {
+                        id: "1x1090423asfadsfljk109042303asjk10",
+                        amount: "1090423",
+                      },
+                      {
+                        id: "2x9820456asfadsfljk982045606asjk98",
+                        amount: "9820456",
+                      },
+                      {
+                        id: "3x1123412asfadsfljk112341232asjk11",
+                        amount: "1123412",
+                      },
+                    ]}
+                    chainId={chainId}
+                    daoAddress={daoAddress}
+                  />
+                </React.Suspense>
               ),
             },
           ]}
@@ -263,7 +280,7 @@ const DaoProfile: React.FC = () => {
               isValidator={isValidator}
               handleOpenCreateProposalModal={handleOpenCreateProposalModal}
               account={account}
-              govPoolQuery={govPoolQuery}
+              govPoolQuery={govPoolQuery.data?.daoPool ?? ({} as IGovPoolQuery)}
             />
             <S.Indents top side={false}>
               <DaoProfileChart chart={chart} setChart={setChart} />
