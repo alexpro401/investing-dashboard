@@ -87,22 +87,60 @@ const AbiStep: FC = () => {
     executorsShorten
   )
 
+  const selectedExecutorAbi = useMemo(
+    () => executorsAbis[executorsShorten.indexOf(executorSelectedAddress.get)],
+    [executorsAbis, executorSelectedAddress, executorsShorten]
+  )
+
+  const selectedExecutorEncodeMethod = useMemo(
+    () =>
+      executorSelectedAddress.get &&
+      encodedMethods.get[executorSelectedAddress.get] &&
+      encodedMethods.get[executorSelectedAddress.get][0]
+        ? encodedMethods.get[executorSelectedAddress.get][0]
+        : "",
+    [encodedMethods, executorSelectedAddress]
+  )
+
+  // console.log("adresses: ", adresses)
+  // console.log("abis: ", abis)
+  // console.log("executorsAbis: ", executorsAbis)
+  // console.log("contractAdresses: ", contractAdresses)
+
+  // console.log("executorSelectedAddress: ", executorSelectedAddress)
+
+  // console.log("encodedMethods.get: ", encodedMethods.get)
+
   const { getFieldErrorMessage, touchField, isFieldsValid, touchForm } =
     useFormValidation(
       {
-        contractAdresses: contractAdresses.get,
+        executorSelectedAddress: executorSelectedAddress.get,
+        selectedExecutorAbi,
+        selectedExecutorEncodeMethod,
+        contractAdresses: contractAdresses.get.map((el) => el[1]),
+        abis: abis,
       },
       {
-        contractAdresses: { required, isAddressValidator },
+        executorSelectedAddress: { required, isAddressValidator },
+        selectedExecutorAbi: { required },
+        selectedExecutorEncodeMethod: { required },
+        contractAdresses: { $every: { required, isAddressValidator } },
+        abis: { $every: { required } },
       }
     )
 
   const handleNextStep = useCallback(() => {
     touchForm()
+
+    for (const [, address] of contractAdresses.get) {
+      if (!(address in encodedMethods.get) || !encodedMethods.get[address][0])
+        return
+    }
+
     if (!isFieldsValid) return
 
     nextCb()
-  }, [nextCb, touchForm, isFieldsValid])
+  }, [nextCb, touchForm, isFieldsValid, encodedMethods, contractAdresses])
 
   const pasteFromClipboard = useCallback(
     async (dispatchCb: Dispatch<SetStateAction<any>>) => {
@@ -131,7 +169,7 @@ const AbiStep: FC = () => {
       <CollapsedCard title="Executor contract">
         <InputField
           placeholder="Value (optional)"
-          type="text"
+          type="number"
           value={executorValue.get}
           setValue={(value) => executorValue.set(value as string)}
           nodeRight={<S.FieldNodeRight>BNB</S.FieldNodeRight>}
@@ -141,6 +179,8 @@ const AbiStep: FC = () => {
           placeholder="Contract address"
           selected={executorSelectedAddress.get}
           setSelected={(value) => executorSelectedAddress.set(value!)}
+          errorMessage={getFieldErrorMessage("executorSelectedAddress")}
+          onBlur={() => touchField("executorSelectedAddress")}
           list={executorsShorten}
           renderItem={(item) => (
             <S.SelectItem>{shortenAddress(item, 5)}</S.SelectItem>
@@ -151,13 +191,13 @@ const AbiStep: FC = () => {
         />
 
         <TextareaField
-          value={
-            executorsAbis[executorsShorten.indexOf(executorSelectedAddress.get)]
-          }
+          value={selectedExecutorAbi}
           setValue={(value) =>
             handleCustomAbi(executorSelectedAddress.get, value as string)
           }
           label="ABI"
+          errorMessage={getFieldErrorMessage("selectedExecutorAbi")}
+          onBlur={() => touchField("selectedExecutorAbi")}
         />
 
         <OverlapInputField
@@ -165,23 +205,16 @@ const AbiStep: FC = () => {
           disabled={!executorSelectedAddress.get}
           label=""
           placeholder="Contract method"
-          value={
-            (executorSelectedAddress.get in encodedMethods.get &&
-              encodedMethods.get[executorSelectedAddress.get][0]) ||
-            ""
-          }
+          value={selectedExecutorEncodeMethod}
           overlapNodeLeft={
-            (
-              <S.SelectItem>
-                {executorSelectedAddress.get in encodedMethods.get &&
-                  encodedMethods.get[executorSelectedAddress.get][0]}
-              </S.SelectItem>
-            ) || null
+            <S.SelectItem>{selectedExecutorEncodeMethod}</S.SelectItem> || null
           }
           setValue={() => {}}
           onClick={() =>
             handleOpenContractMethodSelector(executorSelectedAddress.get)
           }
+          errorMessage={getFieldErrorMessage("selectedExecutorEncodeMethod")}
+          onBlur={() => touchField("selectedExecutorEncodeMethod")}
           overlapNodeRight={
             <S.NodeRightContainer>
               {!modal.get && <S.NodeRightIcon name={ICON_NAMES.angleDown} />}
@@ -195,11 +228,13 @@ const AbiStep: FC = () => {
       executorValue,
       executorSelectedAddress,
       executorsShorten,
-      executorsAbis,
-      encodedMethods.get,
       modal.get,
       handleCustomAbi,
       handleOpenContractMethodSelector,
+      getFieldErrorMessage,
+      touchField,
+      selectedExecutorAbi,
+      selectedExecutorEncodeMethod,
     ]
   )
 
@@ -208,7 +243,7 @@ const AbiStep: FC = () => {
       <CollapsedCard key={id} title={`Contract ${index + 1}`}>
         <InputField
           placeholder="Value (optional)"
-          type="text"
+          type="number"
           value={contractValues.get[index]}
           setValue={(value) => contractValues.set(index, value as string)}
           nodeRight={<S.FieldNodeRight>BNB</S.FieldNodeRight>}
@@ -218,8 +253,8 @@ const AbiStep: FC = () => {
           value={address}
           setValue={(value) => contractAdresses.set(index, id, value as string)}
           label="Contract address"
-          errorMessage={getFieldErrorMessage("contractAdresses")}
-          onBlur={() => touchField("contractAdresses")}
+          errorMessage={getFieldErrorMessage(`contractAdresses[${index}]`)}
+          onBlur={() => touchField(`contractAdresses[${index}]`)}
           overlapNodeLeft={
             isAddress(address) ? (
               <S.Address>{shortenAddress(address, 4)}</S.Address>
@@ -256,6 +291,8 @@ const AbiStep: FC = () => {
           placeholder="ABI"
           value={abis[index]}
           setValue={(value) => handleCustomAbi(address, value as string)}
+          errorMessage={getFieldErrorMessage(`abis[${index}]`)}
+          onBlur={() => touchField(`abis[${index}]`)}
         />
 
         <OverlapInputField
@@ -267,6 +304,11 @@ const AbiStep: FC = () => {
           value={
             (address in encodedMethods.get && encodedMethods.get[address][0]) ||
             ""
+          }
+          errorMessage={
+            !(address in encodedMethods.get) || !encodedMethods.get[address][0]
+              ? "Please fill out this field"
+              : undefined
           }
           overlapNodeLeft={
             (

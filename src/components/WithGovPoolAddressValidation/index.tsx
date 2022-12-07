@@ -31,7 +31,6 @@ const WithGovPoolAddressValidation: React.FC<IProps> = ({
     setLoading(true)
 
     try {
-      await new Promise((res) => setTimeout(res, 2000))
       if (govPoolFromRedux) {
         setIsValid(true)
       } else {
