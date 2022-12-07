@@ -1,6 +1,6 @@
 import styled from "styled-components"
 
-import { Flex } from "theme"
+import theme, { Flex } from "theme"
 import CircularProgress from "components/CircularProgress"
 
 export const TransactionWaitContainer = styled.div`
@@ -8,27 +8,21 @@ export const TransactionWaitContainer = styled.div`
   margin-top: 0;
 `
 
-export const TransactionWaitContent = styled.div`
-  font-family: "Gilroy";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 0.03em;
-  color: #e4f2ff;
-`
-
-export const TransactionWaitFooter = styled(Flex)`
-  margin-top: 16px;
+export const TransactionWaitContent = styled(Flex)`
+  display: inline-flex;
   font-family: "Gilroy";
   font-style: normal;
   font-weight: 500;
   font-size: 12px;
   line-height: 12px;
   letter-spacing: 0.03em;
-  color: #616d8b;
+  color: ${theme.textColors.primary};
 `
 
 export const TransactionWaitProgress = styled(CircularProgress)`
   background: transparent;
+
+  path {
+    stroke: #2669eb;
+  }
 `
