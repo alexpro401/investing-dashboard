@@ -10,6 +10,7 @@ import {
 } from "hooks/dao"
 import { BigNumber } from "@ethersproject/bignumber"
 import { ProposalState, WrappedProposalView } from "types"
+import { useERC20 } from "hooks/useERC20"
 
 const GovPoolGraphClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -73,8 +74,6 @@ export const useGovPoolProposal = (
     () => daoPoolValidatorsGraph?.proposals?.[0],
     [daoPoolValidatorsGraph]
   )
-
-  console.log(graphGovPoolValidatorProposal)
 
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
@@ -175,6 +174,8 @@ export const useGovPoolProposal = (
     [wrappedProposalView]
   )
 
+  const rewardToken = useERC20(rewardTokenAddress)
+
   const isProposalStateVoting = useMemo(
     () => String(wrappedProposalView?.proposalState) === ProposalState.Voting,
     [wrappedProposalView]
@@ -205,29 +206,47 @@ export const useGovPoolProposal = (
     [wrappedProposalView]
   )
 
-  const votesTotalNeed = useMemo(
+  const isSecondStepProgressStarted = useMemo(
     () =>
-      isProposalStateValidatorVoting
-        ? wrappedProposalView.requiredValidatorsQuorum
-        : wrappedProposalView.requiredQuorum,
+      !!wrappedProposalView?.validatorProposal?.core?.voteEnd?.gt(0) ||
+      isProposalStateValidatorVoting ||
+      wrappedProposalView?.proposal?.core?.votesFor.gt(
+        wrappedProposalView?.requiredQuorum
+      ),
     [isProposalStateValidatorVoting, wrappedProposalView]
   )
 
+  const currentVotesVoted = useMemo(
+    () =>
+      isSecondStepProgressStarted
+        ? wrappedProposalView?.validatorProposal?.core?.votesFor
+        : wrappedProposalView?.proposal?.core?.votesFor,
+    [isSecondStepProgressStarted, wrappedProposalView]
+  )
+
+  const votesTotalNeed = useMemo(
+    () =>
+      isSecondStepProgressStarted
+        ? wrappedProposalView?.requiredValidatorsQuorum
+        : wrappedProposalView?.requiredQuorum,
+    [isSecondStepProgressStarted, wrappedProposalView]
+  )
+
   const progress = useMemo(() => {
-    return isProposalStateValidatorVoting
-      ? graphGovPoolValidatorProposal?.totalVote
+    return isSecondStepProgressStarted
+      ? wrappedProposalView.requiredValidatorsQuorum.gt(0)
+        ? wrappedProposalView?.validatorProposal?.core?.votesFor
+            .mul(100)
+            .div(wrappedProposalView.requiredValidatorsQuorum)
+            .toNumber()
+        : 0
+      : wrappedProposalView?.requiredQuorum.gt(0)
+      ? wrappedProposalView?.proposal.core.votesFor
           .mul(100)
-          .div(wrappedProposalView.requiredValidatorsQuorum)
+          .div(wrappedProposalView?.requiredQuorum)
           .toNumber()
-      : wrappedProposalView?.proposal.core.votesFor
-          .mul(100)
-          .div(wrappedProposalView.requiredQuorum)
-          .toNumber()
-  }, [
-    graphGovPoolValidatorProposal.totalVote,
-    isProposalStateValidatorVoting,
-    wrappedProposalView,
-  ])
+      : 0
+  }, [isSecondStepProgressStarted, wrappedProposalView])
 
   const moveProposalToValidators = useCallback(async () => {
     await _moveProposalToValidators(String(wrappedProposalView?.proposalId))
@@ -274,6 +293,8 @@ export const useGovPoolProposal = (
     }
   }, [_getCurrentAccountTotalVotes, account, wrappedProposalView])
 
+  const loadRewardsIfExist = useCallback(async () => {}, [])
+
   const init = useCallback(async () => {
     try {
       await loadDetailsFromIpfs()
@@ -300,6 +321,7 @@ export const useGovPoolProposal = (
     distributionProposalTokenAmount,
     distributionProposalToken,
     rewardTokenAddress,
+    rewardToken,
     coreSettings,
     isProposalStateVoting,
     isProposalStateWaitingForVotingTransfer,
@@ -309,6 +331,8 @@ export const useGovPoolProposal = (
     isProposalStateExecuted,
     proposalType,
     voteEnd,
+    isSecondStepProgressStarted,
+    currentVotesVoted,
     votesTotalNeed,
     votesFor,
     myVotesAmount,

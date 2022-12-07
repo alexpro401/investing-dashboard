@@ -91,6 +91,7 @@ export const DaoProposalDetailsTabsItem = styled.button.attrs(() => ({
 export const DaoProposalDetailsCard = styled.div`
   display: flex;
   flex-direction: column;
+  word-break: break-all;
   gap: 12px;
   background: #181e2c;
   border-radius: 20px;

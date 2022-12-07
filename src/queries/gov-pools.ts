@@ -23,7 +23,9 @@ const POOL_SETTINGS = `
 const POOL_EXECUTOR = `
   id
   executorAddress
-  settings {${POOL_SETTINGS}}
+  settings {
+    ${POOL_SETTINGS}
+}
 `
 
 const POOL = `
