@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useState } from "react"
+import { isEqual } from "lodash"
 
 import useGovPoolExecutors from "./useGovPoolExecutors"
 import { parseIpfsString } from "utils/ipfs"
@@ -79,7 +80,7 @@ const useGovPoolCustomExecutors = (
   }, [executors])
 
   useEffect(() => {
-    if (JSON.stringify(lastExecutorsSnapshot) !== JSON.stringify(executors)) {
+    if (!isEqual(lastExecutorsSnapshot, executors)) {
       handleSetupCustomExecutors()
     }
   }, [handleSetupCustomExecutors, lastExecutorsSnapshot, executors])

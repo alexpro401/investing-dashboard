@@ -41,8 +41,6 @@ const ManualStep: React.FC = () => {
     [executors]
   )
 
-  console.log("executors: ", executors)
-
   const { contracts, onContractDelete, onContractAdd } = useContext(
     AdvancedManualContext
   )

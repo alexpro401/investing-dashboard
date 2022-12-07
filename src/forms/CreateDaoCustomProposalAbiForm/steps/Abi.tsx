@@ -87,8 +87,6 @@ const AbiStep: FC = () => {
     executorsShorten
   )
 
-  console.log("adresses: ", adresses)
-
   const { getFieldErrorMessage, touchField, isFieldsValid, touchForm } =
     useFormValidation(
       {
