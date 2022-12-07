@@ -10,6 +10,7 @@ import {
 } from "hooks/dao"
 import { BigNumber } from "@ethersproject/bignumber"
 import { ProposalState, WrappedProposalView } from "types"
+import { useERC20 } from "hooks/useERC20"
 
 const GovPoolGraphClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -173,6 +174,8 @@ export const useGovPoolProposal = (
     [wrappedProposalView]
   )
 
+  const rewardToken = useERC20(rewardTokenAddress)
+
   const isProposalStateVoting = useMemo(
     () => String(wrappedProposalView?.proposalState) === ProposalState.Voting,
     [wrappedProposalView]
@@ -318,6 +321,7 @@ export const useGovPoolProposal = (
     distributionProposalTokenAmount,
     distributionProposalToken,
     rewardTokenAddress,
+    rewardToken,
     coreSettings,
     isProposalStateVoting,
     isProposalStateWaitingForVotingTransfer,
