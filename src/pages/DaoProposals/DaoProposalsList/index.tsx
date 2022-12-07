@@ -18,6 +18,7 @@ import {
   WrappedProposalView,
 } from "types"
 import { BigNumber } from "ethers"
+import { isEqual } from "lodash"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   status?: ProposalStatuses
@@ -48,20 +49,39 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
   }, [wrappedProposalViews, status])
 
   const filterProposalViewsWithRewards = useCallback(async () => {
+    const proposalsWithRewards: WrappedProposalView[] = []
+
     for (const el of filteredWrappedProposalViews) {
       const rewards = await pendingRewards(Number(el.proposalId))
 
-      if (BigNumber.isBigNumber(rewards) && rewards.gt(0)) {
-        setFilteredProposalViewsWithRewards((prev) => [
-          ...prev,
-          { ...el, currentAccountRewards: rewards },
-        ])
+      if (status === "completed-all") {
+        proposalsWithRewards.push({
+          ...el,
+          ...(BigNumber.isBigNumber(rewards) && rewards.gt(0)
+            ? { currentAccountRewards: rewards }
+            : {}),
+        })
+      } else if (
+        status === "completed-rewards" &&
+        BigNumber.isBigNumber(rewards) &&
+        rewards.gt(0)
+      ) {
+        proposalsWithRewards.push({
+          ...el,
+          currentAccountRewards: rewards,
+        })
       }
     }
-  }, [pendingRewards, filteredWrappedProposalViews])
+
+    setFilteredProposalViewsWithRewards((prev) => {
+      const next = proposalsWithRewards
+
+      return isEqual(prev, next) ? prev : next
+    })
+  }, [filteredWrappedProposalViews, pendingRewards, status])
 
   const proposalsViewsToShow = useMemo(() => {
-    if (status === "completed-rewards") {
+    if (status === "completed-rewards" || status === "completed-all") {
       return filteredProposalViewsWithRewards
     } else {
       return filteredWrappedProposalViews
@@ -69,7 +89,7 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
   }, [filteredProposalViewsWithRewards, filteredWrappedProposalViews, status])
 
   useEffect(() => {
-    if (status === "completed-rewards") {
+    if (status === "completed-rewards" || status === "completed-all") {
       filterProposalViewsWithRewards()
     }
   }, [filterProposalViewsWithRewards, status])
@@ -94,7 +114,11 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
         )
       ) : (
         <>
-          <Skeleton />
+          <S.DaoProposalsListBody>
+            <Skeleton w="100%" h="225px" />
+            <Skeleton w="100%" h="225px" />
+            <Skeleton w="100%" h="225px" />
+          </S.DaoProposalsListBody>
         </>
       )}
     </>

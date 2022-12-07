@@ -38,6 +38,7 @@ const DaoProposalCard: FC<Props> = ({
     distributionProposalTokenAddress,
     distributionProposalToken,
     rewardTokenAddress,
+    rewardToken,
     isProposalStateVoting,
     isProposalStateWaitingForVotingTransfer,
     isProposalStateValidatorVoting,
@@ -202,7 +203,11 @@ const DaoProposalCard: FC<Props> = ({
                     </S.DaoVotingStatusCounterTotal>
                   </>
                 ) : (
-                  normalizeBigNumber(wrappedProposalView.currentAccountRewards)
+                  <>
+                    {`${normalizeBigNumber(
+                      wrappedProposalView.currentAccountRewards
+                    )} ${rewardToken?.[1]?.symbol}`}
+                  </>
                 )}
               </>
             ) : (
