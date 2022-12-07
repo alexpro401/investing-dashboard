@@ -28,7 +28,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
   const { pendingRewards } = useGovPool(govPoolAddress)
 
-  const { wrappedProposalViews, isLoaded, isLoadFailed } =
+  const { wrappedProposalViews, isLoaded, isLoadFailed, loadProposals } =
     useGovPoolProposals(govPoolAddress)
 
   const [
@@ -106,6 +106,7 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
                 key={idx}
                 wrappedProposalView={wrappedProposalView}
                 govPoolAddress={govPoolAddress}
+                onButtonClick={loadProposals}
               />
             ))}
           </S.DaoProposalsListBody>

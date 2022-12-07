@@ -55,5 +55,6 @@ export const useGovPoolProposals = (
 
     setOffset,
     setLimit,
+    loadProposals,
   }
 }

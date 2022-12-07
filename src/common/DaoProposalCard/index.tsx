@@ -16,11 +16,13 @@ import { ZERO_ADDR } from "constants/index"
 interface Props extends HTMLAttributes<HTMLDivElement> {
   wrappedProposalView: WrappedProposalView
   govPoolAddress?: string
+  onButtonClick?: () => void
 }
 
 const DaoProposalCard: FC<Props> = ({
   govPoolAddress,
   wrappedProposalView,
+  onButtonClick,
   ...rest
 }) => {
   const {
@@ -102,6 +104,10 @@ const DaoProposalCard: FC<Props> = ({
       !isEqual(rewardTokenAddress, ZERO_ADDR)
     ) {
       await claimRewards()
+    }
+
+    if (onButtonClick) {
+      onButtonClick()
     }
   }, [
     claimRewards,

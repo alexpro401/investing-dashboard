@@ -3,7 +3,7 @@ import * as S from "./styled"
 import { FC, HTMLAttributes } from "react"
 import Header from "components/Header/Layout"
 import { Routes, Route, useParams, Navigate } from "react-router-dom"
-import DaoProposalsList from "pages/DaoProposals/DaoProposalsList"
+import { DaoProposalsList } from "common"
 import * as React from "react"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
