@@ -202,7 +202,7 @@ const DaoProposalCard: FC<Props> = ({
                     </S.DaoVotingStatusCounterTotal>
                   </>
                 ) : (
-                  "1 DEXE"
+                  normalizeBigNumber(wrappedProposalView.currentAccountRewards)
                 )}
               </>
             ) : (
