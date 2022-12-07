@@ -15,7 +15,6 @@ export const Container = styled.div`
 `
 
 export const Content = styled.div`
-  //padding: 16px;
   width: inherit;
   height: calc(100vh - 94px);
   overflow-y: auto;
