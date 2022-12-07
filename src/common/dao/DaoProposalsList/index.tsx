@@ -107,6 +107,9 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
                 wrappedProposalView={wrappedProposalView}
                 govPoolAddress={govPoolAddress}
                 onButtonClick={loadProposals}
+                completed={
+                  status === "completed-rewards" || status === "completed-all"
+                }
               />
             ))}
           </S.DaoProposalsListBody>

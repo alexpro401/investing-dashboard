@@ -17,21 +17,22 @@ interface Props extends NavLinkProps {
   isInsurance: boolean
   name: string
   pool?: string
+  completed?: boolean
 }
 
 const GovProposalCardHead: React.FC<Props> = ({
   isInsurance,
   name,
   pool,
-  to,
+  completed,
   ...rest
 }) => {
   const Head = isInsurance ? Insurance : Base
 
   return (
-    <S.Container to={to}>
+    <S.Container {...rest}>
       <React.Suspense fallback={<GovProposalCardHeadFallback />}>
-        <Head name={name} pool={pool} />
+        <Head name={name} pool={pool} completed={completed} />
       </React.Suspense>
     </S.Container>
   )
