@@ -13,13 +13,21 @@ interface IAdvancedManualContext {
     get: IContract[]
     set: (index: number, value: IContract) => void
   }
+  executorContract: {
+    get: IContract
+    set: (value: IContract) => void
+  }
   onContractDelete: (index: number) => void
   onContractAdd: () => void
 }
 
 export const AdvancedManualContext = createContext<IAdvancedManualContext>({
   contracts: {
-    get: [{ value: "", contractAddress: "", transactionData: "", id: "" }],
+    get: [],
+    set: () => {},
+  },
+  executorContract: {
+    get: { value: "", contractAddress: "", transactionData: "", id: "" },
     set: () => {},
   },
   onContractDelete: () => {},
@@ -33,9 +41,14 @@ interface IAdvancedManualContextProvider {
 const AdvancedManualContextProvider: React.FC<
   IAdvancedManualContextProvider
 > = ({ children }) => {
-  const [_contracts, _setContracts] = useState<IContract[]>([
-    { value: "", contractAddress: "", transactionData: "", id: uuid() },
-  ])
+  const [_contracts, _setContracts] = useState<IContract[]>([])
+
+  const [_executorContract, _setExecutorContract] = useState<IContract>({
+    value: "",
+    contractAddress: "",
+    transactionData: "",
+    id: uuid(),
+  })
 
   const onContractChange = useCallback((index: number, value: IContract) => {
     _setContracts((prev) => {
@@ -44,6 +57,10 @@ const AdvancedManualContextProvider: React.FC<
         return el
       })
     })
+  }, [])
+
+  const changeExecutorContract = useCallback((value: IContract) => {
+    _setExecutorContract(value)
   }, [])
 
   const onContractDelete = useCallback((index: number) => {
@@ -73,6 +90,10 @@ const AdvancedManualContextProvider: React.FC<
     <AdvancedManualContext.Provider
       value={{
         contracts: { get: _contracts, set: onContractChange },
+        executorContract: {
+          get: _executorContract,
+          set: changeExecutorContract,
+        },
         onContractDelete,
         onContractAdd,
       }}
