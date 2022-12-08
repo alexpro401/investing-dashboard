@@ -19,12 +19,14 @@ interface Props {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
   url: string
+  onVoteCallback: () => void
 }
 
 const CreateInsuranceAccidentCreatedSuccessfully: FC<Props> = ({
   open,
   url,
   setOpen,
+  onVoteCallback,
 }) => {
   const navigate = useNavigate()
   const addToast = useAddToast()
@@ -47,6 +49,7 @@ const CreateInsuranceAccidentCreatedSuccessfully: FC<Props> = ({
   const onVote = useCallback(async () => {
     const latestProposalId = await updateLatesProposalId()
 
+    onVoteCallback()
     navigate(
       `/dao/${process.env.REACT_APP_DEXE_DAO_ADDRESS}/vote/${latestProposalId}`
     )

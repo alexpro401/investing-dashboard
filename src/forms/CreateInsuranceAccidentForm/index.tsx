@@ -41,6 +41,7 @@ import { selectInsuranceAddress } from "state/contracts/selectors"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { Insurance as Insurance_ABI } from "abi"
 import { divideBignumbers } from "utils/formulas"
+import { DEFAULT_ALERT_HIDDEN_TIMEOUT } from "constants/misc"
 
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
@@ -64,7 +65,7 @@ const CreateInsuranceAccidentForm: FC = () => {
     insuranceAccidentExist,
     investorsInfo,
     insurancePoolHaveTrades,
-    _clearState,
+    clearFormStorage,
   } = context
 
   const { pool, block, date, description, chat } = form
@@ -152,7 +153,6 @@ const CreateInsuranceAccidentForm: FC = () => {
 
   useEffect(() => {
     return () => {
-      _clearState()
       setShowNotEnoughInsurance(false)
       setShowNotEnoughInsuranceByDay(false)
     }
@@ -301,7 +301,7 @@ const CreateInsuranceAccidentForm: FC = () => {
             content:
               "Before continue choose pool where accident has been happens",
             type: AlertType.warning,
-            hideDuration: 10000,
+            hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
           })
           break
         }
@@ -309,7 +309,7 @@ const CreateInsuranceAccidentForm: FC = () => {
           showAlert({
             content: "Insurance accident for chosen pool already exist.",
             type: AlertType.warning,
-            hideDuration: 10000,
+            hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
           })
           break
         }
@@ -318,7 +318,7 @@ const CreateInsuranceAccidentForm: FC = () => {
             content:
               "Chosen fund have no trades. You can't create insurance accident proposal on pool without trades.",
             type: AlertType.warning,
-            hideDuration: 10000,
+            hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
           })
           break
         }
@@ -334,7 +334,7 @@ const CreateInsuranceAccidentForm: FC = () => {
             content:
               "Before continue choose closest block or date before accident has been happens",
             type: AlertType.warning,
-            hideDuration: 10000,
+            hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
           })
           break
         }
@@ -343,7 +343,7 @@ const CreateInsuranceAccidentForm: FC = () => {
             content:
               "Do not have insurance for this day. Please choose another one.",
             type: AlertType.warning,
-            hideDuration: 10000,
+            hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
           })
           break
         }
@@ -356,7 +356,7 @@ const CreateInsuranceAccidentForm: FC = () => {
             content:
               "Chosen fund have no investments. You can't create insurance accident proposal on pool without trading.",
             type: AlertType.warning,
-            hideDuration: 10000,
+            hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
           })
           break
         }
@@ -382,7 +382,7 @@ const CreateInsuranceAccidentForm: FC = () => {
           showAlert({
             content: message,
             type: AlertType.warning,
-            hideDuration: 10000,
+            hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
           })
           break
         }
@@ -447,6 +447,7 @@ const CreateInsuranceAccidentForm: FC = () => {
         open={showSuccessfullyCreatedModal}
         setOpen={setShowSuccessfullyCreatedModal}
         url={newAccidentHash}
+        onVoteCallback={clearFormStorage}
       />
     </>
   )
