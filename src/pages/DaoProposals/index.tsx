@@ -3,7 +3,7 @@ import * as S from "./styled"
 import { FC, HTMLAttributes } from "react"
 import Header from "components/Header/Layout"
 import { Routes, Route, useParams, Navigate } from "react-router-dom"
-import DaoProposalsList from "pages/DaoProposals/DaoProposalsList"
+import { DaoProposalsList } from "common"
 import * as React from "react"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
@@ -53,7 +53,12 @@ const DaoProposals: FC<Props> = () => {
       <Header tabs={TABS}>All Proposals</Header>
       <S.Root>
         <Routes>
-          <Route path="opened" element={<DaoProposalsList status="opened" />} />
+          <Route
+            path="opened"
+            element={
+              <DaoProposalsList govPoolAddress={daoAddress} status="opened" />
+            }
+          />
           <Route
             path="ended"
             element={
@@ -68,7 +73,10 @@ const DaoProposals: FC<Props> = () => {
             element={
               <>
                 <S.PageSubTabs tabs={ENDED_TABS} />
-                <DaoProposalsList status="ended-passed" />
+                <DaoProposalsList
+                  govPoolAddress={daoAddress}
+                  status="ended-passed"
+                />
               </>
             }
           />
@@ -77,7 +85,10 @@ const DaoProposals: FC<Props> = () => {
             element={
               <>
                 <S.PageSubTabs tabs={ENDED_TABS} />
-                <DaoProposalsList status="ended-rejected" />
+                <DaoProposalsList
+                  govPoolAddress={daoAddress}
+                  status="ended-rejected"
+                />
               </>
             }
           />
@@ -96,7 +107,10 @@ const DaoProposals: FC<Props> = () => {
             element={
               <>
                 <S.PageSubTabs tabs={COMPLETED_TABS} />
-                <DaoProposalsList status="completed-all" />
+                <DaoProposalsList
+                  govPoolAddress={daoAddress}
+                  status="completed-all"
+                />
               </>
             }
           />
@@ -105,7 +119,10 @@ const DaoProposals: FC<Props> = () => {
             element={
               <>
                 <S.PageSubTabs tabs={COMPLETED_TABS} />
-                <DaoProposalsList status="completed-rewards" />
+                <DaoProposalsList
+                  govPoolAddress={daoAddress}
+                  status="completed-rewards"
+                />
               </>
             }
           />

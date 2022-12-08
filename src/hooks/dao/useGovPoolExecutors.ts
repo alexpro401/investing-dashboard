@@ -31,18 +31,20 @@ const useGovPoolExecutors = (
 
   const executorTypes = useGovPoolExecutorType(
     govPoolAddress ?? "",
-    !data ? [] : data.daoPool.executors.map((ex) => ex.executorAddress)
+    !data ? [] : data?.daoPool?.executors?.map((ex) => ex.executorAddress)
   )
 
   const executors = useMemo(() => {
-    const searchedExecutors = !data ? [] : data.daoPool.executors
+    const searchedExecutors = !data ? [] : data?.daoPool?.executors
 
-    return searchedExecutors.map((ex) => ({
-      ...ex,
-      type:
-        executorTypes.find((el) => el.executorAddress === ex.executorAddress)
-          ?.type ?? "custom",
-    }))
+    return (
+      searchedExecutors?.map((ex) => ({
+        ...ex,
+        type:
+          executorTypes.find((el) => el.executorAddress === ex.executorAddress)
+            ?.type ?? "custom",
+      })) || []
+    )
   }, [data, executorTypes])
 
   return [executors, fetching]

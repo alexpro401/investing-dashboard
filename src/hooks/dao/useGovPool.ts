@@ -19,6 +19,7 @@ import { isTxMined, parseTransactionError } from "utils"
 import { get } from "lodash"
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { useEffectOnce } from "react-use"
+import { BigNumber } from "@ethersproject/bignumber/src.ts/bignumber"
 
 export const useGovPool = (address?: string) => {
   const { account } = useActiveWeb3React()
@@ -217,6 +218,23 @@ export const useGovPool = (address?: string) => {
     ]
   )
 
+  const pendingRewards = useCallback(
+    async (proposalId: number) => {
+      if (!account) return
+
+      try {
+        const rewardsAmount = await govPoolContract?.pendingRewards(
+          proposalId,
+          account
+        )
+        return rewardsAmount
+      } catch (error) {}
+
+      return 0
+    },
+    [account, govPoolContract]
+  )
+
   const claimRewards = useCallback(
     async (proposalIds: string[]) => {
       try {
@@ -316,6 +334,7 @@ export const useGovPool = (address?: string) => {
     moveProposalToValidators,
     execute,
     executeAndClaim,
+    pendingRewards,
     claimRewards,
     getCurrentAccountTotalVotes,
   }

@@ -11,9 +11,7 @@ const GovProposalCardHeadBase: React.FC<Props> = ({ name }) => {
   return (
     <S.Content>
       <S.TitleWrapper>
-        <S.Title>
-          {name.length > 0 ? name : "DAO proposal name fallback"}
-        </S.Title>
+        <S.Title>{name || "DAO proposal name fallback"}</S.Title>
       </S.TitleWrapper>
       <S.HeadIcon name={ICON_NAMES.angleRight} />
     </S.Content>

@@ -12,7 +12,6 @@ import gas from "./gas/reducer"
 import erc20 from "./erc20/reducer"
 import lists from "./lists/reducer"
 import multicall from "./multicall/reducer"
-import govPools from "./govPools/reducer"
 import { updateVersion } from "./global/actions"
 
 const RESET_KEY = "1669198332611"
@@ -24,7 +23,6 @@ const PERSISTED_KEYS: string[] = [
   "ipfsMetadata",
   "gas",
   "erc20",
-  "govPools",
 ]
 
 const shouldReset = () => {
@@ -53,7 +51,6 @@ const store = configureStore({
     erc20,
     lists,
     multicall,
-    govPools,
   },
   middleware: [
     ...getDefaultMiddleware({ thunk: false }),

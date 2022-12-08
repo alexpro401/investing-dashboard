@@ -12,6 +12,7 @@ import { Icon } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
+import { ValidatorsVote } from "pages/ValidatorsVote"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -90,10 +91,24 @@ const DaoProposalDetails: FC<Props> = ({}) => {
                   <VotingHistoryTab govPoolProposal={govPoolProposal} />
                 )}
               </AnimatePresence>
-              <S.DaoProposalVotingTerminal
-                proposalId={proposalId}
-                daoPoolAddress={daoAddress}
-              />
+              {govPoolProposal.isSecondStepProgressStarted ? (
+                <>
+                  <ValidatorsVote
+                    daoPoolAddress={daoAddress}
+                    proposalId={String(
+                      govPoolProposal.wrappedProposalView.proposalId
+                    )}
+                    isInternal={false}
+                  />
+                </>
+              ) : (
+                <>
+                  <S.DaoProposalVotingTerminal
+                    proposalId={proposalId}
+                    daoPoolAddress={daoAddress}
+                  />
+                </>
+              )}
             </>
           )
         ) : (
