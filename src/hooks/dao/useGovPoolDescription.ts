@@ -5,7 +5,13 @@ import { IpfsEntity } from "utils/ipfsEntity"
 import { IGovPoolDescription } from "types/dao.types"
 import { parseIpfsString } from "utils/ipfs"
 
-const useGovPoolDescriptionUrl = (govPoolAddress: string) => {
+interface UseGovPoolDescriptionUrlResponse {
+  descriptionUrl: string | null
+  descriptionObject: IGovPoolDescription | null
+}
+const useGovPoolDescriptionUrl = (
+  govPoolAddress: string
+): UseGovPoolDescriptionUrlResponse => {
   const govPoolContract = useGovPoolContract(govPoolAddress)
 
   const [descriptionUrl, setDescriptionUrl] = useState<string | null>(null)
