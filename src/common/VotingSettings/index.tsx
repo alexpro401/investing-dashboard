@@ -99,13 +99,13 @@ const VotingSettings: React.FC<IVotingSettingsProps> = ({
       {minVotesForVoting && (
         <S.Record>
           <S.Label>Min. voting power required for voting</S.Label>
-          <S.Value>{cutStringZeroes(formatEther(minVotesForVoting))}</S.Value>
+          <S.Value>{cutStringZeroes(minVotesForVoting)}</S.Value>
         </S.Record>
       )}
       {minVotesForCreating && (
         <S.Record>
           <S.Label>Min. voting power required for creating a proposal</S.Label>
-          <S.Value>{cutStringZeroes(formatEther(minVotesForCreating))}</S.Value>
+          <S.Value>{cutStringZeroes(minVotesForCreating)}</S.Value>
         </S.Record>
       )}
       {rewardToken !== undefined && (
