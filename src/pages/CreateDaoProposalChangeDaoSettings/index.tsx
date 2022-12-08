@@ -13,7 +13,7 @@ import * as S from "./styled"
 const CreateDaoProposalChangeDaoSettings: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
 
-  const { desciptionObject } = useGovPoolDescription(daoAddress ?? "")
+  const { descriptionObject } = useGovPoolDescription(daoAddress ?? "")
 
   return (
     <>
@@ -22,12 +22,12 @@ const CreateDaoProposalChangeDaoSettings: React.FC = () => {
         <S.PageHolder>
           <ChangeGovSettingsContextProvider
             initialForm={{
-              avatarUrl: desciptionObject?.avatarUrl ?? "",
-              daoName: desciptionObject?.daoName ?? "",
-              description: desciptionObject?.description ?? "",
-              documents: desciptionObject?.documents ?? [],
-              socialLinks: desciptionObject?.socialLinks ?? [],
-              websiteUrl: desciptionObject?.websiteUrl ?? "",
+              avatarUrl: descriptionObject?.avatarUrl ?? "",
+              daoName: descriptionObject?.daoName ?? "",
+              description: descriptionObject?.description ?? "",
+              documents: descriptionObject?.documents ?? [],
+              socialLinks: descriptionObject?.socialLinks ?? [],
+              websiteUrl: descriptionObject?.websiteUrl ?? "",
             }}
           >
             <GovProposalCreatingContextProvider>

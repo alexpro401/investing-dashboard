@@ -9,7 +9,7 @@ const useGovPoolDescriptionUrl = (govPoolAddress: string) => {
   const govPoolContract = useGovPoolContract(govPoolAddress)
 
   const [descriptionUrl, setDescriptionUrl] = useState<string | null>(null)
-  const [desciptionObject, setDescriptionObject] =
+  const [descriptionObject, setDescriptionObject] =
     useState<IGovPoolDescription | null>(null)
 
   const setupDescriptionUrl = useCallback(async () => {
@@ -46,7 +46,7 @@ const useGovPoolDescriptionUrl = (govPoolAddress: string) => {
     getIpfsDataFromDescriptionUrl()
   }, [getIpfsDataFromDescriptionUrl])
 
-  return { descriptionUrl, desciptionObject }
+  return { descriptionUrl, descriptionObject }
 }
 
 export default useGovPoolDescriptionUrl

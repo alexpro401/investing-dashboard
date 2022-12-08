@@ -23,7 +23,7 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 const DaoPoolCard: React.FC<Props> = ({ data, account, children, ...rest }) => {
   const id = React.useMemo(() => data?.id ?? "", [data])
 
-  const { desciptionObject: descriptionObject } = useGovPoolDescription(id)
+  const { descriptionObject } = useGovPoolDescription(id)
   const [assetsExisting, assets] = useGovPoolVotingAssets(id)
   const [{ tvl, mc_tvl, members, lau }] = useGovPoolStatistic(data)
   const [userVotingPower] = useGovPoolUserVotingPower({
