@@ -167,7 +167,7 @@ const GovPoolProposalChangeValidatorBalances: FC<Props> = ({
               </S.DaoProposalDetailsRowText>
             </S.DaoProposalDetailsRow>
             {validatorsToAdjust.map((el, idx) => (
-              <>
+              <div key={idx}>
                 <S.DaoProposalCardRowDivider />
                 <S.DaoProposalDetailsRow>
                   <S.DaoProposalDetailsRowText textType="label">
@@ -193,7 +193,7 @@ const GovPoolProposalChangeValidatorBalances: FC<Props> = ({
                     )}${validatorTokenData?.symbol}`}
                   </S.DaoProposalDetailsRowText>
                 </S.DaoProposalDetailsRow>
-              </>
+              </div>
             ))}
           </S.DaoProposalDetailsCard>
         )}
@@ -209,7 +209,7 @@ const GovPoolProposalChangeValidatorBalances: FC<Props> = ({
               </S.DaoProposalDetailsRowText>
             </S.DaoProposalDetailsRow>
             {validatorsToAdd.map((el, idx) => (
-              <>
+              <div key={idx}>
                 <S.DaoProposalCardRowDivider />
                 <S.DaoProposalDetailsRow>
                   <S.DaoProposalDetailsRowText textType="label">
@@ -232,7 +232,7 @@ const GovPoolProposalChangeValidatorBalances: FC<Props> = ({
                     {validatorTokenData?.symbol}
                   </S.DaoProposalDetailsRowText>
                 </S.DaoProposalDetailsRow>
-              </>
+              </div>
             ))}
           </S.DaoProposalDetailsCard>
         )}
@@ -248,7 +248,7 @@ const GovPoolProposalChangeValidatorBalances: FC<Props> = ({
               </S.DaoProposalDetailsRowText>
             </S.DaoProposalDetailsRow>
             {validatorsToRemove.map((el, idx) => (
-              <>
+              <div key={idx}>
                 <S.DaoProposalCardRowDivider />
                 <S.DaoProposalDetailsRow>
                   <S.DaoProposalDetailsRowText textType="label">
@@ -271,7 +271,7 @@ const GovPoolProposalChangeValidatorBalances: FC<Props> = ({
                     {validatorTokenData?.symbol}
                   </S.DaoProposalDetailsRowText>
                 </S.DaoProposalDetailsRow>
-              </>
+              </div>
             ))}
           </S.DaoProposalDetailsCard>
         )}
