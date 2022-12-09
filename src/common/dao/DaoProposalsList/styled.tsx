@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import NoDataMessage from "common/NoDataMessage"
 
 export const Root = styled.div`
   overflow: hidden auto;
@@ -14,4 +15,8 @@ export const DaoProposalsListBody = styled.div`
   flex-direction: column;
   gap: 16px;
   padding: 16px;
+`
+
+export const EmptyMessage = styled(NoDataMessage)`
+  height: 70%;
 `
