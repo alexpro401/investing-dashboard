@@ -26,7 +26,8 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
-  const { pendingRewards } = useGovPool(govPoolAddress)
+  const { pendingRewards, distributionProposalAddress } =
+    useGovPool(govPoolAddress)
 
   const { wrappedProposalViews, isLoaded, isLoadFailed, loadProposals } =
     useGovPoolProposals(govPoolAddress)
@@ -34,6 +35,10 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
   const [
     filteredProposalViewsWithRewards,
     setFilteredProposalViewsWithRewards,
+  ] = useState<WrappedProposalView[]>([])
+  const [
+    filteredProposalViewsDistribution,
+    setFilteredProposalViewsDistribution,
   ] = useState<WrappedProposalView[]>([])
 
   const filteredWrappedProposalViews = useMemo(() => {
@@ -80,17 +85,55 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
     })
   }, [filteredWrappedProposalViews, pendingRewards, status])
 
+  const filterProposalViewsDistribution = useCallback(async () => {
+    const proposalsDistribution: WrappedProposalView[] = []
+
+    for (const el of filteredWrappedProposalViews) {
+      const lastExecutor = String(
+        el?.proposal?.executors[el?.proposal?.executors.length - 1]
+      ).toLocaleLowerCase()
+
+      if (
+        lastExecutor === String(distributionProposalAddress).toLocaleLowerCase()
+      ) {
+        const rewards = await pendingRewards(Number(el.proposalId))
+
+        proposalsDistribution.push({
+          ...el,
+          ...(BigNumber.isBigNumber(rewards) && rewards.gt(0)
+            ? { currentAccountRewards: rewards }
+            : {}),
+        })
+      }
+    }
+
+    setFilteredProposalViewsDistribution((prev) => {
+      const next = proposalsDistribution
+
+      return isEqual(prev, next) ? prev : next
+    })
+  }, [filteredWrappedProposalViews, status, distributionProposalAddress])
+
   const proposalsViewsToShow = useMemo(() => {
     if (status === "completed-rewards" || status === "completed-all") {
       return filteredProposalViewsWithRewards
+    } else if (status === "completed-distribution") {
+      return filteredProposalViewsDistribution
     } else {
       return filteredWrappedProposalViews
     }
-  }, [filteredProposalViewsWithRewards, filteredWrappedProposalViews, status])
+  }, [
+    filteredProposalViewsWithRewards,
+    filteredProposalViewsDistribution,
+    filteredWrappedProposalViews,
+    status,
+  ])
 
   useEffect(() => {
     if (status === "completed-rewards" || status === "completed-all") {
       filterProposalViewsWithRewards()
+    } else if (status === "completed-distribution") {
+      filterProposalViewsDistribution()
     }
   }, [filterProposalViewsWithRewards, status])
 

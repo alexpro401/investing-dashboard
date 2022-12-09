@@ -134,6 +134,7 @@ export type ProposalStatuses =
   | "ended-rejected"
   | "completed-all"
   | "completed-rewards"
+  | "completed-distribution"
 
 export const proposalStatusToStates: Record<ProposalStatuses, ProposalState[]> =
   {
@@ -146,6 +147,7 @@ export const proposalStatusToStates: Record<ProposalStatuses, ProposalState[]> =
     "ended-rejected": [ProposalState.Defeated],
     "completed-all": [ProposalState.Executed],
     "completed-rewards": [ProposalState.Executed],
+    "completed-distribution": [ProposalState.Succeeded, ProposalState.Executed],
   }
 
 export type IExecutorType =
