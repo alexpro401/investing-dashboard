@@ -5,23 +5,17 @@ import { ICON_NAMES } from "constants/icon-names"
 export const Container = styled.div`
   margin: 0 auto;
   width: fill-available;
-  height: calc(100vh - 94px);
   overflow-y: hidden;
   background-color: #0e121b;
 
-  @media all and (display-mode: standalone) {
-    height: calc(100vh - 115px);
-  }
+  height: 100vh; /* Fallback for browsers that do not support Custom Properties */
+  height: calc(var(--vh, 1vh) * 100 - 94px);
 `
 
 export const Content = styled.div`
   width: inherit;
-  height: calc(100vh - 94px);
+  height: inherit;
   overflow-y: auto;
-
-  @media all and (display-mode: standalone) {
-    height: calc(100vh - 115px);
-  }
 `
 
 export const Indents = styled.div<{ top?: boolean; side?: boolean }>`
