@@ -39,7 +39,6 @@ export const InsuranceAllProposalsLink = styled(AppButton).attrs(() => ({
 
 export const InsuranceProposalsList = styled.div`
   width: 100%;
-  padding: 0 16px;
   max-height: 460px;
   overflow-y: auto;
 
