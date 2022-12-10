@@ -3,6 +3,7 @@ import * as S from "./styled"
 import {
   FC,
   HTMLAttributes,
+  ReactNode,
   useCallback,
   useEffect,
   useMemo,
@@ -20,16 +21,18 @@ import {
 import { BigNumber } from "ethers"
 import { isEqual } from "lodash"
 
-interface Props extends HTMLAttributes<HTMLDivElement> {
+interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
   status?: ProposalStatuses
   govPoolAddress?: string
+  children?: (props) => ReactNode
 }
 
-const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
+const DaoProposalsList: FC<Props> = ({ govPoolAddress, status, children }) => {
   const [isListPrepared, setIsListPrepared] = useState(
     !status || (status !== "completed-all" && status !== "completed-rewards")
   )
-  const { pendingRewards } = useGovPool(govPoolAddress)
+  const { pendingRewards, distributionProposalAddress } =
+    useGovPool(govPoolAddress)
 
   const { wrappedProposalViews, isLoaded, isLoadFailed, loadProposals } =
     useGovPoolProposals(govPoolAddress)
@@ -38,6 +41,10 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
     filteredProposalViewsWithRewards,
     setFilteredProposalViewsWithRewards,
   ] = useState<WrappedProposalView[]>([{} as WrappedProposalView])
+  const [
+    filteredProposalViewsDistribution,
+    setFilteredProposalViewsDistribution,
+  ] = useState<WrappedProposalView[]>([])
 
   const filteredWrappedProposalViews = useMemo(() => {
     if (status) {
@@ -83,17 +90,56 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
     })
   }, [filteredWrappedProposalViews, pendingRewards, status])
 
+  const filterProposalViewsDistribution = useCallback(async () => {
+    const proposalsDistribution: WrappedProposalView[] = []
+
+    for (const el of filteredWrappedProposalViews) {
+      const rewards = await pendingRewards(Number(el.proposalId))
+
+      const lastExecutor = String(
+        el?.proposal?.executors[el?.proposal?.executors.length - 1]
+      ).toLocaleLowerCase()
+
+      if (
+        lastExecutor ===
+          String(distributionProposalAddress).toLocaleLowerCase() &&
+        BigNumber.isBigNumber(rewards) &&
+        rewards.gt(0)
+      ) {
+        proposalsDistribution.push({
+          ...el,
+          currentAccountRewards: rewards,
+        })
+      }
+    }
+
+    setFilteredProposalViewsDistribution((prev) => {
+      const next = proposalsDistribution
+
+      return isEqual(prev, next) ? prev : next
+    })
+  }, [filteredWrappedProposalViews, status, distributionProposalAddress])
+
   const proposalsViewsToShow = useMemo(() => {
     if (status === "completed-rewards" || status === "completed-all") {
       return filteredProposalViewsWithRewards
+    } else if (status === "completed-distribution") {
+      return filteredProposalViewsDistribution
     } else {
       return filteredWrappedProposalViews
     }
-  }, [filteredProposalViewsWithRewards, filteredWrappedProposalViews, status])
+  }, [
+    filteredProposalViewsWithRewards,
+    filteredProposalViewsDistribution,
+    filteredWrappedProposalViews,
+    status,
+  ])
 
   useEffect(() => {
     if (status === "completed-rewards" || status === "completed-all") {
       filterProposalViewsWithRewards()
+    } else if (status === "completed-distribution") {
+      filterProposalViewsDistribution()
     }
   }, [filterProposalViewsWithRewards, status])
 
@@ -107,16 +153,20 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
         isLoadFailed ? (
           <p>Oops... Something went wrong</p>
         ) : proposalsViewsToShow.length ? (
-          <S.DaoProposalsListBody>
-            {proposalsViewsToShow.map((wrappedProposalView, idx) => (
-              <DaoProposalCard
-                key={idx}
-                wrappedProposalView={wrappedProposalView}
-                govPoolAddress={govPoolAddress}
-                onButtonClick={loadProposals}
-              />
-            ))}
-          </S.DaoProposalsListBody>
+          <>
+            <S.DaoProposalsListBody>
+              {proposalsViewsToShow.map((wrappedProposalView, idx) => (
+                <DaoProposalCard
+                  key={idx}
+                  wrappedProposalView={wrappedProposalView}
+                  govPoolAddress={govPoolAddress}
+                  onButtonClick={loadProposals}
+                />
+              ))}
+            </S.DaoProposalsListBody>
+            {!!children &&
+              children({ proposalsViewsToShow, status, loadProposals })}
+          </>
         ) : (
           <S.EmptyMessage message="There's no proposals, yet" />
         )
