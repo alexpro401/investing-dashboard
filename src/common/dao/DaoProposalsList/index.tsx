@@ -45,6 +45,8 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status, children }) => {
     filteredProposalViewsDistribution,
     setFilteredProposalViewsDistribution,
   ] = useState<WrappedProposalView[]>([])
+  const [filteredProposalViewsInsurance, setFilteredProposalViewsInsurance] =
+    useState<WrappedProposalView[]>([])
 
   const filteredWrappedProposalViews = useMemo(() => {
     if (status) {
@@ -120,17 +122,43 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status, children }) => {
     })
   }, [filteredWrappedProposalViews, status, distributionProposalAddress])
 
+  const filterProposalViewsInsurance = useCallback(async () => {
+    const proposalsInsurance: WrappedProposalView[] = []
+
+    for (const el of filteredWrappedProposalViews) {
+      const lastExecutor = String(
+        el?.proposal?.executors[el?.proposal?.executors.length - 1]
+      ).toLocaleLowerCase()
+
+      if (
+        lastExecutor ===
+        String(process.env.REACT_APP_DEXE_DAO_ADDRESS).toLocaleLowerCase()
+      ) {
+        proposalsInsurance.push(el)
+      }
+    }
+
+    setFilteredProposalViewsInsurance((prev) => {
+      const next = proposalsInsurance
+
+      return isEqual(prev, next) ? prev : next
+    })
+  }, [filteredWrappedProposalViews, status, distributionProposalAddress])
+
   const proposalsViewsToShow = useMemo(() => {
     if (status === "completed-rewards" || status === "completed-all") {
       return filteredProposalViewsWithRewards
     } else if (status === "completed-distribution") {
       return filteredProposalViewsDistribution
+    } else if (status === "opened-insurance") {
+      return filteredProposalViewsInsurance
     } else {
       return filteredWrappedProposalViews
     }
   }, [
     filteredProposalViewsWithRewards,
     filteredProposalViewsDistribution,
+    filteredProposalViewsInsurance,
     filteredWrappedProposalViews,
     status,
   ])
@@ -140,6 +168,8 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status, children }) => {
       filterProposalViewsWithRewards()
     } else if (status === "completed-distribution") {
       filterProposalViewsDistribution()
+    } else if (status === "opened-insurance") {
+      filterProposalViewsInsurance()
     }
   }, [filterProposalViewsWithRewards, status])
 

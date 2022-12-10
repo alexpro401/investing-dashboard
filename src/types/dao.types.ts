@@ -130,6 +130,7 @@ export enum ProposalState {
 
 export type ProposalStatuses =
   | "opened"
+  | "opened-insurance"
   | "ended-passed"
   | "ended-rejected"
   | "completed-all"
@@ -139,6 +140,11 @@ export type ProposalStatuses =
 export const proposalStatusToStates: Record<ProposalStatuses, ProposalState[]> =
   {
     opened: [
+      ProposalState.Voting,
+      ProposalState.WaitingForVotingTransfer,
+      ProposalState.ValidatorVoting,
+    ],
+    "opened-insurance": [
       ProposalState.Voting,
       ProposalState.WaitingForVotingTransfer,
       ProposalState.ValidatorVoting,
