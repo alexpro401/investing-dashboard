@@ -29,7 +29,8 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
   const [isListPrepared, setIsListPrepared] = useState(
     !status || (status !== "completed-all" && status !== "completed-rewards")
   )
-  const { pendingRewards, distributionProposalAddress } = useGovPool(govPoolAddress)
+  const { pendingRewards, distributionProposalAddress } =
+    useGovPool(govPoolAddress)
 
   const { wrappedProposalViews, isLoaded, isLoadFailed, loadProposals } =
     useGovPoolProposals(govPoolAddress)
