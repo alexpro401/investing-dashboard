@@ -20,6 +20,8 @@ import {
 } from "types"
 import { BigNumber } from "ethers"
 import { isEqual } from "lodash"
+import { useSelector } from "react-redux"
+import { selectInsuranceAddress } from "state/contracts/selectors"
 
 interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
   status?: ProposalStatuses
@@ -28,6 +30,7 @@ interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
 }
 
 const DaoProposalsList: FC<Props> = ({ govPoolAddress, status, children }) => {
+  const insuranceAddress = useSelector(selectInsuranceAddress)
   const [isListPrepared, setIsListPrepared] = useState(
     !status || (status !== "completed-all" && status !== "completed-rewards")
   )
@@ -130,10 +133,7 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status, children }) => {
         el?.proposal?.executors[el?.proposal?.executors.length - 1]
       ).toLocaleLowerCase()
 
-      if (
-        lastExecutor ===
-        String(process.env.REACT_APP_DEXE_DAO_ADDRESS).toLocaleLowerCase()
-      ) {
+      if (lastExecutor === String(insuranceAddress).toLocaleLowerCase()) {
         proposalsInsurance.push(el)
       }
     }
@@ -143,7 +143,7 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status, children }) => {
 
       return isEqual(prev, next) ? prev : next
     })
-  }, [filteredWrappedProposalViews, status, distributionProposalAddress])
+  }, [filteredWrappedProposalViews, status, insuranceAddress])
 
   const proposalsViewsToShow = useMemo(() => {
     if (status === "completed-rewards" || status === "completed-all") {
