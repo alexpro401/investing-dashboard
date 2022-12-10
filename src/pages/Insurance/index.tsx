@@ -62,7 +62,7 @@ const Insurance = () => {
             <S.InsuranceProposalsList>
               <DaoProposalsList
                 govPoolAddress={process.env.REACT_APP_DEXE_DAO_ADDRESS}
-                status={"opened"}
+                status={"opened-insurance"}
               />
             </S.InsuranceProposalsList>
           </S.Indents>
