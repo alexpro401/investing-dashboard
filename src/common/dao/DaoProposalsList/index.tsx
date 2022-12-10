@@ -26,8 +26,10 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
-  const { pendingRewards, distributionProposalAddress } =
-    useGovPool(govPoolAddress)
+  const [isListPrepared, setIsListPrepared] = useState(
+    !status || (status !== "completed-all" && status !== "completed-rewards")
+  )
+  const { pendingRewards, distributionProposalAddress } = useGovPool(govPoolAddress)
 
   const { wrappedProposalViews, isLoaded, isLoadFailed, loadProposals } =
     useGovPoolProposals(govPoolAddress)
@@ -35,7 +37,7 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
   const [
     filteredProposalViewsWithRewards,
     setFilteredProposalViewsWithRewards,
-  ] = useState<WrappedProposalView[]>([])
+  ] = useState<WrappedProposalView[]>([{} as WrappedProposalView])
   const [
     filteredProposalViewsDistribution,
     setFilteredProposalViewsDistribution,
@@ -137,9 +139,13 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
     }
   }, [filterProposalViewsWithRewards, status])
 
+  useEffect(() => {
+    setIsListPrepared(true)
+  }, [filterProposalViewsWithRewards])
+
   return (
     <>
-      {isLoaded ? (
+      {isLoaded && isListPrepared ? (
         isLoadFailed ? (
           <p>Oops... Something went wrong</p>
         ) : proposalsViewsToShow.length ? (
@@ -154,7 +160,7 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status }) => {
             ))}
           </S.DaoProposalsListBody>
         ) : (
-          <p>{"There's no proposals, yet"}</p>
+          <S.EmptyMessage message="There's no proposals, yet" />
         )
       ) : (
         <>

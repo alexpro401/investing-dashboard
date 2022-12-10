@@ -85,12 +85,7 @@ const GovPoolProposalProfile: FC<Props> = ({ govPoolProposal }) => {
 
   useEffect(() => {
     decodeProposalData()
-  }, [
-    abiCoder,
-    decodeProposalData,
-    govPoolProposal,
-    proposalTypeDataDecodingMap,
-  ])
+  }, [abiCoder, decodeProposalData, govPoolProposal])
 
   return (
     <>
@@ -204,8 +199,8 @@ const GovPoolProposalProfile: FC<Props> = ({ govPoolProposal }) => {
       )}
 
       {!isEqual(
-        proposedGovPoolDescription?.websiteUrl,
-        actualGovPoolDescription?.websiteUrl
+        proposedGovPoolDescription?.documents,
+        actualGovPoolDescription?.documents
       ) && (
         <>
           <S.DaoProposalCardRowDivider />
@@ -213,26 +208,30 @@ const GovPoolProposalProfile: FC<Props> = ({ govPoolProposal }) => {
           <S.DaoProposalDetailsRow>
             <S.DaoProposalDetailsRowText textType="complex">
               <span>Documents</span>
-              {actualGovPoolDescription?.documents.map((el, idx) => (
-                <ExternalLink href={el.url} key={idx}>
-                  <S.DaoProposalDetailsRowExternalCroppedLinkWrp>
-                    <S.DaoProposalDetailsRowExternalCroppedLink>
-                      {el.name}
-                    </S.DaoProposalDetailsRowExternalCroppedLink>
-                  </S.DaoProposalDetailsRowExternalCroppedLinkWrp>
-                </ExternalLink>
-              ))}
+              <S.DaoProposalDetailsRowList>
+                {actualGovPoolDescription?.documents.map((el, idx) => (
+                  <ExternalLink href={el.url} key={idx}>
+                    <S.DaoProposalDetailsRowExternalCroppedLinkWrp>
+                      <S.DaoProposalDetailsRowExternalCroppedLink>
+                        {el.name}
+                      </S.DaoProposalDetailsRowExternalCroppedLink>
+                    </S.DaoProposalDetailsRowExternalCroppedLinkWrp>
+                  </ExternalLink>
+                ))}
+              </S.DaoProposalDetailsRowList>
             </S.DaoProposalDetailsRowText>
             <S.DaoProposalDetailsRowText textType="success">
-              {proposedGovPoolDescription?.documents.map((el, idx) => (
-                <ExternalLink href={el.url} key={idx}>
-                  <S.DaoProposalDetailsRowExternalCroppedLinkWrp>
-                    <S.DaoProposalDetailsRowExternalCroppedLink>
-                      {el.name}
-                    </S.DaoProposalDetailsRowExternalCroppedLink>
-                  </S.DaoProposalDetailsRowExternalCroppedLinkWrp>
-                </ExternalLink>
-              ))}
+              <S.DaoProposalDetailsRowList>
+                {proposedGovPoolDescription?.documents.map((el, idx) => (
+                  <ExternalLink href={el.url} key={idx}>
+                    <S.DaoProposalDetailsRowExternalCroppedLinkWrp>
+                      <S.DaoProposalDetailsRowExternalCroppedLink>
+                        {el.name}
+                      </S.DaoProposalDetailsRowExternalCroppedLink>
+                    </S.DaoProposalDetailsRowExternalCroppedLinkWrp>
+                  </ExternalLink>
+                ))}
+              </S.DaoProposalDetailsRowList>
             </S.DaoProposalDetailsRowText>
           </S.DaoProposalDetailsRow>
         </>
