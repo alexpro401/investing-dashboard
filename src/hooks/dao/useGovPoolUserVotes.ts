@@ -31,11 +31,9 @@ const useGovPoolUserVotes = ({ daoPoolAddress, params }: Props) => {
 
   const validatedParams = useMemo(
     () =>
-      params
-        .filter((p) => isAddress(p.voter))
-        .map((p) => {
-          return [p.proposalId, p.voter, p.isMicroPoool || false]
-        }),
+      params.map((p) => {
+        return [p.proposalId, p.voter, p.isMicroPoool || false]
+      }),
     [params]
   ) as unknown as OptionalMethodInputs[]
 
@@ -53,24 +51,14 @@ const useGovPoolUserVotes = ({ daoPoolAddress, params }: Props) => {
   return useMemo(
     () => [
       !!params.length && !!validatedParams.length
-        ? validatedParams.reduce<{
-            [voter: string]: any
-          }>((memo, votes, i) => {
-            const value = callResults[i].result?.voteInfo || undefined
-
-            if (value && votes) {
-              memo[votes[1] as string] = value
-
-              return memo
-            }
-
-            return memo
-          }, {})
-        : {},
+        ? validatedParams.map((votes, i) => {
+            return callResults[i].result?.voteInfo || undefined
+          })
+        : [],
       anyLoading,
     ],
     [params.length, validatedParams, anyLoading, callResults]
-  ) as [Result, boolean]
+  ) as [any, boolean]
 }
 
 export default useGovPoolUserVotes
