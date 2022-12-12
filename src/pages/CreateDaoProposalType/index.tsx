@@ -22,7 +22,7 @@ const CreateDaoProposalType: React.FC = () => {
     daoAddress: daoAddress ?? "",
     settingsId: EExecutor.DEFAULT,
   })
-  const validatorsCount = useGovPoolValidatorsCount(daoAddress)
+  const [validatorsCount] = useGovPoolValidatorsCount(daoAddress)
   const location = useLocation()
 
   useEffect(() => {

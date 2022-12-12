@@ -8,24 +8,30 @@ import { parseIpfsString } from "utils/ipfs"
 interface UseGovPoolDescriptionUrlResponse {
   descriptionUrl: string | null
   descriptionObject: IGovPoolDescription | null
+  loading: boolean
 }
 const useGovPoolDescriptionUrl = (
-  govPoolAddress: string
+  govPoolAddress?: string
 ): UseGovPoolDescriptionUrlResponse => {
   const govPoolContract = useGovPoolContract(govPoolAddress)
 
   const [descriptionUrl, setDescriptionUrl] = useState<string | null>(null)
   const [descriptionObject, setDescriptionObject] =
     useState<IGovPoolDescription | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
 
   const setupDescriptionUrl = useCallback(async () => {
     if (!govPoolContract) return
+
+    setLoading(true)
 
     try {
       const _descriptionUrl = await govPoolContract.descriptionURL()
       setDescriptionUrl(_descriptionUrl)
     } catch (error) {
       console.log(error)
+    } finally {
+      setLoading(false)
     }
   }, [govPoolContract])
 
@@ -36,6 +42,8 @@ const useGovPoolDescriptionUrl = (
   const getIpfsDataFromDescriptionUrl = useCallback(async () => {
     if (!descriptionUrl || descriptionUrl === "") return
 
+    setLoading(true)
+
     try {
       const ipfsEntity = new IpfsEntity<IGovPoolDescription>({
         path: parseIpfsString(descriptionUrl),
@@ -45,6 +53,8 @@ const useGovPoolDescriptionUrl = (
       setDescriptionObject(_govPoolDescription)
     } catch (error) {
       console.log(error)
+    } finally {
+      setLoading(false)
     }
   }, [descriptionUrl])
 
@@ -52,7 +62,7 @@ const useGovPoolDescriptionUrl = (
     getIpfsDataFromDescriptionUrl()
   }, [getIpfsDataFromDescriptionUrl])
 
-  return { descriptionUrl, descriptionObject }
+  return { descriptionUrl, descriptionObject, loading }
 }
 
 export default useGovPoolDescriptionUrl

@@ -23,7 +23,7 @@ const TokenDistribution: React.FC = () => {
     daoAddress: daoAddress ?? "",
     settingsId: EExecutor.DISTRIBUTION,
   })
-  const validatorsCount = useGovPoolValidatorsCount(daoAddress)
+  const [validatorsCount] = useGovPoolValidatorsCount(daoAddress)
 
   useEffect(() => {
     localStorage.removeItem("creating-proposal-change-token-distribution")

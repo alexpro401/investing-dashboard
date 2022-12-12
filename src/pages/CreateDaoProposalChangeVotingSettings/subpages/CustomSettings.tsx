@@ -26,7 +26,7 @@ const CustomSettings: React.FC = () => {
     daoAddress,
     executorAddress
   )
-  const validatorsCount = useGovPoolValidatorsCount(daoAddress)
+  const [validatorsCount] = useGovPoolValidatorsCount(daoAddress)
 
   useEffect(() => {
     localStorage.removeItem(
