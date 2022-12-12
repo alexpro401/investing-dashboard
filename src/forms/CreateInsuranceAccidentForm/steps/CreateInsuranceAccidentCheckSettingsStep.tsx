@@ -231,7 +231,7 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
   )
 
   const { initialPriceUSD, currentPriceUSD, priceDiffUSD } =
-    usePoolPriceHistoryDiff(point.get?.payload, poolData)
+    usePoolPriceHistoryDiff(point.get?.payload, poolData?.priceHistory[0])
 
   useEffect(() => {
     if (!isNil(poolData)) {
