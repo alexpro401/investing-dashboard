@@ -4,7 +4,6 @@ import { AppButton } from "common"
 export const Container = styled.div`
   margin: 0 auto;
   width: fill-available;
-  height: calc(100vh - 94px);
   overflow-y: hidden;
   background-color: #0e121b;
 
@@ -16,7 +15,6 @@ export const Container = styled.div`
 export const Content = styled.div`
   padding: 16px;
   width: inherit;
-  height: calc(100vh - 94px);
   overflow-y: auto;
 
   @media all and (display-mode: standalone) {

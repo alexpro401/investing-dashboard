@@ -8,7 +8,6 @@ export const Container = styled(motion.div)`
   margin: 0 auto;
   background-color: #0e121b;
   width: fill-available;
-  height: calc(100vh - 94px);
   overflow-y: auto;
 
   @media all and (display-mode: standalone) {

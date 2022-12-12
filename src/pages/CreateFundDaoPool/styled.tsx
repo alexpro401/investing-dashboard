@@ -4,7 +4,6 @@ import { motion } from "framer-motion"
 export const Container = styled(motion.div)`
   margin: 0 auto;
   background-color: #040a0f;
-  height: calc(100vh - 94px);
   overflow-y: auto;
 
   @media all and (display-mode: standalone) {

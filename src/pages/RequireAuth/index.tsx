@@ -1,6 +1,6 @@
-import { useLocation, Navigate, Outlet } from "react-router-dom"
+import { useLocation, Navigate } from "react-router-dom"
 import { useWeb3React } from "@web3-react/core"
-import TapBar from "components/TapBar"
+import * as S from "./styled"
 
 function RequireAuth() {
   const { account } = useWeb3React()
@@ -15,10 +15,12 @@ function RequireAuth() {
   }
 
   return (
-    <>
-      <Outlet />
-      <TapBar />
-    </>
+    <S.Root className={"auth__root"}>
+      <S.AuthOutletWrp>
+        <S.AuthOutlet />
+      </S.AuthOutletWrp>
+      <S.AuthTapBar className={"auth__tap-bar"} />
+    </S.Root>
   )
 }
 

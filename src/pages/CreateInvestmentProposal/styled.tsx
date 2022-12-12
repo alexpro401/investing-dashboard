@@ -4,7 +4,6 @@ import { Flex } from "theme"
 
 export const Container = styled(Flex)`
   width: 100%;
-  height: calc(100vh - 94px);
   padding: 16px;
   align-items: center;
   flex-direction: column;

@@ -10,6 +10,5 @@ export const CreateNewDaoProposalTypePageHolder = styled(motion.div).attrs(
   })
 )`
   width: 100%;
-  height: calc(100vh - 94px);
   overflow-y: auto;
 `
