@@ -69,19 +69,31 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
       if (!poolData) return
 
       const same = pool.get === poolData.id
-
       pool.set(same ? "" : poolData.id)
-      insurancePoolHaveTrades.set(
-        same ? false : Number(poolData.totalTrades) > 0
-      )
     },
     [pool]
   )
 
   useEffect(() => {
+    if (!payload || payload.length === 0) {
+      return
+    }
+
+    if (pool.get === "") {
+      insurancePoolHaveTrades.set(false)
+    } else {
+      const poolQuery = payload.filter((p) => p.id === pool.get)
+
+      if (poolQuery[0]) {
+        insurancePoolHaveTrades.set(Number(poolQuery[0].totalTrades) > 0)
+      }
+    }
+  }, [pool.get, payload])
+
+  useEffect(() => {
     debounce(() => {
       setNoInvestments(!loading && payload.length === 0)
-    }, 500)
+    }, 100)
   }, [loading, payload])
 
   const list = useMemo(() => {

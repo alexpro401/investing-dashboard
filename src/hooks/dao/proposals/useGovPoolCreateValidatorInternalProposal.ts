@@ -14,7 +14,7 @@ import { TransactionType } from "state/transactions/types"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { useActiveWeb3React } from "hooks"
 import { useGovPoolLatestProposalId } from "hooks/dao"
-import { addDaoProposalData } from "utils/ipfs"
+import { IpfsEntity } from "utils/ipfsEntity"
 
 interface IProps {
   daoAddress: string
@@ -92,11 +92,17 @@ const useGovPoolCreateValidatorInternalProposal = ({ daoAddress }: IProps) => {
       try {
         setPayload(SubmitState.SIGN)
 
-        let { path: daoProposalIPFSCode } = await addDaoProposalData({
-          proposalName,
-          proposalDescription,
+        const daoProposalIpfsEntity = new IpfsEntity({
+          data: JSON.stringify({
+            proposalName,
+            proposalDescription,
+            timestamp: new Date().getTime() / 1000,
+          }),
         })
-        daoProposalIPFSCode = "ipfs://" + daoProposalIPFSCode
+
+        await daoProposalIpfsEntity.uploadSelf()
+
+        const daoProposalIPFSCode = "ipfs://" + daoProposalIpfsEntity._path
 
         const gasLimit = await tryEstimateGas(
           internalProposalType,

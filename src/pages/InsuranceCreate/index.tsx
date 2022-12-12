@@ -3,13 +3,17 @@ import InsuranceAccidentCreatingContextProvider from "context/InsuranceAccidentC
 
 import { Container } from "./styled"
 import Header from "components/Header/Layout"
+import { useWeb3React } from "@web3-react/core"
 
 const InsuranceCreate = () => {
+  const { account } = useWeb3React()
   return (
     <>
       <Header>Proposal create</Header>
       <Container>
-        <InsuranceAccidentCreatingContextProvider>
+        <InsuranceAccidentCreatingContextProvider
+          customLSKey={`${account}-creating-new-dao-proposal-insurance-accident`}
+        >
           <CreateInsuranceAccidentForm />
         </InsuranceAccidentCreatingContextProvider>
       </Container>

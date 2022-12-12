@@ -18,12 +18,14 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   wrappedProposalView: WrappedProposalView
   govPoolAddress?: string
   onButtonClick?: () => void
+  completed: boolean
 }
 
 const DaoProposalCard: FC<Props> = ({
   govPoolAddress,
   wrappedProposalView,
   onButtonClick,
+  completed,
   ...rest
 }) => {
   const {
@@ -141,6 +143,7 @@ const DaoProposalCard: FC<Props> = ({
         name={name}
         pool={govPoolAddress}
         to={proposalDetailsLinkPath}
+        completed={completed}
       />
       <S.DaoProposalCardBody>
         <S.DaoProposalCardBlockInfo>
