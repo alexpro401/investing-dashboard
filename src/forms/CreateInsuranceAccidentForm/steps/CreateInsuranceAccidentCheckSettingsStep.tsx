@@ -11,7 +11,6 @@ import {
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import * as S from "../styled/step-check-settings"
 import { Flex, Text } from "theme"
-import usePoolPrice from "hooks/usePoolPrice"
 import { normalizeBigNumber } from "utils"
 import { addBignumbers, divideBignumbers } from "utils/formulas"
 import Skeleton from "components/Skeleton"
@@ -19,6 +18,7 @@ import usePoolInvestorsByDay from "hooks/usePoolInvestorsByDay"
 import useInvestorsInsuranceHistory from "hooks/useInvestorsInsuranceHistory"
 import useInvestorsLpHistory from "hooks/useInvestorsLpHistory"
 import CreateInsuranceAccidentMemberCard from "../components/CreateInsuranceAccidentMemberCard"
+import PoolPriceDiff from "components/PoolPriceDiff"
 import { BigNumber } from "@ethersproject/bignumber"
 import { ZERO } from "constants/index"
 import useInvestorsLastPoolPosition from "hooks/useInvestorsLastPoolPosition"
@@ -317,32 +317,11 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
           </CardDescription>
         </Card>
         <Flex full>
-          <S.PNLGrid>
-            <Card>
-              <Text fz={16} fw={600} color="#E4F2FF" align="center">
-                <>{initialPriceUSD}</>
-              </Text>
-              <Text fz={13} fw={500} color="#B1C7FC" align="center">
-                Initial LP Price
-              </Text>
-            </Card>
-            <Card>
-              <Text fz={16} fw={600} color="#E4F2FF" align="center">
-                <>{currentPriceUSD}</>
-              </Text>
-              <Text fz={13} fw={500} color="#B1C7FC" align="center">
-                Current Price
-              </Text>
-            </Card>
-            <Card>
-              <Text fz={16} fw={600} color="#DB6D6D" align="center">
-                <>{priceDiffUSD}</>
-              </Text>
-              <Text fz={13} fw={500} color="#B1C7FC" align="center">
-                Difference
-              </Text>
-            </Card>
-          </S.PNLGrid>
+          <PoolPriceDiff
+            initialPriceUSD={initialPriceUSD}
+            currentPriceUSD={currentPriceUSD}
+            priceDiffUSD={priceDiffUSD}
+          />
         </Flex>
         <Flex full>
           <S.Table>
