@@ -55,10 +55,10 @@ export const selectInsuranceAccidentByPool = (pool?: string) => {
     // eslint-disable-next-line prefer-const
     let result = {} as InsuranceAccident
     for (const ia of Object.values(metadata.insuranceAccidents)) {
-      if (isNil(ia) || isNil(ia.accidentInfo)) {
+      if (isNil(ia) || isNil(ia.form)) {
         break
       }
-      if (ia.accidentInfo.pool === pool) {
+      if (ia.form.pool === pool) {
         result = ia
         break
       }

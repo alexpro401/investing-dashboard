@@ -6,6 +6,7 @@ import { ICON_NAMES } from "constants/icon-names"
 import { useGovPoolProposal, useGovPoolProposalVotingHistory } from "hooks/dao"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
+import { NoDataMessage } from "common"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   govPoolProposal: ReturnType<typeof useGovPoolProposal>
@@ -40,8 +41,7 @@ const VotingHistoryTab: FC<Props> = ({ govPoolProposal }) => {
           </S.DaoProposalDetailsRowText>
         </S.DaoProposalDetailsTxRow>
         <S.DaoProposalCardRowDivider />
-        {!isLoading &&
-          proposalVotes?.length &&
+        {!isLoading && !!proposalVotes?.length ? (
           proposalVotes.map((el) => (
             <>
               <S.DaoProposalDetailsTxRow>
@@ -70,7 +70,10 @@ const VotingHistoryTab: FC<Props> = ({ govPoolProposal }) => {
               </S.DaoProposalDetailsTxRow>
               <S.DaoProposalCardRowDivider />
             </>
-          ))}
+          ))
+        ) : (
+          <NoDataMessage />
+        )}
         {totalVotesCount > limit && (
           <S.DaoProposalDetailsHistoryPaginationWrp>
             <S.DaoProposalDetailsHistoryPaginationIndicator>

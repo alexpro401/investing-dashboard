@@ -10,12 +10,7 @@ import {
 } from "common"
 import { InputField, TextareaField } from "fields"
 import { useFormValidation } from "hooks/useFormValidation"
-import {
-  required,
-  isAddressValidator,
-  minLength,
-  maxLength,
-} from "utils/validators"
+import { required, minLength, maxLength } from "utils/validators"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
 
@@ -142,6 +137,7 @@ const CreateDaoProposalGeneralForm: React.FC<
           </CardFormControl>
         </Card>
       </S.StepsRoot>
+      <div style={{ marginTop: "auto" }}></div>
       <StepsNavigation
         customNextCb={handleNextStepCb}
         nextLabel={"Create Proposal"}

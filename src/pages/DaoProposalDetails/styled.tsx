@@ -205,15 +205,25 @@ export const DaoProposalDetailsRowText = styled.span<{
       : ""}
   
   a {
+    display: flex;
+    align-items: baseline;
     text-decoration: none;
     font: inherit;
     color: inherit;
   }
 `
 
+export const DaoProposalDetailsRowList = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex: 1;
+`
+
 export const DaoProposalDetailsRowExternalCroppedLinkWrp = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
   max-width: 30vw;
 `
 
