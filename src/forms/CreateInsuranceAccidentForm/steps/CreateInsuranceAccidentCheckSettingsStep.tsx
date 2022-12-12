@@ -9,34 +9,26 @@ import {
   StepsBottomNavigation,
 } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
-import * as S from "../styled/step-check-settings"
-import { Flex, Text } from "theme"
+import { Flex } from "theme"
 import { normalizeBigNumber } from "utils"
 import { addBignumbers, divideBignumbers } from "utils/formulas"
-import Skeleton from "components/Skeleton"
 import usePoolInvestorsByDay from "hooks/usePoolInvestorsByDay"
 import useInvestorsInsuranceHistory from "hooks/useInvestorsInsuranceHistory"
 import useInvestorsLpHistory from "hooks/useInvestorsLpHistory"
-import CreateInsuranceAccidentMemberCard from "../components/CreateInsuranceAccidentMemberCard"
 import PoolPriceDiff from "components/PoolPriceDiff"
 import { BigNumber } from "@ethersproject/bignumber"
 import { ZERO } from "constants/index"
 import useInvestorsLastPoolPosition from "hooks/useInvestorsLastPoolPosition"
-import { Card, CardDescription, CardHead } from "common"
-import { InsuranceAccidentInvestor } from "interfaces/insurance"
+import {
+  Card,
+  CardDescription,
+  CardHead,
+  InsuranceAccidentMembersTable,
+} from "common"
 import { selectPoolByAddress } from "state/pools/selectors"
 import { useSelector } from "react-redux"
 import { AppState } from "state"
 import { usePoolPriceHistoryDiff } from "hooks/usePool"
-
-const TableRowSkeleton = (props) => (
-  <S.TableRow gap="12px" {...props}>
-    <Skeleton h="13px" />
-    <Skeleton h="13px" />
-    <Skeleton h="13px" />
-    <Skeleton h="13px" />
-  </S.TableRow>
-)
 
 function useInvestorsInAccident() {
   const { account } = useWeb3React()
@@ -212,7 +204,6 @@ function useInvestorsInAccident() {
 }
 
 const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
-  const { account } = useWeb3React()
   const { data, totals, loading, noData } = useInvestorsInAccident()
 
   const {
@@ -264,37 +255,6 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
     }
   }, [totals])
 
-  const tableBody = useMemo(() => {
-    if (loading) {
-      return Array(10)
-        .fill(null)
-        .map((_, i) => <TableRowSkeleton key={i} />)
-    }
-
-    if (!loading && noData) {
-      return (
-        <Flex full ai="center" jc="center">
-          <Text fz={16} fw={500} color="#e4f2ff">
-            No investors
-          </Text>
-        </Flex>
-      )
-    }
-
-    return (Object.values(data) as InsuranceAccidentInvestor[]).map((h) => {
-      const isCurrentUser =
-        h.investor.id === String(account).toLocaleLowerCase()
-      return (
-        <CreateInsuranceAccidentMemberCard
-          key={h.investor.id}
-          payload={h}
-          color={isCurrentUser ? "#2669EB" : undefined}
-          fw={isCurrentUser ? 600 : 400}
-        />
-      )
-    })
-  }, [account, data, loading, noData])
-
   return (
     <>
       <StepsRoot
@@ -325,25 +285,17 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
           />
         </Flex>
         <Flex full>
-          <S.Table>
-            <S.TableHead>
-              <S.TableRow>
-                <S.TableCell>Members: {totals.users}</S.TableCell>
-                <S.TableCell>Amount LP</S.TableCell>
-                <S.TableCell>Loss $</S.TableCell>
-                <S.TableCell>Сoverage DEXE</S.TableCell>
-              </S.TableRow>
-            </S.TableHead>
-            <S.TableBody>{tableBody}</S.TableBody>
-            <S.TableFooter>
-              <S.TableRow fw={600}>
-                <S.TableCell>Total:</S.TableCell>
-                <S.TableCell>{totals.lp.render}</S.TableCell>
-                <S.TableCell>{totals.loss.render}</S.TableCell>
-                <S.TableCell>{totals.coverage.render}</S.TableCell>
-              </S.TableRow>
-            </S.TableFooter>
-          </S.Table>
+          <InsuranceAccidentMembersTable
+            totals={{
+              users: totals.users,
+              lp: totals.lp.render,
+              loss: totals.loss.render,
+              coverage: totals.coverage.render,
+            }}
+            data={data}
+            loading={loading}
+            noData={noData}
+          />
         </Flex>
       </StepsRoot>
       <StepsBottomNavigation />
