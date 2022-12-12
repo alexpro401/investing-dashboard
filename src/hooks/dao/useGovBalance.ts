@@ -1,12 +1,12 @@
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { useWeb3React } from "@web3-react/core"
+import { ZERO_ADDR } from "constants/index"
+import { useGovUserKeeperContract } from "contracts"
+
 import {
   OptionalMethodInputs,
   useSingleContractMultipleData,
 } from "state/multicall/hooks"
-import { ZERO_ADDR } from "constants/index"
-import { useCallback, useEffect, useMemo, useState } from "react"
-import { useGovUserKeeperContract } from "contracts"
-import { useWeb3React } from "@web3-react/core"
-import { isAddress } from "utils"
 
 type methods = "tokenBalance" | "nftBalance" | "nftExactBalance"
 
