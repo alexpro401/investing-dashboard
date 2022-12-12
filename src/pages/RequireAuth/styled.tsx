@@ -12,6 +12,8 @@ export const Root = styled.div`
 export const AuthOutletWrp = styled.div`
   position: relative;
   overflow: hidden auto;
+  display: flex;
+  flex-direction: column;
   flex: 1;
 `
 

@@ -11,9 +11,6 @@ export const DaoProposalDetails = styled.div`
   color: ${(props) => props.theme.textColors.primary};
   padding: 16px;
   flex: 1;
-  @media all and (display-mode: standalone) {
-    height: calc(100vh - 115px);
-  }
 `
 
 export const DaoProposalDetailsTitleWrp = styled.div``

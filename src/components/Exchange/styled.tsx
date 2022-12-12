@@ -313,10 +313,6 @@ export const Container = styled(Flex)`
   align-items: center;
   flex-direction: column;
   overflow-y: auto;
-
-  @media all and (display-mode: standalone) {
-    height: calc(100vh - 115px);
-  }
 `
 
 export const Card = styled(BasicCard)`

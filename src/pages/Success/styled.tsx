@@ -5,10 +5,6 @@ export const SuccessContainer = styled.div`
   bacground-color: #040a0f;
   width: fill-available;
   overflow-y: auto;
-
-  @media all and (display-mode: standalone) {
-    height: calc(100vh - 115px);
-  }
 `
 
 export const Body = styled.div`

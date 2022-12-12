@@ -45,9 +45,6 @@ const GlobalStyle: any = createGlobalStyle`
     overflow-x:hidden;
     overflow-y:hidden;
     background: #0E121B;
-    
-    /* height: calc(var(--vh, 1vh) * 100);
-    min-height: calc(var(--vh, 1vh) * 100); */
     min-height: -webkit-fill-available;
     touch-action: none;
     overscroll-behavior: none;
