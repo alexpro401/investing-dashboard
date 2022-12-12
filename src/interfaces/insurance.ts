@@ -25,6 +25,7 @@ export interface InsuranceAccidentInfo {
 }
 
 export interface InsuranceAccidentInvestorsTotalsInfo {
+  users: string
   lp: string
   loss: string
   coverage: string

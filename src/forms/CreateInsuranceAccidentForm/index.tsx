@@ -405,6 +405,7 @@ const CreateInsuranceAccidentForm: FC = () => {
       case STEPS.checkSettings:
         investorsInfo.set({})
         investorsTotals.set({
+          users: "",
           lp: ZERO.toHexString(),
           loss: ZERO.toHexString(),
           coverage: ZERO.toHexString(),

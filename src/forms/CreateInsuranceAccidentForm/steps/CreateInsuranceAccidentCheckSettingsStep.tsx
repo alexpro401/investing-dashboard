@@ -139,7 +139,7 @@ function useInvestorsInAccident() {
 
   const totals = useMemo(() => {
     const InitialTotals = {
-      users: 0,
+      users: "0",
       lp: { render: `LP 0`, value: ZERO },
       loss: {
         render: `$ 0`,
@@ -190,7 +190,7 @@ function useInvestorsInAccident() {
     )
 
     return {
-      users: insuranceHistory.data.length,
+      users: String(insuranceHistory.data.length),
       lp: { render: `LP ${normalizeBigNumber(res.lp, 18, 2)}`, value: res.lp },
       loss: {
         render: `$ ${normalizeBigNumber(res.loss, 18, 2)}`,
@@ -256,6 +256,7 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
 
     if ((emptyTotals && havePayload) || (havePayload && !isSame)) {
       investorsTotals.set({
+        users: totals.users,
         lp: totals.lp.value.toHexString(),
         loss: totals.loss.value.toHexString(),
         coverage: totals.coverage.value.toHexString(),

@@ -16,6 +16,7 @@ export const INITIAL_INSURANCE_ACCIDENT: InsuranceAccident = {
     chat: "",
   },
   investorsTotals: {
+    users: "",
     lp: "",
     loss: "",
     coverage: "",
