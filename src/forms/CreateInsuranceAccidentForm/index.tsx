@@ -178,7 +178,7 @@ const CreateInsuranceAccidentForm: FC = () => {
         data: JSON.stringify({
           creator: String(account).toLocaleLowerCase(),
           timestamp: new Date().getTime() / 1000,
-          accidentInfo: {
+          form: {
             pool: pool.get,
             block: block.get,
             date: date.get,
