@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react"
+import { FC, ReactNode, useEffect, useState } from "react"
 
 import HeaderTabs from "components/Header/Tabs"
 import { More, GoBack } from "./Components"
@@ -16,6 +16,12 @@ interface Props {
 
 const Layout: FC<Props> = ({ children, left, right, tabs }) => {
   const AppHeaderNode = document.querySelector("#app-header")
+
+  const [, updateComponent] = useState(false)
+
+  useEffect(() => {
+    updateComponent(true)
+  }, [AppHeaderNode])
 
   return (
     AppHeaderNode &&
