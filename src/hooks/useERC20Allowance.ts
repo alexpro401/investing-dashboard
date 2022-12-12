@@ -91,13 +91,12 @@ const useERC20Allowance = (tokens: string[], spender?: string) => {
     if (account && tokens.length > 0) {
       return tokens.reduce((memo, token, i) => {
         const value = callResults?.[i]?.result?.[0]
-        const amount = value ? JSBI.BigInt(value.toString()) : undefined
 
         if (!token) return memo
 
-        if (amount) {
+        if (value) {
           try {
-            memo[token] = BigNumber.from(fromRawAmount(amount))
+            memo[token] = value
           } catch {
             memo[token] = ZERO
           }
