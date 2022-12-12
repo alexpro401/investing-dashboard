@@ -5,6 +5,7 @@ import { More, GoBack } from "./Components"
 
 import { Container, Bar, Icons, Title } from "./styled"
 import { ITab } from "interfaces"
+import { createPortal } from "react-dom"
 
 interface Props {
   left?: ReactNode
@@ -14,9 +15,13 @@ interface Props {
 }
 
 const Layout: FC<Props> = ({ children, left, right, tabs }) => {
+  const AppHeaderNode = document.querySelector("#app-header")
+
   return (
-    <>
+    AppHeaderNode &&
+    createPortal(
       <Container
+        key={Number(!!AppHeaderNode)}
         initial={{ y: -102 }}
         animate={{ y: 0 }}
         exit={{ y: -102 }}
@@ -31,8 +36,9 @@ const Layout: FC<Props> = ({ children, left, right, tabs }) => {
           </Icons>
         </Bar>
         {tabs !== undefined && !!tabs.length && <HeaderTabs tabs={tabs} />}
-      </Container>
-    </>
+      </Container>,
+      AppHeaderNode
+    )
   )
 }
 

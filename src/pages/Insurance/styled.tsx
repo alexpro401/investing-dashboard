@@ -4,7 +4,6 @@ import { AppButton } from "common"
 export const Container = styled.div`
   margin: 0 auto;
   width: fill-available;
-  overflow-y: hidden;
   background-color: #0e121b;
 `
 

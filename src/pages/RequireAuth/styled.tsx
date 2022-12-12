@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import { Outlet } from "react-router-dom"
 import TapBar from "components/TapBar"
+import { AppHeader } from "common"
 
 export const Root = styled.div`
   display: flex;
@@ -8,6 +9,8 @@ export const Root = styled.div`
   height: 100%;
   flex: 1;
 `
+
+export const AuthAppHeader = styled(AppHeader)``
 
 export const AuthOutletWrp = styled.div`
   position: relative;

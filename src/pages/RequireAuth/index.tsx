@@ -16,6 +16,7 @@ function RequireAuth() {
 
   return (
     <S.Root className={"auth__root"}>
+      <S.AuthAppHeader />
       <S.AuthOutletWrp>
         <S.AuthOutlet />
       </S.AuthOutletWrp>
