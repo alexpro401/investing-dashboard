@@ -9,7 +9,10 @@ interface IUseValidatorProps {
   userAddress: string
 }
 
-const useIsValidator = ({ daoAddress, userAddress }: IUseValidatorProps) => {
+const useIsValidator = ({
+  daoAddress,
+  userAddress,
+}: IUseValidatorProps): [boolean, boolean, boolean] => {
   const { library } = useActiveWeb3React()
 
   const govValidatorsContract = useGovValidatorsContract(daoAddress)

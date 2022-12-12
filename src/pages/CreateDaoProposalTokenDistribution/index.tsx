@@ -6,6 +6,8 @@ import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidatio
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
 import TokenDistributionCreatingContextProvider from "context/govPool/proposals/TokenDistributionContext"
 import CreateDaoProposalTokenDistributionForm from "forms/CreateDaoProposalTokenDistributionForm"
+import Skeleton from "components/Skeleton"
+import { Flex } from "theme"
 
 import * as S from "./styled"
 
@@ -15,7 +17,15 @@ const CreateDaoProposalTokenDistribution: React.FC = () => {
   return (
     <>
       <Header>Create proposal</Header>
-      <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
+      <WithGovPoolAddressValidation
+        daoPoolAddress={daoAddress ?? ""}
+        loader={
+          <Flex gap={"24"} full m="16px 0 0 0" dir="column" ai={"center"}>
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"160px"} />
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"160px"} />
+          </Flex>
+        }
+      >
         <GovProposalCreatingContextProvider>
           <TokenDistributionCreatingContextProvider>
             <S.PageHolder>

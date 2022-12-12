@@ -7,6 +7,8 @@ import WithUserIsDaoValidatorValidation from "components/WithUserIsDaoValidatorV
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import { SelectableCard, Icon } from "common"
 import { ICON_NAMES } from "constants/icon-names"
+import Skeleton from "components/Skeleton"
+import { Flex } from "theme"
 
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
@@ -70,11 +72,28 @@ const CreateDaoProposalValidatorSelectType: React.FC = () => {
     []
   )
 
+  const loader = useMemo(
+    () => (
+      <Flex gap={"24"} full m="16px 0 0 0" dir="column" ai={"center"}>
+        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+      </Flex>
+    ),
+    []
+  )
+
   return (
     <>
       <Header>Create proposal</Header>
-      <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
-        <WithUserIsDaoValidatorValidation daoPoolAddress={daoAddress ?? ""}>
+      <WithGovPoolAddressValidation
+        daoPoolAddress={daoAddress ?? ""}
+        loader={loader}
+      >
+        <WithUserIsDaoValidatorValidation
+          daoPoolAddress={daoAddress ?? ""}
+          loader={loader}
+        >
           <S.PageHolder>
             <S.PageContent>
               <TutorialCard

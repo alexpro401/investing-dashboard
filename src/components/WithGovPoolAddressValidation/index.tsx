@@ -15,11 +15,13 @@ const govPoolsClient = createClient({
 interface IProps {
   daoPoolAddress: string
   children: React.ReactNode
+  loader?: React.ReactNode
 }
 
 const WithGovPoolAddressValidation: React.FC<IProps> = ({
   daoPoolAddress,
   children,
+  loader,
 }) => {
   const poolRegistryContract = usePoolRegistryContract()
   const [loading, setLoading] = useState<boolean>(true)
@@ -56,7 +58,7 @@ const WithGovPoolAddressValidation: React.FC<IProps> = ({
   }, [checkGovAddressValidation])
 
   if (loading) {
-    return <></>
+    return <>{loader ?? ""}</>
   }
 
   if (!isValid) {

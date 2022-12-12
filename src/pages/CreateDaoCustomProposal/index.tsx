@@ -13,6 +13,8 @@ import Header from "components/Header/Layout"
 import RadioButton from "components/RadioButton"
 import StepsControllerContext from "context/StepsControllerContext"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
+import Skeleton from "components/Skeleton"
+import { Flex } from "theme"
 
 import * as S from "./styled"
 
@@ -103,7 +105,16 @@ const CreateDaoCustomProposal: React.FC = () => {
       nextCb={handleNextStep}
     >
       <Header>Create proposal</Header>
-      <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
+      <WithGovPoolAddressValidation
+        daoPoolAddress={daoAddress ?? ""}
+        loader={
+          <Flex gap={"24"} full m="16px 0 0 0" dir="column" ai={"center"}>
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"70px"} />
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"70px"} />
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"70px"} />
+          </Flex>
+        }
+      >
         <S.PageHolder>
           <S.PageContent>
             <Card>
