@@ -102,15 +102,6 @@ const AbiStep: FC = () => {
     [encodedMethods, executorSelectedAddress]
   )
 
-  // console.log("adresses: ", adresses)
-  // console.log("abis: ", abis)
-  // console.log("executorsAbis: ", executorsAbis)
-  // console.log("contractAdresses: ", contractAdresses)
-
-  // console.log("executorSelectedAddress: ", executorSelectedAddress)
-
-  // console.log("encodedMethods.get: ", encodedMethods.get)
-
   const { getFieldErrorMessage, touchField, isFieldsValid, touchForm } =
     useFormValidation(
       {
