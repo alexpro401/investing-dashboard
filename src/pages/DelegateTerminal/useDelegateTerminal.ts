@@ -140,9 +140,15 @@ const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
     return ownedERC721Selected.filter(
       (id) =>
         ERC721Allowances[id].toLocaleLowerCase() !==
-        govUserKeeperAddress.toLocaleLowerCase()
+          govUserKeeperAddress.toLocaleLowerCase() &&
+        !depositedERC721Tokens.includes(id)
     )
-  }, [ERC721Allowances, ownedERC721Selected, govUserKeeperAddress])
+  }, [
+    ownedERC721Selected,
+    ERC721Allowances,
+    govUserKeeperAddress,
+    depositedERC721Tokens,
+  ])
 
   const undepositedERC721Selected = useMemo(() => {
     return ERC721Amount.filter(
