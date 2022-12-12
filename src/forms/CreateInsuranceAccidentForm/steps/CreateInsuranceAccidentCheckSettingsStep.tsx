@@ -13,7 +13,7 @@ import * as S from "../styled/step-check-settings"
 import { Flex, Text } from "theme"
 import usePoolPrice from "hooks/usePoolPrice"
 import { normalizeBigNumber } from "utils"
-import { addBignumbers, divideBignumbers, getLP } from "utils/formulas"
+import { addBignumbers, divideBignumbers } from "utils/formulas"
 import Skeleton from "components/Skeleton"
 import usePoolInvestorsByDay from "hooks/usePoolInvestorsByDay"
 import useInvestorsInsuranceHistory from "hooks/useInvestorsInsuranceHistory"
@@ -24,6 +24,10 @@ import { ZERO } from "constants/index"
 import useInvestorsLastPoolPosition from "hooks/useInvestorsLastPoolPosition"
 import { Card, CardDescription, CardHead } from "common"
 import { InsuranceAccidentInvestor } from "interfaces/insurance"
+import { selectPoolByAddress } from "state/pools/selectors"
+import { useSelector } from "react-redux"
+import { AppState } from "state"
+import { usePoolPriceHistoryDiff } from "hooks/usePool"
 
 const TableRowSkeleton = (props) => (
   <S.TableRow gap="12px" {...props}>
@@ -211,48 +215,29 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
   const { account } = useWeb3React()
   const { data, totals, loading, noData } = useInvestorsInAccident()
 
-  const { form, chart, investorsTotals, investorsInfo } = useContext(
-    InsuranceAccidentCreatingContext
-  )
+  const {
+    form,
+    chart,
+    investorsTotals,
+    investorsInfo,
+    insurancePoolLastPriceHistory,
+  } = useContext(InsuranceAccidentCreatingContext)
 
   const { pool } = form
   const { point } = chart
 
-  const [{ priceUSD }] = usePoolPrice(pool.get)
+  const poolData = useSelector((s: AppState) =>
+    selectPoolByAddress(s, pool.get)
+  )
 
-  const initialPrice = useMemo(() => {
-    if (isEmpty(point.get)) {
-      return <Skeleton w="120px" h="16px" />
+  const { initialPriceUSD, currentPriceUSD, priceDiffUSD } =
+    usePoolPriceHistoryDiff(point.get?.payload, poolData)
+
+  useEffect(() => {
+    if (!isNil(poolData)) {
+      insurancePoolLastPriceHistory.set(poolData.priceHistory[0] ?? {})
     }
-
-    const { baseTVL, supply } = point.get.payload
-    const price = getLP(String(baseTVL), String(supply))
-
-    return `$ ${price}`
-  }, [point])
-
-  const currentPrice = useMemo(() => {
-    if (isNil(priceUSD)) {
-      return <Skeleton w="120px" h="16px" />
-    }
-
-    return `$ ${normalizeBigNumber(priceUSD, 18, 2)}`
-  }, [priceUSD])
-
-  const priceDiff = useMemo(() => {
-    if (isEmpty(point.get) || isNil(priceUSD)) {
-      return <Skeleton w="120px" h="16px" />
-    }
-
-    const { baseTVL, supply } = point.get.payload
-    const initial = getLP(String(baseTVL), String(supply))
-
-    const diff = Math.abs(
-      Number(normalizeBigNumber(priceUSD, 18, 2)) - Number(initial)
-    ).toFixed(2)
-
-    return `$ ${diff}`
-  }, [point, priceUSD])
+  }, [poolData])
 
   useEffect(() => {
     if (!loading && !noData) {
@@ -335,7 +320,7 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
           <S.PNLGrid>
             <Card>
               <Text fz={16} fw={600} color="#E4F2FF" align="center">
-                <>{initialPrice}</>
+                <>{initialPriceUSD}</>
               </Text>
               <Text fz={13} fw={500} color="#B1C7FC" align="center">
                 Initial LP Price
@@ -343,7 +328,7 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
             </Card>
             <Card>
               <Text fz={16} fw={600} color="#E4F2FF" align="center">
-                <>{currentPrice}</>
+                <>{currentPriceUSD}</>
               </Text>
               <Text fz={13} fw={500} color="#B1C7FC" align="center">
                 Current Price
@@ -351,7 +336,7 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
             </Card>
             <Card>
               <Text fz={16} fw={600} color="#DB6D6D" align="center">
-                <>{priceDiff}</>
+                <>{priceDiffUSD}</>
               </Text>
               <Text fz={13} fw={500} color="#B1C7FC" align="center">
                 Difference

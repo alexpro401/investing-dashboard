@@ -57,4 +57,6 @@ export interface InsuranceAccident {
 
   insuranceAccidentExist: boolean
   insurancePoolHaveTrades: boolean
+
+  insurancePoolLastPriceHistory: IPriceHistory
 }

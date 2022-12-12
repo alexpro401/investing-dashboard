@@ -65,6 +65,7 @@ const CreateInsuranceAccidentForm: FC = () => {
     insuranceAccidentExist,
     investorsInfo,
     insurancePoolHaveTrades,
+    insurancePoolLastPriceHistory,
     clearFormStorage,
   } = context
 
@@ -185,6 +186,7 @@ const CreateInsuranceAccidentForm: FC = () => {
             description: description.get,
             chat: chat.get,
           },
+          insurancePoolLastPriceHistory: insurancePoolLastPriceHistory.get,
           investorsTotals: investorsTotals.get,
           investorsInfo: investorsInfo.get,
           chart: {
@@ -289,6 +291,7 @@ const CreateInsuranceAccidentForm: FC = () => {
     touchForm,
     pool,
     govPool,
+    insurancePoolLastPriceHistory,
   ])
 
   const handleNextStep = () => {
