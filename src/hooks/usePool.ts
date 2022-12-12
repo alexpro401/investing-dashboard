@@ -278,7 +278,7 @@ export const usePoolPriceHistoryDiff = (priceHistoryFrom, priceHistoryTo) => {
   const priceDiffUSD = useMemo(() => {
     if (!currentPriceUSD) return 0
 
-    return Number(Math.abs(currentPriceUSD - initialPriceUSD).toFixed(2))
+    return currentPriceUSD - initialPriceUSD
   }, [currentPriceUSD, initialPriceUSD])
 
   return {

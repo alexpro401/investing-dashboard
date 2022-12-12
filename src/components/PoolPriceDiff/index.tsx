@@ -56,7 +56,7 @@ const PoolPriceDiff: React.FC<Props> = ({
           }
           align="center"
         >
-          <>{`$ ${priceDiffUSD}`}</>
+          <>{`$ ${Math.abs(priceDiffUSD).toFixed(2)}`}</>
         </Text>
         <Text
           fz={13}
