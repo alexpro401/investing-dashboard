@@ -2,7 +2,7 @@ import { FC, useState, useEffect, useMemo, useCallback } from "react"
 import { useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
 import { useWeb3React } from "@web3-react/core"
-import { RotateSpinner, PulseSpinner } from "react-spinners-kit"
+import { RotateSpinner, PulseSpinner, GuardSpinner } from "react-spinners-kit"
 import { formatEther, parseEther } from "@ethersproject/units"
 import { useDispatch } from "react-redux"
 
@@ -18,7 +18,7 @@ import {
   ValidationError,
   InputRow,
 } from "./styled"
-import { Flex } from "theme"
+import { Center, Flex } from "theme"
 import SwitchRow, { InputText } from "components/SwitchRow"
 import { AppButton } from "common"
 import Avatar from "components/Avatar"
@@ -51,6 +51,7 @@ import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { useTraderPoolContract } from "contracts"
 import { IpfsEntity } from "utils/ipfsEntity"
+import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -706,9 +707,20 @@ const FundDetailsEdit: FC = () => {
 }
 
 export default function FundDetailsEditWithProvider() {
+  const { poolAddress } = useParams()
+
   return (
     <GraphProvider value={poolsClient}>
-      <FundDetailsEdit />
+      <WithPoolAddressValidation
+        poolAddress={poolAddress ?? ""}
+        loader={
+          <Center>
+            <GuardSpinner size={20} loading />
+          </Center>
+        }
+      >
+        <FundDetailsEdit />
+      </WithPoolAddressValidation>
     </GraphProvider>
   )
 }
