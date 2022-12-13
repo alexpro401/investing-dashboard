@@ -19,6 +19,10 @@ export const MobileMenu = styled(motion.div)`
     height: 70px;
     padding: 5px 14px 25px 14px;
   }
+
+  @media (min-width: 768px) {
+    flex-direction: column;
+  }
 `
 
 const MobileItem = styled(motion.div)`

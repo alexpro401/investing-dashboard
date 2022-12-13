@@ -8,9 +8,10 @@ import Dao from "assets/menu/mobile/Dao"
 
 import { MobileMenu, NavItem } from "./styled"
 import { shortenAddress } from "utils"
-import { FC, HTMLAttributes } from "react"
+import { FC } from "react"
+import { MotionProps } from "framer-motion"
 
-interface Props extends HTMLAttributes<HTMLDivElement> {}
+interface Props extends MotionProps {}
 
 export const TapBar: FC<Props> = ({ ...rest }) => {
   const { account } = useWeb3React()
@@ -18,26 +19,21 @@ export const TapBar: FC<Props> = ({ ...rest }) => {
   const isBarHidden = !account ? "hidden" : "visible"
 
   return (
-    <div {...rest}>
-      <MobileMenu
-        initial={isBarHidden}
-        animate={isBarHidden}
-        variants={{
-          visible: { opacity: 1 },
-          hidden: { opacity: 0 },
-        }}
-      >
-        <NavItem
-          path="/wallet"
-          Icon={Wallet}
-          text={shortenAddress(account, 3)}
-        />
-        <NavItem path="/me/trader" Icon={Profile} text="My profile" />
-        <NavItem path="/" Icon={TopTraders} text="Traders" />
-        <NavItem path="/dao/list/top" Icon={Dao} text="DAO" />
-        <NavItem path="/insurance" Icon={Insurance} text="Insurance" />
-      </MobileMenu>
-    </div>
+    <MobileMenu
+      initial={isBarHidden}
+      animate={isBarHidden}
+      variants={{
+        visible: { opacity: 1 },
+        hidden: { opacity: 0 },
+      }}
+      {...rest}
+    >
+      <NavItem path="/wallet" Icon={Wallet} text={shortenAddress(account, 3)} />
+      <NavItem path="/me/trader" Icon={Profile} text="My profile" />
+      <NavItem path="/" Icon={TopTraders} text="Traders" />
+      <NavItem path="/dao/list/top" Icon={Dao} text="DAO" />
+      <NavItem path="/insurance" Icon={Insurance} text="Insurance" />
+    </MobileMenu>
   )
 }
 export default TapBar

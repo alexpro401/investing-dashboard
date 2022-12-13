@@ -16,11 +16,15 @@ function RequireAuth() {
 
   return (
     <S.Root className={"auth__root"}>
-      <S.AuthAppHeader />
-      <S.AuthOutletWrp>
-        <S.AuthOutlet />
-      </S.AuthOutletWrp>
-      <S.AuthTapBar className={"auth__tap-bar"} />
+      <S.AuthNavigation className={"auth__nav"} />
+      <S.AuthMainWrp className={"auth__main-wrp"}>
+        <S.AuthMain className={"auth__main"}>
+          <S.AuthAppHeader className={"auth__header"} />
+          <S.AuthOutletWrp className={"auth__outlet-wrp"}>
+            <S.AuthOutlet />
+          </S.AuthOutletWrp>
+        </S.AuthMain>
+      </S.AuthMainWrp>
     </S.Root>
   )
 }
