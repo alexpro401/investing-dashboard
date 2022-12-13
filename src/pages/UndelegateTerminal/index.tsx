@@ -94,7 +94,7 @@ export const UndelegateTerminal: FC<Props> = ({
           />
         )}
 
-        {formInfo.haveNft && !formInfo.erc721.balance.isZero() && (
+        {formInfo.haveNft && (
           <>
             <Flex full p="4px" />
             <NftInput

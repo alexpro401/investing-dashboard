@@ -62,7 +62,7 @@ const WalletInput: React.FC<Props> = ({
         />
 
         <S.ActiveSymbol onClick={addAddress}>
-          {!address && !!onChange ? (
+          {(!address || address === "0x...") && !!onChange ? (
             <AppButton
               type="button"
               text="Add address"
