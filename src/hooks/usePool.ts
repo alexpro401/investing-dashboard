@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 import { parseUnits } from "@ethersproject/units"
-import { isEmpty } from "lodash"
+import { isEmpty, isNil } from "lodash"
 import axios from "axios"
 import { useQuery } from "urql"
 import { useSelector } from "react-redux"
+import { Client } from "@urql/core/dist/types/client"
 
 import { IPosition } from "interfaces/thegraphs/all-pools"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
@@ -41,7 +42,8 @@ import { useAPI } from "api"
  * Returns TheGraph info about the pool
  */
 export function usePoolQuery(
-  address: string | undefined
+  address: string | undefined,
+  context?: Client
 ): [IPoolQuery | undefined, () => void] {
   const [pool, executeQuery] = useQuery<{
     traderPool: IPoolQuery
@@ -49,6 +51,7 @@ export function usePoolQuery(
     pause: !isAddress(address),
     query: PoolQuery,
     variables: { address },
+    ...(!isNil(context) ? { context } : {}),
   })
 
   return [pool.data?.traderPool, executeQuery]
