@@ -1,6 +1,3 @@
-import { useParams } from "react-router-dom"
-import theme from "theme"
-
 import {
   FC,
   Dispatch,
@@ -9,6 +6,8 @@ import {
   useContext,
   useMemo,
 } from "react"
+import { useParams } from "react-router-dom"
+import theme from "theme"
 
 import {
   AppButton,
@@ -17,6 +16,7 @@ import {
   CardHead,
   CollapsedCard,
   CreateDaoCardStepNumber,
+  StepsNavigation,
 } from "common"
 
 import {
@@ -30,9 +30,14 @@ import ABIConstructor from "modals/ABIConstructor"
 
 import { ICON_NAMES } from "constants/icon-names"
 import { AdvancedABIContext } from "context/govPool/proposals/custom/AdvancedABIContext"
+import { stepsControllerContext } from "context/StepsControllerContext"
 
 import { useFormValidation } from "hooks/useFormValidation"
 import useAbiKeeper from "hooks/useAbiKeeper"
+import {
+  useGovPoolSettingsIdToExecutors,
+  useGovPoolExecutorToSettings,
+} from "hooks/dao"
 
 import { isAddress, shortenAddress } from "utils"
 import { readFromClipboard } from "utils/clipboard"
@@ -49,14 +54,16 @@ const AbiStep: FC = () => {
     "daoAddress" | "executorAddress"
   >()
 
-  // TODO: Dummy data -> replace to hook data
-  const executors = useMemo(
-    () => [
-      "0x8eff9efd56581bb5b8ac5f5220fab9a7349160e3",
-      "0xCC09139C13775Fd660A0601a055520F7967cf63f",
-      "0x36119c25B7710fcbDEf1408cfaD2F24D4A95A41b",
-    ],
-    []
+  const [settingsId] = useGovPoolExecutorToSettings(daoAddress, executorAddress)
+  const [executors] = useGovPoolSettingsIdToExecutors(
+    daoAddress,
+    settingsId ? settingsId.toString() : undefined
+  )
+  const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
+
+  const executorsShorten = useMemo(
+    () => (executors ? executors.map((el) => el.executorAddress) : []),
+    [executors]
   )
 
   const {
@@ -77,17 +84,54 @@ const AbiStep: FC = () => {
 
   const { abis, executorsAbis, handleCustomAbi } = useAbiKeeper(
     adresses,
-    executors
+    executorsShorten
   )
 
-  const { getFieldErrorMessage, touchField } = useFormValidation(
-    {
-      contractAdresses: contractAdresses.get,
-    },
-    {
-      contractAdresses: { required, isAddressValidator },
-    }
+  const selectedExecutorAbi = useMemo(
+    () => executorsAbis[executorsShorten.indexOf(executorSelectedAddress.get)],
+    [executorsAbis, executorSelectedAddress, executorsShorten]
   )
+
+  const selectedExecutorEncodeMethod = useMemo(
+    () =>
+      executorSelectedAddress.get &&
+      encodedMethods.get[executorSelectedAddress.get] &&
+      encodedMethods.get[executorSelectedAddress.get][0]
+        ? encodedMethods.get[executorSelectedAddress.get][0]
+        : "",
+    [encodedMethods, executorSelectedAddress]
+  )
+
+  const { getFieldErrorMessage, touchField, isFieldsValid, touchForm } =
+    useFormValidation(
+      {
+        executorSelectedAddress: executorSelectedAddress.get,
+        selectedExecutorAbi,
+        selectedExecutorEncodeMethod,
+        contractAdresses: contractAdresses.get.map((el) => el[1]),
+        abis: abis,
+      },
+      {
+        executorSelectedAddress: { required, isAddressValidator },
+        selectedExecutorAbi: { required },
+        selectedExecutorEncodeMethod: { required },
+        contractAdresses: { $every: { required, isAddressValidator } },
+        abis: { $every: { required } },
+      }
+    )
+
+  const handleNextStep = useCallback(() => {
+    touchForm()
+
+    for (const [, address] of contractAdresses.get) {
+      if (!(address in encodedMethods.get) || !encodedMethods.get[address][0])
+        return
+    }
+
+    if (!isFieldsValid) return
+
+    nextCb()
+  }, [nextCb, touchForm, isFieldsValid, encodedMethods, contractAdresses])
 
   const pasteFromClipboard = useCallback(
     async (dispatchCb: Dispatch<SetStateAction<any>>) => {
@@ -116,7 +160,7 @@ const AbiStep: FC = () => {
       <CollapsedCard title="Executor contract">
         <InputField
           placeholder="Value (optional)"
-          type="text"
+          type="number"
           value={executorValue.get}
           setValue={(value) => executorValue.set(value as string)}
           nodeRight={<S.FieldNodeRight>BNB</S.FieldNodeRight>}
@@ -126,7 +170,9 @@ const AbiStep: FC = () => {
           placeholder="Contract address"
           selected={executorSelectedAddress.get}
           setSelected={(value) => executorSelectedAddress.set(value!)}
-          list={executors}
+          errorMessage={getFieldErrorMessage("executorSelectedAddress")}
+          onBlur={() => touchField("executorSelectedAddress")}
+          list={executorsShorten}
           renderItem={(item) => (
             <S.SelectItem>{shortenAddress(item, 5)}</S.SelectItem>
           )}
@@ -136,11 +182,13 @@ const AbiStep: FC = () => {
         />
 
         <TextareaField
-          value={executorsAbis[executors.indexOf(executorSelectedAddress.get)]}
+          value={selectedExecutorAbi}
           setValue={(value) =>
             handleCustomAbi(executorSelectedAddress.get, value as string)
           }
           label="ABI"
+          errorMessage={getFieldErrorMessage("selectedExecutorAbi")}
+          onBlur={() => touchField("selectedExecutorAbi")}
         />
 
         <OverlapInputField
@@ -148,23 +196,16 @@ const AbiStep: FC = () => {
           disabled={!executorSelectedAddress.get}
           label=""
           placeholder="Contract method"
-          value={
-            (executorSelectedAddress.get in encodedMethods.get &&
-              encodedMethods.get[executorSelectedAddress.get][0]) ||
-            ""
-          }
+          value={selectedExecutorEncodeMethod}
           overlapNodeLeft={
-            (
-              <S.SelectItem>
-                {executorSelectedAddress.get in encodedMethods.get &&
-                  encodedMethods.get[executorSelectedAddress.get][0]}
-              </S.SelectItem>
-            ) || null
+            <S.SelectItem>{selectedExecutorEncodeMethod}</S.SelectItem> || null
           }
           setValue={() => {}}
           onClick={() =>
             handleOpenContractMethodSelector(executorSelectedAddress.get)
           }
+          errorMessage={getFieldErrorMessage("selectedExecutorEncodeMethod")}
+          onBlur={() => touchField("selectedExecutorEncodeMethod")}
           overlapNodeRight={
             <S.NodeRightContainer>
               {!modal.get && <S.NodeRightIcon name={ICON_NAMES.angleDown} />}
@@ -177,12 +218,14 @@ const AbiStep: FC = () => {
     [
       executorValue,
       executorSelectedAddress,
-      executors,
-      executorsAbis,
-      encodedMethods.get,
+      executorsShorten,
       modal.get,
       handleCustomAbi,
       handleOpenContractMethodSelector,
+      getFieldErrorMessage,
+      touchField,
+      selectedExecutorAbi,
+      selectedExecutorEncodeMethod,
     ]
   )
 
@@ -191,7 +234,7 @@ const AbiStep: FC = () => {
       <CollapsedCard key={id} title={`Contract ${index + 1}`}>
         <InputField
           placeholder="Value (optional)"
-          type="text"
+          type="number"
           value={contractValues.get[index]}
           setValue={(value) => contractValues.set(index, value as string)}
           nodeRight={<S.FieldNodeRight>BNB</S.FieldNodeRight>}
@@ -201,8 +244,8 @@ const AbiStep: FC = () => {
           value={address}
           setValue={(value) => contractAdresses.set(index, id, value as string)}
           label="Contract address"
-          errorMessage={getFieldErrorMessage("contractAdresses")}
-          onBlur={() => touchField("contractAdresses")}
+          errorMessage={getFieldErrorMessage(`contractAdresses[${index}]`)}
+          onBlur={() => touchField(`contractAdresses[${index}]`)}
           overlapNodeLeft={
             isAddress(address) ? (
               <S.Address>{shortenAddress(address, 4)}</S.Address>
@@ -238,7 +281,9 @@ const AbiStep: FC = () => {
         <TextareaField
           placeholder="ABI"
           value={abis[index]}
-          setValue={(value) => handleCustomAbi(address, value)}
+          setValue={(value) => handleCustomAbi(address, value as string)}
+          errorMessage={getFieldErrorMessage(`abis[${index}]`)}
+          onBlur={() => touchField(`abis[${index}]`)}
         />
 
         <OverlapInputField
@@ -250,6 +295,11 @@ const AbiStep: FC = () => {
           value={
             (address in encodedMethods.get && encodedMethods.get[address][0]) ||
             ""
+          }
+          errorMessage={
+            !(address in encodedMethods.get) || !encodedMethods.get[address][0]
+              ? "Please fill out this field"
+              : undefined
           }
           overlapNodeLeft={
             (
@@ -300,7 +350,7 @@ const AbiStep: FC = () => {
     <S.StepsRoot>
       <Card>
         <CardHead
-          nodeLeft={<CreateDaoCardStepNumber number={2} />}
+          nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
           title="Конструктор транзакции ABI"
         />
         <CardDescription>
@@ -329,13 +379,14 @@ const AbiStep: FC = () => {
       <ABIConstructor
         abi={
           abis[adresses.indexOf(modal.get)] ||
-          executorsAbis[executors.indexOf(modal.get)]
+          executorsAbis[executorsShorten.indexOf(modal.get)]
         }
         allowedMethods={adresses.indexOf(modal.get) > -1 ? ["approve"] : []}
         onSubmit={handleConstructorSubmit}
         isOpen={modal.get !== ""}
         onClose={() => modal.set("")}
       />
+      <StepsNavigation customNextCb={handleNextStep} />
     </S.StepsRoot>
   )
 }

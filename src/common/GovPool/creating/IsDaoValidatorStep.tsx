@@ -21,6 +21,7 @@ import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
 import { stepsControllerContext } from "context/StepsControllerContext"
+import { createPortal } from "react-dom"
 
 const IsDaoValidatorStep: FC = () => {
   const { validatorsParams, isValidator } = useContext(FundDaoCreatingContext)
@@ -78,6 +79,8 @@ const IsDaoValidatorStep: FC = () => {
 
     nextCb()
   }
+
+  const appNavigationEl = document.querySelector("#app-navigation")
 
   return (
     <>
@@ -230,7 +233,14 @@ const IsDaoValidatorStep: FC = () => {
           </S.OverflowedCard>
         </Collapse>
       </S.StepsRoot>
-      <S.StepsBottomNavigation customNextCb={handleNextStep} />
+      {appNavigationEl ? (
+        createPortal(
+          <S.StepsBottomNavigation customNextCb={handleNextStep} />,
+          appNavigationEl
+        )
+      ) : (
+        <></>
+      )}
     </>
   )
 }

@@ -5,6 +5,7 @@ import { NavLink } from "react-router-dom"
 export const Container = styled(NavLink)`
   border-bottom: 1px solid #293c54;
   margin-bottom: 16px;
+  text-decoration: none;
 `
 
 export const Content = styled.div`

@@ -22,4 +22,9 @@ export const Loader = styled.div<{ size?: number; m: string }>`
   align-items: center;
   justify-content: center;
   background: linear-gradient(64.44deg, #191e2b 32.35%, #272e3e 100%);
+
+  & > * > * {
+    height: ${(props) => (props.size ? props.size : 28)}px;
+    width: ${(props) => (props.size ? props.size : 28)}px;
+  }
 `

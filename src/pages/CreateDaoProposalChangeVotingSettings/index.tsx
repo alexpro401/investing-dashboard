@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useCallback } from "react"
 import { useParams, useNavigate } from "react-router-dom"
+import { uniqBy } from "lodash"
 
 import {
   Card,
@@ -14,6 +15,8 @@ import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import StepsControllerContext from "context/StepsControllerContext"
 import { useGovPoolCustomExecutors } from "hooks/dao"
+import Skeleton from "components/Skeleton"
+import { Flex } from "theme"
 
 import * as S from "./styled"
 
@@ -41,7 +44,13 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
     type: "default",
     specification: EDefaultVotingSettingsType.changeVotingSettings,
   })
-  const [customExecutors] = useGovPoolCustomExecutors(daoAddress)
+
+  const [customExecutors, customExecutorsLoading] =
+    useGovPoolCustomExecutors(daoAddress)
+
+  const customExecutorsFiltered = useMemo(() => {
+    return uniqBy(customExecutors, "settings.settingsId")
+  }, [customExecutors])
 
   const handleSelectDefaultVotingType = useCallback(
     (specification: EDefaultVotingSettingsType): void => {
@@ -119,7 +128,17 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
       nextCb={handleNextStep}
     >
       <Header>Create proposal</Header>
-      <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
+      <WithGovPoolAddressValidation
+        daoPoolAddress={daoAddress ?? ""}
+        loader={
+          <Flex gap={"24"} full m="16px 0 0 0" dir="column" ai={"center"}>
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+          </Flex>
+        }
+      >
         <S.PageHolder>
           <S.PageContent>
             <Card>
@@ -152,27 +171,38 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
                 />
               )
             })}
-            {customExecutors.map(
-              ({ id, proposalName, proposalDescription, executorAddress }) => {
-                return (
-                  <SelectableCard
-                    key={id}
-                    value={selectedCard?.executorAddress as string}
-                    setValue={handleSelectCustomProposal}
-                    valueToSet={executorAddress}
-                    nodeLeft={
-                      <RadioButton
-                        selected={selectedCard?.executorAddress ?? ""}
-                        value={executorAddress}
-                        onChange={() => {}}
-                      />
-                    }
-                    title={proposalName}
-                    description={proposalDescription}
-                  />
-                )
-              }
+            {customExecutorsLoading && (
+              <Flex gap={"24"} full dir="column" ai={"center"}>
+                <Skeleton variant={"rect"} w={"100%"} h={"60px"} />
+              </Flex>
             )}
+            {!customExecutorsLoading &&
+              customExecutorsFiltered.map(
+                ({
+                  id,
+                  proposalName,
+                  proposalDescription,
+                  executorAddress,
+                }) => {
+                  return (
+                    <SelectableCard
+                      key={id}
+                      value={selectedCard?.executorAddress as string}
+                      setValue={handleSelectCustomProposal}
+                      valueToSet={executorAddress}
+                      nodeLeft={
+                        <RadioButton
+                          selected={selectedCard?.executorAddress ?? ""}
+                          value={executorAddress}
+                          onChange={() => {}}
+                        />
+                      }
+                      title={proposalName}
+                      description={proposalDescription}
+                    />
+                  )
+                }
+              )}
             <StepsNavigation />
           </S.PageContent>
         </S.PageHolder>

@@ -21,7 +21,8 @@ const ChartTooltipPnl = (props) => {
     if (
       isNil(payload) ||
       isNil(payload[0]?.payload) ||
-      (!isNil(payload[0]?.payload.isFallback) && payload[0]?.payload.isFallback)
+      (!isNil(payload[0]?.payload?.isFallback) &&
+        payload[0]?.payload?.isFallback)
     ) {
       return null
     }
@@ -51,7 +52,13 @@ const ChartTooltipPnl = (props) => {
     return { format: String(Math.abs(Number(res))), number: Number(res) }
   }, [history])
 
-  if (active && payload && payload.length && baseToken && !history.isFallback) {
+  if (
+    active &&
+    payload &&
+    payload.length &&
+    baseToken &&
+    !history?.isFallback
+  ) {
     return (
       <S.Container>
         <S.Content>

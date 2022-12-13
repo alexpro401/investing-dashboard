@@ -1,5 +1,5 @@
-import { isEmpty, isNil } from "lodash"
-import { BigNumber } from "@ethersproject/bignumber"
+import { isEmpty, isNil, reduce } from "lodash"
+import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
 import { createClient, Provider as GraphProvider } from "urql"
 import {
   FC,
@@ -25,18 +25,23 @@ import CreateInsuranceAccidentCheckSettingsStep from "./steps/CreateInsuranceAcc
 import CreateInsuranceAccidentAddDescriptionStep from "./steps/CreateInsuranceAccidentAddDescriptionStep"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { AnimatePresence } from "framer-motion"
-import { addInsuranceProposalData } from "utils/ipfs"
-import { InsuranceAccident } from "interfaces/insurance"
 import { useWeb3React } from "@web3-react/core"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isUrl, required } from "utils/validators"
-import { useInsuranceContract } from "contracts"
+import { useGovPoolContract } from "contracts"
 import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
 import usePayload from "hooks/usePayload"
 import { SubmitState } from "constants/types"
 import CreateInsuranceAccidentCreatedSuccessfully from "./components/CreateInsuranceAccidentCreatedSuccessfully"
 import { ZERO } from "constants/index"
+import { IpfsEntity } from "utils/ipfsEntity"
+import { useSelector } from "react-redux"
+import { selectInsuranceAddress } from "state/contracts/selectors"
+import { encodeAbiMethod } from "utils/encodeAbi"
+import { Insurance as Insurance_ABI } from "abi"
+import { divideBignumbers } from "utils/formulas"
+import { DEFAULT_ALERT_HIDDEN_TIMEOUT } from "constants/misc"
 
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
@@ -60,7 +65,8 @@ const CreateInsuranceAccidentForm: FC = () => {
     insuranceAccidentExist,
     investorsInfo,
     insurancePoolHaveTrades,
-    _clearState,
+    insurancePoolLastPriceHistory,
+    clearFormStorage,
   } = context
 
   const { pool, block, date, description, chat } = form
@@ -104,8 +110,9 @@ const CreateInsuranceAccidentForm: FC = () => {
   const [showAlert] = useAlert()
   const [, setError] = useError()
   const [insuranceBalances, insuranceLoading] = useInsurance()
-  const insurance = useInsuranceContract()
   const addTransaction = useTransactionAdder()
+  const insuranceAddress = useSelector(selectInsuranceAddress)
+  const govPool = useGovPoolContract(process.env.REACT_APP_DEXE_DAO_ADDRESS)
 
   const [newAccidentHash, setNewAccidentHash] = useState("")
   const [showSuccessfullyCreatedModal, setShowSuccessfullyCreatedModal] =
@@ -147,7 +154,6 @@ const CreateInsuranceAccidentForm: FC = () => {
 
   useEffect(() => {
     return () => {
-      _clearState()
       setShowNotEnoughInsurance(false)
       setShowNotEnoughInsuranceByDay(false)
     }
@@ -162,49 +168,103 @@ const CreateInsuranceAccidentForm: FC = () => {
 
   const submit = useCallback(async () => {
     touchForm()
-    if (!account || !isFieldsValid || !insurance) {
+    if (!account || !isFieldsValid || !govPool) {
       return
     }
 
     formController.disableForm()
     setAccidentCreating(SubmitState.SIGN)
     try {
-      const insuranceProposalData = {
-        creator: account,
-        accidentInfo: {
-          pool: pool.get,
-          block: block.get,
-          date: date.get,
-          description: description.get,
-          chat: chat.get,
-        },
-        investorsTotals: investorsTotals.get,
-        investorsInfo: investorsInfo.get,
-        chart: {
-          data: chart.data.get,
-          point: chart.point.get,
-          forPool: chart.forPool.get,
-          timeframe: chart.timeframe.get,
-        },
-      } as unknown as InsuranceAccident
+      const insuranceProposalData = new IpfsEntity({
+        data: JSON.stringify({
+          creator: String(account).toLocaleLowerCase(),
+          timestamp: new Date().getTime() / 1000,
+          form: {
+            pool: pool.get,
+            block: block.get,
+            date: date.get,
+            description: description.get,
+            chat: chat.get,
+          },
+          insurancePoolLastPriceHistory: insurancePoolLastPriceHistory.get,
+          investorsTotals: investorsTotals.get,
+          investorsInfo: investorsInfo.get,
+          chart: {
+            data: chart.data.get,
+            point: chart.point.get,
+            forPool: chart.forPool.get,
+            timeframe: chart.timeframe.get,
+          },
+        }),
+      })
 
-      const ipfsResponse = await addInsuranceProposalData(insuranceProposalData)
+      await insuranceProposalData.uploadSelf()
 
-      if (!isNil(ipfsResponse) && !isNil(ipfsResponse.path)) {
-        setNewAccidentHash(ipfsResponse.path)
+      if (!isNil(insuranceProposalData._path)) {
+        setNewAccidentHash(insuranceProposalData._path)
         setAccidentCreating(SubmitState.WAIT_CONFIRM)
-        // const receipt = await insurance.proposeClaim(ipfsResponse.path)
 
-        // const tx = await addTransaction(receipt, {
-        //   type: TransactionType.INSURANCE_REGISTER_PROPOSAL_CLAIM,
-        //   pool: pool.get,
-        // })
+        const investorsWithAmounts = reduce(
+          Object.keys(investorsInfo.get),
+          (acc, investorKey) => {
+            const investorData = investorsInfo.get[investorKey]
 
-        // if (isTxMined(tx)) {
-        //   _clearState()
-        //   setAccidentCreating(SubmitState.SUCCESS)
-        //   setShowSuccessfullyCreatedModal(true)
-        // }
+            const {
+              poolPositionBeforeAccident,
+              poolPositionOnAccidentCreation,
+            } = investorData
+
+            const { totalLPInvestVolume, totalLPDivestVolume } =
+              poolPositionOnAccidentCreation
+
+            const _inDayLPAmount = BigNumber.from(
+              poolPositionBeforeAccident.lpHistory[0].currentLpAmount
+            )
+
+            const _currentLPAmount = divideBignumbers(
+              [BigNumber.from(totalLPInvestVolume), 18],
+              [BigNumber.from(totalLPDivestVolume), 18]
+            )
+
+            const loss = divideBignumbers(
+              [_inDayLPAmount, 18],
+              [_currentLPAmount, 18]
+            )
+
+            acc.investors.push(investorKey)
+            acc.amounts.push(loss.toString())
+
+            return acc
+          },
+          { investors: [] as string[], amounts: [] as BigNumberish[] }
+        )
+
+        const encodedProposalExecution = encodeAbiMethod(
+          Insurance_ABI,
+          "acceptClaim",
+          [
+            insuranceProposalData._path,
+            investorsWithAmounts.investors,
+            investorsWithAmounts.amounts,
+          ]
+        )
+
+        const receipt = await govPool.createProposal(
+          "ipfs://" + insuranceProposalData._path,
+          [insuranceAddress],
+          [BigNumber.from(0).toHexString()],
+          [encodedProposalExecution]
+        )
+
+        const tx = await addTransaction(receipt, {
+          type: TransactionType.INSURANCE_REGISTER_PROPOSAL_CLAIM,
+          pool: pool.get,
+        })
+
+        if (isTxMined(tx)) {
+          setAccidentCreating(SubmitState.SUCCESS)
+          setShowSuccessfullyCreatedModal(true)
+        }
       }
     } catch (error: any) {
       if (!!error && !!error.data && !!error.data.message) {
@@ -225,12 +285,13 @@ const CreateInsuranceAccidentForm: FC = () => {
     date,
     description,
     formController,
-    insurance,
     investorsInfo,
     investorsTotals,
     isFieldsValid,
     touchForm,
     pool,
+    govPool,
+    insurancePoolLastPriceHistory,
   ])
 
   const handleNextStep = () => {
@@ -243,7 +304,7 @@ const CreateInsuranceAccidentForm: FC = () => {
             content:
               "Before continue choose pool where accident has been happens",
             type: AlertType.warning,
-            hideDuration: 10000,
+            hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
           })
           break
         }
@@ -251,7 +312,7 @@ const CreateInsuranceAccidentForm: FC = () => {
           showAlert({
             content: "Insurance accident for chosen pool already exist.",
             type: AlertType.warning,
-            hideDuration: 10000,
+            hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
           })
           break
         }
@@ -260,7 +321,7 @@ const CreateInsuranceAccidentForm: FC = () => {
             content:
               "Chosen fund have no trades. You can't create insurance accident proposal on pool without trades.",
             type: AlertType.warning,
-            hideDuration: 10000,
+            hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
           })
           break
         }
@@ -276,7 +337,7 @@ const CreateInsuranceAccidentForm: FC = () => {
             content:
               "Before continue choose closest block or date before accident has been happens",
             type: AlertType.warning,
-            hideDuration: 10000,
+            hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
           })
           break
         }
@@ -285,7 +346,7 @@ const CreateInsuranceAccidentForm: FC = () => {
             content:
               "Do not have insurance for this day. Please choose another one.",
             type: AlertType.warning,
-            hideDuration: 10000,
+            hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
           })
           break
         }
@@ -298,7 +359,7 @@ const CreateInsuranceAccidentForm: FC = () => {
             content:
               "Chosen fund have no investments. You can't create insurance accident proposal on pool without trading.",
             type: AlertType.warning,
-            hideDuration: 10000,
+            hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
           })
           break
         }
@@ -324,7 +385,7 @@ const CreateInsuranceAccidentForm: FC = () => {
           showAlert({
             content: message,
             type: AlertType.warning,
-            hideDuration: 10000,
+            hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
           })
           break
         }
@@ -344,6 +405,7 @@ const CreateInsuranceAccidentForm: FC = () => {
       case STEPS.checkSettings:
         investorsInfo.set({})
         investorsTotals.set({
+          users: "",
           lp: ZERO.toHexString(),
           loss: ZERO.toHexString(),
           coverage: ZERO.toHexString(),
@@ -389,6 +451,7 @@ const CreateInsuranceAccidentForm: FC = () => {
         open={showSuccessfullyCreatedModal}
         setOpen={setShowSuccessfullyCreatedModal}
         url={newAccidentHash}
+        onVoteCallback={clearFormStorage}
       />
     </>
   )

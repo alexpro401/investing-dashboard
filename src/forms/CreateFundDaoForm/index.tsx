@@ -1,4 +1,11 @@
-import { FC, useCallback, useContext, useMemo, useState } from "react"
+import {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import * as S from "./styled"
 import {
   TitlesStep,
@@ -14,6 +21,8 @@ import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { useCreateDAO } from "hooks/dao"
+import { useDispatch } from "react-redux"
+import { hideTapBar, showTabBar } from "state/application/actions"
 
 enum STEPS {
   titles = "titles",
@@ -40,6 +49,16 @@ const CreateFundDaoForm: FC = () => {
   const { isCustomVoting, isDistributionProposal } = useContext(
     FundDaoCreatingContext
   )
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(hideTapBar())
+
+    return () => {
+      dispatch(showTabBar())
+    }
+  }, [])
 
   const createDaoCb = useCreateDAO()
 

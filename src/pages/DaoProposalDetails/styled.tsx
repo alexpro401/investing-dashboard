@@ -11,10 +11,6 @@ export const DaoProposalDetails = styled.div`
   color: ${(props) => props.theme.textColors.primary};
   padding: 16px;
   flex: 1;
-  height: calc(100vh - 94px);
-  @media all and (display-mode: standalone) {
-    height: calc(100vh - 115px);
-  }
 `
 
 export const DaoProposalDetailsTitleWrp = styled.div``
@@ -205,15 +201,25 @@ export const DaoProposalDetailsRowText = styled.span<{
       : ""}
   
   a {
+    display: flex;
+    align-items: baseline;
     text-decoration: none;
     font: inherit;
     color: inherit;
   }
 `
 
+export const DaoProposalDetailsRowList = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex: 1;
+`
+
 export const DaoProposalDetailsRowExternalCroppedLinkWrp = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
   max-width: 30vw;
 `
 

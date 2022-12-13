@@ -17,22 +17,24 @@ export const Container = styled(motion.div).attrs(() => ({
   transition: { duration: 0.2 },
 }))`
   display: grid;
-  grid-template-rows: max-content 1fr max-content;
+  grid-template-rows: max-content 1fr;
   margin: 0 auto;
   width: fill-available;
   overflow: hidden;
   background-color: ${({ theme }) => theme.backgroundColors.primary};
-  height: calc(100vh - 94px);
-
-  @media all and (display-mode: standalone) {
-    height: calc(100vh - 115px);
-  }
 `
 
 export const List = styled.div`
+  display: grid;
+  grid-template-rows: 1fr max-content;
   margin: 0 auto;
   width: fill-available;
-  overflow: hidden auto;
+  overflow: hidden;
+  position: relative;
+
+  & > *:nth-child(1) {
+    overflow: hidden auto;
+  }
 `
 
 export const Indents = styled.div<{ top?: boolean; side?: boolean }>`
@@ -52,10 +54,11 @@ export const TextLabel = styled(Text).attrs((props) => ({
   color: props.color ?? theme.textColors.secondary,
 }))``
 
-export const BottomActionContainer = styled.div`
+export const ActionContainer = styled.div`
   width: 100%;
   padding: 16px;
   box-shadow: inset 0 1px 0 ${rgba("#293c54", 0.5)};
+  background-color: ${theme.backgroundColors.secondary};
 `
 
 export const AppButtonFull = styled(AppButton)`

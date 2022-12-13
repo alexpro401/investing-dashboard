@@ -2,12 +2,12 @@ import * as React from "react"
 import { Route, Routes, useParams } from "react-router-dom"
 
 import * as S from "./styled"
-import { DaoClaimTabDistribution, DaoClaimTabRewards } from "./tabs"
 
 import Header from "components/Header/Layout"
 
 import RouteTabs from "components/RouteTabs"
 import { ITab } from "interfaces"
+import ClaimList from "./ClaimList"
 
 const DaoPoolClaim: React.FC = () => {
   const { daoAddress } = useParams()
@@ -36,11 +36,18 @@ const DaoPoolClaim: React.FC = () => {
         <Routes>
           <Route
             path="distribution"
-            element={<DaoClaimTabDistribution daoAddress={daoAddress} />}
+            element={
+              <ClaimList
+                daoAddress={daoAddress}
+                status={"completed-distribution"}
+              />
+            }
           />
           <Route
             path="rewards"
-            element={<DaoClaimTabRewards daoAddress={daoAddress} />}
+            element={
+              <ClaimList daoAddress={daoAddress} status={"completed-rewards"} />
+            }
           />
         </Routes>
       </S.Container>

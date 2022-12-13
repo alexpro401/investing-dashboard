@@ -8,8 +8,12 @@ import Dao from "assets/menu/mobile/Dao"
 
 import { MobileMenu, NavItem } from "./styled"
 import { shortenAddress } from "utils"
+import { FC } from "react"
+import { MotionProps } from "framer-motion"
 
-export const TapBar = () => {
+interface Props extends MotionProps {}
+
+export const TapBar: FC<Props> = ({ ...rest }) => {
   const { account } = useWeb3React()
 
   const isBarHidden = !account ? "hidden" : "visible"
@@ -22,6 +26,7 @@ export const TapBar = () => {
         visible: { opacity: 1 },
         hidden: { opacity: 0 },
       }}
+      {...rest}
     >
       <NavItem path="/wallet" Icon={Wallet} text={shortenAddress(account, 3)} />
       <NavItem path="/me/trader" Icon={Profile} text="My profile" />

@@ -12,17 +12,20 @@ import { useWeb3React } from "@web3-react/core"
 import { WrappedProposalView } from "types"
 import { isEqual } from "lodash"
 import { ZERO_ADDR } from "constants/index"
+import { useNavigate } from "react-router-dom"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   wrappedProposalView: WrappedProposalView
   govPoolAddress?: string
   onButtonClick?: () => void
+  completed: boolean
 }
 
 const DaoProposalCard: FC<Props> = ({
   govPoolAddress,
   wrappedProposalView,
   onButtonClick,
+  completed,
   ...rest
 }) => {
   const {
@@ -52,9 +55,17 @@ const DaoProposalCard: FC<Props> = ({
     execute,
     executeAndClaim,
     progress,
+    insuranceProposalView,
   } = useGovPoolProposal(wrappedProposalView, govPoolAddress)
 
   const { chainId } = useWeb3React()
+
+  const navigate = useNavigate()
+
+  const proposalDetailsLinkPath = useMemo(
+    () => `/dao/${govPoolAddress}/proposal/${wrappedProposalView.proposalId}`,
+    [govPoolAddress, wrappedProposalView]
+  )
 
   const cardBtnText = useMemo(() => {
     if (isProposalStateVoting) {
@@ -90,7 +101,9 @@ const DaoProposalCard: FC<Props> = ({
   ])
 
   const handleCardBtnClick = useCallback(async () => {
-    if (isProposalStateWaitingForVotingTransfer) {
+    if (isProposalStateVoting || isProposalStateValidatorVoting) {
+      navigate(proposalDetailsLinkPath)
+    } else if (isProposalStateWaitingForVotingTransfer) {
       await moveProposalToValidators()
     } else if (isProposalStateSucceeded) {
       if (isEqual(rewardTokenAddress, ZERO_ADDR)) {
@@ -115,8 +128,12 @@ const DaoProposalCard: FC<Props> = ({
     executeAndClaim,
     isProposalStateExecuted,
     isProposalStateSucceeded,
+    isProposalStateValidatorVoting,
+    isProposalStateVoting,
     isProposalStateWaitingForVotingTransfer,
     moveProposalToValidators,
+    onButtonClick,
+    proposalDetailsLinkPath,
     rewardTokenAddress,
   ])
 
@@ -125,8 +142,9 @@ const DaoProposalCard: FC<Props> = ({
       <GovProposalCardHead
         isInsurance={isInsurance}
         name={name}
-        pool={govPoolAddress}
-        to={`/dao/${govPoolAddress}/proposal/${wrappedProposalView.proposalId}`}
+        pool={insuranceProposalView?.form?.pool}
+        to={proposalDetailsLinkPath}
+        completed={completed}
       />
       <S.DaoProposalCardBody>
         <S.DaoProposalCardBlockInfo>

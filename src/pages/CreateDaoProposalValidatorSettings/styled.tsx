@@ -8,12 +8,13 @@ export const PageHolder = styled(motion.div).attrs(() => ({
   transition: { duration: 0.2 },
 }))`
   width: 100%;
-  height: calc(100vh - 94px);
   overflow-y: auto;
 `
 
 export const PageContent = styled.div`
+  overflow: hidden auto;
   display: flex;
   flex-direction: column;
   gap: 15px;
+  height: 100%;
 `

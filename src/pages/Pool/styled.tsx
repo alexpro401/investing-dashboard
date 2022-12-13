@@ -16,13 +16,8 @@ export const Container = styled(motion.div).attrs(() => ({
   grid-gap: 40px;
   width: 100%;
   max-height: 100%;
-  height: calc(100vh - 94px);
   overflow: hidden auto;
   padding-bottom: 16px;
-
-  @media all and (display-mode: standalone) {
-    height: calc(100vh - 115px);
-  }
 `
 
 export const Indents = styled.div<{ top?: boolean; side?: boolean }>`

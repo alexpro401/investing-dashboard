@@ -3,7 +3,12 @@ import * as S from "./styled"
 import * as React from "react"
 import { FC, HTMLAttributes, useMemo, useState } from "react"
 import Header from "components/Header/Layout"
-import { DetailsTab, VotingSettingsTab, VotingHistoryTab } from "./components"
+import {
+  DetailsTab,
+  VotingSettingsTab,
+  VotingHistoryTab,
+  ProposalInfo,
+} from "./components"
 import { AnimatePresence } from "framer-motion"
 import { useGovPoolProposal, useGovPoolProposals } from "hooks/dao"
 import { useParams } from "react-router-dom"
@@ -66,9 +71,7 @@ const DaoProposalDetails: FC<Props> = ({}) => {
                 </S.DaoProposalDetailsTitle>
               </S.DaoProposalDetailsTitleWrp>
               <S.DaoProposalDetailsProgressBar />
-              <S.DaoProposalDetailsCard>
-                {govPoolProposal.description}
-              </S.DaoProposalDetailsCard>
+              <ProposalInfo govPoolProposal={govPoolProposal} />
               <S.DaoProposalDetailsTabs>
                 {TABS.map((el) => (
                   <S.DaoProposalDetailsTabsItem
@@ -114,7 +117,7 @@ const DaoProposalDetails: FC<Props> = ({}) => {
         ) : (
           <>
             <Skeleton variant={"text"} w={"calc(100%)"} h={"40%"} />
-            <Flex gap={"24px"} full>
+            <Flex gap={"24"} full>
               <Skeleton variant={"rect"} w={"30%"} h={"19px"} />
               <Skeleton variant={"rect"} w={"30%"} h={"19px"} />
               <Skeleton variant={"rect"} w={"30%"} h={"19px"} />

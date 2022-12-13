@@ -68,30 +68,3 @@ export const getIpfsData = async (hash) => {
     return false
   }
 }
-
-export const addInsuranceProposalData = (payload) => {
-  const data = {
-    ...payload,
-    timestamp: new Date().getTime() / 1000,
-  }
-  const dataString = stringify(data)
-
-  return client.add(dataString)
-}
-
-export const addDaoProposalData = ({
-  proposalName,
-  proposalDescription,
-}: {
-  proposalName: string
-  proposalDescription: string
-}) => {
-  const data = {
-    proposalName,
-    proposalDescription,
-    timestamp: new Date().getTime() / 1000,
-  }
-  const dataToString = stringify(data)
-
-  return client.add(dataToString)
-}

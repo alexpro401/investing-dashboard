@@ -9,11 +9,13 @@ import image404Src from "assets/others/create-fund-docs.png"
 interface IProps {
   daoPoolAddress: string
   children: React.ReactNode
+  loader?: React.ReactNode
 }
 
 const WithUserIsDaoValidatorValidation: React.FC<IProps> = ({
   daoPoolAddress,
   children,
+  loader,
 }) => {
   const { account } = useActiveWeb3React()
   const [isValid, loading] = useIsValidator({
@@ -22,7 +24,7 @@ const WithUserIsDaoValidatorValidation: React.FC<IProps> = ({
   })
 
   if (loading) {
-    return <></>
+    return <>{loader ?? ""}</>
   }
 
   if (!isValid) {

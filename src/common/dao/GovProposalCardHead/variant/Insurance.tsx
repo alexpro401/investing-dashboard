@@ -11,6 +11,7 @@ import { ICON_NAMES } from "constants/icon-names"
 interface Props {
   name: string
   pool?: string
+  completed?: boolean
 }
 
 const GovProposalCardHeadInsurance: React.FC<Props> = ({ pool }) => {

@@ -5,7 +5,7 @@ import { createClient, Provider as GraphProvider } from "urql"
 import { useERC20Data } from "state/erc20/hooks"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 
-import { Flex } from "theme"
+import { Center, Flex } from "theme"
 import Icon from "components/Icon"
 import Amount from "components/Amount"
 import { AppButton } from "common"
@@ -20,6 +20,8 @@ import useFundFee from "./useFundFee"
 
 import S, { PageLoading } from "./styled"
 import { useUserAgreement } from "state/user/hooks"
+import { GuardSpinner } from "react-spinners-kit"
+import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -112,7 +114,7 @@ const FundDetailsFee: FC = () => {
 
           <PoolPnlChart address={poolAddress} baseToken={poolData?.baseToken} />
 
-          <Flex full dir="column">
+          <Flex full dir="column" m={"16px 0 0"}>
             <AmountRow
               title="Funds under management"
               value={fundsUnderManagementDexe}
@@ -225,9 +227,19 @@ const FundDetailsFee: FC = () => {
 }
 
 export default function FeeWithProvider() {
+  const { poolAddress } = useParams()
   return (
     <GraphProvider value={poolsClient}>
-      <FundDetailsFee />
+      <WithPoolAddressValidation
+        poolAddress={poolAddress ?? ""}
+        loader={
+          <Center>
+            <GuardSpinner size={20} loading />
+          </Center>
+        }
+      >
+        <FundDetailsFee />
+      </WithPoolAddressValidation>
     </GraphProvider>
   )
 }

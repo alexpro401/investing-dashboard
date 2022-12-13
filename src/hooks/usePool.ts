@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 import { parseUnits } from "@ethersproject/units"
-import { isEmpty } from "lodash"
+import { isEmpty, isNil } from "lodash"
 import axios from "axios"
 import { useQuery } from "urql"
 import { useSelector } from "react-redux"
+import { Client } from "@urql/core/dist/types/client"
 
 import { IPosition } from "interfaces/thegraphs/all-pools"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
@@ -24,6 +25,7 @@ import {
   divideBignumbers,
   generateLockedFundsChartData,
   generatePoolPnlHistory,
+  getLP,
   multiplyBignumbers,
 } from "utils/formulas"
 import { AppState } from "state"
@@ -41,7 +43,8 @@ import { useAPI } from "api"
  * Returns TheGraph info about the pool
  */
 export function usePoolQuery(
-  address: string | undefined
+  address: string | undefined,
+  context?: Client
 ): [IPoolQuery | undefined, () => void] {
   const [pool, executeQuery] = useQuery<{
     traderPool: IPoolQuery
@@ -49,6 +52,7 @@ export function usePoolQuery(
     pause: !isAddress(address),
     query: PoolQuery,
     variables: { address },
+    ...(!isNil(context) ? { context } : {}),
   })
 
   return [pool.data?.traderPool, executeQuery]
@@ -257,4 +261,32 @@ export const usePoolLockedFundsHistory = (
     TIMEFRAME_FROM_DATE[tf]
   )
   return [generateLockedFundsChartData(history), fetching]
+}
+
+export const usePoolPriceHistoryDiff = (priceHistoryFrom, priceHistoryTo) => {
+  const initialPriceUSD = useMemo(() => {
+    if (!priceHistoryFrom) return 0
+
+    const { baseTVL, supply } = priceHistoryFrom
+    return Number(getLP(String(baseTVL), String(supply)))
+  }, [priceHistoryFrom])
+
+  const currentPriceUSD = useMemo(() => {
+    if (!priceHistoryTo) return 0
+
+    const { baseTVL, supply } = priceHistoryTo
+    return Number(getLP(String(baseTVL), String(supply)))
+  }, [priceHistoryTo])
+
+  const priceDiffUSD = useMemo(() => {
+    if (!currentPriceUSD) return 0
+
+    return currentPriceUSD - initialPriceUSD
+  }, [currentPriceUSD, initialPriceUSD])
+
+  return {
+    initialPriceUSD,
+    currentPriceUSD,
+    priceDiffUSD,
+  }
 }

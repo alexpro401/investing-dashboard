@@ -1,6 +1,7 @@
 import React, { useContext, useCallback } from "react"
 import { useParams } from "react-router-dom"
 import { BigNumber } from "@ethersproject/bignumber"
+import { formatUnits, parseUnits } from "@ethersproject/units"
 import { useActiveWeb3React } from "hooks"
 
 import {
@@ -15,15 +16,17 @@ import {
   CardFormControl,
   CreateDaoCardStepNumber,
   TokenChip,
+  AppButton,
 } from "common"
 import ExternalLink from "components/ExternalLink"
 import { InputField, TextareaField, SelectField } from "fields"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { TokenDistributionCreatingContext } from "context/govPool/proposals/TokenDistributionContext"
 import { useFormValidation } from "hooks/useFormValidation"
-import { required, minLength, maxLength } from "utils/validators"
+import { required, minLength, maxLength, isBnLte } from "utils/validators"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { formatFiatNumber, formatTokenNumber } from "utils"
+import { cutStringZeroes } from "utils"
 
 import * as S from "./styled"
 
@@ -57,9 +60,28 @@ const CreateDaoProposalTokenDistributionForm: React.FC = () => {
           maxLength: maxLength(1000),
         },
         selectedTreasuryToken: { required },
-        tokenAmount: {
-          required,
-        },
+        ...(selectedTreasuryToken.get && tokenAmount.get
+          ? {
+              tokenAmount: {
+                required,
+                isBnLte: isBnLte(
+                  formatUnits(
+                    selectedTreasuryToken.get.balance,
+                    selectedTreasuryToken.get.contract_decimals
+                  ).toString(),
+                  selectedTreasuryToken.get.contract_decimals,
+                  `Дао пул максимум має ${cutStringZeroes(
+                    formatUnits(
+                      selectedTreasuryToken.get.balance,
+                      selectedTreasuryToken.get.contract_decimals
+                    ).toString()
+                  )} ${
+                    selectedTreasuryToken.get.contract_ticker_symbol
+                  } токенів. Оберіть валідне число`
+                ),
+              },
+            }
+          : {}),
       }
     )
 
@@ -180,6 +202,30 @@ const CreateDaoProposalTokenDistributionForm: React.FC = () => {
               label="Amount of token"
               errorMessage={getFieldErrorMessage("tokenAmount")}
               onBlur={() => touchField("tokenAmount")}
+              nodeRight={
+                !!selectedTreasuryToken.get && (
+                  <AppButton
+                    type="button"
+                    text={"Max"}
+                    color="default"
+                    size="no-paddings"
+                    onClick={() =>
+                      selectedTreasuryToken.get?.balance
+                        ? tokenAmount.set(
+                            cutStringZeroes(
+                              formatUnits(
+                                BigNumber.from(
+                                  selectedTreasuryToken.get.balance
+                                ),
+                                selectedTreasuryToken.get.contract_decimals
+                              )
+                            )
+                          )
+                        : null
+                    }
+                  />
+                )
+              }
             />
           </CardFormControl>
         </Card>

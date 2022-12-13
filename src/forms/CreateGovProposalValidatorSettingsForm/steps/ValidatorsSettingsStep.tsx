@@ -223,6 +223,7 @@ const ValidatorsSettingsStep: React.FC = () => {
           </Card>
         )}
       </S.StepsRoot>
+      <div style={{ marginTop: "auto" }}></div>
       <StepsNavigation customNextCb={handleNextStep} />
     </>
   )
