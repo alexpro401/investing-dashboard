@@ -165,25 +165,28 @@ const FundDetailsEdit: FC = () => {
       minInvest
     )
 
-    // Save new pool data to store
-    dispatch(
-      addPool({
-        params: {
-          poolId: poolAddress,
-          hash: receipt.hash,
-          assets: assetsParam,
-          description,
-          strategy,
-          account,
-        },
-      })
-    )
-
-    return addTransaction(receipt, {
+    const tx = await addTransaction(receipt, {
       type: TransactionType.POOL_EDIT,
       baseCurrencyId: poolData.baseToken,
       fundName: poolData.name,
     })
+
+    if (isTxMined(tx)) {
+      dispatch(
+        addPool({
+          params: {
+            poolId: poolAddress,
+            hash: receipt.hash,
+            assets: assetsParam,
+            description,
+            strategy,
+            account,
+          },
+        })
+      )
+    }
+
+    return tx
   }, [
     traderPool,
     poolData,
@@ -311,9 +314,9 @@ const FundDetailsEdit: FC = () => {
       setTransactionFail(false)
       if (steps[step].title === "Parameters") {
         setStepPending(true)
-        const data = await handleParametersUpdate()
+        const tx = await handleParametersUpdate()
 
-        if (isTxMined(data)) {
+        if (isTxMined(tx)) {
           setStep(step + 1)
           setStepPending(false)
           poolParametersSaveCallback()
@@ -702,7 +705,7 @@ const FundDetailsEdit: FC = () => {
   )
 }
 
-export default function SwapWithProvider() {
+export default function FundDetailsEditWithProvider() {
   return (
     <GraphProvider value={poolsClient}>
       <FundDetailsEdit />
