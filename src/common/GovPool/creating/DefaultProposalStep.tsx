@@ -8,6 +8,7 @@ import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 import { DaoSettingsParameters } from "common"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isAddressValidator, isPercentage, required } from "utils/validators"
+import { createPortal } from "react-dom"
 
 interface IDefaultProposalStepProps {
   isCreatingProposal?: boolean
@@ -85,6 +86,8 @@ const DefaultProposalStep: FC<IDefaultProposalStepProps> = ({
     nextCb()
   }
 
+  const appNavigationEl = document.querySelector("#app-navigation")
+
   return (
     <>
       <S.StepsRoot>
@@ -115,7 +118,14 @@ const DefaultProposalStep: FC<IDefaultProposalStepProps> = ({
           <></>
         )}
       </S.StepsRoot>
-      <StepsNavigation customNextCb={handleNextStep} />
+      {appNavigationEl ? (
+        createPortal(
+          <S.StepsBottomNavigation customNextCb={handleNextStep} />,
+          appNavigationEl
+        )
+      ) : (
+        <></>
+      )}
     </>
   )
 }

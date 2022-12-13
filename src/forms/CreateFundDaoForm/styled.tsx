@@ -14,12 +14,14 @@ export const Container = styled(StepsControllerContext)`
 `
 
 export const StepsContainer = styled(motion.div).attrs(() => ({
+  className: "yopta",
   initial: { opacity: 0 },
   animate: { opacity: 1 },
   exit: { opacity: 0 },
   transition: { duration: 0.2 },
   variants: opacityVariants,
 }))`
+  overflow: hidden auto;
   position: relative;
   display: flex;
   flex-direction: column;

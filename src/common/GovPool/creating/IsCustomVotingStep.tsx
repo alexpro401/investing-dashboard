@@ -18,6 +18,7 @@ import useAlert, { AlertType } from "hooks/useAlert"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
+import { createPortal } from "react-dom"
 
 const IsCustomVotingStep: FC = () => {
   const { isCustomVoting, internalProposalForm } = useContext(
@@ -118,6 +119,8 @@ const IsCustomVotingStep: FC = () => {
     })
   }
 
+  const appNavigationEl = document.querySelector("#app-navigation")
+
   return (
     <>
       <S.StepsRoot>
@@ -165,35 +168,42 @@ const IsCustomVotingStep: FC = () => {
             </p>
           </CardDescription>
         </Card>
-
-        <Collapse isOpen={isCustomVoting.get}>
-          {internalProposalForm && (
-            <>
-              <Card>
-                <CardHead
-                  nodeLeft={
-                    <CreateDaoCardStepNumber number={currentStepNumber} />
-                  }
-                  title="Internal voting settings"
-                />
-                <CardDescription>
-                  <p>
-                    Configure the settings for proposals, voting, vote
-                    delegation, and rewards for active members.
-                  </p>
-                </CardDescription>
-              </Card>
-              <S.ConditionalParameters>
-                <DaoSettingsParameters
-                  poolParameters={internalProposalForm}
-                  formValidation={formValidation}
-                />
-              </S.ConditionalParameters>
-            </>
-          )}
-        </Collapse>
       </S.StepsRoot>
-      <S.StepsBottomNavigation customNextCb={handleNextStep} />
+
+      <Collapse isOpen={isCustomVoting.get}>
+        {internalProposalForm && (
+          <S.StepsRoot>
+            <Card>
+              <CardHead
+                nodeLeft={
+                  <CreateDaoCardStepNumber number={currentStepNumber} />
+                }
+                title="Internal voting settings"
+              />
+              <CardDescription>
+                <p>
+                  Configure the settings for proposals, voting, vote delegation,
+                  and rewards for active members.
+                </p>
+              </CardDescription>
+            </Card>
+            <S.ConditionalParameters>
+              <DaoSettingsParameters
+                poolParameters={internalProposalForm}
+                formValidation={formValidation}
+              />
+            </S.ConditionalParameters>
+          </S.StepsRoot>
+        )}
+      </Collapse>
+      {appNavigationEl ? (
+        createPortal(
+          <S.StepsBottomNavigation customNextCb={handleNextStep} />,
+          appNavigationEl
+        )
+      ) : (
+        <></>
+      )}
     </>
   )
 }
