@@ -5,11 +5,7 @@ import { ICON_NAMES } from "constants/icon-names"
 export const Container = styled.div`
   margin: 0 auto;
   width: fill-available;
-  overflow-y: hidden;
   background-color: #0e121b;
-
-  height: 100vh; /* Fallback for browsers that do not support Custom Properties */
-  height: calc(var(--vh, 1vh) * 100 - 94px);
 `
 
 export const Content = styled.div`

@@ -8,7 +8,7 @@ import * as S from "./styled"
 
 const CreateFundDaoPool: FC = () => {
   return (
-    <>
+    <S.Root>
       <Header>Create DAO</Header>
       <S.Container
         initial={{ opacity: 0 }}
@@ -21,7 +21,7 @@ const CreateFundDaoPool: FC = () => {
           <CreateFundDaoForm />
         </FundDaoCreatingContextProvider>
       </S.Container>
-    </>
+    </S.Root>
   )
 }
 

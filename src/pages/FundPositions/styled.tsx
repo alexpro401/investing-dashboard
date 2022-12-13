@@ -6,11 +6,6 @@ import { Flex, GradientBorder } from "theme"
 
 const ContainerBase = css`
   width: 100%;
-  height: calc(100vh - 128px);
-
-  @media all and (display-mode: standalone) {
-    height: calc(100vh - 149px);
-  }
 `
 
 const Styled = {

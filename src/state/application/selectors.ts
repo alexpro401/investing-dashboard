@@ -12,3 +12,8 @@ export const selectError = createSelector(
   [selectApplication],
   (app) => app.error
 )
+
+export const selectIsTabBarHidden = createSelector(
+  [selectApplication],
+  (app) => app.isTabBarHidden
+)

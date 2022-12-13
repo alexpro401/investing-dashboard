@@ -53,6 +53,7 @@ import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { SUPPORTED_SOCIALS } from "constants/socials"
+import { createPortal } from "react-dom"
 
 const TitlesStep: FC = () => {
   const daoPoolFormContext = useContext(FundDaoCreatingContext)
@@ -213,6 +214,8 @@ const TitlesStep: FC = () => {
     ])
     setIsShowSocials(true)
   }, [socialLinks])
+
+  const appNavigationEl = document.querySelector("#app-navigation")
 
   return (
     <>
@@ -626,7 +629,14 @@ const TitlesStep: FC = () => {
           />
         </Card>
       </S.StepsRoot>
-      <S.StepsBottomNavigation customNextCb={handleNextStep} />
+      {appNavigationEl ? (
+        createPortal(
+          <S.StepsBottomNavigation customNextCb={handleNextStep} />,
+          appNavigationEl
+        )
+      ) : (
+        <></>
+      )}
     </>
   )
 }

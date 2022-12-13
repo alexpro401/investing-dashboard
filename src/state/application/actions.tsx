@@ -16,3 +16,7 @@ export const updatePayload = createAction<{ params: SubmitState }>(
 export const updateError = createAction<{ params: string }>(
   "application/update-error"
 )
+
+export const hideTapBar = createAction("application/hide-tap-bar")
+
+export const showTabBar = createAction("application/show-tap-bar")

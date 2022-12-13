@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, FC } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { Flex } from "theme"
 import { useWeb3React } from "@web3-react/core"
@@ -43,7 +43,7 @@ interface routerStateType {
   from: { pathname: string }
 }
 
-const Welcome: React.FC = () => {
+const Welcome: FC = () => {
   const [isLoading, setLoading] = useState(true)
   const [loginPath, setLoginPath] = useState<LoginPathMapper | string | null>(
     null
@@ -175,6 +175,7 @@ const Welcome: React.FC = () => {
               />
             </Buttons>
             <LoginContainer
+              className={"login-container"}
               onClick={() => {
                 toggleConnectWallet(true)
                 setLoginPath(LoginPathMapper.wallet)

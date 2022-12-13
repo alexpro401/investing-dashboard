@@ -22,11 +22,17 @@ const DetailsTab: FC<Props> = ({ govPoolProposal }) => {
   return (
     <>
       {govPoolProposal.proposalType === "profile" ? (
-        <GovPoolProposalProfile govPoolProposal={govPoolProposal} />
+        <S.DaoProposalDetailsCard>
+          <GovPoolProposalProfile govPoolProposal={govPoolProposal} />
+        </S.DaoProposalDetailsCard>
       ) : govPoolProposal.proposalType === "distribution" ? (
-        <GovPoolProposalDistribution govPoolProposal={govPoolProposal} />
+        <S.DaoProposalDetailsCard>
+          <GovPoolProposalDistribution govPoolProposal={govPoolProposal} />
+        </S.DaoProposalDetailsCard>
       ) : govPoolProposal.proposalType === "change-settings" ? (
-        <GovPoolProposalChangeSettings govPoolProposal={govPoolProposal} />
+        <S.DaoProposalDetailsCard>
+          <GovPoolProposalChangeSettings govPoolProposal={govPoolProposal} />
+        </S.DaoProposalDetailsCard>
       ) : govPoolProposal.proposalType === "change-validator-balances" ? (
         <GovPoolProposalChangeValidatorBalances
           govPoolProposal={govPoolProposal}

@@ -22,9 +22,6 @@ export const Container = styled(motion.div).attrs(() => ({
   width: fill-available;
   overflow: hidden;
   background-color: ${({ theme }) => theme.backgroundColors.primary};
-
-  height: 100vh; /* Fallback for browsers that do not support Custom Properties */
-  height: calc(var(--vh, 1vh) * 100 - 94px);
 `
 
 export const List = styled.div`
