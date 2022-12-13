@@ -80,7 +80,6 @@ const ChangeDAOSettings: React.FC = () => {
       avatarUrl: { required },
       daoName: { required, minLength: minLength(6) },
       documents: {
-        required,
         $every: {
           name: { required, maxLength: maxLength(50) },
           url: { required, isUrl, maxLength: maxLength(200) },
@@ -119,9 +118,7 @@ const ChangeDAOSettings: React.FC = () => {
             github: { isUrl, isUrlGithub },
           }
         : {}),
-      ...(socialLinks.get
-        ?.slice(6, socialLinks.get.length)
-        ?.map((el) => ({ key: el[0], value: el[1] })).length
+      ...(socialLinks.get?.slice(6, socialLinks.get.length).length
         ? {
             others: {
               $every: {
@@ -181,7 +178,12 @@ const ChangeDAOSettings: React.FC = () => {
           size={100}
           url={avatarUrl.get}
         >
-          <S.ChangeDaoAvatarBtn>Change fund photo</S.ChangeDaoAvatarBtn>
+          <S.ChangeFundDaoAvatarActions>
+            <S.ChangeDaoAvatarBtn>Change fund photo</S.ChangeDaoAvatarBtn>
+            <S.ChangeFundDaoAvatarBtnErrorMessage>
+              {getFieldErrorMessage("avatarUrl")}
+            </S.ChangeFundDaoAvatarBtnErrorMessage>
+          </S.ChangeFundDaoAvatarActions>
         </Avatar>
         <Card>
           <CardHead

@@ -20,6 +20,8 @@ import {
 } from "types"
 import { BigNumber } from "ethers"
 import { isEqual } from "lodash"
+import { useSelector } from "react-redux"
+import { selectInsuranceAddress } from "state/contracts/selectors"
 
 interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
   status?: ProposalStatuses
@@ -28,6 +30,7 @@ interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
 }
 
 const DaoProposalsList: FC<Props> = ({ govPoolAddress, status, children }) => {
+  const insuranceAddress = useSelector(selectInsuranceAddress)
   const [isListPrepared, setIsListPrepared] = useState(
     !status || (status !== "completed-all" && status !== "completed-rewards")
   )
@@ -45,6 +48,8 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status, children }) => {
     filteredProposalViewsDistribution,
     setFilteredProposalViewsDistribution,
   ] = useState<WrappedProposalView[]>([])
+  const [filteredProposalViewsInsurance, setFilteredProposalViewsInsurance] =
+    useState<WrappedProposalView[]>([])
 
   const filteredWrappedProposalViews = useMemo(() => {
     if (status) {
@@ -120,17 +125,40 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status, children }) => {
     })
   }, [filteredWrappedProposalViews, status, distributionProposalAddress])
 
+  const filterProposalViewsInsurance = useCallback(async () => {
+    const proposalsInsurance: WrappedProposalView[] = []
+
+    for (const el of filteredWrappedProposalViews) {
+      const lastExecutor = String(
+        el?.proposal?.executors[el?.proposal?.executors.length - 1]
+      ).toLocaleLowerCase()
+
+      if (lastExecutor === String(insuranceAddress).toLocaleLowerCase()) {
+        proposalsInsurance.push(el)
+      }
+    }
+
+    setFilteredProposalViewsInsurance((prev) => {
+      const next = proposalsInsurance
+
+      return isEqual(prev, next) ? prev : next
+    })
+  }, [filteredWrappedProposalViews, status, insuranceAddress])
+
   const proposalsViewsToShow = useMemo(() => {
     if (status === "completed-rewards" || status === "completed-all") {
       return filteredProposalViewsWithRewards
     } else if (status === "completed-distribution") {
       return filteredProposalViewsDistribution
+    } else if (status === "opened-insurance") {
+      return filteredProposalViewsInsurance
     } else {
       return filteredWrappedProposalViews
     }
   }, [
     filteredProposalViewsWithRewards,
     filteredProposalViewsDistribution,
+    filteredProposalViewsInsurance,
     filteredWrappedProposalViews,
     status,
   ])
@@ -140,6 +168,8 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status, children }) => {
       filterProposalViewsWithRewards()
     } else if (status === "completed-distribution") {
       filterProposalViewsDistribution()
+    } else if (status === "opened-insurance") {
+      filterProposalViewsInsurance()
     }
   }, [filterProposalViewsWithRewards, status])
 
@@ -161,6 +191,9 @@ const DaoProposalsList: FC<Props> = ({ govPoolAddress, status, children }) => {
                   wrappedProposalView={wrappedProposalView}
                   govPoolAddress={govPoolAddress}
                   onButtonClick={loadProposals}
+                  completed={
+                    status === "completed-rewards" || status === "completed-all"
+                  }
                 />
               ))}
             </S.DaoProposalsListBody>

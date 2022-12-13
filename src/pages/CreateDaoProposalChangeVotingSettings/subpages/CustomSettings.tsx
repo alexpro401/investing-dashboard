@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useMemo } from "react"
 import { useParams, useLocation } from "react-router-dom"
 import { formatUnits, formatEther } from "@ethersproject/units"
 
@@ -12,6 +12,8 @@ import {
   useGovPoolExecutorSettings,
   useGovPoolValidatorsCount,
 } from "hooks/dao"
+import Skeleton from "components/Skeleton"
+import { Flex } from "theme"
 import { cutStringZeroes } from "utils"
 import { ZERO_ADDR } from "constants/index"
 
@@ -40,7 +42,25 @@ const CustomSettings: React.FC = () => {
     }
   }, [location, executorAddress])
 
-  if (!executorSettings || validatorsCount === null) return null
+  const loader = useMemo(
+    () => (
+      <Flex gap={"24"} full m="16px 0 0 0" dir="column" ai={"center"}>
+        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+      </Flex>
+    ),
+    []
+  )
+
+  if (!executorSettings || validatorsCount === null)
+    return (
+      <>
+        <Header>Create proposal</Header>
+        {loader}
+      </>
+    )
 
   const {
     creationReward,
@@ -62,7 +82,10 @@ const CustomSettings: React.FC = () => {
   return (
     <>
       <Header>Create proposal</Header>
-      <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
+      <WithGovPoolAddressValidation
+        daoPoolAddress={daoAddress ?? ""}
+        loader={loader}
+      >
         <S.PageHolder>
           <GovProposalCreatingContextProvider>
             <FundDaoCreatingContextProvider

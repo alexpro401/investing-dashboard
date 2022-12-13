@@ -6,6 +6,8 @@ import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidatio
 import AdvancedManualContextProvider from "context/govPool/proposals/custom/AdvancedManualContext"
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
 import CreateDaoCustomProposalManualForm from "forms/CreateDaoCustomProposalManualForm"
+import Skeleton from "components/Skeleton"
+import { Flex } from "theme"
 
 import * as S from "../styled"
 
@@ -15,7 +17,16 @@ const Manual: React.FC = () => {
   return (
     <>
       <Header>Create proposal</Header>
-      <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
+      <WithGovPoolAddressValidation
+        daoPoolAddress={daoAddress ?? ""}
+        loader={
+          <Flex gap={"24"} full m="16px 0 0 0" dir="column" ai={"center"}>
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+          </Flex>
+        }
+      >
         <S.PageHolder>
           <GovProposalCreatingContextProvider>
             <AdvancedManualContextProvider>

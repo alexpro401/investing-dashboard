@@ -8,6 +8,8 @@ import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidatio
 import { SelectableCard, Icon, Collapse } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 import { useGovPoolCustomExecutors } from "hooks/dao"
+import Skeleton from "components/Skeleton"
+import { Flex } from "theme"
 
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
@@ -41,7 +43,8 @@ const CreateProposalSelectType: React.FC = () => {
     type: "default",
     specification: EProposalType.daoProfileModification,
   })
-  const [customExecutors] = useGovPoolCustomExecutors(daoAddress)
+  const [customExecutors, customExecutorsLoading] =
+    useGovPoolCustomExecutors(daoAddress)
 
   const customExecutorsFiltered = useMemo(() => {
     return uniqBy(customExecutors, "settings.settingsId")
@@ -167,7 +170,17 @@ const CreateProposalSelectType: React.FC = () => {
   return (
     <>
       <Header>Create proposal</Header>
-      <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
+      <WithGovPoolAddressValidation
+        daoPoolAddress={daoAddress ?? ""}
+        loader={
+          <Flex gap={"24"} full m="16px 0 0 0" dir="column" ai={"center"}>
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+          </Flex>
+        }
+      >
         <S.CreateProposalSelectTypePageHolder
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -212,20 +225,31 @@ const CreateProposalSelectType: React.FC = () => {
                 )
               }
             )}
-            {customExecutorsFiltered.map(
-              ({ id, proposalName, proposalDescription, executorAddress }) => {
-                return (
-                  <SelectableCard
-                    key={id}
-                    value={selectedCard?.executorAddress as string}
-                    setValue={handleSelectCustomProposal}
-                    valueToSet={executorAddress}
-                    title={proposalName}
-                    description={proposalDescription}
-                  />
-                )
-              }
+            {customExecutorsLoading && (
+              <Flex gap={"24"} full dir="column" ai={"center"}>
+                <Skeleton variant={"rect"} w={"100%"} h={"60px"} />
+              </Flex>
             )}
+            {!customExecutorsLoading &&
+              customExecutorsFiltered.map(
+                ({
+                  id,
+                  proposalName,
+                  proposalDescription,
+                  executorAddress,
+                }) => {
+                  return (
+                    <SelectableCard
+                      key={id}
+                      value={selectedCard?.executorAddress as string}
+                      setValue={handleSelectCustomProposal}
+                      valueToSet={executorAddress}
+                      title={proposalName}
+                      description={proposalDescription}
+                    />
+                  )
+                }
+              )}
             <S.CreateProposalSelectTypeSubmitButton
               type="button"
               size="large"

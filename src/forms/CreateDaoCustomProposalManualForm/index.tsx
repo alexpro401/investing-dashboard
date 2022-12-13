@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback, useContext } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
+import { parseEther } from "@ethersproject/units"
 
 import { ManualStep } from "./steps"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
@@ -10,7 +11,6 @@ import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposa
 import { useGovPoolCreateCustomProposalManual } from "hooks/dao"
 
 import * as S from "./styled"
-import { parseEther } from "@ethersproject/units"
 
 enum STEPS {
   manualInfo = "manualInfo",
@@ -22,7 +22,7 @@ const CreateDaoCustomProposalManualForm: React.FC = () => {
   const { daoAddress, executorAddress } = useParams<
     "daoAddress" | "executorAddress"
   >()
-  const { contracts } = useContext(AdvancedManualContext)
+  const { contracts, executorContract } = useContext(AdvancedManualContext)
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
   )
@@ -38,15 +38,31 @@ const CreateDaoCustomProposalManualForm: React.FC = () => {
 
   const handeCreateProposal = useCallback(() => {
     createProposal({
-      executors: contracts.get.map((el) => el.contractAddress),
-      values: contracts.get.map((el) =>
-        isNaN(Number(el.value)) ? "0" : parseEther(el.value).toString()
-      ),
-      data: contracts.get.map((el) => el.transactionData),
+      executors: contracts.get
+        .map((el) => el.contractAddress)
+        .concat(executorContract.get.contractAddress),
+      values: contracts.get
+        .map((el) =>
+          isNaN(Number(el.value)) ? "0" : parseEther(el.value).toString()
+        )
+        .concat(
+          isNaN(Number(executorContract.get.value))
+            ? "0"
+            : parseEther(executorContract.get.value).toString()
+        ),
+      data: contracts.get
+        .map((el) => el.transactionData)
+        .concat(executorContract.get.transactionData),
       proposalName: proposalName.get,
       proposalDescription: proposalDescription.get,
     })
-  }, [createProposal, contracts, proposalName, proposalDescription])
+  }, [
+    createProposal,
+    contracts,
+    proposalName,
+    proposalDescription,
+    executorContract,
+  ])
 
   const handlePrevStep = useCallback(() => {
     switch (currentStep) {
