@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react"
-import { Flex, To } from "theme"
+import { Center, Flex, To } from "theme"
 import { useParams, useNavigate, useLocation } from "react-router-dom"
-import { PulseSpinner } from "react-spinners-kit"
+import { GuardSpinner, PulseSpinner } from "react-spinners-kit"
 
 import SwapPrice from "components/SwapPrice"
 import SwapPath from "components/SwapPrice/SwapPath"
@@ -43,6 +43,7 @@ import { useAllTokenFundBalances } from "hooks/useBalance"
 import { Currency } from "lib/entities"
 import useRiskyProposals from "hooks/useRiskyProposals"
 import usePoolType, { POOL_TYPE } from "hooks/usePoolType"
+import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -446,9 +447,19 @@ const Swap = () => {
 }
 
 export default function SwapWithProvider() {
+  const { poolToken } = useParams()
   return (
     <GraphProvider value={poolsClient}>
-      <Swap />
+      <WithPoolAddressValidation
+        poolAddress={poolToken ?? ""}
+        loader={
+          <Center>
+            <GuardSpinner size={20} loading />
+          </Center>
+        }
+      >
+        <Swap />
+      </WithPoolAddressValidation>
     </GraphProvider>
   )
 }
