@@ -15,10 +15,11 @@ import ExternalLink from "components/ExternalLink"
 
 interface Props {
   daoPoolAddress?: string
+  delegatee?: string
 }
 
 // DelegateTerminal - card component. can be used as separate element on the page
-export const DelegateTerminal: FC<Props> = ({ daoPoolAddress }) => {
+export const DelegateTerminal: FC<Props> = ({ daoPoolAddress, delegatee }) => {
   const {
     formInfo,
     allNftsId,
@@ -34,7 +35,7 @@ export const DelegateTerminal: FC<Props> = ({ daoPoolAddress }) => {
     handleApprove,
     handleSubmit,
     setDelegatee,
-  } = useDelegateTerminal(daoPoolAddress)
+  } = useDelegateTerminal(daoPoolAddress, delegatee)
 
   const button = useMemo(() => {
     // not enough token balance
@@ -73,6 +74,17 @@ export const DelegateTerminal: FC<Props> = ({ daoPoolAddress }) => {
           size="large"
           onClick={() => {}}
           text="Select amount"
+        />
+      )
+    }
+
+    if (buttonType === ButtonTypes.DEPOSIT) {
+      return (
+        <S.SubmitButton
+          type="button"
+          size="large"
+          onClick={handleSubmit}
+          text="Deposit"
         />
       )
     }

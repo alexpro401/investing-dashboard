@@ -26,7 +26,7 @@ export interface Result extends ReadonlyArray<any> {
 type MethodArg = string | number | BigNumber
 type MethodArgs = Array<MethodArg | MethodArg[]>
 
-type OptionalMethodInputs =
+export type OptionalMethodInputs =
   | Array<MethodArg | MethodArg[] | undefined>
   | undefined
 

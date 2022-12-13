@@ -37,7 +37,7 @@ export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
     handleERC721Change,
     handleApprove,
     handleSubmit,
-  } = useVotingTerminal(daoPoolAddress)
+  } = useVotingTerminal(daoPoolAddress, proposalId)
 
   const button = useMemo(() => {
     // not enough token balance
@@ -84,11 +84,11 @@ export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
       <S.SubmitButton
         type="button"
         size="large"
-        onClick={() => handleSubmit(proposalId)}
+        onClick={() => handleSubmit()}
         text="Confirm voting"
       />
     )
-  }, [buttonType, handleApprove, handleSubmit, proposalId])
+  }, [buttonType, handleApprove, handleSubmit])
 
   // wrapper function to close modal on submit
   const selectNfts = useCallback(
