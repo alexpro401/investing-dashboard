@@ -1,6 +1,6 @@
 import { useERC721Contract } from "contracts"
 import { useMemo } from "react"
-import { Result, useSingleContractMultipleData } from "state/multicall/hooks"
+import { useSingleContractMultipleData } from "state/multicall/hooks"
 import { isAddress } from "utils"
 
 interface Props {

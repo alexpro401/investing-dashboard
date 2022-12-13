@@ -12,8 +12,6 @@ import { useCallback, useMemo } from "react"
 import { ERC20 } from "abi"
 import { Interface } from "@ethersproject/abi"
 import { useActiveWeb3React } from "hooks"
-import JSBI from "jsbi"
-import fromRawAmount from "lib/utils/fromRaw"
 
 const ERC20_INTERFACE = new Interface(ERC20)
 
