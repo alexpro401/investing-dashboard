@@ -16,7 +16,11 @@ interface Props {
   tfPosition?: "top" | "bottom"
 }
 
-const PoolPnlChart: React.FC<Props> = ({ address, baseToken, tfPosition }) => {
+const PoolPnlChart: React.FC<Props> = ({
+  address,
+  baseToken,
+  tfPosition = "bottom",
+}) => {
   const [tf, setTf] = React.useState(TIMEFRAME.d)
   const [baseTokenData] = useERC20Data(baseToken)
 
