@@ -11,6 +11,8 @@ import {
 import { BigNumber } from "@ethersproject/bignumber"
 import { ProposalState, WrappedProposalView } from "types"
 import { useERC20 } from "hooks/useERC20"
+import { useSelector } from "react-redux"
+import { selectInsuranceAddress } from "../../../state/contracts/selectors"
 
 const GovPoolGraphClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -64,6 +66,8 @@ export const useGovPoolProposal = (
     `,
     context: GovPoolValidatorsGraphClient,
   })
+
+  const insuranceAddress = useSelector(selectInsuranceAddress)
 
   const graphGovPoolProposal = useMemo(
     () => daoPoolGraph?.proposals?.[0],
@@ -148,8 +152,14 @@ export const useGovPoolProposal = (
   )
 
   const isInsurance = useMemo(() => {
-    return false
-  }, [])
+    const lastExecutor = String(
+      wrappedProposalView?.proposal?.executors[
+        wrappedProposalView?.proposal?.executors.length - 1
+      ]
+    ).toLocaleLowerCase()
+
+    return lastExecutor === String(insuranceAddress).toLocaleLowerCase()
+  }, [wrappedProposalView])
 
   const isDistribution = useMemo(() => {
     return executor?.type === "distribution"

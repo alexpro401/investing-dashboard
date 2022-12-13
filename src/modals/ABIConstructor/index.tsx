@@ -122,6 +122,7 @@ const ABIConstructor: FC<Props> = ({
                   {item.inputs.map((input, index) => (
                     <InputField
                       setValue={(value) => handleInputChange(index, value)}
+                      type={input.type === "uint256" ? "number" : undefined}
                       placeholder={`${input.name} (${input.type})`}
                       key={input.name}
                       value={selectedMethodInputs[index]}

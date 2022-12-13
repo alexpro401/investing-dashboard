@@ -53,11 +53,7 @@ const VotingSettings: React.FC<IVotingSettingsProps> = ({
   )
 
   const isRewardTokenHasValidAddress = useMemo<boolean>(() => {
-    if (!isAddress(rewardToken)) return false
-
-    if (rewardToken === ZERO_ADDR) return false
-
-    return true
+    return !(!isAddress(rewardToken) || rewardToken === ZERO_ADDR)
   }, [rewardToken])
 
   return (
@@ -99,13 +95,13 @@ const VotingSettings: React.FC<IVotingSettingsProps> = ({
       {minVotesForVoting && (
         <S.Record>
           <S.Label>Min. voting power required for voting</S.Label>
-          <S.Value>{cutStringZeroes(formatEther(minVotesForVoting))}</S.Value>
+          <S.Value>{minVotesForVoting}</S.Value>
         </S.Record>
       )}
       {minVotesForCreating && (
         <S.Record>
           <S.Label>Min. voting power required for creating a proposal</S.Label>
-          <S.Value>{cutStringZeroes(formatEther(minVotesForCreating))}</S.Value>
+          <S.Value>{minVotesForCreating}</S.Value>
         </S.Record>
       )}
       {rewardToken !== undefined && (

@@ -5,6 +5,7 @@ import Modal from "components/Modal"
 import useIsValidator from "hooks/useIsValidator"
 import { useActiveWeb3React } from "hooks"
 import { ICON_NAMES } from "constants/icon-names"
+import Skeleton from "components/Skeleton"
 
 import * as S from "./styled"
 
@@ -21,7 +22,7 @@ const ChooseDaoProposalAsPerson: React.FC<IChooseProposalAsPersonProps> = ({
 }) => {
   const navigate = useNavigate()
   const { account } = useActiveWeb3React()
-  const [isUserValidator] = useIsValidator({
+  const [isUserValidator, isUserValidatorLoading] = useIsValidator({
     daoAddress,
     userAddress: account ?? "",
   })
@@ -48,7 +49,10 @@ const ChooseDaoProposalAsPerson: React.FC<IChooseProposalAsPersonProps> = ({
             Any proposal except validator-only ones.
           </S.ProposalText>
         </S.PersonProposal>
-        {isUserValidator && (
+        {isUserValidatorLoading && (
+          <Skeleton variant={"rect"} w={"100%"} h={"80px"} />
+        )}
+        {!isUserValidatorLoading && isUserValidator && (
           <S.PersonProposal onClick={handleGoToValidatorProposals}>
             <S.ProposalTopbar>
               <S.ProposalIcon name={ICON_NAMES.user} />

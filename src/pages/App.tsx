@@ -14,10 +14,12 @@ import NotificationsContext from "context/NotificationsContext"
 import Routes from "pages/Routes"
 
 import { SpecialModalBackground, AppWrapper } from "theme/GlobalStyle"
+import useIosHeightFix from "utils/useIosHeightFix"
 
 const App = () => {
   const eager = useEagerConnect()
   useInactiveListener(eager)
+  useIosHeightFix()
 
   return (
     <ThemeProvider theme={theme}>

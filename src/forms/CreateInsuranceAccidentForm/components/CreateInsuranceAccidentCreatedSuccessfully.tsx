@@ -13,20 +13,26 @@ import { copyToClipboard } from "utils/clipboard"
 import AppButton from "common/AppButton"
 import { ICON_NAMES } from "constants/icon-names"
 import { useAddToast } from "state/application/hooks"
+import { useGovPoolLatestProposalId } from "hooks/dao"
 
 interface Props {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
   url: string
+  onVoteCallback: () => void
 }
 
 const CreateInsuranceAccidentCreatedSuccessfully: FC<Props> = ({
   open,
   url,
   setOpen,
+  onVoteCallback,
 }) => {
   const navigate = useNavigate()
   const addToast = useAddToast()
+  const { updateLatesProposalId } = useGovPoolLatestProposalId(
+    process.env.REACT_APP_DEXE_DAO_ADDRESS
+  )
 
   const copyURLToClipboard = useCallback(async () => {
     await copyToClipboard(url)
@@ -40,9 +46,14 @@ const CreateInsuranceAccidentCreatedSuccessfully: FC<Props> = ({
     )
   }, [])
 
-  const onVote = () => {
-    navigate(`/insurance/voting/${url}`)
-  }
+  const onVote = useCallback(async () => {
+    const latestProposalId = await updateLatesProposalId()
+
+    onVoteCallback()
+    navigate(
+      `/dao/${process.env.REACT_APP_DEXE_DAO_ADDRESS}/vote/${latestProposalId}`
+    )
+  }, [])
 
   return (
     <Confirm title="Success" isOpen={open} toggle={() => setOpen(!open)}>

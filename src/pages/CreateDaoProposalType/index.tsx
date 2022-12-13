@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useMemo } from "react"
 import { useParams, useLocation } from "react-router-dom"
 import { formatUnits, formatEther } from "@ethersproject/units"
 
@@ -13,6 +13,8 @@ import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
 import { ZERO_ADDR } from "constants/index"
 import { cutStringZeroes } from "utils"
+import Skeleton from "components/Skeleton"
+import { Flex } from "theme"
 
 import * as S from "./styled"
 
@@ -31,7 +33,25 @@ const CreateDaoProposalType: React.FC = () => {
     }
   }, [location])
 
-  if (loading || !daoSettings || validatorsCount === null) return null
+  const loader = useMemo(
+    () => (
+      <Flex gap={"24"} full m="16px 0 0 0" dir="column" ai={"center"}>
+        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"40px"} />
+        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"40px"} />
+        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+      </Flex>
+    ),
+    []
+  )
+
+  if (loading || !daoSettings || validatorsCount === null)
+    return (
+      <>
+        <Header>Create Proposal</Header>
+        {loader}
+      </>
+    )
 
   const {
     earlyCompletion,
@@ -52,7 +72,10 @@ const CreateDaoProposalType: React.FC = () => {
   return (
     <>
       <Header>Create Proposal</Header>
-      <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
+      <WithGovPoolAddressValidation
+        daoPoolAddress={daoAddress ?? ""}
+        loader={loader}
+      >
         <S.CreateNewDaoProposalTypePageHolder
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

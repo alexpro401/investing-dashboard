@@ -1,9 +1,13 @@
-import React, { useState, useMemo, useCallback } from "react"
+import React, { useState, useMemo, useCallback, useContext } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
+import { parseEther } from "@ethersproject/units"
 
 import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
+import { AdvancedABIContext } from "context/govPool/proposals/custom/AdvancedABIContext"
+import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
+import { useGovPoolCreateCustomProposalManual } from "hooks/dao"
 import { AbiStep } from "./steps"
 
 import * as S from "./styled"
@@ -18,6 +22,16 @@ const CreateDaoCustomProposalAbiForm: React.FC = () => {
   const { daoAddress, executorAddress } = useParams<
     "daoAddress" | "executorAddress"
   >()
+  const { proposalName, proposalDescription } = useContext(
+    GovProposalCreatingContext
+  )
+  const {
+    contractAdresses,
+    contractValues,
+    executorSelectedAddress,
+    executorValue,
+    encodedMethods,
+  } = useContext(AdvancedABIContext)
 
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.abiInfo)
 
@@ -26,6 +40,40 @@ const CreateDaoCustomProposalAbiForm: React.FC = () => {
     () => Object.values(STEPS).indexOf(currentStep) + 2,
     [currentStep]
   )
+  const createProposal = useGovPoolCreateCustomProposalManual(daoAddress)
+
+  const handeCreateProposal = useCallback(() => {
+    const executors = contractAdresses.get
+      .map((el) => el[1])
+      .concat([executorSelectedAddress.get])
+
+    const values = contractValues.get
+      .map((el) => (isNaN(Number(el)) ? "0" : parseEther(el).toString()))
+      .concat(
+        isNaN(Number(executorValue.get))
+          ? "0"
+          : parseEther(executorValue.get).toString()
+      )
+
+    const data = executors.map((el) => encodedMethods.get[el][1])
+
+    createProposal({
+      executors,
+      values,
+      data,
+      proposalName: proposalName.get,
+      proposalDescription: proposalDescription.get,
+    })
+  }, [
+    createProposal,
+    proposalName,
+    proposalDescription,
+    contractAdresses,
+    contractValues,
+    executorSelectedAddress,
+    executorValue,
+    encodedMethods,
+  ])
 
   const handlePrevStep = useCallback(() => {
     switch (currentStep) {
@@ -53,13 +101,13 @@ const CreateDaoCustomProposalAbiForm: React.FC = () => {
         break
       }
       case STEPS.basicInfo: {
-        //TODO handle create proposal here
+        handeCreateProposal()
         break
       }
       default:
         break
     }
-  }, [currentStep])
+  }, [currentStep, handeCreateProposal])
 
   return (
     <StepsControllerContext

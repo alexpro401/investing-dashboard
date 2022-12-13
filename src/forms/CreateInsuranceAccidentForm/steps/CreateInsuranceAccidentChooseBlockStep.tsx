@@ -43,12 +43,16 @@ import Skeleton from "components/Skeleton"
 import Chart from "components/Chart"
 import theme, { Flex, Text } from "theme"
 import { ChartTooltipPnl } from "components/Chart/tooltips"
+import { AlertType } from "context/AlertContext"
+import useAlert from "hooks/useAlert"
+import { DEFAULT_ALERT_HIDDEN_TIMEOUT } from "constants/misc"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
 })
 
 const CreateInsuranceAccidentChooseBlockStep: FC = () => {
+  const [showAlert] = useAlert()
   const { form, insuranceAccidentExist, chart } = useContext(
     InsuranceAccidentCreatingContext
   )
@@ -74,12 +78,29 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
   )
 
   const historyFormatted = generatePoolPnlHistory(
-    !isEmpty(data.get) ? data.get : undefined
+    !isEmpty(data.get) ? data.get : []
   )
 
   useEffect(() => {
+    if (!historyLoading && isEmpty(history) && isEmpty(data)) {
+      const tfList = Object.values(TIMEFRAME)
+      const currentTfIndex = tfList.indexOf(timeframe.get)
+
+      if (currentTfIndex > 0) {
+        timeframe.set(tfList[currentTfIndex - 1])
+      } else {
+        showAlert({
+          content: "Sorry, but still no tracked data about pool price",
+          type: AlertType.warning,
+          hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
+        })
+      }
+    }
+  }, [history, historyLoading])
+
+  useEffect(() => {
     if (history && history.length > 0) {
-      const activeLabel = 1
+      const activeLabel = history.length - 1
       const payload = history[activeLabel] ?? {}
       const price = getLP(String(payload?.baseTVL), String(payload?.supply))
 
@@ -117,9 +138,13 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
   }, [])
 
   useEffect(() => {
-    if (!isEmpty(point.get) && !historyLoading) {
+    if (
+      !historyLoading &&
+      !isNil(point.get.payload?.timestamp) &&
+      !isEmpty(point.get.payload?.timestamp)
+    ) {
       block.set(point.get.payload.block)
-      date.set(String(point.get.payload.timestamp))
+      date.set(String(point.get.payload?.timestamp))
     }
   }, [point])
 
@@ -131,10 +156,11 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
         point.get.activeLabel !== p.activeLabel &&
         !isNil(p.activePayload[0].payload)
       ) {
-        point.set({
+        const chosenPoint = {
           payload: p.activePayload[0].payload ?? {},
           activeLabel: p.activeLabel,
-        })
+        }
+        point.set(chosenPoint)
       }
     },
     [point]
@@ -166,7 +192,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
     let date: ReactNode = <Skeleton w="120px" h="15px" />
 
     if (!isEmpty(point.get) && !isNil(point.get.payload.price)) {
-      price = point.get.payload.price
+      price = `$${point.get.payload.price}`
     }
     if (!isEmpty(point.get) && !isNil(point.get.payload.timestamp)) {
       date = format(expandTimestamp(point.get.payload.timestamp), DATE_FORMAT)
@@ -175,7 +201,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
     return (
       <Flex dir="column" ai="flex-start" jc="center">
         <Text fz={16} fw={700} lh="19px" color="#E4F2FF">
-          ${price}
+          {price}
         </Text>
         <Text fz={13} fw={500} lh="15px" color="#B1C7FC">
           {date}
@@ -231,9 +257,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
             timeframe={{ get: timeframe.get, set: onTimeframeChange }}
             timeframePosition="bottom"
             loading={
-              historyLoading ||
-              isNil(historyFormatted) ||
-              isEmpty(historyFormatted)
+              historyLoading || (!historyLoading && isNil(historyFormatted))
             }
           >
             <Tooltip

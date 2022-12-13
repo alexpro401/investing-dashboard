@@ -4,6 +4,7 @@ import {
   InvestorPoolPosition,
   InvestorPoolPositionWithHistory,
 } from "./thegraphs/investors"
+import { TIMEFRAME } from "constants/chart"
 
 export interface IPriceHistoryWithCalcPNL extends IPriceHistory {
   pnl: number | string
@@ -43,14 +44,17 @@ export interface InsuranceAccidentPriceHistory {
   data: IPriceHistory[]
   point: InsuranceAccidentChartPoint
   forPool: string
-  timeframe: string
+  timeframe: TIMEFRAME
 }
 
 export interface InsuranceAccident {
   creator: string
   timestamp: number
-  accidentInfo: InsuranceAccidentInfo
+  form: InsuranceAccidentInfo
   investorsTotals: InsuranceAccidentInvestorsTotalsInfo
   investorsInfo: InsuranceAccidentInvestors
   chart: InsuranceAccidentPriceHistory
+
+  insuranceAccidentExist: boolean
+  insurancePoolHaveTrades: boolean
 }

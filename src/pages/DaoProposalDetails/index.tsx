@@ -114,7 +114,7 @@ const DaoProposalDetails: FC<Props> = ({}) => {
         ) : (
           <>
             <Skeleton variant={"text"} w={"calc(100%)"} h={"40%"} />
-            <Flex gap={"24px"} full>
+            <Flex gap={"24"} full>
               <Skeleton variant={"rect"} w={"30%"} h={"19px"} />
               <Skeleton variant={"rect"} w={"30%"} h={"19px"} />
               <Skeleton variant={"rect"} w={"30%"} h={"19px"} />

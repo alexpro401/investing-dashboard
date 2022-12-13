@@ -1,13 +1,11 @@
 import { createClient, Provider as GraphProvider } from "urql"
 
 import useInsurancePage from "./useInsurancePage"
-import { ICON_NAMES } from "constants/icon-names"
 
 import { Flex, Text } from "theme"
 import Header from "components/Header/Layout"
-import { AppButton, Card, CardDescription, CardHead } from "common"
+import { Card, CardDescription, CardHead, DaoProposalsList } from "common"
 
-import Voting from "pages/Voting"
 import Management from "pages/Management"
 
 import * as S from "./styled"
@@ -17,63 +15,57 @@ const poolsClient = createClient({
 })
 
 const Insurance = () => {
-  const [
-    { checkingInvestmentStatus, accidentsResponse },
-    { onInsuranceCreateNavigate, fetchInsuranceAccidents },
-  ] = useInsurancePage()
+  const [{ checkingInvestmentStatus }, { onInsuranceCreateNavigate }] =
+    useInsurancePage()
+
+  const daoPool = String(
+    process.env.REACT_APP_DEXE_DAO_ADDRESS
+  ).toLocaleLowerCase()
 
   return (
     <>
       <Header>Insurance</Header>
       <S.Container>
         <S.Content>
-          <Card>
-            <CardHead title="Headers" />
-            <CardDescription>
-              <p>
-                Текст защити свои инвестиции. чтобы создавать пропозалы вам
-                необходимо иметь страховку минимум 100 дикси
-              </p>
-            </CardDescription>
-            <S.InsuranceCreateButton
-              type="button"
-              size="small"
-              color="secondary"
-              onClick={onInsuranceCreateNavigate}
-              text="Создать новый пропозал"
-              disabled={checkingInvestmentStatus}
-            />
-          </Card>
-          <Flex m="16px 0 0" full>
+          <S.Indents top side>
+            <Card>
+              <CardHead title="Headers" />
+              <CardDescription>
+                <p>
+                  Текст защити свои инвестиции. чтобы создавать пропозалы вам
+                  необходимо иметь страховку минимум 100 дикси
+                </p>
+              </CardDescription>
+              <S.AppButtonFull
+                type="button"
+                size="small"
+                color="secondary"
+                onClick={onInsuranceCreateNavigate}
+                text="Создать новый пропозал"
+                disabled={checkingInvestmentStatus}
+              />
+            </Card>
+          </S.Indents>
+          <S.Indents top side>
             <Management />
-          </Flex>
-          <Flex m="40px 0 0" full dir="column">
-            <Flex full ai="center" jc="space-between">
+          </S.Indents>
+          <S.Indents top side={false}>
+            <Flex full ai="center" jc="space-between" p={"0 16px"}>
               <Text fz={16} fw={600} color="#E4F2FF">
                 Текущие пропозалы
               </Text>
-              <AppButton
-                color="default"
+              <S.InsuranceAllProposalsLink
                 text="View all"
-                size="x-small"
-                iconRight={ICON_NAMES.angleRightOutlined}
-                routePath="/insurance"
+                routePath={`/dao/${daoPool}/proposals/opened`}
               />
             </Flex>
-            <Flex full m="8px 0 0">
-              <Text fz={13} lh="150%" color="#B1C7FC">
-                Description Sed ut perspiciatis, unde omnis iste natus error sit
-                voluptatem accusantium doloremque
-              </Text>
-            </Flex>
-            <Flex full m="16px 0 0">
-              <Voting
-                data={accidentsResponse?.data}
-                loading={accidentsResponse?.loading ?? true}
-                fetchMore={fetchInsuranceAccidents}
+            <S.InsuranceProposalsList>
+              <DaoProposalsList
+                govPoolAddress={process.env.REACT_APP_DEXE_DAO_ADDRESS}
+                status={"opened-insurance"}
               />
-            </Flex>
-          </Flex>
+            </S.InsuranceProposalsList>
+          </S.Indents>
         </S.Content>
       </S.Container>
     </>

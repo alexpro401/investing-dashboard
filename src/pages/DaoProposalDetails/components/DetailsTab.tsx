@@ -21,27 +21,25 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 const DetailsTab: FC<Props> = ({ govPoolProposal }) => {
   return (
     <>
-      <S.DaoProposalDetailsCard>
-        {govPoolProposal.proposalType === "profile" ? (
-          <GovPoolProposalProfile govPoolProposal={govPoolProposal} />
-        ) : govPoolProposal.proposalType === "distribution" ? (
-          <GovPoolProposalDistribution govPoolProposal={govPoolProposal} />
-        ) : govPoolProposal.proposalType === "change-settings" ? (
-          <GovPoolProposalChangeSettings govPoolProposal={govPoolProposal} />
-        ) : govPoolProposal.proposalType === "change-validator-balances" ? (
-          <GovPoolProposalChangeValidatorBalances
-            govPoolProposal={govPoolProposal}
-          />
-        ) : govPoolProposal.proposalType === "add-token" ? (
-          <GovPoolProposalAddToken govPoolProposal={govPoolProposal} />
-        ) : govPoolProposal.proposalType === "custom" ? (
-          <GovPoolProposalCustom govPoolProposal={govPoolProposal} />
-        ) : govPoolProposal.proposalType === "insurance" ? (
-          <GovPoolProposalInsurance govPoolProposal={govPoolProposal} />
-        ) : (
-          <></>
-        )}
-      </S.DaoProposalDetailsCard>
+      {govPoolProposal.proposalType === "profile" ? (
+        <GovPoolProposalProfile govPoolProposal={govPoolProposal} />
+      ) : govPoolProposal.proposalType === "distribution" ? (
+        <GovPoolProposalDistribution govPoolProposal={govPoolProposal} />
+      ) : govPoolProposal.proposalType === "change-settings" ? (
+        <GovPoolProposalChangeSettings govPoolProposal={govPoolProposal} />
+      ) : govPoolProposal.proposalType === "change-validator-balances" ? (
+        <GovPoolProposalChangeValidatorBalances
+          govPoolProposal={govPoolProposal}
+        />
+      ) : govPoolProposal.proposalType === "add-token" ? (
+        <GovPoolProposalAddToken govPoolProposal={govPoolProposal} />
+      ) : govPoolProposal.proposalType === "custom" ? (
+        <GovPoolProposalCustom govPoolProposal={govPoolProposal} />
+      ) : govPoolProposal.proposalType === "insurance" ? (
+        <GovPoolProposalInsurance govPoolProposal={govPoolProposal} />
+      ) : (
+        <></>
+      )}
       <S.DaoProposalDetailsCard>
         <S.DaoProposalDetailsRow>
           <S.DaoProposalDetailsRowText textType="label">

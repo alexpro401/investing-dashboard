@@ -3,7 +3,6 @@ import { isEmpty } from "lodash"
 import { useNavigate } from "react-router-dom"
 
 import useAlert, { AlertType } from "hooks/useAlert"
-import { useInsuranceAccidents } from "state/ipfsMetadata/hooks"
 import useOwnedAndInvestedPools from "hooks/useOwnedAndInvestedPools"
 
 function useInsurancePage() {
@@ -11,9 +10,6 @@ function useInsurancePage() {
   const [showAlert] = useAlert()
 
   const [{ data: pools, fetching }] = useOwnedAndInvestedPools()
-
-  const [accidentsResponse, { fetch: fetchInsuranceAccidents }] =
-    useInsuranceAccidents()
 
   const onInsuranceCreateNavigate = useCallback(() => {
     if (fetching || (!fetching && isEmpty(pools))) {
@@ -36,9 +32,8 @@ function useInsurancePage() {
   return [
     {
       checkingInvestmentStatus: fetching,
-      accidentsResponse,
     },
-    { onInsuranceCreateNavigate, fetchInsuranceAccidents },
+    { onInsuranceCreateNavigate },
   ]
 }
 
