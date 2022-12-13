@@ -2,27 +2,6 @@ import styled from "styled-components"
 import { motion } from "framer-motion"
 import { Text } from "theme"
 
-export const PNLGrid = styled.div`
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  position: relative;
-
-  &::before {
-    content: "";
-    height: 0px;
-    border: 1px dashed #788ab4;
-
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: calc(50% - 1px);
-    transform: translateY(-50%);
-    z-index: -1;
-  }
-`
-
 export const Table = styled(motion.div)`
   width: 100%;
   display: flex;

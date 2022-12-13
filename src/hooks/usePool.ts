@@ -24,6 +24,7 @@ import {
   divideBignumbers,
   generateLockedFundsChartData,
   generatePoolPnlHistory,
+  getLP,
   multiplyBignumbers,
 } from "utils/formulas"
 import { AppState } from "state"
@@ -257,4 +258,32 @@ export const usePoolLockedFundsHistory = (
     TIMEFRAME_FROM_DATE[tf]
   )
   return [generateLockedFundsChartData(history), fetching]
+}
+
+export const usePoolPriceHistoryDiff = (priceHistoryFrom, priceHistoryTo) => {
+  const initialPriceUSD = useMemo(() => {
+    if (!priceHistoryFrom) return 0
+
+    const { baseTVL, supply } = priceHistoryFrom
+    return Number(getLP(String(baseTVL), String(supply)))
+  }, [priceHistoryFrom])
+
+  const currentPriceUSD = useMemo(() => {
+    if (!priceHistoryTo) return 0
+
+    const { baseTVL, supply } = priceHistoryTo
+    return Number(getLP(String(baseTVL), String(supply)))
+  }, [priceHistoryTo])
+
+  const priceDiffUSD = useMemo(() => {
+    if (!currentPriceUSD) return 0
+
+    return currentPriceUSD - initialPriceUSD
+  }, [currentPriceUSD, initialPriceUSD])
+
+  return {
+    initialPriceUSD,
+    currentPriceUSD,
+    priceDiffUSD,
+  }
 }

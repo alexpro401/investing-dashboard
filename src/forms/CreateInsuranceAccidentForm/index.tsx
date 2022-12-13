@@ -65,6 +65,7 @@ const CreateInsuranceAccidentForm: FC = () => {
     insuranceAccidentExist,
     investorsInfo,
     insurancePoolHaveTrades,
+    insurancePoolLastPriceHistory,
     clearFormStorage,
   } = context
 
@@ -178,13 +179,14 @@ const CreateInsuranceAccidentForm: FC = () => {
         data: JSON.stringify({
           creator: String(account).toLocaleLowerCase(),
           timestamp: new Date().getTime() / 1000,
-          accidentInfo: {
+          form: {
             pool: pool.get,
             block: block.get,
             date: date.get,
             description: description.get,
             chat: chat.get,
           },
+          insurancePoolLastPriceHistory: insurancePoolLastPriceHistory.get,
           investorsTotals: investorsTotals.get,
           investorsInfo: investorsInfo.get,
           chart: {
@@ -289,6 +291,7 @@ const CreateInsuranceAccidentForm: FC = () => {
     touchForm,
     pool,
     govPool,
+    insurancePoolLastPriceHistory,
   ])
 
   const handleNextStep = () => {
@@ -402,6 +405,7 @@ const CreateInsuranceAccidentForm: FC = () => {
       case STEPS.checkSettings:
         investorsInfo.set({})
         investorsTotals.set({
+          users: "",
           lp: ZERO.toHexString(),
           loss: ZERO.toHexString(),
           coverage: ZERO.toHexString(),

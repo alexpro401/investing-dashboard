@@ -1,5 +1,5 @@
 import { useQuery } from "urql"
-import { isEmpty } from "lodash"
+import { isEmpty, isNil } from "lodash"
 import { useSelector } from "react-redux"
 import { useWeb3React } from "@web3-react/core"
 import { BigNumber } from "@ethersproject/bignumber"
@@ -10,6 +10,11 @@ import { InsurancDueDay } from "queries/investors"
 import { Insurance } from "interfaces/thegraphs/investors"
 import { selectDexeAddress } from "state/contracts/selectors"
 import { useInsuranceContract, usePriceFeedContract } from "contracts"
+import useTokenPriceOutUSD from "./useTokenPriceOutUSD"
+import { InsuranceAccidentInvestorsTotalsInfo } from "../interfaces/insurance"
+import { divideBignumbers, multiplyBignumbers } from "../utils/formulas"
+import { normalizeBigNumber, parseTransactionError } from "../utils"
+import useError from "./useError"
 
 interface IValues {
   stakeDexe: BigNumber
@@ -100,4 +105,107 @@ export const useInsuranceDueDay = (
     },
     refetch,
   ]
+}
+
+export const useInsuranceAccidentTotals = (
+  investorsTotals: InsuranceAccidentInvestorsTotalsInfo
+) => {
+  const [, setError] = useError()
+  const insurance = useInsuranceContract()
+  const dexeAddress = useSelector(selectDexeAddress)
+  const dexePrice = useTokenPriceOutUSD({
+    tokenAddress: dexeAddress,
+  })
+
+  const [insuranceTreasuryDEXE, setInsuranceTreasuryDEXE] = useState(ZERO)
+
+  const insuranceTreasuryUSD = useTokenPriceOutUSD({
+    tokenAddress: dexeAddress,
+    amount: insuranceTreasuryDEXE,
+  })
+
+  const totalLossDEXE = useMemo(() => {
+    if (
+      isNil(dexePrice) ||
+      isNil(investorsTotals) ||
+      BigNumber.from(investorsTotals.loss).isZero()
+    ) {
+      return ZERO
+    }
+
+    return divideBignumbers(
+      [BigNumber.from(investorsTotals.loss), 18],
+      [BigNumber.from(dexePrice), 18]
+    )
+  }, [dexePrice, investorsTotals])
+
+  const totalLossUSD = useMemo(() => {
+    if (
+      isNil(investorsTotals) ||
+      BigNumber.from(investorsTotals.loss).isZero()
+    ) {
+      return ZERO
+    }
+
+    return BigNumber.from(investorsTotals.loss)
+  }, [investorsTotals])
+
+  const totalCoverageDEXE = useMemo(() => {
+    if (
+      isNil(investorsTotals) ||
+      BigNumber.from(investorsTotals.coverage).isZero()
+    ) {
+      return ZERO
+    }
+
+    return BigNumber.from(investorsTotals.coverage)
+  }, [investorsTotals])
+
+  const totalCoverageUSD = useMemo(() => {
+    if (
+      isNil(dexePrice) ||
+      isNil(investorsTotals) ||
+      BigNumber.from(investorsTotals.coverage).isZero()
+    ) {
+      return ZERO
+    }
+
+    return multiplyBignumbers(
+      [BigNumber.from(investorsTotals.coverage), 18],
+      [BigNumber.from(dexePrice), 18]
+    )
+  }, [investorsTotals, dexePrice])
+
+  useEffect(() => {
+    if (!insurance) {
+      return
+    }
+    ;(async () => {
+      try {
+        const maxTreasuryPayout = await insurance.getMaxTreasuryPayout()
+
+        if (!isNil(maxTreasuryPayout)) {
+          setInsuranceTreasuryDEXE(maxTreasuryPayout)
+        }
+      } catch (error: any) {
+        if (!!error && !!error.data && !!error.data.message) {
+          setError(error.data.message)
+        } else {
+          const errorMessage = parseTransactionError(error.toString())
+          !!errorMessage && setError(errorMessage)
+        }
+      }
+    })()
+  }, [insurance])
+
+  return {
+    insuranceTreasuryDEXE,
+    insuranceTreasuryUSD,
+
+    totalLossDEXE,
+    totalLossUSD,
+
+    totalCoverageDEXE,
+    totalCoverageUSD,
+  }
 }

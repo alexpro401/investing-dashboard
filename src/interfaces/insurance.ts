@@ -25,6 +25,7 @@ export interface InsuranceAccidentInfo {
 }
 
 export interface InsuranceAccidentInvestorsTotalsInfo {
+  users: string
   lp: string
   loss: string
   coverage: string
@@ -57,4 +58,6 @@ export interface InsuranceAccident {
 
   insuranceAccidentExist: boolean
   insurancePoolHaveTrades: boolean
+
+  insurancePoolLastPriceHistory: IPriceHistory
 }
