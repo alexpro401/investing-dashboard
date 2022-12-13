@@ -242,7 +242,9 @@ const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
   const handleApprove = useCallback(() => {
     // approve erc20
     if (!isERC20Approved) {
-      const amount = ERC20Amount.sub(tokenBalanceLocked)
+      const amount = !isERC20Deposited
+        ? ERC20Amount.sub(depositedERC20Balance)
+        : ZERO
 
       updateERC20Allowance(tokenAddress, amount)
       return
@@ -256,8 +258,9 @@ const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
   }, [
     isERC20Approved,
     unapprowedERC721Selected,
-    tokenBalanceLocked,
+    isERC20Deposited,
     ERC20Amount,
+    depositedERC20Balance,
     updateERC20Allowance,
     tokenAddress,
     updateERC721Allowance,
