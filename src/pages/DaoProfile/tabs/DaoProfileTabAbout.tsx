@@ -54,7 +54,7 @@ const DaoProfileTabAbout: React.FC<IDaoProfileTabAboutProps> = ({
         <p>{description}</p>
       </TextValue>
       <Divider />
-      {creationTime && (
+      {creationTime && !isNaN(creationTime) && (
         <Flex full ai="center" jc="space-between">
           <TextLabel>Creation day</TextLabel>
           <TextValue>

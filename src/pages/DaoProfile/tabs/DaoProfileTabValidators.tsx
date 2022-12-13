@@ -25,7 +25,6 @@ const daoValidatorsGraphClient = createClient({
 })
 
 interface Props {
-  data: any[]
   chainId?: number
 }
 
@@ -34,7 +33,7 @@ interface IValidator {
   balance: string
 }
 
-const DaoProfileTabValidators: React.FC<Props> = ({ data, chainId }) => {
+const DaoProfileTabValidators: React.FC<Props> = ({ chainId }) => {
   const { daoAddress } = useParams<"daoAddress">()
   const { validatorsCount, validatorsLoading } = useContext(
     GovPoolProfileTabsContext

@@ -19,8 +19,8 @@ const DaoProfileTabBalance = React.lazy(
 const DaoProfileTabValidators = React.lazy(
   () => import("./tabs/DaoProfileTabValidators")
 )
-const DaoProfileTabUsedTokens = React.lazy(
-  () => import("./tabs/DaoProfileTabUsedTokens")
+const DaoProfileTabDelegations = React.lazy(
+  () => import("./tabs/DaoProfileTabDelegations")
 )
 import { PageChart } from "./types"
 import { EDaoProfileTab } from "types/dao.types"
@@ -205,35 +205,15 @@ const DaoProfile: React.FC = () => {
               name: EDaoProfileTab.validators,
               child: (
                 <React.Suspense fallback={<TabFallback />}>
-                  <DaoProfileTabValidators
-                    data={[
-                      {
-                        id: "0x1230413asfadsfljk123041303asjk12",
-                        amount: "1230413",
-                      },
-                      {
-                        id: "1x1090423asfadsfljk109042303asjk10",
-                        amount: "1090423",
-                      },
-                      {
-                        id: "2x9820456asfadsfljk982045606asjk98",
-                        amount: "9820456",
-                      },
-                      {
-                        id: "3x1123412asfadsfljk112341232asjk11",
-                        amount: "1123412",
-                      },
-                    ]}
-                    chainId={chainId}
-                  />
+                  <DaoProfileTabValidators chainId={chainId} />
                 </React.Suspense>
               ),
             },
             {
-              name: EDaoProfileTab.in_treasury,
+              name: EDaoProfileTab.delegations,
               child: (
                 <React.Suspense fallback={<TabFallback />}>
-                  <DaoProfileTabUsedTokens
+                  <DaoProfileTabDelegations
                     data={[
                       {
                         id: "0x1230413asfadsfljk123041303asjk12",

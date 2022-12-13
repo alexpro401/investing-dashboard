@@ -28,7 +28,7 @@ interface Props {
   daoAddress?: string
 }
 
-const DaoProfileTabUsedTokens: React.FC<Props> = ({
+const DaoProfileTabDelegations: React.FC<Props> = ({
   data,
   chainId,
   daoAddress,
@@ -143,4 +143,4 @@ const DaoProfileTabUsedTokens: React.FC<Props> = ({
   )
 }
 
-export default DaoProfileTabUsedTokens
+export default DaoProfileTabDelegations

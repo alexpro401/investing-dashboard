@@ -35,8 +35,6 @@ function PaginationTable<T>({
   const [records, setRecords] = useState<T[] | undefined>(undefined)
   const [dataInView, setDataInView] = useState<T[] | undefined>(undefined)
 
-  console.log("records: ", records)
-
   const _variables = useMemo(
     () => ({
       ...variables,
