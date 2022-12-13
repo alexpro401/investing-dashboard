@@ -3,6 +3,7 @@ import {
   IPriceHistoryWithCalcPNL,
 } from "interfaces/insurance"
 import { TIMEFRAME } from "constants/chart"
+import { IPriceHistory } from "../interfaces/thegraphs/all-pools"
 
 export const INITIAL_INSURANCE_ACCIDENT: InsuranceAccident = {
   creator: "",
@@ -15,6 +16,7 @@ export const INITIAL_INSURANCE_ACCIDENT: InsuranceAccident = {
     chat: "",
   },
   investorsTotals: {
+    users: "",
     lp: "",
     loss: "",
     coverage: "",
@@ -28,4 +30,5 @@ export const INITIAL_INSURANCE_ACCIDENT: InsuranceAccident = {
   },
   insuranceAccidentExist: false,
   insurancePoolHaveTrades: false,
+  insurancePoolLastPriceHistory: {} as IPriceHistory,
 }

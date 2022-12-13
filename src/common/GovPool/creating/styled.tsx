@@ -15,12 +15,7 @@ export const Container = styled(StepsControllerContext)`
   margin: 0 auto;
   background-color: #040a0f;
   width: 100%;
-  height: calc(100vh - 94px);
   overflow-y: auto;
-
-  @media all and (display-mode: standalone) {
-    height: calc(100vh - 115px);
-  }
 `
 
 export const StepsContainer = styled(motion.div).attrs(() => ({

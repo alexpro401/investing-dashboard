@@ -15,7 +15,6 @@ export const CreateProposalSelectTypePageHolder = styled(motion.div).attrs(
 )`
   width: 100%;
   padding: 16px;
-  height: calc(100vh - 94px);
   overflow-y: auto;
 `
 

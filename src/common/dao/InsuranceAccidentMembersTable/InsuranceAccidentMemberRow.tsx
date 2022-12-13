@@ -1,5 +1,5 @@
 import { FC, useMemo } from "react"
-import * as S from "../styled/step-check-settings"
+import * as S from "./styled"
 import { normalizeBigNumber, shortenAddress } from "utils"
 import { BigNumber } from "@ethersproject/bignumber"
 import { isNil } from "lodash"
@@ -13,7 +13,7 @@ interface Props {
   fw?: string | number
 }
 
-const CreateInsuranceAccidentMemberCard: FC<Props> = ({ payload, ...rest }) => {
+const InsuranceAccidentMemberRow: FC<Props> = ({ payload, ...rest }) => {
   const address = shortenAddress(payload.investor.id)
 
   const inDayLpAmount = useMemo(() => {
@@ -65,4 +65,4 @@ const CreateInsuranceAccidentMemberCard: FC<Props> = ({ payload, ...rest }) => {
   )
 }
 
-export default CreateInsuranceAccidentMemberCard
+export default InsuranceAccidentMemberRow

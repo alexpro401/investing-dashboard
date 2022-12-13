@@ -4,8 +4,10 @@ import { DEFAULT_TXN_DISMISS_MS } from "constants/misc"
 import { SubmitState } from "constants/types"
 import {
   addToast,
+  hideTapBar,
   hideToast,
   removeToast,
+  showTabBar,
   updateError,
   updatePayload,
 } from "./actions"
@@ -23,12 +25,14 @@ export interface ApplicationState {
   readonly toastList: ToastList
   readonly payload: SubmitState
   readonly error: string
+  readonly isTabBarHidden: boolean
 }
 
 export const initialState: ApplicationState = {
   toastList: [],
   payload: SubmitState.IDLE,
   error: "",
+  isTabBarHidden: false,
 }
 
 export default createReducer(initialState, (builder) =>
@@ -77,5 +81,11 @@ export default createReducer(initialState, (builder) =>
     })
     .addCase(updateError, (state, { payload }) => {
       state.error = payload.params
+    })
+    .addCase(hideTapBar, (state, {}) => {
+      state.isTabBarHidden = true
+    })
+    .addCase(showTabBar, (state, {}) => {
+      state.isTabBarHidden = false
     })
 )

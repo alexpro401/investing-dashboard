@@ -45,9 +45,6 @@ const GlobalStyle: any = createGlobalStyle`
     overflow-x:hidden;
     overflow-y:hidden;
     background: #0E121B;
-    
-    /* height: calc(var(--vh, 1vh) * 100);
-    min-height: calc(var(--vh, 1vh) * 100); */
     min-height: -webkit-fill-available;
     touch-action: none;
     overscroll-behavior: none;
@@ -144,12 +141,6 @@ export const AppWrapper = styled.div`
   min-height: -webkit-fill-available;
 
   display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr 59px;
-  grid-template-areas: "content" "bottom";
-  gap: 0px 0px;
-  justify-items: stretch;
-  align-items: stretch;
 
   // display: grid;
 
@@ -171,20 +162,19 @@ export const AppWrapper = styled.div`
 `
 
 export const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   z-index: 5;
-  grid-area: content;
   touch-action: none;
   overscroll-behavior: none;
   transition: 0.2s all;
   overflow-x: hidden;
   overflow-y: hidden;
-  touch-action: none;
-  overscroll-behavior: none;
   // min-height: -webkit-fill-available;
-`
 
-export const RestrictedContainer = styled(motion.div)`
-  height: 100%;
+  height: 100vh; /* Fallback for browsers that do not support Custom Properties */
+  height: calc(var(--vh, 1vh) * 100);
 `
 
 export default GlobalStyle

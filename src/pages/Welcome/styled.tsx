@@ -8,8 +8,8 @@ export const Container = styled(Flex)`
   justify-content: flex-start;
   flex-direction: column;
   width: 100%;
-  height: 100vh;
-  position: realtive;
+  height: 100%;
+  position: relative;
   padding: 40px 32px;
 
   &:before {
@@ -118,7 +118,6 @@ export const LoginContainer = styled(Flex)`
   width: fit-content;
   margin-top: 24px;
   margin-right: auto;
-  margin-left: 19%;
   margin-left: 61px;
   justify-content: center;
   font-family: "Gilroy";

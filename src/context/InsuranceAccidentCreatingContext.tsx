@@ -54,6 +54,10 @@ export interface InsurancePoolHaveTrades {
   get: boolean
   set: Dispatch<SetStateAction<boolean>>
 }
+export interface InsurancePoolLastTradeHistory {
+  get: IPriceHistory
+  set: Dispatch<SetStateAction<IPriceHistory>>
+}
 
 export interface InsuranceDueDate {
   get: Insurance
@@ -98,6 +102,7 @@ interface InsuranceAccidentCreatingContext
   extends InsuranceAccidentCreatingContextUtilities {
   form: InsuranceAccidentForm
   insurancePoolHaveTrades: InsurancePoolHaveTrades
+  insurancePoolLastPriceHistory: InsurancePoolLastTradeHistory
   insuranceAccidentExist: InsuranceAccidentExist
   insuranceDueDate: InsuranceDueDate
   investorsTotals: InvestorsTotals
@@ -116,6 +121,7 @@ export const InsuranceAccidentCreatingContext =
     } as InsuranceAccidentForm,
 
     insurancePoolHaveTrades: { get: false, set: () => {} },
+    insurancePoolLastPriceHistory: { get: {} as IPriceHistory, set: () => {} },
     insuranceAccidentExist: { get: false, set: () => {} },
     insuranceDueDate: { get: {} as Insurance, set: () => {} },
     investorsTotals: {
@@ -168,6 +174,8 @@ const InsuranceAccidentCreatingContextProvider: FC<
     useState<boolean>(storedForm.insuranceAccidentExist)
   const [_insurancePoolHaveTrades, _setInsurancePoolHaveTrades] =
     useState<boolean>(false)
+  const [_insurancePoolLastPriceHistory, _setInsurancePoolLastPriceHistory] =
+    useState<IPriceHistory>({} as IPriceHistory)
 
   const insuranceDueDate = useState<Insurance>({} as Insurance)
 
@@ -198,6 +206,7 @@ const InsuranceAccidentCreatingContextProvider: FC<
         },
         insuranceAccidentExist: _insuranceAccidentExist,
         insurancePoolHaveTrades: _insurancePoolHaveTrades,
+        insurancePoolLastPriceHistory: _insurancePoolLastPriceHistory,
         investorsTotals: investorsTotals[0],
         investorsInfo: investorsInfo[0],
         chart: {
@@ -219,6 +228,7 @@ const InsuranceAccidentCreatingContextProvider: FC<
     _chat,
     _insuranceAccidentExist,
     _insurancePoolHaveTrades,
+    _insurancePoolLastPriceHistory,
     investorsTotals[0],
     investorsInfo[0],
     chart.point[0],
@@ -273,6 +283,10 @@ const InsuranceAccidentCreatingContextProvider: FC<
           insurancePoolHaveTrades: {
             get: _insurancePoolHaveTrades,
             set: _setInsurancePoolHaveTrades,
+          },
+          insurancePoolLastPriceHistory: {
+            get: _insurancePoolLastPriceHistory,
+            set: _setInsurancePoolLastPriceHistory,
           },
           insuranceAccidentExist: {
             get: _insuranceAccidentExist,

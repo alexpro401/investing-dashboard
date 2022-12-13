@@ -55,6 +55,7 @@ const DaoProposalCard: FC<Props> = ({
     execute,
     executeAndClaim,
     progress,
+    insuranceProposalView,
   } = useGovPoolProposal(wrappedProposalView, govPoolAddress)
 
   const { chainId } = useWeb3React()
@@ -141,7 +142,7 @@ const DaoProposalCard: FC<Props> = ({
       <GovProposalCardHead
         isInsurance={isInsurance}
         name={name}
-        pool={govPoolAddress}
+        pool={insuranceProposalView?.form?.pool}
         to={proposalDetailsLinkPath}
         completed={completed}
       />

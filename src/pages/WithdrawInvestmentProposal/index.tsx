@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom"
 import { BigNumber } from "@ethersproject/bignumber"
 import { createClient, Provider as GraphProvider } from "urql"
 
-import { Flex } from "theme"
+import { Center, Flex } from "theme"
 import SwapPrice from "components/SwapPrice"
 import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
@@ -30,6 +30,8 @@ import {
 } from "components/Exchange/styled"
 
 import useWithdrawInvestmentProposal from "./useWithdrawInvestmentProposal"
+import WithPoolAddressValidation from "components/WithPoolAddressValidation"
+import { GuardSpinner } from "react-spinners-kit"
 
 const investPoolsClient = createClient({
   url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",
@@ -234,9 +236,19 @@ function WithdrawInvestmentProposal() {
 }
 
 const WithdrawInvestmentProposalWithProvider = () => {
+  const { poolAddress } = useParams()
   return (
     <GraphProvider value={investPoolsClient}>
-      <WithdrawInvestmentProposal />
+      <WithPoolAddressValidation
+        poolAddress={poolAddress ?? ""}
+        loader={
+          <Center>
+            <GuardSpinner size={20} loading />
+          </Center>
+        }
+      >
+        <WithdrawInvestmentProposal />
+      </WithPoolAddressValidation>
     </GraphProvider>
   )
 }

@@ -4,27 +4,24 @@ import { motion } from "framer-motion"
 import { useMatch } from "react-router-dom"
 
 export const MobileMenu = styled(motion.div)`
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
   user-select: none;
-  grid-area: bottom;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 15px 14px 23px 14px;
   width: 100%;
   z-index: 100;
   background: #0e121b;
   border-radius: 8px 8px 0 0;
 
-  height: 49px;
   padding: 15px 14px 12px 14px;
 
   @media all and (display-mode: standalone) {
     height: 70px;
     padding: 5px 14px 25px 14px;
+  }
+
+  @media (min-width: 768px) {
+    flex-direction: column;
   }
 `
 

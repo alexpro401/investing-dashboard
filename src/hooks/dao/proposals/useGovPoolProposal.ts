@@ -12,7 +12,8 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { ProposalState, WrappedProposalView } from "types"
 import { useERC20 } from "hooks/useERC20"
 import { useSelector } from "react-redux"
-import { selectInsuranceAddress } from "../../../state/contracts/selectors"
+import { selectInsuranceAddress } from "state/contracts/selectors"
+import { InsuranceAccident } from "interfaces/insurance"
 
 const GovPoolGraphClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -81,6 +82,8 @@ export const useGovPoolProposal = (
 
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
+  const [insuranceProposalView, setInsuranceProposalView] =
+    useState<InsuranceAccident>({} as InsuranceAccident)
 
   const [myVotesAmount, setMyVotesAmount] = useState<BigNumber>()
 
@@ -276,19 +279,31 @@ export const useGovPoolProposal = (
 
   const loadDetailsFromIpfs = useCallback(async () => {
     try {
-      const entity = new IpfsEntity<{
-        proposalName: string
-        proposalDescription: string
-      }>({
-        path: wrappedProposalView?.proposal.descriptionURL,
-      })
+      if (isInsurance) {
+        const entity = new IpfsEntity<InsuranceAccident>({
+          path: wrappedProposalView?.proposal.descriptionURL,
+        })
 
-      const response = await entity.load()
+        const response = await entity.load()
 
-      setName(response.proposalName)
-      setDescription(response.proposalDescription)
+        setInsuranceProposalView(response)
+        setName("Insurance accident")
+        setDescription(response.form.description)
+      } else {
+        const entity = new IpfsEntity<{
+          proposalName: string
+          proposalDescription: string
+        }>({
+          path: wrappedProposalView?.proposal.descriptionURL,
+        })
+
+        const response = await entity.load()
+
+        setName(response.proposalName)
+        setDescription(response.proposalDescription)
+      }
     } catch (error) {}
-  }, [wrappedProposalView])
+  }, [wrappedProposalView, isInsurance])
 
   const loadProposalTotalVotes = useCallback(async () => {
     if (!account) return
@@ -310,7 +325,7 @@ export const useGovPoolProposal = (
       await loadDetailsFromIpfs()
       await loadProposalTotalVotes()
     } catch (error) {}
-  }, [loadDetailsFromIpfs, loadProposalTotalVotes])
+  }, [loadDetailsFromIpfs, loadProposalTotalVotes, isInsurance])
 
   useEffect(() => {
     init()
@@ -355,5 +370,6 @@ export const useGovPoolProposal = (
     claimRewards,
     govPoolDescriptionURL,
     progress,
+    insuranceProposalView,
   }
 }

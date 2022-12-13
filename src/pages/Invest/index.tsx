@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { useParams } from "react-router-dom"
-import { Flex } from "theme"
+import { Center, Flex } from "theme"
 
 import { ICON_NAMES } from "constants/icon-names"
 import Token from "components/Token"
@@ -35,6 +35,8 @@ import {
 } from "components/Exchange/styled"
 
 import useInvest from "./useInvest"
+import { GuardSpinner } from "react-spinners-kit"
+import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -298,9 +300,19 @@ const Invest = () => {
 }
 
 const InvestWithProvider = () => {
+  const { poolAddress } = useParams()
   return (
     <GraphProvider value={poolsClient}>
-      <Invest />
+      <WithPoolAddressValidation
+        poolAddress={poolAddress ?? ""}
+        loader={
+          <Center>
+            <GuardSpinner size={20} loading />
+          </Center>
+        }
+      >
+        <Invest />
+      </WithPoolAddressValidation>
     </GraphProvider>
   )
 }

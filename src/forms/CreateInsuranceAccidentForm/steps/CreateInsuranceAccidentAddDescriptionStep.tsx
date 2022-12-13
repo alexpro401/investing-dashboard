@@ -4,9 +4,7 @@ import {
   SetStateAction,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useState,
 } from "react"
 import { isEmpty, isNil } from "lodash"
 import { useWeb3React } from "@web3-react/core"
@@ -22,62 +20,31 @@ import {
 } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { Flex, Text } from "theme"
-import { normalizeBigNumber, parseTransactionError } from "utils"
+import { normalizeBigNumber } from "utils"
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 import { BigNumber } from "@ethersproject/bignumber"
 import { ZERO } from "constants/index"
 import { ICON_NAMES } from "constants/icon-names"
 import { AppButton, Icon, Card, CardDescription, CardHead } from "common"
-import { useInsuranceContract } from "contracts"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { selectDexeAddress } from "state/contracts/selectors"
 import { useSelector } from "react-redux"
 import { InputField, TextareaField } from "fields"
 import { readFromClipboard } from "utils/clipboard"
 import Tooltip from "components/Tooltip"
-import useError from "hooks/useError"
+import { useInsuranceAccidentTotals } from "hooks/useInsurance"
 
 const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
-  const [, setError] = useError()
   const { account } = useWeb3React()
   const { form, investorsTotals, investorsInfo } = useContext(
     InsuranceAccidentCreatingContext
   )
   const { chat, description } = form
 
-  // Payload
-  const insurance = useInsuranceContract()
   const dexeAddress = useSelector(selectDexeAddress)
-  const [insuranceTreasuryDEXE, setInsuranceTreasuryDEXE] = useState(ZERO)
   const dexePrice = useTokenPriceOutUSD({
     tokenAddress: dexeAddress,
   })
-  const insuranceTreasuryUSD = useTokenPriceOutUSD({
-    tokenAddress: dexeAddress,
-    amount: insuranceTreasuryDEXE,
-  })
-
-  useEffect(() => {
-    if (!insurance) {
-      return
-    }
-    ;(async () => {
-      try {
-        const maxTreasuryPayout = await insurance.getMaxTreasuryPayout()
-
-        if (!isNil(maxTreasuryPayout)) {
-          setInsuranceTreasuryDEXE(maxTreasuryPayout)
-        }
-      } catch (error: any) {
-        if (!!error && !!error.data && !!error.data.message) {
-          setError(error.data.message)
-        } else {
-          const errorMessage = parseTransactionError(error.toString())
-          !!errorMessage && setError(errorMessage)
-        }
-      }
-    })()
-  }, [insurance])
 
   const _inDayLpAmount = useMemo(() => {
     if (
@@ -162,67 +129,15 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
     return normalizeBigNumber(value, 18, 3)
   }, [dexePrice, userCoverageDEXE])
 
-  const totalLossDEXE = useMemo(() => {
-    if (
-      isNil(dexePrice) ||
-      isNil(investorsTotals.get) ||
-      BigNumber.from(investorsTotals.get.loss).isZero()
-    ) {
-      return "0.0"
-    }
+  const {
+    insuranceTreasuryDEXE,
+    insuranceTreasuryUSD,
+    totalLossDEXE,
+    totalLossUSD,
+    totalCoverageDEXE,
+    totalCoverageUSD,
+  } = useInsuranceAccidentTotals(investorsTotals.get)
 
-    const value = divideBignumbers(
-      [BigNumber.from(investorsTotals.get.loss), 18],
-      [BigNumber.from(dexePrice), 18]
-    )
-
-    return normalizeBigNumber(value, 18, 3)
-  }, [dexePrice, investorsTotals])
-
-  const totalLossUSD = useMemo(() => {
-    if (
-      isNil(investorsTotals.get) ||
-      BigNumber.from(investorsTotals.get.loss).isZero()
-    ) {
-      return "0.0"
-    }
-
-    return normalizeBigNumber(BigNumber.from(investorsTotals.get.loss), 18, 3)
-  }, [investorsTotals])
-
-  const totalCoverageDEXE = useMemo(() => {
-    if (
-      isNil(investorsTotals.get) ||
-      BigNumber.from(investorsTotals.get.coverage).isZero()
-    ) {
-      return "0.0"
-    }
-
-    return normalizeBigNumber(
-      BigNumber.from(investorsTotals.get.coverage),
-      18,
-      3
-    )
-  }, [investorsTotals])
-
-  const totalCoverageUSD = useMemo(() => {
-    if (
-      isNil(dexePrice) ||
-      isNil(investorsTotals.get) ||
-      BigNumber.from(investorsTotals.get.coverage).isZero()
-    ) {
-      return "0.0"
-    }
-
-    const value = multiplyBignumbers(
-      [BigNumber.from(investorsTotals.get.coverage), 18],
-      [BigNumber.from(dexePrice), 18]
-    )
-
-    return normalizeBigNumber(BigNumber.from(value), 18, 3)
-  }, [investorsTotals, dexePrice])
-
-  // Form
   const pasteFromClipboard = useCallback(
     async (dispatchCb: Dispatch<SetStateAction<any>>) => {
       dispatchCb(await readFromClipboard())
@@ -291,10 +206,10 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
                 </Text>
                 <Flex jc="flex-end" gap="4">
                   <Text fz={13} fw={500} color="#E4F2FF">
-                    {totalLossDEXE} DEXE
+                    {normalizeBigNumber(totalLossDEXE, 18, 3)} DEXE
                   </Text>
                   <Text fz={13} fw={500} color="#B1C7FC">
-                    ($ {totalLossUSD})
+                    ($ {normalizeBigNumber(totalLossUSD, 18, 3)})
                   </Text>
                 </Flex>
               </Flex>
@@ -304,10 +219,10 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
                 </Text>
                 <Flex jc="flex-end" gap="4">
                   <Text fz={13} fw={500} color="#E4F2FF">
-                    {totalCoverageDEXE} DEXE
+                    {normalizeBigNumber(totalCoverageDEXE, 18, 3)} DEXE
                   </Text>
                   <Text fz={13} fw={500} color="#B1C7FC">
-                    ($ {totalCoverageUSD})
+                    ($ {normalizeBigNumber(totalCoverageUSD, 18, 3)})
                   </Text>
                 </Flex>
               </Flex>

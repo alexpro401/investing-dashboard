@@ -7,15 +7,12 @@ import insuranceBG from "assets/background/insurance-card.svg"
 import dexePlaceholder from "assets/icons/dexe-placeholder.svg"
 
 export const Container = styled(Flex)`
+  overflow: hidden auto;
   padding: 16px 16px;
   width: 100%;
   flex-direction: column;
   align-items: flex-start;
-  height: calc(100vh - 94px);
-
-  @media all and (display-mode: standalone) {
-    height: calc(100vh - 115px);
-  }
+  flex: 1;
 `
 
 export const Cards = styled(Flex)`
