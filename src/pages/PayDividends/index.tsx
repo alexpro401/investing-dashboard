@@ -1,4 +1,4 @@
-import { Flex } from "theme"
+import { Center, Flex } from "theme"
 import { useCallback, useMemo, useState } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
@@ -43,6 +43,8 @@ import useConvertToDividendsContext, {
 import { useAllTokenBalances } from "hooks/useBalance"
 import { useAllTokens } from "hooks/useToken"
 import { Currency } from "lib/entities"
+import WithPoolAddressValidation from "components/WithPoolAddressValidation"
+import { GuardSpinner } from "react-spinners-kit"
 
 const investPoolClient = createClient({
   url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",
@@ -287,11 +289,22 @@ function PayDividends() {
 }
 
 const PayDividendsWithProvider = () => {
+  const { poolAddress } = useParams()
+
   return (
     <GraphProvider value={investPoolClient}>
-      <ConvertToDividendsProvider>
-        <PayDividends />
-      </ConvertToDividendsProvider>
+      <WithPoolAddressValidation
+        poolAddress={poolAddress ?? ""}
+        loader={
+          <Center>
+            <GuardSpinner size={20} loading />
+          </Center>
+        }
+      >
+        <ConvertToDividendsProvider>
+          <PayDividends />
+        </ConvertToDividendsProvider>
+      </WithPoolAddressValidation>
     </GraphProvider>
   )
 }

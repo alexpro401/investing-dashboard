@@ -1,4 +1,4 @@
-import { Flex } from "theme"
+import { Center, Flex } from "theme"
 import { useCallback, useMemo } from "react"
 import { useParams } from "react-router-dom"
 import { createClient, Provider as GraphProvider } from "urql"
@@ -33,6 +33,8 @@ import { normalizeBigNumber } from "utils"
 import SwapPrice from "components/SwapPrice"
 import { useUserAgreement } from "state/user/hooks"
 import useInvestRiskyProposal from "./useInvestRiskyProposal"
+import WithPoolAddressValidation from "components/WithPoolAddressValidation"
+import { GuardSpinner } from "react-spinners-kit"
 
 const basicClient = createClient({
   url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
@@ -300,9 +302,19 @@ function InvestRiskyProposal() {
 }
 
 const InvestRiskyProposalWithProvider = () => {
+  const { poolAddress } = useParams()
   return (
     <GraphProvider value={basicClient}>
-      <InvestRiskyProposal />
+      <WithPoolAddressValidation
+        poolAddress={poolAddress ?? ""}
+        loader={
+          <Center>
+            <GuardSpinner size={20} loading />
+          </Center>
+        }
+      >
+        <InvestRiskyProposal />
+      </WithPoolAddressValidation>
     </GraphProvider>
   )
 }
