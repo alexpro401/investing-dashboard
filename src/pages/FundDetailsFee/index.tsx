@@ -114,7 +114,7 @@ const FundDetailsFee: FC = () => {
 
           <PoolPnlChart address={poolAddress} baseToken={poolData?.baseToken} />
 
-          <Flex full dir="column">
+          <Flex full dir="column" m={"16px 0 0"}>
             <AmountRow
               title="Funds under management"
               value={fundsUnderManagementDexe}
