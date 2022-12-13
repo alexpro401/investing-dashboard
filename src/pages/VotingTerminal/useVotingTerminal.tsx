@@ -6,7 +6,6 @@ import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
 import {
   useGovPoolUserVotingPower,
   useGovPoolVote,
-  useGovPoolMemberBalance,
   useGovPoolHelperContracts,
   useGovPoolVotingAssets,
 } from "hooks/dao"
@@ -50,10 +49,6 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
   const [{ haveToken, haveNft, tokenAddress, nftAddress }] =
     useGovPoolVotingAssets(daoPoolAddress)
   const { vote, voteDelegated } = useGovPoolVote(daoPoolAddress)
-  const { tokenBalanceDelegated } = useGovPoolMemberBalance(
-    daoPoolAddress,
-    withDelegated
-  )
 
   const erc20Balances = useERC20GovBalance(daoPoolAddress)
   const erc721Balances = useERC721GovBalance(daoPoolAddress)
@@ -169,11 +164,8 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
     }, {})
   }, [allNftsId, allNftsPower])
 
-  console.log(ERC20Voted.toString())
-
   // all token balances with advanced calculations
   const tokenBalances = useMemo(() => {
-    console.log(erc20Balances.poolBalance.toString(), ERC20Voted.toString())
     const advencedBalances = {
       erc20LockedWithoutVotes: erc20Balances.poolBalance.sub(ERC20Voted),
       erc20LockedAndDelegatedBalance: erc20Balances.delegatedBalance.add(
@@ -371,8 +363,6 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
         : erc20Balances.poolBalance
       const amount = ERC20Amount.sub(locked)
 
-      console.log(amount.toString())
-
       updateERC20Allowance(tokenAddress, amount)
       return
     }
@@ -466,14 +456,19 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
     try {
       await handleVote(id)
 
-      if (delegatedERC721Selected.length > 0) {
+      if (
+        delegatedERC721Selected.length > 0 ||
+        (!ERC20Amount.isZero() && !erc20Balances.delegatedBalance.isZero())
+      ) {
         await handleVoteDelegated(id)
       }
     } catch (err) {
       console.error(err)
     }
   }, [
+    ERC20Amount,
     delegatedERC721Selected.length,
+    erc20Balances.delegatedBalance,
     handleVote,
     handleVoteDelegated,
     proposalId,
