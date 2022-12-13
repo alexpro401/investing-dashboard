@@ -1,5 +1,5 @@
 import { FC, useState } from "react"
-import { Flex } from "theme"
+import { Center, Flex } from "theme"
 import { format } from "date-fns/esm"
 import {
   Navigate,
@@ -67,6 +67,8 @@ import {
   Grey,
   ValidationError,
 } from "./styled"
+import WithPoolAddressValidation from "components/WithPoolAddressValidation"
+import { GuardSpinner } from "react-spinners-kit"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -430,9 +432,20 @@ const CreateRiskyProposal: FC = () => {
 }
 
 const CreateRiskyProposalWithProvider = () => {
+  const { poolAddress } = useParams()
+
   return (
     <GraphProvider value={poolsClient}>
-      <CreateRiskyProposal />
+      <WithPoolAddressValidation
+        poolAddress={poolAddress ?? ""}
+        loader={
+          <Center>
+            <GuardSpinner size={20} loading />
+          </Center>
+        }
+      >
+        <CreateRiskyProposal />
+      </WithPoolAddressValidation>
     </GraphProvider>
   )
 }
