@@ -39,6 +39,7 @@ import usePoolPrice from "hooks/usePoolPrice"
 import { multiplyBignumbers } from "utils/formulas"
 import { usePoolContract } from "hooks/usePool"
 import { useTraderPoolContract } from "contracts"
+import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -95,24 +96,24 @@ function Pool() {
         leftNode: {
           onClick: () =>
             navigate(
-              `/pool/swap/${poolData.type}/${poolData.id}/${poolData.baseToken}/0x`
+              `/pool/swap/${poolData?.type}/${poolData?.id}/${poolData?.baseToken}/0x`
             ),
           text: "Open new trade",
         },
         rightNode: {
-          onClick: () => navigate(`/fund-positions/${poolData.id}/open`),
+          onClick: () => navigate(`/fund-positions/${poolData?.id}/open`),
           text: `Positions`,
         },
       }
     } else {
       return {
         leftNode: {
-          onClick: () => navigate(`/fund-positions/${poolData.id}/closed`),
+          onClick: () => navigate(`/fund-positions/${poolData?.id}/closed`),
           text: "Fund positions",
         },
         rightNode: {
-          onClick: () => navigate(`/pool/invest/${poolData.id}`),
-          text: `Buy ${poolData.ticker}`,
+          onClick: () => navigate(`/pool/invest/${poolData?.id}`),
+          text: `Buy ${poolData?.ticker}`,
         },
       }
     }
@@ -132,14 +133,18 @@ function Pool() {
                   <GuardSpinner size={20} loading />
                 </Center>
               ) : (
-                <TabPoolPnl address={poolData.id} />
+                <TabPoolPnl address={poolData?.id} />
               ),
             },
             {
               name: "Locked funds",
-              child: (
+              child: load ? (
+                <Center>
+                  <GuardSpinner size={20} loading />
+                </Center>
+              ) : (
                 <TabPoolLockedFunds
-                  address={poolData.id}
+                  address={poolData?.id}
                   poolData={poolData}
                   poolInfo={poolInfoData}
                   baseToken={baseToken}
@@ -150,7 +155,11 @@ function Pool() {
             },
             {
               name: "About fund",
-              child: (
+              child: load ? (
+                <Center>
+                  <GuardSpinner size={20} loading />
+                </Center>
+              ) : (
                 <TabPoolInfo
                   data={poolData}
                   poolInfo={poolInfoData}
@@ -162,13 +171,21 @@ function Pool() {
             },
             {
               name: "Statistic",
-              child: (
+              child: load ? (
+                <Center>
+                  <GuardSpinner size={20} loading />
+                </Center>
+              ) : (
                 <TabPoolStatistic poolData={poolData} poolInfo={poolInfoData} />
               ),
             },
             {
               name: "Holders",
-              child: (
+              child: load ? (
+                <Center>
+                  <GuardSpinner size={20} loading />
+                </Center>
+              ) : (
                 <TabPoolHolders
                   poolData={poolData}
                   chainId={chainId}
@@ -197,51 +214,71 @@ function Pool() {
         <Pools />
       </Header>
       <Container>
-        <Indents top>
-          <PoolStatisticCard data={poolData}>
-            <>
-              <ButtonContainer>
-                <AppButton
-                  color="secondary"
-                  size="small"
-                  full
-                  onClick={actions.leftNode.onClick}
-                  text={actions.leftNode.text}
-                />
-                <AppButton
-                  color="primary"
-                  size="small"
-                  onClick={actions.rightNode.onClick}
-                  full
-                  text={actions.rightNode.text}
-                />
-              </ButtonContainer>
-              {!isTrader && (
+        {!isNil(poolData) ? (
+          <>
+            <Indents top>
+              <PoolStatisticCard data={poolData}>
                 <>
-                  <Divider />
-                  <Flex full ai="center" jc="space-between">
-                    <Label>Your share</Label>
-                    <Value.Medium color="#E4F2FF">
-                      {normalizeBigNumber(accountLPs, 18, 2)} {poolData.ticker}
-                    </Value.Medium>
-                  </Flex>
+                  <ButtonContainer>
+                    <AppButton
+                      color="secondary"
+                      size="small"
+                      full
+                      onClick={actions.leftNode.onClick}
+                      text={actions.leftNode.text}
+                    />
+                    <AppButton
+                      color="primary"
+                      size="small"
+                      onClick={actions.rightNode.onClick}
+                      full
+                      text={actions.rightNode.text}
+                    />
+                  </ButtonContainer>
+                  {!isTrader && (
+                    <>
+                      <Divider />
+                      <Flex full ai="center" jc="space-between">
+                        <Label>Your share</Label>
+                        <Value.Medium color="#E4F2FF">
+                          {normalizeBigNumber(accountLPs, 18, 2)}{" "}
+                          {poolData?.ticker}
+                        </Value.Medium>
+                      </Flex>
+                    </>
+                  )}
                 </>
-              )}
-            </>
-          </PoolStatisticCard>
-        </Indents>
-        {PoolPageTabs}
+              </PoolStatisticCard>
+            </Indents>
+            {PoolPageTabs}
+          </>
+        ) : (
+          <Center>
+            <GuardSpinner size={20} loading />
+          </Center>
+        )}
       </Container>
     </>
   )
 }
 
-const PoolWithProvider = () => {
+const PoolWithProviders = () => {
+  const { poolAddress } = useParams()
+
   return (
     <GraphProvider value={poolsClient}>
-      <Pool />
+      <WithPoolAddressValidation
+        poolAddress={poolAddress ?? ""}
+        loader={
+          <Center>
+            <GuardSpinner size={20} loading />
+          </Center>
+        }
+      >
+        <Pool />
+      </WithPoolAddressValidation>
     </GraphProvider>
   )
 }
 
-export default PoolWithProvider
+export default PoolWithProviders
