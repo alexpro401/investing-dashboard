@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState, useContext } from "react"
 import { useParams } from "react-router-dom"
 import { BigNumber } from "@ethersproject/bignumber"
-import { useSelector } from "react-redux"
 import { useWeb3React } from "@web3-react/core"
 
 import * as S from "./styled"
@@ -29,7 +28,6 @@ import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import ChooseDaoProposalAsPerson from "modals/ChooseDaoProposalAsPerson"
 import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsContext/GovPoolProfileTabsContext"
-import { selectDexeAddress } from "state/contracts/selectors"
 import Tabs from "common/Tabs"
 import { Flex } from "theme"
 
@@ -41,117 +39,9 @@ const govPoolsClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
 })
 
-const FakeTokensData = (dexeAddress) => [
-  {
-    id: dexeAddress ?? "0x",
-    type: "Token",
-    amount: "14.2134.213412",
-    amountUsd: "14",
-    inTreasury: "100",
-    inVoting: "21",
-  },
-  {
-    id: dexeAddress ?? "0x",
-    type: "NFT",
-    amount: "11234.1324",
-    amountUsd: "141234.123",
-    inTreasury: "23",
-    inVoting: "41",
-  },
-  {
-    id: dexeAddress ?? "0x",
-    type: "Token",
-    amount: "14",
-    amountUsd: "14",
-    inTreasury: "14",
-    inVoting: "20",
-  },
-  {
-    id: dexeAddress ?? "0x",
-    type: "NFT",
-    amount: "14",
-    amountUsd: "14",
-    inTreasury: "14",
-    inVoting: "20",
-  },
-  {
-    id: dexeAddress ?? "0x",
-    type: "NFT",
-    amount: "14",
-    amountUsd: "14",
-    inTreasury: "14",
-    inVoting: "20",
-  },
-  {
-    id: dexeAddress ?? "0x",
-    type: "Token",
-    amount: "14",
-    amountUsd: "14",
-    inTreasury: "14",
-    inVoting: "20",
-  },
-  {
-    id: dexeAddress ?? "0x",
-    type: "NFT",
-    amount: "14",
-    amountUsd: "14",
-    inTreasury: "14",
-    inVoting: "20",
-  },
-  {
-    id: dexeAddress ?? "0x",
-    type: "Token",
-    amount: "14",
-    amountUsd: "14",
-    inTreasury: "14",
-    inVoting: "20",
-  },
-  {
-    id: dexeAddress ?? "0x",
-    type: "NFT",
-    amount: "14",
-    amountUsd: "14",
-    inTreasury: "14",
-    inVoting: "20",
-  },
-  {
-    id: dexeAddress ?? "0x",
-    type: "Token",
-    amount: "14",
-    amountUsd: "14",
-    inTreasury: "14",
-    inVoting: "20",
-  },
-  {
-    id: dexeAddress ?? "0x",
-    type: "Token",
-    amount: "14",
-    amountUsd: "14",
-    inTreasury: "14",
-    inVoting: "20",
-  },
-  {
-    id: dexeAddress ?? "0x",
-    type: "NFT",
-    amount: "14",
-    amountUsd: "14",
-    inTreasury: "14",
-    inVoting: "20",
-  },
-  {
-    id: dexeAddress ?? "0x",
-    type: "NFT",
-    amount: "14",
-    amountUsd: "14",
-    inTreasury: "14",
-    inVoting: "20",
-  },
-]
-
 const DaoProfile: React.FC = () => {
   const { account, chainId } = useWeb3React()
   const { daoAddress } = useParams()
-  const dexeAddress = useSelector(selectDexeAddress)
 
   const { currentTab, daoDescription } = useContext(GovPoolProfileTabsContext)
 
@@ -244,7 +134,7 @@ const DaoProfile: React.FC = () => {
         />
       </S.Indents>
     )
-  }, [daoAddress, chainId, currentTab])
+  }, [daoAddress, chainId, currentTab, govPoolQuery])
 
   return (
     <>
@@ -277,9 +167,7 @@ const DaoProfile: React.FC = () => {
               />
             </S.Indents>
             <S.Indents top side={false}>
-              <DaoProfileTokensInTreasuryCard
-                tokens={FakeTokensData(dexeAddress)}
-              />
+              <DaoProfileTokensInTreasuryCard />
             </S.Indents>
           </S.Indents>
           <Flex full m="40px 0 16px">

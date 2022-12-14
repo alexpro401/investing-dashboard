@@ -1,4 +1,4 @@
-import { FC, useCallback, useState, useMemo } from "react"
+import { FC, useCallback, useState, useMemo, useContext } from "react"
 import { v4 as uuidv4 } from "uuid"
 
 import theme, { Flex } from "theme"
@@ -12,7 +12,7 @@ import { ICON_NAMES } from "constants/icon-names"
 import ERC721Row from "components/ERC721Row"
 import { ZERO } from "constants/index"
 
-import { useGovPoolVotingAssets, useGovPoolWithdrawableAssets } from "hooks/dao"
+import { useGovPoolWithdrawableAssets } from "hooks/dao"
 import { useActiveWeb3React } from "hooks"
 import {
   useERC20GovBalance,
@@ -21,6 +21,7 @@ import {
 import { formatTokenNumber } from "utils"
 import { divideBignumbers } from "utils/formulas"
 import { formatUnits, parseEther } from "@ethersproject/units"
+import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommonContext/GovPoolProfileCommonContext"
 import { isNaN } from "lodash"
 
 interface Props {
@@ -28,12 +29,13 @@ interface Props {
 }
 
 const DaoProfileUserBalancesCard: FC<Props> = ({ daoPoolAddress }) => {
+  const { haveNft, haveToken, mainToken } = useContext(
+    GovPoolProfileCommonContext
+  )
+
   const [showNftList, setShowNftList] = useState(false)
 
   const { account } = useActiveWeb3React()
-
-  const [{ haveNft, haveToken }, { token }] =
-    useGovPoolVotingAssets(daoPoolAddress)
 
   const withdrawableAssets = useGovPoolWithdrawableAssets({
     daoPoolAddress,
@@ -69,13 +71,13 @@ const DaoProfileUserBalancesCard: FC<Props> = ({ daoPoolAddress }) => {
 
   const progressBarValue = useMemo(() => {
     const tokenDenumerator = divideBignumbers(
-      [erc20.total, token?.decimals || 18],
+      [erc20.total, mainToken?.decimals || 18],
       [parseEther("100"), 18]
     )
 
     const tokenScore = divideBignumbers(
-      [erc20.used, token?.decimals || 18],
-      [tokenDenumerator, token?.decimals || 18]
+      [erc20.used, mainToken?.decimals || 18],
+      [tokenDenumerator, mainToken?.decimals || 18]
     )
 
     const nftDenumerator = erc721.total.length / 100
@@ -83,10 +85,16 @@ const DaoProfileUserBalancesCard: FC<Props> = ({ daoPoolAddress }) => {
     const nftScore = erc721.used.length / nftDenumerator
 
     const percent =
-      Number(formatUnits(tokenScore, token?.decimals || 18)) + nftScore
+      Number(formatUnits(tokenScore, mainToken?.decimals || 18)) + nftScore
 
     return isNaN(percent) || percent < 0 ? 0 : Number((percent / 2).toFixed(0))
-  }, [erc20.total, erc20.used, erc721.total.length, erc721.used.length, token])
+  }, [
+    erc20.total,
+    erc20.used,
+    erc721.total.length,
+    erc721.used.length,
+    mainToken,
+  ])
 
   const toggleNftList = useCallback(() => {
     if (haveNft && !!erc721.total.length) {
@@ -104,7 +112,7 @@ const DaoProfileUserBalancesCard: FC<Props> = ({ daoPoolAddress }) => {
                 {formatTokenNumber(erc20.total, 18, 2)} /
               </TextValue>
               <TextValue fw={600} color={theme.textColors.secondary}>
-                {formatTokenNumber(erc20.used, 18, 2)} {token?.symbol}
+                {formatTokenNumber(erc20.used, 18, 2)} {mainToken?.symbol}
               </TextValue>
             </Flex>
             <Flex ai="center" gap="4">

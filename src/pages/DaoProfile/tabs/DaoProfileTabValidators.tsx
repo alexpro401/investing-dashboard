@@ -122,7 +122,7 @@ const DaoProfileTabValidators: React.FC<Props> = ({ chainId }) => {
 
   return (
     <Card>
-      {validatorsCount && (
+      {validatorsCount !== null && (
         <>
           {validatorsCount === 0 && TableNoDataPlaceholder}
           {validatorsCount !== 0 && (

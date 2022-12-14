@@ -39,6 +39,13 @@ export interface NftMetadata {
 }
 
 // endpoint: /getwalletnfts
+export interface GetNftsByWalletParams {
+  token_addresses?: string[]
+  limit?: number
+  format?: "decimal" | "hex"
+  chainId: number
+}
+
 export interface GetNftsByWalletResponse extends NftMetadata {}
 
 // endpoint: /getcontractnfts

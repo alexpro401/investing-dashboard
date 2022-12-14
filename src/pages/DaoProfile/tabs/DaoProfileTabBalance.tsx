@@ -35,7 +35,8 @@ const DaoProfileTabBalance: React.FC<Props> = ({ daoAddress }) => {
 
   return (
     <>
-      <DaoProfileEmptyBalanceCard />
+      {/* TODO add this card with completed Add token proposal */}
+      {/* <DaoProfileEmptyBalanceCard /> */}
       <Indents top side={false}>
         <DaoProfileUserBalancesCard daoPoolAddress={daoAddress} />
       </Indents>

@@ -86,7 +86,7 @@ const GovPoolProfileTabsContextProvider: React.FC<
   })
 
   useEffect(() => {
-    if (validatorsCount) {
+    if (validatorsCount !== null) {
       _setValidatorsCount(validatorsCount)
     }
   }, [validatorsCount])
@@ -105,7 +105,7 @@ const GovPoolProfileTabsContextProvider: React.FC<
   })
 
   useEffect(() => {
-    if (proposalsCount) {
+    if (proposalsCount !== null) {
       _setMyProposalsCount(proposalsCount)
     }
   }, [proposalsCount])

@@ -62,20 +62,20 @@ class MoralisNftAPI implements NftAPI {
   // https://docs.moralis.io/reference/getwalletnfts
   getNftsByWallet = async (
     account: string,
-    chainId: number,
-    contractAddress: string
+    { chainId, format, limit, token_addresses }: NftTypes.GetNftsByWalletParams
   ) => {
     const result = await this.fetch<
       NftTypes.MoralisAPIResponse<NftTypes.GetNftsByWalletResponse[]>
     >(`/${account}/nft`, {
       params: {
         chain: NftTypes.MORALIS_NETWORK_BY_CHAIN[chainId],
-        format: "decimal",
-        token_addresses: contractAddress,
+        format: format ?? "decimal",
+        token_addresses: token_addresses ?? undefined,
+        limit: limit ?? undefined,
       },
     })
 
-    return result.result.map((nft) => Number(nft.token_id))
+    return result.result
   }
 
   // https://docs.moralis.io/reference/getcontractnfts

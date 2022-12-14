@@ -1,7 +1,7 @@
 import React, { useContext, useCallback } from "react"
 import { useParams } from "react-router-dom"
 import { BigNumber } from "@ethersproject/bignumber"
-import { formatUnits, parseUnits } from "@ethersproject/units"
+import { formatUnits } from "@ethersproject/units"
 import { useActiveWeb3React } from "hooks"
 
 import {
@@ -33,6 +33,7 @@ import * as S from "./styled"
 const CreateDaoProposalTokenDistributionForm: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
   const [treasury] = useGovPoolTreasury(daoAddress)
+
   const { chainId } = useActiveWeb3React()
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
