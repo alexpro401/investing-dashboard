@@ -1,5 +1,4 @@
 import React, { HTMLAttributes, useMemo } from "react"
-import { formatEther } from "@ethersproject/units"
 
 import Switch from "components/Switch"
 import { TokenChip } from "common"
@@ -9,7 +8,7 @@ import {
   parseDuration,
   parseDurationShortString,
 } from "utils/time"
-import { cutStringZeroes, isAddress } from "utils"
+import { isAddress } from "utils"
 import { ZERO_ADDR } from "constants/index"
 import { useERC20 } from "hooks/useERC20"
 import getExplorerLink from "utils/getExplorerLink"

@@ -53,8 +53,8 @@ export const AuthOutletWrp = styled.div`
   position: relative;
   overflow: hidden auto;
   display: flex;
-  flex-direction: column;
   flex: 1;
+  background: ${(props) => props.theme.backgroundColors.primary};
 `
 
 export const AuthOutlet = styled(Outlet)`

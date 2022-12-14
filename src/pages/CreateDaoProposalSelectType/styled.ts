@@ -22,6 +22,7 @@ export const CreateProposalSelectTypeContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 15px;
+  height: 100%;
 `
 
 export const CreateProposalSelectTypeHeader = styled.div`
@@ -50,6 +51,7 @@ export const CreateProposalSelectTypeCreateNew = styled(NavLink)`
   line-height: 19px;
 `
 export const CreateProposalSelectTypeSubmitButton = styled(AppButton)`
+  margin-top: auto;
   width: 100%;
 `
 export const ProposalTypeGuide = styled.div`

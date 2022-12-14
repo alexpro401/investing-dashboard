@@ -49,7 +49,7 @@ export const usePoolBalancesWithLoadingIndicator = (
       account && validatedTokens.length > 0
         ? validatedTokens.reduce<{
             [tokenAddress: string]: CurrencyAmount<Token> | undefined
-          }>((memo, token, i) => {
+          }>((memo, token) => {
             const tokenAddress = token.address.toLocaleLowerCase()
             const positionIndex = positions.indexOf(tokenAddress)
 

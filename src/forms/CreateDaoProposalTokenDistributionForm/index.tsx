@@ -1,7 +1,7 @@
 import React, { useContext, useCallback } from "react"
 import { useParams } from "react-router-dom"
 import { BigNumber } from "@ethersproject/bignumber"
-import { formatUnits, parseUnits } from "@ethersproject/units"
+import { formatUnits } from "@ethersproject/units"
 import { useActiveWeb3React } from "hooks"
 
 import {

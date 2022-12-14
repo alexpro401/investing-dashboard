@@ -92,10 +92,6 @@ const DaoSettingsParameters: FC<Props> = ({
     field: "defaultProposalSettingForm.minVotesForCreating",
   })
 
-  const rewardTokenIsChanged = useIsDaoFieldChanged({
-    field: "defaultProposalSettingForm.rewardToken",
-  })
-
   const creationRewardIsChanged = useIsDaoFieldChanged({
     field: "defaultProposalSettingForm.creationReward",
   })

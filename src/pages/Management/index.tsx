@@ -2,7 +2,6 @@ import { Flex } from "theme"
 import { useMemo } from "react"
 import { createClient, Provider as GraphProvider } from "urql"
 import { BigNumber } from "@ethersproject/bignumber"
-import { Icon } from "common"
 
 import { ICON_NAMES } from "constants/icon-names"
 import ExchangeInput from "components/Exchange/ExchangeInput"

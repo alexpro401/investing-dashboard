@@ -1,3 +1,4 @@
+import { FC } from "react"
 import { useSelector } from "react-redux"
 import { BigNumber } from "@ethersproject/bignumber"
 
@@ -51,7 +52,7 @@ interface IProps {
   info: TransactionInfo
 }
 
-const ApprovalSummary: React.FC<{ info: ApproveTransactionInfo }> = ({
+const ApprovalSummary: FC<{ info: ApproveTransactionInfo }> = ({
   info: { tokenAddress },
 }) => {
   const token = useSelector(selectWhitelistItem(tokenAddress))
@@ -59,7 +60,7 @@ const ApprovalSummary: React.FC<{ info: ApproveTransactionInfo }> = ({
   return <>Approve {token?.symbol}</>
 }
 
-const SwapSummaryInput: React.FC<{ info: ExactInputSwapTransactionInfo }> = ({
+const SwapSummaryInput: FC<{ info: ExactInputSwapTransactionInfo }> = ({
   info,
 }) => {
   return (
@@ -77,7 +78,7 @@ const SwapSummaryInput: React.FC<{ info: ExactInputSwapTransactionInfo }> = ({
     </>
   )
 }
-const SwapSummaryOutput: React.FC<{ info: ExactOutputSwapTransactionInfo }> = ({
+const SwapSummaryOutput: FC<{ info: ExactOutputSwapTransactionInfo }> = ({
   info,
 }) => {
   return (
@@ -96,7 +97,7 @@ const SwapSummaryOutput: React.FC<{ info: ExactOutputSwapTransactionInfo }> = ({
   )
 }
 
-const SwapSummary: React.FC<{
+const SwapSummary: FC<{
   info: ExactInputSwapTransactionInfo | ExactOutputSwapTransactionInfo
 }> = ({ info }) => {
   if (info.tradeType === TradeType.EXACT_INPUT) {
@@ -106,7 +107,7 @@ const SwapSummary: React.FC<{
   }
 }
 
-const DepositLiquiditySummary: React.FC<{
+const DepositLiquiditySummary: FC<{
   info: DepositLiquidityTransactionInfo
 }> = ({ info: { currencyId, amount } }) => {
   return (
@@ -117,7 +118,7 @@ const DepositLiquiditySummary: React.FC<{
   )
 }
 
-const WithdrawLiquiditySummary: React.FC<{
+const WithdrawLiquiditySummary: FC<{
   info: WithdrawLiquidityTransactionInfo
 }> = ({ info: { currencyId, amount } }) => {
   return (
@@ -128,7 +129,7 @@ const WithdrawLiquiditySummary: React.FC<{
   )
 }
 
-const FundCreateSummary: React.FC<{ info: FundCreateTransactionInfo }> = ({
+const FundCreateSummary: FC<{ info: FundCreateTransactionInfo }> = ({
   info: { fundName, baseCurrencyId },
 }) => {
   const baseCurrency = useSelector(selectWhitelistItem(baseCurrencyId))
@@ -141,7 +142,7 @@ const FundCreateSummary: React.FC<{ info: FundCreateTransactionInfo }> = ({
   )
 }
 
-const FundEditSummary: React.FC<{ info: FundEditTransactionInfo }> = ({
+const FundEditSummary: FC<{ info: FundEditTransactionInfo }> = ({
   info: { fundName, baseCurrencyId },
 }) => {
   const baseCurrency = useSelector(selectWhitelistItem(baseCurrencyId))
@@ -154,36 +155,36 @@ const FundEditSummary: React.FC<{ info: FundEditTransactionInfo }> = ({
   )
 }
 
-const FundUpdateUnvestorsSummary: React.FC<{
+const FundUpdateUnvestorsSummary: FC<{
   info: FundUpdateInvestorsTransactionInfo
 }> = ({ info }) => {
   const action = info.editType === UpdateListType.ADD ? "add" : "remove"
   return <>Successlully {action} investors</>
 }
 
-const FundUpdateManagersSummary: React.FC<{
+const FundUpdateManagersSummary: FC<{
   info: FundUpdateManagersTransactionInfo
 }> = ({ info }) => {
   const action = info.editType === UpdateListType.ADD ? "add" : "remove"
   return <>Successlully {action} managers</>
 }
 
-const CredentialsUpdateSummary: React.FC = () => {
+const CredentialsUpdateSummary: FC = () => {
   return <>Successfully update Credentials</>
 }
 
-const CreateRiskyProposalSummary: React.FC<{
+const CreateRiskyProposalSummary: FC<{
   info: CreateRiskyProposalTransactionInfo
 }> = ({ info }) => {
   const [token] = useERC20Data(info.token)
   return <>Successfully create Risky Proposal for {token?.symbol}</>
 }
-const EditRiskyProposalSummary: React.FC<{
+const EditRiskyProposalSummary: FC<{
   info: EditRiskyProposalTransactionInfo
 }> = () => {
   return <>Successfully update Risky Proposal</>
 }
-const DepositRiskyProposalSummary: React.FC<{
+const DepositRiskyProposalSummary: FC<{
   info: DepositRiskyProposalTransactionInfo
 }> = ({ info }) => {
   return (
@@ -201,7 +202,7 @@ const DepositRiskyProposalSummary: React.FC<{
     </>
   )
 }
-const WithdrawRiskyProposalSummary: React.FC<{
+const WithdrawRiskyProposalSummary: FC<{
   info: WithdrawRiskyProposalTransactionInfo
 }> = ({ info }) => {
   return (
@@ -219,7 +220,7 @@ const WithdrawRiskyProposalSummary: React.FC<{
     </>
   )
 }
-const SwapRiskyProposalSummary: React.FC<{
+const SwapRiskyProposalSummary: FC<{
   info: SwapRiskyProposalTransactionInfo
 }> = ({ info }) => {
   return (
@@ -238,25 +239,25 @@ const SwapRiskyProposalSummary: React.FC<{
   )
 }
 
-const CreateInvestmentProposalSummary: React.FC<{
+const CreateInvestmentProposalSummary: FC<{
   info: CreateInvestmentProposalTransactionInfo
 }> = ({ info: { investLpAmountRaw } }) => {
   const amount = formatBigNumber(BigNumber.from(investLpAmountRaw))
   return <>Create Invest Proposal for {amount} LP tokens</>
 }
-const EditInvestProposalSummary: React.FC<{
+const EditInvestProposalSummary: FC<{
   info: EditInvestProposalTransactionInfo
 }> = ({ info: { investLpAmountRaw } }) => {
   const amount = formatBigNumber(BigNumber.from(investLpAmountRaw))
   return <>Update Invest Proposal with {amount} of LP tokens</>
 }
-const DepositInvestProposalSummary: React.FC<{
+const DepositInvestProposalSummary: FC<{
   info: DepositInvestProposalTransactionInfo
 }> = ({ info: { investLpAmountRaw } }) => {
   const amount = formatBigNumber(BigNumber.from(investLpAmountRaw))
   return <>Stake Invest Proposal LP2 tokens with {amount} LP tokens</>
 }
-const WithdrawInvestProposalSummary: React.FC<{
+const WithdrawInvestProposalSummary: FC<{
   info: WithdrawInvestProposalTransactionInfo
 }> = ({ info: { amountRaw, symbol } }) => {
   const amount = formatBigNumber(BigNumber.from(amountRaw))
@@ -266,18 +267,18 @@ const WithdrawInvestProposalSummary: React.FC<{
     </>
   )
 }
-const SupplyInvestProposalSummary: React.FC<{
+const SupplyInvestProposalSummary: FC<{
   info: SupplyInvestProposalTransactionInfo
 }> = ({ info: { amount } }) => {
   return <>Supply transaction completed. Tokens paid: {amount}</>
 }
-const ClaimInvestProposalSummary: React.FC<{
+const ClaimInvestProposalSummary: FC<{
   info: ClaimInvestProposalTransactionInfo
 }> = () => {
   return <>Claim invest proposal dividends</>
 }
 
-const StakeInsuranceSummary: React.FC<{
+const StakeInsuranceSummary: FC<{
   info: StakeInsuranceTransactionInfo
 }> = ({ info: { amount } }) => {
   const fromAmount = formatBigNumber(BigNumber.from(amount))
@@ -285,7 +286,7 @@ const StakeInsuranceSummary: React.FC<{
   return <>Stake insurance {fromAmount} DEXE</>
 }
 
-const UnstakeInsuranceSummary: React.FC<{
+const UnstakeInsuranceSummary: FC<{
   info: UnstakeInsuranceTransactionInfo
 }> = ({ info: { amount } }) => {
   const toAmount = formatBigNumber(BigNumber.from(amount))
@@ -293,7 +294,7 @@ const UnstakeInsuranceSummary: React.FC<{
   return <>Unstake insurance {toAmount} DEXE-LP</>
 }
 
-const InsuranceRegisterProposalClaimSummary: React.FC<{
+const InsuranceRegisterProposalClaimSummary: FC<{
   info: InsuranceRegisterProposalClaimTransactionInfo
 }> = ({ info: { pool } }) => {
   const [poolData] = usePoolQuery(pool)
@@ -301,13 +302,13 @@ const InsuranceRegisterProposalClaimSummary: React.FC<{
   return <>Created insurance proposal for &quot;{poolData?.name}&quot; pool</>
 }
 
-const PrivacyPolicyAgreeSummary: React.FC<{
+const PrivacyPolicyAgreeSummary: FC<{
   info: PrivacyPolicyAgreeTransactionInfo
 }> = () => {
   return <>Successfully sign privacy policy.</>
 }
 
-const TraderGetPerformanceFeeSummary: React.FC<{
+const TraderGetPerformanceFeeSummary: FC<{
   info: TraderGetPerformanceFeeTransactionInfo
 }> = ({ info: { baseAmount, _baseTokenSymbol } }) => {
   return (
@@ -318,61 +319,61 @@ const TraderGetPerformanceFeeSummary: React.FC<{
   )
 }
 
-const ConvertInvestProposalToDividendsSummary: React.FC<{
+const ConvertInvestProposalToDividendsSummary: FC<{
   info: ConvertInvestProposalToDividendsTransactionInfo
 }> = () => {
   return <>Convert Invest Proposal balance to Dividends.</>
 }
 
-const GovPoolCreateSummary: React.FC<{
+const GovPoolCreateSummary: FC<{
   info: GovPoolCreateTransactionInfo
 }> = () => {
   return <>Create DAO pool.</>
 }
 
-const GovPoolDepositSummary: React.FC<{
+const GovPoolDepositSummary: FC<{
   info: GovPoolDepositTransactionInfo
 }> = () => {
   return <>Successfully deposited.</>
 }
 
-const GovPoolVoteSummary: React.FC<{
+const GovPoolVoteSummary: FC<{
   info: GovPoolVoteTransactionInfo
 }> = () => {
   return <>Successfully voted for proposal</>
 }
 
-const GovPoolWithdrawSummary: React.FC<{
+const GovPoolWithdrawSummary: FC<{
   info: GovPoolWithdrawTransactionInfo
 }> = () => {
   return <>Successfully withdrawn from DAO pool</>
 }
 
-const GovPoolCreateChangeVotingSettingsProposalSummary: React.FC<{
+const GovPoolCreateChangeVotingSettingsProposalSummary: FC<{
   info: GovPoolCreateChangeVotingSettingsProposalTransactionInfo
 }> = () => {
   return <>Successfully created new proposal for changing DAO voting settings</>
 }
 
-const GovPoolCreateProposalSummary: React.FC<{
+const GovPoolCreateProposalSummary: FC<{
   info: GovPoolCreateProposalTransactionInfo
-}> = ({ info }) => {
+}> = () => {
   return <>Transaction completed successfully.</>
 }
 
-const GovPoolDelegateSummary: React.FC<{
+const GovPoolDelegateSummary: FC<{
   info: GovPoolDelegateTransactionInfo
 }> = () => {
   return <>Successfully delegated tokens</>
 }
 
-const GovPoolUndelegateSummary: React.FC<{
+const GovPoolUndelegateSummary: FC<{
   info: GovPoolUndelegateTransactionInfo
 }> = () => {
   return <>Successfully undelegated tokens</>
 }
 
-const TransactionSummary: React.FC<IProps> = ({ info }) => {
+const TransactionSummary: FC<IProps> = ({ info }) => {
   switch (info.type) {
     case TransactionType.APPROVAL:
       return <ApprovalSummary info={info} />

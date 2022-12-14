@@ -3,7 +3,7 @@ import { motion } from "framer-motion"
 
 import { opacityVariants } from "motion/variants"
 import theme, { Flex } from "theme"
-import { Card, Icon } from "common"
+import { Icon } from "common"
 
 export const StepsContainer = styled(motion.div).attrs(() => ({
   initial: { opacity: 0 },

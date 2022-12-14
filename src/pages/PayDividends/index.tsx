@@ -8,7 +8,6 @@ import formatDistanceToNow from "date-fns/formatDistanceToNow"
 
 import { DATE_TIME_FORMAT } from "constants/time"
 
-import { Icon } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 import ExternalLink from "components/ExternalLink"
 import IconButton from "components/IconButton"

@@ -1,5 +1,5 @@
 import { FC, useMemo } from "react"
-import { AppButton, Icon } from "common"
+import { Icon } from "common"
 import { Token } from "lib/entities"
 
 import TokenIcon from "components/TokenIcon"

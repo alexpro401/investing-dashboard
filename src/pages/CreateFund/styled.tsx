@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import { motion } from "framer-motion"
-import { Card, Icon } from "common"
+import { Icon } from "common"
 
 export const Container = styled(motion.div)`
   display: flex;

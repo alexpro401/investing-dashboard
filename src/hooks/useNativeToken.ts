@@ -5,9 +5,9 @@ export const useNativeToken = () => {
     () => "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
     []
   )
-  const [symbol, setSymbol] = useState("BNB")
-  const [decimals, setDecimals] = useState(18)
-  const [name, setName] = useState("BNB")
+  const [symbol] = useState("BNB")
+  const [decimals] = useState(18)
+  const [name] = useState("BNB")
 
   return {
     address,

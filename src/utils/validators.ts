@@ -1,6 +1,5 @@
 import { isBoolean, isDate, isEmpty, isNumber } from "lodash"
-import { BigNumber } from "@ethersproject/bignumber"
-import { formatUnits, parseUnits } from "@ethersproject/units"
+import { parseUnits } from "@ethersproject/units"
 
 import { Validator } from "hooks/useFormValidation"
 import {

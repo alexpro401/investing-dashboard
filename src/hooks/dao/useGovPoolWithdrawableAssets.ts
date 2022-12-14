@@ -50,11 +50,6 @@ export const useGovPoolWithdrawableAssetsQuery = (
     validatedAssets
   )
 
-  const anyLoading: boolean = useMemo(
-    () => callResults.some((callState) => callState.loading),
-    [callResults]
-  )
-
   const assets: Response[] = useMemo(() => {
     const defaultParams = {
       tokens: ZERO,

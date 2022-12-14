@@ -1,11 +1,4 @@
-import {
-  FC,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react"
+import { FC, useCallback, useEffect, useMemo, useState } from "react"
 import * as S from "./styled"
 import {
   TitlesStep,
@@ -19,7 +12,6 @@ import {
 import { useForm } from "hooks/useForm"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
-import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { useCreateDAO } from "hooks/dao"
 import { useDispatch } from "react-redux"
 import { hideTapBar, showTabBar } from "state/application/actions"
@@ -45,10 +37,6 @@ const CreateFundDaoForm: FC = () => {
   const formController = useForm()
 
   const navigate = useNavigate()
-
-  const { isCustomVoting, isDistributionProposal } = useContext(
-    FundDaoCreatingContext
-  )
 
   const dispatch = useDispatch()
 

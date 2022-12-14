@@ -49,10 +49,6 @@ function TextareaField<V extends string | number>({
     [readonly]
   )
 
-  const isToggled = useMemo(() => {
-    return !Boolean(value)
-  }, [value])
-
   const handleInput = useCallback(
     (event: FormEvent<HTMLTextAreaElement>) => {
       const eventTarget = event.currentTarget

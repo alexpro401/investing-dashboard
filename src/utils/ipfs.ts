@@ -1,5 +1,4 @@
 import axios from "axios"
-import { create } from "ipfs-http-client"
 import { Buffer } from "buffer"
 
 export interface AddResult {
@@ -18,15 +17,6 @@ const auth =
       process.env.REACT_APP_IPFS_PROJECT_SECRET
   ).toString("base64")
 
-const client = create({
-  host: "ipfs.infura.io",
-  port: 5001,
-  protocol: "https",
-  headers: {
-    authorization: auth,
-  },
-})
-
 export const blobToBase64 = (blob): Promise<string | ArrayBuffer | null> => {
   return new Promise((resolve) => {
     const reader = new FileReader()
@@ -35,14 +25,6 @@ export const blobToBase64 = (blob): Promise<string | ArrayBuffer | null> => {
       resolve(reader.result)
     }
   })
-}
-
-const stringify = (json) => {
-  try {
-    return JSON.stringify(json)
-  } catch (e) {
-    return ""
-  }
 }
 
 export const parseIpfsString = (ipfsString: string): string => {
