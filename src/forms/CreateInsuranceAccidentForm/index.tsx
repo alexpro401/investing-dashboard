@@ -251,6 +251,7 @@ const CreateInsuranceAccidentForm: FC = () => {
 
         const receipt = await govPool.createProposal(
           "ipfs://" + insuranceProposalData._path,
+          pool.get,
           [insuranceAddress],
           [BigNumber.from(0).toHexString()],
           [encodedProposalExecution]
