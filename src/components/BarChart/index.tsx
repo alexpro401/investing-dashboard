@@ -84,21 +84,21 @@ const BarChart: React.FC<IProps> = ({ address, withTip, m }) => {
           active={withTip}
           key={i}
           perc={
-            v && v.percPNL ? Number(normalizeBigNumber(v.percPNL, 4, 6)) : null
+            v && v.percPNLBase ? Number(normalizeBigNumber(v.percPNLBase, 4, 6)) : null
           }
           onMouseEnter={() => activateTooltip(i)}
           onMouseLeave={() => deactivateTooltip()}
         >
           <Flex
             initial={
-              showTooltip && i === activeItem && v && v.percPNL
+              showTooltip && i === activeItem && v && v.percPNLBase
                 ? "visible"
                 : "hidden"
             }
             variants={opacityVariants}
             transition={{ duration: 0.2 }}
             animate={
-              showTooltip && i === activeItem && v && v.percPNL
+              showTooltip && i === activeItem && v && v.percPNLBase
                 ? "visible"
                 : "hidden"
             }
@@ -107,7 +107,7 @@ const BarChart: React.FC<IProps> = ({ address, withTip, m }) => {
               <Tip
                 id={i}
                 timestamp={expandTimestamp(Number(v.timestamp))}
-                pnl={Number(normalizeBigNumber(v.percPNL, 4, 6))}
+                pnl={Number(normalizeBigNumber(v.percPNLBase, 4, 6))}
               />
             )}
           </Flex>
