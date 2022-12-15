@@ -84,7 +84,9 @@ const BarChart: React.FC<IProps> = ({ address, withTip, m }) => {
           active={withTip}
           key={i}
           perc={
-            v && v.percPNLBase ? Number(normalizeBigNumber(v.percPNLBase, 4, 6)) : null
+            v && v.percPNLBase
+              ? Number(normalizeBigNumber(v.percPNLBase, 4, 6))
+              : null
           }
           onMouseEnter={() => activateTooltip(i)}
           onMouseLeave={() => deactivateTooltip()}
