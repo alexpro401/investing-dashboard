@@ -63,6 +63,7 @@ const CreateDaoCustomProposalAbiForm: React.FC = () => {
       data,
       proposalName: proposalName.get,
       proposalDescription: proposalDescription.get,
+      misc: "",
     })
   }, [
     createProposal,

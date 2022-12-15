@@ -115,6 +115,7 @@ const useGovPoolCreateProposalChangeSettings = ({
 
       const receipt = await createGovProposal(
         { proposalName, proposalDescription },
+        "",
         [govSettingsAddress],
         [0],
         [encodedChangeSettingsMethod]
