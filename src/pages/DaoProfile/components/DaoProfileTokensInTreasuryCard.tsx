@@ -29,31 +29,32 @@ interface ITokenView {
   treasuryPercent: string
   isFallback?: boolean
   address: string
+  id: string
 }
 
-const FAKE_LOADING_TREASURY: Array<Array<ITokenView>> = [
-  [
-    {
-      type: "nft",
-      logo: "",
-      symbol: "",
-      amount: "",
-      amountUsd: "",
-      treasuryPercent: "",
-      address: "",
-      isFallback: true,
-    },
-    {
-      type: "nft",
-      logo: "",
-      symbol: "",
-      amount: "",
-      amountUsd: "",
-      treasuryPercent: "",
-      address: "",
-      isFallback: true,
-    },
-  ],
+const FAKE_LOADING_TREASURY: Array<ITokenView> = [
+  {
+    type: "nft",
+    logo: "",
+    symbol: "",
+    amount: "",
+    amountUsd: "",
+    treasuryPercent: "",
+    address: "",
+    isFallback: true,
+    id: uuidv4(),
+  },
+  {
+    type: "nft",
+    logo: "",
+    symbol: "",
+    amount: "",
+    amountUsd: "",
+    treasuryPercent: "",
+    address: "",
+    isFallback: true,
+    id: uuidv4(),
+  },
 ]
 
 const DaoProfileTokensInTreasuryCard: React.FC = () => {
@@ -82,6 +83,7 @@ const DaoProfileTokensInTreasuryCard: React.FC = () => {
         treasuryPercent:
           totalPrice === 0 ? "0" : (Number(el.quote) / totalPrice).toFixed(2),
         address: el.contract_address,
+        id: uuidv4(),
       }))
       .concat(
         treasuryNftCollections.map<ITokenView>((el) => ({
@@ -92,6 +94,7 @@ const DaoProfileTokensInTreasuryCard: React.FC = () => {
           amountUsd: "-",
           treasuryPercent: "-",
           address: el.address,
+          id: uuidv4(),
         }))
       )
 
@@ -124,6 +127,7 @@ const DaoProfileTokensInTreasuryCard: React.FC = () => {
             type: "token",
             address: "",
             isFallback: true,
+            id: uuidv4(),
           })
         }
 
@@ -155,32 +159,31 @@ const DaoProfileTokensInTreasuryCard: React.FC = () => {
           modules={[Pagination]}
           style={treasuryIsEmpty ? { padding: "20px 0" } : undefined}
         >
-          {treasuryLoading &&
-            map(FAKE_LOADING_TREASURY, (tokens) => (
-              <SwiperSlide key={uuidv4()}>
-                {map(tokens, (token) => (
-                  <DaoProfileTokenInTreasuryCard
-                    key={uuidv4()}
-                    address={token.address}
-                    amount={token.amount}
-                    amountUsd={token.amountUsd}
-                    type={token.type}
-                    logo={token.logo}
-                    chainId={chainId}
-                    isFallback={token.isFallback ?? false}
-                    symbol={token.symbol}
-                    treasuryPercent={token.treasuryPercent}
-                  />
-                ))}
-              </SwiperSlide>
-            ))}
+          {treasuryLoading && (
+            <SwiperSlide>
+              {map(FAKE_LOADING_TREASURY, (token) => (
+                <DaoProfileTokenInTreasuryCard
+                  key={token.id}
+                  address={token.address}
+                  amount={token.amount}
+                  amountUsd={token.amountUsd}
+                  type={token.type}
+                  logo={token.logo}
+                  chainId={chainId}
+                  isFallback={token.isFallback ?? false}
+                  symbol={token.symbol}
+                  treasuryPercent={token.treasuryPercent}
+                />
+              ))}
+            </SwiperSlide>
+          )}
           {!treasuryLoading &&
             payload.flat().length !== 0 &&
-            map(payload, (tokens) => (
-              <SwiperSlide key={uuidv4()}>
+            map(payload, (tokens, index) => (
+              <SwiperSlide key={index}>
                 {map(tokens, (token) => (
                   <DaoProfileTokenInTreasuryCard
-                    key={uuidv4()}
+                    key={token.id}
                     address={token.address}
                     amount={token.amount}
                     amountUsd={token.amountUsd}

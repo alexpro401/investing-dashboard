@@ -13,6 +13,8 @@ interface Props<T> extends UseQueryArgs<T> {
   total: number
   nodeHead?: React.ReactNode
   nodeFooter?: React.ReactNode
+  data: T[] | undefined
+  setData: (v: T[] | undefined) => void
   row: (item: T, i: number) => React.ReactNode
   variables: any
   formatter: (newDataSlice: any, loadedData?: undefined | T[]) => T[]
@@ -22,6 +24,8 @@ function PaginationTable<T>({
   limit,
   total,
   nodeHead,
+  data,
+  setData,
   row,
   nodeFooter,
   formatter,
@@ -31,8 +35,9 @@ function PaginationTable<T>({
   pause,
 }: Props<T>) {
   const [offset, setOffset] = useState(0)
-  const [lastOffset, setLastOffset] = useState<number>(0)
-  const [records, setRecords] = useState<T[] | undefined>(undefined)
+  const [lastOffset, setLastOffset] = useState<number>(
+    data ? data.length - limit : 0
+  )
   const [dataInView, setDataInView] = useState<T[] | undefined>(undefined)
 
   const _variables = useMemo(
@@ -45,11 +50,15 @@ function PaginationTable<T>({
   )
 
   const _pause = useMemo(
-    () => pause || offset < lastOffset || (records && records.length === total),
-    [pause, lastOffset, offset, records, total]
+    () =>
+      !!pause ||
+      offset < lastOffset ||
+      (offset === 0 && data && data.length !== 0) ||
+      (data && data.length === total),
+    [pause, lastOffset, offset, data, total]
   )
 
-  const [{ fetching, data }] = useQuery({
+  const [{ fetching, data: graphData }] = useQuery({
     query,
     variables: _variables,
     context,
@@ -57,42 +66,40 @@ function PaginationTable<T>({
     requestPolicy: "network-only",
   })
 
-  // Clear state helper
-  const reset = useCallback(() => {
-    setOffset(0)
-    setRecords(undefined)
-  }, [])
-
-  // Clear state when query or variables changed
-  useEffect(() => {
-    reset()
-  }, [query, variables, reset])
-
   useEffect(() => {
     if (
-      data &&
+      graphData &&
       !fetching &&
       offset >= lastOffset &&
-      (!records ||
-        (records.length !== total && records.length < offset + limit))
+      (!data || (data.length !== total && data.length < offset + limit))
     ) {
-      const newPieceOfData = formatter(data, records)
+      const newPieceOfData = formatter(graphData, data)
       if (newPieceOfData.length > 0) {
         const newRecords: T[] =
-          records && records.length !== 0
-            ? [...records, ...newPieceOfData]
+          data && data.length !== 0
+            ? [...data, ...newPieceOfData]
             : [...newPieceOfData]
 
-        setRecords(newRecords)
+        setData(newRecords)
         setDataInView(newRecords.slice(offset, offset + limit))
       }
       if (offset > lastOffset) {
         setLastOffset(offset)
       }
     } else if (!fetching) {
-      setDataInView(records ? records.slice(offset, offset + limit) : undefined)
+      setDataInView(data ? data.slice(offset, offset + limit) : undefined)
     }
-  }, [fetching, offset, lastOffset, formatter, data, total, limit, records])
+  }, [
+    fetching,
+    offset,
+    lastOffset,
+    formatter,
+    graphData,
+    total,
+    limit,
+    data,
+    setData,
+  ])
 
   const onPrev = useCallback(() => {
     if (offset === 0 || offset - limit <= 0) {

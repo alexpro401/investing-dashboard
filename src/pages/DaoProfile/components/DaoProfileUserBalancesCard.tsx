@@ -1,5 +1,8 @@
 import { FC, useCallback, useState, useMemo, useContext } from "react"
+import { useNavigate, useParams } from "react-router-dom"
 import { v4 as uuidv4 } from "uuid"
+import { formatUnits, parseEther } from "@ethersproject/units"
+import { isNaN } from "lodash"
 
 import theme, { Flex } from "theme"
 import { Card, Collapse, Icon } from "common"
@@ -12,38 +15,26 @@ import { ICON_NAMES } from "constants/icon-names"
 import ERC721Row from "components/ERC721Row"
 import { ZERO } from "constants/index"
 
-import { useGovPoolWithdrawableAssets } from "hooks/dao"
-import { useActiveWeb3React } from "hooks"
-import {
-  useERC20GovBalance,
-  useERC721GovBalance,
-} from "hooks/dao/useGovPoolMemberBalance"
 import { formatTokenNumber } from "utils"
 import { divideBignumbers } from "utils/formulas"
-import { formatUnits, parseEther } from "@ethersproject/units"
 import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommonContext/GovPoolProfileCommonContext"
-import { isNaN } from "lodash"
+import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsContext/GovPoolProfileTabsContext"
 
 interface Props {
   daoPoolAddress?: string
 }
 
 const DaoProfileUserBalancesCard: FC<Props> = ({ daoPoolAddress }) => {
+  const navigate = useNavigate()
+  const { daoAddress } = useParams<"daoAddress">()
   const { haveNft, haveToken, mainToken } = useContext(
     GovPoolProfileCommonContext
   )
+  const { erc20Balances, erc721Balances, withdrawableAssets } = useContext(
+    GovPoolProfileTabsContext
+  )
 
   const [showNftList, setShowNftList] = useState(false)
-
-  const { account } = useActiveWeb3React()
-
-  const withdrawableAssets = useGovPoolWithdrawableAssets({
-    daoPoolAddress,
-    delegator: account,
-  })
-
-  const erc20Balances = useERC20GovBalance(daoPoolAddress)
-  const erc721Balances = useERC721GovBalance(daoPoolAddress)
 
   const erc20 = useMemo(() => {
     const total = erc20Balances.poolBalance
@@ -172,7 +163,7 @@ const DaoProfileUserBalancesCard: FC<Props> = ({ daoPoolAddress }) => {
         full
         color="secondary"
         size="small"
-        onClick={() => alert("Redirect to 'withdraw DAO tokens' terminal 🤑")}
+        onClick={() => navigate(`/dao/${daoAddress}/withdraw`)}
         text="Withdraw available assets"
       />
     </Card>

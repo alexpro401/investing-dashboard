@@ -4,7 +4,14 @@ import { createClient, useQuery } from "urql"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { useActiveWeb3React } from "hooks"
-import { useGovPoolPendingRewards } from "hooks/dao"
+import {
+  useGovPoolPendingRewards,
+  useGovPoolWithdrawableAssets,
+} from "hooks/dao"
+import {
+  useERC20GovBalance,
+  useERC721GovBalance,
+} from "hooks/dao/useGovPoolMemberBalance"
 import {
   GovMemberProposalsHistoryCountQuery,
   GovVoterInPoolQuery,
@@ -31,7 +38,15 @@ const useMyBalance = ({ startLoading }: IUseMyBalanceProps) => {
   const [unclaimedProposalsCount, setUnclaimedProposalsCount] = useState<
     number | null
   >(null)
-  const [internalLoading, setInternalLoading] = useState<boolean>(false)
+  const [internalLoading, setInternalLoading] = useState<boolean>(true)
+
+  const withdrawableAssets = useGovPoolWithdrawableAssets({
+    daoPoolAddress: startLoading ? daoAddress : "",
+    delegator: account,
+  })
+
+  const erc20Balances = useERC20GovBalance(startLoading ? daoAddress : "")
+  const erc721Balances = useERC721GovBalance(startLoading ? daoAddress : "")
 
   const handleSetProposals = useCallback(
     async (proposalsData: { proposalId: string }[]) => {
@@ -104,6 +119,9 @@ const useMyBalance = ({ startLoading }: IUseMyBalanceProps) => {
     proposalsCount,
     receivedRewardsUSD,
     unclaimedProposalsCount,
+    withdrawableAssets,
+    erc20Balances,
+    erc721Balances,
     loading: proposalsFetching || voterFetching || internalLoading || false,
   }
 }

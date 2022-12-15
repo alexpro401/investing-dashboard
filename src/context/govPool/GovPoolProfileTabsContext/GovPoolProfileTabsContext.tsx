@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from "react"
+import { BigNumber } from "@ethersproject/bignumber"
 
 import { EDaoProfileTab, IGovPoolDescription } from "types/dao.types"
 import {
@@ -7,6 +8,16 @@ import {
   useDelegations,
   useMyBalance,
 } from "./hooks"
+
+type UintArrayStructOutput = [BigNumber[], BigNumber] & {
+  values: BigNumber[]
+  length: BigNumber
+}
+
+interface IValidator {
+  id: string
+  balance: string
+}
 
 interface IGovPoolProfileTabsContext {
   currentTab: { get: EDaoProfileTab; set: (value: EDaoProfileTab) => void }
@@ -17,12 +28,30 @@ interface IGovPoolProfileTabsContext {
 
   //validators
   validatorsCount: number | null
+  validators: undefined | IValidator[]
+  setValidators: (v: undefined | IValidator[]) => void
   validatorsLoading: boolean
 
   //myBalance
   myProposalsCount: number | null
   receivedRewardsUSD: string | null
   unclaimedProposalsCount: number | null
+  erc20Balances: {
+    walletBalance: BigNumber
+    poolBalance: BigNumber
+    delegatedBalance: BigNumber
+  }
+  erc721Balances: {
+    walletBalance: number[]
+    poolBalance: number[]
+    delegatedBalance: number[]
+  }
+  withdrawableAssets:
+    | ([BigNumber, UintArrayStructOutput] & {
+        tokens: BigNumber
+        nfts: UintArrayStructOutput
+      })
+    | undefined
   myBalanceLoading: boolean
 }
 
@@ -36,12 +65,25 @@ export const GovPoolProfileTabsContext =
 
     //validators
     validatorsCount: null,
+    validators: undefined,
+    setValidators: () => {},
     validatorsLoading: false,
 
     //my-balance
     myProposalsCount: null,
     receivedRewardsUSD: null,
     unclaimedProposalsCount: null,
+    erc20Balances: {
+      walletBalance: BigNumber.from("0"),
+      poolBalance: BigNumber.from("0"),
+      delegatedBalance: BigNumber.from("0"),
+    },
+    erc721Balances: {
+      walletBalance: [],
+      poolBalance: [],
+      delegatedBalance: [],
+    },
+    withdrawableAssets: undefined,
     myBalanceLoading: false,
   })
 
@@ -59,6 +101,9 @@ const GovPoolProfileTabsContextProvider: React.FC<
     useState<IGovPoolDescription | null>(null)
 
   const [_validatorsCount, _setValidatorsCount] = useState<number | null>(null)
+  const [_validators, _setValidators] = useState<undefined | IValidator[]>(
+    undefined
+  )
 
   const [_myProposalsCount, _setMyProposalsCount] = useState<number | null>(
     null
@@ -99,6 +144,9 @@ const GovPoolProfileTabsContextProvider: React.FC<
     proposalsCount,
     receivedRewardsUSD,
     unclaimedProposalsCount,
+    withdrawableAssets,
+    erc20Balances,
+    erc721Balances,
     loading: myBalanceLoading,
   } = useMyBalance({
     startLoading: _currentTab === EDaoProfileTab.my_balance,
@@ -133,12 +181,17 @@ const GovPoolProfileTabsContextProvider: React.FC<
 
         //validators
         validatorsCount: _validatorsCount,
+        validators: _validators,
+        setValidators: _setValidators,
         validatorsLoading,
 
         //myBalance
         myProposalsCount: _myProposalsCount,
         receivedRewardsUSD: _receivedRewardsUSD,
         unclaimedProposalsCount: _unclaimedProposalsCount,
+        withdrawableAssets,
+        erc20Balances,
+        erc721Balances,
         myBalanceLoading,
       }}
     >

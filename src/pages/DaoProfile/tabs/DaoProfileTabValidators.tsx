@@ -35,9 +35,8 @@ interface IValidator {
 
 const DaoProfileTabValidators: React.FC<Props> = ({ chainId }) => {
   const { daoAddress } = useParams<"daoAddress">()
-  const { validatorsCount, validatorsLoading } = useContext(
-    GovPoolProfileTabsContext
-  )
+  const { validatorsCount, validatorsLoading, validators, setValidators } =
+    useContext(GovPoolProfileTabsContext)
   const { validatorsTotalVotes, validatorsToken } = useContext(
     GovPoolProfileCommonContext
   )
@@ -129,6 +128,8 @@ const DaoProfileTabValidators: React.FC<Props> = ({ chainId }) => {
             <PaginationTable<IValidator>
               total={validatorsCount}
               limit={5}
+              data={validators}
+              setData={setValidators}
               row={getTableRow}
               nodeHead={TableHead}
               query={DaoPoolDaoProfileValidatorsQuery}

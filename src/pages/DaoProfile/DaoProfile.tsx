@@ -160,12 +160,13 @@ const DaoProfile: React.FC = () => {
             <S.Indents top side={false}>
               <DaoProfileChart chart={chart} setChart={setChart} />
             </S.Indents>
-            <S.Indents top side={false}>
+            {/* TODO */}
+            {/* <S.Indents top side={false}>
               <DaoProfileBuyTokenCard
                 total={BigNumber.from(100)}
                 available={BigNumber.from(34)}
               />
-            </S.Indents>
+            </S.Indents> */}
             <S.Indents top side={false}>
               <DaoProfileTokensInTreasuryCard />
             </S.Indents>
