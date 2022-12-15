@@ -45,22 +45,17 @@ const useGovPoolUserVotingPower = ({
     try {
       setLoading(true)
 
-      const { power, nftPower } = await govUserKeeperContract.votingPower(
-        address,
-        isMicroPool || false,
-        useDelegated || false
-      )
-
-      const totalNftPower = reduce(
-        nftPower,
-        (acc, nftPowerItem) => addBignumbers([acc, 18], [nftPowerItem, 18]),
-        ZERO
-      )
+      const [{ power, nftPower, perNftPower }] =
+        await govUserKeeperContract.votingPower(
+          [address],
+          [isMicroPool || false],
+          [useDelegated || false]
+        )
 
       setResult({
         power,
-        nftPower,
-        totalNftPower,
+        nftPower: perNftPower,
+        totalNftPower: nftPower,
       })
     } catch (error: any) {
       if (!!error && !!error.data && !!error.data.message) {

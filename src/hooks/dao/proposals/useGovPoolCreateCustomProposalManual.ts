@@ -11,6 +11,8 @@ import { isTxMined, parseTransactionError } from "utils"
 
 interface ICreateProposalArgs {
   executors: string[]
+
+  misc: string
   values: string[]
   data: string[]
   proposalName: string
@@ -33,6 +35,7 @@ const useGovPoolCreateCustomProposalManual = (
   const createProposal = useCallback(
     async ({
       data,
+      misc,
       executors,
       proposalDescription,
       proposalName,
@@ -49,6 +52,7 @@ const useGovPoolCreateCustomProposalManual = (
 
         const receipt = await createGovProposal(
           { proposalName, proposalDescription },
+          misc,
           executors,
           values,
           data
