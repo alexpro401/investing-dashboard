@@ -105,7 +105,7 @@ const DaoPoolCard: React.FC<Props> = ({ data, account, children, ...rest }) => {
             <Tooltip id={uuidv4()}>Info about Members</Tooltip>
           </Flex>
           <S.DaoPoolCardBlockInfoValue>
-            {String(members.value)}
+            {String(members.value ?? 0)}
           </S.DaoPoolCardBlockInfoValue>
         </Flex>
         <Flex full dir={"column"} gap={"4"} ai={"flex-end"}>

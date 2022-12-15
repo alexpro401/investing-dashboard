@@ -35,9 +35,13 @@ function PaginationTable<T>({
   pause,
 }: Props<T>) {
   const [offset, setOffset] = useState(0)
-  const [lastOffset, setLastOffset] = useState<number>(
-    data ? data.length - limit : 0
+
+  // checking if offset is already processed with graph request
+  const offsetIsPassed = useMemo(
+    () => data && offset < data.length - limit,
+    [data, offset, limit]
   )
+
   const [dataInView, setDataInView] = useState<T[] | undefined>(undefined)
 
   const _variables = useMemo(
@@ -52,10 +56,10 @@ function PaginationTable<T>({
   const _pause = useMemo(
     () =>
       !!pause ||
-      offset < lastOffset ||
+      offsetIsPassed ||
       (offset === 0 && data && data.length !== 0) ||
       (data && data.length === total),
-    [pause, lastOffset, offset, data, total]
+    [pause, offsetIsPassed, offset, data, total]
   )
 
   const [{ fetching, data: graphData }] = useQuery({
@@ -70,7 +74,7 @@ function PaginationTable<T>({
     if (
       graphData &&
       !fetching &&
-      offset >= lastOffset &&
+      !offsetIsPassed &&
       (!data || (data.length !== total && data.length < offset + limit))
     ) {
       const newPieceOfData = formatter(graphData, data)
@@ -83,16 +87,13 @@ function PaginationTable<T>({
         setData(newRecords)
         setDataInView(newRecords.slice(offset, offset + limit))
       }
-      if (offset > lastOffset) {
-        setLastOffset(offset)
-      }
     } else if (!fetching) {
       setDataInView(data ? data.slice(offset, offset + limit) : undefined)
     }
   }, [
     fetching,
     offset,
-    lastOffset,
+    offsetIsPassed,
     formatter,
     graphData,
     total,

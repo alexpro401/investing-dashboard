@@ -17,7 +17,7 @@ import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsCon
 import { Divider, TextLabel, TextValue } from "../styled"
 
 interface IDaoProfileTabAboutProps {
-  creationTime: number
+  creationTime: number | undefined
 }
 
 const DaoProfileTabAbout: React.FC<IDaoProfileTabAboutProps> = ({

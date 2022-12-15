@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState, useContext } from "react"
 import { useParams } from "react-router-dom"
-import { BigNumber } from "@ethersproject/bignumber"
 import { useWeb3React } from "@web3-react/core"
 
 import * as S from "./styled"
@@ -77,7 +76,9 @@ const DaoProfile: React.FC = () => {
                 <React.Suspense fallback={<TabFallback />}>
                   <DaoProfileTabAbout
                     creationTime={
-                      Number(govPoolQuery.data?.daoPool?.creationTime) ?? 0
+                      govPoolQuery.data?.daoPool?.creationTime
+                        ? Number(govPoolQuery.data.daoPool.creationTime)
+                        : undefined
                     }
                   />
                 </React.Suspense>
