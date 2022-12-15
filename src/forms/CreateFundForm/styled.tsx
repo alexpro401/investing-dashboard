@@ -5,7 +5,6 @@ import { ReactNode, FC } from "react"
 
 export const Container = styled.div`
   margin: 0 auto;
-  background-color: #040a0f;
   width: fill-available;
   overflow-y: auto;
 `
