@@ -37,18 +37,18 @@ const ChartTooltipPnl = (props) => {
   }, [history])
 
   const pnlBase = useMemo<{ format: string; number: number }>(() => {
-    if (!history || parseEther(history.percPNL).isZero()) {
+    if (!history || parseEther(history.percPNLBase).isZero()) {
       return { format: "0.00", number: 0 }
     }
 
-    const res = normalizeBigNumber(history.percPNL, 4, 2)
+    const res = normalizeBigNumber(history.percPNLBase, 4, 2)
     return { format: res, number: Number(res) }
   }, [history])
 
   const absPnlUsd = useMemo<{ format: string; number: number }>(() => {
     if (!history) return { format: "0.00", number: 0 }
 
-    const res = normalizeBigNumber(history.absPNL, 18, 2)
+    const res = normalizeBigNumber(history.absPNLUSD, 18, 2)
     return { format: String(Math.abs(Number(res))), number: Number(res) }
   }, [history])
 
