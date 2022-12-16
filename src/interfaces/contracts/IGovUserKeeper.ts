@@ -1,6 +1,5 @@
 import { GovUserKeeper } from "interfaces/typechain"
 
-export type IGovNftInfo = Awaited<ReturnType<GovUserKeeper["nftInfo"]>>
 export type IGovTokenBalance = Awaited<
   ReturnType<GovUserKeeper["tokenBalance"]>
 >

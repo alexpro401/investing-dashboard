@@ -75,12 +75,14 @@ const useGovPoolCreateDistributionProposal = (govPoolAddress: string) => {
         const receipt = await (isTokenNative
           ? createGovProposal(
               { proposalName, proposalDescription },
+              "",
               [govDistributionProposalAddress],
               [tokenAmountBN],
               [encodedExecute]
             )
           : createGovProposal(
               { proposalName, proposalDescription },
+              "",
               [tokenAddress, govDistributionProposalAddress],
               [0, 0],
               [encodedTransfer, encodedExecute]

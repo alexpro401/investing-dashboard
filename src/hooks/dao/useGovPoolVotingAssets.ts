@@ -89,7 +89,7 @@ const useGovPoolVotingAssets = (
   const updateNftInfo = useCallback(async () => {
     try {
       const { isSupportPower, totalPowerInTokens, totalSupply } =
-        await govUserKeeperContract!.nftInfo()
+        await govUserKeeperContract!.getNftInfo()
 
       setNftInfo({ isSupportPower, totalPowerInTokens, totalSupply })
     } catch (error: any) {

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 import { parseUnits } from "@ethersproject/units"
 import { isEmpty, isNil } from "lodash"
-import axios from "axios"
 import { useQuery } from "urql"
 import { useSelector } from "react-redux"
 import { Client } from "@urql/core/dist/types/client"
@@ -159,7 +158,7 @@ export const usePoolPnlInfo = (address: string | undefined) => {
       return { big: ZERO, format: "0" }
     }
 
-    const big = BigNumber.from(poolData.priceHistory[0].absPNL)
+    const big = BigNumber.from(poolData.priceHistory[0].absPNLBase)
 
     return { big, format: normalizeBigNumber(big, 18, 6) }
   }, [poolData])
@@ -169,7 +168,7 @@ export const usePoolPnlInfo = (address: string | undefined) => {
       return "0"
     }
 
-    const big = BigNumber.from(poolData.priceHistory[0].percPNL)
+    const big = BigNumber.from(poolData.priceHistory[0].percPNLUSD)
     return normalizeBigNumber(big, 4, 2)
   }, [poolData])
 

@@ -33,7 +33,7 @@ export const selectTotalOwnedPoolsStatistic = createSelector(
     const state = {
       usdTVL: ZERO,
       APY: 0,
-      percPNL: 0,
+      percPNLBase: 0,
       investorsCount: 0,
     }
     const ownedAddresses = [...user.ownedPools.invest, ...user.ownedPools.basic]
@@ -55,7 +55,7 @@ export const selectTotalOwnedPoolsStatistic = createSelector(
         [state.usdTVL, 18]
       )
       state.APY += Number(lastHistoryPoint.APY)
-      state.percPNL += Number(lastHistoryPoint.percPNL)
+      state.percPNLBase += Number(lastHistoryPoint.percPNLBase)
       state.investorsCount += Number(pool.investorsCount)
     })
 
