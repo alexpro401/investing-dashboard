@@ -5,7 +5,7 @@ import { formatUnits, formatEther } from "@ethersproject/units"
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
-import FundDaoCreatingContextProvider from "context/FundDaoCreatingContext"
+import GovPoolFormContextProvider from "context/govPool/GovPoolFormContext"
 import CreateDaoProposalGlobalVotingSettingsForm from "forms/CreateDaoProposalGlobalVotingSettingsForm"
 import { useGovPoolSetting, useGovPoolValidatorsCount } from "hooks/dao"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
@@ -81,7 +81,7 @@ const GlobalVotingSettings: React.FC = () => {
       >
         <S.PageHolder>
           <GovProposalCreatingContextProvider>
-            <FundDaoCreatingContextProvider
+            <GovPoolFormContextProvider
               customLSKey={"creating-proposal-global-voting-settings"}
               daoProposal={{
                 ...INITIAL_DAO_PROPOSAL,
@@ -118,7 +118,7 @@ const GlobalVotingSettings: React.FC = () => {
               }}
             >
               <CreateDaoProposalGlobalVotingSettingsForm />
-            </FundDaoCreatingContextProvider>
+            </GovPoolFormContextProvider>
           </GovProposalCreatingContextProvider>
         </S.PageHolder>
       </WithGovPoolAddressValidation>

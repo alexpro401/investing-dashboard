@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useState } from "react"
+import { FC, useCallback, useMemo, useState } from "react"
 import * as S from "./styled"
 import {
   TitlesStep,
@@ -15,6 +15,7 @@ import { AnimatePresence } from "framer-motion"
 import { useCreateDAO } from "hooks/dao"
 import { useDispatch } from "react-redux"
 import { hideTapBar, showTabBar } from "state/application/actions"
+import { useEffectOnce } from "react-use"
 
 enum STEPS {
   titles = "titles",
@@ -40,13 +41,13 @@ const CreateFundDaoForm: FC = () => {
 
   const dispatch = useDispatch()
 
-  useEffect(() => {
+  useEffectOnce(() => {
     dispatch(hideTapBar())
 
     return () => {
       dispatch(showTabBar())
     }
-  }, [])
+  })
 
   const createDaoCb = useCreateDAO()
 
@@ -130,7 +131,7 @@ const CreateFundDaoForm: FC = () => {
             <IsDistributionProposalStep />
           </S.StepsContainer>
         ) : currentStep === STEPS.success ? (
-          <S.StepsContainer>
+          <S.StepsContainer className={"steps-container"}>
             <SuccessStep />
           </S.StepsContainer>
         ) : (

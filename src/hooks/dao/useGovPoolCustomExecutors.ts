@@ -4,7 +4,7 @@ import { isEqual } from "lodash"
 import useGovPoolExecutors from "./useGovPoolExecutors"
 import { parseIpfsString } from "utils/ipfs"
 import { IpfsEntity } from "utils/ipfsEntity"
-import { IExecutor, IExecutorType } from "types/dao.types"
+import { IExecutor, IExecutorType } from "types"
 
 interface ICustomExecutor extends IExecutor {
   proposalName: string

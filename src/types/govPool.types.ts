@@ -25,7 +25,7 @@ export interface IGovSettingsFromContract {
   executorDescription: string
 }
 
-export type DaoVotingSettings = {
+export type GovPoolSettings = {
   earlyCompletion: boolean
   delegatedVotingAllowed: boolean
   validatorsVote: boolean
@@ -42,7 +42,7 @@ export type DaoVotingSettings = {
   executorDescription: string
 }
 
-export type DaoProposal = {
+export type GovPoolFormOptions = {
   _isErc20: boolean
   _isErc721: boolean
   _isCustomVoting: boolean
@@ -68,10 +68,10 @@ export type DaoProposal = {
     validators: string[]
     balances: number[]
   }
-  _internalProposalForm: DaoVotingSettings
-  _distributionProposalSettingsForm: DaoVotingSettings
-  _validatorsBalancesSettingsForm: DaoVotingSettings
-  _defaultProposalSettingForm: DaoVotingSettings
+  _internalProposalForm: GovPoolSettings
+  _distributionProposalSettingsForm: GovPoolSettings
+  _validatorsBalancesSettingsForm: GovPoolSettings
+  _defaultProposalSettingForm: GovPoolSettings
 }
 
 export interface IGovPoolDescription {
@@ -86,22 +86,6 @@ export interface IGovPoolDescription {
 export interface IProposalIPFS {
   proposalName: string
   proposalDescription: string
-}
-
-export enum ExecutorType {
-  DEFAULT = "0",
-  INTERNAL = "1",
-  DISTRIBUTION = "2",
-  VALIDATORS = "3",
-}
-
-export const govPoolProposals = {
-  [ExecutorType.INTERNAL]: {
-    changeInternalDuration: "change-internal-duration",
-    changeInternalQuorum: "change-internal-quorum",
-    changeInternalDurationAndQuorum: "change-internal-duration-and-quorum",
-    changeInternalBalances: "change-internal-balances",
-  },
 }
 
 export interface IExecutorSettings {

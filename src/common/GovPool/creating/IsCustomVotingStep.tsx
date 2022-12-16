@@ -1,5 +1,5 @@
 import { FC, useContext } from "react"
-import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import {
   AppButton,
   Card,
@@ -21,9 +21,8 @@ import { isPercentage, required } from "utils/validators"
 import { createPortal } from "react-dom"
 
 const IsCustomVotingStep: FC = () => {
-  const { isCustomVoting, internalProposalForm } = useContext(
-    FundDaoCreatingContext
-  )
+  const { isCustomVoting, internalProposalForm } =
+    useContext(GovPoolFormContext)
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
 
   const {

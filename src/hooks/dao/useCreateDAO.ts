@@ -10,7 +10,7 @@ import { isTxMined, parseTransactionError } from "utils"
 import usePayload from "hooks/usePayload"
 import { SubmitState } from "constants/types"
 import useError from "hooks/useError"
-import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { cloneDeep } from "lodash"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { BytesLike, ethers } from "ethers"
@@ -34,7 +34,7 @@ const useCreateDAO = () => {
     defaultProposalSettingForm,
     distributionProposalSettingsForm,
     createdDaoAddress,
-  } = useContext(FundDaoCreatingContext)
+  } = useContext(GovPoolFormContext)
 
   const factory = usePoolFactoryContract()
   const { account } = useWeb3React()

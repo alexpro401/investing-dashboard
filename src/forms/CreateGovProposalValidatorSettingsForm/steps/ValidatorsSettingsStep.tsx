@@ -13,7 +13,7 @@ import {
 import { OverlapInputField } from "fields"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { ValidatorsListContext } from "context/govPool/proposals/ValidatorsListContext"
-import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { CreateDaoCardStepNumber } from "common"
 import ValidatorsList from "components/ValidatorsList"
 import GovVotingSettings from "modals/GovVotingSettings"
@@ -33,7 +33,7 @@ const ValidatorsSettingsStep: React.FC = () => {
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
   const { validators, balances, handleChangeValidator, hiddenIdxs } =
     useContext(ValidatorsListContext)
-  const { initialForm } = useContext(FundDaoCreatingContext)
+  const { initialForm } = useContext(GovPoolFormContext)
   const totalVoteWeight = useGovUserKeeperGetTotalVoteWeight(daoAddress ?? "")
 
   const [previousSettingsOpened, setPreviousSettingsOpened] = useState(false)

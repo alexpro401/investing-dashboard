@@ -2,7 +2,7 @@ import React, { HTMLAttributes, useMemo } from "react"
 
 import Switch from "components/Switch"
 import { TokenChip } from "common"
-import { DaoVotingSettings } from "types"
+import { GovPoolSettings } from "types"
 import {
   parseSeconds,
   parseDuration,
@@ -18,7 +18,7 @@ import { useActiveWeb3React } from "hooks"
 import * as S from "./styled"
 
 type DaoSettingsNotRequired = Partial<
-  Omit<DaoVotingSettings, "executorDescription" | "quorum">
+  Omit<GovPoolSettings, "executorDescription" | "quorum">
 >
 
 interface IVotingSettingsProps

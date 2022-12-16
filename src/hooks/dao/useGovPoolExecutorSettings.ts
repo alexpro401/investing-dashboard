@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 
 import { useGovSettingsContract } from "contracts"
-import { IGovSettingsFromContract } from "types/dao.types"
+import { IGovSettingsFromContract } from "types"
 
 const useGovPoolExecutorSettings = (
   govPoolAddress?: string,

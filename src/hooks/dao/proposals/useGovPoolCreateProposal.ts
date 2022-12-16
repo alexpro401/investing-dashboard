@@ -13,7 +13,7 @@ import { TransactionType } from "state/transactions/types"
 import { getERC20Contract, isTxMined, parseTransactionError } from "utils"
 import { ERC20 } from "interfaces/typechain"
 import { IpfsEntity } from "utils/ipfsEntity"
-import { IProposalIPFS } from "types/dao.types"
+import { IProposalIPFS } from "types"
 
 export const useGovPoolCreateProposal = (
   daoPoolAddress: string | undefined

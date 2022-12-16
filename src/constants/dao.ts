@@ -1,6 +1,6 @@
-import { DaoProposal } from "types"
+import { GovPoolFormOptions } from "types"
 
-export const INITIAL_DAO_PROPOSAL: DaoProposal = {
+export const INITIAL_DAO_PROPOSAL: GovPoolFormOptions = {
   _isErc20: true,
   _isErc721: false,
   _isCustomVoting: false,

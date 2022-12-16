@@ -21,10 +21,10 @@ import {
   useMemo,
 } from "react"
 import {
-  DaoProposalSettingsForm,
-  FundDaoCreatingContext,
+  GovPoolSettingsForm,
+  GovPoolFormContext,
   useIsDaoFieldChanged,
-} from "context/FundDaoCreatingContext"
+} from "context/govPool/GovPoolFormContext"
 import { useFormValidation } from "hooks/useFormValidation"
 import { EInputBorderColors } from "fields/InputField"
 import { useERC20 } from "hooks/useERC20"
@@ -35,7 +35,7 @@ import { useActiveWeb3React } from "hooks"
 import * as S from "./styled"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
-  poolParameters: DaoProposalSettingsForm
+  poolParameters: GovPoolSettingsForm
   formValidation: ReturnType<typeof useFormValidation>
   isCreatingProposal?: boolean
 }
@@ -64,7 +64,7 @@ const DaoSettingsParameters: FC<Props> = ({
     quorumValidators,
   } = poolParameters
 
-  const { isValidator } = useContext(FundDaoCreatingContext)
+  const { isValidator } = useContext(GovPoolFormContext)
 
   const { getFieldErrorMessage, touchField, isFieldValid } = formValidation
 

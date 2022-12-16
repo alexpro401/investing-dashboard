@@ -1,6 +1,6 @@
 import { FC, useContext } from "react"
 import { CreateDaoCardStepNumber } from "../components"
-import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { Card, CardDescription, CardHead } from "common"
 import * as S from "./styled"
@@ -17,7 +17,7 @@ interface IDefaultProposalStepProps {
 const DefaultProposalStep: FC<IDefaultProposalStepProps> = ({
   isCreatingProposal = false,
 }) => {
-  const { defaultProposalSettingForm } = useContext(FundDaoCreatingContext)
+  const { defaultProposalSettingForm } = useContext(GovPoolFormContext)
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
 
   const {

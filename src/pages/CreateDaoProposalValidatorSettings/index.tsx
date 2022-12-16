@@ -4,7 +4,7 @@ import { formatEther, formatUnits } from "@ethersproject/units"
 
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
-import FundDaoCreatingContextProvider from "context/FundDaoCreatingContext"
+import GovPoolFormContextProvider from "context/govPool/GovPoolFormContext"
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
 import ValidatorsListContextProvider from "context/govPool/proposals/ValidatorsListContext"
 import {
@@ -21,6 +21,7 @@ import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
 
 import * as S from "./styled"
+import { GovPoolFormOptions } from "../../types"
 
 const CreateDaoProposalValidatorSettings: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
@@ -62,6 +63,46 @@ const CreateDaoProposalValidatorSettings: React.FC = () => {
     []
   )
 
+  const {
+    validatorsCount,
+    earlyCompletion,
+    delegatedVotingAllowed,
+    validatorsVote,
+    duration,
+    durationValidators,
+    quorum,
+    quorumValidators,
+    minVotesForVoting,
+    minVotesForCreating,
+    rewardToken,
+    creationReward,
+    executionReward,
+    voteRewardsCoefficient,
+    executorDescription,
+  } = validatorDaoSettings!
+
+  const govPoolFormOptions = {
+    ...INITIAL_DAO_PROPOSAL,
+    _isValidator: Boolean(validatorsCount > 0),
+    _validatorsBalancesSettingsForm: {
+      ...INITIAL_DAO_PROPOSAL._validatorsBalancesSettingsForm,
+      earlyCompletion,
+      delegatedVotingAllowed,
+      validatorsVote,
+      duration,
+      durationValidators,
+      quorum,
+      quorumValidators,
+      minVotesForVoting,
+      minVotesForCreating,
+      rewardToken,
+      creationReward,
+      executionReward,
+      voteRewardsCoefficient,
+      executorDescription,
+    },
+  } as GovPoolFormOptions
+
   return (
     <>
       <Header>Create proposal</Header>
@@ -75,50 +116,9 @@ const CreateDaoProposalValidatorSettings: React.FC = () => {
           validatorDaoSettings && (
             <S.PageHolder>
               <S.PageContent>
-                <FundDaoCreatingContextProvider
+                <GovPoolFormContextProvider
                   customLSKey="creating-new-dao-proposal-validator-settings"
-                  daoProposal={{
-                    ...INITIAL_DAO_PROPOSAL,
-                    _validatorsBalancesSettingsForm: {
-                      earlyCompletion: validatorDaoSettings.earlyCompletion,
-                      delegatedVotingAllowed:
-                        validatorDaoSettings.delegatedVotingAllowed,
-                      validatorsVote: validatorDaoSettings.validatorsVote,
-                      duration: validatorDaoSettings.duration.toNumber(),
-                      durationValidators:
-                        validatorDaoSettings.durationValidators.toNumber(),
-                      quorum: cutStringZeroes(
-                        formatUnits(validatorDaoSettings.quorum, 25)
-                      ),
-                      quorumValidators: cutStringZeroes(
-                        formatUnits(validatorDaoSettings.quorumValidators, 25)
-                      ),
-                      minVotesForVoting: cutStringZeroes(
-                        formatEther(validatorDaoSettings.minVotesForVoting)
-                      ),
-                      minVotesForCreating: cutStringZeroes(
-                        formatEther(validatorDaoSettings.minVotesForCreating)
-                      ),
-                      rewardToken:
-                        validatorDaoSettings.rewardToken === ZERO_ADDR
-                          ? ""
-                          : validatorDaoSettings.rewardToken,
-                      creationReward: cutStringZeroes(
-                        formatUnits(validatorDaoSettings.creationReward, 18)
-                      ),
-                      executionReward: cutStringZeroes(
-                        formatUnits(validatorDaoSettings.executionReward, 18)
-                      ),
-                      voteRewardsCoefficient: cutStringZeroes(
-                        formatUnits(
-                          validatorDaoSettings.voteRewardsCoefficient,
-                          18
-                        )
-                      ),
-                      executorDescription:
-                        validatorDaoSettings.executorDescription,
-                    },
-                  }}
+                  govPoolFormOptions={govPoolFormOptions}
                 >
                   <GovProposalCreatingContextProvider>
                     <ValidatorsListContextProvider
@@ -133,7 +133,7 @@ const CreateDaoProposalValidatorSettings: React.FC = () => {
                       <CreateGovProposalValidatorSettingsForm />
                     </ValidatorsListContextProvider>
                   </GovProposalCreatingContextProvider>
-                </FundDaoCreatingContextProvider>
+                </GovPoolFormContextProvider>
               </S.PageContent>
             </S.PageHolder>
           )}

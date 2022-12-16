@@ -31,7 +31,7 @@ import { CreateDaoCardStepNumber } from "../components"
 
 import * as S from "./styled"
 
-import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { ICON_NAMES } from "constants/icon-names"
 import { readFromClipboard } from "utils/clipboard"
 import { useFormValidation } from "hooks/useFormValidation"
@@ -56,7 +56,7 @@ import { SUPPORTED_SOCIALS } from "constants/socials"
 import { createPortal } from "react-dom"
 
 const TitlesStep: FC = () => {
-  const daoPoolFormContext = useContext(FundDaoCreatingContext)
+  const daoPoolFormContext = useContext(GovPoolFormContext)
 
   const { isErc20, isErc721, erc20, erc721, socialLinks } = daoPoolFormContext
 
@@ -253,25 +253,117 @@ const TitlesStep: FC = () => {
         <Card>
           <CardHead
             nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
-            title="DAO Name"
+            title="About DAO "
           />
           <CardDescription>
-            <p>*Maximum 15 characters</p>
+            <p>Add your DAO’s website, description, and social links.</p>
           </CardDescription>
-          <InputField
-            value={daoName.get}
-            setValue={daoName.set}
-            label="DAO name"
-            labelNodeRight={
-              isFieldValid("daoName") ? (
-                <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+          <CardFormControl>
+            <InputField
+              value={daoName.get}
+              setValue={daoName.set}
+              label="DAO name"
+              labelNodeRight={
+                isFieldValid("daoName") ? (
+                  <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                ) : (
+                  <></>
+                )
+              }
+              errorMessage={getFieldErrorMessage("daoName")}
+              onBlur={() => touchField("daoName")}
+            />
+            <TextareaField
+              value={description.get}
+              setValue={description.set}
+              label="Description"
+              errorMessage={getFieldErrorMessage("description")}
+              onBlur={() => touchField("description")}
+            />
+            <InputField
+              value={websiteUrl.get}
+              setValue={websiteUrl.set}
+              label="Site"
+              errorMessage={getFieldErrorMessage("websiteUrl")}
+              onBlur={() => touchField("websiteUrl")}
+            />
+          </CardFormControl>
+          {!socialLinks.get.length ? (
+            <S.CardAddBtn
+              text={"+ Add social media"}
+              size="no-paddings"
+              color="default"
+              onClick={handleAddSocials}
+            />
+          ) : (
+            <></>
+          )}
+          <Collapse isOpen={!!socialLinks.get || isShowSocials}>
+            <CardFormControl>
+              {socialLinks.get.map(([key, value], idx) => (
+                <SocialLinkField
+                  key={idx}
+                  socialType={key}
+                  label={key}
+                  labelNodeRight={
+                    isFieldValid(
+                      key === "other" ? `others[${idx - 6}].value` : `${key}`
+                    ) ? (
+                      <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                    ) : (
+                      <></>
+                    )
+                  }
+                  value={value}
+                  setValue={(val) => {
+                    socialLinks.set((prevState) => {
+                      const nextState = [...prevState]
+                      nextState[idx][1] = val as string
+                      return nextState
+                    })
+                  }}
+                  onRemove={() => {
+                    socialLinks.set((prevState) => {
+                      let nextState = [...prevState]
+
+                      if (key === "other") {
+                        nextState = [...prevState.filter((el, i) => i !== idx)]
+                      } else {
+                        nextState[idx][1] = ""
+                      }
+
+                      return nextState
+                    })
+                  }}
+                  errorMessage={getFieldErrorMessage(
+                    key === "other" ? `others[${idx - 6}].value` : `${key}`
+                  )}
+                  onPaste={() => {
+                    touchField(
+                      key === "other" ? `others[${idx - 6}].value` : `${key}`
+                    )
+                  }}
+                />
+              ))}
+              {socialLinks.get.length ? (
+                <S.CardAddBtn
+                  text="+ Add other"
+                  size="no-paddings"
+                  color="default"
+                  onClick={() => {
+                    socialLinks.set((prevState) => {
+                      return [
+                        ...prevState,
+                        ["other", ""] as [SUPPORTED_SOCIALS, string],
+                      ]
+                    })
+                  }}
+                />
               ) : (
                 <></>
-              )
-            }
-            errorMessage={getFieldErrorMessage("daoName")}
-            onBlur={() => touchField("daoName")}
-          />
+              )}
+            </CardFormControl>
+          </Collapse>
         </Card>
 
         <Card>
@@ -464,108 +556,6 @@ const TitlesStep: FC = () => {
                   errorMessage={getFieldErrorMessage("nftsTotalSupply")}
                   onBlur={() => touchField("nftsTotalSupply")}
                 />
-              )}
-            </CardFormControl>
-          </Collapse>
-        </Card>
-
-        <Card>
-          <CardHead
-            nodeLeft={<Icon name={ICON_NAMES.globe} />}
-            title="Additional Info"
-          />
-          <CardDescription>
-            <p>Add your DAO’s website, description, and social links.</p>
-          </CardDescription>
-          <CardFormControl>
-            <InputField
-              value={websiteUrl.get}
-              setValue={websiteUrl.set}
-              label="Site"
-              errorMessage={getFieldErrorMessage("websiteUrl")}
-              onBlur={() => touchField("websiteUrl")}
-            />
-            <TextareaField
-              value={description.get}
-              setValue={description.set}
-              label="Description"
-              errorMessage={getFieldErrorMessage("description")}
-              onBlur={() => touchField("description")}
-            />
-          </CardFormControl>
-          {!socialLinks.get.length ? (
-            <S.CardAddBtn
-              text={"+ Add social media"}
-              size="no-paddings"
-              color="default"
-              onClick={handleAddSocials}
-            />
-          ) : (
-            <></>
-          )}
-          <Collapse isOpen={!!socialLinks.get || isShowSocials}>
-            <CardFormControl>
-              {socialLinks.get.map(([key, value], idx) => (
-                <SocialLinkField
-                  key={idx}
-                  socialType={key}
-                  label={key}
-                  labelNodeRight={
-                    isFieldValid(
-                      key === "other" ? `others[${idx - 6}].value` : `${key}`
-                    ) ? (
-                      <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
-                    ) : (
-                      <></>
-                    )
-                  }
-                  value={value}
-                  setValue={(val) => {
-                    socialLinks.set((prevState) => {
-                      const nextState = [...prevState]
-                      nextState[idx][1] = val as string
-                      return nextState
-                    })
-                  }}
-                  onRemove={() => {
-                    socialLinks.set((prevState) => {
-                      let nextState = [...prevState]
-
-                      if (key === "other") {
-                        nextState = [...prevState.filter((el, i) => i !== idx)]
-                      } else {
-                        nextState[idx][1] = ""
-                      }
-
-                      return nextState
-                    })
-                  }}
-                  errorMessage={getFieldErrorMessage(
-                    key === "other" ? `others[${idx - 6}].value` : `${key}`
-                  )}
-                  onPaste={() => {
-                    touchField(
-                      key === "other" ? `others[${idx - 6}].value` : `${key}`
-                    )
-                  }}
-                />
-              ))}
-              {socialLinks.get.length ? (
-                <S.CardAddBtn
-                  text="+ Add other"
-                  size="no-paddings"
-                  color="default"
-                  onClick={() => {
-                    socialLinks.set((prevState) => {
-                      return [
-                        ...prevState,
-                        ["other", ""] as [SUPPORTED_SOCIALS, string],
-                      ]
-                    })
-                  }}
-                />
-              ) : (
-                <></>
               )}
             </CardFormControl>
           </Collapse>

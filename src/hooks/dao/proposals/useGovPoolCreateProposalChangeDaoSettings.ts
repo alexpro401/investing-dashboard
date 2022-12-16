@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 
 import { useGovPoolContract } from "contracts"
 import { IpfsEntity } from "utils/ipfsEntity"
-import { IGovPoolDescription } from "types/dao.types"
+import { IGovPoolDescription } from "types"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovPool } from "abi"
 import usePayload from "hooks/usePayload"

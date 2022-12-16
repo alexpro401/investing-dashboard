@@ -1,5 +1,5 @@
 import React, { useContext } from "react"
-import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import {
   AppButton,
   Card,
@@ -30,7 +30,7 @@ const IsDistributionProposalStep: React.FC<
   IIsDistributionProposalStepProps
 > = ({ isCreatingProposal = false }) => {
   const { isDistributionProposal, distributionProposalSettingsForm } =
-    useContext(FundDaoCreatingContext)
+    useContext(GovPoolFormContext)
 
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
 

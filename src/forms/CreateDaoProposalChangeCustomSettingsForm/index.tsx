@@ -6,7 +6,7 @@ import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { DefaultProposalStep } from "common"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
-import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import {
   useGovPoolCreateProposalChangeSettings,
   useGovPoolExecutorToSettings,
@@ -25,7 +25,7 @@ const CreateDaoProposalChangeCustomSettingsForm: React.FC = () => {
     "daoAddress" | "executorAddress"
   >()
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.customSettings)
-  const { defaultProposalSettingForm } = useContext(FundDaoCreatingContext)
+  const { defaultProposalSettingForm } = useContext(GovPoolFormContext)
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
   )

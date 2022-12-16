@@ -9,11 +9,16 @@ import {
   useMemo,
   useState,
   useContext,
+  ReactNode,
 } from "react"
 import { useERC20 } from "hooks/useERC20"
 import { useErc721 } from "hooks/useErc721"
 import { useLocalStorage } from "react-use"
-import { DaoProposal, ExternalFileDocument } from "types"
+import {
+  GovPoolFormOptions,
+  ExternalFileDocument,
+  GovPoolSettings,
+} from "types"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
 import { get, isEqual } from "lodash"
 import { SUPPORTED_SOCIALS } from "constants/socials"
@@ -34,7 +39,12 @@ export interface ValidatorsDeployParamsForm {
   balances: { get: number[]; set: (value: any, idx?: number) => void }
 }
 
-export interface DaoProposalSettingsForm {
+export type GovPoolSettingsState = Record<
+  keyof GovPoolSettingsForm,
+  [unknown, Dispatch<SetStateAction<unknown>>]
+>
+
+export interface GovPoolSettingsForm {
   earlyCompletion: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
   delegatedVotingAllowed: {
     get: boolean
@@ -54,7 +64,7 @@ export interface DaoProposalSettingsForm {
   executorDescription: { get: string; set: Dispatch<SetStateAction<string>> }
 }
 
-interface FundDaoCreatingContext {
+interface IGovPoolFormContext {
   isErc20: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
   isErc721: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
   erc20: ReturnType<typeof useERC20>
@@ -86,17 +96,17 @@ interface FundDaoCreatingContext {
   userKeeperParams: UserKeeperDeployParamsForm
   validatorsParams: ValidatorsDeployParamsForm
 
-  defaultProposalSettingForm: DaoProposalSettingsForm
-  internalProposalForm: DaoProposalSettingsForm
-  validatorsBalancesSettingsForm: DaoProposalSettingsForm
-  distributionProposalSettingsForm: DaoProposalSettingsForm
+  defaultProposalSettingForm: GovPoolSettingsForm
+  internalProposalForm: GovPoolSettingsForm
+  validatorsBalancesSettingsForm: GovPoolSettingsForm
+  distributionProposalSettingsForm: GovPoolSettingsForm
 
   clearFormStorage: () => void
   createdDaoAddress: { get: string; set: Dispatch<SetStateAction<string>> }
-  initialForm: DaoProposal
+  initialForm: GovPoolFormOptions
 }
 
-export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
+export const GovPoolFormContext = createContext<IGovPoolFormContext>({
   isErc20: { get: false, set: () => {} },
   isErc721: { get: false, set: () => {} },
   isCustomVoting: { get: false, set: () => {} },
@@ -115,32 +125,37 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
   userKeeperParams: {} as UserKeeperDeployParamsForm,
   validatorsParams: {} as ValidatorsDeployParamsForm,
 
-  internalProposalForm: {} as DaoProposalSettingsForm,
-  validatorsBalancesSettingsForm: {} as DaoProposalSettingsForm,
-  defaultProposalSettingForm: {} as DaoProposalSettingsForm,
-  distributionProposalSettingsForm: {} as DaoProposalSettingsForm,
+  internalProposalForm: {} as GovPoolSettingsForm,
+  validatorsBalancesSettingsForm: {} as GovPoolSettingsForm,
+  defaultProposalSettingForm: {} as GovPoolSettingsForm,
+  distributionProposalSettingsForm: {} as GovPoolSettingsForm,
 
   clearFormStorage: () => {},
   createdDaoAddress: { get: "", set: () => {} },
-  initialForm: {} as DaoProposal,
+  initialForm: {} as GovPoolFormOptions,
 })
 
-interface IFundDaoCreatingContextProviderProps
+interface IGovPoolFormContextProviderProps
   extends HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode
+  children: ReactNode
   customLSKey?: string
-  daoProposal?: DaoProposal
+  govPoolFormOptions?: GovPoolFormOptions
 }
 
-const FundDaoCreatingContextProvider: FC<
-  IFundDaoCreatingContextProviderProps
-> = ({ children, customLSKey, daoProposal }) => {
-  const [value, setValue, remove] = useLocalStorage(
-    customLSKey ? customLSKey : "fund-dao-creating-form",
-    JSON.stringify(daoProposal ? daoProposal : INITIAL_DAO_PROPOSAL)
-  )
+const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
+  children,
+  customLSKey,
+  govPoolFormOptions,
+}) => {
+  const [localStorageValue, setLocalStorageValue, removeLocalStorageValue] =
+    useLocalStorage(
+      customLSKey || "fund-dao-creating-form",
+      JSON.stringify(
+        govPoolFormOptions ? govPoolFormOptions : INITIAL_DAO_PROPOSAL
+      )
+    )
 
-  const initialForm = useMemo<DaoProposal>(() => {
+  const initialForm = useMemo<GovPoolFormOptions>(() => {
     if (customLSKey) {
       const customFormFromLS = localStorage.getItem(customLSKey)
 
@@ -148,7 +163,7 @@ const FundDaoCreatingContextProvider: FC<
         return JSON.parse(JSON.parse(customFormFromLS))
       }
 
-      return daoProposal
+      return govPoolFormOptions
     } else {
       const formFromLS = localStorage.getItem("fund-dao-creating-form")
 
@@ -158,15 +173,15 @@ const FundDaoCreatingContextProvider: FC<
 
       return INITIAL_DAO_PROPOSAL
     }
-  }, [customLSKey, daoProposal])
+  }, [customLSKey, govPoolFormOptions])
 
-  const storedForm = useMemo<DaoProposal>(() => {
+  const storedForm = useMemo<GovPoolFormOptions>(() => {
     try {
-      return value ? JSON.parse(value) : {}
+      return localStorageValue ? JSON.parse(localStorageValue) : {}
     } catch (error) {
       return {}
     }
-  }, [value])
+  }, [localStorageValue])
 
   const [_isErc20, _setIsErc20] = useState<boolean>(storedForm._isErc20)
   const [_isErc721, _setIsErc721] = useState<boolean>(storedForm._isErc721)
@@ -176,7 +191,6 @@ const FundDaoCreatingContextProvider: FC<
   )
   const [_isDistributionProposal, _setIsDistributionProposal] =
     useState<boolean>(storedForm._isDistributionProposal)
-
   const [_isValidator, _setIsValidator] = useState(storedForm._isValidator)
 
   // to ipfs
@@ -293,7 +307,7 @@ const FundDaoCreatingContextProvider: FC<
     executorDescription: useState<string>(
       storedForm._internalProposalForm.executorDescription
     ),
-  }
+  } as GovPoolSettingsState
   const _distributionProposalSettingsForm = {
     earlyCompletion: useState<boolean>(
       storedForm._distributionProposalSettingsForm.earlyCompletion
@@ -337,7 +351,7 @@ const FundDaoCreatingContextProvider: FC<
     executorDescription: useState<string>(
       storedForm._distributionProposalSettingsForm.executorDescription
     ),
-  }
+  } as GovPoolSettingsState
   const _validatorsBalancesSettingsForm = {
     earlyCompletion: useState<boolean>(
       storedForm._validatorsBalancesSettingsForm.earlyCompletion
@@ -379,7 +393,7 @@ const FundDaoCreatingContextProvider: FC<
     executorDescription: useState<string>(
       storedForm._validatorsBalancesSettingsForm.executorDescription
     ),
-  }
+  } as GovPoolSettingsState
   const _defaultProposalSettingForm = {
     earlyCompletion: useState<boolean>(
       storedForm._defaultProposalSettingForm.earlyCompletion
@@ -419,14 +433,14 @@ const FundDaoCreatingContextProvider: FC<
     executorDescription: useState<string>(
       storedForm._defaultProposalSettingForm.executorDescription
     ),
-  }
+  } as GovPoolSettingsState
 
   const erc20 = useERC20(_userKeeperParams.tokenAddress[0])
   const erc721 = useErc721(_userKeeperParams.nftAddress[0])
   const [_createdDaoAddress, _setCreatedDaoAddress] = useState("")
 
   useEffect(() => {
-    setValue((prevState) => {
+    setLocalStorageValue((prevState) => {
       const nextState = JSON.stringify({
         _isErc20,
         _isErc721,
@@ -536,94 +550,140 @@ const FundDaoCreatingContextProvider: FC<
           executorDescription:
             _defaultProposalSettingForm.executorDescription[0],
         },
-      })
+      } as GovPoolFormOptions)
 
       return isEqual(prevState, nextState) ? prevState : nextState
     })
   }, [
     _avatarUrl,
     _daoName,
-    _defaultProposalSettingForm.creationReward,
-    _defaultProposalSettingForm.delegatedVotingAllowed,
-    _defaultProposalSettingForm.duration,
-    _defaultProposalSettingForm.durationValidators,
-    _defaultProposalSettingForm.earlyCompletion,
-    _defaultProposalSettingForm.executionReward,
-    _defaultProposalSettingForm.executorDescription,
-    _defaultProposalSettingForm.minVotesForCreating,
-    _defaultProposalSettingForm.minVotesForVoting,
-    _defaultProposalSettingForm.quorum,
-    _defaultProposalSettingForm.quorumValidators,
-    _defaultProposalSettingForm.rewardToken,
-    _defaultProposalSettingForm.validatorsVote,
-    _defaultProposalSettingForm.voteRewardsCoefficient,
     _description,
-    _distributionProposalSettingsForm.creationReward,
-    _distributionProposalSettingsForm.delegatedVotingAllowed,
-    _distributionProposalSettingsForm.duration,
-    _distributionProposalSettingsForm.durationValidators,
-    _distributionProposalSettingsForm.earlyCompletion,
-    _distributionProposalSettingsForm.executionReward,
-    _distributionProposalSettingsForm.executorDescription,
-    _distributionProposalSettingsForm.minVotesForCreating,
-    _distributionProposalSettingsForm.minVotesForVoting,
-    _distributionProposalSettingsForm.quorum,
-    _distributionProposalSettingsForm.quorumValidators,
-    _distributionProposalSettingsForm.rewardToken,
-    _distributionProposalSettingsForm.validatorsVote,
-    _distributionProposalSettingsForm.voteRewardsCoefficient,
     _documents,
-    _internalProposalForm.creationReward,
-    _internalProposalForm.delegatedVotingAllowed,
-    _internalProposalForm.duration,
-    _internalProposalForm.durationValidators,
-    _internalProposalForm.earlyCompletion,
-    _internalProposalForm.executionReward,
-    _internalProposalForm.executorDescription,
-    _internalProposalForm.minVotesForCreating,
-    _internalProposalForm.minVotesForVoting,
-    _internalProposalForm.quorum,
-    _internalProposalForm.quorumValidators,
-    _internalProposalForm.rewardToken,
-    _internalProposalForm.validatorsVote,
-    _internalProposalForm.voteRewardsCoefficient,
     _isCustomVoting,
     _isDistributionProposal,
     _isErc20,
     _isErc721,
     _isValidator,
     _socialLinks,
-    _userKeeperParams.nftAddress,
-    _userKeeperParams.nftsTotalSupply,
-    _userKeeperParams.tokenAddress,
-    _userKeeperParams.totalPowerInTokens,
-    _validatorsBalancesSettingsForm.creationReward,
-    _validatorsBalancesSettingsForm.delegatedVotingAllowed,
-    _validatorsBalancesSettingsForm.duration,
-    _validatorsBalancesSettingsForm.durationValidators,
-    _validatorsBalancesSettingsForm.earlyCompletion,
-    _validatorsBalancesSettingsForm.executionReward,
-    _validatorsBalancesSettingsForm.executorDescription,
-    _validatorsBalancesSettingsForm.minVotesForCreating,
-    _validatorsBalancesSettingsForm.minVotesForVoting,
-    _validatorsBalancesSettingsForm.quorum,
-    _validatorsBalancesSettingsForm.quorumValidators,
-    _validatorsBalancesSettingsForm.rewardToken,
-    _validatorsBalancesSettingsForm.validatorsVote,
-    _validatorsBalancesSettingsForm.voteRewardsCoefficient,
-    _validatorsParams.balances,
-    _validatorsParams.duration,
-    _validatorsParams.name,
-    _validatorsParams.quorum,
-    _validatorsParams.symbol,
-    _validatorsParams.validators,
+    _userKeeperParams,
+    _validatorsParams,
     _websiteUrl,
-    setValue,
+    _defaultProposalSettingForm,
+    _distributionProposalSettingsForm,
+    _validatorsBalancesSettingsForm,
+    _internalProposalForm,
+    setLocalStorageValue,
   ])
+
+  const populateSettings = useCallback(
+    (settingsForm: GovPoolSettingsState, settings: GovPoolSettings) => {
+      const [, setEarlyCompletion] = settingsForm.earlyCompletion
+      const [, setDelegatedVotingAllowed] = settingsForm.delegatedVotingAllowed
+      const [, setValidatorsVote] = settingsForm.validatorsVote
+      const [, setDuration] = settingsForm.duration
+      const [, setDurationValidators] = settingsForm.durationValidators
+      const [, setQuorum] = settingsForm.quorum
+      const [, setQuorumValidators] = settingsForm.quorumValidators
+      const [, setMinVotesForVoting] = settingsForm.minVotesForVoting
+      const [, setMinVotesForCreating] = settingsForm.minVotesForCreating
+      const [, setRewardToken] = settingsForm.rewardToken
+      const [, setCreationReward] = settingsForm.creationReward
+      const [, setExecutionReward] = settingsForm.executionReward
+      const [, setVoteRewardsCoefficient] = settingsForm.voteRewardsCoefficient
+      const [, setExecutorDescription] = settingsForm.executorDescription
+
+      setEarlyCompletion(settings.earlyCompletion)
+      setDelegatedVotingAllowed(settings.delegatedVotingAllowed)
+      setValidatorsVote(settings.validatorsVote)
+      setDuration(settings.duration)
+      setDurationValidators(settings.durationValidators)
+      setQuorum(settings.quorum)
+      setQuorumValidators(settings.quorumValidators)
+      setMinVotesForVoting(settings.minVotesForVoting)
+      setMinVotesForCreating(settings.minVotesForCreating)
+      setRewardToken(settings.rewardToken)
+      setCreationReward(settings.creationReward)
+      setExecutionReward(settings.executionReward)
+      setVoteRewardsCoefficient(settings.voteRewardsCoefficient)
+      setExecutorDescription(settings.executorDescription)
+    },
+    []
+  )
+
+  const populateForm = useCallback(
+    (govPool: GovPoolFormOptions) => {
+      _setAvatarUrl(govPool._avatarUrl)
+      _setDaoName(govPool._daoName)
+      _setDescription(govPool._description)
+      _setSocialLinks(govPool._socialLinks)
+      _setDocuments(govPool._documents)
+      _setWebsiteUrl(govPool._websiteUrl)
+
+      _setIsErc20(govPool._isErc20)
+      _setIsErc721(govPool._isErc721)
+
+      _setIsValidator(govPool._isValidator)
+      _setIsCustomVoting(govPool._isCustomVoting)
+      _setIsDistributionProposal(govPool._isDistributionProposal)
+
+      const [, _setTokenAddress] = _userKeeperParams.tokenAddress
+      const [, _setNftAddress] = _userKeeperParams.nftAddress
+      const [, _setTotalPowerInTokens] = _userKeeperParams.totalPowerInTokens
+      const [, _setNftsTotalSupply] = _userKeeperParams.nftsTotalSupply
+
+      _setTokenAddress(govPool._userKeeperParams.tokenAddress)
+      _setNftAddress(govPool._userKeeperParams.nftAddress)
+      _setTotalPowerInTokens(govPool._userKeeperParams.totalPowerInTokens)
+      _setNftsTotalSupply(govPool._userKeeperParams.nftsTotalSupply)
+
+      const [, setName] = _validatorsParams.name
+      const [, setSymbol] = _validatorsParams.symbol
+      const [, setDuration] = _validatorsParams.duration
+      const [, setQuorum] = _validatorsParams.quorum
+      const [, setValidators] = _validatorsParams.validators
+      const [, setBalances] = _validatorsParams.balances
+
+      setName(govPool._validatorsParams.name)
+      setSymbol(govPool._validatorsParams.symbol)
+      setDuration(govPool._validatorsParams.duration)
+      setQuorum(govPool._validatorsParams.quorum)
+      setValidators(govPool._validatorsParams.validators)
+      setBalances(govPool._validatorsParams.balances)
+
+      populateSettings(_internalProposalForm, govPool._internalProposalForm)
+      populateSettings(
+        _defaultProposalSettingForm,
+        govPool._defaultProposalSettingForm
+      )
+      populateSettings(
+        _distributionProposalSettingsForm,
+        govPool._distributionProposalSettingsForm
+      )
+      populateSettings(
+        _validatorsBalancesSettingsForm,
+        govPool._validatorsBalancesSettingsForm
+      )
+    },
+    [
+      _defaultProposalSettingForm,
+      _distributionProposalSettingsForm,
+      _internalProposalForm,
+      _userKeeperParams,
+      _validatorsBalancesSettingsForm,
+      _validatorsParams,
+      populateSettings,
+    ]
+  )
+
+  useEffect(() => {
+    if (govPoolFormOptions) {
+      populateForm(govPoolFormOptions)
+    }
+  }, [govPoolFormOptions, populateForm])
 
   return (
     <>
-      <FundDaoCreatingContext.Provider
+      <GovPoolFormContext.Provider
         value={{
           isErc20: { get: _isErc20, set: _setIsErc20 },
           isErc721: { get: _isErc721, set: _setIsErc721 },
@@ -745,7 +805,7 @@ const FundDaoCreatingContextProvider: FC<
               get: _internalProposalForm.executorDescription[0],
               set: _internalProposalForm.executorDescription[1],
             },
-          } as DaoProposalSettingsForm,
+          } as GovPoolSettingsForm,
           distributionProposalSettingsForm: {
             earlyCompletion: {
               get: _distributionProposalSettingsForm.earlyCompletion[0],
@@ -803,7 +863,7 @@ const FundDaoCreatingContextProvider: FC<
               get: _distributionProposalSettingsForm.executorDescription[0],
               set: _distributionProposalSettingsForm.executorDescription[1],
             },
-          } as DaoProposalSettingsForm,
+          } as GovPoolSettingsForm,
           validatorsBalancesSettingsForm: {
             earlyCompletion: {
               get: _validatorsBalancesSettingsForm.earlyCompletion[0],
@@ -861,7 +921,7 @@ const FundDaoCreatingContextProvider: FC<
               get: _validatorsBalancesSettingsForm.executorDescription[0],
               set: _validatorsBalancesSettingsForm.executorDescription[1],
             },
-          } as DaoProposalSettingsForm,
+          } as GovPoolSettingsForm,
           defaultProposalSettingForm: {
             earlyCompletion: {
               get: _defaultProposalSettingForm.earlyCompletion[0],
@@ -919,9 +979,9 @@ const FundDaoCreatingContextProvider: FC<
               get: _defaultProposalSettingForm.executorDescription[0],
               set: _defaultProposalSettingForm.executorDescription[1],
             },
-          } as DaoProposalSettingsForm,
+          } as GovPoolSettingsForm,
 
-          clearFormStorage: remove,
+          clearFormStorage: removeLocalStorageValue,
           createdDaoAddress: {
             get: _createdDaoAddress,
             set: _setCreatedDaoAddress,
@@ -930,7 +990,7 @@ const FundDaoCreatingContextProvider: FC<
         }}
       >
         {children}
-      </FundDaoCreatingContext.Provider>
+      </GovPoolFormContext.Provider>
     </>
   )
 }
@@ -938,7 +998,7 @@ const FundDaoCreatingContextProvider: FC<
 export const useIsDaoFieldChanged = ({ field }: { field: string }): boolean => {
   const [result, setResult] = useState<boolean>(false)
 
-  const contextValue = useContext(FundDaoCreatingContext)
+  const contextValue = useContext(GovPoolFormContext)
 
   useEffect(() => {
     try {
@@ -954,4 +1014,4 @@ export const useIsDaoFieldChanged = ({ field }: { field: string }): boolean => {
   return result
 }
 
-export default FundDaoCreatingContextProvider
+export default GovPoolFormContextProvider
