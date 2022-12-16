@@ -6,6 +6,7 @@ import {
   useContext,
   useMemo,
 } from "react"
+import { createPortal } from "react-dom"
 import { useParams } from "react-router-dom"
 import theme from "theme"
 
@@ -346,6 +347,8 @@ const AbiStep: FC = () => {
     ]
   )
 
+  const appNavigationEl = document.querySelector("#app-navigation")
+
   return (
     <S.StepsRoot>
       <Card>
@@ -386,7 +389,14 @@ const AbiStep: FC = () => {
         isOpen={modal.get !== ""}
         onClose={() => modal.set("")}
       />
-      <StepsNavigation customNextCb={handleNextStep} />
+      {appNavigationEl ? (
+        createPortal(
+          <StepsNavigation customNextCb={handleNextStep} />,
+          appNavigationEl
+        )
+      ) : (
+        <></>
+      )}
     </S.StepsRoot>
   )
 }

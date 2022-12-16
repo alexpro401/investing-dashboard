@@ -1,13 +1,21 @@
-import React, { useState, useMemo, useCallback, useContext } from "react"
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useContext,
+  useEffect,
+} from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { parseEther } from "@ethersproject/units"
+import { useDispatch } from "react-redux"
 
 import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { AdvancedABIContext } from "context/govPool/proposals/custom/AdvancedABIContext"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { useGovPoolCreateCustomProposalManual } from "hooks/dao"
+import { hideTapBar, showTabBar } from "state/application/actions"
 import { AbiStep } from "./steps"
 
 import * as S from "./styled"
@@ -19,6 +27,7 @@ enum STEPS {
 
 const CreateDaoCustomProposalAbiForm: React.FC = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { daoAddress, executorAddress } = useParams<
     "daoAddress" | "executorAddress"
   >()
@@ -32,6 +41,14 @@ const CreateDaoCustomProposalAbiForm: React.FC = () => {
     executorValue,
     encodedMethods,
   } = useContext(AdvancedABIContext)
+
+  useEffect(() => {
+    dispatch(hideTapBar())
+
+    return () => {
+      dispatch(showTabBar())
+    }
+  }, [dispatch])
 
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.abiInfo)
 
