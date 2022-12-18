@@ -11,18 +11,9 @@ import TransactionSlippage from "components/TransactionSlippage"
 
 import { formatBigNumber } from "utils"
 
-import multiplier from "assets/icons/10x-staking.svg"
-
 import { Card, CardHeader, Title } from "components/Exchange/styled"
 import useInsuranceManagement from "./useInsuranceManagement"
-import {
-  PriceCard,
-  Row,
-  Label,
-  Amount,
-  InsuranceAmount,
-  MultiplierIcon,
-} from "./styled"
+import * as S from "./styled"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -105,7 +96,7 @@ function Management() {
       customPrice={
         direction === "withdraw" && (
           <Flex>
-            <InsuranceAmount>Unstake amount</InsuranceAmount>
+            <S.InsuranceAmount>Unstake amount</S.InsuranceAmount>
           </Flex>
         )
       }
@@ -124,8 +115,8 @@ function Management() {
       customPrice={
         direction === "deposit" && (
           <Flex>
-            <InsuranceAmount>Insurance amount</InsuranceAmount>
-            <MultiplierIcon src={multiplier} />
+            <S.InsuranceAmount>Insurance amount</S.InsuranceAmount>
+            <Icon name={ICON_NAMES.insuranceMultiplier} />
           </Flex>
         )
       }
@@ -153,29 +144,29 @@ function Management() {
 
       {direction === "deposit" ? from : to}
 
-      <PriceCard>
-        <Row>
-          <Label>Total Stake:</Label>
+      <S.PriceCard>
+        <S.Row>
+          <S.Label>Total Stake:</S.Label>
           <Flex>
-            <Amount>{formatBigNumber(stakeAmount, 18, 2)}</Amount>
-            <Label>DEXE</Label>
+            <S.Amount>{formatBigNumber(stakeAmount, 18, 2)}</S.Amount>
+            <S.Label>DEXE</S.Label>
           </Flex>
-        </Row>
-        <Row>
-          <Label>Insurance amount:</Label>
+        </S.Row>
+        <S.Row>
+          <S.Label>Insurance amount:</S.Label>
           <Flex>
-            <Amount>{formatBigNumber(insuranceAmount, 18, 2)}</Amount>
-            <Label>DEXE</Label>
+            <S.Amount>{formatBigNumber(insuranceAmount, 18, 2)}</S.Amount>
+            <S.Label>DEXE</S.Label>
           </Flex>
-        </Row>
-        <Row>
-          <Label>Insurance amount in USD:</Label>
+        </S.Row>
+        <S.Row>
+          <S.Label>Insurance amount in USD:</S.Label>
           <Flex>
-            <Amount>{formatBigNumber(insuranceAmountUSD, 18, 2)}</Amount>
-            <Label>USD</Label>
+            <S.Amount>{formatBigNumber(insuranceAmountUSD, 18, 2)}</S.Amount>
+            <S.Label>USD</S.Label>
           </Flex>
-        </Row>
-      </PriceCard>
+        </S.Row>
+      </S.PriceCard>
 
       {button}
 

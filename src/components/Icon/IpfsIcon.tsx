@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import { Icon as CommonIcon } from "common"
 
 import { getIpfsData } from "utils/ipfs"
 
@@ -7,7 +8,7 @@ import { Icon } from "./styled"
 import IconLoader from "./IconLoader"
 
 import defaultAvatar from "assets/icons/default-avatar.svg"
-import unknown from "assets/icons/Unknown.svg"
+import { ICON_NAMES } from "constants/icon-names"
 
 interface IProps {
   size?: number
@@ -17,7 +18,7 @@ interface IProps {
 
 const IpfsIcon: React.FC<IProps> = ({ size, hash, m }) => {
   const [src, setSrc] = useState("")
-  const [srcImg, setImg] = useState(unknown)
+  const [srcImg, setImg] = useState<string>()
   const [isLoading, setLoadingState] = useState(true)
 
   useEffect(() => {
@@ -61,6 +62,8 @@ const IpfsIcon: React.FC<IProps> = ({ size, hash, m }) => {
       token.removeEventListener(imageLoad, imageError)
     }
   }, [src])
+
+  if (!srcImg) return <CommonIcon name={ICON_NAMES.unknownToken} />
 
   if (isLoading) {
     return <IconLoader m={m} size={size} />

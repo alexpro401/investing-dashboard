@@ -46,6 +46,8 @@ import {
   PlusIcon,
   ExclamationCircle,
   ClockCircledIcon,
+  InsuranceMultiplierIcon,
+  UnknownTokenIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -155,6 +157,10 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return ClockCircledIcon as unknown as ElementType
       case ICON_NAMES.successCircle:
         return SuccessCircledIcon as unknown as ElementType
+      case ICON_NAMES.insuranceMultiplier:
+        return InsuranceMultiplierIcon as unknown as ElementType
+      case ICON_NAMES.unknownToken:
+        return UnknownTokenIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }
