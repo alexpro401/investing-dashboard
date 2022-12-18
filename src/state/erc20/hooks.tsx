@@ -60,6 +60,10 @@ export function useERC20Data(
       return
     }
 
+    if (address === process.env.REACT_APP_MAIN_ASSET_ADDRESS) {
+      return
+    }
+
     if (
       String(address).toLocaleLowerCase() === storedAddress ||
       address === ZERO_ADDR
