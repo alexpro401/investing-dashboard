@@ -2,9 +2,14 @@ import React, { useState, useEffect, useMemo, useRef, memo } from "react"
 import { useWeb3React } from "@web3-react/core"
 import { MetroSpinner } from "react-spinners-kit"
 import styled from "styled-components"
+import { Icon as CommonIcon } from "common"
 
 import { Flex } from "theme"
 import { useERC20 } from "hooks/useERC20"
+import { useSelector } from "react-redux"
+import { selectDexeAddress } from "state/contracts/selectors"
+import MemoDexeIcon from "assets/menu/DexeIcon"
+import { ICON_NAMES } from "constants/icon-names"
 
 interface IconProps {
   size?: number
@@ -112,6 +117,8 @@ const TokenIcon: React.FC<IProps> = ({ size, address, m = "0 8px 0 0" }) => {
   const ref = useRef() as React.MutableRefObject<HTMLImageElement>
   const src = getIconsPathByChain(chainId, address)
 
+  const dexeAddress = useSelector(selectDexeAddress)
+
   const isBroken = useMemo(
     () => checkImageBroken(chainId, account, address),
     [account, address, chainId]
@@ -152,6 +159,10 @@ const TokenIcon: React.FC<IProps> = ({ size, address, m = "0 8px 0 0" }) => {
       token.removeEventListener(imageLoad, imageError)
     }
   }, [account, address, chainId, isBroken, src])
+
+  if (address?.toLocaleLowerCase() === dexeAddress.toLocaleLowerCase()) {
+    return <CommonIcon name={ICON_NAMES.dexeTokenIcon} style={{ margin: m }} />
+  }
 
   if (noImage && tokenData) {
     return <DefaultTokenIcon symbol={tokenData.symbol} m={m} size={size} />

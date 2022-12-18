@@ -2,12 +2,14 @@ import styled from "styled-components"
 
 export const SuccessContainer = styled.div`
   margin: 0 auto;
-  bacground-color: #040a0f;
+  background-color: #040a0f;
   width: fill-available;
   overflow-y: auto;
+  flex: 1;
 `
 
 export const Body = styled.div`
+  flex: 1;
   position: relative;
   margin-top: 67px;
   box-sizing: border-box;
