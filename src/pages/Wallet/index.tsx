@@ -9,7 +9,7 @@ import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
 import TransactionHistory from "components/TransactionHistory"
 
-import { useInsuranceContract, useUserRegistryContract } from "contracts"
+import { useUserRegistryContract } from "contracts"
 import useCopyClipboard from "hooks/useCopyClipboard"
 
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
@@ -53,8 +53,8 @@ import {
   NetworkIcon,
 } from "./styled"
 import { useUserAgreement } from "state/user/hooks"
-import { ZERO } from "constants/index"
 import { IpfsEntity } from "utils/ipfsEntity"
+import useInsuranceAmount from "hooks/useInsuranceAmount"
 
 const useUserSettings = (): [
   {
@@ -194,26 +194,9 @@ export default function Wallet() {
 
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
-  const [insuranceAmount, setInsuranceAmount] = useState(ZERO)
-
-  const insurance = useInsuranceContract()
+  const insuranceAmount = useInsuranceAmount(account)
 
   const [txHistoryOpen, setTxHistoryOpen] = useState<boolean>(false)
-
-  const fetchInsuranceBalance = useCallback(async () => {
-    if (!account) return
-
-    const userInsurance = await insurance?.getInsurance(account)
-
-    if (!userInsurance) return
-    setInsuranceAmount(userInsurance[1])
-  }, [account, insurance])
-
-  useEffect(() => {
-    if (!insurance) return
-
-    fetchInsuranceBalance().catch(console.error)
-  }, [insurance, fetchInsuranceBalance])
 
   const handleLogout = () => {
     deactivate()

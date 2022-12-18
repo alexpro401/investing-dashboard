@@ -5,11 +5,13 @@ interface IProps {
 }
 
 function DexeIcon(props: IProps) {
+  const { size, ...rest } = props
   return (
     <svg
       width={38}
       height={38}
-      transform={`scale(${props.size ? props.size / 38 : 1})`}
+      transform={`scale(${size ? size / 38 : 1})`}
+      {...rest}
     >
       <defs>
         <filter

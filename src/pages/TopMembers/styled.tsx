@@ -16,6 +16,12 @@ export const MembersList = styled.div`
   @media only screen and (${device.sm}) {
     padding: 0 16px 30px;
   }
+
+  @media (min-width: 768px) {
+    max-width: 1200px;
+    margin: auto;
+    padding: 10px 32px 30px;
+  }
 `
 
 export const LoadingText = styled.div`
@@ -36,7 +42,6 @@ export const MembersGrid = styled.div`
 `
 
 export const ListContainer = styled(motion.div)`
-  padding: 0 0 0 20px;
   overflow-y: hidden;
   touch-action: none;
   overscroll-behavior: none;

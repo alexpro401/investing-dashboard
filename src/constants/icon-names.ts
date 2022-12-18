@@ -49,4 +49,6 @@ export enum ICON_NAMES {
   successCircle = "success-circle",
   insuranceMultiplier = "insurance-multiplier",
   unknownToken = "unknown-token",
+  logoIcon = "logo-icon",
+  dexeTokenIcon = "dexe-token-icon",
 }
