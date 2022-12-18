@@ -13,6 +13,8 @@ export const Container = styled(motion.div)`
   right: 8px;
   z-index: 100;
   padding: 31px 26px;
+  max-width: 350px;
+  margin: auto;
 `
 
 export const Overlay = styled(motion.div)`
@@ -30,7 +32,7 @@ export const Overlay = styled(motion.div)`
 
 export const Head = styled(Flex)`
   width: 100%;
-  jutsify-content: space-between;
+  justify-content: space-between;
 `
 
 export const Title = styled.div`

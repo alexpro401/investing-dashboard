@@ -9,8 +9,9 @@ export const Container = styled(Flex)`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  position: relative;
   padding: 40px 32px;
+  max-width: 1200px;
+  margin: auto;
 
   &:before {
     content: "";
@@ -33,6 +34,10 @@ export const Container = styled(Flex)`
     background: url(${bottomAsset});
     background-position: 0 100%;
     background-repeat: no-repeat;
+  }
+
+  @media (min-width: 768px) {
+    padding: 60px 80px;
   }
 `
 
