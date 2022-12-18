@@ -1,6 +1,6 @@
 import React, { useMemo } from "react"
 import { useParams } from "react-router-dom"
-import { formatEther, formatUnits } from "@ethersproject/units"
+import { formatEther } from "@ethersproject/units"
 
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
@@ -14,14 +14,13 @@ import {
 } from "hooks/dao"
 import CreateGovProposalValidatorSettingsForm from "forms/CreateGovProposalValidatorSettingsForm"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
-import { ZERO_ADDR } from "constants/index"
 import { cutStringZeroes } from "utils"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
 
 import * as S from "./styled"
-import { GovPoolFormOptions } from "../../types"
+import { GovPoolFormOptions } from "types"
 
 const CreateDaoProposalValidatorSettings: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
@@ -64,7 +63,6 @@ const CreateDaoProposalValidatorSettings: React.FC = () => {
   )
 
   const {
-    validatorsCount,
     earlyCompletion,
     delegatedVotingAllowed,
     validatorsVote,
@@ -83,7 +81,6 @@ const CreateDaoProposalValidatorSettings: React.FC = () => {
 
   const govPoolFormOptions = {
     ...INITIAL_DAO_PROPOSAL,
-    _isValidator: Boolean(validatorsCount > 0),
     _validatorsBalancesSettingsForm: {
       ...INITIAL_DAO_PROPOSAL._validatorsBalancesSettingsForm,
       earlyCompletion,

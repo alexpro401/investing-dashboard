@@ -1,7 +1,8 @@
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { SUPPORTED_SOCIALS } from "constants/socials"
-import { IGovPool } from "../interfaces/typechain/GovPool"
+import { IGovPool } from "interfaces/typechain/GovPool"
+import { Dispatch, SetStateAction } from "react"
 
 export type ExternalFileDocument = {
   name: string
@@ -29,16 +30,16 @@ export type GovPoolSettings = {
   earlyCompletion: boolean
   delegatedVotingAllowed: boolean
   validatorsVote: boolean
-  duration: number
-  durationValidators: number
-  quorum: string
-  quorumValidators: string
-  minVotesForVoting: string
-  minVotesForCreating: string
+  duration: BigNumber
+  durationValidators: BigNumber
+  quorum: BigNumber
+  quorumValidators: BigNumber
+  minVotesForVoting: BigNumber
+  minVotesForCreating: BigNumber
   rewardToken: string
-  creationReward: string
-  executionReward: string
-  voteRewardsCoefficient: string
+  creationReward: BigNumber
+  executionReward: BigNumber
+  voteRewardsCoefficient: BigNumber
   executorDescription: string
 }
 
@@ -72,6 +73,47 @@ export type GovPoolFormOptions = {
   _distributionProposalSettingsForm: GovPoolSettings
   _validatorsBalancesSettingsForm: GovPoolSettings
   _defaultProposalSettingForm: GovPoolSettings
+}
+
+export interface UserKeeperDeployParamsForm {
+  tokenAddress: { get: string; set: Dispatch<SetStateAction<string>> }
+  nftAddress: { get: string; set: Dispatch<SetStateAction<string>> }
+  totalPowerInTokens: { get: number; set: Dispatch<SetStateAction<number>> }
+  nftsTotalSupply: { get: number; set: Dispatch<SetStateAction<number>> }
+}
+
+export interface ValidatorsDeployParamsForm {
+  name: { get: string; set: Dispatch<SetStateAction<string>> }
+  symbol: { get: string; set: Dispatch<SetStateAction<string>> }
+  duration: { get: number; set: Dispatch<SetStateAction<number>> }
+  quorum: { get: number; set: Dispatch<SetStateAction<number>> }
+  validators: { get: string[]; set: (value: any, idx?: number) => void }
+  balances: { get: number[]; set: (value: any, idx?: number) => void }
+}
+
+export type GovPoolSettingsState = Record<
+  keyof GovPoolSettingsForm,
+  [unknown, Dispatch<SetStateAction<unknown>>]
+>
+
+export interface GovPoolSettingsForm {
+  earlyCompletion: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
+  delegatedVotingAllowed: {
+    get: boolean
+    set: Dispatch<SetStateAction<boolean>>
+  }
+  validatorsVote: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
+  duration: { get: number; set: Dispatch<SetStateAction<number>> }
+  durationValidators: { get: number; set: Dispatch<SetStateAction<number>> }
+  quorum: { get: string; set: Dispatch<SetStateAction<string>> }
+  quorumValidators: { get: string; set: Dispatch<SetStateAction<string>> }
+  minVotesForVoting: { get: string; set: Dispatch<SetStateAction<string>> }
+  minVotesForCreating: { get: string; set: Dispatch<SetStateAction<string>> }
+  rewardToken: { get: string; set: Dispatch<SetStateAction<string>> }
+  creationReward: { get: string; set: Dispatch<SetStateAction<string>> }
+  executionReward: { get: string; set: Dispatch<SetStateAction<string>> }
+  voteRewardsCoefficient: { get: string; set: Dispatch<SetStateAction<string>> }
+  executorDescription: { get: string; set: Dispatch<SetStateAction<string>> }
 }
 
 export interface IGovPoolDescription {

@@ -46,7 +46,9 @@ const VotingSettings: React.FC<IVotingSettingsProps> = ({
   const durationString = useMemo(
     () =>
       duration
-        ? parseDurationShortString(parseDuration(parseSeconds(duration)))
+        ? parseDurationShortString(
+            parseDuration(parseSeconds(duration.toNumber()))
+          )
         : null,
     [duration]
   )

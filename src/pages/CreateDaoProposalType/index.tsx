@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo } from "react"
 import { useParams, useLocation } from "react-router-dom"
-import { formatUnits, formatEther } from "@ethersproject/units"
 
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
@@ -11,13 +10,11 @@ import CreateNewProposalTypeForm from "forms/CreateNewProposalTypeForm"
 import { useGovPoolSetting, useGovPoolValidatorsCount } from "hooks/dao"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
-import { ZERO_ADDR } from "constants/index"
-import { cutStringZeroes } from "utils"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
 
 import * as S from "./styled"
-import { GovPoolFormOptions } from "../../types"
+import { GovPoolFormOptions } from "types"
 
 const CreateDaoProposalType: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
@@ -79,16 +76,15 @@ const CreateDaoProposalType: React.FC = () => {
       delegatedVotingAllowed,
       validatorsVote,
       duration,
-      durationValidators,
       quorum,
-      quorumValidators,
       minVotesForVoting,
       minVotesForCreating,
       rewardToken,
       creationReward,
       executionReward,
       voteRewardsCoefficient,
-      executorDescription,
+      durationValidators,
+      quorumValidators,
     },
   } as GovPoolFormOptions
 
