@@ -7,8 +7,10 @@ export interface IPriceHistory {
   usdTVL: number
   baseTVL: number
   supply: number
-  absPNL: number
-  percPNL: number
+  absPNLUSD: number
+  percPNLUSD: number
+  absPNLBase: number
+  percPNLBase: number
   timestamp: number
   traderUSD: number
   aggregationType: number

@@ -42,6 +42,7 @@ export const useGovPoolCreateProposal = (
   const tryEstimateGas = useCallback(
     async (
       descriptionURL: string,
+      misc: string,
       executors: string[],
       values: number[],
       data: string[]
@@ -49,6 +50,7 @@ export const useGovPoolCreateProposal = (
       try {
         const gas = await govPoolContract!.estimateGas.createProposal(
           descriptionURL,
+          misc,
           executors,
           values,
           data,
@@ -70,6 +72,7 @@ export const useGovPoolCreateProposal = (
   const createGovProposal = useCallback(
     async (
       { proposalName, proposalDescription }: IProposalIPFS,
+      misc: string,
       executors: string[],
       values: (number | string)[],
       data: string[]
@@ -90,6 +93,7 @@ export const useGovPoolCreateProposal = (
 
         const gasLimit = await tryEstimateGas(
           descriptionUrl,
+          misc,
           executors,
           //@ts-ignore
           values,
@@ -98,6 +102,7 @@ export const useGovPoolCreateProposal = (
 
         const txResult = await govPoolContract.createProposal(
           descriptionUrl,
+          misc,
           executors,
           values,
           data,
@@ -145,6 +150,7 @@ export const useGovPoolCreateProposal = (
 
     await createGovProposal(
       { proposalName: "", proposalDescription: "" },
+      "",
       [daoPoolAddress as string],
       [0],
       [
@@ -194,6 +200,7 @@ export const useGovPoolCreateProposal = (
 
       await createGovProposal(
         { proposalName: "", proposalDescription: "" },
+        "",
         executors,
         values,
         data

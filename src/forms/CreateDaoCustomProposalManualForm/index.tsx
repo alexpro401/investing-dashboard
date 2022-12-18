@@ -55,6 +55,7 @@ const CreateDaoCustomProposalManualForm: React.FC = () => {
         .concat(executorContract.get.transactionData),
       proposalName: proposalName.get,
       proposalDescription: proposalDescription.get,
+      misc: "",
     })
   }, [
     createProposal,

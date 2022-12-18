@@ -68,6 +68,7 @@ const useGovPoolCreateProposalChangeDaoSettings = (govPoolAddress: string) => {
 
       const receipt = await createGovProposal(
         { proposalName, proposalDescription },
+        "",
         [govPoolAddress],
         [0],
         [encodedNewFovPoolDescription]

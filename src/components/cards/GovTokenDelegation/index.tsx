@@ -85,7 +85,7 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
     }
 
     const _currentDelegations = reduce(
-      delegations,
+      delegations.delegationsInfo,
       (acc, delegation) => {
         if (
           String(delegation.delegatee).toLocaleLowerCase() ===

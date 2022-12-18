@@ -531,9 +531,9 @@ const useSwap = ({
 
     if (!history.priceHistory || !history.priceHistory.length) return
 
-    const { percPNL } = history.priceHistory[0]
+    const { percPNLBase } = history.priceHistory[0]
 
-    setPNL(BigNumber.from(percPNL))
+    setPNL(BigNumber.from(percPNLBase))
   }, [history])
 
   useEffect(() => {
