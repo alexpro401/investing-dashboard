@@ -19,7 +19,7 @@ interface Props {
   data: {
     usdTVL: BigNumber | any
     APY: BigNumber | any
-    percPNL: BigNumber | any
+    percPNLBase: BigNumber | any
     investorsCount: BigNumber | any
   }
   pools: IPoolQuery[]
@@ -49,7 +49,7 @@ const TraderStatisticCard: FC<Props> = ({ account, data, pools }) => {
         label: "P&L",
         value: (
           <StatisticValue>
-            {normalizeBigNumber(data.percPNL, 4, 2)}%
+            {normalizeBigNumber(data.percPNLBase, 4, 2)}%
           </StatisticValue>
         ),
         info: <>Explain about P&L</>,

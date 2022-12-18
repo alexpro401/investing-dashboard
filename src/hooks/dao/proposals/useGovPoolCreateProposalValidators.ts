@@ -46,6 +46,7 @@ const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
 
       const receipt = await createGovProposal(
         { proposalName, proposalDescription },
+        "",
         [govValidatorsAddress],
         [0],
         [encodedChangeBalancesMethod]

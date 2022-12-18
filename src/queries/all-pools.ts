@@ -9,8 +9,10 @@ const PRICE_HISTORY = `
   usdTVL
   baseTVL
   supply
-  absPNL
-  percPNL
+  absPNLUSD
+  percPNLUSD
+  absPNLBase
+  percPNLBase
   timestamp
   traderUSD
   aggregationType

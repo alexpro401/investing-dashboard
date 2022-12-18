@@ -198,3 +198,14 @@ export const AllProposals = styled(AppButton).attrs(() => ({
 }))`
   width: fill-available;
 `
+
+export const NftIcon = styled.img`
+  width: 35px;
+  height: 35px;
+`
+
+export const TreasuryEmptyText = styled.span`
+  color: ${theme.textColors.secondary};
+  font-size: 13px;
+  font-weight: 400;
+`

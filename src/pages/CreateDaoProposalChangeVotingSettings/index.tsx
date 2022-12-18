@@ -1,5 +1,7 @@
-import React, { useMemo, useState, useCallback } from "react"
+import React, { useMemo, useState, useCallback, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
+import { createPortal } from "react-dom"
+import { useDispatch } from "react-redux"
 import { uniqBy } from "lodash"
 
 import {
@@ -17,6 +19,7 @@ import StepsControllerContext from "context/StepsControllerContext"
 import { useGovPoolCustomExecutors } from "hooks/dao"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
+import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
 
@@ -39,11 +42,24 @@ interface ISelectedCard {
 
 const CreateDaoProposalChangeVotingSettings: React.FC = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { daoAddress } = useParams<"daoAddress">()
   const [selectedCard, setSelectedCard] = useState<ISelectedCard>({
     type: "default",
     specification: EDefaultVotingSettingsType.changeVotingSettings,
   })
+  const [appNavigationEl, setAppNavigationEl] = useState<Element | null>(null)
+
+  useEffect(() => {
+    dispatch(hideTapBar())
+    setTimeout(() => {
+      setAppNavigationEl(document.querySelector("#app-navigation"))
+    }, 100)
+
+    return () => {
+      dispatch(showTabBar())
+    }
+  }, [dispatch])
 
   const [customExecutors, customExecutorsLoading] =
     useGovPoolCustomExecutors(daoAddress)
@@ -203,9 +219,13 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
                   )
                 }
               )}
-            <StepsNavigation />
           </S.PageContent>
         </S.PageHolder>
+        {appNavigationEl ? (
+          createPortal(<StepsNavigation />, appNavigationEl)
+        ) : (
+          <></>
+        )}
       </WithGovPoolAddressValidation>
     </StepsControllerContext>
   )

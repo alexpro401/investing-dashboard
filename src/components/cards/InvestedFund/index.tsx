@@ -47,11 +47,11 @@ const InvestedFund: FC<Props> = ({ data, account }) => {
   }, [tvLoading, tvUSD])
 
   const PnlPercentage = useMemo(() => {
-    if (!lastHistoryPoint || !lastHistoryPoint.percPNL) {
+    if (!lastHistoryPoint || !lastHistoryPoint.percPNLBase) {
       return <Skeleton w="50px" h="17px" />
     }
 
-    const pnlBN = BigNumber.from(lastHistoryPoint.percPNL)
+    const pnlBN = BigNumber.from(lastHistoryPoint.percPNLBase)
     const pnl = normalizeBigNumber(pnlBN, 4, 2)
 
     return (

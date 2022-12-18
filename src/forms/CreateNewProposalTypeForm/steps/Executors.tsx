@@ -1,4 +1,5 @@
 import React, { useContext, useCallback, Dispatch, SetStateAction } from "react"
+import { createPortal } from "react-dom"
 
 import {
   Card,
@@ -52,6 +53,8 @@ const ExecutorsStep: React.FC = () => {
     []
   )
 
+  const appNavigationEl = document.querySelector("#app-navigation")
+
   return (
     <>
       <S.StepsRoot>
@@ -62,16 +65,16 @@ const ExecutorsStep: React.FC = () => {
           />
           <CardDescription>
             <p>В майбутньому замінити текст.</p>
-            <S.ButtonsContainer>
-              <AppButton
-                type="button"
-                text="+ Add more contract addresses"
-                color="default"
-                size="no-paddings"
-                onClick={addExecutorAddress}
-              />
-            </S.ButtonsContainer>
           </CardDescription>
+          <S.ButtonsContainer>
+            <AppButton
+              type="button"
+              text="+ Add more contract addresses"
+              color="default"
+              size="no-paddings"
+              onClick={addExecutorAddress}
+            />
+          </S.ButtonsContainer>
         </Card>
         {executorAddresses.get.map((el, index) => {
           return (
@@ -117,7 +120,14 @@ const ExecutorsStep: React.FC = () => {
           )
         })}
       </S.StepsRoot>
-      <StepsNavigation customNextCb={handleNextStepCb} />
+      {appNavigationEl ? (
+        createPortal(
+          <StepsNavigation customNextCb={handleNextStepCb} />,
+          appNavigationEl
+        )
+      ) : (
+        <></>
+      )}
     </>
   )
 }

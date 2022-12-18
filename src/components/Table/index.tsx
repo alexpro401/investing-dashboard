@@ -96,12 +96,12 @@ const Table: React.FC<Props> = ({
         </Flex>
       ) : (
         map(dataInView, (item, index) => (
-          <>
+          <React.Fragment key={index}>
             <Flex full p="16px 0">
               {row(item, index)}
             </Flex>
             {index + 1 < dataInView.length ? <S.Divider /> : null}
-          </>
+          </React.Fragment>
         ))
       )}
       {!isNil(nodeFooter) && nodeFooter}

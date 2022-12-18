@@ -188,7 +188,7 @@ export const formatInsuranceAccidentChartData = (data) => {
   }
 
   return data.reverse().map((v) => {
-    const normalizedPNL = normalizeBigNumber(v.percPNL, 18, 2)
+    const normalizedPNL = normalizeBigNumber(v.percPNLBase, 18, 2)
     return {
       ...v,
       normalizedPNL,

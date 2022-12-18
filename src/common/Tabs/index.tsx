@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState } from "react"
+import { FC, ReactNode, useCallback, useEffect, useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 
 import * as S from "./styled"
@@ -10,11 +10,28 @@ interface ITab {
 
 interface IProps {
   tabs: Array<ITab>
+  initialTab?: number
+  onChangeTab?: ({ name, index }: { name: ReactNode; index: number }) => void
   gap?: number
 }
 
-const Tabs: FC<IProps> = ({ tabs, gap }) => {
-  const [activeTab, setTab] = useState(0)
+const Tabs: FC<IProps> = ({ tabs, initialTab = 0, onChangeTab, gap }) => {
+  const [activeTab, setTab] = useState(initialTab)
+
+  useEffect(() => {
+    setTab(initialTab)
+  }, [initialTab])
+
+  const handleSelectTab = useCallback(
+    (index: number) => {
+      setTab(index)
+
+      if (onChangeTab && tabs[index]) {
+        onChangeTab({ name: tabs[index].name, index })
+      }
+    },
+    [onChangeTab, tabs]
+  )
 
   return (
     <S.Container>
@@ -22,7 +39,7 @@ const Tabs: FC<IProps> = ({ tabs, gap }) => {
         {tabs.map(({ name }, index) => {
           return (
             <S.Tab
-              onClick={() => setTab(index)}
+              onClick={() => handleSelectTab(index)}
               active={activeTab === index}
               key={uuidv4()}
             >

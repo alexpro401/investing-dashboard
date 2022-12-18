@@ -1,134 +1,119 @@
-import * as React from "react"
+import React, { useContext } from "react"
 import { map } from "lodash"
 import { format } from "date-fns"
 import { v4 as uuidv4 } from "uuid"
 
 import { Flex } from "theme"
 import { Card, Icon } from "common"
-import { Divider, TextLabel, TextValue } from "../styled"
+import TabFallback from "./TabFallback"
 
 import ExternalLink from "components/ExternalLink"
 
-import { shortenAddress } from "utils"
+import extractRootDomain from "utils/extractRootDomain"
 import { DATE_FORMAT } from "constants/time"
 import { ICON_NAMES } from "constants/icon-names"
+import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsContext/GovPoolProfileTabsContext"
 
-const links = [
-  {
-    name: "DAO site",
-    url: "http://111pg.io/",
-  },
-  {
-    name: "Privacy",
-    url: "http://111pg.io/",
-  },
-  {
-    name: "Terms",
-    url: "http://111pg.io/",
-  },
-  {
-    name: "DOC Name",
-    url: "http://111pg.io/",
-  },
-]
+import { Divider, TextLabel, TextValue } from "../styled"
 
-const customSocials = [
-  {
-    name: "DAO Link",
-    url: "http://111pg.io/",
-  },
-  {
-    name: "WeChat",
-    url: "http://111pg.io/",
-  },
-]
+interface IDaoProfileTabAboutProps {
+  creationTime: number | undefined
+}
 
-const socials = [
-  {
-    name: "telegram",
-    url: "https://t.me",
-  },
-  {
-    name: "twitter",
-    url: "https://twitter.com",
-  },
-  {
-    name: "medium",
-    url: "https://medium.com",
-  },
-  {
-    name: "facebook",
-    url: "https://facebook.com",
-  },
-  {
-    name: "github",
-    url: "https://github.com",
-  },
-]
+const DaoProfileTabAbout: React.FC<IDaoProfileTabAboutProps> = ({
+  creationTime,
+}) => {
+  const { daoDescription, aboutDaoLoading } = useContext(
+    GovPoolProfileTabsContext
+  )
 
-const DaoProfileTabAbout: React.FC = () => {
-  return (
-    <>
+  if (aboutDaoLoading) {
+    return <TabFallback />
+  }
+
+  if (!daoDescription) {
+    return (
       <Card>
         <TextValue lh="19.5px">
-          <p>
-            The 111PG DAO was founded by its 111 members to protect and help
-            fintech startups go to the DeFi market.
-          </p>
+          <p>Цей ДАО пул має не валідний опис.</p>
           <br />
           <p>
-            DAO is governed by 111 NFT heads, which may have various statuses
-            such as: alive, dying, and dead. As it gets weaker, the NFT look
-            deteriorates. Keeping the head alive takes 111PG tokens. The weaker
-            the NFT, the less voting power in the DAO and the less you earn from
-            the Treasury.
-          </p>
-          <br />
-          <p>
-            If you don’t, it will lose 1% of its power daily, with the lost
-            value being distributed among all the other living heads (aka, all
-            the other active 111PG NFTs). This creates a strong incentive to
-            keep the NFT in good shape and a big chunk of 111PG tokens out of
-            active circulation = scarcity and long-term value alignment.
+            Будь ласка створіть пропоузал на зміну налаштувань дао пула, щоб
+            заповнити дану інформацію.
           </p>
         </TextValue>
-        <Divider />
+      </Card>
+    )
+  }
+
+  const { description, documents, socialLinks, websiteUrl } = daoDescription
+
+  return (
+    <Card>
+      <TextValue lh="19.5px">
+        <p>{description}</p>
+      </TextValue>
+      <Divider />
+      {creationTime && !isNaN(creationTime) && (
         <Flex full ai="center" jc="space-between">
           <TextLabel>Creation day</TextLabel>
-          <TextValue>{format(new Date().getTime(), DATE_FORMAT)}</TextValue>
+          <TextValue>
+            {format(new Date(creationTime * 1000), DATE_FORMAT)}
+          </TextValue>
         </Flex>
-        {map(links, (link) => (
-          <Flex key={uuidv4()} full ai="center" jc="space-between">
-            <TextLabel>{link.name}</TextLabel>
-            <ExternalLink href={link.url} color="#2669EB">
-              {shortenAddress(link.url, 8)}
-            </ExternalLink>
-          </Flex>
-        ))}
-        <Divider />
-        {map(customSocials, (link) => (
-          <Flex key={uuidv4()} full ai="center" jc="space-between">
-            <TextLabel>{link.name}</TextLabel>
-            <ExternalLink href={link.url} color="#2669EB">
-              {shortenAddress(link.url, 8)}
-            </ExternalLink>
-          </Flex>
-        ))}
-        <Divider />
-        <Flex full ai="center" jc="space-between">
-          {map(socials, (link) => (
-            <ExternalLink
-              key={uuidv4()}
-              href={link.url}
-              color="#788AB4"
-              removeIcon
-            >
-              <Icon name={ICON_NAMES[link.name]} />
-            </ExternalLink>
-          ))}
+      )}
+      <Flex full ai="center" jc="space-between">
+        <TextLabel>DAO site</TextLabel>
+        <ExternalLink href={websiteUrl} color="#2669EB">
+          {extractRootDomain(websiteUrl)}
+        </ExternalLink>
+      </Flex>
+      {map(documents, (document) => (
+        <Flex key={uuidv4()} full ai="center" jc="space-between">
+          <TextLabel>{document.name}</TextLabel>
+          <ExternalLink href={document.url} color="#2669EB">
+            {extractRootDomain(document.url)}
+          </ExternalLink>
         </Flex>
-      </Card>
-    </>
+      ))}
+      {socialLinks.length > 6 && (
+        <>
+          <Divider />
+          {socialLinks
+            .slice(5)
+            .filter((el) => !!el[1])
+            .map((customSocialLink) => (
+              <Flex key={uuidv4()} full ai="center" jc="space-between">
+                <TextLabel></TextLabel>
+                <ExternalLink href={customSocialLink[1]} color="#2669EB">
+                  {extractRootDomain(customSocialLink[1])}
+                </ExternalLink>
+              </Flex>
+            ))}
+        </>
+      )}
+      {socialLinks.length !== 0 &&
+        socialLinks.slice(0, 5).filter((el) => !!el[1]) && (
+          <>
+            <Divider />
+            <Flex full ai="center" jc="space-around">
+              {socialLinks
+                .slice(0, 5)
+                .filter((el) => !!el[1])
+                .map(([tag, url]) => (
+                  <ExternalLink
+                    key={uuidv4()}
+                    href={url}
+                    color="#788AB4"
+                    removeIcon
+                  >
+                    <Icon name={ICON_NAMES[tag]} />
+                  </ExternalLink>
+                ))}
+            </Flex>
+          </>
+        )}
+    </Card>
   )
 }
 

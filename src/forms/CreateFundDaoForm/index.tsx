@@ -58,7 +58,7 @@ const CreateFundDaoForm: FC = () => {
     return () => {
       dispatch(showTabBar())
     }
-  }, [])
+  }, [dispatch])
 
   const createDaoCb = useCreateDAO()
 

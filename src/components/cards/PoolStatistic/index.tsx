@@ -72,14 +72,14 @@ const PoolStatisticCard: FC<Props> = ({ data, index = 0, children }) => {
     }
     if (
       !lastHistoryPoint ||
-      BigNumber.from(lastHistoryPoint.percPNL).isZero()
+      BigNumber.from(lastHistoryPoint.percPNLBase).isZero()
     ) {
       return <S.StatisticValue>0.0%</S.StatisticValue>
     }
 
     return (
       <S.StatisticValue>
-        {normalizeBigNumber(lastHistoryPoint.percPNL, 4, 2)}%
+        {normalizeBigNumber(lastHistoryPoint.percPNLBase, 4, 2)}%
       </S.StatisticValue>
     )
   }, [lastHistoryPoint])

@@ -1,5 +1,12 @@
-import React, { useState, useMemo, useCallback, useContext } from "react"
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useContext,
+  useEffect,
+} from "react"
 import { useParams, useNavigate } from "react-router-dom"
+import { useDispatch } from "react-redux"
 import { AnimatePresence } from "framer-motion"
 
 import StepsControllerContext from "context/StepsControllerContext"
@@ -11,6 +18,7 @@ import {
   useGovPoolCreateProposalChangeSettings,
   useGovPoolExecutorToSettings,
 } from "hooks/dao"
+import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
 
@@ -21,6 +29,7 @@ enum STEPS {
 
 const CreateDaoProposalChangeCustomSettingsForm: React.FC = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { daoAddress, executorAddress } = useParams<
     "daoAddress" | "executorAddress"
   >()
@@ -29,6 +38,15 @@ const CreateDaoProposalChangeCustomSettingsForm: React.FC = () => {
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
   )
+
+  useEffect(() => {
+    dispatch(hideTapBar())
+
+    return () => {
+      dispatch(showTabBar())
+    }
+  }, [dispatch])
+
   const createProposal = useGovPoolCreateProposalChangeSettings({
     daoPoolAddress: daoAddress ?? "",
   })
