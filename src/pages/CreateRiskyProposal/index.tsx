@@ -14,7 +14,7 @@ import { createClient, Provider as GraphProvider } from "urql"
 import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
 import Checkbox from "components/Checkbox"
-import { AppButton } from "common"
+import { AppButton, Card } from "common"
 import Input from "components/Input"
 import TokenIcon from "components/TokenIcon"
 import Slider from "components/Slider"
@@ -45,7 +45,6 @@ import useCreateRiskyProposal from "./useCreateRiskyProposal"
 
 import {
   Container,
-  Card,
   Content,
   Title,
   SubTitle,
