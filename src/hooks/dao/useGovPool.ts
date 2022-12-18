@@ -19,7 +19,6 @@ import { isTxMined, parseTransactionError } from "utils"
 import { get } from "lodash"
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { useEffectOnce } from "react-use"
-import { BigNumber } from "@ethersproject/bignumber/src.ts/bignumber"
 
 export const useGovPool = (address?: string) => {
   const { account } = useActiveWeb3React()

@@ -1,4 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react"
+import { createPortal } from "react-dom"
 
 import {
   AppButton,
@@ -158,6 +159,8 @@ const ChangeDAOSettings: React.FC = () => {
       setSocialLinksOpened(true)
     }
   }, [socialLinks])
+
+  const appNavigationEl = document.querySelector("#app-navigation")
 
   return (
     <>
@@ -363,7 +366,14 @@ const ChangeDAOSettings: React.FC = () => {
           />
         </Card>
       </S.StepsRoot>
-      <StepsNavigation customNextCb={handleNextStep} />
+      {appNavigationEl ? (
+        createPortal(
+          <StepsNavigation customNextCb={handleNextStep} />,
+          appNavigationEl
+        )
+      ) : (
+        <></>
+      )}
     </>
   )
 }

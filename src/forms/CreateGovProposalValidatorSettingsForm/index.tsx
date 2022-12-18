@@ -1,5 +1,12 @@
-import React, { useState, useMemo, useCallback, useContext } from "react"
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useContext,
+  useEffect,
+} from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { useDispatch } from "react-redux"
 import { AnimatePresence } from "framer-motion"
 import { parseEther } from "@ethersproject/units"
 
@@ -9,6 +16,7 @@ import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposa
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { ValidatorsSettingsStep } from "./steps"
 import useGovPoolCreateProposalValidators from "hooks/dao/proposals/useGovPoolCreateProposalValidators"
+import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
 
@@ -19,9 +27,18 @@ enum STEPS {
 
 const CreateGovProposalValidatorSettingsForm: React.FC = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { daoAddress } = useParams<"daoAddress">()
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.validators)
   const createProposal = useGovPoolCreateProposalValidators(daoAddress ?? "")
+
+  useEffect(() => {
+    dispatch(hideTapBar())
+
+    return () => {
+      dispatch(showTabBar())
+    }
+  }, [dispatch])
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length, [])
   const currentStepNumber = useMemo(

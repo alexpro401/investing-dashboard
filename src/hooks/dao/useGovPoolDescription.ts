@@ -5,13 +5,20 @@ import { IpfsEntity } from "utils/ipfsEntity"
 import { IGovPoolDescription } from "types/dao.types"
 import { parseIpfsString } from "utils/ipfs"
 
-const useGovPoolDescriptionUrl = (govPoolAddress: string) => {
+interface UseGovPoolDescriptionUrlResponse {
+  descriptionUrl: string | null
+  descriptionObject: IGovPoolDescription | null
+  loading: boolean
+}
+const useGovPoolDescriptionUrl = (
+  govPoolAddress?: string
+): UseGovPoolDescriptionUrlResponse => {
   const govPoolContract = useGovPoolContract(govPoolAddress)
 
-  const [loading, setLoading] = useState<boolean>(false)
   const [descriptionUrl, setDescriptionUrl] = useState<string | null>(null)
-  const [desciptionObject, setDescriptionObject] =
+  const [descriptionObject, setDescriptionObject] =
     useState<IGovPoolDescription | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
 
   const setupDescriptionUrl = useCallback(async () => {
     if (!govPoolContract) return
@@ -55,7 +62,7 @@ const useGovPoolDescriptionUrl = (govPoolAddress: string) => {
     getIpfsDataFromDescriptionUrl()
   }, [getIpfsDataFromDescriptionUrl])
 
-  return { descriptionUrl, desciptionObject, loading }
+  return { descriptionUrl, descriptionObject, loading }
 }
 
 export default useGovPoolDescriptionUrl

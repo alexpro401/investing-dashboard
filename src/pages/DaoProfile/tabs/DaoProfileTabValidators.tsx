@@ -1,35 +1,67 @@
-import * as React from "react"
-
-import { FlexLink, Image, TextValue } from "../styled"
+import React, { useContext, useMemo, useCallback } from "react"
+import { createClient } from "urql"
+import { useParams } from "react-router-dom"
+import { BigNumber } from "@ethersproject/bignumber"
 
 import theme, { Flex } from "theme"
+import TabFallback from "./TabFallback"
 import { Card, Icon } from "common"
-import Table from "components/Table"
+import PaginationTable from "components/PaginationTable"
 import { v4 as uuidv4 } from "uuid"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { shortenAddress } from "utils"
 import { ICON_NAMES } from "constants/icon-names"
 import usersImageUrl from "assets/images/users.svg"
+import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsContext/GovPoolProfileTabsContext"
+import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommonContext/GovPoolProfileCommonContext"
+import { formatTokenNumber } from "utils"
+import { DaoPoolDaoProfileValidatorsQuery } from "queries/validators"
+
+import { FlexLink, Image, TextValue } from "../styled"
+
+const daoValidatorsGraphClient = createClient({
+  url: process.env.REACT_APP_DAO_VALIDATORS_API_URL || "",
+  requestPolicy: "network-only",
+})
 
 interface Props {
-  data: any[]
   chainId?: number
 }
 
-const DaoProfileTabValidators: React.FC<Props> = ({ data, chainId }) => {
-  const total = data.length ?? 0
+interface IValidator {
+  id: string
+  balance: string
+}
 
-  const TableHead = React.useMemo(
-    () => (
-      <Flex full ai="center" jc="space-between">
-        <TextValue fw={600}>Validators: {total}</TextValue>
-        <TextValue fw={600}>Total votes: 11,110</TextValue>
-      </Flex>
-    ),
-    [total]
+const DaoProfileTabValidators: React.FC<Props> = ({ chainId }) => {
+  const { daoAddress } = useParams<"daoAddress">()
+  const { validatorsCount, validatorsLoading, validators, setValidators } =
+    useContext(GovPoolProfileTabsContext)
+  const { validatorsTotalVotes, validatorsToken } = useContext(
+    GovPoolProfileCommonContext
   )
 
-  const TableNoDataPlaceholder = React.useMemo(
+  const TableHead = useMemo(
+    () => (
+      <Flex full ai="center" jc="space-between">
+        <TextValue fw={600}>Validators: {validatorsCount}</TextValue>
+        <TextValue fw={600}>
+          Total votes:{" "}
+          {validatorsTotalVotes && validatorsToken
+            ? formatTokenNumber(
+                validatorsTotalVotes,
+                validatorsToken.decimals
+              ) +
+              " " +
+              validatorsToken.symbol
+            : "0"}
+        </TextValue>
+      </Flex>
+    ),
+    [validatorsCount, validatorsTotalVotes, validatorsToken]
+  )
+
+  const TableNoDataPlaceholder = useMemo(
     () => (
       <Flex full dir="column" ai="center" jc="center">
         <Image src={usersImageUrl} alt="No data" />
@@ -39,46 +71,76 @@ const DaoProfileTabValidators: React.FC<Props> = ({ data, chainId }) => {
         </TextValue>
       </Flex>
     ),
-    [total]
+    []
   )
 
-  const getTableRow = React.useCallback(
-    ({ id }) => (
-      <FlexLink
-        full
-        as={"a"}
-        key={uuidv4()}
-        href={getExplorerLink(chainId ?? 0, id, ExplorerDataType.ADDRESS)}
-      >
-        <Flex full ai="center" jc="space-between">
-          <TextValue color={theme.textColors.secondary} block>
-            <Flex ai="center" jc="flex-start" gap="4">
-              {shortenAddress(id, 4)}
-              <Icon name={ICON_NAMES.externalLink} />
+  const getTableRow = useCallback(
+    ({ id, balance }: IValidator) => (
+      <>
+        {validatorsToken && (
+          <FlexLink
+            full
+            as={"a"}
+            key={uuidv4()}
+            href={getExplorerLink(
+              chainId ?? 0,
+              id.substring(0, 42),
+              ExplorerDataType.ADDRESS
+            )}
+          >
+            <Flex full ai="center" jc="space-between">
+              <TextValue color={theme.textColors.secondary} block>
+                <Flex ai="center" jc="flex-start" gap="4">
+                  {shortenAddress(id.substring(0, 42), 4)}
+                  <Icon name={ICON_NAMES.externalLink} />
+                </Flex>
+              </TextValue>
+
+              <Flex ai="center" jc="flex-end" gap="4">
+                <TextValue>
+                  {formatTokenNumber(
+                    BigNumber.from(balance),
+                    validatorsToken.decimals
+                  )}
+                </TextValue>
+                <TextValue color={theme.textColors.secondary}>
+                  {validatorsToken.symbol}
+                </TextValue>
+              </Flex>
             </Flex>
-          </TextValue>
-
-          <Flex ai="center" jc="flex-end" gap="4">
-            <TextValue>100,500</TextValue>
-            <TextValue color={theme.textColors.secondary}>111PG</TextValue>
-          </Flex>
-        </Flex>
-      </FlexLink>
+          </FlexLink>
+        )}
+      </>
     ),
-    [chainId]
+    [chainId, validatorsToken]
   )
+
+  if (validatorsLoading) {
+    return <TabFallback />
+  }
 
   return (
-    <>
-      <Card>
-        <Table
-          data={data}
-          row={getTableRow}
-          nodeHead={TableHead}
-          placeholder={TableNoDataPlaceholder}
-        />
-      </Card>
-    </>
+    <Card>
+      {validatorsCount !== null && (
+        <>
+          {validatorsCount === 0 && TableNoDataPlaceholder}
+          {validatorsCount !== 0 && (
+            <PaginationTable<IValidator>
+              total={validatorsCount}
+              limit={5}
+              data={validators}
+              setData={setValidators}
+              row={getTableRow}
+              nodeHead={TableHead}
+              query={DaoPoolDaoProfileValidatorsQuery}
+              context={daoValidatorsGraphClient}
+              variables={{ address: daoAddress }}
+              formatter={(d) => d.daoPool.validators}
+            />
+          )}
+        </>
+      )}
+    </Card>
   )
 }
 

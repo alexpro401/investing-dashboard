@@ -2,13 +2,18 @@ import { useCallback, useEffect, useState } from "react"
 
 import { useGovValidatorsContract } from "contracts"
 
-const useGovPoolValidatorsCount = (govPoolAddress?: string): null | number => {
+const useGovPoolValidatorsCount = (
+  govPoolAddress?: string
+): [null | number, boolean] => {
   const [result, setResult] = useState<null | number>(null)
+  const [loading, setLoading] = useState<boolean>(true)
 
   const validatorsContract = useGovValidatorsContract(govPoolAddress)
 
   const handleGetValidatorsCount = useCallback(async () => {
     if (!validatorsContract) return
+
+    setLoading(true)
 
     try {
       const _validatorsCount = (
@@ -17,6 +22,8 @@ const useGovPoolValidatorsCount = (govPoolAddress?: string): null | number => {
       setResult(_validatorsCount)
     } catch (error) {
       console.log(error)
+    } finally {
+      setLoading(false)
     }
   }, [validatorsContract, setResult])
 
@@ -24,7 +31,7 @@ const useGovPoolValidatorsCount = (govPoolAddress?: string): null | number => {
     handleGetValidatorsCount()
   }, [handleGetValidatorsCount])
 
-  return result
+  return [result, loading]
 }
 
 export default useGovPoolValidatorsCount

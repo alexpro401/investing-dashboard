@@ -1,12 +1,17 @@
+import { useContext } from "react"
+import { v4 as uuidv4 } from "uuid"
+import { Web3ReactContextInterface } from "@web3-react/core/dist/types"
+
 import { Icon } from "common"
-import * as S from "../styled"
 import { Flex, Text } from "theme"
 import Tooltip from "components/Tooltip"
-import { v4 as uuidv4 } from "uuid"
 import { ICON_NAMES } from "constants/icon-names"
 import { DaoPoolCard } from "common"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
-import { Web3ReactContextInterface } from "@web3-react/core/dist/types"
+import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommonContext/GovPoolProfileCommonContext"
+import { formatTokenNumber } from "utils"
+
+import * as S from "../styled"
 
 interface Props extends Pick<Web3ReactContextInterface, "account"> {
   isValidator: boolean
@@ -20,6 +25,10 @@ const DaoProfileStatisticCard: React.FC<Props> = ({
   account,
   govPoolQuery,
 }) => {
+  const { validatorsToken, validatorsTotalVotes } = useContext(
+    GovPoolProfileCommonContext
+  )
+
   return (
     <DaoPoolCard account={account} data={govPoolQuery}>
       <Flex full dir={"column"} p={"12px"} gap={"12"}>
@@ -40,10 +49,18 @@ const DaoProfileStatisticCard: React.FC<Props> = ({
                 <Tooltip id={uuidv4()}>Validator voting power</Tooltip>
               </Flex>
 
-              <Flex full ai="center" jc="flex-end" gap="4">
-                <Icon name={ICON_NAMES.flameGradient} />
-                <S.ValidatorVotingPower>1,000,000 PG</S.ValidatorVotingPower>
-              </Flex>
+              {validatorsToken && validatorsTotalVotes && (
+                <Flex full ai="center" jc="flex-end" gap="4">
+                  <Icon name={ICON_NAMES.flameGradient} />
+                  <S.ValidatorVotingPower>
+                    {formatTokenNumber(
+                      validatorsTotalVotes,
+                      validatorsToken.decimals
+                    )}{" "}
+                    {validatorsToken.symbol}
+                  </S.ValidatorVotingPower>
+                </Flex>
+              )}
             </Flex>
           </>
         )}

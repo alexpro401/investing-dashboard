@@ -1,4 +1,5 @@
 import React, { useContext, useCallback } from "react"
+import { createPortal } from "react-dom"
 
 import {
   Card,
@@ -82,6 +83,8 @@ const CreateDaoProposalGeneralForm: React.FC<
     }
   }, [nextCb, isFieldsValid, touchForm])
 
+  const appNavigationEl = document.querySelector("#app-navigation")
+
   return (
     <>
       <CreatingProposalSuccessModal />
@@ -137,11 +140,17 @@ const CreateDaoProposalGeneralForm: React.FC<
           </CardFormControl>
         </Card>
       </S.StepsRoot>
-      <div style={{ marginTop: "auto" }}></div>
-      <StepsNavigation
-        customNextCb={handleNextStepCb}
-        nextLabel={"Create Proposal"}
-      />
+      {appNavigationEl ? (
+        createPortal(
+          <StepsNavigation
+            customNextCb={handleNextStepCb}
+            nextLabel={"Create Proposal"}
+          />,
+          appNavigationEl
+        )
+      ) : (
+        <></>
+      )}
     </>
   )
 }

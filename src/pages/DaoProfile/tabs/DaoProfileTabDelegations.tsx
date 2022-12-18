@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useNavigate } from "react-router-dom"
 import { v4 as uuidv4 } from "uuid"
 
 import theme, { Flex, Text } from "theme"
@@ -20,7 +21,6 @@ import usersImageUrl from "assets/images/users.svg"
 import { shortenAddress } from "utils"
 import { ICON_NAMES } from "constants/icon-names"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { useNavigate } from "react-router-dom"
 
 interface Props {
   data: any[]
@@ -28,7 +28,7 @@ interface Props {
   daoAddress?: string
 }
 
-const DaoProfileTabUsedTokens: React.FC<Props> = ({
+const DaoProfileTabDelegations: React.FC<Props> = ({
   data,
   chainId,
   daoAddress,
@@ -135,7 +135,7 @@ const DaoProfileTabUsedTokens: React.FC<Props> = ({
           full
           size="medium"
           color="primary"
-          onClick={() => alert("Redirect to delegating terminal")}
+          onClick={() => navigate(`/dao/${daoAddress}/delegate/0x...`)}
           text="Delegate to address"
         />
       </Indents>
@@ -143,4 +143,4 @@ const DaoProfileTabUsedTokens: React.FC<Props> = ({
   )
 }
 
-export default DaoProfileTabUsedTokens
+export default DaoProfileTabDelegations

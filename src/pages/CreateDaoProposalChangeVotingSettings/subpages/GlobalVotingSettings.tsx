@@ -25,7 +25,7 @@ const GlobalVotingSettings: React.FC = () => {
     daoAddress: daoAddress ?? "",
     settingsId: EExecutor.DEFAULT,
   })
-  const validatorsCount = useGovPoolValidatorsCount(daoAddress)
+  const [validatorsCount] = useGovPoolValidatorsCount(daoAddress)
 
   useEffect(() => {
     localStorage.removeItem("creating-proposal-global-voting-settings")

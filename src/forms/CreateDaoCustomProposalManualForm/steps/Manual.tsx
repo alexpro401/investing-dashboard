@@ -6,6 +6,7 @@ import React, {
   SetStateAction,
 } from "react"
 import { useParams } from "react-router-dom"
+import { createPortal } from "react-dom"
 
 import {
   AppButton,
@@ -105,6 +106,8 @@ const ManualStep: React.FC = () => {
 
     nextCb()
   }, [nextCb, touchForm, isFieldsValid])
+
+  const appNavigationEl = document.querySelector("#app-navigation")
 
   return (
     <S.StepsRoot>
@@ -275,7 +278,14 @@ const ManualStep: React.FC = () => {
           onBlur={() => touchField("executorTransactionData")}
         />
       </CollapsedCard>
-      <StepsNavigation customNextCb={handleNextStep} />
+      {appNavigationEl ? (
+        createPortal(
+          <StepsNavigation customNextCb={handleNextStep} />,
+          appNavigationEl
+        )
+      ) : (
+        <></>
+      )}
     </S.StepsRoot>
   )
 }

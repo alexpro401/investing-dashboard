@@ -1,5 +1,12 @@
-import React, { useCallback, useContext, useMemo, useState } from "react"
+import React, {
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+  useEffect,
+} from "react"
 import { AnimatePresence } from "framer-motion"
+import { useDispatch } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import { parseEther } from "@ethersproject/units"
 
@@ -9,6 +16,7 @@ import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposa
 import { ValidatorsListContext } from "context/govPool/proposals/ValidatorsListContext"
 import { ValidatorsStep } from "./steps"
 import { useGovPoolCreateValidatorInternalProposal } from "hooks/dao"
+import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
 
@@ -19,6 +27,7 @@ enum STEPS {
 
 const CreateGovProposalValidatorChangeValidatorSettingsForm: React.FC = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { daoAddress } = useParams<"daoAddress">()
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.validators)
   const createInternalProposal = useGovPoolCreateValidatorInternalProposal({
@@ -28,6 +37,14 @@ const CreateGovProposalValidatorChangeValidatorSettingsForm: React.FC = () => {
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
   )
+
+  useEffect(() => {
+    dispatch(hideTapBar())
+
+    return () => {
+      dispatch(showTabBar())
+    }
+  }, [dispatch])
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length, [])
   const currentStepNumber = useMemo(

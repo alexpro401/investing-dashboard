@@ -2,68 +2,70 @@ import * as React from "react"
 
 import { Flex } from "theme"
 import { Icon } from "common"
-import { TextLabel, TextValue, SliderItem, FlexLink } from "../styled"
+import { TextLabel, TextValue, SliderItem, FlexLink, NftIcon } from "../styled"
 
 import TokenIcon from "components/TokenIcon"
 
 import { ICON_NAMES } from "constants/icon-names"
-import { useERC20Data } from "state/erc20/hooks"
 import { isNil } from "lodash"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import LockedIcon from "assets/icons/LockedIcon"
 
 interface Props {
-  token: any
+  type: "token" | "nft"
+  address: string
+  amountUsd: string
+  amount: string
   chainId?: number
+  logo: string
+  symbol: string
+  treasuryPercent: string
+  isFallback: boolean
 }
 
-const DaoProfileTokenInTreasuryCard: React.FC<Props> = ({ token, chainId }) => {
-  const [tokenData] = useERC20Data(token.id)
-
+const DaoProfileTokenInTreasuryCard: React.FC<Props> = ({
+  type,
+  address,
+  amount,
+  amountUsd,
+  chainId,
+  logo,
+  symbol,
+  treasuryPercent,
+  isFallback,
+}) => {
   const explorerLink = React.useMemo(() => {
-    if (isNil(token) || isNil(chainId)) return ""
-    return getExplorerLink(chainId, token.id, ExplorerDataType.TOKEN)
-  }, [token])
+    if (isNil(address) || isNil(chainId)) return ""
+    return getExplorerLink(chainId, address, ExplorerDataType.TOKEN)
+  }, [address, chainId])
 
-  if (!isNil(token.isFallback) && token.isFallback) {
+  if (!isNil(isFallback) && isFallback) {
     return <SliderItem />
   }
 
   return (
     <>
       <SliderItem>
-        <FlexLink
-          ai="center"
-          jc="flex-start"
-          gap="8"
-          as={"a"}
-          href={explorerLink}
-        >
-          <TokenIcon address={token.id} size={38} m="0" />
+        <FlexLink jc="flex-start" gap="8" as={"a"} href={explorerLink}>
+          {type === "token" && <TokenIcon address={address} size={38} m="0" />}
+          {type === "nft" && <NftIcon src={logo} alt="" />}
           <Flex dir="column" ai="flex-start" gap="4">
             <Flex ai="center" jc="flex-start" gap="4">
               <TextValue fw={600} lh={"19px"}>
-                {tokenData?.symbol}
+                {symbol}
               </TextValue>
               <Icon name={ICON_NAMES.externalLink} color={"#788AB4"} />
             </Flex>
-            <TextLabel fw={500}>{token.type}</TextLabel>
+            <TextLabel fw={500}>{type === "token" ? "Token" : "NFT"}</TextLabel>
           </Flex>
         </FlexLink>
         <Flex dir="column" ai="flex-start" jc="center" gap="4">
-          <TextValue fw={600}>${token.amountUsd}</TextValue>
+          <TextValue fw={600}>${amountUsd}</TextValue>
           <TextLabel fw={500} lh={"19px"}>
-            {token.amount}
+            {amount}
           </TextLabel>
         </Flex>
-        <Flex dir="column" ai="flex-end" jc="center" gap="4">
-          <TextValue fw={600}>{token.inTreasury}%</TextValue>
-          <Flex ai="flex-end" jc="flex-end" gap="1">
-            {token.inVoting > 20 ? <LockedIcon /> : null}
-            <TextLabel fw={500} lh={"19px"}>
-              {token.inVoting} %
-            </TextLabel>
-          </Flex>
+        <Flex dir="column" ai="flex-end" jc="flex-start">
+          <TextValue fw={600}>{treasuryPercent}%</TextValue>
         </Flex>
       </SliderItem>
     </>

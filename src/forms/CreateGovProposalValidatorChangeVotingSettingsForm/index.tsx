@@ -1,5 +1,12 @@
-import React, { useMemo, useState, useCallback, useContext } from "react"
+import React, {
+  useMemo,
+  useState,
+  useCallback,
+  useContext,
+  useEffect,
+} from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { useDispatch } from "react-redux"
 import { AnimatePresence } from "framer-motion"
 import { parseUnits } from "@ethersproject/units"
 
@@ -9,6 +16,7 @@ import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposa
 import { ChangeVotingSettingsContext } from "context/govPool/proposals/validators/ChangeVotingSettingsContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { useGovPoolCreateValidatorInternalProposal } from "hooks/dao"
+import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
 
@@ -19,6 +27,7 @@ enum STEPS {
 
 const CreateGovProposalValidatorChangeVotingSettingsForm: React.FC = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { daoAddress } = useParams<"daoAddress">()
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.votingSettings)
   const { proposalName, proposalDescription } = useContext(
@@ -27,6 +36,14 @@ const CreateGovProposalValidatorChangeVotingSettingsForm: React.FC = () => {
   const { duration, quorum, initialForm } = useContext(
     ChangeVotingSettingsContext
   )
+
+  useEffect(() => {
+    dispatch(hideTapBar())
+
+    return () => {
+      dispatch(showTabBar())
+    }
+  }, [dispatch])
 
   const createProposal = useGovPoolCreateValidatorInternalProposal({
     daoAddress: daoAddress ?? "",
