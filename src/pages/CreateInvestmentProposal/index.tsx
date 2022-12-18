@@ -9,7 +9,7 @@ import { DATE_TIME_FORMAT } from "constants/time"
 import { Center, Flex } from "theme"
 import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
-import { AppButton } from "common"
+import { AppButton, Card } from "common"
 import Input from "components/Input"
 import TextArea from "components/TextArea"
 import Tooltip from "components/Tooltip"
@@ -22,7 +22,6 @@ import useCreateInvestmentProposal from "./useCreateInvestmentProposal"
 
 import {
   Container,
-  Card,
   Content,
   Title,
   SubTitle,
