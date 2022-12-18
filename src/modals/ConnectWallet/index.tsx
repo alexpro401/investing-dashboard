@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { createPortal } from "react-dom"
 import { useWeb3React } from "@web3-react/core"
 import { connectorsByName } from "constants/connectors"
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector"
@@ -8,22 +9,9 @@ import metamask from "assets/wallets/metamask.svg"
 import walletconnect from "assets/wallets/walletconnect.svg"
 import closeIcon from "assets/icons/modal-close.svg"
 
-import {
-  Title,
-  Overlay,
-  Container,
-  Head,
-  Body,
-  Close,
-  PrivacyText,
-  LinkText,
-  Wallets,
-  Wallet,
-  WalletIcon,
-  WalletTitle,
-} from "./styled"
-import { createPortal } from "react-dom"
 import { activateInjectedProvider } from "utils/activateInjectedProvider"
+
+import * as S from "./styled"
 
 const modalRoot = document.getElementById("modal")
 
@@ -79,7 +67,7 @@ export default function ConnectWallet({ isOpen, onRequestClose, onConnect }) {
   if (!modalRoot) return null
   return createPortal(
     <>
-      <Overlay
+      <S.Overlay
         onClick={onRequestClose}
         animate={isOpen ? "visible" : "hidden"}
         initial="hidden"
@@ -94,7 +82,7 @@ export default function ConnectWallet({ isOpen, onRequestClose, onConnect }) {
           },
         }}
       />
-      <Container
+      <S.Container
         animate={isOpen ? "visible" : "hidden"}
         initial="hidden"
         variants={{
@@ -108,38 +96,38 @@ export default function ConnectWallet({ isOpen, onRequestClose, onConnect }) {
           },
         }}
       >
-        <Head>
-          <Title>Connect wallet</Title>
-          <Close onClick={onRequestClose} src={closeIcon} />
-        </Head>
-        <Body>
-          <PrivacyText>
+        <S.Head>
+          <S.Title>Connect wallet</S.Title>
+          <S.Close onClick={onRequestClose} src={closeIcon} />
+        </S.Head>
+        <S.Body>
+          <S.PrivacyText>
             By connecting the wallet I accept
-            <LinkText to="/service-terms"> Terms of Service </LinkText>and
-            <LinkText to="/privacy-policy"> Privacy Policy </LinkText>
+            <S.LinkText to="/service-terms"> Terms of Service </S.LinkText>and
+            <S.LinkText to="/privacy-policy"> Privacy Policy </S.LinkText>
             DeXe Network
-          </PrivacyText>
+          </S.PrivacyText>
 
-          <Wallets full>
-            <Wallet onClick={() => activateProvider("walletconnect")}>
+          <S.Wallets full>
+            <S.Wallet onClick={() => activateProvider("walletconnect")}>
               {isActivating === "walletconnect" ? (
                 <RotateSpinner size={33} loading />
               ) : (
-                <WalletIcon src={walletconnect} alt="walletconnect" />
+                <S.WalletIcon src={walletconnect} alt="walletconnect" />
               )}
-              <WalletTitle>Wallet Connect</WalletTitle>
-            </Wallet>
-            <Wallet onClick={() => activateProvider("injected")}>
+              <S.WalletTitle>Wallet Connect</S.WalletTitle>
+            </S.Wallet>
+            <S.Wallet onClick={() => activateProvider("injected")}>
               {isActivating === "injected" ? (
                 <RotateSpinner size={33} loading />
               ) : (
-                <WalletIcon src={metamask} alt="metamask" />
+                <S.WalletIcon src={metamask} alt="metamask" />
               )}
-              <WalletTitle>Metamask</WalletTitle>
-            </Wallet>
-          </Wallets>
-        </Body>
-      </Container>
+              <S.WalletTitle>Metamask</S.WalletTitle>
+            </S.Wallet>
+          </S.Wallets>
+        </S.Body>
+      </S.Container>
     </>,
     modalRoot
   )

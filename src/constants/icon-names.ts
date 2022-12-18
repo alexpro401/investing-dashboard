@@ -47,4 +47,6 @@ export enum ICON_NAMES {
   exclamationCircle = "exclamation-circle",
   clockCircle = "clock-circle",
   successCircle = "success-circle",
+  insuranceMultiplier = "insurance-multiplier",
+  unknownToken = "unknown-token",
 }
