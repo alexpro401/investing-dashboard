@@ -16,6 +16,7 @@ import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
 
 import * as S from "../styled"
+import { GovPoolFormOptions } from "../../../types"
 
 const GlobalVotingSettings: React.FC = () => {
   const location = useLocation()
@@ -72,6 +73,28 @@ const GlobalVotingSettings: React.FC = () => {
     quorumValidators,
   } = daoSettings
 
+  const govPoolFormOptions = {
+    ...INITIAL_DAO_PROPOSAL,
+    _isValidator: validatorsCount > 0,
+    _defaultProposalSettingForm: {
+      ...INITIAL_DAO_PROPOSAL._defaultProposalSettingForm,
+      earlyCompletion,
+      delegatedVotingAllowed,
+      validatorsVote,
+      duration,
+      durationValidators,
+      quorum,
+      quorumValidators,
+      minVotesForVoting,
+      minVotesForCreating,
+      rewardToken,
+      creationReward,
+      executionReward,
+      voteRewardsCoefficient,
+      executorDescription,
+    },
+  } as GovPoolFormOptions
+
   return (
     <>
       <Header>Create proposal</Header>
@@ -83,39 +106,7 @@ const GlobalVotingSettings: React.FC = () => {
           <GovProposalCreatingContextProvider>
             <GovPoolFormContextProvider
               customLSKey={"creating-proposal-global-voting-settings"}
-              daoProposal={{
-                ...INITIAL_DAO_PROPOSAL,
-                _isValidator: validatorsCount > 0,
-                _defaultProposalSettingForm: {
-                  ...INITIAL_DAO_PROPOSAL._defaultProposalSettingForm,
-                  earlyCompletion,
-                  delegatedVotingAllowed,
-                  validatorsVote,
-                  duration: duration.toNumber(),
-                  durationValidators: durationValidators.toNumber(),
-                  quorum: cutStringZeroes(formatUnits(quorum, 25)),
-                  quorumValidators: cutStringZeroes(
-                    formatUnits(quorumValidators, 25)
-                  ),
-                  minVotesForVoting: cutStringZeroes(
-                    formatEther(minVotesForVoting)
-                  ),
-                  minVotesForCreating: cutStringZeroes(
-                    formatEther(minVotesForCreating)
-                  ),
-                  rewardToken: rewardToken === ZERO_ADDR ? "" : rewardToken,
-                  creationReward: cutStringZeroes(
-                    formatUnits(creationReward, 18)
-                  ),
-                  executionReward: cutStringZeroes(
-                    formatUnits(executionReward, 18)
-                  ),
-                  voteRewardsCoefficient: cutStringZeroes(
-                    formatUnits(voteRewardsCoefficient, 18)
-                  ),
-                  executorDescription,
-                },
-              }}
+              govPoolFormOptions={govPoolFormOptions}
             >
               <CreateDaoProposalGlobalVotingSettingsForm />
             </GovPoolFormContextProvider>

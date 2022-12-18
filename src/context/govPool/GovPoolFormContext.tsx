@@ -195,10 +195,12 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       storedForm._internalProposalForm.validatorsVote
     ),
     duration: useState<number>(
-      storedForm._internalProposalForm.duration.toNumber()
+      Number(formatUnits(storedForm._internalProposalForm.duration, 0))
     ),
     durationValidators: useState<number>(
-      storedForm._internalProposalForm.durationValidators.toNumber()
+      Number(
+        formatUnits(storedForm._internalProposalForm.durationValidators, 0)
+      )
     ),
     quorum: useState<string>(
       formatUnits(storedForm._internalProposalForm.quorum, 25)
@@ -223,7 +225,7 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       formatUnits(storedForm._internalProposalForm.voteRewardsCoefficient, 18)
     ),
     executorDescription: useState<string>(
-      formatUnits(storedForm._internalProposalForm.executorDescription, 18)
+      storedForm._internalProposalForm.executorDescription
     ),
   } as GovPoolSettingsState
   const _distributionProposalSettingsForm = {
@@ -237,10 +239,17 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       storedForm._distributionProposalSettingsForm.validatorsVote
     ),
     duration: useState<number>(
-      storedForm._distributionProposalSettingsForm.duration.toNumber()
+      Number(
+        formatUnits(storedForm._distributionProposalSettingsForm.duration, 0)
+      )
     ),
     durationValidators: useState<number>(
-      storedForm._distributionProposalSettingsForm.durationValidators.toNumber()
+      Number(
+        formatUnits(
+          storedForm._distributionProposalSettingsForm.durationValidators,
+          0
+        )
+      )
     ),
     quorum: useState<string>(
       formatUnits(storedForm._distributionProposalSettingsForm.quorum, 25)
@@ -285,10 +294,7 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       )
     ),
     executorDescription: useState<string>(
-      formatUnits(
-        storedForm._distributionProposalSettingsForm.executorDescription,
-        18
-      )
+      storedForm._distributionProposalSettingsForm.executorDescription
     ),
   } as GovPoolSettingsState
   const _validatorsBalancesSettingsForm = {
@@ -302,10 +308,17 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       storedForm._validatorsBalancesSettingsForm.validatorsVote
     ),
     duration: useState<number>(
-      storedForm._validatorsBalancesSettingsForm.duration.toNumber()
+      Number(
+        formatUnits(storedForm._validatorsBalancesSettingsForm.duration, 0)
+      )
     ),
     durationValidators: useState<number>(
-      storedForm._validatorsBalancesSettingsForm.durationValidators.toNumber()
+      Number(
+        formatUnits(
+          storedForm._validatorsBalancesSettingsForm.durationValidators,
+          0
+        )
+      )
     ),
     quorum: useState<string>(
       formatUnits(storedForm._validatorsBalancesSettingsForm.quorum, 25)
@@ -347,10 +360,7 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       )
     ),
     executorDescription: useState<string>(
-      formatUnits(
-        storedForm._validatorsBalancesSettingsForm.executorDescription,
-        18
-      )
+      storedForm._validatorsBalancesSettingsForm.executorDescription
     ),
   } as GovPoolSettingsState
   const _defaultProposalSettingForm = {
@@ -364,10 +374,15 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       storedForm._defaultProposalSettingForm.validatorsVote
     ),
     duration: useState<number>(
-      storedForm._defaultProposalSettingForm.duration.toNumber()
+      Number(formatUnits(storedForm._defaultProposalSettingForm.duration, 0))
     ),
     durationValidators: useState<number>(
-      storedForm._defaultProposalSettingForm.durationValidators.toNumber()
+      Number(
+        formatUnits(
+          storedForm._defaultProposalSettingForm.durationValidators,
+          0
+        )
+      )
     ),
     quorum: useState<string>(
       formatUnits(storedForm._defaultProposalSettingForm.quorum, 25)
@@ -400,10 +415,7 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       )
     ),
     executorDescription: useState<string>(
-      formatUnits(
-        storedForm._defaultProposalSettingForm.executorDescription,
-        18
-      )
+      storedForm._defaultProposalSettingForm.executorDescription
     ),
   } as GovPoolSettingsState
 
@@ -757,8 +769,9 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
   }, [govPoolFormOptions, populateForm])
 
   useEffect(() => {
+    console.log(convertForm())
     setLocalStorageValue((prevState) => {
-      const nextState = JSON.stringify(convertForm() as GovPoolFormOptions)
+      const nextState = JSON.stringify(convertForm())
 
       return isEqual(prevState, nextState) ? prevState : nextState
     })

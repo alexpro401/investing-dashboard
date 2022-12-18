@@ -24,6 +24,7 @@ import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 import { cutStringZeroes } from "utils"
 
 import * as S from "../styled"
+import { BigNumber } from "@ethersproject/bignumber"
 
 const VotingSettings: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
@@ -96,7 +97,7 @@ const VotingSettings: React.FC = () => {
       <GovVotingSettings
         isOpen={previousSettingsOpened}
         toggle={() => setPreviousSettingsOpened((b) => !b)}
-        duration={initialForm.duration}
+        duration={BigNumber.from(initialForm.duration)}
         quorum={quorumForValidators}
       />
       <S.StepsRoot>

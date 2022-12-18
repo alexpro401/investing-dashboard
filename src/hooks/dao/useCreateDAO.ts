@@ -182,7 +182,7 @@ const useCreateDAO = () => {
             ).toString(),
             voteRewardsCoefficient: parseUnits(
               String(internalProposalForm.voteRewardsCoefficient.get),
-              18
+              18 // TODO: 18 or 25?
             ).toString(),
             executorDescription: "internal",
           }

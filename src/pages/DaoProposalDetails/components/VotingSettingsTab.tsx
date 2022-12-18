@@ -5,7 +5,6 @@ import { ICON_NAMES } from "constants/icon-names"
 import { VotingSettings } from "common"
 import { useGovPoolProposal } from "hooks/dao"
 import { cutStringZeroes, fromBig } from "utils"
-import { formatEther } from "@ethersproject/units"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   govPoolProposal: ReturnType<typeof useGovPoolProposal>
@@ -26,24 +25,22 @@ const VotingSettingsTab: FC<Props> = ({ govPoolProposal }) => {
           delegatedVotingAllowed={
             govPoolProposal.proposalSettings.delegatedVotingAllowed
           }
-          duration={govPoolProposal.proposalSettings?.duration?.toNumber()}
+          duration={govPoolProposal.proposalSettings?.duration}
           quorum={cutStringZeroes(
             fromBig(govPoolProposal?.proposalSettings?.quorum, 25)
           )}
-          minVotesForVoting={cutStringZeroes(
-            formatEther(
-              govPoolProposal?.proposalSettings?.minVotesForVoting?.toString()
-            )
-          )}
-          minVotesForCreating={cutStringZeroes(
-            formatEther(
-              govPoolProposal?.proposalSettings?.minVotesForCreating?.toString()
-            )
-          )}
+          minVotesForVoting={
+            govPoolProposal?.proposalSettings?.minVotesForVoting
+          }
+          minVotesForCreating={
+            govPoolProposal?.proposalSettings?.minVotesForCreating
+          }
           rewardToken={govPoolProposal?.proposalSettings?.rewardToken}
-          creationReward={govPoolProposal?.proposalSettings?.creationReward?.toString()}
-          voteRewardsCoefficient={govPoolProposal?.proposalSettings?.voteRewardsCoefficient?.toString()}
-          executionReward={govPoolProposal?.proposalSettings?.executionReward?.toString()}
+          creationReward={govPoolProposal?.proposalSettings?.creationReward}
+          voteRewardsCoefficient={
+            govPoolProposal?.proposalSettings?.voteRewardsCoefficient
+          }
+          executionReward={govPoolProposal?.proposalSettings?.executionReward}
         />
       </S.DaoProposalDetailsCard>
     </>
