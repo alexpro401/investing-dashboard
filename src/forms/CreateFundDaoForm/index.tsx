@@ -1,12 +1,13 @@
 import { FC, useCallback, useMemo, useState } from "react"
 import * as S from "./styled"
 import {
-  TitlesStep,
-  IsDaoValidatorStep,
-  IsCustomVotingStep,
   DefaultProposalStep,
+  Icon,
+  IsCustomVotingStep,
+  IsDaoValidatorStep,
   IsDistributionProposalStep,
   SuccessStep,
+  TitlesStep,
 } from "common"
 
 import { useForm } from "hooks/useForm"
@@ -15,7 +16,8 @@ import { AnimatePresence } from "framer-motion"
 import { useCreateDAO } from "hooks/dao"
 import { useDispatch } from "react-redux"
 import { hideTapBar, showTabBar } from "state/application/actions"
-import { useEffectOnce } from "react-use"
+import { useEffectOnce, useWindowSize } from "react-use"
+import { ICON_NAMES } from "constants/icon-names"
 
 enum STEPS {
   titles = "titles",
@@ -26,7 +28,18 @@ enum STEPS {
   success = "success",
 }
 
+const STEPS_TITLES: Record<STEPS, string> = {
+  [STEPS.titles]: "Basic DAO Settings",
+  [STEPS.isDaoValidator]: "Validator settings",
+  [STEPS.defaultProposalSetting]: "General voting settings",
+  [STEPS.isCustomVoteSelecting]: "Changing voting settings",
+  [STEPS.isTokenDistributionSettings]: "Distribution proposal settings",
+  [STEPS.success]: "Summary",
+}
+
 const CreateFundDaoForm: FC = () => {
+  const { width: windowWidth } = useWindowSize()
+
   const [currentStep, setCurrentStep] = useState(STEPS.titles)
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length, [])
@@ -34,6 +47,7 @@ const CreateFundDaoForm: FC = () => {
     () => Object.values(STEPS).indexOf(currentStep) + 1,
     [currentStep]
   )
+  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
 
   const formController = useForm()
 
@@ -102,6 +116,13 @@ const CreateFundDaoForm: FC = () => {
     }
   }
 
+  const isStepPassed = (step: STEPS) => {
+    return (
+      Object.values(STEPS).indexOf(step) <
+      Object.values(STEPS).indexOf(currentStep)
+    )
+  }
+
   return (
     <S.Container
       totalStepsAmount={totalStepsCount}
@@ -110,33 +131,65 @@ const CreateFundDaoForm: FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        {currentStep === STEPS.titles ? (
-          <S.StepsContainer>
-            <TitlesStep />
-          </S.StepsContainer>
-        ) : currentStep === STEPS.isDaoValidator ? (
-          <S.StepsContainer>
-            <IsDaoValidatorStep />
-          </S.StepsContainer>
-        ) : currentStep === STEPS.defaultProposalSetting ? (
-          <S.StepsContainer>
-            <DefaultProposalStep />
-          </S.StepsContainer>
-        ) : currentStep === STEPS.isCustomVoteSelecting ? (
-          <S.StepsContainer>
-            <IsCustomVotingStep />
-          </S.StepsContainer>
-        ) : currentStep === STEPS.isTokenDistributionSettings ? (
-          <S.StepsContainer>
-            <IsDistributionProposalStep />
-          </S.StepsContainer>
-        ) : currentStep === STEPS.success ? (
-          <S.StepsContainer>
-            <SuccessStep />
-          </S.StepsContainer>
-        ) : (
-          <></>
-        )}
+        <S.StepsWrapper>
+          {currentStep === STEPS.titles ? (
+            <S.StepsContainer>
+              <TitlesStep />
+            </S.StepsContainer>
+          ) : currentStep === STEPS.isDaoValidator ? (
+            <S.StepsContainer>
+              <IsDaoValidatorStep />
+            </S.StepsContainer>
+          ) : currentStep === STEPS.defaultProposalSetting ? (
+            <S.StepsContainer>
+              <DefaultProposalStep />
+            </S.StepsContainer>
+          ) : currentStep === STEPS.isCustomVoteSelecting ? (
+            <S.StepsContainer>
+              <IsCustomVotingStep />
+            </S.StepsContainer>
+          ) : currentStep === STEPS.isTokenDistributionSettings ? (
+            <S.StepsContainer>
+              <IsDistributionProposalStep />
+            </S.StepsContainer>
+          ) : currentStep === STEPS.success ? (
+            <S.StepsContainer>
+              <SuccessStep />
+            </S.StepsContainer>
+          ) : (
+            <></>
+          )}
+          {!isMobile ? (
+            <S.StepsSideNavigation>
+              {Object.values(STEPS).map((el, idx) => (
+                <S.StepsSideNavigationItem
+                  key={idx}
+                  isPassed={isStepPassed(el)}
+                  isActive={el === currentStep}
+                >
+                  <S.StepsSideNavigationItemIcon
+                    isPassed={isStepPassed(el)}
+                    isActive={el === currentStep}
+                  >
+                    {isStepPassed(el) ? (
+                      <Icon name={ICON_NAMES.gradientCheck} />
+                    ) : (
+                      <>{idx + 1}</>
+                    )}
+                  </S.StepsSideNavigationItemIcon>
+                  <S.StepsSideNavigationItemText
+                    isPassed={isStepPassed(el)}
+                    isActive={el === currentStep}
+                  >
+                    {STEPS_TITLES[el]}
+                  </S.StepsSideNavigationItemText>
+                </S.StepsSideNavigationItem>
+              ))}
+            </S.StepsSideNavigation>
+          ) : (
+            <></>
+          )}
+        </S.StepsWrapper>
       </AnimatePresence>
     </S.Container>
   )

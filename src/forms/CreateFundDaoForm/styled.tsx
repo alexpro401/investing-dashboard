@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 
 import { StepsNavigation } from "common"
 import StepsControllerContext from "context/StepsControllerContext"
@@ -8,7 +8,7 @@ import { opacityVariants } from "motion/variants"
 export const Container = styled(StepsControllerContext)`
   display: flex;
   margin: 0 auto;
-  background-color: #040a0f;
+  background-color: #ff0000;
   width: 100%;
   overflow-y: auto;
 `
@@ -42,3 +42,75 @@ export const StepsRoot = styled.div`
 export const StepsBottomNavigation = styled(StepsNavigation)`
   margin-top: auto;
 `
+
+export const StepsWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  height: 100%;
+`
+
+export const StepsSideNavigation = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: max-content;
+  white-space: nowrap;
+  height: 100%;
+  padding: 20px;
+`
+
+export const StepsSideNavigationItem = styled.div<{
+  isPassed: boolean
+  isActive: boolean
+}>`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #293c54;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  padding: 16px;
+  border-radius: 14px;
+
+  ${(props) =>
+    props.isActive
+      ? css`
+          background: #181e2c;
+          color: #2669eb;
+        `
+      : css``}
+`
+
+export const StepsSideNavigationItemIcon = styled.div<{
+  isPassed: boolean
+  isActive: boolean
+}>`
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid #293c54;
+
+  ${(props) =>
+    props.isPassed
+      ? css`
+          background: #293c54;
+        `
+      : css``}
+
+  ${(props) =>
+    props.isActive
+      ? css`
+          background: #2669eb;
+          color: #181e2c;
+        `
+      : css``}
+`
+
+export const StepsSideNavigationItemText = styled.span<{
+  isPassed: boolean
+  isActive: boolean
+}>``
