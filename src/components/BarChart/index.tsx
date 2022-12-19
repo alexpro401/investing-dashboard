@@ -3,7 +3,7 @@ import { AGGREGATION_CODE } from "constants/chart"
 import { opacityVariants } from "motion/variants"
 import { usePriceHistory } from "state/pools/hooks"
 import { Flex } from "theme"
-import { daysAgoTimestamp, expandTimestamp } from "utils"
+import { daysAgoTimestamp, expandTimestamp, normalizeBigNumber } from "utils"
 
 import S, { Tip } from "./styled"
 
@@ -83,7 +83,11 @@ const BarChart: React.FC<IProps> = ({ address, withTip, m }) => {
         <S.Bar
           active={withTip}
           key={i}
-          perc={v && v.percPNLBase ? Number(v.percPNLBase) : null}
+          perc={
+            v && v.percPNLBase
+              ? Number(normalizeBigNumber(v.percPNLBase, 4, 6))
+              : null
+          }
           onMouseEnter={() => activateTooltip(i)}
           onMouseLeave={() => deactivateTooltip()}
         >
@@ -105,7 +109,7 @@ const BarChart: React.FC<IProps> = ({ address, withTip, m }) => {
               <Tip
                 id={i}
                 timestamp={expandTimestamp(Number(v.timestamp))}
-                pnl={Number(v.percPNLBase)}
+                pnl={Number(normalizeBigNumber(v.percPNLBase, 4, 6))}
               />
             )}
           </Flex>

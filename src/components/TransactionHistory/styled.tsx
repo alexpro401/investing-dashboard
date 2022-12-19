@@ -5,7 +5,7 @@ import { Flex, GradientBorderLightGreen } from "theme"
 
 const Styled = {
   Container: styled.div`
-    width: 100%;
+    width: fill-available;
     flex: 1;
   `,
   Heading: styled(motion.div)`
