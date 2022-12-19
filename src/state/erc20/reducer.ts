@@ -1,4 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit"
+import { ChainMainTokenData } from "constants/chains"
 
 import { Token } from "interfaces"
 import { addToken, removeToken } from "state/erc20/actions"
@@ -9,7 +10,16 @@ export interface IERC20State {
   }
 }
 
-export const initialState: IERC20State = {}
+export const initialState: IERC20State = {
+  97: {
+    [process.env.REACT_APP_MAIN_ASSET_ADDRESS as string]:
+      ChainMainTokenData[97],
+  },
+  56: {
+    [process.env.REACT_APP_MAIN_ASSET_ADDRESS as string]:
+      ChainMainTokenData[56],
+  },
+}
 
 export default createReducer(initialState, (builder) =>
   builder

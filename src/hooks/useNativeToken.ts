@@ -1,18 +1,15 @@
-import { useMemo, useState } from "react"
+import { ChainMainTokenData } from "constants/chains"
+import { useActiveWeb3React } from "hooks"
+import { Token } from "interfaces"
+import { useMemo } from "react"
 
 export const useNativeToken = () => {
-  const address = useMemo(
-    () => "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-    []
-  )
-  const [symbol, setSymbol] = useState("BNB")
-  const [decimals, setDecimals] = useState(18)
-  const [name, setName] = useState("BNB")
+  const { chainId } = useActiveWeb3React()
 
-  return {
-    address,
-    name,
-    symbol,
-    decimals,
-  }
+  const tokenData = useMemo(
+    () => (chainId ? ChainMainTokenData[chainId] : ChainMainTokenData[56]),
+    [chainId]
+  ) as unknown as Token
+
+  return tokenData
 }
