@@ -5,11 +5,12 @@ import styled from "styled-components"
 import { Icon as CommonIcon } from "common"
 
 import { Flex } from "theme"
-import { useERC20 } from "hooks/useERC20"
 import { useSelector } from "react-redux"
 import { selectDexeAddress } from "state/contracts/selectors"
-import MemoDexeIcon from "assets/menu/DexeIcon"
 import { ICON_NAMES } from "constants/icon-names"
+import { useERC20Data } from "state/erc20/hooks"
+
+import mainAsset from "assets/tokens/bnb.png"
 
 interface IconProps {
   size?: number
@@ -127,7 +128,7 @@ const TokenIcon: React.FC<IProps> = ({ size, address, m = "0 8px 0 0" }) => {
   const [srcImg, setImg] = useState<string | undefined>()
   const [noImage, setNoImage] = useState(isBroken)
   const [isLoading, setLoadingState] = useState(!isBroken)
-  const [, tokenData] = useERC20(noImage ? address : undefined)
+  const [tokenData] = useERC20Data(noImage ? address : undefined)
 
   useEffect(() => {
     if (!src) return
@@ -159,6 +160,12 @@ const TokenIcon: React.FC<IProps> = ({ size, address, m = "0 8px 0 0" }) => {
       token.removeEventListener(imageLoad, imageError)
     }
   }, [account, address, chainId, isBroken, src])
+
+  if (
+    address?.toLocaleLowerCase() === process.env.REACT_APP_MAIN_ASSET_ADDRESS
+  ) {
+    return <Icon ref={ref} m={m!} src={mainAsset} size={size} />
+  }
 
   if (address?.toLocaleLowerCase() === dexeAddress.toLocaleLowerCase()) {
     return <CommonIcon name={ICON_NAMES.dexeTokenIcon} style={{ margin: m }} />

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react"
 
 import { isAddress } from "utils"
 import { Token } from "interfaces"
-import { ZERO } from "constants/index"
+import { ZERO, ZERO_ADDR } from "constants/index"
 import { useActiveWeb3React } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
 import { getBalanceOf } from "utils/getContract"
@@ -94,6 +94,13 @@ export function useERC20(
   // check address and save
   useEffect(() => {
     if (!address || String(address).toLocaleLowerCase() === storedAddress) {
+      return
+    }
+
+    if (
+      String(address).toLocaleLowerCase() === storedAddress ||
+      address === ZERO_ADDR
+    ) {
       return
     }
 
