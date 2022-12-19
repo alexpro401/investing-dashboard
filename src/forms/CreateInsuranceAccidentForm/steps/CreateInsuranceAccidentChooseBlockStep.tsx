@@ -94,7 +94,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
 
   useEffect(() => {
     if (history && history.length > 0) {
-      const activeLabel = history.length - 1
+      const activeLabel = 1
       const payload = history[activeLabel] ?? {}
       const price = getLP(String(payload?.baseTVL), String(payload?.supply))
 
