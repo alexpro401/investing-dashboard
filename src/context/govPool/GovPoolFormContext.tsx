@@ -12,7 +12,7 @@ import {
 } from "react"
 import { useERC20 } from "hooks/useERC20"
 import { useErc721 } from "hooks/useErc721"
-import { useLocalStorage } from "react-use"
+import { useEffectOnce, useLocalStorage } from "react-use"
 import {
   GovPoolFormOptions,
   ExternalFileDocument,
@@ -798,11 +798,11 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
     ]
   )
 
-  useEffect(() => {
+  useEffectOnce(() => {
     if (govPoolFormOptions) {
       populateForm(govPoolFormOptions)
     }
-  }, [govPoolFormOptions, populateForm])
+  })
 
   useEffect(() => {
     setLocalStorageValue((prevState) => {
