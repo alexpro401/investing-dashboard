@@ -72,7 +72,7 @@ export const Name = styled.input`
   letter-spacing: 0.5px;
   color: #c5d1dc;
   letter-spacing: 0.5px;
-  appereance: none;
+  appearance: none;
   background: none;
   outline: none;
   border: none;

@@ -4,22 +4,18 @@ import { motion } from "framer-motion"
 
 export const StyledTopMembers = styled(motion.div)`
   padding: 0;
-  height: 100%;
+  height: fit-content;
 `
 
 export const MembersList = styled.div`
   width: 100%;
   padding: 10px 0 30px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 
   @media only screen and (${device.sm}) {
     padding: 0 16px 30px;
   }
 
   @media (min-width: 768px) {
-    max-width: 1200px;
-    margin: auto;
     padding: 10px 32px 30px;
   }
 `
@@ -42,9 +38,12 @@ export const MembersGrid = styled.div`
 `
 
 export const ListContainer = styled(motion.div)`
-  overflow-y: hidden;
+  /* overflow-y: hidden;
   touch-action: none;
-  overscroll-behavior: none;
+  overscroll-behavior: none; */
+
+  max-width: 1200px;
+  margin: 0 auto;
 
   @media only screen and (${device.sm}) {
     padding: 0;
