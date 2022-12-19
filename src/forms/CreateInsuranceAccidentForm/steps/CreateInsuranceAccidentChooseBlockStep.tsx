@@ -18,7 +18,7 @@ import { Card, CardDescription, CardHead } from "common"
 
 import { StepsRoot } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
-import { usePoolContract } from "hooks/usePool"
+import { usePoolContract, usePoolQuery } from "hooks/usePool"
 
 import {
   CHART_TYPE,
@@ -54,8 +54,10 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
   const { block, pool, date } = form
   const { forPool, timeframe, data, point } = chart
 
+  const [poolQuery] = usePoolQuery(pool.get)
   const [, poolData] = usePoolContract(pool.get)
   const [baseTokenData] = useERC20Data(poolData?.parameters.baseToken)
+  console.log(poolQuery)
 
   const [isDateOpen, setDateOpen] = useState<boolean>(false)
 
@@ -289,6 +291,8 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
         isOpen={isDateOpen}
         timestamp={expandTimestamp(Number(date.get))}
         toggle={() => setDateOpen(false)}
+        minDate={new Date(expandTimestamp(poolQuery?.creationTime ?? 0))}
+        maxDate={new Date()}
         onChange={(v) => onFieldChange("date", String(v))}
       />
     </>
