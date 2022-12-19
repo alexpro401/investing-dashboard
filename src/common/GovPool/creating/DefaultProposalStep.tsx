@@ -1,14 +1,16 @@
 import { FC, useContext } from "react"
+import { createPortal } from "react-dom"
+
 import { CreateDaoCardStepNumber } from "../components"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { Card, CardDescription, CardHead } from "common"
-import * as S from "./styled"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 import { DaoSettingsParameters } from "common"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isAddressValidator, isPercentage, required } from "utils/validators"
-import { createPortal } from "react-dom"
+
+import * as S from "./styled"
 
 interface IDefaultProposalStepProps {
   isCreatingProposal?: boolean

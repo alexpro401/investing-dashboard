@@ -11,7 +11,6 @@ import { isTxMined, parseTransactionError } from "utils"
 
 interface ICreateProposalArgs {
   executors: string[]
-
   misc: string
   values: string[]
   data: string[]

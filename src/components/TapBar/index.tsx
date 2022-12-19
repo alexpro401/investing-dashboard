@@ -6,10 +6,12 @@ import TopTraders from "assets/menu/mobile/TopTraders"
 import Insurance from "assets/menu/mobile/Insurance"
 import Dao from "assets/menu/mobile/Dao"
 
-import { MobileMenu, NavItem } from "./styled"
+import { MobileMenu, NavItem, LogoWrapper } from "./styled"
 import { shortenAddress } from "utils"
 import { FC } from "react"
 import { MotionProps } from "framer-motion"
+import { Icon } from "common"
+import { ICON_NAMES } from "constants/icon-names"
 
 interface Props extends MotionProps {}
 
@@ -28,6 +30,9 @@ export const TapBar: FC<Props> = ({ ...rest }) => {
       }}
       {...rest}
     >
+      <LogoWrapper>
+        <Icon name={ICON_NAMES.logoIcon} />
+      </LogoWrapper>
       <NavItem path="/wallet" Icon={Wallet} text={shortenAddress(account, 3)} />
       <NavItem path="/me/trader" Icon={Profile} text="My profile" />
       <NavItem path="/" Icon={TopTraders} text="Traders" />

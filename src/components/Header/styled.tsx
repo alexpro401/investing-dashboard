@@ -1,23 +1,39 @@
 import { Flex, device, BaseButton } from "theme"
 import styled from "styled-components"
-import { motion } from "framer-motion"
 
-export const Container = styled(motion.div)`
+export const Container = styled(Flex)`
   touch-action: none;
   user-select: none;
   width: 100%;
   background: #0e121b;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
+  flex-direction: column;
 
   @media only screen and (${device.sm}) {
     justify-content: space-between;
     padding: 0 10px;
+  }
+
+  @media (min-width: 768px) {
+    height: 84px;
+    background: #0e121b;
+    box-shadow: none;
+    justify-content: center;
   }
 `
 
 export const Bar = styled(Flex)`
   width: 100%;
   height: 45px;
+
+  @media (min-width: 768px) {
+    padding: 0 20px;
+    max-width: 1200px;
+  }
+
+  @media (min-width: 1160px) {
+    padding: 0;
+  }
 `
 
 export const ClickableArea = styled(BaseButton)`
@@ -123,6 +139,16 @@ export const Title = styled(Flex)`
   letter-spacing: -0.02em;
   align-items: center;
   color: #e4f2ff;
+
+  @media (min-width: 768px) {
+    font-family: "Gilroy";
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 17px;
+    letter-spacing: 0.01em;
+    color: #b1c7fc;
+  }
 `
 
 export const Icons = styled(Flex)`
@@ -133,6 +159,10 @@ export const Icons = styled(Flex)`
   }
   &:last-child {
     justify-content: flex-end;
+  }
+
+  @media (min-width: 768px) {
+    display: none;
   }
 `
 
@@ -176,4 +206,10 @@ export const Funds = styled(Flex)`
 
 export const IconButton = styled.img`
   margin: 0 3px;
+`
+
+export const WidgetWrapper = styled.div`
+  @media (max-width: 768px) {
+    display: none;
+  }
 `

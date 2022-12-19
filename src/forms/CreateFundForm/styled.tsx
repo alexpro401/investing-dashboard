@@ -12,7 +12,7 @@ export const Container = styled.div`
 export const AvatarWrapper = styled(Flex)`
   position: absolute;
   top: -35px;
-  width: 100%;
+  width: fill-available;
   justify-content: space-between;
   flex-direction: column;
   align-items: center;
@@ -21,7 +21,7 @@ export const AvatarWrapper = styled(Flex)`
 
 export const LinkButton = styled.button`
   background: none;
-  appereance: none;
+  appearance: none;
   border: none;
   outline: none;
   color: #2680eb;
@@ -41,12 +41,22 @@ export const LinkButton = styled.button`
 
 export const Body = styled.div`
   position: relative;
-  padding-top: 117px;
-  margin-top: 67px;
   width: fill-available;
   background: #08121a;
   box-shadow: 0px -3px 102px 2px rgba(149, 185, 255, 0.26);
   border-radius: 26px 26px 0px 0px;
+
+  @media (max-width: 768px) {
+    max-width: 650px;
+    padding: 117px 0 0;
+    margin: 67px auto 0;
+  }
+
+  @media (min-width: 768px) {
+    max-width: 880px;
+    margin: 67px auto 0;
+    padding: 117px 0 0 16px;
+  }
 `
 
 export const Steps = styled.div``

@@ -1,6 +1,6 @@
 import { AxiosInstance } from "axios"
 import Moralis from "./Moralis"
-import { ERC721Metadata } from "./types"
+import { ERC721Metadata, GetNftsByWalletParams, NftMetadata } from "./types"
 
 // represents nft api boilerplate
 interface NftAPI {
@@ -9,9 +9,8 @@ interface NftAPI {
   // @returns an array of NFT collection tokenIds for the given wallet
   getNftsByWallet: (
     account: string,
-    chainId: number,
-    contractAddress: string
-  ) => Promise<number[]>
+    params: GetNftsByWalletParams
+  ) => Promise<NftMetadata[]>
 
   // @returns an array of NFT metadata for the given NFT collection contract
   getNftsMetadataByContract: (

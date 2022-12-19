@@ -1,4 +1,5 @@
 import { FC, memo } from "react"
+import theme from "theme"
 
 interface Props {
   active: boolean
@@ -13,14 +14,14 @@ const Wallet: FC<Props> = ({ active }) => {
         width={22}
         height={15}
         rx={2}
-        stroke={active ? "#9AE2CB" : "#616D8B"}
+        stroke={active ? "#9AE2CB" : theme.textColors.secondary}
         strokeWidth={1.5}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M3.875 12h22M8.917 17.5h2.333"
-        stroke={active ? "#9AE2CB" : "#616D8B"}
+        stroke={active ? "#9AE2CB" : theme.textColors.secondary}
         strokeWidth={1.5}
         strokeLinecap="round"
         strokeLinejoin="round"

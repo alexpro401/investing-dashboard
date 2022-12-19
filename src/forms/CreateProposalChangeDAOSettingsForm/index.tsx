@@ -1,5 +1,12 @@
-import React, { useState, useMemo, useCallback, useContext } from "react"
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useContext,
+  useEffect,
+} from "react"
 import { AnimatePresence } from "framer-motion"
+import { useDispatch } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 
 import StepsControllerContext from "context/StepsControllerContext"
@@ -8,6 +15,7 @@ import { ChangeDAOSettings } from "./steps"
 import { useGovPoolCreateProposalChangeDaoSettings } from "hooks/dao/proposals"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { ChangeGovSettingsContext } from "context/govPool/proposals/regular/ChangeGovSettingsContext"
+import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
 
@@ -18,6 +26,7 @@ enum STEPS {
 
 const CreateProposalChangeDAOSettingsForm: React.FC = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { daoAddress } = useParams<"daoAddress">()
   const createProposal = useGovPoolCreateProposalChangeDaoSettings(
     daoAddress ?? ""
@@ -33,6 +42,14 @@ const CreateProposalChangeDAOSettingsForm: React.FC = () => {
     socialLinks,
     websiteUrl,
   } = useContext(ChangeGovSettingsContext)
+
+  useEffect(() => {
+    dispatch(hideTapBar())
+
+    return () => {
+      dispatch(showTabBar())
+    }
+  }, [dispatch])
 
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.daoSettings)
 

@@ -131,7 +131,7 @@ const CreateFundDaoForm: FC = () => {
             <IsDistributionProposalStep />
           </S.StepsContainer>
         ) : currentStep === STEPS.success ? (
-          <S.StepsContainer className={"steps-container"}>
+          <S.StepsContainer>
             <SuccessStep />
           </S.StepsContainer>
         ) : (

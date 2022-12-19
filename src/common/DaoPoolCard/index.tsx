@@ -1,17 +1,18 @@
-import { v4 as uuidv4 } from "uuid"
-import * as React from "react"
 import * as S from "./styled"
+
+import { isNil } from "lodash"
+import * as React from "react"
+import { v4 as uuidv4 } from "uuid"
 
 import { Flex } from "theme"
 import Icon from "components/Icon"
 import Tooltip from "components/Tooltip"
 import { normalizeBigNumber } from "utils"
+import { useGovPoolDescription } from "hooks/dao"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
-import useGovPoolIpfsData from "hooks/dao/useGovPoolIpfsData"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
 import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
 import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
-import { isNil } from "lodash"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   data: IGovPoolQuery
@@ -22,7 +23,7 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 const DaoPoolCard: React.FC<Props> = ({ data, account, children, ...rest }) => {
   const id = React.useMemo(() => data?.id ?? "", [data])
 
-  const [ipfs] = useGovPoolIpfsData(id)
+  const { descriptionObject } = useGovPoolDescription(id)
   const [assetsExisting, assets] = useGovPoolVotingAssets(id)
   const [{ tvl, mc_tvl, members, lau }] = useGovPoolStatistic(data)
   const [userVotingPower] = useGovPoolUserVotingPower({
@@ -62,7 +63,7 @@ const DaoPoolCard: React.FC<Props> = ({ data, account, children, ...rest }) => {
             size={38}
             m="0 8px 0 0"
             address={data?.id}
-            source={ipfs?.avatarUrl ?? ""}
+            source={descriptionObject?.avatarUrl ?? ""}
           />
           <Flex dir="column" ai="flex-start" gap="4">
             <S.DaoPoolCardTitle>{poolName}</S.DaoPoolCardTitle>
@@ -104,7 +105,7 @@ const DaoPoolCard: React.FC<Props> = ({ data, account, children, ...rest }) => {
             <Tooltip id={uuidv4()}>Info about Members</Tooltip>
           </Flex>
           <S.DaoPoolCardBlockInfoValue>
-            {String(members.value)}
+            {String(members.value ?? 0)}
           </S.DaoPoolCardBlockInfoValue>
         </Flex>
         <Flex full dir={"column"} gap={"4"} ai={"flex-end"}>

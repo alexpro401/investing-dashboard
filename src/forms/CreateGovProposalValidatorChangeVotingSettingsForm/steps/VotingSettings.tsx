@@ -1,5 +1,6 @@
 import React, { useContext, useCallback, useState, useMemo } from "react"
 import { useParams } from "react-router-dom"
+import { createPortal } from "react-dom"
 import { parseUnits, formatUnits } from "@ethersproject/units"
 
 import {
@@ -92,6 +93,8 @@ const VotingSettings: React.FC = () => {
     return cutStringZeroes(formatUnits(quorumResult, 18))
   }, [totalValidatorsTokenSupply, initialForm])
 
+  const appNavigationEl = document.querySelector("#app-navigation")
+
   return (
     <>
       <GovVotingSettings
@@ -164,7 +167,14 @@ const VotingSettings: React.FC = () => {
           </CardFormControl>
         </Card>
       </S.StepsRoot>
-      <StepsNavigation customNextCb={handleNextStep} />
+      {appNavigationEl ? (
+        createPortal(
+          <StepsNavigation customNextCb={handleNextStep} />,
+          appNavigationEl
+        )
+      ) : (
+        <></>
+      )}
     </>
   )
 }

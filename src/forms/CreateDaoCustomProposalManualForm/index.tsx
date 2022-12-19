@@ -1,5 +1,12 @@
-import React, { useState, useMemo, useCallback, useContext } from "react"
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useContext,
+  useEffect,
+} from "react"
 import { useParams, useNavigate } from "react-router-dom"
+import { useDispatch } from "react-redux"
 import { AnimatePresence } from "framer-motion"
 import { parseEther } from "@ethersproject/units"
 
@@ -9,6 +16,7 @@ import StepsControllerContext from "context/StepsControllerContext"
 import { AdvancedManualContext } from "context/govPool/proposals/custom/AdvancedManualContext"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { useGovPoolCreateCustomProposalManual } from "hooks/dao"
+import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
 
@@ -19,6 +27,7 @@ enum STEPS {
 
 const CreateDaoCustomProposalManualForm: React.FC = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { daoAddress, executorAddress } = useParams<
     "daoAddress" | "executorAddress"
   >()
@@ -26,6 +35,14 @@ const CreateDaoCustomProposalManualForm: React.FC = () => {
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
   )
+
+  useEffect(() => {
+    dispatch(hideTapBar())
+
+    return () => {
+      dispatch(showTabBar())
+    }
+  }, [dispatch])
 
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.manualInfo)
   const createProposal = useGovPoolCreateCustomProposalManual(daoAddress)

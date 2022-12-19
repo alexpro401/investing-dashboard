@@ -4,16 +4,18 @@ import { motion } from "framer-motion"
 import { useScroll } from "react-use"
 import { SpiralSpinner } from "react-spinners-kit"
 
-import loadMore from "assets/icons/swipe-arrow-down.svg"
+import theme, { Text } from "theme"
 
 const LoadMoreIcon = styled(motion.div)`
+  cursor: pointer;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 40px auto;
+  margin: 16px auto;
   z-index: 100;
   height: 50px;
+  width: fill-available;
 `
 
 const LoadMore: React.FC<{
@@ -21,41 +23,14 @@ const LoadMore: React.FC<{
   isLoading: boolean
   handleMore: () => void
 }> = ({ r, isLoading, handleMore }) => {
-  const { y } = useScroll(r)
-  const scrollableDistance = r?.current?.scrollHeight - r?.current?.clientHeight
-
-  const getAnimation = () => {
-    const isBottom = scrollableDistance - y <= 1
-
-    if (isBottom && !isLoading) {
-      handleMore()
-    }
-    if (scrollableDistance - y <= -100) {
-      handleMore()
-    }
-    if (scrollableDistance - y <= -50) {
-      return "visible2x"
-    }
-    if (scrollableDistance - y <= -30 || isLoading) {
-      return "visible"
-    }
-
-    return "hidden"
-  }
-
   return (
-    <LoadMoreIcon
-      variants={{
-        hidden: { opacity: 0, y: -30, scale: 0 },
-        visible: { opacity: 1, y: -20, scale: 1 },
-        visible2x: { opacity: 1, y: 0, scale: 1.1 },
-      }}
-      animate={getAnimation()}
-    >
+    <LoadMoreIcon onClick={handleMore}>
       {isLoading ? (
         <SpiralSpinner size={30} loading />
       ) : (
-        <img src={loadMore} alt="looad more" />
+        <Text color={theme.brandColors.secondary} fw={600}>
+          Load more
+        </Text>
       )}
     </LoadMoreIcon>
   )

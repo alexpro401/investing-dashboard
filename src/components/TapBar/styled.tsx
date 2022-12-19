@@ -1,4 +1,4 @@
-import { To } from "theme"
+import theme, { Flex, To } from "theme"
 import styled from "styled-components"
 import { motion } from "framer-motion"
 import { useMatch } from "react-router-dom"
@@ -22,6 +22,9 @@ export const MobileMenu = styled(motion.div)`
 
   @media (min-width: 768px) {
     flex-direction: column;
+    justify-content: flex-start;
+    width: 100px;
+    padding: 0;
   }
 `
 
@@ -32,6 +35,11 @@ const MobileItem = styled(motion.div)`
   align-items: center;
   justify-content: center;
   flex-direction: column;
+
+  @media (min-width: 768px) {
+    width: 100px;
+    height: 100px;
+  }
 `
 
 const MobileIcon = styled.div`
@@ -40,6 +48,17 @@ const MobileIcon = styled.div`
   align-items: center;
   width: 35px;
   height: 35px;
+`
+
+export const LogoWrapper = styled(Flex)`
+  width: 100px;
+  height: 100px;
+  justify-content: center;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `
 
 const MobileLabel = styled.div<{ active: boolean }>`
@@ -54,7 +73,7 @@ const MobileLabel = styled.div<{ active: boolean }>`
   text-align: center;
   letter-spacing: 0.16px;
 
-  color: ${(props) => (props.active ? "#9AE2CB" : "#616D8B")};
+  color: ${(props) => (props.active ? "#9AE2CB" : theme.textColors.secondary)};
 `
 
 const Wrapper = styled.div`

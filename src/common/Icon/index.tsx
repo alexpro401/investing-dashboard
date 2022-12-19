@@ -46,6 +46,10 @@ import {
   PlusIcon,
   ExclamationCircle,
   ClockCircledIcon,
+  InsuranceMultiplierIcon,
+  UnknownTokenIcon,
+  LogoIcon,
+  DexeTokenIcon,
   SuccessCircledIcon,
 } from "assets/icons"
 
@@ -155,6 +159,14 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return ClockCircledIcon as unknown as ElementType
       case ICON_NAMES.successCircle:
         return SuccessCircledIcon as unknown as ElementType
+      case ICON_NAMES.insuranceMultiplier:
+        return InsuranceMultiplierIcon as unknown as ElementType
+      case ICON_NAMES.unknownToken:
+        return UnknownTokenIcon as unknown as ElementType
+      case ICON_NAMES.logoIcon:
+        return LogoIcon as unknown as ElementType
+      case ICON_NAMES.dexeTokenIcon:
+        return DexeTokenIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }

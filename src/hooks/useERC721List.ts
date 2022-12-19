@@ -91,13 +91,12 @@ export const useOwnedERC721Tokens = (daoPoolAddress?: string) => {
       if (!nftAddress || nftAddress === ZERO_ADDR) return
 
       try {
-        const data = await NFTAPI.getNftsByWallet(
-          account!,
-          chainId!,
-          nftAddress
-        )
+        const data = await NFTAPI.getNftsByWallet(account, {
+          token_addresses: [nftAddress],
+          chainId,
+        })
 
-        setIds(data)
+        setIds(data.map((nft) => Number(nft.token_id)))
       } catch (e) {
         console.error("useOwnedERC721Tokens error: ", e)
       }
