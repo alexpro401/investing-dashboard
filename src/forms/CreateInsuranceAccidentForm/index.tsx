@@ -42,6 +42,8 @@ import { encodeAbiMethod } from "utils/encodeAbi"
 import { Insurance as Insurance_ABI } from "abi"
 import { divideBignumbers } from "utils/formulas"
 import { DEFAULT_ALERT_HIDDEN_TIMEOUT } from "constants/misc"
+import { useActiveInsuranceProposalByPool } from "hooks/dao"
+import InsuranceAccidentExist from "modals/InsuranceAccidentExist"
 
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
@@ -158,6 +160,17 @@ const CreateInsuranceAccidentForm: FC = () => {
       setShowNotEnoughInsuranceByDay(false)
     }
   }, [])
+
+  const [activeProposalByPool, loadingActiveProposalByPool] =
+    useActiveInsuranceProposalByPool(pool.get)
+
+  useEffect(() => {
+    if (loadingActiveProposalByPool) return
+
+    insuranceAccidentExist.set(
+      !isNil(activeProposalByPool) && !isEmpty(activeProposalByPool)
+    )
+  }, [activeProposalByPool, loadingActiveProposalByPool])
 
   const [currentStep, setCurrentStep] = useState(STEPS.chooseFund)
   const totalStepsCount = useMemo(() => Object.values(STEPS).length, [])
@@ -309,6 +322,14 @@ const CreateInsuranceAccidentForm: FC = () => {
           })
           break
         }
+        if (loadingActiveProposalByPool) {
+          showAlert({
+            content: "Checking exist proposal for chose pool",
+            type: AlertType.info,
+            hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
+          })
+          break
+        }
         if (insuranceAccidentExist.get) {
           showAlert({
             content: "Insurance accident for chosen pool already exist.",
@@ -448,6 +469,12 @@ const CreateInsuranceAccidentForm: FC = () => {
         isOpen={showNotEnoughInsurance}
         onClose={() => setShowNotEnoughInsurance(false)}
       />
+      {insuranceAccidentExist.get && (
+        <InsuranceAccidentExist
+          isOpen={insuranceAccidentExist.get}
+          onClose={() => insuranceAccidentExist.set(false)}
+        />
+      )}
       <CreateInsuranceAccidentCreatedSuccessfully
         open={showSuccessfullyCreatedModal}
         setOpen={setShowSuccessfullyCreatedModal}
