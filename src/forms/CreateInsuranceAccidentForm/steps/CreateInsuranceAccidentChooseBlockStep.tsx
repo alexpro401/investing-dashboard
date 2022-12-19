@@ -57,7 +57,6 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
   const [poolQuery] = usePoolQuery(pool.get)
   const [, poolData] = usePoolContract(pool.get)
   const [baseTokenData] = useERC20Data(poolData?.parameters.baseToken)
-  console.log(poolQuery)
 
   const [isDateOpen, setDateOpen] = useState<boolean>(false)
 
