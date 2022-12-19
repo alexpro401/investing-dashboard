@@ -490,16 +490,18 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       setEarlyCompletion(settings.earlyCompletion)
       setDelegatedVotingAllowed(settings.delegatedVotingAllowed)
       setValidatorsVote(settings.validatorsVote)
-      setDuration(settings.duration)
-      setDurationValidators(settings.durationValidators)
-      setQuorum(settings.quorum)
-      setQuorumValidators(settings.quorumValidators)
-      setMinVotesForVoting(settings.minVotesForVoting)
-      setMinVotesForCreating(settings.minVotesForCreating)
+      setDuration(Number(formatUnits(settings.duration, 0)))
+      setDurationValidators(Number(formatUnits(settings.durationValidators, 0)))
+      setQuorum(formatUnits(settings.quorum, 25))
+      setQuorumValidators(formatUnits(settings.quorumValidators, 25))
+      setMinVotesForVoting(formatUnits(settings.minVotesForVoting, 18))
+      setMinVotesForCreating(formatUnits(settings.minVotesForCreating, 18))
       setRewardToken(settings.rewardToken)
-      setCreationReward(settings.creationReward)
-      setExecutionReward(settings.executionReward)
-      setVoteRewardsCoefficient(settings.voteRewardsCoefficient)
+      setCreationReward(formatUnits(settings.creationReward, 18))
+      setExecutionReward(formatUnits(settings.executionReward, 18))
+      setVoteRewardsCoefficient(
+        formatUnits(settings.voteRewardsCoefficient, 18)
+      )
       setExecutorDescription(settings.executorDescription)
     },
     []
@@ -803,7 +805,6 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
   }, [govPoolFormOptions, populateForm])
 
   useEffect(() => {
-    console.log(convertForm())
     setLocalStorageValue((prevState) => {
       const nextState = JSON.stringify(convertForm())
 
