@@ -2,10 +2,10 @@ import { FC, useCallback, useMemo, useState } from "react"
 import * as S from "./styled"
 import {
   DefaultProposalStep,
-  Icon,
   IsCustomVotingStep,
   IsDaoValidatorStep,
   IsDistributionProposalStep,
+  SideStepsNavigationBar,
   SuccessStep,
   TitlesStep,
 } from "common"
@@ -17,7 +17,6 @@ import { useCreateDAO } from "hooks/dao"
 import { useDispatch } from "react-redux"
 import { hideTapBar, showTabBar } from "state/application/actions"
 import { useEffectOnce, useWindowSize } from "react-use"
-import { ICON_NAMES } from "constants/icon-names"
 
 enum STEPS {
   titles = "titles",
@@ -40,7 +39,7 @@ const STEPS_TITLES: Record<STEPS, string> = {
 const CreateFundDaoForm: FC = () => {
   const { width: windowWidth } = useWindowSize()
 
-  const [currentStep, setCurrentStep] = useState(STEPS.titles)
+  const [currentStep, setCurrentStep] = useState(STEPS.isCustomVoteSelecting)
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length, [])
   const currentStepNumber = useMemo(
@@ -160,32 +159,13 @@ const CreateFundDaoForm: FC = () => {
             <></>
           )}
           {!isMobile ? (
-            <S.StepsSideNavigation>
-              {Object.values(STEPS).map((el, idx) => (
-                <S.StepsSideNavigationItem
-                  key={idx}
-                  isPassed={isStepPassed(el)}
-                  isActive={el === currentStep}
-                >
-                  <S.StepsSideNavigationItemIcon
-                    isPassed={isStepPassed(el)}
-                    isActive={el === currentStep}
-                  >
-                    {isStepPassed(el) ? (
-                      <Icon name={ICON_NAMES.gradientCheck} />
-                    ) : (
-                      <>{idx + 1}</>
-                    )}
-                  </S.StepsSideNavigationItemIcon>
-                  <S.StepsSideNavigationItemText
-                    isPassed={isStepPassed(el)}
-                    isActive={el === currentStep}
-                  >
-                    {STEPS_TITLES[el]}
-                  </S.StepsSideNavigationItemText>
-                </S.StepsSideNavigationItem>
-              ))}
-            </S.StepsSideNavigation>
+            <SideStepsNavigationBar
+              steps={Object.values(STEPS).map((step) => ({
+                number: Object.values(STEPS).indexOf(step),
+                title: STEPS_TITLES[step],
+              }))}
+              currentStep={Object.values(STEPS).indexOf(currentStep)}
+            />
           ) : (
             <></>
           )}
