@@ -53,6 +53,7 @@ export const CreateProposalSelectTypeCreateNew = styled(NavLink)`
 export const CreateProposalSelectTypeSubmitButton = styled(AppButton)`
   margin-top: auto;
   width: 100%;
+  flex-shrink: 0;
 `
 export const ProposalTypeGuide = styled.div`
   overflow: visible;

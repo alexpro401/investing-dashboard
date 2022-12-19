@@ -16,6 +16,7 @@ export const PageHolder = styled(motion.div).attrs(() => ({
 
 export const SubmitButton = styled(AppButton)`
   width: 100%;
+  flex-shrink: 0;
 `
 
 export const PageContent = styled.div`
