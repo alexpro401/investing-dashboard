@@ -25,8 +25,7 @@ import {
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
 import { isEqual } from "lodash"
 import { SUPPORTED_SOCIALS } from "constants/socials"
-import { BigNumber } from "@ethersproject/bignumber"
-import { formatUnits } from "@ethersproject/units"
+import { formatUnits, parseUnits } from "@ethersproject/units"
 
 interface IGovPoolFormContext {
   isErc20: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
@@ -603,32 +602,37 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
         delegatedVotingAllowed: _internalProposalForm
           .delegatedVotingAllowed[0] as boolean,
         validatorsVote: _internalProposalForm.validatorsVote[0] as boolean,
-        duration: BigNumber.from(_internalProposalForm.duration[0]),
-        durationValidators: BigNumber.from(
-          _internalProposalForm.durationValidators[0]
+        duration: parseUnits(String(_internalProposalForm.duration[0]), 0),
+        durationValidators: parseUnits(
+          String(_internalProposalForm.durationValidators[0]),
+          0
         ),
-        quorum: BigNumber.from(_internalProposalForm.quorum[0]).mul(
-          BigNumber.from(10).pow(25)
+        quorum: parseUnits(_internalProposalForm.quorum[0] as string, 25),
+        quorumValidators: parseUnits(
+          _internalProposalForm.quorumValidators[0] as string,
+          25
         ),
-        quorumValidators: BigNumber.from(
-          _internalProposalForm.quorumValidators[0]
-        ).mul(BigNumber.from(10).pow(25)),
-        minVotesForVoting: BigNumber.from(
-          _internalProposalForm.minVotesForVoting[0]
-        ).mul(BigNumber.from(10).pow(18)),
-        minVotesForCreating: BigNumber.from(
-          _internalProposalForm.minVotesForCreating[0]
-        ).mul(BigNumber.from(10).pow(18)),
+        minVotesForVoting: parseUnits(
+          _internalProposalForm.minVotesForVoting[0] as string,
+          18
+        ),
+        minVotesForCreating: parseUnits(
+          _internalProposalForm.minVotesForCreating[0] as string,
+          18
+        ),
         rewardToken: _internalProposalForm.rewardToken[0] as string,
-        creationReward: BigNumber.from(
-          _internalProposalForm.creationReward[0]
-        ).mul(BigNumber.from(10).pow(18)),
-        executionReward: BigNumber.from(
-          _internalProposalForm.executionReward[0]
-        ).mul(BigNumber.from(10).pow(18)),
-        voteRewardsCoefficient: BigNumber.from(
-          _internalProposalForm.voteRewardsCoefficient[0]
-        ).mul(BigNumber.from(10).pow(18)),
+        creationReward: parseUnits(
+          _internalProposalForm.creationReward[0] as string,
+          18
+        ),
+        executionReward: parseUnits(
+          _internalProposalForm.executionReward[0] as string,
+          18
+        ),
+        voteRewardsCoefficient: parseUnits(
+          _internalProposalForm.voteRewardsCoefficient[0] as string,
+          18
+        ),
         executorDescription: _internalProposalForm
           .executorDescription[0] as string,
       },
@@ -639,32 +643,43 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
           .delegatedVotingAllowed[0] as boolean,
         validatorsVote: _distributionProposalSettingsForm
           .validatorsVote[0] as boolean,
-        duration: BigNumber.from(_distributionProposalSettingsForm.duration[0]),
-        durationValidators: BigNumber.from(
-          _distributionProposalSettingsForm.durationValidators[0]
+        duration: parseUnits(
+          String(_distributionProposalSettingsForm.duration[0]),
+          0
         ),
-        quorum: BigNumber.from(_distributionProposalSettingsForm.quorum[0]).mul(
-          BigNumber.from(10).pow(25)
+        durationValidators: parseUnits(
+          String(_distributionProposalSettingsForm.durationValidators[0]),
+          0
         ),
-        quorumValidators: BigNumber.from(
-          _distributionProposalSettingsForm.quorumValidators[0]
-        ).mul(BigNumber.from(10).pow(25)),
-        minVotesForVoting: BigNumber.from(
-          _distributionProposalSettingsForm.minVotesForVoting[0]
-        ).mul(BigNumber.from(10).pow(18)),
-        minVotesForCreating: BigNumber.from(
-          _distributionProposalSettingsForm.minVotesForCreating[0]
-        ).mul(BigNumber.from(10).pow(18)),
+        quorum: parseUnits(
+          _distributionProposalSettingsForm.quorum[0] as string,
+          25
+        ),
+        quorumValidators: parseUnits(
+          _distributionProposalSettingsForm.quorumValidators[0] as string,
+          25
+        ),
+        minVotesForVoting: parseUnits(
+          _distributionProposalSettingsForm.minVotesForVoting[0] as string,
+          18
+        ),
+        minVotesForCreating: parseUnits(
+          _distributionProposalSettingsForm.minVotesForCreating[0] as string,
+          18
+        ),
         rewardToken: _distributionProposalSettingsForm.rewardToken[0] as string,
-        creationReward: BigNumber.from(
-          _distributionProposalSettingsForm.creationReward[0]
-        ).mul(BigNumber.from(10).pow(18)),
-        executionReward: BigNumber.from(
-          _distributionProposalSettingsForm.executionReward[0]
-        ).mul(BigNumber.from(10).pow(18)),
-        voteRewardsCoefficient: BigNumber.from(
-          _distributionProposalSettingsForm.voteRewardsCoefficient[0]
-        ).mul(BigNumber.from(10).pow(18)),
+        creationReward: parseUnits(
+          _distributionProposalSettingsForm.creationReward[0] as string,
+          18
+        ),
+        executionReward: parseUnits(
+          _distributionProposalSettingsForm.executionReward[0] as string,
+          18
+        ),
+        voteRewardsCoefficient: parseUnits(
+          _distributionProposalSettingsForm.voteRewardsCoefficient[0] as string,
+          18
+        ),
         executorDescription: _distributionProposalSettingsForm
           .executorDescription[0] as string,
       },
@@ -675,32 +690,43 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
           .delegatedVotingAllowed[0] as boolean,
         validatorsVote: _validatorsBalancesSettingsForm
           .validatorsVote[0] as boolean,
-        duration: BigNumber.from(_validatorsBalancesSettingsForm.duration[0]),
-        durationValidators: BigNumber.from(
-          _validatorsBalancesSettingsForm.durationValidators[0]
+        duration: parseUnits(
+          String(_validatorsBalancesSettingsForm.duration[0]),
+          0
         ),
-        quorum: BigNumber.from(_validatorsBalancesSettingsForm.quorum[0]).mul(
-          BigNumber.from(10).pow(25)
+        durationValidators: parseUnits(
+          String(_validatorsBalancesSettingsForm.durationValidators[0]),
+          0
         ),
-        quorumValidators: BigNumber.from(
-          _validatorsBalancesSettingsForm.quorumValidators[0]
-        ).mul(BigNumber.from(10).pow(25)),
-        minVotesForVoting: BigNumber.from(
-          _validatorsBalancesSettingsForm.minVotesForVoting[0]
-        ).mul(BigNumber.from(10).pow(18)),
-        minVotesForCreating: BigNumber.from(
-          _validatorsBalancesSettingsForm.minVotesForCreating[0]
-        ).mul(BigNumber.from(10).pow(18)),
+        quorum: parseUnits(
+          _validatorsBalancesSettingsForm.quorum[0] as string,
+          25
+        ),
+        quorumValidators: parseUnits(
+          _validatorsBalancesSettingsForm.quorumValidators[0] as string,
+          25
+        ),
+        minVotesForVoting: parseUnits(
+          _validatorsBalancesSettingsForm.minVotesForVoting[0] as string,
+          18
+        ),
+        minVotesForCreating: parseUnits(
+          _validatorsBalancesSettingsForm.minVotesForCreating[0] as string,
+          18
+        ),
         rewardToken: _validatorsBalancesSettingsForm.rewardToken[0] as string,
-        creationReward: BigNumber.from(
-          _validatorsBalancesSettingsForm.creationReward[0]
-        ).mul(BigNumber.from(10).pow(18)),
-        executionReward: BigNumber.from(
-          _validatorsBalancesSettingsForm.executionReward[0]
-        ).mul(BigNumber.from(10).pow(18)),
-        voteRewardsCoefficient: BigNumber.from(
-          _validatorsBalancesSettingsForm.voteRewardsCoefficient[0]
-        ).mul(BigNumber.from(10).pow(18)),
+        creationReward: parseUnits(
+          _validatorsBalancesSettingsForm.creationReward[0] as string,
+          18
+        ),
+        executionReward: parseUnits(
+          _validatorsBalancesSettingsForm.executionReward[0] as string,
+          18
+        ),
+        voteRewardsCoefficient: parseUnits(
+          _validatorsBalancesSettingsForm.voteRewardsCoefficient[0] as string,
+          18
+        ),
         executorDescription: _validatorsBalancesSettingsForm
           .executorDescription[0] as string,
       },
@@ -711,32 +737,40 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
           .delegatedVotingAllowed[0] as boolean,
         validatorsVote: _defaultProposalSettingForm
           .validatorsVote[0] as boolean,
-        duration: BigNumber.from(_defaultProposalSettingForm.duration[0]),
-        durationValidators: BigNumber.from(
-          _defaultProposalSettingForm.durationValidators[0]
+        duration: parseUnits(
+          String(_defaultProposalSettingForm.duration[0]),
+          0
         ),
-        quorum: BigNumber.from(_defaultProposalSettingForm.quorum[0]).mul(
-          BigNumber.from(10).pow(25)
+        durationValidators: parseUnits(
+          String(_defaultProposalSettingForm.durationValidators[0]),
+          0
         ),
-        quorumValidators: BigNumber.from(
-          _defaultProposalSettingForm.quorumValidators[0]
-        ).mul(BigNumber.from(10).pow(25)),
-        minVotesForVoting: BigNumber.from(
-          _defaultProposalSettingForm.minVotesForVoting[0]
-        ).mul(BigNumber.from(10).pow(18)),
-        minVotesForCreating: BigNumber.from(
-          _defaultProposalSettingForm.minVotesForCreating[0]
-        ).mul(BigNumber.from(10).pow(18)),
+        quorum: parseUnits(_defaultProposalSettingForm.quorum[0] as string, 25),
+        quorumValidators: parseUnits(
+          _defaultProposalSettingForm.quorumValidators[0] as string,
+          25
+        ),
+        minVotesForVoting: parseUnits(
+          _defaultProposalSettingForm.minVotesForVoting[0] as string,
+          18
+        ),
+        minVotesForCreating: parseUnits(
+          _defaultProposalSettingForm.minVotesForCreating[0] as string,
+          18
+        ),
         rewardToken: _defaultProposalSettingForm.rewardToken[0] as string,
-        creationReward: BigNumber.from(
-          _defaultProposalSettingForm.creationReward[0]
-        ).mul(BigNumber.from(10).pow(18)),
-        executionReward: BigNumber.from(
-          _defaultProposalSettingForm.executionReward[0]
-        ).mul(BigNumber.from(10).pow(18)),
-        voteRewardsCoefficient: BigNumber.from(
-          _defaultProposalSettingForm.voteRewardsCoefficient[0]
-        ).mul(BigNumber.from(10).pow(18)),
+        creationReward: parseUnits(
+          _defaultProposalSettingForm.creationReward[0] as string,
+          18
+        ),
+        executionReward: parseUnits(
+          _defaultProposalSettingForm.executionReward[0] as string,
+          18
+        ),
+        voteRewardsCoefficient: parseUnits(
+          _defaultProposalSettingForm.voteRewardsCoefficient[0] as string,
+          18
+        ),
         executorDescription: _defaultProposalSettingForm
           .executorDescription[0] as string,
       },
