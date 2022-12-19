@@ -12,9 +12,14 @@ import { GridTwoColumn, Indents, Label, ProgressBar, Value } from "../styled"
 import { Card } from "common"
 import { Flex } from "theme"
 import Tooltip from "components/Tooltip"
+import { usePoolSortino } from "hooks/pool"
 
 const MAX_INVESTORS = 1000
 const MAX_OPEN_TRADES = 25
+const sortinoTokens = [
+  "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+  "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+]
 
 interface Props {
   poolData: IPoolQuery
@@ -22,6 +27,8 @@ interface Props {
 }
 
 const TabPoolStatistic: FC<Props> = ({ poolData, poolInfo }) => {
+  const sortino = usePoolSortino(poolData.id, sortinoTokens)
+
   const investorsCount = Number(poolData?.investorsCount) || 0
   const openPositionsLen = Number(poolInfo?.openPositions.length) || 0
 
@@ -48,6 +55,18 @@ const TabPoolStatistic: FC<Props> = ({ poolData, poolInfo }) => {
     const date = new Date(poolData.averagePositionTime * 1000)
     return `${date.getUTCHours()}H`
   }, [poolData])
+
+  const sortinoETH = useMemo(() => {
+    if (!sortino) return <>♾️</>
+
+    return Number([sortino[sortinoTokens[0]]]).toFixed(2)
+  }, [sortino])
+
+  const sortinoBTC = useMemo(() => {
+    if (!sortino) return <>♾️</>
+
+    return Number([sortino[sortinoTokens[1]]]).toFixed(2)
+  }, [sortino])
 
   const totalTrades = useMemo(() => {
     if (!poolData) return "0"
@@ -129,11 +148,11 @@ const TabPoolStatistic: FC<Props> = ({ poolData, poolInfo }) => {
           <GridTwoColumn>
             <Flex full ai="center" jc="space-between">
               <Label>Sortino (ETH)</Label>
-              <Value.Medium color="#E4F2FF">🥲</Value.Medium>
+              <Value.Medium color="#E4F2FF">{sortinoETH}</Value.Medium>
             </Flex>
             <Flex full ai="center" jc="space-between">
               <Label>Sortino (BTC)</Label>
-              <Value.Medium color="#E4F2FF">🥲</Value.Medium>
+              <Value.Medium color="#E4F2FF">{sortinoBTC}</Value.Medium>
             </Flex>
           </GridTwoColumn>
 
