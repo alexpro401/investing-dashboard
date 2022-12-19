@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useSelector } from "react-redux"
 import { createClient } from "urql"
-import { isEmpty } from "lodash"
+import { isEmpty, isNil } from "lodash"
 
 import { useGovPoolContract } from "contracts"
 import { MAX_PAGINATION_COUNT } from "constants/misc"
@@ -26,8 +26,16 @@ interface ActiveInsuranceProposal {
 }
 
 const useActiveInsuranceProposalByPool = (basicPool) => {
+  const [_pool, _setPool] = React.useState()
   const [_loading, _setLoading] = React.useState(true)
   const [proposal, setProposal] = React.useState<ActiveInsuranceProposal>()
+
+  React.useEffect(() => {
+    if (!isNil(basicPool) && !isEmpty(basicPool) && basicPool !== _pool) {
+      _setPool(basicPool)
+      _setLoading(true)
+    }
+  }, [basicPool])
 
   const insuranceContractAddress = useSelector(selectInsuranceAddress)
   const govPoolContract = useGovPoolContract(dexeDaoPoolAddress)
@@ -55,6 +63,7 @@ const useActiveInsuranceProposalByPool = (basicPool) => {
 
   React.useEffect(() => {
     if (!loading && lastFetchLen === MAX_PAGINATION_COUNT) {
+      _setLoading(true)
       fetchMore()
     }
   }, [loading, lastFetchLen])
@@ -69,6 +78,7 @@ const useActiveInsuranceProposalByPool = (basicPool) => {
       return
     }
     ;(async () => {
+      _setLoading(true)
       for (const proposal of data) {
         const pId = Number(proposal.proposalId)
         const offset = pId === 0 ? 0 : pId - 1
@@ -95,11 +105,11 @@ const useActiveInsuranceProposalByPool = (basicPool) => {
               query: proposal,
               wrappedProposalView: _proposals[0],
             })
-            _setLoading(false)
             return
           }
         }
       }
+      _setLoading(false)
     })()
   }, [data, loading, govPoolContract])
 
