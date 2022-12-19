@@ -21,8 +21,8 @@ export const CreateProposalSelectTypePageHolder = styled(motion.div).attrs(
 export const CreateProposalSelectTypeContent = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 15px;
-  height: 100%;
 `
 
 export const CreateProposalSelectTypeHeader = styled.div`
