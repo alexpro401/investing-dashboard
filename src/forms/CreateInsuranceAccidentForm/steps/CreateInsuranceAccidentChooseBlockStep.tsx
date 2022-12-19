@@ -21,7 +21,6 @@ import {
   StepsRoot,
 } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
-import InsuranceAccidentExist from "modals/InsuranceAccidentExist"
 import { usePoolContract } from "hooks/usePool"
 
 import {
@@ -53,9 +52,7 @@ const poolsClient = createClient({
 
 const CreateInsuranceAccidentChooseBlockStep: FC = () => {
   const [showAlert] = useAlert()
-  const { form, insuranceAccidentExist, chart } = useContext(
-    InsuranceAccidentCreatingContext
-  )
+  const { form, chart } = useContext(InsuranceAccidentCreatingContext)
 
   const { block, pool, date } = form
   const { forPool, timeframe, data, point } = chart
@@ -199,14 +196,14 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
     }
 
     return (
-      <Flex dir="column" ai="flex-start" jc="center">
-        <Text fz={16} fw={700} lh="19px" color="#E4F2FF">
+      <div>
+        <Text block fz={16} fw={700} lh="19px" color="#E4F2FF">
           {price}
         </Text>
-        <Text fz={13} fw={500} lh="15px" color="#B1C7FC">
+        <Text block fz={13} fw={500} lh="15px" color="#B1C7FC">
           {date}
         </Text>
-      </Flex>
+      </div>
     )
   }, [point])
 
@@ -305,12 +302,6 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
         toggle={() => setDateOpen(false)}
         onChange={(v) => onFieldChange("date", String(v))}
       />
-      {!isNil(insuranceAccidentExist) && (
-        <InsuranceAccidentExist
-          isOpen={insuranceAccidentExist.get}
-          onClose={() => insuranceAccidentExist.set(false)}
-        />
-      )}
     </>
   )
 }
