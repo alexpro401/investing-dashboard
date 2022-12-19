@@ -5,7 +5,7 @@ import { BigNumber } from "@ethersproject/bignumber"
 
 import { ICON_NAMES } from "constants/icon-names"
 import ExchangeInput from "components/Exchange/ExchangeInput"
-import { AppButton } from "common"
+import { AppButton, Icon } from "common"
 import TransactionSlippage from "components/TransactionSlippage"
 
 import { formatBigNumber } from "utils"
