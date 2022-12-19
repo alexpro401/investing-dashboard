@@ -7,7 +7,6 @@ import { useActiveWeb3React } from "hooks"
 
 import { addToken } from "state/erc20/actions"
 import { selectERC20Data } from "state/erc20/selectors"
-import { ZERO_ADDR } from "constants/index"
 import { useERC20Contract } from "contracts"
 
 export function useERC20Data(
@@ -24,6 +23,13 @@ export function useERC20Data(
 
   const init = useCallback(async () => {
     if (!storedAddress || !isAddress(storedAddress) || !chainId || !contract) {
+      return
+    }
+
+    if (
+      storedAddress.toLocaleLowerCase() ===
+      process.env.REACT_APP_MAIN_ASSET_ADDRESS
+    ) {
       return
     }
 
@@ -57,17 +63,6 @@ export function useERC20Data(
   // check address and save
   useEffect(() => {
     if (!isAddress(address)) {
-      return
-    }
-
-    if (address === process.env.REACT_APP_MAIN_ASSET_ADDRESS) {
-      return
-    }
-
-    if (
-      String(address).toLocaleLowerCase() === storedAddress ||
-      address === ZERO_ADDR
-    ) {
       return
     }
 
