@@ -62,41 +62,24 @@ const CreateDaoProposalValidatorSettings: React.FC = () => {
     []
   )
 
-  const {
-    earlyCompletion,
-    delegatedVotingAllowed,
-    validatorsVote,
-    duration,
-    durationValidators,
-    quorum,
-    quorumValidators,
-    minVotesForVoting,
-    minVotesForCreating,
-    rewardToken,
-    creationReward,
-    executionReward,
-    voteRewardsCoefficient,
-    executorDescription,
-  } = validatorDaoSettings!
-
   const govPoolFormOptions = {
     ...INITIAL_DAO_PROPOSAL,
     _validatorsBalancesSettingsForm: {
       ...INITIAL_DAO_PROPOSAL._validatorsBalancesSettingsForm,
-      earlyCompletion,
-      delegatedVotingAllowed,
-      validatorsVote,
-      duration,
-      durationValidators,
-      quorum,
-      quorumValidators,
-      minVotesForVoting,
-      minVotesForCreating,
-      rewardToken,
-      creationReward,
-      executionReward,
-      voteRewardsCoefficient,
-      executorDescription,
+      earlyCompletion: validatorDaoSettings?.earlyCompletion,
+      delegatedVotingAllowed: validatorDaoSettings?.delegatedVotingAllowed,
+      validatorsVote: validatorDaoSettings?.validatorsVote,
+      duration: validatorDaoSettings?.duration,
+      durationValidators: validatorDaoSettings?.durationValidators,
+      quorum: validatorDaoSettings?.quorum,
+      quorumValidators: validatorDaoSettings?.quorumValidators,
+      minVotesForVoting: validatorDaoSettings?.minVotesForVoting,
+      minVotesForCreating: validatorDaoSettings?.minVotesForCreating,
+      rewardToken: validatorDaoSettings?.rewardToken,
+      creationReward: validatorDaoSettings?.creationReward,
+      executionReward: validatorDaoSettings?.executionReward,
+      voteRewardsCoefficient: validatorDaoSettings?.voteRewardsCoefficient,
+      executorDescription: validatorDaoSettings?.executorDescription,
     },
   } as GovPoolFormOptions
 

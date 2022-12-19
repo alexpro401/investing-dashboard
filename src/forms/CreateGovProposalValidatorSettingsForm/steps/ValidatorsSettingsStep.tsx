@@ -100,14 +100,9 @@ const ValidatorsSettingsStep: React.FC = () => {
   const regularQuorum = useMemo(() => {
     if (!totalVoteWeight) return "0"
 
-    const quorumBN = parseUnits(
-      initialForm._validatorsBalancesSettingsForm.quorum.toString(),
-      18
-    )
-
     // quorum_votes = (users_total_supply * quorum) / 100
     const multiplyResult = multiplyBignumbers(
-      [quorumBN, 18],
+      [initialForm._validatorsBalancesSettingsForm.quorum, 18],
       [totalVoteWeight, 18]
     )
     const quorumResult = divideBignumbers(
