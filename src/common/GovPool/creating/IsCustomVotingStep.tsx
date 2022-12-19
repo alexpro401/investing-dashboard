@@ -1,4 +1,4 @@
-import { FC, useContext } from "react"
+import { FC, useContext, useMemo } from "react"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import {
   AppButton,
@@ -19,6 +19,7 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
 import { createPortal } from "react-dom"
+import { useWindowSize } from "react-use"
 
 const IsCustomVotingStep: FC = () => {
   const { isCustomVoting, internalProposalForm } =
@@ -119,6 +120,8 @@ const IsCustomVotingStep: FC = () => {
   }
 
   const appNavigationEl = document.querySelector("#app-navigation")
+  const { width: windowWidth } = useWindowSize()
+  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
 
   return (
     <>
@@ -200,6 +203,8 @@ const IsCustomVotingStep: FC = () => {
           <S.StepsBottomNavigation customNextCb={handleNextStep} />,
           appNavigationEl
         )
+      ) : !isMobile ? (
+        <S.StepsBottomNavigation customNextCb={handleNextStep} />
       ) : (
         <></>
       )}

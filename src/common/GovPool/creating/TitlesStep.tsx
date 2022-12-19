@@ -54,6 +54,7 @@ import { useActiveWeb3React } from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { SUPPORTED_SOCIALS } from "constants/socials"
 import { createPortal } from "react-dom"
+import { useWindowSize } from "react-use"
 
 const TitlesStep: FC = () => {
   const daoPoolFormContext = useContext(GovPoolFormContext)
@@ -79,11 +80,14 @@ const TitlesStep: FC = () => {
     isEnumerable: erc721IsEnumerable,
   } = erc721
 
+  const { width: windowWidth } = useWindowSize()
+
   const erc20TokenExplorerLink = useMemo(() => {
     return chainId
       ? getExplorerLink(chainId, tokenAddress.get, ExplorerDataType.ADDRESS)
       : ""
   }, [chainId, tokenAddress.get])
+  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
 
   const {
     getFieldErrorMessage,
@@ -624,6 +628,8 @@ const TitlesStep: FC = () => {
           <S.StepsBottomNavigation customNextCb={handleNextStep} />,
           appNavigationEl
         )
+      ) : !isMobile ? (
+        <S.StepsBottomNavigation customNextCb={handleNextStep} />
       ) : (
         <></>
       )}

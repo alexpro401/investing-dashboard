@@ -27,6 +27,11 @@ export const StepsNavigationActions = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  @media screen and (min-width: 768px) {
+    justify-content: flex-end;
+    padding: 0 20px;
+  }
 `
 
 export const StepsNavigationButton = styled(AppButton)<{
@@ -39,4 +44,9 @@ export const StepsNavigationButton = styled(AppButton)<{
     props.isActive
       ? props.theme.statusColors.success
       : props.theme.textColors.secondary};
+
+  @media screen and (min-width: 768px) {
+    min-width: 280px;
+    border-width: 0;
+  }
 `

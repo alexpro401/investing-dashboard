@@ -3,6 +3,7 @@ import { FC, HTMLAttributes, ReactNode, useContext, useMemo } from "react"
 import * as S from "./styled"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { ICON_NAMES } from "constants/icon-names"
+import { useWindowSize } from "react-use"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   nodeLeft?: ReactNode
@@ -43,9 +44,12 @@ const StepsNavigation: FC<Props> = ({
     [customNextCb, nextCb]
   )
 
+  const { width: windowWidth } = useWindowSize()
+  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
+
   return (
     <S.Root {...rest}>
-      <S.StepsNavigationProgress progress={progress} />
+      {isMobile ? <S.StepsNavigationProgress progress={progress} /> : <></>}
       <S.StepsNavigationActions>
         <>
           {nodeLeft ? (
@@ -54,7 +58,7 @@ const StepsNavigation: FC<Props> = ({
             <S.StepsNavigationButton
               scheme="filled"
               color="default"
-              iconLeft={ICON_NAMES.angleLeftOutlined}
+              iconLeft={isMobile ? ICON_NAMES.angleLeftOutlined : ""}
               iconSize={22}
               onClick={() => prevAction()}
               text={prevLabel || "Back"}
@@ -65,8 +69,8 @@ const StepsNavigation: FC<Props> = ({
           ) : (
             <S.StepsNavigationButton
               scheme="filled"
-              color="default"
-              iconRight={ICON_NAMES.angleRightOutlined}
+              color={isMobile ? "default" : "tertiary"}
+              iconRight={isMobile ? ICON_NAMES.angleRightOutlined : ""}
               iconSize={22}
               onClick={() => nextAction()}
               text={nextLabel || "Continue"}

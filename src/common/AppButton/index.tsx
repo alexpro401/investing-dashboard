@@ -14,6 +14,7 @@ export enum MODIFICATIONS {
 export type COLORS =
   | "primary"
   | "secondary"
+  | "tertiary"
   | "success"
   | "error"
   | "warning"

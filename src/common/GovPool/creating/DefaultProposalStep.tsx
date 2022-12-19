@@ -1,4 +1,4 @@
-import { FC, useContext } from "react"
+import { FC, useContext, useMemo } from "react"
 import { createPortal } from "react-dom"
 
 import { CreateDaoCardStepNumber } from "../components"
@@ -11,6 +11,7 @@ import { useFormValidation } from "hooks/useFormValidation"
 import { isAddressValidator, isPercentage, required } from "utils/validators"
 
 import * as S from "./styled"
+import { useWindowSize } from "react-use"
 
 interface IDefaultProposalStepProps {
   isCreatingProposal?: boolean
@@ -89,6 +90,8 @@ const DefaultProposalStep: FC<IDefaultProposalStepProps> = ({
   }
 
   const appNavigationEl = document.querySelector("#app-navigation")
+  const { width: windowWidth } = useWindowSize()
+  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
 
   return (
     <>
@@ -125,6 +128,8 @@ const DefaultProposalStep: FC<IDefaultProposalStepProps> = ({
           <S.StepsBottomNavigation customNextCb={handleNextStep} />,
           appNavigationEl
         )
+      ) : !isMobile ? (
+        <S.StepsBottomNavigation customNextCb={handleNextStep} />
       ) : (
         <></>
       )}

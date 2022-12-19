@@ -1,7 +1,7 @@
 import Switch from "components/Switch"
 import { CreateDaoCardStepNumber } from "../components"
 
-import { FC, useCallback, useContext } from "react"
+import { FC, useCallback, useContext, useMemo } from "react"
 import {
   AppButton,
   Card,
@@ -22,6 +22,7 @@ import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { createPortal } from "react-dom"
+import { useWindowSize } from "react-use"
 
 const IsDaoValidatorStep: FC = () => {
   const { validatorsParams, isValidator } = useContext(GovPoolFormContext)
@@ -81,6 +82,9 @@ const IsDaoValidatorStep: FC = () => {
   }
 
   const appNavigationEl = document.querySelector("#app-navigation")
+
+  const { width: windowWidth } = useWindowSize()
+  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
 
   return (
     <>
@@ -238,6 +242,8 @@ const IsDaoValidatorStep: FC = () => {
           <S.StepsBottomNavigation customNextCb={handleNextStep} />,
           appNavigationEl
         )
+      ) : !isMobile ? (
+        <S.StepsBottomNavigation customNextCb={handleNextStep} />
       ) : (
         <></>
       )}

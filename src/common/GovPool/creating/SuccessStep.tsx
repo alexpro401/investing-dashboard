@@ -1,4 +1,4 @@
-import { FC, HTMLAttributes, useContext } from "react"
+import { FC, HTMLAttributes, useContext, useMemo } from "react"
 
 import * as S from "./styled"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
@@ -6,6 +6,8 @@ import { ICON_NAMES } from "constants/icon-names"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
 import { shortenAddress } from "utils"
+import { useWindowSize } from "react-use"
+import { SuccessSubmitBtn, SuccessSubmitBtnWrp } from "./styled"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -14,6 +16,10 @@ const SuccessStep: FC<Props> = () => {
 
   const { avatarUrl, daoName, createdDaoAddress, clearFormStorage } =
     useContext(GovPoolFormContext)
+
+  const { width: windowWidth } = useWindowSize()
+  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
+
   return (
     <S.SuccessBackdrop className={"success-backdrop"}>
       <S.SuccessAvatarWrp>
@@ -36,7 +42,7 @@ const SuccessStep: FC<Props> = () => {
       </S.SuccessSubtitle>
       <S.SuccessDescription>
         <p>You just successfully created a DAO!</p>
-        <br />
+        {isMobile ? <br /> : <></>}
         <p>Now you and other members can govern it via proposals. Congrats!</p>
       </S.SuccessDescription>
       <S.SuccessFooter>
@@ -50,34 +56,42 @@ const SuccessStep: FC<Props> = () => {
             iconRight={ICON_NAMES.telegram}
             size="no-paddings"
             color="default"
+            iconSize={isMobile ? 20 : 24}
           />
           <S.SuccessLink
             iconRight={ICON_NAMES.twitter}
             size="no-paddings"
             color="default"
+            iconSize={isMobile ? 20 : 24}
           />
           <S.SuccessLink
             iconRight={ICON_NAMES.facebook}
             size="no-paddings"
             color="default"
+            iconSize={isMobile ? 20 : 24}
           />
           <S.SuccessLink
             iconRight={ICON_NAMES.linkedin}
             size="no-paddings"
             color="default"
+            iconSize={isMobile ? 20 : 24}
           />
           <S.SuccessLink
             iconRight={ICON_NAMES.medium}
             size="no-paddings"
             color="default"
+            iconSize={isMobile ? 20 : 24}
           />
         </S.SuccessLinksWrp>
-        <S.SuccessLinkBtn
-          text="Go to DAO profile"
-          size="large"
-          routePath={`/dao/${createdDaoAddress.get}`}
-          onClick={clearFormStorage}
-        />
+        <S.SuccessSubmitBtnWrp>
+          <S.SuccessSubmitBtn
+            text="Go to DAO profile"
+            size="large"
+            color={isMobile ? "primary" : "tertiary"}
+            routePath={`/dao/${createdDaoAddress.get}`}
+            onClick={clearFormStorage}
+          />
+        </S.SuccessSubmitBtnWrp>
       </S.SuccessFooter>
     </S.SuccessBackdrop>
   )

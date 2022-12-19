@@ -17,6 +17,7 @@ import { useCreateDAO } from "hooks/dao"
 import { useDispatch } from "react-redux"
 import { hideTapBar, showTabBar } from "state/application/actions"
 import { useEffectOnce, useWindowSize } from "react-use"
+import Modal from "../../components/Modal"
 
 enum STEPS {
   titles = "titles",
@@ -39,7 +40,8 @@ const STEPS_TITLES: Record<STEPS, string> = {
 const CreateFundDaoForm: FC = () => {
   const { width: windowWidth } = useWindowSize()
 
-  const [currentStep, setCurrentStep] = useState(STEPS.isCustomVoteSelecting)
+  const [currentStep, setCurrentStep] = useState(STEPS.titles)
+  const [isSuccessModalShown, setIsSuccessModalShown] = useState(false)
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length, [])
   const currentStepNumber = useMemo(
@@ -68,12 +70,17 @@ const CreateFundDaoForm: FC = () => {
     formController.disableForm()
     try {
       await createDaoCb()
-      setCurrentStep(STEPS.success)
+
+      if (isMobile) {
+        setCurrentStep(STEPS.success)
+      } else {
+        setIsSuccessModalShown(true)
+      }
     } catch (error) {
       console.error(error)
     }
     formController.enableForm()
-  }, [createDaoCb, formController])
+  }, [createDaoCb, formController, isMobile])
 
   const handleNextStep = () => {
     switch (currentStep) {
@@ -115,13 +122,6 @@ const CreateFundDaoForm: FC = () => {
     }
   }
 
-  const isStepPassed = (step: STEPS) => {
-    return (
-      Object.values(STEPS).indexOf(step) <
-      Object.values(STEPS).indexOf(currentStep)
-    )
-  }
-
   return (
     <S.Container
       totalStepsAmount={totalStepsCount}
@@ -160,10 +160,12 @@ const CreateFundDaoForm: FC = () => {
           )}
           {!isMobile ? (
             <SideStepsNavigationBar
-              steps={Object.values(STEPS).map((step) => ({
-                number: Object.values(STEPS).indexOf(step),
-                title: STEPS_TITLES[step],
-              }))}
+              steps={Object.values(STEPS)
+                .slice(0, Object.values(STEPS).length - 1)
+                .map((step) => ({
+                  number: Object.values(STEPS).indexOf(step),
+                  title: STEPS_TITLES[step],
+                }))}
               currentStep={Object.values(STEPS).indexOf(currentStep)}
             />
           ) : (
@@ -171,6 +173,15 @@ const CreateFundDaoForm: FC = () => {
           )}
         </S.StepsWrapper>
       </AnimatePresence>
+      <Modal
+        isOpen={isSuccessModalShown}
+        isShowCloseBtn={false}
+        toggle={() => setIsSuccessModalShown(!isSuccessModalShown)}
+        title=""
+        maxWidth="450px"
+      >
+        <SuccessStep />
+      </Modal>
     </S.Container>
   )
 }

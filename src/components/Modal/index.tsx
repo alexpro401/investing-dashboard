@@ -12,9 +12,17 @@ interface Props {
   title: string
   children?: ReactNode
   maxWidth?: string
+  isShowCloseBtn?: boolean
 }
 
-const Modal: FC<Props> = ({ children, isOpen, toggle, title, maxWidth }) => {
+const Modal: FC<Props> = ({
+  children,
+  isOpen,
+  toggle,
+  title,
+  maxWidth,
+  isShowCloseBtn = true,
+}) => {
   if (!modalRoot) return null
   return createPortal(
     <>
@@ -50,10 +58,18 @@ const Modal: FC<Props> = ({ children, isOpen, toggle, title, maxWidth }) => {
           },
         }}
       >
-        <S.Head>
-          <S.Title>{title}</S.Title>
-          <Icon name={ICON_NAMES.modalClose} onClick={toggle} />
-        </S.Head>
+        {isShowCloseBtn || title ? (
+          <S.Head>
+            {title ? <S.Title>{title}</S.Title> : <> </>}
+            {isShowCloseBtn ? (
+              <Icon name={ICON_NAMES.modalClose} onClick={toggle} />
+            ) : (
+              <></>
+            )}
+          </S.Head>
+        ) : (
+          <></>
+        )}
         {children}
       </S.Container>
     </>,
