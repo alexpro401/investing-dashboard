@@ -48,7 +48,7 @@ const VotingSettings: React.FC<IVotingSettingsProps> = ({
     () =>
       duration
         ? parseDurationShortString(
-            parseDuration(parseSeconds(duration.toNumber()))
+            parseDuration(parseSeconds(Number(formatUnits(duration, 0))))
           )
         : null,
     [duration]
