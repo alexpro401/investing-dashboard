@@ -47,6 +47,7 @@ import InsuranceAccidentExist from "modals/InsuranceAccidentExist"
 import { createPortal } from "react-dom"
 import { StepsNavigation } from "common"
 import { hideTapBar, showTabBar } from "state/application/actions"
+import StepsControllerContext from "context/StepsControllerContext"
 
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
@@ -85,6 +86,7 @@ const CreateInsuranceAccidentForm: FC = () => {
     investorsInfo,
     insurancePoolHaveTrades,
     insurancePoolLastPriceHistory,
+    _clearState,
     clearFormStorage,
   } = context
 
@@ -139,6 +141,7 @@ const CreateInsuranceAccidentForm: FC = () => {
   const [showNotEnoughInsurance, setShowNotEnoughInsurance] = useState(false)
   const [showNotEnoughInsuranceByDay, setShowNotEnoughInsuranceByDay] =
     useState(false)
+  const [accidentExistModal, setAccidentExistModal] = useState(false)
 
   const dayFromDate = useMemo(() => {
     if (isEmpty(date.get)) return ""
@@ -184,9 +187,11 @@ const CreateInsuranceAccidentForm: FC = () => {
   useEffect(() => {
     if (loadingActiveProposalByPool) return
 
-    insuranceAccidentExist.set(
+    const _exist =
       !isNil(activeProposalByPool) && !isEmpty(activeProposalByPool)
-    )
+
+    insuranceAccidentExist.set(_exist)
+    setAccidentExistModal(_exist)
   }, [activeProposalByPool, loadingActiveProposalByPool])
 
   const [currentStep, setCurrentStep] = useState(STEPS.chooseFund)
@@ -198,7 +203,13 @@ const CreateInsuranceAccidentForm: FC = () => {
 
   const submit = useCallback(async () => {
     touchForm()
-    if (!account || !isFieldsValid || !govPool) {
+    if (
+      !account ||
+      !isFieldsValid ||
+      !govPool ||
+      loadingActiveProposalByPool ||
+      insuranceAccidentExist.get
+    ) {
       return
     }
 
@@ -295,6 +306,7 @@ const CreateInsuranceAccidentForm: FC = () => {
         if (isTxMined(tx)) {
           setAccidentCreating(SubmitState.SUCCESS)
           setShowSuccessfullyCreatedModal(true)
+          _clearState()
         }
       }
     } catch (error: any) {
@@ -323,6 +335,7 @@ const CreateInsuranceAccidentForm: FC = () => {
     pool,
     govPool,
     insurancePoolLastPriceHistory,
+    loadingActiveProposalByPool,
   ])
 
   const handleNextStep = () => {
@@ -384,6 +397,14 @@ const CreateInsuranceAccidentForm: FC = () => {
           showAlert({
             content:
               "Do not have insurance for this day. Please choose another one.",
+            type: AlertType.warning,
+            hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
+          })
+          break
+        }
+        if (chart.data.get.length === 0) {
+          showAlert({
+            content: "Wait before fund data loaded",
             type: AlertType.warning,
             hideDuration: DEFAULT_ALERT_HIDDEN_TIMEOUT,
           })
@@ -462,47 +483,48 @@ const CreateInsuranceAccidentForm: FC = () => {
 
   return (
     <>
-      <S.Container
+      <StepsControllerContext
         totalStepsAmount={totalStepsCount}
         currentStepNumber={currentStepNumber}
         prevCb={handlePrevStep}
         nextCb={handleNextStep}
       >
-        <AnimatePresence>
-          {currentStep === STEPS.chooseFund ? (
-            <CreateInsuranceAccidentChooseFundStep />
-          ) : currentStep === STEPS.chooseBlock ? (
-            <CreateInsuranceAccidentChooseBlockStep />
-          ) : currentStep === STEPS.checkSettings ? (
-            <CreateInsuranceAccidentCheckSettingsStep />
-          ) : currentStep === STEPS.addDescription ? (
-            <CreateInsuranceAccidentAddDescriptionStep />
+        <S.Container>
+          <AnimatePresence>
+            {currentStep === STEPS.chooseFund ? (
+              <CreateInsuranceAccidentChooseFundStep />
+            ) : currentStep === STEPS.chooseBlock ? (
+              <CreateInsuranceAccidentChooseBlockStep />
+            ) : currentStep === STEPS.checkSettings ? (
+              <CreateInsuranceAccidentCheckSettingsStep />
+            ) : currentStep === STEPS.addDescription ? (
+              <CreateInsuranceAccidentAddDescriptionStep />
+            ) : (
+              <></>
+            )}
+          </AnimatePresence>
+          {appNavigationEl ? (
+            createPortal(<StepsNavigation />, appNavigationEl)
           ) : (
             <></>
           )}
-        </AnimatePresence>
-        {appNavigationEl ? (
-          createPortal(<StepsNavigation />, appNavigationEl)
-        ) : (
-          <></>
-        )}
-      </S.Container>
-      <NoEnoughInsurance
-        isOpen={showNotEnoughInsurance}
-        onClose={() => setShowNotEnoughInsurance(false)}
-      />
-      {insuranceAccidentExist.get && (
-        <InsuranceAccidentExist
-          isOpen={insuranceAccidentExist.get}
-          onClose={() => insuranceAccidentExist.set(false)}
+        </S.Container>
+
+        <NoEnoughInsurance
+          isOpen={showNotEnoughInsurance}
+          onClose={() => setShowNotEnoughInsurance(false)}
         />
-      )}
-      <CreateInsuranceAccidentCreatedSuccessfully
-        open={showSuccessfullyCreatedModal}
-        setOpen={setShowSuccessfullyCreatedModal}
-        url={newAccidentHash}
-        onVoteCallback={clearFormStorage}
-      />
+        <InsuranceAccidentExist
+          isOpen={accidentExistModal}
+          onClose={() => setAccidentExistModal(false)}
+        />
+        <CreateInsuranceAccidentCreatedSuccessfully
+          open={showSuccessfullyCreatedModal}
+          setOpen={setShowSuccessfullyCreatedModal}
+          url={newAccidentHash}
+          onVoteCallback={clearFormStorage}
+        />
+      </StepsControllerContext>
     </>
   )
 }

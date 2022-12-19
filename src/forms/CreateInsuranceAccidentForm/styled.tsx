@@ -1,8 +1,7 @@
 import styled from "styled-components"
 import { Flex } from "theme"
-import StepsControllerContext from "context/StepsControllerContext"
 
-export const Container = styled(StepsControllerContext)``
+export const Container = styled.div``
 
 export const StepsRoot = styled.div`
   display: flex;

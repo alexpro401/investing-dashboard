@@ -238,20 +238,7 @@ const InsuranceAccidentCreatingContextProvider: FC<
   ])
 
   const _clearState = useCallback(() => {
-    _setPool("")
-    _setBlock("")
-    _setDate("")
-    _setDescription("")
-    _setChat("")
-    _setInsurancePoolHaveTrades(false)
-    _setInsuranceAccidentExist(false)
-    insuranceDueDate[1]({} as Insurance)
-    investorsTotals[1]({} as InsuranceAccidentInvestorsTotalsInfo)
-    investorsInfo[1]({} as InsuranceAccidentInvestors)
-    chart.point[1]({} as InsuranceAccidentChartPoint)
-    chart.data[1]([] as IPriceHistory[])
-    chart.timeframe[1](TIMEFRAME.m)
-    chart.forPool[1]("")
+    setValue(JSON.stringify(INITIAL_INSURANCE_ACCIDENT))
   }, [])
 
   return (
