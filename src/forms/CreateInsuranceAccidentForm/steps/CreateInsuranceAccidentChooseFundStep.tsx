@@ -5,10 +5,7 @@ import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccident
 import CreateInsuranceAccidentPools from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentPools"
 
 import { Card, CardDescription, CardHead } from "common"
-import {
-  StepsRoot,
-  StepsBottomNavigation,
-} from "forms/CreateInsuranceAccidentForm/styled"
+import { StepsRoot } from "forms/CreateInsuranceAccidentForm/styled"
 import useOwnedAndInvestedPools from "hooks/useOwnedAndInvestedPools"
 
 const allPoolsApiUrl = process.env.REACT_APP_ALL_POOLS_API_URL ?? ""
@@ -20,14 +17,7 @@ const CreateInsuranceAccidentChooseFundStep: FC = () => {
 
   return (
     <>
-      <StepsRoot
-        gap={"16"}
-        dir={"column"}
-        jc={"flex-start"}
-        ai={"stretch"}
-        p={"16px"}
-        full
-      >
+      <StepsRoot>
         <Card>
           <CardHead
             nodeLeft={<CreateInsuranceAccidentCardStepNumber number={1} />}
@@ -50,7 +40,6 @@ const CreateInsuranceAccidentChooseFundStep: FC = () => {
           />
         </div>
       </StepsRoot>
-      <StepsBottomNavigation />
     </>
   )
 }

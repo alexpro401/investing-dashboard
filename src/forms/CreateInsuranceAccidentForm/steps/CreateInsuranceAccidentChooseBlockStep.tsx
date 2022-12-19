@@ -16,10 +16,7 @@ import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccident
 
 import { Card, CardDescription, CardHead } from "common"
 
-import {
-  StepsBottomNavigation,
-  StepsRoot,
-} from "forms/CreateInsuranceAccidentForm/styled"
+import { StepsRoot } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { usePoolContract } from "hooks/usePool"
 
@@ -40,7 +37,7 @@ import DatePicker from "components/DatePicker"
 import { InputGroup } from "../styled"
 import Skeleton from "components/Skeleton"
 import Chart from "components/Chart"
-import theme, { Flex, Text } from "theme"
+import theme, { Text } from "theme"
 import { ChartTooltipPnl } from "components/Chart/tooltips"
 import { AlertType } from "context/AlertContext"
 import useAlert from "hooks/useAlert"
@@ -209,14 +206,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
 
   return (
     <>
-      <StepsRoot
-        gap={"24"}
-        dir={"column"}
-        jc={"flex-start"}
-        ai={"stretch"}
-        p={"16px"}
-        full
-      >
+      <StepsRoot>
         <Card>
           <CardHead
             nodeLeft={<CreateInsuranceAccidentCardStepNumber number={2} />}
@@ -294,7 +284,6 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
           </InputGroup>
         </Card>
       </StepsRoot>
-      <StepsBottomNavigation />
 
       <DatePicker
         isOpen={isDateOpen}

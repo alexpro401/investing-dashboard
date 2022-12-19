@@ -36,7 +36,7 @@ import { SubmitState } from "constants/types"
 import CreateInsuranceAccidentCreatedSuccessfully from "./components/CreateInsuranceAccidentCreatedSuccessfully"
 import { ZERO } from "constants/index"
 import { IpfsEntity } from "utils/ipfsEntity"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { selectInsuranceAddress } from "state/contracts/selectors"
 import { encodeAbiMethod } from "utils/encodeAbi"
 import { Insurance as Insurance_ABI } from "abi"
@@ -44,6 +44,9 @@ import { divideBignumbers } from "utils/formulas"
 import { DEFAULT_ALERT_HIDDEN_TIMEOUT } from "constants/misc"
 import { useActiveInsuranceProposalByPool } from "hooks/dao"
 import InsuranceAccidentExist from "modals/InsuranceAccidentExist"
+import { createPortal } from "react-dom"
+import { StepsNavigation } from "common"
+import { hideTapBar, showTabBar } from "state/application/actions"
 
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
@@ -57,6 +60,20 @@ enum STEPS {
 }
 
 const CreateInsuranceAccidentForm: FC = () => {
+  const dispatch = useDispatch()
+  const [appNavigationEl, setAppNavigationEl] = useState<Element | null>(null)
+
+  useEffect(() => {
+    dispatch(hideTapBar())
+    setTimeout(() => {
+      setAppNavigationEl(document.querySelector("#app-navigation"))
+    }, 100)
+
+    return () => {
+      dispatch(showTabBar())
+    }
+  }, [dispatch])
+
   const { account } = useWeb3React()
   const context = useContext(InsuranceAccidentCreatingContext)
   const {
@@ -464,6 +481,11 @@ const CreateInsuranceAccidentForm: FC = () => {
             <></>
           )}
         </AnimatePresence>
+        {appNavigationEl ? (
+          createPortal(<StepsNavigation />, appNavigationEl)
+        ) : (
+          <></>
+        )}
       </S.Container>
       <NoEnoughInsurance
         isOpen={showNotEnoughInsurance}

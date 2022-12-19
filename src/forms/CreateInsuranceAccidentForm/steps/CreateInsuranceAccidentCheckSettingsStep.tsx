@@ -4,10 +4,7 @@ import { useWeb3React } from "@web3-react/core"
 
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
 
-import {
-  StepsRoot,
-  StepsBottomNavigation,
-} from "forms/CreateInsuranceAccidentForm/styled"
+import { StepsRoot } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { Flex } from "theme"
 import { normalizeBigNumber } from "utils"
@@ -257,14 +254,7 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
 
   return (
     <>
-      <StepsRoot
-        gap={"24"}
-        dir={"column"}
-        jc={"flex-start"}
-        ai={"stretch"}
-        p={"16px"}
-        full
-      >
+      <StepsRoot>
         <Card>
           <CardHead
             nodeLeft={<CreateInsuranceAccidentCardStepNumber number={3} />}
@@ -298,7 +288,6 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
           />
         </Flex>
       </StepsRoot>
-      <StepsBottomNavigation />
     </>
   )
 }

@@ -14,10 +14,7 @@ import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccident
 
 import * as S from "../styled/step-add-description"
 
-import {
-  StepsRoot,
-  StepsBottomNavigation,
-} from "forms/CreateInsuranceAccidentForm/styled"
+import { StepsRoot } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { Flex, Text } from "theme"
 import { normalizeBigNumber } from "utils"
@@ -147,14 +144,7 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
 
   return (
     <>
-      <StepsRoot
-        gap={"24"}
-        dir={"column"}
-        jc={"flex-start"}
-        ai={"stretch"}
-        p={"16px"}
-        full
-      >
+      <StepsRoot>
         <Card>
           <CardHead
             nodeLeft={<CreateInsuranceAccidentCardStepNumber number={4} />}
@@ -296,7 +286,6 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
           />
         </Card>
       </StepsRoot>
-      <StepsBottomNavigation />
     </>
   )
 }
