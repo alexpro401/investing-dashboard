@@ -298,7 +298,12 @@ const InsuranceRegisterProposalClaimSummary: React.FC<{
 }> = ({ info: { pool } }) => {
   const [poolData] = usePoolQuery(pool)
 
-  return <>Created insurance proposal for &quot;{poolData?.name}&quot; pool</>
+  return (
+    <>
+      Created insurance proposal
+      {poolData?.name ? ` for "${poolData?.name}" pool` : ""}
+    </>
+  )
 }
 
 const PrivacyPolicyAgreeSummary: React.FC<{
