@@ -7,11 +7,22 @@ import { UseQueryArgs } from "urql/dist/types/hooks/useQuery"
 import useError from "hooks/useError"
 import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
 
-type Result<T> = [
-  { data: T[]; error?: CombinedError; loading: boolean },
-  () => void,
-  () => void
-]
+/**
+ * Represent payload object
+ *
+ * @param data - list of loaded data
+ * @param error - request error
+ * @param loading - request loading state
+ * @param lastFetchLen - last fetched data length
+ */
+interface Payload<T> {
+  data: T[]
+  error?: CombinedError
+  loading: boolean
+  lastFetchLen: number
+}
+
+type Result<T> = [Payload<T>, () => void, () => void]
 
 interface QueryArgs<T> extends UseQueryArgs {
   formatter: (newDataSlice: any, loadedData?: any) => T[]
@@ -34,6 +45,7 @@ const useQueryPagination = <T>(
   const [, setError] = useError()
   const [offset, setOffset] = useState(pagination.initialOffset)
   const [result, setResult] = useState<T[]>([])
+  const [lastFetchLen, setLastFetchLen] = useState(0)
 
   const _variables = useMemo(
     () => ({
@@ -61,6 +73,7 @@ const useQueryPagination = <T>(
   const reset = useCallback(() => {
     setOffset(0)
     setResult([])
+    setLastFetchLen(0)
   }, [])
 
   useEffect(() => {
@@ -70,6 +83,7 @@ const useQueryPagination = <T>(
       !error
     ) {
       const newPieceOfData = formatter(data, result)
+      setLastFetchLen(newPieceOfData.length)
       if (newPieceOfData.length > 0) {
         setResult((d) => [...d, ...newPieceOfData])
       }
@@ -94,7 +108,7 @@ const useQueryPagination = <T>(
   }, [fetching, variables, error, setError])
 
   return [
-    { data: result, error, loading: fetching },
+    { data: result, error, loading: fetching, lastFetchLen },
     debounce(fetchMore, 100),
     reset,
   ]
