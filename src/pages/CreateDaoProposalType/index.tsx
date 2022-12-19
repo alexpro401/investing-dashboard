@@ -12,6 +12,7 @@ import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
+import { ZERO_ADDR } from "constants/index"
 
 import * as S from "./styled"
 import { GovPoolFormOptions } from "types"
@@ -86,7 +87,7 @@ const CreateDaoProposalType: React.FC = () => {
       quorum,
       minVotesForVoting,
       minVotesForCreating,
-      rewardToken,
+      rewardToken: rewardToken === ZERO_ADDR ? "" : rewardToken,
       creationReward,
       executionReward,
       voteRewardsCoefficient,

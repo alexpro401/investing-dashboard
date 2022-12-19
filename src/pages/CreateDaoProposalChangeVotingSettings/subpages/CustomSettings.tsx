@@ -13,9 +13,10 @@ import {
 } from "hooks/dao"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
+import { GovPoolFormOptions } from "types"
+import { ZERO_ADDR } from "constants/index"
 
 import * as S from "../styled"
-import { GovPoolFormOptions } from "types"
 
 const CustomSettings: React.FC = () => {
   const location = useLocation()
@@ -98,7 +99,7 @@ const CustomSettings: React.FC = () => {
       quorumValidators,
       minVotesForVoting,
       minVotesForCreating,
-      rewardToken,
+      rewardToken: rewardToken === ZERO_ADDR ? "" : rewardToken,
       creationReward,
       executionReward,
       voteRewardsCoefficient,

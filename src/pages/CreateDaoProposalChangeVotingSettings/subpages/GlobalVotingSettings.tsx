@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo } from "react"
 import { useParams, useLocation } from "react-router-dom"
-import { formatUnits, formatEther } from "@ethersproject/units"
 
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
@@ -9,14 +8,13 @@ import GovPoolFormContextProvider from "context/govPool/GovPoolFormContext"
 import CreateDaoProposalGlobalVotingSettingsForm from "forms/CreateDaoProposalGlobalVotingSettingsForm"
 import { useGovPoolSetting, useGovPoolValidatorsCount } from "hooks/dao"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
-import { cutStringZeroes } from "utils"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
 import { ZERO_ADDR } from "constants/index"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
+import { GovPoolFormOptions } from "types"
 
 import * as S from "../styled"
-import { GovPoolFormOptions } from "../../../types"
 
 const GlobalVotingSettings: React.FC = () => {
   const location = useLocation()
@@ -94,7 +92,7 @@ const GlobalVotingSettings: React.FC = () => {
       quorumValidators,
       minVotesForVoting,
       minVotesForCreating,
-      rewardToken,
+      rewardToken: rewardToken === ZERO_ADDR ? "" : rewardToken,
       creationReward,
       executionReward,
       voteRewardsCoefficient,
