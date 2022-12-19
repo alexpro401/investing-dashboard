@@ -1,5 +1,7 @@
-import React, { useCallback, useState, useMemo } from "react"
+import React, { useCallback, useState, useMemo, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { useDispatch } from "react-redux"
+import { createPortal } from "react-dom"
 
 import {
   Card,
@@ -15,6 +17,7 @@ import StepsControllerContext from "context/StepsControllerContext"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
+import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
 
@@ -32,12 +35,25 @@ interface ICustomProposalSelectType {
 
 const CreateDaoCustomProposal: React.FC = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { daoAddress, executorAddress } = useParams<
     "daoAddress" | "executorAddress"
   >()
   const [selectedCard, setSelectedCard] = useState<ECustomProposalTypes>(
     ECustomProposalTypes.walletConnect
   )
+  const [appNavigationEl, setAppNavigationEl] = useState<Element | null>(null)
+
+  useEffect(() => {
+    dispatch(hideTapBar())
+    setTimeout(() => {
+      setAppNavigationEl(document.querySelector("#app-navigation"))
+    }, 100)
+
+    return () => {
+      dispatch(showTabBar())
+    }
+  }, [dispatch])
 
   const handlePrevStep = useCallback(() => {
     navigate(`/dao/${daoAddress}/create-proposal`)
@@ -61,15 +77,15 @@ const CreateDaoCustomProposal: React.FC = () => {
 
   const customProposalSelectTypes = useMemo<ICustomProposalSelectType[]>(
     () => [
-      {
-        type: ECustomProposalTypes.walletConnect,
-        title: "Wallet connect",
-        description: (
-          <>
-            <p>Interact with dApps via Wallet connect.</p>
-          </>
-        ),
-      },
+      // {
+      //   type: ECustomProposalTypes.walletConnect,
+      //   title: "Wallet connect",
+      //   description: (
+      //     <>
+      //       <p>Interact with dApps via Wallet connect.</p>
+      //     </>
+      //   ),
+      // },
       {
         type: ECustomProposalTypes.abi,
         title: "ABI (advanced)",
@@ -153,9 +169,13 @@ const CreateDaoCustomProposal: React.FC = () => {
                 description={description}
               />
             ))}
-            <StepsNavigation />
           </S.PageContent>
         </S.PageHolder>
+        {appNavigationEl ? (
+          createPortal(<StepsNavigation />, appNavigationEl)
+        ) : (
+          <></>
+        )}
       </WithGovPoolAddressValidation>
     </StepsControllerContext>
   )

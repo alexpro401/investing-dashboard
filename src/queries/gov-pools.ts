@@ -208,6 +208,14 @@ const GovProposalsWithRewardsQuery = `
   }
 `
 
+const GovMemberProposalsHistoryCountQuery = `
+  query($address: String!, $voters: [String]!) {
+    proposals(where: { pool_: { id: $address }, voters_contains: $voters }) {
+      proposalId
+    }
+  }
+`
+
 const GovProposalsByPoolInMiscQuery = `
   query($offset: Int!, $limit: Int!, $misc: String!, $pool: String!) {
     proposals(
@@ -230,5 +238,6 @@ export {
   GovPoolActiveDelegations,
   GovProposalsWithRewardsQuery,
   GovProposalsWithDistributionQuery,
+  GovMemberProposalsHistoryCountQuery,
   GovProposalsByPoolInMiscQuery,
 }

@@ -12,7 +12,7 @@ const TooltipLockedFundsChart = (props) => {
   const data = (payload && payload[0]?.payload) ?? null
 
   const date = useMemo<string>(() => {
-    if (!data) return ""
+    if (!data || !data.timestamp) return ""
     return format(expandTimestamp(data.timestamp), DATE_FORMAT)
   }, [data])
 

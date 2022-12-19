@@ -1,8 +1,14 @@
-import React, { useState, useMemo, useCallback, useContext } from "react"
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useContext,
+  useEffect,
+} from "react"
 import { AnimatePresence } from "framer-motion"
 import { useNavigate, useParams } from "react-router-dom"
+import { useDispatch } from "react-redux"
 
-import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { DefaultProposalStep } from "common"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
@@ -10,6 +16,7 @@ import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
 import { createCustomProposalTypeContext } from "context/govPool/proposals/regular/CreateCustomProposalType"
 import { useGovPoolCreateProposalType } from "hooks/dao"
 import { ExecutorsStep } from "./steps"
+import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
 
@@ -21,10 +28,19 @@ enum STEPS {
 
 const CreateNewProposalTypeForm: React.FC = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { daoAddress } = useParams<"daoAddress">()
   const createDaoProposalType = useGovPoolCreateProposalType({
     daoPoolAddress: daoAddress ?? "",
   })
+
+  useEffect(() => {
+    dispatch(hideTapBar())
+
+    return () => {
+      dispatch(showTabBar())
+    }
+  }, [dispatch])
 
   const daoProposalCreatingInfo = useContext(GovProposalCreatingContext)
   const firstStepSettings = useContext(FundDaoCreatingContext)
@@ -138,7 +154,7 @@ const CreateNewProposalTypeForm: React.FC = () => {
   }, [currentStep, handleCreateDaoProposalType])
 
   return (
-    <StepsControllerContext
+    <S.StepsContextContainer
       totalStepsAmount={totalStepsCount}
       currentStepNumber={currentStepNumber}
       prevCb={handlePrevStep}
@@ -164,7 +180,7 @@ const CreateNewProposalTypeForm: React.FC = () => {
           </S.StepsContainer>
         )}
       </AnimatePresence>
-    </StepsControllerContext>
+    </S.StepsContextContainer>
   )
 }
 

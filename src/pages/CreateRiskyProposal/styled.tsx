@@ -22,16 +22,6 @@ export const Container = styled(Flex)`
   overflow-y: scroll;
 `
 
-export const Card = styled(Flex)`
-  flex-direction: column;
-  background: linear-gradient(64.44deg, #191e2b 32.35%, #272e3e 100%);
-  width: 100%;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
-  border-radius: 10px;
-  max-height: fit-content;
-  margin: auto;
-`
-
 export const Content = styled(Flex)`
   overflow-y: auto;
   flex-direction: column;

@@ -1,4 +1,5 @@
 import React, { useContext, useCallback } from "react"
+import { createPortal } from "react-dom"
 
 import { StepsNavigation, CardHead, Card, CardDescription } from "common"
 import ValidatorsList from "components/ValidatorsList"
@@ -53,6 +54,8 @@ const ValidatorsStep: React.FC = () => {
     }
   }, [nextCb, touchForm, isFieldsValid, hiddenIdxs, balances])
 
+  const appNavigationEl = document.querySelector("#app-navigation")
+
   return (
     <>
       <S.StepsRoot>
@@ -71,7 +74,14 @@ const ValidatorsStep: React.FC = () => {
         </Card>
         <ValidatorsList />
       </S.StepsRoot>
-      <StepsNavigation customNextCb={handleNextStep} />
+      {appNavigationEl ? (
+        createPortal(
+          <StepsNavigation customNextCb={handleNextStep} />,
+          appNavigationEl
+        )
+      ) : (
+        <></>
+      )}
     </>
   )
 }

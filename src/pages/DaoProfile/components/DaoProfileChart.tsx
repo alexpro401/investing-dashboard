@@ -9,18 +9,51 @@ import { ChartFilter, ChartFilterItem, TextLabel, TextValue } from "../styled"
 import Chart from "components/Chart"
 import { CHART_TYPE, TIMEFRAME } from "constants/chart"
 
+const FakeChartData = [
+  {
+    tvl: 330,
+    members: 10,
+    mcTvl: 400,
+    timestamp: 1670493921,
+  },
+  {
+    tvl: 420,
+    members: 45,
+    mcTvl: 12,
+    timestamp: 1670493933,
+  },
+  {
+    tvl: 97,
+    members: 94,
+    mcTvl: 172,
+    timestamp: 1670493938,
+  },
+  {
+    tvl: 670,
+    members: 40,
+    mcTvl: 666,
+    timestamp: 1670493941,
+  },
+  {
+    tvl: 453,
+    members: 93,
+    mcTvl: 74,
+    timestamp: 1670493944,
+  },
+]
+
 const ActiveLines = {
   [PageChart.tvl]: [
     {
       legendType: "triangle",
-      dataKey: "b",
+      dataKey: "tvl",
       stroke: "#9AE2CB",
     },
   ],
   [PageChart.members]: [
     {
       legendType: "square",
-      dataKey: "p",
+      dataKey: "members",
       stroke: "#2680eb",
     },
   ],
@@ -28,7 +61,7 @@ const ActiveLines = {
   [PageChart.mcTvl]: [
     {
       legendType: "triangle",
-      dataKey: "a",
+      dataKey: "mcTvl",
       stroke: "#0AEACB",
     },
   ],
@@ -97,7 +130,7 @@ const DaoProfileChart: React.FC<Props> = ({ chart, setChart }) => {
         height="130px"
         timeframe={{ get: timeframe[0], set: timeframe[1] }}
         timeframePosition="bottom"
-        data={[]}
+        data={FakeChartData}
         chart={{
           onClick: onChoosePoint,
           stackOffset: "silhouette",
