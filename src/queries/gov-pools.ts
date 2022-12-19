@@ -208,6 +208,17 @@ const GovProposalsWithRewardsQuery = `
   }
 `
 
+const GovProposalsByPoolInMiscQuery = `
+  query($offset: Int!, $limit: Int!, $misc: String!, $pool: String!) {
+    proposals(
+      skip: $offset, first: $limit, 
+      where: { misc: $misc, pool: $pool, executionTimestamp: 0 }
+    ) {
+      ${PROPOSAL}
+    }
+  }
+`
+
 export {
   GovPoolQuery,
   GovPoolsQuery,
@@ -219,4 +230,5 @@ export {
   GovPoolActiveDelegations,
   GovProposalsWithRewardsQuery,
   GovProposalsWithDistributionQuery,
+  GovProposalsByPoolInMiscQuery,
 }
