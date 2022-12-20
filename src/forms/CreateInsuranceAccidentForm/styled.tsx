@@ -2,12 +2,13 @@ import styled from "styled-components"
 import { Flex } from "theme"
 import { motion } from "framer-motion"
 import { opacityVariants } from "motion/variants"
+import StepsControllerContext from "context/StepsControllerContext"
 
-export const Container = styled.div`
+export const Container = styled(StepsControllerContext)`
   display: flex;
   margin: 0 auto;
   width: 100%;
-  overflow-y: auto;
+  flex: 1;
 `
 
 export const StepsWrapper = styled.div`
@@ -43,6 +44,7 @@ export const StepsRoot = styled.div`
   transform: scale(1);
   gap: 16px;
   padding: 14px 16px 20px;
+  flex: 1;
 `
 
 export const StepNumber = {
