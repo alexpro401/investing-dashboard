@@ -10,6 +10,9 @@ export const Container = styled.div`
   overflow: hidden;
   padding: 16px 0 0;
   width: 100%;
+
+  max-width: 1200px;
+  margin: 0 auto;
 `
 
 export const Indents = styled.div`
