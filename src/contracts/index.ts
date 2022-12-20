@@ -1,10 +1,11 @@
-import { ZERO_ADDR } from "constants/index"
 import { useSelector } from "react-redux"
-import useContract from "hooks/useContract"
-import { useGovPoolHelperContracts } from "hooks/dao"
-import { useActiveWeb3React } from "hooks"
+import {
+  useContract,
+  useGovPoolHelperContracts,
+  useActiveWeb3React,
+  useProposalAddress,
+} from "hooks"
 import { getMulticallAddress } from "utils/addressHelpers"
-import useProposalAddress from "hooks/useProposalAddress"
 
 import {
   ERC20 as ERC20_ABI,

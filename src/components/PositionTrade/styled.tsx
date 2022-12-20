@@ -31,7 +31,7 @@ export const Styled = {
   Label: styled.div`
     width: 100%;
     margin-bottom: 4px;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 500;
     font-size: 11px;
@@ -40,7 +40,7 @@ export const Styled = {
   `,
   Value: styled.div`
     width: 100%;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 13px;
@@ -49,7 +49,7 @@ export const Styled = {
     color: #e4f2ff;
   `,
   Direction: styled.span<{ isBuy?: boolean }>`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 13px;

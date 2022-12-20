@@ -10,7 +10,7 @@ import { checkedTransaction, finalizeTransaction } from "./actions"
 import { useAddToast, useRemoveToast } from "state/application/hooks"
 
 import { useActiveWeb3React } from "hooks"
-import useBlockNumber from "hooks/useBlockNumber"
+import { useBlockNumber } from "hooks"
 import { retry, RetryableError, DEFAULT_RETRY_OPTIONS } from "utils/retry"
 
 interface Transaction {

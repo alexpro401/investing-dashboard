@@ -10,7 +10,7 @@ import {
 } from "utils/time"
 import { cutStringZeroes, isAddress } from "utils"
 import { ZERO_ADDR } from "constants/index"
-import { useERC20 } from "hooks/useERC20"
+import { useERC20 } from "hooks"
 import getExplorerLink from "utils/getExplorerLink"
 import { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"

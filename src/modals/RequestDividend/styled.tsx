@@ -33,7 +33,7 @@ export const TextContainer = styled(Flex)`
 `
 
 export const TextWhite = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -44,7 +44,7 @@ export const TextWhite = styled.div`
 `
 
 export const TextGray = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 13px;

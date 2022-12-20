@@ -5,7 +5,7 @@ import { Flex } from "theme"
 import { IAmountStyle } from "./interface"
 
 export const Container = styled(Flex)<IAmountStyle>`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-size: ${(props) => props.fz ?? "13px"};
   line-height: ${(props) => props.lh ?? "16px"};
@@ -24,7 +24,7 @@ export const Symbol = styled.div`
 // AMOUNT ROW
 
 export const Title = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 13px;

@@ -131,7 +131,7 @@ export const List = {
     jc: "flex-start",
     gap: "8",
   }))`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-size: 13px;
     line-height: 150%;
     color: ${({ theme }) => theme.textColors.secondary};
@@ -210,7 +210,6 @@ export const PoolCard: React.FC<{
   pnl,
   address,
   baseAddress,
-  poolType,
   descriptionURL,
   onClick,
 }) => {

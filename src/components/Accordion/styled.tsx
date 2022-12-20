@@ -16,7 +16,7 @@ export const AccordionHeader = styled(Flex)`
 `
 
 export const AccordionTitle = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 13px;

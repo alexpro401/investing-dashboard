@@ -13,7 +13,7 @@ interface Response {
 
 type Result = [Response, () => void]
 
-const useInvestorsLpHistory = (
+export const useInvestorsLpHistory = (
   date,
   pools,
   investors,

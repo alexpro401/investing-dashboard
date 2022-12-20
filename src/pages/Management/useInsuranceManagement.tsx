@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react"
 import { useSelector } from "react-redux"
 import { useWeb3React } from "@web3-react/core"
 
-import { useERC20 } from "hooks/useERC20"
+import { useERC20 } from "hooks"
 import {
   selectDexeAddress,
   selectInsuranceAddress,

@@ -8,7 +8,7 @@ const Styled = {
   `,
   Card: styled(GradientBorder)`
     width: 100%;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
     border-radius: 16px;
     flex-direction: column;
 
@@ -34,7 +34,7 @@ const Styled = {
     gap: 16px 6px;
   `,
   Title: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 14px;
@@ -49,14 +49,14 @@ const Styled = {
     white-space: nowrap;
     border: 1px solid ${(props) => (props.active ? "#9ae2cb" : "#788AB4")};
     color: ${(props) => (props.active ? "#9ae2cb" : "#788AB4")};
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 11px;
     line-height: 13px;
   `,
   Ticker: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 13px;
@@ -64,7 +64,7 @@ const Styled = {
     color: #788ab4;
   `,
   FundSymbol: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 13px;
@@ -107,7 +107,7 @@ export const SettingsStyled = {
     border-bottom: 1px solid rgba(41, 60, 84, 0.3);
   `,
   Title: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 16px;
@@ -131,7 +131,7 @@ export const SettingsStyled = {
     gap: 4.5px;
   `,
   Label: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 13px;
@@ -139,7 +139,7 @@ export const SettingsStyled = {
     color: #788ab4;
   `,
   InputType: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 13px;
@@ -150,7 +150,7 @@ export const SettingsStyled = {
   ErrorMessage: styled.div`
     width: 100%;
     margin: 4px 0;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 13px;

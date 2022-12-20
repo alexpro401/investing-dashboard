@@ -4,7 +4,6 @@ import { motion } from "framer-motion"
 import { AppButton } from "common"
 
 export const Container = styled(motion.div)`
-  border-radius: 10px;
   position: absolute;
   background: linear-gradient(64.44deg, #191e2b 32.35%, #272e3e 100%);
   border-radius: 10px;
@@ -33,7 +32,7 @@ export const Head = styled(Flex)`
 `
 
 export const Title = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: bold;
   font-size: 22px;
@@ -49,8 +48,8 @@ export const Placeholder = styled(Flex)`
   box-sizing: border-box;
   height: 100%;
   width: 100%;
-  min-width: 0px;
-  font-family: "Gilroy";
+  min-width: 0;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 700;
   font-size: 16px;
@@ -98,12 +97,12 @@ export const CardList = styled.div`
         54.8% 53% at 50% 50%,
         #587eb7 0%,
         rgba(88, 126, 183, 0) 100%
-      )
+      ),
       radial-gradient(
         60% 51.57% at 50% 50%,
         #6d99db 0%,
         rgba(109, 153, 219, 0) 100%
-      )
+      ),
       radial-gradient(
         69.43% 69.43% at 50% 50%,
         rgba(5, 5, 5, 0.5) 0%,
@@ -132,12 +131,12 @@ export const Footer = styled(Flex)`
         54.8% 53% at 50% 50%,
         #587eb7 0%,
         rgba(88, 126, 183, 0) 100%
-      )
+      ),
       radial-gradient(
         60% 51.57% at 50% 50%,
         #6d99db 0%,
         rgba(109, 153, 219, 0) 100%
-      )
+      ),
       radial-gradient(
         69.43% 69.43% at 50% 50%,
         rgba(5, 5, 5, 0.5) 0%,
@@ -154,7 +153,7 @@ export const ImportButton = styled(AppButton)`
 export const Error = styled(Flex)`
   width: 100%;
   justify-content: center;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 13px;

@@ -1,11 +1,11 @@
 import styled from "styled-components"
 import { motion } from "framer-motion"
-import { Flex, Text } from "theme"
+import { Flex } from "theme"
 
 export const FloatingContainer = styled(motion.div)`
   position: absolute;
-  left: 0%;
-  right: 0%;
+  left: 0;
+  right: 0;
   overflow: hidden;
   width: 100%;
   z-index: 90;
@@ -14,7 +14,7 @@ export const FloatingContainer = styled(motion.div)`
 
 export const Container = styled.div`
   background: linear-gradient(64.44deg, #1f232c 32.35%, #282f3f 100%);
-  box-shadow: 0px 0.5px 0px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0.5px 0 rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(20px);
   border-radius: 10px;
   height: 100%;
@@ -44,7 +44,7 @@ export const Header = styled(Flex)`
   padding-bottom: 16px;
   width: 100%;
   justify-content: center;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 700;
   font-size: 20px;
@@ -65,81 +65,3 @@ export const Overlay = styled(motion.div)`
   height: 100%;
   width: 100%;
 `
-
-export const AccountCard = styled.div`
-  background: linear-gradient(64.44deg, #2f3338 32.35%, #3a393f 100%);
-  border-radius: 10px;
-  width: fill-available;
-  margin: 47px auto;
-  // filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.08));
-  max-width: 343px;
-`
-
-export const AccountTitle = styled(Text)`
-  font-family: Gilroy;
-  font-style: normal;
-  font-family: Gilroy;
-  font-weight: 700;
-  font-size: 18px;
-  line-height: 22px;
-  color: #ffffff;
-  margin-left: -2px;
-  margin-bottom: 7px;
-`
-
-export const AccountDescription = styled(Text)`
-  font-family: Gilroy;
-  font-style: italic;
-  font-family: Gilroy;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 14px;
-
-  color: #ffffff;
-`
-
-export const AccountIcon = styled.img`
-  height: 22px;
-  width: 22px;
-`
-
-export const AccountAddress = styled(Flex)`
-  height: 54px;
-  width: fill-available;
-  margin: 20px 14px;
-  background: #1d2127;
-  box-shadow: 0px 7px 4px rgba(0, 0, 0, 0.07);
-  border-radius: 10px;
-  font-family: Gilroy;
-  font-style: normal;
-  font-family: Gilroy;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 200%;
-  color: #f7f7f7;
-  justify-content: center;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-`
-
-export const AccountFooter = styled(Flex)`
-  height: 43px;
-  width: 100%;
-  padding: 0 25px;
-`
-
-export const TextButton = styled(Text)<{ theme?: "default" | "primary" }>`
-  cursor: pointer;
-  font-family: Gilroy;
-  font-style: normal;
-  font-family: Gilroy;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 14px;
-  text-align: center;
-  color: ${(props) => (props.theme === "primary" ? "#7BDFC4" : "#ffffff")};
-  font-weight: ${(props) => (props.theme === "primary" ? "bold" : "normal")};
-`
-
-export default {}

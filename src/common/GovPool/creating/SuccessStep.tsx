@@ -1,13 +1,11 @@
-import { FC, HTMLAttributes, useContext, useMemo } from "react"
+import { FC, HTMLAttributes, useContext } from "react"
 
 import * as S from "./styled"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { ICON_NAMES } from "constants/icon-names"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { useActiveWeb3React } from "hooks"
+import { useActiveWeb3React, useBreakpoints } from "hooks"
 import { shortenAddress } from "utils"
-import { useWindowSize } from "react-use"
-import { SuccessSubmitBtn, SuccessSubmitBtnWrp } from "./styled"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -17,8 +15,7 @@ const SuccessStep: FC<Props> = () => {
   const { avatarUrl, daoName, createdDaoAddress, clearFormStorage } =
     useContext(GovPoolFormContext)
 
-  const { width: windowWidth } = useWindowSize()
-  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
+  const { isMobile } = useBreakpoints()
 
   return (
     <S.SuccessBackdrop className={"success-backdrop"}>

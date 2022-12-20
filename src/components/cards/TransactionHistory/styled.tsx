@@ -36,7 +36,7 @@ const Styled = {
       }`}
   `,
   CardTime: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 500;
     font-size: 13px;

@@ -40,7 +40,7 @@ import Chart from "components/Chart"
 import theme, { Text } from "theme"
 import { ChartTooltipPnl } from "components/Chart/tooltips"
 import { AlertType } from "context/AlertContext"
-import useAlert from "hooks/useAlert"
+import { useAlert } from "hooks"
 import { DEFAULT_ALERT_HIDDEN_TIMEOUT } from "constants/misc"
 
 const poolsClient = createClient({

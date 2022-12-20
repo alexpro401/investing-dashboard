@@ -12,7 +12,7 @@ export const Container = styled(motion.div)`
   width: 343px;
   height: fit-content;
   background: #181e2c;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.15);
   border-radius: 15px;
   z-index: 90;
 `
@@ -46,7 +46,7 @@ export const Body = styled(Flex)`
 `
 
 export const Title = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 20px;
@@ -56,7 +56,7 @@ export const Title = styled.div`
 `
 
 export const Description = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -84,7 +84,7 @@ export const StepsContainer = styled(Flex)`
 `
 
 export const Number = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 700;
   font-size: 11px;
@@ -93,7 +93,7 @@ export const Number = styled.div`
 `
 
 export const Label = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 12px;
@@ -118,8 +118,8 @@ export const Circle = styled(Flex)`
 
 export const Line = styled.div<{ width: number; offset: number }>`
   background: linear-gradient(65.03deg, #a4ebd4 12.07%, #63b49b 78.73%);
-  box-shadow: 0px 1px 4px rgba(164, 235, 212, 0.29),
-    0px 2px 5px rgba(164, 235, 212, 0.14);
+  box-shadow: 0 1px 4px rgba(164, 235, 212, 0.29),
+    0 2px 5px rgba(164, 235, 212, 0.14);
   height: 1px;
   width: ${({ width }) => width}%;
   left: ${({ offset }) => offset}px;
@@ -131,7 +131,7 @@ export const Line = styled.div<{ width: number; offset: number }>`
 
 export const Track = styled.div<{ offset: number }>`
   background: #141925;
-  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 6px;
   height: 1px;
   position: absolute;

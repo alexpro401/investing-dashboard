@@ -15,7 +15,7 @@ import { usePriceFeedContract } from "contracts"
  * @param positionAmountsMap amounts of open positions
  * @param positions addresses of open positions
  */
-const useOpenPositionsPriceOutUSD = (
+export const useOpenPositionsPriceOutUSD = (
   poolAddress?: string,
   positionAmountsMap?: any,
   positions?: string[]

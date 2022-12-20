@@ -64,9 +64,9 @@ export const LogoWrapper = styled(Flex)`
 const MobileLabel = styled.div<{ active: boolean }>`
   margin-bottom: 3px;
 
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-weight: 400;
   font-size: 12px;
   line-height: 12px;

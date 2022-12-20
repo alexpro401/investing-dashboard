@@ -10,12 +10,10 @@ import {
   useState,
 } from "react"
 
-import { useForm } from "hooks/useForm"
-import useError from "hooks/useError"
-import useAlert from "hooks/useAlert"
+import { useForm, useError, useInsurance, useInsuranceDueDay } from "hooks"
+import { useAlert } from "hooks"
 import { isTxMined, normalizeBigNumber, parseTransactionError } from "utils"
 import { AlertType } from "context/AlertContext"
-import useInsurance, { useInsuranceDueDay } from "hooks/useInsurance"
 
 import * as S from "./styled"
 import NoEnoughInsurance from "modals/NoEnoughInsurance"

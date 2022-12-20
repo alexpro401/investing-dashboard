@@ -63,7 +63,7 @@ const Styled = {
     }
   `,
   PNL: styled(ColorizedNumber)`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     line-height: 100%;
@@ -73,7 +73,7 @@ const Styled = {
     transform: translateY(2px);
   `,
   WitoutData: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 500;
     font-size: 14px;
@@ -87,7 +87,7 @@ export default Styled
 
 export const BodyItemStyled = {
   Label: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
@@ -98,7 +98,7 @@ export const BodyItemStyled = {
   `,
 
   PNL: styled.div<{ positive?: boolean }>`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     line-height: 100%;
@@ -109,7 +109,7 @@ export const BodyItemStyled = {
   `,
 
   StablePrice: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 500;
     font-size: 12px;
@@ -182,7 +182,7 @@ const ActionsStyled = {
     margin: 8px 0 0;
   `,
   Item: styled(GradientBorder)<{ active?: boolean }>`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 500;
     font-size: 13px;

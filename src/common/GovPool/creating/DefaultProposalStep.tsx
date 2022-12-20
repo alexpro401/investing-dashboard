@@ -1,4 +1,4 @@
-import { FC, useContext, useMemo } from "react"
+import { FC, useContext } from "react"
 import { createPortal } from "react-dom"
 
 import { CreateDaoCardStepNumber } from "../components"
@@ -7,11 +7,10 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 import { Card, CardDescription, CardHead } from "common"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 import { DaoSettingsParameters } from "common"
-import { useFormValidation } from "hooks/useFormValidation"
+import { useFormValidation, useBreakpoints } from "hooks"
 import { isAddressValidator, isPercentage, required } from "utils/validators"
 
 import * as S from "./styled"
-import { useWindowSize } from "react-use"
 
 interface IDefaultProposalStepProps {
   isCreatingProposal?: boolean
@@ -90,8 +89,7 @@ const DefaultProposalStep: FC<IDefaultProposalStepProps> = ({
   }
 
   const appNavigationEl = document.querySelector("#app-navigation")
-  const { width: windowWidth } = useWindowSize()
-  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
+  const { isMobile } = useBreakpoints()
 
   return (
     <>

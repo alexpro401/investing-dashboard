@@ -45,7 +45,6 @@ export const Area = styled(motion.textarea)`
 
   &:focus {
     outline: none;
-    height: auto;
     height: 78px;
 
     &::placeholder {
@@ -57,7 +56,7 @@ export const Area = styled(motion.textarea)`
   }
 `
 export const Label = styled(Flex)`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -74,7 +73,7 @@ export const MaxLength = styled(Text)`
   right: 20px;
   bottom: 6px;
   max-width: 50px;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 12px;

@@ -18,9 +18,9 @@ const Percent = styled.input`
   border: none;
   border-radius: 0;
   width: 35px;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-weight: 400;
   font-size: 16px;
   line-height: 41px;
@@ -33,9 +33,9 @@ const InputWrapper = styled(Flex)`
 `
 
 const InputSymbol = styled.span`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-weight: 400;
   font-size: 16px;
   line-height: 16px;

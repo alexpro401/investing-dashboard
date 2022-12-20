@@ -6,7 +6,7 @@ import { useActiveWeb3React } from "hooks"
 import { isAddress } from "utils"
 import { RPC_PROVIDERS } from "constants/providers"
 
-export default function useContract<T extends Contract = Contract>(
+export function useContract<T extends Contract = Contract>(
   address: string | undefined,
   ABI: any,
   withSignerIfPossible = true
@@ -35,3 +35,5 @@ export default function useContract<T extends Contract = Contract>(
     }
   }, [address, ABI, library, withSignerIfPossible, account, provider]) as T
 }
+
+export default useContract

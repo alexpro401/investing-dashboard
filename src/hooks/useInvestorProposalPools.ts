@@ -2,7 +2,7 @@ import { useQuery } from "urql"
 import { IInvestorInvestedPools } from "interfaces/thegraphs/invest-pools"
 import { InvestorPoolsInvestedForQuery } from "queries"
 
-function useInvestorProposalPools(address?: string, poolType?: string) {
+export function useInvestorProposalPools(address?: string, poolType?: string) {
   const [response] = useQuery<{
     investors: IInvestorInvestedPools[]
   }>({

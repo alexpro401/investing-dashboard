@@ -47,7 +47,7 @@ export const FloatingButtons = styled(Flex)`
 `
 
 export const TextGray = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
@@ -64,19 +64,18 @@ export const UserInfo = styled(Flex)`
 `
 
 export const Name = styled.input`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 18px;
   line-height: 22px;
   letter-spacing: 0.5px;
   color: #c5d1dc;
-  letter-spacing: 0.5px;
   appearance: none;
   background: none;
   outline: none;
   border: none;
-  border-bottom: 1px solid transarent;
+  border-bottom: 1px solid transparent;
   border-radius: 0;
   max-width: 154px;
   padding: 0;
@@ -98,11 +97,9 @@ export const Card = styled.div`
   position: relative;
   background: url(${cardBG});
   background-repeat: no-repeat;
-  border-radius: 12px;
   border: 1px solid #2f3c3a;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.08);
   padding: 16px 16px 14px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 16px;
   width: 100%;
 `
@@ -119,7 +116,7 @@ export const Network = styled(Flex)`
   position: absolute;
   right: 16px;
   top: 16px;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
@@ -142,7 +139,7 @@ export const CardButtons = styled(Flex)`
 export const TextButton = styled.div<{ color?: string }>`
   display: flex;
   align-items: center;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-size: 12px;
   line-height: 14px;
@@ -183,7 +180,7 @@ export const InsuranceCard = styled(Flex)`
     #111318;
   border-radius: 16px;
   border: 1px solid #2f3c3a;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.08);
   z-index: 5;
 
   &:before {
@@ -217,7 +214,7 @@ export const InsuranceInfo = styled(Flex)`
 `
 
 export const InsuranceTitle = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 12px;
@@ -225,7 +222,7 @@ export const InsuranceTitle = styled.div`
   letter-spacing: 0.03em;
   color: #e4f2ff;
 
-  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 `
 
 export const InsuranceIcon = styled.img`
@@ -239,7 +236,7 @@ export const InsuranceButton = styled.button`
   background: transparent;
   outline: none;
   border: none;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 12px;

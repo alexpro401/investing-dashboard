@@ -295,7 +295,7 @@ export const DaoProposalDPActiveSymbol = styled(GradientBorder)`
 `
 
 export const DaoProposalDPSymbolLabel = styled.span`
-  font-family: "Gilroy", Sans-Serif, Arial;
+  font-family: ${(props) => props.theme.appFontFamily}, Sans-Serif, Arial;
   font-style: normal;
   font-weight: 600;
   font-size: 16px;

@@ -13,7 +13,7 @@ const Styled = {
     align-items: center;
   `,
   WithoutData: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 13px;

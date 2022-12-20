@@ -10,7 +10,7 @@ interface IProposalData {
   poolAddress: string
 }
 
-function useInvestorInvestProposals(
+export function useInvestorInvestProposals(
   activePools: string[],
   invested: boolean
 ): [IProposalData[], boolean] {

@@ -26,7 +26,7 @@ export const RowContainer = styled(Flex)`
 `
 
 export const InputText = styled(Text)`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -36,7 +36,7 @@ export const InputText = styled(Text)`
 `
 
 export const FormLabel = styled(Text)`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;

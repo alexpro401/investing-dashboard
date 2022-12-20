@@ -10,7 +10,7 @@ import {
 } from "hooks/dao"
 import { BigNumber } from "@ethersproject/bignumber"
 import { ProposalState, WrappedProposalView } from "types"
-import { useERC20 } from "hooks/useERC20"
+import { useERC20 } from "hooks"
 import { useSelector } from "react-redux"
 import { selectInsuranceAddress } from "state/contracts/selectors"
 import { InsuranceAccident } from "interfaces/insurance"

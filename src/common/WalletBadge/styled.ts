@@ -27,7 +27,7 @@ export const AccountCard = styled(Flex)`
 `
 
 export const AccountAddress = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 14px;
@@ -47,7 +47,7 @@ export const InsuranceInner = styled(Flex)`
 
 export const InsuranceAmount = styled.div`
   transform: translateY(1px);
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 14px;

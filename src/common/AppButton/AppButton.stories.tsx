@@ -19,7 +19,7 @@ const Container = styled.div`
 `
 
 const Title = styled.div`
-    font-family: 'Gilroy';
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 700;
     font-size: 144px;

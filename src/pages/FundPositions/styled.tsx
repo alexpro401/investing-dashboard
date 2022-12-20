@@ -10,24 +10,26 @@ const ContainerBase = css`
 
 const Styled = {
   Container: styled.div`
-    ${ContainerBase}
     box-sizing: border-box;
+
+    ${ContainerBase}
   `,
   List: styled.div`
-    ${ContainerBase}
     padding: 16px;
     position: relative;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+
+    ${ContainerBase}
   `,
   Content: styled(Flex)`
-    ${ContainerBase}
     align-items: center;
     justify-content: center;
     position: relative;
+    ${ContainerBase}
   `,
   WithoutData: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 13px;
@@ -59,7 +61,7 @@ const ActionStyled = {
     }
   `,
   Title: styled.p`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 700;
     font-size: 20px;
@@ -69,7 +71,7 @@ const ActionStyled = {
   `,
   Text: styled.p`
     margin: 16px 0;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 500;
     font-size: 13px;

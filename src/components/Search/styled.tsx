@@ -16,7 +16,7 @@ export const Input = styled.input`
   border: none;
 
   flex: 1;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 13px;
@@ -26,7 +26,7 @@ export const Input = styled.input`
   padding-left: 8px;
 
   &::-webkit-input-placeholder {
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 13px;
@@ -34,7 +34,7 @@ export const Input = styled.input`
     color: #788ab4;
   }
   &:-moz-placeholder {
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 13px;
@@ -42,7 +42,7 @@ export const Input = styled.input`
     color: #788ab4;
   }
   &::-moz-placeholder {
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 13px;
@@ -50,7 +50,7 @@ export const Input = styled.input`
     color: #788ab4;
   }
   &:-ms-input-placeholder {
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 13px;

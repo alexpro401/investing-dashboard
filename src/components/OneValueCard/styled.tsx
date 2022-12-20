@@ -36,8 +36,8 @@ export const Icon = styled.img`
 `
 
 export const Label = styled.div`
-  font-family: Gilroy;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
+  font-family: ${(props) => props.theme.appFontFamily};
   font-weight: 400;
   font-size: 12px;
   line-height: 14px;
@@ -45,9 +45,9 @@ export const Label = styled.div`
 `
 
 export const Value = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-weight: 400;
   font-size: 18px;
   line-height: 41px;

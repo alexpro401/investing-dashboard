@@ -6,7 +6,7 @@ import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 
 import Icon from "components/Icon"
 
-const usePoolIcon = (
+export const usePoolIcon = (
   poolAddress: string,
   size = 24
 ): [JSX.Element, IPoolInfo | null] => {

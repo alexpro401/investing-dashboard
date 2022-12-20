@@ -114,7 +114,7 @@ export function useRiskyProposal(
   return [proposal, riskyProposal, proposalAddress, refresh]
 }
 
-export function useActiveInvestmentsInfo(
+export function useRiskyActiveInvestmentsInfo(
   poolAddress?: string,
   account?: string | null | undefined,
   index?: string

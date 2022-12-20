@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import { retry, RetryableError, DEFAULT_RETRY_OPTIONS } from "utils/retry"
 
-function useTransactionWaiter(library) {
+export function useTransactionWaiter(library) {
   const wait = useCallback(
     (hash) => {
       if (!library) throw new Error("No library or chainId")

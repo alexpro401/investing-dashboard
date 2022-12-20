@@ -1,6 +1,6 @@
 import { useERC721Contract } from "contracts"
 import useError from "hooks/useError"
-import { parseTransactionError } from "./../utils/index"
+import { parseTransactionError } from "utils"
 import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { SubmitState } from "constants/types"
@@ -12,7 +12,7 @@ import { useSingleContractMultipleData } from "state/multicall/hooks"
 import { useCallback, useMemo } from "react"
 import { useActiveWeb3React } from "hooks"
 
-const useERC721Allowance = (
+export const useERC721Allowance = (
   collectionAddress: string,
   tokenIds: number[],
   spender?: string

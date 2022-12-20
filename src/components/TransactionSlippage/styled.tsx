@@ -37,7 +37,7 @@ export const Overlay = styled.div`
 `
 
 export const Title = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -46,7 +46,7 @@ export const Title = styled.div`
 `
 
 export const TextGray = styled(Text)`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -64,14 +64,14 @@ const InputElement = styled.input`
   border-radius: 15px;
   width: 150px;
 
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
   color: #e4f2ff;
 
   &::placeholder {
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
@@ -92,7 +92,7 @@ const InputContainer = styled.div`
     height: 12px;
     width: 12px;
 
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
@@ -125,7 +125,7 @@ export const Button = styled.button<{ active?: boolean }>`
   border-radius: 15px;
   padding: 10px 16px;
 
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 12px;

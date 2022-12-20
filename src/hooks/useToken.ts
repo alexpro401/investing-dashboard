@@ -8,7 +8,7 @@ import {
   useCombinedWhiteList,
 } from "state/lists/hooks"
 import { isAddress } from "utils"
-import { useERC20 } from "hooks/useERC20"
+import { useERC20 } from "hooks"
 import { useUserAddedTokens } from "state/user/hooks"
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens

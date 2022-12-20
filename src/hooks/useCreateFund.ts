@@ -2,7 +2,7 @@ import { useState } from "react"
 
 interface IProps {}
 
-export default function useCreateFund() {
+export function useCreateFund() {
   const [loading, setLoading] = useState(false)
   const [address, setAddress] = useState(null)
 
@@ -12,3 +12,5 @@ export default function useCreateFund() {
 
   return [submit, loading, address] as const
 }
+
+export default useCreateFund

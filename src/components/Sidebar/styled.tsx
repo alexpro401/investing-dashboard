@@ -52,7 +52,7 @@ export const MenuIcon = styled.div`
 `
 
 export const MenuText = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -108,7 +108,7 @@ export const SwitchContainer = styled.div`
 `
 
 export const SwitchText = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -132,7 +132,7 @@ export const MiniLogoDexe = styled.div`
 `
 
 export const Total = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -141,7 +141,7 @@ export const Total = styled.div`
 `
 
 export const BuyText = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;

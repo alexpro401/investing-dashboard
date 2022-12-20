@@ -45,17 +45,8 @@ export const InputBottom = styled(Flex)`
   padding-top: 18px;
 `
 
-export const FromContainer = styled(InputContainer)``
-
-export const ToContainer = styled(InputContainer)``
-
-export const InfoContainer = styled(Flex)`
-  width: 100%;
-  padding-bottom: 11px;
-`
-
 export const Price = styled(Text)`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 13px;
@@ -72,7 +63,7 @@ export const Balance = styled(Flex)`
 `
 
 export const Tokens = styled.span`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 13px;
@@ -84,7 +75,7 @@ export const Tokens = styled.span`
 `
 
 export const Symbol = styled.span`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
@@ -96,7 +87,7 @@ export const Symbol = styled.span`
 `
 
 export const Max = styled(Text)`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 13px;
@@ -107,7 +98,7 @@ export const Max = styled(Text)`
 `
 
 export const Input = styled.input`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 22px;
@@ -134,7 +125,7 @@ export const Input = styled.input`
 `
 
 export const InputS = styled.input`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -176,21 +167,19 @@ export const ActiveSymbol = styled(GradientBorder)`
 `
 
 export const SymbolLabel = styled.span`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
   line-height: 15px;
   letter-spacing: 0.3px;
   color: #e4f2ff;
-  margin-right: 7px;
   white-space: nowrap;
-  margin-top: 4px;
   margin: 4px 7px 0 4px;
 `
 
 export const SymbolLabelS = styled.span`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: italic;
   font-weight: 400;
   font-size: 13px;
@@ -226,7 +215,7 @@ export const Unlock = styled.div`
 `
 
 export const Label = styled(Text)`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
@@ -235,9 +224,8 @@ export const Label = styled(Text)`
 `
 
 export const Value = styled(Text)`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
-  font-family: Gilroy;
   font-weight: 400;
   font-size: 14px;
   line-height: 100%;
@@ -245,9 +233,8 @@ export const Value = styled(Text)`
 `
 
 export const PriceText = styled(Text)`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
-  font-family: Gilroy;
   font-weight: 400;
   font-size: 12px;
   line-height: 100%;
@@ -270,7 +257,7 @@ export const PercentButton = styled.div<{ active?: boolean }>`
   text-align: center;
   cursor: pointer;
 
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -282,13 +269,13 @@ export const PercentButton = styled.div<{ active?: boolean }>`
   border-radius: 3px;
 
   &:first-child {
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 0px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
   }
 
   &:last-child {
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
   }
 `
 
@@ -331,7 +318,7 @@ export const CardHeader = styled(Flex)`
 `
 
 export const Title = styled.div<{ active?: boolean }>`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -369,7 +356,7 @@ export const InfoRow = styled(Flex)`
 `
 
 export const InfoGrey = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 13px;
@@ -378,7 +365,7 @@ export const InfoGrey = styled.div`
 `
 
 export const InfoWhite = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 13px;
@@ -473,7 +460,7 @@ export const TokenInfo = styled(Flex)`
 `
 
 export const TokenText = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 13px;
@@ -487,7 +474,7 @@ export const AddButton = styled.button`
   background: none;
   border: none;
   outline: none;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 700;
   font-size: 16px;
@@ -544,7 +531,7 @@ export const BlueButton = styled.button`
   background: none;
   outline: none;
   border: none;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 700;
   font-size: 16px;
@@ -554,7 +541,7 @@ export const BlueButton = styled.button`
 `
 
 export const NftCounter = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 20px;
@@ -566,7 +553,7 @@ export const NftCounter = styled.div`
 `
 
 export const TooltipText = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 13px;
@@ -583,7 +570,7 @@ export const DescriptionContainer = styled.p`
   padding: 0;
   margin: 0;
   width: fill-available;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 13px;

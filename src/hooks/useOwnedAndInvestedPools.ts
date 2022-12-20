@@ -12,7 +12,7 @@ interface Response {
   fetching: boolean
 }
 
-const useOwnedAndInvestedPools = (): [Response] => {
+export const useOwnedAndInvestedPools = (): [Response] => {
   const { account } = useActiveWeb3React()
 
   const investors = useMemo<string[]>(
