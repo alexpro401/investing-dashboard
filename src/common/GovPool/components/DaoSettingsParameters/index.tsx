@@ -1,4 +1,16 @@
 import {
+  Dispatch,
+  FC,
+  HTMLAttributes,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useMemo,
+} from "react"
+import { isEqual } from "lodash"
+import { formatUnits } from "@ethersproject/units"
+
+import {
   AppButton,
   Card,
   CardDescription,
@@ -11,15 +23,6 @@ import {
 import { ICON_NAMES } from "constants/icon-names"
 import Switch from "components/Switch"
 import { DurationField, InputField, OverlapInputField } from "fields"
-import {
-  Dispatch,
-  FC,
-  HTMLAttributes,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useMemo,
-} from "react"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { useFormValidation } from "hooks/useFormValidation"
 import { EInputBorderColors } from "fields/InputField"
@@ -28,9 +31,9 @@ import { readFromClipboard } from "utils/clipboard"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
 import { GovPoolSettingsForm } from "types"
+import { cutStringZeroes } from "utils"
 
 import * as S from "./styled"
-import { isEqual } from "lodash"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   poolParameters: GovPoolSettingsForm
@@ -69,81 +72,128 @@ const DaoSettingsParameters: FC<Props> = ({
 
   const isQuorumChanged = useMemo(
     () =>
-      isEqual(
-        initialForm._defaultProposalSettingForm.quorum,
-        defaultProposalSettingForm.quorum.get
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(initialForm._defaultProposalSettingForm.quorum, 25)
+        ),
+        cutStringZeroes(defaultProposalSettingForm.quorum.get)
       ),
     [defaultProposalSettingForm, initialForm]
   )
 
   const isDurationChanged = useMemo(
     () =>
-      isEqual(
-        initialForm._defaultProposalSettingForm.duration,
-        defaultProposalSettingForm.duration.get
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(initialForm._defaultProposalSettingForm.duration, 0)
+        ),
+        defaultProposalSettingForm.duration.get.toString()
       ),
     [defaultProposalSettingForm, initialForm]
   )
 
   const isDurationValidatorsChanged = useMemo(
     () =>
-      isEqual(
-        initialForm._defaultProposalSettingForm.durationValidators,
-        defaultProposalSettingForm.durationValidators.get
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(
+            initialForm._defaultProposalSettingForm.durationValidators,
+            0
+          )
+        ),
+        defaultProposalSettingForm.durationValidators.get.toString()
       ),
     [defaultProposalSettingForm, initialForm]
   )
 
   const isQuorumValidatorsChanged = useMemo(
     () =>
-      isEqual(
-        initialForm._defaultProposalSettingForm.quorumValidators,
-        defaultProposalSettingForm.quorumValidators.get
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(
+            initialForm._defaultProposalSettingForm.quorumValidators,
+            25
+          )
+        ),
+        cutStringZeroes(defaultProposalSettingForm.quorumValidators.get)
       ),
     [defaultProposalSettingForm, initialForm]
   )
 
   const isMinVotesForVotingChanged = useMemo(
     () =>
-      isEqual(
-        initialForm._defaultProposalSettingForm.minVotesForVoting,
-        defaultProposalSettingForm.minVotesForVoting.get
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(
+            initialForm._defaultProposalSettingForm.minVotesForVoting,
+            18
+          )
+        ),
+        cutStringZeroes(
+          defaultProposalSettingForm.minVotesForVoting.get.toString()
+        )
       ),
     [defaultProposalSettingForm, initialForm]
   )
 
   const isMinVotesForCreatingChanged = useMemo(
     () =>
-      isEqual(
-        initialForm._defaultProposalSettingForm.minVotesForCreating,
-        defaultProposalSettingForm.minVotesForCreating.get
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(
+            initialForm._defaultProposalSettingForm.minVotesForCreating,
+            18
+          )
+        ),
+        cutStringZeroes(
+          defaultProposalSettingForm.minVotesForCreating.get.toString()
+        )
       ),
     [defaultProposalSettingForm, initialForm]
   )
 
   const isCreationRewardChanged = useMemo(
     () =>
-      isEqual(
-        initialForm._defaultProposalSettingForm.creationReward,
-        defaultProposalSettingForm.creationReward.get
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(
+            initialForm._defaultProposalSettingForm.creationReward,
+            18
+          )
+        ),
+        cutStringZeroes(
+          defaultProposalSettingForm.creationReward.get.toString()
+        )
       ),
     [defaultProposalSettingForm, initialForm]
   )
 
   const isVoteRewardsCoefficientChanged = useMemo(
     () =>
-      isEqual(
-        initialForm._defaultProposalSettingForm.voteRewardsCoefficient,
-        defaultProposalSettingForm.voteRewardsCoefficient.get
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(
+            initialForm._defaultProposalSettingForm.voteRewardsCoefficient,
+            18
+          )
+        ),
+        cutStringZeroes(
+          defaultProposalSettingForm.voteRewardsCoefficient.get.toString()
+        )
       ),
     [defaultProposalSettingForm, initialForm]
   )
 
   const isExecutionRewardChanged = useMemo(
     () =>
-      isEqual(
-        initialForm._defaultProposalSettingForm.executionReward,
-        defaultProposalSettingForm.executionReward.get
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(
+            initialForm._defaultProposalSettingForm.executionReward,
+            18
+          )
+        ),
+        cutStringZeroes(defaultProposalSettingForm.executionReward.get)
       ),
     [defaultProposalSettingForm, initialForm]
   )

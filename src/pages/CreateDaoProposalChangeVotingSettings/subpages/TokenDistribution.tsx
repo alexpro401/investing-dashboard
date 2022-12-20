@@ -11,9 +11,10 @@ import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
+import { GovPoolFormOptions } from "types"
+import { ZERO_ADDR } from "constants/index"
 
 import * as S from "../styled"
-import { GovPoolFormOptions } from "types"
 
 const TokenDistribution: React.FC = () => {
   const location = useLocation()
@@ -35,7 +36,14 @@ const TokenDistribution: React.FC = () => {
 
   const loader = useMemo(
     () => (
-      <Flex gap={"24"} full m="16px 0 0 0" dir="column" ai={"center"}>
+      <Flex
+        gap={"24"}
+        full
+        m="16px 0 0 0"
+        dir="column"
+        ai={"center"}
+        jc={"flex-start"}
+      >
         <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
         <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
         <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
@@ -85,7 +93,7 @@ const TokenDistribution: React.FC = () => {
       quorumValidators,
       minVotesForVoting,
       minVotesForCreating,
-      rewardToken,
+      rewardToken: rewardToken === ZERO_ADDR ? "" : rewardToken,
       creationReward,
       executionReward,
       voteRewardsCoefficient,

@@ -238,10 +238,13 @@ export const cutStringZeroes = (value: string): string => {
       reversed.shift()
     }
 
-    return splittedString[0] + "." + reversed.reverse().join("")
+    if (reversed.length !== 0)
+      return splittedString[0] + "." + reversed.reverse().join("")
+
+    return splittedString[0]
   }
 
-  return value
+  return value.replace(".", "")
 }
 
 export function getTypedSignature(address, lib, nonce) {

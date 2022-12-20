@@ -102,15 +102,15 @@ const ValidatorsSettingsStep: React.FC = () => {
 
     // quorum_votes = (users_total_supply * quorum) / 100
     const multiplyResult = multiplyBignumbers(
-      [initialForm._validatorsBalancesSettingsForm.quorum, 18],
+      [initialForm._validatorsBalancesSettingsForm.quorum, 25],
       [totalVoteWeight, 18]
     )
     const quorumResult = divideBignumbers(
       [multiplyResult, 18],
-      [parseUnits("100"), 18]
+      [parseUnits("100"), 25]
     )
 
-    return cutStringZeroes(formatUnits(quorumResult, 18))
+    return cutStringZeroes(formatUnits(quorumResult, 25))
   }, [totalVoteWeight, initialForm])
 
   const appNavigationEl = document.querySelector("#app-navigation")

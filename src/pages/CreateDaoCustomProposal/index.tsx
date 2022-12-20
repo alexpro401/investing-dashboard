@@ -124,7 +124,14 @@ const CreateDaoCustomProposal: React.FC = () => {
       <WithGovPoolAddressValidation
         daoPoolAddress={daoAddress ?? ""}
         loader={
-          <Flex gap={"24"} full m="16px 0 0 0" dir="column" ai={"center"}>
+          <Flex
+            gap={"24"}
+            full
+            m="16px 0 0 0"
+            dir="column"
+            ai={"center"}
+            jc={"flex-start"}
+          >
             <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"70px"} />
             <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"70px"} />
             <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"70px"} />

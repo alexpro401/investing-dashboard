@@ -48,6 +48,8 @@ const DaoProfileTabAbout: React.FC<IDaoProfileTabAboutProps> = ({
 
   const { description, documents, socialLinks, websiteUrl } = daoDescription
 
+  console.log("socialLinks: ", socialLinks)
+
   return (
     <Card>
       <TextValue lh="19.5px">
@@ -76,7 +78,7 @@ const DaoProfileTabAbout: React.FC<IDaoProfileTabAboutProps> = ({
           </ExternalLink>
         </Flex>
       ))}
-      {socialLinks.length > 6 && (
+      {socialLinks.filter((el) => !!el[1]).length > 6 && (
         <>
           <Divider />
           {socialLinks

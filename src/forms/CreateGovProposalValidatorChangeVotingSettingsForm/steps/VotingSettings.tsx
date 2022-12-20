@@ -78,19 +78,19 @@ const VotingSettings: React.FC = () => {
   const quorumForValidators = useMemo(() => {
     if (!totalValidatorsTokenSupply) return "0"
 
-    const quorumBN = parseUnits(initialForm.quorum.toString(), 18)
+    const quorumBN = parseUnits(initialForm.quorum.toString(), 25)
 
     // quorum_votes = (validator_total_supply * validators_quorum) / 100
     const multiplyResult = multiplyBignumbers(
-      [quorumBN, 18],
+      [quorumBN, 25],
       [totalValidatorsTokenSupply, 18]
     )
     const quorumResult = divideBignumbers(
       [multiplyResult, 18],
-      [parseUnits("100"), 18]
+      [parseUnits("100"), 25]
     )
 
-    return cutStringZeroes(formatUnits(quorumResult, 18))
+    return cutStringZeroes(formatUnits(quorumResult, 25))
   }, [totalValidatorsTokenSupply, initialForm])
 
   const appNavigationEl = document.querySelector("#app-navigation")
