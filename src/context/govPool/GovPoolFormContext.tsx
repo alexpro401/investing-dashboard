@@ -10,7 +10,7 @@ import {
   useState,
   ReactNode,
 } from "react"
-import { useERC20 } from "hooks/useERC20"
+import { useERC20 } from "hooks"
 import { useErc721 } from "hooks/useErc721"
 import { useEffectOnce, useLocalStorage } from "react-use"
 import {

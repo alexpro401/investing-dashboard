@@ -4,7 +4,7 @@ import { ThemeProvider } from "styled-components"
 import { ModalProvider } from "styled-react-modal"
 import UnsupportedChain from "components/UnsupportedChain"
 
-import { useEagerConnect } from "hooks/useEagerConnect"
+import { useEagerConnect } from "hooks"
 import { useInactiveListener } from "hooks/useInactiveListener"
 
 import ConnectWalletContext from "context/ConnectWalletContext"

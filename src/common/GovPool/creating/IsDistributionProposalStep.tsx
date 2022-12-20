@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from "react"
+import React, { useContext } from "react"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import {
   AppButton,
@@ -15,13 +15,13 @@ import * as S from "./styled"
 import { ICON_NAMES } from "constants/icon-names"
 import Switch from "components/Switch"
 import { AlertType } from "context/AlertContext"
-import useAlert from "hooks/useAlert"
+import { useAlert } from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 import { createPortal } from "react-dom"
-import { useWindowSize } from "react-use"
+import { useBreakpoints } from "hooks"
 
 interface IIsDistributionProposalStepProps {
   isCreatingProposal?: boolean
@@ -124,8 +124,7 @@ const IsDistributionProposalStep: React.FC<
   }
 
   const appNavigationEl = document.querySelector("#app-navigation")
-  const { width: windowWidth } = useWindowSize()
-  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
+  const { isMobile } = useBreakpoints()
 
   return (
     <>

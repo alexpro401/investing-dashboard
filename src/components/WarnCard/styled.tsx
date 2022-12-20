@@ -17,7 +17,7 @@ export const Card = styled(Flex)`
 `
 
 export const Head = styled(Flex)`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   gap: 8px;
   font-style: normal;
   font-weight: 700;
@@ -27,7 +27,7 @@ export const Head = styled(Flex)`
 `
 
 export const Text = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 13px;

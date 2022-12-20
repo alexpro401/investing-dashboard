@@ -13,7 +13,7 @@ import { DATE_TIME_FORMAT } from "constants/time"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { parseEther, parseUnits } from "@ethersproject/units"
 import {
-  useActiveInvestmentsInfo,
+  useRiskyActiveInvestmentsInfo,
   useRiskyProposal,
 } from "hooks/useRiskyProposals"
 import { usePoolContract } from "hooks/usePool"
@@ -120,7 +120,7 @@ const useSwapRiskyProposal = ({
     closed: false,
   })
 
-  const investmentsInfo = useActiveInvestmentsInfo(
+  const investmentsInfo = useRiskyActiveInvestmentsInfo(
     poolAddress,
     account,
     proposalId

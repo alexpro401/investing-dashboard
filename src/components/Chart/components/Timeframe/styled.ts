@@ -9,9 +9,8 @@ const Styled = {
   `,
 
   Item: styled.div<{ active?: boolean }>`
-    font-family: Gilroy;
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
-    font-weight: normal;
     padding: 4px 11px 2px;
     font-size: 12px;
     line-height: 130%;

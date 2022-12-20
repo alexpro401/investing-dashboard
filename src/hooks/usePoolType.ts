@@ -7,7 +7,7 @@ export enum POOL_TYPE {
   GOV = "GOV_POOL",
 }
 
-const usePoolType = (address?: string) => {
+export const usePoolType = (address?: string) => {
   const [poolType, setPoolType] = useState<POOL_TYPE | undefined>()
   const traderPoolRegistry = usePoolRegistryContract()
 

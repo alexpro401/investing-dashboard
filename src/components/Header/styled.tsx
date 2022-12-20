@@ -6,7 +6,7 @@ export const Container = styled(Flex)`
   user-select: none;
   width: 100%;
   background: #0e121b;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.15);
   flex-direction: column;
 
   @media only screen and (${device.sm}) {
@@ -84,7 +84,7 @@ export const Tabs = styled(Flex)`
 `
 
 export const Tab = styled(ClickableArea)<{ active?: boolean }>`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 13px;
@@ -107,9 +107,9 @@ export const Tab = styled(ClickableArea)<{ active?: boolean }>`
     left: 0;
     margin: auto;
     background: linear-gradient(64.44deg, #63b49b 12.29%, #a4ebd4 76.64%);
-    box-shadow: 0px 1px 4px rgba(164, 235, 212, 0.29),
-      0px 2px 5px rgba(164, 235, 212, 0.14);
-    border-radius: 2px 2px 0px 0px;
+    box-shadow: 0 1px 4px rgba(164, 235, 212, 0.29),
+      0 2px 5px rgba(164, 235, 212, 0.14);
+    border-radius: 2px 2px 0 0;
     height: 2px;
     width: 100%;
   }
@@ -130,7 +130,7 @@ export const TabAmount = styled(Flex)`
 `
 
 export const Title = styled(Flex)`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 20px;
@@ -141,7 +141,7 @@ export const Title = styled(Flex)`
   color: #e4f2ff;
 
   @media (min-width: 768px) {
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 14px;
@@ -180,7 +180,7 @@ export const PortraitsPlus = styled(Flex)`
   color: #616d8b;
   font-size: 18px;
   font-weight: 500;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   line-height: 18px;
 `
 
@@ -188,7 +188,7 @@ export const FundWrapper = styled.div`
   width: 26px;
   height: 26px;
   border-radius: 50px;
-  border: px solid #363f4e80;
+  border: 0 solid #363f4e80;
   position: absolute;
 `
 

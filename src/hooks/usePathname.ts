@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom"
 
 // custom hook to get the current pathname in React
 
-function usePathname(): string {
+export function usePathname(): string {
   const location = useLocation()
   return location.pathname
 }

@@ -113,7 +113,7 @@ const TipS = {
   `,
   Month: styled.div`
     margin: 0 6px;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 500;
     font-size: 11px;
@@ -122,7 +122,7 @@ const TipS = {
     flex: 0 0 auto;
   `,
   PNL: styled.div<{ pnl: number }>`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 500;
     font-size: 11px;

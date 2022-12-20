@@ -33,7 +33,7 @@ export const Overlay = styled(Flex)`
 `
 
 export const TimeLabel = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -50,7 +50,7 @@ export const TimeInput = styled.input`
   height: 30px;
   width: 63px;
 
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 14px;

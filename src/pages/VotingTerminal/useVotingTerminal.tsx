@@ -10,10 +10,9 @@ import {
   useGovPoolVotingAssets,
 } from "hooks/dao"
 
-import { useActiveWeb3React } from "hooks"
-import useERC721Allowance from "hooks/useERC721Allowance"
+import { useActiveWeb3React, useERC721Allowance } from "hooks"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import useERC20Allowance from "hooks/useERC20Allowance"
+import { useERC20Allowance } from "hooks"
 
 import { useERC20Data } from "state/erc20/hooks"
 import { multiplyBignumbers } from "utils/formulas"

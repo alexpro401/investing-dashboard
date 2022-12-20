@@ -29,7 +29,7 @@ export const DescriptionCardWrapper = styled.div<{ isDefault?: boolean }>`
 `
 
 export const Label = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-weight: 400;
   font-size: 12px;
   line-height: 14px;
@@ -37,7 +37,7 @@ export const Label = styled.div`
 `
 
 export const Content = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 12px;

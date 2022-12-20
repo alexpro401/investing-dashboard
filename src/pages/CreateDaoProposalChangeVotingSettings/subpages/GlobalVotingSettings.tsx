@@ -14,6 +14,7 @@ import { Flex } from "theme"
 import { GovPoolFormOptions } from "types"
 
 import * as S from "../styled"
+import { ZERO_ADDR } from "constants/index"
 
 const GlobalVotingSettings: React.FC = () => {
   const location = useLocation()

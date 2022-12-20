@@ -36,7 +36,7 @@ export const Head = styled(Flex)`
 `
 
 export const Title = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: bold;
   font-size: 22px;
@@ -93,7 +93,7 @@ export const Wallets = styled(Flex)`
 
 export const WalletTitle = styled(Text)`
   padding-left: 16px;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 16px;
@@ -106,7 +106,7 @@ export const WalletTitle = styled(Text)`
 export const PrivacyText = styled.p`
   padding: 0;
   margin: 0;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
@@ -118,7 +118,7 @@ export const PrivacyText = styled.p`
 
 export const LinkText = styled(Link)`
   text-decoration: none;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 12px;

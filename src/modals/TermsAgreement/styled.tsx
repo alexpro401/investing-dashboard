@@ -4,7 +4,7 @@ const Styled = {
   Text: styled.div`
     padding: 0 16px 0;
     box-sizing: border-box;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
@@ -31,7 +31,7 @@ const Styled = {
   CheckboxText: styled.div`
     padding-left: 10px;
     box-sizing: border-box;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
@@ -39,7 +39,7 @@ const Styled = {
     color: #e4f2ff;
   `,
   CheckboxLink: styled.a`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
@@ -52,7 +52,7 @@ const Styled = {
     box-sizing: border-box;
   `,
   Button: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 700;
     font-size: 16px;

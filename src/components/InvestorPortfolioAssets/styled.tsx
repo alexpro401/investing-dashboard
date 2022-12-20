@@ -21,7 +21,7 @@ export const NumberOfAssets = styled.div`
   font-size: 70px;
   color: #969696;
   height: 70px;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-weight: 700;
 `
 
@@ -61,7 +61,7 @@ export const Ticker = styled.div`
 
 export const Price = styled.div<{ type: "positive" | "negative" }>`
   font-size: 14px;
-  font-family: Gilroy;
-font-weight: 500;
+  font-family: ${(props) => props.theme.appFontFamily};
+  font-weight: 500;
   color: ${(props) => (props.type === "positive" ? "#7FFFD4" : "#FF7F7F")};
 `

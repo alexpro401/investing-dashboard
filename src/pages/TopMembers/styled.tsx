@@ -21,7 +21,7 @@ export const MembersList = styled.div`
 `
 
 export const LoadingText = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 12px;

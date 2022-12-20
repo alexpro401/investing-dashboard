@@ -12,10 +12,12 @@ import {
 } from "hooks/dao"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { multiplyBignumbers } from "utils/formulas"
-import useERC20Allowance from "hooks/useERC20Allowance"
 import { useERC20Data } from "state/erc20/hooks"
-import useERC721Allowance from "hooks/useERC721Allowance"
-import { useActiveWeb3React } from "hooks"
+import {
+  useActiveWeb3React,
+  useERC20Allowance,
+  useERC721Allowance,
+} from "hooks"
 import { useGovPoolWithdrawableAssetsQuery } from "hooks/dao/useGovPoolWithdrawableAssets"
 import { useNavigate } from "react-router-dom"
 import { isAddress } from "utils"

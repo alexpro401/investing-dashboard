@@ -22,7 +22,7 @@ interface IValues {
   insuranceUSD: BigNumber
 }
 
-function useInsurance(): [IValues, boolean, () => void] {
+export function useInsurance(): [IValues, boolean, () => void] {
   const { account } = useWeb3React()
   const priceFeed = usePriceFeedContract()
   const insurance = useInsuranceContract()
@@ -77,8 +77,6 @@ function useInsurance(): [IValues, boolean, () => void] {
     fetchInsuranceBalance,
   ]
 }
-
-export default useInsurance
 
 export const useInsuranceDueDay = (
   day

@@ -8,7 +8,7 @@ import Grid from 'storybook/Grid';
 
 const Text = styled.div`
   padding: 0 5px;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -18,7 +18,7 @@ const Text = styled.div`
 
 const Label = styled.div`
   margin-bottom: 30px;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 20px;

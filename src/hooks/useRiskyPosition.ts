@@ -13,7 +13,11 @@ interface Params {
   proposalId?: string
 }
 
-function useRiskyPosition({ closed, proposalAddress, proposalId }: Params) {
+export function useRiskyPosition({
+  closed,
+  proposalAddress,
+  proposalId,
+}: Params) {
   const [position, setPosition] = useState<IRiskyPosition>()
 
   const [response] = useQuery<{

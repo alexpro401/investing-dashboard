@@ -48,7 +48,7 @@ export const Center = styled(Flex)`
 `
 
 export const LoadingText = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
@@ -69,7 +69,7 @@ export const Content = styled(Flex)`
 `
 
 export const Title = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 42px;
@@ -79,7 +79,7 @@ export const Title = styled.div`
 `
 
 export const Description = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -125,7 +125,7 @@ export const LoginContainer = styled(Flex)`
   margin-right: auto;
   margin-left: 61px;
   justify-content: center;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;

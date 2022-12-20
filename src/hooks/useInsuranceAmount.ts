@@ -2,7 +2,7 @@ import { ZERO } from "constants/index"
 import { useInsuranceContract } from "contracts"
 import { useCallback, useEffect, useState } from "react"
 
-const useInsuranceAmount = (account?: string | null) => {
+export const useInsuranceAmount = (account?: string | null) => {
   const insurance = useInsuranceContract()
   const [insuranceAmount, setInsuranceAmount] = useState(ZERO)
 

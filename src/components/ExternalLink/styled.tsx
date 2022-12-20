@@ -3,7 +3,7 @@ import styled from "styled-components"
 export const Container = styled.a<{ color: string; fw?: string; fz?: string }>`
   color: ${({ color }) => color ?? "white"};
 
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: ${({ fw }) => fw ?? "400"};
   font-size: ${({ fz }) => fz ?? "12px"};

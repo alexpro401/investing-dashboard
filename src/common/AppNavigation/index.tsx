@@ -1,19 +1,16 @@
-import { FC, HTMLAttributes, useEffect, useMemo } from "react"
+import { FC, HTMLAttributes, useEffect } from "react"
 
 import * as S from "./styled"
-import { useWindowSize } from "react-use"
-import useForceUpdate from "hooks/useForceUpdate"
 import { useSelector } from "react-redux"
 import { selectIsTabBarHidden } from "state/application/selectors"
+import { useBreakpoints, useForceUpdate } from "hooks"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const AppNavigation: FC<Props> = ({ ...rest }) => {
-  const { width: windowWidth } = useWindowSize()
-
   const isTabBarHidden = useSelector(selectIsTabBarHidden)
 
-  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
+  const { isMobile } = useBreakpoints()
 
   const [, update] = useForceUpdate()
 

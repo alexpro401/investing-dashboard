@@ -12,7 +12,7 @@ const investorGraphClient = createClient({
   requestPolicy: "network-only",
 })
 
-function useInvestorTotalInvest(address?: string | null) {
+export function useInvestorTotalInvest(address?: string | null) {
   const [loading, setLoading] = useState(true)
   const [offset, setOffset] = useState(0)
   const [limit] = useState(1000)

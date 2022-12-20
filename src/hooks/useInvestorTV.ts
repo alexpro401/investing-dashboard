@@ -14,7 +14,7 @@ import {
 } from "utils/formulas"
 import { BigNumber } from "@ethersproject/bignumber"
 
-function useInvestorTV(
+export function useInvestorTV(
   address?: string | null,
   pools?: { id: string }[]
 ): [{ usd: BigNumber }, { loading: boolean }] {

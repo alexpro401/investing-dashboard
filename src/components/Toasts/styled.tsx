@@ -50,7 +50,7 @@ export const Icon = styled.img`
 
 export const Content = styled.div`
   width: 100%;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 13px;

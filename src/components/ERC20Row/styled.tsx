@@ -25,7 +25,7 @@ export const Value = styled(Text).attrs(() => ({
 
 export const RightNode = styled(Flex)`
   align-items: center;
-  padding: 0px;
+  padding: 0;
   gap: 8px;
   flex: none;
   order: 1;
@@ -34,7 +34,7 @@ export const RightNode = styled(Flex)`
 `
 
 export const TokenId = styled(Flex)`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 13px;

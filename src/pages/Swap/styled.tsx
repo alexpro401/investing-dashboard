@@ -28,7 +28,7 @@ export const SwapPathTitle = styled(Flex)`
   gap: 6px;
   justify-content: flex-start;
   width: 100%;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 13px;
@@ -37,7 +37,7 @@ export const SwapPathTitle = styled(Flex)`
 `
 
 export const SwapPathDescription = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 11px;

@@ -58,7 +58,7 @@ export const CreateInsuranceAccidentPoolsStyled = {
     background: transparent;
     border: none;
     gap: 7px;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 16px;

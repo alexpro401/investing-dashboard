@@ -8,7 +8,7 @@ interface Props {
   tokenIds: number[]
 }
 
-const useERC721TokenOwnerMulticall = ({
+export const useERC721TokenOwnerMulticall = ({
   contractAddress,
   tokenIds,
 }: Props): [{ [tokenId: string]: string | undefined }, boolean] => {

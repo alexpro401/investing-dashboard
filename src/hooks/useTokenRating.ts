@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import { useAPI } from "api"
 
-function useTokenRating() {
+export function useTokenRating() {
   const { TokenAPI } = useAPI()
 
   return useCallback(

@@ -9,7 +9,7 @@ const Styled = {
     flex: 1;
   `,
   Heading: styled(motion.div)`
-    font-family: Gilroy;
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 16px;
@@ -33,7 +33,7 @@ const Styled = {
   `,
   HeaderButton: styled(GradientBorderLightGreen)`
     border-radius: 16px;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
@@ -55,7 +55,7 @@ const Styled = {
     padding: 0 16px;
   `,
   ListPlaceholder: styled.div`
-    font-family: Gilroy;
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 300;
     font-size: 12px;

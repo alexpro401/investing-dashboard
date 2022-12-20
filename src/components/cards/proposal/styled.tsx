@@ -11,7 +11,7 @@ import checkGreenIcon from "assets/icons/green-check.svg"
 const Styled = {
   Card: styled(GradientBorder)`
     width: 100%;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
     border-radius: 16px;
     flex-direction: column;
     margin-bottom: 18px;
@@ -38,7 +38,7 @@ const Styled = {
   `,
   Title: styled.div`
     min-width: 24px;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 14px;
@@ -64,7 +64,7 @@ const Styled = {
     height: 24px;
   `,
   SizeTitle: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 13px;
@@ -114,7 +114,7 @@ export const BodyItemStyled = {
     min-height: 16px;
     align-items: center;
     margin-bottom: 2px;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 11px;
@@ -158,7 +158,7 @@ const ActionsStyled = {
     margin: 8px 0 0;
   `,
   Item: styled(GradientBorder)<{ active?: boolean }>`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 500;
     font-size: 13px;

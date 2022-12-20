@@ -15,7 +15,9 @@ interface IPayload {
   loading: boolean
 }
 
-function useInvestProposals(poolAddress?: string): [IPayload, () => void] {
+export function useInvestProposals(
+  poolAddress?: string
+): [IPayload, () => void] {
   const [proposals, setProposals] = useState<IInvestProposalInfo>([])
   const [offset, setOffset] = useState<number>(0)
   const [fetching, setFetching] = useState<boolean>(true)

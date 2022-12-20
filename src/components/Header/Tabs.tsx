@@ -7,7 +7,7 @@ import { useLocation } from "react-router-dom"
 import { To } from "theme"
 import isActiveRoute from "utils/isActiveRoute"
 import { EHeaderTitles } from "."
-import { Tabs, Tab, TabAmount } from "./styled"
+import * as S from "./styled"
 
 interface IHeaderTabsProps {
   tabs: ITab[]
@@ -25,19 +25,21 @@ const HeaderTabs = ({ tabs }: IHeaderTabsProps) => {
 
   return tabs.length > 0 ? (
     <TabsMenu>
-      <Tabs>
+      <S.Tabs>
         {tabs.map((tab: ITab) => {
           return (
             <To key={tab.title} to={tab.source}>
-              <Tab active={isActive(tab.source, tab.activeSource)}>
+              <S.Tab active={isActive(tab.source, tab.activeSource)}>
                 {tab.title}
-              </Tab>
+              </S.Tab>
 
-              {(tab?.amount || 0) > 0 && <TabAmount>{tab.amount}</TabAmount>}
+              {(tab?.amount || 0) > 0 && (
+                <S.TabAmount>{tab.amount}</S.TabAmount>
+              )}
             </To>
           )
         })}
-      </Tabs>
+      </S.Tabs>
     </TabsMenu>
   ) : null
 }

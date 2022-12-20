@@ -5,7 +5,7 @@ import { AppDispatch, AppState } from "state"
 import { updatePayload } from "state/application/actions"
 import { selectPayload } from "state/application/selectors"
 
-function usePayload(): [
+export function usePayload(): [
   AppState["application"]["payload"],
   (params: SubmitState) => void
 ] {

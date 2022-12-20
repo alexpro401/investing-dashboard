@@ -39,7 +39,7 @@ const Content = styled(Flex)`
 `
 const Title = styled.div`
   box-sizing: border-box;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -49,7 +49,7 @@ const Title = styled.div`
   margin-bottom: 2px;
 `
 const Subtitle = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
@@ -75,7 +75,7 @@ const ButtonCancel = styled.button`
   border-top: 2px solid;
   border-right: 2px solid;
   border-color: rgb(105, 105, 117, 0.3);
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 16px;
@@ -93,7 +93,7 @@ const ButtonClose = styled.button`
   outline: none;
   border-top: 2px solid;
   border-color: rgb(105, 105, 117, 0.3);
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;

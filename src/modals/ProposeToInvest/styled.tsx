@@ -5,7 +5,7 @@ const Styled = {
   ModalText: styled.div`
     width: inherit;
     padding: 0 16px 16px;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 500;
     font-size: 13px;

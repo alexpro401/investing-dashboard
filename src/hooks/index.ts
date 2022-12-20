@@ -1,6 +1,4 @@
 import { useWeb3React } from "@web3-react/core"
-import React, { useState, useEffect, useRef } from "react"
-import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 export function useActiveWeb3React() {
   const web3 = useWeb3React()
@@ -8,54 +6,72 @@ export function useActiveWeb3React() {
   return web3
 }
 
-export function useKeyPress(targetKey: string): boolean {
-  // State for keeping track of whether key is pressed
-  const [keyPressed, setKeyPressed] = useState(false)
-  // If pressed key is our target key then set to true
-  function downHandler({ key }): void {
-    if (key === targetKey) {
-      setKeyPressed(true)
-    }
-  }
-  // If released key is our target key then set to false
-  const upHandler = ({ key }): void => {
-    if (key === targetKey) {
-      setKeyPressed(false)
-    }
-  }
-  // Add event listeners
-  useEffect(() => {
-    window.addEventListener("keydown", downHandler)
-    window.addEventListener("keyup", upHandler)
-    // Remove event listeners on cleanup
-    return () => {
-      window.removeEventListener("keydown", downHandler)
-      window.removeEventListener("keyup", upHandler)
-    }
+export * from "./useABI"
+export * from "./useAbiKeeper"
+export * from "./useActiveWallet"
+export * from "./useAlert"
+export * from "./useBalance"
+export * from "./useBlockNumber"
+export * from "./useBreakpoints"
+export * from "./useContract"
+export * from "./useCopyClipboard"
+export * from "./useCreateFund"
+export * from "./useDebounce"
+export * from "./useDefaultConnector"
+export * from "./useEagerConnect"
+export * from "./useERC20"
+export * from "./useERC20Allowance"
+export * from "./useErc721"
+export * from "./useERC721Allowance"
+export * from "./useERC721List"
+export * from "./useERC721Power"
+export * from "./useERC721TokenOwner"
+export * from "./useError"
+export * from "./useFetchListCallback"
+export * from "./useForceUpdate"
+export * from "./useForm"
+export * from "./useFormValidation"
+export * from "./useInactiveListener"
+export * from "./useInsurance"
+export * from "./useInsuranceAmount"
+export * from "./useInvestmentPrice"
+export * from "./useInvestmentProposals"
+export * from "./useInvestorInvestProposals"
+export * from "./useInvestorProposalPools"
+export * from "./useInvestorRiskyProposals"
+export * from "./useInvestorsInsuranceHistory"
+export * from "./useInvestorsLastPoolPosition"
+export * from "./useInvestorsLpHistory"
+export * from "./useInvestorTotalInvest"
+export * from "./useInvestorTV"
+export * from "./useInvestProposalData"
+export * from "./useIsValidator"
+export * from "./useIsWindowVisible"
+export * from "./useNativeToken"
+export * from "./useNotifications"
+export * from "./useOpenPositionsPriceOutUSD"
+export * from "./useOwnedAndInvestedPools"
+export * from "./usePathname"
+export * from "./usePayload"
+export * from "./usePool"
+export * from "./usePoolIcon"
+export * from "./usePoolInvestorsByDay"
+export * from "./usePoolLockedFunds"
+export * from "./usePoolPrice"
+export * from "./usePoolType"
+export * from "./usePrice"
+export * from "./usePrivacyPolicy"
+export * from "./useProposalAddress"
+export * from "./useQueryPagination"
+export * from "./useReadMore"
+export * from "./useRiskyPosition"
+export * from "./useRiskyPrice"
+export * from "./useRiskyProposals"
+export * from "./useStoreTransactionWaiter"
+export * from "./useToken"
+export * from "./useTokenPriceOutUSD"
+export * from "./useTokenRating"
+export * from "./useTransactionWaiter"
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // Empty array ensures that effect is only run on mount and unmount
-  return keyPressed
-}
-
-export const useFocus = (): [any, any] => {
-  const htmlElRef = useRef<any>(null)
-  const setFocus = () => {
-    htmlElRef.current && htmlElRef.current?.focus && htmlElRef.current.focus()
-  }
-
-  return [htmlElRef, setFocus]
-}
-
-export const useBodyLock = () => {
-  const ref = React.createRef()
-
-  useEffect(() => {
-    if (!ref.current) return
-    disableBodyScroll(ref.current)
-
-    return () => clearAllBodyScrollLocks()
-  }, [ref])
-
-  return ref
-}
+export * from "./dao"
+export * from "./pool"

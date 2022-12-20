@@ -1,5 +1,5 @@
 import useError from "hooks/useError"
-import { parseTransactionError } from "./../utils/index"
+import { parseTransactionError } from "utils/index"
 import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { SubmitState } from "constants/types"
@@ -15,7 +15,7 @@ import { useActiveWeb3React } from "hooks"
 
 const ERC20_INTERFACE = new Interface(ERC20)
 
-const useERC20Allowance = (tokens: string[], spender?: string) => {
+export const useERC20Allowance = (tokens: string[], spender?: string) => {
   const { account, library } = useActiveWeb3React()
   const [, setPayload] = usePayload()
   const [, setError] = useError()

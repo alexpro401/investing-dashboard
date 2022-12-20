@@ -30,7 +30,7 @@ export const Fallback = styled(Flex)<IconProps>`
 
 export const SymbolLetter = styled.div`
   transform: translate(0px, 1px);
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -84,10 +84,8 @@ const getIconsPathByChain = (chainId, address) => {
   switch (chainId) {
     case 97:
       return `https://pancake.kiemtienonline360.com/images/coins/${a}.png`
-      break
     default:
       return `https://pancake.kiemtienonline360.com/images/coins/${a}.png`
-      break
   }
 }
 

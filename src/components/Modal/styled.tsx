@@ -38,7 +38,7 @@ export const Head = styled(Flex)`
 `
 
 export const Title = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 700;
   font-size: 16px;

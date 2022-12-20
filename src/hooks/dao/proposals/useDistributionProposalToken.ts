@@ -1,4 +1,4 @@
-import { useERC20 } from "hooks/useERC20"
+import { useERC20 } from "hooks"
 import { useNativeToken } from "hooks/useNativeToken"
 import { useMemo } from "react"
 

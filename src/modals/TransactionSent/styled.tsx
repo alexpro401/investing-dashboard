@@ -18,7 +18,7 @@ export const Text = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;

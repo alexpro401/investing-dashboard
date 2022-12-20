@@ -17,7 +17,7 @@ import usePoolPrice from "hooks/usePoolPrice"
 import useAlert, { AlertType } from "hooks/useAlert"
 import { usePoolContract } from "hooks/usePool"
 import { useTraderPoolContract } from "contracts"
-import { useERC20 } from "hooks/useERC20"
+import { useERC20 } from "hooks"
 import { usePriceFeedContract } from "contracts"
 
 import { useTransactionAdder } from "state/transactions/hooks"

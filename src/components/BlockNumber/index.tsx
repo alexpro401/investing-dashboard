@@ -1,7 +1,7 @@
 // import React, { useState, useRef } from "react"
 import styled from "styled-components"
 import { motion } from "framer-motion"
-import useBlockNumber from "hooks/useBlockNumber"
+import { useBlockNumber } from "hooks"
 
 const StyledBlockNumber = styled(motion.div)`
   position: fixed;
@@ -9,7 +9,7 @@ const StyledBlockNumber = styled(motion.div)`
   right: 30px;
   color: #2680eb;
   font-size: 14px;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-weight: 700;
 `
 

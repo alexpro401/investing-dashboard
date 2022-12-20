@@ -2,7 +2,7 @@ import { useCallback, useState, useEffect, useMemo } from "react"
 import { isEmpty, isEqual } from "lodash"
 
 import useError from "hooks/useError"
-import { useERC20 } from "hooks/useERC20"
+import { useERC20 } from "hooks"
 import { useErc721 } from "hooks/useErc721"
 
 import { Token } from "interfaces"

@@ -4,7 +4,7 @@ import { parseEther } from "@ethersproject/units"
 import { useTraderPoolContract } from "contracts"
 import useForceUpdate from "hooks/useForceUpdate"
 
-function usePoolPrice(
+export function usePoolPrice(
   address: string | undefined
 ): [{ priceUSD: BigNumber; priceBase: BigNumber }, () => void] {
   const [updateObserver, update] = useForceUpdate()

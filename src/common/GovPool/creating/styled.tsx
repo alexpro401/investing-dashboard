@@ -102,7 +102,7 @@ export const CardFieldBtn = styled(AppButton)`
 `
 
 export const SuccessBackdrop = styled.div`
-  font-family: "Gilroy", sans-serif;
+  font-family: ${(props) => props.theme.appFontFamily}, sans-serif;
   position: relative;
   display: flex;
   flex-direction: column;

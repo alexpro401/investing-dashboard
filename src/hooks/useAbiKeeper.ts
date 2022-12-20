@@ -1,12 +1,12 @@
 import { useCallback, useMemo, useState } from "react"
-import { useAbiList } from "./useABI"
+import { useAbiList } from "hooks"
 
 // *hint
 // this hook created to help handle ABI data storing in custom ABI form
 // it handles fetching the ABI from the API
 // any abi value can be changes outside of the hook
 
-const useAbiKeeper = (addresses: string[], executors: string[]) => {
+export const useAbiKeeper = (addresses: string[], executors: string[]) => {
   const [storedAbi, setStoredAbi] = useState<Record<string, string>>({})
 
   const abis = useAbiList(addresses)

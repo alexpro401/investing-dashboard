@@ -10,7 +10,6 @@ export const Overlay = styled(motion.div)`
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 80;
   height: 100%;
   width: 100%;
   z-index: 104;
@@ -47,7 +46,7 @@ export const Content = styled(Flex)`
 `
 
 export const Title = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 20px;

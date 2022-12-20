@@ -15,7 +15,7 @@ export const Content = styled.div`
 `
 
 export const Title = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -28,7 +28,7 @@ export const Title = styled.div`
 `
 
 export const SubTitle = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -91,7 +91,7 @@ export const CalendarIcon = styled.img`
 
 export const HintText = styled.div`
   padding: 0 0 40px;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -100,7 +100,7 @@ export const HintText = styled.div`
 `
 
 export const LabelText = styled(Flex)`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -137,7 +137,7 @@ export const Row = styled(Flex)`
 `
 
 export const TextBase = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -157,7 +157,7 @@ export const Grey = styled(TextBase)`
 export const SymbolsLeft = styled.div`
   white-space: nowrap;
   height: 30px;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -168,7 +168,7 @@ export const SymbolsLeft = styled.div`
 `
 
 export const ValidationError = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;

@@ -18,13 +18,12 @@ const Styled = {
     justify-content: center;
     flex: 1 0 auto;
     padding: 6.5px 18px;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 500;
     font-size: 13px;
     line-height: 15px;
     text-decoration: none;
-    border-radius: 12px;
     color: ${(props) => (props.active ? "#E4F2FF" : "#788ab4")};
     background: ${(props) => (props.active ? " #181e2c" : "transparent")};
     transition: all ease-in-out 0.15s;

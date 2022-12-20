@@ -9,15 +9,15 @@ import {
   SuccessStep,
   TitlesStep,
 } from "common"
+import Modal from "components/Modal"
 
-import { useForm } from "hooks/useForm"
+import { useForm, useBreakpoints } from "hooks"
 import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { useCreateDAO } from "hooks/dao"
 import { useDispatch } from "react-redux"
 import { hideTapBar, showTabBar } from "state/application/actions"
-import { useEffectOnce, useWindowSize } from "react-use"
-import Modal from "../../components/Modal"
+import { useEffectOnce } from "react-use"
 
 enum STEPS {
   titles = "titles",
@@ -38,8 +38,6 @@ const STEPS_TITLES: Record<STEPS, string> = {
 }
 
 const CreateFundDaoForm: FC = () => {
-  const { width: windowWidth } = useWindowSize()
-
   const [currentStep, setCurrentStep] = useState(STEPS.titles)
   const [isSuccessModalShown, setIsSuccessModalShown] = useState(false)
 
@@ -48,7 +46,7 @@ const CreateFundDaoForm: FC = () => {
     () => Object.values(STEPS).indexOf(currentStep) + 1,
     [currentStep]
   )
-  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
+  const { isMobile } = useBreakpoints()
 
   const formController = useForm()
 

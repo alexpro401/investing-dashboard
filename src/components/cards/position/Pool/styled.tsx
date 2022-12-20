@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components"
 
 const SharedAmount = css`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 14px;
@@ -11,13 +11,15 @@ const SharedAmount = css`
 `
 const Styled = {
   PositionSymbol: styled.div`
-    ${SharedAmount}
     margin: 0 4px;
+
+    ${SharedAmount}
   `,
 
   Amount: styled.div`
-    ${SharedAmount}
     margin: 0 0 0 8px;
+
+    ${SharedAmount}
   `,
 }
 

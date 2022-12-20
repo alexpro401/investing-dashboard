@@ -22,7 +22,7 @@ export const Tabs = styled(Flex)`
 export const Tab = styled(Flex)<{ active?: boolean }>`
   justify-content: center;
   width: 60px;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 12px;
@@ -60,7 +60,7 @@ const Head = styled(Flex)`
 
 const TitleRow = styled.div`
   padding: 8px 0 2px;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -70,7 +70,7 @@ const TitleRow = styled.div`
 `
 
 const CardDescription = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
@@ -83,7 +83,7 @@ const CardDescription = styled.div`
 const TokenInfo = styled(Flex)``
 
 const Date = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 13px;
@@ -96,7 +96,7 @@ const Date = styled.div`
 `
 
 const Owner = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 16px;

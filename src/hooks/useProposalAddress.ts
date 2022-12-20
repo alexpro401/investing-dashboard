@@ -1,7 +1,7 @@
 import { useTraderPoolContract } from "contracts"
 import { useEffect, useState } from "react"
 
-function useProposalAddress(poolAddress) {
+export function useProposalAddress(poolAddress) {
   const [proposalAddress, setProposalAddress] = useState("")
 
   const traderPool = useTraderPoolContract(poolAddress)

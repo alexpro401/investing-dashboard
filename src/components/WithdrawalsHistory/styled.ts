@@ -4,7 +4,7 @@ import { Flex, GradientBorder } from "theme"
 const Styled = {
   Title: styled.div`
     width: 100%;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 16px;
@@ -38,7 +38,7 @@ const Styled = {
     padding: 16px 16px 0;
   `,
   ListHeaderItem: styled(Flex)`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 13px;
@@ -57,7 +57,7 @@ const Styled = {
     justify-content: center;
   `,
   WithoutData: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 13px;

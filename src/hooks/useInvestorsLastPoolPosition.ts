@@ -12,7 +12,7 @@ interface Response {
 
 type Result = [Response, () => void]
 
-const useInvestorsLastPoolPosition = (
+export const useInvestorsLastPoolPosition = (
   pool,
   investors,
   prepare?: (d: InvestorPoolPosition[]) => void

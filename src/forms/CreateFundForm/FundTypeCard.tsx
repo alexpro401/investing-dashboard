@@ -19,7 +19,6 @@ const ContainerCard = styled.div<{
   box-sizing: border-box;
   background: linear-gradient(64.44deg, #10151f 32.35%, #181d26 100%);
   mix-blend-mode: normal;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.01);
   border: 1px solid #26324482;
   border-radius: 16px;
   margin-bottom: 16px;
@@ -39,7 +38,7 @@ const Body = styled.div`
 const Text = styled.div``
 
 const Label = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -50,7 +49,7 @@ const Label = styled.div`
 `
 
 const Description = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -60,7 +59,7 @@ const Description = styled.div`
 `
 
 const Link = styled.a`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 12px;

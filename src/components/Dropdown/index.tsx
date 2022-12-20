@@ -54,7 +54,7 @@ export const Label = styled(Text)`
 
 export const Value = styled(Text)`
   font-size: 16px;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-weight: 700;
   color: #f5f5f5;
   margin-left: 15px;

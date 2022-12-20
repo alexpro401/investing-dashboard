@@ -18,14 +18,14 @@ export const Record = styled.div`
 `
 
 export const Label = styled.span`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   color: ${theme.textColors.secondary};
   font-size: 13px;
   font-weight: 500;
 `
 
 export const Value = styled.span`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   color: ${theme.textColors.primary};
   font-size: 13px;
   font-weight: 500;

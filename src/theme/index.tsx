@@ -1,13 +1,11 @@
 import { Link } from "react-router-dom"
 import styled, { css } from "styled-components"
 import { motion } from "framer-motion"
-import { createBreakpoint } from "react-use"
-import { ReactNode, FC } from "react"
 import { colorsTheme } from "./colors.theme"
 
 export const ease = [0.29, 0.98, 0.29, 1]
 
-const breakpoints = {
+export const breakpoints = {
   xxs: 375,
   xs: 500,
   sm: 768,
@@ -15,25 +13,15 @@ const breakpoints = {
   lg: 1280,
 }
 
-export const useBreakpoint = createBreakpoint(breakpoints)
-
-const size = {
-  xxs: `${breakpoints.xxs}px`,
-  xs: `${breakpoints.xs}px`,
-  sm: `${breakpoints.sm}px`,
-  md: `${breakpoints.md}px`,
-  lg: `${breakpoints.lg}px`,
-}
-
 const device = {
-  xxs: `max-width: ${size.xxs}`,
-  xs: `max-width: ${size.xs}`,
-  sm: `max-width: ${size.sm}`,
-  md: `max-width: ${size.md}`,
-  lg: `max-width: ${size.lg}`,
+  xxs: `max-width: ${breakpoints.xxs}px`,
+  xs: `max-width: ${breakpoints.xs}px`,
+  sm: `max-width: ${breakpoints.sm}px`,
+  md: `max-width: ${breakpoints.md}px`,
+  lg: `max-width: ${breakpoints.lg}px`,
 }
 
-export { size, device }
+export { device }
 
 export default {
   textPrimary: "#FAFAFA",
@@ -69,7 +57,7 @@ export const BaseButton = styled(motion.button)`
     transform: scale(0.98);
   } */
   &:focus {
-    outline: 0px solid transparent;
+    outline: 0 solid transparent;
   }
 `
 
@@ -80,7 +68,6 @@ const LinkWrap = styled(Link)<{ c: string; fw: number }>`
   cursor: pointer;
   transition: all 0.1s ease-in-out;
   text-decoration: none;
-  user-select: none;
   padding: 0 20px;
 
   font-weight: ${(props) => props.fw};
@@ -125,7 +112,7 @@ export const Block = styled(Flex)`
   position: relative;
   background: linear-gradient(64.44deg, #24272f 32.35%, #333a48 100%);
   border-radius: 10px;
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
   height: 120px;
   width: 100%;
   justify-content: space-around;
@@ -135,7 +122,7 @@ export const BasicCard = styled(Flex)`
   width: 100%;
   background: linear-gradient(64.44deg, #1f232c 32.35%, #282f3f 100%);
 
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.15);
   border-radius: 10px;
 `
 
@@ -212,15 +199,6 @@ export const GradientBorderSearch = styled(Flex)<{ focused?: boolean }>`
   }
 `
 
-export const External: FC<{
-  href: string
-  children?: ReactNode
-}> = ({ href, children }) => (
-  <ExternalLink href={href} target="_blank" rel="noopener noreferrer">
-    {children}
-  </ExternalLink>
-)
-
 export const Text = styled(motion.span)<{
   color?: string
   fz?: number
@@ -233,7 +211,7 @@ export const Text = styled(motion.span)<{
   block?: boolean
 }>`
   display: ${(props) => (props?.block ? "block" : "inline")};
-  font-family: ${(props) => (props?.ff ? props.ff : "Gilroy")};
+  font-family: ${(props) => (props?.ff ? props.ff : props.theme.appFontFamily)};
   font-size: ${(props) => (props?.fz ? `${props.fz}px` : "14px")};
   font-weight: ${(props) => (props?.fw ? props.fw : 400)};
   line-height: ${(props) => (props?.lh ? props.lh : "initial")};

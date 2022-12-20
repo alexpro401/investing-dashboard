@@ -4,7 +4,7 @@ import { useWeb3React } from "@web3-react/core"
 import useDebounce from "hooks/useDebounce"
 import useSWRImmutable from "swr/immutable"
 
-export default function useBlockNumber() {
+export function useBlockNumber() {
   const { library } = useWeb3React()
   const [blockNumber, setBlockNumber] = useState(null)
   const debounced = useDebounce(blockNumber, 100)
