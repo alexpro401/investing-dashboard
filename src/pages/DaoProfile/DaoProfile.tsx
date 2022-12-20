@@ -33,6 +33,8 @@ import { Flex } from "theme"
 import { createClient, useQuery } from "urql"
 import { GovPoolQuery } from "queries"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
+import { useGovPoolVotingPowerMulticall } from "hooks/dao/useGovPoolUserVotingPower"
+import useGovPoolHelperContractsMulticall from "hooks/dao/useGovPoolHelperContractsMulticall"
 
 const govPoolsClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -49,6 +51,54 @@ const DaoProfile: React.FC = () => {
     variables: useMemo(() => ({ address: daoAddress }), [daoAddress]),
     context: govPoolsClient,
   })
+
+  const [userKeeperContracts] = useGovPoolHelperContractsMulticall(
+    useMemo(() => [daoAddress], [daoAddress])
+  )
+
+  const votingPowerParams = useMemo(
+    () => [
+      {
+        userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
+        address: account,
+        isMicroPool: false,
+        useDelegated: false,
+      },
+      {
+        userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
+        address: account,
+        isMicroPool: true,
+        useDelegated: false,
+      },
+      {
+        userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
+        address: account,
+        isMicroPool: false,
+        useDelegated: true,
+      },
+      {
+        userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
+        address: "0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3",
+        isMicroPool: false,
+        useDelegated: false,
+      },
+      {
+        userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
+        address: "0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3",
+        isMicroPool: true,
+        useDelegated: false,
+      },
+      {
+        userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
+        address: "0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3",
+        isMicroPool: false,
+        useDelegated: true,
+      },
+    ],
+    [account, daoAddress, userKeeperContracts]
+  )
+
+  const [data, loading] = useGovPoolVotingPowerMulticall(votingPowerParams)
 
   const isValidator = true
 

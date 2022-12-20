@@ -13,6 +13,7 @@ import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
 import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
 import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
+import { ZERO } from "constants/index"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   data: IGovPoolQuery
@@ -26,10 +27,11 @@ const DaoPoolCard: React.FC<Props> = ({ data, account, children, ...rest }) => {
   const { descriptionObject } = useGovPoolDescription(id)
   const [assetsExisting, assets] = useGovPoolVotingAssets(id)
   const [{ tvl, mc_tvl, members, lau }] = useGovPoolStatistic(data)
-  const [userVotingPower] = useGovPoolUserVotingPower({
-    daoAddress: id,
-    address: account,
-  })
+  const userVotingPower = {
+    power: ZERO,
+    totalNftPower: ZERO,
+    nftPower: [],
+  }
 
   const poolName = React.useMemo(() => {
     if (isNil(data)) return ""

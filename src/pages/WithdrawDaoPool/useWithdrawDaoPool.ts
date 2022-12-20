@@ -53,10 +53,11 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
   )
 
   // get power for all nfts
-  const [userOwnedPower] = useGovPoolUserVotingPower({
-    daoAddress: daoPoolAddress || "",
-    address: account,
-  })
+  const userOwnedPower = {
+    power: ZERO,
+    totalNftPower: ZERO,
+    nftPower: [],
+  } as any
 
   // merge all lists in one
   const allNftsId = useMemo(() => {

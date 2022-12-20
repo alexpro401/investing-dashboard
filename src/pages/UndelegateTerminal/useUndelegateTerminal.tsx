@@ -46,11 +46,11 @@ const useUndelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
   const priceUSD = useTokenPriceOutUSD({ tokenAddress })
 
   // get power for all nfts
-  const [delegatedNftPower] = useGovPoolUserVotingPower({
-    daoAddress: daoPoolAddress || "",
-    address: account,
-    useDelegated: true,
-  })
+  const delegatedNftPower = {
+    power: ZERO,
+    totalNftPower: ZERO,
+    nftPower: [],
+  } as any
 
   // merge all lists in one
   const allNftsId = useMemo(() => {
