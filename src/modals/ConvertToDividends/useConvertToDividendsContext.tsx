@@ -61,6 +61,7 @@ function useConvertToDividendsModal(): [
 
 const defaultContext = {
   isOpen: false,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   convertToDividends: (address: string, id: string) => {},
   onConvertToDividendsClose: () => {},
 }

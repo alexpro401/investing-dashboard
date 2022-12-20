@@ -75,11 +75,6 @@ export const useGovPoolProposal = (
     [daoPoolGraph]
   )
 
-  const graphGovPoolValidatorProposal = useMemo(
-    () => daoPoolValidatorsGraph?.proposals?.[0],
-    [daoPoolValidatorsGraph]
-  )
-
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [insuranceProposalView, setInsuranceProposalView] =

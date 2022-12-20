@@ -14,7 +14,6 @@ export const Container = styled(StepsControllerContext)`
 `
 
 export const StepsContainer = styled(motion.div).attrs(() => ({
-  className: "yopta",
   initial: { opacity: 0 },
   animate: { opacity: 1 },
   exit: { opacity: 0 },
@@ -26,6 +25,9 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   display: flex;
   flex-direction: column;
   height: 100%;
+  max-width: 775px;
+  margin: 0 auto;
+  align-self: center;
 `
 
 export const StepsRoot = styled.div`

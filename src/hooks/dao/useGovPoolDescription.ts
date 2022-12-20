@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react"
 
 import { useGovPoolContract } from "contracts"
 import { IpfsEntity } from "utils/ipfsEntity"
-import { IGovPoolDescription } from "types/dao.types"
+import { IGovPoolDescription } from "types"
 import { parseIpfsString } from "utils/ipfs"
 
 interface UseGovPoolDescriptionUrlResponse {

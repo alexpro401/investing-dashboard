@@ -1,22 +1,21 @@
 import React, { useEffect, useMemo } from "react"
 import { useParams, useLocation } from "react-router-dom"
-import { formatUnits, formatEther } from "@ethersproject/units"
 
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
 import CreateCustomProposalTypeContextProvider from "context/govPool/proposals/regular/CreateCustomProposalType"
-import FundDaoCreatingContextProvider from "context/FundDaoCreatingContext"
+import GovPoolFormContextProvider from "context/govPool/GovPoolFormContext"
 import CreateNewProposalTypeForm from "forms/CreateNewProposalTypeForm"
 import { useGovPoolSetting, useGovPoolValidatorsCount } from "hooks/dao"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
-import { ZERO_ADDR } from "constants/index"
-import { cutStringZeroes } from "utils"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
+import { ZERO_ADDR } from "constants/index"
 
 import * as S from "./styled"
+import { GovPoolFormOptions } from "types"
 
 const CreateDaoProposalType: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
@@ -35,7 +34,14 @@ const CreateDaoProposalType: React.FC = () => {
 
   const loader = useMemo(
     () => (
-      <Flex gap={"24"} full m="16px 0 0 0" dir="column" ai={"center"}>
+      <Flex
+        gap={"24"}
+        full
+        m="16px 0 0 0"
+        dir="column"
+        ai={"center"}
+        jc={"flex-start"}
+      >
         <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"40px"} />
         <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"40px"} />
         <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
@@ -69,6 +75,27 @@ const CreateDaoProposalType: React.FC = () => {
     quorumValidators,
   } = daoSettings
 
+  const govPoolFormOptions = {
+    ...INITIAL_DAO_PROPOSAL,
+    _isValidator: Boolean(validatorsCount > 0),
+    _defaultProposalSettingForm: {
+      ...INITIAL_DAO_PROPOSAL._defaultProposalSettingForm,
+      earlyCompletion,
+      delegatedVotingAllowed,
+      validatorsVote,
+      duration,
+      quorum,
+      minVotesForVoting,
+      minVotesForCreating,
+      rewardToken: rewardToken === ZERO_ADDR ? "" : rewardToken,
+      creationReward,
+      executionReward,
+      voteRewardsCoefficient,
+      durationValidators,
+      quorumValidators,
+    },
+  } as GovPoolFormOptions
+
   return (
     <>
       <Header>Create Proposal</Header>
@@ -82,47 +109,16 @@ const CreateDaoProposalType: React.FC = () => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <FundDaoCreatingContextProvider
+          <GovPoolFormContextProvider
             customLSKey={"creating-new-dao-proposal-type"}
-            daoProposal={{
-              ...INITIAL_DAO_PROPOSAL,
-              _isValidator: validatorsCount > 0,
-              _defaultProposalSettingForm: {
-                ...INITIAL_DAO_PROPOSAL._defaultProposalSettingForm,
-                earlyCompletion,
-                delegatedVotingAllowed,
-                validatorsVote,
-                duration: duration.toNumber(),
-                durationValidators: durationValidators.toNumber(),
-                quorum: cutStringZeroes(formatUnits(quorum, 25)),
-                quorumValidators: cutStringZeroes(
-                  formatUnits(quorumValidators, 25)
-                ),
-                minVotesForVoting: cutStringZeroes(
-                  formatEther(minVotesForVoting)
-                ),
-                minVotesForCreating: cutStringZeroes(
-                  formatEther(minVotesForCreating)
-                ),
-                rewardToken: rewardToken === ZERO_ADDR ? "" : rewardToken,
-                creationReward: cutStringZeroes(
-                  formatUnits(creationReward, 18)
-                ),
-                executionReward: cutStringZeroes(
-                  formatUnits(executionReward, 18)
-                ),
-                voteRewardsCoefficient: cutStringZeroes(
-                  formatUnits(voteRewardsCoefficient, 18)
-                ),
-              },
-            }}
+            govPoolFormOptions={govPoolFormOptions}
           >
             <CreateCustomProposalTypeContextProvider>
               <GovProposalCreatingContextProvider>
                 <CreateNewProposalTypeForm />
               </GovProposalCreatingContextProvider>
             </CreateCustomProposalTypeContextProvider>
-          </FundDaoCreatingContextProvider>
+          </GovPoolFormContextProvider>
         </S.CreateNewDaoProposalTypePageHolder>
       </WithGovPoolAddressValidation>
     </>

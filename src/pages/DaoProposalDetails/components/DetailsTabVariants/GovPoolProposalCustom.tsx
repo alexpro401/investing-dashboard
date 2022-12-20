@@ -5,7 +5,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   govPoolProposal: ReturnType<typeof useGovPoolProposal>
 }
 
-const GovPoolProposalCustom: FC<Props> = ({ ...rest }) => {
+const GovPoolProposalCustom: FC<Props> = () => {
   return <></>
 }
 

@@ -1,31 +1,13 @@
 import { createGlobalStyle, css } from "styled-components"
 import styled from "styled-components"
 import { device } from "theme"
-import { motion } from "framer-motion"
 
 import "swiper/swiper-bundle.min.css"
 import "swiper/swiper.min.css"
 
-export const GradientSVG = () => {
-  const gradientTransform = `rotate(${180})`
-
-  return (
-    <svg style={{ height: 0, width: 0 }}>
-      <defs>
-        <linearGradient
-          id="progress-bar-gradient"
-          gradientTransform={gradientTransform}
-        >
-          <stop offset="0%" stopColor="#A4EBD4" />
-          <stop offset="92%" stopColor="#000" stopOpacity="0.2" />
-        </linearGradient>
-      </defs>
-    </svg>
-  )
-}
-
 const SwiperGlobalStyle = css`
   :root {
+    display: flex;
     --swiper-theme-color: #7fffd4;
 
     --swiper-pagination-bullet-size: 4px;

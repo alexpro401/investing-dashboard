@@ -12,7 +12,7 @@ import {
   Icon,
 } from "common"
 import { AddressAmountField, InputField, DurationField } from "fields"
-import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { ICON_NAMES } from "constants/icon-names"
 
 import * as S from "./styled"
@@ -24,7 +24,7 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 import { createPortal } from "react-dom"
 
 const IsDaoValidatorStep: FC = () => {
-  const { validatorsParams, isValidator } = useContext(FundDaoCreatingContext)
+  const { validatorsParams, isValidator } = useContext(GovPoolFormContext)
 
   const { name, symbol, duration, quorum, validators, balances } =
     validatorsParams

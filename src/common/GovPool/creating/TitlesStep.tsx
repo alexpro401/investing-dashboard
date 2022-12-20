@@ -6,6 +6,7 @@ import {
   useContext,
   useMemo,
   useState,
+  useEffect,
 } from "react"
 
 import {
@@ -31,7 +32,7 @@ import { CreateDaoCardStepNumber } from "../components"
 
 import * as S from "./styled"
 
-import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { ICON_NAMES } from "constants/icon-names"
 import { readFromClipboard } from "utils/clipboard"
 import { useFormValidation } from "hooks/useFormValidation"
@@ -54,9 +55,14 @@ import { useActiveWeb3React } from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { SUPPORTED_SOCIALS } from "constants/socials"
 import { createPortal } from "react-dom"
+import { useEffectOnce } from "react-use"
 
-const TitlesStep: FC = () => {
-  const daoPoolFormContext = useContext(FundDaoCreatingContext)
+interface ITitlesStepProps {
+  isCreatingProposal?: boolean
+}
+
+const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
+  const daoPoolFormContext = useContext(GovPoolFormContext)
 
   const { isErc20, isErc721, erc20, erc721, socialLinks } = daoPoolFormContext
 
@@ -84,6 +90,12 @@ const TitlesStep: FC = () => {
       ? getExplorerLink(chainId, tokenAddress.get, ExplorerDataType.ADDRESS)
       : ""
   }, [chainId, tokenAddress.get])
+
+  useEffect(() => {
+    if (socialLinks.get.length !== 0 && isCreatingProposal) {
+      setIsShowSocials(true)
+    }
+  }, [socialLinks, isCreatingProposal])
 
   const {
     getFieldErrorMessage,
@@ -175,10 +187,10 @@ const TitlesStep: FC = () => {
           }
         : {}),
 
-      ...(isErc20.get
+      ...(isErc20.get && !isCreatingProposal
         ? { tokenAddress: { required, isAddressValidator } }
         : {}),
-      ...(isErc721.get
+      ...(isErc721.get && !isCreatingProposal
         ? {
             nftAddress: { required, isAddressValidator },
             totalPowerInTokens: { required },
@@ -215,6 +227,90 @@ const TitlesStep: FC = () => {
     setIsShowSocials(true)
   }, [socialLinks])
 
+  const SocialLinks = useMemo(
+    () => (
+      <>
+        {!socialLinks.get.length && (
+          <S.CardAddBtn
+            color="default"
+            text="+ Add social links"
+            onClick={handleAddSocials}
+          />
+        )}
+        <Collapse isOpen={!!socialLinks.get && isShowSocials}>
+          <CardFormControl>
+            {socialLinks.get.map(([key, value], idx) => (
+              <SocialLinkField
+                key={idx}
+                socialType={key}
+                label={key}
+                labelNodeRight={
+                  isFieldValid(
+                    key === "other" ? `others[${idx - 6}].value` : `${key}`
+                  ) ? (
+                    <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                  ) : (
+                    <></>
+                  )
+                }
+                value={value}
+                setValue={(val) => {
+                  socialLinks.set((prevState) => {
+                    const nextState = [...prevState]
+                    nextState[idx][1] = val as string
+                    return nextState
+                  })
+                }}
+                onRemove={() => {
+                  socialLinks.set((prevState) => {
+                    let nextState = [...prevState]
+
+                    if (key === "other") {
+                      nextState = [...prevState.filter((el, i) => i !== idx)]
+                    } else {
+                      nextState[idx][1] = ""
+                    }
+
+                    return nextState
+                  })
+                }}
+                errorMessage={getFieldErrorMessage(
+                  key === "other" ? `others[${idx - 6}].value` : `${key}`
+                )}
+                onPaste={() => {
+                  touchField(
+                    key === "other" ? `others[${idx - 6}].value` : `${key}`
+                  )
+                }}
+              />
+            ))}
+            <S.CardAddBtn
+              text="+ Add other"
+              size="no-paddings"
+              color="default"
+              onClick={() => {
+                socialLinks.set((prevState) => {
+                  return [
+                    ...prevState,
+                    ["other", ""] as [SUPPORTED_SOCIALS, string],
+                  ]
+                })
+              }}
+            />
+          </CardFormControl>
+        </Collapse>
+      </>
+    ),
+    [
+      socialLinks,
+      getFieldErrorMessage,
+      handleAddSocials,
+      isFieldValid,
+      isShowSocials,
+      touchField,
+    ]
+  )
+
   const appNavigationEl = document.querySelector("#app-navigation")
 
   return (
@@ -226,12 +322,17 @@ const TitlesStep: FC = () => {
             title="DAO Profile"
           />
           <CardDescription>
-            <p>Enter basic info about your DAO</p>
-            <br />
-            <p>
-              *Once created, the DAO settings can be changed only by voting via
-              the appropriate proposal.
-            </p>
+            {isCreatingProposal && <p>Make your changes below.</p>}
+            {!isCreatingProposal && (
+              <>
+                <p>Enter basic info about your DAO</p>
+                <br />
+                <p>
+                  *Once created, the DAO settings can be changed only by voting
+                  via the appropriate proposal.
+                </p>
+              </>
+            )}
           </CardDescription>
         </Card>
 
@@ -243,333 +344,313 @@ const TitlesStep: FC = () => {
           url={avatarUrl.get}
         >
           <S.CreateFundDaoAvatarActions>
-            <S.CreateFundDaoAvatarBtn>Add fund photo</S.CreateFundDaoAvatarBtn>
+            <S.CreateFundDaoAvatarBtn>
+              {isCreatingProposal ? "Change fund photo" : "Add fund photo"}
+            </S.CreateFundDaoAvatarBtn>
             <S.CreateFundDaoAvatarBtnErrorMessage>
               {getFieldErrorMessage("avatarUrl")}
             </S.CreateFundDaoAvatarBtnErrorMessage>
           </S.CreateFundDaoAvatarActions>
         </Avatar>
 
-        <Card>
-          <CardHead
-            nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
-            title="DAO Name"
-          />
-          <CardDescription>
-            <p>*Maximum 15 characters</p>
-          </CardDescription>
-          <InputField
-            value={daoName.get}
-            setValue={daoName.set}
-            label="DAO name"
-            labelNodeRight={
-              isFieldValid("daoName") ? (
-                <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
-              ) : (
-                <></>
-              )
-            }
-            errorMessage={getFieldErrorMessage("daoName")}
-            onBlur={() => touchField("daoName")}
-          />
-        </Card>
-
-        <Card>
-          <CardHead
-            nodeLeft={<Icon name={ICON_NAMES.shieldCheck} />}
-            title="Governance token information"
-          />
-          <CardDescription>
-            <p>
-              For governance, you can choose any ERC-20 token, any (ERC-721)
-              NFT, or a hybrid of both.
-            </p>
-            <br />
-            <p>
-              *Token/NFT selected for governance cannot be changed once
-              initially set.
-            </p>
-          </CardDescription>
-        </Card>
-
-        <Card>
-          <CardHead
-            nodeLeft={<Icon name={ICON_NAMES.dollarOutline} />}
-            title="ERC-20"
-            nodeRight={
-              <Switch
-                isOn={isErc20.get}
-                onChange={(n, v) => {
-                  isErc20.set(v)
-                  if (!v && !isErc721.get) {
-                    isErc721.set(true)
-                  }
-                }}
-                name={"create-fund-title-step-is-erc20"}
+        {isCreatingProposal && (
+          <>
+            <Card>
+              <CardHead
+                nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
+                title="DAO Name"
               />
-            }
-          />
-          <CardDescription>
-            <p>
-              Enter ERC-20 token address or create a new one. 1 token = 1 Voting
-              power
-            </p>
-          </CardDescription>
-          <Collapse isOpen={isErc20.get}>
-            <CardFormControl>
-              <OverlapInputField
-                value={tokenAddress.get}
-                setValue={tokenAddress.set}
-                label="ERC-20 token"
-                labelNodeRight={
-                  isFieldValid("tokenAddress") ? (
-                    <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
-                  ) : (
-                    <></>
-                  )
-                }
-                errorMessage={getFieldErrorMessage("tokenAddress")}
-                onBlur={() => touchField("tokenAddress")}
-                nodeRight={
-                  <AppButton
-                    type="button"
-                    text={"Paste"}
-                    color="default"
-                    size="no-paddings"
-                    onClick={() => pasteFromClipboard(tokenAddress.set)}
-                  />
-                }
-                overlapNodeLeft={
-                  tokenAddress.get &&
-                  erc20TokenData?.name &&
-                  erc20TokenData?.symbol && (
-                    <TokenChip
-                      name={erc20TokenData?.name}
-                      symbol={erc20TokenData?.symbol}
-                      link={erc20TokenExplorerLink}
-                    />
-                  )
-                }
-                overlapNodeRight={
-                  tokenAddress.get &&
-                  erc20TokenData?.name &&
-                  erc20TokenData?.symbol && (
-                    <AppButton
-                      type="button"
-                      text="Paste another"
-                      color="default"
-                      size="no-paddings"
-                      onClick={() => {
-                        tokenAddress.set("")
-                      }}
-                    />
-                  )
-                }
-                disabled={!!tokenAddress.get && !!erc20TokenData?.name}
-              />
-            </CardFormControl>
-          </Collapse>
-        </Card>
-
-        <Card>
-          <CardHead
-            nodeLeft={<Icon name={ICON_NAMES.star} />}
-            title="ERC-721 (NFT)"
-            nodeRight={
-              <Switch
-                isOn={isErc721.get}
-                onChange={(n, v) => {
-                  isErc721.set(v)
-                  if (!v && !isErc20.get) {
-                    isErc20.set(true)
-                  }
-                }}
-                name={"create-fund-title-step-is-erc721"}
-              />
-            }
-          />
-          <CardDescription>
-            <p>
-              Enter the governing NFT (ERC-721) address, number of NFTs in the
-              series, and the voting power. For governance, you can choose any
-              ERC-20 token, any (ERC-721) NFT, or a hybrid of both.
-            </p>
-            <br />
-            <p>
-              With hybrid governance (ERC-20 + NFT), your NFT can have more
-              weight than a token, and thus should have more voting power.
-            </p>
-          </CardDescription>
-          <Collapse isOpen={isErc721.get}>
-            <CardFormControl>
-              <OverlapInputField
-                value={nftAddress.get}
-                setValue={nftAddress.set}
-                label="NFT ERC-721 address"
-                labelNodeRight={
-                  isFieldValid("nftAddress") ? (
-                    <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
-                  ) : (
-                    <></>
-                  )
-                }
-                nodeRight={
-                  <AppButton
-                    type="button"
-                    color="default"
-                    size="no-paddings"
-                    onClick={() => pasteFromClipboard(nftAddress.set)}
-                    text={"Paste"}
-                  />
-                }
-                overlapNodeLeft={
-                  erc721Name &&
-                  erc721Symbol && (
-                    <TokenChip
-                      name={erc721Name}
-                      symbol={erc721Symbol}
-                      link={erc20TokenExplorerLink}
-                    />
-                  )
-                }
-                overlapNodeRight={
-                  erc721Name &&
-                  erc721Symbol && (
-                    <AppButton
-                      type="button"
-                      text="Paste another"
-                      color="default"
-                      size="no-paddings"
-                      onClick={() => {
-                        nftAddress.set("")
-                      }}
-                    />
-                  )
-                }
-                errorMessage={getFieldErrorMessage("nftAddress")}
-                onBlur={() => touchField("nftAddress")}
-              />
-              <InputField
-                value={totalPowerInTokens.get}
-                setValue={totalPowerInTokens.set}
-                label="Voting power of all NFTs"
-                errorMessage={getFieldErrorMessage("totalPowerInTokens")}
-                onBlur={() => touchField("totalPowerInTokens")}
-              />
-              {!erc721IsEnumerable && (
+              <CardDescription>
+                <p>Up to 15 characters</p>
+              </CardDescription>
+              <CardFormControl>
                 <InputField
-                  value={nftsTotalSupply.get}
-                  setValue={nftsTotalSupply.set}
-                  label="Number of NFTs"
-                  errorMessage={getFieldErrorMessage("nftsTotalSupply")}
-                  onBlur={() => touchField("nftsTotalSupply")}
-                />
-              )}
-            </CardFormControl>
-          </Collapse>
-        </Card>
-
-        <Card>
-          <CardHead
-            nodeLeft={<Icon name={ICON_NAMES.globe} />}
-            title="Additional Info"
-          />
-          <CardDescription>
-            <p>Add your DAO’s website, description, and social links.</p>
-          </CardDescription>
-          <CardFormControl>
-            <InputField
-              value={websiteUrl.get}
-              setValue={websiteUrl.set}
-              label="Site"
-              errorMessage={getFieldErrorMessage("websiteUrl")}
-              onBlur={() => touchField("websiteUrl")}
-            />
-            <TextareaField
-              value={description.get}
-              setValue={description.set}
-              label="Description"
-              errorMessage={getFieldErrorMessage("description")}
-              onBlur={() => touchField("description")}
-            />
-          </CardFormControl>
-          {!socialLinks.get.length ? (
-            <S.CardAddBtn
-              text={"+ Add social media"}
-              size="no-paddings"
-              color="default"
-              onClick={handleAddSocials}
-            />
-          ) : (
-            <></>
-          )}
-          <Collapse isOpen={!!socialLinks.get || isShowSocials}>
-            <CardFormControl>
-              {socialLinks.get.map(([key, value], idx) => (
-                <SocialLinkField
-                  key={idx}
-                  socialType={key}
-                  label={key}
+                  value={daoName.get}
+                  setValue={daoName.set}
+                  label="DAO name"
                   labelNodeRight={
-                    isFieldValid(
-                      key === "other" ? `others[${idx - 6}].value` : `${key}`
-                    ) ? (
+                    isFieldValid("daoName") ? (
                       <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
                     ) : (
                       <></>
                     )
                   }
-                  value={value}
-                  setValue={(val) => {
-                    socialLinks.set((prevState) => {
-                      const nextState = [...prevState]
-                      nextState[idx][1] = val as string
-                      return nextState
-                    })
-                  }}
-                  onRemove={() => {
-                    socialLinks.set((prevState) => {
-                      let nextState = [...prevState]
-
-                      if (key === "other") {
-                        nextState = [...prevState.filter((el, i) => i !== idx)]
-                      } else {
-                        nextState[idx][1] = ""
-                      }
-
-                      return nextState
-                    })
-                  }}
-                  errorMessage={getFieldErrorMessage(
-                    key === "other" ? `others[${idx - 6}].value` : `${key}`
-                  )}
-                  onPaste={() => {
-                    touchField(
-                      key === "other" ? `others[${idx - 6}].value` : `${key}`
-                    )
-                  }}
+                  errorMessage={getFieldErrorMessage("daoName")}
+                  onBlur={() => touchField("daoName")}
                 />
-              ))}
-              {socialLinks.get.length ? (
-                <S.CardAddBtn
-                  text="+ Add other"
-                  size="no-paddings"
-                  color="default"
-                  onClick={() => {
-                    socialLinks.set((prevState) => {
-                      return [
-                        ...prevState,
-                        ["other", ""] as [SUPPORTED_SOCIALS, string],
-                      ]
-                    })
-                  }}
+              </CardFormControl>
+            </Card>
+            <Card>
+              <CardHead
+                nodeLeft={<Icon name={ICON_NAMES.globe} />}
+                title="Additional Info"
+              />
+              <CardDescription>
+                <p>Add your DAO’s website, description, and social links.</p>
+              </CardDescription>
+              <CardFormControl>
+                <InputField
+                  value={websiteUrl.get}
+                  setValue={websiteUrl.set}
+                  label="Site"
+                  errorMessage={getFieldErrorMessage("websiteUrl")}
+                  onBlur={() => touchField("websiteUrl")}
                 />
-              ) : (
-                <></>
-              )}
+                <TextareaField
+                  value={description.get}
+                  setValue={description.set}
+                  label="Description"
+                  errorMessage={getFieldErrorMessage("description")}
+                  onBlur={() => touchField("description")}
+                />
+                {SocialLinks}
+              </CardFormControl>
+            </Card>
+          </>
+        )}
+        {!isCreatingProposal && (
+          <Card>
+            <CardHead
+              nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
+              title="About DAO "
+            />
+            <CardDescription>
+              <p>Add your DAO’s website, description, and social links.</p>
+            </CardDescription>
+            <CardFormControl>
+              <InputField
+                value={daoName.get}
+                setValue={daoName.set}
+                label="DAO name"
+                labelNodeRight={
+                  isFieldValid("daoName") ? (
+                    <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                  ) : (
+                    <></>
+                  )
+                }
+                errorMessage={getFieldErrorMessage("daoName")}
+                onBlur={() => touchField("daoName")}
+              />
+              <TextareaField
+                value={description.get}
+                setValue={description.set}
+                label="Description"
+                errorMessage={getFieldErrorMessage("description")}
+                onBlur={() => touchField("description")}
+              />
+              <InputField
+                value={websiteUrl.get}
+                setValue={websiteUrl.set}
+                label="Site"
+                errorMessage={getFieldErrorMessage("websiteUrl")}
+                onBlur={() => touchField("websiteUrl")}
+              />
             </CardFormControl>
-          </Collapse>
-        </Card>
+            {SocialLinks}
+          </Card>
+        )}
+
+        {!isCreatingProposal && (
+          <Card>
+            <CardHead
+              nodeLeft={<Icon name={ICON_NAMES.shieldCheck} />}
+              title="Governance token information"
+            />
+            <CardDescription>
+              <p>
+                For governance, you can choose any ERC-20 token, any (ERC-721)
+                NFT, or a hybrid of both.
+              </p>
+              <br />
+              <p>
+                *Token/NFT selected for governance cannot be changed once
+                initially set.
+              </p>
+            </CardDescription>
+          </Card>
+        )}
+
+        {!isCreatingProposal && (
+          <Card>
+            <CardHead
+              nodeLeft={<Icon name={ICON_NAMES.dollarOutline} />}
+              title="ERC-20"
+              nodeRight={
+                <Switch
+                  isOn={isErc20.get}
+                  onChange={(n, v) => {
+                    isErc20.set(v)
+                    if (!v && !isErc721.get) {
+                      isErc721.set(true)
+                    }
+                  }}
+                  name={"create-fund-title-step-is-erc20"}
+                />
+              }
+            />
+            <CardDescription>
+              <p>
+                Enter ERC-20 token address or create a new one. 1 token = 1
+                Voting power
+              </p>
+            </CardDescription>
+            <Collapse isOpen={isErc20.get}>
+              <CardFormControl>
+                <OverlapInputField
+                  value={tokenAddress.get}
+                  setValue={tokenAddress.set}
+                  label="ERC-20 token"
+                  labelNodeRight={
+                    isFieldValid("tokenAddress") ? (
+                      <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                    ) : (
+                      <></>
+                    )
+                  }
+                  errorMessage={getFieldErrorMessage("tokenAddress")}
+                  onBlur={() => touchField("tokenAddress")}
+                  nodeRight={
+                    <AppButton
+                      type="button"
+                      text={"Paste"}
+                      color="default"
+                      size="no-paddings"
+                      onClick={() => pasteFromClipboard(tokenAddress.set)}
+                    />
+                  }
+                  overlapNodeLeft={
+                    tokenAddress.get &&
+                    erc20TokenData?.name &&
+                    erc20TokenData?.symbol && (
+                      <TokenChip
+                        name={erc20TokenData?.name}
+                        symbol={erc20TokenData?.symbol}
+                        link={erc20TokenExplorerLink}
+                      />
+                    )
+                  }
+                  overlapNodeRight={
+                    tokenAddress.get &&
+                    erc20TokenData?.name &&
+                    erc20TokenData?.symbol && (
+                      <AppButton
+                        type="button"
+                        text="Paste another"
+                        color="default"
+                        size="no-paddings"
+                        onClick={() => {
+                          tokenAddress.set("")
+                        }}
+                      />
+                    )
+                  }
+                  disabled={!!tokenAddress.get && !!erc20TokenData?.name}
+                />
+              </CardFormControl>
+            </Collapse>
+          </Card>
+        )}
+
+        {!isCreatingProposal && (
+          <Card>
+            <CardHead
+              nodeLeft={<Icon name={ICON_NAMES.star} />}
+              title="ERC-721 (NFT)"
+              nodeRight={
+                <Switch
+                  isOn={isErc721.get}
+                  onChange={(n, v) => {
+                    isErc721.set(v)
+                    if (!v && !isErc20.get) {
+                      isErc20.set(true)
+                    }
+                  }}
+                  name={"create-fund-title-step-is-erc721"}
+                />
+              }
+            />
+            <CardDescription>
+              <p>
+                Enter the governing NFT (ERC-721) address, number of NFTs in the
+                series, and the voting power. For governance, you can choose any
+                ERC-20 token, any (ERC-721) NFT, or a hybrid of both.
+              </p>
+              <br />
+              <p>
+                With hybrid governance (ERC-20 + NFT), your NFT can have more
+                weight than a token, and thus should have more voting power.
+              </p>
+            </CardDescription>
+            <Collapse isOpen={isErc721.get}>
+              <CardFormControl>
+                <OverlapInputField
+                  value={nftAddress.get}
+                  setValue={nftAddress.set}
+                  label="NFT ERC-721 address"
+                  labelNodeRight={
+                    isFieldValid("nftAddress") ? (
+                      <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                    ) : (
+                      <></>
+                    )
+                  }
+                  nodeRight={
+                    <AppButton
+                      type="button"
+                      color="default"
+                      size="no-paddings"
+                      onClick={() => pasteFromClipboard(nftAddress.set)}
+                      text={"Paste"}
+                    />
+                  }
+                  overlapNodeLeft={
+                    erc721Name &&
+                    erc721Symbol && (
+                      <TokenChip
+                        name={erc721Name}
+                        symbol={erc721Symbol}
+                        link={erc20TokenExplorerLink}
+                      />
+                    )
+                  }
+                  overlapNodeRight={
+                    erc721Name &&
+                    erc721Symbol && (
+                      <AppButton
+                        type="button"
+                        text="Paste another"
+                        color="default"
+                        size="no-paddings"
+                        onClick={() => {
+                          nftAddress.set("")
+                        }}
+                      />
+                    )
+                  }
+                  errorMessage={getFieldErrorMessage("nftAddress")}
+                  onBlur={() => touchField("nftAddress")}
+                />
+                <InputField
+                  value={totalPowerInTokens.get}
+                  setValue={totalPowerInTokens.set}
+                  label="Voting power of all NFTs"
+                  errorMessage={getFieldErrorMessage("totalPowerInTokens")}
+                  onBlur={() => touchField("totalPowerInTokens")}
+                />
+                {!erc721IsEnumerable && (
+                  <InputField
+                    value={nftsTotalSupply.get}
+                    setValue={nftsTotalSupply.set}
+                    label="Number of NFTs"
+                    errorMessage={getFieldErrorMessage("nftsTotalSupply")}
+                    onBlur={() => touchField("nftsTotalSupply")}
+                  />
+                )}
+              </CardFormControl>
+            </Collapse>
+          </Card>
+        )}
 
         <Card>
           <CardHead

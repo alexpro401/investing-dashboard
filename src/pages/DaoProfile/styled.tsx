@@ -41,10 +41,6 @@ export const CardButtons = styled.div`
   grid-gap: 16px;
 `
 
-export const CardAppButton = styled(AppButton)`
-  width: 100%;
-`
-
 export const ValidatorVotingPower = styled(Text).attrs(() => ({
   fw: 700,
   fz: 13,
@@ -71,7 +67,7 @@ const ChartFilterItemVariants = {
   hidden: { backgroundColor: "rgba(0,0,0,0)", color: "#B1C7FC" },
 }
 
-export const ChartFilterItem = styled(Text).attrs((p) => ({
+export const ChartFilterItem = styled(Text).attrs(() => ({
   block: true,
   fw: 500,
   fz: "13",

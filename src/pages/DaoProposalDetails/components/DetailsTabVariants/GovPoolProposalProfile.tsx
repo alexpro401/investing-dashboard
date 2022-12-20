@@ -22,8 +22,8 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const GovPoolProposalProfile: FC<Props> = ({ govPoolProposal }) => {
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [isLoadFailed, setIsLoadFailed] = useState(false)
+  const [, setIsLoaded] = useState(false)
+  const [, setIsLoadFailed] = useState(false)
 
   const [actualGovPoolDescription, setActualGovPoolDescription] =
     useState<IGovPoolDescription>()

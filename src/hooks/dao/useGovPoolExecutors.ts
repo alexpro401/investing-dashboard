@@ -4,7 +4,7 @@ import { createClient, useQuery } from "urql"
 import { GovPoolExecutorsQuery } from "queries/gov-pools"
 import { isAddress } from "utils"
 import { useGovPoolExecutorType } from "hooks/dao"
-import { IExecutor, IExecutorType } from "types/dao.types"
+import { IExecutor, IExecutorType } from "types"
 
 interface IExecutorExtended extends IExecutor {
   type: IExecutorType

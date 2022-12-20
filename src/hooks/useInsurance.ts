@@ -13,7 +13,7 @@ import { useInsuranceContract, usePriceFeedContract } from "contracts"
 import useTokenPriceOutUSD from "./useTokenPriceOutUSD"
 import { InsuranceAccidentInvestorsTotalsInfo } from "../interfaces/insurance"
 import { divideBignumbers, multiplyBignumbers } from "../utils/formulas"
-import { normalizeBigNumber, parseTransactionError } from "../utils"
+import { parseTransactionError } from "../utils"
 import useError from "./useError"
 
 interface IValues {

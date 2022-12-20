@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { DefaultProposalStep } from "common"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
-import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { createCustomProposalTypeContext } from "context/govPool/proposals/regular/CreateCustomProposalType"
 import { useGovPoolCreateProposalType } from "hooks/dao"
 import { ExecutorsStep } from "./steps"
@@ -43,7 +43,7 @@ const CreateNewProposalTypeForm: React.FC = () => {
   }, [dispatch])
 
   const daoProposalCreatingInfo = useContext(GovProposalCreatingContext)
-  const firstStepSettings = useContext(FundDaoCreatingContext)
+  const firstStepSettings = useContext(GovPoolFormContext)
   const { executorAddresses } = useContext(createCustomProposalTypeContext)
 
   const [currentStep, setCurrentStep] = useState<STEPS>(

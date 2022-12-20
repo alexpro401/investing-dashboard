@@ -8,53 +8,26 @@ import {
   useEffect,
   useMemo,
   useState,
-  useContext,
+  ReactNode,
 } from "react"
 import { useERC20 } from "hooks/useERC20"
 import { useErc721 } from "hooks/useErc721"
-import { useLocalStorage } from "react-use"
-import { DaoProposal, ExternalFileDocument } from "types"
+import { useEffectOnce, useLocalStorage } from "react-use"
+import {
+  GovPoolFormOptions,
+  ExternalFileDocument,
+  GovPoolSettings,
+  UserKeeperDeployParamsForm,
+  ValidatorsDeployParamsForm,
+  GovPoolSettingsForm,
+  GovPoolSettingsState,
+} from "types"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
-import { get, isEqual } from "lodash"
+import { isEqual } from "lodash"
 import { SUPPORTED_SOCIALS } from "constants/socials"
+import { formatUnits, parseUnits } from "@ethersproject/units"
 
-export interface UserKeeperDeployParamsForm {
-  tokenAddress: { get: string; set: Dispatch<SetStateAction<string>> }
-  nftAddress: { get: string; set: Dispatch<SetStateAction<string>> }
-  totalPowerInTokens: { get: number; set: Dispatch<SetStateAction<number>> }
-  nftsTotalSupply: { get: number; set: Dispatch<SetStateAction<number>> }
-}
-
-export interface ValidatorsDeployParamsForm {
-  name: { get: string; set: Dispatch<SetStateAction<string>> }
-  symbol: { get: string; set: Dispatch<SetStateAction<string>> }
-  duration: { get: number; set: Dispatch<SetStateAction<number>> }
-  quorum: { get: number; set: Dispatch<SetStateAction<number>> }
-  validators: { get: string[]; set: (value: any, idx?: number) => void }
-  balances: { get: number[]; set: (value: any, idx?: number) => void }
-}
-
-export interface DaoProposalSettingsForm {
-  earlyCompletion: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
-  delegatedVotingAllowed: {
-    get: boolean
-    set: Dispatch<SetStateAction<boolean>>
-  }
-  validatorsVote: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
-  duration: { get: number; set: Dispatch<SetStateAction<number>> }
-  durationValidators: { get: number; set: Dispatch<SetStateAction<number>> }
-  quorum: { get: string; set: Dispatch<SetStateAction<string>> }
-  quorumValidators: { get: string; set: Dispatch<SetStateAction<string>> }
-  minVotesForVoting: { get: string; set: Dispatch<SetStateAction<string>> }
-  minVotesForCreating: { get: string; set: Dispatch<SetStateAction<string>> }
-  rewardToken: { get: string; set: Dispatch<SetStateAction<string>> }
-  creationReward: { get: string; set: Dispatch<SetStateAction<string>> }
-  executionReward: { get: string; set: Dispatch<SetStateAction<string>> }
-  voteRewardsCoefficient: { get: string; set: Dispatch<SetStateAction<string>> }
-  executorDescription: { get: string; set: Dispatch<SetStateAction<string>> }
-}
-
-interface FundDaoCreatingContext {
+interface IGovPoolFormContext {
   isErc20: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
   isErc721: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
   erc20: ReturnType<typeof useERC20>
@@ -86,17 +59,17 @@ interface FundDaoCreatingContext {
   userKeeperParams: UserKeeperDeployParamsForm
   validatorsParams: ValidatorsDeployParamsForm
 
-  defaultProposalSettingForm: DaoProposalSettingsForm
-  internalProposalForm: DaoProposalSettingsForm
-  validatorsBalancesSettingsForm: DaoProposalSettingsForm
-  distributionProposalSettingsForm: DaoProposalSettingsForm
+  defaultProposalSettingForm: GovPoolSettingsForm
+  internalProposalForm: GovPoolSettingsForm
+  validatorsBalancesSettingsForm: GovPoolSettingsForm
+  distributionProposalSettingsForm: GovPoolSettingsForm
 
   clearFormStorage: () => void
   createdDaoAddress: { get: string; set: Dispatch<SetStateAction<string>> }
-  initialForm: DaoProposal
+  initialForm: GovPoolFormOptions
 }
 
-export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
+export const GovPoolFormContext = createContext<IGovPoolFormContext>({
   isErc20: { get: false, set: () => {} },
   isErc721: { get: false, set: () => {} },
   isCustomVoting: { get: false, set: () => {} },
@@ -115,32 +88,35 @@ export const FundDaoCreatingContext = createContext<FundDaoCreatingContext>({
   userKeeperParams: {} as UserKeeperDeployParamsForm,
   validatorsParams: {} as ValidatorsDeployParamsForm,
 
-  internalProposalForm: {} as DaoProposalSettingsForm,
-  validatorsBalancesSettingsForm: {} as DaoProposalSettingsForm,
-  defaultProposalSettingForm: {} as DaoProposalSettingsForm,
-  distributionProposalSettingsForm: {} as DaoProposalSettingsForm,
+  internalProposalForm: {} as GovPoolSettingsForm,
+  validatorsBalancesSettingsForm: {} as GovPoolSettingsForm,
+  defaultProposalSettingForm: {} as GovPoolSettingsForm,
+  distributionProposalSettingsForm: {} as GovPoolSettingsForm,
 
   clearFormStorage: () => {},
   createdDaoAddress: { get: "", set: () => {} },
-  initialForm: {} as DaoProposal,
+  initialForm: {} as GovPoolFormOptions,
 })
 
-interface IFundDaoCreatingContextProviderProps
+interface IGovPoolFormContextProviderProps
   extends HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode
+  children: ReactNode
   customLSKey?: string
-  daoProposal?: DaoProposal
+  govPoolFormOptions?: GovPoolFormOptions
 }
 
-const FundDaoCreatingContextProvider: FC<
-  IFundDaoCreatingContextProviderProps
-> = ({ children, customLSKey, daoProposal }) => {
-  const [value, setValue, remove] = useLocalStorage(
-    customLSKey ? customLSKey : "fund-dao-creating-form",
-    JSON.stringify(daoProposal ? daoProposal : INITIAL_DAO_PROPOSAL)
-  )
+const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
+  children,
+  customLSKey,
+  govPoolFormOptions,
+}) => {
+  const [localStorageValue, setLocalStorageValue, removeLocalStorageValue] =
+    useLocalStorage(
+      customLSKey || "fund-dao-creating-form",
+      JSON.stringify(govPoolFormOptions || INITIAL_DAO_PROPOSAL)
+    )
 
-  const initialForm = useMemo<DaoProposal>(() => {
+  const initialForm = useMemo<GovPoolFormOptions>(() => {
     if (customLSKey) {
       const customFormFromLS = localStorage.getItem(customLSKey)
 
@@ -148,7 +124,7 @@ const FundDaoCreatingContextProvider: FC<
         return JSON.parse(JSON.parse(customFormFromLS))
       }
 
-      return daoProposal
+      return govPoolFormOptions
     } else {
       const formFromLS = localStorage.getItem("fund-dao-creating-form")
 
@@ -158,15 +134,15 @@ const FundDaoCreatingContextProvider: FC<
 
       return INITIAL_DAO_PROPOSAL
     }
-  }, [customLSKey, daoProposal])
+  }, [customLSKey, govPoolFormOptions])
 
-  const storedForm = useMemo<DaoProposal>(() => {
+  const storedForm = useMemo<GovPoolFormOptions>(() => {
     try {
-      return value ? JSON.parse(value) : {}
+      return localStorageValue ? JSON.parse(localStorageValue) : {}
     } catch (error) {
       return {}
     }
-  }, [value])
+  }, [localStorageValue])
 
   const [_isErc20, _setIsErc20] = useState<boolean>(storedForm._isErc20)
   const [_isErc721, _setIsErc721] = useState<boolean>(storedForm._isErc721)
@@ -176,7 +152,6 @@ const FundDaoCreatingContextProvider: FC<
   )
   const [_isDistributionProposal, _setIsDistributionProposal] =
     useState<boolean>(storedForm._isDistributionProposal)
-
   const [_isValidator, _setIsValidator] = useState(storedForm._isValidator)
 
   // to ipfs
@@ -190,20 +165,6 @@ const FundDaoCreatingContextProvider: FC<
   const [_documents, _setDocuments] = useState<ExternalFileDocument[]>(
     storedForm._documents
   )
-
-  const _handleChangeDocuments = useCallback((value, idx?: number) => {
-    _setDocuments((prev) => {
-      if (Array.isArray(value)) {
-        return value
-      } else {
-        const newDocs = [...prev]
-        if (idx !== undefined && idx !== null) {
-          newDocs[idx] = value
-        }
-        return newDocs
-      }
-    })
-  }, [])
 
   const _userKeeperParams = {
     tokenAddress: useState(storedForm._userKeeperParams.tokenAddress),
@@ -221,6 +182,259 @@ const FundDaoCreatingContextProvider: FC<
     validators: useState<string[]>(storedForm._validatorsParams.validators),
     balances: useState<number[]>(storedForm._validatorsParams.balances),
   }
+
+  const _internalProposalForm = {
+    earlyCompletion: useState<boolean>(
+      storedForm._internalProposalForm.earlyCompletion
+    ),
+    delegatedVotingAllowed: useState<boolean>(
+      storedForm._internalProposalForm.delegatedVotingAllowed
+    ),
+    validatorsVote: useState<boolean>(
+      storedForm._internalProposalForm.validatorsVote
+    ),
+    duration: useState<number>(
+      Number(formatUnits(storedForm._internalProposalForm.duration, 0))
+    ),
+    durationValidators: useState<number>(
+      Number(
+        formatUnits(storedForm._internalProposalForm.durationValidators, 0)
+      )
+    ),
+    quorum: useState<string>(
+      formatUnits(storedForm._internalProposalForm.quorum, 25)
+    ),
+    quorumValidators: useState<string>(
+      formatUnits(storedForm._internalProposalForm.quorumValidators, 25)
+    ),
+    minVotesForVoting: useState<string>(
+      formatUnits(storedForm._internalProposalForm.minVotesForVoting, 18)
+    ),
+    minVotesForCreating: useState<string>(
+      formatUnits(storedForm._internalProposalForm.minVotesForCreating, 18)
+    ),
+    rewardToken: useState<string>(storedForm._internalProposalForm.rewardToken),
+    creationReward: useState<string>(
+      formatUnits(storedForm._internalProposalForm.creationReward, 18)
+    ),
+    executionReward: useState<string>(
+      formatUnits(storedForm._internalProposalForm.executionReward, 18)
+    ),
+    voteRewardsCoefficient: useState<string>(
+      formatUnits(storedForm._internalProposalForm.voteRewardsCoefficient, 18)
+    ),
+    executorDescription: useState<string>(
+      storedForm._internalProposalForm.executorDescription
+    ),
+  } as GovPoolSettingsState
+  const _distributionProposalSettingsForm = {
+    earlyCompletion: useState<boolean>(
+      storedForm._distributionProposalSettingsForm.earlyCompletion
+    ),
+    delegatedVotingAllowed: useState<boolean>(
+      storedForm._distributionProposalSettingsForm.delegatedVotingAllowed
+    ),
+    validatorsVote: useState<boolean>(
+      storedForm._distributionProposalSettingsForm.validatorsVote
+    ),
+    duration: useState<number>(
+      Number(
+        formatUnits(storedForm._distributionProposalSettingsForm.duration, 0)
+      )
+    ),
+    durationValidators: useState<number>(
+      Number(
+        formatUnits(
+          storedForm._distributionProposalSettingsForm.durationValidators,
+          0
+        )
+      )
+    ),
+    quorum: useState<string>(
+      formatUnits(storedForm._distributionProposalSettingsForm.quorum, 25)
+    ),
+    quorumValidators: useState<string>(
+      formatUnits(
+        storedForm._distributionProposalSettingsForm.quorumValidators,
+        25
+      )
+    ),
+    minVotesForVoting: useState<string>(
+      formatUnits(
+        storedForm._distributionProposalSettingsForm.minVotesForVoting,
+        18
+      )
+    ),
+    minVotesForCreating: useState<string>(
+      formatUnits(
+        storedForm._distributionProposalSettingsForm.minVotesForCreating,
+        18
+      )
+    ),
+    rewardToken: useState<string>(
+      storedForm._distributionProposalSettingsForm.rewardToken
+    ),
+    creationReward: useState<string>(
+      formatUnits(
+        storedForm._distributionProposalSettingsForm.creationReward,
+        18
+      )
+    ),
+    executionReward: useState<string>(
+      formatUnits(
+        storedForm._distributionProposalSettingsForm.executionReward,
+        18
+      )
+    ),
+    voteRewardsCoefficient: useState<string>(
+      formatUnits(
+        storedForm._distributionProposalSettingsForm.voteRewardsCoefficient,
+        18
+      )
+    ),
+    executorDescription: useState<string>(
+      storedForm._distributionProposalSettingsForm.executorDescription
+    ),
+  } as GovPoolSettingsState
+  const _validatorsBalancesSettingsForm = {
+    earlyCompletion: useState<boolean>(
+      storedForm._validatorsBalancesSettingsForm.earlyCompletion
+    ),
+    delegatedVotingAllowed: useState<boolean>(
+      storedForm._validatorsBalancesSettingsForm.delegatedVotingAllowed
+    ),
+    validatorsVote: useState<boolean>(
+      storedForm._validatorsBalancesSettingsForm.validatorsVote
+    ),
+    duration: useState<number>(
+      Number(
+        formatUnits(storedForm._validatorsBalancesSettingsForm.duration, 0)
+      )
+    ),
+    durationValidators: useState<number>(
+      Number(
+        formatUnits(
+          storedForm._validatorsBalancesSettingsForm.durationValidators,
+          0
+        )
+      )
+    ),
+    quorum: useState<string>(
+      formatUnits(storedForm._validatorsBalancesSettingsForm.quorum, 25)
+    ),
+    quorumValidators: useState<string>(
+      formatUnits(
+        storedForm._validatorsBalancesSettingsForm.quorumValidators,
+        25
+      )
+    ),
+    minVotesForVoting: useState<string>(
+      formatUnits(
+        storedForm._validatorsBalancesSettingsForm.minVotesForVoting,
+        18
+      )
+    ),
+    minVotesForCreating: useState<string>(
+      formatUnits(
+        storedForm._validatorsBalancesSettingsForm.minVotesForCreating,
+        18
+      )
+    ),
+    rewardToken: useState<string>(
+      storedForm._validatorsBalancesSettingsForm.rewardToken
+    ),
+    creationReward: useState<string>(
+      formatUnits(storedForm._validatorsBalancesSettingsForm.creationReward, 18)
+    ),
+    executionReward: useState<string>(
+      formatUnits(
+        storedForm._validatorsBalancesSettingsForm.executionReward,
+        18
+      )
+    ),
+    voteRewardsCoefficient: useState<string>(
+      formatUnits(
+        storedForm._validatorsBalancesSettingsForm.voteRewardsCoefficient,
+        18
+      )
+    ),
+    executorDescription: useState<string>(
+      storedForm._validatorsBalancesSettingsForm.executorDescription
+    ),
+  } as GovPoolSettingsState
+  const _defaultProposalSettingForm = {
+    earlyCompletion: useState<boolean>(
+      storedForm._defaultProposalSettingForm.earlyCompletion
+    ),
+    delegatedVotingAllowed: useState<boolean>(
+      storedForm._defaultProposalSettingForm.delegatedVotingAllowed
+    ),
+    validatorsVote: useState<boolean>(
+      storedForm._defaultProposalSettingForm.validatorsVote
+    ),
+    duration: useState<number>(
+      Number(formatUnits(storedForm._defaultProposalSettingForm.duration, 0))
+    ),
+    durationValidators: useState<number>(
+      Number(
+        formatUnits(
+          storedForm._defaultProposalSettingForm.durationValidators,
+          0
+        )
+      )
+    ),
+    quorum: useState<string>(
+      formatUnits(storedForm._defaultProposalSettingForm.quorum, 25)
+    ),
+    quorumValidators: useState<string>(
+      formatUnits(storedForm._defaultProposalSettingForm.quorumValidators, 25)
+    ),
+    minVotesForVoting: useState<string>(
+      formatUnits(storedForm._defaultProposalSettingForm.minVotesForVoting, 18)
+    ),
+    minVotesForCreating: useState<string>(
+      formatUnits(
+        storedForm._defaultProposalSettingForm.minVotesForCreating,
+        18
+      )
+    ),
+    rewardToken: useState<string>(
+      storedForm._defaultProposalSettingForm.rewardToken
+    ),
+    creationReward: useState<string>(
+      formatUnits(storedForm._defaultProposalSettingForm.creationReward, 18)
+    ),
+    executionReward: useState<string>(
+      formatUnits(storedForm._defaultProposalSettingForm.executionReward, 18)
+    ),
+    voteRewardsCoefficient: useState<string>(
+      formatUnits(
+        storedForm._defaultProposalSettingForm.voteRewardsCoefficient,
+        18
+      )
+    ),
+    executorDescription: useState<string>(
+      storedForm._defaultProposalSettingForm.executorDescription
+    ),
+  } as GovPoolSettingsState
+
+  const erc20 = useERC20(_userKeeperParams.tokenAddress[0])
+  const erc721 = useErc721(_userKeeperParams.nftAddress[0])
+  const [_createdDaoAddress, _setCreatedDaoAddress] = useState("")
+
+  const _handleChangeDocuments = useCallback((value, idx?: number) => {
+    _setDocuments((prev) => {
+      if (Array.isArray(value)) {
+        return value
+      } else {
+        const newDocs = [...prev]
+        if (idx !== undefined && idx !== null) {
+          newDocs[idx] = value
+        }
+        return newDocs
+      }
+    })
+  }, [])
 
   const _handleChangeValidators = useCallback(
     (value, idx?: number) => {
@@ -256,374 +470,371 @@ const FundDaoCreatingContextProvider: FC<
     [_validatorsParams.balances]
   )
 
-  const _internalProposalForm = {
-    earlyCompletion: useState<boolean>(
-      storedForm._internalProposalForm.earlyCompletion
-    ),
-    delegatedVotingAllowed: useState<boolean>(
-      storedForm._internalProposalForm.delegatedVotingAllowed
-    ),
-    validatorsVote: useState<boolean>(
-      storedForm._internalProposalForm.validatorsVote
-    ),
-    duration: useState<number>(storedForm._internalProposalForm.duration),
-    durationValidators: useState<number>(
-      storedForm._internalProposalForm.durationValidators
-    ),
-    quorum: useState<string>(storedForm._internalProposalForm.quorum),
-    quorumValidators: useState<string>(
-      storedForm._internalProposalForm.quorumValidators
-    ),
-    minVotesForVoting: useState<string>(
-      storedForm._internalProposalForm.minVotesForVoting
-    ),
-    minVotesForCreating: useState<string>(
-      storedForm._internalProposalForm.minVotesForCreating
-    ),
-    rewardToken: useState<string>(storedForm._internalProposalForm.rewardToken),
-    creationReward: useState<string>(
-      storedForm._internalProposalForm.creationReward
-    ),
-    executionReward: useState<string>(
-      storedForm._internalProposalForm.executionReward
-    ),
-    voteRewardsCoefficient: useState<string>(
-      storedForm._internalProposalForm.voteRewardsCoefficient
-    ),
-    executorDescription: useState<string>(
-      storedForm._internalProposalForm.executorDescription
-    ),
-  }
-  const _distributionProposalSettingsForm = {
-    earlyCompletion: useState<boolean>(
-      storedForm._distributionProposalSettingsForm.earlyCompletion
-    ),
-    delegatedVotingAllowed: useState<boolean>(
-      storedForm._distributionProposalSettingsForm.delegatedVotingAllowed
-    ),
-    validatorsVote: useState<boolean>(
-      storedForm._distributionProposalSettingsForm.validatorsVote
-    ),
-    duration: useState<number>(
-      storedForm._distributionProposalSettingsForm.duration
-    ),
-    durationValidators: useState<number>(
-      storedForm._distributionProposalSettingsForm.durationValidators
-    ),
-    quorum: useState<string>(
-      storedForm._distributionProposalSettingsForm.quorum
-    ),
-    quorumValidators: useState<string>(
-      storedForm._distributionProposalSettingsForm.quorumValidators
-    ),
-    minVotesForVoting: useState<string>(
-      storedForm._distributionProposalSettingsForm.minVotesForVoting
-    ),
-    minVotesForCreating: useState<string>(
-      storedForm._distributionProposalSettingsForm.minVotesForCreating
-    ),
-    rewardToken: useState<string>(
-      storedForm._distributionProposalSettingsForm.rewardToken
-    ),
-    creationReward: useState<string>(
-      storedForm._distributionProposalSettingsForm.creationReward
-    ),
-    executionReward: useState<string>(
-      storedForm._distributionProposalSettingsForm.executionReward
-    ),
-    voteRewardsCoefficient: useState<string>(
-      storedForm._distributionProposalSettingsForm.voteRewardsCoefficient
-    ),
-    executorDescription: useState<string>(
-      storedForm._distributionProposalSettingsForm.executorDescription
-    ),
-  }
-  const _validatorsBalancesSettingsForm = {
-    earlyCompletion: useState<boolean>(
-      storedForm._validatorsBalancesSettingsForm.earlyCompletion
-    ),
-    delegatedVotingAllowed: useState<boolean>(
-      storedForm._validatorsBalancesSettingsForm.delegatedVotingAllowed
-    ),
-    validatorsVote: useState<boolean>(
-      storedForm._validatorsBalancesSettingsForm.validatorsVote
-    ),
-    duration: useState<number>(
-      storedForm._validatorsBalancesSettingsForm.duration
-    ),
-    durationValidators: useState<number>(
-      storedForm._validatorsBalancesSettingsForm.durationValidators
-    ),
-    quorum: useState<string>(storedForm._validatorsBalancesSettingsForm.quorum),
-    quorumValidators: useState<string>(
-      storedForm._validatorsBalancesSettingsForm.quorumValidators
-    ),
-    minVotesForVoting: useState<string>(
-      storedForm._validatorsBalancesSettingsForm.minVotesForVoting
-    ),
-    minVotesForCreating: useState<string>(
-      storedForm._validatorsBalancesSettingsForm.minVotesForCreating
-    ),
-    rewardToken: useState<string>(
-      storedForm._validatorsBalancesSettingsForm.rewardToken
-    ),
-    creationReward: useState<string>(
-      storedForm._validatorsBalancesSettingsForm.creationReward
-    ),
-    executionReward: useState<string>(
-      storedForm._validatorsBalancesSettingsForm.executionReward
-    ),
-    voteRewardsCoefficient: useState<string>(
-      storedForm._validatorsBalancesSettingsForm.voteRewardsCoefficient
-    ),
-    executorDescription: useState<string>(
-      storedForm._validatorsBalancesSettingsForm.executorDescription
-    ),
-  }
-  const _defaultProposalSettingForm = {
-    earlyCompletion: useState<boolean>(
-      storedForm._defaultProposalSettingForm.earlyCompletion
-    ),
-    delegatedVotingAllowed: useState<boolean>(
-      storedForm._defaultProposalSettingForm.delegatedVotingAllowed
-    ),
-    validatorsVote: useState<boolean>(
-      storedForm._defaultProposalSettingForm.validatorsVote
-    ),
-    duration: useState<number>(storedForm._defaultProposalSettingForm.duration),
-    durationValidators: useState<number>(
-      storedForm._defaultProposalSettingForm.durationValidators
-    ),
-    quorum: useState<string>(storedForm._defaultProposalSettingForm.quorum),
-    quorumValidators: useState<string>(
-      storedForm._defaultProposalSettingForm.quorumValidators
-    ),
-    minVotesForVoting: useState<string>(
-      storedForm._defaultProposalSettingForm.minVotesForVoting
-    ),
-    minVotesForCreating: useState<string>(
-      storedForm._defaultProposalSettingForm.minVotesForCreating
-    ),
-    rewardToken: useState<string>(
-      storedForm._defaultProposalSettingForm.rewardToken
-    ),
-    creationReward: useState<string>(
-      storedForm._defaultProposalSettingForm.creationReward
-    ),
-    executionReward: useState<string>(
-      storedForm._defaultProposalSettingForm.executionReward
-    ),
-    voteRewardsCoefficient: useState<string>(
-      storedForm._defaultProposalSettingForm.voteRewardsCoefficient
-    ),
-    executorDescription: useState<string>(
-      storedForm._defaultProposalSettingForm.executorDescription
-    ),
-  }
+  const populateSettings = useCallback(
+    (settingsForm: GovPoolSettingsState, settings: GovPoolSettings) => {
+      const [, setEarlyCompletion] = settingsForm.earlyCompletion
+      const [, setDelegatedVotingAllowed] = settingsForm.delegatedVotingAllowed
+      const [, setValidatorsVote] = settingsForm.validatorsVote
+      const [, setDuration] = settingsForm.duration
+      const [, setDurationValidators] = settingsForm.durationValidators
+      const [, setQuorum] = settingsForm.quorum
+      const [, setQuorumValidators] = settingsForm.quorumValidators
+      const [, setMinVotesForVoting] = settingsForm.minVotesForVoting
+      const [, setMinVotesForCreating] = settingsForm.minVotesForCreating
+      const [, setRewardToken] = settingsForm.rewardToken
+      const [, setCreationReward] = settingsForm.creationReward
+      const [, setExecutionReward] = settingsForm.executionReward
+      const [, setVoteRewardsCoefficient] = settingsForm.voteRewardsCoefficient
+      const [, setExecutorDescription] = settingsForm.executorDescription
 
-  const erc20 = useERC20(_userKeeperParams.tokenAddress[0])
-  const erc721 = useErc721(_userKeeperParams.nftAddress[0])
-  const [_createdDaoAddress, _setCreatedDaoAddress] = useState("")
+      setEarlyCompletion(settings.earlyCompletion)
+      setDelegatedVotingAllowed(settings.delegatedVotingAllowed)
+      setValidatorsVote(settings.validatorsVote)
+      setDuration(Number(formatUnits(settings.duration, 0)))
+      setDurationValidators(Number(formatUnits(settings.durationValidators, 0)))
+      setQuorum(formatUnits(settings.quorum, 25))
+      setQuorumValidators(formatUnits(settings.quorumValidators, 25))
+      setMinVotesForVoting(formatUnits(settings.minVotesForVoting, 18))
+      setMinVotesForCreating(formatUnits(settings.minVotesForCreating, 18))
+      setRewardToken(settings.rewardToken)
+      setCreationReward(formatUnits(settings.creationReward, 18))
+      setExecutionReward(formatUnits(settings.executionReward, 18))
+      setVoteRewardsCoefficient(
+        formatUnits(settings.voteRewardsCoefficient, 18)
+      )
+      setExecutorDescription(settings.executorDescription)
+    },
+    []
+  )
+
+  const populateForm = useCallback(
+    (govPool: GovPoolFormOptions) => {
+      _setAvatarUrl(govPool._avatarUrl)
+      _setDaoName(govPool._daoName)
+      _setDescription(govPool._description)
+      _setSocialLinks(govPool._socialLinks)
+      _setDocuments(govPool._documents)
+      _setWebsiteUrl(govPool._websiteUrl)
+
+      _setIsErc20(govPool._isErc20)
+      _setIsErc721(govPool._isErc721)
+
+      _setIsValidator(govPool._isValidator)
+      _setIsCustomVoting(govPool._isCustomVoting)
+      _setIsDistributionProposal(govPool._isDistributionProposal)
+
+      const [, _setTokenAddress] = _userKeeperParams.tokenAddress
+      const [, _setNftAddress] = _userKeeperParams.nftAddress
+      const [, _setTotalPowerInTokens] = _userKeeperParams.totalPowerInTokens
+      const [, _setNftsTotalSupply] = _userKeeperParams.nftsTotalSupply
+
+      _setTokenAddress(govPool._userKeeperParams.tokenAddress)
+      _setNftAddress(govPool._userKeeperParams.nftAddress)
+      _setTotalPowerInTokens(govPool._userKeeperParams.totalPowerInTokens)
+      _setNftsTotalSupply(govPool._userKeeperParams.nftsTotalSupply)
+
+      const [, setName] = _validatorsParams.name
+      const [, setSymbol] = _validatorsParams.symbol
+      const [, setDuration] = _validatorsParams.duration
+      const [, setQuorum] = _validatorsParams.quorum
+      const [, setValidators] = _validatorsParams.validators
+      const [, setBalances] = _validatorsParams.balances
+
+      setName(govPool._validatorsParams.name)
+      setSymbol(govPool._validatorsParams.symbol)
+      setDuration(govPool._validatorsParams.duration)
+      setQuorum(govPool._validatorsParams.quorum)
+      setValidators(govPool._validatorsParams.validators)
+      setBalances(govPool._validatorsParams.balances)
+
+      populateSettings(_internalProposalForm, govPool._internalProposalForm)
+      populateSettings(
+        _defaultProposalSettingForm,
+        govPool._defaultProposalSettingForm
+      )
+      populateSettings(
+        _distributionProposalSettingsForm,
+        govPool._distributionProposalSettingsForm
+      )
+      populateSettings(
+        _validatorsBalancesSettingsForm,
+        govPool._validatorsBalancesSettingsForm
+      )
+    },
+    [
+      _defaultProposalSettingForm,
+      _distributionProposalSettingsForm,
+      _internalProposalForm,
+      _userKeeperParams,
+      _validatorsBalancesSettingsForm,
+      _validatorsParams,
+      populateSettings,
+    ]
+  )
+
+  const convertForm = useCallback(
+    (): GovPoolFormOptions => ({
+      _isErc20,
+      _isErc721,
+      _isCustomVoting,
+      _isDistributionProposal,
+      _isValidator,
+      _avatarUrl,
+      _daoName,
+      _websiteUrl,
+      _description,
+      _socialLinks,
+      _documents,
+      _userKeeperParams: {
+        tokenAddress: _userKeeperParams.tokenAddress[0],
+        nftAddress: _userKeeperParams.nftAddress[0],
+        totalPowerInTokens: _userKeeperParams.totalPowerInTokens[0],
+        nftsTotalSupply: _userKeeperParams.nftsTotalSupply[0],
+      },
+      _validatorsParams: {
+        name: _validatorsParams.name[0],
+        symbol: _validatorsParams.symbol[0],
+        duration: _validatorsParams.duration[0],
+        quorum: _validatorsParams.quorum[0],
+        validators: _validatorsParams.validators[0],
+        balances: _validatorsParams.balances[0],
+      },
+      _internalProposalForm: {
+        earlyCompletion: _internalProposalForm.earlyCompletion[0] as boolean,
+        delegatedVotingAllowed: _internalProposalForm
+          .delegatedVotingAllowed[0] as boolean,
+        validatorsVote: _internalProposalForm.validatorsVote[0] as boolean,
+        duration: parseUnits(String(_internalProposalForm.duration[0]), 0),
+        durationValidators: parseUnits(
+          String(_internalProposalForm.durationValidators[0]),
+          0
+        ),
+        quorum: parseUnits(_internalProposalForm.quorum[0] as string, 25),
+        quorumValidators: parseUnits(
+          _internalProposalForm.quorumValidators[0] as string,
+          25
+        ),
+        minVotesForVoting: parseUnits(
+          _internalProposalForm.minVotesForVoting[0] as string,
+          18
+        ),
+        minVotesForCreating: parseUnits(
+          _internalProposalForm.minVotesForCreating[0] as string,
+          18
+        ),
+        rewardToken: _internalProposalForm.rewardToken[0] as string,
+        creationReward: parseUnits(
+          _internalProposalForm.creationReward[0] as string,
+          18
+        ),
+        executionReward: parseUnits(
+          _internalProposalForm.executionReward[0] as string,
+          18
+        ),
+        voteRewardsCoefficient: parseUnits(
+          _internalProposalForm.voteRewardsCoefficient[0] as string,
+          18
+        ),
+        executorDescription: _internalProposalForm
+          .executorDescription[0] as string,
+      },
+      _distributionProposalSettingsForm: {
+        earlyCompletion: _distributionProposalSettingsForm
+          .earlyCompletion[0] as boolean,
+        delegatedVotingAllowed: _distributionProposalSettingsForm
+          .delegatedVotingAllowed[0] as boolean,
+        validatorsVote: _distributionProposalSettingsForm
+          .validatorsVote[0] as boolean,
+        duration: parseUnits(
+          String(_distributionProposalSettingsForm.duration[0]),
+          0
+        ),
+        durationValidators: parseUnits(
+          String(_distributionProposalSettingsForm.durationValidators[0]),
+          0
+        ),
+        quorum: parseUnits(
+          _distributionProposalSettingsForm.quorum[0] as string,
+          25
+        ),
+        quorumValidators: parseUnits(
+          _distributionProposalSettingsForm.quorumValidators[0] as string,
+          25
+        ),
+        minVotesForVoting: parseUnits(
+          _distributionProposalSettingsForm.minVotesForVoting[0] as string,
+          18
+        ),
+        minVotesForCreating: parseUnits(
+          _distributionProposalSettingsForm.minVotesForCreating[0] as string,
+          18
+        ),
+        rewardToken: _distributionProposalSettingsForm.rewardToken[0] as string,
+        creationReward: parseUnits(
+          _distributionProposalSettingsForm.creationReward[0] as string,
+          18
+        ),
+        executionReward: parseUnits(
+          _distributionProposalSettingsForm.executionReward[0] as string,
+          18
+        ),
+        voteRewardsCoefficient: parseUnits(
+          _distributionProposalSettingsForm.voteRewardsCoefficient[0] as string,
+          18
+        ),
+        executorDescription: _distributionProposalSettingsForm
+          .executorDescription[0] as string,
+      },
+      _validatorsBalancesSettingsForm: {
+        earlyCompletion: _validatorsBalancesSettingsForm
+          .earlyCompletion[0] as boolean,
+        delegatedVotingAllowed: _validatorsBalancesSettingsForm
+          .delegatedVotingAllowed[0] as boolean,
+        validatorsVote: _validatorsBalancesSettingsForm
+          .validatorsVote[0] as boolean,
+        duration: parseUnits(
+          String(_validatorsBalancesSettingsForm.duration[0]),
+          0
+        ),
+        durationValidators: parseUnits(
+          String(_validatorsBalancesSettingsForm.durationValidators[0]),
+          0
+        ),
+        quorum: parseUnits(
+          _validatorsBalancesSettingsForm.quorum[0] as string,
+          25
+        ),
+        quorumValidators: parseUnits(
+          _validatorsBalancesSettingsForm.quorumValidators[0] as string,
+          25
+        ),
+        minVotesForVoting: parseUnits(
+          _validatorsBalancesSettingsForm.minVotesForVoting[0] as string,
+          18
+        ),
+        minVotesForCreating: parseUnits(
+          _validatorsBalancesSettingsForm.minVotesForCreating[0] as string,
+          18
+        ),
+        rewardToken: _validatorsBalancesSettingsForm.rewardToken[0] as string,
+        creationReward: parseUnits(
+          _validatorsBalancesSettingsForm.creationReward[0] as string,
+          18
+        ),
+        executionReward: parseUnits(
+          _validatorsBalancesSettingsForm.executionReward[0] as string,
+          18
+        ),
+        voteRewardsCoefficient: parseUnits(
+          _validatorsBalancesSettingsForm.voteRewardsCoefficient[0] as string,
+          18
+        ),
+        executorDescription: _validatorsBalancesSettingsForm
+          .executorDescription[0] as string,
+      },
+      _defaultProposalSettingForm: {
+        earlyCompletion: _defaultProposalSettingForm
+          .earlyCompletion[0] as boolean,
+        delegatedVotingAllowed: _defaultProposalSettingForm
+          .delegatedVotingAllowed[0] as boolean,
+        validatorsVote: _defaultProposalSettingForm
+          .validatorsVote[0] as boolean,
+        duration: parseUnits(
+          String(_defaultProposalSettingForm.duration[0]),
+          0
+        ),
+        durationValidators: parseUnits(
+          String(_defaultProposalSettingForm.durationValidators[0]),
+          0
+        ),
+        quorum: parseUnits(_defaultProposalSettingForm.quorum[0] as string, 25),
+        quorumValidators: parseUnits(
+          _defaultProposalSettingForm.quorumValidators[0] as string,
+          25
+        ),
+        minVotesForVoting: parseUnits(
+          _defaultProposalSettingForm.minVotesForVoting[0] as string,
+          18
+        ),
+        minVotesForCreating: parseUnits(
+          _defaultProposalSettingForm.minVotesForCreating[0] as string,
+          18
+        ),
+        rewardToken: _defaultProposalSettingForm.rewardToken[0] as string,
+        creationReward: parseUnits(
+          _defaultProposalSettingForm.creationReward[0] as string,
+          18
+        ),
+        executionReward: parseUnits(
+          _defaultProposalSettingForm.executionReward[0] as string,
+          18
+        ),
+        voteRewardsCoefficient: parseUnits(
+          _defaultProposalSettingForm.voteRewardsCoefficient[0] as string,
+          18
+        ),
+        executorDescription: _defaultProposalSettingForm
+          .executorDescription[0] as string,
+      },
+    }),
+    [
+      _avatarUrl,
+      _daoName,
+      _defaultProposalSettingForm,
+      _description,
+      _distributionProposalSettingsForm,
+      _documents,
+      _internalProposalForm,
+      _isCustomVoting,
+      _isDistributionProposal,
+      _isErc20,
+      _isErc721,
+      _isValidator,
+      _socialLinks,
+      _userKeeperParams,
+      _validatorsBalancesSettingsForm,
+      _validatorsParams,
+      _websiteUrl,
+    ]
+  )
+
+  useEffectOnce(() => {
+    if (govPoolFormOptions) {
+      populateForm(govPoolFormOptions)
+    }
+  })
 
   useEffect(() => {
-    setValue((prevState) => {
-      const nextState = JSON.stringify({
-        _isErc20,
-        _isErc721,
-        _isCustomVoting,
-        _isDistributionProposal,
-        _isValidator,
-        _avatarUrl,
-        _daoName,
-        _websiteUrl,
-        _description,
-        _socialLinks,
-        _documents,
-        _userKeeperParams: {
-          tokenAddress: _userKeeperParams.tokenAddress[0],
-          nftAddress: _userKeeperParams.nftAddress[0],
-          totalPowerInTokens: _userKeeperParams.totalPowerInTokens[0],
-          nftsTotalSupply: _userKeeperParams.nftsTotalSupply[0],
-        },
-        _validatorsParams: {
-          name: _validatorsParams.name[0],
-          symbol: _validatorsParams.symbol[0],
-          duration: _validatorsParams.duration[0],
-          quorum: _validatorsParams.quorum[0],
-          validators: _validatorsParams.validators[0],
-          balances: _validatorsParams.balances[0],
-        },
-        _internalProposalForm: {
-          earlyCompletion: _internalProposalForm.earlyCompletion[0],
-          delegatedVotingAllowed:
-            _internalProposalForm.delegatedVotingAllowed[0],
-          validatorsVote: _internalProposalForm.validatorsVote[0],
-          duration: _internalProposalForm.duration[0],
-          durationValidators: _internalProposalForm.durationValidators[0],
-          quorum: _internalProposalForm.quorum[0],
-          quorumValidators: _internalProposalForm.quorumValidators[0],
-          minVotesForVoting: _internalProposalForm.minVotesForVoting[0],
-          minVotesForCreating: _internalProposalForm.minVotesForCreating[0],
-          rewardToken: _internalProposalForm.rewardToken[0],
-          creationReward: _internalProposalForm.creationReward[0],
-          executionReward: _internalProposalForm.executionReward[0],
-          voteRewardsCoefficient:
-            _internalProposalForm.voteRewardsCoefficient[0],
-          executorDescription: _internalProposalForm.executorDescription[0],
-        },
-        _distributionProposalSettingsForm: {
-          earlyCompletion: _distributionProposalSettingsForm.earlyCompletion[0],
-          delegatedVotingAllowed:
-            _distributionProposalSettingsForm.delegatedVotingAllowed[0],
-          validatorsVote: _distributionProposalSettingsForm.validatorsVote[0],
-          duration: _distributionProposalSettingsForm.duration[0],
-          durationValidators:
-            _distributionProposalSettingsForm.durationValidators[0],
-          quorum: _distributionProposalSettingsForm.quorum[0],
-          quorumValidators:
-            _distributionProposalSettingsForm.quorumValidators[0],
-          minVotesForVoting:
-            _distributionProposalSettingsForm.minVotesForVoting[0],
-          minVotesForCreating:
-            _distributionProposalSettingsForm.minVotesForCreating[0],
-          rewardToken: _distributionProposalSettingsForm.rewardToken[0],
-          creationReward: _distributionProposalSettingsForm.creationReward[0],
-          executionReward: _distributionProposalSettingsForm.executionReward[0],
-          voteRewardsCoefficient:
-            _distributionProposalSettingsForm.voteRewardsCoefficient[0],
-          executorDescription:
-            _distributionProposalSettingsForm.executorDescription[0],
-        },
-        _validatorsBalancesSettingsForm: {
-          earlyCompletion: _validatorsBalancesSettingsForm.earlyCompletion[0],
-          delegatedVotingAllowed:
-            _validatorsBalancesSettingsForm.delegatedVotingAllowed[0],
-          validatorsVote: _validatorsBalancesSettingsForm.validatorsVote[0],
-          duration: _validatorsBalancesSettingsForm.duration[0],
-          durationValidators:
-            _validatorsBalancesSettingsForm.durationValidators[0],
-          quorum: _validatorsBalancesSettingsForm.quorum[0],
-          quorumValidators: _validatorsBalancesSettingsForm.quorumValidators[0],
-          minVotesForVoting:
-            _validatorsBalancesSettingsForm.minVotesForVoting[0],
-          minVotesForCreating:
-            _validatorsBalancesSettingsForm.minVotesForCreating[0],
-          rewardToken: _validatorsBalancesSettingsForm.rewardToken[0],
-          creationReward: _validatorsBalancesSettingsForm.creationReward[0],
-          executionReward: _validatorsBalancesSettingsForm.executionReward[0],
-          voteRewardsCoefficient:
-            _validatorsBalancesSettingsForm.voteRewardsCoefficient[0],
-          executorDescription:
-            _validatorsBalancesSettingsForm.executorDescription[0],
-        },
-        _defaultProposalSettingForm: {
-          earlyCompletion: _defaultProposalSettingForm.earlyCompletion[0],
-          delegatedVotingAllowed:
-            _defaultProposalSettingForm.delegatedVotingAllowed[0],
-          validatorsVote: _defaultProposalSettingForm.validatorsVote[0],
-          duration: _defaultProposalSettingForm.duration[0],
-          durationValidators: _defaultProposalSettingForm.durationValidators[0],
-          quorum: _defaultProposalSettingForm.quorum[0],
-          quorumValidators: _defaultProposalSettingForm.quorumValidators[0],
-          minVotesForVoting: _defaultProposalSettingForm.minVotesForVoting[0],
-          minVotesForCreating:
-            _defaultProposalSettingForm.minVotesForCreating[0],
-          rewardToken: _defaultProposalSettingForm.rewardToken[0],
-          creationReward: _defaultProposalSettingForm.creationReward[0],
-          executionReward: _defaultProposalSettingForm.executionReward[0],
-          voteRewardsCoefficient:
-            _defaultProposalSettingForm.voteRewardsCoefficient[0],
-          executorDescription:
-            _defaultProposalSettingForm.executorDescription[0],
-        },
-      })
+    setLocalStorageValue((prevState) => {
+      const nextState = JSON.stringify(convertForm())
 
       return isEqual(prevState, nextState) ? prevState : nextState
     })
   }, [
     _avatarUrl,
     _daoName,
-    _defaultProposalSettingForm.creationReward,
-    _defaultProposalSettingForm.delegatedVotingAllowed,
-    _defaultProposalSettingForm.duration,
-    _defaultProposalSettingForm.durationValidators,
-    _defaultProposalSettingForm.earlyCompletion,
-    _defaultProposalSettingForm.executionReward,
-    _defaultProposalSettingForm.executorDescription,
-    _defaultProposalSettingForm.minVotesForCreating,
-    _defaultProposalSettingForm.minVotesForVoting,
-    _defaultProposalSettingForm.quorum,
-    _defaultProposalSettingForm.quorumValidators,
-    _defaultProposalSettingForm.rewardToken,
-    _defaultProposalSettingForm.validatorsVote,
-    _defaultProposalSettingForm.voteRewardsCoefficient,
     _description,
-    _distributionProposalSettingsForm.creationReward,
-    _distributionProposalSettingsForm.delegatedVotingAllowed,
-    _distributionProposalSettingsForm.duration,
-    _distributionProposalSettingsForm.durationValidators,
-    _distributionProposalSettingsForm.earlyCompletion,
-    _distributionProposalSettingsForm.executionReward,
-    _distributionProposalSettingsForm.executorDescription,
-    _distributionProposalSettingsForm.minVotesForCreating,
-    _distributionProposalSettingsForm.minVotesForVoting,
-    _distributionProposalSettingsForm.quorum,
-    _distributionProposalSettingsForm.quorumValidators,
-    _distributionProposalSettingsForm.rewardToken,
-    _distributionProposalSettingsForm.validatorsVote,
-    _distributionProposalSettingsForm.voteRewardsCoefficient,
     _documents,
-    _internalProposalForm.creationReward,
-    _internalProposalForm.delegatedVotingAllowed,
-    _internalProposalForm.duration,
-    _internalProposalForm.durationValidators,
-    _internalProposalForm.earlyCompletion,
-    _internalProposalForm.executionReward,
-    _internalProposalForm.executorDescription,
-    _internalProposalForm.minVotesForCreating,
-    _internalProposalForm.minVotesForVoting,
-    _internalProposalForm.quorum,
-    _internalProposalForm.quorumValidators,
-    _internalProposalForm.rewardToken,
-    _internalProposalForm.validatorsVote,
-    _internalProposalForm.voteRewardsCoefficient,
     _isCustomVoting,
     _isDistributionProposal,
     _isErc20,
     _isErc721,
     _isValidator,
     _socialLinks,
-    _userKeeperParams.nftAddress,
-    _userKeeperParams.nftsTotalSupply,
-    _userKeeperParams.tokenAddress,
-    _userKeeperParams.totalPowerInTokens,
-    _validatorsBalancesSettingsForm.creationReward,
-    _validatorsBalancesSettingsForm.delegatedVotingAllowed,
-    _validatorsBalancesSettingsForm.duration,
-    _validatorsBalancesSettingsForm.durationValidators,
-    _validatorsBalancesSettingsForm.earlyCompletion,
-    _validatorsBalancesSettingsForm.executionReward,
-    _validatorsBalancesSettingsForm.executorDescription,
-    _validatorsBalancesSettingsForm.minVotesForCreating,
-    _validatorsBalancesSettingsForm.minVotesForVoting,
-    _validatorsBalancesSettingsForm.quorum,
-    _validatorsBalancesSettingsForm.quorumValidators,
-    _validatorsBalancesSettingsForm.rewardToken,
-    _validatorsBalancesSettingsForm.validatorsVote,
-    _validatorsBalancesSettingsForm.voteRewardsCoefficient,
-    _validatorsParams.balances,
-    _validatorsParams.duration,
-    _validatorsParams.name,
-    _validatorsParams.quorum,
-    _validatorsParams.symbol,
-    _validatorsParams.validators,
+    _userKeeperParams,
+    _validatorsParams,
     _websiteUrl,
-    setValue,
+    _defaultProposalSettingForm,
+    _distributionProposalSettingsForm,
+    _validatorsBalancesSettingsForm,
+    _internalProposalForm,
+    setLocalStorageValue,
+    convertForm,
   ])
 
   return (
     <>
-      <FundDaoCreatingContext.Provider
+      <GovPoolFormContext.Provider
         value={{
           isErc20: { get: _isErc20, set: _setIsErc20 },
           isErc721: { get: _isErc721, set: _setIsErc721 },
@@ -745,7 +956,7 @@ const FundDaoCreatingContextProvider: FC<
               get: _internalProposalForm.executorDescription[0],
               set: _internalProposalForm.executorDescription[1],
             },
-          } as DaoProposalSettingsForm,
+          } as GovPoolSettingsForm,
           distributionProposalSettingsForm: {
             earlyCompletion: {
               get: _distributionProposalSettingsForm.earlyCompletion[0],
@@ -803,7 +1014,7 @@ const FundDaoCreatingContextProvider: FC<
               get: _distributionProposalSettingsForm.executorDescription[0],
               set: _distributionProposalSettingsForm.executorDescription[1],
             },
-          } as DaoProposalSettingsForm,
+          } as GovPoolSettingsForm,
           validatorsBalancesSettingsForm: {
             earlyCompletion: {
               get: _validatorsBalancesSettingsForm.earlyCompletion[0],
@@ -861,7 +1072,7 @@ const FundDaoCreatingContextProvider: FC<
               get: _validatorsBalancesSettingsForm.executorDescription[0],
               set: _validatorsBalancesSettingsForm.executorDescription[1],
             },
-          } as DaoProposalSettingsForm,
+          } as GovPoolSettingsForm,
           defaultProposalSettingForm: {
             earlyCompletion: {
               get: _defaultProposalSettingForm.earlyCompletion[0],
@@ -919,9 +1130,9 @@ const FundDaoCreatingContextProvider: FC<
               get: _defaultProposalSettingForm.executorDescription[0],
               set: _defaultProposalSettingForm.executorDescription[1],
             },
-          } as DaoProposalSettingsForm,
+          } as GovPoolSettingsForm,
 
-          clearFormStorage: remove,
+          clearFormStorage: removeLocalStorageValue,
           createdDaoAddress: {
             get: _createdDaoAddress,
             set: _setCreatedDaoAddress,
@@ -930,28 +1141,9 @@ const FundDaoCreatingContextProvider: FC<
         }}
       >
         {children}
-      </FundDaoCreatingContext.Provider>
+      </GovPoolFormContext.Provider>
     </>
   )
 }
 
-export const useIsDaoFieldChanged = ({ field }: { field: string }): boolean => {
-  const [result, setResult] = useState<boolean>(false)
-
-  const contextValue = useContext(FundDaoCreatingContext)
-
-  useEffect(() => {
-    try {
-      const initialValue = get(contextValue.initialForm, "_" + field)
-      const currentValue = get(contextValue, field + ".get")
-
-      setResult(JSON.stringify(initialValue) !== JSON.stringify(currentValue))
-    } catch (error) {
-      setResult(false)
-    }
-  }, [field, contextValue])
-
-  return result
-}
-
-export default FundDaoCreatingContextProvider
+export default GovPoolFormContextProvider

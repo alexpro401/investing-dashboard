@@ -49,3 +49,4 @@ export { default as InsuranceMultiplierIcon } from "assets/icons/InsuranceMultip
 export { default as UnknownTokenIcon } from "assets/icons/UnknownTokenIcon"
 export { default as LogoIcon } from "assets/icons/LogoIcon"
 export { default as DexeTokenIcon } from "assets/icons/DexeTokenIcon"
+export { default as SuccessCircledIcon } from "assets/icons/SuccessCircledIcon"

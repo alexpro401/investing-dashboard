@@ -3,7 +3,7 @@ import { createClient, useQuery } from "urql"
 
 import { GovPoolExecutorQuery } from "queries/gov-pools"
 import { isAddress } from "utils"
-import { IExecutor, IExecutorType } from "types/dao.types"
+import { IExecutor, IExecutorType } from "types"
 import { parseIpfsString } from "utils/ipfs"
 import { IpfsEntity } from "utils/ipfsEntity"
 import useGovPoolExecutorType from "./useGovPoolExecutorType"

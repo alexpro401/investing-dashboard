@@ -2,10 +2,15 @@ import { useState, useEffect } from "react"
 import { Flex } from "theme"
 import InputSlider from "rc-slider"
 import useDebounce from "hooks/useDebounce"
-import SliderStyle from "theme/SliderStyle"
 import { focusText } from "utils"
 
-import { SliderLine, Percent, InputWrapper, InputSymbol } from "./styled"
+import {
+  SliderLine,
+  Percent,
+  InputWrapper,
+  InputSymbol,
+  SliderStyle,
+} from "./styled"
 
 export const NumberInput = ({ value, onChange, onClick }) => (
   <InputWrapper>

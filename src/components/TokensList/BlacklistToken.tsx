@@ -33,8 +33,6 @@ const BlacklistToken: FC<Props> = ({
 }) => {
   const { symbol, name } = currency
 
-  const token = currency.isToken ? currency : undefined
-
   return (
     <S.TokenContainer disabled style={style} onClick={() => onClick(currency)}>
       <TokenIcon m="0 8px 0 0" address={address} size={32} />

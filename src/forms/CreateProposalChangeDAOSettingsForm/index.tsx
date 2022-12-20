@@ -11,11 +11,11 @@ import { useNavigate, useParams } from "react-router-dom"
 
 import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
-import { ChangeDAOSettings } from "./steps"
 import { useGovPoolCreateProposalChangeDaoSettings } from "hooks/dao/proposals"
+import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
-import { ChangeGovSettingsContext } from "context/govPool/proposals/regular/ChangeGovSettingsContext"
 import { hideTapBar, showTabBar } from "state/application/actions"
+import { TitlesStep } from "common"
 
 import * as S from "./styled"
 
@@ -41,7 +41,7 @@ const CreateProposalChangeDAOSettingsForm: React.FC = () => {
     documents,
     socialLinks,
     websiteUrl,
-  } = useContext(ChangeGovSettingsContext)
+  } = useContext(GovPoolFormContext)
 
   useEffect(() => {
     dispatch(hideTapBar())
@@ -124,7 +124,7 @@ const CreateProposalChangeDAOSettingsForm: React.FC = () => {
       <AnimatePresence>
         {currentStep === STEPS.daoSettings && (
           <S.StepsContainer>
-            <ChangeDAOSettings />
+            <TitlesStep isCreatingProposal />
           </S.StepsContainer>
         )}
         {currentStep === STEPS.basicInfo && (

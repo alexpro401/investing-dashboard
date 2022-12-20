@@ -6,7 +6,6 @@ import * as S from "./styled"
 import {
   DaoProfileStatisticCard,
   DaoProfileChart,
-  DaoProfileBuyTokenCard,
   DaoProfileTokensInTreasuryCard,
 } from "./components"
 import { TabFallback } from "./tabs"
@@ -21,7 +20,7 @@ const DaoProfileTabDelegations = React.lazy(
   () => import("./tabs/DaoProfileTabDelegations")
 )
 import { PageChart } from "./types"
-import { EDaoProfileTab } from "types/dao.types"
+import { EDaoProfileTab } from "types"
 
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"

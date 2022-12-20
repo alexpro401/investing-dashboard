@@ -5,7 +5,6 @@ import {
   OptionalMethodInputs,
   useSingleContractMultipleData,
 } from "state/multicall/hooks"
-import { isAddress } from "utils"
 
 interface Params {
   proposalId: string
@@ -16,14 +15,6 @@ interface Params {
 interface Props {
   daoPoolAddress: string
   params: Params[]
-}
-
-interface Result {
-  [voter: string]: {
-    nftsVoted: BigNumber[]
-    tokensVoted: BigNumber
-    totalVoted: BigNumber
-  }
 }
 
 const useGovPoolUserVotes = ({ daoPoolAddress, params }: Props) => {

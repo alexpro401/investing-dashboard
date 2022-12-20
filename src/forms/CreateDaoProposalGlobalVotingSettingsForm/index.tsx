@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux"
 import { AnimatePresence } from "framer-motion"
 
 import StepsControllerContext from "context/StepsControllerContext"
-import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { DefaultProposalStep } from "common"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
@@ -32,7 +32,7 @@ const CreateDaoProposalGlobalVotingSettings: React.FC = () => {
   const createProposal = useGovPoolCreateProposalChangeSettings({
     daoPoolAddress: daoAddress ?? "",
   })
-  const { defaultProposalSettingForm } = useContext(FundDaoCreatingContext)
+  const { defaultProposalSettingForm } = useContext(GovPoolFormContext)
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
   )

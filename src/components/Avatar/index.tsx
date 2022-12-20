@@ -2,19 +2,11 @@ import { useState, useEffect, useCallback, ReactNode } from "react"
 import Compressor from "compressorjs"
 import ImageCropper from "modals/ImageCropper"
 import defaultAvatar from "assets/icons/default-avatar.svg"
-import picture from "assets/icons/picture.svg"
 import { blobToBase64 } from "utils/ipfs"
 
 import JazzIcon from "components/Icon/JazzIcon"
 
-import {
-  Img,
-  Overlay,
-  FileUpload,
-  CameraIcon,
-  Container,
-  JazzContainer,
-} from "./styled"
+import { Img, FileUpload, Container, JazzContainer } from "./styled"
 
 const getNormalizedFile = (file) => {
   return new Promise((resolve, reject) => {

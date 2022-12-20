@@ -1,12 +1,12 @@
 import React from "react"
 
-import { DaoVotingSettings } from "types"
+import { GovPoolSettings } from "types"
 import Modal from "components/Modal"
 
 import * as S from "./styled"
 
 interface IGovVotingSettings
-  extends Partial<Omit<DaoVotingSettings, "executorDescription" | "quorum">> {
+  extends Partial<Omit<GovPoolSettings, "executorDescription" | "quorum">> {
   isOpen: boolean
   toggle: () => void
   quorum: string

@@ -21,6 +21,7 @@ export const CreateProposalSelectTypePageHolder = styled(motion.div).attrs(
 export const CreateProposalSelectTypeContent = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 15px;
 `
 
@@ -50,7 +51,9 @@ export const CreateProposalSelectTypeCreateNew = styled(NavLink)`
   line-height: 19px;
 `
 export const CreateProposalSelectTypeSubmitButton = styled(AppButton)`
+  margin-top: auto;
   width: 100%;
+  flex-shrink: 0;
 `
 export const ProposalTypeGuide = styled.div`
   overflow: visible;

@@ -14,7 +14,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   govPoolProposal: ReturnType<typeof useGovPoolProposal>
 }
 
-const GovPoolProposalInsurance: FC<Props> = ({ govPoolProposal, ...rest }) => {
+const GovPoolProposalInsurance: FC<Props> = ({ govPoolProposal }) => {
   const { insuranceProposalView } = govPoolProposal
 
   const {

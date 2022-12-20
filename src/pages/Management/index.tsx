@@ -2,11 +2,10 @@ import { Flex } from "theme"
 import { useMemo } from "react"
 import { createClient, Provider as GraphProvider } from "urql"
 import { BigNumber } from "@ethersproject/bignumber"
-import { Icon } from "common"
 
 import { ICON_NAMES } from "constants/icon-names"
 import ExchangeInput from "components/Exchange/ExchangeInput"
-import { AppButton } from "common"
+import { AppButton, Icon } from "common"
 import TransactionSlippage from "components/TransactionSlippage"
 
 import { formatBigNumber } from "utils"

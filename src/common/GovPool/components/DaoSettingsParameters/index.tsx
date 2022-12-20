@@ -1,4 +1,16 @@
 import {
+  Dispatch,
+  FC,
+  HTMLAttributes,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useMemo,
+} from "react"
+import { isEqual } from "lodash"
+import { formatUnits } from "@ethersproject/units"
+
+import {
   AppButton,
   Card,
   CardDescription,
@@ -11,31 +23,20 @@ import {
 import { ICON_NAMES } from "constants/icon-names"
 import Switch from "components/Switch"
 import { DurationField, InputField, OverlapInputField } from "fields"
-import {
-  Dispatch,
-  FC,
-  HTMLAttributes,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useMemo,
-} from "react"
-import {
-  DaoProposalSettingsForm,
-  FundDaoCreatingContext,
-  useIsDaoFieldChanged,
-} from "context/FundDaoCreatingContext"
+import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { useFormValidation } from "hooks/useFormValidation"
 import { EInputBorderColors } from "fields/InputField"
 import { useERC20 } from "hooks/useERC20"
 import { readFromClipboard } from "utils/clipboard"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
+import { GovPoolSettingsForm } from "types"
+import { cutStringZeroes } from "utils"
 
 import * as S from "./styled"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
-  poolParameters: DaoProposalSettingsForm
+  poolParameters: GovPoolSettingsForm
   formValidation: ReturnType<typeof useFormValidation>
   isCreatingProposal?: boolean
 }
@@ -64,49 +65,139 @@ const DaoSettingsParameters: FC<Props> = ({
     quorumValidators,
   } = poolParameters
 
-  const { isValidator } = useContext(FundDaoCreatingContext)
+  const { isValidator, initialForm, defaultProposalSettingForm } =
+    useContext(GovPoolFormContext)
 
   const { getFieldErrorMessage, touchField, isFieldValid } = formValidation
 
-  const quorumIsChanged = useIsDaoFieldChanged({
-    field: "defaultProposalSettingForm.quorum",
-  })
+  const isQuorumChanged = useMemo(
+    () =>
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(initialForm._defaultProposalSettingForm.quorum, 25)
+        ),
+        cutStringZeroes(defaultProposalSettingForm.quorum.get)
+      ),
+    [defaultProposalSettingForm, initialForm]
+  )
 
-  const durationIsChanged = useIsDaoFieldChanged({
-    field: "defaultProposalSettingForm.duration",
-  })
+  const isDurationChanged = useMemo(
+    () =>
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(initialForm._defaultProposalSettingForm.duration, 0)
+        ),
+        defaultProposalSettingForm.duration.get.toString()
+      ),
+    [defaultProposalSettingForm, initialForm]
+  )
 
-  const durationValidatorsIsChanged = useIsDaoFieldChanged({
-    field: "defaultProposalSettingForm.durationValidators",
-  })
+  const isDurationValidatorsChanged = useMemo(
+    () =>
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(
+            initialForm._defaultProposalSettingForm.durationValidators,
+            0
+          )
+        ),
+        defaultProposalSettingForm.durationValidators.get.toString()
+      ),
+    [defaultProposalSettingForm, initialForm]
+  )
 
-  const quorumValidatorsIsChanged = useIsDaoFieldChanged({
-    field: "defaultProposalSettingForm.quorumValidators",
-  })
+  const isQuorumValidatorsChanged = useMemo(
+    () =>
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(
+            initialForm._defaultProposalSettingForm.quorumValidators,
+            25
+          )
+        ),
+        cutStringZeroes(defaultProposalSettingForm.quorumValidators.get)
+      ),
+    [defaultProposalSettingForm, initialForm]
+  )
 
-  const minVotesForVotingIsChanged = useIsDaoFieldChanged({
-    field: "defaultProposalSettingForm.minVotesForVoting",
-  })
+  const isMinVotesForVotingChanged = useMemo(
+    () =>
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(
+            initialForm._defaultProposalSettingForm.minVotesForVoting,
+            18
+          )
+        ),
+        cutStringZeroes(
+          defaultProposalSettingForm.minVotesForVoting.get.toString()
+        )
+      ),
+    [defaultProposalSettingForm, initialForm]
+  )
 
-  const minVotesForCreatingIsChanged = useIsDaoFieldChanged({
-    field: "defaultProposalSettingForm.minVotesForCreating",
-  })
+  const isMinVotesForCreatingChanged = useMemo(
+    () =>
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(
+            initialForm._defaultProposalSettingForm.minVotesForCreating,
+            18
+          )
+        ),
+        cutStringZeroes(
+          defaultProposalSettingForm.minVotesForCreating.get.toString()
+        )
+      ),
+    [defaultProposalSettingForm, initialForm]
+  )
 
-  const rewardTokenIsChanged = useIsDaoFieldChanged({
-    field: "defaultProposalSettingForm.rewardToken",
-  })
+  const isCreationRewardChanged = useMemo(
+    () =>
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(
+            initialForm._defaultProposalSettingForm.creationReward,
+            18
+          )
+        ),
+        cutStringZeroes(
+          defaultProposalSettingForm.creationReward.get.toString()
+        )
+      ),
+    [defaultProposalSettingForm, initialForm]
+  )
 
-  const creationRewardIsChanged = useIsDaoFieldChanged({
-    field: "defaultProposalSettingForm.creationReward",
-  })
+  const isVoteRewardsCoefficientChanged = useMemo(
+    () =>
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(
+            initialForm._defaultProposalSettingForm.voteRewardsCoefficient,
+            18
+          )
+        ),
+        cutStringZeroes(
+          defaultProposalSettingForm.voteRewardsCoefficient.get.toString()
+        )
+      ),
+    [defaultProposalSettingForm, initialForm]
+  )
 
-  const voteRewardsCoefficientIsChanged = useIsDaoFieldChanged({
-    field: "defaultProposalSettingForm.voteRewardsCoefficient",
-  })
+  const isExecutionRewardChanged = useMemo(
+    () =>
+      !isEqual(
+        cutStringZeroes(
+          formatUnits(
+            initialForm._defaultProposalSettingForm.executionReward,
+            18
+          )
+        ),
+        cutStringZeroes(defaultProposalSettingForm.executionReward.get)
+      ),
+    [defaultProposalSettingForm, initialForm]
+  )
 
-  const executionRewardIsChanged = useIsDaoFieldChanged({
-    field: "defaultProposalSettingForm.executionReward",
-  })
   const [, erc20TokenData] = useERC20(rewardToken.get)
 
   const { chainId } = useActiveWeb3React()
@@ -163,7 +254,7 @@ const DaoSettingsParameters: FC<Props> = ({
             errorMessage={getFieldErrorMessage("duration")}
             onBlur={() => touchField("duration")}
             borderColor={
-              isCreatingProposal && durationIsChanged
+              isCreatingProposal && isDurationChanged
                 ? EInputBorderColors.success
                 : undefined
             }
@@ -182,7 +273,7 @@ const DaoSettingsParameters: FC<Props> = ({
             onBlur={() => touchField("quorum")}
             nodeRight={"%"}
             borderColor={
-              isCreatingProposal && quorumIsChanged
+              isCreatingProposal && isQuorumChanged
                 ? EInputBorderColors.success
                 : undefined
             }
@@ -218,7 +309,7 @@ const DaoSettingsParameters: FC<Props> = ({
               errorMessage={getFieldErrorMessage("durationValidators")}
               onBlur={() => touchField("durationValidators")}
               borderColor={
-                isCreatingProposal && durationValidatorsIsChanged
+                isCreatingProposal && isDurationValidatorsChanged
                   ? EInputBorderColors.success
                   : undefined
               }
@@ -236,7 +327,7 @@ const DaoSettingsParameters: FC<Props> = ({
               errorMessage={getFieldErrorMessage("quorumValidators")}
               onBlur={() => touchField("quorumValidators")}
               borderColor={
-                isCreatingProposal && quorumValidatorsIsChanged
+                isCreatingProposal && isQuorumValidatorsChanged
                   ? EInputBorderColors.success
                   : undefined
               }
@@ -287,7 +378,7 @@ const DaoSettingsParameters: FC<Props> = ({
             errorMessage={getFieldErrorMessage("minVotesForVoting")}
             onBlur={() => touchField("minVotesForVoting")}
             borderColor={
-              isCreatingProposal && minVotesForVotingIsChanged
+              isCreatingProposal && isMinVotesForVotingChanged
                 ? EInputBorderColors.success
                 : undefined
             }
@@ -306,7 +397,7 @@ const DaoSettingsParameters: FC<Props> = ({
             errorMessage={getFieldErrorMessage("minVotesForCreating")}
             onBlur={() => touchField("minVotesForCreating")}
             borderColor={
-              isCreatingProposal && minVotesForCreatingIsChanged
+              isCreatingProposal && isMinVotesForCreatingChanged
                 ? EInputBorderColors.success
                 : undefined
             }
@@ -403,7 +494,7 @@ const DaoSettingsParameters: FC<Props> = ({
                 errorMessage={getFieldErrorMessage("creationReward")}
                 onBlur={() => touchField("creationReward")}
                 borderColor={
-                  isCreatingProposal && creationRewardIsChanged
+                  isCreatingProposal && isCreationRewardChanged
                     ? EInputBorderColors.success
                     : undefined
                 }
@@ -422,7 +513,7 @@ const DaoSettingsParameters: FC<Props> = ({
                 errorMessage={getFieldErrorMessage("voteRewardsCoefficient")}
                 onBlur={() => touchField("voteRewardsCoefficient")}
                 borderColor={
-                  isCreatingProposal && voteRewardsCoefficientIsChanged
+                  isCreatingProposal && isVoteRewardsCoefficientChanged
                     ? EInputBorderColors.success
                     : undefined
                 }
@@ -441,7 +532,7 @@ const DaoSettingsParameters: FC<Props> = ({
                 errorMessage={getFieldErrorMessage("executionReward")}
                 onBlur={() => touchField("executionReward")}
                 borderColor={
-                  isCreatingProposal && executionRewardIsChanged
+                  isCreatingProposal && isExecutionRewardChanged
                     ? EInputBorderColors.success
                     : undefined
                 }

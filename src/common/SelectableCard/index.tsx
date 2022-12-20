@@ -1,11 +1,4 @@
-import {
-  Dispatch,
-  HTMLAttributes,
-  ReactNode,
-  SetStateAction,
-  useCallback,
-  useMemo,
-} from "react"
+import { HTMLAttributes, ReactNode, useCallback, useMemo } from "react"
 
 import * as S from "./styled"
 

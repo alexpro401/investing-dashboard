@@ -14,7 +14,7 @@ import {
 import { OverlapInputField } from "fields"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { ValidatorsListContext } from "context/govPool/proposals/ValidatorsListContext"
-import { FundDaoCreatingContext } from "context/FundDaoCreatingContext"
+import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { CreateDaoCardStepNumber } from "common"
 import ValidatorsList from "components/ValidatorsList"
 import GovVotingSettings from "modals/GovVotingSettings"
@@ -34,7 +34,7 @@ const ValidatorsSettingsStep: React.FC = () => {
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
   const { validators, balances, handleChangeValidator, hiddenIdxs } =
     useContext(ValidatorsListContext)
-  const { initialForm } = useContext(FundDaoCreatingContext)
+  const { initialForm } = useContext(GovPoolFormContext)
   const totalVoteWeight = useGovUserKeeperGetTotalVoteWeight(daoAddress ?? "")
 
   const [previousSettingsOpened, setPreviousSettingsOpened] = useState(false)
@@ -100,22 +100,17 @@ const ValidatorsSettingsStep: React.FC = () => {
   const regularQuorum = useMemo(() => {
     if (!totalVoteWeight) return "0"
 
-    const quorumBN = parseUnits(
-      initialForm._validatorsBalancesSettingsForm.quorum.toString(),
-      18
-    )
-
     // quorum_votes = (users_total_supply * quorum) / 100
     const multiplyResult = multiplyBignumbers(
-      [quorumBN, 18],
+      [initialForm._validatorsBalancesSettingsForm.quorum, 25],
       [totalVoteWeight, 18]
     )
     const quorumResult = divideBignumbers(
       [multiplyResult, 18],
-      [parseUnits("100"), 18]
+      [parseUnits("100"), 25]
     )
 
-    return cutStringZeroes(formatUnits(quorumResult, 18))
+    return cutStringZeroes(formatUnits(quorumResult, 25))
   }, [totalVoteWeight, initialForm])
 
   const appNavigationEl = document.querySelector("#app-navigation")

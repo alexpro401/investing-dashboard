@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { EDaoProfileTab, IGovPoolDescription } from "types/dao.types"
+import { EDaoProfileTab, IGovPoolDescription } from "types"
 import {
   useAboutDao,
   useValidators,

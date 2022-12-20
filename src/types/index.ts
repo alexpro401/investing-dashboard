@@ -1,1 +1,1 @@
-export * from "./dao.types"
+export * from "./govPool.types"

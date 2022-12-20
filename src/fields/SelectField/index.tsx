@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useRef, useMemo } from "react"
+import React, { useCallback, useState, useRef, useMemo } from "react"
 import { useClickAway, useDebounce } from "react-use"
 
 import { Collapse } from "common"

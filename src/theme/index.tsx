@@ -2,7 +2,7 @@ import { Link } from "react-router-dom"
 import styled, { css } from "styled-components"
 import { motion } from "framer-motion"
 import { createBreakpoint } from "react-use"
-import { ReactNode } from "react"
+import { ReactNode, FC } from "react"
 import { colorsTheme } from "./colors.theme"
 
 export const ease = [0.29, 0.98, 0.29, 1]
@@ -42,22 +42,6 @@ export default {
   ...colorsTheme,
 }
 
-export const chartColors = {
-  pro: {
-    stroke: "#48AA6E",
-    bg: "#9AE2CB33",
-  },
-  default: {
-    stroke: "#00C0FF",
-    bg: ["#9AE2CB33", "#9AE2CB26", "#9AE2CB00"],
-  },
-}
-
-export const rotateVariants = {
-  visible: { rotate: 180 },
-  hidden: { rotate: 0 },
-}
-
 export const To = styled(Link)`
   text-decoration: none;
   color: ${(props) => props.theme.textPrimary};
@@ -87,14 +71,6 @@ export const BaseButton = styled(motion.button)`
   &:focus {
     outline: 0px solid transparent;
   }
-`
-
-export const Header = styled.div`
-  display: flex;
-  padding: 20px 0;
-  width: fit-content;
-  align-items: center;
-  justify-content: space-around;
 `
 
 const LinkWrap = styled(Link)<{ c: string; fw: number }>`
@@ -208,23 +184,6 @@ export const GradientBorder = styled(Flex)<{ focused?: boolean }>`
   }
 `
 
-export const GradientBorderLight = styled(Flex)`
-  ${GradientBorderBase}
-
-  &:before {
-    background-image: linear-gradient(
-      to bottom right,
-      #2680eb 0%,
-      #7fffd4 40%,
-      #2680eb 60%,
-      #2680eb 100%
-    );
-  }
-  &:after {
-    background: linear-gradient(64.44deg, #191e2b 32.35%, #272e3e 100%);
-  }
-`
-
 export const GradientBorderLightGreen = styled(Flex)<{ focused?: boolean }>`
   ${GradientBorderBase}
 
@@ -253,7 +212,7 @@ export const GradientBorderSearch = styled(Flex)<{ focused?: boolean }>`
   }
 `
 
-export const External: React.FC<{
+export const External: FC<{
   href: string
   children?: ReactNode
 }> = ({ href, children }) => (
@@ -261,49 +220,6 @@ export const External: React.FC<{
     {children}
   </ExternalLink>
 )
-
-export const customStyles = {
-  header: {
-    style: {
-      display: "none",
-    },
-  },
-  headRow: {
-    style: {
-      minHeight: "26px",
-      borderBottomWidth: "0px",
-    },
-  },
-  rows: {
-    style: {
-      minHeight: "37px",
-      fontSize: "14px",
-      fontWeight: 300,
-      color: "#F5F5F5",
-    },
-  },
-  headCells: {
-    style: {
-      color: "#707070",
-      fontFamily: "Gilroy",
-      fontSize: "14px",
-      fontWeight: 300,
-    },
-  },
-  cells: {
-    style: {
-      paddingLeft: "16px",
-      paddingRight: "0px",
-    },
-  },
-}
-
-export const customListStyles = customStyles
-export const customTableStyles = {
-  ...customStyles,
-  rows: { style: { minHeight: "52px" } },
-  headCells: { style: { fontWeight: 800 } },
-}
 
 export const Text = styled(motion.span)<{
   color?: string
@@ -326,29 +242,6 @@ export const Text = styled(motion.span)<{
   font-style: ${(props) => props.fs || "normal"};
   padding: ${(props) => props.p || "0px"};
 `
-
-export const TextIcon = styled.svg<{ side?: "left" | "right" }>`
-  width: 15px;
-  height: 15px;
-  margin-left: ${(props) => (props?.side === "left" ? "0px" : "5px")};
-  margin-right: ${(props) => (props?.side === "right" ? "0px" : "5px")};
-  transform: translateY(-2px);
-  cursor: pointer;
-`
-
-export const LinkIcon: React.FC<{
-  side?: "left" | "right"
-  fill?: string
-}> = (props) => (
-  <TextIcon side={props.side} viewBox="0 0 15.004 15.004">
-    <path
-      d="M12.66-2.873h-.938a.469.469,0,0,0-.469.469V.878H1.875V-8.5H6.1a.469.469,0,0,0,.469-.469v-.938a.469.469,0,0,0-.469-.469H1.407A1.407,1.407,0,0,0,0-8.968V1.347A1.407,1.407,0,0,0,1.407,2.754H11.722a1.407,1.407,0,0,0,1.407-1.407V-2.4A.469.469,0,0,0,12.66-2.873ZM14.3-12.25H10.55a.7.7,0,0,0-.5,1.2L11.1-10,3.956-2.862a.808.808,0,0,0-.207.5.808.808,0,0,0,.207.5L4.62-1.2a.808.808,0,0,0,.5.207.808.808,0,0,0,.5-.207l7.139-7.141L13.8-7.3A.7.7,0,0,0,15-7.8v-3.751A.7.7,0,0,0,14.3-12.25Z"
-      transform="translate(0 12.25)"
-      fill={props.fill ? props.fill : "#5c9b90"}
-      opacity="0.996"
-    />
-  </TextIcon>
-)
 
 export const IconButton = styled.div`
   cursor: pointer;

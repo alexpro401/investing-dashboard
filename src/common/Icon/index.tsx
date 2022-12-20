@@ -50,11 +50,11 @@ import {
   UnknownTokenIcon,
   LogoIcon,
   DexeTokenIcon,
+  SuccessCircledIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
 import { ICON_NAMES } from "constants/icon-names"
-import SuccessCircledIcon from "../../assets/icons/SuccessCircledIcon"
 
 interface Props extends HTMLAttributes<HTMLOrSVGElement> {
   name: ICON_NAMES

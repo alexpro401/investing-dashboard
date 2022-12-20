@@ -1,9 +1,8 @@
 import React, { HTMLAttributes, useMemo } from "react"
-import { formatEther } from "@ethersproject/units"
 
 import Switch from "components/Switch"
 import { TokenChip } from "common"
-import { DaoVotingSettings } from "types"
+import { GovPoolSettings } from "types"
 import {
   parseSeconds,
   parseDuration,
@@ -17,9 +16,10 @@ import { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
 
 import * as S from "./styled"
+import { formatUnits } from "@ethersproject/units"
 
 type DaoSettingsNotRequired = Partial<
-  Omit<DaoVotingSettings, "executorDescription" | "quorum">
+  Omit<GovPoolSettings, "executorDescription" | "quorum">
 >
 
 interface IVotingSettingsProps
@@ -47,7 +47,9 @@ const VotingSettings: React.FC<IVotingSettingsProps> = ({
   const durationString = useMemo(
     () =>
       duration
-        ? parseDurationShortString(parseDuration(parseSeconds(duration)))
+        ? parseDurationShortString(
+            parseDuration(parseSeconds(Number(formatUnits(duration, 0))))
+          )
         : null,
     [duration]
   )
@@ -95,13 +97,17 @@ const VotingSettings: React.FC<IVotingSettingsProps> = ({
       {minVotesForVoting && (
         <S.Record>
           <S.Label>Min. voting power required for voting</S.Label>
-          <S.Value>{minVotesForVoting}</S.Value>
+          <S.Value>
+            {cutStringZeroes(formatUnits(minVotesForVoting, 18))}
+          </S.Value>
         </S.Record>
       )}
       {minVotesForCreating && (
         <S.Record>
           <S.Label>Min. voting power required for creating a proposal</S.Label>
-          <S.Value>{minVotesForCreating}</S.Value>
+          <S.Value>
+            {cutStringZeroes(formatUnits(minVotesForCreating, 18))}
+          </S.Value>
         </S.Record>
       )}
       {rewardToken !== undefined && (
@@ -124,10 +130,16 @@ const VotingSettings: React.FC<IVotingSettingsProps> = ({
       {creationReward && (
         <S.Record>
           <S.Label>Tokens reward for creator</S.Label>
-          {!tokenData && <S.Value>{creationReward} TKN</S.Value>}
+          {!tokenData && (
+            <S.Value>
+              {cutStringZeroes(formatUnits(creationReward, 18))} TKN
+            </S.Value>
+          )}
           {tokenData && (
             <S.Value>
-              {creationReward} {tokenData.symbol}
+              {`${cutStringZeroes(formatUnits(creationReward, 18))} ${
+                tokenData.symbol
+              }`}
             </S.Value>
           )}
         </S.Record>
@@ -135,16 +147,25 @@ const VotingSettings: React.FC<IVotingSettingsProps> = ({
       {voteRewardsCoefficient && (
         <S.Record>
           <S.Label>Tokens reward for the voter</S.Label>
-          <S.Value>{voteRewardsCoefficient} %</S.Value>
+          <S.Value>
+            {/*TODO: 18 or 25?*/}
+            {cutStringZeroes(formatUnits(voteRewardsCoefficient, 18))} %
+          </S.Value>
         </S.Record>
       )}
       {executionReward && (
         <S.Record>
           <S.Label>Tokens reward for member executing proposal tx.</S.Label>
-          {!tokenData && <S.Value>{creationReward} TKN</S.Value>}
-          {tokenData && (
+          {!tokenData && creationReward && (
             <S.Value>
-              {creationReward} {tokenData.symbol}
+              {cutStringZeroes(formatUnits(creationReward, 18))} TKN
+            </S.Value>
+          )}
+          {tokenData && creationReward && (
+            <S.Value>
+              {`${cutStringZeroes(formatUnits(creationReward, 18))} ${
+                tokenData.symbol
+              }`}
             </S.Value>
           )}
         </S.Record>

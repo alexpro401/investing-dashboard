@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { createClient, useQuery } from "urql"
 
-import { IExecutor, IExecutorType } from "types/dao.types"
+import { IExecutor, IExecutorType } from "types"
 import { GovPoolExecutorsBySettingIdQuery } from "queries/gov-pools"
 import { isAddress } from "utils"
 import { useGovPoolExecutorType } from "hooks/dao"

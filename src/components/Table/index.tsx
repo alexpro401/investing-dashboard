@@ -25,7 +25,7 @@ const Table: React.FC<Props> = ({
   const total = Number(data.length) || 0
 
   const [offset, setOffset] = React.useState(0)
-  const [limit, setLimit] = React.useState(10)
+  const [limit] = React.useState(10)
 
   const onPrev = React.useCallback(() => {
     if (offset === 0 || offset - limit <= 0) {
