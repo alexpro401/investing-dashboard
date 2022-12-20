@@ -15,6 +15,7 @@ import { normalizeBigNumber } from "utils"
 import { IGovPoolDelegationHistoryQuery } from "interfaces/thegraphs/gov-pools"
 import { Token } from "interfaces"
 import { ZERO } from "constants/index"
+import { useGovPoolHelperContracts } from "hooks/dao"
 
 interface DaoDelegationInProps {
   token: Token | null
@@ -27,9 +28,16 @@ const DaoDelegationIn: React.FC<DaoDelegationInProps> = ({
 }) => {
   const { chainId, account } = useWeb3React()
 
-  const { power } = {
-    power: ZERO,
-  }
+  const { govUserKeeperAddress } = useGovPoolHelperContracts(
+    govPoolAddress ?? ""
+  )
+
+  const [{ power }] = useGovPoolUserVotingPower({
+    userKeeperAddress: govUserKeeperAddress ?? "",
+    address: account ?? "",
+    isMicroPool: true,
+    useDelegated: false,
+  })
 
   const [{ data, loading }, fetchMore] =
     useQueryPagination<IGovPoolDelegationHistoryQuery>({

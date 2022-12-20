@@ -83,11 +83,10 @@ const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
   } = useERC721Allowance(nftAddress, ERC721OwnedBalance, govUserKeeperAddress)
 
   // get power for all nfts
-  const userOwnedPower = {
-    power: ZERO,
-    totalNftPower: ZERO,
-    nftPower: [],
-  } as any
+  const [userOwnedPower] = useGovPoolUserVotingPower({
+    userKeeperAddress: govUserKeeperAddress,
+    address: account,
+  })
 
   // user nfts ids lists
   const userTokens = useERC721Tokens(daoPoolAddress)

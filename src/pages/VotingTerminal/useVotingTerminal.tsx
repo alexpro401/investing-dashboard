@@ -83,16 +83,15 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
   })
 
   // get power for all nfts
-  const userOwnedPower = {
-    power: ZERO,
-    totalNftPower: ZERO,
-    nftPower: [],
-  } as any
-  const userDelegatedPower = {
-    power: ZERO,
-    totalNftPower: ZERO,
-    nftPower: [],
-  } as any
+  const [userOwnedPower] = useGovPoolUserVotingPower({
+    userKeeperAddress: govUserKeeperAddress || "",
+    address: account,
+  })
+  const [userDelegatedPower] = useGovPoolUserVotingPower({
+    address: account,
+    userKeeperAddress: govUserKeeperAddress || "",
+    isMicroPool: true,
+  })
 
   const ERC20Voted = useMemo(() => {
     if (!account) return ZERO

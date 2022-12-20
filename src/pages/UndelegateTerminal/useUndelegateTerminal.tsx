@@ -6,6 +6,7 @@ import {
   useGovPoolVotingAssets,
   useGovPoolDelegate,
   useGovPoolWithdrawableAssets,
+  useGovPoolHelperContracts,
 } from "hooks/dao"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { multiplyBignumbers } from "utils/formulas"
@@ -28,6 +29,7 @@ const useUndelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
   const [ERC20Price, setERC20Price] = useState(ZERO)
   const [ERC721Amount, setERC721Amount] = useState<number[]>([])
 
+  const { govUserKeeperAddress } = useGovPoolHelperContracts(daoPoolAddress)
   const { undelegate } = useGovPoolDelegate(daoPoolAddress)
   const [{ tokenAddress, nftAddress, haveToken, haveNft }] =
     useGovPoolVotingAssets(daoPoolAddress)
@@ -46,11 +48,11 @@ const useUndelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
   const priceUSD = useTokenPriceOutUSD({ tokenAddress })
 
   // get power for all nfts
-  const delegatedNftPower = {
-    power: ZERO,
-    totalNftPower: ZERO,
-    nftPower: [],
-  } as any
+  const [delegatedNftPower] = useGovPoolUserVotingPower({
+    userKeeperAddress: govUserKeeperAddress,
+    address: account,
+    useDelegated: true,
+  })
 
   // merge all lists in one
   const allNftsId = useMemo(() => {

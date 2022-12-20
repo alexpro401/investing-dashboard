@@ -2,6 +2,7 @@ import { ZERO } from "constants/index"
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
 import { useCallback, useMemo, useState } from "react"
 import {
+  useGovPoolHelperContracts,
   useGovPoolUserVotingPower,
   useGovPoolWithdraw,
   useGovPoolWithdrawableAssets,
@@ -31,6 +32,7 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
   const [ERC20Price, setERC20Price] = useState(ZERO)
   const [ERC721Amount, setERC721Amount] = useState<number[]>([])
 
+  const { govUserKeeperAddress } = useGovPoolHelperContracts(daoPoolAddress)
   const [{ tokenAddress, nftAddress, haveToken, haveNft }] =
     useGovPoolVotingAssets(daoPoolAddress)
 
@@ -53,11 +55,10 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
   )
 
   // get power for all nfts
-  const userOwnedPower = {
-    power: ZERO,
-    totalNftPower: ZERO,
-    nftPower: [],
-  } as any
+  const [userOwnedPower] = useGovPoolUserVotingPower({
+    userKeeperAddress: govUserKeeperAddress || "",
+    address: account,
+  })
 
   // merge all lists in one
   const allNftsId = useMemo(() => {

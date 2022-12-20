@@ -8,7 +8,7 @@ import { Flex } from "theme"
 import Icon from "components/Icon"
 import Tooltip from "components/Tooltip"
 import { normalizeBigNumber } from "utils"
-import { useGovPoolDescription } from "hooks/dao"
+import { useGovPoolDescription, useGovPoolHelperContracts } from "hooks/dao"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
 import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
@@ -27,11 +27,11 @@ const DaoPoolCard: React.FC<Props> = ({ data, account, children, ...rest }) => {
   const { descriptionObject } = useGovPoolDescription(id)
   const [assetsExisting, assets] = useGovPoolVotingAssets(id)
   const [{ tvl, mc_tvl, members, lau }] = useGovPoolStatistic(data)
-  const userVotingPower = {
-    power: ZERO,
-    totalNftPower: ZERO,
-    nftPower: [],
-  }
+  const { govUserKeeperAddress } = useGovPoolHelperContracts(id ?? "")
+  const [userVotingPower] = useGovPoolUserVotingPower({
+    userKeeperAddress: govUserKeeperAddress,
+    address: account,
+  })
 
   const poolName = React.useMemo(() => {
     if (isNil(data)) return ""

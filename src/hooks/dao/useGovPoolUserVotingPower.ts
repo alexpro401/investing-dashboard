@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { useGovUserKeeperContract } from "contracts"
 import { isAddress, parseTransactionError } from "utils"
 import useError from "hooks/useError"
 import { ZERO } from "constants/index"
 import { useMultipleContractSingleData } from "state/multicall/hooks"
-import { GovUserKeeper } from "abi"
+import { GovUserKeeper as GovUserKeeper_ABI } from "abi"
 import { Interface } from "@ethersproject/abi"
 import { isArray } from "lodash"
+import useContract from "hooks/useContract"
+import { GovUserKeeper } from "interfaces/typechain"
 
 interface IUseGovPoolUserVotingPower {
   userKeeperAddress?: string
@@ -29,7 +30,7 @@ const initialState = {
   nftPower: [],
 }
 
-const USER_KEEPER_INTERFACE = new Interface(GovUserKeeper)
+const USER_KEEPER_INTERFACE = new Interface(GovUserKeeper_ABI)
 
 export const useGovPoolVotingPowerMulticall = (
   params: IUseGovPoolUserVotingPower[]
@@ -113,7 +114,7 @@ export const useGovPoolVotingPowerMulticall = (
         : {},
       anyLoading,
     ]
-  }, [validatedParams, anyLoading, callResults])
+  }, [params, validatedParams, anyLoading, callResults])
 }
 
 const useGovPoolUserVotingPower = ({
@@ -123,7 +124,11 @@ const useGovPoolUserVotingPower = ({
   useDelegated,
 }: IUseGovPoolUserVotingPower): [result: IPowers, loading: boolean] => {
   const [, setError] = useError()
-  const govUserKeeperContract = useGovUserKeeperContract(userKeeperAddress)
+  const govUserKeeperContract = useContract<GovUserKeeper>(
+    userKeeperAddress,
+    GovUserKeeper_ABI,
+    true
+  )
 
   const [result, setResult] = useState<IPowers>(initialState)
   const [loading, setLoading] = useState<boolean>(true)
