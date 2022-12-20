@@ -132,6 +132,7 @@ const DaoProposalCard: FC<Props> = ({
     isProposalStateVoting,
     isProposalStateWaitingForVotingTransfer,
     moveProposalToValidators,
+    navigate,
     onButtonClick,
     proposalDetailsLinkPath,
     rewardTokenAddress,
@@ -175,7 +176,7 @@ const DaoProposalCard: FC<Props> = ({
             Voting status
           </S.DaoProposalCardBlockInfoLabel>
         </S.DaoProposalCardBlockInfo>
-        <S.DaoVotingProgressBar>
+        <S.DaoVotingProgressBar className={"progress-bar"}>
           <Flex full ai={"center"} jc={"space-between"} gap={"3"}>
             {isSecondStepProgressStarted ? (
               <>

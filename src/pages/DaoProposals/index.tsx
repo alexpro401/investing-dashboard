@@ -4,7 +4,7 @@ import { FC, HTMLAttributes } from "react"
 import Header from "components/Header/Layout"
 import { Routes, Route, useParams, Navigate } from "react-router-dom"
 import { DaoProposalsList } from "common"
-import * as React from "react"
+import { useBreakpoints } from "hooks"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -48,10 +48,22 @@ const DaoProposals: FC<Props> = () => {
     },
   ]
 
+  const { isMobile } = useBreakpoints()
+
   return (
     <>
-      <Header tabs={TABS}>All Proposals</Header>
+      <Header tabs={isMobile ? TABS : undefined}>
+        {isMobile ? "All Proposals" : <></>}
+      </Header>
       <S.Root>
+        {!isMobile ? (
+          <S.HeadContainer>
+            <S.PageTitle>All Proposals</S.PageTitle>
+            <S.PageHeadTabs tabs={TABS} />
+          </S.HeadContainer>
+        ) : (
+          <></>
+        )}
         <Routes>
           <Route
             path="opened"
