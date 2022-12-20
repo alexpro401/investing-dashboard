@@ -31,7 +31,7 @@ export type OptionalMethodInputs =
   | undefined
 
 function isMethodArg(x: unknown): x is MethodArg {
-  return ["string", "number"].indexOf(typeof x) !== -1
+  return ["string", "number", "boolean"].indexOf(typeof x) !== -1
 }
 
 function isValidMethodArgs(x: unknown): x is MethodArgs | undefined {

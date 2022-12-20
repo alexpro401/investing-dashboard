@@ -84,12 +84,12 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
 
   // get power for all nfts
   const [userOwnedPower] = useGovPoolUserVotingPower({
-    daoAddress: daoPoolAddress || "",
+    userKeeperAddress: govUserKeeperAddress || "",
     address: account,
   })
   const [userDelegatedPower] = useGovPoolUserVotingPower({
     address: account,
-    daoAddress: daoPoolAddress || "",
+    userKeeperAddress: govUserKeeperAddress || "",
     isMicroPool: true,
   })
 
@@ -147,13 +147,13 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
   // merge all power in one
   const allNftsPower = useMemo(() => {
     if (withDelegated) {
-      return [...userOwnedPower.nftPower, ...userDelegatedPower.nftPower].map(
-        (v) => v.toString()
+      return [...userOwnedPower.nftIds, ...userDelegatedPower.nftIds].map((v) =>
+        v.toString()
       )
     }
 
-    return [...userOwnedPower.nftPower].map((v) => v.toString())
-  }, [userDelegatedPower.nftPower, userOwnedPower.nftPower, withDelegated])
+    return [...userOwnedPower.nftIds].map((v) => v.toString())
+  }, [userDelegatedPower.nftIds, userOwnedPower.nftIds, withDelegated])
 
   const nftPowerMap = useMemo(() => {
     return allNftsId.reduce((acc, id, index) => {
