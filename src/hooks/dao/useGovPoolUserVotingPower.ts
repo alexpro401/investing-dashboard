@@ -1,15 +1,17 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
-import { reduce } from "lodash"
 
 import { useGovUserKeeperContract } from "contracts"
-import { addBignumbers } from "utils/formulas"
-import { parseTransactionError } from "utils"
+import { isAddress, parseTransactionError } from "utils"
 import useError from "hooks/useError"
 import { ZERO } from "constants/index"
+import { useMultipleContractSingleData } from "state/multicall/hooks"
+import { GovUserKeeper } from "abi"
+import { Interface } from "@ethersproject/abi"
+import { isArray } from "lodash"
 
 interface IUseGovPoolUserVotingPower {
-  daoAddress: string
+  userKeeperAddress?: string
   address?: string | null
   isMicroPool?: boolean
   useDelegated?: boolean
@@ -27,14 +29,101 @@ const initialState = {
   nftPower: [],
 }
 
+const USER_KEEPER_INTERFACE = new Interface(GovUserKeeper)
+
+export const useGovPoolVotingPowerMulticall = (
+  params: IUseGovPoolUserVotingPower[]
+) => {
+  const validatedList = useMemo(
+    () =>
+      params.filter(
+        (p) => isAddress(p.address) && isAddress(p.userKeeperAddress)
+      ),
+    [params]
+  )
+
+  const validatedAddresses = useMemo(
+    () => validatedList.map((p) => p.userKeeperAddress as string),
+    [validatedList]
+  )
+
+  const validatedParams = useMemo(() => {
+    const addresses = validatedList.map((p) => p.address as string)
+    const isMicroPool = validatedList.map((p) => p.isMicroPool || false)
+    const useDelegated = validatedList.map((p) => p.useDelegated || false)
+
+    return [addresses, isMicroPool, useDelegated] as const
+  }, [validatedList])
+
+  const callResults = useMultipleContractSingleData(
+    validatedAddresses,
+    USER_KEEPER_INTERFACE,
+    "votingPower",
+    validatedParams as any
+  )
+
+  const anyLoading: boolean = useMemo(
+    () => callResults.some((callState) => callState.loading),
+    [callResults]
+  )
+
+  return useMemo(() => {
+    return [
+      validatedParams.length > 0
+        ? validatedParams[0].reduce<{
+            default: {
+              [address: string]: IPowers
+            }
+            micropool: {
+              [address: string]: IPowers
+            }
+            delegated: {
+              [address: string]: IPowers
+            }
+          }>(
+            (memo, account, i) => {
+              const value = callResults?.[i]?.result?.[0]
+
+              if (!value) return memo
+
+              if (!isArray(value) || !value.length) return memo
+
+              params.map((p, i) => {
+                // if (!isAddress(p[0])) return
+
+                if (validatedParams[1][i]) {
+                  memo.micropool[account] = value[i]
+                }
+
+                if (validatedParams[2][i]) {
+                  memo.delegated[account] = value[i]
+                }
+
+                memo.default[account] = value[i]
+              })
+
+              return memo
+            },
+            {
+              default: {},
+              micropool: {},
+              delegated: {},
+            }
+          )
+        : {},
+      anyLoading,
+    ]
+  }, [validatedParams, anyLoading, callResults])
+}
+
 const useGovPoolUserVotingPower = ({
-  daoAddress,
+  userKeeperAddress,
   address,
   isMicroPool,
   useDelegated,
 }: IUseGovPoolUserVotingPower): [result: IPowers, loading: boolean] => {
   const [, setError] = useError()
-  const govUserKeeperContract = useGovUserKeeperContract(daoAddress)
+  const govUserKeeperContract = useGovUserKeeperContract(userKeeperAddress)
 
   const [result, setResult] = useState<IPowers>(initialState)
   const [loading, setLoading] = useState<boolean>(true)
@@ -70,11 +159,11 @@ const useGovPoolUserVotingPower = ({
   }, [govUserKeeperContract, address, isMicroPool, useDelegated, setError])
 
   useEffect(() => {
-    if (!govUserKeeperContract || !daoAddress || !address) {
+    if (!govUserKeeperContract || !userKeeperAddress || !address) {
       return
     }
     ;(async () => await getUserVotingPower())()
-  }, [govUserKeeperContract, getUserVotingPower, daoAddress, address])
+  }, [govUserKeeperContract, getUserVotingPower, userKeeperAddress, address])
 
   return [result, loading]
 }
