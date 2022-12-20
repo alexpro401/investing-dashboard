@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { isAddress, parseTransactionError } from "utils"
 import useError from "hooks/useError"
@@ -18,23 +18,41 @@ interface IUseGovPoolUserVotingPower {
   useDelegated?: boolean
 }
 
-interface IPowers {
+interface IVotingPowerResponse {
   power: BigNumber
-  nftPower: BigNumber[]
-  totalNftPower: BigNumber
+  nftPower: BigNumber
+  perNftPower: BigNumber[]
+  ownedBalance: BigNumber
+  ownedLength: BigNumber
+  nftIds: BigNumber[]
 }
 
-const initialState = {
+interface IUserVotingPowerMulticallResponse {
+  default: {
+    [address: string]: IVotingPowerResponse
+  }
+  micropool: {
+    [address: string]: IVotingPowerResponse
+  }
+  delegated: {
+    [address: string]: IVotingPowerResponse
+  }
+}
+
+const initialState: IVotingPowerResponse = {
   power: ZERO,
-  totalNftPower: ZERO,
-  nftPower: [],
+  nftPower: ZERO,
+  perNftPower: [],
+  ownedBalance: ZERO,
+  ownedLength: ZERO,
+  nftIds: [],
 }
 
 const USER_KEEPER_INTERFACE = new Interface(GovUserKeeper_ABI)
 
 export const useGovPoolVotingPowerMulticall = (
   params: IUseGovPoolUserVotingPower[]
-) => {
+): [data: IUserVotingPowerMulticallResponse, loading: boolean] => {
   const validatedList = useMemo(
     () =>
       params.filter(
@@ -71,17 +89,7 @@ export const useGovPoolVotingPowerMulticall = (
   return useMemo(() => {
     return [
       validatedParams.length > 0
-        ? validatedParams[0].reduce<{
-            default: {
-              [address: string]: IPowers
-            }
-            micropool: {
-              [address: string]: IPowers
-            }
-            delegated: {
-              [address: string]: IPowers
-            }
-          }>(
+        ? validatedParams[0].reduce<IUserVotingPowerMulticallResponse>(
             (memo, account, i) => {
               const value = callResults?.[i]?.result?.[0]
 
@@ -90,17 +98,33 @@ export const useGovPoolVotingPowerMulticall = (
               if (!isArray(value) || !value.length) return memo
 
               params.map((p, i) => {
-                // if (!isAddress(p[0])) return
+                const {
+                  power,
+                  nftPower,
+                  perNftPower,
+                  ownedBalance,
+                  ownedLength,
+                  nftIds,
+                } = value[i]
+
+                const result = {
+                  power,
+                  nftPower,
+                  perNftPower,
+                  ownedBalance,
+                  ownedLength,
+                  nftIds,
+                }
 
                 if (validatedParams[1][i]) {
-                  memo.micropool[account] = value[i]
+                  memo.micropool[account] = result
                 }
 
                 if (validatedParams[2][i]) {
-                  memo.delegated[account] = value[i]
+                  memo.delegated[account] = result
                 }
 
-                memo.default[account] = value[i]
+                memo.default[account] = result
               })
 
               return memo
@@ -111,7 +135,11 @@ export const useGovPoolVotingPowerMulticall = (
               delegated: {},
             }
           )
-        : {},
+        : {
+            default: {},
+            micropool: {},
+            delegated: {},
+          },
       anyLoading,
     ]
   }, [params, validatedParams, anyLoading, callResults])
@@ -122,7 +150,10 @@ const useGovPoolUserVotingPower = ({
   address,
   isMicroPool,
   useDelegated,
-}: IUseGovPoolUserVotingPower): [result: IPowers, loading: boolean] => {
+}: IUseGovPoolUserVotingPower): [
+  result: IVotingPowerResponse,
+  loading: boolean
+] => {
   const [, setError] = useError()
   const govUserKeeperContract = useContract<GovUserKeeper>(
     userKeeperAddress,
@@ -130,7 +161,7 @@ const useGovPoolUserVotingPower = ({
     true
   )
 
-  const [result, setResult] = useState<IPowers>(initialState)
+  const [result, setResult] = useState<IVotingPowerResponse>(initialState)
   const [loading, setLoading] = useState<boolean>(true)
 
   const getUserVotingPower = useCallback(async () => {
@@ -139,17 +170,21 @@ const useGovPoolUserVotingPower = ({
     try {
       setLoading(true)
 
-      const [{ power, nftPower, perNftPower }] =
-        await govUserKeeperContract.votingPower(
-          [address],
-          [isMicroPool || false],
-          [useDelegated || false]
-        )
+      const [
+        { power, nftPower, perNftPower, ownedBalance, ownedLength, nftIds },
+      ] = await govUserKeeperContract.votingPower(
+        [address],
+        [isMicroPool || false],
+        [useDelegated || false]
+      )
 
       setResult({
         power,
-        nftPower: perNftPower,
-        totalNftPower: nftPower,
+        nftPower,
+        perNftPower,
+        ownedBalance,
+        ownedLength,
+        nftIds,
       })
     } catch (error: any) {
       if (!!error && !!error.data && !!error.data.message) {

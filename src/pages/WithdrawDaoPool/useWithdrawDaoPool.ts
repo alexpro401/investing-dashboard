@@ -67,8 +67,8 @@ const useVotingTerminal = (daoPoolAddress?: string) => {
 
   // merge all power in one
   const allNftsPower = useMemo(() => {
-    return [...userOwnedPower.nftPower].map((v) => v.toString())
-  }, [userOwnedPower.nftPower])
+    return [...userOwnedPower.nftIds].map((v) => v.toString())
+  }, [userOwnedPower.nftIds])
 
   const nftPowerMap = useMemo(() => {
     return allNftsId.reduce((acc, id, index) => {

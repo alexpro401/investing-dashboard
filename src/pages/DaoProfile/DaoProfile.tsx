@@ -52,53 +52,53 @@ const DaoProfile: React.FC = () => {
     context: govPoolsClient,
   })
 
-  const [userKeeperContracts] = useGovPoolHelperContractsMulticall(
-    useMemo(() => [daoAddress], [daoAddress])
-  )
+  // const [userKeeperContracts] = useGovPoolHelperContractsMulticall(
+  //   useMemo(() => [daoAddress], [daoAddress])
+  // )
 
-  const votingPowerParams = useMemo(
-    () => [
-      {
-        userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
-        address: account,
-        isMicroPool: false,
-        useDelegated: false,
-      },
-      {
-        userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
-        address: account,
-        isMicroPool: true,
-        useDelegated: false,
-      },
-      {
-        userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
-        address: account,
-        isMicroPool: false,
-        useDelegated: true,
-      },
-      {
-        userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
-        address: "0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3",
-        isMicroPool: false,
-        useDelegated: false,
-      },
-      {
-        userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
-        address: "0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3",
-        isMicroPool: true,
-        useDelegated: false,
-      },
-      {
-        userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
-        address: "0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3",
-        isMicroPool: false,
-        useDelegated: true,
-      },
-    ],
-    [account, daoAddress, userKeeperContracts]
-  )
+  // const votingPowerParams = useMemo(
+  //   () => [
+  //     {
+  //       userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
+  //       address: account,
+  //       isMicroPool: false,
+  //       useDelegated: false,
+  //     },
+  //     {
+  //       userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
+  //       address: account,
+  //       isMicroPool: true,
+  //       useDelegated: false,
+  //     },
+  //     {
+  //       userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
+  //       address: account,
+  //       isMicroPool: false,
+  //       useDelegated: true,
+  //     },
+  //     {
+  //       userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
+  //       address: "0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3",
+  //       isMicroPool: false,
+  //       useDelegated: false,
+  //     },
+  //     {
+  //       userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
+  //       address: "0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3",
+  //       isMicroPool: true,
+  //       useDelegated: false,
+  //     },
+  //     {
+  //       userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
+  //       address: "0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3",
+  //       isMicroPool: false,
+  //       useDelegated: true,
+  //     },
+  //   ],
+  //   [account, daoAddress, userKeeperContracts]
+  // )
 
-  const [data, loading] = useGovPoolVotingPowerMulticall(votingPowerParams)
+  // const [data] = useGovPoolVotingPowerMulticall(votingPowerParams)
 
   const isValidator = true
 

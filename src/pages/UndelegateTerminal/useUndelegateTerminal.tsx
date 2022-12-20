@@ -61,8 +61,8 @@ const useUndelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
 
   // merge all power in one
   const allNftsPower = useMemo(() => {
-    return delegatedNftPower.nftPower.map((v) => v.toString())
-  }, [delegatedNftPower.nftPower])
+    return delegatedNftPower.nftIds.map((v) => v.toString())
+  }, [delegatedNftPower.nftIds])
 
   const nftPowerMap = useMemo(() => {
     return allNftsId.reduce((acc, id, index) => {

@@ -14,7 +14,6 @@ import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
 import { normalizeBigNumber } from "utils"
 import { IGovPoolDelegationHistoryQuery } from "interfaces/thegraphs/gov-pools"
 import { Token } from "interfaces"
-import { ZERO } from "constants/index"
 import { useGovPoolHelperContracts } from "hooks/dao"
 
 interface DaoDelegationInProps {
