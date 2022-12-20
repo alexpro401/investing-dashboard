@@ -19,6 +19,11 @@ interface IValidator {
   balance: string
 }
 
+interface ITokenDelegatee {
+  id: string
+  receivedDelegation: string
+}
+
 interface IGovPoolProfileTabsContext {
   currentTab: { get: EDaoProfileTab; set: (value: EDaoProfileTab) => void }
 
@@ -53,6 +58,15 @@ interface IGovPoolProfileTabsContext {
       })
     | undefined
   myBalanceLoading: boolean
+
+  //delegations
+  delegationsLoading: boolean
+  totalDelegatedNftVotingPower: BigNumber | undefined
+  totalDelegatedTokensVotingPower: BigNumber | undefined
+  totalTokensDelegatee: number | undefined
+  totalNftDelegatee: number | undefined
+  topTokenDelegatee: undefined | ITokenDelegatee[]
+  setTopTokenDelegatee: (v: undefined | ITokenDelegatee[]) => void
 }
 
 export const GovPoolProfileTabsContext =
@@ -85,6 +99,15 @@ export const GovPoolProfileTabsContext =
     },
     withdrawableAssets: undefined,
     myBalanceLoading: false,
+
+    //delegations
+    delegationsLoading: false,
+    totalDelegatedNftVotingPower: undefined,
+    totalDelegatedTokensVotingPower: undefined,
+    totalTokensDelegatee: undefined,
+    totalNftDelegatee: undefined,
+    topTokenDelegatee: undefined,
+    setTopTokenDelegatee: () => {},
   })
 
 interface IGovPoolProfileTabsContextProviderProps {
@@ -115,6 +138,22 @@ const GovPoolProfileTabsContextProvider: React.FC<
     number | null
   >(null)
 
+  const [_totalDelegatedNftVotingPower, _setTotalDelegatedNftVotingPower] =
+    useState<BigNumber | undefined>(undefined)
+  const [
+    _totalDelegatedTokensVotingPower,
+    _setTotalDelegatedTokensVotingPower,
+  ] = useState<BigNumber | undefined>(undefined)
+  const [_totalTokensDelegatee, _setTotalTokensDelegatee] = useState<
+    number | undefined
+  >(undefined)
+  const [_totalNftDelegatee, _setTotalNftDelegatee] = useState<
+    number | undefined
+  >(undefined)
+  const [_topTokenDelegatee, _setTopTokenDelegatee] = useState<
+    undefined | ITokenDelegatee[]
+  >(undefined)
+
   const { descriptionObject, loading: aboutDaoLoading } = useAboutDao({
     startLoading: _currentTab === EDaoProfileTab.about && !_daoDescription,
   })
@@ -136,9 +175,38 @@ const GovPoolProfileTabsContextProvider: React.FC<
     }
   }, [validatorsCount])
 
-  const some = useDelegations({
-    startLoading: _currentTab === EDaoProfileTab.delegations,
+  const {
+    totalDelegatedNftVotingPower,
+    totalDelegatedTokensVotingPower,
+    totalTokensDelegatee,
+    totalNftDelegatee,
+    loading: delegationsLoading,
+  } = useDelegations({
+    startLoading:
+      _currentTab === EDaoProfileTab.delegations &&
+      !_totalDelegatedNftVotingPower,
   })
+
+  useEffect(() => {
+    if (totalDelegatedNftVotingPower) {
+      _setTotalDelegatedNftVotingPower(totalDelegatedNftVotingPower)
+    }
+  }, [totalDelegatedNftVotingPower])
+  useEffect(() => {
+    if (totalDelegatedTokensVotingPower) {
+      _setTotalDelegatedTokensVotingPower(totalDelegatedTokensVotingPower)
+    }
+  }, [totalDelegatedTokensVotingPower])
+  useEffect(() => {
+    if (totalTokensDelegatee) {
+      _setTotalTokensDelegatee(totalTokensDelegatee)
+    }
+  }, [totalTokensDelegatee])
+  useEffect(() => {
+    if (totalNftDelegatee) {
+      _setTotalNftDelegatee(totalNftDelegatee)
+    }
+  }, [totalNftDelegatee])
 
   const {
     proposalsCount,
@@ -193,6 +261,15 @@ const GovPoolProfileTabsContextProvider: React.FC<
         erc20Balances,
         erc721Balances,
         myBalanceLoading,
+
+        //delegations
+        delegationsLoading,
+        totalDelegatedNftVotingPower: _totalDelegatedNftVotingPower,
+        totalDelegatedTokensVotingPower: _totalDelegatedTokensVotingPower,
+        totalTokensDelegatee: _totalTokensDelegatee,
+        totalNftDelegatee: _totalNftDelegatee,
+        topTokenDelegatee: _topTokenDelegatee,
+        setTopTokenDelegatee: _setTopTokenDelegatee,
       }}
     >
       {children}
