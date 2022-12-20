@@ -45,9 +45,10 @@ import { DEFAULT_ALERT_HIDDEN_TIMEOUT } from "constants/misc"
 import { useActiveInsuranceProposalByPool } from "hooks/dao"
 import InsuranceAccidentExist from "modals/InsuranceAccidentExist"
 import { createPortal } from "react-dom"
-import { StepsNavigation } from "common"
+import { SideStepsNavigationBar, StepsNavigation } from "common"
 import { hideTapBar, showTabBar } from "state/application/actions"
 import StepsControllerContext from "context/StepsControllerContext"
+import { useWindowSize } from "react-use"
 
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
@@ -58,6 +59,13 @@ enum STEPS {
   chooseBlock = "choose-block",
   checkSettings = "check-settings",
   addDescription = "add-description",
+}
+
+const STEPS_TITLES: Record<STEPS, string> = {
+  [STEPS.chooseFund]: "Basic fund",
+  [STEPS.chooseBlock]: "Accident price",
+  [STEPS.checkSettings]: "Accident summary",
+  [STEPS.addDescription]: "Add Description",
 }
 
 const CreateInsuranceAccidentForm: FC = () => {
@@ -481,6 +489,9 @@ const CreateInsuranceAccidentForm: FC = () => {
     }
   }
 
+  const { width: windowWidth } = useWindowSize()
+  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
+
   return (
     <>
       <StepsControllerContext
@@ -491,23 +502,41 @@ const CreateInsuranceAccidentForm: FC = () => {
       >
         <S.Container>
           <AnimatePresence>
-            {currentStep === STEPS.chooseFund ? (
-              <CreateInsuranceAccidentChooseFundStep />
-            ) : currentStep === STEPS.chooseBlock ? (
-              <CreateInsuranceAccidentChooseBlockStep />
-            ) : currentStep === STEPS.checkSettings ? (
-              <CreateInsuranceAccidentCheckSettingsStep />
-            ) : currentStep === STEPS.addDescription ? (
-              <CreateInsuranceAccidentAddDescriptionStep />
-            ) : (
-              <></>
-            )}
+            <S.StepsWrapper>
+              <S.StepsContainer>
+                {currentStep === STEPS.chooseFund ? (
+                  <CreateInsuranceAccidentChooseFundStep />
+                ) : currentStep === STEPS.chooseBlock ? (
+                  <CreateInsuranceAccidentChooseBlockStep />
+                ) : currentStep === STEPS.checkSettings ? (
+                  <CreateInsuranceAccidentCheckSettingsStep />
+                ) : currentStep === STEPS.addDescription ? (
+                  <CreateInsuranceAccidentAddDescriptionStep />
+                ) : (
+                  <></>
+                )}
+                {appNavigationEl ? (
+                  createPortal(<StepsNavigation />, appNavigationEl)
+                ) : !isMobile ? (
+                  <StepsNavigation />
+                ) : (
+                  <></>
+                )}
+              </S.StepsContainer>
+
+              {!isMobile ? (
+                <SideStepsNavigationBar
+                  steps={Object.values(STEPS).map((step) => ({
+                    number: Object.values(STEPS).indexOf(step),
+                    title: STEPS_TITLES[step],
+                  }))}
+                  currentStep={Object.values(STEPS).indexOf(currentStep)}
+                />
+              ) : (
+                <></>
+              )}
+            </S.StepsWrapper>
           </AnimatePresence>
-          {appNavigationEl ? (
-            createPortal(<StepsNavigation />, appNavigationEl)
-          ) : (
-            <></>
-          )}
         </S.Container>
 
         <NoEnoughInsurance

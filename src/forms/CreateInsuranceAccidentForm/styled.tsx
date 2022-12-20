@@ -1,7 +1,41 @@
 import styled from "styled-components"
 import { Flex } from "theme"
+import { motion } from "framer-motion"
+import { opacityVariants } from "motion/variants"
 
-export const Container = styled.div``
+export const Container = styled.div`
+  display: flex;
+  margin: 0 auto;
+  width: 100%;
+  overflow-y: auto;
+`
+
+export const StepsWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  height: 100%;
+`
+
+export const StepsContainer = styled(motion.div).attrs(() => ({
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.2 },
+  variants: opacityVariants,
+}))`
+  overflow: hidden auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 775px;
+  margin: 0 auto;
+  align-self: center;
+
+  @media screen and (min-width: 768px) {
+    padding-bottom: 40px;
+  }
+`
 
 export const StepsRoot = styled.div`
   display: flex;
