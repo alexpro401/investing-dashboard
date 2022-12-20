@@ -14,3 +14,18 @@ export const ChainMainToken = {
   [SupportedChainId.BINANCE_SMART_CHAIN_TESTNET]:
     "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
 }
+
+export const ChainMainTokenData = {
+  [SupportedChainId.BINANCE_SMART_CHAIN]: {
+    address: process.env.REACT_APP_MAIN_ASSET_ADDRESS,
+    name: "Binance Smart Chain",
+    symbol: "BNB",
+    decimals: 18,
+  },
+  [SupportedChainId.BINANCE_SMART_CHAIN_TESTNET]: {
+    address: process.env.REACT_APP_MAIN_ASSET_ADDRESS,
+    name: "Binance Smart Chain Testnet",
+    symbol: "BNBt",
+    decimals: 18,
+  },
+}

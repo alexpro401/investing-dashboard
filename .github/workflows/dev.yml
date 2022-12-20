@@ -1,4 +1,4 @@
-name: Dashboard CI
+name: Dashboard Dev CI
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - run: yarn
-      - run: CI=false && yarn build
+      - run: CI=false && yarn run build:development
         env:
           REACT_APP_INFURA_ID: ${{ secrets.REACT_APP_INFURA_ID }}
           REACT_APP_BSCSCAN_API_KEY: ${{ secrets.REACT_APP_BSCSCAN_API_KEY }}
