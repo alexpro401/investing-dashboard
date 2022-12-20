@@ -13,6 +13,7 @@ interface Props {
   toggle: () => void
   onChange: (timestamp: number) => void
   minDate?: Date
+  maxDate?: Date
 }
 
 const DatePicker: React.FC<Props> = ({
@@ -21,6 +22,7 @@ const DatePicker: React.FC<Props> = ({
   onChange,
   toggle,
   minDate,
+  maxDate,
 }) => {
   const handleDateChange = (date: Date) => {
     const hh = getHours(timestamp)
@@ -65,6 +67,7 @@ const DatePicker: React.FC<Props> = ({
           onChange={handleDateChange}
           value={new Date(timestamp)}
           minDate={minDate}
+          maxDate={maxDate}
         />
         <Flex p="17px 0 0 4px" full>
           <TimeLabel>Time: </TimeLabel>

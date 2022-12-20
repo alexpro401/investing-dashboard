@@ -21,7 +21,7 @@ const InsuranceAccidentExist: FC<Props> = ({ isOpen, onClose }) => {
   }
 
   return (
-    <Confirm title="Insurance Proposal" isOpen={isOpen} toggle={() => {}}>
+    <Confirm title="Insurance Proposal" isOpen={isOpen} toggle={onClose}>
       <S.Image src={confirmModalImage} alt="" />
       <Text fz={13} lh="150%" color="#E4F2FF" align="center">
         There is already an active insurance proposal for this fund. Review and

@@ -53,7 +53,10 @@ export const TIMEFRAME_AGGREGATION_CODE: Record<string, [number, number]> = {
   [TIMEFRAME.d]: [AGGREGATION_CODE.min5, AGGREGATION_CODE.h1],
   [TIMEFRAME.w]: [AGGREGATION_CODE.min15, AGGREGATION_CODE.d1],
   [TIMEFRAME.m]: [AGGREGATION_CODE.h1, AGGREGATION_CODE.d1],
-  [TIMEFRAME.m3]: [AGGREGATION_CODE.h4, AGGREGATION_CODE.d1],
+  [TIMEFRAME.m3]: [
+    AGGREGATION_CODE.h2 - AGGREGATION_CODE.min15,
+    AGGREGATION_CODE.d1,
+  ],
   [TIMEFRAME.m6]: [
     AGGREGATION_CODE.h6 - AGGREGATION_CODE.h1,
     AGGREGATION_CODE.h12 + AGGREGATION_CODE.d1,
@@ -66,15 +69,15 @@ export const TIMEFRAME_AGGREGATION_CODE: Record<string, [number, number]> = {
 }
 
 /**
- * Mapping timeframe to collection length limits
+ * Mapping timeframe to limits of collection length
  * @key - timeframe
  * @value - fetch limit
  */
 export const TIMEFRAME_LIMIT_CODE = {
-  [TIMEFRAME.d]: 96, // 24h * (1h / TIMEFRAME_MIN_CODE["D"])
-  [TIMEFRAME.w]: 168, // (24h * 7d) / TIMEFRAME_MIN_CODE["W"]
-  [TIMEFRAME.m]: 744, // (24h * 31d)
-  [TIMEFRAME.m3]: 558,
+  [TIMEFRAME.d]: 288, // count of TIMEFRAME_AGGREGATION_CODE[TIMEFRAME.d][0] interval in 1 day
+  [TIMEFRAME.w]: 672,
+  [TIMEFRAME.m]: 744,
+  [TIMEFRAME.m3]: 1000,
   [TIMEFRAME.m6]: 893,
   [TIMEFRAME.y1]: 974,
   [TIMEFRAME.all]: 1000,

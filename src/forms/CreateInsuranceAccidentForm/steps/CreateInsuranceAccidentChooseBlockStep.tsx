@@ -16,13 +16,9 @@ import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccident
 
 import { Card, CardDescription, CardHead } from "common"
 
-import {
-  StepsBottomNavigation,
-  StepsRoot,
-} from "forms/CreateInsuranceAccidentForm/styled"
+import { StepsRoot } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
-import InsuranceAccidentExist from "modals/InsuranceAccidentExist"
-import { usePoolContract } from "hooks/usePool"
+import { usePoolContract, usePoolQuery } from "hooks/usePool"
 
 import {
   CHART_TYPE,
@@ -41,7 +37,7 @@ import DatePicker from "components/DatePicker"
 import { InputGroup } from "../styled"
 import Skeleton from "components/Skeleton"
 import Chart from "components/Chart"
-import theme, { Flex, Text } from "theme"
+import theme, { Text } from "theme"
 import { ChartTooltipPnl } from "components/Chart/tooltips"
 import { AlertType } from "context/AlertContext"
 import useAlert from "hooks/useAlert"
@@ -53,13 +49,12 @@ const poolsClient = createClient({
 
 const CreateInsuranceAccidentChooseBlockStep: FC = () => {
   const [showAlert] = useAlert()
-  const { form, insuranceAccidentExist, chart } = useContext(
-    InsuranceAccidentCreatingContext
-  )
+  const { form, chart } = useContext(InsuranceAccidentCreatingContext)
 
   const { block, pool, date } = form
   const { forPool, timeframe, data, point } = chart
 
+  const [poolQuery] = usePoolQuery(pool.get)
   const [, poolData] = usePoolContract(pool.get)
   const [baseTokenData] = useERC20Data(poolData?.parameters.baseToken)
 
@@ -100,7 +95,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
 
   useEffect(() => {
     if (history && history.length > 0) {
-      const activeLabel = history.length - 1
+      const activeLabel = 1
       const payload = history[activeLabel] ?? {}
       const price = getLP(String(payload?.baseTVL), String(payload?.supply))
 
@@ -199,27 +194,20 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
     }
 
     return (
-      <Flex dir="column" ai="flex-start" jc="center">
-        <Text fz={16} fw={700} lh="19px" color="#E4F2FF">
+      <div>
+        <Text block fz={16} fw={700} lh="19px" color="#E4F2FF">
           {price}
         </Text>
-        <Text fz={13} fw={500} lh="15px" color="#B1C7FC">
+        <Text block fz={13} fw={500} lh="15px" color="#B1C7FC">
           {date}
         </Text>
-      </Flex>
+      </div>
     )
   }, [point])
 
   return (
     <>
-      <StepsRoot
-        gap={"24"}
-        dir={"column"}
-        jc={"flex-start"}
-        ai={"stretch"}
-        p={"16px"}
-        full
-      >
+      <StepsRoot>
         <Card>
           <CardHead
             nodeLeft={<CreateInsuranceAccidentCardStepNumber number={2} />}
@@ -297,20 +285,15 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
           </InputGroup>
         </Card>
       </StepsRoot>
-      <StepsBottomNavigation />
 
       <DatePicker
         isOpen={isDateOpen}
         timestamp={expandTimestamp(Number(date.get))}
         toggle={() => setDateOpen(false)}
+        minDate={new Date(expandTimestamp(poolQuery?.creationTime ?? 0))}
+        maxDate={new Date()}
         onChange={(v) => onFieldChange("date", String(v))}
       />
-      {!isNil(insuranceAccidentExist) && (
-        <InsuranceAccidentExist
-          isOpen={insuranceAccidentExist.get}
-          onClose={() => insuranceAccidentExist.set(false)}
-        />
-      )}
     </>
   )
 }

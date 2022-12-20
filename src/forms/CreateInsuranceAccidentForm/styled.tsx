@@ -1,22 +1,14 @@
 import styled from "styled-components"
 import { Flex } from "theme"
-import StepsControllerContext from "context/StepsControllerContext"
-import { StepsNavigation } from "common"
 
-export const Container = styled(StepsControllerContext)``
+export const Container = styled.div``
 
-export const StepsRoot = styled(Flex)`
-  width: 100%;
-  height: calc(100vh - 146px);
-  overflow-y: auto;
-
-  @media all and (display-mode: standalone) {
-    height: calc(100% - 165px);
-  }
-`
-
-export const StepsBottomNavigation = styled(StepsNavigation)`
-  margin-top: auto;
+export const StepsRoot = styled.div`
+  display: flex;
+  flex-direction: column;
+  transform: scale(1);
+  gap: 16px;
+  padding: 14px 16px 20px;
 `
 
 export const StepNumber = {

@@ -42,6 +42,7 @@ import {
   GovProposalsWithRewardsQuery,
   GovProposalsWithDistributionQuery,
   GovPoolDelegationHistoryByUserQuery,
+  GovProposalsByPoolInMiscQuery,
 } from "./gov-pools"
 
 export {
@@ -76,4 +77,5 @@ export {
   GovProposalsWithRewardsQuery,
   GovProposalsWithDistributionQuery,
   GovPoolDelegationHistoryByUserQuery,
+  GovProposalsByPoolInMiscQuery,
 }
