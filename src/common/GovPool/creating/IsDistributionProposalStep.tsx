@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useMemo } from "react"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import {
   AppButton,
@@ -21,6 +21,7 @@ import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 import { createPortal } from "react-dom"
+import { useWindowSize } from "react-use"
 
 interface IIsDistributionProposalStepProps {
   isCreatingProposal?: boolean
@@ -123,6 +124,8 @@ const IsDistributionProposalStep: React.FC<
   }
 
   const appNavigationEl = document.querySelector("#app-navigation")
+  const { width: windowWidth } = useWindowSize()
+  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
 
   return (
     <>
@@ -201,9 +204,17 @@ const IsDistributionProposalStep: React.FC<
       </S.StepsRoot>
       {appNavigationEl ? (
         createPortal(
-          <S.StepsBottomNavigation customNextCb={handleNextStep} />,
+          <S.StepsBottomNavigation
+            customNextCb={handleNextStep}
+            nextLabel={"Create DAO"}
+          />,
           appNavigationEl
         )
+      ) : !isMobile ? (
+        <S.StepsBottomNavigation
+          customNextCb={handleNextStep}
+          nextLabel={"Create DAO"}
+        />
       ) : (
         <></>
       )}

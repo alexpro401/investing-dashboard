@@ -4,7 +4,7 @@ import _Decimal from "decimal.js-light"
 import _Big from "big.js"
 import toFormat from "toformat"
 
-import { BigintIsh, Rounding } from "../../constants"
+import { BigintIsh, Rounding } from "lib/constants"
 
 export const enum RoundingMode {
   /**

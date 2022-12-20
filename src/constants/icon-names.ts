@@ -51,4 +51,5 @@ export enum ICON_NAMES {
   unknownToken = "unknown-token",
   logoIcon = "logo-icon",
   dexeTokenIcon = "dexe-token-icon",
+  gradientCheck = "gradient-check",
 }

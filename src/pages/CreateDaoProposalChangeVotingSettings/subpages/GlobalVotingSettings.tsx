@@ -9,7 +9,6 @@ import CreateDaoProposalGlobalVotingSettingsForm from "forms/CreateDaoProposalGl
 import { useGovPoolSetting, useGovPoolValidatorsCount } from "hooks/dao"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
-import { ZERO_ADDR } from "constants/index"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
 import { GovPoolFormOptions } from "types"

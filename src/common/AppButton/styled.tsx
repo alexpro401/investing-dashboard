@@ -67,6 +67,17 @@ export const defaultButtonStyles = (
       flatScheme.appButtonBorderHover = `1px solid ${"#293C54"}`
       flatScheme.appButtonBorderActive = `1px solid ${"#293C54"}`
       break
+    case "tertiary":
+      filledScheme.appButtonBg = `linear-gradient(41.86deg, #2680EB 0%, ${theme.brandColors.primary} 117.98%)`
+      filledScheme.appButtonBgHover = `linear-gradient(41.86deg, #2680EB 0%, ${theme.brandColors.primary} 117.98%)`
+      filledScheme.appButtonBgActive = `linear-gradient(41.86deg, #2680EB 0%, ${theme.brandColors.primary} 117.98%)`
+
+      filledScheme.appButtonText = "#0D1320 !important"
+      filledScheme.appButtonTextHover = "#0D1320 !important"
+
+      flatScheme.appButtonText = "#0D1320 !important"
+      flatScheme.appButtonTextHover = "#0D1320 !important"
+      break
     case "success":
       filledScheme.appButtonBg = theme.statusColors.success
       filledScheme.appButtonBgHover = theme.statusColors.success
@@ -174,6 +185,8 @@ export const defaultButtonStyles = (
       break
   }
 
+  console.log(appButtonText)
+
   return css`
     outline: 0;
     font-family: ${theme.appFontFamily};
@@ -196,7 +209,7 @@ export const defaultButtonStyles = (
     transition-property: background-color, color;
     text-decoration: none;
     border: ${appButtonBorder};
-    background-color: ${appButtonBg};
+    background: ${appButtonBg};
     color: ${appButtonText};
 
     &:disabled {

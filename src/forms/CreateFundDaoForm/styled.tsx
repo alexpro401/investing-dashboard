@@ -8,7 +8,7 @@ import { opacityVariants } from "motion/variants"
 export const Container = styled(StepsControllerContext)`
   display: flex;
   margin: 0 auto;
-  background-color: #040a0f;
+  background-color: #ff0000;
   width: 100%;
   overflow-y: auto;
 `
@@ -28,6 +28,10 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   max-width: 775px;
   margin: 0 auto;
   align-self: center;
+
+  @media screen and (min-width: 768px) {
+    padding-bottom: 40px;
+  }
 `
 
 export const StepsRoot = styled.div`
@@ -41,4 +45,10 @@ export const StepsRoot = styled.div`
 
 export const StepsBottomNavigation = styled(StepsNavigation)`
   margin-top: auto;
+`
+
+export const StepsWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  height: 100%;
 `
