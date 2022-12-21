@@ -29,11 +29,12 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 100%;
   max-width: 775px;
   margin: 0 auto;
   align-self: center;
 
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 1194px) {
     padding-bottom: 40px;
   }
 `
@@ -45,6 +46,10 @@ export const StepsRoot = styled.div`
   gap: 16px;
   padding: 14px 16px 20px;
   flex: 1;
+
+  @media screen and (min-width: 1194px) {
+    padding: 20px 0;
+  }
 `
 
 export const StepNumber = {
