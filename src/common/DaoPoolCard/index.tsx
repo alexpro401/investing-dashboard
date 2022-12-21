@@ -6,12 +6,17 @@ import * as React from "react"
 import { Flex } from "theme"
 import Icon from "components/Icon"
 import { normalizeBigNumber } from "utils"
-import { useGovPoolDescription, useGovPoolHelperContracts } from "hooks/dao"
+import { useGovPoolDescription } from "hooks/dao"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
 import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
-import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
-import { CardInfo } from "common"
+import { AppButton, CardInfo } from "common"
+import { ICON_NAMES } from "constants/icon-names"
+import Skeleton from "components/Skeleton"
+
+const DaoPoolCardVotingPower = React.lazy(
+  () => import("./DaoPoolCardVotingPower")
+)
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   data: IGovPoolQuery
@@ -29,14 +34,19 @@ const DaoPoolCard: React.FC<Props> = ({
 }) => {
   const id = React.useMemo(() => data?.id ?? "", [data])
 
+  const [showVotingPower, setShowVotingPower] = React.useState(false)
+  const toggleVotingPowerView = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault()
+      event.stopPropagation()
+      setShowVotingPower((prev) => !prev)
+    },
+    []
+  ) as unknown as React.MouseEventHandler<HTMLAnchorElement>
+
   const { descriptionObject } = useGovPoolDescription(id)
   const [assetsExisting, assets] = useGovPoolVotingAssets(id)
   const [govPoolStatistic] = useGovPoolStatistic(data)
-  const { govUserKeeperAddress } = useGovPoolHelperContracts(id ?? "")
-  const [userVotingPower] = useGovPoolUserVotingPower({
-    userKeeperAddress: govUserKeeperAddress,
-    address: account,
-  })
 
   const poolName = React.useMemo(() => {
     if (isNil(data)) return ""
@@ -81,16 +91,26 @@ const DaoPoolCard: React.FC<Props> = ({
     ),
     [data, descriptionObject, isMobile]
   )
+
   const nodeHeadRight = React.useMemo(
     () => (
       <Flex ai="flex-end" jc="flex-start" dir="column" gap="4">
-        <S.DaoPoolCardVotingPower>
-          {normalizeBigNumber(userVotingPower.power, 18, 0)}
-        </S.DaoPoolCardVotingPower>
-        <S.DaoPoolCardDescription>My voting power</S.DaoPoolCardDescription>
+        <AppButton
+          onClick={toggleVotingPowerView}
+          iconRight={showVotingPower ? ICON_NAMES.close : ICON_NAMES.locked}
+          size="no-paddings"
+          color={"default"}
+        />
+        {showVotingPower ? (
+          <React.Suspense
+            fallback={<Skeleton variant={"rect"} h={"16px"} w={"80px"} />}
+          >
+            <DaoPoolCardVotingPower account={account} pool={id} />
+          </React.Suspense>
+        ) : null}
       </Flex>
     ),
-    [userVotingPower]
+    [showVotingPower, account, id, toggleVotingPowerView]
   )
 
   const statistic = React.useMemo(

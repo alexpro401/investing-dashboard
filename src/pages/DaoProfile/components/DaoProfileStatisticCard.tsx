@@ -42,7 +42,7 @@ const DaoProfileStatisticCard: React.FC<Props> = ({
         </S.CardButtons>
         {isValidator && (
           <>
-            <S.Divider />
+            {isMobile && <S.Divider />}
             <Flex full ai="center" jc="space-between">
               <Flex full ai="center" jc="flex-start" gap="4">
                 <Text color="#B1C7FC" fz={13}>
