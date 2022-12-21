@@ -1,24 +1,20 @@
+import Header from "components/Header/Layout"
+import { DetailsTab, VotingSettingsTab, VotingHistoryTab } from "./components"
+import { AnimatePresence } from "framer-motion"
+import { ErrorText } from "components/AddressChips/styled"
+import Skeleton from "components/Skeleton"
+import ProposalCountDown from "./components/ProposalCountDown"
+import { Flex } from "theme"
+
 import * as S from "./styled"
 
 import * as React from "react"
 import { FC, HTMLAttributes, useMemo, useState } from "react"
-import Header from "components/Header/Layout"
-import { DetailsTab, VotingSettingsTab, VotingHistoryTab } from "./components"
-import { AnimatePresence } from "framer-motion"
 import { useGovPoolProposal, useGovPoolProposals, useBreakpoints } from "hooks"
 import { useParams } from "react-router-dom"
-import { ErrorText } from "components/AddressChips/styled"
 import { Icon } from "common"
 import { ICON_NAMES } from "constants/icon-names"
-import Skeleton from "components/Skeleton"
-import { Flex } from "theme"
 import { ValidatorsVote } from "pages/ValidatorsVote"
-import { DateUtil } from "../../utils"
-import {
-  parseDuration,
-  parseDurationShortString,
-  parseSeconds,
-} from "../../utils/time"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -71,9 +67,9 @@ const DaoProposalDetails: FC<Props> = ({}) => {
                   {govPoolProposal.name}
                 </S.DaoProposalDetailsTitle>
                 {!isMobile ? (
-                  <S.DaoProposalCountdown>
-                    {govPoolProposal.proposalCountDown}
-                  </S.DaoProposalCountdown>
+                  <ProposalCountDown
+                    date={govPoolProposal.voteEnd.toNumber()}
+                  />
                 ) : (
                   <></>
                 )}

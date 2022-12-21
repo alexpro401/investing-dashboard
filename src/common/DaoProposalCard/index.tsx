@@ -13,6 +13,7 @@ import { WrappedProposalView } from "types"
 import { isEqual } from "lodash"
 import { ZERO_ADDR } from "constants/index"
 import { useNavigate } from "react-router-dom"
+import { useCountdown } from "../../hooks"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   wrappedProposalView: WrappedProposalView
@@ -33,7 +34,7 @@ const DaoProposalCard: FC<Props> = ({
     votedAddresses,
     name,
     proposalType,
-    proposalCountDown,
+    voteEnd,
     isSecondStepProgressStarted,
     currentVotesVoted,
     votesTotalNeed,
@@ -67,13 +68,15 @@ const DaoProposalCard: FC<Props> = ({
     [govPoolAddress, wrappedProposalView]
   )
 
+  const { parsedCountDown } = useCountdown(voteEnd.toNumber())
+
   const cardBtnText = useMemo(() => {
     if (isProposalStateVoting) {
-      return proposalCountDown.toUpperCase()
+      return parsedCountDown.toUpperCase()
     } else if (isProposalStateWaitingForVotingTransfer) {
       return "Start second step (validators)"
     } else if (isProposalStateValidatorVoting) {
-      return `Second step ${proposalCountDown.toUpperCase()}`
+      return `Second step ${parsedCountDown.toUpperCase()}`
     } else if (isProposalStateSucceeded) {
       return "Execute"
     } else if (isProposalStateExecuted) {
@@ -90,14 +93,14 @@ const DaoProposalCard: FC<Props> = ({
       return ""
     }
   }, [
-    isProposalStateExecuted,
-    isProposalStateSucceeded,
-    isProposalStateValidatorVoting,
     isProposalStateVoting,
     isProposalStateWaitingForVotingTransfer,
+    isProposalStateValidatorVoting,
+    isProposalStateSucceeded,
+    isProposalStateExecuted,
+    parsedCountDown,
     rewardTokenAddress,
-    proposalCountDown,
-    wrappedProposalView,
+    wrappedProposalView.currentAccountRewards,
   ])
 
   const handleCardBtnClick = useCallback(async () => {

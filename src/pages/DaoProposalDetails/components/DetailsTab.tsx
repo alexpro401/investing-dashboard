@@ -21,7 +21,6 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const DetailsTab: FC<Props> = ({ govPoolProposal }) => {
-  console.log(govPoolProposal.wrappedProposalView)
   return (
     <>
       {govPoolProposal.proposalType === "profile" ? (

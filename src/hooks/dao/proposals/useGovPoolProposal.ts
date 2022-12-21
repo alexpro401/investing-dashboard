@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
-import { DateUtil } from "utils"
+import { useCallback, useMemo, useState } from "react"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { createClient, useQuery } from "urql"
 import { useActiveWeb3React } from "hooks"
@@ -14,25 +13,17 @@ import { useERC20 } from "hooks"
 import { useSelector } from "react-redux"
 import { selectInsuranceAddress } from "state/contracts/selectors"
 import { InsuranceAccident } from "interfaces/insurance"
-import {
-  parseDuration,
-  parseDurationShortString,
-  parseSeconds,
-} from "utils/time"
-import { useInterval } from "react-use"
+import { useEffectOnce } from "react-use"
 
 const GovPoolGraphClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
-})
-
-const GovPoolValidatorsGraphClient = createClient({
-  url: process.env.REACT_APP_DAO_VALIDATORS_API_URL || "",
 })
 
 export const useGovPoolProposal = (
   wrappedProposalView: WrappedProposalView,
   govPoolAddress?: string
 ) => {
+  console.log("wrappedProposalView")
   const {
     descriptionUrl: _descriptionUrl,
     moveProposalToValidators: _moveProposalToValidators,
@@ -60,18 +51,6 @@ export const useGovPoolProposal = (
       }
     `,
     context: GovPoolGraphClient,
-  })
-
-  const [{ data: daoPoolValidatorsGraph }] = useQuery({
-    query: `
-      query {
-        proposals(where: { pool: "${govPoolAddress}", proposalId: "${wrappedProposalView?.proposalId}", isInternal: false }) {
-          id
-          totalVote
-        }
-      }
-    `,
-    context: GovPoolValidatorsGraphClient,
   })
 
   const insuranceAddress = useSelector(selectInsuranceAddress)
@@ -161,7 +140,7 @@ export const useGovPoolProposal = (
     ).toLocaleLowerCase()
 
     return lastExecutor === String(insuranceAddress).toLocaleLowerCase()
-  }, [wrappedProposalView])
+  }, [insuranceAddress, wrappedProposalView])
 
   const isDistribution = useMemo(() => {
     return executor?.type === "distribution"
@@ -282,7 +261,6 @@ export const useGovPoolProposal = (
         const entity = new IpfsEntity<InsuranceAccident>({
           path: wrappedProposalView?.proposal.descriptionURL,
         })
-
         const response = await entity.load()
 
         setInsuranceProposalView(response)
@@ -324,29 +302,9 @@ export const useGovPoolProposal = (
     } catch (error) {}
   }, [loadDetailsFromIpfs, loadProposalTotalVotes])
 
-  useEffect(() => {
+  useEffectOnce(() => {
     init()
-  }, [init, wrappedProposalView])
-
-  const [countdownCounter, setCountdownCounter] = useState(0)
-
-  const proposalCountDown = useMemo(() => {
-    return DateUtil.isDatePast(voteEnd.toNumber())
-      ? ""
-      : parseDurationShortString(
-          parseDuration(
-            parseSeconds(DateUtil.timeFromNow(voteEnd.toNumber()) * -1)
-          ),
-          ":"
-        )
-  }, [voteEnd, countdownCounter])
-
-  useInterval(
-    () => {
-      setCountdownCounter(countdownCounter + 1)
-    },
-    isProposalStateVoting || isProposalStateValidatorVoting ? 1000 : null
-  )
+  })
 
   return {
     wrappedProposalView,
@@ -388,7 +346,5 @@ export const useGovPoolProposal = (
     govPoolDescriptionURL,
     progress,
     insuranceProposalView,
-
-    proposalCountDown,
   }
 }

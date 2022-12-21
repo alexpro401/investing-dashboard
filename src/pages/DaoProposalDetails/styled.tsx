@@ -2,7 +2,7 @@ import styled, { css } from "styled-components"
 import { AppButton, Icon } from "common"
 import { VotingTerminal } from "pages/VotingTerminal"
 import { GradientBorder } from "theme"
-import { ProposalInfo } from "./components"
+import ProposalInfo from "./components/ProposalInfo"
 
 export const DaoProposalDetails = styled.div`
   overflow: hidden auto;
