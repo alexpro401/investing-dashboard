@@ -2,7 +2,7 @@ import { FC, ReactNode, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 import { isNil } from "lodash"
 
-import { Flex, Text, getAmountColor } from "theme"
+import { Flex, getAmountColor, Text } from "theme"
 import { CardInfo } from "common"
 import Icon from "components/Icon"
 import Skeleton from "components/Skeleton"
@@ -17,6 +17,10 @@ import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { getLastInArray, getPNL, getPriceLP } from "utils/formulas"
 import { format } from "date-fns"
 import { DATE_FORMAT } from "constants/time"
+import { CHART_TYPE, TIMEFRAME } from "constants/chart"
+import theme from "theme"
+import { usePoolPriceHistory } from "hooks/usePool"
+import Chart from "components/Chart"
 
 const HeadNodesSkeleton: FC = () => (
   <Flex ai="center" jc="flex-start">
@@ -33,6 +37,8 @@ interface Props {
   index?: number
   children?: ReactNode
   isMobile: boolean
+  hideChart?: boolean
+  stroke?: string
 }
 
 const PoolStatisticCard: FC<Props> = ({
@@ -40,6 +46,8 @@ const PoolStatisticCard: FC<Props> = ({
   index = 0,
   children,
   isMobile,
+  hideChart = false,
+  stroke = theme.statusColors.success,
 }) => {
   const [{ poolMetadata: metadata }] = usePoolMetadata(
     data.id,
@@ -47,7 +55,7 @@ const PoolStatisticCard: FC<Props> = ({
   )
   const lastHistoryPoint = getLastInArray(data?.priceHistory)
   const [baseToken] = useERC20Data(data?.baseToken)
-
+  const [history, fetchingHistory] = usePoolPriceHistory(data.id, TIMEFRAME.all)
   const priceLP = getPriceLP(data?.priceHistory)
   const pnl = getPNL(priceLP)
 
@@ -56,11 +64,7 @@ const PoolStatisticCard: FC<Props> = ({
       return <Skeleton w="25px" h="16px" />
     }
 
-    return (
-      <S.StatisticValue>
-        ${normalizeBigNumber(lastHistoryPoint.usdTVL, 18, 2)}
-      </S.StatisticValue>
-    )
+    return `$${normalizeBigNumber(lastHistoryPoint.usdTVL, 18, 2)}`
   }, [lastHistoryPoint])
 
   const APY = useMemo(() => {
@@ -68,11 +72,7 @@ const PoolStatisticCard: FC<Props> = ({
       return <Skeleton w="25px" h="16px" />
     }
 
-    return (
-      <S.StatisticValue>
-        {normalizeBigNumber(lastHistoryPoint.APY, 4, 2)}%
-      </S.StatisticValue>
-    )
+    return `${normalizeBigNumber(lastHistoryPoint.APY, 4, 2)}%`
   }, [lastHistoryPoint])
 
   const PNL = useMemo(() => {
@@ -83,20 +83,16 @@ const PoolStatisticCard: FC<Props> = ({
       !lastHistoryPoint ||
       BigNumber.from(lastHistoryPoint.percPNLBase).isZero()
     ) {
-      return <S.StatisticValue>0.0%</S.StatisticValue>
+      return "0.0%"
     }
 
-    return (
-      <S.StatisticValue>
-        {normalizeBigNumber(lastHistoryPoint.percPNLBase, 4, 2)}%
-      </S.StatisticValue>
-    )
+    return `${normalizeBigNumber(lastHistoryPoint.percPNLBase, 4, 2)}%`
   }, [lastHistoryPoint])
 
   const depositors = useMemo(() => {
     if (isNil(data)) return <Skeleton w="25px" h="16px" />
 
-    return <S.StatisticValue>{data.investorsCount}</S.StatisticValue>
+    return data.investorsCount
   }, [data])
 
   const userStatistic = useMemo(
@@ -171,6 +167,45 @@ const PoolStatisticCard: FC<Props> = ({
     )
   }, [data, baseToken, priceLP, pnl, isMobile])
 
+  const _children = useMemo(() => {
+    if (!isMobile && !hideChart && !isNil(data)) {
+      return (
+        <>
+          <div
+            style={{
+              height: "35px",
+              width: "118px",
+              margin: "auto 0 auto 45px",
+              flex: "1 0 118px",
+            }}
+          >
+            <Chart
+              type={CHART_TYPE.area}
+              data={history}
+              height={"35px"}
+              chart={{
+                stackOffset: "silhouette",
+              }}
+              chartItems={[
+                {
+                  type: "linear",
+                  dataKey: "price",
+                  legendType: "triangle",
+                  isAnimationActive: true,
+                  stroke,
+                },
+              ]}
+              loading={fetchingHistory}
+            />
+          </div>
+          {children}
+        </>
+      )
+    }
+
+    return null
+  }, [children, hideChart, isMobile, history, fetchingHistory, stroke])
+
   return (
     <S.Animation index={index}>
       <CardInfo
@@ -179,7 +214,7 @@ const PoolStatisticCard: FC<Props> = ({
         statistic={userStatistic}
         isMobile={isMobile}
       >
-        {children}
+        {_children}
       </CardInfo>
     </S.Animation>
   )

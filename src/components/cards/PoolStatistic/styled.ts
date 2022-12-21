@@ -39,11 +39,3 @@ export const Description = styled(Text).attrs(({ theme }) => ({
 }))<{ align?: string }>`
   text-align: ${({ align }) => align ?? "right"};
 `
-
-export const StatisticValue = styled(Text).attrs(() => ({
-  block: true,
-  color: "#f7f7f7",
-  fw: 600,
-  fz: 16,
-  lh: "16px",
-}))``
