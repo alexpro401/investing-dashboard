@@ -7,8 +7,9 @@ export const Container = styled(Card)`
 
   @media screen and (min-width: 1194px) {
     flex-direction: row;
+    align-items: center;
     border-radius: 60px 24px 24px 60px;
-    padding: 0 16px 0 0;
+    padding: 0 24px 0 0;
   }
 `
 
@@ -49,16 +50,29 @@ export const Divider = styled.div`
 
 export const CardInfoLabel = styled(Text).attrs(() => ({
   block: true,
-  color: "#B1C7FC",
   fw: 600,
-  fz: 11,
   lh: "20px",
-}))``
+}))`
+  font-size: 11px;
+  color: ${({ theme }) => theme.textColors.secondary};
+
+  @media screen and (min-width: 1194px) {
+    font-size: 12px;
+    color: #6781bd;
+  }
+`
 
 export const CardInfoValue = styled(Text).attrs(() => ({
   block: true,
-  color: "#f7f7f7",
-  fw: 600,
-  fz: 16,
-  lh: "16px",
-}))``
+  color: "rgba(228, 242, 255, 0.8)",
+}))`
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+
+  @media screen and (min-width: 1194px) {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 25px;
+  }
+`

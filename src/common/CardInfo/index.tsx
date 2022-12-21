@@ -34,11 +34,16 @@ const CardInfo: FC<Props> = (props) => {
         ) : null}
       </S.Header>
       {isMobile && <S.Divider />}
-      <Flex full ai={"center"} jc={"space-between"} gap={"12"}>
+      <Flex
+        full
+        ai={"center"}
+        jc={"space-between"}
+        gap={isMobile ? "12" : "32"}
+      >
         {statistic.map((item, i) => (
           <Flex
             full
-            gap={"4"}
+            gap={isMobile ? "4" : "0"}
             dir={"column"}
             key={uuidv4()}
             ai={statistic.length === i + 1 ? "flex-end" : "flex-start"}
