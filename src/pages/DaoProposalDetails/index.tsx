@@ -1,22 +1,19 @@
+import Header from "components/Header/Layout"
+import { DetailsTab, VotingSettingsTab, VotingHistoryTab } from "./components"
+import { AnimatePresence } from "framer-motion"
+import { ErrorText } from "components/AddressChips/styled"
+import Skeleton from "components/Skeleton"
+import ProposalCountDown from "./components/ProposalCountDown"
+import { Flex } from "theme"
+
 import * as S from "./styled"
 
 import * as React from "react"
 import { FC, HTMLAttributes, useMemo, useState } from "react"
-import Header from "components/Header/Layout"
-import {
-  DetailsTab,
-  VotingSettingsTab,
-  VotingHistoryTab,
-  ProposalInfo,
-} from "./components"
-import { AnimatePresence } from "framer-motion"
-import { useGovPoolProposal, useGovPoolProposals } from "hooks/dao"
+import { useGovPoolProposal, useGovPoolProposals, useBreakpoints } from "hooks"
 import { useParams } from "react-router-dom"
-import { ErrorText } from "components/AddressChips/styled"
 import { Icon } from "common"
 import { ICON_NAMES } from "constants/icon-names"
-import Skeleton from "components/Skeleton"
-import { Flex } from "theme"
 import { ValidatorsVote } from "pages/ValidatorsVote"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
@@ -26,8 +23,6 @@ const DaoProposalDetails: FC<Props> = ({}) => {
     daoAddress: string
     proposalId: string
   }>()
-
-  // TEMP
 
   const { wrappedProposalViews, isLoaded, isLoadFailed } = useGovPoolProposals(
     daoAddress,
@@ -51,9 +46,11 @@ const DaoProposalDetails: FC<Props> = ({}) => {
 
   const [selectedTabNumber, setSelectedTabNumber] = useState(TABS[0].number)
 
+  const { isMobile } = useBreakpoints()
+
   return (
     <>
-      <Header>Proposal</Header>
+      <Header>{isMobile ? "Proposal" : ""}</Header>
       <S.DaoProposalDetails>
         {isLoaded ? (
           isLoadFailed ? (
@@ -64,14 +61,21 @@ const DaoProposalDetails: FC<Props> = ({}) => {
               </Flex>
             </ErrorText>
           ) : (
-            <>
+            <S.PageContainer>
               <S.DaoProposalDetailsTitleWrp>
                 <S.DaoProposalDetailsTitle>
                   {govPoolProposal.name}
                 </S.DaoProposalDetailsTitle>
+                {!isMobile ? (
+                  <ProposalCountDown
+                    date={govPoolProposal.voteEnd.toNumber()}
+                  />
+                ) : (
+                  <></>
+                )}
               </S.DaoProposalDetailsTitleWrp>
               <S.DaoProposalDetailsProgressBar />
-              <ProposalInfo govPoolProposal={govPoolProposal} />
+              <S.ProposalInfoWrp govPoolProposal={govPoolProposal} />
               <S.DaoProposalDetailsTabs>
                 {TABS.map((el) => (
                   <S.DaoProposalDetailsTabsItem
@@ -83,36 +87,40 @@ const DaoProposalDetails: FC<Props> = ({}) => {
                   </S.DaoProposalDetailsTabsItem>
                 ))}
               </S.DaoProposalDetailsTabs>
-              <AnimatePresence initial={false}>
-                {selectedTabNumber === TABS[0].number && (
-                  <DetailsTab govPoolProposal={govPoolProposal} />
+              <S.ContentWrapper>
+                <AnimatePresence initial={false}>
+                  {selectedTabNumber === TABS[0].number && (
+                    <DetailsTab govPoolProposal={govPoolProposal} />
+                  )}
+                  {selectedTabNumber === TABS[1].number && (
+                    <VotingSettingsTab govPoolProposal={govPoolProposal} />
+                  )}
+                  {selectedTabNumber === TABS[2].number && (
+                    <VotingHistoryTab govPoolProposal={govPoolProposal} />
+                  )}
+                </AnimatePresence>
+              </S.ContentWrapper>
+              <S.VotingContainer>
+                {govPoolProposal.isSecondStepProgressStarted ? (
+                  <>
+                    <ValidatorsVote
+                      daoPoolAddress={daoAddress}
+                      proposalId={String(
+                        govPoolProposal.wrappedProposalView.proposalId
+                      )}
+                      isInternal={false}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <S.DaoProposalVotingTerminal
+                      proposalId={proposalId}
+                      daoPoolAddress={daoAddress}
+                    />
+                  </>
                 )}
-                {selectedTabNumber === TABS[1].number && (
-                  <VotingSettingsTab govPoolProposal={govPoolProposal} />
-                )}
-                {selectedTabNumber === TABS[2].number && (
-                  <VotingHistoryTab govPoolProposal={govPoolProposal} />
-                )}
-              </AnimatePresence>
-              {govPoolProposal.isSecondStepProgressStarted ? (
-                <>
-                  <ValidatorsVote
-                    daoPoolAddress={daoAddress}
-                    proposalId={String(
-                      govPoolProposal.wrappedProposalView.proposalId
-                    )}
-                    isInternal={false}
-                  />
-                </>
-              ) : (
-                <>
-                  <S.DaoProposalVotingTerminal
-                    proposalId={proposalId}
-                    daoPoolAddress={daoAddress}
-                  />
-                </>
-              )}
-            </>
+              </S.VotingContainer>
+            </S.PageContainer>
           )
         ) : (
           <>

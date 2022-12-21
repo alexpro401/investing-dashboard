@@ -47,10 +47,10 @@ export const ClickableArea = styled(BaseButton)`
 
 export const Tabs = styled(Flex)`
   width: 100%;
+  height: 34px;
   padding: 0 10px;
   position: relative;
   justify-content: space-around;
-  height: 34px;
 
   &:before {
     position: absolute;

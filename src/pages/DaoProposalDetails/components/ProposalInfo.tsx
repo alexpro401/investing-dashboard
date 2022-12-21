@@ -10,11 +10,11 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   govPoolProposal: ReturnType<typeof useGovPoolProposal>
 }
 
-const ProposalInfo: FC<Props> = ({ govPoolProposal }) => {
+const ProposalInfo: FC<Props> = ({ govPoolProposal, ...rest }) => {
   return govPoolProposal.isInsurance ? (
-    <GovPoolProposalInsurance govPoolProposal={govPoolProposal} />
+    <GovPoolProposalInsurance govPoolProposal={govPoolProposal} {...rest} />
   ) : (
-    <GovPoolProposalBase govPoolProposal={govPoolProposal} />
+    <GovPoolProposalBase govPoolProposal={govPoolProposal} {...rest} />
   )
 }
 
