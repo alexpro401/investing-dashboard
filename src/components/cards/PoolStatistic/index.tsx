@@ -15,6 +15,8 @@ import { formatNumber, normalizeBigNumber } from "utils"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { getLastInArray, getPNL, getPriceLP } from "utils/formulas"
+import { format } from "date-fns"
+import { DATE_FORMAT } from "constants/time"
 
 const HeadNodesSkeleton: FC = () => (
   <Flex ai="center" jc="flex-start">
@@ -133,8 +135,13 @@ const PoolStatisticCard: FC<Props> = ({
           address={data.id}
         />
         <div>
+          {!isMobile && (
+            <S.Description align="left">
+              {format(new Date(data.creationTime * 1000), DATE_FORMAT)}
+            </S.Description>
+          )}
           <S.Title>{data.ticker}</S.Title>
-          <S.Description align="left">{data.name}</S.Description>
+          {isMobile && <S.Description align="left">{data.name}</S.Description>}
         </div>
       </Flex>
     )
@@ -147,20 +154,22 @@ const PoolStatisticCard: FC<Props> = ({
 
     return (
       <Flex ai="center" jc="flex-end">
-        <div>
-          <Flex ai="center" jc="flex-end" gap="4">
-            <Text fz={10} lh="12px" color={getAmountColor(pnl)}>
-              {Number(pnl) > 0 ? "+" : null}
-              {pnl}%
-            </Text>
-            <S.Title>{formatNumber(priceLP, 2)}</S.Title>
-          </Flex>
-          <S.Description>{baseToken.symbol}</S.Description>
-        </div>
+        {isMobile && (
+          <div>
+            <Flex ai="center" jc="flex-end" gap="4">
+              <Text fz={10} lh="12px" color={getAmountColor(pnl)}>
+                {Number(pnl) > 0 ? "+" : null}
+                {pnl}%
+              </Text>
+              <S.Title>{formatNumber(priceLP, 2)}</S.Title>
+            </Flex>
+            <S.Description>{baseToken.symbol}</S.Description>
+          </div>
+        )}
         <TokenIcon address={data.baseToken} size={38} m="0 0 0 8px" />
       </Flex>
     )
-  }, [data, baseToken, priceLP, pnl])
+  }, [data, baseToken, priceLP, pnl, isMobile])
 
   return (
     <S.Animation index={index}>

@@ -17,16 +17,24 @@ export const Animation = styled(motion.div).attrs((p: { index: number }) => ({
 `
 
 export const Title = styled(Text).attrs(() => ({
-  color: "#ffffff",
-  fw: 700,
   fz: 16,
   lh: "20px",
-}))``
-export const Description = styled(Text).attrs(() => ({
+}))`
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 16px;
+
+  @media screen and (min-width: 1194px) {
+    color: ${({ theme }) => theme.brandColors.secondary};
+    font-weight: 900;
+    font-size: 20px;
+  }
+`
+export const Description = styled(Text).attrs(({ theme }) => ({
   block: true,
-  color: "#B1C7FC",
-  fw: 400,
+  color: theme.textColors.secondary,
   fz: 13,
+  fw: 400,
   lh: "15px",
 }))<{ align?: string }>`
   text-align: ${({ align }) => align ?? "right"};
