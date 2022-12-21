@@ -34,6 +34,7 @@ import { GovPoolQuery } from "queries"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import { useGovPoolVotingPowerMulticall } from "hooks/dao/useGovPoolUserVotingPower"
 import useGovPoolHelperContractsMulticall from "hooks/dao/useGovPoolHelperContractsMulticall"
+import { useWindowSize } from "react-use"
 
 const govPoolsClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -186,6 +187,9 @@ const DaoProfile: React.FC = () => {
     )
   }, [daoAddress, chainId, currentTab, govPoolQuery])
 
+  const { width: windowWidth } = useWindowSize()
+  const isMobile = useMemo(() => windowWidth < 1194, [windowWidth])
+
   return (
     <>
       <Header>Dao Profile</Header>
@@ -206,6 +210,7 @@ const DaoProfile: React.FC = () => {
                     }
                   : {}) as IGovPoolQuery),
               }}
+              isMobile={isMobile}
             />
             <S.Indents top side={false}>
               <DaoProfileChart chart={chart} setChart={setChart} />

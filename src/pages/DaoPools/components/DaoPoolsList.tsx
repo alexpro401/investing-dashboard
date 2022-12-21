@@ -13,6 +13,8 @@ import { ZERO_ADDR } from "constants/index"
 import { createClient } from "urql"
 import { PulseSpinner } from "react-spinners-kit"
 import { useWeb3React } from "@web3-react/core"
+import { useWindowSize } from "react-use"
+import { useMemo } from "react"
 
 const govPoolsClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -39,6 +41,9 @@ const DaoPoolsList: React.FC<Props> = () => {
     return () => clearAllBodyScrollLocks()
   }, [listRef, loading])
 
+  const { width: windowWidth } = useWindowSize()
+  const isMobile = useMemo(() => windowWidth < 1194, [windowWidth])
+
   if (loading && (isNil(data) || isEmpty(data))) {
     return (
       <List.Scroll center>
@@ -64,7 +69,7 @@ const DaoPoolsList: React.FC<Props> = () => {
       {data.map((pool, index) => (
         <Indents key={pool.id} top={index > 0}>
           <To to={`/dao/${pool.id}`}>
-            <DaoPoolCard data={pool} account={account} />
+            <DaoPoolCard data={pool} account={account} isMobile={isMobile} />
           </To>
         </Indents>
       ))}

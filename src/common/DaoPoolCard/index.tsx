@@ -2,31 +2,36 @@ import * as S from "./styled"
 
 import { isNil } from "lodash"
 import * as React from "react"
-import { v4 as uuidv4 } from "uuid"
 
 import { Flex } from "theme"
 import Icon from "components/Icon"
-import Tooltip from "components/Tooltip"
 import { normalizeBigNumber } from "utils"
 import { useGovPoolDescription, useGovPoolHelperContracts } from "hooks/dao"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
 import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
 import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
-import { ZERO } from "constants/index"
+import { CardInfo } from "common"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   data: IGovPoolQuery
   account?: string | null
   children?: React.ReactNode
+  isMobile: boolean
 }
 
-const DaoPoolCard: React.FC<Props> = ({ data, account, children, ...rest }) => {
+const DaoPoolCard: React.FC<Props> = ({
+  data,
+  account,
+  children,
+  isMobile,
+  ...rest
+}) => {
   const id = React.useMemo(() => data?.id ?? "", [data])
 
   const { descriptionObject } = useGovPoolDescription(id)
   const [assetsExisting, assets] = useGovPoolVotingAssets(id)
-  const [{ tvl, mc_tvl, members, lau }] = useGovPoolStatistic(data)
+  const [govPoolStatistic] = useGovPoolStatistic(data)
   const { govUserKeeperAddress } = useGovPoolHelperContracts(id ?? "")
   const [userVotingPower] = useGovPoolUserVotingPower({
     userKeeperAddress: govUserKeeperAddress,
@@ -57,71 +62,73 @@ const DaoPoolCard: React.FC<Props> = ({ data, account, children, ...rest }) => {
     return subTitle
   }, [assetsExisting, assets])
 
-  return (
-    <S.Root {...rest}>
-      <S.DaoPoolCardHead>
-        <Flex ai="center" jc="flex-start">
-          <Icon
-            size={38}
-            m="0 8px 0 0"
-            address={data?.id}
-            source={descriptionObject?.avatarUrl ?? ""}
-          />
-          <Flex dir="column" ai="flex-start" gap="4">
-            <S.DaoPoolCardTitle>{poolName}</S.DaoPoolCardTitle>
-            <S.DaoPoolCardDescription align="left">
-              {poolAssets}
-            </S.DaoPoolCardDescription>
-          </Flex>
-        </Flex>
-        <Flex ai="flex-end" jc="flex-start" dir="column" gap="4">
-          <S.DaoPoolCardVotingPower>
-            {normalizeBigNumber(userVotingPower.power, 18, 0)}
-          </S.DaoPoolCardVotingPower>
-          <S.DaoPoolCardDescription>My voting power</S.DaoPoolCardDescription>
-        </Flex>
-      </S.DaoPoolCardHead>
-      <S.DaoPoolCardDivider />
-      <Flex full ai={"center"} jc={"space-between"} p={"12px"} gap={"10"}>
-        <Flex full dir={"column"} gap={"4"} ai={"flex-start"}>
-          <Flex full ai={"center"} jc={"flex-start"} gap={"4"}>
-            <S.DaoPoolCardBlockInfoLabel>TVL</S.DaoPoolCardBlockInfoLabel>
-            <Tooltip id={uuidv4()}>Info about TVL</Tooltip>
-          </Flex>
-          <S.DaoPoolCardBlockInfoValue>
-            ${normalizeBigNumber(tvl.value, 18, 2)}
-          </S.DaoPoolCardBlockInfoValue>
-        </Flex>
-        <Flex full dir={"column"} gap={"4"} ai={"flex-start"}>
-          <Flex full ai={"center"} jc={"flex-start"} gap={"4"}>
-            <S.DaoPoolCardBlockInfoLabel>MC/TVL</S.DaoPoolCardBlockInfoLabel>
-            <Tooltip id={uuidv4()}>Info about MC/TVL</Tooltip>
-          </Flex>
-          <S.DaoPoolCardBlockInfoValue>
-            {normalizeBigNumber(mc_tvl.value, 18, 2)}
-          </S.DaoPoolCardBlockInfoValue>
-        </Flex>
-        <Flex full dir={"column"} gap={"4"} ai={"flex-start"}>
-          <Flex full ai={"center"} jc={"flex-start"} gap={"4"}>
-            <S.DaoPoolCardBlockInfoLabel>Members</S.DaoPoolCardBlockInfoLabel>
-            <Tooltip id={uuidv4()}>Info about Members</Tooltip>
-          </Flex>
-          <S.DaoPoolCardBlockInfoValue>
-            {String(members.value ?? 0)}
-          </S.DaoPoolCardBlockInfoValue>
-        </Flex>
-        <Flex full dir={"column"} gap={"4"} ai={"flex-end"}>
-          <Flex full ai={"center"} jc={"flex-end"} gap={"4"}>
-            <S.DaoPoolCardBlockInfoLabel>LAU</S.DaoPoolCardBlockInfoLabel>
-            <Tooltip id={uuidv4()}>Info about LAU</Tooltip>
-          </Flex>
-          <S.DaoPoolCardBlockInfoValue>
-            {normalizeBigNumber(lau.value, 18, 0)}
-          </S.DaoPoolCardBlockInfoValue>
+  const nodeHeadLeft = React.useMemo(
+    () => (
+      <Flex ai="center" jc="flex-start">
+        <Icon
+          size={isMobile ? 38 : 100}
+          m="0 8px 0 0"
+          address={data?.id}
+          source={descriptionObject?.avatarUrl ?? ""}
+        />
+        <Flex dir="column" ai="flex-start" gap="4">
+          <S.DaoPoolCardTitle>{poolName}</S.DaoPoolCardTitle>
+          <S.DaoPoolCardDescription align="left">
+            {poolAssets}
+          </S.DaoPoolCardDescription>
         </Flex>
       </Flex>
+    ),
+    [data, descriptionObject, isMobile]
+  )
+  const nodeHeadRight = React.useMemo(
+    () => (
+      <Flex ai="flex-end" jc="flex-start" dir="column" gap="4">
+        <S.DaoPoolCardVotingPower>
+          {normalizeBigNumber(userVotingPower.power, 18, 0)}
+        </S.DaoPoolCardVotingPower>
+        <S.DaoPoolCardDescription>My voting power</S.DaoPoolCardDescription>
+      </Flex>
+    ),
+    [userVotingPower]
+  )
+
+  const statistic = React.useMemo(
+    () => [
+      {
+        label: "TVL",
+        value: <>${normalizeBigNumber(govPoolStatistic.tvl.value, 18, 2)}</>,
+        info: "Info about TVL",
+      },
+      {
+        label: "MC/TVL",
+        value: <>{normalizeBigNumber(govPoolStatistic.mc_tvl.value, 18, 2)}</>,
+        info: "Info about MC/TVL",
+      },
+      {
+        label: "Members",
+        value: <>{String(govPoolStatistic.members.value ?? 0)}</>,
+        info: "Info about Members",
+      },
+      {
+        label: "LAU",
+        value: <>{normalizeBigNumber(govPoolStatistic.lau.value, 18, 0)}</>,
+        info: "Info about LAU",
+      },
+    ],
+    [govPoolStatistic]
+  )
+
+  return (
+    <CardInfo
+      nodeHeadLeft={nodeHeadLeft}
+      nodeHeadRight={nodeHeadRight}
+      statistic={statistic}
+      isMobile={isMobile}
+      {...rest}
+    >
       {children}
-    </S.Root>
+    </CardInfo>
   )
 }
 

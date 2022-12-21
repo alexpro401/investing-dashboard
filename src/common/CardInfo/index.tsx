@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react"
+import { FC, ReactNode, HTMLAttributes } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { isNil } from "lodash"
 
@@ -12,7 +12,7 @@ interface Statistic {
   value: ReactNode
 }
 
-interface Props {
+interface Props extends HTMLAttributes<HTMLDivElement> {
   nodeHeadLeft?: ReactNode
   nodeHeadRight?: ReactNode
   children?: ReactNode
@@ -21,10 +21,17 @@ interface Props {
 }
 
 const CardInfo: FC<Props> = (props) => {
-  const { nodeHeadLeft, nodeHeadRight, statistic, children, isMobile } = props
+  const {
+    nodeHeadLeft,
+    nodeHeadRight,
+    statistic,
+    children,
+    isMobile,
+    ...rest
+  } = props
 
   return (
-    <S.Container>
+    <S.Container {...rest}>
       <S.Header>
         {nodeHeadLeft ? (
           <S.HeaderNodeLeft>{nodeHeadLeft}</S.HeaderNodeLeft>
