@@ -203,7 +203,7 @@ const PoolStatisticCard: FC<Props> = ({
       )
     }
 
-    return null
+    return children
   }, [children, hideChart, isMobile, history, fetchingHistory, stroke])
 
   return (

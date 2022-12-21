@@ -221,7 +221,7 @@ function Pool() {
         {!isNil(poolData) ? (
           <>
             <Indents top>
-              <PoolStatisticCard data={poolData} isMobile={isMobile}>
+              <PoolStatisticCard data={poolData} isMobile={isMobile} hideChart>
                 <>
                   <ButtonContainer>
                     <AppButton
