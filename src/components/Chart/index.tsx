@@ -121,7 +121,14 @@ const Chart: React.FC<Props> = ({
       isNil(chartItems) ||
       isEmpty(chartItems)
     ) {
-      return [CHART_FALLBACK_ITEM]
+      return [
+        {
+          ...CHART_FALLBACK_ITEM,
+          ...(!isNil(chartItems[0]?.stroke)
+            ? { stroke: chartItems[0]?.stroke }
+            : {}),
+        },
+      ]
     }
     return chartItems
   }, [data, chartItems])
