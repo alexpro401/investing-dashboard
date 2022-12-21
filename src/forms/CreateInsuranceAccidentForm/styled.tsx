@@ -106,12 +106,23 @@ export const CreateInsuranceAccidentPoolsStyled = {
   Card: styled.div<{ active: boolean }>`
     width: 100%;
     border-radius: 12px;
-    background: #181e2c;
-    border: 1px solid ${(p) => (p.active ? "#9AE2CB" : "#181e2c")};
+    background: ${({ theme }) => theme.backgroundColors.secondary};
+    border: 1px solid
+      ${(p) =>
+        p.active
+          ? p.theme.statusColors.success
+          : p.theme.backgroundColors.secondary};
     cursor: pointer;
 
     &:not(:last-child) {
       margin-bottom: 16px;
+    }
+
+    @media screen and (min-width: 1194px) {
+      background: transparent;
+      border-radius: 60px 24px 24px 60px;
+      border: 1px solid
+        ${(p) => (p.active ? p.theme.statusColors.success : "transparent")};
     }
   `,
   CardContent: styled(Flex)`

@@ -16,6 +16,8 @@ import { CreateInsuranceAccidentPoolsStyled as CIAPools } from "forms/CreateInsu
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import CreateInsuranceAccidentNoInvestments from "./CreateInsuranceAccidentNoInvestments"
+import { useWindowSize } from "react-use"
+import PoolStatisticCard from "components/cards/PoolStatistic"
 
 type FilterTVL = "ask" | "desc"
 
@@ -96,6 +98,11 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
     }, 100)
   }, [loading, payload])
 
+  const { width: windowWidth } = useWindowSize()
+  const isMobile = useMemo(() => windowWidth < 1194, [windowWidth])
+
+  console.log(payload)
+
   const list = useMemo(() => {
     if (loading || (!loading && payload.length === 0)) {
       const items = Array(5).fill(null)
@@ -114,27 +121,47 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
     if (filterTVL === undefined) {
       return payload
         .sort((a, b) => (a.creationTime > b.creationTime ? -1 : 1))
-        .map((p) => (
+        .map((p) =>
+          isMobile ? (
+            <CreateInsuranceAccidentPoolCard
+              key={p.id}
+              pool={p}
+              onToggle={() => onTogglePool(p)}
+              active={pool.get === p.id}
+            />
+          ) : (
+            <CIAPools.Card
+              key={p.id}
+              onClick={() => onTogglePool(p)}
+              active={pool.get === p.id}
+            >
+              <PoolStatisticCard data={p} isMobile={isMobile} />
+            </CIAPools.Card>
+          )
+        )
+    }
+
+    return payload
+      .sort((a, b) => sortByTVLCb(a, b, filterTVL))
+      .map((p) =>
+        isMobile ? (
           <CreateInsuranceAccidentPoolCard
             key={p.id}
             pool={p}
             onToggle={() => onTogglePool(p)}
             active={pool.get === p.id}
           />
-        ))
-    }
-
-    return payload
-      .sort((a, b) => sortByTVLCb(a, b, filterTVL))
-      .map((p) => (
-        <CreateInsuranceAccidentPoolCard
-          key={p.id}
-          pool={p}
-          onToggle={() => onTogglePool(p)}
-          active={pool.get === p.id}
-        />
-      ))
-  }, [loading, pool, payload, onTogglePool, filterTVL])
+        ) : (
+          <CIAPools.Card
+            key={p.id}
+            onClick={() => onTogglePool(p)}
+            active={pool.get === p.id}
+          >
+            <PoolStatisticCard data={p} isMobile={isMobile} />
+          </CIAPools.Card>
+        )
+      )
+  }, [loading, pool, payload, onTogglePool, filterTVL, isMobile])
 
   return (
     <>
