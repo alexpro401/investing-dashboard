@@ -52,7 +52,9 @@ export const ListContainer = styled(motion.div)`
 `
 
 export const CardIconWrp = styled.div`
-  width: 7px;
-  height: 12px;
   flex: 1 0 7px;
+  svg {
+    width: 7px;
+    height: 12px;
+  }
 `
