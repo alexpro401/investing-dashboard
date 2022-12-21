@@ -5,12 +5,6 @@ import { Card } from "common"
 export const Container = styled(Card)`
   width: 100%;
 
-  //@media screen and (min-width: 744px) {
-  //  flex-direction: row;
-  //  border-radius: 60px 24px 24px 60px;
-  //  padding: 0 16px 0 0;
-  //}
-
   @media screen and (min-width: 1194px) {
     flex-direction: row;
     border-radius: 60px 24px 24px 60px;
