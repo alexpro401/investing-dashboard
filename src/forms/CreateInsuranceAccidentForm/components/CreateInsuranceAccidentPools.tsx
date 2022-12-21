@@ -18,6 +18,7 @@ import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import CreateInsuranceAccidentNoInvestments from "./CreateInsuranceAccidentNoInvestments"
 import { useWindowSize } from "react-use"
 import PoolStatisticCard from "components/cards/PoolStatistic"
+import theme from "../../../theme"
 
 type FilterTVL = "ask" | "desc"
 
@@ -135,7 +136,11 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
               onClick={() => onTogglePool(p)}
               active={pool.get === p.id}
             >
-              <PoolStatisticCard data={p} isMobile={isMobile} />
+              <PoolStatisticCard
+                data={p}
+                isMobile={isMobile}
+                stroke={theme.statusColors.error}
+              />
             </CIAPools.Card>
           )
         )
@@ -157,7 +162,11 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
             onClick={() => onTogglePool(p)}
             active={pool.get === p.id}
           >
-            <PoolStatisticCard data={p} isMobile={isMobile} />
+            <PoolStatisticCard
+              data={p}
+              isMobile={isMobile}
+              stroke={theme.statusColors.error}
+            />
           </CIAPools.Card>
         )
       )

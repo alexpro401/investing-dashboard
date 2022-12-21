@@ -50,3 +50,9 @@ export const ListContainer = styled(motion.div)`
     padding: 0;
   }
 `
+
+export const CardIconWrp = styled.div`
+  width: 7px;
+  height: 12px;
+  flex: 1 0 7px;
+`

@@ -23,10 +23,13 @@ import {
   MembersList,
   ListContainer,
   LoadingText,
+  CardIconWrp,
 } from "./styled"
 import { AppDispatch } from "state"
 import { setActivePoolType } from "state/pools/actions"
 import { useWindowSize } from "react-use"
+import { ICON_NAMES } from "constants/icon-names"
+import { Icon } from "common"
 
 interface Props {
   poolType: PoolType
@@ -81,11 +84,15 @@ const List: React.FC<Props> = ({ poolType }) => {
         {pools[poolType].map((pool, index) => (
           <To key={pool.id} to={`/pool/profile/${pool.id}`}>
             <Flex p="16px 0 0" full>
-              <PoolStatisticCard
-                data={pool}
-                index={index}
-                isMobile={isMobile}
-              />
+              <PoolStatisticCard data={pool} index={index} isMobile={isMobile}>
+                {!isMobile ? (
+                  <CardIconWrp>
+                    <Icon name={ICON_NAMES.angleRight} color={"#6781BD"} />
+                  </CardIconWrp>
+                ) : (
+                  <></>
+                )}
+              </PoolStatisticCard>
             </Flex>
           </To>
         ))}
