@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { createClient, useQuery } from "urql"
 import { useActiveWeb3React } from "hooks"
@@ -13,7 +13,6 @@ import { useERC20 } from "hooks"
 import { useSelector } from "react-redux"
 import { selectInsuranceAddress } from "state/contracts/selectors"
 import { InsuranceAccident } from "interfaces/insurance"
-import { useEffectOnce } from "react-use"
 
 const GovPoolGraphClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -23,7 +22,6 @@ export const useGovPoolProposal = (
   wrappedProposalView: WrappedProposalView,
   govPoolAddress?: string
 ) => {
-  console.log("wrappedProposalView")
   const {
     descriptionUrl: _descriptionUrl,
     moveProposalToValidators: _moveProposalToValidators,
@@ -302,9 +300,9 @@ export const useGovPoolProposal = (
     } catch (error) {}
   }, [loadDetailsFromIpfs, loadProposalTotalVotes])
 
-  useEffectOnce(() => {
+  useEffect(() => {
     init()
-  })
+  }, [wrappedProposalView, init])
 
   return {
     wrappedProposalView,

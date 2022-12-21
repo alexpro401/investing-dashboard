@@ -22,7 +22,6 @@ export const useGovPoolProposals = (
   >([])
 
   const loadProposals = useCallback(async () => {
-    console.log("loadProposals")
     try {
       const data = await getProposals(offset, limit)
 
