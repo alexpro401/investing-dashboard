@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 export const StyledTopMembers = styled(motion.div)`
   padding: 0;
   height: fit-content;
+  width: 100%;
 `
 
 export const MembersList = styled.div`
