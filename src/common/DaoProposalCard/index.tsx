@@ -33,7 +33,7 @@ const DaoProposalCard: FC<Props> = ({
     votedAddresses,
     name,
     proposalType,
-    voteEnd,
+    proposalCountDown,
     isSecondStepProgressStarted,
     currentVotesVoted,
     votesTotalNeed,
@@ -69,11 +69,11 @@ const DaoProposalCard: FC<Props> = ({
 
   const cardBtnText = useMemo(() => {
     if (isProposalStateVoting) {
-      return voteEnd
+      return proposalCountDown.toUpperCase()
     } else if (isProposalStateWaitingForVotingTransfer) {
       return "Start second step (validators)"
     } else if (isProposalStateValidatorVoting) {
-      return `Second step ${voteEnd}`
+      return `Second step ${proposalCountDown.toUpperCase()}`
     } else if (isProposalStateSucceeded) {
       return "Execute"
     } else if (isProposalStateExecuted) {
@@ -96,7 +96,7 @@ const DaoProposalCard: FC<Props> = ({
     isProposalStateVoting,
     isProposalStateWaitingForVotingTransfer,
     rewardTokenAddress,
-    voteEnd,
+    proposalCountDown,
     wrappedProposalView,
   ])
 

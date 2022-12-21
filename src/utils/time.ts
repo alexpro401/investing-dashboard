@@ -113,15 +113,10 @@ export const parseDurationString = ({
   ].join(" ")
 }
 
-export const parseDurationShortString = ({
-  years,
-  months,
-  weeks,
-  days,
-  hours,
-  minutes,
-  seconds,
-}: ISepataredDuration) => {
+export const parseDurationShortString = (
+  { years, months, weeks, days, hours, minutes, seconds }: ISepataredDuration,
+  separator?: string
+) => {
   return [
     ...(years ? [`${years}Y`] : []),
     ...(months ? [`${months}Mon`] : []),
@@ -130,5 +125,5 @@ export const parseDurationShortString = ({
     ...(hours ? [`${hours}H`] : []),
     ...(minutes ? [`${minutes}Min`] : []),
     ...(seconds ? [`${seconds}S`] : []),
-  ].join("/")
+  ].join(separator || "/")
 }

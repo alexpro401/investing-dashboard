@@ -2,6 +2,7 @@ import styled, { css } from "styled-components"
 import { AppButton, Icon } from "common"
 import { VotingTerminal } from "pages/VotingTerminal"
 import { GradientBorder } from "theme"
+import { ProposalInfo } from "./components"
 
 export const DaoProposalDetails = styled.div`
   overflow: hidden auto;
@@ -13,9 +14,72 @@ export const DaoProposalDetails = styled.div`
   flex: 1;
 `
 
-export const DaoProposalDetailsTitleWrp = styled.div``
+export const PageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 16px;
 
-export const DaoProposalDetailsTitle = styled.div``
+  @media screen and (min-width: 768px) {
+    display: grid;
+    grid-template-columns: 1fr 0.5fr;
+    align-content: start;
+    align-items: start;
+  }
+`
+
+export const ContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  @media screen and (min-width: 768px) {
+    grid-column: 1 / 2;
+  }
+`
+
+export const VotingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  @media screen and (min-width: 768px) {
+    grid-column: 2 / 3;
+  }
+`
+
+export const DaoProposalDetailsTitleWrp = styled.div`
+  @media screen and (min-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    grid-column: 1 / -1;
+    margin-bottom: 24px;
+  }
+`
+
+export const DaoProposalDetailsTitle = styled.div`
+  @media screen and (min-width: 768px) {
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 900;
+    color: #e4f2ff;
+    grid-column: 1 / -1;
+  }
+`
+
+export const DaoProposalCountdown = styled.div`
+  margin-left: auto;
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 1.25;
+  background: linear-gradient(41.86deg, #2680eb 0%, #7fffd4 117.98%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  text-transform: uppercase;
+`
 
 export const DaoProposalDetailsProgressBar = styled.div`
   overflow: hidden;
@@ -31,6 +95,18 @@ export const DaoProposalDetailsProgressBar = styled.div`
     height: 100%;
     width: 50%;
     background: ${(props) => props.theme.statusColors.success};
+  }
+
+  @media screen and (min-width: 768px) {
+    grid-column: 1 / -1;
+  }
+`
+
+export const ProposalInfoWrp = styled(ProposalInfo)`
+  @media screen and (min-width: 768px) {
+    grid-column: 1 / 2;
+    background: transparent;
+    margin-bottom: 40px;
   }
 `
 
@@ -48,6 +124,13 @@ export const DaoProposalDetailsTabs = styled.div`
     width: 100%;
     height: 1px;
     background: rgba(32, 41, 58, 0.5);
+  }
+
+  @media screen and (min-width: 768px) {
+    grid-column: 1 / 2;
+    background: transparent;
+    justify-content: flex-start;
+    gap: 24px;
   }
 `
 
@@ -207,6 +290,25 @@ export const DaoProposalDetailsRowText = styled.span<{
     font: inherit;
     color: inherit;
   }
+`
+
+export const DaoProposalDetailsRowTextData = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: break-spaces;
+  width: 100%;
+  background: transparent;
+  border: none;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  max-height: 75px;
+`
+
+export const DaoProposalDetailsRowTextDataIcon = styled(Icon)`
+  width: 1.25em;
+  height: 1.25em;
 `
 
 export const DaoProposalDetailsRowList = styled.div`

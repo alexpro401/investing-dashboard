@@ -14,6 +14,12 @@ import { useERC20 } from "hooks"
 import { useSelector } from "react-redux"
 import { selectInsuranceAddress } from "state/contracts/selectors"
 import { InsuranceAccident } from "interfaces/insurance"
+import {
+  parseDuration,
+  parseDurationShortString,
+  parseSeconds,
+} from "utils/time"
+import { useInterval } from "react-use"
 
 const GovPoolGraphClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -110,14 +116,12 @@ export const useGovPoolProposal = (
     const isValidatorsVoting =
       String(wrappedProposalView?.proposalState) ===
       ProposalState.ValidatorVoting
+
     return wrappedProposalView?.proposal
-      ? (DateUtil.fromTimestamp(
-          isValidatorsVoting
-            ? wrappedProposalView?.validatorProposal?.core?.voteEnd.toNumber()
-            : wrappedProposalView?.proposal.core.voteEnd.toNumber(),
-          "dd/mm/yy hh:mm:ss"
-        ) as string)
-      : ""
+      ? isValidatorsVoting
+        ? wrappedProposalView?.validatorProposal?.core?.voteEnd
+        : wrappedProposalView?.proposal.core.voteEnd
+      : BigNumber.from(0)
   }, [wrappedProposalView])
 
   const executors = useMemo(
@@ -313,18 +317,36 @@ export const useGovPoolProposal = (
     }
   }, [_getCurrentAccountTotalVotes, account, wrappedProposalView])
 
-  const loadRewardsIfExist = useCallback(async () => {}, [])
-
   const init = useCallback(async () => {
     try {
       await loadDetailsFromIpfs()
       await loadProposalTotalVotes()
     } catch (error) {}
-  }, [loadDetailsFromIpfs, loadProposalTotalVotes, isInsurance])
+  }, [loadDetailsFromIpfs, loadProposalTotalVotes])
 
   useEffect(() => {
     init()
   }, [init, wrappedProposalView])
+
+  const [countdownCounter, setCountdownCounter] = useState(0)
+
+  const proposalCountDown = useMemo(() => {
+    return DateUtil.isDatePast(voteEnd.toNumber())
+      ? ""
+      : parseDurationShortString(
+          parseDuration(
+            parseSeconds(DateUtil.timeFromNow(voteEnd.toNumber()) * -1)
+          ),
+          ":"
+        )
+  }, [voteEnd, countdownCounter])
+
+  useInterval(
+    () => {
+      setCountdownCounter(countdownCounter + 1)
+    },
+    isProposalStateVoting || isProposalStateValidatorVoting ? 1000 : null
+  )
 
   return {
     wrappedProposalView,
@@ -366,5 +388,7 @@ export const useGovPoolProposal = (
     govPoolDescriptionURL,
     progress,
     insuranceProposalView,
+
+    proposalCountDown,
   }
 }
