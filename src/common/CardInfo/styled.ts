@@ -1,9 +1,21 @@
 import styled from "styled-components"
-import { Flex } from "theme"
+import { Text } from "theme"
 import { Card } from "common"
 
 export const Container = styled(Card)`
   width: 100%;
+
+  //@media screen and (min-width: 744px) {
+  //  flex-direction: row;
+  //  border-radius: 60px 24px 24px 60px;
+  //  padding: 0 16px 0 0;
+  //}
+
+  @media screen and (min-width: 1194px) {
+    flex-direction: row;
+    border-radius: 60px 24px 24px 60px;
+    padding: 0 16px 0 0;
+  }
 `
 
 export const Header = styled.div`
@@ -41,29 +53,18 @@ export const Divider = styled.div`
   height: 1px;
 `
 
-export const Content = styled.div`
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr;
-  gap: 0 12px;
-`
+export const CardInfoLabel = styled(Text).attrs(() => ({
+  block: true,
+  color: "#B1C7FC",
+  fw: 600,
+  fz: 11,
+  lh: "20px",
+}))``
 
-export const Item = styled(Flex)`
-  flex-direction: column;
-  flex: 1;
-  align-items: flex-start;
-
-  &:nth-child(1) {
-    justify-self: start;
-  }
-  &:nth-child(2) {
-    justify-self: start;
-  }
-  &:nth-child(3) {
-    justify-self: start;
-  }
-  &:nth-child(4) {
-    justify-self: center;
-  }
-`
+export const CardInfoValue = styled(Text).attrs(() => ({
+  block: true,
+  color: "#f7f7f7",
+  fw: 600,
+  fz: 16,
+  lh: "16px",
+}))``

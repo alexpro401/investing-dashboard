@@ -18,8 +18,9 @@ import Tooltip from "components/Tooltip"
 
 interface Props {
   activePools: InvestorPoolQuery[]
+  isMobile: boolean
 }
-const InvestorStatisticCard: FC<Props> = ({ activePools }) => {
+const InvestorStatisticCard: FC<Props> = ({ activePools, isMobile }) => {
   const { account } = useWeb3React()
 
   const [{ usd: totalInvestUSD }, { loading: totalLoading }] =
@@ -84,7 +85,7 @@ const InvestorStatisticCard: FC<Props> = ({ activePools }) => {
 
   const leftNode = useMemo(
     () => (
-      <AccountInfo account={account}>
+      <AccountInfo account={account} isMobile={isMobile}>
         <Flex full ai="center" jc="flex-start" gap="6">
           <Text fz={12} lh="15px" color="#5a6071">
             Investing
@@ -97,7 +98,7 @@ const InvestorStatisticCard: FC<Props> = ({ activePools }) => {
       </AccountInfo>
     ),
 
-    [account]
+    [account, isMobile]
   )
 
   const rightNode = useMemo(
@@ -115,6 +116,7 @@ const InvestorStatisticCard: FC<Props> = ({ activePools }) => {
         nodeHeadLeft={leftNode}
         nodeHeadRight={rightNode}
         statistic={userStatistic}
+        isMobile={isMobile}
       >
         <S.ButtonContainer>
           <S.NewInvestment text={"+ New investment"} routePath="/" />

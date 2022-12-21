@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid"
 import { isNil } from "lodash"
 
 import * as S from "./styled"
-import { Flex, Text } from "theme"
+import { Flex } from "theme"
 import Tooltip from "components/Tooltip"
 
 interface Statistic {
@@ -17,10 +17,11 @@ interface Props {
   nodeHeadRight?: ReactNode
   children?: ReactNode
   statistic: Statistic[]
+  isMobile: boolean
 }
 
 const CardInfo: FC<Props> = (props) => {
-  const { nodeHeadLeft, nodeHeadRight, statistic, children } = props
+  const { nodeHeadLeft, nodeHeadRight, statistic, children, isMobile } = props
 
   return (
     <S.Container>
@@ -32,29 +33,32 @@ const CardInfo: FC<Props> = (props) => {
           <S.HeaderNodeRight>{nodeHeadRight}</S.HeaderNodeRight>
         ) : null}
       </S.Header>
-      <S.Divider />
-      <S.Content>
+      {isMobile && <S.Divider />}
+      <Flex full ai={"center"} jc={"space-between"} gap={"12"}>
         {statistic.map((item, i) => (
-          <S.Item key={uuidv4()}>
-            <Flex full ai="center" jc="flex-start" m="0 0 4px 0">
-              <Text
-                color="#B1C7FC"
-                fz={11}
-                lh="20px"
-                p="0 3px 0 0"
-                align={i + 1 < statistic.length ? "left" : "right"}
-              >
-                {item.label}
-              </Text>
-              {!isNil(item.info) ? (
+          <Flex
+            full
+            gap={"4"}
+            dir={"column"}
+            key={uuidv4()}
+            ai={statistic.length === i + 1 ? "flex-end" : "flex-start"}
+          >
+            <Flex
+              full
+              ai={"center"}
+              jc={statistic.length === i + 1 ? "flex-end" : "flex-start"}
+              gap={"4"}
+            >
+              <S.CardInfoLabel>{item.label}</S.CardInfoLabel>
+              {!isNil(item.info) && (
                 <Tooltip id={uuidv4()}>{item.info}</Tooltip>
-              ) : null}
+              )}
             </Flex>
 
-            <Flex full>{item.value}</Flex>
-          </S.Item>
+            <S.CardInfoValue>{item.value}</S.CardInfoValue>
+          </Flex>
         ))}
-      </S.Content>
+      </Flex>
       {children}
     </S.Container>
   )

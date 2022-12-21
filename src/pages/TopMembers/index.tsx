@@ -1,5 +1,5 @@
 import { Flex, Center, To } from "theme"
-import React, { useEffect } from "react"
+import React, { useEffect, useMemo } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { CubeSpinner } from "react-spinners-kit"
 import { Routes, Route } from "react-router-dom"
@@ -26,6 +26,7 @@ import {
 } from "./styled"
 import { AppDispatch } from "state"
 import { setActivePoolType } from "state/pools/actions"
+import { useWindowSize } from "react-use"
 
 interface Props {
   poolType: PoolType
@@ -61,6 +62,9 @@ const List: React.FC<Props> = ({ poolType }) => {
     return () => clearAllBodyScrollLocks()
   }, [investScrollRef, loading])
 
+  const { width: windowWidth } = useWindowSize()
+  const isMobile = useMemo(() => windowWidth < 1194, [windowWidth])
+
   return loading && !pools[poolType].length ? (
     <Center>
       <CubeSpinner size={40} loading />
@@ -77,7 +81,11 @@ const List: React.FC<Props> = ({ poolType }) => {
         {pools[poolType].map((pool, index) => (
           <To key={pool.id} to={`/pool/profile/${pool.id}`}>
             <Flex p="16px 0 0" full>
-              <PoolStatisticCard data={pool} index={index} />
+              <PoolStatisticCard
+                data={pool}
+                index={index}
+                isMobile={isMobile}
+              />
             </Flex>
           </To>
         ))}

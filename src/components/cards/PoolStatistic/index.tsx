@@ -30,8 +30,15 @@ interface Props {
   data: IPoolQuery
   index?: number
   children?: ReactNode
+  isMobile: boolean
 }
-const PoolStatisticCard: FC<Props> = ({ data, index = 0, children }) => {
+
+const PoolStatisticCard: FC<Props> = ({
+  data,
+  index = 0,
+  children,
+  isMobile,
+}) => {
   const [{ poolMetadata: metadata }] = usePoolMetadata(
     data.id,
     data?.descriptionURL
@@ -120,7 +127,7 @@ const PoolStatisticCard: FC<Props> = ({ data, index = 0, children }) => {
     return (
       <Flex ai="center" jc="flex-start">
         <Icon
-          size={38}
+          size={isMobile ? 38 : 100}
           m="0 8px 0 0"
           source={metadata?.assets[metadata?.assets.length - 1]}
           address={data.id}
@@ -131,7 +138,7 @@ const PoolStatisticCard: FC<Props> = ({ data, index = 0, children }) => {
         </div>
       </Flex>
     )
-  }, [data, metadata])
+  }, [data, metadata, isMobile])
 
   const rightNode = useMemo(() => {
     if (isNil(data) || isNil(baseToken) || isNil(pnl) || isNil(priceLP)) {
@@ -161,6 +168,7 @@ const PoolStatisticCard: FC<Props> = ({ data, index = 0, children }) => {
         nodeHeadLeft={leftNode}
         nodeHeadRight={rightNode}
         statistic={userStatistic}
+        isMobile={isMobile}
       >
         {children}
       </CardInfo>

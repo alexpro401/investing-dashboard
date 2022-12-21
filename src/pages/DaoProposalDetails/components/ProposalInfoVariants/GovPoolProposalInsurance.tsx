@@ -16,6 +16,8 @@ import Chart from "components/Chart"
 import { generatePoolPnlHistory } from "utils/formulas"
 import PoolPriceDiff from "components/PoolPriceDiff"
 import { usePoolPriceHistoryDiff } from "hooks/usePool"
+import { useWindowSize } from "react-use"
+import { useMemo } from "react"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   govPoolProposal: ReturnType<typeof useGovPoolProposal>
@@ -45,11 +47,14 @@ const GovPoolProposalInsurance: React.FC<Props> = ({ govPoolProposal }) => {
     }
   }, [insuranceProposalView, poolData])
 
+  const { width: windowWidth } = useWindowSize()
+  const isMobile = useMemo(() => windowWidth < 1194, [windowWidth])
+
   return (
     <>
       {isLoaded ? (
         <>
-          <PoolStatisticCard data={poolData} />
+          <PoolStatisticCard data={poolData} isMobile={isMobile} />
 
           <S.DaoProposalDetailsCard>
             <Chart
