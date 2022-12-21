@@ -45,7 +45,7 @@ const Layout: FC<Props> = ({ children, left, right, tabs }) => {
             <WalletBadge />
           </WidgetWrapper>
         </Bar>
-        {tabs !== undefined && !!tabs.length && <HeaderTabs tabs={tabs} />}
+        {tabs && !!tabs.length && <HeaderTabs tabs={tabs} />}
       </Container>,
       AppHeaderNode
     )

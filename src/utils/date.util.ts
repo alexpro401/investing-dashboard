@@ -3,6 +3,8 @@ import {
   formatISO,
   getUnixTime,
   fromUnixTime,
+  differenceInSeconds,
+  isPast,
 } from "date-fns"
 
 export class DateUtil {
@@ -24,5 +26,16 @@ export class DateUtil {
 
   static format(date: Date | number, format: string) {
     return _externalFormat(date, format)
+  }
+
+  static timeFromNow(date: Date | number) {
+    return differenceInSeconds(
+      new Date(),
+      isNaN(Number(date)) ? date : (this.fromTimestamp(date as number) as Date)
+    )
+  }
+
+  static isDatePast(date: Date | number) {
+    return isPast(this.fromTimestamp(date as number) as Date)
   }
 }

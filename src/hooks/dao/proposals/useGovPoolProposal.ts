@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { DateUtil } from "utils"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { createClient, useQuery } from "urql"
 import { useActiveWeb3React } from "hooks"
@@ -17,10 +16,6 @@ import { InsuranceAccident } from "interfaces/insurance"
 
 const GovPoolGraphClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
-})
-
-const GovPoolValidatorsGraphClient = createClient({
-  url: process.env.REACT_APP_DAO_VALIDATORS_API_URL || "",
 })
 
 export const useGovPoolProposal = (
@@ -54,18 +49,6 @@ export const useGovPoolProposal = (
       }
     `,
     context: GovPoolGraphClient,
-  })
-
-  const [{ data: daoPoolValidatorsGraph }] = useQuery({
-    query: `
-      query {
-        proposals(where: { pool: "${govPoolAddress}", proposalId: "${wrappedProposalView?.proposalId}", isInternal: false }) {
-          id
-          totalVote
-        }
-      }
-    `,
-    context: GovPoolValidatorsGraphClient,
   })
 
   const insuranceAddress = useSelector(selectInsuranceAddress)
@@ -110,14 +93,12 @@ export const useGovPoolProposal = (
     const isValidatorsVoting =
       String(wrappedProposalView?.proposalState) ===
       ProposalState.ValidatorVoting
+
     return wrappedProposalView?.proposal
-      ? (DateUtil.fromTimestamp(
-          isValidatorsVoting
-            ? wrappedProposalView?.validatorProposal?.core?.voteEnd.toNumber()
-            : wrappedProposalView?.proposal.core.voteEnd.toNumber(),
-          "dd/mm/yy hh:mm:ss"
-        ) as string)
-      : ""
+      ? isValidatorsVoting
+        ? wrappedProposalView?.validatorProposal?.core?.voteEnd
+        : wrappedProposalView?.proposal.core.voteEnd
+      : BigNumber.from(0)
   }, [wrappedProposalView])
 
   const executors = useMemo(
@@ -157,7 +138,7 @@ export const useGovPoolProposal = (
     ).toLocaleLowerCase()
 
     return lastExecutor === String(insuranceAddress).toLocaleLowerCase()
-  }, [wrappedProposalView])
+  }, [insuranceAddress, wrappedProposalView])
 
   const isDistribution = useMemo(() => {
     return executor?.type === "distribution"
@@ -278,7 +259,6 @@ export const useGovPoolProposal = (
         const entity = new IpfsEntity<InsuranceAccident>({
           path: wrappedProposalView?.proposal.descriptionURL,
         })
-
         const response = await entity.load()
 
         setInsuranceProposalView(response)
@@ -313,18 +293,16 @@ export const useGovPoolProposal = (
     }
   }, [_getCurrentAccountTotalVotes, account, wrappedProposalView])
 
-  const loadRewardsIfExist = useCallback(async () => {}, [])
-
   const init = useCallback(async () => {
     try {
       await loadDetailsFromIpfs()
       await loadProposalTotalVotes()
     } catch (error) {}
-  }, [loadDetailsFromIpfs, loadProposalTotalVotes, isInsurance])
+  }, [loadDetailsFromIpfs, loadProposalTotalVotes])
 
   useEffect(() => {
     init()
-  }, [init, wrappedProposalView])
+  }, [wrappedProposalView, init])
 
   return {
     wrappedProposalView,

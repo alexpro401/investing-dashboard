@@ -77,15 +77,19 @@ const GovPoolProposalProfile: FC<Props> = ({ govPoolProposal }) => {
 
   useEffectOnce(() => {
     init()
+    loadGovPoolActualDescription()
   })
 
   useEffect(() => {
-    loadGovPoolActualDescription()
-  }, [loadGovPoolActualDescription])
-
-  useEffect(() => {
-    decodeProposalData()
-  }, [abiCoder, decodeProposalData, govPoolProposal])
+    if (!proposedGovPoolDescription) {
+      decodeProposalData()
+    }
+  }, [
+    abiCoder,
+    decodeProposalData,
+    govPoolProposal,
+    proposedGovPoolDescription,
+  ])
 
   return (
     <>

@@ -5,14 +5,16 @@ import { shortenAddress } from "utils"
 import { ProposalDetailsCard } from "./index"
 import { useGovPoolProposal } from "hooks/dao"
 import {
-  GovPoolProposalProfile,
-  GovPoolProposalDistribution,
+  GovPoolProposalAddToken,
   GovPoolProposalChangeSettings,
   GovPoolProposalChangeValidatorBalances,
-  GovPoolProposalAddToken,
   GovPoolProposalCustom,
+  GovPoolProposalDistribution,
   GovPoolProposalInsurance,
+  GovPoolProposalProfile,
 } from "./DetailsTabVariants"
+import { ICON_NAMES } from "constants/icon-names"
+import { copyToClipboard } from "utils/clipboard"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   govPoolProposal: ReturnType<typeof useGovPoolProposal>
@@ -46,33 +48,57 @@ const DetailsTab: FC<Props> = ({ govPoolProposal }) => {
       ) : (
         <></>
       )}
-      <S.DaoProposalDetailsCard>
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="label">
-            Contract addresses
-          </S.DaoProposalDetailsRowText>
-          <S.DaoProposalDetailsRowText textType="value">
-            [
-            {govPoolProposal.executors.map((el, idx) => (
+
+      {govPoolProposal.executors.map((executor, idx) => (
+        <S.DaoProposalDetailsCard key={idx}>
+          <S.DaoProposalDetailsRow>
+            <S.DaoProposalDetailsRowText textType="label">
+              Contract addresses
+            </S.DaoProposalDetailsRowText>
+            <S.DaoProposalDetailsRowText textType="value">
               <ExternalLink href={"#"} key={idx}>
-                {shortenAddress(el)}
+                {shortenAddress(executor)}
               </ExternalLink>
-            ))}
-            ]
-          </S.DaoProposalDetailsRowText>
-        </S.DaoProposalDetailsRow>
+            </S.DaoProposalDetailsRowText>
+          </S.DaoProposalDetailsRow>
 
-        <S.DaoProposalCardRowDivider />
+          <S.DaoProposalCardRowDivider />
 
-        <S.DaoProposalDetailsRow>
-          <S.DaoProposalDetailsRowText textType="label">
-            value
-          </S.DaoProposalDetailsRowText>
-          <S.DaoProposalDetailsRowText textType="value">
-            0.2 BNB
-          </S.DaoProposalDetailsRowText>
-        </S.DaoProposalDetailsRow>
-      </S.DaoProposalDetailsCard>
+          <S.DaoProposalDetailsRow>
+            <S.DaoProposalDetailsRowText textType="label">
+              value
+            </S.DaoProposalDetailsRowText>
+            <S.DaoProposalDetailsRowText textType="value">
+              0.2 BNB
+            </S.DaoProposalDetailsRowText>
+          </S.DaoProposalDetailsRow>
+
+          <S.DaoProposalCardRowDivider />
+
+          <S.DaoProposalDetailsRow>
+            <S.DaoProposalDetailsRowText
+              textType="label"
+              style={{ maxWidth: "100%" }}
+            >
+              <S.DaoProposalDetailsRowTextData
+                className={"hello"}
+                onClick={() =>
+                  copyToClipboard(
+                    govPoolProposal.wrappedProposalView.proposal.data[idx]
+                  )
+                }
+                title={govPoolProposal.wrappedProposalView.proposal.data[idx]}
+              >
+                {govPoolProposal.wrappedProposalView.proposal.data[
+                  idx
+                ].substring(0, 125)}
+                ...
+                <S.DaoProposalDetailsRowTextDataIcon name={ICON_NAMES.copy} />
+              </S.DaoProposalDetailsRowTextData>
+            </S.DaoProposalDetailsRowText>
+          </S.DaoProposalDetailsRow>
+        </S.DaoProposalDetailsCard>
+      ))}
       <ProposalDetailsCard govPoolProposal={govPoolProposal} />
     </>
   )
