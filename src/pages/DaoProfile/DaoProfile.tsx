@@ -32,8 +32,6 @@ import { Flex } from "theme"
 import { createClient, useQuery } from "urql"
 import { GovPoolQuery } from "queries"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
-import { useGovPoolVotingPowerMulticall } from "hooks/dao/useGovPoolUserVotingPower"
-import useGovPoolHelperContractsMulticall from "hooks/dao/useGovPoolHelperContractsMulticall"
 
 const govPoolsClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -50,54 +48,6 @@ const DaoProfile: React.FC = () => {
     variables: useMemo(() => ({ address: daoAddress }), [daoAddress]),
     context: govPoolsClient,
   })
-
-  // const [userKeeperContracts] = useGovPoolHelperContractsMulticall(
-  //   useMemo(() => [daoAddress], [daoAddress])
-  // )
-
-  // const votingPowerParams = useMemo(
-  //   () => [
-  //     {
-  //       userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
-  //       address: account,
-  //       isMicroPool: false,
-  //       useDelegated: false,
-  //     },
-  //     {
-  //       userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
-  //       address: account,
-  //       isMicroPool: true,
-  //       useDelegated: false,
-  //     },
-  //     {
-  //       userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
-  //       address: account,
-  //       isMicroPool: false,
-  //       useDelegated: true,
-  //     },
-  //     {
-  //       userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
-  //       address: "0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3",
-  //       isMicroPool: false,
-  //       useDelegated: false,
-  //     },
-  //     {
-  //       userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
-  //       address: "0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3",
-  //       isMicroPool: true,
-  //       useDelegated: false,
-  //     },
-  //     {
-  //       userKeeperAddress: userKeeperContracts[daoAddress || ""]?.userKeeper,
-  //       address: "0x8eFf9Efd56581bb5B8Ac5F5220faB9A7349160e3",
-  //       isMicroPool: false,
-  //       useDelegated: true,
-  //     },
-  //   ],
-  //   [account, daoAddress, userKeeperContracts]
-  // )
-
-  // const [data] = useGovPoolVotingPowerMulticall(votingPowerParams)
 
   const isValidator = true
 
@@ -154,24 +104,6 @@ const DaoProfile: React.FC = () => {
               child: (
                 <React.Suspense fallback={<TabFallback />}>
                   <DaoProfileTabDelegations
-                    data={[
-                      {
-                        id: "0x1230413asfadsfljk123041303asjk12",
-                        amount: "1230413",
-                      },
-                      {
-                        id: "1x1090423asfadsfljk109042303asjk10",
-                        amount: "1090423",
-                      },
-                      {
-                        id: "2x9820456asfadsfljk982045606asjk98",
-                        amount: "9820456",
-                      },
-                      {
-                        id: "3x1123412asfadsfljk112341232asjk11",
-                        amount: "1123412",
-                      },
-                    ]}
                     chainId={chainId}
                     daoAddress={daoAddress}
                   />
