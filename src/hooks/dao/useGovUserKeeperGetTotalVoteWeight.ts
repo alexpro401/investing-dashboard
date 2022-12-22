@@ -3,7 +3,7 @@ import { BigNumber } from "ethers"
 
 import { useGovUserKeeperContract } from "contracts"
 
-const useGovUserKeeperGetTotalVoteWeight = (
+export const useGovUserKeeperGetTotalVoteWeight = (
   daoPoolAddress: string
 ): BigNumber | null => {
   const userKeeperContract = useGovUserKeeperContract(daoPoolAddress)

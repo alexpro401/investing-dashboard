@@ -22,6 +22,7 @@ import { Flex } from "theme"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
+import { useBreakpoints } from "../../hooks"
 
 enum EDefaultVotingSettingsType {
   changeVotingSettings = "changeVotingSettings",
@@ -49,6 +50,8 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
     specification: EDefaultVotingSettingsType.changeVotingSettings,
   })
   const [appNavigationEl, setAppNavigationEl] = useState<Element | null>(null)
+
+  const { isMobile } = useBreakpoints()
 
   useEffect(() => {
     dispatch(hideTapBar())
@@ -226,13 +229,15 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
                   )
                 }
               )}
+            {appNavigationEl ? (
+              createPortal(<StepsNavigation />, appNavigationEl)
+            ) : !isMobile ? (
+              <StepsNavigation />
+            ) : (
+              <></>
+            )}
           </S.PageContent>
         </S.PageHolder>
-        {appNavigationEl ? (
-          createPortal(<StepsNavigation />, appNavigationEl)
-        ) : (
-          <></>
-        )}
       </WithGovPoolAddressValidation>
     </StepsControllerContext>
   )
