@@ -22,7 +22,7 @@ import { Flex } from "theme"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
-import { useBreakpoints } from "../../hooks"
+import { useBreakpoints } from "hooks"
 
 enum EDefaultVotingSettingsType {
   changeVotingSettings = "changeVotingSettings",

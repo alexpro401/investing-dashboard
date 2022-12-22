@@ -1,6 +1,6 @@
 import styled from "styled-components"
 
-import { device, Flex } from "theme"
+import { Flex, respondTo } from "theme"
 
 const Styled = {
   Container: styled(Flex)`
@@ -12,11 +12,11 @@ const Styled = {
     font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     padding: 4px 11px 2px;
-    font-size: 12px;
+    font-size: 10px;
     line-height: 130%;
 
-    @media only screen and (${device.xxs}) {
-      font-size: 10px;
+    ${respondTo("xxs")} {
+      font-size: 12px;
     }
 
     display: flex;

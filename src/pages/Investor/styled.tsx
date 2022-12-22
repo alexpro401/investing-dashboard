@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Flex, device, GradientBorder } from "theme"
+import { Flex, GradientBorder, respondTo } from "theme"
 
 export const Container = styled(Flex)`
   width: 100%;
@@ -13,10 +13,10 @@ export const TabContainer = styled(Flex)`
   position: relative;
   width: 100%;
   justify-content: space-evenly;
-  height: 40px;
+  height: 34px;
 
-  @media only screen and (${device.xxs}) {
-    height: 34px;
+  ${respondTo("xxs")} {
+    height: 40px;
   }
 
   &:after {
@@ -52,12 +52,13 @@ export const Tab = styled(Flex)<{ active?: boolean }>`
   font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 130%;
   text-align: center;
   color: ${(props) => (props.active ? "#C5D1DC" : "#5a6071")};
-  @media only screen and (${device.xxs}) {
-    font-size: 12px;
+
+  ${respondTo("xxs")} {
+    font-size: 14px;
   }
 `
 
@@ -84,11 +85,12 @@ export const MainText = styled.div`
   font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 130%;
   color: #c5d1dc;
-  @media only screen and (${device.xxs}) {
-    font-size: 12px;
+
+  ${respondTo("xxs")} {
+    font-size: 14px;
   }
 `
 

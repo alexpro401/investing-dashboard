@@ -1,4 +1,4 @@
-import { Flex, device, BaseButton } from "theme"
+import { Flex, BaseButton, respondTo } from "theme"
 import styled from "styled-components"
 
 export const Container = styled(Flex)`
@@ -9,12 +9,8 @@ export const Container = styled(Flex)`
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.15);
   flex-direction: column;
 
-  @media only screen and (${device.sm}) {
-    justify-content: space-between;
+  ${respondTo("sm")} {
     padding: 0 10px;
-  }
-
-  @media (min-width: 768px) {
     height: 84px;
     background: #0e121b;
     box-shadow: none;
@@ -26,7 +22,7 @@ export const Bar = styled(Flex)`
   width: 100%;
   height: 45px;
 
-  @media (min-width: 768px) {
+  ${respondTo("sm")} {
     padding: 0 20px;
     max-width: 1200px;
   }
@@ -140,7 +136,7 @@ export const Title = styled(Flex)`
   align-items: center;
   color: #e4f2ff;
 
-  @media (min-width: 768px) {
+  ${respondTo("sm")} {
     font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
@@ -161,7 +157,7 @@ export const Icons = styled(Flex)`
     justify-content: flex-end;
   }
 
-  @media (min-width: 768px) {
+  ${respondTo("sm")} {
     display: none;
   }
 `
@@ -209,7 +205,7 @@ export const IconButton = styled.img`
 `
 
 export const WidgetWrapper = styled.div`
-  @media (max-width: 768px) {
+  ${respondTo("sm")} {
     display: none;
   }
 `
