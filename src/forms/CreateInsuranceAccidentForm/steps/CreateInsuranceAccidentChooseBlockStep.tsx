@@ -8,7 +8,7 @@ import {
   useState,
 } from "react"
 import { createClient, Provider as GraphProvider } from "urql"
-import { isEmpty, isNil } from "lodash"
+import { isEmpty, isEqual, isNil } from "lodash"
 import { Tooltip } from "recharts"
 import { format } from "date-fns"
 
@@ -206,6 +206,24 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
     )
   }, [point])
 
+  const [_block, _setBlock] = useState(block.get ?? "")
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!isEqual(block.get, _block)) {
+        onFieldChange("block", _block)
+      }
+    }, 750)
+
+    return () => clearTimeout(timeout)
+  }, [_block])
+
+  useEffect(() => {
+    if (!isEqual(block.get, _block)) {
+      _setBlock(block.get ?? "")
+    }
+  }, [block.get])
+
   return (
     <>
       <StepsRoot>
@@ -256,32 +274,24 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
           </Chart>
 
           <InputGroup>
-            {isEmpty(block.get) ? (
-              <Skeleton h="50px" w="100%" radius="16px 0 0 16px" />
-            ) : (
-              <Input
-                type="number"
-                theme="clear"
-                inputmode="decimal"
-                placeholder="Block"
-                value={block.get}
-                onChange={(v) => onFieldChange("block", v)}
-              />
-            )}
-            {isEmpty(date.get) ? (
-              <Skeleton h="50px" w="100%" radius="0 16px 16px 0" />
-            ) : (
-              <Input
-                disabled
-                theme="clear"
-                value={format(
-                  expandTimestamp(Number(date.get)),
-                  DATE_TIME_FORMAT
-                )}
-                placeholder="DD/MM/YYYY, HH"
-                onClick={() => setDateOpen(!isDateOpen)}
-              />
-            )}
+            <Input
+              type="number"
+              theme="clear"
+              inputmode="decimal"
+              placeholder="Block"
+              value={_block}
+              onChange={_setBlock}
+            />
+            <Input
+              disabled
+              theme="clear"
+              value={
+                format(expandTimestamp(Number(date.get)), DATE_TIME_FORMAT) ??
+                ""
+              }
+              placeholder="DD/MM/YYYY, HH"
+              onClick={() => setDateOpen(!isDateOpen)}
+            />
           </InputGroup>
         </Card>
       </StepsRoot>
