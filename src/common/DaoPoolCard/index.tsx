@@ -60,7 +60,7 @@ const DaoPoolCard: React.FC<Props> = ({
     let subTitle = ""
 
     if (assetsExisting.haveToken) {
-      subTitle = `${assets.token?.symbol} `
+      subTitle = `${assets.token?.symbol ?? ""} `
     }
     if (assetsExisting.haveNft) {
       if (subTitle.length > 0) {
