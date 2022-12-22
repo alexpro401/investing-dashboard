@@ -19,10 +19,16 @@ import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
+import { useBreakpoints } from "../../hooks"
 
 enum STEPS {
   globalVotingSettings = "globalVotingSettings",
   basicInfo = "basicInfo",
+}
+
+const STEPS_TITLES: Record<STEPS, string> = {
+  [STEPS.globalVotingSettings]: "Global voting settings",
+  [STEPS.basicInfo]: "Basic Info",
 }
 
 const CreateDaoProposalGlobalVotingSettings: React.FC = () => {
@@ -135,6 +141,8 @@ const CreateDaoProposalGlobalVotingSettings: React.FC = () => {
     }
   }, [currentStep, handleCreateProposal])
 
+  const { isMobile } = useBreakpoints()
+
   return (
     <StepsControllerContext
       totalStepsAmount={totalStepsCount}
@@ -143,16 +151,29 @@ const CreateDaoProposalGlobalVotingSettings: React.FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        {currentStep === STEPS.globalVotingSettings && (
-          <S.StepsContainer>
-            <DefaultProposalStep isCreatingProposal />
-          </S.StepsContainer>
-        )}
-        {currentStep === STEPS.basicInfo && (
-          <S.StepsContainer>
-            <CreateDaoProposalGeneralForm />
-          </S.StepsContainer>
-        )}
+        <S.ContainerWrp>
+          {currentStep === STEPS.globalVotingSettings && (
+            <S.StepsContainer>
+              <DefaultProposalStep isCreatingProposal />
+            </S.StepsContainer>
+          )}
+          {currentStep === STEPS.basicInfo && (
+            <S.StepsContainer>
+              <CreateDaoProposalGeneralForm />
+            </S.StepsContainer>
+          )}
+          {!isMobile ? (
+            <S.SideStepsNavigationBarWrp
+              steps={Object.values(STEPS).map((step) => ({
+                number: Object.values(STEPS).indexOf(step),
+                title: STEPS_TITLES[step],
+              }))}
+              currentStep={Object.values(STEPS).indexOf(currentStep)}
+            />
+          ) : (
+            <></>
+          )}
+        </S.ContainerWrp>
       </AnimatePresence>
     </StepsControllerContext>
   )

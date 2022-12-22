@@ -19,10 +19,16 @@ import useGovPoolCreateProposalValidators from "hooks/dao/proposals/useGovPoolCr
 import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
+import { useBreakpoints } from "../../hooks"
 
 enum STEPS {
   validators = "validators",
   basicInfo = "basicInfo",
+}
+
+const STEPS_TITLES: Record<STEPS, string> = {
+  [STEPS.validators]: "Validators",
+  [STEPS.basicInfo]: "Basic Info",
 }
 
 const CreateGovProposalValidatorSettingsForm: React.FC = () => {
@@ -104,6 +110,8 @@ const CreateGovProposalValidatorSettingsForm: React.FC = () => {
     }
   }, [currentStep, handleCreateProposal])
 
+  const { isMobile } = useBreakpoints()
+
   return (
     <StepsControllerContext
       totalStepsAmount={totalStepsCount}
@@ -112,16 +120,29 @@ const CreateGovProposalValidatorSettingsForm: React.FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        {currentStep === STEPS.validators && (
-          <S.StepsContainer>
-            <ValidatorsSettingsStep />
-          </S.StepsContainer>
-        )}
-        {currentStep === STEPS.basicInfo && (
-          <S.StepsContainer>
-            <CreateDaoProposalGeneralForm />
-          </S.StepsContainer>
-        )}
+        <S.ContainerWrp>
+          {currentStep === STEPS.validators && (
+            <S.StepsContainer>
+              <ValidatorsSettingsStep />
+            </S.StepsContainer>
+          )}
+          {currentStep === STEPS.basicInfo && (
+            <S.StepsContainer>
+              <CreateDaoProposalGeneralForm />
+            </S.StepsContainer>
+          )}
+          {!isMobile ? (
+            <S.SideStepsNavigationBarWrp
+              steps={Object.values(STEPS).map((step) => ({
+                number: Object.values(STEPS).indexOf(step),
+                title: STEPS_TITLES[step],
+              }))}
+              currentStep={Object.values(STEPS).indexOf(currentStep)}
+            />
+          ) : (
+            <></>
+          )}
+        </S.ContainerWrp>
       </AnimatePresence>
     </StepsControllerContext>
   )

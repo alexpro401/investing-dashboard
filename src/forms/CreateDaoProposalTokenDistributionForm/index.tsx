@@ -18,10 +18,16 @@ import { TokenDistributionStep } from "./steps"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
+import { useBreakpoints } from "../../hooks"
 
 enum STEPS {
   tokenDistribution = "tokenDistribution",
   basicInfo = "basicInfo",
+}
+
+const STEPS_TITLES: Record<STEPS, string> = {
+  [STEPS.tokenDistribution]: "Token Distribution",
+  [STEPS.basicInfo]: "Basic Info",
 }
 
 const CreateDaoProposalTokenDistributionForm: React.FC = () => {
@@ -36,6 +42,8 @@ const CreateDaoProposalTokenDistributionForm: React.FC = () => {
   const { selectedTreasuryToken, tokenAmount } = useContext(
     TokenDistributionCreatingContext
   )
+
+  const { isMobile } = useBreakpoints()
 
   useEffect(() => {
     dispatch(hideTapBar())
@@ -111,16 +119,29 @@ const CreateDaoProposalTokenDistributionForm: React.FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        {currentStep === STEPS.tokenDistribution && (
-          <S.StepsContainer>
-            <TokenDistributionStep />
-          </S.StepsContainer>
-        )}
-        {currentStep === STEPS.basicInfo && (
-          <S.StepsContainer>
-            <CreateDaoProposalGeneralForm />
-          </S.StepsContainer>
-        )}
+        <S.ContainerWrp>
+          {currentStep === STEPS.tokenDistribution && (
+            <S.StepsContainer>
+              <TokenDistributionStep />
+            </S.StepsContainer>
+          )}
+          {currentStep === STEPS.basicInfo && (
+            <S.StepsContainer>
+              <CreateDaoProposalGeneralForm />
+            </S.StepsContainer>
+          )}
+          {!isMobile ? (
+            <S.SideStepsNavigationBarWrp
+              steps={Object.values(STEPS).map((step) => ({
+                number: Object.values(STEPS).indexOf(step),
+                title: STEPS_TITLES[step],
+              }))}
+              currentStep={Object.values(STEPS).indexOf(currentStep)}
+            />
+          ) : (
+            <></>
+          )}
+        </S.ContainerWrp>
       </AnimatePresence>
     </StepsControllerContext>
   )
