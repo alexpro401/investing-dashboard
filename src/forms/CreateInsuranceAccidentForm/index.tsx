@@ -192,6 +192,7 @@ const CreateInsuranceAccidentForm: FC = () => {
     useActiveInsuranceProposalByPool(pool.get)
 
   useEffect(() => {
+    console.log({ activeProposalByPool, loadingActiveProposalByPool })
     if (loadingActiveProposalByPool) return
 
     const _exist =
@@ -545,6 +546,8 @@ const CreateInsuranceAccidentForm: FC = () => {
         <InsuranceAccidentExist
           isOpen={accidentExistModal}
           onClose={() => setAccidentExistModal(false)}
+          daoPool={activeProposalByPool?.query?.pool?.id ?? ""}
+          proposalId={activeProposalByPool?.query?.proposalId ?? ""}
         />
         <CreateInsuranceAccidentCreatedSuccessfully
           open={showSuccessfullyCreatedModal}
