@@ -10,7 +10,7 @@ import { useGovPoolDescription } from "hooks/dao"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
 import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
-import { AppButton, CardInfo } from "common"
+import { CardInfo } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 import Skeleton from "components/Skeleton"
 
@@ -95,22 +95,47 @@ const DaoPoolCard: React.FC<Props> = ({
   const nodeHeadRight = React.useMemo(
     () => (
       <Flex ai="flex-end" jc="flex-start" dir="column" gap="4">
-        <AppButton
-          onClick={toggleVotingPowerView}
-          iconRight={showVotingPower ? ICON_NAMES.close : ICON_NAMES.locked}
-          size="no-paddings"
-          color={"default"}
-        />
-        {showVotingPower ? (
-          <React.Suspense
-            fallback={<Skeleton variant={"rect"} h={"16px"} w={"80px"} />}
-          >
-            <DaoPoolCardVotingPower account={account} pool={id} />
-          </React.Suspense>
-        ) : null}
+        <Flex
+          ai="flex-end"
+          jc="flex-start"
+          dir={isMobile ? "column" : "column-reverse"}
+          gap="4"
+        >
+          <Flex gap={"8"}>
+            {showVotingPower ? (
+              <React.Suspense
+                fallback={
+                  <Skeleton
+                    variant={"rect"}
+                    h={isMobile ? "16px" : "25px"}
+                    w={"80px"}
+                  />
+                }
+              >
+                <DaoPoolCardVotingPower
+                  account={account}
+                  pool={id}
+                  isMobile={isMobile}
+                />
+              </React.Suspense>
+            ) : null}
+            <S.DaoPoolCardShowVotingPower
+              onClick={toggleVotingPowerView}
+              name={
+                showVotingPower
+                  ? ICON_NAMES.modalClose
+                  : ICON_NAMES.angleLeftOutlined
+              }
+              dir={"left"}
+            />
+          </Flex>
+          <S.DaoPoolCardDescription>
+            {isMobile ? "My voting power" : "My power"}
+          </S.DaoPoolCardDescription>
+        </Flex>
       </Flex>
     ),
-    [showVotingPower, account, id, toggleVotingPowerView]
+    [showVotingPower, account, id, toggleVotingPowerView, isMobile]
   )
 
   const statistic = React.useMemo(
