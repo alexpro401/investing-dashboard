@@ -31,3 +31,4 @@ export { default as useGovPoolExecutorSettings } from "./useGovPoolExecutorSetti
 export { default as useGovPoolExecutorToSettings } from "./useGovPoolExecutorToSettings"
 export { default as useGovPoolSettingsIdToExecutors } from "./useGovPoolSettingsIdToExecutors"
 export { default as useGovPoolPendingRewards } from "./useGovPoolPendingRewards"
+export * from "./useGovUserKeeperGetTotalVoteWeight"
