@@ -102,8 +102,6 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
   const { width: windowWidth } = useWindowSize()
   const isMobile = useMemo(() => windowWidth < 1194, [windowWidth])
 
-  console.log(payload)
-
   const list = useMemo(() => {
     if (loading || (!loading && payload.length === 0)) {
       const items = Array(5).fill(null)
