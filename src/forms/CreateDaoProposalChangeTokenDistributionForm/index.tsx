@@ -19,10 +19,16 @@ import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
+import { useBreakpoints } from "../../hooks"
 
 enum STEPS {
-  globalVotingSettings = "globalVotingSettings",
+  TDSettings = "Token Distribution Settings",
   basicInfo = "basicInfo",
+}
+
+const STEPS_TITLES: Record<STEPS, string> = {
+  [STEPS.TDSettings]: "Global voting settings",
+  [STEPS.basicInfo]: "Basic Info",
 }
 
 const CreateDaoProposalChangeTokenDistributionForm: React.FC = () => {
@@ -45,9 +51,7 @@ const CreateDaoProposalChangeTokenDistributionForm: React.FC = () => {
     }
   }, [dispatch])
 
-  const [currentStep, setCurrentStep] = useState<STEPS>(
-    STEPS.globalVotingSettings
-  )
+  const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.TDSettings)
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length + 1, [])
   const currentStepNumber = useMemo(
@@ -105,14 +109,14 @@ const CreateDaoProposalChangeTokenDistributionForm: React.FC = () => {
 
   const handlePrevStep = useCallback(() => {
     switch (currentStep) {
-      case STEPS.globalVotingSettings: {
+      case STEPS.TDSettings: {
         if (daoAddress) {
           navigate(`/dao/${daoAddress}/create-proposal/change-voting-settings`)
         }
         break
       }
       case STEPS.basicInfo: {
-        setCurrentStep(STEPS.globalVotingSettings)
+        setCurrentStep(STEPS.TDSettings)
         break
       }
       default:
@@ -122,7 +126,7 @@ const CreateDaoProposalChangeTokenDistributionForm: React.FC = () => {
 
   const handleNextStep = useCallback(() => {
     switch (currentStep) {
-      case STEPS.globalVotingSettings: {
+      case STEPS.TDSettings: {
         setCurrentStep(STEPS.basicInfo)
         break
       }
@@ -135,6 +139,8 @@ const CreateDaoProposalChangeTokenDistributionForm: React.FC = () => {
     }
   }, [currentStep, handleCreateProposal])
 
+  const { isMobile } = useBreakpoints()
+
   return (
     <StepsControllerContext
       totalStepsAmount={totalStepsCount}
@@ -143,16 +149,29 @@ const CreateDaoProposalChangeTokenDistributionForm: React.FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        {currentStep === STEPS.globalVotingSettings && (
-          <S.StepsContainer>
-            <IsDistributionProposalStep isCreatingProposal />
-          </S.StepsContainer>
-        )}
-        {currentStep === STEPS.basicInfo && (
-          <S.StepsContainer>
-            <CreateDaoProposalGeneralForm />
-          </S.StepsContainer>
-        )}
+        <S.ContainerWrp>
+          {currentStep === STEPS.TDSettings && (
+            <S.StepsContainer>
+              <IsDistributionProposalStep isCreatingProposal />
+            </S.StepsContainer>
+          )}
+          {currentStep === STEPS.basicInfo && (
+            <S.StepsContainer>
+              <CreateDaoProposalGeneralForm />
+            </S.StepsContainer>
+          )}
+          {!isMobile ? (
+            <S.SideStepsNavigationBarWrp
+              steps={Object.values(STEPS).map((step) => ({
+                number: Object.values(STEPS).indexOf(step),
+                title: STEPS_TITLES[step],
+              }))}
+              currentStep={Object.values(STEPS).indexOf(currentStep)}
+            />
+          ) : (
+            <></>
+          )}
+        </S.ContainerWrp>
       </AnimatePresence>
     </StepsControllerContext>
   )

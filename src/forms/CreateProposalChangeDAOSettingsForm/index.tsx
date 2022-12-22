@@ -11,7 +11,10 @@ import { useNavigate, useParams } from "react-router-dom"
 
 import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
-import { useGovPoolCreateProposalChangeDaoSettings } from "hooks/dao/proposals"
+import {
+  useGovPoolCreateProposalChangeDaoSettings,
+  useBreakpoints,
+} from "hooks"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { hideTapBar, showTabBar } from "state/application/actions"
@@ -24,6 +27,11 @@ enum STEPS {
   basicInfo = "basicInfo",
 }
 
+const STEPS_TITLES: Record<STEPS, string> = {
+  [STEPS.daoSettings]: "DAO Settings",
+  [STEPS.basicInfo]: "Basic Info",
+}
+
 const CreateProposalChangeDAOSettingsForm: React.FC = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -31,6 +39,7 @@ const CreateProposalChangeDAOSettingsForm: React.FC = () => {
   const createProposal = useGovPoolCreateProposalChangeDaoSettings(
     daoAddress ?? ""
   )
+  const { isMobile } = useBreakpoints()
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
   )
@@ -122,16 +131,29 @@ const CreateProposalChangeDAOSettingsForm: React.FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        {currentStep === STEPS.daoSettings && (
-          <S.StepsContainer>
-            <TitlesStep isCreatingProposal />
-          </S.StepsContainer>
-        )}
-        {currentStep === STEPS.basicInfo && (
-          <S.StepsContainer>
-            <CreateDaoProposalGeneralForm />
-          </S.StepsContainer>
-        )}
+        <S.ContainerWrp>
+          {currentStep === STEPS.daoSettings && (
+            <S.StepsContainer>
+              <TitlesStep isCreatingProposal />
+            </S.StepsContainer>
+          )}
+          {currentStep === STEPS.basicInfo && (
+            <S.StepsContainer>
+              <CreateDaoProposalGeneralForm />
+            </S.StepsContainer>
+          )}
+          {!isMobile ? (
+            <S.SideStepsNavigationBarWrp
+              steps={Object.values(STEPS).map((step) => ({
+                number: Object.values(STEPS).indexOf(step),
+                title: STEPS_TITLES[step],
+              }))}
+              currentStep={Object.values(STEPS).indexOf(currentStep)}
+            />
+          ) : (
+            <></>
+          )}
+        </S.ContainerWrp>
       </AnimatePresence>
     </StepsControllerContext>
   )

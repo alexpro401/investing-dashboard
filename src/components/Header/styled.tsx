@@ -205,7 +205,9 @@ export const IconButton = styled.img`
 `
 
 export const WidgetWrapper = styled.div`
+  display: none;
+
   ${respondTo("sm")} {
-    display: none;
+    display: block;
   }
 `
