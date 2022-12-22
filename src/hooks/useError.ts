@@ -4,7 +4,7 @@ import { AppDispatch, AppState } from "state"
 import { updateError } from "state/application/actions"
 import { selectError } from "state/application/selectors"
 
-function useError(): [
+export function useError(): [
   AppState["application"]["error"],
   (params: string) => void
 ] {

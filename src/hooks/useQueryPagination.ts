@@ -38,7 +38,7 @@ const paginationDefault: PaginationArgs = {
   initialOffset: 0,
 }
 
-const useQueryPagination = <T>(
+export const useQueryPagination = <T>(
   { formatter, variables, ...queryArgs }: QueryArgs<T>,
   pagination = paginationDefault
 ): Result<T> => {

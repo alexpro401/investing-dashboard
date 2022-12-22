@@ -21,7 +21,7 @@ const Index = styled.div`
   margin-right: 16px;
   width: 27px;
   height: 27px;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 700;
   font-size: 12px;
@@ -35,7 +35,7 @@ const Index = styled.div`
 `
 
 const Title = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -46,7 +46,7 @@ const Title = styled.div`
 `
 
 const Description = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;

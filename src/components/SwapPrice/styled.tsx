@@ -5,7 +5,6 @@ import { motion } from "framer-motion"
 export const Container = styled(GradientBorder)`
   width: 100%;
   flex-direction: column;
-  align-items: space-between;
   align-items: center;
   height: fit-content;
   border-radius: 15px;
@@ -29,7 +28,7 @@ export const Content = styled(Flex)`
 `
 
 export const WhiteText = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 12px;
@@ -48,7 +47,7 @@ export const UsdPrice = styled(WhiteText)`
 `
 
 export const GasPrice = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 12px;

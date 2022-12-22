@@ -1,44 +1,47 @@
 /**
  * Render Tabs
  */
-import { TabsMenu } from "components/TopMembersBar/styled"
 import { ITab } from "interfaces"
 import { useLocation } from "react-router-dom"
 import { To } from "theme"
 import isActiveRoute from "utils/isActiveRoute"
 import { EHeaderTitles } from "."
-import { Tabs, Tab, TabAmount } from "./styled"
+import * as S from "./styled"
+import { useMemo } from "react"
+import { MotionProps } from "framer-motion"
 
-interface IHeaderTabsProps {
+interface IHeaderTabsProps extends MotionProps {
   tabs: ITab[]
 }
-const HeaderTabs = ({ tabs }: IHeaderTabsProps) => {
+
+const HeaderTabs = ({ tabs, ...rest }: IHeaderTabsProps) => {
   const { pathname } = useLocation()
 
-  const isActive = (source, activeSource) => {
-    if (activeSource && activeSource.length > 0) {
-      return activeSource.some((s) => isActiveRoute(pathname, s))
-    }
+  const isActive = useMemo(
+    () => (source, activeSource) => {
+      if (activeSource && activeSource.length > 0) {
+        return activeSource.some((s) => isActiveRoute(pathname, s))
+      }
 
-    return isActiveRoute(pathname, source)
-  }
+      return isActiveRoute(pathname, source)
+    },
+    [pathname]
+  )
 
   return tabs.length > 0 ? (
-    <TabsMenu>
-      <Tabs>
-        {tabs.map((tab: ITab) => {
-          return (
-            <To key={tab.title} to={tab.source}>
-              <Tab active={isActive(tab.source, tab.activeSource)}>
-                {tab.title}
-              </Tab>
+    <S.Tabs {...rest}>
+      {tabs.map((tab: ITab) => {
+        return (
+          <To key={tab.title} to={tab.source}>
+            <S.Tab active={isActive(tab.source, tab.activeSource)}>
+              {tab.title}
+            </S.Tab>
 
-              {(tab?.amount || 0) > 0 && <TabAmount>{tab.amount}</TabAmount>}
-            </To>
-          )
-        })}
-      </Tabs>
-    </TabsMenu>
+            {(tab?.amount || 0) > 0 && <S.TabAmount>{tab.amount}</S.TabAmount>}
+          </To>
+        )
+      })}
+    </S.Tabs>
   ) : null
 }
 

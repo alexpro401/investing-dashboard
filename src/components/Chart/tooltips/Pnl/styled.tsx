@@ -13,7 +13,7 @@ export const Styled = {
     padding: 8px 12px;
   `,
   Date: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 500;
     font-size: 11px;
@@ -22,7 +22,7 @@ export const Styled = {
   `,
   Label: styled.div`
     margin-right: 12px;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 500;
     font-size: 11px;
@@ -30,7 +30,7 @@ export const Styled = {
     color: #e4f2ff;
   `,
   Value: styled.div<{ amount: number }>`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 11px;

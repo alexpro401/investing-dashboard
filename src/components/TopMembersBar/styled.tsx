@@ -2,7 +2,7 @@ import { Flex, BaseButton } from "theme"
 import styled from "styled-components"
 
 export const Title = styled(Flex)`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 20px;
@@ -65,7 +65,7 @@ export const Tabs = styled(Flex)`
 `
 
 export const Tab = styled(ClickableArea)<{ active?: boolean }>`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
@@ -88,9 +88,9 @@ export const Tab = styled(ClickableArea)<{ active?: boolean }>`
     left: 0;
     margin: auto;
     background: linear-gradient(64.44deg, #63b49b 12.29%, #a4ebd4 76.64%);
-    box-shadow: 0px 1px 4px rgba(164, 235, 212, 0.29),
-      0px 2px 5px rgba(164, 235, 212, 0.14);
-    border-radius: 2px 2px 0px 0px;
+    box-shadow: 0 1px 4px rgba(164, 235, 212, 0.29),
+      0 2px 5px rgba(164, 235, 212, 0.14);
+    border-radius: 2px 2px 0 0;
     height: 2px;
     width: 100%;
   }
@@ -110,13 +110,3 @@ export const Icons = styled(Flex)`
 export const IconButton = styled.img`
   margin: 0 3px;
 `
-
-export const tabsVariants = {
-  visible: {
-    opacity: 1,
-    transition: { delay: 0.2 },
-  },
-  hidden: {
-    opacity: 0,
-  },
-}

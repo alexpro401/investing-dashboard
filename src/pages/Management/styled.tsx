@@ -22,7 +22,7 @@ export const PriceCard = styled(GradientBorder)`
 `
 
 export const Label = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -32,7 +32,7 @@ export const Label = styled.div`
 `
 
 export const Amount = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 12px;
@@ -54,16 +54,11 @@ export const Row = styled(Flex)`
 `
 
 export const InsuranceAmount = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 13px;
   line-height: 13px;
   color: #788ab4;
   padding-right: 4px;
-`
-
-export const MultiplierIcon = styled.img`
-  width: 35px;
-  height: 16px;
 `

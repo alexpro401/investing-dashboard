@@ -23,7 +23,7 @@ export const Time = styled(Text)`
 
 export const Title = styled(Text)`
   color: #f5f5f5;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: normal;
@@ -31,7 +31,7 @@ export const Title = styled(Text)`
 
 export const Description = styled(Text)`
   color: #f5f5f5;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-weight: 300;
   text-overflow: ellipsis;
   white-space: normal;

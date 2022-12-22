@@ -8,14 +8,13 @@ const TextButton = styled.button`
   background: none;
   outline: none;
   border: none;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 700;
   font-size: 16px;
   line-height: 19px;
   text-align: center;
   color: #2669eb;
-  text-align: center;
   width: 100%;
 `
 

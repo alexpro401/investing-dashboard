@@ -2,18 +2,6 @@ import { FC, ReactNode } from "react"
 import styled from "styled-components"
 import { Flex } from "theme"
 
-export const contentVariants = {
-  hidden: {
-    opacity: 0,
-  },
-  visible: {
-    transition: {
-      duration: 0.3,
-    },
-    opacity: 1,
-  },
-}
-
 export const Container = styled(Flex)`
   width: 100%;
   padding: 16px;
@@ -30,7 +18,7 @@ export const Content = styled(Flex)`
 `
 
 export const Title = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -43,7 +31,7 @@ export const Title = styled.div`
 `
 
 export const SubTitle = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -54,7 +42,7 @@ export const SubTitle = styled.div`
 `
 
 export const Link = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -109,7 +97,7 @@ export const Body = styled(Flex)<{ noPaddings?: boolean }>`
 `
 
 export const FaqText = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -120,7 +108,7 @@ export const FaqText = styled.div`
 `
 
 export const CheckboxLabel = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -157,7 +145,7 @@ export const TokenInfo = styled(Flex)`
 `
 
 export const Symbol = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -169,7 +157,7 @@ export const Symbol = styled.div`
 `
 
 export const Name = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -181,7 +169,7 @@ export const Name = styled.div`
 `
 
 export const Price = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -193,7 +181,7 @@ export const Price = styled.div`
 
 export const HintText = styled.div`
   padding: 16px 0 40px;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -202,7 +190,7 @@ export const HintText = styled.div`
 `
 
 export const LabelText = styled(Flex)`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -239,7 +227,7 @@ export const Row = styled(Flex)`
 `
 
 export const TextBase = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -257,7 +245,7 @@ export const Grey = styled(TextBase)`
 `
 
 export const ValidationError = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;

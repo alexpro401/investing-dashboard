@@ -10,7 +10,7 @@ interface IProposalData {
   poolAddress: string
 }
 
-function useInvestorRiskyProposals(
+export function useInvestorRiskyProposals(
   activePools?: string[]
 ): [IProposalData[], boolean] {
   const { library, account } = useActiveWeb3React()

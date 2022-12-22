@@ -20,8 +20,8 @@ export const Body = styled.div`
     #0e121b 89.07%,
     #0e121b 89.08%
   );
-  box-shadow: 0px -3px 102px 2px rgba(149, 185, 255, 0.26);
-  border-radius: 26px 26px 0px 0px;
+  box-shadow: 0 -3px 102px 2px rgba(149, 185, 255, 0.26);
+  border-radius: 26px 26px 0 0;
   height: fill-available;
   display: flex;
   flex-direction: column;
@@ -56,7 +56,7 @@ export const AddressContainer = styled.a`
 `
 
 export const Address = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
@@ -69,7 +69,7 @@ export const Address = styled.div`
 `
 
 export const Title = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 20px;
@@ -82,7 +82,7 @@ export const Title = styled.div`
 export const CenterSideContent = styled.div`
   display: flex;
   flex-direction: column;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
@@ -100,7 +100,6 @@ export const ListDiv = styled.div`
   display: flex;
   margin-bottom: 22px;
   text-align: center;
-  display: flex;
   align-items: center;
   &:last-child {
     margin-bottom: 0;
@@ -122,7 +121,7 @@ export const BottomSideContent = styled.div`
 `
 
 export const BottomTitle = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 14px;

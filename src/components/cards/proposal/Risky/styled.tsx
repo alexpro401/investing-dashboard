@@ -18,14 +18,14 @@ const Styled = {
     white-space: nowrap;
     border: 1px solid ${(props) => (props.active ? "#9ae2cb" : "#788AB4")};
     color: ${(props) => (props.active ? "#9ae2cb" : "#788AB4")};
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 11px;
     line-height: 13px;
   `,
   Ticker: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 13px;
@@ -43,7 +43,7 @@ const Styled = {
     position: relative;
   `,
   SizeTitle: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 13px;
@@ -79,7 +79,7 @@ const Styled = {
   `,
   AddButton: styled.div`
     margin-left: 0.5px;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 11px;
@@ -120,7 +120,7 @@ export const SettingsStyled = {
     gap: 4.5px;
   `,
   Title: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 13px;
@@ -128,7 +128,7 @@ export const SettingsStyled = {
     color: #788ab4;
   `,
   InputType: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 13px;
@@ -139,7 +139,7 @@ export const SettingsStyled = {
   ErrorMessage: styled.div`
     width: 100%;
     margin: 4px 0;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 13px;
@@ -212,16 +212,19 @@ const LPSizeStyled = {
     }
   `,
   First: styled(motion.div)`
-    ${LineBase}
     background: linear-gradient(90deg, #77ffd4 0%, #ffa51f 100%);
+
+    ${LineBase}
   `,
   Second: styled(motion.div)`
-    ${LineBase}
     background: linear-gradient(90deg, #fda723 0%, #f14b4b 100%, #ff9052 100%);
+
+    ${LineBase}
   `,
   Third: styled(motion.div)`
-    ${LineBase}
     background: linear-gradient(90deg, #ff514f 0%, #fe0404 100%);
+
+    ${LineBase}
   `,
 }
 
@@ -325,7 +328,7 @@ const TraderInfoBadgeStyled = {
     height: 10px;
   `,
   Content: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 500;
     font-size: 12px;

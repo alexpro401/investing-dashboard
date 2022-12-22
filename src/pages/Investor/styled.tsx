@@ -49,7 +49,7 @@ export const TabContainer = styled(Flex)`
 export const Tab = styled(Flex)<{ active?: boolean }>`
   height: 40px;
   position: relative;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
@@ -81,7 +81,7 @@ export const Row = styled(Flex)`
 `
 
 export const MainText = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
@@ -93,7 +93,7 @@ export const MainText = styled.div`
 `
 
 export const MainValue = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 14px;

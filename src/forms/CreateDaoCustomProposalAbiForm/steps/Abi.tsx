@@ -34,7 +34,7 @@ import { AdvancedABIContext } from "context/govPool/proposals/custom/AdvancedABI
 import { stepsControllerContext } from "context/StepsControllerContext"
 
 import { useFormValidation } from "hooks/useFormValidation"
-import useAbiKeeper from "hooks/useAbiKeeper"
+import { useAbiKeeper } from "hooks"
 import {
   useGovPoolSettingsIdToExecutors,
   useGovPoolExecutorToSettings,

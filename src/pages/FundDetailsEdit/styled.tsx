@@ -9,8 +9,8 @@ export const Container = styled.div<{ loading?: boolean }>`
   margin-top: 103px;
   width: fill-available;
   background: #08121a;
-  box-shadow: 0px -3px 102px 2px rgba(149, 185, 255, 0.26);
-  border-radius: 26px 26px 0px 0px;
+  box-shadow: 0 -3px 102px 2px rgba(149, 185, 255, 0.26);
+  border-radius: 26px 26px 0 0;
 
   height: ${({ loading = false }) =>
     loading ? "calc(100vh - 128px)" : "initial"};
@@ -41,8 +41,7 @@ export const LinkButton = styled.div`
   outline: none;
   color: #2680eb;
   padding: 0;
-  margin: 0;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 12px;
@@ -62,7 +61,7 @@ export const Step = styled.div`
   margin-bottom: 48px;
 `
 export const StepTitle = styled.h2`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -91,7 +90,7 @@ export const BasicItem = styled(Flex)`
   }
 `
 export const BasicTitle = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -99,7 +98,7 @@ export const BasicTitle = styled.div`
   color: #616d8b;
 `
 export const BasicValue = styled(Flex)`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -113,7 +112,7 @@ export const BasicValueText = styled.span`
 `
 
 export const ValidationError = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -165,7 +164,7 @@ const TickersContainer = styled(Flex)`
 `
 
 const Ticker = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;

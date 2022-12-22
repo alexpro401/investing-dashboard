@@ -3,10 +3,6 @@ import { ICON_NAMES } from "constants/icon-names"
 import styled from "styled-components"
 import { Flex } from "theme"
 
-export const Wrapper = styled.div`
-  padding: 16px;
-`
-
 export const Container = styled(Flex)`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -33,12 +29,12 @@ export const Container = styled(Flex)`
         54.8% 53% at 50% 50%,
         #587eb7 0%,
         rgba(88, 126, 183, 0) 100%
-      )
+      ),
       radial-gradient(
         60% 51.57% at 50% 50%,
         #6d99db 0%,
         rgba(109, 153, 219, 0) 100%
-      )
+      ),
       radial-gradient(
         69.43% 69.43% at 50% 50%,
         rgba(5, 5, 5, 0.5) 0%,
@@ -126,7 +122,7 @@ export const CardInfo = styled(Flex)`
 `
 
 export const NftId = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 13px;
@@ -139,7 +135,7 @@ export const NftId = styled.div`
 `
 
 export const VotingPowerAmount = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 13px;

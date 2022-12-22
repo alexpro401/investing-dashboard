@@ -8,7 +8,7 @@ export const Icon = styled.img`
 
 export const Text = styled.div`
   max-width: 80%;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;

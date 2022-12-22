@@ -9,7 +9,7 @@ export const AddButton = styled.button`
   padding: 2px 4px;
   border: none;
 
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 11px;

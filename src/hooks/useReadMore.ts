@@ -13,9 +13,7 @@ interface IMethods {
   toggle: (e: MouseEvent<HTMLElement>) => void
 }
 
-export default function useReadMore(
-  maxLen: number = MAX_LENGTH
-): [IValues, IMethods] {
+export function useReadMore(maxLen: number = MAX_LENGTH): [IValues, IMethods] {
   const [full, setFull] = useState("")
   const [inView, setInView] = useState("")
   const [isExpand, setIsExpand] = useState(false)
@@ -58,3 +56,5 @@ export default function useReadMore(
     { setContent, toggle },
   ]
 }
+
+export default useReadMore

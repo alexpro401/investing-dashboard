@@ -19,7 +19,7 @@ export const Percent = styled.input`
   border-radius: 0;
   width: 30px;
   text-align: right;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -41,7 +41,7 @@ export const InputWrapper = styled(GradientBorder)`
 `
 
 export const InputSymbol = styled.span`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -74,7 +74,7 @@ export const SliderStyle = createGlobalStyle`
   }
   .rc-slider-track {
     position: absolute;
-    left: 0px;
+    left: 0;
     height: 4px;
     background: linear-gradient(244.44deg, #63B49B 0%, #A4EBD4 67.65%);
     border-radius: 2px;
@@ -88,28 +88,28 @@ export const SliderStyle = createGlobalStyle`
     margin-top: -6px;
     cursor: grab;
     border-radius: 50%;
-    box-shadow: 0px 0px 0px 0px rgba(156,157,159,0.1);
+    box-shadow: 0 0 0 0 rgba(156,157,159,0.1);
     background: linear-gradient(244.44deg, #63B49B 0%, #A4EBD4 67.65%);
     touch-action: pan-x;
     transition: box-shadow .1s ease-in-out;
   }
   .rc-slider-handle-dragging.rc-slider-handle-dragging.rc-slider-handle-dragging {
-    box-shadow: 0px 0px 0px 10px rgba(156,157,159,0.1);
+    box-shadow: 0 0 0 10px rgba(156,157,159,0.1);
   }
   .rc-slider-handle:focus {
     outline: none;
   }
   .rc-slider-handle-click-focused:focus {
     border-color: #96dbfa;
-    box-shadow: 0px 0px 0px 3px rgba(156,157,159,0.1);
+    box-shadow: 0 0 0 3px rgba(156,157,159,0.1);
   }
   .rc-slider-handle:hover {
     border-color: #9C9D9F;
-    box-shadow: 0px 0px 0px 3px rgba(156,157,159,0.1);
+    box-shadow: 0 0 0 3px rgba(156,157,159,0.1);
   }
   .rc-slider-handle:active {
     border-color: #9C9D9F;
-    box-shadow: 0px 0px 0px 10px rgba(156,157,159,0.1);
+    box-shadow: 0 0 0 10px rgba(156,157,159,0.1);
     cursor: -webkit-grabbing;
     cursor: grabbing;
   }
@@ -122,7 +122,6 @@ export const SliderStyle = createGlobalStyle`
   }
   .rc-slider-mark-text {
     position: absolute;
-    display: inline-block;
     vertical-align: middle;
     text-align: center;
     cursor: pointer;
@@ -141,8 +140,8 @@ export const SliderStyle = createGlobalStyle`
   }
   .rc-slider-dot {
     position: absolute;
-    bottom: 0px;
-    margin-left: 0px;
+    bottom: 0;
+    margin-left: 0;
     width: 4px;
     height: 4px;
     /* border: 2px solid #e9e9e9; */

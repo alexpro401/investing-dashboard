@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import axios from "axios"
 import { INotification } from "interfaces"
 
-export default function useNotifications() {
+export function useNotifications() {
   const [notifications, setNotifications] = useState<INotification[]>([])
 
   useEffect(() => {
@@ -15,3 +15,5 @@ export default function useNotifications() {
 
   return notifications
 }
+
+export default useNotifications

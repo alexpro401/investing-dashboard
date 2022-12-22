@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react"
 
-const useForceUpdate = (): [boolean, () => void] => {
+export const useForceUpdate = (): [boolean, () => void] => {
   const [, setUpdate] = useState(false)
   const updateRef = useRef(false)
 

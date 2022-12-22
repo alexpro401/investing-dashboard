@@ -2,7 +2,7 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { useState, useCallback, useEffect } from "react"
 
 import { useGovValidatorsContract } from "contracts"
-import { useERC20 } from "hooks/useERC20"
+import { useERC20 } from "hooks"
 import { Token } from "interfaces"
 
 const useGovValidatorsValidatorsToken = (

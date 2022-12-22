@@ -10,7 +10,7 @@ export const TransactionWaitContainer = styled.div`
 
 export const TransactionWaitContent = styled(Flex)`
   display: inline-flex;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 12px;

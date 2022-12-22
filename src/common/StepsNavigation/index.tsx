@@ -3,7 +3,7 @@ import { FC, HTMLAttributes, ReactNode, useContext, useMemo } from "react"
 import * as S from "./styled"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { ICON_NAMES } from "constants/icon-names"
-import { useWindowSize } from "react-use"
+import { useBreakpoints } from "hooks"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   nodeLeft?: ReactNode
@@ -44,8 +44,7 @@ const StepsNavigation: FC<Props> = ({
     [customNextCb, nextCb]
   )
 
-  const { width: windowWidth } = useWindowSize()
-  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
+  const { isMobile } = useBreakpoints()
 
   return (
     <S.Root {...rest}>

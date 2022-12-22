@@ -3,7 +3,7 @@ import styled from "styled-components"
 
 export const Label = styled.div`
   padding: 20px 0 0 15px;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-weight: 400;
   font-size: 12px;
   line-height: 14px;
@@ -45,28 +45,13 @@ export const ChipsWrapper = styled(Flex)`
   justify-content: flex-start;
 `
 
-export const LimitIndicator = styled.div`
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  font-family: Gilroy;
-  font-style: normal;
-  font-family: Gilroy;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 14px;
-  text-align: right;
-
-  color: #5a6071;
-`
-
 export const TagItem = styled.div`
   display: inline-flex;
   align-items: center;
   background: linear-gradient(64.44deg, #191e2b 32.35%, #272e3e 100%);
-  box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -97,7 +82,7 @@ export const TagButton = styled(BaseButton)`
 export const ErrorText = styled(Text)`
   color: #be0007;
   white-space: normal;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-weight: 700;
   padding: 5px 0;
 `
@@ -109,7 +94,7 @@ export const Input = styled.input`
   border: none;
 
   background: none;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 16px;
@@ -118,9 +103,8 @@ export const Input = styled.input`
   color: #e4f2ff;
 
   &::placeholder {
-    font-family: Gilroy;
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
-    font-family: Gilroy;
     font-weight: 400;
     font-size: 12px;
     line-height: 14px;

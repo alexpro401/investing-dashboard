@@ -2,7 +2,7 @@ import styled from "styled-components"
 import { Flex } from "theme"
 
 export const Text = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 13px;
@@ -18,7 +18,7 @@ export const Text = styled.div`
 `
 
 export const BalanceLabel = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 13px;
@@ -33,7 +33,7 @@ export const BalanceLabel = styled.div`
 `
 
 export const Balance = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 20px;

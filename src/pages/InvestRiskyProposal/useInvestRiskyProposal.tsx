@@ -19,7 +19,7 @@ import {
 
 import useAlert, { AlertType } from "hooks/useAlert"
 import {
-  useActiveInvestmentsInfo,
+  useRiskyActiveInvestmentsInfo,
   useRiskyProposal,
 } from "hooks/useRiskyProposals"
 import { usePoolContract } from "hooks/usePool"
@@ -142,7 +142,7 @@ const useInvestRiskyProposal = (
     closed: false,
   })
 
-  const investmentsInfo = useActiveInvestmentsInfo(
+  const investmentsInfo = useRiskyActiveInvestmentsInfo(
     poolAddress,
     account,
     proposalId

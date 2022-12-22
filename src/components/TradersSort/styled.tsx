@@ -46,7 +46,7 @@ export const Header = styled(Flex)`
 `
 
 export const Title = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -59,7 +59,7 @@ export const Cancel = styled.button`
   appearance: none;
   border: none;
   background: none;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -80,7 +80,7 @@ export const Item = styled(Flex)<{ active?: boolean }>`
 `
 
 export const Label = styled.div<{ active?: boolean }>`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 12px;

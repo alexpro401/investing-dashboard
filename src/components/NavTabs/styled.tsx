@@ -1,6 +1,5 @@
 import styled from "styled-components"
 import { Flex } from "theme"
-import { motion } from "framer-motion"
 
 export const TabContainer = styled(Flex)`
   background: #252a35;
@@ -18,13 +17,10 @@ export const TabContainer = styled(Flex)`
 export const Tab = styled(Flex)<{ active?: boolean }>`
   text-align: center;
   justify-content: center;
-  font-family: Gilroy;
   font-style: normal;
-  font-family: Gilroy;
-  font-weight: 400;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-size: 12px;
-  line-height: 15px;
-  text-align: center;
+  line-height: 1.25;
   height: 35px;
   flex: 1;
   background: ${(props) =>

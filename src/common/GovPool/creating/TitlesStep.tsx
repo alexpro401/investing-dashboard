@@ -51,12 +51,10 @@ import {
 } from "utils/validators"
 import { isValidUrl } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { useActiveWeb3React } from "hooks"
+import { useActiveWeb3React, useBreakpoints } from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { SUPPORTED_SOCIALS } from "constants/socials"
 import { createPortal } from "react-dom"
-import { useEffectOnce } from "react-use"
-import { useWindowSize } from "react-use"
 
 interface ITitlesStepProps {
   isCreatingProposal?: boolean
@@ -86,14 +84,12 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
     isEnumerable: erc721IsEnumerable,
   } = erc721
 
-  const { width: windowWidth } = useWindowSize()
-
   const erc20TokenExplorerLink = useMemo(() => {
     return chainId
       ? getExplorerLink(chainId, tokenAddress.get, ExplorerDataType.ADDRESS)
       : ""
   }, [chainId, tokenAddress.get])
-  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
+  const { isMobile } = useBreakpoints()
 
   useEffect(() => {
     if (socialLinks.get.length !== 0 && isCreatingProposal) {

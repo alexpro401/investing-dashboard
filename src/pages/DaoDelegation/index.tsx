@@ -9,7 +9,7 @@ import Header from "components/Header/Layout"
 import RouteTabs from "components/RouteTabs"
 import { ITab } from "interfaces"
 import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
-import { useERC20 } from "hooks/useERC20"
+import { useERC20 } from "hooks"
 
 const govPoolsClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",

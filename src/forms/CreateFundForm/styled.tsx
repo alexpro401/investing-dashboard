@@ -26,8 +26,7 @@ export const LinkButton = styled.button`
   outline: none;
   color: #2680eb;
   padding: 0;
-  margin: 0;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 12px;
@@ -43,8 +42,8 @@ export const Body = styled.div`
   position: relative;
   width: fill-available;
   background: #08121a;
-  box-shadow: 0px -3px 102px 2px rgba(149, 185, 255, 0.26);
-  border-radius: 26px 26px 0px 0px;
+  box-shadow: 0 -3px 102px 2px rgba(149, 185, 255, 0.26);
+  border-radius: 26px 26px 0 0;
 
   @media (max-width: 768px) {
     max-width: 650px;
@@ -68,12 +67,10 @@ export const StepBody = styled.div<{ isLast?: boolean }>`
     props.isLast ? "24px 17px 24px 44px" : "24px 17px 48px 44px"};
 `
 
-export const FundTypeCards = styled.div``
-
 export const FeeCards = styled.div``
 
 export const ValidationError = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -123,7 +120,7 @@ const TickersContainer = styled(Flex)`
 `
 
 const Ticker = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;

@@ -3,7 +3,7 @@ import { isEqual } from "lodash"
 import { useCallback, useEffect, useState } from "react"
 import { isAddress } from "utils"
 
-const useABI = () => {
+export const useABI = () => {
   const { ContractAPI } = useAPI()
 
   const fetch = useCallback(
@@ -61,5 +61,3 @@ export const useAbiList = (abis: string[]) => {
 
   return abiList
 }
-
-export default useABI

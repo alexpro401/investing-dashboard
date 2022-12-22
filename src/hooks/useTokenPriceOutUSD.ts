@@ -10,7 +10,7 @@ interface IParams {
   amount?: BigNumber
 }
 
-export default function useTokenPriceOutUSD({
+export function useTokenPriceOutUSD({
   tokenAddress,
   amount,
 }: IParams): BigNumber {
@@ -39,3 +39,5 @@ export default function useTokenPriceOutUSD({
 
   return markPriceUSD
 }
+
+export default useTokenPriceOutUSD

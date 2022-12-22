@@ -26,7 +26,7 @@ export const StepsRoot = styled.div`
 `
 
 export const Address = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 16px;
@@ -49,7 +49,7 @@ export const NodeRightIcon = styled(Icon)`
 `
 
 export const SelectItem = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -59,7 +59,7 @@ export const SelectItem = styled.div`
 `
 
 export const FieldNodeRight = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;

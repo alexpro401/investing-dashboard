@@ -5,8 +5,7 @@ import { useAPI } from "api"
 import { IGovNftExactBalance } from "interfaces/contracts/IGovUserKeeper"
 import { ZERO_ADDR } from "constants/index"
 
-import { useActiveWeb3React } from "hooks"
-import useERC721TokenOwnerMulticall from "hooks/useERC721TokenOwner"
+import { useActiveWeb3React, useERC721TokenOwnerMulticall } from "hooks"
 import {
   useGovPoolVotingAssets,
   useGovBalance,

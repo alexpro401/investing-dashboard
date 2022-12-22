@@ -162,7 +162,7 @@ export const Counter = styled.div`
   border-radius: 6px;
   background: linear-gradient(267.88deg, #d75e65 -0.85%, #e77171 98.22%);
 
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-weight: 700;
   font-size: 9px;
   line-height: 12px;

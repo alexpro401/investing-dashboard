@@ -6,7 +6,7 @@ import { percentageOfBignumbers, subtractBignumbers } from "utils/formulas"
 import useOpenPositionsPriceOutUSD from "hooks/useOpenPositionsPriceOutUSD"
 import { ZERO } from "constants/index"
 
-function usePoolLockedFunds(poolData, poolInfo, baseToken) {
+export function usePoolLockedFunds(poolData, poolInfo, baseToken) {
   const _baseAndPositionBalances = useMemo(() => {
     if (!poolInfo) return []
 

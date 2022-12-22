@@ -14,7 +14,7 @@ interface Props extends PropsBase {
 }
 
 // TODO: get power of NFTs list using multicall hook
-const useERC721Power = ({ daoPoolAddress, tokenIds }: Props) => {
+export const useERC721Power = ({ daoPoolAddress, tokenIds }: Props) => {
   const [power, setPower] = useState(ZERO)
 
   const [{ nftAddress }, { nftInfo }] = useGovPoolVotingAssets(daoPoolAddress)
@@ -58,5 +58,3 @@ const useERC721Power = ({ daoPoolAddress, tokenIds }: Props) => {
     }
   }, [nftCollection, nftInfo, tokenIds])
 }
-
-export default useERC721Power

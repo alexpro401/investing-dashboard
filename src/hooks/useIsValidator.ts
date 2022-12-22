@@ -9,7 +9,7 @@ interface IUseValidatorProps {
   userAddress: string
 }
 
-const useIsValidator = ({
+export const useIsValidator = ({
   daoAddress,
   userAddress,
 }: IUseValidatorProps): [boolean, boolean, boolean] => {

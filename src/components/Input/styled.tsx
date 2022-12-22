@@ -58,7 +58,7 @@ export const Container = styled(GradientBorder)<{
 `
 
 export const Label = styled(Flex)`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -71,7 +71,7 @@ export const Label = styled(Flex)`
 `
 
 export const LimitText = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -89,7 +89,7 @@ export const InputField = styled(motion.input)`
   height: 16px;
   padding: 0;
 
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -97,7 +97,7 @@ export const InputField = styled(motion.input)`
   color: #e4f2ff;
 
   &::placeholder {
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 400;
     font-size: 16px;

@@ -13,7 +13,7 @@ export const TokenInfo = styled(Flex)`
 
 export const Symbol = styled.div`
   overflow: hidden;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -29,7 +29,7 @@ export const Name = styled.div`
   max-width: 150px;
   height: 15px;
   text-overflow: ellipsis;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 13px;
@@ -47,7 +47,7 @@ export const BalanceInfo = styled(Flex)`
 `
 
 export const TokenBalance = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 13px;
@@ -57,7 +57,7 @@ export const TokenBalance = styled.div`
 `
 
 export const TokenPrice = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 13px;
@@ -67,7 +67,7 @@ export const TokenPrice = styled.div`
 `
 
 export const Blacklist = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 700;
   font-size: 13px;
@@ -138,7 +138,7 @@ export const ListRowContent = styled(Flex)`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
+  padding: 0;
   gap: 8px;
 
   height: 40px;
@@ -150,7 +150,7 @@ export const ListRowContent = styled(Flex)`
 // list row tokens counter
 export const ListRowTokensCounter = styled(Flex)`
   align-items: center;
-  padding: 0px;
+  padding: 0;
   gap: 5px;
 
   height: 16px;
@@ -159,7 +159,7 @@ export const ListRowTokensCounter = styled(Flex)`
   order: 1;
   flex-grow: 0;
 
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 13px;
@@ -173,7 +173,7 @@ export const ListRowTokensCounter = styled(Flex)`
 
 // list row name
 export const ListRowName = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -186,7 +186,7 @@ export const ListRowName = styled.div`
 `
 
 export const Error = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 13px;
@@ -217,7 +217,7 @@ export const StaticListCard = styled(Flex)`
 `
 
 export const StaticListCardContent = styled(Flex)`
-  padding: 0px;
+  padding: 0;
   gap: 8px;
   height: 40px;
 
@@ -229,7 +229,7 @@ export const StaticListCardContent = styled(Flex)`
 export const StaticListCardInfo = styled(Flex)`
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
+  padding: 0;
   gap: 4px;
   height: 40px;
 
@@ -239,7 +239,7 @@ export const StaticListCardInfo = styled(Flex)`
 `
 
 export const StaticListCardName = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -257,7 +257,7 @@ export const StaticListCardName = styled.div`
 `
 
 export const StaticListCardTokens = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 13px;
@@ -273,7 +273,7 @@ export const StaticListCardTokens = styled.div`
 `
 
 export const StaticListCardLink = styled.a`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 500;
   font-size: 13px;
@@ -332,7 +332,7 @@ export const PopoverLink = styled.a`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 13px;
@@ -342,7 +342,7 @@ export const PopoverLink = styled.a`
 `
 
 export const PopoverButton = styled.button`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 700;
   font-size: 13px;

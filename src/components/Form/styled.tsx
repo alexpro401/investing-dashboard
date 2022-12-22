@@ -15,7 +15,7 @@ const Container = styled(Flex)<{ withBottom?: boolean }>`
 `
 
 export const FormLabelGreen = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: bold;
   font-size: 16px;
@@ -25,7 +25,7 @@ export const FormLabelGreen = styled.div`
 `
 
 const Label = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
@@ -34,7 +34,7 @@ const Label = styled.div`
 `
 
 const Value = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
@@ -78,7 +78,7 @@ const DescriptionContainer = styled.div`
   background: rgba(37, 42, 53, 0.5);
   border-radius: 0px 0px 6px 6px;
   border-top: 1px solid #2b3039;
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 12px;

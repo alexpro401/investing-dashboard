@@ -9,7 +9,7 @@ const Styled = {
     margin: ${(props) => props.m ?? 0};
   `,
   Date: styled.div`
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 500;
     font-size: 13px;
@@ -19,7 +19,7 @@ const Styled = {
   `,
   PNL: styled(ColorizedNumber)`
     margin-top: 2px;
-    font-family: "Gilroy";
+    font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     font-weight: 600;
     font-size: 13px;

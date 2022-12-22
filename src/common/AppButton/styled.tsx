@@ -185,8 +185,6 @@ export const defaultButtonStyles = (
       break
   }
 
-  console.log(appButtonText)
-
   return css`
     outline: 0;
     font-family: ${theme.appFontFamily};

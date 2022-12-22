@@ -16,7 +16,7 @@ const GovProposalCardHeadBase: React.FC<Props> = ({
 }) => {
   return (
     <S.Content>
-      <Flex ai={"center"} jc={"flex-start"} gap={"8"}>
+      <Flex ai={"center"} jc={"flex-start"} gap={"8"} full>
         {completed && <Icon name={ICON_NAMES.successCircle} />}
         <S.TitleWrapper>
           <S.Title>

@@ -1,4 +1,4 @@
-import { IInvestorClaims } from "./../interfaces/thegraphs/investors"
+import { IInvestorClaims } from "interfaces/thegraphs/investors"
 import { useQuery } from "urql"
 import {
   IInvestProposal,

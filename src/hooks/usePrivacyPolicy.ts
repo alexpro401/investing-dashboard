@@ -57,7 +57,7 @@ interface IMethods {
   setShowAgreement: Dispatch<SetStateAction<boolean>>
 }
 
-export default function usePrivacyPolicyAgreed(): [IPayload, IMethods] {
+export function usePrivacyPolicyAgreed(): [IPayload, IMethods] {
   const { account } = useWeb3React()
 
   const userRegistryAddress = useSelector(selectUserRegistryAddress)
@@ -136,3 +136,5 @@ export default function usePrivacyPolicyAgreed(): [IPayload, IMethods] {
     { setError, setLoading, setShowAgreement, onAgree },
   ]
 }
+
+export default usePrivacyPolicyAgreed

@@ -9,7 +9,7 @@ const Container = styled.div`
 `
 
 const Label = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: bold;
   font-size: 14px;
@@ -19,7 +19,7 @@ const Label = styled.div`
 `
 
 const Value = styled.div`
-  font-family: Gilroy;
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: normal;
   font-size: 12px;

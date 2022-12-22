@@ -3,7 +3,7 @@ import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { parseEther } from "@ethersproject/units"
 import { useRiskyProposal } from "hooks/useRiskyProposals"
 
-function useRiskyPrice(address?: string, index?: string) {
+export function useRiskyPrice(address?: string, index?: string) {
   const [priceUSD, setPriceUSD] = useState(parseEther("1"))
   const [priceBase, setPriceBase] = useState(parseEther("1"))
   const [proposalInfo] = useRiskyProposal(address, index)

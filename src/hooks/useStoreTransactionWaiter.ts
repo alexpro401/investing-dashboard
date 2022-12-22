@@ -13,7 +13,7 @@ const RETRY_OPTIONS: RetryOptions = {
  * until the promise successfully resolves mined transactions
  * up to n retries
  */
-function useStoreTransactionWaiter() {
+export function useStoreTransactionWaiter() {
   const { chainId } = useActiveWeb3React()
 
   const wait = useCallback(

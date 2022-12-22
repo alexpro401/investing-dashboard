@@ -55,7 +55,7 @@ export const Icon = styled.img`
 export const Title = styled.span`
   flex: 1;
   height: 17px;
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 700;
   font-size: 15px;
@@ -64,7 +64,7 @@ export const Title = styled.span`
 `
 
 export const Content = styled.div`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 13px;

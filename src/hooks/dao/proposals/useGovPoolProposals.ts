@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 import { useGovPool } from "hooks/dao"
 import { WrappedProposalView } from "types"
 import { isEqual } from "lodash"
+import { useEffectOnce } from "react-use"
 
 export const useGovPoolProposals = (
   govPoolAddress?: string,
@@ -43,9 +44,9 @@ export const useGovPoolProposals = (
     setIsLoaded(true)
   }, [getProposals, limit, offset])
 
-  useEffect(() => {
+  useEffectOnce(() => {
     loadProposals()
-  }, [offset, limit, loadProposals])
+  })
 
   return {
     isLoaded,

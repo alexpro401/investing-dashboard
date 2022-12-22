@@ -36,7 +36,7 @@ export const ProposalTopbar = styled.div`
 `
 
 export const ProposalTitle = styled.span`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-size: 16px;
   font-weight: 600;
@@ -45,7 +45,7 @@ export const ProposalTitle = styled.span`
 `
 
 export const ProposalText = styled.span`
-  font-family: "Gilroy";
+  font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 13px;

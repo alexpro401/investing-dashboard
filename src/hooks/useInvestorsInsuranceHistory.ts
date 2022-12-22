@@ -13,7 +13,7 @@ interface Response {
 
 type Result = [Response, () => void]
 
-const useInvestorsInsuranceHistory = (date, investors): Result => {
+export const useInvestorsInsuranceHistory = (date, investors): Result => {
   const pause = useMemo(
     () => isNil(date) || isNil(investors),
     [date, investors]
