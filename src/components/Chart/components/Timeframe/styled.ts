@@ -14,11 +14,7 @@ const Styled = {
     padding: 4px 11px 2px;
     font-size: 12px;
     line-height: 130%;
-
-    @media only screen and (${device.xxs}) {
-      font-size: 10px;
-    }
-
+    cursor: pointer;
     display: flex;
     align-items: center;
     text-align: center;
@@ -30,6 +26,20 @@ const Styled = {
     background: ${({ active, theme }) =>
       active ? theme.statusColors.success : "translate"};
     border-radius: 14px;
+
+    @media only screen and (${device.xxs}) {
+      font-size: 10px;
+    }
+
+    @media screen and (min-width: 768px) {
+      font-weight: 600;
+      font-size: 13px;
+      line-height: 16px;
+      color: ${({ active, theme }) =>
+        active ? theme.brandColors.secondary : "rgba(177, 199, 252, 0.5)"};
+      background: transparent;
+      padding: 4px 12px 2px;
+    }
   `,
 }
 
