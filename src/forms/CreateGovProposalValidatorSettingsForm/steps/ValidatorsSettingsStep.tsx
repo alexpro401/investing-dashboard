@@ -20,8 +20,11 @@ import ValidatorsList from "components/ValidatorsList"
 import GovVotingSettings from "modals/GovVotingSettings"
 import { ICON_NAMES } from "constants/icon-names"
 import { readFromClipboard } from "utils/clipboard"
-import { useFormValidation } from "hooks/useFormValidation"
-import useGovUserKeeperGetTotalVoteWeight from "hooks/dao/useGovUserKeeperGetTotalVoteWeight"
+import {
+  useFormValidation,
+  useBreakpoints,
+  useGovUserKeeperGetTotalVoteWeight,
+} from "hooks"
 import { required, isAddressValidator } from "utils/validators"
 import { cutStringZeroes } from "utils"
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
@@ -114,6 +117,8 @@ const ValidatorsSettingsStep: React.FC = () => {
   }, [totalVoteWeight, initialForm])
 
   const appNavigationEl = document.querySelector("#app-navigation")
+
+  const { isMobile } = useBreakpoints()
 
   return (
     <>
@@ -226,6 +231,8 @@ const ValidatorsSettingsStep: React.FC = () => {
           <StepsNavigation customNextCb={handleNextStep} />,
           appNavigationEl
         )
+      ) : !isMobile ? (
+        <StepsNavigation customNextCb={handleNextStep} />
       ) : (
         <></>
       )}

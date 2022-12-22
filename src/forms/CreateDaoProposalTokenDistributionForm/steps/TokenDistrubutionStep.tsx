@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom"
 import { createPortal } from "react-dom"
 import { BigNumber } from "@ethersproject/bignumber"
 import { formatUnits } from "@ethersproject/units"
-import { useActiveWeb3React } from "hooks"
+import { useActiveWeb3React, useBreakpoints } from "hooks"
 
 import { useGovPoolTreasury } from "hooks/dao"
 import {
@@ -86,6 +86,8 @@ const TokenDistributionStep: React.FC = () => {
   }, [nextCb, touchForm, isFieldsValid, selectedTreasuryToken])
 
   const appNavigationEl = document.querySelector("#app-navigation")
+
+  const { isMobile } = useBreakpoints()
 
   return (
     <>
@@ -212,6 +214,8 @@ const TokenDistributionStep: React.FC = () => {
           <StepsNavigation customNextCb={handleNextStep} />,
           appNavigationEl
         )
+      ) : !isMobile ? (
+        <StepsNavigation customNextCb={handleNextStep} />
       ) : (
         <></>
       )}
