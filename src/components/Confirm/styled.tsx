@@ -29,6 +29,11 @@ export const Container = styled(GradientBorder)`
   padding: 24px 16px;
   z-index: 105;
   flex-direction: column;
+
+  @media screen and (min-width: 768px) {
+    width: 420px;
+    padding: 16px;
+  }
 `
 
 export const Header = styled(Flex)`
