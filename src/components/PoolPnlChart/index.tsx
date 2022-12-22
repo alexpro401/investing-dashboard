@@ -32,7 +32,6 @@ const PoolPnlChart: React.FC<Props> = ({
         <Chart
           type={CHART_TYPE.area}
           data={data}
-          height={"130px"}
           chart={{
             stackOffset: "silhouette",
           }}
