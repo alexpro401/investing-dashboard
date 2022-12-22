@@ -11,16 +11,17 @@ import TokenIcon from "components/TokenIcon"
 import * as S from "./styled"
 
 import { useERC20Data } from "state/erc20/hooks"
-import { formatNumber, normalizeBigNumber } from "utils"
+import { DateUtil, formatNumber, normalizeBigNumber } from "utils"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { getLastInArray, getPNL, getPriceLP } from "utils/formulas"
 import { format } from "date-fns"
 import { DATE_FORMAT } from "constants/time"
-import { CHART_TYPE, TIMEFRAME } from "constants/chart"
+import { CHART_TYPE, TIMEFRAME, TIMEFRAME_FROM_DATE } from "constants/chart"
 import theme from "theme"
 import { usePoolPriceHistory } from "hooks/usePool"
 import Chart from "components/Chart"
+import { parseDuration, parseSeconds } from "../../../utils/time"
 
 const HeadNodesSkeleton: FC = () => (
   <Flex ai="center" jc="flex-start">
@@ -55,7 +56,24 @@ const PoolStatisticCard: FC<Props> = ({
   )
   const lastHistoryPoint = getLastInArray(data?.priceHistory)
   const [baseToken] = useERC20Data(data?.baseToken)
-  const [history, fetchingHistory] = usePoolPriceHistory(data.id, TIMEFRAME.all)
+
+  const startDate = useMemo(() => {
+    const durationFromNow = parseDuration(
+      parseSeconds(DateUtil.timeFromNow(data.creationTime))
+    )
+
+    if (durationFromNow.years === 0) {
+      return Number(data.creationTime)
+    } else {
+      return TIMEFRAME_FROM_DATE[TIMEFRAME.all]
+    }
+  }, [data.creationTime])
+
+  const [history, fetchingHistory] = usePoolPriceHistory(
+    data.id,
+    TIMEFRAME.all,
+    startDate
+  )
   const priceLP = getPriceLP(data?.priceHistory)
   const pnl = getPNL(priceLP)
 
