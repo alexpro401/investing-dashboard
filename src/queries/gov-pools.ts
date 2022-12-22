@@ -227,6 +227,33 @@ const GovProposalsByPoolInMiscQuery = `
   }
 `
 
+const DaoPoolDaoProfileTotalDelegationsQuery = `
+  query($address: String!) {
+    daoPool(id: $address) {
+      totalCurrentTokenDelegated,
+      totalCurrentNFTDelegated
+    }
+  }
+`
+
+const DaoPoolProfileTopTokenDelegateeQuery = `
+  query($offset: Int!, $limit: Int, $pool: String!) {
+    voterInPools(where: { pool_: { id: $pool } }, skip: $offset, first: $limit, orderBy: receivedDelegation, orderDirection: desc) {
+      id,
+      receivedDelegation
+    }
+  }
+`
+
+const DaoPoolProfileTopNftDelegateeQuery = `
+  query($offset: Int!, $limit: Int, $pool: String!) {
+    voterInPools(where: { pool_: { id: $pool } }, skip: $offset, first: $limit, orderBy: receivedNFTDelegation, orderDirection: desc) {
+      id,
+      receivedNFTDelegation
+    }
+  }
+`
+
 export {
   GovPoolQuery,
   GovPoolsQuery,
@@ -240,4 +267,7 @@ export {
   GovProposalsWithDistributionQuery,
   GovMemberProposalsHistoryCountQuery,
   GovProposalsByPoolInMiscQuery,
+  DaoPoolDaoProfileTotalDelegationsQuery,
+  DaoPoolProfileTopTokenDelegateeQuery,
+  DaoPoolProfileTopNftDelegateeQuery,
 }
