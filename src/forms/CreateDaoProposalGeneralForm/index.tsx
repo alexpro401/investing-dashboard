@@ -18,7 +18,7 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 import { CreatingProposalSuccessModal } from "common/GovProposal"
 
 import * as S from "./styled"
-import { useBreakpoints } from "../../hooks"
+import { useBreakpoints } from "hooks"
 
 interface ICreateDaoProposalGeneralFormProps {
   withProposalTypeName?: boolean

@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import ExternalLink from "components/ExternalLink"
 import { AppButton } from "common"
+import { respondTo } from "theme"
 
 export const Root = styled.div`
   background: ${(props) => props.theme.backgroundColors.secondary};
@@ -14,7 +15,7 @@ export const DaoProposalCardBody = styled.div`
   padding: 16px;
   grid-gap: 16px;
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     display: flex;
     flex-wrap: wrap;
     gap: 16px 48px;
@@ -30,7 +31,7 @@ export const DaoProposalCardBlockInfo = styled.div<{
     alignRight ? "flex-end" : "flex-start"};
   gap: 4px;
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     align-items: flex-start;
     flex-direction: column-reverse;
   }
@@ -67,7 +68,7 @@ export const DaoVotingProgressBar = styled.div`
   position: relative;
   grid-column: 1 / -1;
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     order: -1;
     width: 100%;
   }
@@ -77,7 +78,7 @@ export const DaoCenteredButton = styled(AppButton)`
   grid-column: 1 / -1;
   width: 100%;
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     width: auto;
     margin-left: auto;
   }

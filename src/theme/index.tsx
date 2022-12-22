@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import styled, { css } from "styled-components"
 import { motion } from "framer-motion"
 import { colorsTheme } from "./colors.theme"
+import { respondTo } from "./mixins.theme"
 
 export const ease = [0.29, 0.98, 0.29, 1]
 
@@ -11,23 +12,6 @@ export const breakpoints = {
   sm: 768,
   md: 1024,
   lg: 1280,
-}
-
-const device = {
-  xxs: `max-width: ${breakpoints.xxs}px`,
-  xs: `max-width: ${breakpoints.xs}px`,
-  sm: `max-width: ${breakpoints.sm}px`,
-  md: `max-width: ${breakpoints.md}px`,
-  lg: `max-width: ${breakpoints.lg}px`,
-}
-
-export { device }
-
-export default {
-  textPrimary: "#FAFAFA",
-  device,
-  appFontFamily: "Gilroy",
-  ...colorsTheme,
 }
 
 export const To = styled(Link)`
@@ -68,16 +52,15 @@ const LinkWrap = styled(Link)<{ c: string; fw: number }>`
   cursor: pointer;
   transition: all 0.1s ease-in-out;
   text-decoration: none;
-  padding: 0 20px;
-
+  padding: 0 10px;
   font-weight: ${(props) => props.fw};
 
-  @media only screen and (${device.md}) {
+  ${respondTo("sm")} {
     font-size: 14px;
   }
 
-  @media only screen and (${device.sm}) {
-    padding: 0 10px;
+  ${respondTo("md")} {
+    padding: 0 20px;
   }
 `
 
@@ -254,3 +237,11 @@ export function getAmountColor(
 export const ColorizedNumber = styled.div<{ value: string | number }>`
   color: ${(p) => getAmountColor(p.value)};
 `
+
+export * from "./mixins.theme"
+
+export default {
+  textPrimary: "#FAFAFA",
+  appFontFamily: "Gilroy",
+  ...colorsTheme,
+}
