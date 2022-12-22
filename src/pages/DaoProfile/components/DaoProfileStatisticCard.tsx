@@ -33,7 +33,7 @@ const DaoProfileStatisticCard: React.FC<Props> = ({
 
   return (
     <DaoPoolCard account={account} data={govPoolQuery} isMobile={isMobile}>
-      <Flex full dir={"column"} p={"12px"} gap={"12"}>
+      <Flex full dir={"column"} gap={"12"}>
         <S.CardButtons>
           <S.NewProposal onClick={handleOpenCreateProposalModal} />
           <S.AllProposals
