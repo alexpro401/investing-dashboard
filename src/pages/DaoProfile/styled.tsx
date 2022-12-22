@@ -1,5 +1,6 @@
 import { motion } from "framer-motion"
 import styled from "styled-components"
+import { Link } from "react-router-dom"
 
 import theme, { Flex, Text } from "theme"
 import { AppButton } from "common"
@@ -145,11 +146,18 @@ export const FlexLink = styled(Flex).attrs(() => ({
   rel: "noopener noreferrer",
 }))`
   text-decoration: none;
+  color: inherit;
 `
 
-export const AppLink = styled(AppButton)`
+export const AppLink = styled(Link).attrs(() => ({
+  target: "_blank",
+  rel: "noopener noreferrer",
+}))`
   border-radius: 0;
   font-size: 13px;
+  font-weight: 700;
+  color: ${theme.statusColors.info};
+  text-decoration: none;
 `
 export const AppButtonFull = styled(AppButton)`
   width: 100%;

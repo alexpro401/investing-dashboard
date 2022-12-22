@@ -22,12 +22,12 @@ const DaoProfileEmptyBalanceCard: FC = () => {
           <TokenIcon key={uuidv4()} address={""} size={38} m="0" />
           <TextValue fw={600}>111PG...0x11...3437</TextValue>
         </Flex>
-        <AppLink
+        {/* <AppLink
           iconRight={ICON_NAMES.externalLink}
           color="default"
           size="x-small"
           text="BscScan"
-        />
+        /> */}
       </FlexLink>
       <Divider />
       <TextLabel fw={400}>

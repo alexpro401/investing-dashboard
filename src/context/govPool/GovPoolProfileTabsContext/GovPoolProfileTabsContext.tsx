@@ -24,6 +24,12 @@ interface ITokenDelegatee {
   receivedDelegation: string
 }
 
+interface INftDelegatee {
+  id: string
+  receivedNFTDelegation: string[]
+  votingPower: string
+}
+
 interface IGovPoolProfileTabsContext {
   currentTab: { get: EDaoProfileTab; set: (value: EDaoProfileTab) => void }
 
@@ -67,6 +73,10 @@ interface IGovPoolProfileTabsContext {
   totalNftDelegatee: number | undefined
   topTokenDelegatee: undefined | ITokenDelegatee[]
   setTopTokenDelegatee: (v: undefined | ITokenDelegatee[]) => void
+  topNftDelegatee: undefined | INftDelegatee[]
+  setTopNftDelegatee: (v: undefined | INftDelegatee[]) => void
+  delegatedVotingPowerByMe: BigNumber | undefined
+  delegatedVotingPowerToMe: BigNumber | undefined
 }
 
 export const GovPoolProfileTabsContext =
@@ -108,6 +118,10 @@ export const GovPoolProfileTabsContext =
     totalNftDelegatee: undefined,
     topTokenDelegatee: undefined,
     setTopTokenDelegatee: () => {},
+    topNftDelegatee: undefined,
+    setTopNftDelegatee: () => {},
+    delegatedVotingPowerByMe: undefined,
+    delegatedVotingPowerToMe: undefined,
   })
 
 interface IGovPoolProfileTabsContextProviderProps {
@@ -153,6 +167,15 @@ const GovPoolProfileTabsContextProvider: React.FC<
   const [_topTokenDelegatee, _setTopTokenDelegatee] = useState<
     undefined | ITokenDelegatee[]
   >(undefined)
+  const [_topNftDelegatee, _setTopNftDelegatee] = useState<
+    undefined | INftDelegatee[]
+  >(undefined)
+  const [_delegatedVotingPowerByMe, _setDelegatedVotingPowerByMe] = useState<
+    BigNumber | undefined
+  >(undefined)
+  const [_delegatedVotingPowerToMe, _setDelegatedVotingPowerToMe] = useState<
+    BigNumber | undefined
+  >(undefined)
 
   const { descriptionObject, loading: aboutDaoLoading } = useAboutDao({
     startLoading: _currentTab === EDaoProfileTab.about && !_daoDescription,
@@ -180,6 +203,8 @@ const GovPoolProfileTabsContextProvider: React.FC<
     totalDelegatedTokensVotingPower,
     totalTokensDelegatee,
     totalNftDelegatee,
+    delegatedVotingPowerByMe,
+    delegatedVotingPowerToMe,
     loading: delegationsLoading,
   } = useDelegations({
     startLoading:
@@ -207,6 +232,16 @@ const GovPoolProfileTabsContextProvider: React.FC<
       _setTotalNftDelegatee(totalNftDelegatee)
     }
   }, [totalNftDelegatee])
+  useEffect(() => {
+    if (delegatedVotingPowerByMe) {
+      _setDelegatedVotingPowerByMe(delegatedVotingPowerByMe)
+    }
+  }, [delegatedVotingPowerByMe])
+  useEffect(() => {
+    if (delegatedVotingPowerToMe) {
+      _setDelegatedVotingPowerToMe(delegatedVotingPowerToMe)
+    }
+  }, [delegatedVotingPowerToMe])
 
   const {
     proposalsCount,
@@ -270,6 +305,10 @@ const GovPoolProfileTabsContextProvider: React.FC<
         totalNftDelegatee: _totalNftDelegatee,
         topTokenDelegatee: _topTokenDelegatee,
         setTopTokenDelegatee: _setTopTokenDelegatee,
+        topNftDelegatee: _topNftDelegatee,
+        setTopNftDelegatee: _setTopNftDelegatee,
+        delegatedVotingPowerByMe: _delegatedVotingPowerByMe,
+        delegatedVotingPowerToMe: _delegatedVotingPowerToMe,
       }}
     >
       {children}

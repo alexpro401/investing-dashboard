@@ -4,7 +4,12 @@ import { createClient, useQuery } from "urql"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { useActiveWeb3React } from "hooks"
-import { useGovPoolNftVotingPower } from "hooks/dao"
+import {
+  useGovPoolNftVotingPower,
+  useGovPoolDelegations,
+  useGovPoolHelperContracts,
+} from "hooks/dao"
+import { useGovPoolVotingPowerMulticall } from "hooks/dao/useGovPoolUserVotingPower"
 import { DaoPoolDaoProfileTotalDelegationsQuery } from "queries/gov-pools"
 import { isAddress } from "utils"
 
@@ -32,11 +37,32 @@ const useDelegations = ({ startLoading }: IUseDelegationsProps) => {
   const [totalNftsListDelegated, setTotalNftsListDelegated] = useState<
     string[]
   >([])
+  const { govUserKeeperAddress } = useGovPoolHelperContracts(daoAddress)
   const [totalDelegatedNftVotingPower, , totalDelegatedNftVotingPowerLoading] =
     useGovPoolNftVotingPower(
       startLoading ? daoAddress : undefined,
       totalNftsListDelegated
     )
+  const myDelegations = useGovPoolDelegations({
+    daoPoolAddress: startLoading ? daoAddress : undefined,
+    user: account ?? "",
+  })
+
+  const votingPowerParams = useMemo(
+    () => [
+      {
+        userKeeperAddress: govUserKeeperAddress,
+        address: account,
+        isMicroPool: true,
+        useDelegated: false,
+      },
+    ],
+    [account, govUserKeeperAddress]
+  )
+
+  const [votingPowerData, votingPowerDataLoading] =
+    useGovPoolVotingPowerMulticall(votingPowerParams)
+
   const [totalTokensDelegatee, setTotalTokensDelegatee] = useState<number>(5)
   const [totalNftDelegatee, setTotalNftDelegatee] = useState<number>(5)
 
@@ -69,11 +95,18 @@ const useDelegations = ({ startLoading }: IUseDelegationsProps) => {
 
   return {
     loading:
-      totalDelegationsFetching || totalDelegatedNftVotingPowerLoading || false,
+      totalDelegationsFetching ||
+      totalDelegatedNftVotingPowerLoading ||
+      votingPowerDataLoading ||
+      false,
     totalDelegatedTokensVotingPower,
     totalDelegatedNftVotingPower,
     totalTokensDelegatee,
     totalNftDelegatee,
+    delegatedVotingPowerByMe: myDelegations ? myDelegations.power : undefined,
+    delegatedVotingPowerToMe: votingPowerData
+      ? votingPowerData.micropool[account ?? ""]?.power ?? undefined
+      : undefined,
   }
 }
 

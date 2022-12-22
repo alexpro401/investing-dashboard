@@ -1,5 +1,4 @@
 import React, { useContext } from "react"
-import { useNavigate } from "react-router-dom"
 import { v4 as uuidv4 } from "uuid"
 import { formatEther } from "@ethersproject/units"
 
@@ -21,7 +20,6 @@ interface Props {
 }
 
 const DaoProfileTabBalance: React.FC<Props> = ({ daoAddress }) => {
-  const navigate = useNavigate()
   const {
     myProposalsCount,
     receivedRewardsUSD,
@@ -50,7 +48,7 @@ const DaoProfileTabBalance: React.FC<Props> = ({ daoAddress }) => {
                 <TextLabel>Received rewards</TextLabel>
               </Flex>
             }
-            onClick={() => navigate(`/dao/${daoAddress}/claim/rewards`)}
+            to={`/dao/${daoAddress}/claim/rewards`}
             actionText="Claim"
             count={unclaimedProposalsCount ?? null}
           />
@@ -60,7 +58,7 @@ const DaoProfileTabBalance: React.FC<Props> = ({ daoAddress }) => {
         <DaoProfileValueWithActionCard
           value={`${myProposalsCount ?? 0} proposals`}
           info={<TextLabel>Voting history</TextLabel>}
-          onClick={() => alert("Handle voting history")}
+          to={`/`}
           actionText="Details"
         />
       </Indents>

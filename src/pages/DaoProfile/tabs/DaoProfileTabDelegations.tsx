@@ -24,7 +24,6 @@ import {
 } from "../styled"
 import { DaoProfileValueWithActionCard } from "../components"
 
-import Table from "components/Table"
 import { AppButton } from "common"
 import TabFallback from "./TabFallback"
 import PaginationTable from "components/PaginationTable"
@@ -35,15 +34,23 @@ import { ICON_NAMES } from "constants/icon-names"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommonContext/GovPoolProfileCommonContext"
 import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsContext/GovPoolProfileTabsContext"
-import { DaoPoolProfileTopTokenDelegateeQuery } from "queries/gov-pools"
+import {
+  DaoPoolProfileTopTokenDelegateeQuery,
+  DaoPoolProfileTopNftDelegateeQuery,
+} from "queries/gov-pools"
 
 interface ITokenDelegatee {
   id: string
   receivedDelegation: string
 }
 
+interface INftDelegatee {
+  id: string
+  receivedNFTDelegation: string[]
+  votingPower: string
+}
+
 interface Props {
-  data: any[]
   chainId?: number
   daoAddress?: string
 }
@@ -55,11 +62,7 @@ const daoGraphClient = createClient({
   requestPolicy: "network-only",
 })
 
-const DaoProfileTabDelegations: React.FC<Props> = ({
-  data,
-  chainId,
-  daoAddress,
-}) => {
+const DaoProfileTabDelegations: React.FC<Props> = ({ chainId, daoAddress }) => {
   const navigate = useNavigate()
   const { haveNft, haveToken } = useContext(GovPoolProfileCommonContext)
   const {
@@ -70,6 +73,10 @@ const DaoProfileTabDelegations: React.FC<Props> = ({
     totalTokensDelegatee,
     topTokenDelegatee,
     setTopTokenDelegatee,
+    topNftDelegatee,
+    setTopNftDelegatee,
+    delegatedVotingPowerByMe,
+    delegatedVotingPowerToMe,
   } = useContext(GovPoolProfileTabsContext)
 
   const [delegationTabs, setDelegationTabs] = useState<
@@ -136,31 +143,64 @@ const DaoProfileTabDelegations: React.FC<Props> = ({
 
   const getTokenDelegateeTableRow = useCallback(
     ({ id, receivedDelegation }: ITokenDelegatee) => (
-      <FlexLink
-        full
-        as={"a"}
-        key={uuidv4()}
-        href={getExplorerLink(
-          chainId ?? 0,
-          id.substring(0, 42),
-          ExplorerDataType.ADDRESS
-        )}
-      >
+      <Flex full key={uuidv4()}>
         <Flex full ai="center" jc="space-between">
           <TextValue color={theme.textColors.secondary} block fw={500}>
-            <Flex ai="center" jc="flex-start" gap="4">
+            <FlexLink
+              ai="center"
+              jc="flex-start"
+              gap="4"
+              as={"a"}
+              href={getExplorerLink(
+                chainId ?? 0,
+                id.substring(0, 42),
+                ExplorerDataType.ADDRESS
+              )}
+            >
               {shortenAddress(id.substring(0, 42), 4)}
               <Icon name={ICON_NAMES.externalLink} />
-            </Flex>
+            </FlexLink>
           </TextValue>
           <TextValue fw={500}>
             {formatTokenNumber(BigNumber.from(receivedDelegation))}
           </TextValue>
-          <AppLink color="default" size="no-paddings" text="Delegate" />
+          <AppLink to={`/dao/${daoAddress}/delegate/${id.substring(0, 42)}`}>
+            Delegate
+          </AppLink>
         </Flex>
-      </FlexLink>
+      </Flex>
     ),
-    [chainId]
+    [chainId, daoAddress]
+  )
+
+  const getNftDelegateeTableRow = useCallback(
+    ({ id, receivedNFTDelegation, votingPower }: INftDelegatee) => (
+      <Flex full key={uuidv4()}>
+        <Flex full ai="center" jc="space-between">
+          <TextValue color={theme.textColors.secondary} block fw={500}>
+            <FlexLink
+              ai="center"
+              jc="flex-start"
+              gap="4"
+              as={"a"}
+              href={getExplorerLink(
+                chainId ?? 0,
+                id.substring(0, 42),
+                ExplorerDataType.ADDRESS
+              )}
+            >
+              {shortenAddress(id.substring(0, 42), 4)}
+              <Icon name={ICON_NAMES.externalLink} />
+            </FlexLink>
+          </TextValue>
+          <TextValue fw={500}>{receivedNFTDelegation.length}</TextValue>
+          <AppLink to={`/dao/${daoAddress}/delegate/${id.substring(0, 42)}`}>
+            Delegate
+          </AppLink>
+        </Flex>
+      </Flex>
+    ),
+    [chainId, daoAddress]
   )
 
   if (delegationsLoading) {
@@ -173,7 +213,9 @@ const DaoProfileTabDelegations: React.FC<Props> = ({
         value={
           <>
             <Text color={theme.textColors.primary} fz={16} fw={600}>
-              1,000
+              {delegatedVotingPowerByMe
+                ? formatTokenNumber(delegatedVotingPowerByMe, 18)
+                : ""}
             </Text>
             <Text color={theme.textColors.secondary} fz={16} fw={600}>
               {" "}
@@ -182,7 +224,7 @@ const DaoProfileTabDelegations: React.FC<Props> = ({
           </>
         }
         info={<TextLabel>Delegated by me</TextLabel>}
-        onClick={() => navigate(`/dao/${daoAddress ?? ""}/delegation/out`)}
+        to={`/dao/${daoAddress ?? ""}/delegation/out`}
         actionText="Manage"
       />
       <Indents top side={false}>
@@ -190,7 +232,9 @@ const DaoProfileTabDelegations: React.FC<Props> = ({
           value={
             <>
               <Text color={theme.textColors.primary} fz={16} fw={600}>
-                1,000,200
+                {delegatedVotingPowerToMe
+                  ? formatTokenNumber(delegatedVotingPowerToMe, 18)
+                  : ""}
               </Text>
               <Text color={theme.textColors.secondary} fz={16} fw={600}>
                 {" "}
@@ -199,7 +243,7 @@ const DaoProfileTabDelegations: React.FC<Props> = ({
             </>
           }
           info={<TextLabel>Delegated to me</TextLabel>}
-          onClick={() => navigate(`/dao/${daoAddress ?? ""}/delegation/in`)}
+          to={`/dao/${daoAddress ?? ""}/delegation/in`}
           actionText="Details"
         />
       </Indents>
@@ -217,34 +261,48 @@ const DaoProfileTabDelegations: React.FC<Props> = ({
               </DelegationTab>
             ))}
           </DelegationTabs>
-          {selectedDelegationTab === "token" && totalTokensDelegatee && (
-            <>
-              {totalTokensDelegatee === 0 && TableNoDataPlaceholder}
-              {totalTokensDelegatee !== 0 && (
-                <PaginationTable<ITokenDelegatee>
-                  total={totalTokensDelegatee}
-                  limit={1}
-                  data={topTokenDelegatee}
-                  setData={setTopTokenDelegatee}
-                  row={getTokenDelegateeTableRow}
-                  nodeHead={TableHead}
-                  query={DaoPoolProfileTopTokenDelegateeQuery}
-                  context={daoGraphClient}
-                  variables={{ pool: daoAddress }}
-                  formatter={(d) => d.voterInPools}
-                />
-              )}
-            </>
-          )}
-          {selectedDelegationTab === "nft" && (
-            // <Table
-            //   data={data}
-            //   row={getTableRow}
-            //   nodeHead={TableHead}
-            //   placeholder={TableNoDataPlaceholder}
-            // />
-            <></>
-          )}
+          {selectedDelegationTab === "token" &&
+            totalTokensDelegatee !== undefined && (
+              <>
+                {totalTokensDelegatee === 0 && TableNoDataPlaceholder}
+                {totalTokensDelegatee !== 0 && (
+                  <PaginationTable<ITokenDelegatee>
+                    total={totalTokensDelegatee}
+                    limit={1}
+                    data={topTokenDelegatee}
+                    setData={setTopTokenDelegatee}
+                    row={getTokenDelegateeTableRow}
+                    nodeHead={TableHead}
+                    query={DaoPoolProfileTopTokenDelegateeQuery}
+                    context={daoGraphClient}
+                    variables={{ pool: daoAddress }}
+                    formatter={(d) => d.voterInPools}
+                  />
+                )}
+              </>
+            )}
+          {selectedDelegationTab === "nft" &&
+            totalNftDelegatee !== undefined && (
+              <>
+                {totalNftDelegatee === 0 && TableNoDataPlaceholder}
+                {totalNftDelegatee !== 0 && (
+                  <PaginationTable<INftDelegatee>
+                    total={totalNftDelegatee}
+                    limit={1}
+                    data={topNftDelegatee}
+                    setData={setTopNftDelegatee}
+                    row={getNftDelegateeTableRow}
+                    nodeHead={TableHead}
+                    query={DaoPoolProfileTopNftDelegateeQuery}
+                    context={daoGraphClient}
+                    variables={{ pool: daoAddress }}
+                    formatter={(d) =>
+                      d.voterInPools.map((el) => ({ ...el, votingPower: "" }))
+                    }
+                  />
+                )}
+              </>
+            )}
         </Card>
       </Indents>
       <Indents top side={false}>
