@@ -40,7 +40,7 @@ import Chart from "components/Chart"
 import theme, { Text } from "theme"
 import { ChartTooltipPnl } from "components/Chart/tooltips"
 import { AlertType } from "context/AlertContext"
-import { useAlert } from "hooks"
+import { useAlert, useBreakpoints } from "hooks"
 import { DEFAULT_ALERT_HIDDEN_TIMEOUT } from "constants/misc"
 
 const poolsClient = createClient({
@@ -48,6 +48,7 @@ const poolsClient = createClient({
 })
 
 const CreateInsuranceAccidentChooseBlockStep: FC = () => {
+  const { isMobile } = useBreakpoints()
   const [showAlert] = useAlert()
   const { form, chart } = useContext(InsuranceAccidentCreatingContext)
 
@@ -215,9 +216,9 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
           />
           <CardDescription>
             <p>
-              Введите блок или дату перед страховым случаем
-              <br />
-              (когда все было норм).
+              Чтобы определить цену для страховой компенсации выберите дату
+              непосредственно до того как произошел страховой случай. Также вы
+              можете вписать соответствующий блок.
             </p>
           </CardDescription>
         </Card>
@@ -226,7 +227,6 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
           <Chart
             nodeHeadLeft={chartNodeLeft}
             type={CHART_TYPE.area}
-            height={"130px"}
             activePoint={point}
             data={historyFormatted}
             chart={{
@@ -239,7 +239,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
                 dataKey: "price",
                 legendType: "triangle",
                 isAnimationActive: false,
-                stroke: theme.statusColors.success,
+                stroke: theme.brandColors.secondary,
               },
             ]}
             timeframe={{ get: timeframe.get, set: onTimeframeChange }}
