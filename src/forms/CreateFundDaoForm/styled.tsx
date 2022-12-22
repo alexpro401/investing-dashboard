@@ -4,6 +4,7 @@ import { StepsNavigation } from "common"
 import StepsControllerContext from "context/StepsControllerContext"
 import { motion } from "framer-motion"
 import { opacityVariants } from "motion/variants"
+import { breakpoints, respondTo } from "../../theme"
 
 export const Container = styled(StepsControllerContext)`
   display: flex;
@@ -29,8 +30,12 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   margin: 0 auto;
   align-self: center;
 
-  @media screen and (min-width: 768px) {
-    padding-bottom: 40px;
+  @media screen and (min-width: ${breakpoints.sm}px) {
+    padding-bottom: 440px;
+  }
+
+  ${respondTo("sm")} {
+    padding-bottom: 440px;
   }
 `
 

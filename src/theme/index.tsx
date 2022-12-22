@@ -254,3 +254,5 @@ export function getAmountColor(
 export const ColorizedNumber = styled.div<{ value: string | number }>`
   color: ${(p) => getAmountColor(p.value)};
 `
+
+export * from "./mixins.theme"
