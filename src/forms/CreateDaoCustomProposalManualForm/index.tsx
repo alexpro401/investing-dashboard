@@ -12,17 +12,22 @@ import { parseEther } from "@ethersproject/units"
 
 import { ManualStep } from "./steps"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
-import StepsControllerContext from "context/StepsControllerContext"
 import { AdvancedManualContext } from "context/govPool/proposals/custom/AdvancedManualContext"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
+import { useBreakpoints } from "hooks"
 import { useGovPoolCreateCustomProposalManual } from "hooks/dao"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
-import * as S from "./styled"
+import * as S from "common/FormSteps/styled"
 
 enum STEPS {
   manualInfo = "manualInfo",
   basicInfo = "basicInfo",
+}
+
+const STEPS_TITLES: Record<STEPS, string> = {
+  [STEPS.manualInfo]: "Manual info",
+  [STEPS.basicInfo]: "Basic Info",
 }
 
 const CreateDaoCustomProposalManualForm: React.FC = () => {
@@ -31,6 +36,7 @@ const CreateDaoCustomProposalManualForm: React.FC = () => {
   const { daoAddress, executorAddress } = useParams<
     "daoAddress" | "executorAddress"
   >()
+  const { isMobile } = useBreakpoints()
   const { contracts, executorContract } = useContext(AdvancedManualContext)
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
@@ -117,25 +123,39 @@ const CreateDaoCustomProposalManualForm: React.FC = () => {
   }, [currentStep, handeCreateProposal])
 
   return (
-    <StepsControllerContext
+    <S.StepsFormContainer
       totalStepsAmount={totalStepsCount}
       currentStepNumber={currentStepNumber}
       prevCb={handlePrevStep}
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        {currentStep === STEPS.manualInfo && (
-          <S.StepsContainer>
-            <ManualStep />
-          </S.StepsContainer>
-        )}
-        {currentStep === STEPS.basicInfo && (
-          <S.StepsContainer>
-            <CreateDaoProposalGeneralForm />
-          </S.StepsContainer>
-        )}
+        <S.StepsWrapper>
+          {currentStep === STEPS.manualInfo && (
+            <S.StepsContainer>
+              <ManualStep />
+            </S.StepsContainer>
+          )}
+          {currentStep === STEPS.basicInfo && (
+            <S.StepsContainer>
+              <CreateDaoProposalGeneralForm />
+            </S.StepsContainer>
+          )}
+          {!isMobile && (
+            <S.SideStepsNavigationBarWrp
+              title={"Create proposal"}
+              steps={[{ number: 0, title: "Select creation method" }].concat(
+                Object.values(STEPS).map((step) => ({
+                  number: Object.values(STEPS).indexOf(step) + 1,
+                  title: STEPS_TITLES[step],
+                }))
+              )}
+              currentStep={Object.values(STEPS).indexOf(currentStep) + 1}
+            />
+          )}
+        </S.StepsWrapper>
       </AnimatePresence>
-    </StepsControllerContext>
+    </S.StepsFormContainer>
   )
 }
 

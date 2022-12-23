@@ -15,11 +15,11 @@ import { ValidatorsListContext } from "context/govPool/proposals/ValidatorsListC
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { ValidatorsSettingsStep } from "./steps"
+import { useBreakpoints } from "hooks"
 import useGovPoolCreateProposalValidators from "hooks/dao/proposals/useGovPoolCreateProposalValidators"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
-import * as S from "./styled"
-import { useBreakpoints } from "../../hooks"
+import * as S from "common/FormSteps/styled"
 
 enum STEPS {
   validators = "validators",
@@ -113,14 +113,14 @@ const CreateGovProposalValidatorSettingsForm: React.FC = () => {
   const { isMobile } = useBreakpoints()
 
   return (
-    <StepsControllerContext
+    <S.StepsFormContainer
       totalStepsAmount={totalStepsCount}
       currentStepNumber={currentStepNumber}
       prevCb={handlePrevStep}
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        <S.ContainerWrp>
+        <S.StepsWrapper>
           {currentStep === STEPS.validators && (
             <S.StepsContainer>
               <ValidatorsSettingsStep />
@@ -131,7 +131,7 @@ const CreateGovProposalValidatorSettingsForm: React.FC = () => {
               <CreateDaoProposalGeneralForm />
             </S.StepsContainer>
           )}
-          {!isMobile ? (
+          {!isMobile && (
             <S.SideStepsNavigationBarWrp
               steps={Object.values(STEPS).map((step) => ({
                 number: Object.values(STEPS).indexOf(step),
@@ -139,12 +139,10 @@ const CreateGovProposalValidatorSettingsForm: React.FC = () => {
               }))}
               currentStep={Object.values(STEPS).indexOf(currentStep)}
             />
-          ) : (
-            <></>
           )}
-        </S.ContainerWrp>
+        </S.StepsWrapper>
       </AnimatePresence>
-    </StepsControllerContext>
+    </S.StepsFormContainer>
   )
 }
 

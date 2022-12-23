@@ -9,7 +9,6 @@ import { SideStepsNavigationBar } from "common"
 export const Container = styled(StepsControllerContext)`
   display: flex;
   margin: 0 auto;
-  background-color: #ff0000;
   width: 100%;
   overflow-y: auto;
 `

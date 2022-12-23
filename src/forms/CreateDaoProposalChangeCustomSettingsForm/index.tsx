@@ -9,7 +9,6 @@ import { useParams, useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { AnimatePresence } from "framer-motion"
 
-import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { DefaultProposalStep } from "common"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
@@ -19,12 +18,18 @@ import {
   useGovPoolExecutorToSettings,
 } from "hooks/dao"
 import { hideTapBar, showTabBar } from "state/application/actions"
+import { useBreakpoints } from "hooks"
 
-import * as S from "./styled"
+import * as S from "common/FormSteps/styled"
 
 enum STEPS {
   customSettings = "customSettings",
   basicInfo = "basicInfo",
+}
+
+const STEPS_TITLES: Record<STEPS, string> = {
+  [STEPS.customSettings]: "Change custom settings",
+  [STEPS.basicInfo]: "Basic Info",
 }
 
 const CreateDaoProposalChangeCustomSettingsForm: React.FC = () => {
@@ -38,6 +43,8 @@ const CreateDaoProposalChangeCustomSettingsForm: React.FC = () => {
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
   )
+
+  const { isMobile } = useBreakpoints()
 
   useEffect(() => {
     dispatch(hideTapBar())
@@ -142,25 +149,39 @@ const CreateDaoProposalChangeCustomSettingsForm: React.FC = () => {
   }, [currentStep, handleCreateProposal])
 
   return (
-    <StepsControllerContext
+    <S.StepsFormContainer
       totalStepsAmount={totalStepsCount}
       currentStepNumber={currentStepNumber}
       prevCb={handlePrevStep}
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        {currentStep === STEPS.customSettings && (
-          <S.StepsContainer>
-            <DefaultProposalStep isCreatingProposal />
-          </S.StepsContainer>
-        )}
-        {currentStep === STEPS.basicInfo && (
-          <S.StepsContainer>
-            <CreateDaoProposalGeneralForm />
-          </S.StepsContainer>
-        )}
+        <S.StepsWrapper>
+          {currentStep === STEPS.customSettings && (
+            <S.StepsContainer>
+              <DefaultProposalStep isCreatingProposal />
+            </S.StepsContainer>
+          )}
+          {currentStep === STEPS.basicInfo && (
+            <S.StepsContainer>
+              <CreateDaoProposalGeneralForm />
+            </S.StepsContainer>
+          )}
+          {!isMobile && (
+            <S.SideStepsNavigationBarWrp
+              title={"Create proposal"}
+              steps={[{ number: 0, title: "Select proposal type" }].concat(
+                Object.values(STEPS).map((step) => ({
+                  number: Object.values(STEPS).indexOf(step) + 1,
+                  title: STEPS_TITLES[step],
+                }))
+              )}
+              currentStep={Object.values(STEPS).indexOf(currentStep) + 1}
+            />
+          )}
+        </S.StepsWrapper>
       </AnimatePresence>
-    </StepsControllerContext>
+    </S.StepsFormContainer>
   )
 }
 

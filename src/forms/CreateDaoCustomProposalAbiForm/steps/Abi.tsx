@@ -34,7 +34,7 @@ import { AdvancedABIContext } from "context/govPool/proposals/custom/AdvancedABI
 import { stepsControllerContext } from "context/StepsControllerContext"
 
 import { useFormValidation } from "hooks/useFormValidation"
-import { useAbiKeeper } from "hooks"
+import { useAbiKeeper, useBreakpoints } from "hooks"
 import {
   useGovPoolSettingsIdToExecutors,
   useGovPoolExecutorToSettings,
@@ -60,6 +60,7 @@ const AbiStep: FC = () => {
     daoAddress,
     settingsId ? settingsId.toString() : undefined
   )
+  const { isMobile } = useBreakpoints()
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
 
   const executorsShorten = useMemo(
@@ -389,14 +390,13 @@ const AbiStep: FC = () => {
         isOpen={modal.get !== ""}
         onClose={() => modal.set("")}
       />
-      {appNavigationEl ? (
+      {isMobile &&
+        appNavigationEl &&
         createPortal(
           <StepsNavigation customNextCb={handleNextStep} />,
           appNavigationEl
-        )
-      ) : (
-        <></>
-      )}
+        )}
+      {!isMobile && <StepsNavigation customNextCb={handleNextStep} />}
     </S.StepsRoot>
   )
 }

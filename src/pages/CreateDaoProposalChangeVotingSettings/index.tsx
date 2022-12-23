@@ -15,14 +15,14 @@ import {
 import RadioButton from "components/RadioButton"
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
-import StepsControllerContext from "context/StepsControllerContext"
 import { useGovPoolCustomExecutors } from "hooks/dao"
+import { useBreakpoints } from "hooks"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
-import { useBreakpoints } from "hooks"
+import * as SForms from "common/FormSteps/styled"
 
 enum EDefaultVotingSettingsType {
   changeVotingSettings = "changeVotingSettings",
@@ -140,7 +140,7 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
   }, [navigate, daoAddress, selectedCard])
 
   return (
-    <StepsControllerContext
+    <SForms.StepsFormContainer
       totalStepsAmount={3}
       currentStepNumber={1}
       prevCb={handlePrevStep}
@@ -165,81 +165,102 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
           </Flex>
         }
       >
-        <S.PageHolder>
-          <S.PageContent>
-            <Card>
-              <CardHead
-                nodeLeft={<CreateDaoCardStepNumber number={1} />}
-                title="What do you want to change? "
-              />
-              <CardDescription>
-                <p>Choose the setting you want to change.</p>
-              </CardDescription>
-            </Card>
-            {defaultVotingSettingsTypes.map((el) => {
-              return (
-                <SelectableCard
-                  key={el.type}
-                  value={
-                    selectedCard?.specification as EDefaultVotingSettingsType
-                  }
-                  setValue={handleSelectDefaultVotingType}
-                  valueToSet={el.type}
-                  nodeLeft={
-                    <RadioButton
-                      selected={selectedCard?.specification ?? ""}
-                      value={el.type}
-                      onChange={() => {}}
-                    />
-                  }
-                  title={el.title}
-                  description={el.description}
-                />
-              )
-            })}
-            {customExecutorsLoading && (
-              <Flex gap={"24"} full dir="column" ai={"center"}>
-                <Skeleton variant={"rect"} w={"100%"} h={"60px"} />
-              </Flex>
-            )}
-            {!customExecutorsLoading &&
-              customExecutorsFiltered.map(
-                ({
-                  id,
-                  proposalName,
-                  proposalDescription,
-                  executorAddress,
-                }) => {
+        <SForms.StepsWrapper>
+          <SForms.StepsContainer>
+            <S.PageHolder>
+              <S.PageContent>
+                <Card>
+                  <CardHead
+                    nodeLeft={<CreateDaoCardStepNumber number={1} />}
+                    title="What do you want to change? "
+                  />
+                  <CardDescription>
+                    <p>Choose the setting you want to change.</p>
+                  </CardDescription>
+                </Card>
+                {defaultVotingSettingsTypes.map((el) => {
                   return (
                     <SelectableCard
-                      key={id}
-                      value={selectedCard?.executorAddress as string}
-                      setValue={handleSelectCustomProposal}
-                      valueToSet={executorAddress}
+                      key={el.type}
+                      value={
+                        selectedCard?.specification as EDefaultVotingSettingsType
+                      }
+                      setValue={handleSelectDefaultVotingType}
+                      valueToSet={el.type}
                       nodeLeft={
                         <RadioButton
-                          selected={selectedCard?.executorAddress ?? ""}
-                          value={executorAddress}
+                          selected={selectedCard?.specification ?? ""}
+                          value={el.type}
                           onChange={() => {}}
                         />
                       }
-                      title={proposalName}
-                      description={proposalDescription}
+                      title={el.title}
+                      description={el.description}
                     />
                   )
-                }
-              )}
-            {appNavigationEl ? (
-              createPortal(<StepsNavigation />, appNavigationEl)
-            ) : !isMobile ? (
-              <StepsNavigation />
-            ) : (
-              <></>
-            )}
-          </S.PageContent>
-        </S.PageHolder>
+                })}
+                {customExecutorsLoading && (
+                  <Flex gap={"24"} full dir="column" ai={"center"}>
+                    <Skeleton variant={"rect"} w={"100%"} h={"60px"} />
+                  </Flex>
+                )}
+                {!customExecutorsLoading &&
+                  customExecutorsFiltered.map(
+                    ({
+                      id,
+                      proposalName,
+                      proposalDescription,
+                      executorAddress,
+                    }) => {
+                      return (
+                        <SelectableCard
+                          key={id}
+                          value={selectedCard?.executorAddress as string}
+                          setValue={handleSelectCustomProposal}
+                          valueToSet={executorAddress}
+                          nodeLeft={
+                            <RadioButton
+                              selected={selectedCard?.executorAddress ?? ""}
+                              value={executorAddress}
+                              onChange={() => {}}
+                            />
+                          }
+                          title={proposalName}
+                          description={proposalDescription}
+                        />
+                      )
+                    }
+                  )}
+                {isMobile &&
+                  appNavigationEl &&
+                  createPortal(<StepsNavigation />, appNavigationEl)}
+                {!isMobile && <StepsNavigation />}
+              </S.PageContent>
+            </S.PageHolder>
+          </SForms.StepsContainer>
+          {!isMobile && (
+            <SForms.SideStepsNavigationBarWrp
+              title={"Create proposal"}
+              steps={[
+                {
+                  number: 1,
+                  title: "Select proposal type",
+                },
+                {
+                  number: 2,
+                  title: "Change voting settings",
+                },
+                {
+                  number: 3,
+                  title: "Basic info",
+                },
+              ]}
+              currentStep={1}
+            />
+          )}
+        </SForms.StepsWrapper>
       </WithGovPoolAddressValidation>
-    </StepsControllerContext>
+    </SForms.StepsFormContainer>
   )
 }
 
