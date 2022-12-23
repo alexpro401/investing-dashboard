@@ -1,6 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { createPortal } from "react-dom"
 import { useDispatch } from "react-redux"
 import { uniqBy } from "lodash"
 
@@ -9,7 +8,6 @@ import {
   CardHead,
   CardDescription,
   SelectableCard,
-  StepsNavigation,
   CreateDaoCardStepNumber,
 } from "common"
 import RadioButton from "components/RadioButton"
@@ -49,15 +47,11 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
     type: "default",
     specification: EDefaultVotingSettingsType.changeVotingSettings,
   })
-  const [appNavigationEl, setAppNavigationEl] = useState<Element | null>(null)
 
   const { isMobile } = useBreakpoints()
 
   useEffect(() => {
     dispatch(hideTapBar())
-    setTimeout(() => {
-      setAppNavigationEl(document.querySelector("#app-navigation"))
-    }, 100)
 
     return () => {
       dispatch(showTabBar())
@@ -231,10 +225,7 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
                       )
                     }
                   )}
-                {isMobile &&
-                  appNavigationEl &&
-                  createPortal(<StepsNavigation />, appNavigationEl)}
-                {!isMobile && <StepsNavigation />}
+                <SForms.FormStepsNavigationWrp />
               </S.PageContent>
             </S.PageHolder>
           </SForms.StepsContainer>

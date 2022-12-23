@@ -6,7 +6,6 @@ import {
   useContext,
   useMemo,
 } from "react"
-import { createPortal } from "react-dom"
 import { useParams } from "react-router-dom"
 import theme from "theme"
 
@@ -17,7 +16,6 @@ import {
   CardHead,
   CollapsedCard,
   CreateDaoCardStepNumber,
-  StepsNavigation,
 } from "common"
 
 import {
@@ -34,7 +32,7 @@ import { AdvancedABIContext } from "context/govPool/proposals/custom/AdvancedABI
 import { stepsControllerContext } from "context/StepsControllerContext"
 
 import { useFormValidation } from "hooks/useFormValidation"
-import { useAbiKeeper, useBreakpoints } from "hooks"
+import { useAbiKeeper } from "hooks"
 import {
   useGovPoolSettingsIdToExecutors,
   useGovPoolExecutorToSettings,
@@ -45,6 +43,7 @@ import { readFromClipboard } from "utils/clipboard"
 import { required, isAddressValidator } from "utils/validators"
 
 import * as S from "../styled"
+import * as SForms from "common/FormSteps/styled"
 
 // TODO: improvements
 // 1. save selected method & params decoded in context - needed to parse data in preview
@@ -60,7 +59,6 @@ const AbiStep: FC = () => {
     daoAddress,
     settingsId ? settingsId.toString() : undefined
   )
-  const { isMobile } = useBreakpoints()
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
 
   const executorsShorten = useMemo(
@@ -348,10 +346,8 @@ const AbiStep: FC = () => {
     ]
   )
 
-  const appNavigationEl = document.querySelector("#app-navigation")
-
   return (
-    <S.StepsRoot>
+    <SForms.StepsRoot>
       <Card>
         <CardHead
           nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
@@ -390,14 +386,8 @@ const AbiStep: FC = () => {
         isOpen={modal.get !== ""}
         onClose={() => modal.set("")}
       />
-      {isMobile &&
-        appNavigationEl &&
-        createPortal(
-          <StepsNavigation customNextCb={handleNextStep} />,
-          appNavigationEl
-        )}
-      {!isMobile && <StepsNavigation customNextCb={handleNextStep} />}
-    </S.StepsRoot>
+      <SForms.FormStepsNavigationWrp customNextCb={handleNextStep} />
+    </SForms.StepsRoot>
   )
 }
 

@@ -1,9 +1,8 @@
 import React, { useContext, useCallback } from "react"
 import { useParams } from "react-router-dom"
-import { createPortal } from "react-dom"
 import { BigNumber } from "@ethersproject/bignumber"
 import { formatUnits } from "@ethersproject/units"
-import { useActiveWeb3React, useBreakpoints } from "hooks"
+import { useActiveWeb3React } from "hooks"
 
 import { useGovPoolTreasury } from "hooks/dao"
 import {
@@ -14,7 +13,6 @@ import {
   CreateDaoCardStepNumber,
   TokenChip,
   AppButton,
-  StepsNavigation,
 } from "common"
 import ExternalLink from "components/ExternalLink"
 import { InputField, SelectField } from "fields"
@@ -27,6 +25,7 @@ import { formatFiatNumber, formatTokenNumber } from "utils"
 import { cutStringZeroes } from "utils"
 
 import * as S from "../styled"
+import * as SForms from "common/FormSteps/styled"
 
 const TokenDistributionStep: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
@@ -85,12 +84,8 @@ const TokenDistributionStep: React.FC = () => {
     }
   }, [nextCb, touchForm, isFieldsValid, selectedTreasuryToken])
 
-  const appNavigationEl = document.querySelector("#app-navigation")
-
-  const { isMobile } = useBreakpoints()
-
   return (
-    <S.StepsRoot>
+    <SForms.StepsRoot>
       <Card>
         <CardHead
           nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
@@ -205,14 +200,8 @@ const TokenDistributionStep: React.FC = () => {
           />
         </CardFormControl>
       </Card>
-      {isMobile &&
-        appNavigationEl &&
-        createPortal(
-          <StepsNavigation customNextCb={handleNextStep} />,
-          appNavigationEl
-        )}
-      {!isMobile && <StepsNavigation customNextCb={handleNextStep} />}
-    </S.StepsRoot>
+      <SForms.FormStepsNavigationWrp customNextCb={handleNextStep} />
+    </SForms.StepsRoot>
   )
 }
 

@@ -1,14 +1,12 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useDispatch } from "react-redux"
-import { createPortal } from "react-dom"
 
 import {
   Card,
   CardHead,
   CardDescription,
   SelectableCard,
-  StepsNavigation,
   CreateDaoCardStepNumber,
 } from "common"
 import Header from "components/Header/Layout"
@@ -44,13 +42,9 @@ const CreateDaoCustomProposal: React.FC = () => {
   const [selectedCard, setSelectedCard] = useState<ECustomProposalTypes>(
     ECustomProposalTypes.abi
   )
-  const [appNavigationEl, setAppNavigationEl] = useState<Element | null>(null)
 
   useEffect(() => {
     dispatch(hideTapBar())
-    setTimeout(() => {
-      setAppNavigationEl(document.querySelector("#app-navigation"))
-    }, 100)
 
     return () => {
       dispatch(showTabBar())
@@ -182,10 +176,7 @@ const CreateDaoCustomProposal: React.FC = () => {
                     />
                   )
                 )}
-                {isMobile &&
-                  appNavigationEl &&
-                  createPortal(<StepsNavigation />, appNavigationEl)}
-                {!isMobile && <StepsNavigation />}
+                <SForms.FormStepsNavigationWrp />
               </S.PageContent>
             </S.PageHolder>
           </SForms.StepsContainer>

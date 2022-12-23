@@ -1,12 +1,10 @@
 import React, { useContext, useCallback, Dispatch, SetStateAction } from "react"
-import { createPortal } from "react-dom"
 
 import {
   Card,
   CardHead,
   CardDescription,
   CreateDaoCardStepNumber,
-  StepsNavigation,
   CollapsedCard,
   AppButton,
 } from "common"
@@ -14,20 +12,18 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 import { createCustomProposalTypeContext } from "context/govPool/proposals/regular/CreateCustomProposalType"
 import { InputField } from "fields"
 import { readFromClipboard } from "utils/clipboard"
-import { useBreakpoints } from "hooks"
 import { useFormValidation } from "hooks/useFormValidation"
 import { required, isAddressValidator } from "utils/validators"
 import { ICON_NAMES } from "constants/icon-names"
 import theme from "theme"
 
 import * as S from "../styled"
+import * as SForms from "common/FormSteps/styled"
 
 const ExecutorsStep: React.FC = () => {
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
   const { executorAddresses, addExecutorAddress, deleteExecutorAddress } =
     useContext(createCustomProposalTypeContext)
-
-  const { isMobile } = useBreakpoints()
 
   const { getFieldErrorMessage, touchField, isFieldsValid, touchForm } =
     useFormValidation(
@@ -56,10 +52,8 @@ const ExecutorsStep: React.FC = () => {
     []
   )
 
-  const appNavigationEl = document.querySelector("#app-navigation")
-
   return (
-    <S.StepsRoot>
+    <SForms.StepsRoot>
       <Card>
         <CardHead
           nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
@@ -119,14 +113,8 @@ const ExecutorsStep: React.FC = () => {
           </CollapsedCard>
         )
       })}
-      {isMobile &&
-        appNavigationEl &&
-        createPortal(
-          <StepsNavigation customNextCb={handleNextStepCb} />,
-          appNavigationEl
-        )}
-      {!isMobile && <StepsNavigation customNextCb={handleNextStepCb} />}
-    </S.StepsRoot>
+      <SForms.FormStepsNavigationWrp customNextCb={handleNextStepCb} />
+    </SForms.StepsRoot>
   )
 }
 

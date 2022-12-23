@@ -5,6 +5,7 @@ import { opacityVariants } from "motion/variants"
 import { respondTo } from "theme"
 import { SideStepsNavigationBar } from "common"
 import StepsControllerContextProvider from "context/StepsControllerContext"
+import FormStepsNavigation from "common/FormStepsNavigation"
 
 export const StepsFormContainer = styled(StepsControllerContextProvider)`
   display: flex;
@@ -56,3 +57,5 @@ export const StepsRoot = styled.div`
   gap: 16px;
   padding: 14px 16px 20px;
 `
+
+export const FormStepsNavigationWrp = styled(FormStepsNavigation)``

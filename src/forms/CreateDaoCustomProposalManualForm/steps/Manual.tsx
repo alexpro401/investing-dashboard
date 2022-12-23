@@ -6,7 +6,6 @@ import React, {
   SetStateAction,
 } from "react"
 import { useParams } from "react-router-dom"
-import { createPortal } from "react-dom"
 
 import {
   AppButton,
@@ -14,7 +13,6 @@ import {
   CardDescription,
   CardHead,
   CreateDaoCardStepNumber,
-  StepsNavigation,
   CollapsedCard,
 } from "common"
 import { useFormValidation } from "hooks/useFormValidation"
@@ -29,7 +27,6 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 import theme from "theme"
 import { ICON_NAMES } from "constants/icon-names"
 import { isAddressValidator, required } from "utils/validators"
-import { useBreakpoints } from "hooks"
 import {
   useGovPoolSettingsIdToExecutors,
   useGovPoolExecutorToSettings,
@@ -38,6 +35,7 @@ import { readFromClipboard } from "utils/clipboard"
 import { isAddress, shortenAddress } from "utils"
 
 import * as S from "../styled"
+import * as SForms from "common/FormSteps/styled"
 
 const ManualStep: React.FC = () => {
   const { daoAddress, executorAddress } = useParams<
@@ -49,7 +47,6 @@ const ManualStep: React.FC = () => {
     daoAddress,
     settingsId ? settingsId.toString() : undefined
   )
-  const { isMobile } = useBreakpoints()
 
   const executorsShorten = useMemo(
     () => (executors ? executors.map((el) => el.executorAddress) : []),
@@ -109,10 +106,8 @@ const ManualStep: React.FC = () => {
     nextCb()
   }, [nextCb, touchForm, isFieldsValid])
 
-  const appNavigationEl = document.querySelector("#app-navigation")
-
   return (
-    <S.StepsRoot>
+    <SForms.StepsRoot>
       <Card>
         <CardHead
           nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
@@ -280,14 +275,8 @@ const ManualStep: React.FC = () => {
           onBlur={() => touchField("executorTransactionData")}
         />
       </CollapsedCard>
-      {isMobile &&
-        appNavigationEl &&
-        createPortal(
-          <StepsNavigation customNextCb={handleNextStep} />,
-          appNavigationEl
-        )}
-      {!isMobile && <StepsNavigation customNextCb={handleNextStep} />}
-    </S.StepsRoot>
+      <SForms.FormStepsNavigationWrp customNextCb={handleNextStep} />
+    </SForms.StepsRoot>
   )
 }
 

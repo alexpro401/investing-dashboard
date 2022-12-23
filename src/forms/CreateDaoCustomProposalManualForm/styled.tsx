@@ -2,14 +2,6 @@ import styled from "styled-components/macro"
 
 import { Flex } from "theme"
 
-export const StepsRoot = styled.div`
-  display: flex;
-  flex-direction: column;
-  transform: scale(1);
-  gap: 16px;
-  padding: 14px 16px 20px;
-`
-
 export const Address = styled.div`
   font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;

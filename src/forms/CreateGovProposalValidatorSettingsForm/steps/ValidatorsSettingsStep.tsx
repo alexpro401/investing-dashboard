@@ -1,16 +1,8 @@
 import React, { useCallback, useContext, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
-import { createPortal } from "react-dom"
 import { parseUnits, formatUnits } from "@ethersproject/units"
 
-import {
-  StepsNavigation,
-  CardHead,
-  Card,
-  CardDescription,
-  Icon,
-  AppButton,
-} from "common"
+import { CardHead, Card, CardDescription, Icon, AppButton } from "common"
 import { OverlapInputField } from "fields"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { ValidatorsListContext } from "context/govPool/proposals/ValidatorsListContext"
@@ -20,16 +12,13 @@ import ValidatorsList from "components/ValidatorsList"
 import GovVotingSettings from "modals/GovVotingSettings"
 import { ICON_NAMES } from "constants/icon-names"
 import { readFromClipboard } from "utils/clipboard"
-import {
-  useFormValidation,
-  useBreakpoints,
-  useGovUserKeeperGetTotalVoteWeight,
-} from "hooks"
+import { useFormValidation, useGovUserKeeperGetTotalVoteWeight } from "hooks"
 import { required, isAddressValidator } from "utils/validators"
 import { cutStringZeroes } from "utils"
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 
 import * as S from "../styled"
+import * as SForms from "common/FormSteps/styled"
 
 const ValidatorsSettingsStep: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
@@ -116,10 +105,6 @@ const ValidatorsSettingsStep: React.FC = () => {
     return cutStringZeroes(formatUnits(quorumResult, 25))
   }, [totalVoteWeight, initialForm])
 
-  const appNavigationEl = document.querySelector("#app-navigation")
-
-  const { isMobile } = useBreakpoints()
-
   return (
     <>
       <GovVotingSettings
@@ -150,7 +135,7 @@ const ValidatorsSettingsStep: React.FC = () => {
           initialForm._validatorsBalancesSettingsForm.executionReward
         }
       />
-      <S.StepsRoot>
+      <SForms.StepsRoot>
         <Card>
           <CardHead
             nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
@@ -225,17 +210,8 @@ const ValidatorsSettingsStep: React.FC = () => {
             />
           </Card>
         )}
-      </S.StepsRoot>
-      {appNavigationEl ? (
-        createPortal(
-          <StepsNavigation customNextCb={handleNextStep} />,
-          appNavigationEl
-        )
-      ) : !isMobile ? (
-        <StepsNavigation customNextCb={handleNextStep} />
-      ) : (
-        <></>
-      )}
+        <SForms.FormStepsNavigationWrp customNextCb={handleNextStep} />
+      </SForms.StepsRoot>
     </>
   )
 }
