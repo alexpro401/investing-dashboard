@@ -10,19 +10,24 @@ import { useDispatch } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import { parseEther } from "@ethersproject/units"
 
-import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { ValidatorsListContext } from "context/govPool/proposals/ValidatorsListContext"
 import { ValidatorsStep } from "./steps"
+import { useBreakpoints } from "hooks"
 import { useGovPoolCreateValidatorInternalProposal } from "hooks/dao"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
-import * as S from "./styled"
+import * as S from "common/FormSteps/styled"
 
 enum STEPS {
   validators = "validators",
   basicInfo = "basicInfo",
+}
+
+const STEPS_TITLES: Record<STEPS, string> = {
+  [STEPS.validators]: "Validators",
+  [STEPS.basicInfo]: "Basic Info",
 }
 
 const CreateGovProposalValidatorChangeValidatorSettingsForm: React.FC = () => {
@@ -30,6 +35,7 @@ const CreateGovProposalValidatorChangeValidatorSettingsForm: React.FC = () => {
   const dispatch = useDispatch()
   const { daoAddress } = useParams<"daoAddress">()
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.validators)
+  const { isMobile } = useBreakpoints()
   const createInternalProposal = useGovPoolCreateValidatorInternalProposal({
     daoAddress: daoAddress ?? "",
   })
@@ -107,25 +113,36 @@ const CreateGovProposalValidatorChangeValidatorSettingsForm: React.FC = () => {
   }, [currentStep, handleCreateProposal])
 
   return (
-    <StepsControllerContext
+    <S.StepsFormContainer
       totalStepsAmount={totalStepsCount}
       currentStepNumber={currentStepNumber}
       prevCb={handlePrevStep}
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        {currentStep === STEPS.validators && (
-          <S.StepsContainer>
-            <ValidatorsStep />
-          </S.StepsContainer>
-        )}
-        {currentStep === STEPS.basicInfo && (
-          <S.StepsContainer>
-            <CreateDaoProposalGeneralForm />
-          </S.StepsContainer>
-        )}
+        <S.StepsWrapper>
+          {currentStep === STEPS.validators && (
+            <S.StepsContainer>
+              <ValidatorsStep />
+            </S.StepsContainer>
+          )}
+          {currentStep === STEPS.basicInfo && (
+            <S.StepsContainer>
+              <CreateDaoProposalGeneralForm />
+            </S.StepsContainer>
+          )}
+          {!isMobile && (
+            <S.SideStepsNavigationBarWrp
+              steps={Object.values(STEPS).map((step) => ({
+                number: Object.values(STEPS).indexOf(step),
+                title: STEPS_TITLES[step],
+              }))}
+              currentStep={Object.values(STEPS).indexOf(currentStep)}
+            />
+          )}
+        </S.StepsWrapper>
       </AnimatePresence>
-    </StepsControllerContext>
+    </S.StepsFormContainer>
   )
 }
 

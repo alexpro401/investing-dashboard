@@ -6,6 +6,7 @@ import ValidatorsList from "components/ValidatorsList"
 import { CreateDaoCardStepNumber } from "common"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { ValidatorsListContext } from "context/govPool/proposals/ValidatorsListContext"
+import { useBreakpoints } from "hooks"
 import { useFormValidation } from "hooks/useFormValidation"
 import { required, isAddressValidator } from "utils/validators"
 
@@ -15,6 +16,7 @@ const ValidatorsStep: React.FC = () => {
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
   const { balances, validators, hiddenIdxs } = useContext(ValidatorsListContext)
 
+  const { isMobile } = useBreakpoints()
   const { isFieldsValid, touchForm } = useFormValidation(
     {
       balances: balances.filter((_, idx) => !hiddenIdxs.includes(idx)),
@@ -57,32 +59,29 @@ const ValidatorsStep: React.FC = () => {
   const appNavigationEl = document.querySelector("#app-navigation")
 
   return (
-    <>
-      <S.StepsRoot>
-        <Card>
-          <CardHead
-            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
-            title="Validators"
-          />
-          <CardDescription>
-            <p>
-              Here you can propose adding/removing validators, and the change
-              voting power of each validator.
-            </p>
-            <p>Will be voted on by validators only.</p>
-          </CardDescription>
-        </Card>
-        <ValidatorsList />
-      </S.StepsRoot>
-      {appNavigationEl ? (
+    <S.StepsRoot>
+      <Card>
+        <CardHead
+          nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+          title="Validators"
+        />
+        <CardDescription>
+          <p>
+            Here you can propose adding/removing validators, and the change
+            voting power of each validator.
+          </p>
+          <p>Will be voted on by validators only.</p>
+        </CardDescription>
+      </Card>
+      <ValidatorsList />
+      {isMobile &&
+        appNavigationEl &&
         createPortal(
           <StepsNavigation customNextCb={handleNextStep} />,
           appNavigationEl
-        )
-      ) : (
-        <></>
-      )}
-    </>
+        )}
+      {!isMobile && <StepsNavigation customNextCb={handleNextStep} />}
+    </S.StepsRoot>
   )
 }
 
