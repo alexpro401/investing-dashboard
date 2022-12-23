@@ -6,11 +6,13 @@ import { ICON_NAMES } from "constants/icon-names"
 import { stepsControllerContext } from "../../context/StepsControllerContext"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
+  title?: string
   steps: { title: string; number: number }[]
   currentStep: number
 }
 
 const SideStepsNavigationBar: FC<Props> = ({
+  title,
   steps: overidenSteps,
   currentStep,
   ...rest
@@ -38,6 +40,7 @@ const SideStepsNavigationBar: FC<Props> = ({
 
   return (
     <S.SideStepsNavigationBar {...rest}>
+      {title && <S.SideStepsTitle>{title}</S.SideStepsTitle>}
       {steps.map((el, idx) => (
         <S.SideStepsNavigationBarItem
           key={idx}

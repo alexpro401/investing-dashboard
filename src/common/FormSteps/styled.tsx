@@ -4,25 +4,29 @@ import { motion } from "framer-motion"
 import { opacityVariants } from "motion/variants"
 import { respondTo } from "theme"
 import { SideStepsNavigationBar } from "common"
+import StepsControllerContextProvider from "context/StepsControllerContext"
 
-export const ContainerWrp = styled.div`
-  overflow: hidden;
+export const StepsFormContainer = styled(StepsControllerContextProvider)`
   display: flex;
-  flex: 1;
+  margin: 0 auto;
   width: 100%;
   height: 100%;
+  overflow-y: auto;
+`
+
+export const StepsWrapper = styled.div`
+  display: flex;
+  flex: 1;
 
   ${respondTo("sm")} {
-    display: grid;
-    grid-template-columns: 1fr 0.65fr;
-    gap: 24px;
-    padding: 0 20px;
+    padding-bottom: 40px;
   }
 `
 
 export const SideStepsNavigationBarWrp = styled(SideStepsNavigationBar)`
-  width: 100%;
-  height: 100%;
+  min-width: 300px;
+  position: sticky;
+  top: 0px;
 `
 
 export const StepsContainer = styled(motion.div).attrs(() => ({
@@ -32,8 +36,23 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   transition: { duration: 0.2 },
   variants: opacityVariants,
 }))`
+  overflow: hidden;
+  position: relative;
   display: flex;
   flex-direction: column;
-  overflow: hidden auto;
-  height: 100%;
+  width: 100%;
+  margin: 0 auto;
+
+  ${respondTo("sm")} {
+    width: auto;
+    max-width: 775px;
+  }
+`
+
+export const StepsRoot = styled.div`
+  display: flex;
+  flex-direction: column;
+  transform: scale(1);
+  gap: 16px;
+  padding: 14px 16px 20px;
 `

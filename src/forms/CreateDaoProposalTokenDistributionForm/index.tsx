@@ -9,16 +9,15 @@ import { useParams, useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { AnimatePresence } from "framer-motion"
 
+import { useBreakpoints } from "hooks"
 import { useGovPoolCreateDistributionProposal } from "hooks/dao"
-import StepsControllerContext from "context/StepsControllerContext"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { TokenDistributionCreatingContext } from "context/govPool/proposals/TokenDistributionContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { TokenDistributionStep } from "./steps"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
-import * as S from "./styled"
-import { useBreakpoints } from "../../hooks"
+import * as S from "common/FormSteps/styled"
 
 enum STEPS {
   tokenDistribution = "tokenDistribution",
@@ -112,14 +111,14 @@ const CreateDaoProposalTokenDistributionForm: React.FC = () => {
   }, [currentStep, handleCreateProposal])
 
   return (
-    <StepsControllerContext
+    <S.StepsFormContainer
       totalStepsAmount={totalStepsCount}
       currentStepNumber={currentStepNumber}
       prevCb={handlePrevStep}
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        <S.ContainerWrp>
+        <S.StepsWrapper>
           {currentStep === STEPS.tokenDistribution && (
             <S.StepsContainer>
               <TokenDistributionStep />
@@ -130,20 +129,19 @@ const CreateDaoProposalTokenDistributionForm: React.FC = () => {
               <CreateDaoProposalGeneralForm />
             </S.StepsContainer>
           )}
-          {!isMobile ? (
+          {!isMobile && (
             <S.SideStepsNavigationBarWrp
+              title={"Create proposal"}
               steps={Object.values(STEPS).map((step) => ({
                 number: Object.values(STEPS).indexOf(step),
                 title: STEPS_TITLES[step],
               }))}
               currentStep={Object.values(STEPS).indexOf(currentStep)}
             />
-          ) : (
-            <></>
           )}
-        </S.ContainerWrp>
+        </S.StepsWrapper>
       </AnimatePresence>
-    </StepsControllerContext>
+    </S.StepsFormContainer>
   )
 }
 

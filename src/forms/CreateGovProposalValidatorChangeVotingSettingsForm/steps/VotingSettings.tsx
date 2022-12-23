@@ -2,6 +2,7 @@ import React, { useContext, useCallback, useState, useMemo } from "react"
 import { useParams } from "react-router-dom"
 import { createPortal } from "react-dom"
 import { parseUnits, formatUnits } from "@ethersproject/units"
+import { BigNumber } from "@ethersproject/bignumber"
 
 import {
   StepsNavigation,
@@ -18,6 +19,7 @@ import { ChangeVotingSettingsContext } from "context/govPool/proposals/validator
 import { CreateDaoCardStepNumber } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 import { EInputBorderColors } from "fields/InputField"
+import { useBreakpoints } from "hooks"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
 import { useGovValidatorsTokenTotalSupply } from "hooks/dao"
@@ -25,7 +27,6 @@ import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 import { cutStringZeroes } from "utils"
 
 import * as S from "../styled"
-import { BigNumber } from "@ethersproject/bignumber"
 
 const VotingSettings: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
@@ -33,6 +34,7 @@ const VotingSettings: React.FC = () => {
     daoAddress ?? ""
   )
 
+  const { isMobile } = useBreakpoints()
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
   const { initialForm, duration, quorum } = useContext(
     ChangeVotingSettingsContext
@@ -166,15 +168,14 @@ const VotingSettings: React.FC = () => {
             />
           </CardFormControl>
         </Card>
+        {isMobile &&
+          appNavigationEl &&
+          createPortal(
+            <StepsNavigation customNextCb={handleNextStep} />,
+            appNavigationEl
+          )}
+        {!isMobile && <StepsNavigation customNextCb={handleNextStep} />}
       </S.StepsRoot>
-      {appNavigationEl ? (
-        createPortal(
-          <StepsNavigation customNextCb={handleNextStep} />,
-          appNavigationEl
-        )
-      ) : (
-        <></>
-      )}
     </>
   )
 }
