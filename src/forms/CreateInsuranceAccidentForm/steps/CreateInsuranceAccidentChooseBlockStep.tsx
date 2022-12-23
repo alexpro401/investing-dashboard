@@ -42,6 +42,7 @@ import { ChartTooltipPnl } from "components/Chart/tooltips"
 import { AlertType } from "context/AlertContext"
 import { useAlert, useBreakpoints } from "hooks"
 import { DEFAULT_ALERT_HIDDEN_TIMEOUT } from "constants/misc"
+import { DateInput } from "forms/CreateInsuranceAccidentForm/styled/step-choose-block"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -282,7 +283,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
               value={_block}
               onChange={_setBlock}
             />
-            <Input
+            <DateInput
               disabled
               theme="clear"
               value={
