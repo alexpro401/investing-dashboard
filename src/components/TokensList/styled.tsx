@@ -1,5 +1,5 @@
 import { AppButton } from "common"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import theme, { Flex } from "theme"
 import polygon from "assets/icons/popover-polygon.svg"
 

@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components"
+import styled, { css } from "styled-components/macro"
 
 const SharedAmount = css`
   font-family: ${(props) => props.theme.appFontFamily};

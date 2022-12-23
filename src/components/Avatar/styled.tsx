@@ -1,5 +1,5 @@
 import { respondTo } from "theme"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 
 export const Img = styled.img<{ size: number }>`
   display: block;

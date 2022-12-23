@@ -1,5 +1,5 @@
 import theme, { Flex, respondTo, To } from "theme"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { motion } from "framer-motion"
 import { useMatch } from "react-router-dom"
 

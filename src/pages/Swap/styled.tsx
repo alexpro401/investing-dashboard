@@ -1,6 +1,6 @@
 import { AppButton } from "common"
 import { ICON_NAMES } from "constants/icon-names"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { Flex } from "theme"
 
 export const SwapPriceBody = styled(Flex)`

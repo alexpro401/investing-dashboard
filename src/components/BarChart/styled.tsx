@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { Flex, getAmountColor, GradientBorder } from "theme"
 
 function getTop(r) {

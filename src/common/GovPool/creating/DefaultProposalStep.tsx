@@ -1,5 +1,4 @@
 import { FC, useContext } from "react"
-import { createPortal } from "react-dom"
 
 import { CreateDaoCardStepNumber } from "../components"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
@@ -7,7 +6,7 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 import { Card, CardDescription, CardHead } from "common"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 import { DaoSettingsParameters } from "common"
-import { useFormValidation, useBreakpoints } from "hooks"
+import { useFormValidation } from "hooks"
 import { isAddressValidator, isPercentage, required } from "utils/validators"
 
 import * as S from "./styled"
@@ -88,9 +87,6 @@ const DefaultProposalStep: FC<IDefaultProposalStepProps> = ({
     nextCb()
   }
 
-  const appNavigationEl = document.querySelector("#app-navigation")
-  const { isMobile } = useBreakpoints()
-
   return (
     <>
       <S.StepsRoot>
@@ -121,16 +117,7 @@ const DefaultProposalStep: FC<IDefaultProposalStepProps> = ({
           <></>
         )}
       </S.StepsRoot>
-      {appNavigationEl ? (
-        createPortal(
-          <S.StepsBottomNavigation customNextCb={handleNextStep} />,
-          appNavigationEl
-        )
-      ) : !isMobile ? (
-        <S.StepsBottomNavigation customNextCb={handleNextStep} />
-      ) : (
-        <></>
-      )}
+      <S.FormStepsNavigationWrp customNextCb={handleNextStep} />
     </>
   )
 }

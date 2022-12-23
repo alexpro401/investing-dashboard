@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components"
+import styled, { css } from "styled-components/macro"
 import { AppButton, Icon } from "common"
 import { VotingTerminal } from "pages/VotingTerminal"
 import { GradientBorder, respondTo } from "theme"

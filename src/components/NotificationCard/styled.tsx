@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { Flex, Text } from "theme"
 
 export const Card = styled.a`

@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { Flex, GradientBorderSearch } from "theme"
 
 export const Container = styled(GradientBorderSearch)<{ height: string }>`

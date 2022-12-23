@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import styled, { css } from "styled-components"
+import styled, { css } from "styled-components/macro"
 import { motion } from "framer-motion"
 import { colorsTheme } from "./colors.theme"
 import { respondTo } from "./mixins.theme"

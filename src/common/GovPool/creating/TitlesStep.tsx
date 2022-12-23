@@ -51,10 +51,9 @@ import {
 } from "utils/validators"
 import { isValidUrl } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { useActiveWeb3React, useBreakpoints } from "hooks"
+import { useActiveWeb3React } from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { SUPPORTED_SOCIALS } from "constants/socials"
-import { createPortal } from "react-dom"
 
 interface ITitlesStepProps {
   isCreatingProposal?: boolean
@@ -89,7 +88,6 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
       ? getExplorerLink(chainId, tokenAddress.get, ExplorerDataType.ADDRESS)
       : ""
   }, [chainId, tokenAddress.get])
-  const { isMobile } = useBreakpoints()
 
   useEffect(() => {
     if (socialLinks.get.length !== 0 && isCreatingProposal) {
@@ -310,8 +308,6 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
       touchField,
     ]
   )
-
-  const appNavigationEl = document.querySelector("#app-navigation")
 
   return (
     <>
@@ -710,16 +706,7 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
           />
         </Card>
       </S.StepsRoot>
-      {appNavigationEl ? (
-        createPortal(
-          <S.StepsBottomNavigation customNextCb={handleNextStep} />,
-          appNavigationEl
-        )
-      ) : !isMobile ? (
-        <S.StepsBottomNavigation customNextCb={handleNextStep} />
-      ) : (
-        <></>
-      )}
+      <S.FormStepsNavigationWrp customNextCb={handleNextStep} />
     </>
   )
 }

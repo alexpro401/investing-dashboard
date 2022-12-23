@@ -1,7 +1,7 @@
 import { CircularProgressbarWithChildren } from "react-circular-progressbar"
 import "./custom.css"
 
-import styled from "styled-components"
+import styled from "styled-components/macro"
 
 const Container = styled.div`
   height: 110px;

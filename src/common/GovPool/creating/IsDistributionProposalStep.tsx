@@ -20,8 +20,6 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
-import { createPortal } from "react-dom"
-import { useBreakpoints } from "hooks"
 
 interface IIsDistributionProposalStepProps {
   isCreatingProposal?: boolean
@@ -123,9 +121,6 @@ const IsDistributionProposalStep: React.FC<
     })
   }
 
-  const appNavigationEl = document.querySelector("#app-navigation")
-  const { isMobile } = useBreakpoints()
-
   return (
     <>
       <S.StepsRoot>
@@ -201,22 +196,10 @@ const IsDistributionProposalStep: React.FC<
           )}
         </Collapse>
       </S.StepsRoot>
-      {appNavigationEl ? (
-        createPortal(
-          <S.StepsBottomNavigation
-            customNextCb={handleNextStep}
-            nextLabel={"Create DAO"}
-          />,
-          appNavigationEl
-        )
-      ) : !isMobile ? (
-        <S.StepsBottomNavigation
-          customNextCb={handleNextStep}
-          nextLabel={"Create DAO"}
-        />
-      ) : (
-        <></>
-      )}
+      <S.FormStepsNavigationWrp
+        customNextCb={handleNextStep}
+        nextLabel="Create DAO"
+      />
     </>
   )
 }

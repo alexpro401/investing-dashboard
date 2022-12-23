@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import RouteTabs from "components/RouteTabs"
 import HeaderTabs from "components/Header/Tabs"
 import { respondTo } from "theme"

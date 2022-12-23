@@ -1,10 +1,10 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 
-import { StepsNavigation } from "common"
 import StepsControllerContext from "context/StepsControllerContext"
 import { motion } from "framer-motion"
 import { opacityVariants } from "motion/variants"
 import { respondTo } from "theme"
+import { SideStepsNavigationBar } from "common"
 
 export const Container = styled(StepsControllerContext)`
   display: flex;
@@ -21,18 +21,14 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   transition: { duration: 0.2 },
   variants: opacityVariants,
 }))`
-  overflow: hidden auto;
   position: relative;
   display: flex;
   flex-direction: column;
+  width: 100%;
   height: 100%;
-  max-width: 775px;
+  max-width: 767px;
   margin: 0 auto;
   align-self: center;
-
-  ${respondTo("sm")} {
-    padding-bottom: 40px;
-  }
 `
 
 export const StepsRoot = styled.div`
@@ -44,12 +40,23 @@ export const StepsRoot = styled.div`
   flex: 1;
 `
 
-export const StepsBottomNavigation = styled(StepsNavigation)`
-  margin-top: auto;
-`
-
 export const StepsWrapper = styled.div`
   display: flex;
+  overflow: hidden auto;
   flex: 1;
   height: 100%;
+
+  ${respondTo("sm")} {
+    padding-bottom: 40px;
+    padding-right: 260px;
+  }
+`
+
+export const SideStepsNavigationBarWrp = styled(SideStepsNavigationBar)`
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  z-index: 1;
 `

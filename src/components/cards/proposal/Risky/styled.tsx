@@ -1,5 +1,5 @@
 import { FC, ReactNode, useMemo } from "react"
-import styled, { css } from "styled-components"
+import styled, { css } from "styled-components/macro"
 import { AnimatePresence, motion } from "framer-motion"
 import ReactTooltip from "react-tooltip"
 
