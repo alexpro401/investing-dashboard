@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { GradientBorder, Flex } from "theme"
 
 export const Overlay = styled(Flex)`

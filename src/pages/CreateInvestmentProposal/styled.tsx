@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { Flex } from "theme"
 
 export const Container = styled(Flex)`

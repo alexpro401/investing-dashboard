@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 
 import { Text, Flex } from "theme"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { motion } from "framer-motion"
 
 export const Container = styled(motion.div)`

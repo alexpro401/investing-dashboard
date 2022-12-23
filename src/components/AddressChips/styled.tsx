@@ -1,5 +1,5 @@
 import { Flex, BaseButton, Text, GradientBorder } from "theme"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 
 export const Label = styled.div`
   padding: 20px 0 0 15px;

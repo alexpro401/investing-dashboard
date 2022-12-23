@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { motion } from "framer-motion"
 import theme, { Flex, Text, GradientBorder, BasicCard } from "theme"
 import { FC, ReactNode, useState } from "react"

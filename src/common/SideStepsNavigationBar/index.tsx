@@ -1,8 +1,9 @@
-import { FC, HTMLAttributes, useCallback } from "react"
+import { FC, HTMLAttributes, useCallback, useContext, useMemo } from "react"
 import { Icon } from "common"
 
 import * as S from "./styled"
 import { ICON_NAMES } from "constants/icon-names"
+import { stepsControllerContext } from "../../context/StepsControllerContext"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   title?: string
@@ -12,10 +13,17 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 
 const SideStepsNavigationBar: FC<Props> = ({
   title,
-  steps,
+  steps: overidenSteps,
   currentStep,
   ...rest
 }) => {
+  const { steps: fallbackSteps } = useContext(stepsControllerContext)
+
+  const steps = useMemo(
+    () => overidenSteps || fallbackSteps,
+    [fallbackSteps, overidenSteps]
+  )
+
   const isStepPassed = useCallback(
     (step: number) => {
       return (

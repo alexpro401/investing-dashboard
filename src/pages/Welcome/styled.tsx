@@ -1,5 +1,5 @@
 import { Flex, respondTo } from "theme"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 
 import bottomAsset from "assets/background/welcome-bottom.svg"
 import rightAsset from "assets/background/welcome-right.svg"

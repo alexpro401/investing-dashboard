@@ -2,7 +2,7 @@
 
 // import { motion } from "framer-motion"
 import { IPool } from "interfaces"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { Flex, respondTo } from "theme"
 
 const monthes = [

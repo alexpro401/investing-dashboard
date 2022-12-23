@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { Collapse } from "common"
 
 export const Root = styled.div<{

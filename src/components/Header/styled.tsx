@@ -1,5 +1,5 @@
 import { Flex, BaseButton, respondTo } from "theme"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 
 export const Container = styled(Flex)`
   touch-action: none;

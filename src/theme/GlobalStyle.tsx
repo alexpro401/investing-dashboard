@@ -1,5 +1,5 @@
-import { createGlobalStyle, css } from "styled-components"
-import styled from "styled-components"
+import { createGlobalStyle, css } from "styled-components/macro"
+import styled from "styled-components/macro"
 import { respondTo } from "theme"
 
 import "swiper/swiper-bundle.min.css"

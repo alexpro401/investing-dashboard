@@ -1,5 +1,5 @@
 import { Flex } from "theme"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 
 export const Container = styled(Flex)`
   justify-content: flex-start;

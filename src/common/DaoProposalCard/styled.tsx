@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import ExternalLink from "components/ExternalLink"
 import { AppButton } from "common"
 import { respondTo } from "theme"

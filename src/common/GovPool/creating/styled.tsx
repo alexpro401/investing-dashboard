@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 
 import { Icon, StepsNavigation, Card, AppButton } from "common"
 import StepsControllerContext from "context/StepsControllerContext"
@@ -10,6 +10,7 @@ import {
 } from "fields/styled"
 import ExternalLink from "components/ExternalLink"
 import { respondTo } from "theme"
+import FormStepsNavigation from "common/FormStepsNavigation"
 
 export const Container = styled(StepsControllerContext)`
   display: flex;
@@ -73,6 +74,8 @@ export const ConditionalParameters = styled.div`
 export const StepsBottomNavigation = styled(StepsNavigation)`
   margin-top: auto;
 `
+
+export const FormStepsNavigationWrp = styled(FormStepsNavigation)``
 
 export const OverflowedCard = styled(Card)`
   overflow: hidden;

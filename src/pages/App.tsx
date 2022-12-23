@@ -1,6 +1,6 @@
 import Div100vh from "react-div-100vh"
 import theme from "theme"
-import { ThemeProvider } from "styled-components"
+import { ThemeProvider } from "styled-components/macro"
 import { ModalProvider } from "styled-react-modal"
 import UnsupportedChain from "components/UnsupportedChain"
 

@@ -2,7 +2,7 @@ import { useState, useRef, ReactNode } from "react"
 
 import { useClickAway } from "react-use"
 import { motion } from "framer-motion"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { Flex, respondTo } from "theme"
 
 export const floatingBodyVariants = {

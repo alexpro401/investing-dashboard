@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 
 export const DescriptionCardWrapper = styled.div<{ isDefault?: boolean }>`
   padding: 27px 11px 16px 13px;

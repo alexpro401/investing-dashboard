@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { map } from "lodash"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 
 import { Flex, Text } from "theme"
 import Icon from "components/Icon"

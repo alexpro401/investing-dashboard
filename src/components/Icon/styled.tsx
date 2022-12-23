@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 
 export const Icon = styled.img<{ size?: number; m: string }>`
   height: ${(props) => (props.size ? props.size : 28)}px;

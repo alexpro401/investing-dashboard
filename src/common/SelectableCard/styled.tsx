@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components"
+import styled, { css } from "styled-components/macro"
 import { Card, CardDescription, CardHead } from "common"
 
 export const Root = styled(Card)<{
