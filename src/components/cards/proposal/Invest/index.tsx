@@ -33,7 +33,7 @@ import Skeleton from "components/Skeleton"
 import ReadMore from "components/ReadMore"
 import TokenIcon from "components/TokenIcon"
 import IconButton from "components/IconButton"
-import { Actions } from "components/cards/proposal/styled"
+import { Actions } from "components/cards/proposal/_shared"
 
 import S from "./styled"
 import BodyTrader from "./BodyTrader"
