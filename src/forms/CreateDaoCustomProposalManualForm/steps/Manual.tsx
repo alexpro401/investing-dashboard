@@ -29,6 +29,7 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 import theme from "theme"
 import { ICON_NAMES } from "constants/icon-names"
 import { isAddressValidator, required } from "utils/validators"
+import { useBreakpoints } from "hooks"
 import {
   useGovPoolSettingsIdToExecutors,
   useGovPoolExecutorToSettings,
@@ -48,6 +49,7 @@ const ManualStep: React.FC = () => {
     daoAddress,
     settingsId ? settingsId.toString() : undefined
   )
+  const { isMobile } = useBreakpoints()
 
   const executorsShorten = useMemo(
     () => (executors ? executors.map((el) => el.executorAddress) : []),
@@ -278,14 +280,13 @@ const ManualStep: React.FC = () => {
           onBlur={() => touchField("executorTransactionData")}
         />
       </CollapsedCard>
-      {appNavigationEl ? (
+      {isMobile &&
+        appNavigationEl &&
         createPortal(
           <StepsNavigation customNextCb={handleNextStep} />,
           appNavigationEl
-        )
-      ) : (
-        <></>
-      )}
+        )}
+      {!isMobile && <StepsNavigation customNextCb={handleNextStep} />}
     </S.StepsRoot>
   )
 }

@@ -9,7 +9,6 @@ import { AnimatePresence } from "framer-motion"
 import { useDispatch } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 
-import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import {
   useGovPoolCreateProposalChangeDaoSettings,
@@ -20,7 +19,7 @@ import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposa
 import { hideTapBar, showTabBar } from "state/application/actions"
 import { TitlesStep } from "common"
 
-import * as S from "./styled"
+import * as S from "common/FormSteps/styled"
 
 enum STEPS {
   daoSettings = "daoSettings",
@@ -124,14 +123,14 @@ const CreateProposalChangeDAOSettingsForm: React.FC = () => {
   }, [currentStep, handleCreateChangeDaoSettingsProposal])
 
   return (
-    <StepsControllerContext
+    <S.StepsFormContainer
       totalStepsAmount={totalStepsCount}
       currentStepNumber={currentStepNumber}
       prevCb={handlePrevStep}
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        <S.ContainerWrp>
+        <S.StepsWrapper>
           {currentStep === STEPS.daoSettings && (
             <S.StepsContainer>
               <TitlesStep isCreatingProposal />
@@ -142,20 +141,19 @@ const CreateProposalChangeDAOSettingsForm: React.FC = () => {
               <CreateDaoProposalGeneralForm />
             </S.StepsContainer>
           )}
-          {!isMobile ? (
+          {!isMobile && (
             <S.SideStepsNavigationBarWrp
+              title={"Create proposal"}
               steps={Object.values(STEPS).map((step) => ({
                 number: Object.values(STEPS).indexOf(step),
                 title: STEPS_TITLES[step],
               }))}
               currentStep={Object.values(STEPS).indexOf(currentStep)}
             />
-          ) : (
-            <></>
           )}
-        </S.ContainerWrp>
+        </S.StepsWrapper>
       </AnimatePresence>
-    </StepsControllerContext>
+    </S.StepsFormContainer>
   )
 }
 

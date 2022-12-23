@@ -11,18 +11,23 @@ import { AnimatePresence } from "framer-motion"
 import { parseUnits } from "@ethersproject/units"
 
 import { VotingSettings } from "./steps"
-import StepsControllerContext from "context/StepsControllerContext"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { ChangeVotingSettingsContext } from "context/govPool/proposals/validators/ChangeVotingSettingsContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
+import { useBreakpoints } from "hooks"
 import { useGovPoolCreateValidatorInternalProposal } from "hooks/dao"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
-import * as S from "./styled"
+import * as S from "common/FormSteps/styled"
 
 enum STEPS {
   votingSettings = "votingSettings",
   basicInfo = "basicInfo",
+}
+
+const STEPS_TITLES: Record<STEPS, string> = {
+  [STEPS.votingSettings]: "Voting settings",
+  [STEPS.basicInfo]: "Basic Info",
 }
 
 const CreateGovProposalValidatorChangeVotingSettingsForm: React.FC = () => {
@@ -33,6 +38,7 @@ const CreateGovProposalValidatorChangeVotingSettingsForm: React.FC = () => {
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
   )
+  const { isMobile } = useBreakpoints()
   const { duration, quorum, initialForm } = useContext(
     ChangeVotingSettingsContext
   )
@@ -122,25 +128,36 @@ const CreateGovProposalValidatorChangeVotingSettingsForm: React.FC = () => {
   }, [currentStep, handleCreateProposal])
 
   return (
-    <StepsControllerContext
+    <S.StepsFormContainer
       totalStepsAmount={totalStepsCount}
       currentStepNumber={currentStepNumber}
       prevCb={handlePrevStep}
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        {currentStep === STEPS.votingSettings && (
-          <S.StepsContainer>
-            <VotingSettings />
-          </S.StepsContainer>
-        )}
-        {currentStep === STEPS.basicInfo && (
-          <S.StepsContainer>
-            <CreateDaoProposalGeneralForm />
-          </S.StepsContainer>
-        )}
+        <S.StepsWrapper>
+          {currentStep === STEPS.votingSettings && (
+            <S.StepsContainer>
+              <VotingSettings />
+            </S.StepsContainer>
+          )}
+          {currentStep === STEPS.basicInfo && (
+            <S.StepsContainer>
+              <CreateDaoProposalGeneralForm />
+            </S.StepsContainer>
+          )}
+          {!isMobile && (
+            <S.SideStepsNavigationBarWrp
+              steps={Object.values(STEPS).map((step) => ({
+                number: Object.values(STEPS).indexOf(step),
+                title: STEPS_TITLES[step],
+              }))}
+              currentStep={Object.values(STEPS).indexOf(currentStep)}
+            />
+          )}
+        </S.StepsWrapper>
       </AnimatePresence>
-    </StepsControllerContext>
+    </S.StepsFormContainer>
   )
 }
 

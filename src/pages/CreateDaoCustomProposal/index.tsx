@@ -13,13 +13,14 @@ import {
 } from "common"
 import Header from "components/Header/Layout"
 import RadioButton from "components/RadioButton"
-import StepsControllerContext from "context/StepsControllerContext"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
+import { useBreakpoints } from "hooks"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
+import * as SForms from "common/FormSteps/styled"
 
 enum ECustomProposalTypes {
   walletConnect = "walletConnect",
@@ -39,8 +40,9 @@ const CreateDaoCustomProposal: React.FC = () => {
   const { daoAddress, executorAddress } = useParams<
     "daoAddress" | "executorAddress"
   >()
+  const { isMobile } = useBreakpoints()
   const [selectedCard, setSelectedCard] = useState<ECustomProposalTypes>(
-    ECustomProposalTypes.walletConnect
+    ECustomProposalTypes.abi
   )
   const [appNavigationEl, setAppNavigationEl] = useState<Element | null>(null)
 
@@ -114,7 +116,7 @@ const CreateDaoCustomProposal: React.FC = () => {
   )
 
   return (
-    <StepsControllerContext
+    <SForms.StepsFormContainer
       totalStepsAmount={3}
       currentStepNumber={1}
       prevCb={handlePrevStep}
@@ -138,53 +140,78 @@ const CreateDaoCustomProposal: React.FC = () => {
           </Flex>
         }
       >
-        <S.PageHolder>
-          <S.PageContent>
-            <Card>
-              <CardHead
-                nodeLeft={<CreateDaoCardStepNumber number={1} />}
-                title="Select creation method"
-              />
-              <CardDescription>
-                <p>
-                  This proposl type is to create a proposal for autonomous
-                  interaction with any DeFi protocol. Connect the treasury
-                  wallet with the needed dApp and initiate the transaction to be
-                  finalized once the proposal passes.
-                </p>
-                <p>
-                  E.g., you can create a proposal to buy any asset on 1inch to
-                  diversify or provide liquidity to a pair on Uniswap to
-                  generate extra profit for your DAO.
-                </p>
-              </CardDescription>
-            </Card>
-            {customProposalSelectTypes.map(({ type, title, description }) => (
-              <SelectableCard
-                key={type}
-                value={selectedCard}
-                setValue={setSelectedCard}
-                valueToSet={type}
-                nodeLeft={
-                  <RadioButton
-                    selected={selectedCard}
-                    value={type}
-                    onChange={() => {}}
+        <SForms.StepsWrapper>
+          <SForms.StepsContainer>
+            <S.PageHolder>
+              <S.PageContent>
+                <Card>
+                  <CardHead
+                    nodeLeft={<CreateDaoCardStepNumber number={1} />}
+                    title="Select creation method"
                   />
-                }
-                title={title}
-                description={description}
-              />
-            ))}
-          </S.PageContent>
-        </S.PageHolder>
-        {appNavigationEl ? (
-          createPortal(<StepsNavigation />, appNavigationEl)
-        ) : (
-          <></>
-        )}
+                  <CardDescription>
+                    <p>
+                      This proposl type is to create a proposal for autonomous
+                      interaction with any DeFi protocol. Connect the treasury
+                      wallet with the needed dApp and initiate the transaction
+                      to be finalized once the proposal passes.
+                    </p>
+                    <p>
+                      E.g., you can create a proposal to buy any asset on 1inch
+                      to diversify or provide liquidity to a pair on Uniswap to
+                      generate extra profit for your DAO.
+                    </p>
+                  </CardDescription>
+                </Card>
+                {customProposalSelectTypes.map(
+                  ({ type, title, description }) => (
+                    <SelectableCard
+                      key={type}
+                      value={selectedCard}
+                      setValue={setSelectedCard}
+                      valueToSet={type}
+                      nodeLeft={
+                        <RadioButton
+                          selected={selectedCard}
+                          value={type}
+                          onChange={() => {}}
+                        />
+                      }
+                      title={title}
+                      description={description}
+                    />
+                  )
+                )}
+                {isMobile &&
+                  appNavigationEl &&
+                  createPortal(<StepsNavigation />, appNavigationEl)}
+                {!isMobile && <StepsNavigation />}
+              </S.PageContent>
+            </S.PageHolder>
+          </SForms.StepsContainer>
+          {!isMobile && (
+            <SForms.SideStepsNavigationBarWrp
+              title={"Create proposal"}
+              steps={[
+                {
+                  number: 1,
+                  title: "Select creation method",
+                },
+                {
+                  number: 2,
+                  title: "Custom voting params",
+                },
+                {
+                  number: 3,
+                  title: "Basic info",
+                },
+              ]}
+              currentStep={1}
+            />
+          )}
+        </SForms.StepsWrapper>
       </WithGovPoolAddressValidation>
-    </StepsControllerContext>
+    </SForms.StepsFormContainer>
   )
 }
 

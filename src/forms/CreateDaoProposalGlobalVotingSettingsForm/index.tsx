@@ -9,7 +9,6 @@ import { useParams, useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { AnimatePresence } from "framer-motion"
 
-import StepsControllerContext from "context/StepsControllerContext"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { DefaultProposalStep } from "common"
@@ -18,7 +17,7 @@ import { useGovPoolCreateProposalChangeSettings } from "hooks/dao/proposals"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
-import * as S from "./styled"
+import * as S from "common/FormSteps/styled"
 import { useBreakpoints } from "../../hooks"
 
 enum STEPS {
@@ -144,14 +143,14 @@ const CreateDaoProposalGlobalVotingSettings: React.FC = () => {
   const { isMobile } = useBreakpoints()
 
   return (
-    <StepsControllerContext
+    <S.StepsFormContainer
       totalStepsAmount={totalStepsCount}
       currentStepNumber={currentStepNumber}
       prevCb={handlePrevStep}
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        <S.ContainerWrp>
+        <S.StepsWrapper>
           {currentStep === STEPS.globalVotingSettings && (
             <S.StepsContainer>
               <DefaultProposalStep isCreatingProposal />
@@ -162,20 +161,21 @@ const CreateDaoProposalGlobalVotingSettings: React.FC = () => {
               <CreateDaoProposalGeneralForm />
             </S.StepsContainer>
           )}
-          {!isMobile ? (
+          {!isMobile && (
             <S.SideStepsNavigationBarWrp
-              steps={Object.values(STEPS).map((step) => ({
-                number: Object.values(STEPS).indexOf(step),
-                title: STEPS_TITLES[step],
-              }))}
-              currentStep={Object.values(STEPS).indexOf(currentStep)}
+              title={"Create proposal"}
+              steps={[{ number: 0, title: "Select proposal type" }].concat(
+                Object.values(STEPS).map((step) => ({
+                  number: Object.values(STEPS).indexOf(step) + 1,
+                  title: STEPS_TITLES[step],
+                }))
+              )}
+              currentStep={Object.values(STEPS).indexOf(currentStep) + 1}
             />
-          ) : (
-            <></>
           )}
-        </S.ContainerWrp>
+        </S.StepsWrapper>
       </AnimatePresence>
-    </StepsControllerContext>
+    </S.StepsFormContainer>
   )
 }
 

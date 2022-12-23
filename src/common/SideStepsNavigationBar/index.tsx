@@ -5,11 +5,17 @@ import * as S from "./styled"
 import { ICON_NAMES } from "constants/icon-names"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
+  title?: string
   steps: { title: string; number: number }[]
   currentStep: number
 }
 
-const SideStepsNavigationBar: FC<Props> = ({ steps, currentStep, ...rest }) => {
+const SideStepsNavigationBar: FC<Props> = ({
+  title,
+  steps,
+  currentStep,
+  ...rest
+}) => {
   const isStepPassed = useCallback(
     (step: number) => {
       return (
@@ -26,6 +32,7 @@ const SideStepsNavigationBar: FC<Props> = ({ steps, currentStep, ...rest }) => {
 
   return (
     <S.SideStepsNavigationBar {...rest}>
+      {title && <S.SideStepsTitle>{title}</S.SideStepsTitle>}
       {steps.map((el, idx) => (
         <S.SideStepsNavigationBarItem
           key={idx}
