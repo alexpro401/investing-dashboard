@@ -9,16 +9,15 @@ import {
 import { BigNumber } from "@ethersproject/bignumber"
 import { debounce } from "lodash"
 
-import { Flex } from "theme"
+import theme, { Flex } from "theme"
 import CreateInsuranceAccidentPoolCard from "./CreateInsuranceAccidentPoolCard"
 import CreateInsuranceAccidentPoolsSortButton from "./CreateInsuranceAccidentPoolsSortButton"
 import { CreateInsuranceAccidentPoolsStyled as CIAPools } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import CreateInsuranceAccidentNoInvestments from "./CreateInsuranceAccidentNoInvestments"
-import { useWindowSize } from "react-use"
 import PoolStatisticCard from "components/cards/PoolStatistic"
-import theme from "../../../theme"
+import { useBreakpoints } from "hooks"
 
 type FilterTVL = "ask" | "desc"
 
@@ -99,8 +98,7 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
     }, 100)
   }, [loading, payload])
 
-  const { width: windowWidth } = useWindowSize()
-  const isMobile = useMemo(() => windowWidth < 1194, [windowWidth])
+  const { isDesktop } = useBreakpoints()
 
   const list = useMemo(() => {
     if (loading || (!loading && payload.length === 0)) {
@@ -121,7 +119,7 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
       return payload
         .sort((a, b) => (a.creationTime > b.creationTime ? -1 : 1))
         .map((p) =>
-          isMobile ? (
+          !isDesktop ? (
             <CreateInsuranceAccidentPoolCard
               key={p.id}
               pool={p}
@@ -134,11 +132,7 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
               onClick={() => onTogglePool(p)}
               active={pool.get === p.id}
             >
-              <PoolStatisticCard
-                data={p}
-                isMobile={isMobile}
-                stroke={theme.statusColors.error}
-              />
+              <PoolStatisticCard data={p} stroke={theme.statusColors.error} />
             </CIAPools.Card>
           )
         )
@@ -147,7 +141,7 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
     return payload
       .sort((a, b) => sortByTVLCb(a, b, filterTVL))
       .map((p) =>
-        isMobile ? (
+        !isDesktop ? (
           <CreateInsuranceAccidentPoolCard
             key={p.id}
             pool={p}
@@ -160,15 +154,11 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
             onClick={() => onTogglePool(p)}
             active={pool.get === p.id}
           >
-            <PoolStatisticCard
-              data={p}
-              isMobile={isMobile}
-              stroke={theme.statusColors.error}
-            />
+            <PoolStatisticCard data={p} stroke={theme.statusColors.error} />
           </CIAPools.Card>
         )
       )
-  }, [loading, pool, payload, onTogglePool, filterTVL, isMobile])
+  }, [loading, pool, payload, onTogglePool, filterTVL, isDesktop])
 
   return (
     <>

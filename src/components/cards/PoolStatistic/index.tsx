@@ -21,7 +21,8 @@ import { CHART_TYPE, TIMEFRAME, TIMEFRAME_FROM_DATE } from "constants/chart"
 import theme from "theme"
 import { usePoolPriceHistory } from "hooks/usePool"
 import Chart from "components/Chart"
-import { parseDuration, parseSeconds } from "../../../utils/time"
+import { parseDuration, parseSeconds } from "utils/time"
+import { useBreakpoints } from "hooks"
 
 const HeadNodesSkeleton: FC = () => (
   <Flex ai="center" jc="flex-start">
@@ -37,7 +38,7 @@ interface Props {
   data: IPoolQuery
   index?: number
   children?: ReactNode
-  isMobile: boolean
+  isMobile?: boolean
   hideChart?: boolean
   stroke?: string
 }
@@ -46,10 +47,10 @@ const PoolStatisticCard: FC<Props> = ({
   data,
   index = 0,
   children,
-  isMobile,
   hideChart = false,
   stroke = theme.statusColors.success,
 }) => {
+  const { isMobile, isTablet, isDesktop } = useBreakpoints()
   const [{ poolMetadata: metadata }] = usePoolMetadata(
     data.id,
     data?.descriptionURL
@@ -135,6 +136,40 @@ const PoolStatisticCard: FC<Props> = ({
     [TVL, APY, PNL, depositors]
   )
 
+  const _Chart = useMemo(
+    () =>
+      hideChart ? null : (
+        <div
+          style={{
+            height: isTablet ? "39px" : "35px",
+            width: isTablet ? "180px" : "118px",
+            margin: "auto 0 auto 45px",
+            flex: "1 0 118px",
+          }}
+        >
+          <Chart
+            type={CHART_TYPE.area}
+            data={history}
+            height={isTablet ? "39px" : "35px"}
+            chart={{
+              stackOffset: "silhouette",
+            }}
+            chartItems={[
+              {
+                type: "linear",
+                dataKey: "price",
+                legendType: "triangle",
+                isAnimationActive: true,
+                stroke,
+              },
+            ]}
+            loading={fetchingHistory}
+          />
+        </div>
+      ),
+    [history, fetchingHistory, stroke, hideChart, isTablet]
+  )
+
   const leftNode = useMemo(() => {
     if (isNil(data) || isNil(metadata)) {
       return <HeadNodesSkeleton />
@@ -143,23 +178,23 @@ const PoolStatisticCard: FC<Props> = ({
     return (
       <Flex ai="center" jc="flex-start">
         <Icon
-          size={isMobile ? 38 : 100}
+          size={!isDesktop ? 38 : 100}
           m="0 8px 0 0"
           source={metadata?.assets[metadata?.assets.length - 1]}
           address={data.id}
         />
         <div>
-          {!isMobile && (
+          {!isDesktop && (
             <S.Description align="left">
               {format(new Date(data.creationTime * 1000), DATE_FORMAT)}
             </S.Description>
           )}
           <S.Title>{data.ticker}</S.Title>
-          {isMobile && <S.Description align="left">{data.name}</S.Description>}
+          {isDesktop && <S.Description align="left">{data.name}</S.Description>}
         </div>
       </Flex>
     )
-  }, [data, metadata, isMobile])
+  }, [data, metadata, isDesktop])
 
   const rightNode = useMemo(() => {
     if (isNil(data) || isNil(baseToken) || isNil(pnl) || isNil(priceLP)) {
@@ -167,62 +202,39 @@ const PoolStatisticCard: FC<Props> = ({
     }
 
     return (
-      <Flex ai="center" jc="flex-end">
-        {isMobile && (
-          <div>
-            <Flex ai="center" jc="flex-end" gap="4">
-              <Text fz={10} lh="12px" color={getAmountColor(pnl)}>
-                {Number(pnl) > 0 ? "+" : null}
-                {pnl}%
-              </Text>
-              <S.Title>{formatNumber(priceLP, 2)}</S.Title>
-            </Flex>
-            <S.Description>{baseToken.symbol}</S.Description>
-          </div>
-        )}
-        <TokenIcon address={data.baseToken} size={38} m="0 0 0 8px" />
+      <Flex ai={"center"} jc={"space-between"} gap={"88"}>
+        {isTablet && _Chart}
+        <Flex ai="center" jc="flex-end">
+          {!isDesktop && (
+            <div>
+              <Flex ai="center" jc="flex-end" gap="4">
+                <Text fz={10} lh="12px" color={getAmountColor(pnl)}>
+                  {Number(pnl) > 0 ? "+" : null}
+                  {pnl}%
+                </Text>
+                <S.Title>{formatNumber(priceLP, 2)}</S.Title>
+              </Flex>
+              <S.Description>{baseToken.symbol}</S.Description>
+            </div>
+          )}
+          <TokenIcon address={data.baseToken} size={38} m="0 0 0 8px" />
+        </Flex>
       </Flex>
     )
-  }, [data, baseToken, priceLP, pnl, isMobile])
+  }, [data, baseToken, priceLP, pnl, isDesktop, isTablet, _Chart])
 
   const _children = useMemo(() => {
-    if (!isMobile && !hideChart && !isNil(data)) {
+    if (isDesktop && !isNil(data)) {
       return (
         <>
-          <div
-            style={{
-              height: "35px",
-              width: "118px",
-              margin: "auto 0 auto 45px",
-              flex: "1 0 118px",
-            }}
-          >
-            <Chart
-              type={CHART_TYPE.area}
-              data={history}
-              height={"35px"}
-              chart={{
-                stackOffset: "silhouette",
-              }}
-              chartItems={[
-                {
-                  type: "linear",
-                  dataKey: "price",
-                  legendType: "triangle",
-                  isAnimationActive: true,
-                  stroke,
-                },
-              ]}
-              loading={fetchingHistory}
-            />
-          </div>
+          {_Chart}
           {children}
         </>
       )
     }
 
     return children
-  }, [children, hideChart, isMobile, history, fetchingHistory, stroke])
+  }, [children, isDesktop, _Chart])
 
   return (
     <S.Animation index={index}>

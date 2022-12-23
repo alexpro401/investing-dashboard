@@ -1,5 +1,5 @@
 import { Flex, Center, To } from "theme"
-import React, { useEffect, useMemo } from "react"
+import React, { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { CubeSpinner } from "react-spinners-kit"
 import { Routes, Route } from "react-router-dom"
@@ -27,9 +27,9 @@ import {
 } from "./styled"
 import { AppDispatch } from "state"
 import { setActivePoolType } from "state/pools/actions"
-import { useWindowSize } from "react-use"
 import { ICON_NAMES } from "constants/icon-names"
 import { Icon } from "common"
+import { useBreakpoints } from "hooks"
 
 interface Props {
   poolType: PoolType
@@ -65,8 +65,7 @@ const List: React.FC<Props> = ({ poolType }) => {
     return () => clearAllBodyScrollLocks()
   }, [investScrollRef, loading])
 
-  const { width: windowWidth } = useWindowSize()
-  const isMobile = useMemo(() => windowWidth < 1194, [windowWidth])
+  const { isDesktop } = useBreakpoints()
 
   return loading && !pools[poolType].length ? (
     <Center>
@@ -84,8 +83,8 @@ const List: React.FC<Props> = ({ poolType }) => {
         {pools[poolType].map((pool, index) => (
           <To key={pool.id} to={`/pool/profile/${pool.id}`}>
             <Flex p="16px 0 0" full>
-              <PoolStatisticCard data={pool} index={index} isMobile={isMobile}>
-                {!isMobile ? (
+              <PoolStatisticCard data={pool} index={index}>
+                {isDesktop ? (
                   <CardIconWrp>
                     <Icon name={ICON_NAMES.angleRight} color={"#6781BD"} />
                   </CardIconWrp>

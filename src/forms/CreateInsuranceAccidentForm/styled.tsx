@@ -1,5 +1,5 @@
 import styled from "styled-components/macro"
-import { Flex } from "theme"
+import { Flex, respondTo } from "theme"
 import { motion } from "framer-motion"
 import { opacityVariants } from "motion/variants"
 import StepsControllerContext from "context/StepsControllerContext"
@@ -34,7 +34,7 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   margin: 0 auto;
   align-self: center;
 
-  @media screen and (min-width: 1194px) {
+  ${respondTo("lg")} {
     padding-bottom: 40px;
   }
 `
@@ -47,7 +47,7 @@ export const StepsRoot = styled.div`
   padding: 14px 16px 20px;
   flex: 1;
 
-  @media screen and (min-width: 1194px) {
+  ${respondTo("lg")} {
     padding: 20px 0;
   }
 `
@@ -118,7 +118,7 @@ export const CreateInsuranceAccidentPoolsStyled = {
       margin-bottom: 16px;
     }
 
-    @media screen and (min-width: 1194px) {
+    ${respondTo("lg")} {
       background: transparent;
       border-radius: 60px 24px 24px 60px;
       border: 1px solid
