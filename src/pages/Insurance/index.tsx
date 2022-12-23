@@ -9,6 +9,7 @@ import { Card, CardDescription, CardHead, DaoProposalsList } from "common"
 import Management from "pages/Management"
 
 import * as S from "./styled"
+import { useBreakpoints } from "hooks"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -17,6 +18,8 @@ const poolsClient = createClient({
 const Insurance = () => {
   const [{ checkingInvestmentStatus }, { onInsuranceCreateNavigate }] =
     useInsurancePage()
+
+  const { isMobile } = useBreakpoints()
 
   const daoPool = String(
     process.env.REACT_APP_DEXE_DAO_ADDRESS
@@ -27,28 +30,34 @@ const Insurance = () => {
       <Header>Insurance</Header>
       <S.Container>
         <S.Content>
-          <S.Indents top side>
-            <Card>
-              <CardHead title="Headers" />
-              <CardDescription>
-                <p>
-                  Текст защити свои инвестиции. чтобы создавать пропозалы вам
-                  необходимо иметь страховку минимум 100 дикси
-                </p>
-              </CardDescription>
-              <S.AppButtonFull
-                type="button"
-                size="small"
-                color="secondary"
-                onClick={onInsuranceCreateNavigate}
-                text="Создать новый пропозал"
-                disabled={checkingInvestmentStatus}
-              />
-            </Card>
-          </S.Indents>
-          <S.Indents top side>
-            <Management />
-          </S.Indents>
+          <Flex
+            full
+            dir={isMobile ? "column" : "row"}
+            ai={isMobile ? "center" : "flex-start"}
+          >
+            <S.Indents top side>
+              <Card>
+                <CardHead title="Headers" />
+                <CardDescription>
+                  <p>
+                    Текст защити свои инвестиции. чтобы создавать пропозалы вам
+                    необходимо иметь страховку минимум 100 дикси
+                  </p>
+                </CardDescription>
+                <S.AppButtonFull
+                  type="button"
+                  size="small"
+                  color="secondary"
+                  onClick={onInsuranceCreateNavigate}
+                  text="Создать новый пропозал"
+                  disabled={checkingInvestmentStatus}
+                />
+              </Card>
+            </S.Indents>
+            <S.Indents top side>
+              <Management />
+            </S.Indents>
+          </Flex>
           <S.Indents top side={false}>
             <Flex full ai="center" jc="space-between" p={"0 16px"}>
               <Text fz={16} fw={600} color="#E4F2FF">
