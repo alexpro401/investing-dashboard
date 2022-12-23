@@ -1,5 +1,5 @@
-import { device } from "theme"
-import styled from "styled-components"
+import { respondTo } from "theme"
+import styled from "styled-components/macro"
 
 export const Img = styled.img<{ size: number }>`
   display: block;
@@ -9,7 +9,7 @@ export const Img = styled.img<{ size: number }>`
   min-width: ${(props) => `${props.size}px`};
   min-height: ${(props) => `${props.size}px`};
   border-radius: 150px;
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 `
 
 export const Overlay = styled.div<{ size: number }>`
@@ -33,10 +33,7 @@ export const HoverCamera = styled.div`
   width: 100%;
   border-radius: 150px;
   transition: all 0.4s ease-in-out;
-
-  @media only screen and (${device.xs}) {
-    opacity: 1;
-  }
+  opacity: 1;
 `
 
 export const FileUpload = styled.input`
@@ -59,12 +56,12 @@ export const CameraIcon = styled.img`
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 10px;
+  bottom: 25px;
   width: 18px;
   top: 0;
 
-  @media only screen and (${device.xs}) {
-    bottom: 25px;
+  ${respondTo("xs")} {
+    bottom: 10px;
   }
 `
 

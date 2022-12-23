@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { InputField } from "fields"
 import { Icon } from "common"
 

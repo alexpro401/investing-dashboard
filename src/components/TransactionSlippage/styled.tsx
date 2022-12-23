@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { GradientBorder, Text, Flex } from "theme"
 // import { motion } from "framer-motion"
 

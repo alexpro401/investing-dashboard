@@ -2,7 +2,7 @@ import { Icon } from "common"
 import { NavLink } from "react-router-dom"
 
 import theme from "theme"
-import styled, { css } from "styled-components"
+import styled, { css } from "styled-components/macro"
 import { COLORS, SCHEMES, SIZES } from "./index"
 
 export const defaultButtonStyles = (

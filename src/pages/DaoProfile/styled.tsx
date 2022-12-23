@@ -1,7 +1,10 @@
 import { motion } from "framer-motion"
-import styled from "styled-components"
+import styled from "styled-components/macro"
+import { Link } from "react-router-dom"
+
 import theme, { Flex, Text } from "theme"
 import { AppButton } from "common"
+import RouteTabs from "components/RouteTabs"
 
 const variants = {
   hidden: { opacity: 0 },
@@ -146,11 +149,18 @@ export const FlexLink = styled(Flex).attrs(() => ({
   rel: "noopener noreferrer",
 }))`
   text-decoration: none;
+  color: inherit;
 `
 
-export const AppLink = styled(AppButton)`
+export const AppLink = styled(Link).attrs(() => ({
+  target: "_blank",
+  rel: "noopener noreferrer",
+}))`
   border-radius: 0;
   font-size: 13px;
+  font-weight: 700;
+  color: ${theme.statusColors.info};
+  text-decoration: none;
 `
 export const AppButtonFull = styled(AppButton)`
   width: 100%;
@@ -207,4 +217,37 @@ export const TreasuryEmptyText = styled.span`
   color: ${theme.textColors.secondary};
   font-size: 13px;
   font-weight: 400;
+`
+
+export const DelegationTabs = styled(Flex).attrs(() => ({
+  ai: "center",
+  jc: "center",
+}))`
+  padding: 2px;
+  background: #141926;
+  border-radius: 20px;
+  width: 100%;
+`
+
+const DelegationTabVariants = {
+  visible: { backgroundColor: "#20283A", color: "#E4F2FF" },
+  hidden: { backgroundColor: "rgba(0,0,0,0)", color: "#B1C7FC" },
+}
+
+export const DelegationTab = styled(Text).attrs(() => ({
+  block: true,
+  fw: 500,
+  fz: "13",
+  lh: "15px",
+  variants: DelegationTabVariants,
+  initial: DelegationTabVariants.hidden,
+  transition: { duration: 0.2 },
+}))<{ full?: boolean }>`
+  ${(props) => (props.full ? "width: calc(100%);" : "width: calc(50%);")}
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  cursor: pointer;
 `

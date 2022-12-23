@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 
 export const Container = styled.a<{ color: string; fw?: string; fz?: string }>`
   color: ${({ color }) => color ?? "white"};

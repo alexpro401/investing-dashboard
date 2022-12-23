@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { motion } from "framer-motion"
 import { AppButton, Card } from "common"
 import { opacityVariants } from "motion/variants"

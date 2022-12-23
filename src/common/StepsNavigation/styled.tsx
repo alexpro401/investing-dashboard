@@ -1,5 +1,6 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { AppButton } from "common"
+import { respondTo } from "theme"
 
 export const Root = styled.div`
   display: flex;
@@ -28,7 +29,7 @@ export const StepsNavigationActions = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     justify-content: flex-end;
     padding: 0 20px;
   }
@@ -45,7 +46,7 @@ export const StepsNavigationButton = styled(AppButton)<{
       ? props.theme.statusColors.success
       : props.theme.textColors.secondary};
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     min-width: 280px;
     border-width: 0;
   }

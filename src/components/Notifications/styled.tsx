@@ -1,5 +1,5 @@
 import { Flex, Text } from "theme"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { motion } from "framer-motion"
 
 export const NotificationsStyled = styled(motion.div)`

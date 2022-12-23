@@ -15,14 +15,20 @@ import { ValidatorsListContext } from "context/govPool/proposals/ValidatorsListC
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { ValidatorsSettingsStep } from "./steps"
+import { useBreakpoints } from "hooks"
 import useGovPoolCreateProposalValidators from "hooks/dao/proposals/useGovPoolCreateProposalValidators"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
-import * as S from "./styled"
+import * as S from "common/FormSteps/styled"
 
 enum STEPS {
   validators = "validators",
   basicInfo = "basicInfo",
+}
+
+const STEPS_TITLES: Record<STEPS, string> = {
+  [STEPS.validators]: "Validators",
+  [STEPS.basicInfo]: "Basic Info",
 }
 
 const CreateGovProposalValidatorSettingsForm: React.FC = () => {
@@ -104,26 +110,39 @@ const CreateGovProposalValidatorSettingsForm: React.FC = () => {
     }
   }, [currentStep, handleCreateProposal])
 
+  const { isMobile } = useBreakpoints()
+
   return (
-    <StepsControllerContext
+    <S.StepsFormContainer
       totalStepsAmount={totalStepsCount}
       currentStepNumber={currentStepNumber}
       prevCb={handlePrevStep}
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        {currentStep === STEPS.validators && (
-          <S.StepsContainer>
-            <ValidatorsSettingsStep />
-          </S.StepsContainer>
-        )}
-        {currentStep === STEPS.basicInfo && (
-          <S.StepsContainer>
-            <CreateDaoProposalGeneralForm />
-          </S.StepsContainer>
-        )}
+        <S.StepsWrapper>
+          {currentStep === STEPS.validators && (
+            <S.StepsContainer>
+              <ValidatorsSettingsStep />
+            </S.StepsContainer>
+          )}
+          {currentStep === STEPS.basicInfo && (
+            <S.StepsContainer>
+              <CreateDaoProposalGeneralForm />
+            </S.StepsContainer>
+          )}
+          {!isMobile && (
+            <S.SideStepsNavigationBarWrp
+              steps={Object.values(STEPS).map((step) => ({
+                number: Object.values(STEPS).indexOf(step),
+                title: STEPS_TITLES[step],
+              }))}
+              currentStep={Object.values(STEPS).indexOf(currentStep)}
+            />
+          )}
+        </S.StepsWrapper>
       </AnimatePresence>
-    </StepsControllerContext>
+    </S.StepsFormContainer>
   )
 }
 

@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { motion } from "framer-motion"
 
 export const CreateNewDaoProposalTypePageHolder = styled(motion.div).attrs(

@@ -1,5 +1,5 @@
-import styled from "styled-components"
-import { Text } from "theme"
+import styled from "styled-components/macro"
+import { Flex, Text } from "theme"
 import { Card } from "common"
 
 export const Container = styled(Card)`

@@ -1,4 +1,12 @@
-import styled, { css } from "styled-components"
+import styled, { css } from "styled-components/macro"
+
+import theme from "theme"
+
+export const SideStepsTitle = styled.h4`
+  font-size: 20px;
+  font-weight: 700px;
+  color: ${theme.textColors.primary};
+`
 
 export const SideStepsNavigationBar = styled.div`
   display: flex;

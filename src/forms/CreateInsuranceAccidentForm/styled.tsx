@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { Flex } from "theme"
 import { motion } from "framer-motion"
 import { opacityVariants } from "motion/variants"

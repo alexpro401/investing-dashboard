@@ -1,5 +1,5 @@
-import styled from "styled-components"
-import { device } from "theme"
+import styled from "styled-components/macro"
+import { respondTo } from "theme"
 import { motion } from "framer-motion"
 
 export const StyledTopMembers = styled(motion.div)`
@@ -10,13 +10,9 @@ export const StyledTopMembers = styled(motion.div)`
 
 export const MembersList = styled.div`
   width: 100%;
-  padding: 10px 0 30px;
+  padding: 0 16px 30px;
 
-  @media only screen and (${device.sm}) {
-    padding: 0 16px 30px;
-  }
-
-  @media (min-width: 768px) {
+  ${respondTo("sm")} {
     padding: 10px 32px 30px;
   }
 `
@@ -33,11 +29,6 @@ export const LoadingText = styled.div`
   margin-top: 30px;
 `
 
-export const MembersGrid = styled.div`
-  width: 100%;
-  overflow: auto;
-`
-
 export const ListContainer = styled(motion.div)`
   /* overflow-y: hidden;
   touch-action: none;
@@ -45,10 +36,7 @@ export const ListContainer = styled(motion.div)`
 
   max-width: 1200px;
   margin: 0 auto;
-
-  @media only screen and (${device.sm}) {
-    padding: 0;
-  }
+  padding: 0;
 `
 
 export const CardIconWrp = styled.div`

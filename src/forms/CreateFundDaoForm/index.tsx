@@ -5,7 +5,6 @@ import {
   IsCustomVotingStep,
   IsDaoValidatorStep,
   IsDistributionProposalStep,
-  SideStepsNavigationBar,
   SuccessStep,
   TitlesStep,
 } from "common"
@@ -19,33 +18,39 @@ import { useDispatch } from "react-redux"
 import { hideTapBar, showTabBar } from "state/application/actions"
 import { useEffectOnce } from "react-use"
 
-enum STEPS {
-  titles = "titles",
-  isDaoValidator = "is-dao-validator",
-  defaultProposalSetting = "default-proposal-setting",
-  isCustomVoteSelecting = "is-custom-vote-selecting",
-  isTokenDistributionSettings = "is-token-distribution-settings",
-  success = "success",
-}
-
-const STEPS_TITLES: Record<STEPS, string> = {
-  [STEPS.titles]: "Basic DAO Settings",
-  [STEPS.isDaoValidator]: "Validator settings",
-  [STEPS.defaultProposalSetting]: "General voting settings",
-  [STEPS.isCustomVoteSelecting]: "Changing voting settings",
-  [STEPS.isTokenDistributionSettings]: "Distribution proposal settings",
-  [STEPS.success]: "Summary",
+const STEPS = {
+  titles: {
+    title: "Basic DAO Settings",
+    number: 1,
+  },
+  isDaoValidator: {
+    title: "Validator settings",
+    number: 2,
+  },
+  defaultProposalSetting: {
+    title: "General voting settings",
+    number: 3,
+  },
+  isCustomVoteSelecting: {
+    title: "Changing voting settings",
+    number: 4,
+  },
+  isTokenDistributionSettings: {
+    title: "Distribution proposal settings",
+    number: 5,
+  },
+  success: {
+    title: "Summary",
+    number: 6,
+  },
 }
 
 const CreateFundDaoForm: FC = () => {
-  const [currentStep, setCurrentStep] = useState(STEPS.titles)
+  const [currentStep, setCurrentStep] = useState(STEPS.titles.number)
   const [isSuccessModalShown, setIsSuccessModalShown] = useState(false)
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length, [])
-  const currentStepNumber = useMemo(
-    () => Object.values(STEPS).indexOf(currentStep) + 1,
-    [currentStep]
-  )
+
   const { isMobile } = useBreakpoints()
 
   const formController = useForm()
@@ -70,7 +75,7 @@ const CreateFundDaoForm: FC = () => {
       await createDaoCb()
 
       if (isMobile) {
-        setCurrentStep(STEPS.success)
+        setCurrentStep(STEPS.success.number)
       } else {
         setIsSuccessModalShown(true)
       }
@@ -82,19 +87,19 @@ const CreateFundDaoForm: FC = () => {
 
   const handleNextStep = () => {
     switch (currentStep) {
-      case STEPS.titles:
-        setCurrentStep(STEPS.isDaoValidator)
+      case STEPS.titles.number:
+        setCurrentStep(STEPS.isDaoValidator.number)
         break
-      case STEPS.isDaoValidator:
-        setCurrentStep(STEPS.defaultProposalSetting)
+      case STEPS.isDaoValidator.number:
+        setCurrentStep(STEPS.defaultProposalSetting.number)
         break
-      case STEPS.defaultProposalSetting:
-        setCurrentStep(STEPS.isCustomVoteSelecting)
+      case STEPS.defaultProposalSetting.number:
+        setCurrentStep(STEPS.isCustomVoteSelecting.number)
         break
-      case STEPS.isCustomVoteSelecting:
-        setCurrentStep(STEPS.isTokenDistributionSettings)
+      case STEPS.isCustomVoteSelecting.number:
+        setCurrentStep(STEPS.isTokenDistributionSettings.number)
         break
-      case STEPS.isTokenDistributionSettings:
+      case STEPS.isTokenDistributionSettings.number:
         submit()
         break
     }
@@ -102,54 +107,55 @@ const CreateFundDaoForm: FC = () => {
 
   const handlePrevStep = () => {
     switch (currentStep) {
-      case STEPS.titles:
+      case STEPS.titles.number:
         navigate("/create-fund")
         break
-      case STEPS.isDaoValidator:
-        setCurrentStep(STEPS.titles)
+      case STEPS.isDaoValidator.number:
+        setCurrentStep(STEPS.titles.number)
         break
-      case STEPS.defaultProposalSetting:
-        setCurrentStep(STEPS.isDaoValidator)
+      case STEPS.defaultProposalSetting.number:
+        setCurrentStep(STEPS.isDaoValidator.number)
         break
-      case STEPS.isCustomVoteSelecting:
-        setCurrentStep(STEPS.defaultProposalSetting)
+      case STEPS.isCustomVoteSelecting.number:
+        setCurrentStep(STEPS.defaultProposalSetting.number)
         break
-      case STEPS.isTokenDistributionSettings:
-        setCurrentStep(STEPS.isCustomVoteSelecting)
+      case STEPS.isTokenDistributionSettings.number:
+        setCurrentStep(STEPS.isCustomVoteSelecting.number)
         break
     }
   }
 
   return (
     <S.Container
+      steps={Object.values(STEPS).slice(0, Object.values(STEPS).length - 1)}
       totalStepsAmount={totalStepsCount}
-      currentStepNumber={currentStepNumber}
+      currentStepNumber={currentStep}
       prevCb={handlePrevStep}
       nextCb={handleNextStep}
     >
       <AnimatePresence>
         <S.StepsWrapper>
-          {currentStep === STEPS.titles ? (
+          {currentStep === STEPS.titles.number ? (
             <S.StepsContainer>
               <TitlesStep />
             </S.StepsContainer>
-          ) : currentStep === STEPS.isDaoValidator ? (
+          ) : currentStep === STEPS.isDaoValidator.number ? (
             <S.StepsContainer>
               <IsDaoValidatorStep />
             </S.StepsContainer>
-          ) : currentStep === STEPS.defaultProposalSetting ? (
+          ) : currentStep === STEPS.defaultProposalSetting.number ? (
             <S.StepsContainer>
               <DefaultProposalStep />
             </S.StepsContainer>
-          ) : currentStep === STEPS.isCustomVoteSelecting ? (
+          ) : currentStep === STEPS.isCustomVoteSelecting.number ? (
             <S.StepsContainer>
               <IsCustomVotingStep />
             </S.StepsContainer>
-          ) : currentStep === STEPS.isTokenDistributionSettings ? (
+          ) : currentStep === STEPS.isTokenDistributionSettings.number ? (
             <S.StepsContainer>
               <IsDistributionProposalStep />
             </S.StepsContainer>
-          ) : currentStep === STEPS.success ? (
+          ) : currentStep === STEPS.success.number ? (
             <S.StepsContainer>
               <SuccessStep />
             </S.StepsContainer>
@@ -157,14 +163,12 @@ const CreateFundDaoForm: FC = () => {
             <></>
           )}
           {!isMobile ? (
-            <SideStepsNavigationBar
-              steps={Object.values(STEPS)
-                .slice(0, Object.values(STEPS).length - 1)
-                .map((step) => ({
-                  number: Object.values(STEPS).indexOf(step),
-                  title: STEPS_TITLES[step],
-                }))}
-              currentStep={Object.values(STEPS).indexOf(currentStep)}
+            <S.SideStepsNavigationBarWrp
+              steps={Object.values(STEPS).slice(
+                0,
+                Object.values(STEPS).length - 1
+              )}
+              currentStep={currentStep}
             />
           ) : (
             <></>

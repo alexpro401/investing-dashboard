@@ -10,19 +10,24 @@ import { AnimatePresence } from "framer-motion"
 import { parseEther } from "@ethersproject/units"
 import { useDispatch } from "react-redux"
 
-import StepsControllerContext from "context/StepsControllerContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import { AdvancedABIContext } from "context/govPool/proposals/custom/AdvancedABIContext"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
+import { useBreakpoints } from "hooks"
 import { useGovPoolCreateCustomProposalManual } from "hooks/dao"
 import { hideTapBar, showTabBar } from "state/application/actions"
 import { AbiStep } from "./steps"
 
-import * as S from "./styled"
+import * as S from "common/FormSteps/styled"
 
 enum STEPS {
   abiInfo = "abiInfo",
   basicInfo = "basicInfo",
+}
+
+const STEPS_TITLES: Record<STEPS, string> = {
+  [STEPS.abiInfo]: "Abi info",
+  [STEPS.basicInfo]: "Basic Info",
 }
 
 const CreateDaoCustomProposalAbiForm: React.FC = () => {
@@ -31,6 +36,7 @@ const CreateDaoCustomProposalAbiForm: React.FC = () => {
   const { daoAddress, executorAddress } = useParams<
     "daoAddress" | "executorAddress"
   >()
+  const { isMobile } = useBreakpoints()
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
   )
@@ -128,25 +134,39 @@ const CreateDaoCustomProposalAbiForm: React.FC = () => {
   }, [currentStep, handeCreateProposal])
 
   return (
-    <StepsControllerContext
+    <S.StepsFormContainer
       totalStepsAmount={totalStepsCount}
       currentStepNumber={currentStepNumber}
       prevCb={handlePrevStep}
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        {currentStep === STEPS.abiInfo && (
-          <S.StepsContainer>
-            <AbiStep />
-          </S.StepsContainer>
-        )}
-        {currentStep === STEPS.basicInfo && (
-          <S.StepsContainer>
-            <CreateDaoProposalGeneralForm />
-          </S.StepsContainer>
-        )}
+        <S.StepsWrapper>
+          {currentStep === STEPS.abiInfo && (
+            <S.StepsContainer>
+              <AbiStep />
+            </S.StepsContainer>
+          )}
+          {currentStep === STEPS.basicInfo && (
+            <S.StepsContainer>
+              <CreateDaoProposalGeneralForm />
+            </S.StepsContainer>
+          )}
+          {!isMobile && (
+            <S.SideStepsNavigationBarWrp
+              title={"Create proposal"}
+              steps={[{ number: 0, title: "Select creation method" }].concat(
+                Object.values(STEPS).map((step) => ({
+                  number: Object.values(STEPS).indexOf(step) + 1,
+                  title: STEPS_TITLES[step],
+                }))
+              )}
+              currentStep={Object.values(STEPS).indexOf(currentStep) + 1}
+            />
+          )}
+        </S.StepsWrapper>
       </AnimatePresence>
-    </StepsControllerContext>
+    </S.StepsFormContainer>
   )
 }
 

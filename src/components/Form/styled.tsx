@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { Flex, Text, BaseButton } from "theme"
 import pen from "assets/icons/pencil-edit.svg"
 

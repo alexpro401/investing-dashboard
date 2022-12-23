@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 
 import { Icon, StepsNavigation, Card, AppButton } from "common"
 import StepsControllerContext from "context/StepsControllerContext"
@@ -9,6 +9,8 @@ import {
   getDefaultFieldErrorStyles,
 } from "fields/styled"
 import ExternalLink from "components/ExternalLink"
+import { respondTo } from "theme"
+import FormStepsNavigation from "common/FormStepsNavigation"
 
 export const Container = styled(StepsControllerContext)`
   display: flex;
@@ -73,6 +75,8 @@ export const StepsBottomNavigation = styled(StepsNavigation)`
   margin-top: auto;
 `
 
+export const FormStepsNavigationWrp = styled(FormStepsNavigation)``
+
 export const OverflowedCard = styled(Card)`
   overflow: hidden;
   height: 100%;
@@ -112,7 +116,7 @@ export const SuccessBackdrop = styled.div`
   border-radius: 26px 26px 0 0;
   background: #08121a;
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     min-width: 420px;
     margin-top: 0;
     background: #181e2c;
@@ -150,7 +154,7 @@ export const SuccessAvatarWrp = styled.div`
     mask-composite: exclude;
   }
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     margin-top: 0;
   }
 `
@@ -181,7 +185,7 @@ export const SuccessSubtitle = styled(ExternalLink)`
   color: #788ab4;
   font-size: 16px;
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     color: #2669eb;
     margin-bottom: 16px;
   }
@@ -196,7 +200,7 @@ export const SuccessDescription = styled.div`
   line-height: 1.5;
   font-weight: 500;
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     font-size: 14px;
     line-height: 1.7;
     letter-spacing: 0.01em;
@@ -213,7 +217,7 @@ export const SuccessFooter = styled.div`
   padding: 24px 16px;
   border-top: 1px solid #293c54;
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     padding: 16px 16px 0;
     border: 0;
   }
@@ -243,7 +247,7 @@ export const SuccessLinksWrp = styled.div`
   gap: 24px;
   width: 100%;
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     color: #2669eb;
   }
 `
@@ -251,7 +255,7 @@ export const SuccessLinksWrp = styled.div`
 export const SuccessLink = styled(AppButton)`
   color: #788ab4;
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     color: #788ab480;
   }
 `

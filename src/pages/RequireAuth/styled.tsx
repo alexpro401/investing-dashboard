@@ -1,6 +1,7 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { Outlet } from "react-router-dom"
 import { AppHeader, AppNavigation } from "common"
+import { respondTo } from "theme"
 
 export const Root = styled.div`
   display: flex;
@@ -8,7 +9,7 @@ export const Root = styled.div`
   height: 100%;
   flex: 1;
 
-  @media (min-width: 768px) {
+  ${respondTo("sm")} {
     flex-direction: row;
   }
 `
@@ -22,7 +23,7 @@ export const AuthMainWrp = styled.div`
   order: 1;
   flex: 1;
 
-  @media (min-width: 768px) {
+  ${respondTo("sm")} {
     order: 2;
   }
 `
@@ -42,7 +43,7 @@ export const AuthNavigation = styled(AppNavigation)`
   margin-top: auto;
   order: 2;
 
-  @media (min-width: 768px) {
+  ${respondTo("sm")} {
     display: flex;
     order: 1;
     height: 100%;

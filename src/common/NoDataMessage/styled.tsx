@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { Icon } from "common"
 
 export const Root = styled.div`

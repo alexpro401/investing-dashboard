@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react"
 import Modal from "styled-react-modal"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import Cropper from "react-easy-crop"
 import close from "assets/icons/close.svg"
 import SliderInput from "components/SliderInput"

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom"
 import { createPortal } from "react-dom"
 import { BigNumber } from "@ethersproject/bignumber"
 import { formatUnits } from "@ethersproject/units"
-import { useActiveWeb3React } from "hooks"
+import { useActiveWeb3React, useBreakpoints } from "hooks"
 
 import { useGovPoolTreasury } from "hooks/dao"
 import {
@@ -87,135 +87,132 @@ const TokenDistributionStep: React.FC = () => {
 
   const appNavigationEl = document.querySelector("#app-navigation")
 
+  const { isMobile } = useBreakpoints()
+
   return (
-    <>
-      <S.StepsRoot>
-        <Card>
-          <CardHead
-            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
-            title="Select token from treasury"
-          />
-          <CardDescription>
-            <p>
-              Choose the ERC-20 token for distibution — make sure to have enough
-              of this token in the DAO treasury.
-            </p>
-          </CardDescription>
-          <CardFormControl>
-            <SelectField
-              placeholder="ERC-20"
-              selected={selectedTreasuryToken.get ?? undefined}
-              setSelected={(newSelectedToken) =>
-                selectedTreasuryToken.set(newSelectedToken)
-              }
-              list={treasury?.items ?? []}
-              searchingFields={[
-                "contract_address",
-                "contract_ticker_symbol",
-                "contract_name",
-              ]}
-              errorMessage={getFieldErrorMessage("selectedTreasuryToken")}
-              onBlur={() => touchField("selectedTreasuryToken")}
-              renderSelected={(token) =>
-                token ? (
-                  <TokenChip
-                    name={token.contract_name}
-                    symbol={token.contract_ticker_symbol}
-                    link={
-                      chainId
-                        ? getExplorerLink(
-                            chainId,
-                            token.contract_address,
-                            ExplorerDataType.ADDRESS
-                          )
-                        : ""
-                    }
-                  />
-                ) : null
-              }
-              renderItem={(token) => (
-                <S.TokenContainer>
-                  <S.TokenContainerLeft>
-                    <S.TokenImg src={token.logo_url} />
-                    <S.TokenNamings>
-                      <S.TokenTitle>
-                        <S.TokenTitleInner>
-                          {token.contract_ticker_symbol}
-                        </S.TokenTitleInner>
-                        <ExternalLink
-                          href={
-                            chainId
-                              ? getExplorerLink(
-                                  chainId,
-                                  token.contract_address,
-                                  ExplorerDataType.ADDRESS
-                                )
-                              : ""
-                          }
-                        />
-                      </S.TokenTitle>
-                      <S.TokenName>{token.contract_name}</S.TokenName>
-                    </S.TokenNamings>
-                  </S.TokenContainerLeft>
-                  <S.TokenContainerRight>
-                    <S.TokenUsdAmount>
-                      {"$" + formatFiatNumber(token.quote)}
-                    </S.TokenUsdAmount>
-                    <S.TokenName>
-                      {formatTokenNumber(
-                        BigNumber.from(token.balance),
-                        token.contract_decimals,
-                        6
-                      )}
-                    </S.TokenName>
-                  </S.TokenContainerRight>
-                </S.TokenContainer>
-              )}
-            />
-            <InputField
-              value={tokenAmount.get}
-              type={"number"}
-              setValue={tokenAmount.set}
-              label="Amount of token"
-              errorMessage={getFieldErrorMessage("tokenAmount")}
-              onBlur={() => touchField("tokenAmount")}
-              nodeRight={
-                !!selectedTreasuryToken.get && (
-                  <AppButton
-                    type="button"
-                    text={"Max"}
-                    color="default"
-                    size="no-paddings"
-                    onClick={() =>
-                      selectedTreasuryToken.get?.balance
-                        ? tokenAmount.set(
-                            cutStringZeroes(
-                              formatUnits(
-                                BigNumber.from(
-                                  selectedTreasuryToken.get.balance
-                                ),
-                                selectedTreasuryToken.get.contract_decimals
+    <S.StepsRoot>
+      <Card>
+        <CardHead
+          nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+          title="Select token from treasury"
+        />
+        <CardDescription>
+          <p>
+            Choose the ERC-20 token for distibution — make sure to have enough
+            of this token in the DAO treasury.
+          </p>
+        </CardDescription>
+        <CardFormControl>
+          <SelectField
+            placeholder="ERC-20"
+            selected={selectedTreasuryToken.get ?? undefined}
+            setSelected={(newSelectedToken) =>
+              selectedTreasuryToken.set(newSelectedToken)
+            }
+            list={treasury?.items ?? []}
+            searchingFields={[
+              "contract_address",
+              "contract_ticker_symbol",
+              "contract_name",
+            ]}
+            errorMessage={getFieldErrorMessage("selectedTreasuryToken")}
+            onBlur={() => touchField("selectedTreasuryToken")}
+            renderSelected={(token) =>
+              token ? (
+                <TokenChip
+                  name={token.contract_name}
+                  symbol={token.contract_ticker_symbol}
+                  link={
+                    chainId
+                      ? getExplorerLink(
+                          chainId,
+                          token.contract_address,
+                          ExplorerDataType.ADDRESS
+                        )
+                      : ""
+                  }
+                />
+              ) : null
+            }
+            renderItem={(token) => (
+              <S.TokenContainer>
+                <S.TokenContainerLeft>
+                  <S.TokenImg src={token.logo_url} />
+                  <S.TokenNamings>
+                    <S.TokenTitle>
+                      <S.TokenTitleInner>
+                        {token.contract_ticker_symbol}
+                      </S.TokenTitleInner>
+                      <ExternalLink
+                        href={
+                          chainId
+                            ? getExplorerLink(
+                                chainId,
+                                token.contract_address,
+                                ExplorerDataType.ADDRESS
                               )
+                            : ""
+                        }
+                      />
+                    </S.TokenTitle>
+                    <S.TokenName>{token.contract_name}</S.TokenName>
+                  </S.TokenNamings>
+                </S.TokenContainerLeft>
+                <S.TokenContainerRight>
+                  <S.TokenUsdAmount>
+                    {"$" + formatFiatNumber(token.quote)}
+                  </S.TokenUsdAmount>
+                  <S.TokenName>
+                    {formatTokenNumber(
+                      BigNumber.from(token.balance),
+                      token.contract_decimals,
+                      6
+                    )}
+                  </S.TokenName>
+                </S.TokenContainerRight>
+              </S.TokenContainer>
+            )}
+          />
+          <InputField
+            value={tokenAmount.get}
+            type={"number"}
+            setValue={tokenAmount.set}
+            label="Amount of token"
+            errorMessage={getFieldErrorMessage("tokenAmount")}
+            onBlur={() => touchField("tokenAmount")}
+            nodeRight={
+              !!selectedTreasuryToken.get && (
+                <AppButton
+                  type="button"
+                  text={"Max"}
+                  color="default"
+                  size="no-paddings"
+                  onClick={() =>
+                    selectedTreasuryToken.get?.balance
+                      ? tokenAmount.set(
+                          cutStringZeroes(
+                            formatUnits(
+                              BigNumber.from(selectedTreasuryToken.get.balance),
+                              selectedTreasuryToken.get.contract_decimals
                             )
                           )
-                        : null
-                    }
-                  />
-                )
-              }
-            />
-          </CardFormControl>
-        </Card>
-      </S.StepsRoot>
-      {appNavigationEl ? (
+                        )
+                      : null
+                  }
+                />
+              )
+            }
+          />
+        </CardFormControl>
+      </Card>
+      {isMobile &&
+        appNavigationEl &&
         createPortal(
           <StepsNavigation customNextCb={handleNextStep} />,
           appNavigationEl
-        )
-      ) : (
-        <></>
-      )}
-    </>
+        )}
+      {!isMobile && <StepsNavigation customNextCb={handleNextStep} />}
+    </S.StepsRoot>
   )
 }
 

@@ -1,7 +1,7 @@
-import styled, { css } from "styled-components"
+import styled, { css } from "styled-components/macro"
 import { AppButton, Icon } from "common"
 import { VotingTerminal } from "pages/VotingTerminal"
-import { GradientBorder } from "theme"
+import { GradientBorder, respondTo } from "theme"
 import ProposalInfo from "./components/ProposalInfo"
 
 export const DaoProposalDetails = styled.div`
@@ -20,7 +20,7 @@ export const PageContainer = styled.div`
   flex: 1;
   gap: 16px;
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     display: grid;
     grid-template-columns: 1fr 0.5fr;
     align-content: start;
@@ -33,7 +33,7 @@ export const ContentWrapper = styled.div`
   flex-direction: column;
   gap: 16px;
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     grid-column: 1 / 2;
   }
 `
@@ -43,13 +43,13 @@ export const VotingContainer = styled.div`
   flex-direction: column;
   gap: 16px;
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     grid-column: 2 / 3;
   }
 `
 
 export const DaoProposalDetailsTitleWrp = styled.div`
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -59,7 +59,7 @@ export const DaoProposalDetailsTitleWrp = styled.div`
 `
 
 export const DaoProposalDetailsTitle = styled.div`
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     font-size: 24px;
     line-height: 1.25;
     font-weight: 900;
@@ -97,13 +97,13 @@ export const DaoProposalDetailsProgressBar = styled.div`
     background: ${(props) => props.theme.statusColors.success};
   }
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     grid-column: 1 / -1;
   }
 `
 
 export const ProposalInfoWrp = styled(ProposalInfo)`
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     grid-column: 1 / 2;
     background: transparent;
     margin-bottom: 40px;
@@ -126,7 +126,7 @@ export const DaoProposalDetailsTabs = styled.div`
     background: rgba(32, 41, 58, 0.5);
   }
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     grid-column: 1 / 2;
     background: transparent;
     justify-content: flex-start;

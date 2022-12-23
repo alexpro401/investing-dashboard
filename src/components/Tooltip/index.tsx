@@ -1,6 +1,6 @@
 import ReactTooltip from "react-tooltip"
 import TooltipIcon from "assets/icons/TooltipIcon"
-import styled, { createGlobalStyle } from "styled-components"
+import styled, { createGlobalStyle } from "styled-components/macro"
 import TooltipSmall from "assets/icons/TooltipSmall"
 import { GradientBorderBase } from "theme"
 import { ReactNode, useState } from "react"

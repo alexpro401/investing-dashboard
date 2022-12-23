@@ -1,5 +1,5 @@
-import { Flex } from "theme"
-import styled from "styled-components"
+import { Flex, respondTo } from "theme"
+import styled from "styled-components/macro"
 
 import bottomAsset from "assets/background/welcome-bottom.svg"
 import rightAsset from "assets/background/welcome-right.svg"
@@ -36,7 +36,7 @@ export const Container = styled(Flex)`
     background-repeat: no-repeat;
   }
 
-  @media (min-width: 768px) {
+  ${respondTo("sm")} {
     padding: 60px 80px;
   }
 `

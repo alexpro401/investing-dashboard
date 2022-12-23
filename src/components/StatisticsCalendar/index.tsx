@@ -2,9 +2,8 @@
 
 // import { motion } from "framer-motion"
 import { IPool } from "interfaces"
-import styled from "styled-components"
-import { Flex, device } from "theme"
-import { getRandomPnl } from "utils"
+import styled from "styled-components/macro"
+import { Flex, respondTo } from "theme"
 
 const monthes = [
   "Jan",
@@ -25,13 +24,12 @@ const Cell = styled.div<{ align?: "left" | "right" }>`
   text-align: ${(props) => (props.align ? props.align : "center")};
   flex: 1;
 
-  @media only screen and (${device.sm}) {
-    &:first-child {
-      display: none;
-    }
-    &:last-child {
-      display: none;
-    }
+  &:first-child {
+    display: none;
+  }
+
+  &:last-child {
+    display: none;
   }
 `
 
@@ -43,14 +41,14 @@ const Label = styled.div`
 `
 
 const Month = styled.div<{ c?: string; fw?: number; current?: boolean }>`
-  font-size: 16px;
   font-weight: ${(props) => (props.fw ? props.fw : "500")};
-  margin: 5px 0;
   color: ${(props) => (props.c ? props.c : "#7F7F86")};
+  font-size: 12px;
+  margin: 2px 0;
 
-  @media only screen and (${device.sm}) {
-    font-size: 12px;
-    margin: 2px 0;
+  ${respondTo("sm")} {
+    font-size: 16px;
+    margin: 5px 0;
   }
 `
 

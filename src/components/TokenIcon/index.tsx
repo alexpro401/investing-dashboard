@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef, memo } from "react"
 import { useWeb3React } from "@web3-react/core"
 import { MetroSpinner } from "react-spinners-kit"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { Icon as CommonIcon } from "common"
 
 import { Flex } from "theme"

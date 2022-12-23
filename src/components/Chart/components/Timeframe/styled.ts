@@ -1,6 +1,6 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 
-import { device, Flex } from "theme"
+import { Flex, respondTo } from "theme"
 
 const Styled = {
   Container: styled(Flex)`
@@ -12,6 +12,13 @@ const Styled = {
     font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
     padding: 4px 11px 2px;
+    font-size: 10px;
+    line-height: 130%;
+
+    ${respondTo("xxs")} {
+      font-size: 12px;
+    }
+
     font-size: 12px;
     line-height: 130%;
     cursor: pointer;
@@ -26,10 +33,6 @@ const Styled = {
     background: ${({ active, theme }) =>
       active ? theme.statusColors.success : "translate"};
     border-radius: 14px;
-
-    @media only screen and (${device.xxs}) {
-      font-size: 10px;
-    }
 
     @media screen and (min-width: 768px) {
       font-weight: 600;

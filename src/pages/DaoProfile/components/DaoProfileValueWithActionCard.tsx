@@ -10,7 +10,7 @@ import theme from "theme"
 interface Props {
   value: React.ReactNode
   info: React.ReactNode
-  onClick: () => void
+  to: string
   actionText: string
   count?: React.ReactNode
 }
@@ -18,7 +18,7 @@ interface Props {
 const DaoProfileValueWithActionCard: React.FC<Props> = ({
   value,
   info,
-  onClick,
+  to,
   actionText,
   count,
 }) => {
@@ -36,12 +36,7 @@ const DaoProfileValueWithActionCard: React.FC<Props> = ({
           {info}
         </Flex>
         <Flex ai="flex-center" jc="flex-end" gap="4">
-          <AppLink
-            color="default"
-            size="no-paddings"
-            text={actionText}
-            onClick={onClick}
-          />
+          <AppLink to={to}>{actionText}</AppLink>
           {!isNil(count) && <Counter>{count}</Counter>}
         </Flex>
       </Flex>
