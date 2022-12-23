@@ -11,8 +11,8 @@ import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useWeb3React } from "@web3-react/core"
 import { WrappedProposalView } from "types"
 import { isEqual } from "lodash"
-import { ZERO_ADDR } from "constants/index"
-import { useNavigate } from "react-router-dom"
+import { ROUTE_PATHS, ZERO_ADDR } from "constants/index"
+import { generatePath, useNavigate } from "react-router-dom"
 import { useCountdown } from "hooks"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -64,7 +64,11 @@ const DaoProposalCard: FC<Props> = ({
   const navigate = useNavigate()
 
   const proposalDetailsLinkPath = useMemo(
-    () => `/dao/${govPoolAddress}/proposal/${wrappedProposalView.proposalId}`,
+    () =>
+      generatePath(ROUTE_PATHS.daoProposalItem, {
+        daoAddress: govPoolAddress,
+        proposalId: String(wrappedProposalView.proposalId),
+      }),
     [govPoolAddress, wrappedProposalView]
   )
 

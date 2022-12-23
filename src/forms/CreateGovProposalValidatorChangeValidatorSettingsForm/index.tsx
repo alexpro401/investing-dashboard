@@ -7,7 +7,7 @@ import React, {
 } from "react"
 import { AnimatePresence } from "framer-motion"
 import { useDispatch } from "react-redux"
-import { useNavigate, useParams } from "react-router-dom"
+import { generatePath, useNavigate, useParams } from "react-router-dom"
 import { parseEther } from "@ethersproject/units"
 
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
@@ -19,6 +19,7 @@ import { useGovPoolCreateValidatorInternalProposal } from "hooks/dao"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "common/FormSteps/styled"
+import { ROUTE_PATHS } from "constants/index"
 
 enum STEPS {
   validators = "validators",
@@ -84,7 +85,12 @@ const CreateGovProposalValidatorChangeValidatorSettingsForm: React.FC = () => {
     switch (currentStep) {
       case STEPS.validators: {
         if (daoAddress) {
-          navigate(`/dao/${daoAddress}/create-validator-proposal`)
+          navigate(
+            generatePath(
+              ROUTE_PATHS.daoProposalCreateInternalValidatorsSelectType,
+              { daoAddress }
+            )
+          )
         }
         break
       }
