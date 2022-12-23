@@ -45,7 +45,6 @@ export const StepsRoot = styled.div`
   transform: scale(1);
   gap: 16px;
   padding: 14px 16px 20px;
-  flex: 1;
 
   ${respondTo("lg")} {
     padding: 20px 0;
