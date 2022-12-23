@@ -40,6 +40,19 @@
         "semi": false,
         "endOfLine": "auto"
       }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [{
+          "name": "styled-components",
+          "importNames": ["styled"],
+          "message": "Please import from styled-components/macro."
+        }],
+        "patterns": [
+          "!styled-components/macro"
+        ]
+      }
     ]
   }
 }
