@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import NoDataMessage from "common/NoDataMessage"
 
 export const Root = styled.div`

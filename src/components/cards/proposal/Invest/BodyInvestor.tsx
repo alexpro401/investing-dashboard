@@ -1,7 +1,7 @@
 import { FC } from "react"
 
 import { AppButton } from "common"
-import { BodyItem } from "components/cards/proposal/styled"
+import { BodyItem } from "components/cards/proposal/_shared"
 import { BigNumber } from "@ethersproject/bignumber"
 
 interface Props {

@@ -1,6 +1,6 @@
-import { createGlobalStyle, css } from "styled-components"
-import styled from "styled-components"
-import { device } from "theme"
+import { createGlobalStyle, css } from "styled-components/macro"
+import styled from "styled-components/macro"
+import { respondTo } from "theme"
 
 import "swiper/swiper-bundle.min.css"
 import "swiper/swiper.min.css"
@@ -99,7 +99,6 @@ export const SpecialModalBackground = styled.div`
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
   z-index: 10;
   background: rgba(13, 18, 28, 0.3);
   backdrop-filter: blur(1px);
@@ -111,10 +110,12 @@ export const SpecialModalBackground = styled.div`
   -webkit-justify-content: center;
   -ms-flex-pack: center;
   justify-content: center;
+  bottom: 62px;
+  height: auto;
 
-  @media only screen and (${device.sm}) {
-    bottom: 62px;
-    height: auto;
+  ${respondTo("sm")} {
+    height: 100vh;
+    bottom: auto;
   }
 `
 
@@ -123,24 +124,6 @@ export const AppWrapper = styled.div`
   min-height: -webkit-fill-available;
 
   display: grid;
-
-  // display: grid;
-
-  // grid-template-columns: 50px 1fr;
-  // grid-template-areas: "menu content";
-  // height: inherit;
-  // overscroll-behavior: none;
-  // touch-action: none;
-
-  // @media only screen and (${device.sm}) {
-  //   display: grid;
-  //   grid-template-columns: 1fr;
-  //   grid-template-rows: 1fr 0px;
-  //   grid-template-areas: "content" "bottom";
-  //   gap: 0px 0px;
-  //   justify-items: stretch;
-  //   align-items: stretch;
-  // }
 `
 
 export const Content = styled.div`

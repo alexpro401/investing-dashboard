@@ -18,8 +18,6 @@ import useAlert, { AlertType } from "hooks/useAlert"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
-import { createPortal } from "react-dom"
-import { useBreakpoints } from "hooks"
 
 const IsCustomVotingStep: FC = () => {
   const { isCustomVoting, internalProposalForm } =
@@ -119,9 +117,6 @@ const IsCustomVotingStep: FC = () => {
     })
   }
 
-  const appNavigationEl = document.querySelector("#app-navigation")
-  const { isMobile } = useBreakpoints()
-
   return (
     <>
       <S.StepsRoot>
@@ -197,16 +192,7 @@ const IsCustomVotingStep: FC = () => {
           </S.StepsRoot>
         )}
       </Collapse>
-      {appNavigationEl ? (
-        createPortal(
-          <S.StepsBottomNavigation customNextCb={handleNextStep} />,
-          appNavigationEl
-        )
-      ) : !isMobile ? (
-        <S.StepsBottomNavigation customNextCb={handleNextStep} />
-      ) : (
-        <></>
-      )}
+      <S.FormStepsNavigationWrp customNextCb={handleNextStep} />
     </>
   )
 }

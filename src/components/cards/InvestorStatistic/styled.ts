@@ -1,5 +1,5 @@
 import { AppButton } from "common"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import theme, { Text } from "theme"
 
 export const ButtonContainer = styled.div`

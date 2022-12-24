@@ -18,8 +18,6 @@ import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
 import { stepsControllerContext } from "context/StepsControllerContext"
-import { createPortal } from "react-dom"
-import { useBreakpoints } from "hooks"
 
 import * as S from "./styled"
 
@@ -79,10 +77,6 @@ const IsDaoValidatorStep: FC = () => {
 
     nextCb()
   }
-
-  const appNavigationEl = document.querySelector("#app-navigation")
-
-  const { isMobile } = useBreakpoints()
 
   return (
     <>
@@ -235,16 +229,7 @@ const IsDaoValidatorStep: FC = () => {
           </S.OverflowedCard>
         </Collapse>
       </S.StepsRoot>
-      {appNavigationEl ? (
-        createPortal(
-          <S.StepsBottomNavigation customNextCb={handleNextStep} />,
-          appNavigationEl
-        )
-      ) : !isMobile ? (
-        <S.StepsBottomNavigation customNextCb={handleNextStep} />
-      ) : (
-        <></>
-      )}
+      <S.FormStepsNavigationWrp customNextCb={handleNextStep} />
     </>
   )
 }

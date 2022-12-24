@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { Block, Text, Flex } from "theme"
 import Avatar from "components/Avatar"
 import bell from "assets/icons/notification-bell.svg"

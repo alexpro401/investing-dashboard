@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { motion } from "framer-motion"
 import { Flex } from "theme"
 import warningIcon from "assets/icons/warning-icon.svg"

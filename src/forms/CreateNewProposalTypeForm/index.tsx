@@ -14,11 +14,12 @@ import { DefaultProposalStep } from "common"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { createCustomProposalTypeContext } from "context/govPool/proposals/regular/CreateCustomProposalType"
+import { useBreakpoints } from "hooks"
 import { useGovPoolCreateProposalType } from "hooks/dao"
 import { ExecutorsStep } from "./steps"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
-import * as S from "./styled"
+import * as S from "common/FormSteps/styled"
 
 enum STEPS {
   generalVotingSettings = "generalVotingSettings",
@@ -26,10 +27,17 @@ enum STEPS {
   basicInfo = "basicInfo",
 }
 
+const STEPS_TITLES: Record<STEPS, string> = {
+  [STEPS.generalVotingSettings]: "Setup custom voting settings",
+  [STEPS.executors]: "Executors",
+  [STEPS.basicInfo]: "Basic info",
+}
+
 const CreateNewProposalTypeForm: React.FC = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { daoAddress } = useParams<"daoAddress">()
+  const { isMobile } = useBreakpoints()
   const createDaoProposalType = useGovPoolCreateProposalType({
     daoPoolAddress: daoAddress ?? "",
   })
@@ -154,33 +162,45 @@ const CreateNewProposalTypeForm: React.FC = () => {
   }, [currentStep, handleCreateDaoProposalType])
 
   return (
-    <S.StepsContextContainer
+    <S.StepsFormContainer
       totalStepsAmount={totalStepsCount}
       currentStepNumber={currentStepNumber}
       prevCb={handlePrevStep}
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        {currentStep === STEPS.generalVotingSettings && (
-          <S.StepsContainer>
-            <DefaultProposalStep isCreatingProposal />
-          </S.StepsContainer>
-        )}
-        {currentStep === STEPS.executors && (
-          <S.StepsContainer>
-            <ExecutorsStep />
-          </S.StepsContainer>
-        )}
-        {currentStep === STEPS.basicInfo && (
-          <S.StepsContainer>
-            <CreateDaoProposalGeneralForm
-              withProposalTypeName
-              withProposalTypeDescription
+        <S.StepsWrapper>
+          {currentStep === STEPS.generalVotingSettings && (
+            <S.StepsContainer>
+              <DefaultProposalStep isCreatingProposal />
+            </S.StepsContainer>
+          )}
+          {currentStep === STEPS.executors && (
+            <S.StepsContainer>
+              <ExecutorsStep />
+            </S.StepsContainer>
+          )}
+          {currentStep === STEPS.basicInfo && (
+            <S.StepsContainer>
+              <CreateDaoProposalGeneralForm
+                withProposalTypeName
+                withProposalTypeDescription
+              />
+            </S.StepsContainer>
+          )}
+          {!isMobile && (
+            <S.SideStepsNavigationBarWrp
+              title={"Create proposal"}
+              steps={Object.values(STEPS).map((step) => ({
+                number: Object.values(STEPS).indexOf(step),
+                title: STEPS_TITLES[step],
+              }))}
+              currentStep={Object.values(STEPS).indexOf(currentStep)}
             />
-          </S.StepsContainer>
-        )}
+          )}
+        </S.StepsWrapper>
       </AnimatePresence>
-    </S.StepsContextContainer>
+    </S.StepsFormContainer>
   )
 }
 

@@ -1,5 +1,5 @@
 import { Flex, BaseButton } from "theme"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 
 export const Title = styled(Flex)`
   font-family: ${(props) => props.theme.appFontFamily};

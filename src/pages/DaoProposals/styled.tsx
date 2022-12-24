@@ -1,6 +1,7 @@
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import RouteTabs from "components/RouteTabs"
 import HeaderTabs from "components/Header/Tabs"
+import { respondTo } from "theme"
 
 export const Root = styled.div`
   overflow: hidden auto;
@@ -37,7 +38,7 @@ export const PageHeadTabs = styled(HeaderTabs)`
 export const PageSubTabs = styled(RouteTabs)`
   margin: 16px 0 0;
 
-  @media screen and (min-width: 768px) {
+  ${respondTo("sm")} {
     width: max-content;
     min-width: 350px;
   }

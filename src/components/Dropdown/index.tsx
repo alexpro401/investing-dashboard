@@ -2,8 +2,8 @@ import { useState, useRef, ReactNode } from "react"
 
 import { useClickAway } from "react-use"
 import { motion } from "framer-motion"
-import styled from "styled-components"
-import { device, Flex } from "theme"
+import styled from "styled-components/macro"
+import { Flex, respondTo } from "theme"
 
 export const floatingBodyVariants = {
   visible: {
@@ -42,8 +42,10 @@ export const StyledDropdown = styled.div`
 `
 
 const Text = styled.div`
-  @media only screen and (${device.sm}) {
-    display: none;
+  display: none;
+
+  ${respondTo("sm")} {
+    display: block;
   }
 `
 
@@ -63,7 +65,7 @@ export const Value = styled(Text)`
 `
 
 const Body = styled(motion.div)<{ position?: "right" | "left" }>`
-  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
   overflow: hidden;
   background: linear-gradient(
     197deg,
@@ -72,21 +74,22 @@ const Body = styled(motion.div)<{ position?: "right" | "left" }>`
   );
   border-radius: 7px;
   z-index: 20;
-  position: absolute;
-  top: 50px;
-  right: ${(props) => (props?.position === "left" ? "30%" : "0")};
-  left: ${(props) => (props?.position === "right" ? "30%" : "0")};
   min-width: 176px;
   max-width: 100vh;
   width: fit-content;
   height: fit-content;
 
-  @media only screen and (${device.md}) {
-    margin: auto;
-    position: fixed;
-    left: 50px;
-    right: 0;
-    top: 60px;
+  margin: auto;
+  position: fixed;
+  left: 50px;
+  right: 0;
+  top: 60px;
+
+  ${respondTo("md")} {
+    position: absolute;
+    top: 50px;
+    right: ${(props) => (props?.position === "left" ? "30%" : "0")};
+    left: ${(props) => (props?.position === "right" ? "30%" : "0")};
   }
 `
 

@@ -1,42 +1,113 @@
+import { useEffect, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
-import { useActiveWeb3React } from "hooks"
+import { createClient, useQuery } from "urql"
+import { BigNumber } from "@ethersproject/bignumber"
 
-import { useGovBalance, useGovPoolDelegations } from "hooks/dao"
+import { useActiveWeb3React } from "hooks"
+import {
+  useGovPoolNftVotingPower,
+  useGovPoolDelegations,
+  useGovPoolHelperContracts,
+} from "hooks/dao"
+import { useGovPoolVotingPowerMulticall } from "hooks/dao/useGovPoolUserVotingPower"
+import { DaoPoolDaoProfileTotalDelegationsQuery } from "queries/gov-pools"
+import { isAddress } from "utils"
 
 interface IUseDelegationsProps {
   startLoading: boolean
 }
 
+interface ITotalDelegationsQuery {
+  daoPool: {
+    totalCurrentTokenDelegated: string
+    totalCurrentNFTDelegated: string[]
+  }
+}
+
+const daoGraphClient = createClient({
+  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
+  requestPolicy: "network-only",
+})
+
 const useDelegations = ({ startLoading }: IUseDelegationsProps) => {
   const { daoAddress } = useParams<"daoAddress">()
   const { account } = useActiveWeb3React()
-
-  const delegatedTokensForMe = useGovBalance({
+  const [totalDelegatedTokensVotingPower, setTotalDelegatedTokensVotingPower] =
+    useState<BigNumber | undefined>(undefined)
+  const [totalNftsListDelegated, setTotalNftsListDelegated] = useState<
+    string[]
+  >([])
+  const { govUserKeeperAddress } = useGovPoolHelperContracts(daoAddress)
+  const [totalDelegatedNftVotingPower, , totalDelegatedNftVotingPowerLoading] =
+    useGovPoolNftVotingPower(
+      startLoading ? daoAddress : undefined,
+      totalNftsListDelegated
+    )
+  const myDelegations = useGovPoolDelegations({
     daoPoolAddress: startLoading ? daoAddress : undefined,
-    isMicroPool: true,
-    useDelegated: false,
-    method: "tokenBalance",
+    user: account ?? "",
   })
 
-  const delegatedNftsForMe = useGovBalance({
-    daoPoolAddress: startLoading ? daoAddress : undefined,
-    isMicroPool: true,
-    useDelegated: false,
-    method: "nftBalance",
-  })
+  const votingPowerParams = useMemo(
+    () => [
+      {
+        userKeeperAddress: govUserKeeperAddress,
+        address: account,
+        isMicroPool: true,
+        useDelegated: false,
+      },
+    ],
+    [account, govUserKeeperAddress]
+  )
 
-  const delegations = useGovPoolDelegations({
-    daoPoolAddress: daoAddress,
-    user: account,
-  })
+  const [votingPowerData, votingPowerDataLoading] =
+    useGovPoolVotingPowerMulticall(votingPowerParams)
 
-  // як дізнатись скільки всього топ делегаторів буде
+  const [totalTokensDelegatee, setTotalTokensDelegatee] = useState<number>(5)
+  const [totalNftDelegatee, setTotalNftDelegatee] = useState<number>(5)
 
-  // console.log("delegatedTokensForMe: ", delegatedTokensForMe)
-  // console.log("delegatedNftsForMe: ", delegatedNftsForMe)
-  // console.log("delegations: ", delegations)
+  const [{ fetching: totalDelegationsFetching, data: totalDelegationsData }] =
+    useQuery<ITotalDelegationsQuery>({
+      query: DaoPoolDaoProfileTotalDelegationsQuery,
+      variables: useMemo(() => ({ address: daoAddress }), [daoAddress]),
+      context: daoGraphClient,
+      pause: useMemo(
+        () => !startLoading || !isAddress(daoAddress) || !isAddress(account),
+        [daoAddress, account, startLoading]
+      ),
+      requestPolicy: "network-only",
+    })
 
-  return null
+  useEffect(() => {
+    if (
+      !totalDelegationsFetching &&
+      totalDelegationsData?.daoPool &&
+      startLoading
+    ) {
+      setTotalDelegatedTokensVotingPower(
+        BigNumber.from(totalDelegationsData.daoPool.totalCurrentTokenDelegated)
+      )
+      setTotalNftsListDelegated(
+        totalDelegationsData.daoPool.totalCurrentNFTDelegated
+      )
+    }
+  }, [totalDelegationsData, totalDelegationsFetching, startLoading])
+
+  return {
+    loading:
+      totalDelegationsFetching ||
+      totalDelegatedNftVotingPowerLoading ||
+      votingPowerDataLoading ||
+      false,
+    totalDelegatedTokensVotingPower,
+    totalDelegatedNftVotingPower,
+    totalTokensDelegatee,
+    totalNftDelegatee,
+    delegatedVotingPowerByMe: myDelegations ? myDelegations.power : undefined,
+    delegatedVotingPowerToMe: votingPowerData
+      ? votingPowerData.micropool[account ?? ""]?.power ?? undefined
+      : undefined,
+  }
 }
 
 export default useDelegations

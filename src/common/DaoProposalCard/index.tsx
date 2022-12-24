@@ -13,7 +13,7 @@ import { WrappedProposalView } from "types"
 import { isEqual } from "lodash"
 import { ZERO_ADDR } from "constants/index"
 import { useNavigate } from "react-router-dom"
-import { useCountdown } from "../../hooks"
+import { useCountdown } from "hooks"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   wrappedProposalView: WrappedProposalView

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 import { GradientBorder, Flex } from "theme"
 
 const background = {

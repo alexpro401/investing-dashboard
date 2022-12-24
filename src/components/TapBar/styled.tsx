@@ -1,5 +1,5 @@
-import theme, { Flex, To } from "theme"
-import styled from "styled-components"
+import theme, { Flex, respondTo, To } from "theme"
+import styled from "styled-components/macro"
 import { motion } from "framer-motion"
 import { useMatch } from "react-router-dom"
 
@@ -20,7 +20,7 @@ export const MobileMenu = styled(motion.div)`
     padding: 5px 14px 25px 14px;
   }
 
-  @media (min-width: 768px) {
+  ${respondTo("sm")} {
     flex-direction: column;
     justify-content: flex-start;
     width: 100px;
@@ -36,7 +36,7 @@ const MobileItem = styled(motion.div)`
   justify-content: center;
   flex-direction: column;
 
-  @media (min-width: 768px) {
+  ${respondTo("sm")} {
     width: 100px;
     height: 100px;
   }
@@ -56,7 +56,7 @@ export const LogoWrapper = styled(Flex)`
   justify-content: center;
   align-items: center;
 
-  @media (max-width: 768px) {
+  ${respondTo("sm")} {
     display: none;
   }
 `

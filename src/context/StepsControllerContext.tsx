@@ -1,6 +1,10 @@
 import { createContext, FC, HTMLAttributes } from "react"
 
 interface StepsControllerContext {
+  steps?: {
+    title: string
+    number: number
+  }[]
   totalStepsAmount: number
   currentStepNumber: number
   prevCb: (cb?: () => void) => void
@@ -8,6 +12,7 @@ interface StepsControllerContext {
 }
 
 export const stepsControllerContext = createContext<StepsControllerContext>({
+  steps: [],
   totalStepsAmount: 0,
   currentStepNumber: 0,
   nextCb(): void {},
@@ -15,13 +20,18 @@ export const stepsControllerContext = createContext<StepsControllerContext>({
 })
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
-  totalStepsAmount: number
+  steps?: {
+    title: string
+    number: number
+  }[]
+  totalStepsAmount?: number
   currentStepNumber: number
   prevCb: (cb?: () => void) => void
   nextCb: (cb?: () => void) => void
 }
 
 const StepsControllerContext: FC<Props> = ({
+  steps,
   totalStepsAmount,
   currentStepNumber,
   prevCb,
@@ -32,7 +42,8 @@ const StepsControllerContext: FC<Props> = ({
   return (
     <stepsControllerContext.Provider
       value={{
-        totalStepsAmount,
+        steps,
+        totalStepsAmount: Number(totalStepsAmount || steps?.length),
         currentStepNumber,
         prevCb,
         nextCb,

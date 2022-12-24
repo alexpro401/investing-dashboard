@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components"
+import styled, { css } from "styled-components/macro"
 import { AppButton, Icon } from "common"
 import { fieldLabelHoverColor } from "fields/styled"
 import { ICON_NAMES } from "constants/icon-names"

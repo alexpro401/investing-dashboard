@@ -1,5 +1,5 @@
-import styled from "styled-components"
-import { Flex } from "theme"
+import styled from "styled-components/macro"
+import { Flex, respondTo } from "theme"
 
 import { ReactNode, FC } from "react"
 
@@ -45,13 +45,13 @@ export const Body = styled.div`
   box-shadow: 0 -3px 102px 2px rgba(149, 185, 255, 0.26);
   border-radius: 26px 26px 0 0;
 
-  @media (max-width: 768px) {
+  ${respondTo("sm")} {
     max-width: 650px;
     padding: 117px 0 0;
     margin: 67px auto 0;
   }
 
-  @media (min-width: 768px) {
+  ${respondTo("sm")} {
     max-width: 880px;
     margin: 67px auto 0;
     padding: 117px 0 0 16px;

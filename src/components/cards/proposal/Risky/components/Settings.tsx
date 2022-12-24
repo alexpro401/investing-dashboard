@@ -24,7 +24,7 @@ import { AppButton } from "common"
 import { Flex } from "theme"
 import { accordionSummaryVariants } from "motion/variants"
 import { DATE_TIME_FORMAT } from "constants/time"
-import { SettingsStyled as S } from "./styled"
+import { SettingsStyled as S } from "./styled-settings"
 import { useUserAgreement } from "state/user/hooks"
 import { TraderPoolRiskyProposal } from "interfaces/typechain"
 

@@ -30,7 +30,7 @@ const StepsNavigation: FC<Props> = ({
   )
 
   const progress = useMemo(
-    () => (currentStepNumber / totalStepsAmount) * 100,
+    () => (currentStepNumber / Number(totalStepsAmount)) * 100,
     [currentStepNumber, totalStepsAmount]
   )
 

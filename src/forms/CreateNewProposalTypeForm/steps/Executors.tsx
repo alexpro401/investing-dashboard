@@ -14,6 +14,7 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 import { createCustomProposalTypeContext } from "context/govPool/proposals/regular/CreateCustomProposalType"
 import { InputField } from "fields"
 import { readFromClipboard } from "utils/clipboard"
+import { useBreakpoints } from "hooks"
 import { useFormValidation } from "hooks/useFormValidation"
 import { required, isAddressValidator } from "utils/validators"
 import { ICON_NAMES } from "constants/icon-names"
@@ -25,6 +26,8 @@ const ExecutorsStep: React.FC = () => {
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
   const { executorAddresses, addExecutorAddress, deleteExecutorAddress } =
     useContext(createCustomProposalTypeContext)
+
+  const { isMobile } = useBreakpoints()
 
   const { getFieldErrorMessage, touchField, isFieldsValid, touchForm } =
     useFormValidation(
@@ -56,79 +59,74 @@ const ExecutorsStep: React.FC = () => {
   const appNavigationEl = document.querySelector("#app-navigation")
 
   return (
-    <>
-      <S.StepsRoot>
-        <Card>
-          <CardHead
-            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
-            title="Налаштування пропоузала"
+    <S.StepsRoot>
+      <Card>
+        <CardHead
+          nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+          title="Налаштування пропоузала"
+        />
+        <CardDescription>
+          <p>В майбутньому замінити текст.</p>
+        </CardDescription>
+        <S.ButtonsContainer>
+          <AppButton
+            type="button"
+            text="+ Add more contract addresses"
+            color="default"
+            size="no-paddings"
+            onClick={addExecutorAddress}
           />
-          <CardDescription>
-            <p>В майбутньому замінити текст.</p>
-          </CardDescription>
-          <S.ButtonsContainer>
-            <AppButton
-              type="button"
-              text="+ Add more contract addresses"
-              color="default"
-              size="no-paddings"
-              onClick={addExecutorAddress}
-            />
-          </S.ButtonsContainer>
-        </Card>
-        {executorAddresses.get.map((el, index) => {
-          return (
-            <CollapsedCard title={`Contract ${index + 1}`} key={el.id}>
-              <InputField
-                value={el.address}
-                setValue={(value: string) => {
-                  executorAddresses.set(index, value)
-                }}
-                label="Contract address"
-                errorMessage={getFieldErrorMessage(
-                  `executorAddresses[${index}]`
-                )}
-                onBlur={() => touchField(`executorAddresses[${index}]`)}
-                nodeRight={
-                  <AppButton
-                    type="button"
-                    text="Paste"
-                    color="default"
-                    size="no-paddings"
-                    onClick={() =>
-                      pasteFromClipboard((value: string) => {
-                        executorAddresses.set(index, value)
-                      })
-                    }
-                  />
-                }
-              />
-              <S.ButtonsContainer>
+        </S.ButtonsContainer>
+      </Card>
+      {executorAddresses.get.map((el, index) => {
+        return (
+          <CollapsedCard title={`Contract ${index + 1}`} key={el.id}>
+            <InputField
+              value={el.address}
+              setValue={(value: string) => {
+                executorAddresses.set(index, value)
+              }}
+              label="Contract address"
+              errorMessage={getFieldErrorMessage(`executorAddresses[${index}]`)}
+              onBlur={() => touchField(`executorAddresses[${index}]`)}
+              nodeRight={
                 <AppButton
-                  disabled={executorAddresses.get.length === 1}
-                  style={{ color: theme.statusColors.error }}
-                  iconLeft={ICON_NAMES.trash}
-                  iconSize={16}
                   type="button"
-                  text="Delete"
+                  text="Paste"
                   color="default"
                   size="no-paddings"
-                  onClick={() => deleteExecutorAddress(index)}
+                  onClick={() =>
+                    pasteFromClipboard((value: string) => {
+                      executorAddresses.set(index, value)
+                    })
+                  }
                 />
-              </S.ButtonsContainer>
-            </CollapsedCard>
-          )
-        })}
-      </S.StepsRoot>
-      {appNavigationEl ? (
+              }
+            />
+            <S.ButtonsContainer>
+              <AppButton
+                disabled={executorAddresses.get.length === 1}
+                style={{ color: theme.statusColors.error }}
+                iconLeft={ICON_NAMES.trash}
+                iconSize={16}
+                type="button"
+                text="Delete"
+                color="default"
+                size="no-paddings"
+                onClick={() => deleteExecutorAddress(index)}
+              />
+            </S.ButtonsContainer>
+          </CollapsedCard>
+        )
+      })}
+      {isMobile &&
+        appNavigationEl &&
         createPortal(
           <StepsNavigation customNextCb={handleNextStepCb} />,
           appNavigationEl
-        )
-      ) : (
-        <></>
-      )}
-    </>
+        )}
+      {!isMobile && <StepsNavigation customNextCb={handleNextStepCb} />}
+    </S.StepsRoot>
   )
 }
 

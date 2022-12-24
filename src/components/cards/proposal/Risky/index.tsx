@@ -29,9 +29,15 @@ import IconButton from "components/IconButton"
 import ExternalLink from "components/ExternalLink"
 import { AppButton } from "common"
 
-import S, { TraderRating, TraderLPSize, TraderInfoBadge } from "./styled"
-import RiskyCardSettings from "./Settings"
-import SharedS, { BodyItem } from "components/cards/proposal/styled"
+import * as S from "./styled"
+import { BodyItem } from "components/cards/proposal/_shared"
+import * as SharedS from "components/cards/proposal/styled"
+import {
+  RiskyCardSettings,
+  TraderInfoBadge,
+  TraderLPSize,
+  Rating,
+} from "./components"
 
 import settingsIcon from "assets/icons/settings.svg"
 import settingsGreenIcon from "assets/icons/settings-green.svg"
@@ -417,7 +423,7 @@ const RiskyProposalCard: FC<Props> = ({
   return (
     <>
       <SharedS.Card>
-        <SharedS.Head p={isTrader ? "8px 8px 7px 16px" : undefined}>
+        <SharedS.Head p={isTrader ? "8px 8px 7px 16px" : "8px 16px 7px 16px"}>
           <Flex>
             <TokenIcon address={proposal.proposalInfo.token} m="0" size={24} />
 
@@ -426,7 +432,7 @@ const RiskyProposalCard: FC<Props> = ({
             ) : (
               <Flex ai="center">
                 <SharedS.Title>{proposalSymbol}</SharedS.Title>
-                <TraderRating rating={tokenRating} />
+                <Rating rating={tokenRating} />
                 <Flex m="0 0 -5px">
                   <Tooltip
                     id={`risky-proposal-rating-info-${proposalId}-${poolAddress}`}

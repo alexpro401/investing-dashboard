@@ -1,5 +1,5 @@
 import { Icon } from "common"
-import styled from "styled-components"
+import styled from "styled-components/macro"
 
 export const LockedIcon = styled(Icon)`
   position: absolute;

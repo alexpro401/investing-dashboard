@@ -18,6 +18,7 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 import { CreatingProposalSuccessModal } from "common/GovProposal"
 
 import * as S from "./styled"
+import { useBreakpoints } from "hooks"
 
 interface ICreateDaoProposalGeneralFormProps {
   withProposalTypeName?: boolean
@@ -85,6 +86,8 @@ const CreateDaoProposalGeneralForm: React.FC<
 
   const appNavigationEl = document.querySelector("#app-navigation")
 
+  const { isMobile } = useBreakpoints()
+
   return (
     <>
       <CreatingProposalSuccessModal />
@@ -140,6 +143,7 @@ const CreateDaoProposalGeneralForm: React.FC<
           </CardFormControl>
         </Card>
       </S.StepsRoot>
+
       {appNavigationEl ? (
         createPortal(
           <StepsNavigation
@@ -148,6 +152,11 @@ const CreateDaoProposalGeneralForm: React.FC<
           />,
           appNavigationEl
         )
+      ) : !isMobile ? (
+        <StepsNavigation
+          customNextCb={handleNextStepCb}
+          nextLabel={"Create Proposal"}
+        />
       ) : (
         <></>
       )}
