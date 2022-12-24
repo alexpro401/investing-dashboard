@@ -42,3 +42,17 @@ export interface Address {
   56: string
   [chainId: number]: string
 }
+
+/* 
+  # typography html tags
+*/
+
+export type TypographyTags =
+  | "h1"
+  | "h2"
+  | "h3"
+  | "h4"
+  | "h5"
+  | "h6"
+  | "p"
+  | "span"
