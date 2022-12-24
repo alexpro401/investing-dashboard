@@ -256,24 +256,6 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
     withDelegated,
   ])
 
-  const isDepositedERC20Used = useMemo(() => {
-    if (withDelegated) {
-      return (
-        ERC20Amount.gt(tokenBalances.erc20DelegatedWithoutVotes) &&
-        tokenBalances.erc20LockedWithoutVotes.gt(ZERO)
-      )
-    }
-
-    return (
-      ERC20Amount.gt(ZERO) && tokenBalances.erc20LockedWithoutVotes.gt(ZERO)
-    )
-  }, [
-    ERC20Amount,
-    tokenBalances.erc20DelegatedWithoutVotes,
-    tokenBalances.erc20LockedWithoutVotes,
-    withDelegated,
-  ])
-
   const ownedERC721Selected = useMemo(() => {
     return ERC721Amount.filter((id) =>
       erc721Balances.walletBalance.includes(id)
@@ -427,7 +409,6 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
       tokenBalances.erc20LockedAndDelegatedBalanceWithoutVotes,
       tokenBalances.erc20LockedWithoutVotes,
       tokenBalances.erc20DelegatedWithoutVotes,
-      isDepositedERC20Used,
       ownedERC721Selected,
       ERC721Amount,
       vote,
