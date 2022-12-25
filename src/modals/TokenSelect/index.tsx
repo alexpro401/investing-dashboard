@@ -258,7 +258,7 @@ const TokenSelect: FC<Props> = ({
   )
 
   return (
-    <Modal isOpen={isOpen} toggle={onClose} title={"Select token"}>
+    <Modal isOpen={isOpen} onClose={onClose} title={"Select token"}>
       {isOpen && content}
     </Modal>
   )

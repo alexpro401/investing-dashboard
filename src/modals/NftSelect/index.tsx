@@ -42,7 +42,7 @@ const NftSelect: FC<Props> = ({
     <Modal
       maxWidth="fit-content"
       isOpen={isOpen}
-      toggle={onClose}
+      onClose={onClose}
       title={"Choose ERC-721 "}
     >
       <S.Container>

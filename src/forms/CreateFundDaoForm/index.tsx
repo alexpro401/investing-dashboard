@@ -178,7 +178,7 @@ const CreateFundDaoForm: FC = () => {
       <Modal
         isOpen={isSuccessModalShown}
         isShowCloseBtn={false}
-        toggle={() => setIsSuccessModalShown(!isSuccessModalShown)}
+        onClose={() => setIsSuccessModalShown(false)}
         title=""
         maxWidth="450px"
       >
