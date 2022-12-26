@@ -1,5 +1,5 @@
 import { useCallback, useContext } from "react"
-import { useNavigate } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
 
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import {
@@ -15,6 +15,7 @@ import usePayload from "hooks/usePayload"
 import useError from "hooks/useError"
 import { useNativeToken } from "hooks/useNativeToken"
 import { SubmitState } from "constants/types"
+import { ROUTE_PATHS } from "constants/index"
 
 interface ICreateProposalDistributionArgs {
   proposalName: string
@@ -97,7 +98,10 @@ const useGovPoolCreateDistributionProposal = (govPoolAddress: string) => {
             buttonText: "Vote",
             onClick: () => {
               navigate(
-                `/dao/${govPoolAddress}/vote/${latestProposalId.toNumber() + 1}`
+                generatePath(ROUTE_PATHS.daoProposalVoting, {
+                  daoProposal: govPoolAddress,
+                  proposalId: String(latestProposalId.toNumber() + 1),
+                })
               )
               closeSuccessModalState()
             },

@@ -55,6 +55,7 @@ import {
 import { useUserAgreement } from "state/user/hooks"
 import { IpfsEntity } from "utils/ipfsEntity"
 import useInsuranceAmount from "hooks/useInsuranceAmount"
+import { ROUTE_PATHS } from "constants/index"
 
 const useUserSettings = (): [
   {
@@ -222,7 +223,7 @@ export default function Wallet() {
     }
   }, [isCopied, addToast, account])
 
-  if (!account) return <Navigate to="/welcome" />
+  if (!account) return <Navigate to={ROUTE_PATHS.welcome} />
 
   const userIcon = isUserEditing ? (
     <IconButton

@@ -18,7 +18,7 @@ import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "common/FormSteps/styled"
-import { useBreakpoints } from "../../hooks"
+import { useBreakpoints } from "hooks"
 
 enum STEPS {
   globalVotingSettings = "globalVotingSettings",

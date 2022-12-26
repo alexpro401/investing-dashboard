@@ -2,7 +2,7 @@ import { Flex, Center, To } from "theme"
 import React, { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { CubeSpinner } from "react-spinners-kit"
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, generatePath } from "react-router-dom"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import LoadMore from "components/LoadMore"
@@ -30,6 +30,7 @@ import { setActivePoolType } from "state/pools/actions"
 import { ICON_NAMES } from "constants/icon-names"
 import { Icon } from "common"
 import { useBreakpoints } from "hooks"
+import { ROUTE_PATHS } from "constants/index"
 
 interface Props {
   poolType: PoolType
@@ -81,7 +82,10 @@ const List: React.FC<Props> = ({ poolType }) => {
         style={{ height: window.innerHeight - 117 }}
       >
         {pools[poolType].map((pool, index) => (
-          <To key={pool.id} to={`/pool/profile/${pool.id}`}>
+          <To
+            key={pool.id}
+            to={generatePath(ROUTE_PATHS.poolProfile, { poolAddress: pool.id })}
+          >
             <Flex p="16px 0 0" full>
               <PoolStatisticCard data={pool} index={index}>
                 {isDesktop ? (

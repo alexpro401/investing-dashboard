@@ -5,6 +5,7 @@ import { AnimatePresence } from "framer-motion"
 import RequireAuth from "pages/RequireAuth"
 
 import { Content } from "theme/GlobalStyle"
+import { ROUTE_PATHS } from "constants/index"
 
 const Welcome = lazy(() => import("pages/Welcome"))
 const TopMembers = lazy(() => import("pages/TopMembers"))
@@ -123,200 +124,219 @@ export default function Routes() {
         <AnimatePresence exitBeforeEnter initial>
           <Switch>
             <Route element={<Layout />}>
-              <Route path="welcome" element={<Welcome />} />
+              <Route path={ROUTE_PATHS.welcome} element={<Welcome />} />
 
               <Route element={<RequireAuth />}>
-                <Route path="me/investor" element={<Investor />} />
-                <Route
-                  path="dao/:daoPoolAddress/vote/:proposalId"
-                  element={<VotingTerminalPage />}
-                />
-                <Route
-                  path="dao/:daoPoolAddress/withdraw"
-                  element={<WithdrawDaoPoolPage />}
-                />
-                <Route
-                  path="dao/:daoPoolAddress/delegate/:delegatee"
-                  element={<DelegateTerminalPage />}
-                />
-                <Route
-                  path="dao/:daoPoolAddress/undelegate/:delegatee"
-                  element={<UndelegateTerminalPage />}
-                />
-                <Route
-                  path="dao/:daoPoolAddress/validators-vote/:proposalId"
-                  element={<ValidatorsVotePage />}
-                />
+                <Route path={ROUTE_PATHS.meInvestor} element={<Investor />} />
 
-                <Route path="me/trader" element={<Trader />} />
-
-                <Route path="notifications" element={<Notifications />} />
-
-                <Route path="wallet" element={<Wallet />} />
+                <Route path={ROUTE_PATHS.meTrader} element={<Trader />} />
 
                 <Route
-                  path="pool/swap/:poolType/:poolToken/:inputToken/:outputToken/*"
-                  element={<Swap />}
+                  path={ROUTE_PATHS.notifications}
+                  element={<Notifications />}
                 />
 
-                <Route path="pool/invest/:poolAddress" element={<Invest />} />
-                <Route path="pool/profile/:poolAddress" element={<Pool />} />
+                <Route path={ROUTE_PATHS.wallet} element={<Wallet />} />
+
+                <Route path={ROUTE_PATHS.poolSwap} element={<Swap />} />
+
+                <Route path={ROUTE_PATHS.poolInvest} element={<Invest />} />
+                <Route path={ROUTE_PATHS.poolProfile} element={<Pool />} />
 
                 <Route
-                  path="create-risky-proposal/:poolAddress/:tokenAddress/*"
+                  path={ROUTE_PATHS.riskyProposalCreate}
                   element={<CreateRiskyProposal />}
                 />
                 <Route
-                  path="invest-risky-proposal/:poolAddress/:proposalId"
+                  path={ROUTE_PATHS.riskyProposalInvest}
                   element={<InvestRiskyProposal />}
                 />
                 <Route
-                  path="swap-risky-proposal/:poolAddress/:proposalId/:direction"
+                  path={ROUTE_PATHS.riskyProposalSwap}
                   element={<SwapRiskyProposal />}
                 />
+
+                <Route path={ROUTE_PATHS.investment} element={<Investment />} />
                 <Route
-                  path="create-invest-proposal/:poolAddress"
+                  path={ROUTE_PATHS.investmentProposalCreate}
                   element={<CreateInvestmentProposal />}
                 />
                 <Route
-                  path="invest-investment-proposal/:poolAddress/:proposalId"
+                  path={ROUTE_PATHS.investmentProposalInvest}
                   element={<InvestInvestmentProposal />}
                 />
                 <Route
-                  path="withdraw-investment-proposal/:poolAddress/:proposalId"
+                  path={ROUTE_PATHS.investmentProposalWithdraw}
                   element={<WithdrawInvestmentProposal />}
                 />
                 <Route
-                  path="pay-dividends-investment-proposal/:poolAddress/:proposalId/*"
+                  path={ROUTE_PATHS.dividendsPay}
                   element={<PayDividends />}
                 />
-                <Route path="create-fund" element={<CreateFund />} />
+                <Route path={ROUTE_PATHS.createFund} element={<CreateFund />} />
                 <Route
-                  path="create-fund/basic/*"
+                  path={ROUTE_PATHS.createFundBasic}
                   element={<CreateFundBasic />}
                 />
                 <Route
-                  path="create-fund/investment/*"
+                  path={ROUTE_PATHS.createFundInvestment}
                   element={<CreateFundInvestment />}
                 />
-                <Route path="create-fund/dao" element={<CreateFundDaoPool />} />
-                <Route path="success/:poolAddress" element={<Success />} />
-
-                <Route path="insurance" element={<Insurance />} />
-                <Route path="insurance/create" element={<InsuranceCreate />} />
                 <Route
-                  path="fund-positions/:poolAddress/*"
+                  path={ROUTE_PATHS.createFundDao}
+                  element={<CreateFundDaoPool />}
+                />
+                <Route
+                  path={ROUTE_PATHS.createFundSuccess}
+                  element={<Success />}
+                />
+
+                <Route
+                  path={ROUTE_PATHS.fundPositions}
                   element={<FundPositions />}
                 />
                 <Route
-                  path="fund-details/:poolAddress/*"
+                  path={ROUTE_PATHS.fundDetails}
                   element={<FundDetails />}
                 />
-                <Route path="investment/*" element={<Investment />} />
+
+                <Route path={ROUTE_PATHS.insurance} element={<Insurance />} />
+                <Route
+                  path={ROUTE_PATHS.insuranceCreate}
+                  element={<InsuranceCreate />}
+                />
+
+                <Route
+                  path={ROUTE_PATHS.daoProposalVoting}
+                  element={<VotingTerminalPage />}
+                />
+                <Route
+                  path={ROUTE_PATHS.daoWithdraw}
+                  element={<WithdrawDaoPoolPage />}
+                />
+                <Route
+                  path={ROUTE_PATHS.daoDelegatee}
+                  element={<DelegateTerminalPage />}
+                />
+                <Route
+                  path={ROUTE_PATHS.daoUnDelegatee}
+                  element={<UndelegateTerminalPage />}
+                />
+                <Route
+                  path={ROUTE_PATHS.daoProposalValidatorsVote}
+                  element={<ValidatorsVotePage />}
+                />
 
                 {/* dao profile */}
-                <Route path="dao/list/*" element={<DaoPools />} />
-                <Route path="dao/:daoAddress" element={<DaoProfile />} />
+                <Route path={ROUTE_PATHS.daoList} element={<DaoPools />} />
+                <Route path={ROUTE_PATHS.daoItem} element={<DaoProfile />} />
                 <Route
-                  path="dao/:daoAddress/delegation/*"
+                  path={ROUTE_PATHS.daoDelegation}
                   element={<DaoDelegation />}
                 />
-                <Route
-                  path="dao/:daoAddress/claim/*"
-                  element={<DaoPoolClaim />}
-                />
+                <Route path={ROUTE_PATHS.daoClaim} element={<DaoPoolClaim />} />
 
                 {/* create proposals */}
                 <Route
-                  path="dao/:daoAddress/create-proposal"
+                  path={ROUTE_PATHS.daoProposalCreateSelectType}
                   element={<CreateDaoProposalSelectType />}
                 />
 
                 {/* default proposals */}
                 <Route
-                  path="dao/:daoAddress/create-proposal/custom"
+                  path={ROUTE_PATHS.daoProposalCreateCustom}
                   element={<CreateDaoProposalType />}
                 />
                 <Route
-                  path="dao/:daoAddress/create-proposal/change-dao-settings"
+                  path={ROUTE_PATHS.daoProposalCreateProfile}
                   element={<CreateDaoProposalChangeDaoSettings />}
                 />
                 <Route
-                  path="dao/:daoAddress/create-proposal/validator-settings"
+                  path={ROUTE_PATHS.daoProposalCreateValidatorSettings}
                   element={<CreateDaoProposalValidatorSettings />}
                 />
                 <Route
-                  path="dao/:daoAddress/create-proposal/token-distribution"
+                  path={ROUTE_PATHS.daoProposalCreateTokenDistribution}
                   element={<DaoProposalTokenDistribution />}
                 />
                 <Route
-                  path="dao/:daoAddress/create-proposal/change-voting-settings"
+                  path={ROUTE_PATHS.daoProposalCreateInternalSelectType}
                   element={<CreateDaoProposalChangeVotingSettings />}
                 />
 
                 {/* change voting settings */}
                 <Route
-                  path="dao/:daoAddress/create-proposal/change-voting-settings/global-voting"
+                  path={ROUTE_PATHS.daoProposalCreateInternalGlobal}
                   element={<DaoProposalChangeGlobalVotingSettings />}
                 />
                 <Route
-                  path="dao/:daoAddress/create-proposal/change-voting-settings/token-distribution"
+                  path={ROUTE_PATHS.daoProposalCreateInternalTokenDistribution}
                   element={<DaoProposalChangeTokenDistribution />}
                 />
                 <Route
-                  path="dao/:daoAddress/create-proposal/change-voting-settings/custom/:executorAddress"
+                  path={ROUTE_PATHS.daoProposalCreateInternalCustom}
                   element={<DaoProposalChangeCustomSettings />}
                 />
 
                 {/* internal proposals */}
                 <Route
-                  path="dao/:daoAddress/create-validator-proposal"
+                  path={
+                    ROUTE_PATHS.daoProposalCreateInternalValidatorsSelectType
+                  }
                   element={<CreateDaoProposalValidatorSelectType />}
                 />
                 <Route
-                  path="/dao/:daoAddress/create-validator-proposal/validator-settings"
+                  path={ROUTE_PATHS.daoProposalCreateInternalValidatorsSettings}
                   element={
                     <CreateDaoProposalValidatorChangeValidatorSettings />
                   }
                 />
                 <Route
-                  path="/dao/:daoAddress/create-validator-proposal/voting-settings"
+                  path={
+                    ROUTE_PATHS.daoProposalCreateInternalValidatorsVotingSettings
+                  }
                   element={<CreateDaoProposalValidatorChangeVotingSettings />}
                 />
 
                 {/* creating custom proposals */}
                 <Route
-                  path="dao/:daoAddress/create-custom-proposal/:executorAddress"
+                  path={ROUTE_PATHS.daoProposalCreateCustomSelectType}
                   element={<CreateDaoCustomProposalSelectType />}
                 />
                 <Route
-                  path="dao/:daoAddress/create-custom-proposal/abi/:executorAddress"
+                  path={ROUTE_PATHS.daoProposalCreateCustomABI}
                   element={<CreateDaoCustomProposalAbi />}
                 />
                 <Route
-                  path="dao/:daoAddress/create-custom-proposal/wallet-connect/:executorAddress"
+                  path={ROUTE_PATHS.daoProposalCreateCustomWalletConnect}
                   element={<CreateDaoCustomProposalWalletConnect />}
                 />
                 <Route
-                  path="dao/:daoAddress/create-custom-proposal/manual/:executorAddress"
+                  path={ROUTE_PATHS.daoProposalCreateCustomManual}
                   element={<CreateDaoCustomProposalManual />}
                 />
 
                 {/* Dao Proposals */}
                 <Route
-                  path="dao/:daoAddress/proposals/*"
+                  path={ROUTE_PATHS.daoProposalList}
                   element={<DaoProposals />}
                 />
                 <Route
-                  path="dao/:daoAddress/proposal/:proposalId"
+                  path={ROUTE_PATHS.daoProposalItem}
                   element={<DaoProposalDetails />}
                 />
 
                 <Route path="/*" element={<TopMembers />} />
               </Route>
 
-              <Route path="privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="service-terms" element={<ServiceTerms />} />
+              <Route
+                path={ROUTE_PATHS.privacyPolicy}
+                element={<PrivacyPolicy />}
+              />
+              <Route
+                path={ROUTE_PATHS.serviceTerms}
+                element={<ServiceTerms />}
+              />
 
               <Route path="*" element={<p>Not found</p>} />
             </Route>

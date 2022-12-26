@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
 import { Dispatch, FC, SetStateAction, useCallback } from "react"
 import { v4 as uuidv4 } from "uuid"
 
@@ -14,6 +14,7 @@ import AppButton from "common/AppButton"
 import { ICON_NAMES } from "constants/icon-names"
 import { useAddToast } from "state/application/hooks"
 import { useGovPoolLatestProposalId } from "hooks/dao"
+import { ROUTE_PATHS } from "constants/index"
 
 interface Props {
   open: boolean
@@ -51,7 +52,10 @@ const CreateInsuranceAccidentCreatedSuccessfully: FC<Props> = ({
 
     onVoteCallback()
     navigate(
-      `/dao/${process.env.REACT_APP_DEXE_DAO_ADDRESS}/vote/${latestProposalId}`
+      generatePath(ROUTE_PATHS.daoProposalVoting, {
+        daoAddress: process.env.REACT_APP_DEXE_DAO_ADDRESS,
+        proposalId: String(latestProposalId),
+      })
     )
   }, [])
 
