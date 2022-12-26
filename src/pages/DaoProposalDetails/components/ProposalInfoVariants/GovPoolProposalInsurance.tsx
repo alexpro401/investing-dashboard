@@ -54,7 +54,7 @@ const GovPoolProposalInsurance: React.FC<Props> = ({ govPoolProposal }) => {
     <>
       {isLoaded ? (
         <>
-          <PoolStatisticCard data={poolData} isMobile={isMobile} />
+          <PoolStatisticCard data={poolData} isMobile={isMobile} hideChart />
 
           <S.DaoProposalDetailsCard>
             <Chart
