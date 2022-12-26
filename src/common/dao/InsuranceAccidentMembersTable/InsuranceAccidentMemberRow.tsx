@@ -68,7 +68,7 @@ const InsuranceAccidentMemberRow: FC<Props> = ({ payload, ...rest }) => {
   }, [payload])
 
   return (
-    <S.TableRow {...rest}>
+    <S.TableBodyRow {...rest}>
       <S.TableCell>
         {!isMobile && rest?.active ? (
           <Flex ai={"center"} jc={"flex-start"} gap={"4"}>
@@ -86,7 +86,7 @@ const InsuranceAccidentMemberRow: FC<Props> = ({ payload, ...rest }) => {
         &nbsp;
         {!isMobile ? <span>$ {stakeUSD}</span> : <></>}
       </S.TableCell>
-    </S.TableRow>
+    </S.TableBodyRow>
   )
 }
 

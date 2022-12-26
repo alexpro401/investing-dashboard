@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from "uuid"
 import { BigNumber } from "@ethersproject/bignumber"
 import { useSelector } from "react-redux"
 
+import * as S from "../styled/step-check-settings"
+
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
 
 import { StepsRoot } from "forms/CreateInsuranceAccidentForm/styled"
@@ -35,6 +37,7 @@ import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { selectDexeAddress } from "state/contracts/selectors"
 import { useBreakpoints } from "hooks"
 import Tooltip from "components/Tooltip"
+import { TableCard } from "../styled/step-check-settings"
 
 function useInvestorsInAccident() {
   const { account } = useWeb3React()
@@ -325,7 +328,7 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
             </Text>
           </Flex>
         )}
-        <Flex full>
+        <S.TableCard>
           <InsuranceAccidentMembersTable
             totals={{
               users: totals.users,
@@ -337,7 +340,7 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
             loading={loading}
             noData={noData}
           />
-        </Flex>
+        </S.TableCard>
       </StepsRoot>
     </>
   )

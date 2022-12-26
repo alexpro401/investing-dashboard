@@ -69,14 +69,14 @@ function getActiveRowStyles({ active = false, fw }) {
 
       ${respondTo("sm")} {
         background: #161b29;
-        color: inherit;
+        color: ${({ theme }) => theme.textColors.primary};
       }
     `
   }
 
   return css`
     background: transparent;
-    color: inherit;
+    color: ${({ theme }) => theme.textColors.primary};
     font-weight: ${fw ?? 400};
   `
 }
@@ -125,6 +125,14 @@ export const TableRow = styled(motion.div)<{
   ${respondTo("sm")} {
     height: 49px;
     padding: 0 16px;
+  }
+`
+
+export const TableBodyRow = styled(TableRow)`
+  height: 49px;
+
+  ${respondTo("sm")} {
+    font-weight: 600;
   }
 `
 
