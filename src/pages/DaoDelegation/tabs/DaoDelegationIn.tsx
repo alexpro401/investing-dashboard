@@ -15,6 +15,7 @@ import { normalizeBigNumber } from "utils"
 import { IGovPoolDelegationHistoryQuery } from "interfaces/thegraphs/gov-pools"
 import { Token } from "interfaces"
 import { useGovPoolHelperContracts } from "hooks/dao"
+import { NoDataMessage } from "common"
 
 interface DaoDelegationInProps {
   token: Token | null
@@ -75,7 +76,7 @@ const DaoDelegationIn: React.FC<DaoDelegationInProps> = ({
     return (
       <S.List>
         <Center>
-          <Text color={theme.textColors.secondary}>No Delegations</Text>
+          <NoDataMessage />
         </Center>
       </S.List>
     )
