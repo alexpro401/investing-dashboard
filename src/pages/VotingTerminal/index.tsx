@@ -13,6 +13,7 @@ import { ICON_NAMES } from "constants/icon-names"
 import { useParams } from "react-router-dom"
 import { Container } from "components/Exchange/styled"
 import Header from "components/Header/Layout"
+import { normalizeBigNumber } from "utils"
 
 interface Props {
   daoPoolAddress?: string
@@ -30,7 +31,11 @@ export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
     buttonType,
     ERC20Amount,
     ERC721Amount,
+    ERC721Voted,
     ERC20Price,
+    ERC20DepositAmount,
+    isERC20Approved,
+    unapprowedERC721Selected,
     toggleDelegated,
     setSelectOpen,
     handleERC20Change,
@@ -54,13 +59,23 @@ export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
     }
 
     if (buttonType === ButtonTypes.UNLOCK) {
+      const tokenUnlockText = `Unlock ${normalizeBigNumber(
+        ERC20DepositAmount,
+        formInfo.erc20.decimal,
+        6
+      )} ${formInfo.erc20.symbol || ""}`
+
+      const nftUnlockText = `Unlock NFT #${unapprowedERC721Selected?.[0] || ""}`
+
+      const buttonText = isERC20Approved ? nftUnlockText : tokenUnlockText
+
       return (
         <S.SubmitButton
           color="secondary"
           type="button"
           size="large"
           onClick={handleApprove}
-          text="Approve token"
+          text={buttonText}
           iconRight={ICON_NAMES.locked}
           iconSize={14}
         />
@@ -158,6 +173,8 @@ export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
         isOpen={selectOpen}
         onClose={() => setSelectOpen(false)}
         nftIds={allNftsId}
+        votedNfts={ERC721Voted}
+        nftPowerMap={nftPowerMap}
       />
     </>
   )

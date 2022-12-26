@@ -140,6 +140,7 @@ export const WithdrawDaoPool: FC<Props> = ({ daoPoolAddress }) => {
         </Flex>
       </S.Card>
       <NftSelect
+        nftPowerMap={nftPowerMap}
         defaultValue={selectedNftsStrings}
         handleSelect={selectNfts}
         isOpen={selectOpen}

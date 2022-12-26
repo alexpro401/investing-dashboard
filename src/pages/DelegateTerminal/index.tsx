@@ -174,6 +174,7 @@ export const DelegateTerminal: FC<Props> = ({ daoPoolAddress, delegatee }) => {
         </Flex>
       </S.Card>
       <NftSelect
+        nftPowerMap={nftPowerMap}
         defaultValue={selectedNftsStrings}
         handleSelect={selectNfts}
         isOpen={selectOpen}

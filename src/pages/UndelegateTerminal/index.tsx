@@ -122,6 +122,7 @@ export const UndelegateTerminal: FC<Props> = ({
         </Flex>
       </S.Card>
       <NftSelect
+        nftPowerMap={nftPowerMap}
         defaultValue={selectedNftsStrings}
         handleSelect={selectNfts}
         isOpen={selectOpen}

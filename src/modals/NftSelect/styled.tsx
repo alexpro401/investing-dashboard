@@ -58,7 +58,11 @@ export const Check = styled(Icon).attrs({ name: ICON_NAMES.tileCheck })`
   }
 `
 
-export const Card = styled(Flex)<{ url: string; isSelected?: boolean }>`
+export const Card = styled(Flex)<{
+  url: string
+  isSelected?: boolean
+  disabled?: boolean
+}>`
   box-sizing: border-box;
   width: 148px;
   height: 148px;
@@ -72,6 +76,13 @@ export const Card = styled(Flex)<{ url: string; isSelected?: boolean }>`
   background-image: url(${({ url }) => url});
   background-size: contain;
   cursor: pointer;
+
+  ${({ disabled }) =>
+    disabled &&
+    ` 
+    cursor: not-allowed;
+    opacity: 0.5;
+  `}
 
   &:hover {
     transition: border 0.1s ease-in-out;
