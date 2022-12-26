@@ -2,7 +2,7 @@ import styled from "styled-components/macro"
 
 const GridContainer = styled.div`
   height: fill-available;
-  overflow: auto;
+  overflow-y: auto;
   width: fill-available;
   max-width: 900px;
   padding: 50px 0;
@@ -30,6 +30,7 @@ const Label = styled.div`
   font-size: 20px;
   line-height: 150%;
   color: #b1c7fc;
+  border-bottom: 1px solid #b1c7fc;
 `
 
 const Grid = ({ items }) => {
