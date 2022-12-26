@@ -16,7 +16,7 @@ import * as S from "../styled/step-add-description"
 
 import { StepsRoot } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
-import { Flex, Text } from "theme"
+import { Flex } from "theme"
 import { normalizeBigNumber } from "utils"
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 import { BigNumber } from "@ethersproject/bignumber"
@@ -30,8 +30,10 @@ import { InputField, TextareaField } from "fields"
 import { readFromClipboard } from "utils/clipboard"
 import Tooltip from "components/Tooltip"
 import { useInsuranceAccidentTotals } from "hooks/useInsurance"
+import { useBreakpoints } from "hooks"
 
 const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
+  const { isMobile } = useBreakpoints()
   const { account } = useWeb3React()
   const { form, investorsTotals, investorsInfo } = useContext(
     InsuranceAccidentCreatingContext
@@ -155,91 +157,82 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
           </CardDescription>
         </Card>
 
-        <Card>
-          <CardHead
-            nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
-            title="Дані"
-          />
+        <S.DataCard>
+          {isMobile && (
+            <CardHead
+              nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
+              title="Дані"
+            />
+          )}
           <div>
             <S.DataBlock>
-              <Flex m="0 0 16px" full jc="space-between">
-                <Text fz={13} fw={500} color="#B1C7FC">
-                  Your loss
-                </Text>
-                <Flex jc="flex-end" gap="4">
-                  <Text fz={13} fw={500} color="#E4F2FF">
-                    {userLossDEXE} DEXE
-                  </Text>
-                  <Text fz={13} fw={500} color="#B1C7FC">
-                    <>($ {userLossUSD.format})</>
-                  </Text>
-                </Flex>
-              </Flex>
-              <Flex full jc="space-between">
-                <Text fz={13} fw={500} color="#B1C7FC">
-                  Your insurance coverage
-                </Text>
-                <Flex jc="flex-end" gap="4">
-                  <Text fz={13} fw={500} color="#E4F2FF">
-                    {userCoverageDEXE.format} DEXE
-                  </Text>
-                  <Text fz={13} fw={500} color="#B1C7FC">
-                    <>($ {userCoverageUSD})</>
-                  </Text>
-                </Flex>
-              </Flex>
+              <S.DataLabel>Your loss</S.DataLabel>
+              <S.DataValue>
+                {userLossDEXE}
+                {isMobile && " DEXE"}
+                <span>
+                  {isMobile && "("}$ {userLossUSD.format}
+                  {isMobile && ")"}
+                </span>
+              </S.DataValue>
+            </S.DataBlock>
+            <S.DataBlock full jc="space-between">
+              <S.DataLabel>Your insurance coverage</S.DataLabel>
+              <S.DataValue>
+                {userCoverageDEXE.format}
+                {isMobile && " DEXE"}
+                <span>
+                  <>
+                    {isMobile && "("}$ {userCoverageUSD}
+                    {isMobile && ")"}
+                  </>
+                </span>
+              </S.DataValue>
             </S.DataBlock>
             <S.DataBlock>
-              <Flex m="0 0 16px" full jc="space-between">
-                <Text fz={13} fw={500} color="#B1C7FC">
-                  Total loss
-                </Text>
-                <Flex jc="flex-end" gap="4">
-                  <Text fz={13} fw={500} color="#E4F2FF">
-                    {normalizeBigNumber(totalLossDEXE, 18, 3)} DEXE
-                  </Text>
-                  <Text fz={13} fw={500} color="#B1C7FC">
-                    ($ {normalizeBigNumber(totalLossUSD, 18, 3)})
-                  </Text>
-                </Flex>
-              </Flex>
-              <Flex full jc="space-between">
-                <Text fz={13} fw={500} color="#B1C7FC">
-                  Insurance coverage
-                </Text>
-                <Flex jc="flex-end" gap="4">
-                  <Text fz={13} fw={500} color="#E4F2FF">
-                    {normalizeBigNumber(totalCoverageDEXE, 18, 3)} DEXE
-                  </Text>
-                  <Text fz={13} fw={500} color="#B1C7FC">
-                    ($ {normalizeBigNumber(totalCoverageUSD, 18, 3)})
-                  </Text>
-                </Flex>
-              </Flex>
+              <S.DataLabel>Total loss</S.DataLabel>
+              <S.DataValue>
+                {normalizeBigNumber(totalLossDEXE, 18, 3)}
+                {isMobile && " DEXE"}
+                <span>
+                  {isMobile && "("}$ {normalizeBigNumber(totalLossUSD, 18, 3)}
+                  {isMobile && ")"}
+                </span>
+              </S.DataValue>
             </S.DataBlock>
             <S.DataBlock>
-              <Flex full jc="space-between">
-                <Text fz={13} fw={500} color="#B1C7FC">
-                  <Flex ai="center" gap="6">
-                    <Tooltip id={uuidv4()}>
-                      Insurance treasury explanation
-                    </Tooltip>
-                    <span>Insurance treasury/3</span>
-                  </Flex>
-                </Text>
-
-                <Flex jc="flex-end" gap="4">
-                  <Text fz={13} fw={500} color="#E4F2FF">
-                    {normalizeBigNumber(insuranceTreasuryDEXE, 18, 3)} DEXE
-                  </Text>
-                  <Text fz={13} fw={500} color="#B1C7FC">
-                    ($ {normalizeBigNumber(insuranceTreasuryUSD, 18, 2)})
-                  </Text>
+              <S.DataLabel>Insurance coverage</S.DataLabel>
+              <S.DataValue>
+                {normalizeBigNumber(totalCoverageDEXE, 18, 3)}
+                {isMobile && " DEXE"}
+                <span>
+                  {isMobile && "("}${" "}
+                  {normalizeBigNumber(totalCoverageUSD, 18, 3)}
+                  {isMobile && ")"}
+                </span>
+              </S.DataValue>
+            </S.DataBlock>
+            <S.DataBlock>
+              <S.DataLabel>
+                <Flex ai="center" gap="6">
+                  <Tooltip id={uuidv4()}>
+                    Insurance treasury explanation
+                  </Tooltip>
+                  <span>Insurance treasury/3</span>
                 </Flex>
-              </Flex>
+              </S.DataLabel>
+              <S.DataValue>
+                {normalizeBigNumber(insuranceTreasuryDEXE, 18, 3)}
+                {isMobile && " DEXE"}
+                <span>
+                  {isMobile && "("}${" "}
+                  {normalizeBigNumber(insuranceTreasuryUSD, 18, 2)}
+                  {isMobile && ")"}
+                </span>
+              </S.DataValue>
             </S.DataBlock>
           </div>
-        </Card>
+        </S.DataCard>
 
         <Card>
           <CardHead
