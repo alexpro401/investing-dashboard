@@ -1,12 +1,15 @@
 import { FC, useContext, useEffect, useMemo } from "react"
 import { isEmpty, isNil } from "lodash"
 import { useWeb3React } from "@web3-react/core"
+import { v4 as uuidv4 } from "uuid"
+import { BigNumber } from "@ethersproject/bignumber"
+import { useSelector } from "react-redux"
 
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
 
 import { StepsRoot } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
-import { Flex } from "theme"
+import theme, { Flex, Text } from "theme"
 import { normalizeBigNumber } from "utils"
 import {
   addBignumbers,
@@ -17,7 +20,6 @@ import usePoolInvestorsByDay from "hooks/usePoolInvestorsByDay"
 import useInvestorsInsuranceHistory from "hooks/useInvestorsInsuranceHistory"
 import useInvestorsLpHistory from "hooks/useInvestorsLpHistory"
 import PoolPriceDiff from "components/PoolPriceDiff"
-import { BigNumber } from "@ethersproject/bignumber"
 import { ZERO } from "constants/index"
 import useInvestorsLastPoolPosition from "hooks/useInvestorsLastPoolPosition"
 import {
@@ -27,11 +29,12 @@ import {
   InsuranceAccidentMembersTable,
 } from "common"
 import { selectPoolByAddress } from "state/pools/selectors"
-import { useSelector } from "react-redux"
 import { AppState } from "state"
 import { usePoolPriceHistoryDiff } from "hooks/usePool"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { selectDexeAddress } from "state/contracts/selectors"
+import { useBreakpoints } from "hooks"
+import Tooltip from "components/Tooltip"
 
 function useInvestorsInAccident() {
   const { account } = useWeb3React()
@@ -288,6 +291,8 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
     }
   }, [totals])
 
+  const { isMobile } = useBreakpoints()
+
   return (
     <>
       <StepsRoot>
@@ -310,6 +315,16 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
             priceDiffUSD={priceDiffUSD}
           />
         </Flex>
+        {!isMobile && (
+          <Flex full ai={"center"} jc={"flex-start"} m={"34px 0 0"} gap={"8"}>
+            <Tooltip id={uuidv4()}>
+              Все участники Все участники Все участники Все участники
+            </Tooltip>
+            <Text fw={700} fz={16} lh={"19px"} color={theme.textColors.primary}>
+              Все участники
+            </Text>
+          </Flex>
+        )}
         <Flex full>
           <InsuranceAccidentMembersTable
             totals={{
