@@ -1,7 +1,7 @@
 import styled from "styled-components/macro"
 import { Block, Text, Flex } from "theme"
 import Avatar from "components/Avatar"
-import bell from "assets/icons/notification-bell.svg"
+// import bell from "assets/icons/notification-bell.svg"
 
 interface NotificationsWidgetProps {
   notifications?: any[]
@@ -62,7 +62,7 @@ const BageIcon = styled.img`
 const Bage: React.FC<{ index: number }> = ({ index }) => (
   <BageContainer>
     <BageCounter>{index}</BageCounter>
-    <BageIcon src={bell} alt="bell icon" />
+    {/* <BageIcon src={bell} alt="bell icon" /> */}
   </BageContainer>
 )
 

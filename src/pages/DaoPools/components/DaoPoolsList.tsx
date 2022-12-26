@@ -9,10 +9,11 @@ import LoadMore from "components/LoadMore"
 import useQueryPagination from "hooks/useQueryPagination"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import { GovPoolsQuery } from "queries"
-import { ZERO_ADDR } from "constants/index"
+import { ROUTE_PATHS, ZERO_ADDR } from "constants/index"
 import { createClient } from "urql"
 import { PulseSpinner } from "react-spinners-kit"
 import { useWeb3React } from "@web3-react/core"
+import { generatePath } from "react-router-dom"
 
 const govPoolsClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -63,7 +64,7 @@ const DaoPoolsList: React.FC<Props> = () => {
     <List.Scroll ref={listRef} center={false}>
       {data.map((pool, index) => (
         <Indents key={pool.id} top={index > 0}>
-          <To to={`/dao/${pool.id}`}>
+          <To to={generatePath(ROUTE_PATHS.daoItem, { daoAddress: pool.id })}>
             <DaoPoolCard data={pool} account={account} />
           </To>
         </Indents>

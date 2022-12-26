@@ -1,5 +1,5 @@
 // tokens by chainID
-const whitelist = {
+export const whitelist = {
   "97": [
     {
       address: "0x7ef95a0fee0dd31b22626fa2e10ee6a223f8a684",

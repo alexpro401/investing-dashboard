@@ -1,12 +1,12 @@
 import React, { useCallback, useState, useMemo } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, generatePath } from "react-router-dom"
 
 import Header from "components/Header/Layout"
 import TutorialCard from "components/TutorialCard"
 import WithUserIsDaoValidatorValidation from "components/WithUserIsDaoValidatorValidation"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import { SelectableCard, Icon } from "common"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES, ROUTE_PATHS } from "constants/index"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
 
@@ -33,8 +33,14 @@ const CreateDaoProposalValidatorSelectType: React.FC = () => {
 
   const proceedToNextStep = useCallback(() => {
     const nextProposalTypePath = {
-      [EValidatorProposalType.validatorSettings]: `/dao/${daoAddress}/create-validator-proposal/validator-settings`,
-      [EValidatorProposalType.votingSettings]: `/dao/${daoAddress}/create-validator-proposal/voting-settings`,
+      [EValidatorProposalType.validatorSettings]: generatePath(
+        ROUTE_PATHS.daoProposalCreateInternalValidatorsSettings,
+        { daoAddress }
+      ),
+      [EValidatorProposalType.votingSettings]: generatePath(
+        ROUTE_PATHS.daoProposalCreateInternalValidatorsVotingSettings,
+        { daoAddress }
+      ),
     }[selectedValidatorProposalType]
 
     navigate(nextProposalTypePath)

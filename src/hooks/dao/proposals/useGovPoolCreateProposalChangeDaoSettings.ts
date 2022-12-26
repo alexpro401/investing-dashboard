@@ -1,5 +1,5 @@
 import { useCallback, useContext } from "react"
-import { useNavigate } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
 
 import { useGovPoolContract } from "contracts"
 import { IpfsEntity } from "utils/ipfsEntity"
@@ -11,6 +11,7 @@ import { useGovPoolCreateProposal, useGovPoolLatestProposalId } from "hooks/dao"
 import { SubmitState } from "constants/types"
 import { isTxMined } from "utils"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
+import { ROUTE_PATHS } from "constants/index"
 
 interface ICreateProposalChangeDaoSettingsArgs extends IGovPoolDescription {
   proposalName: string
@@ -84,7 +85,12 @@ const useGovPoolCreateProposalChangeDaoSettings = (govPoolAddress: string) => {
           image: "",
           buttonText: "Vote",
           onClick: () => {
-            navigate(`/dao/${govPoolAddress}/vote/${latestProposalId}`)
+            navigate(
+              generatePath(ROUTE_PATHS.daoProposalVoting, {
+                daoProposal: govPoolAddress,
+                proposalId: String(latestProposalId),
+              })
+            )
             closeSuccessModalState()
           },
         })
