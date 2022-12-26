@@ -3,7 +3,7 @@ import * as S from "./styled"
 import { FC, HTMLAttributes } from "react"
 import Header from "components/Header/Layout"
 import { Routes, Route, useParams, Navigate } from "react-router-dom"
-import { DaoProposalsList } from "common"
+import { Breadcrumbs, DaoProposalsList } from "common"
 import { useBreakpoints } from "hooks"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
@@ -53,7 +53,7 @@ const DaoProposals: FC<Props> = () => {
   return (
     <>
       <Header tabs={isMobile ? TABS : undefined}>
-        {isMobile ? "All Proposals" : <></>}
+        {isMobile ? "All Proposals" : <Breadcrumbs />}
       </Header>
       <S.Root>
         {!isMobile ? (

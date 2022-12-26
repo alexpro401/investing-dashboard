@@ -35,11 +35,11 @@ const CreateDaoProposalValidatorSelectType: React.FC = () => {
     const nextProposalTypePath = {
       [EValidatorProposalType.validatorSettings]: generatePath(
         ROUTE_PATHS.daoProposalCreateInternalValidatorsSettings,
-        { daoAddress }
+        { daoAddress: daoAddress! }
       ),
       [EValidatorProposalType.votingSettings]: generatePath(
         ROUTE_PATHS.daoProposalCreateInternalValidatorsVotingSettings,
-        { daoAddress }
+        { daoAddress: daoAddress! }
       ),
     }[selectedValidatorProposalType]
 

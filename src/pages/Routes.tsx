@@ -1,4 +1,6 @@
-import { Route, Routes as Switch, Outlet } from "react-router-dom"
+import { RouterProvider } from "react-router-dom"
+
+import { createBrowserRouter, Navigate, Outlet } from "react-router-dom"
 import { lazy, Suspense } from "react"
 import { AnimatePresence } from "framer-motion"
 
@@ -113,236 +115,262 @@ const DaoPools = lazy(() => import("pages/DaoPools"))
 const DaoDelegation = lazy(() => import("pages/DaoDelegation"))
 const DaoPoolClaim = lazy(() => import("pages/DaoPoolClaim"))
 
-function Layout() {
-  return <Outlet />
-}
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <Content>
+        <Suspense fallback={<></>}>
+          <AnimatePresence exitBeforeEnter initial>
+            <Outlet />
+          </AnimatePresence>
+        </Suspense>
+      </Content>
+    ),
+    children: [
+      {
+        path: ROUTE_PATHS.welcome,
+        element: <Welcome />,
+      },
+      {
+        path: ROUTE_PATHS.privacyPolicy,
+        element: <PrivacyPolicy />,
+      },
+      {
+        path: ROUTE_PATHS.serviceTerms,
+        element: <ServiceTerms />,
+      },
+      {
+        path: "/",
+        element: <RequireAuth />,
+        children: [
+          {
+            path: ROUTE_PATHS.meInvestor,
+            element: <Investor />,
+          },
+          {
+            path: ROUTE_PATHS.meTrader,
+            element: <Trader />,
+          },
+
+          {
+            path: ROUTE_PATHS.notifications,
+            element: <Notifications />,
+          },
+
+          {
+            path: ROUTE_PATHS.wallet,
+            element: <Wallet />,
+          },
+
+          {
+            path: ROUTE_PATHS.poolSwap,
+            element: <Swap />,
+          },
+          {
+            path: ROUTE_PATHS.poolInvest,
+            element: <Invest />,
+          },
+          {
+            path: ROUTE_PATHS.poolProfile,
+            element: <Pool />,
+          },
+          {
+            path: ROUTE_PATHS.riskyProposalCreate,
+            element: <CreateRiskyProposal />,
+          },
+          {
+            path: ROUTE_PATHS.riskyProposalInvest,
+            element: <InvestRiskyProposal />,
+          },
+          {
+            path: ROUTE_PATHS.riskyProposalSwap,
+            element: <SwapRiskyProposal />,
+          },
+          {
+            path: ROUTE_PATHS.investment,
+            element: <Investment />,
+          },
+          {
+            path: ROUTE_PATHS.investmentProposalCreate,
+            element: <CreateInvestmentProposal />,
+          },
+          {
+            path: ROUTE_PATHS.investmentProposalInvest,
+            element: <InvestInvestmentProposal />,
+          },
+          {
+            path: ROUTE_PATHS.investmentProposalWithdraw,
+            element: <WithdrawInvestmentProposal />,
+          },
+          {
+            path: ROUTE_PATHS.dividendsPay,
+            element: <PayDividends />,
+          },
+          {
+            path: ROUTE_PATHS.createFund,
+            element: <CreateFund />,
+          },
+          {
+            path: ROUTE_PATHS.createFundBasic,
+            element: <CreateFundBasic />,
+          },
+          {
+            path: ROUTE_PATHS.createFundInvestment,
+            element: <CreateFundInvestment />,
+          },
+          {
+            path: ROUTE_PATHS.createFundDao,
+            element: <CreateFundDaoPool />,
+          },
+          {
+            path: ROUTE_PATHS.createFundSuccess,
+            element: <Success />,
+          },
+          {
+            path: ROUTE_PATHS.fundPositions,
+            element: <FundPositions />,
+          },
+          {
+            path: ROUTE_PATHS.fundDetails,
+            element: <FundDetails />,
+          },
+          {
+            path: ROUTE_PATHS.insurance,
+            element: <Insurance />,
+          },
+          {
+            path: ROUTE_PATHS.insuranceCreate,
+            element: <InsuranceCreate />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalVoting,
+            element: <VotingTerminalPage />,
+          },
+          {
+            path: ROUTE_PATHS.daoWithdraw,
+            element: <WithdrawDaoPoolPage />,
+          },
+          {
+            path: ROUTE_PATHS.daoDelegatee,
+            element: <DelegateTerminalPage />,
+          },
+          {
+            path: ROUTE_PATHS.daoUnDelegatee,
+            element: <UndelegateTerminalPage />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalValidatorsVote,
+            element: <ValidatorsVotePage />,
+          },
+          {
+            path: ROUTE_PATHS.daoList,
+            element: <DaoPools />,
+          },
+          {
+            path: ROUTE_PATHS.daoItem,
+            element: <DaoProfile />,
+            handle: (params) => ({
+              title: `DAO ${params.daoAddress}`,
+            }),
+          },
+          {
+            path: ROUTE_PATHS.daoDelegation,
+            element: <DaoDelegation />,
+          },
+          {
+            path: ROUTE_PATHS.daoClaim,
+            element: <DaoPoolClaim />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalCreateSelectType,
+            element: <CreateDaoProposalSelectType />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalCreateCustom,
+            element: <CreateDaoProposalType />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalCreateProfile,
+            element: <CreateDaoProposalChangeDaoSettings />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalCreateValidatorSettings,
+            element: <CreateDaoProposalValidatorSettings />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalCreateTokenDistribution,
+            element: <DaoProposalTokenDistribution />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalCreateInternalSelectType,
+            element: <CreateDaoProposalChangeVotingSettings />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalCreateInternalGlobal,
+            element: <DaoProposalChangeGlobalVotingSettings />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalCreateInternalTokenDistribution,
+            element: <DaoProposalChangeTokenDistribution />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalCreateInternalCustom,
+            element: <DaoProposalChangeCustomSettings />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalCreateInternalValidatorsSelectType,
+            element: <CreateDaoProposalValidatorSelectType />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalCreateInternalValidatorsSettings,
+            element: <CreateDaoProposalValidatorChangeValidatorSettings />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalCreateInternalValidatorsVotingSettings,
+            element: <CreateDaoProposalValidatorChangeVotingSettings />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalCreateCustomSelectType,
+            element: <CreateDaoCustomProposalSelectType />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalCreateCustomABI,
+            element: <CreateDaoCustomProposalAbi />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalCreateCustomWalletConnect,
+            element: <CreateDaoCustomProposalWalletConnect />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalCreateCustomManual,
+            element: <CreateDaoCustomProposalManual />,
+          },
+          {
+            path: ROUTE_PATHS.daoProposalList,
+            element: <DaoProposals />,
+            handle: (params) => ({
+              title: `DAO ${params.daoAddress}/proposals`,
+            }),
+          },
+          {
+            path: ROUTE_PATHS.daoProposalItem,
+            element: <DaoProposalDetails />,
+          },
+          {
+            path: ROUTE_PATHS.topMembers,
+            element: <TopMembers />,
+          },
+        ],
+      },
+      {
+        path: "*",
+        element: <Navigate replace to={ROUTE_PATHS.welcome} />,
+      },
+    ],
+  },
+])
 
 export default function Routes() {
-  return (
-    <Content>
-      <Suspense fallback={null}>
-        <AnimatePresence exitBeforeEnter initial>
-          <Switch>
-            <Route element={<Layout />}>
-              <Route path={ROUTE_PATHS.welcome} element={<Welcome />} />
-
-              <Route element={<RequireAuth />}>
-                <Route path={ROUTE_PATHS.meInvestor} element={<Investor />} />
-
-                <Route path={ROUTE_PATHS.meTrader} element={<Trader />} />
-
-                <Route
-                  path={ROUTE_PATHS.notifications}
-                  element={<Notifications />}
-                />
-
-                <Route path={ROUTE_PATHS.wallet} element={<Wallet />} />
-
-                <Route path={ROUTE_PATHS.poolSwap} element={<Swap />} />
-
-                <Route path={ROUTE_PATHS.poolInvest} element={<Invest />} />
-                <Route path={ROUTE_PATHS.poolProfile} element={<Pool />} />
-
-                <Route
-                  path={ROUTE_PATHS.riskyProposalCreate}
-                  element={<CreateRiskyProposal />}
-                />
-                <Route
-                  path={ROUTE_PATHS.riskyProposalInvest}
-                  element={<InvestRiskyProposal />}
-                />
-                <Route
-                  path={ROUTE_PATHS.riskyProposalSwap}
-                  element={<SwapRiskyProposal />}
-                />
-
-                <Route path={ROUTE_PATHS.investment} element={<Investment />} />
-                <Route
-                  path={ROUTE_PATHS.investmentProposalCreate}
-                  element={<CreateInvestmentProposal />}
-                />
-                <Route
-                  path={ROUTE_PATHS.investmentProposalInvest}
-                  element={<InvestInvestmentProposal />}
-                />
-                <Route
-                  path={ROUTE_PATHS.investmentProposalWithdraw}
-                  element={<WithdrawInvestmentProposal />}
-                />
-                <Route
-                  path={ROUTE_PATHS.dividendsPay}
-                  element={<PayDividends />}
-                />
-                <Route path={ROUTE_PATHS.createFund} element={<CreateFund />} />
-                <Route
-                  path={ROUTE_PATHS.createFundBasic}
-                  element={<CreateFundBasic />}
-                />
-                <Route
-                  path={ROUTE_PATHS.createFundInvestment}
-                  element={<CreateFundInvestment />}
-                />
-                <Route
-                  path={ROUTE_PATHS.createFundDao}
-                  element={<CreateFundDaoPool />}
-                />
-                <Route
-                  path={ROUTE_PATHS.createFundSuccess}
-                  element={<Success />}
-                />
-
-                <Route
-                  path={ROUTE_PATHS.fundPositions}
-                  element={<FundPositions />}
-                />
-                <Route
-                  path={ROUTE_PATHS.fundDetails}
-                  element={<FundDetails />}
-                />
-
-                <Route path={ROUTE_PATHS.insurance} element={<Insurance />} />
-                <Route
-                  path={ROUTE_PATHS.insuranceCreate}
-                  element={<InsuranceCreate />}
-                />
-
-                <Route
-                  path={ROUTE_PATHS.daoProposalVoting}
-                  element={<VotingTerminalPage />}
-                />
-                <Route
-                  path={ROUTE_PATHS.daoWithdraw}
-                  element={<WithdrawDaoPoolPage />}
-                />
-                <Route
-                  path={ROUTE_PATHS.daoDelegatee}
-                  element={<DelegateTerminalPage />}
-                />
-                <Route
-                  path={ROUTE_PATHS.daoUnDelegatee}
-                  element={<UndelegateTerminalPage />}
-                />
-                <Route
-                  path={ROUTE_PATHS.daoProposalValidatorsVote}
-                  element={<ValidatorsVotePage />}
-                />
-
-                {/* dao profile */}
-                <Route path={ROUTE_PATHS.daoList} element={<DaoPools />} />
-                <Route path={ROUTE_PATHS.daoItem} element={<DaoProfile />} />
-                <Route
-                  path={ROUTE_PATHS.daoDelegation}
-                  element={<DaoDelegation />}
-                />
-                <Route path={ROUTE_PATHS.daoClaim} element={<DaoPoolClaim />} />
-
-                {/* create proposals */}
-                <Route
-                  path={ROUTE_PATHS.daoProposalCreateSelectType}
-                  element={<CreateDaoProposalSelectType />}
-                />
-
-                {/* default proposals */}
-                <Route
-                  path={ROUTE_PATHS.daoProposalCreateCustom}
-                  element={<CreateDaoProposalType />}
-                />
-                <Route
-                  path={ROUTE_PATHS.daoProposalCreateProfile}
-                  element={<CreateDaoProposalChangeDaoSettings />}
-                />
-                <Route
-                  path={ROUTE_PATHS.daoProposalCreateValidatorSettings}
-                  element={<CreateDaoProposalValidatorSettings />}
-                />
-                <Route
-                  path={ROUTE_PATHS.daoProposalCreateTokenDistribution}
-                  element={<DaoProposalTokenDistribution />}
-                />
-                <Route
-                  path={ROUTE_PATHS.daoProposalCreateInternalSelectType}
-                  element={<CreateDaoProposalChangeVotingSettings />}
-                />
-
-                {/* change voting settings */}
-                <Route
-                  path={ROUTE_PATHS.daoProposalCreateInternalGlobal}
-                  element={<DaoProposalChangeGlobalVotingSettings />}
-                />
-                <Route
-                  path={ROUTE_PATHS.daoProposalCreateInternalTokenDistribution}
-                  element={<DaoProposalChangeTokenDistribution />}
-                />
-                <Route
-                  path={ROUTE_PATHS.daoProposalCreateInternalCustom}
-                  element={<DaoProposalChangeCustomSettings />}
-                />
-
-                {/* internal proposals */}
-                <Route
-                  path={
-                    ROUTE_PATHS.daoProposalCreateInternalValidatorsSelectType
-                  }
-                  element={<CreateDaoProposalValidatorSelectType />}
-                />
-                <Route
-                  path={ROUTE_PATHS.daoProposalCreateInternalValidatorsSettings}
-                  element={
-                    <CreateDaoProposalValidatorChangeValidatorSettings />
-                  }
-                />
-                <Route
-                  path={
-                    ROUTE_PATHS.daoProposalCreateInternalValidatorsVotingSettings
-                  }
-                  element={<CreateDaoProposalValidatorChangeVotingSettings />}
-                />
-
-                {/* creating custom proposals */}
-                <Route
-                  path={ROUTE_PATHS.daoProposalCreateCustomSelectType}
-                  element={<CreateDaoCustomProposalSelectType />}
-                />
-                <Route
-                  path={ROUTE_PATHS.daoProposalCreateCustomABI}
-                  element={<CreateDaoCustomProposalAbi />}
-                />
-                <Route
-                  path={ROUTE_PATHS.daoProposalCreateCustomWalletConnect}
-                  element={<CreateDaoCustomProposalWalletConnect />}
-                />
-                <Route
-                  path={ROUTE_PATHS.daoProposalCreateCustomManual}
-                  element={<CreateDaoCustomProposalManual />}
-                />
-
-                {/* Dao Proposals */}
-                <Route
-                  path={ROUTE_PATHS.daoProposalList}
-                  element={<DaoProposals />}
-                />
-                <Route
-                  path={ROUTE_PATHS.daoProposalItem}
-                  element={<DaoProposalDetails />}
-                />
-
-                <Route path="/*" element={<TopMembers />} />
-              </Route>
-
-              <Route
-                path={ROUTE_PATHS.privacyPolicy}
-                element={<PrivacyPolicy />}
-              />
-              <Route
-                path={ROUTE_PATHS.serviceTerms}
-                element={<ServiceTerms />}
-              />
-
-              <Route path="*" element={<p>Not found</p>} />
-            </Route>
-          </Switch>
-        </AnimatePresence>
-      </Suspense>
-    </Content>
-  )
+  return <RouterProvider router={router} />
 }

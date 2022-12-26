@@ -68,7 +68,7 @@ const useGovPoolCreateCustomProposalManual = (
             onClick: () => {
               navigate(
                 generatePath(ROUTE_PATHS.daoProposalVoting, {
-                  daoProposal: govPoolAddress,
+                  daoPoolAddress: govPoolAddress!,
                   proposalId: String(latestProposalId.toNumber() + 1),
                 })
               )

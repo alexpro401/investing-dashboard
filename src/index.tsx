@@ -6,7 +6,6 @@ import { createTheme } from "react-data-table-component"
 
 import { Provider } from "react-redux"
 import { ModalProvider } from "styled-react-modal"
-import { BrowserRouter } from "react-router-dom"
 import store from "state"
 
 import App from "pages/App"
@@ -88,23 +87,21 @@ const container = document.getElementById("root")
 const root = createRoot(container!)
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <ModalProvider>
-        <SideBarContext>
-          <AlertContext>
-            <Web3ReactProvider getLibrary={getLibrary}>
-              <Web3ProviderNetwork getLibrary={getLibrary}>
-                <Provider store={store}>
-                  <>
-                    <GlobalComponents />
-                    <App />
-                  </>
-                </Provider>
-              </Web3ProviderNetwork>
-            </Web3ReactProvider>
-          </AlertContext>
-        </SideBarContext>
-      </ModalProvider>
-    </BrowserRouter>
+    <ModalProvider>
+      <SideBarContext>
+        <AlertContext>
+          <Web3ReactProvider getLibrary={getLibrary}>
+            <Web3ProviderNetwork getLibrary={getLibrary}>
+              <Provider store={store}>
+                <>
+                  <GlobalComponents />
+                  <App />
+                </>
+              </Provider>
+            </Web3ProviderNetwork>
+          </Web3ReactProvider>
+        </AlertContext>
+      </SideBarContext>
+    </ModalProvider>
   </React.StrictMode>
 )

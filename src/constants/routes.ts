@@ -6,6 +6,7 @@ export enum ROUTE_PATHS {
   meTrader = "me/trader",
   notifications = "notifications",
   wallet = "wallet",
+  topMembers = "top-members",
 
   poolSwap = "/pool/swap/:poolType/:poolToken/:inputToken/:outputToken/*",
   poolInvest = "/pool/invest/:poolAddress",
