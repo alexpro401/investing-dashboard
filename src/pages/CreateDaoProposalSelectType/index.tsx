@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { v4 as uuidv4 } from "uuid"
 import { uniqBy } from "lodash"
 
 import Header from "components/Header/Layout"
@@ -7,6 +8,7 @@ import TutorialCard from "components/TutorialCard"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import { SelectableCard, Icon, Collapse } from "common"
 import { ICON_NAMES } from "constants/icon-names"
+import { useBreakpoints } from "hooks"
 import { useGovPoolCustomExecutors } from "hooks/dao"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
@@ -20,6 +22,7 @@ enum EProposalType {
   tokenDistribution = "tokenDistribution",
   validatorSettings = "validatorSettings",
   changeTokenPrice = "changeTokenPrice",
+  createNew = "createNew",
 }
 
 interface IProposalType {
@@ -43,6 +46,7 @@ const CreateProposalSelectType: React.FC = () => {
     type: "default",
     specification: EProposalType.daoProfileModification,
   })
+  const { isMobile } = useBreakpoints()
   const [customExecutors, customExecutorsLoading] =
     useGovPoolCustomExecutors(daoAddress)
 
@@ -61,6 +65,7 @@ const CreateProposalSelectType: React.FC = () => {
         [EProposalType.tokenDistribution]: "/token-distribution",
         [EProposalType.validatorSettings]: "/validator-settings",
         [EProposalType.changeTokenPrice]: "/",
+        [EProposalType.createNew]: "/custom",
       }[selectedCard.specification]
 
       if (nextProposalTypePath !== "/") {
@@ -77,8 +82,8 @@ const CreateProposalSelectType: React.FC = () => {
     }
   }, [selectedCard, daoAddress, navigate])
 
-  const defaultProposalTypes = useMemo<IProposalType[]>(
-    () => [
+  const defaultProposalTypes = useMemo<IProposalType[]>(() => {
+    const defaultTypes = [
       {
         type: EProposalType.daoProfileModification,
         title: "DAO profile modification",
@@ -152,9 +157,23 @@ const CreateProposalSelectType: React.FC = () => {
         ),
         iconName: ICON_NAMES.dollarOutline,
       },
-    ],
-    []
-  )
+    ]
+
+    if (!isMobile) {
+      defaultTypes.push({
+        type: EProposalType.createNew,
+        title: "Create new",
+        description: (
+          <>
+            <p>текст</p>
+          </>
+        ),
+        iconName: ICON_NAMES.fileDock,
+      })
+    }
+
+    return defaultTypes
+  }, [isMobile])
 
   const handleSelectDefaultVotingType = useCallback(
     (specification: EProposalType): void => {
@@ -167,104 +186,205 @@ const CreateProposalSelectType: React.FC = () => {
     setSelectedCard({ type: "custom", executorAddress })
   }, [])
 
+  const renderDefaultProposals = useMemo(() => {
+    return defaultProposalTypes.map(
+      ({ description, guide, iconName, title, type }) => {
+        return (
+          <SelectableCard
+            key={type}
+            value={selectedCard?.specification as EProposalType}
+            setValue={handleSelectDefaultVotingType}
+            valueToSet={type}
+            headNodeLeft={<Icon name={iconName} />}
+            headNodeRight={
+              guide && !isMobile ? (
+                <S.ProposalTypeTooltipWrp>
+                  <S.ProposalTypeTooltip id={uuidv4()}>
+                    {guide}
+                  </S.ProposalTypeTooltip>
+                </S.ProposalTypeTooltipWrp>
+              ) : undefined
+            }
+            title={title}
+            description={description}
+          >
+            {guide && isMobile && (
+              <Collapse isOpen={selectedCard?.specification === type}>
+                <S.ProposalTypeGuide>{guide}</S.ProposalTypeGuide>
+              </Collapse>
+            )}
+          </SelectableCard>
+        )
+      }
+    )
+  }, [
+    defaultProposalTypes,
+    handleSelectDefaultVotingType,
+    selectedCard,
+    isMobile,
+  ])
+
+  const renderCustomProposals = useMemo(() => {
+    if (customExecutorsLoading)
+      return (
+        <>
+          <Flex gap={"24"} full dir="column" ai={"center"}>
+            <Skeleton
+              variant={"rect"}
+              w={isMobile ? "100%" : "100%"}
+              h={isMobile ? "65px" : "90px"}
+            />
+          </Flex>
+          {!isMobile && <Skeleton variant={"rect"} w={"100%"} h={"90px"} />}
+        </>
+      )
+
+    return customExecutorsFiltered.map(
+      ({ id, proposalName, proposalDescription, executorAddress }) => {
+        return (
+          <SelectableCard
+            key={id}
+            headNodeLeft={<Icon name={ICON_NAMES.fileDock} />}
+            value={selectedCard?.executorAddress as string}
+            setValue={handleSelectCustomProposal}
+            valueToSet={executorAddress}
+            title={proposalName}
+            description={proposalDescription}
+          />
+        )
+      }
+    )
+  }, [
+    customExecutorsLoading,
+    isMobile,
+    customExecutorsFiltered,
+    handleSelectCustomProposal,
+    selectedCard,
+  ])
+
   return (
     <>
       <Header>Create proposal</Header>
       <WithGovPoolAddressValidation
         daoPoolAddress={daoAddress ?? ""}
         loader={
-          <Flex
-            gap={"24"}
-            full
-            m="16px 0 0 0"
-            dir="column"
-            ai={"center"}
-            jc={"flex-start"}
-          >
-            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-          </Flex>
+          <S.PageHolder>
+            <S.Content>
+              <Flex
+                gap={isMobile ? "24" : "18"}
+                full
+                m="16px 0 0 0"
+                dir="column"
+                ai={isMobile ? "center" : "flex-start"}
+                jc={"flex-start"}
+              >
+                {isMobile && (
+                  <>
+                    <Skeleton
+                      variant={"rect"}
+                      w={"calc(100% - 32px)"}
+                      h={"80px"}
+                    />
+                    <Skeleton
+                      variant={"rect"}
+                      w={"calc(100% - 32px)"}
+                      h={"80px"}
+                    />
+                    <Skeleton
+                      variant={"rect"}
+                      w={"calc(100% - 32px)"}
+                      h={"80px"}
+                    />
+                    <Skeleton
+                      variant={"rect"}
+                      w={"calc(100% - 32px)"}
+                      h={"80px"}
+                    />
+                  </>
+                )}
+                {!isMobile && (
+                  <>
+                    <Skeleton variant={"text"} w={"300px"} h={"20px"} />
+                    <Flex gap={"16"} full dir="row" wrap="wrap">
+                      <Skeleton
+                        variant={"rect"}
+                        w={"calc(50% - 20px)"}
+                        h={"120px"}
+                      />
+                      <Skeleton
+                        variant={"rect"}
+                        w={"calc(50% - 20px)"}
+                        h={"120px"}
+                      />
+                      <Skeleton
+                        variant={"rect"}
+                        w={"calc(50% - 20px)"}
+                        h={"120px"}
+                      />
+                      <Skeleton
+                        variant={"rect"}
+                        w={"calc(50% - 20px)"}
+                        h={"120px"}
+                      />
+                    </Flex>
+                    <Skeleton variant={"text"} w={"300px"} h={"20px"} />
+                    <Flex gap={"16"} full dir="row" wrap="wrap">
+                      <Skeleton
+                        variant={"rect"}
+                        w={"calc(50% - 20px)"}
+                        h={"120px"}
+                      />
+                      <Skeleton
+                        variant={"rect"}
+                        w={"calc(50% - 20px)"}
+                        h={"120px"}
+                      />
+                    </Flex>
+                  </>
+                )}
+              </Flex>
+            </S.Content>
+          </S.PageHolder>
         }
       >
-        <S.CreateProposalSelectTypePageHolder
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          <S.CreateProposalSelectTypeContent>
-            <TutorialCard
-              text={"Shape your DAO with your best ideas."}
-              linkText={"Read the tutorial"}
-              imageSrc={tutorialImageSrc}
-              href={"https://github.com/"}
-            />
-            <S.CreateProposalSelectTypeHeader>
-              <S.CreateProposalSelectTypeTitle>
-                Choose type of proposal
-              </S.CreateProposalSelectTypeTitle>
-              <S.CreateProposalSelectTypeCreateNew
-                to={`/dao/${daoAddress}/create-proposal/custom`}
-              >
-                + Create new
-              </S.CreateProposalSelectTypeCreateNew>
-            </S.CreateProposalSelectTypeHeader>
-            {defaultProposalTypes.map(
-              ({ description, guide, iconName, title, type }) => {
-                return (
-                  <SelectableCard
-                    key={type}
-                    value={selectedCard?.specification as EProposalType}
-                    setValue={handleSelectDefaultVotingType}
-                    valueToSet={type}
-                    headNodeLeft={<Icon name={iconName} />}
-                    title={title}
-                    description={description}
+        <S.PageHolder>
+          <S.Content>
+            {isMobile && (
+              <>
+                <TutorialCard
+                  text={"Shape your DAO with your best ideas."}
+                  linkText={"Read the tutorial"}
+                  imageSrc={tutorialImageSrc}
+                  href={"https://github.com/"}
+                />
+                <S.HeaderWrp>
+                  <S.CreateProposalSelectTypeTitle>
+                    Choose type of proposal
+                  </S.CreateProposalSelectTypeTitle>
+                  <S.CreateProposalSelectTypeCreateNew
+                    to={`/dao/${daoAddress}/create-proposal/custom`}
                   >
-                    {guide && (
-                      <Collapse isOpen={selectedCard?.specification === type}>
-                        <S.ProposalTypeGuide>{guide}</S.ProposalTypeGuide>
-                      </Collapse>
-                    )}
-                  </SelectableCard>
-                )
-              }
+                    + Create new
+                  </S.CreateProposalSelectTypeCreateNew>
+                </S.HeaderWrp>
+              </>
             )}
-            {customExecutorsLoading && (
-              <Flex gap={"24"} full dir="column" ai={"center"}>
-                <Skeleton variant={"rect"} w={"100%"} h={"60px"} />
-              </Flex>
+            {!isMobile && <S.BlockTitle>Шаблони пропоузалів</S.BlockTitle>}
+            {isMobile && renderDefaultProposals}
+            {!isMobile && <S.BlockGrid>{renderDefaultProposals}</S.BlockGrid>}
+            {!isMobile && (
+              <S.BlockTitle>Шаблони кастомних пропоузалів</S.BlockTitle>
             )}
-            {!customExecutorsLoading &&
-              customExecutorsFiltered.map(
-                ({
-                  id,
-                  proposalName,
-                  proposalDescription,
-                  executorAddress,
-                }) => {
-                  return (
-                    <SelectableCard
-                      key={id}
-                      value={selectedCard?.executorAddress as string}
-                      setValue={handleSelectCustomProposal}
-                      valueToSet={executorAddress}
-                      title={proposalName}
-                      description={proposalDescription}
-                    />
-                  )
-                }
-              )}
+            {isMobile && renderCustomProposals}
+            {!isMobile && <S.BlockGrid>{renderCustomProposals}</S.BlockGrid>}
             <S.CreateProposalSelectTypeSubmitButton
               type="button"
               size="large"
               onClick={proceedToNextStep}
               text={"Start creating proposal"}
             />
-          </S.CreateProposalSelectTypeContent>
-        </S.CreateProposalSelectTypePageHolder>
+          </S.Content>
+        </S.PageHolder>
       </WithGovPoolAddressValidation>
     </>
   )

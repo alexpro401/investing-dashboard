@@ -45,7 +45,6 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   margin: 0 auto;
 
   ${respondTo("sm")} {
-    width: auto;
     max-width: 775px;
   }
 `

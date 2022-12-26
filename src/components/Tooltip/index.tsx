@@ -1,9 +1,11 @@
+import { ReactNode, useState } from "react"
 import ReactTooltip from "react-tooltip"
+import ReactDOMServer from "react-dom/server"
+
 import TooltipIcon from "assets/icons/TooltipIcon"
 import styled, { createGlobalStyle } from "styled-components/macro"
 import TooltipSmall from "assets/icons/TooltipSmall"
 import { GradientBorderBase } from "theme"
-import { ReactNode, useState } from "react"
 
 const TooltipStyles: any = createGlobalStyle`
   button {
@@ -19,6 +21,8 @@ const TooltipStyles: any = createGlobalStyle`
     display: block!important;
     min-width: 300px;
     opacity: 1!important;
+    max-width: 700px;
+    z-index: 101 !important;
 
     &:before {
       display: none!important;
@@ -104,9 +108,14 @@ const Tooltip: React.FC<Props> = ({ id, children, size = "normal" }) => {
       </TooltipArea>
 
       {tooltip && (
-        <ReactTooltip className="dark-tooltip" id={id}>
-          <TooltipContent>{children}</TooltipContent>
-        </ReactTooltip>
+        <ReactTooltip
+          className="dark-tooltip"
+          effect="solid"
+          id={id}
+          getContent={() => {
+            return <TooltipContent>{children}</TooltipContent>
+          }}
+        />
       )}
     </>
   )
