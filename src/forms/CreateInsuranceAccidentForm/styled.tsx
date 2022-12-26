@@ -3,6 +3,7 @@ import { Flex, respondTo } from "theme"
 import { motion } from "framer-motion"
 import { opacityVariants } from "motion/variants"
 import StepsControllerContext from "context/StepsControllerContext"
+import { Card, CardHead, CardDescription } from "common"
 
 export const Container = styled(StepsControllerContext)`
   display: flex;
@@ -152,5 +153,38 @@ export const InputGroup = styled.div`
 
   & > *:nth-child(2) {
     width: 55%;
+  }
+`
+
+export const CreateInsuranceAccidentTopCard = styled(Card)`
+  ${respondTo("sm")} {
+    background: transparent;
+    gap: 8px;
+  }
+`
+
+export const CreateInsuranceAccidentTopCardHead = styled(CardHead)`
+  & > span {
+    ${respondTo("sm")} {
+      font-weight: 900;
+      font-size: 24px;
+      line-height: 30px;
+      letter-spacing: -0.01em;
+      color: #2669eb;
+    }
+  }
+`
+
+export const CreateInsuranceAccidentTopCardDescription = styled(
+  CardDescription
+)`
+  & > span {
+    ${respondTo("sm")} {
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 170%;
+      letter-spacing: 0.01em;
+      color: #b1c7fc;
+    }
   }
 `

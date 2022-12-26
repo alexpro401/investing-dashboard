@@ -14,9 +14,14 @@ import { format } from "date-fns"
 
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
 
-import { Card, CardDescription, CardHead } from "common"
+import { Card } from "common"
 
-import { StepsRoot } from "forms/CreateInsuranceAccidentForm/styled"
+import {
+  StepsRoot,
+  CreateInsuranceAccidentTopCard,
+  CreateInsuranceAccidentTopCardHead,
+  CreateInsuranceAccidentTopCardDescription,
+} from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"
 
@@ -228,19 +233,21 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
   return (
     <>
       <StepsRoot>
-        <Card>
-          <CardHead
-            nodeLeft={<CreateInsuranceAccidentCardStepNumber number={2} />}
+        <CreateInsuranceAccidentTopCard>
+          <CreateInsuranceAccidentTopCardHead
+            nodeLeft={
+              isMobile && <CreateInsuranceAccidentCardStepNumber number={2} />
+            }
             title="Determine the price of insured event"
           />
-          <CardDescription>
+          <CreateInsuranceAccidentTopCardDescription>
             <p>
               Чтобы определить цену для страховой компенсации выберите дату
               непосредственно до того как произошел страховой случай. Также вы
               можете вписать соответствующий блок.
             </p>
-          </CardDescription>
-        </Card>
+          </CreateInsuranceAccidentTopCardDescription>
+        </CreateInsuranceAccidentTopCard>
 
         <Card>
           <Chart

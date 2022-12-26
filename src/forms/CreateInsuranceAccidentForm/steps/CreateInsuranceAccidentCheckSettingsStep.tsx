@@ -9,7 +9,12 @@ import * as S from "../styled/step-check-settings"
 
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
 
-import { StepsRoot } from "forms/CreateInsuranceAccidentForm/styled"
+import {
+  StepsRoot,
+  CreateInsuranceAccidentTopCard,
+  CreateInsuranceAccidentTopCardHead,
+  CreateInsuranceAccidentTopCardDescription,
+} from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import theme, { Flex, Text } from "theme"
 import { normalizeBigNumber } from "utils"
@@ -299,18 +304,20 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
   return (
     <>
       <StepsRoot>
-        <Card>
-          <CardHead
-            nodeLeft={<CreateInsuranceAccidentCardStepNumber number={3} />}
+        <CreateInsuranceAccidentTopCard>
+          <CreateInsuranceAccidentTopCardHead
+            nodeLeft={
+              isMobile && <CreateInsuranceAccidentCardStepNumber number={3} />
+            }
             title="Сheck insurance proposal details"
           />
-          <CardDescription>
+          <CreateInsuranceAccidentTopCardDescription>
             <p>
               тут ви бачете тотал інфу по всім учасникам фонду у яких була
               страховка
             </p>
-          </CardDescription>
-        </Card>
+          </CreateInsuranceAccidentTopCardDescription>
+        </CreateInsuranceAccidentTopCard>
         <Flex full>
           <PoolPriceDiff
             initialPriceUSD={initialPriceUSD}

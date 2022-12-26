@@ -14,7 +14,12 @@ import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccident
 
 import * as S from "../styled/step-add-description"
 
-import { StepsRoot } from "forms/CreateInsuranceAccidentForm/styled"
+import {
+  StepsRoot,
+  CreateInsuranceAccidentTopCard,
+  CreateInsuranceAccidentTopCardHead,
+  CreateInsuranceAccidentTopCardDescription,
+} from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { Flex } from "theme"
 import { normalizeBigNumber } from "utils"
@@ -147,15 +152,21 @@ const CreateInsuranceAccidentAddDescriptionStep: FC = () => {
   return (
     <>
       <StepsRoot>
-        <Card>
-          <CardHead
-            nodeLeft={<CreateInsuranceAccidentCardStepNumber number={4} />}
-            title="Финальный шаг text"
+        <CreateInsuranceAccidentTopCard>
+          <CreateInsuranceAccidentTopCardHead
+            nodeLeft={
+              isMobile && <CreateInsuranceAccidentCardStepNumber number={4} />
+            }
+            title="Proposal summary"
           />
-          <CardDescription>
-            <p>текст</p>
-          </CardDescription>
-        </Card>
+          <CreateInsuranceAccidentTopCardDescription>
+            <p>
+              Для финализации и создания пропоузала еще раз проверьте данные по
+              компенсации, опишите страховую проблему, а также привяжите чат для
+              обсуждения
+            </p>
+          </CreateInsuranceAccidentTopCardDescription>
+        </CreateInsuranceAccidentTopCard>
 
         <S.DataCard>
           {isMobile && (
