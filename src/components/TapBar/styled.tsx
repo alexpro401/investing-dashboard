@@ -54,9 +54,10 @@ export const LogoWrapper = styled(Flex)`
   height: 100px;
   justify-content: center;
   align-items: center;
+  display: none;
 
   ${respondTo("sm")} {
-    display: none;
+    display: flex;
   }
 `
 

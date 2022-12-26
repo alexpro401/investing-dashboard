@@ -1,10 +1,10 @@
 import React, { useCallback } from "react"
-import { useNavigate } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
 
 import Modal from "components/Modal"
 import useIsValidator from "hooks/useIsValidator"
 import { useActiveWeb3React } from "hooks"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES, ROUTE_PATHS } from "constants/index"
 import Skeleton from "components/Skeleton"
 
 import * as S from "./styled"
@@ -28,13 +28,19 @@ const ChooseDaoProposalAsPerson: React.FC<IChooseProposalAsPersonProps> = ({
   })
 
   const handleGoToGeneralProposals = useCallback(() => {
-    navigate(`/dao/${daoAddress}/create-proposal`)
+    navigate(
+      generatePath(ROUTE_PATHS.daoProposalCreateSelectType, { daoAddress })
+    )
   }, [navigate, daoAddress])
 
   const handleGoToValidatorProposals = useCallback(() => {
     if (!isUserValidator) return
 
-    navigate(`/dao/${daoAddress}/create-validator-proposal`)
+    navigate(
+      generatePath(ROUTE_PATHS.daoProposalCreateInternalValidatorsSelectType, {
+        daoAddress,
+      })
+    )
   }, [navigate, isUserValidator, daoAddress])
 
   return (

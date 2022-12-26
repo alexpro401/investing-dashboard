@@ -20,6 +20,7 @@ import {
   selectTotalOwnedPoolsStatistic,
 } from "state/user/selectors"
 import { useNavigate } from "react-router-dom"
+import { ROUTE_PATHS } from "constants/index"
 
 function Trader() {
   const { account } = useWeb3React()
@@ -88,7 +89,10 @@ function Trader() {
               <Text block color="#E4F2FF" fw={700} fz={16} lh="1">
                 All my funds
               </Text>
-              <List.Action text="+ Create new" routePath="/create-fund" />
+              <List.Action
+                text="+ Create new"
+                routePath={ROUTE_PATHS.createFund}
+              />
             </List.Header>
           </Indents>
           <List.Scroll ref={scrollRef} center={!_poolsInView}>
