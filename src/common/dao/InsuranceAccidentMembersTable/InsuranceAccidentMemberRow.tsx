@@ -60,6 +60,13 @@ const InsuranceAccidentMemberRow: FC<Props> = ({ payload, ...rest }) => {
     return normalizeBigNumber(big, 18, 2)
   }, [payload])
 
+  const stakeUSD = useMemo(() => {
+    if (!payload) return "0.0"
+
+    const big = BigNumber.from(payload.stakeUSD)
+    return normalizeBigNumber(big, 18, 2)
+  }, [payload])
+
   return (
     <S.TableRow {...rest}>
       <S.TableCell>
@@ -74,7 +81,11 @@ const InsuranceAccidentMemberRow: FC<Props> = ({ payload, ...rest }) => {
       </S.TableCell>
       <S.TableCell>{inDayLpAmount.format}</S.TableCell>
       <S.TableCell>{loss}</S.TableCell>
-      <S.TableCell>{stake}</S.TableCell>
+      <S.TableCell>
+        {stake}
+        &nbsp;
+        {!isMobile ? <span>$ {stakeUSD}</span> : <></>}
+      </S.TableCell>
     </S.TableRow>
   )
 }

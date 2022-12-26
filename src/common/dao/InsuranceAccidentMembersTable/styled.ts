@@ -138,6 +138,12 @@ export const TableCell = styled(Text)`
   ${respondTo("sm")} {
     font-size: 14px;
   }
+
+  span {
+    display: inline-block;
+    margin-left: 4px;
+    color: #6781bd;
+  }
 `
 
 export const TableCellActiveIcon = styled(Icon)`

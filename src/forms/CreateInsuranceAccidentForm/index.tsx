@@ -477,6 +477,7 @@ const CreateInsuranceAccidentForm: FC = () => {
           lp: ZERO.toHexString(),
           loss: ZERO.toHexString(),
           coverage: ZERO.toHexString(),
+          coverageUSD: ZERO.toHexString(),
         })
         setCurrentStep(STEPS.chooseBlock)
         break

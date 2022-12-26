@@ -29,6 +29,7 @@ export interface InsuranceAccidentInvestorsTotalsInfo {
   lp: string
   loss: string
   coverage: string
+  coverageUSD?: string
 }
 
 export interface InsuranceAccidentInvestor extends Insurance {
