@@ -7,6 +7,10 @@ export const SubmitButton = styled(AppButton)`
   width: 100%;
 `
 
+export const DesktopHeaderWrp = styled.div`
+  margin-bottom: 16px;
+`
+
 export const TokenContainer = styled.div`
   display: flex;
   flex-direction: row;

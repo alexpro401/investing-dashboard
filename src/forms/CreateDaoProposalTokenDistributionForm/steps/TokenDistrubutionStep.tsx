@@ -13,16 +13,19 @@ import {
   CreateDaoCardStepNumber,
   TokenChip,
   AppButton,
+  Headline1,
+  RegularText,
 } from "common"
 import ExternalLink from "components/ExternalLink"
 import { InputField, SelectField } from "fields"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { TokenDistributionCreatingContext } from "context/govPool/proposals/TokenDistributionContext"
+import { useBreakpoints } from "hooks"
 import { useFormValidation } from "hooks/useFormValidation"
 import { required, isBnLte } from "utils/validators"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { formatFiatNumber, formatTokenNumber } from "utils"
-import { cutStringZeroes } from "utils"
+import { formatFiatNumber, formatTokenNumber, cutStringZeroes } from "utils"
+import theme from "theme"
 
 import * as S from "../styled"
 import * as SForms from "common/FormSteps/styled"
@@ -32,6 +35,7 @@ const TokenDistributionStep: React.FC = () => {
   const [treasury] = useGovPoolTreasury(daoAddress)
 
   const { chainId } = useActiveWeb3React()
+  const { isMobile } = useBreakpoints()
   const { selectedTreasuryToken, tokenAmount } = useContext(
     TokenDistributionCreatingContext
   )
@@ -86,17 +90,36 @@ const TokenDistributionStep: React.FC = () => {
 
   return (
     <SForms.StepsRoot>
-      <Card>
-        <CardHead
-          nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
-          title="Select token from treasury"
-        />
-        <CardDescription>
-          <p>
+      {!isMobile && (
+        <S.DesktopHeaderWrp>
+          <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+            Select token from treasury
+          </Headline1>
+          <RegularText
+            color={theme.textColors.secondary}
+            desktopWeight={500}
+            desktopSize={"14px"}
+          >
             Choose the ERC-20 token for distibution — make sure to have enough
             of this token in the DAO treasury.
-          </p>
-        </CardDescription>
+          </RegularText>
+        </S.DesktopHeaderWrp>
+      )}
+      <Card>
+        {isMobile && (
+          <>
+            <CardHead
+              nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+              title="Select token from treasury"
+            />
+            <CardDescription>
+              <p>
+                Choose the ERC-20 token for distibution — make sure to have
+                enough of this token in the DAO treasury.
+              </p>
+            </CardDescription>
+          </>
+        )}
         <CardFormControl>
           <SelectField
             placeholder="ERC-20"

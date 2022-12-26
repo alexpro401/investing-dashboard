@@ -14,6 +14,8 @@ import {
   CardHead,
   CreateDaoCardStepNumber,
   CollapsedCard,
+  Headline1,
+  RegularText,
 } from "common"
 import { useFormValidation } from "hooks/useFormValidation"
 import { AdvancedManualContext } from "context/govPool/proposals/custom/AdvancedManualContext"
@@ -27,6 +29,7 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 import theme from "theme"
 import { ICON_NAMES } from "constants/icon-names"
 import { isAddressValidator, required } from "utils/validators"
+import { useBreakpoints } from "hooks"
 import {
   useGovPoolSettingsIdToExecutors,
   useGovPoolExecutorToSettings,
@@ -42,6 +45,7 @@ const ManualStep: React.FC = () => {
     "daoAddress" | "executorAddress"
   >()
 
+  const { isMobile } = useBreakpoints()
   const [settingsId] = useGovPoolExecutorToSettings(daoAddress, executorAddress)
   const [executors] = useGovPoolSettingsIdToExecutors(
     daoAddress,
@@ -108,15 +112,39 @@ const ManualStep: React.FC = () => {
 
   return (
     <SForms.StepsRoot>
-      <Card>
-        <CardHead
-          nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
-          title="Заповніть дані"
-        />
-        <CardDescription>
-          <p>Insert in the field below the DATA of the formed transaction:</p>
-        </CardDescription>
-        <S.ButtonsContainer>
+      {isMobile && (
+        <Card>
+          <CardHead
+            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+            title="Заповніть дані"
+          />
+          <CardDescription>
+            <p>Insert in the field below the DATA of the formed transaction:</p>
+          </CardDescription>
+          <S.ButtonsContainer>
+            <AppButton
+              type="button"
+              text="+ Add more contract addresses"
+              color="default"
+              size="no-paddings"
+              onClick={() => onContractAdd()}
+            />
+          </S.ButtonsContainer>
+        </Card>
+      )}
+      {!isMobile && (
+        <S.DesktopHeaderWrp>
+          <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+            Заповніть дані
+          </Headline1>
+          <RegularText
+            color={theme.textColors.secondary}
+            desktopWeight={500}
+            desktopSize={"14px"}
+          >
+            Insert in the field below the DATA of the formed transaction:
+          </RegularText>
+          <br />
           <AppButton
             type="button"
             text="+ Add more contract addresses"
@@ -124,8 +152,8 @@ const ManualStep: React.FC = () => {
             size="no-paddings"
             onClick={() => onContractAdd()}
           />
-        </S.ButtonsContainer>
-      </Card>
+        </S.DesktopHeaderWrp>
+      )}
       {contracts.get.map((contract, index) => {
         return (
           <CollapsedCard key={contract.id} title={`Contract ${index + 1}`}>

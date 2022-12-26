@@ -4,6 +4,12 @@ import { motion } from "framer-motion"
 import theme, { Flex } from "theme"
 import { Icon } from "common"
 
+export const DesktopHeaderWrp = styled.div`
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+`
+
 export const Address = styled.div`
   font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;

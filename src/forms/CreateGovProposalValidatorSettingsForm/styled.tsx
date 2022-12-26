@@ -1,7 +1,12 @@
 import styled from "styled-components/macro"
-import { motion } from "framer-motion"
 
 import { AppButton, SideStepsNavigationBar } from "common"
+
+export const DesktopHeaderWrp = styled.div`
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+`
 
 export const SideStepsNavigationBarWrp = styled(SideStepsNavigationBar)`
   width: 100%;

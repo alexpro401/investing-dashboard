@@ -386,9 +386,12 @@ const CreateProposalSelectType: React.FC = () => {
             {!isMobile && <S.BlockTitle>Шаблони пропоузалів</S.BlockTitle>}
             {isMobile && renderDefaultProposals}
             {!isMobile && <S.BlockGrid>{renderDefaultProposals}</S.BlockGrid>}
-            {!isMobile && (
-              <S.BlockTitle>Шаблони кастомних пропоузалів</S.BlockTitle>
-            )}
+            {!isMobile &&
+              (customExecutorsLoading ||
+                (!customExecutorsLoading &&
+                  customExecutorsFiltered.length !== 0)) && (
+                <S.BlockTitle>Шаблони кастомних пропоузалів</S.BlockTitle>
+              )}
             {isMobile && renderCustomProposals}
             {!isMobile && <S.BlockGrid>{renderCustomProposals}</S.BlockGrid>}
             <S.CreateProposalSelectTypeSubmitButton

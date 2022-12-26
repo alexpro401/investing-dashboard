@@ -2,6 +2,12 @@ import styled from "styled-components/macro"
 
 import { Flex } from "theme"
 
+export const DesktopHeaderWrp = styled.div`
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+`
+
 export const Address = styled.div`
   font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;

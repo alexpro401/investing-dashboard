@@ -16,6 +16,8 @@ import {
   CardHead,
   CollapsedCard,
   CreateDaoCardStepNumber,
+  Headline1,
+  RegularText,
 } from "common"
 
 import {
@@ -32,7 +34,7 @@ import { AdvancedABIContext } from "context/govPool/proposals/custom/AdvancedABI
 import { stepsControllerContext } from "context/StepsControllerContext"
 
 import { useFormValidation } from "hooks/useFormValidation"
-import { useAbiKeeper } from "hooks"
+import { useAbiKeeper, useBreakpoints } from "hooks"
 import {
   useGovPoolSettingsIdToExecutors,
   useGovPoolExecutorToSettings,
@@ -54,6 +56,7 @@ const AbiStep: FC = () => {
     "daoAddress" | "executorAddress"
   >()
 
+  const { isMobile } = useBreakpoints()
   const [settingsId] = useGovPoolExecutorToSettings(daoAddress, executorAddress)
   const [executors] = useGovPoolSettingsIdToExecutors(
     daoAddress,
@@ -348,20 +351,46 @@ const AbiStep: FC = () => {
 
   return (
     <SForms.StepsRoot>
-      <Card>
-        <CardHead
-          nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
-          title="Конструктор транзакции ABI"
-        />
-        <CardDescription>
-          <p>
+      {isMobile && (
+        <Card>
+          <CardHead
+            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+            title="Конструктор транзакции ABI"
+          />
+          <CardDescription>
+            <p>
+              description Lorem ipsum dolor sit amet, consectetur adipiscing
+              elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+              aliqua. Ut enim ad minim{" "}
+            </p>
+          </CardDescription>
+
+          <S.CardFooter p="10px 0 0">
+            <AppButton
+              type="button"
+              text="+ Add more contract adresses"
+              color="default"
+              size="no-paddings"
+              onClick={onContractAddressAdd}
+            />
+          </S.CardFooter>
+        </Card>
+      )}
+      {!isMobile && (
+        <S.DesktopHeaderWrp>
+          <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+            Конструктор транзакции ABI
+          </Headline1>
+          <RegularText
+            color={theme.textColors.secondary}
+            desktopWeight={500}
+            desktopSize={"14px"}
+          >
             description Lorem ipsum dolor sit amet, consectetur adipiscing elit,
             sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Ut enim ad minim{" "}
-          </p>
-        </CardDescription>
-
-        <S.CardFooter p="10px 0 0">
+            Ut enim ad minim
+          </RegularText>
+          <br />
           <AppButton
             type="button"
             text="+ Add more contract adresses"
@@ -369,8 +398,8 @@ const AbiStep: FC = () => {
             size="no-paddings"
             onClick={onContractAddressAdd}
           />
-        </S.CardFooter>
-      </Card>
+        </S.DesktopHeaderWrp>
+      )}
 
       {contractAdresses.get.map(addressCardRenderer)}
 
