@@ -287,10 +287,11 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
               disabled
               theme="clear"
               value={
-                format(expandTimestamp(Number(date.get)), DATE_TIME_FORMAT) ??
-                ""
+                !isEmpty(date.get)
+                  ? format(expandTimestamp(Number(date.get)), DATE_TIME_FORMAT)
+                  : ""
               }
-              placeholder="DD/MM/YYYY, HH"
+              placeholder={"Date"}
               onClick={() => setDateOpen(!isDateOpen)}
             />
           </InputGroup>
