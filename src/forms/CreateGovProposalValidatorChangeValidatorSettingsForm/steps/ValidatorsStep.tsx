@@ -1,19 +1,22 @@
 import React, { useContext, useCallback } from "react"
 
-import { CardHead, Card, CardDescription } from "common"
+import { CardHead, Card, CardDescription, Headline1, RegularText } from "common"
 import ValidatorsList from "components/ValidatorsList"
 import { CreateDaoCardStepNumber } from "common"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { ValidatorsListContext } from "context/govPool/proposals/ValidatorsListContext"
-import { useFormValidation } from "hooks/useFormValidation"
+import { useFormValidation, useBreakpoints } from "hooks"
 import { required, isAddressValidator } from "utils/validators"
+import theme from "theme"
 
 import * as S from "common/FormSteps/styled"
+import { DesktopHeaderWrp } from "../styled"
 
 const ValidatorsStep: React.FC = () => {
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
   const { balances, validators, hiddenIdxs } = useContext(ValidatorsListContext)
 
+  const { isMobile } = useBreakpoints()
   const { isFieldsValid, touchForm } = useFormValidation(
     {
       balances: balances.filter((_, idx) => !hiddenIdxs.includes(idx)),
@@ -55,19 +58,43 @@ const ValidatorsStep: React.FC = () => {
 
   return (
     <S.StepsRoot>
-      <Card>
-        <CardHead
-          nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
-          title="Validators"
-        />
-        <CardDescription>
-          <p>
+      {isMobile && (
+        <Card>
+          <CardHead
+            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+            title="Validators"
+          />
+          <CardDescription>
+            <p>
+              Here you can propose adding/removing validators, and the change
+              voting power of each validator.
+            </p>
+            <p>Will be voted on by validators only.</p>
+          </CardDescription>
+        </Card>
+      )}
+      {!isMobile && (
+        <DesktopHeaderWrp>
+          <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+            Validators
+          </Headline1>
+          <RegularText
+            color={theme.textColors.secondary}
+            desktopWeight={500}
+            desktopSize={"14px"}
+          >
             Here you can propose adding/removing validators, and the change
             voting power of each validator.
-          </p>
-          <p>Will be voted on by validators only.</p>
-        </CardDescription>
-      </Card>
+          </RegularText>
+          <RegularText
+            color={theme.textColors.secondary}
+            desktopWeight={500}
+            desktopSize={"14px"}
+          >
+            Will be voted on by validators only.
+          </RegularText>
+        </DesktopHeaderWrp>
+      )}
       <ValidatorsList />
       <S.FormStepsNavigationWrp customNextCb={handleNextStep} />
     </S.StepsRoot>

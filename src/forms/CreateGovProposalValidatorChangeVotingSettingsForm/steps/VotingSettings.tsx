@@ -3,7 +3,15 @@ import { useParams } from "react-router-dom"
 import { parseUnits, formatUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { CardHead, Card, CardDescription, Icon, CardFormControl } from "common"
+import {
+  CardHead,
+  Card,
+  CardDescription,
+  Icon,
+  CardFormControl,
+  Headline1,
+  RegularText,
+} from "common"
 import { DurationField, InputField } from "fields"
 import GovVotingSettings from "modals/GovVotingSettings"
 import { stepsControllerContext } from "context/StepsControllerContext"
@@ -13,15 +21,18 @@ import { ICON_NAMES } from "constants/icon-names"
 import { EInputBorderColors } from "fields/InputField"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
+import { useBreakpoints } from "hooks"
 import { useGovValidatorsTokenTotalSupply } from "hooks/dao"
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
 import { cutStringZeroes } from "utils"
+import theme from "theme"
 
 import * as S from "../styled"
 import * as SForms from "common/FormSteps/styled"
 
 const VotingSettings: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
+  const { isMobile } = useBreakpoints()
   const [totalValidatorsTokenSupply] = useGovValidatorsTokenTotalSupply(
     daoAddress ?? ""
   )
@@ -95,16 +106,40 @@ const VotingSettings: React.FC = () => {
         quorum={quorumForValidators}
       />
       <SForms.StepsRoot>
-        <Card>
-          <CardHead
-            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
-            title="Voting settings"
-          />
-          <CardDescription>
-            <p>
+        {isMobile && (
+          <Card>
+            <CardHead
+              nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+              title="Voting settings"
+            />
+            <CardDescription>
+              <p>
+                This proposal will be voted on only by the validators and using
+                the current quorum rules.
+              </p>
+              <br />
+              <S.VotingSettingsModalButton
+                text="View current voting settings"
+                color="default"
+                size="no-paddings"
+                onClick={handleOpenPreviousSettings}
+              />
+            </CardDescription>
+          </Card>
+        )}
+        {!isMobile && (
+          <S.DesktopHeaderWrp>
+            <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+              Voting settings
+            </Headline1>
+            <RegularText
+              color={theme.textColors.secondary}
+              desktopWeight={500}
+              desktopSize={"14px"}
+            >
               This proposal will be voted on only by the validators and using
               the current quorum rules.
-            </p>
+            </RegularText>
             <br />
             <S.VotingSettingsModalButton
               text="View current voting settings"
@@ -112,8 +147,8 @@ const VotingSettings: React.FC = () => {
               size="no-paddings"
               onClick={handleOpenPreviousSettings}
             />
-          </CardDescription>
-        </Card>
+          </S.DesktopHeaderWrp>
+        )}
         <Card>
           <CardHead
             nodeLeft={<Icon name={ICON_NAMES.cog} />}
