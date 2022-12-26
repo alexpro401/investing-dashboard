@@ -170,17 +170,29 @@ const IsDistributionProposalStep: React.FC<
             <Headline1 color={theme.statusColors.info} desktopWeight={900}>
               Token distribution proposal settings
             </Headline1>
-            <RegularText color={theme.textColors.secondary}>
+            <RegularText
+              color={theme.textColors.secondary}
+              desktopWeight={500}
+              desktopSize={"14px"}
+            >
               Configure the settings for proposals to distribute tokens from the
               DAO treasury to members.
             </RegularText>
-            <RegularText color={theme.textColors.secondary}>
+            <RegularText
+              color={theme.textColors.secondary}
+              desktopWeight={500}
+              desktopSize={"14px"}
+            >
               After the voting, members can claim the distribution. Reward size
               depends on member’s voting power (number of tokens voted with). By
               default, these proposals use the general voting settings.
             </RegularText>
             <br />
-            <RegularText color={theme.textColors.secondary}>
+            <RegularText
+              color={theme.textColors.secondary}
+              desktopWeight={500}
+              desktopSize={"14px"}
+            >
               *To ensure fair token distribution, Early vote completion and Vote
               delegation settings are turned off.
             </RegularText>

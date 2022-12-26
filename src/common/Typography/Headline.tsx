@@ -11,10 +11,6 @@ const HeadlineStyle = css`
   color: ${theme.textColors.primary};
 `
 
-const TextStyle = css`
-  color: ${theme.textColors.primary};
-`
-
 const Headline1Style = (props) => css`
   ${HeadlineStyle}
 
@@ -60,21 +56,6 @@ const Headline3Style = (props) => css`
   }
 `
 
-const RegularTextStyle = (props) => css`
-  ${TextStyle}
-
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 16.5px;
-  letter-spacing: 0.01em;
-  color: ${props.color || theme.textColors.primary};
-
-  ${respondTo("sm")} {
-    font-size: ${props.desktopSize || "14px"};
-    font-weight: ${props.desktopWeight || "500"};
-  }
-`
-
 export const Headline1: ComponentType<TypographyProps> = styled(
   DynamicComponent
 ).attrs({ tag: "h1" })`
@@ -87,10 +68,6 @@ export const Headline2 = styled(DynamicComponent).attrs({ tag: "h2" })`
 
 export const Headline3 = styled(DynamicComponent).attrs({ tag: "h3" })`
   ${Headline3Style}
-`
-
-export const RegularText = styled(DynamicComponent).attrs({ tag: "span" })`
-  ${RegularTextStyle}
 `
 
 // export const Component = () => {

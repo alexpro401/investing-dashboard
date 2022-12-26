@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components"
-import theme from "theme"
+
+import theme, { respondTo } from "theme"
 import DynamicComponent from "./DynamicTag"
 
 /*
@@ -14,8 +15,14 @@ const TextStyle = css`
   color: ${theme.textColors.primary};
 `
 
-const RegularTextStyle = css`
+const RegularTextStyle = (props) => css`
   ${TextStyle}
+  color: ${props.color || theme.textColors.primary};
+
+  ${respondTo("sm")} {
+    font-size: ${props.desktopSize || "13px"};
+    font-weight: ${props.desktopWeight || "400"};
+  }
 `
 
 const MediumTextStyle = css`

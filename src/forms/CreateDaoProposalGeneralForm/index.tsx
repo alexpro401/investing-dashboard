@@ -97,7 +97,11 @@ const CreateDaoProposalGeneralForm: React.FC<
             <Headline1 color={theme.statusColors.info} desktopWeight={900}>
               Basic info
             </Headline1>
-            <RegularText color={theme.textColors.secondary}>
+            <RegularText
+              color={theme.textColors.secondary}
+              desktopWeight={500}
+              desktopSize={"14px"}
+            >
               Describe your proposal and give it a clear name so voters can
               immediately grasp what it’s about. A thorough and concise
               description helps DAO members make the right decision when voting

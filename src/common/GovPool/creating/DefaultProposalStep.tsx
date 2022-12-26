@@ -115,7 +115,11 @@ const DefaultProposalStep: FC<IDefaultProposalStepProps> = ({
                 <Headline1 color={theme.statusColors.info} desktopWeight={900}>
                   General voting settings
                 </Headline1>
-                <RegularText color={theme.textColors.secondary}>
+                <RegularText
+                  color={theme.textColors.secondary}
+                  desktopWeight={500}
+                  desktopSize={"14px"}
+                >
                   Configure the settings for proposals, voting, vote delegation,
                   and rewards for active members.
                 </RegularText>

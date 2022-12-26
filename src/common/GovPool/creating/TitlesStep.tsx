@@ -342,7 +342,11 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
             <Headline1 color={theme.statusColors.info} desktopWeight={900}>
               Basic DAO settings
             </Headline1>
-            <RegularText color={theme.textColors.secondary}>
+            <RegularText
+              color={theme.textColors.secondary}
+              desktopWeight={500}
+              desktopSize={"14px"}
+            >
               {!isCreatingProposal
                 ? "Once created, the DAO settings can be changed only by voting via the appropriate proposal."
                 : "Make your changes below."}

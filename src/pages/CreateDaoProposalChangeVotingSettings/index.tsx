@@ -195,7 +195,11 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
                     >
                       What do you want to change?
                     </Headline1>
-                    <RegularText color={theme.textColors.secondary}>
+                    <RegularText
+                      color={theme.textColors.secondary}
+                      desktopWeight={500}
+                      desktopSize={"14px"}
+                    >
                       Choose the settings you want to change
                     </RegularText>
                   </S.DesktopHeaderWrp>
