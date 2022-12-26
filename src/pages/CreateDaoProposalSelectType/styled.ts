@@ -34,6 +34,10 @@ export const HeaderWrp = styled.div`
   gap: 20px;
 `
 
+export const DesktopHeaderWrp = styled.div`
+  margin-bottom: 16px;
+`
+
 export const BlockTitle = styled.span`
   font-weight: 700;
   font-size: 16px;

@@ -18,6 +18,8 @@ import {
   Collapse,
   Icon,
   TokenChip,
+  Headline1,
+  RegularText,
 } from "common"
 import {
   InputField,
@@ -51,9 +53,10 @@ import {
 } from "utils/validators"
 import { isValidUrl } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { useActiveWeb3React } from "hooks"
+import { useActiveWeb3React, useBreakpoints } from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { SUPPORTED_SOCIALS } from "constants/socials"
+import theme from "theme"
 
 interface ITitlesStepProps {
   isCreatingProposal?: boolean
@@ -73,6 +76,7 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
   const [isShowSocials, setIsShowSocials] = useState(false)
 
   const { chainId } = useActiveWeb3React()
+  const { isMobile } = useBreakpoints()
 
   const { nextCb } = useContext(stepsControllerContext)
 
@@ -312,25 +316,39 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
   return (
     <>
       <S.StepsRoot>
-        <Card>
-          <CardHead
-            nodeLeft={<CreateDaoCardStepNumber number={1} />}
-            title="DAO Profile"
-          />
-          <CardDescription>
-            {isCreatingProposal && <p>Make your changes below.</p>}
-            {!isCreatingProposal && (
-              <>
-                <p>Enter basic info about your DAO</p>
-                <br />
-                <p>
-                  *Once created, the DAO settings can be changed only by voting
-                  via the appropriate proposal.
-                </p>
-              </>
-            )}
-          </CardDescription>
-        </Card>
+        {isMobile && (
+          <Card>
+            <CardHead
+              nodeLeft={<CreateDaoCardStepNumber number={1} />}
+              title="DAO Profile"
+            />
+            <CardDescription>
+              {isCreatingProposal && <p>Make your changes below.</p>}
+              {!isCreatingProposal && (
+                <>
+                  <p>Enter basic info about your DAO</p>
+                  <br />
+                  <p>
+                    *Once created, the DAO settings can be changed only by
+                    voting via the appropriate proposal.
+                  </p>
+                </>
+              )}
+            </CardDescription>
+          </Card>
+        )}
+        {!isMobile && (
+          <S.DesktopHeaderWrp>
+            <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+              Basic DAO settings
+            </Headline1>
+            <RegularText color={theme.textColors.secondary}>
+              {!isCreatingProposal
+                ? "Once created, the DAO settings can be changed only by voting via the appropriate proposal."
+                : "Make your changes below."}
+            </RegularText>
+          </S.DesktopHeaderWrp>
+        )}
 
         <Avatar
           m="0 auto"

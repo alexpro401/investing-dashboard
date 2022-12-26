@@ -11,6 +11,10 @@ const HeadlineStyle = css`
   color: ${theme.textColors.primary};
 `
 
+const TextStyle = css`
+  color: ${theme.textColors.primary};
+`
+
 const Headline1Style = (props) => css`
   ${HeadlineStyle}
 
@@ -18,6 +22,7 @@ const Headline1Style = (props) => css`
   font-size: ${props.size || "20px"};
   line-height: 24px;
   letter-spacing: -0.01em;
+  color: ${props.color || theme.textColors.primary};
 
   ${respondTo("sm")} {
     font-size: ${props.desktopSize || "24px"};
@@ -25,20 +30,49 @@ const Headline1Style = (props) => css`
   }
 `
 
-const Headline2Style = css`
+const Headline2Style = (props) => css`
+  ${HeadlineStyle}
+
   font-weight: 700;
   font-size: 16px;
   line-height: 19px;
   letter-spacing: 0.01em;
-  ${HeadlineStyle}
+  color: ${props.color || theme.textColors.primary};
+
+  ${respondTo("sm")} {
+    font-size: ${props.desktopSize || "19px"};
+    font-weight: ${props.desktopWeight || "700"};
+  }
 `
 
-const Headline3Style = css`
+const Headline3Style = (props) => css`
+  ${HeadlineStyle}
+
   font-weight: 600;
   font-size: 16px;
   line-height: 19px;
   letter-spacing: 0.01em;
-  ${HeadlineStyle}
+  color: ${props.color || theme.textColors.primary};
+
+  ${respondTo("sm")} {
+    font-size: ${props.desktopSize || "16px"};
+    font-weight: ${props.desktopWeight || "600"};
+  }
+`
+
+const RegularTextStyle = (props) => css`
+  ${TextStyle}
+
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16.5px;
+  letter-spacing: 0.01em;
+  color: ${props.color || theme.textColors.primary};
+
+  ${respondTo("sm")} {
+    font-size: ${props.desktopSize || "14px"};
+    font-weight: ${props.desktopWeight || "500"};
+  }
 `
 
 export const Headline1: ComponentType<TypographyProps> = styled(
@@ -53,6 +87,10 @@ export const Headline2 = styled(DynamicComponent).attrs({ tag: "h2" })`
 
 export const Headline3 = styled(DynamicComponent).attrs({ tag: "h3" })`
   ${Headline3Style}
+`
+
+export const RegularText = styled(DynamicComponent).attrs({ tag: "span" })`
+  ${RegularTextStyle}
 `
 
 // export const Component = () => {

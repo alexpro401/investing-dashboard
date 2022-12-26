@@ -21,8 +21,7 @@ const TooltipStyles: any = createGlobalStyle`
     display: block!important;
     min-width: 300px;
     opacity: 1!important;
-    max-width: 700px;
-    z-index: 101 !important;
+    max-width: 350px;
 
     &:before {
       display: none!important;

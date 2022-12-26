@@ -6,10 +6,12 @@ import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidatio
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
 import GovPoolFormContextProvider from "context/govPool/GovPoolFormContext"
 import CreateDaoProposalChangeTokenDistributionForm from "forms/CreateDaoProposalChangeTokenDistributionForm"
+import { useBreakpoints } from "hooks"
 import { useGovPoolSetting, useGovPoolValidatorsCount } from "hooks/dao"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { INITIAL_DAO_PROPOSAL } from "constants/dao"
 import Skeleton from "components/Skeleton"
+import FormStepsLoaderWrapper from "common/FormSteps/FormStepsLoaderWrapper"
 import { Flex } from "theme"
 import { GovPoolFormOptions } from "types"
 import { ZERO_ADDR } from "constants/index"
@@ -20,6 +22,7 @@ const TokenDistribution: React.FC = () => {
   const location = useLocation()
   const { daoAddress } = useParams<"daoAddress">()
 
+  const { isMobile } = useBreakpoints()
   const [daoSettings, loading] = useGovPoolSetting({
     daoAddress: daoAddress ?? "",
     settingsId: EExecutor.DISTRIBUTION,
@@ -36,21 +39,32 @@ const TokenDistribution: React.FC = () => {
 
   const loader = useMemo(
     () => (
-      <Flex
-        gap={"24"}
-        full
-        m="16px 0 0 0"
-        dir="column"
-        ai={"center"}
-        jc={"flex-start"}
-      >
-        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-      </Flex>
+      <FormStepsLoaderWrapper>
+        <Flex
+          gap={"24"}
+          full
+          m="16px 0 0 0"
+          dir="column"
+          ai={"flex-start"}
+          jc={"flex-start"}
+        >
+          {!isMobile && (
+            <>
+              <Skeleton variant={"text"} w={"300px"} h={"40px"} />
+              <Skeleton variant={"text"} w={"400px"} h={"20px"} />
+              <Skeleton variant={"text"} w={"400px"} h={"20px"} />
+            </>
+          )}
+          {isMobile && (
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+          )}
+          <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+          <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+          <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+        </Flex>
+      </FormStepsLoaderWrapper>
     ),
-    []
+    [isMobile]
   )
 
   if (loading || !daoSettings || validatorsCount === null)

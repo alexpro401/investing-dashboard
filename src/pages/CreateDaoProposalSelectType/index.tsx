@@ -6,12 +6,12 @@ import { uniqBy } from "lodash"
 import Header from "components/Header/Layout"
 import TutorialCard from "components/TutorialCard"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
-import { SelectableCard, Icon, Collapse } from "common"
+import { SelectableCard, Icon, Collapse, Headline1, RegularText } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 import { useBreakpoints } from "hooks"
 import { useGovPoolCustomExecutors } from "hooks/dao"
 import Skeleton from "components/Skeleton"
-import { Flex } from "theme"
+import theme, { Flex } from "theme"
 
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
@@ -368,6 +368,16 @@ const CreateProposalSelectType: React.FC = () => {
                   </S.CreateProposalSelectTypeCreateNew>
                 </S.HeaderWrp>
               </>
+            )}
+            {!isMobile && (
+              <S.DesktopHeaderWrp>
+                <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+                  Choose type of proposal
+                </Headline1>
+                <RegularText color={theme.textColors.secondary}>
+                  тут знаходиться тестовий текст
+                </RegularText>
+              </S.DesktopHeaderWrp>
             )}
             {!isMobile && <S.BlockTitle>Шаблони пропоузалів</S.BlockTitle>}
             {isMobile && renderDefaultProposals}

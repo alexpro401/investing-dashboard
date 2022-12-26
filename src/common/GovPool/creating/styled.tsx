@@ -33,6 +33,13 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   height: 100%;
 `
 
+export const DesktopHeaderWrp = styled.div`
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`
+
 export const CreateFundDaoAvatarActions = styled.div`
   display: flex;
   flex-direction: column;
