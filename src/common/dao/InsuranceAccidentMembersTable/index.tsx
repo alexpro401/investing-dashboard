@@ -1,7 +1,5 @@
 import * as React from "react"
 import * as S from "./styled"
-import { useMemo } from "react"
-import { Flex, Text } from "theme"
 import {
   InsuranceAccidentInvestor,
   InsuranceAccidentInvestors,
@@ -10,6 +8,9 @@ import {
 import InsuranceAccidentMemberRow from "./InsuranceAccidentMemberRow"
 import Skeleton from "components/Skeleton"
 import { useWeb3React } from "@web3-react/core"
+import { NoDataMessage } from "common"
+import theme from "theme"
+import { useBreakpoints } from "hooks"
 
 interface Props {
   totals: InsuranceAccidentInvestorsTotalsInfo
@@ -21,8 +22,9 @@ interface Props {
 const InsuranceAccidentMembersTable: React.FC<Props> = (props) => {
   const { totals, data, loading, noData } = props
   const { account } = useWeb3React()
+  const { isMobile } = useBreakpoints()
 
-  const tableBody = useMemo(() => {
+  const tableBody = React.useMemo(() => {
     if (loading) {
       return Array(10)
         .fill(null)
@@ -37,13 +39,7 @@ const InsuranceAccidentMembersTable: React.FC<Props> = (props) => {
     }
 
     if (!loading && noData) {
-      return (
-        <Flex full ai="center" jc="center">
-          <Text fz={16} fw={500} color="#e4f2ff">
-            No investors
-          </Text>
-        </Flex>
-      )
+      return <NoDataMessage />
     }
 
     return (Object.values(data) as InsuranceAccidentInvestor[]).map((h) => {
@@ -53,8 +49,7 @@ const InsuranceAccidentMembersTable: React.FC<Props> = (props) => {
         <InsuranceAccidentMemberRow
           key={h.investor.id}
           payload={h}
-          color={isCurrentUser ? "#2669EB" : undefined}
-          fw={isCurrentUser ? 600 : 400}
+          active={isCurrentUser}
         />
       )
     })
@@ -77,7 +72,11 @@ const InsuranceAccidentMembersTable: React.FC<Props> = (props) => {
             <S.TableCell>Total:</S.TableCell>
             <S.TableCell>{totals.lp}</S.TableCell>
             <S.TableCell>{totals.loss}</S.TableCell>
-            <S.TableCell>{totals.coverage}</S.TableCell>
+            <S.TableCell
+              color={!isMobile ? theme.brandColors.secondary : undefined}
+            >
+              {totals.coverage}
+            </S.TableCell>
           </S.TableRow>
         </S.TableFooter>
       </S.Table>

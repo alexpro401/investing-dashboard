@@ -6,14 +6,19 @@ import { isNil } from "lodash"
 import { ZERO } from "constants/index"
 import { divideBignumbers } from "utils/formulas"
 import { InsuranceAccidentInvestor } from "interfaces/insurance"
+import { useBreakpoints } from "hooks"
+import { ICON_NAMES } from "constants/icon-names"
+import { Flex } from "theme"
 
 interface Props {
   payload: InsuranceAccidentInvestor
-  color?: string
-  fw?: string | number
+  active?: boolean
+  fw?: number
+  gap?: string
 }
 
 const InsuranceAccidentMemberRow: FC<Props> = ({ payload, ...rest }) => {
+  const { isMobile } = useBreakpoints()
   const address = shortenAddress(payload.investor.id)
 
   const inDayLpAmount = useMemo(() => {
@@ -57,7 +62,16 @@ const InsuranceAccidentMemberRow: FC<Props> = ({ payload, ...rest }) => {
 
   return (
     <S.TableRow {...rest}>
-      <S.TableCell>{address}</S.TableCell>
+      <S.TableCell>
+        {!isMobile && rest?.active ? (
+          <Flex ai={"center"} jc={"flex-start"} gap={"4"}>
+            <S.TableCellActiveIcon name={ICON_NAMES.user} />
+            {address}
+          </Flex>
+        ) : (
+          address
+        )}
+      </S.TableCell>
       <S.TableCell>{inDayLpAmount.format}</S.TableCell>
       <S.TableCell>{loss}</S.TableCell>
       <S.TableCell>{stake}</S.TableCell>
