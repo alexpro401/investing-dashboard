@@ -3,7 +3,7 @@ import { Icon } from "common"
 
 import * as S from "./styled"
 import { ICON_NAMES } from "constants/icon-names"
-import { stepsControllerContext } from "../../context/StepsControllerContext"
+import { stepsControllerContext } from "context/StepsControllerContext"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   title?: string

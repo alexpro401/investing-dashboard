@@ -1,6 +1,6 @@
 import { useCallback, useContext } from "react"
 import { parseEther, parseUnits } from "@ethersproject/units"
-import { useNavigate } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
 
 import { useGovPoolContract } from "contracts"
 import { encodeAbiMethod } from "utils/encodeAbi"
@@ -15,7 +15,7 @@ import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposa
 import usePayload from "hooks/usePayload"
 import { SubmitState } from "constants/types"
 import { isTxMined } from "utils"
-import { ZERO_ADDR } from "constants/index"
+import { ROUTE_PATHS, ZERO_ADDR } from "constants/index"
 import { IpfsEntity } from "utils/ipfsEntity"
 
 interface ICreateDaoProposalTypeArgs {
@@ -161,7 +161,12 @@ const useGovPoolCreateProposalType = ({
           image: "",
           buttonText: "Vote",
           onClick: () => {
-            navigate(`/dao/${daoPoolAddress}/vote/${latestProposalId}`)
+            navigate(
+              generatePath(ROUTE_PATHS.daoProposalVoting, {
+                daoProposal: daoPoolAddress,
+                proposalId: String(latestProposalId),
+              })
+            )
             closeSuccessModalState()
           },
         })

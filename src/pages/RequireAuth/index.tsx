@@ -1,6 +1,7 @@
 import { useLocation, Navigate } from "react-router-dom"
 import { useWeb3React } from "@web3-react/core"
 import * as S from "./styled"
+import { ROUTE_PATHS } from "constants/index"
 
 function RequireAuth() {
   const { account } = useWeb3React()
@@ -11,7 +12,7 @@ function RequireAuth() {
     // trying to go to when they were redirected. This allows us to send them
     // along to that page after they login, which is a nicer user experience
     // than dropping them off on the home page.
-    return <Navigate to="welcome" state={{ from: location }} />
+    return <Navigate to={ROUTE_PATHS.welcome} state={{ from: location }} />
   }
 
   return (

@@ -5,7 +5,7 @@ import React, {
   useContext,
   useEffect,
 } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, generatePath } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { AnimatePresence } from "framer-motion"
 
@@ -21,6 +21,7 @@ import { hideTapBar, showTabBar } from "state/application/actions"
 import { useBreakpoints } from "hooks"
 
 import * as S from "common/FormSteps/styled"
+import { ROUTE_PATHS } from "constants/index"
 
 enum STEPS {
   customSettings = "customSettings",
@@ -120,7 +121,11 @@ const CreateDaoProposalChangeCustomSettingsForm: React.FC = () => {
     switch (currentStep) {
       case STEPS.customSettings: {
         if (daoAddress) {
-          navigate(`/dao/${daoAddress}/create-proposal/change-voting-settings`)
+          navigate(
+            generatePath(ROUTE_PATHS.daoProposalCreateInternalSelectType, {
+              daoAddress,
+            })
+          )
         }
         break
       }

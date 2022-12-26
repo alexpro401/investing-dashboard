@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { createPortal } from "react-dom"
 import { useWeb3React } from "@web3-react/core"
-import { connectorsByName } from "constants/connectors"
+import { connectorsByName, ROUTE_PATHS } from "constants/index"
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector"
 import { RotateSpinner } from "react-spinners-kit"
 
@@ -103,8 +103,15 @@ export default function ConnectWallet({ isOpen, onRequestClose, onConnect }) {
         <S.Body>
           <S.PrivacyText>
             By connecting the wallet I accept
-            <S.LinkText to="/service-terms"> Terms of Service </S.LinkText>and
-            <S.LinkText to="/privacy-policy"> Privacy Policy </S.LinkText>
+            <S.LinkText to={ROUTE_PATHS.serviceTerms}>
+              {" "}
+              Terms of Service{" "}
+            </S.LinkText>
+            and
+            <S.LinkText to={ROUTE_PATHS.privacyPolicy}>
+              {" "}
+              Privacy Policy{" "}
+            </S.LinkText>
             DeXe Network
           </S.PrivacyText>
 
