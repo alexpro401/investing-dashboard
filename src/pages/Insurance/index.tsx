@@ -6,7 +6,6 @@ import * as S from "./styled"
 import { Flex, Text } from "theme"
 import { useBreakpoints } from "hooks"
 import { DaoProposalsList } from "common"
-import Management from "pages/Management"
 import Header from "components/Header/Layout"
 
 const poolsClient = createClient({
@@ -62,7 +61,7 @@ const Insurance = () => {
               </S.InsuranceInfoCard>
             </S.Indents>
             <S.Indents top side={isMobile}>
-              <Management />
+              <S.InsuranceTerminal />
             </S.Indents>
           </Flex>
           <S.Indents top side={false}>

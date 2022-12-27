@@ -2,6 +2,7 @@ import styled from "styled-components/macro"
 import { Card, CardDescription, CardHead, AppButton } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 import { respondTo } from "theme"
+import Management from "pages/Management"
 
 export const Container = styled.div`
   margin: 0 auto;
@@ -50,6 +51,11 @@ export const InsuranceInfoCardAction = styled(AppButton)`
   ${respondTo("sm")} {
     background: rgba(38, 105, 235, 0.15);
     border-radius: 16px;
+  }
+`
+export const InsuranceTerminal = styled(Management)`
+  ${respondTo("sm")} {
+    margin: 0 20px 0 auto;
   }
 `
 
