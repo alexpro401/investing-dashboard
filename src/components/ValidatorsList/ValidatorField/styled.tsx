@@ -3,6 +3,8 @@ import styled from "styled-components/macro"
 import { Icon } from "common"
 import theme from "theme"
 import { fieldLabelColor } from "fields/styled"
+import { OverlapInputField, InputField } from "fields"
+import { Input } from "fields/InputField/styled"
 
 export const Root = styled.div`
   position: relative;
@@ -66,5 +68,32 @@ export const TokenInput = styled.input<{ isHidden: boolean }>`
 
   &:focus {
     outline: none;
+  }
+`
+
+export const DektopInputContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+`
+
+export const DesktopLeftInput = styled(OverlapInputField)`
+  width: 50%;
+
+  ${Input} {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-right: none;
+  }
+`
+
+export const DesktopRightInput = styled(InputField)`
+  width: 50%;
+
+  ${Input} {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    border: 1px solid #293c54 !important;
   }
 `
