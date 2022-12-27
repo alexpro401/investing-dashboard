@@ -18,7 +18,7 @@ const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
 })
 
-function Management() {
+function Management(props) {
   const {
     direction,
     setDirection,
@@ -123,7 +123,7 @@ function Management() {
   )
 
   return (
-    <Card>
+    <Card {...props}>
       <CardHeader>
         <Flex>
           <Title
@@ -179,10 +179,10 @@ function Management() {
   )
 }
 
-export default function ManagementWithProvider() {
+export default function ManagementWithProvider(props) {
   return (
     <GraphProvider value={poolsClient}>
-      <Management />
+      <Management {...props} />
     </GraphProvider>
   )
 }
