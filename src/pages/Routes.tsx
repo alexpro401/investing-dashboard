@@ -1,4 +1,4 @@
-import { RouterProvider } from "react-router-dom"
+import { generatePath, RouterProvider } from "react-router-dom"
 
 import { createBrowserRouter, Navigate, Outlet } from "react-router-dom"
 import { lazy, Suspense } from "react"
@@ -270,9 +270,18 @@ export const router = createBrowserRouter([
           {
             path: ROUTE_PATHS.daoItem,
             element: <DaoProfile />,
-            handle: (params) => ({
-              title: `DAO ${params.daoAddress}`,
-            }),
+            handle: (params) => [
+              {
+                label: "DAOs",
+                path: "/dao/list/top",
+              },
+              {
+                label: `DAO ${params.daoAddress}`,
+                path: generatePath(ROUTE_PATHS.daoItem, {
+                  daoAddress: params.daoAddress,
+                }),
+              },
+            ],
           },
           {
             path: ROUTE_PATHS.daoDelegation,
@@ -349,9 +358,25 @@ export const router = createBrowserRouter([
           {
             path: ROUTE_PATHS.daoProposalList,
             element: <DaoProposals />,
-            handle: (params) => ({
-              title: `DAO ${params.daoAddress}/proposals`,
-            }),
+            handle: (params) => [
+              {
+                label: "DAOs",
+                path: "/dao/list/top",
+              },
+              {
+                label: `DAO ${params.daoAddress}`,
+                path: generatePath(ROUTE_PATHS.daoItem, {
+                  daoAddress: params.daoAddress,
+                }),
+              },
+              {
+                label: `Proposals`,
+                path: generatePath(ROUTE_PATHS.daoProposalList, {
+                  daoAddress: params.daoAddress,
+                  "*": "opened",
+                }),
+              },
+            ],
           },
           {
             path: ROUTE_PATHS.daoProposalItem,
@@ -360,6 +385,10 @@ export const router = createBrowserRouter([
           {
             path: ROUTE_PATHS.topMembers,
             element: <TopMembers />,
+          },
+          {
+            path: "/",
+            element: <Navigate replace to={ROUTE_PATHS.topMembers} />,
           },
         ],
       },

@@ -1,30 +1,38 @@
 import { FC, HTMLAttributes, useMemo } from "react"
-import { NavLink, useMatches } from "react-router-dom"
+import { useMatches } from "react-router-dom"
+import * as S from "./styled"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const Breadcrumbs: FC<Props> = () => {
   const matches = useMatches()
 
-  const crumbs = useMemo(() => {
-    return matches
-      .filter((el) => !!el.handle)
-      .map((el) => ({
-        title: (el.handle as (params) => { title: string })(el.params)?.title,
-        path: el.pathname,
-      }))
-  }, [matches])
+  const currentMatch = useMemo(() => matches[matches.length - 1], [matches])
+
+  const crumbs = useMemo<{ label: string; path: string }[]>(
+    () =>
+      !!currentMatch.handle
+        ? (
+            currentMatch.handle as (params) => { label: string; path: string }[]
+          )(currentMatch.params)
+        : [],
+    [currentMatch.handle, currentMatch.params]
+  )
 
   console.log(matches, crumbs)
 
   return (
-    <>
-      {crumbs.map((el, idx) => (
-        <NavLink key={idx} to={el.path}>
-          {el.title}
-        </NavLink>
-      ))}
-    </>
+    <S.Root>
+      {crumbs.length ? (
+        crumbs.map((el, idx) => (
+          <S.BreadcrumbItem key={idx} to={el.path}>
+            {`${el.label} ${idx !== crumbs.length - 1 ? "/ " : ""}`}
+          </S.BreadcrumbItem>
+        ))
+      ) : (
+        <></>
+      )}
+    </S.Root>
   )
 }
 
