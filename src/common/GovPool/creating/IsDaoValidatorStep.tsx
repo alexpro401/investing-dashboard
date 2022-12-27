@@ -10,13 +10,16 @@ import {
   CardHead,
   Collapse,
   Icon,
+  Headline1,
+  RegularText,
 } from "common"
 import { AddressAmountField, InputField, DurationField } from "fields"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { ICON_NAMES } from "constants/icon-names"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
-import { useFormValidation } from "hooks/useFormValidation"
+import { useFormValidation, useBreakpoints } from "hooks"
 import { isPercentage, required } from "utils/validators"
+import theme from "theme"
 import { stepsControllerContext } from "context/StepsControllerContext"
 
 import * as S from "./styled"
@@ -24,6 +27,7 @@ import * as S from "./styled"
 const IsDaoValidatorStep: FC = () => {
   const { validatorsParams, isValidator } = useContext(GovPoolFormContext)
 
+  const { isMobile } = useBreakpoints()
   const { name, symbol, duration, quorum, validators, balances } =
     validatorsParams
 
@@ -81,25 +85,53 @@ const IsDaoValidatorStep: FC = () => {
   return (
     <>
       <S.StepsRoot>
-        <Card>
-          <CardHead
-            nodeLeft={<CreateDaoCardStepNumber number={2} />}
-            title="DAO validator settings"
-          />
-          <CardDescription>
-            <p>
+        {isMobile && (
+          <Card>
+            <CardHead
+              nodeLeft={<CreateDaoCardStepNumber number={2} />}
+              title="DAO validator settings"
+            />
+            <CardDescription>
+              <p>
+                Here you can designate trusted DAO members to serve as
+                validators who will hold a validator-only second vote on every
+                passed proposal to filter out potentially malicious proposals.
+              </p>
+              <br />
+              <p>
+                *Once the pool is created, validator settings can be modified
+                only by VALIDATOR VOTING via an appropriate proposal. *Token/NFT
+                selected for governance cannot be changed once initially set.
+              </p>
+            </CardDescription>
+          </Card>
+        )}
+        {!isMobile && (
+          <S.DesktopHeaderWrp>
+            <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+              DAO validator settings
+            </Headline1>
+            <RegularText
+              color={theme.textColors.secondary}
+              desktopWeight={500}
+              desktopSize={"14px"}
+            >
               Here you can designate trusted DAO members to serve as validators
               who will hold a validator-only second vote on every passed
               proposal to filter out potentially malicious proposals.
-            </p>
+            </RegularText>
             <br />
-            <p>
+            <RegularText
+              color={theme.textColors.secondary}
+              desktopWeight={500}
+              desktopSize={"14px"}
+            >
               *Once the pool is created, validator settings can be modified only
               by VALIDATOR VOTING via an appropriate proposal. *Token/NFT
               selected for governance cannot be changed once initially set.
-            </p>
-          </CardDescription>
-        </Card>
+            </RegularText>
+          </S.DesktopHeaderWrp>
+        )}
 
         <S.CenteredImage src={CreateFundDocsImage} />
 
