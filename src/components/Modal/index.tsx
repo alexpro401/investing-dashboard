@@ -1,4 +1,4 @@
-import { Icon } from "common"
+import { Icon, Overlay } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 import { FC, ReactNode } from "react"
 import { createPortal } from "react-dom"
@@ -26,22 +26,7 @@ const Modal: FC<Props> = ({
   if (!modalRoot) return null
   return createPortal(
     <>
-      <S.Overlay
-        onClick={toggle}
-        animate={isOpen ? "visible" : "hidden"}
-        initial="hidden"
-        transition={{ duration: 0.05 }}
-        variants={{
-          visible: {
-            opacity: 1,
-            display: "block",
-          },
-          hidden: {
-            opacity: 0,
-            transitionEnd: { display: "none" },
-          },
-        }}
-      />
+      <Overlay onClick={toggle} animate={isOpen ? "visible" : "hidden"} />
       <S.Container
         maxWidth={maxWidth}
         animate={isOpen ? "visible" : "hidden"}
