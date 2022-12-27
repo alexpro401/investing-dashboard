@@ -373,7 +373,7 @@ export const router = createBrowserRouter([
                 label: `Proposals`,
                 path: generatePath(ROUTE_PATHS.daoProposalList, {
                   daoAddress: params.daoAddress,
-                  "*": "opened",
+                  "*": "opened", // FIXME
                 }),
               },
             ],
@@ -381,6 +381,25 @@ export const router = createBrowserRouter([
           {
             path: ROUTE_PATHS.daoProposalItem,
             element: <DaoProposalDetails />,
+            handle: (params) => [
+              {
+                label: "DAOs",
+                path: "/dao/list/top",
+              },
+              {
+                label: `DAO ${params.daoAddress}`,
+                path: generatePath(ROUTE_PATHS.daoItem, {
+                  daoAddress: params.daoAddress,
+                }),
+              },
+              {
+                label: `Proposals`,
+                path: generatePath(ROUTE_PATHS.daoProposalList, {
+                  daoAddress: params.daoAddress,
+                  "*": "opened", // FIXME
+                }),
+              },
+            ],
           },
           {
             path: ROUTE_PATHS.topMembers,

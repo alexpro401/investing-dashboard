@@ -19,8 +19,6 @@ const Breadcrumbs: FC<Props> = () => {
     [currentMatch.handle, currentMatch.params]
   )
 
-  console.log(matches, crumbs)
-
   return (
     <S.Root>
       {crumbs.length ? (
