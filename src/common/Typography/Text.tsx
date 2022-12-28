@@ -25,10 +25,15 @@ const RegularTextStyle = (props) => css`
   }
 `
 
-const MediumTextStyle = css`
+const MediumTextStyle = (props) => css`
   ${TextStyle}
 
   font-weight: 500;
+
+  ${respondTo("sm")} {
+    font-size: ${props.desktopSize || "13px"};
+    font-weight: ${props.desktopWeight || "400"};
+  }
 `
 
 const ButtonTextStyle = css`
