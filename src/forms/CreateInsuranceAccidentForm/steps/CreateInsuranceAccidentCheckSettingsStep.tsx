@@ -29,12 +29,7 @@ import useInvestorsLpHistory from "hooks/useInvestorsLpHistory"
 import PoolPriceDiff from "components/PoolPriceDiff"
 import { ZERO } from "constants/index"
 import useInvestorsLastPoolPosition from "hooks/useInvestorsLastPoolPosition"
-import {
-  Card,
-  CardDescription,
-  CardHead,
-  InsuranceAccidentMembersTable,
-} from "common"
+import { InsuranceAccidentMembersTable } from "common"
 import { selectPoolByAddress } from "state/pools/selectors"
 import { AppState } from "state"
 import { usePoolPriceHistoryDiff } from "hooks/usePool"
@@ -42,7 +37,6 @@ import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { selectDexeAddress } from "state/contracts/selectors"
 import { useBreakpoints } from "hooks"
 import Tooltip from "components/Tooltip"
-import { TableCard } from "../styled/step-check-settings"
 
 function useInvestorsInAccident() {
   const { account } = useWeb3React()
@@ -127,7 +121,7 @@ function useInvestorsInAccident() {
   )
 
   const investorsIncludingInAccident = useMemo(() => {
-    if (loading || noData || isNil(account)) {
+    if (loading || noData || isNil(account) || dexePriceUSD.isZero()) {
       return []
     }
 
