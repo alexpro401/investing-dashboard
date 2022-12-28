@@ -1,6 +1,7 @@
 import { FC, HTMLAttributes, ReactNode, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 import { isNil } from "lodash"
+import { MotionProps } from "framer-motion"
 
 import { Flex, getAmountColor, Text } from "theme"
 import { CardInfo } from "common"
@@ -34,14 +35,15 @@ const HeadNodesSkeleton: FC = () => (
   </Flex>
 )
 
-interface Props extends HTMLAttributes<HTMLDivElement> {
+type Props = {
   data: IPoolQuery
   index?: number
   children?: ReactNode
   isMobile?: boolean
   hideChart?: boolean
   stroke?: string
-}
+} & HTMLAttributes<HTMLDivElement> &
+  MotionProps
 
 const PoolStatisticCard: FC<Props> = ({
   data,
@@ -238,7 +240,17 @@ const PoolStatisticCard: FC<Props> = ({
   }, [children, isDesktop, _Chart])
 
   return (
-    <S.Animation index={index} {...rest}>
+    <S.Animation
+      initial={!index ? { opacity: 1, y: 0 } : { opacity: 0, y: -5 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -5 }}
+      transition={{
+        duration: 0.2,
+        delay: index / ((20 * index) ^ 2),
+        ease: [0.29, 0.98, 0.29, 1],
+      }}
+      {...rest}
+    >
       <CardInfo
         nodeHeadLeft={leftNode}
         nodeHeadRight={rightNode}
