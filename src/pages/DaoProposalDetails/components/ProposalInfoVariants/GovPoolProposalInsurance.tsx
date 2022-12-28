@@ -3,7 +3,6 @@ import { useSelector } from "react-redux"
 import { useGovPoolProposal } from "hooks/dao"
 import * as S from "../../styled"
 
-import PoolStatisticCard from "components/cards/PoolStatistic"
 import { AppState } from "state"
 import { selectPoolByAddress } from "state/pools/selectors"
 import { isEmpty, isNil } from "lodash"
@@ -14,10 +13,9 @@ import ExternalLink from "components/ExternalLink"
 import { CHART_TYPE } from "constants/chart"
 import Chart from "components/Chart"
 import { generatePoolPnlHistory } from "utils/formulas"
-import PoolPriceDiff from "components/PoolPriceDiff"
 import { usePoolPriceHistoryDiff } from "hooks/usePool"
-import { useWindowSize } from "react-use"
-import { useMemo } from "react"
+import { useBreakpoints } from "hooks"
+import { ICON_NAMES } from "constants/index"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   govPoolProposal: ReturnType<typeof useGovPoolProposal>
@@ -47,19 +45,22 @@ const GovPoolProposalInsurance: React.FC<Props> = ({ govPoolProposal }) => {
     }
   }, [insuranceProposalView, poolData])
 
-  const { width: windowWidth } = useWindowSize()
-  const isMobile = useMemo(() => windowWidth < 1194, [windowWidth])
+  const { isMobile } = useBreakpoints()
 
   return (
     <>
       {isLoaded ? (
         <>
-          <PoolStatisticCard data={poolData} isMobile={isMobile} hideChart />
+          <S.DaoProposalInsurancePoolStatisticCard
+            data={poolData}
+            isMobile={isMobile}
+            hideChart
+          />
 
-          <S.DaoProposalDetailsCard>
+          <S.DaoProposalInsuranceChartCard>
             <Chart
               type={CHART_TYPE.area}
-              height={"110px"}
+              height={isMobile ? "110px" : "302px"}
               data={generatePoolPnlHistory(insuranceProposalView.chart.data)}
               activePoint={{
                 get: activePoint,
@@ -78,33 +79,46 @@ const GovPoolProposalInsurance: React.FC<Props> = ({ govPoolProposal }) => {
                 },
               ]}
             />
-          </S.DaoProposalDetailsCard>
+          </S.DaoProposalInsuranceChartCard>
 
-          <PoolPriceDiff
+          <S.DaoProposalInsurancePoolPriceDiff
             initialPriceUSD={initialPriceUSD}
             currentPriceUSD={currentPriceUSD}
             priceDiffUSD={priceDiffUSD}
           />
 
-          <S.DaoProposalDetailsCard>
+          <S.DaoProposalInsuranceDescriptionCard>
             {insuranceProposalView.form.description}
-          </S.DaoProposalDetailsCard>
+          </S.DaoProposalInsuranceDescriptionCard>
 
-          <S.DaoProposalDetailsCard>
-            <Flex full ai={"center"} jc={"space-between"}>
-              <Text fw={600} fz={13} lh={"13px"} color={"#E4F2FF"}>
-                Chat for the discussion:
-              </Text>
-              <ExternalLink
-                href={insuranceProposalView.form.chat}
-                color={theme.brandColors.secondary}
-                fz={"13px"}
-                fw={"500"}
-              >
-                {shortenAddress(insuranceProposalView.form.chat, 12)}
-              </ExternalLink>
-            </Flex>
-          </S.DaoProposalDetailsCard>
+          {isMobile ? (
+            <S.DaoProposalDetailsCard>
+              <Flex full ai={"center"} jc={"space-between"}>
+                <Text fw={600} fz={13} lh={"13px"} color={"#E4F2FF"}>
+                  Chat for the discussion:
+                </Text>
+
+                <ExternalLink
+                  href={insuranceProposalView.form.chat}
+                  color={theme.brandColors.secondary}
+                  fz={"13px"}
+                  fw={"500"}
+                >
+                  {shortenAddress(insuranceProposalView.form.chat, 12)}
+                </ExternalLink>
+              </Flex>
+            </S.DaoProposalDetailsCard>
+          ) : (
+            <S.DaoProposalInsuranceChatLink
+              full
+              color={"default"}
+              iconRight={ICON_NAMES.externalLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              text={"Chat for the discussion"}
+              href={insuranceProposalView.form.chat}
+            />
+          )}
         </>
       ) : (
         <Skeleton variant={"rect"} w={"calc(100%)"} h={"135px"} />

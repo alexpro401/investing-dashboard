@@ -1,4 +1,4 @@
-import { FC, ReactNode, useMemo } from "react"
+import { FC, HTMLAttributes, ReactNode, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 import { isNil } from "lodash"
 
@@ -34,7 +34,7 @@ const HeadNodesSkeleton: FC = () => (
   </Flex>
 )
 
-interface Props {
+interface Props extends HTMLAttributes<HTMLDivElement> {
   data: IPoolQuery
   index?: number
   children?: ReactNode
@@ -49,6 +49,7 @@ const PoolStatisticCard: FC<Props> = ({
   children,
   hideChart = false,
   stroke = theme.statusColors.success,
+  ...rest
 }) => {
   const { isMobile, isTablet, isDesktop } = useBreakpoints()
   const [{ poolMetadata: metadata }] = usePoolMetadata(
@@ -237,7 +238,7 @@ const PoolStatisticCard: FC<Props> = ({
   }, [children, isDesktop, _Chart])
 
   return (
-    <S.Animation index={index}>
+    <S.Animation index={index} {...rest}>
       <CardInfo
         nodeHeadLeft={leftNode}
         nodeHeadRight={rightNode}

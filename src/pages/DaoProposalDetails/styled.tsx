@@ -3,6 +3,8 @@ import { AppButton, Icon } from "common"
 import { VotingTerminal } from "pages/VotingTerminal"
 import { GradientBorder, respondTo } from "theme"
 import ProposalInfo from "./components/ProposalInfo"
+import PoolPriceDiff from "components/PoolPriceDiff"
+import PoolStatisticCard from "components/cards/PoolStatistic"
 
 export const DaoProposalDetails = styled.div`
   overflow: hidden auto;
@@ -413,4 +415,35 @@ export const DaoProposalDPAmountValue = styled.span`
   font-size: 20px;
   line-height: 24px;
   color: ${(props) => props.theme.textColors.primary};
+`
+
+export const DaoProposalInsurancePoolStatisticCard = styled(PoolStatisticCard)`
+  ${respondTo("sm")} {
+    grid-column: 1 / -1;
+  }
+`
+export const DaoProposalInsuranceDescriptionCard = styled(
+  DaoProposalDetailsCard
+)`
+  ${respondTo("sm")} {
+    background: transparent;
+    padding: 0;
+  }
+`
+export const DaoProposalInsuranceChatLink = styled(AppButton)`
+  width: 100%;
+  background: rgba(38, 105, 235, 0.15);
+`
+export const DaoProposalInsuranceChartCard = styled(DaoProposalDetailsCard)`
+  ${respondTo("sm")} {
+    background: transparent;
+    padding: 0;
+  }
+`
+
+export const DaoProposalInsurancePoolPriceDiff = styled(PoolPriceDiff)`
+  ${respondTo("sm")} {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, 1fr);
+  }
 `
