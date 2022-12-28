@@ -10,6 +10,7 @@ import { useWeb3React } from "@web3-react/core"
 import theme from "theme"
 import { useBreakpoints } from "hooks"
 import Table from "components/Table"
+import { isNil } from "lodash"
 
 interface Props {
   totals: InsuranceAccidentInvestorsTotalsInfo
@@ -57,6 +58,8 @@ const InsuranceAccidentMembersTable: React.FC<Props> = (props) => {
 
   const getTableRow = React.useCallback(
     (data) => {
+      if (isNil(data)) return <></>
+
       const isCurrentUser =
         String(data.investor.id).toLocaleLowerCase() ===
         String(account).toLocaleLowerCase()
@@ -68,11 +71,13 @@ const InsuranceAccidentMembersTable: React.FC<Props> = (props) => {
     [account]
   )
 
+  console.log(data)
+
   return (
     <>
       <Table
         row={getTableRow}
-        data={Object.values(data)}
+        data={isNil(data) ? data : Object.values(data)}
         nodeHead={TableHead}
         nodeFooter={TableHeadFooter}
         pagination

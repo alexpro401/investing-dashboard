@@ -61,7 +61,7 @@ const InsuranceAccidentMemberRow: FC<Props> = ({ payload, ...rest }) => {
   }, [payload])
 
   const stakeUSD = useMemo(() => {
-    if (!payload) return "0.0"
+    if (!payload || !payload?.stakeUSD) return "0.0"
 
     const big = BigNumber.from(payload.stakeUSD)
     return normalizeBigNumber(big, 18, 2)

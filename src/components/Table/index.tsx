@@ -24,7 +24,7 @@ const Table: React.FC<Props> = ({
   pagination = true,
   placeholder,
 }) => {
-  const total = Number(data.length) || 0
+  const total = Number(data?.length) || 0
 
   const [offset, setOffset] = React.useState(0)
   const [limit] = React.useState(DEFAULT_PAGINATION_COUNT)
