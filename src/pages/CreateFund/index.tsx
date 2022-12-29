@@ -169,6 +169,34 @@ const CreateFund: FC = () => {
                             инвестиционные решения в отношении вашего фонда.
                           </RegularText>
                         </S.DesktopHeaderWrp>
+                        <S.FundTypeCardsDesktop>
+                          <S.CreateFundDaoFeaturesDesktop
+                            value={fundType}
+                            setValue={setFundType}
+                            valueToSet={FUND_TYPES.basic}
+                            nodeLeft={<img src={CreateFundDocsImage} alt="" />}
+                            title="Standard fund"
+                            description={
+                              <p>
+                                Trade crypto from the Dexe DAO white list + any
+                                other crypto via a Risk Proposal
+                              </p>
+                            }
+                          />
+                          <S.CreateFundDaoFeaturesDesktop
+                            value={fundType}
+                            setValue={setFundType}
+                            valueToSet={FUND_TYPES.investment}
+                            title="Investment fund"
+                            nodeLeft={<img src={CreateFundDocsImage} alt="" />}
+                            description={
+                              <p>
+                                Investment in NFTs, Real Estate, Startups, and
+                                any other assets you want.
+                              </p>
+                            }
+                          />
+                        </S.FundTypeCardsDesktop>
                       </>
                     )}
 

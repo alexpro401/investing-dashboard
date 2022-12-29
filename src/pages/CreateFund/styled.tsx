@@ -1,6 +1,7 @@
 import styled from "styled-components/macro"
 import { motion } from "framer-motion"
-import { Icon } from "common"
+import { Icon, SelectableCard } from "common"
+import { SelectableCardTitles } from "common/SelectableCard/styled"
 
 export const PageHolder = styled(motion.div).attrs(() => ({
   initial: { opacity: 0 },
@@ -26,6 +27,27 @@ export const DesktopHeaderWrp = styled.div`
   flex-direction: column;
   margin-bottom: 16px;
 `
+
+export const FundTypeCardsDesktop = styled.div`
+  width: 100%;
+  display: flex;
+  gap: 24px;
+`
+
+export const CreateFundDaoFeaturesDesktop = styled(SelectableCard)`
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px;
+  gap: 8px;
+
+  ${SelectableCardTitles} {
+    align-items: center;
+    justify-content: center;
+  }
+` as typeof SelectableCard
 
 export const FundTypeCards = styled.div`
   display: flex;
