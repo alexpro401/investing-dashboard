@@ -10,7 +10,6 @@ import { useDispatch } from "react-redux"
 import { AnimatePresence } from "framer-motion"
 import { parseEther } from "@ethersproject/units"
 
-import StepsControllerContext from "context/StepsControllerContext"
 import { ValidatorsListContext } from "context/govPool/proposals/ValidatorsListContext"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"

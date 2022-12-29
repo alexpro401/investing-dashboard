@@ -1,5 +1,8 @@
-import { FC, useCallback, useMemo, useState } from "react"
-import * as S from "./styled"
+import { FC, useCallback, useMemo, useState, useEffect, useRef } from "react"
+import { useDispatch } from "react-redux"
+import { useNavigate } from "react-router-dom"
+import { useEffectOnce } from "react-use"
+
 import {
   DefaultProposalStep,
   IsCustomVotingStep,
@@ -11,12 +14,11 @@ import {
 import Modal from "components/Modal"
 
 import { useForm, useBreakpoints } from "hooks"
-import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { useCreateDAO } from "hooks/dao"
-import { useDispatch } from "react-redux"
 import { hideTapBar, showTabBar } from "state/application/actions"
-import { useEffectOnce } from "react-use"
+
+import * as SForms from "common/FormSteps/styled"
 
 const STEPS = {
   titles: {
@@ -48,6 +50,7 @@ const STEPS = {
 const CreateFundDaoForm: FC = () => {
   const [currentStep, setCurrentStep] = useState(STEPS.titles.number)
   const [isSuccessModalShown, setIsSuccessModalShown] = useState(false)
+  const stepsWrapperRef = useRef<HTMLDivElement>(null)
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length, [])
 
@@ -66,6 +69,14 @@ const CreateFundDaoForm: FC = () => {
       dispatch(showTabBar())
     }
   })
+
+  useEffect(() => {
+    if (stepsWrapperRef.current) {
+      stepsWrapperRef.current.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+  }, [currentStep, stepsWrapperRef])
 
   const createDaoCb = useCreateDAO()
 
@@ -126,7 +137,7 @@ const CreateFundDaoForm: FC = () => {
   }
 
   return (
-    <S.Container
+    <SForms.StepsFormContainer
       steps={Object.values(STEPS).slice(0, Object.values(STEPS).length - 1)}
       totalStepsAmount={totalStepsCount}
       currentStepNumber={currentStep}
@@ -134,46 +145,44 @@ const CreateFundDaoForm: FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        <S.StepsWrapper>
+        <SForms.StepsWrapper ref={stepsWrapperRef}>
           {currentStep === STEPS.titles.number ? (
-            <S.StepsContainer>
+            <SForms.StepsContainer>
               <TitlesStep />
-            </S.StepsContainer>
+            </SForms.StepsContainer>
           ) : currentStep === STEPS.isDaoValidator.number ? (
-            <S.StepsContainer>
+            <SForms.StepsContainer>
               <IsDaoValidatorStep />
-            </S.StepsContainer>
+            </SForms.StepsContainer>
           ) : currentStep === STEPS.defaultProposalSetting.number ? (
-            <S.StepsContainer>
+            <SForms.StepsContainer>
               <DefaultProposalStep />
-            </S.StepsContainer>
+            </SForms.StepsContainer>
           ) : currentStep === STEPS.isCustomVoteSelecting.number ? (
-            <S.StepsContainer>
+            <SForms.StepsContainer>
               <IsCustomVotingStep />
-            </S.StepsContainer>
+            </SForms.StepsContainer>
           ) : currentStep === STEPS.isTokenDistributionSettings.number ? (
-            <S.StepsContainer>
+            <SForms.StepsContainer>
               <IsDistributionProposalStep />
-            </S.StepsContainer>
+            </SForms.StepsContainer>
           ) : currentStep === STEPS.success.number ? (
-            <S.StepsContainer>
+            <SForms.StepsContainer>
               <SuccessStep />
-            </S.StepsContainer>
+            </SForms.StepsContainer>
           ) : (
             <></>
           )}
-          {!isMobile ? (
-            <S.SideStepsNavigationBarWrp
+          {!isMobile && (
+            <SForms.SideStepsNavigationBarWrp
               steps={Object.values(STEPS).slice(
                 0,
                 Object.values(STEPS).length - 1
               )}
               currentStep={currentStep}
             />
-          ) : (
-            <></>
           )}
-        </S.StepsWrapper>
+        </SForms.StepsWrapper>
       </AnimatePresence>
       <Modal
         isOpen={isSuccessModalShown}
@@ -184,7 +193,7 @@ const CreateFundDaoForm: FC = () => {
       >
         <SuccessStep />
       </Modal>
-    </S.Container>
+    </SForms.StepsFormContainer>
   )
 }
 

@@ -5,6 +5,7 @@ import { ICON_NAMES } from "constants/icon-names"
 import { AppButton } from "common"
 import { readFromClipboard } from "utils/clipboard"
 import { shortenAddress, isAddress } from "utils"
+import { useBreakpoints } from "hooks"
 
 import * as S from "./styled"
 
@@ -98,6 +99,8 @@ const ValidatorField: React.FC<IValidatorFieldProps> = ({
   setAmount,
   errorMessage,
 }) => {
+  const { isMobile } = useBreakpoints()
+
   const addressIsEmpty = useMemo(() => address === "", [address])
 
   const handleChangeTokenInput = useCallback(
@@ -111,45 +114,94 @@ const ValidatorField: React.FC<IValidatorFieldProps> = ({
 
   return (
     <S.Root>
-      <OverlapInputField
-        value={""}
-        disabled
-        overlapNodeLeft={
-          <>
-            {addressIsEmpty && (
-              <EmptyAddressNodeLeft
-                setAddress={setAddress}
-                handleDelete={handleDelete}
-              />
-            )}
-            {!addressIsEmpty && (
-              <AddressNodeLeft
-                address={address}
+      {isMobile && (
+        <OverlapInputField
+          value={""}
+          disabled
+          overlapNodeLeft={
+            <>
+              {addressIsEmpty && (
+                <EmptyAddressNodeLeft
+                  setAddress={setAddress}
+                  handleDelete={handleDelete}
+                />
+              )}
+              {!addressIsEmpty && (
+                <AddressNodeLeft
+                  address={address}
+                  isHidden={isHidden}
+                  isInitial={isInitial}
+                  handleHide={handleHide}
+                  handleRestore={handleRestore}
+                  handleDelete={handleDelete}
+                />
+              )}
+            </>
+          }
+          overlapNodeRight={
+            <S.TokenContainer>
+              <S.TokenInput
                 isHidden={isHidden}
-                isInitial={isInitial}
-                handleHide={handleHide}
-                handleRestore={handleRestore}
-                handleDelete={handleDelete}
+                disabled={isHidden}
+                value={amount}
+                type={"text"}
+                inputMode={"decimal"}
+                onChange={handleChangeTokenInput}
+                placeholder={"amount"}
               />
-            )}
-          </>
-        }
-        overlapNodeRight={
-          <S.TokenContainer>
-            <S.TokenInput
-              isHidden={isHidden}
-              disabled={isHidden}
-              value={amount}
-              type={"text"}
-              inputMode={"decimal"}
-              onChange={handleChangeTokenInput}
-              placeholder={"amount"}
-            />
-            {token && <S.TokenLabel isHidden={isHidden}>{token}</S.TokenLabel>}
-          </S.TokenContainer>
-        }
-        errorMessage={errorMessage}
-      />
+              {token && (
+                <S.TokenLabel isHidden={isHidden}>{token}</S.TokenLabel>
+              )}
+            </S.TokenContainer>
+          }
+          errorMessage={errorMessage}
+        />
+      )}
+      {!isMobile && (
+        <S.DektopInputContainer>
+          <S.DesktopLeftInput
+            value={""}
+            readonly
+            disabled={isHidden}
+            overlapNodeLeft={
+              <>
+                {addressIsEmpty && (
+                  <EmptyAddressNodeLeft
+                    setAddress={setAddress}
+                    handleDelete={handleDelete}
+                  />
+                )}
+                {!addressIsEmpty && (
+                  <AddressNodeLeft
+                    address={address}
+                    isHidden={isHidden}
+                    isInitial={isInitial}
+                    handleHide={handleHide}
+                    handleRestore={handleRestore}
+                    handleDelete={handleDelete}
+                  />
+                )}
+              </>
+            }
+            errorMessage={errorMessage}
+          />
+          <S.DesktopRightInput
+            type={"number"}
+            value={amount}
+            readonly={isHidden}
+            disabled={isHidden}
+            onChange={handleChangeTokenInput}
+            placeholder={"Amount of token"}
+            nodeRight={
+              <S.TokenContainer>
+                {token && (
+                  <S.TokenLabel isHidden={isHidden}>{token}</S.TokenLabel>
+                )}
+              </S.TokenContainer>
+            }
+          />
+        </S.DektopInputContainer>
+      )}
     </S.Root>
   )
 }

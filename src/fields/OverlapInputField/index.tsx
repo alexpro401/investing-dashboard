@@ -31,7 +31,7 @@ function OverlapInputField<V extends string | number>({
   ...rest
 }: Props<V>) {
   return (
-    <S.Root isOverlapping={!!overlapNodeLeft || !!overlapNodeRight}>
+    <S.Root isOverlapping={!!overlapNodeLeft || !!overlapNodeRight} {...rest}>
       <InputField
         value={value}
         setValue={setValue}
@@ -49,7 +49,6 @@ function OverlapInputField<V extends string | number>({
         nodeRight={!overlapNodeRight && nodeRight}
         onBlur={onBlur}
         cRef={cRef}
-        {...rest}
       />
       {overlapNodeLeft ? (
         <S.OverlapNodeLeft>{overlapNodeLeft}</S.OverlapNodeLeft>
