@@ -1,6 +1,6 @@
 import * as React from "react"
 import * as S from "./styled"
-import theme, { Text } from "theme"
+import theme from "theme"
 import { Card } from "common"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
@@ -15,57 +15,33 @@ const PoolPriceDiff: React.FC<Props> = ({
   priceDiffUSD = 0,
   ...rest
 }) => {
+  const diffColor = React.useMemo(() => {
+    if (priceDiffUSD > 0) {
+      return theme.statusColors.success
+    }
+    if (priceDiffUSD < 0) {
+      return theme.statusColors.error
+    }
+
+    return theme.textColors.primary
+  }, [priceDiffUSD])
+
   return (
     <S.Root {...rest}>
       <Card>
-        <Text fz={16} fw={600} color="#E4F2FF" align="center">
-          <>{`$ ${initialPriceUSD}`}</>
-        </Text>
-        <Text
-          fz={13}
-          fw={500}
-          color={theme.textColors.secondary}
-          align="center"
-        >
-          Initial LP Price
-        </Text>
+        <S.PoolPriceDiffValue>{`$ ${initialPriceUSD}`}</S.PoolPriceDiffValue>
+        <S.PoolPriceDiffLabel>Initial LP Price</S.PoolPriceDiffLabel>
       </Card>
       <Card>
-        <Text fz={16} fw={600} color="#E4F2FF" align="center">
-          <>{`$ ${currentPriceUSD}`}</>
-        </Text>
-        <Text
-          fz={13}
-          fw={500}
-          color={theme.textColors.secondary}
-          align="center"
-        >
-          Current Price
-        </Text>
+        <S.PoolPriceDiffValue>{`$ ${currentPriceUSD}`}</S.PoolPriceDiffValue>
+        <S.PoolPriceDiffLabel>Current Price</S.PoolPriceDiffLabel>
       </Card>
       <Card>
-        <Text
-          fz={16}
-          fw={600}
-          color={
-            priceDiffUSD > 0
-              ? theme.statusColors.success
-              : priceDiffUSD < 0
-              ? theme.statusColors.error
-              : "#E4F2FF"
-          }
-          align="center"
-        >
+        <S.PoolPriceDiffValue color={diffColor}>
           <>{`$ ${Math.abs(priceDiffUSD).toFixed(2)}`}</>
-        </Text>
-        <Text
-          fz={13}
-          fw={500}
-          color={theme.textColors.secondary}
-          align="center"
-        >
-          Difference
-        </Text>
+        </S.PoolPriceDiffValue>
+
+        <S.PoolPriceDiffLabel>Difference</S.PoolPriceDiffLabel>
       </Card>
     </S.Root>
   )

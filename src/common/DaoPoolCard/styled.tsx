@@ -1,32 +1,11 @@
 import styled from "styled-components/macro"
 import { Text } from "theme"
-import { motion } from "framer-motion"
-
-export const Animation = styled(motion.div).attrs((p: { index: number }) => ({
-  initial: p.index === 0 ? { opacity: 1, y: 0 } : { opacity: 0, y: -5 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -5 },
-  transition: {
-    duration: 0.2,
-    delay: p.index === 0 ? 0 : 0.01,
-    ease: [0.29, 0.98, 0.29, 1],
-  },
-}))<{ index: number }>`
-  width: 100%;
-`
+import { Icon } from "common"
 
 export const Root = styled.div`
   background: ${(props) => props.theme.backgroundColors.secondary};
   border-radius: 20px;
   color: ${(props) => props.theme.textColors.primary};
-`
-
-export const DaoPoolCardHead = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px;
 `
 
 export const DaoPoolCardTitle = styled(Text).attrs(() => ({
@@ -38,43 +17,40 @@ export const DaoPoolCardTitle = styled(Text).attrs(() => ({
 
 export const DaoPoolCardDescription = styled(Text).attrs(() => ({
   block: true,
-  color: "#B1C7FC",
-  fw: 400,
-  fz: 13,
   lh: "15px",
 }))<{ align?: string }>`
   text-align: ${({ align }) => align ?? "right"};
+  font-size: 13px;
+  font-weight: 400;
+  color: ${({ theme }) => theme.textColors.secondary};
+
+  @media screen and (min-width: 1194px) {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6781bd;
+  }
 `
 
-export const DaoPoolCardVotingPower = styled(Text).attrs(({ theme }) => ({
-  color: theme.statusColors.success,
-  fw: 700,
-  fz: 16,
-  lh: "16px",
-}))`
+export const DaoPoolCardShowVotingPower = styled(Icon)`
+  height: 16px;
+
+  @media screen and (min-width: 1194px) {
+    height: 25px;
+  }
+`
+export const DaoPoolCardVotingPower = styled(Text)`
   letter-spacing: 1px;
-`
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  color: ${({ theme }) => theme.statusColors.success};
 
-export const DaoPoolCardDivider = styled.div`
-  background: radial-gradient(
-      54.8% 53% at 50% 50%,
-      #587eb7 0%,
-      rgba(88, 126, 183, 0) 100%
-    ),
-    radial-gradient(
-      60% 51.57% at 50% 50%,
-      #6d99db 0%,
-      rgba(109, 153, 219, 0) 100%
-    ),
-    radial-gradient(
-      69.43% 69.43% at 50% 50%,
-      rgba(5, 5, 5, 0.5) 0%,
-      rgba(82, 82, 82, 0) 100%
-    );
-  opacity: 0.1;
-  width: fill-available;
-  margin-left: 63px;
-  height: 1px;
+  @media screen and (min-width: 1194px) {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 25px;
+    color: rgba(228, 242, 255, 0.8);
+  }
 `
 
 export const Content = styled.div`
@@ -84,19 +60,3 @@ export const Content = styled.div`
   grid-template-rows: 1fr;
   gap: 0 12px;
 `
-
-export const DaoPoolCardBlockInfoValue = styled(Text).attrs(() => ({
-  block: true,
-  color: "#f7f7f7",
-  fw: 600,
-  fz: 16,
-  lh: "16px",
-}))``
-
-export const DaoPoolCardBlockInfoLabel = styled(Text).attrs(() => ({
-  block: true,
-  color: "#B1C7FC",
-  fw: 600,
-  fz: 11,
-  lh: "20px",
-}))``

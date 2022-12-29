@@ -1,11 +1,12 @@
 import styled from "styled-components/macro"
-import { AppButton } from "common"
+import { Card, CardDescription, CardHead, AppButton } from "common"
 import { ICON_NAMES } from "constants/icon-names"
+import { respondTo } from "theme"
+import Management from "pages/Management"
 
 export const Container = styled.div`
   margin: 0 auto;
   width: fill-available;
-  background-color: #0e121b;
 `
 
 export const Content = styled.div`
@@ -21,8 +22,41 @@ export const Indents = styled.div<{ top?: boolean; side?: boolean }>`
   padding-right: ${({ side = true }) => (side ? "16px" : "0")};
 `
 
-export const AppButtonFull = styled(AppButton)`
-  width: 100%;
+export const InsuranceInfoCard = styled(Card)`
+  ${respondTo("sm")} {
+    background: transparent;
+    gap: 24px;
+  }
+`
+export const InsuranceInfoCardHead = styled(CardHead)`
+  & > * {
+    ${respondTo("sm")} {
+      font-weight: 900;
+      font-size: 24px;
+      line-height: 30px;
+      letter-spacing: -0.01em;
+    }
+  }
+`
+export const InsuranceInfoCardDescription = styled(CardDescription)`
+  ${respondTo("sm")} {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 170%;
+    letter-spacing: 0.01em;
+    color: #e4f2ff;
+  }
+`
+export const InsuranceInfoCardAction = styled(AppButton)`
+  ${respondTo("sm")} {
+    background: rgba(38, 105, 235, 0.15);
+    border-radius: 16px;
+  }
+`
+export const InsuranceTerminal = styled(Management)`
+  ${respondTo("sm")} {
+    margin: 0 20px 0 auto;
+  }
 `
 
 export const InsuranceAllProposalsLink = styled(AppButton).attrs(() => ({

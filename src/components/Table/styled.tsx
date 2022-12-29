@@ -3,6 +3,10 @@ import styled from "styled-components/macro"
 import { Text } from "theme"
 import { AppButton } from "common"
 
+export const TableContainer = styled.div`
+  width: 100%;
+`
+
 export const Divider = styled.div`
   width: 100%;
   height: 1px;

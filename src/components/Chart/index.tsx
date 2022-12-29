@@ -11,6 +11,7 @@ import {
   CHART_TYPE,
   TIMEFRAME,
 } from "constants/chart"
+import { useBreakpoints } from "hooks"
 
 const ChartArea = React.lazy(() => import(`./charts/ChartArea`))
 const ChartLine = React.lazy(() => import(`./charts/ChartLine`))
@@ -28,7 +29,7 @@ interface Props {
   type: CHART_TYPE
   nodeHeadLeft?: React.ReactNode
   nodeHeadRight?: React.ReactNode
-  height: string
+  height?: string
   data?: any[]
   chart: any
   chartItems: any[]
@@ -62,6 +63,13 @@ const Chart: React.FC<Props> = ({
 }) => {
   const CurrentChart = charts[type]
 
+  const { isMobile } = useBreakpoints()
+
+  const _height = React.useMemo(() => {
+    if (!isNil(height)) return height
+    return isMobile ? "120px" : "180px"
+  }, [height, isMobile])
+
   const _loading = React.useMemo(() => !isNil(loading) && loading, [loading])
   const _enableActivePoint = React.useMemo(
     () => !isNil(activePoint),
@@ -70,9 +78,22 @@ const Chart: React.FC<Props> = ({
 
   const _animationMode = React.useState(true)
 
+  const _nodeHeadRightTimeframe = React.useMemo(() => {
+    if (isNil(timeframe)) {
+      return null
+    }
+
+    return (
+      <S.ChartTimeframeWrapper>
+        <Timeframe current={timeframe.get} set={timeframe.set} />
+      </S.ChartTimeframeWrapper>
+    )
+  }, [timeframe])
+
   const NodeHead = React.useMemo(() => {
     const leftExist = !isNil(nodeHeadLeft)
-    const rightExist = !isNil(nodeHeadRight)
+    const rightExist = !isNil(nodeHeadRight) || !isNil(_nodeHeadRightTimeframe)
+    const _nodeHeadRight = isMobile ? nodeHeadRight : _nodeHeadRightTimeframe
 
     function getHeadJustify(leftExist, rightExist) {
       if (leftExist && rightExist) return "space-between"
@@ -90,16 +111,18 @@ const Chart: React.FC<Props> = ({
           m="0 0 16px"
         >
           {leftExist ? nodeHeadLeft : null}
-          {rightExist ? nodeHeadRight : null}
+          {rightExist ? _nodeHeadRight : null}
         </Flex>
       )
     }
 
     return null
-  }, [nodeHeadLeft, nodeHeadRight])
+  }, [nodeHeadLeft, nodeHeadRight, isMobile, _nodeHeadRightTimeframe])
 
   const _nodesDirection = React.useMemo(() => {
-    if (isNil(timeframePosition) || isNil(timeframe)) return "initial"
+    if (isNil(timeframePosition) || isNil(timeframe)) {
+      return "initial"
+    }
     const DirectionByTimeframePosition = {
       top: "column-reverse",
       bottom: "column",
@@ -121,7 +144,14 @@ const Chart: React.FC<Props> = ({
       isNil(chartItems) ||
       isEmpty(chartItems)
     ) {
-      return [CHART_FALLBACK_ITEM]
+      return [
+        {
+          ...CHART_FALLBACK_ITEM,
+          ...(!isNil(chartItems[0]?.stroke)
+            ? { stroke: chartItems[0]?.stroke }
+            : {}),
+        },
+      ]
     }
     return chartItems
   }, [data, chartItems])
@@ -141,24 +171,26 @@ const Chart: React.FC<Props> = ({
   return (
     <div>
       {NodeHead}
-      <S.Container h={height} dir={_nodesDirection}>
+      <S.Container dir={_nodesDirection}>
         {_loading ? (
-          <ChartFallback />
+          <ChartFallback h={_height} />
         ) : (
-          <React.Suspense fallback={<ChartFallback />}>
-            <CurrentChart
-              data={_data}
-              chart={_chart}
-              chartItems={_chartItems}
-              activePoint={!isNil(activePoint) && activePoint.get}
-              animationMode={_animationMode[0]}
-              enableActivePoint={_enableActivePoint}
-            >
-              {children}
-            </CurrentChart>
-          </React.Suspense>
+          <S.ChartWrapper h={_height}>
+            <React.Suspense fallback={<ChartFallback />}>
+              <CurrentChart
+                data={_data}
+                chart={_chart}
+                chartItems={_chartItems}
+                activePoint={!isNil(activePoint) && activePoint.get}
+                animationMode={_animationMode[0]}
+                enableActivePoint={_enableActivePoint}
+              >
+                {children}
+              </CurrentChart>
+            </React.Suspense>
+          </S.ChartWrapper>
         )}
-        {!isNil(timeframe) && (
+        {!isNil(timeframe) && isMobile && (
           <Timeframe current={timeframe.get} set={timeframe.set} />
         )}
       </S.Container>

@@ -47,7 +47,7 @@ const TabPoolHolders: FC<Props> = ({ poolData, baseToken, chainId }) => {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <Flex full ai="center" jc="space-between">
+        <Flex full ai="center" jc="space-between" p={"16px 0"}>
           <Value.MediumThin color="#E4F2FF" block>
             <Flex ai="center" jc="flex-start" gap="4">
               {shortenAddress(id, 4)}

@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 export const StyledTopMembers = styled(motion.div)`
   padding: 0;
   height: fit-content;
+  width: 100%;
 `
 
 export const MembersList = styled.div`
@@ -36,4 +37,12 @@ export const ListContainer = styled(motion.div)`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0;
+`
+
+export const CardIconWrp = styled.div`
+  flex: 1 0 7px;
+  svg {
+    width: 7px;
+    height: 12px;
+  }
 `

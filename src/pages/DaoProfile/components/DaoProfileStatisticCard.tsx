@@ -17,6 +17,7 @@ interface Props extends Pick<Web3ReactContextInterface, "account"> {
   isValidator: boolean
   handleOpenCreateProposalModal: () => void
   govPoolQuery: IGovPoolQuery
+  isMobile: boolean
 }
 
 const DaoProfileStatisticCard: React.FC<Props> = ({
@@ -24,14 +25,15 @@ const DaoProfileStatisticCard: React.FC<Props> = ({
   handleOpenCreateProposalModal,
   account,
   govPoolQuery,
+  isMobile,
 }) => {
   const { validatorsToken, validatorsTotalVotes } = useContext(
     GovPoolProfileCommonContext
   )
 
   return (
-    <DaoPoolCard account={account} data={govPoolQuery}>
-      <Flex full dir={"column"} p={"12px"} gap={"12"}>
+    <DaoPoolCard account={account} data={govPoolQuery} isMobile={isMobile}>
+      <Flex full dir={"column"} gap={"12"}>
         <S.CardButtons>
           <S.NewProposal onClick={handleOpenCreateProposalModal} />
           <S.AllProposals
@@ -40,7 +42,7 @@ const DaoProfileStatisticCard: React.FC<Props> = ({
         </S.CardButtons>
         {isValidator && (
           <>
-            <S.Divider />
+            {isMobile && <S.Divider />}
             <Flex full ai="center" jc="space-between">
               <Flex full ai="center" jc="flex-start" gap="4">
                 <Text color="#B1C7FC" fz={13}>
