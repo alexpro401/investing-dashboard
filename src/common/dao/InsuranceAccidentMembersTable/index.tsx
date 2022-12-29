@@ -71,8 +71,6 @@ const InsuranceAccidentMembersTable: React.FC<Props> = (props) => {
     [account]
   )
 
-  console.log(data)
-
   return (
     <>
       <Table

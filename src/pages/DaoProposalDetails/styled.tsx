@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components/macro"
-import { AppButton, Icon } from "common"
+import { AppButton, Card, Icon } from "common"
 import { VotingTerminal } from "pages/VotingTerminal"
 import { GradientBorder, respondTo } from "theme"
 import ProposalInfo from "./components/ProposalInfo"
@@ -445,5 +445,11 @@ export const DaoProposalInsurancePoolPriceDiff = styled(PoolPriceDiff)`
   ${respondTo("sm")} {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(3, 1fr);
+  }
+`
+
+export const DaoProposalInsuranceMembersTableWrp = styled(Card)`
+  ${respondTo("sm")} {
+    padding: 0;
   }
 `
