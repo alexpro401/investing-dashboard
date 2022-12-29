@@ -52,7 +52,7 @@ const StepsNavigation: FC<Props> = ({
       <S.StepsNavigationActions>
         <>
           {nodeLeft ? (
-            { nodeLeft }
+            nodeLeft
           ) : (
             <S.StepsNavigationButton
               scheme="filled"

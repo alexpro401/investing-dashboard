@@ -1,7 +1,10 @@
 import { FC, HTMLAttributes, ReactNode, useEffect } from "react"
+import { createPortal } from "react-dom"
+import { useSelector } from "react-redux"
+
 import { useBreakpoints, useForceUpdate } from "hooks"
 import { StepsNavigation } from "../index"
-import { createPortal } from "react-dom"
+import { selectIsTabBarHidden } from "state/application/selectors"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   nodeLeft?: ReactNode
@@ -15,6 +18,8 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const FormStepsNavigation: FC<Props> = ({ customNextCb, ...rest }) => {
+  const isTabBarHidden = useSelector(selectIsTabBarHidden)
+
   const appNavigationEl = document.querySelector("#app-navigation")
 
   const { isMobile } = useBreakpoints()
@@ -26,7 +31,7 @@ const FormStepsNavigation: FC<Props> = ({ customNextCb, ...rest }) => {
 
   useEffect(() => {
     update()
-  }, [appNavigationEl])
+  }, [appNavigationEl, isTabBarHidden])
 
   return isMobile ? (
     appNavigationEl ? (
