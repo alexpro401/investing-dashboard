@@ -8,7 +8,7 @@ import * as S from "./styled"
 import ExternalLink from "components/ExternalLink"
 import theme from "theme"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { useRemoveUserAddedToken } from "state/user/hooks"
 
 interface Props {

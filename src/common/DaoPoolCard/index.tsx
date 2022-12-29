@@ -13,7 +13,7 @@ import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
 import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
 import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   data: IGovPoolQuery

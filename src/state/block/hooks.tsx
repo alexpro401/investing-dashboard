@@ -1,5 +1,5 @@
 import { useWeb3React } from "@web3-react/core"
-import { FAST_INTERVAL, SLOW_INTERVAL } from "constants/chains"
+import { FAST_INTERVAL, SLOW_INTERVAL } from "consts/chains"
 // eslint-disable-next-line camelcase
 import useSWR, { useSWRConfig, unstable_serialize } from "swr"
 import useSWRImmutable from "swr/immutable"

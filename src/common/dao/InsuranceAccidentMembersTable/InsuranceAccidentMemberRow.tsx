@@ -3,7 +3,7 @@ import * as S from "./styled"
 import { normalizeBigNumber, shortenAddress } from "utils"
 import { BigNumber } from "@ethersproject/bignumber"
 import { isNil } from "lodash"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { divideBignumbers } from "utils/formulas"
 import { InsuranceAccidentInvestor } from "interfaces/insurance"
 

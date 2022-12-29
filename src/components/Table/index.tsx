@@ -3,7 +3,7 @@ import { isEmpty, isNil, map } from "lodash"
 
 import * as S from "./styled"
 import theme, { Flex } from "theme"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 
 interface Props {
   nodeHead?: React.ReactNode

@@ -6,7 +6,7 @@ import { Card } from "common"
 import { Divider, TextLabel, TextValue, FlexLink, AppLink } from "../styled"
 
 import TokenIcon from "components/TokenIcon"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 
 const DaoProfileEmptyBalanceCard: FC = () => {
   return (

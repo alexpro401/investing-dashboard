@@ -1,4 +1,4 @@
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { formatUnits, parseEther } from "@ethersproject/units"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"

@@ -6,7 +6,7 @@ import { CardInfo } from "common"
 import Skeleton from "components/Skeleton"
 import AccountInfo from "components/AccountInfo"
 import { Icon } from "common"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 
 import { useWeb3React } from "@web3-react/core"
 import { InvestorPoolQuery } from "interfaces/thegraphs/investors"

@@ -13,7 +13,7 @@ import {
   useGovPoolSetting,
 } from "hooks/dao"
 import CreateGovProposalValidatorSettingsForm from "forms/CreateGovProposalValidatorSettingsForm"
-import { INITIAL_DAO_PROPOSAL } from "constants/dao"
+import { INITIAL_DAO_PROPOSAL } from "consts/dao"
 import { cutStringZeroes } from "utils"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import Skeleton from "components/Skeleton"

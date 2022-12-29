@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux"
 
 import { updateWhitelist } from "./actions"
 import { AppDispatch } from "state"
-import whitelist from "constants/whitelisted"
+import whitelist from "consts/whitelisted"
 import { usePriceFeedContract } from "contracts"
 
 export const PriceFeedUpdater: React.FC = () => {

@@ -22,9 +22,9 @@ import {
   GovPoolSettingsForm,
   GovPoolSettingsState,
 } from "types"
-import { INITIAL_DAO_PROPOSAL } from "constants/dao"
+import { INITIAL_DAO_PROPOSAL } from "consts/dao"
 import { isEqual } from "lodash"
-import { SUPPORTED_SOCIALS } from "constants/socials"
+import { SUPPORTED_SOCIALS } from "consts/socials"
 import { formatUnits, parseUnits } from "@ethersproject/units"
 
 interface IGovPoolFormContext {

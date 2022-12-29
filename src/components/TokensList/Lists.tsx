@@ -1,7 +1,7 @@
 import { useWeb3React } from "@web3-react/core"
 import { AppButton } from "common"
 import { DefaultTokenIcon } from "components/TokenIcon"
-import { UNSUPPORTED_LIST_URLS } from "constants/lists"
+import { UNSUPPORTED_LIST_URLS } from "consts/lists"
 import { useFetchListCallback } from "hooks/useFetchListCallback"
 import { TokenList } from "lib/token-list"
 import parseENSAddress from "lib/utils/parseENSAddress"

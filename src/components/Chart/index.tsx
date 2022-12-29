@@ -10,7 +10,7 @@ import {
   CHART_FALLBACK_ITEM,
   CHART_TYPE,
   TIMEFRAME,
-} from "constants/chart"
+} from "consts/chart"
 
 const ChartArea = React.lazy(() => import(`./charts/ChartArea`))
 const ChartLine = React.lazy(() => import(`./charts/ChartLine`))

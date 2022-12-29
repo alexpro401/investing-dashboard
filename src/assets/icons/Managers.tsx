@@ -1,5 +1,5 @@
 import { FC, memo } from "react"
-import { IconProps } from "constants/types"
+import { IconProps } from "consts/types"
 import { motion } from "framer-motion"
 
 const Managers: FC<IconProps> = ({ active }) => {

@@ -15,7 +15,7 @@ import { PoolPositionLast, PoolQuery } from "queries"
 import { PoolsByInvestorsQuery } from "queries/all-pools"
 import { useTraderPoolContract } from "contracts"
 
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { normalizeBigNumber } from "utils"
 import usePoolPrice from "hooks/usePoolPrice"
 import { useERC20Data } from "state/erc20/hooks"
@@ -34,7 +34,7 @@ import {
   TIMEFRAME_FROM_DATE,
   TIMEFRAME_LIMIT_CODE,
   TIMEFRAME,
-} from "constants/chart"
+} from "consts/chart"
 import { usePriceHistory } from "state/pools/hooks"
 import { useAPI } from "api"
 

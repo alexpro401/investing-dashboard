@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react"
 
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 
 import * as S from "./styled"
 

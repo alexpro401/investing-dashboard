@@ -1,7 +1,7 @@
 import { createReducer, nanoid } from "@reduxjs/toolkit"
 
-import { DEFAULT_TXN_DISMISS_MS } from "constants/misc"
-import { SubmitState } from "constants/types"
+import { DEFAULT_TXN_DISMISS_MS } from "consts/misc"
+import { SubmitState } from "consts/types"
 import {
   addToast,
   hideTapBar,

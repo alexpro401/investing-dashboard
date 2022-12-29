@@ -1,4 +1,4 @@
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
 import { useERC721Tokens, useOwnedERC721Tokens } from "hooks/useERC721List"
 import { useCallback, useMemo, useState } from "react"

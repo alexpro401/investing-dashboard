@@ -27,7 +27,7 @@ import {
 } from "fields"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import theme from "theme"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { isAddressValidator, required } from "utils/validators"
 import { useBreakpoints } from "hooks"
 import {

@@ -8,11 +8,11 @@ import GovPoolFormContextProvider from "context/govPool/GovPoolFormContext"
 import CreateDaoProposalChangeTokenDistributionForm from "forms/CreateDaoProposalChangeTokenDistributionForm"
 import { useGovPoolSetting, useGovPoolValidatorsCount } from "hooks/dao"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
-import { INITIAL_DAO_PROPOSAL } from "constants/dao"
+import { INITIAL_DAO_PROPOSAL } from "consts/dao"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
 import { GovPoolFormOptions } from "types"
-import { ZERO_ADDR } from "constants/index"
+import { ZERO_ADDR } from "consts"
 
 import * as S from "../styled"
 

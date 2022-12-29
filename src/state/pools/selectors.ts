@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit"
-import { poolTypes } from "constants/index"
+import { poolTypes } from "consts"
 import { AppState } from "state"
 
 const selectPoolsState = (state: AppState) => state.pools

@@ -1,5 +1,5 @@
 import { FC, ReactNode, useEffect, useState } from "react"
-import { WalletBadge } from "common"
+import { Wallet, WalletBadge } from "common"
 
 import HeaderTabs from "components/Header/Tabs"
 import { More, GoBack } from "./Components"
@@ -37,6 +37,7 @@ const Layout: FC<Props> = ({ children, left, right, tabs }) => {
         <Bar>
           <Icons>{left || <GoBack />}</Icons>
           <Title>{children}</Title>
+          <Wallet />
           <Icons>
             {right}
             <More />

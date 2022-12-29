@@ -10,7 +10,7 @@ import { useGovPoolDescription } from "hooks/dao"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
 import { GovPoolFormOptions } from "types"
-import { INITIAL_DAO_PROPOSAL } from "constants/dao"
+import { INITIAL_DAO_PROPOSAL } from "consts/dao"
 
 import * as S from "./styled"
 

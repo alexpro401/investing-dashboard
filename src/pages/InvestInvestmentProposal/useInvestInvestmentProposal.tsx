@@ -22,9 +22,9 @@ import usePoolPrice from "hooks/usePoolPrice"
 import { useInvestProposal } from "hooks/useInvestmentProposals"
 
 import { RiskyForm } from "interfaces/exchange"
-import { ZERO } from "constants/index"
-import { SubmitState } from "constants/types"
-import { DATE_TIME_FORMAT } from "constants/time"
+import { ZERO } from "consts"
+import { SubmitState } from "consts/types"
+import { DATE_TIME_FORMAT } from "consts/time"
 import { IDivestAmountsAndCommissions } from "interfaces/contracts/ITraderPool"
 
 import {

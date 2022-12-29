@@ -1,7 +1,7 @@
 import { Fragment } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { EXCHANGE_DEFAULT_PERCENTS } from "constants/index"
+import { EXCHANGE_DEFAULT_PERCENTS } from "consts"
 
 import { DividerContainer, PercentButton, SwapButton } from "./styled"
 import DirectionIcon from "assets/icons/SwapDirectionIcon"

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { AGGREGATION_CODE } from "constants/chart"
+import { AGGREGATION_CODE } from "consts/chart"
 import { opacityVariants } from "motion/variants"
 import { usePriceHistory } from "state/pools/hooks"
 import { Flex } from "theme"

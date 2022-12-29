@@ -8,7 +8,7 @@ import Icon from "components/Icon"
 import { AppButton } from "common"
 
 import { useTraderPoolContract, usePoolRegistryContract } from "contracts"
-import { PoolType } from "constants/types"
+import { PoolType } from "consts/types"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 

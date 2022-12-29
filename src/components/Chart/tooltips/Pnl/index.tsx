@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import { format } from "date-fns"
 import { parseEther } from "@ethersproject/units"
 
-import { DATE_FORMAT } from "constants/time"
+import { DATE_FORMAT } from "consts/time"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 
 import { Flex } from "theme"

@@ -1,5 +1,5 @@
-import addresses from "constants/contracts"
-import { Address } from "constants/types"
+import addresses from "consts/contracts"
+import { Address } from "consts/types"
 
 // by default selects the mainnet chain id (56)
 export const getAddress = (address: Address, chainId?: number): string => {

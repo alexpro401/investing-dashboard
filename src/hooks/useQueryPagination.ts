@@ -5,7 +5,7 @@ import { usePrevious } from "react-use"
 import { UseQueryArgs } from "urql/dist/types/hooks/useQuery"
 
 import useError from "hooks/useError"
-import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
+import { DEFAULT_PAGINATION_COUNT } from "consts/misc"
 
 /**
  * Represent payload object

@@ -3,7 +3,7 @@ import { useMemo } from "react"
 import { createClient, Provider as GraphProvider } from "urql"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import { AppButton, Icon } from "common"
 import TransactionSlippage from "components/TransactionSlippage"

@@ -11,7 +11,7 @@ import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useWeb3React } from "@web3-react/core"
 import { WrappedProposalView } from "types"
 import { isEqual } from "lodash"
-import { ROUTE_PATHS, ZERO_ADDR } from "constants/index"
+import { ROUTE_PATHS, ZERO_ADDR } from "consts"
 import { generatePath, useNavigate } from "react-router-dom"
 import { useCountdown } from "hooks"
 

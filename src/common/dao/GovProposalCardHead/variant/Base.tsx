@@ -1,6 +1,6 @@
 import * as React from "react"
 import * as S from "../styled"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { Icon } from "common"
 import { Flex } from "theme"
 

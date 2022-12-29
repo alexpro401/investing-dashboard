@@ -13,7 +13,7 @@ import {
 } from "common"
 import { AddressAmountField, InputField, DurationField } from "fields"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"

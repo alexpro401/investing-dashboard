@@ -2,7 +2,7 @@ import {
   InsuranceAccident,
   IPriceHistoryWithCalcPNL,
 } from "interfaces/insurance"
-import { TIMEFRAME } from "constants/chart"
+import { TIMEFRAME } from "consts/chart"
 import { IPriceHistory } from "../interfaces/thegraphs/all-pools"
 
 export const INITIAL_INSURANCE_ACCIDENT: InsuranceAccident = {

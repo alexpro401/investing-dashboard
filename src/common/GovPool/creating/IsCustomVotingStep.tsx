@@ -12,7 +12,7 @@ import {
 import { CreateDaoCardStepNumber } from "../components"
 
 import * as S from "./styled"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import Switch from "components/Switch"
 import useAlert, { AlertType } from "hooks/useAlert"
 import { stepsControllerContext } from "context/StepsControllerContext"

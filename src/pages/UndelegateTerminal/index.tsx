@@ -1,7 +1,7 @@
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import NftInput from "components/Exchange/NftInput"
 import * as S from "components/Exchange/styled"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import NftSelect from "modals/NftSelect"
 import { FC, useCallback, useMemo } from "react"
 import { Flex } from "theme"

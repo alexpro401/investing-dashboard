@@ -1,5 +1,5 @@
 import { BigNumber } from "@ethersproject/bignumber"
-import { TradeType, UpdateListType } from "constants/types"
+import { TradeType, UpdateListType } from "consts/types"
 
 interface SerializableTransactionReceipt {
   to: string

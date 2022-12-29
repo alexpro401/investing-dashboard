@@ -14,7 +14,7 @@ import { AppButton } from "common"
 import * as S from "./styled"
 
 import { ExternalFileDocument } from "types"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { isValidUrl } from "utils"
 import { readFromClipboard } from "utils/clipboard"
 import extractRootDomain from "utils/extractRootDomain"

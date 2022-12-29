@@ -4,7 +4,7 @@ import {
   VersionUpgrade,
 } from "lib/token-list"
 import { useWeb3React } from "@web3-react/core"
-import { UNSUPPORTED_LIST_URLS } from "constants/lists"
+import { UNSUPPORTED_LIST_URLS } from "consts/lists"
 import useInterval from "lib/hooks/useInterval"
 import { useCallback, useEffect } from "react"
 import { useAppDispatch } from "state/hooks"

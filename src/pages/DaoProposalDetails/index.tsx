@@ -13,7 +13,7 @@ import { FC, HTMLAttributes, useMemo, useState } from "react"
 import { useGovPoolProposal, useGovPoolProposals, useBreakpoints } from "hooks"
 import { useParams } from "react-router-dom"
 import { Icon } from "common"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { ValidatorsVote } from "pages/ValidatorsVote"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}

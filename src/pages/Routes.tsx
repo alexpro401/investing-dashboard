@@ -5,7 +5,7 @@ import { AnimatePresence } from "framer-motion"
 import RequireAuth from "pages/RequireAuth"
 
 import { Content } from "theme/GlobalStyle"
-import { ROUTE_PATHS } from "constants/index"
+import { ROUTE_PATHS } from "consts"
 
 const Welcome = lazy(() => import("pages/Welcome"))
 const TopMembers = lazy(() => import("pages/TopMembers"))
@@ -19,7 +19,6 @@ const Investor = lazy(() => import("pages/Investor"))
 const Trader = lazy(() => import("pages/Trader"))
 const Pool = lazy(() => import("pages/Pool"))
 const Swap = lazy(() => import("pages/Swap"))
-const Wallet = lazy(() => import("pages/Wallet"))
 const Success = lazy(() => import("pages/Success"))
 const Notifications = lazy(() => import("pages/Notifications"))
 const CreateRiskyProposal = lazy(() => import("pages/CreateRiskyProposal"))
@@ -135,8 +134,6 @@ export default function Routes() {
                   path={ROUTE_PATHS.notifications}
                   element={<Notifications />}
                 />
-
-                <Route path={ROUTE_PATHS.wallet} element={<Wallet />} />
 
                 <Route path={ROUTE_PATHS.poolSwap} element={<Swap />} />
 

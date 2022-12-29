@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react"
 import { debounce } from "lodash"
 
 import { useTraderPoolInvestProposalContract } from "contracts"
-import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
+import { DEFAULT_PAGINATION_COUNT } from "consts/misc"
 import useForceUpdate from "./useForceUpdate"
 import {
   IInvestProposalActiveInvestmentsInfo,

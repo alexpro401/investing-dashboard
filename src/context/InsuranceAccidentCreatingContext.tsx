@@ -17,9 +17,9 @@ import {
   InsuranceAccident,
 } from "interfaces/insurance"
 import { IPriceHistory } from "interfaces/thegraphs/all-pools"
-import { TIMEFRAME } from "constants/chart"
+import { TIMEFRAME } from "consts/chart"
 import { useLocalStorage } from "react-use"
-import { INITIAL_INSURANCE_ACCIDENT } from "constants/insurance"
+import { INITIAL_INSURANCE_ACCIDENT } from "consts/insurance"
 import { isEqual } from "lodash"
 
 export interface InsuranceAccidentForm {

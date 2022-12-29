@@ -4,7 +4,7 @@ import { useGovPool } from "hooks/dao"
 import { ProposalState, ProposalStatuses } from "types"
 import DaoProposalsList from "common/dao/DaoProposalsList"
 import usePayload from "hooks/usePayload"
-import { SubmitState } from "constants/types"
+import { SubmitState } from "consts/types"
 
 interface Props {
   daoAddress?: string

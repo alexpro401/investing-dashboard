@@ -16,7 +16,7 @@ import { addInsuranceAccident, addPool, addProposal, addUser } from "./actions"
 import { IInvestProposalMetadata, IUserMetadata } from "./types"
 import { InsuranceAccident } from "interfaces/insurance"
 import { useInsuranceContract, useUserRegistryContract } from "contracts"
-import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
+import { DEFAULT_PAGINATION_COUNT } from "consts/misc"
 import { shortenAddress } from "utils"
 
 export function usePoolMetadata(poolId, hash) {

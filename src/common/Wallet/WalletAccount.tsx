@@ -3,7 +3,6 @@ import { Navigate } from "react-router-dom"
 import { useWeb3React } from "@web3-react/core"
 import { EHeaderTitles } from "components/Header"
 import Header from "components/Header/Layout"
-import TransactionHistory from "components/TransactionHistory"
 
 import { useCopyClipboard } from "hooks"
 
@@ -15,11 +14,11 @@ import { useAddToast } from "state/application/hooks"
 
 import bsc from "assets/wallets/bsc.svg"
 
-import { ICON_NAMES, ROUTE_PATHS } from "constants/index"
+import { ICON_NAMES, ROUTE_PATHS } from "consts"
 
 import * as S from "./styled"
 
-export default function Wallet() {
+export default function WalletAccount() {
   const { account, chainId, deactivate } = useWeb3React()
 
   const [isCopied, copy] = useCopyClipboard()
@@ -51,9 +50,6 @@ export default function Wallet() {
 
   return (
     <>
-      <Header>
-        {txHistoryOpen ? "Transactions History" : EHeaderTitles.myWallet}
-      </Header>
       <S.Container
         initial={{ opacity: 0, y: -15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -73,7 +69,7 @@ export default function Wallet() {
                     ExplorerDataType.ADDRESS
                   )}
                 >
-                  {shortenAddress(account, 4)}
+                  {shortenAddress(account, 2)}
                 </S.Address>
               </S.AddressWrp>
             ) : (

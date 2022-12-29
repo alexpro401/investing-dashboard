@@ -20,7 +20,7 @@ import {
   selectTotalOwnedPoolsStatistic,
 } from "state/user/selectors"
 import { useNavigate } from "react-router-dom"
-import { ROUTE_PATHS } from "constants/index"
+import { ROUTE_PATHS } from "consts"
 
 function Trader() {
   const { account } = useWeb3React()

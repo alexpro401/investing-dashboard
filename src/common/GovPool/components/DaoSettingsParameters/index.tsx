@@ -20,7 +20,7 @@ import {
   Icon,
   TokenChip,
 } from "common/index"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import Switch from "components/Switch"
 import { DurationField, InputField, OverlapInputField } from "fields"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"

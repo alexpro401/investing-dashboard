@@ -9,7 +9,7 @@ import LoadMore from "components/LoadMore"
 import TopMembersBar from "components/TopMembersBar"
 import PoolStatisticCard from "components/cards/PoolStatistic"
 
-import { PoolType } from "constants/types"
+import { PoolType } from "consts/types"
 
 import {
   selectBasicPools,
@@ -26,7 +26,7 @@ import {
 } from "./styled"
 import { AppDispatch } from "state"
 import { setActivePoolType } from "state/pools/actions"
-import { ROUTE_PATHS } from "constants/index"
+import { ROUTE_PATHS } from "consts"
 
 interface Props {
   poolType: PoolType

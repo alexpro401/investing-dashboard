@@ -1,6 +1,6 @@
 import styled from "styled-components/macro"
 import { AppButton } from "common"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 
 export const Container = styled.div`
   margin: 0 auto;

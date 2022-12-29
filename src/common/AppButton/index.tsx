@@ -3,7 +3,7 @@ import { LinkProps } from "react-router-dom"
 
 import * as S from "./styled"
 
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 
 export type SCHEMES = "filled" | "flat"
 

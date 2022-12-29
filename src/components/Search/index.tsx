@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react"
 import { Icon } from "common"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import * as S from "./styled"
 
 interface Props {

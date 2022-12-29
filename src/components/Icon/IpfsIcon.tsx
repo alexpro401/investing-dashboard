@@ -8,7 +8,7 @@ import { Icon } from "./styled"
 import IconLoader from "./IconLoader"
 
 import defaultAvatar from "assets/icons/default-avatar.svg"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 
 interface IProps {
   size?: number

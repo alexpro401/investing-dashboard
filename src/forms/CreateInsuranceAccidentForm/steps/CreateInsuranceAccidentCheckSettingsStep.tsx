@@ -14,7 +14,7 @@ import useInvestorsInsuranceHistory from "hooks/useInvestorsInsuranceHistory"
 import useInvestorsLpHistory from "hooks/useInvestorsLpHistory"
 import PoolPriceDiff from "components/PoolPriceDiff"
 import { BigNumber } from "@ethersproject/bignumber"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import useInvestorsLastPoolPosition from "hooks/useInvestorsLastPoolPosition"
 import {
   Card,

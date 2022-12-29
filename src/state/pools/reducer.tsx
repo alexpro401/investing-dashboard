@@ -1,10 +1,10 @@
 import { createReducer } from "@reduxjs/toolkit"
-import { sortItemsList, currencies, poolTypes } from "constants/index"
+import { sortItemsList, currencies, poolTypes } from "consts"
 import { ITopMembersFilters, ITopMembersPagination, IPayload } from "interfaces"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
-import { PoolType } from "constants/types"
+import { PoolType } from "consts/types"
 import { addDays } from "date-fns"
-import { calendarStaticRanges } from "constants/index"
+import { calendarStaticRanges } from "consts"
 
 import {
   addPools,

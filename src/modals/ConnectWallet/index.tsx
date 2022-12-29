@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { createPortal } from "react-dom"
 import { useWeb3React } from "@web3-react/core"
-import { connectorsByName, ROUTE_PATHS } from "constants/index"
+import { connectorsByName, ROUTE_PATHS } from "consts"
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector"
 import { RotateSpinner } from "react-spinners-kit"
 

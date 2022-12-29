@@ -1,6 +1,6 @@
 import { nanoid } from "@reduxjs/toolkit"
-import { SupportedChainId } from "constants/chains"
-import { RPC_PROVIDERS } from "constants/providers"
+import { SupportedChainId } from "consts/chains"
+import { RPC_PROVIDERS } from "consts/providers"
 import getTokenList from "lib/hooks/useTokenList/fetchTokenList"
 import { TokenList } from "lib/token-list/TokenList"
 import resolveENSContentHash from "lib/utils/resolveENSContentHash"

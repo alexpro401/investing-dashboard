@@ -10,6 +10,7 @@ import {
   ArrowIcon,
   ArrowUpDiagonalIcon,
   ArrowUpFilled,
+  BSCIcon,
   ChatOutline,
   CircleInfoIcon,
   CircleWarningIcon,
@@ -29,6 +30,7 @@ import {
   GlobeIcon,
   GradientCheckIcon,
   GreenCheckIcon,
+  InsuranceIcon,
   InsuranceMultiplierIcon,
   LinkedinIcon,
   LockedIcon,
@@ -58,7 +60,7 @@ import {
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 
 interface Props extends HTMLAttributes<HTMLOrSVGElement> {
   name: ICON_NAMES
@@ -179,6 +181,10 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return ArrowUpDiagonalIcon as unknown as ElementType
       case ICON_NAMES.arrowDownDiagonal:
         return ArrowDownDiagonalIcon as unknown as ElementType
+      case ICON_NAMES.bsc:
+        return BSCIcon as unknown as ElementType
+      case ICON_NAMES.insurance:
+        return InsuranceIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }

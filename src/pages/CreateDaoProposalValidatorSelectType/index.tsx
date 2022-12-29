@@ -6,7 +6,7 @@ import TutorialCard from "components/TutorialCard"
 import WithUserIsDaoValidatorValidation from "components/WithUserIsDaoValidatorValidation"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import { SelectableCard, Icon } from "common"
-import { ICON_NAMES, ROUTE_PATHS } from "constants/index"
+import { ICON_NAMES, ROUTE_PATHS } from "consts"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
 

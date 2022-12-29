@@ -14,8 +14,8 @@ import { isTxMined, parseTransactionError } from "utils"
 import usePayload from "hooks/usePayload"
 import useError from "hooks/useError"
 import { useNativeToken } from "hooks/useNativeToken"
-import { SubmitState } from "constants/types"
-import { ROUTE_PATHS } from "constants/index"
+import { SubmitState } from "consts/types"
+import { ROUTE_PATHS } from "consts"
 
 interface ICreateProposalDistributionArgs {
   proposalName: string

@@ -22,7 +22,7 @@ import Tooltip from "components/Tooltip"
 import DatePicker from "components/DatePicker"
 import TransactionSent from "modals/TransactionSent"
 
-import { SubmitState } from "constants/types"
+import { SubmitState } from "consts/types"
 
 import { usePoolContract } from "hooks/usePool"
 import { Token } from "interfaces"
@@ -34,7 +34,7 @@ import { useERC20Data } from "state/erc20/hooks"
 
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import { dropdownVariants } from "motion/variants"
-import { DATE_TIME_FORMAT } from "constants/time"
+import { DATE_TIME_FORMAT } from "consts/time"
 
 import back from "assets/icons/angle-left.svg"
 import close from "assets/icons/close-big.svg"

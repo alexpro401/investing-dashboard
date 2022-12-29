@@ -33,7 +33,7 @@ import { CreateDaoCardStepNumber } from "../components"
 import * as S from "./styled"
 
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { readFromClipboard } from "utils/clipboard"
 import { useFormValidation } from "hooks/useFormValidation"
 import {
@@ -53,7 +53,7 @@ import { isValidUrl } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
-import { SUPPORTED_SOCIALS } from "constants/socials"
+import { SUPPORTED_SOCIALS } from "consts/socials"
 
 interface ITitlesStepProps {
   isCreatingProposal?: boolean

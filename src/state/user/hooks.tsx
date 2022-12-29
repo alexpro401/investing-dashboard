@@ -19,7 +19,7 @@ import { selectUserRegistryAddress } from "state/contracts/selectors"
 import { getTypedSignature, isTxMined, parseTransactionError } from "utils"
 import usePayload from "hooks/usePayload"
 import useError from "hooks/useError"
-import { SubmitState } from "constants/types"
+import { SubmitState } from "consts/types"
 import { Token } from "lib/entities"
 
 const privacyHash = process.env.REACT_APP_PRIVACY_POLICY_HASH

@@ -1,4 +1,4 @@
-import { TypographyTags } from "constants/types"
+import { TypographyTags } from "consts/types"
 import styled from "styled-components"
 
 export type TypographyProps = {

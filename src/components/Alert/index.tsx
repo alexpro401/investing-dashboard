@@ -3,7 +3,7 @@ import { Flex } from "theme"
 
 import { useAlertContext, AlertType } from "context/AlertContext"
 
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { Icon } from "common"
 import * as S from "./styled"
 import { MutableRefObject, useRef } from "react"
