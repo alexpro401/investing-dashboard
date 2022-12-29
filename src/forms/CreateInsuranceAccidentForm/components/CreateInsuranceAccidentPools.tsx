@@ -9,13 +9,15 @@ import {
 import { BigNumber } from "@ethersproject/bignumber"
 import { debounce } from "lodash"
 
-import { Flex } from "theme"
+import theme, { Flex } from "theme"
 import CreateInsuranceAccidentPoolCard from "./CreateInsuranceAccidentPoolCard"
 import CreateInsuranceAccidentPoolsSortButton from "./CreateInsuranceAccidentPoolsSortButton"
 import { CreateInsuranceAccidentPoolsStyled as CIAPools } from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import CreateInsuranceAccidentNoInvestments from "./CreateInsuranceAccidentNoInvestments"
+import PoolStatisticCard from "components/cards/PoolStatistic"
+import { useBreakpoints } from "hooks"
 
 type FilterTVL = "ask" | "desc"
 
@@ -96,6 +98,8 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
     }, 100)
   }, [loading, payload])
 
+  const { isDesktop } = useBreakpoints()
+
   const list = useMemo(() => {
     if (loading || (!loading && payload.length === 0)) {
       const items = Array(5).fill(null)
@@ -114,27 +118,47 @@ const CreateInsuranceAccidentPools: FC<Props> = ({
     if (filterTVL === undefined) {
       return payload
         .sort((a, b) => (a.creationTime > b.creationTime ? -1 : 1))
-        .map((p) => (
+        .map((p) =>
+          !isDesktop ? (
+            <CreateInsuranceAccidentPoolCard
+              key={p.id}
+              pool={p}
+              onToggle={() => onTogglePool(p)}
+              active={pool.get === p.id}
+            />
+          ) : (
+            <CIAPools.Card
+              key={p.id}
+              onClick={() => onTogglePool(p)}
+              active={pool.get === p.id}
+            >
+              <PoolStatisticCard data={p} stroke={theme.statusColors.error} />
+            </CIAPools.Card>
+          )
+        )
+    }
+
+    return payload
+      .sort((a, b) => sortByTVLCb(a, b, filterTVL))
+      .map((p) =>
+        !isDesktop ? (
           <CreateInsuranceAccidentPoolCard
             key={p.id}
             pool={p}
             onToggle={() => onTogglePool(p)}
             active={pool.get === p.id}
           />
-        ))
-    }
-
-    return payload
-      .sort((a, b) => sortByTVLCb(a, b, filterTVL))
-      .map((p) => (
-        <CreateInsuranceAccidentPoolCard
-          key={p.id}
-          pool={p}
-          onToggle={() => onTogglePool(p)}
-          active={pool.get === p.id}
-        />
-      ))
-  }, [loading, pool, payload, onTogglePool, filterTVL])
+        ) : (
+          <CIAPools.Card
+            key={p.id}
+            onClick={() => onTogglePool(p)}
+            active={pool.get === p.id}
+          >
+            <PoolStatisticCard data={p} stroke={theme.statusColors.error} />
+          </CIAPools.Card>
+        )
+      )
+  }, [loading, pool, payload, onTogglePool, filterTVL, isDesktop])
 
   return (
     <>

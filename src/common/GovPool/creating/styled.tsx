@@ -1,15 +1,17 @@
 import styled from "styled-components/macro"
-
-import { Icon, StepsNavigation, Card, AppButton } from "common"
-import StepsControllerContext from "context/StepsControllerContext"
 import { motion } from "framer-motion"
+
+import { Icon, StepsNavigation, Card, AppButton, CardFormControl } from "common"
+import StepsControllerContext from "context/StepsControllerContext"
 import { opacityVariants } from "motion/variants"
 import {
   getDefaultFieldBorderStyles,
   getDefaultFieldErrorStyles,
 } from "fields/styled"
+import { Input } from "fields/InputField/styled"
+import { InputField } from "fields"
 import ExternalLink from "components/ExternalLink"
-import { respondTo } from "theme"
+import theme, { respondTo } from "theme"
 import FormStepsNavigation from "common/FormStepsNavigation"
 
 export const Container = styled(StepsControllerContext)`
@@ -31,6 +33,13 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   display: flex;
   flex-direction: column;
   height: 100%;
+`
+
+export const DesktopHeaderWrp = styled.div`
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 `
 
 export const CreateFundDaoAvatarActions = styled.div`
@@ -91,18 +100,8 @@ export const CardAddBtn = styled(AppButton)`
 `
 
 export const CardFieldBtn = styled(AppButton)`
-  text-align: left;
-  justify-content: flex-start;
+  text-align: center;
   width: 100%;
-
-  ${getDefaultFieldBorderStyles}
-
-  padding: 17.5px 16px;
-
-  &:not([disabled]):hover,
-  &:not([disabled]):focus {
-    ${getDefaultFieldBorderStyles}
-  }
 `
 
 export const SuccessBackdrop = styled.div`
@@ -177,7 +176,7 @@ export const SuccessTitle = styled.h2`
   color: ${(props) => props.theme.textColors.primary};
   margin: 0;
   font-size: 20px;
-  fonwt-weight: 600;
+  font-weight: 600;
 `
 
 export const SuccessSubtitle = styled(ExternalLink)`
@@ -277,4 +276,73 @@ export const InfoPopupContentTitle = styled.h5`
   font-weight: 700;
   color: #2669eb;
   margin: 0 0 6px;
+`
+
+export const SettingsWrapper = styled(CardFormControl)`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 24px;
+`
+
+export const ValidatorTokenComboField = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 24px;
+
+  ${respondTo("sm")} {
+    flex-direction: row;
+  }
+`
+
+export const ValidatorTokenLeft = styled(InputField)`
+  ${respondTo("sm")} {
+    width: 50%;
+
+    ${Input} {
+      border-top-right-radius: 0px;
+      border-bottom-right-radius: 0px;
+      border-right: none;
+    }
+  }
+`
+
+export const ValidatorTokenRight = styled(InputField)`
+  ${respondTo("sm")} {
+    width: 50%;
+
+    ${Input} {
+      border-top-left-radius: 0px;
+      border-bottom-left-radius: 0px;
+    }
+  }
+`
+
+export const ERCArea = styled.div`
+  width: 100%;
+  padding: 16px;
+  border-radius: 20px;
+  background-color: #1a2133;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`
+
+export const ERCAreaDescription = styled.div`
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`
+
+export const ERCAreaHead = styled.div`
+  display: flex;
+  width: 100%;
+  gap: 16px;
+  align-items: center;
+`
+
+export const ERCImgWrp = styled.img`
+  width: 100px;
 `

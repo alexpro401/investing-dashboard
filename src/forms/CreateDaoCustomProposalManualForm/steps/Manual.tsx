@@ -6,7 +6,6 @@ import React, {
   SetStateAction,
 } from "react"
 import { useParams } from "react-router-dom"
-import { createPortal } from "react-dom"
 
 import {
   AppButton,
@@ -14,8 +13,9 @@ import {
   CardDescription,
   CardHead,
   CreateDaoCardStepNumber,
-  StepsNavigation,
   CollapsedCard,
+  Headline1,
+  RegularText,
 } from "common"
 import { useFormValidation } from "hooks/useFormValidation"
 import { AdvancedManualContext } from "context/govPool/proposals/custom/AdvancedManualContext"
@@ -38,18 +38,19 @@ import { readFromClipboard } from "utils/clipboard"
 import { isAddress, shortenAddress } from "utils"
 
 import * as S from "../styled"
+import * as SForms from "common/FormSteps/styled"
 
 const ManualStep: React.FC = () => {
   const { daoAddress, executorAddress } = useParams<
     "daoAddress" | "executorAddress"
   >()
 
+  const { isMobile } = useBreakpoints()
   const [settingsId] = useGovPoolExecutorToSettings(daoAddress, executorAddress)
   const [executors] = useGovPoolSettingsIdToExecutors(
     daoAddress,
     settingsId ? settingsId.toString() : undefined
   )
-  const { isMobile } = useBreakpoints()
 
   const executorsShorten = useMemo(
     () => (executors ? executors.map((el) => el.executorAddress) : []),
@@ -109,19 +110,41 @@ const ManualStep: React.FC = () => {
     nextCb()
   }, [nextCb, touchForm, isFieldsValid])
 
-  const appNavigationEl = document.querySelector("#app-navigation")
-
   return (
-    <S.StepsRoot>
-      <Card>
-        <CardHead
-          nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
-          title="Заповніть дані"
-        />
-        <CardDescription>
-          <p>Insert in the field below the DATA of the formed transaction:</p>
-        </CardDescription>
-        <S.ButtonsContainer>
+    <SForms.StepsRoot>
+      {isMobile && (
+        <Card>
+          <CardHead
+            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+            title="Заповніть дані"
+          />
+          <CardDescription>
+            <p>Insert in the field below the DATA of the formed transaction:</p>
+          </CardDescription>
+          <S.ButtonsContainer>
+            <AppButton
+              type="button"
+              text="+ Add more contract addresses"
+              color="default"
+              size="no-paddings"
+              onClick={() => onContractAdd()}
+            />
+          </S.ButtonsContainer>
+        </Card>
+      )}
+      {!isMobile && (
+        <S.DesktopHeaderWrp>
+          <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+            Заповніть дані
+          </Headline1>
+          <RegularText
+            color={theme.textColors.secondary}
+            desktopWeight={500}
+            desktopSize={"14px"}
+          >
+            Insert in the field below the DATA of the formed transaction:
+          </RegularText>
+          <br />
           <AppButton
             type="button"
             text="+ Add more contract addresses"
@@ -129,8 +152,8 @@ const ManualStep: React.FC = () => {
             size="no-paddings"
             onClick={() => onContractAdd()}
           />
-        </S.ButtonsContainer>
-      </Card>
+        </S.DesktopHeaderWrp>
+      )}
       {contracts.get.map((contract, index) => {
         return (
           <CollapsedCard key={contract.id} title={`Contract ${index + 1}`}>
@@ -280,14 +303,8 @@ const ManualStep: React.FC = () => {
           onBlur={() => touchField("executorTransactionData")}
         />
       </CollapsedCard>
-      {isMobile &&
-        appNavigationEl &&
-        createPortal(
-          <StepsNavigation customNextCb={handleNextStep} />,
-          appNavigationEl
-        )}
-      {!isMobile && <StepsNavigation customNextCb={handleNextStep} />}
-    </S.StepsRoot>
+      <SForms.FormStepsNavigationWrp customNextCb={handleNextStep} />
+    </SForms.StepsRoot>
   )
 }
 

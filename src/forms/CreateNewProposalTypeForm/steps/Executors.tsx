@@ -1,14 +1,14 @@
 import React, { useContext, useCallback, Dispatch, SetStateAction } from "react"
-import { createPortal } from "react-dom"
 
 import {
   Card,
   CardHead,
   CardDescription,
   CreateDaoCardStepNumber,
-  StepsNavigation,
   CollapsedCard,
   AppButton,
+  Headline1,
+  RegularText,
 } from "common"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { createCustomProposalTypeContext } from "context/govPool/proposals/regular/CreateCustomProposalType"
@@ -21,12 +21,12 @@ import { ICON_NAMES } from "consts/icon-names"
 import theme from "theme"
 
 import * as S from "../styled"
+import * as SForms from "common/FormSteps/styled"
 
 const ExecutorsStep: React.FC = () => {
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
   const { executorAddresses, addExecutorAddress, deleteExecutorAddress } =
     useContext(createCustomProposalTypeContext)
-
   const { isMobile } = useBreakpoints()
 
   const { getFieldErrorMessage, touchField, isFieldsValid, touchForm } =
@@ -56,19 +56,41 @@ const ExecutorsStep: React.FC = () => {
     []
   )
 
-  const appNavigationEl = document.querySelector("#app-navigation")
-
   return (
-    <S.StepsRoot>
-      <Card>
-        <CardHead
-          nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
-          title="Налаштування пропоузала"
-        />
-        <CardDescription>
-          <p>В майбутньому замінити текст.</p>
-        </CardDescription>
-        <S.ButtonsContainer>
+    <SForms.StepsRoot>
+      {isMobile && (
+        <Card>
+          <CardHead
+            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+            title="Налаштування пропоузала"
+          />
+          <CardDescription>
+            <p>В майбутньому замінити текст.</p>
+          </CardDescription>
+          <S.ButtonsContainer>
+            <AppButton
+              type="button"
+              text="+ Add more contract addresses"
+              color="default"
+              size="no-paddings"
+              onClick={addExecutorAddress}
+            />
+          </S.ButtonsContainer>
+        </Card>
+      )}
+      {!isMobile && (
+        <S.DesktopHeaderWrp>
+          <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+            Налаштування пропоузала
+          </Headline1>
+          <RegularText
+            color={theme.textColors.secondary}
+            desktopWeight={500}
+            desktopSize={"14px"}
+          >
+            В майбутньому замінити текст.
+          </RegularText>
+          <br />
           <AppButton
             type="button"
             text="+ Add more contract addresses"
@@ -76,8 +98,8 @@ const ExecutorsStep: React.FC = () => {
             size="no-paddings"
             onClick={addExecutorAddress}
           />
-        </S.ButtonsContainer>
-      </Card>
+        </S.DesktopHeaderWrp>
+      )}
       {executorAddresses.get.map((el, index) => {
         return (
           <CollapsedCard title={`Contract ${index + 1}`} key={el.id}>
@@ -119,14 +141,8 @@ const ExecutorsStep: React.FC = () => {
           </CollapsedCard>
         )
       })}
-      {isMobile &&
-        appNavigationEl &&
-        createPortal(
-          <StepsNavigation customNextCb={handleNextStepCb} />,
-          appNavigationEl
-        )}
-      {!isMobile && <StepsNavigation customNextCb={handleNextStepCb} />}
-    </S.StepsRoot>
+      <SForms.FormStepsNavigationWrp customNextCb={handleNextStepCb} />
+    </SForms.StepsRoot>
   )
 }
 

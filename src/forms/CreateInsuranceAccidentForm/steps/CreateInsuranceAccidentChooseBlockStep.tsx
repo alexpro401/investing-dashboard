@@ -8,15 +8,20 @@ import {
   useState,
 } from "react"
 import { createClient, Provider as GraphProvider } from "urql"
-import { isEmpty, isNil } from "lodash"
+import { isEmpty, isEqual, isNil } from "lodash"
 import { Tooltip } from "recharts"
 import { format } from "date-fns"
 
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
 
-import { Card, CardDescription, CardHead } from "common"
+import { Card } from "common"
 
-import { StepsRoot } from "forms/CreateInsuranceAccidentForm/styled"
+import {
+  StepsRoot,
+  CreateInsuranceAccidentTopCard,
+  CreateInsuranceAccidentTopCardHead,
+  CreateInsuranceAccidentTopCardDescription,
+} from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
 import { usePoolContract, usePoolQuery } from "hooks/usePool"
 
@@ -40,14 +45,16 @@ import Chart from "components/Chart"
 import theme, { Text } from "theme"
 import { ChartTooltipPnl } from "components/Chart/tooltips"
 import { AlertType } from "context/AlertContext"
-import { useAlert } from "hooks"
 import { DEFAULT_ALERT_HIDDEN_TIMEOUT } from "consts/misc"
+import { useAlert, useBreakpoints } from "hooks"
+import { DateInput } from "forms/CreateInsuranceAccidentForm/styled/step-choose-block"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
 })
 
 const CreateInsuranceAccidentChooseBlockStep: FC = () => {
+  const { isMobile } = useBreakpoints()
   const [showAlert] = useAlert()
   const { form, chart } = useContext(InsuranceAccidentCreatingContext)
 
@@ -205,28 +212,47 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
     )
   }, [point])
 
+  const [_block, _setBlock] = useState(block.get ?? "")
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!isEqual(block.get, _block)) {
+        onFieldChange("block", _block)
+      }
+    }, 750)
+
+    return () => clearTimeout(timeout)
+  }, [_block])
+
+  useEffect(() => {
+    if (!isEqual(block.get, _block)) {
+      _setBlock(block.get ?? "")
+    }
+  }, [block.get])
+
   return (
     <>
       <StepsRoot>
-        <Card>
-          <CardHead
-            nodeLeft={<CreateInsuranceAccidentCardStepNumber number={2} />}
+        <CreateInsuranceAccidentTopCard>
+          <CreateInsuranceAccidentTopCardHead
+            nodeLeft={
+              isMobile && <CreateInsuranceAccidentCardStepNumber number={2} />
+            }
             title="Determine the price of insured event"
           />
-          <CardDescription>
+          <CreateInsuranceAccidentTopCardDescription>
             <p>
-              Введите блок или дату перед страховым случаем
-              <br />
-              (когда все было норм).
+              Чтобы определить цену для страховой компенсации выберите дату
+              непосредственно до того как произошел страховой случай. Также вы
+              можете вписать соответствующий блок.
             </p>
-          </CardDescription>
-        </Card>
+          </CreateInsuranceAccidentTopCardDescription>
+        </CreateInsuranceAccidentTopCard>
 
         <Card>
           <Chart
             nodeHeadLeft={chartNodeLeft}
             type={CHART_TYPE.area}
-            height={"130px"}
             activePoint={point}
             data={historyFormatted}
             chart={{
@@ -239,7 +265,7 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
                 dataKey: "price",
                 legendType: "triangle",
                 isAnimationActive: false,
-                stroke: theme.statusColors.success,
+                stroke: theme.brandColors.secondary,
               },
             ]}
             timeframe={{ get: timeframe.get, set: onTimeframeChange }}
@@ -256,32 +282,25 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
           </Chart>
 
           <InputGroup>
-            {isEmpty(block.get) ? (
-              <Skeleton h="50px" w="100%" radius="16px 0 0 16px" />
-            ) : (
-              <Input
-                type="number"
-                theme="clear"
-                inputmode="decimal"
-                placeholder="Block"
-                value={block.get}
-                onChange={(v) => onFieldChange("block", v)}
-              />
-            )}
-            {isEmpty(date.get) ? (
-              <Skeleton h="50px" w="100%" radius="0 16px 16px 0" />
-            ) : (
-              <Input
-                disabled
-                theme="clear"
-                value={format(
-                  expandTimestamp(Number(date.get)),
-                  DATE_TIME_FORMAT
-                )}
-                placeholder="DD/MM/YYYY, HH"
-                onClick={() => setDateOpen(!isDateOpen)}
-              />
-            )}
+            <Input
+              type="number"
+              theme="clear"
+              inputmode="decimal"
+              placeholder="Block"
+              value={_block}
+              onChange={_setBlock}
+            />
+            <DateInput
+              disabled
+              theme="clear"
+              value={
+                !isEmpty(date.get)
+                  ? format(expandTimestamp(Number(date.get)), DATE_TIME_FORMAT)
+                  : ""
+              }
+              placeholder={"Date"}
+              onClick={() => setDateOpen(!isDateOpen)}
+            />
           </InputGroup>
         </Card>
       </StepsRoot>

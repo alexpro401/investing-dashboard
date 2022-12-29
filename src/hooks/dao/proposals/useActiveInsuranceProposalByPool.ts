@@ -25,7 +25,9 @@ interface ActiveInsuranceProposal {
   wrappedProposalView: IGovPool.ProposalViewStructOutput
 }
 
-const useActiveInsuranceProposalByPool = (basicPool) => {
+const useActiveInsuranceProposalByPool = (
+  basicPool
+): [ActiveInsuranceProposal | undefined, boolean] => {
   const [_pool, _setPool] = React.useState()
   const [_loading, _setLoading] = React.useState(true)
   const [proposal, setProposal] = React.useState<ActiveInsuranceProposal>()
@@ -46,12 +48,12 @@ const useActiveInsuranceProposalByPool = (basicPool) => {
         query: GovProposalsByPoolInMiscQuery,
         variables: React.useMemo(
           () => ({
-            misc: String(basicPool).toLocaleLowerCase(),
+            misc: String(_pool).toLocaleLowerCase(),
             pool: String(dexeDaoPoolAddress).toLocaleLowerCase(),
           }),
-          [basicPool]
+          [_pool]
         ),
-        pause: !basicPool || isEmpty(dexeDaoPoolAddress),
+        pause: !_pool || isEmpty(dexeDaoPoolAddress),
         context: govPoolsClient,
         formatter: (response) => response?.proposals,
       },
@@ -105,6 +107,7 @@ const useActiveInsuranceProposalByPool = (basicPool) => {
               query: proposal,
               wrappedProposalView: _proposals[0],
             })
+            _setLoading(false)
             return
           }
         }

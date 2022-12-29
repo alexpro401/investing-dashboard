@@ -1,5 +1,6 @@
+import styled from "styled-components/macro"
+
 import { TypographyTags } from "consts/types"
-import styled from "styled-components"
 
 export type TypographyProps = {
   tag?: TypographyTags
@@ -10,6 +11,7 @@ export type TypographyProps = {
   desktopSize?: string
   weight?: number
   desktopWeight?: number
+  color?: string
 }
 
 const StyledDynamicComponent = styled.span``

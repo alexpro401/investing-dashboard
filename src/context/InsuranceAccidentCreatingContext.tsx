@@ -162,16 +162,16 @@ const InsuranceAccidentCreatingContextProvider: FC<
     }
   }, [value])
 
-  const [_pool, _setPool] = useState<string>(storedForm.form.pool)
-  const [_block, _setBlock] = useState<string>(storedForm.form.block)
-  const [_date, _setDate] = useState<string>(storedForm.form.date)
-  const [_chat, _setChat] = useState<string>(storedForm.form.chat)
+  const [_pool, _setPool] = useState<string>(storedForm.form.pool ?? "")
+  const [_block, _setBlock] = useState<string>(storedForm.form.block ?? "")
+  const [_date, _setDate] = useState<string>(storedForm.form.date ?? "")
+  const [_chat, _setChat] = useState<string>(storedForm.form.chat ?? "")
   const [_description, _setDescription] = useState<string>(
-    storedForm.form.description
+    storedForm.form.description ?? ""
   )
 
   const [_insuranceAccidentExist, _setInsuranceAccidentExist] =
-    useState<boolean>(storedForm.insuranceAccidentExist)
+    useState<boolean>(storedForm.insuranceAccidentExist ?? false)
   const [_insurancePoolHaveTrades, _setInsurancePoolHaveTrades] =
     useState<boolean>(false)
   const [_insurancePoolLastPriceHistory, _setInsurancePoolLastPriceHistory] =

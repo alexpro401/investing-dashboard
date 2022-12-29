@@ -66,7 +66,7 @@ const DaoProposalCard: FC<Props> = ({
   const proposalDetailsLinkPath = useMemo(
     () =>
       generatePath(ROUTE_PATHS.daoProposalItem, {
-        daoAddress: govPoolAddress,
+        daoAddress: govPoolAddress || "",
         proposalId: String(wrappedProposalView.proposalId),
       }),
     [govPoolAddress, wrappedProposalView]

@@ -8,21 +8,26 @@ import {
   Collapse,
   DaoSettingsParameters,
   Icon,
+  Headline1,
+  RegularText,
 } from "common"
 import { CreateDaoCardStepNumber } from "../components"
 
-import * as S from "./styled"
 import { ICON_NAMES } from "consts/icon-names"
 import Switch from "components/Switch"
+import { useFormValidation, useBreakpoints } from "hooks"
 import useAlert, { AlertType } from "hooks/useAlert"
 import { stepsControllerContext } from "context/StepsControllerContext"
-import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
+import theme from "theme"
+
+import * as S from "./styled"
 
 const IsCustomVotingStep: FC = () => {
   const { isCustomVoting, internalProposalForm } =
     useContext(GovPoolFormContext)
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
+  const { isMobile } = useBreakpoints()
 
   const {
     delegatedVotingAllowed,
@@ -120,18 +125,51 @@ const IsCustomVotingStep: FC = () => {
   return (
     <>
       <S.StepsRoot>
-        <Card>
-          <CardHead
-            nodeLeft={<CreateDaoCardStepNumber number={4} />}
-            title="Changing General voting settings"
-          />
-          <CardDescription>
-            <p>
+        {isMobile && (
+          <Card>
+            <CardHead
+              nodeLeft={<CreateDaoCardStepNumber number={4} />}
+              title="Changing General voting settings"
+            />
+            <CardDescription>
+              <p>
+                Configure the settings for proposals to change the General
+                voting settings (the ones you set up in the previous step).
+              </p>
+              <br />
+              <p>
+                By default, these proposals use the general voting settings.
+              </p>
+              <br />
+              <AppButton
+                text="Why you may need this?"
+                color="default"
+                size="no-paddings"
+                onClick={handleClickShowAlert}
+              />
+            </CardDescription>
+          </Card>
+        )}
+        {!isMobile && (
+          <S.DesktopHeaderWrp>
+            <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+              Changing General voting settings
+            </Headline1>
+            <RegularText
+              color={theme.textColors.secondary}
+              desktopWeight={500}
+              desktopSize={"14px"}
+            >
               Configure the settings for proposals to change the General voting
               settings (the ones you set up in the previous step).
-            </p>
-            <br />
-            <p>By default, these proposals use the general voting settings.</p>
+            </RegularText>
+            <RegularText
+              color={theme.textColors.secondary}
+              desktopWeight={500}
+              desktopSize={"14px"}
+            >
+              By default, these proposals use the general voting settings.
+            </RegularText>
             <br />
             <AppButton
               text="Why you may need this?"
@@ -139,8 +177,8 @@ const IsCustomVotingStep: FC = () => {
               size="no-paddings"
               onClick={handleClickShowAlert}
             />
-          </CardDescription>
-        </Card>
+          </S.DesktopHeaderWrp>
+        )}
 
         <Card>
           <CardHead

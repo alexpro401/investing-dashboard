@@ -9,7 +9,6 @@ export const MobileMenu = styled(motion.div)`
   align-items: center;
   justify-content: space-around;
   width: 100%;
-  z-index: 100;
   background: #0e121b;
   border-radius: 8px 8px 0 0;
 

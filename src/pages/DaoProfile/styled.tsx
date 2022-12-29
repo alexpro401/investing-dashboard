@@ -118,9 +118,12 @@ export const TreasuryRow = styled(Flex).attrs(() => ({
   }
 `
 
-export const SliderContainer = styled(Flex).attrs(() => ({
-  full: true,
-}))`
+export const SliderContainer = styled.div`
+  width: 100%;
+
+  .swiper-slide {
+    width: auto;
+  }
   .swiper-pagination {
     position: initial;
   }

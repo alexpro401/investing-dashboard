@@ -15,6 +15,7 @@ import { ICON_NAMES } from "consts/icon-names"
 import { useAddToast } from "state/application/hooks"
 import { useGovPoolLatestProposalId } from "hooks/dao"
 import { ROUTE_PATHS } from "consts"
+import { useBreakpoints } from "hooks"
 
 interface Props {
   open: boolean
@@ -29,6 +30,7 @@ const CreateInsuranceAccidentCreatedSuccessfully: FC<Props> = ({
   setOpen,
   onVoteCallback,
 }) => {
+  const { isMobile } = useBreakpoints()
   const navigate = useNavigate()
   const addToast = useAddToast()
   const { updateLatesProposalId } = useGovPoolLatestProposalId(
@@ -53,11 +55,11 @@ const CreateInsuranceAccidentCreatedSuccessfully: FC<Props> = ({
     onVoteCallback()
     navigate(
       generatePath(ROUTE_PATHS.daoProposalVoting, {
-        daoAddress: process.env.REACT_APP_DEXE_DAO_ADDRESS,
+        daoPoolAddress: process.env.REACT_APP_DEXE_DAO_ADDRESS,
         proposalId: String(latestProposalId),
       })
     )
-  }, [])
+  }, [navigate, onVoteCallback, updateLatesProposalId])
 
   return (
     <Confirm title="Success" isOpen={open} toggle={() => setOpen(!open)}>
@@ -71,7 +73,7 @@ const CreateInsuranceAccidentCreatedSuccessfully: FC<Props> = ({
       />
       <Text
         color="#E4F2FF"
-        fz={13}
+        fz={isMobile ? 13 : 14}
         fw={500}
         block
         align="center"
@@ -79,7 +81,13 @@ const CreateInsuranceAccidentCreatedSuccessfully: FC<Props> = ({
       >
         Your proposal is creating and available for voting.
       </Text>
-      <AppButton onClick={onVote} size="large" text="Vote for the proposal" />
+      <AppButton
+        full
+        onClick={onVote}
+        size={isMobile ? "large" : "medium"}
+        color={!isMobile ? "tertiary" : undefined}
+        text="Vote for the proposal"
+      />
     </Confirm>
   )
 }

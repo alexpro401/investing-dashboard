@@ -65,8 +65,9 @@ class AlertContext extends React.Component<{
   }
 
   clearContent = () => {
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       this.setState({ content: null, title: null, type: null })
+      clearTimeout(timeout)
     }, 200)
   }
 

@@ -6,6 +6,7 @@ import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidatio
 import CreateProposalChangeDAOSettingsForm from "forms/CreateProposalChangeDAOSettingsForm"
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
 import GovPoolFormContextProvider from "context/govPool/GovPoolFormContext"
+import FormStepsLoaderWrapper from "common/FormSteps/FormStepsLoaderWrapper"
 import { useGovPoolDescription } from "hooks/dao"
 import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
@@ -22,21 +23,23 @@ const CreateDaoProposalChangeDaoSettings: React.FC = () => {
 
   const loader = useMemo(
     () => (
-      <Flex
-        gap={"24"}
-        full
-        m="16px 0 0 0"
-        dir="column"
-        ai={"center"}
-        jc={"flex-start"}
-      >
-        <Skeleton variant={"text"} w={"calc(100% - 32px)"} h={"20px"} />
-        <Skeleton variant={"circle"} radius={"50%"} w={"100px"} h={"100px"} />
-        <Skeleton variant={"text"} w={"calc(100% - 32px)"} h={"20px"} />
-        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-      </Flex>
+      <FormStepsLoaderWrapper>
+        <Flex
+          gap={"24"}
+          full
+          m="16px 0 0 0"
+          dir="column"
+          ai={"center"}
+          jc={"flex-start"}
+        >
+          <Skeleton variant={"text"} w={"calc(100% - 32px)"} h={"20px"} />
+          <Skeleton variant={"circle"} radius={"50%"} w={"100px"} h={"100px"} />
+          <Skeleton variant={"text"} w={"calc(100% - 32px)"} h={"20px"} />
+          <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+          <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+          <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+        </Flex>
+      </FormStepsLoaderWrapper>
     ),
     []
   )

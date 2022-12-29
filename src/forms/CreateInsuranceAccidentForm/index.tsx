@@ -43,9 +43,10 @@ import { DEFAULT_ALERT_HIDDEN_TIMEOUT } from "consts/misc"
 import { useActiveInsuranceProposalByPool } from "hooks/dao"
 import InsuranceAccidentExist from "modals/InsuranceAccidentExist"
 import { createPortal } from "react-dom"
-import { StepsNavigation } from "common"
+import { SideStepsNavigationBar, StepsNavigation } from "common"
 import { hideTapBar, showTabBar } from "state/application/actions"
-import StepsControllerContext from "context/StepsControllerContext"
+import { useWindowSize } from "react-use"
+import { useNavigate } from "react-router-dom"
 
 const investorsPoolsClient = createClient({
   url: process.env.REACT_APP_INVESTORS_API_URL || "",
@@ -58,8 +59,16 @@ enum STEPS {
   addDescription = "add-description",
 }
 
+const STEPS_TITLES: Record<STEPS, string> = {
+  [STEPS.chooseFund]: "Basic fund",
+  [STEPS.chooseBlock]: "Accident price",
+  [STEPS.checkSettings]: "Accident summary",
+  [STEPS.addDescription]: "Add Description",
+}
+
 const CreateInsuranceAccidentForm: FC = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const [appNavigationEl, setAppNavigationEl] = useState<Element | null>(null)
 
   useEffect(() => {
@@ -183,6 +192,7 @@ const CreateInsuranceAccidentForm: FC = () => {
     useActiveInsuranceProposalByPool(pool.get)
 
   useEffect(() => {
+    console.log({ activeProposalByPool, loadingActiveProposalByPool })
     if (loadingActiveProposalByPool) return
 
     const _exist =
@@ -467,6 +477,7 @@ const CreateInsuranceAccidentForm: FC = () => {
           lp: ZERO.toHexString(),
           loss: ZERO.toHexString(),
           coverage: ZERO.toHexString(),
+          coverageUSD: ZERO.toHexString(),
         })
         setCurrentStep(STEPS.chooseBlock)
         break
@@ -474,39 +485,60 @@ const CreateInsuranceAccidentForm: FC = () => {
         setCurrentStep(STEPS.chooseFund)
         break
       case STEPS.chooseFund:
+        navigate("/insurance")
+        break
       default:
         break
     }
   }
 
+  const { width: windowWidth } = useWindowSize()
+  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
+
   return (
     <>
-      <StepsControllerContext
+      <S.Container
         totalStepsAmount={totalStepsCount}
         currentStepNumber={currentStepNumber}
         prevCb={handlePrevStep}
         nextCb={handleNextStep}
       >
-        <S.Container>
-          <AnimatePresence>
-            {currentStep === STEPS.chooseFund ? (
-              <CreateInsuranceAccidentChooseFundStep />
-            ) : currentStep === STEPS.chooseBlock ? (
-              <CreateInsuranceAccidentChooseBlockStep />
-            ) : currentStep === STEPS.checkSettings ? (
-              <CreateInsuranceAccidentCheckSettingsStep />
-            ) : currentStep === STEPS.addDescription ? (
-              <CreateInsuranceAccidentAddDescriptionStep />
+        <AnimatePresence>
+          <S.StepsWrapper>
+            <S.StepsContainer>
+              {currentStep === STEPS.chooseFund ? (
+                <CreateInsuranceAccidentChooseFundStep />
+              ) : currentStep === STEPS.chooseBlock ? (
+                <CreateInsuranceAccidentChooseBlockStep />
+              ) : currentStep === STEPS.checkSettings ? (
+                <CreateInsuranceAccidentCheckSettingsStep />
+              ) : currentStep === STEPS.addDescription ? (
+                <CreateInsuranceAccidentAddDescriptionStep />
+              ) : (
+                <></>
+              )}
+              {appNavigationEl ? (
+                createPortal(<StepsNavigation />, appNavigationEl)
+              ) : !isMobile ? (
+                <StepsNavigation />
+              ) : (
+                <></>
+              )}
+            </S.StepsContainer>
+
+            {!isMobile ? (
+              <SideStepsNavigationBar
+                steps={Object.values(STEPS).map((step) => ({
+                  number: Object.values(STEPS).indexOf(step),
+                  title: STEPS_TITLES[step],
+                }))}
+                currentStep={Object.values(STEPS).indexOf(currentStep)}
+              />
             ) : (
               <></>
             )}
-          </AnimatePresence>
-          {appNavigationEl ? (
-            createPortal(<StepsNavigation />, appNavigationEl)
-          ) : (
-            <></>
-          )}
-        </S.Container>
+          </S.StepsWrapper>
+        </AnimatePresence>
 
         <NoEnoughInsurance
           isOpen={showNotEnoughInsurance}
@@ -515,6 +547,8 @@ const CreateInsuranceAccidentForm: FC = () => {
         <InsuranceAccidentExist
           isOpen={accidentExistModal}
           onClose={() => setAccidentExistModal(false)}
+          daoPool={activeProposalByPool?.query?.pool?.id ?? ""}
+          proposalId={activeProposalByPool?.query?.proposalId ?? ""}
         />
         <CreateInsuranceAccidentCreatedSuccessfully
           open={showSuccessfullyCreatedModal}
@@ -522,7 +556,7 @@ const CreateInsuranceAccidentForm: FC = () => {
           url={newAccidentHash}
           onVoteCallback={clearFormStorage}
         />
-      </StepsControllerContext>
+      </S.Container>
     </>
   )
 }

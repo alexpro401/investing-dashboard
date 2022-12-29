@@ -23,10 +23,13 @@ import {
   MembersList,
   ListContainer,
   LoadingText,
+  CardIconWrp,
 } from "./styled"
 import { AppDispatch } from "state"
 import { setActivePoolType } from "state/pools/actions"
-import { ROUTE_PATHS } from "consts"
+import { ICON_NAMES, ROUTE_PATHS } from "consts"
+import { Icon } from "common"
+import { useBreakpoints } from "hooks"
 
 interface Props {
   poolType: PoolType
@@ -62,6 +65,8 @@ const List: React.FC<Props> = ({ poolType }) => {
     return () => clearAllBodyScrollLocks()
   }, [investScrollRef, loading])
 
+  const { isDesktop } = useBreakpoints()
+
   return loading && !pools[poolType].length ? (
     <Center>
       <CubeSpinner size={40} loading />
@@ -81,7 +86,15 @@ const List: React.FC<Props> = ({ poolType }) => {
             to={generatePath(ROUTE_PATHS.poolProfile, { poolAddress: pool.id })}
           >
             <Flex p="16px 0 0" full>
-              <PoolStatisticCard data={pool} index={index} />
+              <PoolStatisticCard data={pool} index={index}>
+                {isDesktop ? (
+                  <CardIconWrp>
+                    <Icon name={ICON_NAMES.angleRight} color={"#6781BD"} />
+                  </CardIconWrp>
+                ) : (
+                  <></>
+                )}
+              </PoolStatisticCard>
             </Flex>
           </To>
         ))}

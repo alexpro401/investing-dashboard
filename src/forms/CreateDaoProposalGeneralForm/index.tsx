@@ -1,24 +1,26 @@
 import React, { useContext, useCallback } from "react"
-import { createPortal } from "react-dom"
 
 import {
   Card,
   CardDescription,
   CardHead,
-  StepsNavigation,
   CardFormControl,
   CreateDaoCardStepNumber,
+  Headline1,
+  RegularText,
 } from "common"
 import { InputField, TextareaField } from "fields"
+import { useBreakpoints } from "hooks"
 import { useFormValidation } from "hooks/useFormValidation"
 import { required, minLength, maxLength } from "utils/validators"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
+import theme from "theme"
 
 import { CreatingProposalSuccessModal } from "common/GovProposal"
 
-import * as S from "./styled"
-import { useBreakpoints } from "hooks"
+import * as S from "common/FormSteps/styled"
+import { DesktopHeaderWrp } from "./styled"
 
 interface ICreateDaoProposalGeneralFormProps {
   withProposalTypeName?: boolean
@@ -28,6 +30,8 @@ interface ICreateDaoProposalGeneralFormProps {
 const CreateDaoProposalGeneralForm: React.FC<
   ICreateDaoProposalGeneralFormProps
 > = ({ withProposalTypeName = false, withProposalTypeDescription = false }) => {
+  const { isMobile } = useBreakpoints()
+
   const {
     proposalTypeName,
     proposalTypeDescription,
@@ -84,29 +88,53 @@ const CreateDaoProposalGeneralForm: React.FC<
     }
   }, [nextCb, isFieldsValid, touchForm])
 
-  const appNavigationEl = document.querySelector("#app-navigation")
-
-  const { isMobile } = useBreakpoints()
-
   return (
     <>
       <CreatingProposalSuccessModal />
       <S.StepsRoot>
-        <Card>
-          <CardHead
-            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
-            title="Basic info"
-          />
-          <CardDescription>
-            <p>
+        {!isMobile && (
+          <DesktopHeaderWrp>
+            <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+              Basic info
+            </Headline1>
+            <RegularText
+              color={theme.textColors.secondary}
+              desktopWeight={500}
+              desktopSize={"14px"}
+            >
               Describe your proposal and give it a clear name so voters can
-              immediately grasp what it’s about.
-            </p>
-            <p>
-              A thorough and concise description helps DAO members make the
-              right decision when voting on it.
-            </p>
-          </CardDescription>
+              immediately grasp what it’s about. A thorough and concise
+              description helps DAO members make the right decision when voting
+              on it.
+            </RegularText>
+          </DesktopHeaderWrp>
+        )}
+        <Card>
+          {isMobile && (
+            <>
+              <CardHead
+                nodeLeft={
+                  <CreateDaoCardStepNumber number={currentStepNumber} />
+                }
+                title="Basic info"
+              />
+              <CardDescription>
+                <p>
+                  Describe your proposal and give it a clear name so voters can
+                  immediately grasp what it’s about.
+                </p>
+                <p>
+                  A thorough and concise description helps DAO members make the
+                  right decision when voting on it.
+                </p>
+              </CardDescription>
+            </>
+          )}
+          {!isMobile && (
+            <RegularText desktopWeight={700} desktopSize={"16px"}>
+              Proposal
+            </RegularText>
+          )}
           <CardFormControl>
             <InputField
               value={proposalName.get}
@@ -142,24 +170,11 @@ const CreateDaoProposalGeneralForm: React.FC<
             )}
           </CardFormControl>
         </Card>
-      </S.StepsRoot>
-
-      {appNavigationEl ? (
-        createPortal(
-          <StepsNavigation
-            customNextCb={handleNextStepCb}
-            nextLabel={"Create Proposal"}
-          />,
-          appNavigationEl
-        )
-      ) : !isMobile ? (
-        <StepsNavigation
+        <S.FormStepsNavigationWrp
           customNextCb={handleNextStepCb}
           nextLabel={"Create Proposal"}
         />
-      ) : (
-        <></>
-      )}
+      </S.StepsRoot>
     </>
   )
 }

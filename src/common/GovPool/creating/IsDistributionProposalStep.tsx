@@ -8,18 +8,22 @@ import {
   Collapse,
   DaoSettingsParameters,
   Icon,
+  Headline1,
+  RegularText,
 } from "common"
 import { CreateDaoCardStepNumber } from "../components"
 
-import * as S from "./styled"
 import { ICON_NAMES } from "consts/icon-names"
+import theme from "theme"
 import Switch from "components/Switch"
 import { AlertType } from "context/AlertContext"
-import { useAlert } from "hooks"
+import { useAlert, useBreakpoints } from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { useFormValidation } from "hooks/useFormValidation"
 import { isPercentage, required } from "utils/validators"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
+
+import * as S from "./styled"
 
 interface IIsDistributionProposalStepProps {
   isCreatingProposal?: boolean
@@ -32,6 +36,7 @@ const IsDistributionProposalStep: React.FC<
     useContext(GovPoolFormContext)
 
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
+  const { isMobile } = useBreakpoints()
 
   const {
     delegatedVotingAllowed,
@@ -124,28 +129,73 @@ const IsDistributionProposalStep: React.FC<
   return (
     <>
       <S.StepsRoot>
-        <Card>
-          <CardHead
-            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
-            title="Token distribution proposal settings"
-          />
-          <CardDescription>
-            <p>
+        {isMobile && (
+          <Card>
+            <CardHead
+              nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+              title="Token distribution proposal settings"
+            />
+            <CardDescription>
+              <p>
+                Configure the settings for proposals to distribute tokens from
+                the DAO treasury to members.
+              </p>
+              <br />
+              <p>
+                After the voting, members can claim the distribution. Reward
+                size depends on member’s voting power (number of tokens voted
+                with).
+              </p>
+              <br />
+              <p>
+                By default, these proposals use the general voting settings.
+              </p>
+              <br />
+              <p>
+                *To ensure fair token distribution, Early vote completion and
+                Vote delegation settings are turned off.
+              </p>
+              <br />
+              <AppButton
+                text="Details"
+                color="default"
+                size="no-paddings"
+                onClick={handleClickShowAlert}
+              />
+            </CardDescription>
+          </Card>
+        )}
+        {!isMobile && (
+          <S.DesktopHeaderWrp>
+            <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+              Token distribution proposal settings
+            </Headline1>
+            <RegularText
+              color={theme.textColors.secondary}
+              desktopWeight={500}
+              desktopSize={"14px"}
+            >
               Configure the settings for proposals to distribute tokens from the
               DAO treasury to members.
-            </p>
-            <br />
-            <p>
+            </RegularText>
+            <RegularText
+              color={theme.textColors.secondary}
+              desktopWeight={500}
+              desktopSize={"14px"}
+            >
               After the voting, members can claim the distribution. Reward size
-              depends on member’s voting power (number of tokens voted with).
-            </p>
+              depends on member’s voting power (number of tokens voted with). By
+              default, these proposals use the general voting settings.
+            </RegularText>
             <br />
-            <p>By default, these proposals use the general voting settings.</p>
-            <br />
-            <p>
+            <RegularText
+              color={theme.textColors.secondary}
+              desktopWeight={500}
+              desktopSize={"14px"}
+            >
               *To ensure fair token distribution, Early vote completion and Vote
               delegation settings are turned off.
-            </p>
+            </RegularText>
             <br />
             <AppButton
               text="Details"
@@ -153,8 +203,8 @@ const IsDistributionProposalStep: React.FC<
               size="no-paddings"
               onClick={handleClickShowAlert}
             />
-          </CardDescription>
-        </Card>
+          </S.DesktopHeaderWrp>
+        )}
 
         {!isCreatingProposal && (
           <Card>
@@ -198,7 +248,7 @@ const IsDistributionProposalStep: React.FC<
       </S.StepsRoot>
       <S.FormStepsNavigationWrp
         customNextCb={handleNextStep}
-        nextLabel="Create DAO"
+        nextLabel={!isCreatingProposal ? "Create DAO" : "Continue"}
       />
     </>
   )
