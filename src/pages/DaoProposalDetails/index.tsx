@@ -12,7 +12,7 @@ import * as React from "react"
 import { FC, HTMLAttributes, useMemo, useState } from "react"
 import { useGovPoolProposal, useGovPoolProposals, useBreakpoints } from "hooks"
 import { useParams } from "react-router-dom"
-import { Icon } from "common"
+import { Breadcrumbs, Icon } from "common"
 import { ICON_NAMES } from "constants/icon-names"
 import { ValidatorsVote } from "pages/ValidatorsVote"
 
@@ -50,7 +50,7 @@ const DaoProposalDetails: FC<Props> = ({}) => {
 
   return (
     <>
-      <Header>{isMobile ? "Proposal" : ""}</Header>
+      <Header>{isMobile ? "Proposal" : <Breadcrumbs />}</Header>
       <S.DaoProposalDetails>
         {isLoaded ? (
           isLoadFailed ? (

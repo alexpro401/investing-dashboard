@@ -20,6 +20,7 @@ export { default as AppNavigation } from "./AppNavigation"
 export { default as WalletBadge } from "./WalletBadge"
 export { default as SideStepsNavigationBar } from "./SideStepsNavigationBar"
 export { default as FormStepsNavigation } from "./FormStepsNavigation"
-export * from "./Typography"
+export { default as Breadcrumbs } from "./Breadcrumbs"
 
+export * from "./Typography"
 export * from "./dao"

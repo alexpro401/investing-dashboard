@@ -12,6 +12,8 @@ import { FC } from "react"
 import { MotionProps } from "framer-motion"
 import { Icon } from "common"
 import { ICON_NAMES } from "constants/icon-names"
+import { generatePath } from "react-router-dom"
+import { ROUTE_PATHS } from "../../constants"
 
 interface Props extends MotionProps {}
 
@@ -33,11 +35,15 @@ export const TapBar: FC<Props> = ({ ...rest }) => {
       <LogoWrapper>
         <Icon name={ICON_NAMES.logoIcon} />
       </LogoWrapper>
-      <NavItem path="/wallet" Icon={Wallet} text={shortenAddress(account, 3)} />
-      <NavItem path="/me/trader" Icon={Profile} text="My profile" />
-      <NavItem path="/" Icon={TopTraders} text="Traders" />
+      <NavItem
+        path={ROUTE_PATHS.wallet}
+        Icon={Wallet}
+        text={shortenAddress(account, 3)}
+      />
+      <NavItem path={ROUTE_PATHS.meTrader} Icon={Profile} text="My profile" />
+      <NavItem path={ROUTE_PATHS.topMembers} Icon={TopTraders} text="Traders" />
       <NavItem path="/dao/list/top" Icon={Dao} text="DAO" />
-      <NavItem path="/insurance" Icon={Insurance} text="Insurance" />
+      <NavItem path={ROUTE_PATHS.insurance} Icon={Insurance} text="Insurance" />
     </MobileMenu>
   )
 }

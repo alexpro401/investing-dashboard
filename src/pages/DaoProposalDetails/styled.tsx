@@ -54,7 +54,6 @@ export const DaoProposalDetailsTitleWrp = styled.div`
     align-items: center;
     justify-content: space-between;
     grid-column: 1 / -1;
-    margin-bottom: 24px;
   }
 `
 
