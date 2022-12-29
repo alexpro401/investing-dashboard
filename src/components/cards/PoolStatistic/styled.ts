@@ -19,6 +19,11 @@ export const Title = styled(Text).attrs(() => ({
     color: ${({ theme }) => theme.brandColors.secondary};
     font-weight: 900;
     font-size: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    align-self: center;
+    white-space: nowrap;
+    max-width: 90%;
   }
 `
 export const Description = styled(Text).attrs(({ theme }) => ({

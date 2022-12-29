@@ -146,7 +146,7 @@ const PoolStatisticCard: FC<Props> = ({
           style={{
             height: isTablet ? "39px" : "35px",
             width: isTablet ? "180px" : "118px",
-            margin: "auto 0 auto 45px",
+            margin: "auto",
             flex: "1 0 118px",
           }}
         >
@@ -187,13 +187,15 @@ const PoolStatisticCard: FC<Props> = ({
           address={data.id}
         />
         <div>
-          {!isDesktop && (
+          {isDesktop && (
             <S.Description align="left">
               {format(new Date(data.creationTime * 1000), DATE_FORMAT)}
             </S.Description>
           )}
           <S.Title>{data.ticker}</S.Title>
-          {isDesktop && <S.Description align="left">{data.name}</S.Description>}
+          {!isDesktop && (
+            <S.Description align="left">{data.name}</S.Description>
+          )}
         </div>
       </Flex>
     )

@@ -1,11 +1,11 @@
 import styled from "styled-components/macro"
-import { Flex, Text } from "theme"
+import { respondTo, Text } from "theme"
 import { Card } from "common"
 
 export const Container = styled(Card)`
   width: 100%;
 
-  @media screen and (min-width: 1194px) {
+  ${respondTo("lg")} {
     flex-direction: row;
     align-items: center;
     border-radius: 60px 24px 24px 60px;
@@ -17,6 +17,11 @@ export const Header = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
+
+  ${respondTo("lg")} {
+    width: initial;
+    min-width: 35%;
+  }
 `
 
 export const HeaderNodeLeft = styled.div`
@@ -56,7 +61,7 @@ export const CardInfoLabel = styled(Text).attrs(() => ({
   font-size: 11px;
   color: ${({ theme }) => theme.textColors.secondary};
 
-  @media screen and (min-width: 1194px) {
+  ${respondTo("lg")} {
     font-size: 12px;
     color: #6781bd;
   }
@@ -70,7 +75,7 @@ export const CardInfoValue = styled(Text).attrs(() => ({
   font-weight: 600;
   line-height: 1;
 
-  @media screen and (min-width: 1194px) {
+  ${respondTo("lg")} {
     font-size: 20px;
     font-weight: 900;
     line-height: 25px;
