@@ -52,4 +52,7 @@ export enum ICON_NAMES {
   logoIcon = "logo-icon",
   dexeTokenIcon = "dexe-token-icon",
   gradientCheck = "gradient-check",
+  logout = "logout",
+  arrowUpDiagonal = "arrow-up-diagonal",
+  arrowDownDiagonal = "arrow-down-diagonal",
 }

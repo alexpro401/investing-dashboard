@@ -1,7 +1,8 @@
-import styled from "styled-components/macro"
+import styled, { css } from "styled-components/macro"
 import { motion } from "framer-motion"
 
-import { Flex, GradientBorderLightGreen } from "theme"
+import { Flex } from "theme"
+import { Icon } from "common"
 
 const Styled = {
   Container: styled.div`
@@ -21,32 +22,60 @@ const Styled = {
     width: 100%;
     color: #cfdce8;
   `,
-  Content: styled(motion.div)`
-    position: absolute;
-    left: 0;
-    right: 0;
-    z-index: 90;
-  `,
+  Content: styled(motion.div)``,
   Header: styled(Flex)`
+    overflow: hidden;
     width: 100%;
-    justify-content: space-around;
+    border-bottom: 1px solid #1d2435;
+    padding-bottom: 8px;
   `,
-  HeaderButton: styled(GradientBorderLightGreen)`
-    border-radius: 16px;
+  HeaderButton: styled.button<{ isActive: boolean }>`
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
     font-family: ${(props) => props.theme.appFontFamily};
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 12px;
+    background: none;
+    border: none;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
     text-align: center;
-    letter-spacing: 0.3px;
-    color: ${(props) => (props.focused ? "#9AE2CB" : "#616d8b")};
-    height: 25px;
-    padding: 0 10px;
+    letter-spacing: 0.01em;
+    color: #6781bd;
+    padding: 8px;
+    transition: 0.25s ease-in-out;
+    width: 100%;
+
+    ${(props) =>
+      props.isActive
+        ? css`
+            color: #ffffff;
+          `
+        : ""}
 
     &:after {
-      background: #0d121c;
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      height: 1px;
+      background: #0057ff;
+      width: 0;
+      transition: 0.25s ease-in-out;
+
+      ${(props) =>
+        props.isActive
+          ? css`
+              width: 100%;
+            `
+          : ""}
     }
+  `,
+  HeaderButtonIcon: styled(Icon)`
+    color: inherit;
+    width: 1.5em;
+    height: 1.5em;
   `,
   List: styled.div`
     width: 100%;

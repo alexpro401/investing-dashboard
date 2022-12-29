@@ -5,8 +5,10 @@ import {
   AngleRightIcon,
   AngleRightOutlinedIcon,
   AngleUpIcon,
+  ArrowDownDiagonalIcon,
   ArrowDownFilled,
   ArrowIcon,
+  ArrowUpDiagonalIcon,
   ArrowUpFilled,
   ChatOutline,
   CircleInfoIcon,
@@ -31,6 +33,7 @@ import {
   LinkedinIcon,
   LockedIcon,
   LogoIcon,
+  LogoutIcon,
   MediumIcon,
   MetamaskIcon,
   ModalCloseIcon,
@@ -170,6 +173,12 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return DexeTokenIcon as unknown as ElementType
       case ICON_NAMES.gradientCheck:
         return GradientCheckIcon as unknown as ElementType
+      case ICON_NAMES.logout:
+        return LogoutIcon as unknown as ElementType
+      case ICON_NAMES.arrowUpDiagonal:
+        return ArrowUpDiagonalIcon as unknown as ElementType
+      case ICON_NAMES.arrowDownDiagonal:
+        return ArrowDownDiagonalIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }
