@@ -1,53 +1,6 @@
-import { useEffect, useState } from "react"
-import { Navigate } from "react-router-dom"
-import { useWeb3React } from "@web3-react/core"
-import { EHeaderTitles } from "components/Header"
-import Header from "components/Header/Layout"
-
-import { useCopyClipboard } from "hooks"
-
-import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-
-import { shortenAddress } from "utils"
-
-import { useAddToast } from "state/application/hooks"
-
-import bsc from "assets/wallets/bsc.svg"
-
-import { ICON_NAMES, ROUTE_PATHS } from "consts"
-
 import * as S from "./styled"
 
 export default function WalletInsurance() {
-  const { account, chainId, deactivate } = useWeb3React()
-
-  const [isCopied, copy] = useCopyClipboard()
-  const addToast = useAddToast()
-
-  const [txHistoryOpen, setTxHistoryOpen] = useState<boolean>(false)
-
-  const handleLogout = () => {
-    deactivate()
-    localStorage.removeItem("dexe.network/investing/web3-auth-method")
-  }
-
-  const handleAddressCopy = () => {
-    if (!account) return
-    copy(account)
-  }
-
-  useEffect(() => {
-    if (isCopied && account) {
-      addToast(
-        { type: "success", content: "Address copied to clipboard" },
-        account,
-        2000
-      )
-    }
-  }, [isCopied, addToast, account])
-
-  if (!account) return <Navigate to={ROUTE_PATHS.welcome} />
-
   return (
     <>
       <S.Container
@@ -58,36 +11,52 @@ export default function WalletInsurance() {
       >
         <S.ContainerInner>
           <S.Title>Insurance</S.Title>
-          <S.AccountBadgeWrp>
-            {chainId ? (
-              <S.AddressWrp>
-                <S.NetworkIcon src={bsc} />
-                <S.Address
-                  href={getExplorerLink(
-                    chainId,
-                    account,
-                    ExplorerDataType.ADDRESS
-                  )}
-                >
-                  {shortenAddress(account, 2)}
-                </S.Address>
-              </S.AddressWrp>
-            ) : (
-              <></>
-            )}
-            <S.TextButton onClick={handleAddressCopy}>
-              <S.TextIcon name={ICON_NAMES.copy} />
-            </S.TextButton>
-            <S.TextButton onClick={handleLogout}>
-              <span>Log out</span>
-              <S.TextIcon name={ICON_NAMES.logout} />
-            </S.TextButton>
-          </S.AccountBadgeWrp>
+          <S.InsuranceBadgeWrp>
+            <S.InsuranceBadgeWrpDetails>
+              <S.InsuranceBadgeWrpDetailsLabel>
+                Amount Insured
+                <S.InsuranceBadgeWrpDetailsMultiplier>
+                  x10
+                </S.InsuranceBadgeWrpDetailsMultiplier>
+              </S.InsuranceBadgeWrpDetailsLabel>
+              <S.InsuranceBadgeWrpDetailsTitle>
+                0.0000 DeXe
+              </S.InsuranceBadgeWrpDetailsTitle>
+            </S.InsuranceBadgeWrpDetails>
+            <S.InsuranceBadgeWrpManageBtn>Manage</S.InsuranceBadgeWrpManageBtn>
+          </S.InsuranceBadgeWrp>
 
-          <S.TransactionHistoryWrp
-            open={txHistoryOpen}
-            setOpen={setTxHistoryOpen}
-          />
+          <S.InsuranceAmountsRowsWrp>
+            <S.InsuranceAmountsRow>
+              <S.InsuranceAmountsRowLabel>
+                My total Stake:
+              </S.InsuranceAmountsRowLabel>
+              <S.InsuranceAmountsRowValue>
+                10,000 DEXE
+              </S.InsuranceAmountsRowValue>
+            </S.InsuranceAmountsRow>
+
+            <S.InsuranceAmountsRow>
+              <S.InsuranceAmountsRowLabel>
+                DeXe Treasury Balance:
+              </S.InsuranceAmountsRowLabel>
+              <S.InsuranceAmountsRowValue>
+                1m 478 57845 DEXE
+              </S.InsuranceAmountsRowValue>
+            </S.InsuranceAmountsRow>
+          </S.InsuranceAmountsRowsWrp>
+
+          <S.InsuranceFooter>
+            <S.InsuranceCallToActionBlock>
+              <S.InsuranceCallToActionBlockTitle>
+                Застрахуй свои инвестиции с Дикси текст пропушить страховку
+              </S.InsuranceCallToActionBlockTitle>
+
+              <S.InsuranceCallToActionBlockLink>
+                How it works?
+              </S.InsuranceCallToActionBlockLink>
+            </S.InsuranceCallToActionBlock>
+          </S.InsuranceFooter>
         </S.ContainerInner>
       </S.Container>
     </>
