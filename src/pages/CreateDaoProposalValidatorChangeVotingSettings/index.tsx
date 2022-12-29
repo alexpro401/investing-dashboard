@@ -8,8 +8,10 @@ import WithUserIsDaoValidatorValidation from "components/WithUserIsDaoValidatorV
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
 import DaoValidatorProposalChangeVotingSettingsContextProvider from "context/govPool/proposals/validators/ChangeVotingSettingsContext"
 import CreateGovProposalValidatorChangeVotingSettingsForm from "forms/CreateGovProposalValidatorChangeVotingSettingsForm"
+import { useBreakpoints } from "hooks"
 import { useGovValidatorsInternalSettings } from "hooks/dao"
 import Skeleton from "components/Skeleton"
+import FormStepsLoaderWrapper from "common/FormSteps/FormStepsLoaderWrapper"
 import { Flex } from "theme"
 
 import * as S from "./styled"
@@ -19,21 +21,33 @@ const CreateDaoProposalValidatorChangeVotingSettings: React.FC = () => {
   const [proposalInternalSettings, proposalInternalSettingsLoading] =
     useGovValidatorsInternalSettings(daoAddress ?? "")
 
+  const { isMobile } = useBreakpoints()
+
   const loader = useMemo(
     () => (
-      <Flex
-        gap={"24"}
-        full
-        m="16px 0 0 0"
-        dir="column"
-        ai={"center"}
-        jc={"flex-start"}
-      >
-        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"160px"} />
-      </Flex>
+      <FormStepsLoaderWrapper>
+        <Flex
+          gap={"24"}
+          full
+          m="16px 0 0 0"
+          dir="column"
+          ai={"flex-start"}
+          jc={"flex-start"}
+        >
+          {isMobile && (
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+          )}
+          {!isMobile && (
+            <>
+              <Skeleton variant={"rect"} w={"300px"} h={"40px"} />
+              <Skeleton variant={"rect"} w={"400px"} h={"20px"} />
+            </>
+          )}
+          <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"160px"} />
+        </Flex>
+      </FormStepsLoaderWrapper>
     ),
-    []
+    [isMobile]
   )
 
   return (

@@ -65,7 +65,7 @@ const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
           onClick: () => {
             navigate(
               generatePath(ROUTE_PATHS.daoProposalVoting, {
-                daoAddress: govPoolAddress,
+                daoPoolAddress: govPoolAddress,
                 proposalId: String(latestProposalId),
               })
             )

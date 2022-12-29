@@ -3,15 +3,12 @@ import styled from "styled-components/macro"
 import { AppButton } from "common"
 import theme from "theme"
 
-export const StepsRoot = styled.div`
-  display: flex;
-  flex-direction: column;
-  transform: scale(1);
-  gap: 16px;
-`
-
 export const SubmitButton = styled(AppButton)`
   width: 100%;
+`
+
+export const DesktopHeaderWrp = styled.div`
+  margin-bottom: 16px;
 `
 
 export const TokenContainer = styled.div`

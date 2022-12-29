@@ -79,6 +79,7 @@ export const Flex = styled(motion.div)<{
   jc?: string
   op?: number
   gap?: string
+  wrap?: string
 }>`
   width: ${(props) => (props.full ? "100%" : "fit-content")};
   flex-direction: ${(props) => (props.dir ? props.dir : "row")};
@@ -89,6 +90,7 @@ export const Flex = styled(motion.div)<{
   padding: ${(props) => (props.p ? props.p : 0)};
   opacity: ${(props) => (props.op ? props.op : 1)};
   gap: ${(props) => (props.gap ? props.gap : 0)}px;
+  ${(props) => (props.wrap ? `flex-wrap: ${props.wrap};` : "")}
 `
 
 export const Block = styled(Flex)`

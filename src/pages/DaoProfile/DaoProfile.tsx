@@ -32,7 +32,8 @@ import { Flex } from "theme"
 import { createClient, useQuery } from "urql"
 import { GovPoolQuery } from "queries"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
-import { useWindowSize } from "react-use"
+import { useBreakpoints } from "hooks"
+import { Breadcrumbs } from "common"
 
 const govPoolsClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -119,12 +120,11 @@ const DaoProfile: React.FC = () => {
     )
   }, [daoAddress, chainId, currentTab, govPoolQuery])
 
-  const { width: windowWidth } = useWindowSize()
-  const isMobile = useMemo(() => windowWidth < 1194, [windowWidth])
+  const { isMobile } = useBreakpoints()
 
   return (
     <>
-      <Header>Dao Profile</Header>
+      <Header>{isMobile ? "Dao Profile" : <Breadcrumbs />}</Header>
       <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
         <S.Container>
           <S.Indents top>

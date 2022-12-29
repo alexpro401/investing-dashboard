@@ -1,16 +1,17 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useDispatch } from "react-redux"
-import { createPortal } from "react-dom"
 
 import {
   Card,
   CardHead,
   CardDescription,
   SelectableCard,
-  StepsNavigation,
   CreateDaoCardStepNumber,
+  Headline1,
+  RegularText,
 } from "common"
+import FormStepsLoaderWrapper from "common/FormSteps/FormStepsLoaderWrapper"
 import Header from "components/Header/Layout"
 import RadioButton from "components/RadioButton"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
@@ -18,6 +19,7 @@ import Skeleton from "components/Skeleton"
 import { Flex } from "theme"
 import { useBreakpoints } from "hooks"
 import { hideTapBar, showTabBar } from "state/application/actions"
+import theme from "theme"
 
 import * as S from "./styled"
 import * as SForms from "common/FormSteps/styled"
@@ -44,13 +46,9 @@ const CreateDaoCustomProposal: React.FC = () => {
   const [selectedCard, setSelectedCard] = useState<ECustomProposalTypes>(
     ECustomProposalTypes.abi
   )
-  const [appNavigationEl, setAppNavigationEl] = useState<Element | null>(null)
 
   useEffect(() => {
     dispatch(hideTapBar())
-    setTimeout(() => {
-      setAppNavigationEl(document.querySelector("#app-navigation"))
-    }, 100)
 
     return () => {
       dispatch(showTabBar())
@@ -126,43 +124,85 @@ const CreateDaoCustomProposal: React.FC = () => {
       <WithGovPoolAddressValidation
         daoPoolAddress={daoAddress ?? ""}
         loader={
-          <Flex
-            gap={"24"}
-            full
-            m="16px 0 0 0"
-            dir="column"
-            ai={"center"}
-            jc={"flex-start"}
-          >
-            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"70px"} />
-            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"70px"} />
-            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"70px"} />
-          </Flex>
+          <FormStepsLoaderWrapper>
+            <Flex
+              gap={"24"}
+              full
+              m="16px 0 0 0"
+              dir="column"
+              ai={"flex-start"}
+              jc={"flex-start"}
+            >
+              {!isMobile && (
+                <>
+                  <Skeleton variant={"text"} w={"300px"} h={"40px"} />
+                  <Skeleton variant={"text"} w={"400px"} h={"20px"} />
+                </>
+              )}
+              {isMobile && (
+                <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"70px"} />
+              )}
+              <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"70px"} />
+              <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"70px"} />
+            </Flex>
+          </FormStepsLoaderWrapper>
         }
       >
         <SForms.StepsWrapper>
           <SForms.StepsContainer>
             <S.PageHolder>
               <S.PageContent>
-                <Card>
-                  <CardHead
-                    nodeLeft={<CreateDaoCardStepNumber number={1} />}
-                    title="Select creation method"
-                  />
-                  <CardDescription>
-                    <p>
+                {isMobile && (
+                  <Card>
+                    <CardHead
+                      nodeLeft={<CreateDaoCardStepNumber number={1} />}
+                      title="Select creation method"
+                    />
+                    <CardDescription>
+                      <p>
+                        This proposl type is to create a proposal for autonomous
+                        interaction with any DeFi protocol. Connect the treasury
+                        wallet with the needed dApp and initiate the transaction
+                        to be finalized once the proposal passes.
+                      </p>
+                      <p>
+                        E.g., you can create a proposal to buy any asset on
+                        1inch to diversify or provide liquidity to a pair on
+                        Uniswap to generate extra profit for your DAO.
+                      </p>
+                    </CardDescription>
+                  </Card>
+                )}
+                {!isMobile && (
+                  <S.DesktopHeaderWrp>
+                    <Headline1
+                      color={theme.statusColors.info}
+                      desktopWeight={900}
+                    >
+                      Select creation method
+                    </Headline1>
+                    <RegularText
+                      color={theme.textColors.secondary}
+                      desktopWeight={500}
+                      desktopSize={"14px"}
+                    >
                       This proposl type is to create a proposal for autonomous
                       interaction with any DeFi protocol. Connect the treasury
                       wallet with the needed dApp and initiate the transaction
                       to be finalized once the proposal passes.
-                    </p>
-                    <p>
+                    </RegularText>
+                    <br />
+                    <RegularText
+                      color={theme.textColors.secondary}
+                      desktopWeight={500}
+                      desktopSize={"14px"}
+                    >
                       E.g., you can create a proposal to buy any asset on 1inch
                       to diversify or provide liquidity to a pair on Uniswap to
                       generate extra profit for your DAO.
-                    </p>
-                  </CardDescription>
-                </Card>
+                    </RegularText>
+                  </S.DesktopHeaderWrp>
+                )}
                 {customProposalSelectTypes.map(
                   ({ type, title, description }) => (
                     <SelectableCard
@@ -182,10 +222,7 @@ const CreateDaoCustomProposal: React.FC = () => {
                     />
                   )
                 )}
-                {isMobile &&
-                  appNavigationEl &&
-                  createPortal(<StepsNavigation />, appNavigationEl)}
-                {!isMobile && <StepsNavigation />}
+                <SForms.FormStepsNavigationWrp />
               </S.PageContent>
             </S.PageHolder>
           </SForms.StepsContainer>

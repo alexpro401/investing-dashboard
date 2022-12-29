@@ -1,5 +1,7 @@
 import styled from "styled-components/macro"
 
+import { respondTo } from "theme"
+
 export const Root = styled.div`
   display: flex;
   flex-direction: column;
@@ -7,6 +9,10 @@ export const Root = styled.div`
   border-radius: 20px;
   padding: 16px;
   gap: 12px;
+
+  ${respondTo("sm")} {
+    padding: 24px;
+  }
 `
 
 export const CardHead = styled.div`
@@ -25,6 +31,9 @@ export const CardHeadTitle = styled.span`
 
 export const NodeLeft = styled.div`
   margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 export const NodeRight = styled.div`

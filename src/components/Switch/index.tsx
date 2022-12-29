@@ -12,7 +12,7 @@ const Switch: React.FC<{
   const paralelHandlers = () => onChange(name, !isOn)
 
   return (
-    <>
+    <div>
       <input
         checked={isOn}
         disabled={disabled}
@@ -29,7 +29,7 @@ const Switch: React.FC<{
       >
         <span className="react-switch-button" />
       </label>
-    </>
+    </div>
   )
 }
 

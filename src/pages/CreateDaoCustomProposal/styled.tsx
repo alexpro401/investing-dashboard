@@ -17,3 +17,9 @@ export const PageContent = styled.div`
   gap: 15px;
   padding: 16px;
 `
+
+export const DesktopHeaderWrp = styled.div`
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+`

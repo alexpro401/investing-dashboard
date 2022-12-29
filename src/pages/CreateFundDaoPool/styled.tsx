@@ -10,7 +10,6 @@ export const Root = styled.div`
 
 export const Container = styled(motion.div)`
   margin: 0 auto;
-  overflow-y: auto;
   flex: 1;
   width: 100%;
 `
