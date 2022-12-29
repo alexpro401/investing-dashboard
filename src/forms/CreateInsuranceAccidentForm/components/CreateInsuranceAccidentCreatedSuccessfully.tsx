@@ -53,11 +53,11 @@ const CreateInsuranceAccidentCreatedSuccessfully: FC<Props> = ({
     onVoteCallback()
     navigate(
       generatePath(ROUTE_PATHS.daoProposalVoting, {
-        daoAddress: process.env.REACT_APP_DEXE_DAO_ADDRESS,
+        daoPoolAddress: process.env.REACT_APP_DEXE_DAO_ADDRESS,
         proposalId: String(latestProposalId),
       })
     )
-  }, [])
+  }, [navigate, onVoteCallback, updateLatesProposalId])
 
   return (
     <Confirm title="Success" isOpen={open} toggle={() => setOpen(!open)}>
