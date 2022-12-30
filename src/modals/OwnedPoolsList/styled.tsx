@@ -56,7 +56,7 @@ export const AccountCard: React.FC<{
     <Account.Container>
       <Flex full ai="center" jc="space-between">
         <div onClick={copyAccountToClipboard}>
-          <AccountInfo account={account}>
+          <AccountInfo account={account} isMobile>
             <Flex ai="center" jc="flex-start" gap="3" m="2px 0 0">
               <Text color="#B1C7FC" fz={13} lh="15px">
                 {shortenAddress(account, 2)}
