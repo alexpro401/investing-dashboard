@@ -6,7 +6,7 @@ export const Container = styled.div`
   grid-template-rows: 40px 1fr;
   grid-gap: 16px;
   width: 100%;
-  height: inherit;
+  height: 100%;
   overflow: hidden;
 `
 

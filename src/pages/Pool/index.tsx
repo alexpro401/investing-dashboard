@@ -131,21 +131,11 @@ function Pool() {
           tabs={[
             {
               name: "P&L",
-              child: load ? (
-                <Center>
-                  <GuardSpinner size={20} loading />
-                </Center>
-              ) : (
-                <TabPoolPnl address={poolData?.id} />
-              ),
+              child: <TabPoolPnl address={poolData?.id} />,
             },
             {
               name: "Locked funds",
-              child: load ? (
-                <Center>
-                  <GuardSpinner size={20} loading />
-                </Center>
-              ) : (
+              child: (
                 <TabPoolLockedFunds
                   address={poolData?.id}
                   poolData={poolData}
@@ -158,11 +148,7 @@ function Pool() {
             },
             {
               name: "About fund",
-              child: load ? (
-                <Center>
-                  <GuardSpinner size={20} loading />
-                </Center>
-              ) : (
+              child: (
                 <TabPoolInfo
                   data={poolData}
                   poolInfo={poolInfoData}
@@ -174,21 +160,13 @@ function Pool() {
             },
             {
               name: "Statistic",
-              child: load ? (
-                <Center>
-                  <GuardSpinner size={20} loading />
-                </Center>
-              ) : (
+              child: (
                 <TabPoolStatistic poolData={poolData} poolInfo={poolInfoData} />
               ),
             },
             {
               name: "Holders",
-              child: load ? (
-                <Center>
-                  <GuardSpinner size={20} loading />
-                </Center>
-              ) : (
+              child: (
                 <TabPoolHolders
                   poolData={poolData}
                   chainId={chainId}
