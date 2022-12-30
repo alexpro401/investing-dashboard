@@ -1,13 +1,14 @@
 import { FC } from "react"
 
 import { Card } from "common"
-import { Flex, Text } from "theme"
+import { Center, Flex, Text } from "theme"
 import BarChart from "components/BarChart"
 import PoolPnlChart from "components/PoolPnlChart"
 
 import { usePoolPnlInfo } from "hooks/usePool"
 
 import { Indents, Label } from "../styled"
+import { GuardSpinner } from "react-spinners-kit"
 
 const TabPoolPnl: FC<{ address: string }> = ({ address }) => {
   const [
@@ -15,7 +16,11 @@ const TabPoolPnl: FC<{ address: string }> = ({ address }) => {
     { totalPnlPercentage, totalPnlBase, totalUSDPnlPerc, totalUSDPnlUSD },
   ] = usePoolPnlInfo(address)
 
-  return (
+  return !poolData ? (
+    <Center>
+      <GuardSpinner size={20} loading />
+    </Center>
+  ) : (
     <>
       <Indents side={false}>
         <Card>

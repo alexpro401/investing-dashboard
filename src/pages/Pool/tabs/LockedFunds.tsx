@@ -3,7 +3,7 @@ import { FC, useCallback, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Tooltip } from "recharts"
 
-import { Flex } from "theme"
+import { Center, Flex } from "theme"
 import { Card } from "common"
 import { Indents, Label, Value, AppButtonFull, ProgressBar } from "../styled"
 import usePoolLockedFunds from "hooks/usePoolLockedFunds"
@@ -14,6 +14,7 @@ import { CHART_TYPE, TIMEFRAME } from "consts/chart"
 import { usePoolLockedFundsHistory } from "hooks/usePool"
 import Chart from "components/Chart"
 import { TooltipLockedFundsChart } from "../components"
+import { GuardSpinner } from "react-spinners-kit"
 
 const TabPoolLockedFunds: FC<{
   address: string
@@ -43,6 +44,7 @@ const TabPoolLockedFunds: FC<{
       poolUsedInPositionsUSD,
       poolUsedToTotalPercentage,
     },
+    loading,
   ] = usePoolLockedFunds(poolData, poolInfo, baseToken)
 
   const [tf, setTf] = useState(TIMEFRAME.d)
@@ -53,7 +55,11 @@ const TabPoolLockedFunds: FC<{
     navigate(`/pool/invest/${address}`)
   }, [address, navigate])
 
-  return (
+  return loading || fetching ? (
+    <Center>
+      <GuardSpinner size={20} loading />
+    </Center>
+  ) : (
     <>
       <Indents side={false}>
         <Card>
