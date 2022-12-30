@@ -1,27 +1,33 @@
+import * as S from "./styled"
+import { MutableRefObject, useRef } from "react"
 import { createPortal } from "react-dom"
 import { Flex } from "theme"
 
 import { useAlertContext, AlertType } from "context/AlertContext"
 
-import { ICON_NAMES } from "constants/icon-names"
-import { Icon } from "common"
-import * as S from "./styled"
-import { MutableRefObject, useRef } from "react"
+import { ICON_NAMES } from "consts/icon-names"
+import { AppButton, Overlay } from "common"
+import { useBreakpoints } from "hooks"
 
 const alertRoot = document.getElementById("alert")
 
 const iconMapper = {
-  [AlertType.info]: <Icon name={ICON_NAMES.infoCircled} />,
-  [AlertType.warning]: <Icon name={ICON_NAMES.warningCircled} />,
+  [AlertType.info]: <S.AlertContentIcon name={ICON_NAMES.infoCircled} />,
+  [AlertType.warning]: <S.AlertContentIcon name={ICON_NAMES.warningCircled} />,
 }
 
 const Alert: React.FC = () => {
   const { isOpen, type, title, content, hideAlert } = useAlertContext()
   const contentRef = useRef() as MutableRefObject<HTMLDivElement>
 
+  const { isMobile } = useBreakpoints()
+
   if (!alertRoot) return null
   return createPortal(
     <>
+      {!isMobile && (
+        <Overlay onClick={hideAlert} animate={isOpen ? "visible" : "hidden"} />
+      )}
       <S.Container
         animate={isOpen ? "visible" : "hidden"}
         initial="hidden"
@@ -55,11 +61,20 @@ const Alert: React.FC = () => {
           <S.Header>
             <Flex m="0 8px 1px 0">{type && iconMapper[type]}</Flex>
             <S.Title>{title || "Action unavailable"}</S.Title>
-            <Icon onClick={hideAlert} name={ICON_NAMES.modalClose} />
+            <S.AlertCloseIcon
+              onClick={hideAlert}
+              name={ICON_NAMES.modalClose}
+            />
           </S.Header>
-          {/* <Flex> */}
           <S.Content ref={contentRef}>{content}</S.Content>
-          {/* </Flex> */}
+          {!isMobile && (
+            <AppButton
+              full
+              onClick={hideAlert}
+              text={"Ok"}
+              color={"secondary"}
+            />
+          )}
         </S.Body>
       </S.Container>
     </>,

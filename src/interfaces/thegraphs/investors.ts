@@ -1,3 +1,5 @@
+import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
+
 export interface IInvestorClaims {
   amountDividendsTokens: string[]
   dividendsTokens: string[]
@@ -6,6 +8,7 @@ export interface IInvestorClaims {
 }
 
 export interface Insurance {
+  stakeUSD: BigNumberish
   id: string
   day: string
   stake: string

@@ -12,7 +12,7 @@ import {
 } from "state/pools/actions"
 import { selectActivePoolType, selectPoolsFilters } from "state/pools/selectors"
 
-import { poolTypes } from "constants/index"
+import { poolTypes } from "consts"
 
 import { isAddress, getPoolsQueryVariables } from "utils"
 

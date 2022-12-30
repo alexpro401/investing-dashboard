@@ -5,7 +5,7 @@ import { useGovPoolContract } from "contracts"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useSingleContractMultipleData } from "state/multicall/hooks"
 import { isAddress } from "utils"
-import { ZERO, ZERO_ADDR } from "constants/index"
+import { ZERO, ZERO_ADDR } from "consts"
 
 interface Params {
   delegator?: string | null

@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 
 import Ripple from "components/Ripple"
 import JazzIcon from "components/Icon/JazzIcon"

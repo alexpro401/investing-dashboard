@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import useError from "hooks/useError"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { PositionsByIdsQuery } from "queries"
 import { addBignumbers } from "utils/formulas"
 import { usePriceFeedContract } from "contracts"

@@ -1,15 +1,27 @@
 import styled from "styled-components/macro"
-import { Flex } from "theme"
+import { respondTo, Text } from "theme"
 import { Card } from "common"
 
 export const Container = styled(Card)`
   width: 100%;
+
+  ${respondTo("lg")} {
+    flex-direction: row;
+    align-items: center;
+    border-radius: 60px 24px 24px 60px;
+    padding: 0 24px 0 0;
+  }
 `
 
 export const Header = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
+
+  ${respondTo("lg")} {
+    width: initial;
+    min-width: 35%;
+  }
 `
 
 export const HeaderNodeLeft = styled.div`
@@ -41,29 +53,31 @@ export const Divider = styled.div`
   height: 1px;
 `
 
-export const Content = styled.div`
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr;
-  gap: 0 12px;
+export const CardInfoLabel = styled(Text).attrs(() => ({
+  block: true,
+  fw: 600,
+  lh: "20px",
+}))`
+  font-size: 11px;
+  color: ${({ theme }) => theme.textColors.secondary};
+
+  ${respondTo("lg")} {
+    font-size: 12px;
+    color: #6781bd;
+  }
 `
 
-export const Item = styled(Flex)`
-  flex-direction: column;
-  flex: 1;
-  align-items: flex-start;
+export const CardInfoValue = styled(Text).attrs(() => ({
+  block: true,
+  color: "rgba(228, 242, 255, 0.8)",
+}))`
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
 
-  &:nth-child(1) {
-    justify-self: start;
-  }
-  &:nth-child(2) {
-    justify-self: start;
-  }
-  &:nth-child(3) {
-    justify-self: start;
-  }
-  &:nth-child(4) {
-    justify-self: center;
+  ${respondTo("lg")} {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 25px;
   }
 `

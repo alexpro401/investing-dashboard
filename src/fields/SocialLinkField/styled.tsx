@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components/macro"
 import { AppButton, Icon } from "common"
 import { fieldLabelHoverColor } from "fields/styled"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { OverlapInputField } from "fields"
 
 export const Root = styled.div``

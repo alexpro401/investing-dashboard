@@ -15,7 +15,7 @@ import { PoolPositionLast, PoolQuery } from "queries"
 import { PoolsByInvestorsQuery } from "queries/all-pools"
 import { useTraderPoolContract } from "contracts"
 
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { normalizeBigNumber } from "utils"
 import usePoolPrice from "hooks/usePoolPrice"
 import { useERC20Data } from "state/erc20/hooks"
@@ -34,7 +34,7 @@ import {
   TIMEFRAME_FROM_DATE,
   TIMEFRAME_LIMIT_CODE,
   TIMEFRAME,
-} from "constants/chart"
+} from "consts/chart"
 import { usePriceHistory } from "state/pools/hooks"
 import { useAPI } from "api"
 
@@ -237,16 +237,17 @@ export const usePoolPnlInfo = (address: string | undefined) => {
 
 export const usePoolPriceHistory = (
   address: string | undefined,
-  tf: TIMEFRAME
+  tf: TIMEFRAME,
+  startDate?: any
 ) => {
   const [history, fetching] = usePriceHistory(
     address,
     TIMEFRAME_AGGREGATION_CODE[tf],
     TIMEFRAME_LIMIT_CODE[tf],
-    TIMEFRAME_FROM_DATE[tf]
+    startDate ?? TIMEFRAME_FROM_DATE[tf]
   )
 
-  return [generatePoolPnlHistory(history), fetching]
+  return [useMemo(() => generatePoolPnlHistory(history), [history]), fetching]
 }
 
 export const usePoolLockedFundsHistory = (
@@ -259,7 +260,10 @@ export const usePoolLockedFundsHistory = (
     TIMEFRAME_LIMIT_CODE[tf],
     TIMEFRAME_FROM_DATE[tf]
   )
-  return [generateLockedFundsChartData(history), fetching]
+  return [
+    useMemo(() => generateLockedFundsChartData(history), [history]),
+    fetching,
+  ]
 }
 
 export const usePoolPriceHistoryDiff = (priceHistoryFrom, priceHistoryTo) => {

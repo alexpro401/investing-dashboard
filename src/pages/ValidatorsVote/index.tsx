@@ -3,7 +3,7 @@ import { useParams, useLocation } from "react-router-dom"
 
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import * as S from "components/Exchange/styled"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { Flex } from "theme"
 import useValidatorsVote, { ButtonTypes } from "./useValidatorsVote"
 import { Container } from "components/Exchange/styled"

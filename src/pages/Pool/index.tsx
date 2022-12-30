@@ -33,13 +33,14 @@ import { useERC20Data } from "state/erc20/hooks"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { selectPoolByAddress } from "state/pools/selectors"
 
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { normalizeBigNumber } from "utils"
 import usePoolPrice from "hooks/usePoolPrice"
 import { multiplyBignumbers } from "utils/formulas"
 import { usePoolContract } from "hooks/usePool"
 import { useTraderPoolContract } from "contracts"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
+import { useWindowSize } from "react-use"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -83,6 +84,9 @@ function Pool() {
       setAccountLPs(balance)
     })()
   }, [traderPool, account])
+
+  const { width: windowWidth } = useWindowSize()
+  const isMobile = useMemo(() => windowWidth < 1194, [windowWidth])
 
   const actions = useMemo(() => {
     if (!poolData) {
@@ -217,7 +221,7 @@ function Pool() {
         {!isNil(poolData) ? (
           <>
             <Indents top>
-              <PoolStatisticCard data={poolData}>
+              <PoolStatisticCard data={poolData} isMobile={isMobile} hideChart>
                 <>
                   <ButtonContainer>
                     <AppButton
@@ -235,10 +239,15 @@ function Pool() {
                       text={actions.rightNode.text}
                     />
                   </ButtonContainer>
-                  {!isTrader && (
+                  {!isTrader && isMobile && (
                     <>
                       <Divider />
-                      <Flex full ai="center" jc="space-between">
+                      <Flex
+                        full
+                        ai={isMobile ? "center" : "flex-end"}
+                        jc="space-between"
+                        dir={isMobile ? "row" : "column"}
+                      >
                         <Label>Your share</Label>
                         <Value.Medium color="#E4F2FF">
                           {normalizeBigNumber(accountLPs, 18, 2)}{" "}

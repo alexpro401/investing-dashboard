@@ -4,7 +4,7 @@ import {
   InvestorPoolPosition,
   InvestorPoolPositionWithHistory,
 } from "./thegraphs/investors"
-import { TIMEFRAME } from "constants/chart"
+import { TIMEFRAME } from "consts/chart"
 
 export interface IPriceHistoryWithCalcPNL extends IPriceHistory {
   pnl: number | string
@@ -29,6 +29,7 @@ export interface InsuranceAccidentInvestorsTotalsInfo {
   lp: string
   loss: string
   coverage: string
+  coverageUSD?: string
 }
 
 export interface InsuranceAccidentInvestor extends Insurance {

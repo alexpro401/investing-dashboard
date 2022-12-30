@@ -1,34 +1,50 @@
 import { FC, useContext, useEffect, useMemo } from "react"
 import { isEmpty, isNil } from "lodash"
 import { useWeb3React } from "@web3-react/core"
+import { v4 as uuidv4 } from "uuid"
+import { BigNumber } from "@ethersproject/bignumber"
+import { useSelector } from "react-redux"
+
+import * as S from "../styled/step-check-settings"
 
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
 
-import { StepsRoot } from "forms/CreateInsuranceAccidentForm/styled"
+import {
+  StepsRoot,
+  CreateInsuranceAccidentTopCard,
+  CreateInsuranceAccidentTopCardHead,
+  CreateInsuranceAccidentTopCardDescription,
+} from "forms/CreateInsuranceAccidentForm/styled"
 import { InsuranceAccidentCreatingContext } from "context/InsuranceAccidentCreatingContext"
-import { Flex } from "theme"
+import theme, { Flex, Text } from "theme"
 import { normalizeBigNumber } from "utils"
-import { addBignumbers, divideBignumbers } from "utils/formulas"
+import {
+  addBignumbers,
+  divideBignumbers,
+  multiplyBignumbers,
+} from "utils/formulas"
 import usePoolInvestorsByDay from "hooks/usePoolInvestorsByDay"
 import useInvestorsInsuranceHistory from "hooks/useInvestorsInsuranceHistory"
 import useInvestorsLpHistory from "hooks/useInvestorsLpHistory"
 import PoolPriceDiff from "components/PoolPriceDiff"
-import { BigNumber } from "@ethersproject/bignumber"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import useInvestorsLastPoolPosition from "hooks/useInvestorsLastPoolPosition"
-import {
-  Card,
-  CardDescription,
-  CardHead,
-  InsuranceAccidentMembersTable,
-} from "common"
+import { InsuranceAccidentMembersTable } from "common"
 import { selectPoolByAddress } from "state/pools/selectors"
-import { useSelector } from "react-redux"
 import { AppState } from "state"
 import { usePoolPriceHistoryDiff } from "hooks/usePool"
+import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
+import { selectDexeAddress } from "state/contracts/selectors"
+import { useBreakpoints } from "hooks"
+import Tooltip from "components/Tooltip"
 
 function useInvestorsInAccident() {
   const { account } = useWeb3React()
+
+  const dexeAddress = useSelector(selectDexeAddress)
+  const dexePriceUSD = useTokenPriceOutUSD({
+    tokenAddress: dexeAddress,
+  })
 
   const { form } = useContext(InsuranceAccidentCreatingContext)
   const { date, pool } = form
@@ -105,7 +121,7 @@ function useInvestorsInAccident() {
   )
 
   const investorsIncludingInAccident = useMemo(() => {
-    if (loading || noData || isNil(account)) {
+    if (loading || noData || isNil(account) || dexePriceUSD.isZero()) {
       return []
     }
 
@@ -113,18 +129,29 @@ function useInvestorsInAccident() {
       .sort((a1) =>
         a1.investor.id === String(account).toLocaleLowerCase() ? -1 : 1
       )
-      .reduce(
-        (acc, h) => ({
+      .reduce((acc, h) => {
+        return {
           ...acc,
           [h.investor.id]: {
             ...h,
             poolPositionBeforeAccident: lpHistory.data[h.investor.id],
             poolPositionOnAccidentCreation: lpCurrent.data[h.investor.id],
+            stakeUSD: multiplyBignumbers(
+              [BigNumber.from(h.stake).mul(10), 18],
+              [dexePriceUSD, 18]
+            ).toString(),
           },
-        }),
-        {}
-      )
-  }, [loading, noData, insuranceHistory, lpHistory, lpCurrent, account])
+        }
+      }, {})
+  }, [
+    loading,
+    noData,
+    insuranceHistory,
+    lpHistory,
+    lpCurrent,
+    account,
+    dexePriceUSD,
+  ])
 
   const totals = useMemo(() => {
     const InitialTotals = {
@@ -136,6 +163,10 @@ function useInvestorsInAccident() {
       },
       coverage: {
         render: `DEXE 0`,
+        value: ZERO,
+      },
+      coverageUSD: {
+        render: `0`,
         value: ZERO,
       },
     }
@@ -173,9 +204,13 @@ function useInvestorsInAccident() {
             [res.coverage, 18],
             [BigNumber.from(h.stake).mul(10), 18]
           ),
+          coverageUSD: addBignumbers(
+            [res.coverageUSD, 18],
+            [BigNumber.from(h.stake).mul(10), 18]
+          ),
         }
       },
-      { lp: ZERO, loss: ZERO, coverage: ZERO }
+      { lp: ZERO, loss: ZERO, coverage: ZERO, coverageUSD: ZERO }
     )
 
     return {
@@ -189,8 +224,12 @@ function useInvestorsInAccident() {
         render: `DEXE ${normalizeBigNumber(res.coverage, 18, 2)}`,
         value: res.coverage,
       },
+      coverageUSD: {
+        render: normalizeBigNumber(res.coverageUSD, 18, 2),
+        value: res.coverageUSD,
+      },
     }
-  }, [loading, noData, insuranceHistory, lpHistory, lpCurrent])
+  }, [loading, noData, insuranceHistory, lpHistory, lpCurrent, dexePriceUSD])
 
   return {
     data: investorsIncludingInAccident,
@@ -240,7 +279,8 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
       !isEmpty(investorsTotals.get) &&
       investorsTotals.get.lp === totals.lp.value.toHexString() &&
       investorsTotals.get.loss === totals.loss.value.toHexString() &&
-      investorsTotals.get.coverage === totals.coverage.value.toHexString()
+      investorsTotals.get.coverage === totals.coverage.value.toHexString() &&
+      investorsTotals.get.coverageUSD === totals.coverageUSD.value.toHexString()
 
     if ((emptyTotals && havePayload) || (havePayload && !isSame)) {
       investorsTotals.set({
@@ -248,25 +288,30 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
         lp: totals.lp.value.toHexString(),
         loss: totals.loss.value.toHexString(),
         coverage: totals.coverage.value.toHexString(),
+        coverageUSD: totals.coverageUSD.value.toHexString(),
       })
     }
   }, [totals])
 
+  const { isMobile } = useBreakpoints()
+
   return (
     <>
       <StepsRoot>
-        <Card>
-          <CardHead
-            nodeLeft={<CreateInsuranceAccidentCardStepNumber number={3} />}
+        <CreateInsuranceAccidentTopCard>
+          <CreateInsuranceAccidentTopCardHead
+            nodeLeft={
+              isMobile && <CreateInsuranceAccidentCardStepNumber number={3} />
+            }
             title="Сheck insurance proposal details"
           />
-          <CardDescription>
+          <CreateInsuranceAccidentTopCardDescription>
             <p>
               тут ви бачете тотал інфу по всім учасникам фонду у яких була
               страховка
             </p>
-          </CardDescription>
-        </Card>
+          </CreateInsuranceAccidentTopCardDescription>
+        </CreateInsuranceAccidentTopCard>
         <Flex full>
           <PoolPriceDiff
             initialPriceUSD={initialPriceUSD}
@@ -274,7 +319,17 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
             priceDiffUSD={priceDiffUSD}
           />
         </Flex>
-        <Flex full>
+        {!isMobile && (
+          <Flex full ai={"center"} jc={"flex-start"} m={"34px 0 0"} gap={"8"}>
+            <Tooltip id={uuidv4()}>
+              Все участники Все участники Все участники Все участники
+            </Tooltip>
+            <Text fw={700} fz={16} lh={"19px"} color={theme.textColors.primary}>
+              Все участники
+            </Text>
+          </Flex>
+        )}
+        <S.TableCard>
           <InsuranceAccidentMembersTable
             totals={{
               users: totals.users,
@@ -286,7 +341,7 @@ const CreateInsuranceAccidentCheckSettingsStep: FC = () => {
             loading={loading}
             noData={noData}
           />
-        </Flex>
+        </S.TableCard>
       </StepsRoot>
     </>
   )

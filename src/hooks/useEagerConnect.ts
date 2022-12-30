@@ -2,7 +2,7 @@ import { activateInjectedProvider } from "utils/activateInjectedProvider"
 import { useState, useEffect } from "react"
 import { useWeb3React } from "@web3-react/core"
 
-import { injected, connectorsByName } from "constants/connectors"
+import { injected, connectorsByName } from "consts/connectors"
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector"
 
 export function useEagerConnect() {

@@ -9,7 +9,7 @@ import { Collapse, SelectableCard, Headline1, RegularText } from "common"
 
 import { useBreakpoints } from "hooks"
 import theme from "theme"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"

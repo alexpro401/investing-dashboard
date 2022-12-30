@@ -9,7 +9,7 @@ import Icon from "components/Icon"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-import { SwapDirection } from "constants/types"
+import { SwapDirection } from "consts/types"
 
 import {
   divideBignumbers,
@@ -36,7 +36,7 @@ import usePoolPrice from "hooks/usePoolPrice"
 import useRiskyPrice from "hooks/useRiskyPrice"
 import useGasTracker from "state/gas/hooks"
 import { parseEther, parseUnits } from "@ethersproject/units"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import useRiskyPosition from "hooks/useRiskyPosition"
 import { useERC20Data } from "state/erc20/hooks"
 import useProposalAddress from "hooks/useProposalAddress"

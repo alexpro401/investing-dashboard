@@ -1,4 +1,4 @@
-import { FAST_INTERVAL, SUPPORTED_CHAINS } from "constants/chains"
+import { FAST_INTERVAL, SUPPORTED_CHAINS } from "consts/chains"
 import { BSC_RPC_URLS, BSC_TESTNET_RPC_URLS } from "./networks"
 import { InjectedConnector } from "@web3-react/injected-connector"
 import { NetworkConnector } from "@web3-react/network-connector"

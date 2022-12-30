@@ -1,5 +1,5 @@
 import { BigNumber } from "@ethersproject/bignumber"
-import { PoolType } from "constants/types"
+import { PoolType } from "consts/types"
 
 export interface IPriceHistory {
   APY: BigNumber

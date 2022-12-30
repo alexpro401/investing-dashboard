@@ -9,7 +9,7 @@ import { Flex } from "theme"
 import { shortenAddress } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { Token } from "interfaces"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import Table from "components/Table"
 
 interface Props {
@@ -47,7 +47,7 @@ const TabPoolHolders: FC<Props> = ({ poolData, baseToken, chainId }) => {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <Flex full ai="center" jc="space-between">
+        <Flex full ai="center" jc="space-between" p={"16px 0"}>
           <Value.MediumThin color="#E4F2FF" block>
             <Flex ai="center" jc="flex-start" gap="4">
               {shortenAddress(id, 4)}

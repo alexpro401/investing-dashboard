@@ -1,6 +1,6 @@
 import { useGovPoolVotingAssets } from "hooks/dao"
 import { BigNumberish } from "@ethersproject/bignumber"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { useERC721Contract } from "contracts"
 import { useEffect, useState } from "react"
 import { divideBignumbers } from "utils/formulas"

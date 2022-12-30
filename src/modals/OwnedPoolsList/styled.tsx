@@ -1,7 +1,7 @@
 import styled from "styled-components/macro"
 import { v4 as uuidv4 } from "uuid"
 
-import { PoolType } from "constants/types"
+import { PoolType } from "consts/types"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 
 import { Flex, To, Text, getAmountColor } from "theme"
@@ -13,7 +13,7 @@ import { useAddToast } from "state/application/hooks"
 import { useCallback } from "react"
 import { copyToClipboard } from "utils/clipboard"
 import { shortenAddress } from "utils"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { isNil } from "lodash"
 import dexe from "assets/icons/dexe-dark.svg"
 

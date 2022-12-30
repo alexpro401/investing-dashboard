@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { format } from "date-fns"
 
-import { DATE_FORMAT } from "constants/time"
+import { DATE_FORMAT } from "consts/time"
 import { expandTimestamp } from "utils"
 
 import { Flex } from "theme"

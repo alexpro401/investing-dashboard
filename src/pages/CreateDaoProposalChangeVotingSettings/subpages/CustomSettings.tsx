@@ -6,7 +6,7 @@ import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidatio
 import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
 import GovPoolFormContextProvider from "context/govPool/GovPoolFormContext"
 import CreateDaoProposalChangeCustomSettingsForm from "forms/CreateDaoProposalChangeCustomSettingsForm"
-import { INITIAL_DAO_PROPOSAL } from "constants/dao"
+import { INITIAL_DAO_PROPOSAL } from "consts/dao"
 import { useBreakpoints } from "hooks"
 import {
   useGovPoolExecutorSettings,
@@ -16,7 +16,7 @@ import Skeleton from "components/Skeleton"
 import FormStepsLoaderWrapper from "common/FormSteps/FormStepsLoaderWrapper"
 import { Flex } from "theme"
 import { GovPoolFormOptions } from "types"
-import { ZERO_ADDR } from "constants/index"
+import { ZERO_ADDR } from "consts"
 
 import * as S from "../styled"
 

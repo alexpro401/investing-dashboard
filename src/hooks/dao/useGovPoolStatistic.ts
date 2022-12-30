@@ -1,7 +1,7 @@
 import * as React from "react"
 import { isNil } from "lodash"
 
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 
 const useGovPoolStatistic = (data: IGovPoolQuery) => {

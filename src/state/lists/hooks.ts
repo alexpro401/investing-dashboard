@@ -7,7 +7,7 @@ import { AppState } from "state"
 import { useAppSelector } from "state/hooks"
 import sortByListPriority from "utils/listSort"
 
-import { UNSUPPORTED_LIST_URLS, WHITELIST_LIST_URLS } from "constants/lists"
+import { UNSUPPORTED_LIST_URLS, WHITELIST_LIST_URLS } from "consts/lists"
 
 export type TokenAddressMap = ChainTokenMap
 

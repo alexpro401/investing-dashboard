@@ -16,7 +16,7 @@ import { useActiveWeb3React } from "hooks"
 import { expandTimestamp, shortenAddress, formatBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
-import { DATE_TIME_FORMAT } from "constants/time"
+import { DATE_TIME_FORMAT } from "consts/time"
 
 const fundTypes = {
   BASIC_POOL: "Basic",

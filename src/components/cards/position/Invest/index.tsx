@@ -6,9 +6,9 @@ import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { createClient, Provider as GraphProvider } from "urql"
 import { format } from "date-fns/esm"
 
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { useActiveWeb3React } from "hooks"
-import { DATE_FORMAT } from "constants/time"
+import { DATE_FORMAT } from "consts/time"
 import usePoolPrice from "hooks/usePoolPrice"
 import { useERC20Data } from "state/erc20/hooks"
 import {

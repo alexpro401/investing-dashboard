@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useState } from "react"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import Modal from "components/Modal"
 import Tile from "./Tile"
 import * as S from "./styled"

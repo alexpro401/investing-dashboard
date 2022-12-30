@@ -29,7 +29,7 @@ import {
 
 import ABIConstructor from "modals/ABIConstructor"
 
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { AdvancedABIContext } from "context/govPool/proposals/custom/AdvancedABIContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
 

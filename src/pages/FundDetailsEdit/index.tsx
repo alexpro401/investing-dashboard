@@ -44,7 +44,7 @@ import { usePoolContract, usePoolQuery } from "hooks/usePool"
 import { useAddToast } from "state/application/hooks"
 
 import { useERC20Data } from "state/erc20/hooks"
-import { UpdateListType } from "constants/types"
+import { UpdateListType } from "consts/types"
 import { useUserAgreement } from "state/user/hooks"
 import { addPool } from "state/ipfsMetadata/actions"
 import { TransactionType } from "state/transactions/types"

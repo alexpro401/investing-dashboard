@@ -3,7 +3,9 @@ import { isEmpty, isNil, map } from "lodash"
 
 import * as S from "./styled"
 import theme, { Flex } from "theme"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
+import { DEFAULT_PAGINATION_COUNT } from "consts/misc"
+import { NoDataMessage } from "common"
 
 interface Props {
   nodeHead?: React.ReactNode
@@ -22,10 +24,10 @@ const Table: React.FC<Props> = ({
   pagination = true,
   placeholder,
 }) => {
-  const total = Number(data.length) || 0
+  const total = Number(data?.length) || 0
 
   const [offset, setOffset] = React.useState(0)
-  const [limit] = React.useState(10)
+  const [limit] = React.useState(DEFAULT_PAGINATION_COUNT)
 
   const onPrev = React.useCallback(() => {
     if (offset === 0 || offset - limit <= 0) {
@@ -77,10 +79,10 @@ const Table: React.FC<Props> = ({
   }, [total, limit, offset])
 
   return (
-    <div>
+    <S.TableContainer>
       {!isNil(nodeHead) && (
         <>
-          <Flex full m={"0 0 16px"} dir={"column"}>
+          <Flex full dir={"column"}>
             {nodeHead}
           </Flex>
           <S.Divider />
@@ -88,25 +90,19 @@ const Table: React.FC<Props> = ({
       )}
       {isNil(dataInView) || isEmpty(dataInView) ? (
         <Flex full ai="center" jc="center" p="16px 0 0">
-          {!isNil(placeholder) ? (
-            placeholder
-          ) : (
-            <S.Title color={theme.textColors.primary}>No data</S.Title>
-          )}
+          {!isNil(placeholder) ? placeholder : <NoDataMessage />}
         </Flex>
       ) : (
         map(dataInView, (item, index) => (
           <React.Fragment key={index}>
-            <Flex full p="16px 0">
-              {row(item, index)}
-            </Flex>
+            <Flex full>{row(item, index)}</Flex>
             {index + 1 < dataInView.length ? <S.Divider /> : null}
           </React.Fragment>
         ))
       )}
       {!isNil(nodeFooter) && nodeFooter}
       {pagination && Pagination}
-    </div>
+    </S.TableContainer>
   )
 }
 

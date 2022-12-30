@@ -7,7 +7,7 @@ import { Card } from "common"
 import { Flex } from "theme"
 import { ChartFilter, ChartFilterItem, TextLabel, TextValue } from "../styled"
 import Chart from "components/Chart"
-import { CHART_TYPE, TIMEFRAME } from "constants/chart"
+import { CHART_TYPE, TIMEFRAME } from "consts/chart"
 
 const FakeChartData = [
   {

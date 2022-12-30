@@ -4,7 +4,7 @@ import { generatePath, useNavigate } from "react-router-dom"
 import Modal from "components/Modal"
 import useIsValidator from "hooks/useIsValidator"
 import { useActiveWeb3React } from "hooks"
-import { ICON_NAMES, ROUTE_PATHS } from "constants/index"
+import { ICON_NAMES, ROUTE_PATHS } from "consts"
 import Skeleton from "components/Skeleton"
 
 import * as S from "./styled"

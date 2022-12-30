@@ -6,7 +6,7 @@ import { isEmpty, isNil, map, filter } from "lodash"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import * as S from "../styled"
-import theme, { Center, Text } from "theme"
+import theme, { Center } from "theme"
 
 import { Token } from "interfaces"
 import LoadMore from "components/LoadMore"
@@ -14,6 +14,7 @@ import { GovPoolActiveDelegations } from "queries"
 import useQueryPagination from "hooks/useQueryPagination"
 import GovTokenDelegationCard from "components/cards/GovTokenDelegation"
 import { IGovVoterInPoolPairsQuery } from "interfaces/thegraphs/gov-pools"
+import { NoDataMessage } from "common"
 
 interface Props {
   govPoolAddress?: string
@@ -74,7 +75,7 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress, token }) => {
     return (
       <S.List>
         <Center>
-          <Text color={theme.textColors.secondary}>No Delegations</Text>
+          <NoDataMessage />
         </Center>
       </S.List>
     )

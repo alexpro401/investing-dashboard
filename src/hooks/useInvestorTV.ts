@@ -3,7 +3,7 @@ import { isEmpty, isNil } from "lodash"
 
 import { TraderPool } from "abi"
 import useError from "./useError"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { useActiveWeb3React } from "hooks"
 import { parseTransactionError } from "utils"
 import { getContract } from "utils/getContract"

@@ -20,6 +20,8 @@ export { default as AppNavigation } from "./AppNavigation"
 export { default as WalletBadge } from "./WalletBadge"
 export { default as SideStepsNavigationBar } from "./SideStepsNavigationBar"
 export { default as FormStepsNavigation } from "./FormStepsNavigation"
+export { default as Wallet } from "./Wallet"
+export { default as Overlay } from "./Overlay"
 export { default as Breadcrumbs } from "./Breadcrumbs"
 
 export * from "./Typography"

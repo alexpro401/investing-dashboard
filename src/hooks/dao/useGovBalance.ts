@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useWeb3React } from "@web3-react/core"
-import { ZERO_ADDR } from "constants/index"
+import { ZERO_ADDR } from "consts"
 import { useGovUserKeeperContract } from "contracts"
 
 import {

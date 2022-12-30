@@ -1,6 +1,6 @@
 import styled from "styled-components/macro"
 
-import { TypographyTags } from "constants/types"
+import { TypographyTags } from "consts/types"
 
 export type TypographyProps = {
   tag?: TypographyTags

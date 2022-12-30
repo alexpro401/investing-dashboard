@@ -17,7 +17,7 @@ import { readFromClipboard } from "utils/clipboard"
 import { useBreakpoints } from "hooks"
 import { useFormValidation } from "hooks/useFormValidation"
 import { required, isAddressValidator } from "utils/validators"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import theme from "theme"
 
 import * as S from "../styled"

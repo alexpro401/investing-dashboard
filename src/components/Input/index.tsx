@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState, useRef, useEffect } from "react"
+import React, { FC, ReactNode, useState, useRef, useEffect } from "react"
 
 import { Container, Label, InputField, LimitText } from "./styled"
 
@@ -70,6 +70,7 @@ const Input: FC<Props> = ({
   error = false,
   onClick,
   onChange,
+  ...rest
 }) => {
   const fieldRef = useRef<HTMLInputElement | null>(null)
 
@@ -139,6 +140,7 @@ const Input: FC<Props> = ({
         onWheel={(e: any) => e.target.blur()}
         ref={fieldRef}
         placeholder={placeholder}
+        {...rest}
       />
 
       {rightIcon}

@@ -30,7 +30,7 @@ import PaginationTable from "components/PaginationTable"
 import usersImageUrl from "assets/images/users.svg"
 
 import { shortenAddress, formatTokenNumber } from "utils"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommonContext/GovPoolProfileCommonContext"
 import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsContext/GovPoolProfileTabsContext"

@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react"
-import { DEFAULT_TXN_DISMISS_MS } from "constants/misc"
+import { DEFAULT_TXN_DISMISS_MS } from "consts/misc"
 import { AppState } from "state"
 import { useAppDispatch, useAppSelector } from "state/hooks"
 import { addToast, hideToast, removeToast } from "./actions"

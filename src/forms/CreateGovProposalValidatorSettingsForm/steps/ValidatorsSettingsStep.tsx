@@ -18,7 +18,7 @@ import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { CreateDaoCardStepNumber } from "common"
 import ValidatorsList from "components/ValidatorsList"
 import GovVotingSettings from "modals/GovVotingSettings"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { readFromClipboard } from "utils/clipboard"
 import {
   useFormValidation,

@@ -2,7 +2,7 @@ import * as React from "react"
 import { isNil, map } from "lodash"
 import { v4 as uuidv4 } from "uuid"
 import { ResponsiveContainer, AreaChart, Area } from "recharts"
-import { AREA_GRADIENT_STOPS, CHART_ITEM_THEME } from "constants/chart"
+import { AREA_GRADIENT_STOPS, CHART_ITEM_THEME } from "consts/chart"
 import { ChartActiveDot } from "../components"
 
 function getGradients(chartItems) {

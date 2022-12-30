@@ -17,9 +17,9 @@ import {
   InsuranceAccident,
 } from "interfaces/insurance"
 import { IPriceHistory } from "interfaces/thegraphs/all-pools"
-import { TIMEFRAME } from "constants/chart"
+import { TIMEFRAME } from "consts/chart"
 import { useLocalStorage } from "react-use"
-import { INITIAL_INSURANCE_ACCIDENT } from "constants/insurance"
+import { INITIAL_INSURANCE_ACCIDENT } from "consts/insurance"
 import { isEqual } from "lodash"
 
 export interface InsuranceAccidentForm {
@@ -162,16 +162,16 @@ const InsuranceAccidentCreatingContextProvider: FC<
     }
   }, [value])
 
-  const [_pool, _setPool] = useState<string>(storedForm.form.pool)
-  const [_block, _setBlock] = useState<string>(storedForm.form.block)
-  const [_date, _setDate] = useState<string>(storedForm.form.date)
-  const [_chat, _setChat] = useState<string>(storedForm.form.chat)
+  const [_pool, _setPool] = useState<string>(storedForm.form.pool ?? "")
+  const [_block, _setBlock] = useState<string>(storedForm.form.block ?? "")
+  const [_date, _setDate] = useState<string>(storedForm.form.date ?? "")
+  const [_chat, _setChat] = useState<string>(storedForm.form.chat ?? "")
   const [_description, _setDescription] = useState<string>(
-    storedForm.form.description
+    storedForm.form.description ?? ""
   )
 
   const [_insuranceAccidentExist, _setInsuranceAccidentExist] =
-    useState<boolean>(storedForm.insuranceAccidentExist)
+    useState<boolean>(storedForm.insuranceAccidentExist ?? false)
   const [_insurancePoolHaveTrades, _setInsurancePoolHaveTrades] =
     useState<boolean>(false)
   const [_insurancePoolLastPriceHistory, _setInsurancePoolLastPriceHistory] =

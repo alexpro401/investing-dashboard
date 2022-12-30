@@ -5,7 +5,7 @@ import { createClient, Provider as GraphProvider } from "urql"
 
 import { expandTimestamp, formatBigNumber } from "utils"
 
-import { DATE_TIME_FORMAT } from "constants/time"
+import { DATE_TIME_FORMAT } from "consts/time"
 import { Center, Flex } from "theme"
 import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
@@ -36,7 +36,7 @@ import {
   SymbolsLeft,
   ValidationError,
 } from "./styled"
-import { SubmitState } from "constants/types"
+import { SubmitState } from "consts/types"
 import TransactionSent from "modals/TransactionSent"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { GuardSpinner } from "react-spinners-kit"

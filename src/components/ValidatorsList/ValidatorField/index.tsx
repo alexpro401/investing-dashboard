@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from "react"
 
 import { OverlapInputField } from "fields"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { AppButton } from "common"
 import { readFromClipboard } from "utils/clipboard"
 import { shortenAddress, isAddress } from "utils"

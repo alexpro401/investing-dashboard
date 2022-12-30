@@ -1,7 +1,7 @@
 import { useLocation, Navigate } from "react-router-dom"
 import { useWeb3React } from "@web3-react/core"
 import * as S from "./styled"
-import { ROUTE_PATHS } from "constants/index"
+import { ROUTE_PATHS } from "consts"
 
 function RequireAuth() {
   const { account } = useWeb3React()

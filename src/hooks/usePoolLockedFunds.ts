@@ -4,7 +4,7 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { normalizeBigNumber } from "utils"
 import { percentageOfBignumbers, subtractBignumbers } from "utils/formulas"
 import useOpenPositionsPriceOutUSD from "hooks/useOpenPositionsPriceOutUSD"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 
 export function usePoolLockedFunds(poolData, poolInfo, baseToken) {
   const _baseAndPositionBalances = useMemo(() => {

@@ -13,8 +13,8 @@ import {
 } from "common"
 import { CreateDaoCardStepNumber } from "../components"
 
+import { ICON_NAMES } from "consts/icon-names"
 import theme from "theme"
-import { ICON_NAMES } from "constants/icon-names"
 import Switch from "components/Switch"
 import { AlertType } from "context/AlertContext"
 import { useAlert, useBreakpoints } from "hooks"

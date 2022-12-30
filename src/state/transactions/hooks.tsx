@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from "state/hooks"
 import { addTransation } from "./actions"
 import { TransactionDetails } from "./types"
 
-import { DEFAULT_TXN_DISMISS_MS } from "constants/misc"
+import { DEFAULT_TXN_DISMISS_MS } from "consts/misc"
 
 export function useTransactionAdder() {
   const { chainId, account } = useActiveWeb3React()

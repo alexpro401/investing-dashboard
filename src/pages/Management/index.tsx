@@ -3,7 +3,7 @@ import { useMemo } from "react"
 import { createClient, Provider as GraphProvider } from "urql"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import { AppButton, Icon } from "common"
 import TransactionSlippage from "components/TransactionSlippage"
@@ -18,7 +18,7 @@ const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
 })
 
-function Management() {
+function Management(props) {
   const {
     direction,
     setDirection,
@@ -123,7 +123,7 @@ function Management() {
   )
 
   return (
-    <Card>
+    <Card {...props}>
       <CardHeader>
         <Flex>
           <Title
@@ -179,10 +179,10 @@ function Management() {
   )
 }
 
-export default function ManagementWithProvider() {
+export default function ManagementWithProvider(props) {
   return (
     <GraphProvider value={poolsClient}>
-      <Management />
+      <Management {...props} />
     </GraphProvider>
   )
 }
