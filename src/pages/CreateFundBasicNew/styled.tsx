@@ -8,8 +8,20 @@ export const Root = styled.div`
   width: 100%;
 `
 
-export const Container = styled(motion.div)`
-  margin: 0 auto;
-  flex: 1;
+export const PageHolder = styled(motion.div).attrs(() => ({
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.2 },
+}))`
   width: 100%;
+  overflow-y: auto;
+`
+
+export const PageContent = styled.div`
+  overflow: hidden auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  height: 100%;
 `
