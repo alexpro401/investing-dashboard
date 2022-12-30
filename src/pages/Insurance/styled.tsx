@@ -23,8 +23,8 @@ export const Indents = styled.div<{ top?: boolean; side?: boolean }>`
 `
 
 export const InsuranceInfoCard = styled(Card)`
+  background: transparent;
   ${respondTo("sm")} {
-    background: transparent;
     gap: 24px;
   }
 `
@@ -48,8 +48,12 @@ export const InsuranceInfoCardDescription = styled(CardDescription)`
   }
 `
 export const InsuranceInfoCardAction = styled(AppButton)`
+  width: 100%;
+  background: #28334a;
+
   ${respondTo("sm")} {
     background: rgba(38, 105, 235, 0.15);
+    width: initial;
     border-radius: 16px;
   }
 `
