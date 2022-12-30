@@ -21,7 +21,7 @@ import { OverlapInputField, TextareaField } from "fields"
 import Avatar from "components/Avatar"
 import TokenSelect from "modals/TokenSelect"
 import theme from "theme"
-import { ICON_NAMES } from "constants/index"
+import { ICON_NAMES } from "consts/icon-names"
 import { Token } from "lib/entities"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 

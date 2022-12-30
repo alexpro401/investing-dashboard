@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 
 import { hideTapBar, showTabBar } from "state/application/actions"
-import { ROUTE_PATHS } from "constants/index"
+import { ROUTE_PATHS } from "consts/routes"
 import { useBreakpoints } from "hooks"
 import { BasicFundSettings } from "./steps"
 
