@@ -1,6 +1,45 @@
+import { formatUnits } from "@ethersproject/units"
+import { PulseSpinner } from "react-spinners-kit"
+import {
+  useActiveWeb3React,
+  useGovPoolTreasury,
+  useInsuranceAmount,
+} from "hooks"
+import { useMemo } from "react"
+import { useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom"
+import { selectDexeAddress } from "state/contracts/selectors"
+import { formatFiatNumber, normalizeBigNumber } from "utils"
 import * as S from "./styled"
 
 export default function WalletInsurance() {
+  const { account } = useActiveWeb3React()
+  const { insuranceAmount, stakeAmount } = useInsuranceAmount(account)
+
+  const dexeAddress = useSelector(selectDexeAddress)
+
+  const [treasuryTokens, treasuryTokensLoading] = useGovPoolTreasury(
+    process.env.REACT_APP_DEXE_DAO_ADDRESS
+  )
+
+  const navigate = useNavigate()
+
+  const handleInsuranceRedirect = () => {
+    navigate("/insurance")
+  }
+
+  const treasuryDexeBalance = useMemo(() => {
+    if (treasuryTokensLoading || !treasuryTokens) return "-"
+
+    const dexeToken = treasuryTokens.items.filter(
+      (token) => token.contract_address.toLocaleLowerCase() === dexeAddress
+    )[0]
+
+    if (!dexeToken) return "-"
+
+    return formatFiatNumber(formatUnits(dexeToken.balance, 18), 0)
+  }, [dexeAddress, treasuryTokens, treasuryTokensLoading])
+
   return (
     <>
       <S.Container
@@ -20,10 +59,12 @@ export default function WalletInsurance() {
                 </S.InsuranceBadgeWrpDetailsMultiplier>
               </S.InsuranceBadgeWrpDetailsLabel>
               <S.InsuranceBadgeWrpDetailsTitle>
-                0.0000 DeXe
+                {normalizeBigNumber(insuranceAmount, 18, 2)} DEXE
               </S.InsuranceBadgeWrpDetailsTitle>
             </S.InsuranceBadgeWrpDetails>
-            <S.InsuranceBadgeWrpManageBtn>Manage</S.InsuranceBadgeWrpManageBtn>
+            <S.InsuranceBadgeWrpManageBtn onClick={handleInsuranceRedirect}>
+              Manage
+            </S.InsuranceBadgeWrpManageBtn>
           </S.InsuranceBadgeWrp>
 
           <S.InsuranceAmountsRowsWrp>
@@ -32,7 +73,7 @@ export default function WalletInsurance() {
                 My total Stake:
               </S.InsuranceAmountsRowLabel>
               <S.InsuranceAmountsRowValue>
-                10,000 DEXE
+                {normalizeBigNumber(stakeAmount, 18, 2)} DEXE
               </S.InsuranceAmountsRowValue>
             </S.InsuranceAmountsRow>
 
@@ -41,7 +82,12 @@ export default function WalletInsurance() {
                 DeXe Treasury Balance:
               </S.InsuranceAmountsRowLabel>
               <S.InsuranceAmountsRowValue>
-                1m 478 57845 DEXE
+                {treasuryTokensLoading ? (
+                  <PulseSpinner size={12} loading />
+                ) : (
+                  treasuryDexeBalance
+                )}{" "}
+                DEXE
               </S.InsuranceAmountsRowValue>
             </S.InsuranceAmountsRow>
           </S.InsuranceAmountsRowsWrp>

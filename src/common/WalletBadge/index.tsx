@@ -13,7 +13,7 @@ const WalletBadge = () => {
   const { account } = useActiveWeb3React()
   const [{ loading, userAvatar }] = useUserMetadata(account)
   const dexeAddress = useSelector(selectDexeAddress)
-  const insuranceAmount = useInsuranceAmount(account)
+  const { insuranceAmount } = useInsuranceAmount(account)
 
   return (
     <S.Card>
