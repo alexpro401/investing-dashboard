@@ -11,10 +11,10 @@ import confirmModalImage from "assets/images/confirm-modal.png"
 import * as S from "../styled/modal-created-sucessfully"
 import { copyToClipboard } from "utils/clipboard"
 import AppButton from "common/AppButton"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { useAddToast } from "state/application/hooks"
 import { useGovPoolLatestProposalId } from "hooks/dao"
-import { ROUTE_PATHS } from "constants/index"
+import { ROUTE_PATHS } from "consts"
 import { useBreakpoints } from "hooks"
 
 interface Props {

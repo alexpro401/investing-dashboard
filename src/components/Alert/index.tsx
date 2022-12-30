@@ -5,7 +5,7 @@ import { Flex } from "theme"
 
 import { useAlertContext, AlertType } from "context/AlertContext"
 
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { AppButton, Overlay } from "common"
 import { useBreakpoints } from "hooks"
 

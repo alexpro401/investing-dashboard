@@ -5,7 +5,7 @@ import Chart from "components/Chart"
 import { ChartTooltipPnl } from "components/Chart/tooltips"
 import { useERC20Data } from "state/erc20/hooks"
 import { usePoolPriceHistory } from "hooks/usePool"
-import { CHART_TYPE, TIMEFRAME } from "constants/chart"
+import { CHART_TYPE, TIMEFRAME } from "consts/chart"
 
 import S from "./styled"
 import theme from "theme"

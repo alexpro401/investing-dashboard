@@ -1,4 +1,4 @@
-import { SubmitState } from "constants/types"
+import { SubmitState } from "consts/types"
 import { BigNumberish } from "@ethersproject/bignumber"
 import { useCallback } from "react"
 import { useGovValidatorsContract } from "contracts"

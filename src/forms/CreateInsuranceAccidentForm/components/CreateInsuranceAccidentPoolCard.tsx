@@ -8,7 +8,7 @@ import Skeleton from "components/Skeleton"
 import TokenIcon from "components/TokenIcon"
 import { CreateInsuranceAccidentPoolsStyled as CIAPools } from "forms/CreateInsuranceAccidentForm/styled"
 
-import { DATE_FORMAT } from "constants/time"
+import { DATE_FORMAT } from "consts/time"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"

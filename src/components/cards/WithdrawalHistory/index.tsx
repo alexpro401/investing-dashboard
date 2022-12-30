@@ -2,7 +2,7 @@ import { FC, useMemo } from "react"
 import { format } from "date-fns"
 
 import { useActiveWeb3React } from "hooks"
-import { DATE_FORMAT } from "constants/time"
+import { DATE_FORMAT } from "consts/time"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 import { IFeeHistory } from "interfaces/thegraphs/all-pools"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"

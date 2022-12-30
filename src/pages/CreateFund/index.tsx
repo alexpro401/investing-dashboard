@@ -6,7 +6,7 @@ import { FC, useState } from "react"
 import * as S from "./styled"
 import { Flex } from "theme"
 import { useNavigate } from "react-router-dom"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 import RadioButton from "components/RadioButton"

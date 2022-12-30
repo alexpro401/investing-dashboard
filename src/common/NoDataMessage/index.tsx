@@ -1,6 +1,6 @@
 import { FC, HTMLAttributes } from "react"
 import * as S from "./styled"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   message?: string

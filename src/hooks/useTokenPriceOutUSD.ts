@@ -3,7 +3,7 @@ import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { usePriceFeedContract } from "contracts"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 
 interface IParams {
   tokenAddress: string | undefined

@@ -19,7 +19,7 @@ import { IRequestDividendsParams } from "./useRequestDividendsContext"
 import * as S from "./styled"
 import formatDistanceToNow from "date-fns/formatDistanceToNow"
 import format from "date-fns/format"
-import { DATE_TIME_FORMAT } from "constants/time"
+import { DATE_TIME_FORMAT } from "consts/time"
 
 const investPoolsClient = createClient({
   url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",

@@ -10,7 +10,7 @@ import {
   CHART_FALLBACK_ITEM,
   CHART_TYPE,
   TIMEFRAME,
-} from "constants/chart"
+} from "consts/chart"
 import { useBreakpoints } from "hooks"
 
 const ChartArea = React.lazy(() => import(`./charts/ChartArea`))

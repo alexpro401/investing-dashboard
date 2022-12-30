@@ -2,7 +2,7 @@ import * as React from "react"
 import { LineChart, ResponsiveContainer, Line } from "recharts"
 import { isNil, map } from "lodash"
 import { v4 as uuidv4 } from "uuid"
-import { CHART_ITEM_THEME } from "constants/chart"
+import { CHART_ITEM_THEME } from "consts/chart"
 import { ChartActiveDot } from "../components"
 
 interface Props {

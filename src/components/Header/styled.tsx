@@ -1,5 +1,7 @@
 import { Flex, BaseButton, respondTo } from "theme"
-import styled from "styled-components/macro"
+import styled from "styled-components"
+import { Icon } from "common"
+import { ICON_NAMES } from "consts"
 
 export const Container = styled(Flex)`
   touch-action: none;
@@ -18,9 +20,20 @@ export const Container = styled(Flex)`
   }
 `
 
+export const MobileLogo = styled(Icon).attrs({ name: ICON_NAMES.logoIcon })`
+  display: block;
+
+  ${respondTo("sm")} {
+    display: none;
+  }
+`
+
 export const Bar = styled(Flex)`
   width: 100%;
   height: 45px;
+  justify-content: space-between;
+
+  padding: 0 16px;
 
   ${respondTo("sm")} {
     padding: 0 20px;
@@ -135,6 +148,7 @@ export const Title = styled(Flex)`
   letter-spacing: -0.02em;
   align-items: center;
   color: #e4f2ff;
+  display: none;
 
   ${respondTo("sm")} {
     font-family: ${(props) => props.theme.appFontFamily};
@@ -144,6 +158,7 @@ export const Title = styled(Flex)`
     line-height: 17px;
     letter-spacing: 0.01em;
     color: #b1c7fc;
+    display: flex;
   }
 `
 

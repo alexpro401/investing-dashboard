@@ -5,7 +5,7 @@ import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core"
 import IconButton from "components/IconButton"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { connectorsByName, RPC_URLS } from "constants/connectors"
+import { connectorsByName, RPC_URLS } from "consts/connectors"
 
 import warn from "assets/icons/warning.svg"
 

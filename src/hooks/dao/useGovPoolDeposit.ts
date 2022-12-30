@@ -5,7 +5,7 @@ import { useGovUserKeeperContract, useGovPoolContract } from "contracts"
 import useError from "hooks/useError"
 import usePayload from "../usePayload"
 import { useTransactionAdder } from "state/transactions/hooks"
-import { SubmitState } from "constants/types"
+import { SubmitState } from "consts/types"
 import { TransactionType } from "state/transactions/types"
 import { isTxMined, parseTransactionError } from "utils"
 

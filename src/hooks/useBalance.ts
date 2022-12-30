@@ -6,7 +6,7 @@ import { useMemo } from "react"
 import { useMultipleContractSingleData } from "state/multicall/hooks"
 import { isAddress } from "utils"
 import { Currency, Token } from "lib/entities"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { useWeb3React } from "@web3-react/core"
 import { useAllTokens } from "./useToken"
 

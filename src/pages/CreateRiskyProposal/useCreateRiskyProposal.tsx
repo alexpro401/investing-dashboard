@@ -12,8 +12,8 @@ import { useTraderPoolContract } from "contracts"
 import { useBasicPoolContract } from "contracts"
 import { useTraderPoolRiskyProposalContract } from "contracts"
 
-import { ZERO } from "constants/index"
-import { IValidationError, SubmitState } from "constants/types"
+import { ZERO } from "consts"
+import { IValidationError, SubmitState } from "consts/types"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 

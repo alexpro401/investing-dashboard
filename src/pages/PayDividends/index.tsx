@@ -6,9 +6,9 @@ import { useWeb3React } from "@web3-react/core"
 import format from "date-fns/format"
 import formatDistanceToNow from "date-fns/formatDistanceToNow"
 
-import { DATE_TIME_FORMAT } from "constants/time"
+import { DATE_TIME_FORMAT } from "consts/time"
 
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import ExternalLink from "components/ExternalLink"
 import IconButton from "components/IconButton"
 import DividendsInput from "components/Exchange/DividendsInput"

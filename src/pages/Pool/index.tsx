@@ -33,7 +33,7 @@ import { useERC20Data } from "state/erc20/hooks"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { selectPoolByAddress } from "state/pools/selectors"
 
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { normalizeBigNumber } from "utils"
 import usePoolPrice from "hooks/usePoolPrice"
 import { multiplyBignumbers } from "utils/formulas"

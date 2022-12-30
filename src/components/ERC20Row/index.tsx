@@ -8,7 +8,7 @@ import TokenIcon from "components/TokenIcon"
 import { normalizeBigNumber } from "utils"
 import { INftTile } from "interfaces/exchange"
 import { useERC20Data } from "state/erc20/hooks"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import theme from "theme"
 
 interface Props extends Omit<INftTile, "votingPower"> {

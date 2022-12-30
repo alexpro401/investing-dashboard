@@ -8,7 +8,7 @@ import IconButton from "components/IconButton"
 import { ToastType } from "./types"
 
 import close from "assets/icons/close-gray.svg"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 
 const iconMapper = {
   [ToastType.Waiting]: (

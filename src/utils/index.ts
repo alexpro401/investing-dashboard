@@ -5,9 +5,9 @@ import { formatUnits, parseUnits, parseEther } from "@ethersproject/units"
 import { BigNumber, BigNumberish, FixedNumber } from "@ethersproject/bignumber"
 
 import { ERC20 } from "abi"
-import { poolTypes, ZERO } from "constants/index"
+import { poolTypes, ZERO } from "consts"
 import { ExchangeType } from "interfaces/exchange"
-import { PoolType, TokenTuple } from "constants/types"
+import { PoolType, TokenTuple } from "consts/types"
 import { getBalanceOf, getContract } from "./getContract"
 import { ITopMembersFilters, OwnedPools, Token } from "interfaces"
 import {

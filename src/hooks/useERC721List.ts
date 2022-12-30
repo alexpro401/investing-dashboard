@@ -3,7 +3,7 @@ import { useDebounce } from "react-use"
 import { useAPI } from "api"
 
 import { IGovNftExactBalance } from "interfaces/contracts/IGovUserKeeper"
-import { ZERO_ADDR } from "constants/index"
+import { ZERO_ADDR } from "consts"
 
 import { useActiveWeb3React, useERC721TokenOwnerMulticall } from "hooks"
 import {

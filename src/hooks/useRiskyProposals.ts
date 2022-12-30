@@ -11,7 +11,7 @@ import {
   IRiskyProposalInvestmentsInfo,
 } from "interfaces/contracts/ITraderPoolRiskyProposal"
 
-import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
+import { DEFAULT_PAGINATION_COUNT } from "consts/misc"
 import { TraderPoolRiskyProposal } from "interfaces/typechain"
 import { isAddress } from "utils"
 

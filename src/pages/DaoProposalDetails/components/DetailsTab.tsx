@@ -13,7 +13,7 @@ import {
   GovPoolProposalInsurance,
   GovPoolProposalProfile,
 } from "./DetailsTabVariants"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { copyToClipboard } from "utils/clipboard"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {

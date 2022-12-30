@@ -25,7 +25,7 @@ import { TransactionType } from "state/transactions/types"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import useGasTracker from "state/gas/hooks"
 
-import { SubmitState, SwapDirection } from "constants/types"
+import { SubmitState, SwapDirection } from "consts/types"
 import { ExchangeForm } from "interfaces/exchange"
 import { ExchangeType } from "interfaces/exchange"
 import { IAlert } from "context/AlertContext"
@@ -48,7 +48,7 @@ import {
   percentageOfBignumbers,
   divideBignumbers,
 } from "utils/formulas"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { ITraderPool } from "interfaces/typechain/BasicTraderPool"
 
 interface UseInvestProps {

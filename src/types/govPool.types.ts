@@ -1,6 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { SUPPORTED_SOCIALS } from "constants/socials"
+import { SUPPORTED_SOCIALS } from "consts/socials"
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { Dispatch, SetStateAction } from "react"
 

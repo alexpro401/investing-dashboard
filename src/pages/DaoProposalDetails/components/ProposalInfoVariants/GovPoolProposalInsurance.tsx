@@ -10,12 +10,12 @@ import Skeleton from "components/Skeleton"
 import { shortenAddress } from "utils"
 import theme, { Flex, Text } from "theme"
 import ExternalLink from "components/ExternalLink"
-import { CHART_TYPE } from "constants/chart"
+import { CHART_TYPE } from "consts/chart"
 import Chart from "components/Chart"
 import { generatePoolPnlHistory } from "utils/formulas"
 import { usePoolPriceHistoryDiff } from "hooks/usePool"
 import { useBreakpoints } from "hooks"
-import { ICON_NAMES } from "constants/index"
+import { ICON_NAMES } from "consts/index"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   govPoolProposal: ReturnType<typeof useGovPoolProposal>

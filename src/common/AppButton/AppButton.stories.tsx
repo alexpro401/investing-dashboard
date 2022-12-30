@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { CircleSpinner } from "react-spinners-kit"
 import theme, { Flex } from 'theme';
 import { AppButton } from 'common';
-import { ICON_NAMES } from 'constants/icon-names';
+import { ICON_NAMES } from 'consts/icon-names';
 import { TabAmount } from 'components/Header/styled';
 
 const Container = styled.div`

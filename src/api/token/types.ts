@@ -1,4 +1,4 @@
-import { SupportedChainId } from "constants/chains"
+import { SupportedChainId } from "consts/chains"
 
 export const ChainNameById = {
   [SupportedChainId.BINANCE_SMART_CHAIN]: "BNB",

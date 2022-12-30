@@ -7,7 +7,7 @@ import { Icon as CommonIcon } from "common"
 import { Flex } from "theme"
 import { useSelector } from "react-redux"
 import { selectDexeAddress } from "state/contracts/selectors"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { useERC20Data } from "state/erc20/hooks"
 
 import mainAsset from "assets/tokens/bnb.png"

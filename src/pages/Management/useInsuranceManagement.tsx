@@ -14,12 +14,12 @@ import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
 import { parseEther } from "@ethersproject/units"
 
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 
-import { SubmitState, SwapDirection } from "constants/types"
+import { SubmitState, SwapDirection } from "consts/types"
 
 import { getAllowance, parseTransactionError, isTxMined } from "utils"
 import { BigNumber } from "@ethersproject/bignumber"

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { isAddress, parseTransactionError } from "utils"
 import useError from "hooks/useError"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { useMultipleContractSingleData } from "state/multicall/hooks"
 import { GovUserKeeper as GovUserKeeper_ABI } from "abi"
 import { Interface } from "@ethersproject/abi"

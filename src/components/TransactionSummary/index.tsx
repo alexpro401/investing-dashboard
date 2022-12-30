@@ -42,7 +42,7 @@ import {
 } from "state/transactions/types"
 import { formatBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
-import { TradeType, UpdateListType } from "constants/types"
+import { TradeType, UpdateListType } from "consts/types"
 import { selectWhitelistItem } from "state/pricefeed/selectors"
 
 import FormattedCurrencyAmount from "./FormattedCurrencyAmount"

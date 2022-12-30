@@ -1,8 +1,8 @@
 import { InputFieldProps } from "fields"
 
 import * as S from "./styled"
-import { ICON_NAMES } from "constants/icon-names"
-import { SUPPORTED_SOCIALS } from "constants/socials"
+import { ICON_NAMES } from "consts/icon-names"
+import { SUPPORTED_SOCIALS } from "consts/socials"
 import { useCallback, useMemo } from "react"
 import { readFromClipboard } from "utils/clipboard"
 import { AppButton } from "common"

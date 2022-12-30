@@ -3,7 +3,7 @@ import { useClickAway, useDebounce } from "react-use"
 
 import { Collapse } from "common"
 import { OverlapInputField } from "fields"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 
 import * as S from "./styled"
 

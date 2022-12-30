@@ -11,7 +11,7 @@ import { isEmpty, isNil } from "lodash"
 import { BigNumber } from "@ethersproject/bignumber"
 import { useBreakpoints } from "hooks"
 import { useWeb3React } from "@web3-react/core"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts/index"
 import { divideBignumbers } from "utils/formulas"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
