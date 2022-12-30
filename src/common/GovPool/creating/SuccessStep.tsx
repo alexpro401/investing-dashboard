@@ -2,7 +2,7 @@ import { FC, HTMLAttributes, useContext } from "react"
 
 import * as S from "./styled"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React, useBreakpoints } from "hooks"
 import { shortenAddress } from "utils"

@@ -1,6 +1,13 @@
 import { PulseSpinner } from "react-spinners-kit"
 import { createClient } from "urql"
-import { FC, Dispatch, SetStateAction, useMemo, useRef } from "react"
+import {
+  Dispatch,
+  FC,
+  HTMLAttributes,
+  SetStateAction,
+  useMemo,
+  useRef,
+} from "react"
 
 import useTransactionHistoryUI from "./useTransactionHistoryUI"
 
@@ -12,33 +19,31 @@ import { TransactionType } from "state/transactions/types"
 import LoadMore from "components/LoadMore"
 import TransactionHistoryCard from "components/cards/TransactionHistory"
 
-import S from "./styled"
-
-import Invest from "assets/icons/Invest"
-import Withdraw from "assets/icons/Withdraw"
-import Swap from "assets/icons/Swap"
-import Expand from "assets/icons/Expand"
-import Shrink from "assets/icons/Shrink"
+import * as S from "./styled"
 import { Transaction } from "interfaces/thegraphs/interactions"
+import { DEFAULT_PAGINATION_COUNT, ICON_NAMES } from "consts"
 
 const interactionsClient = createClient({
   url: process.env.REACT_APP_INTERACTIONS_API_URL || "",
   requestPolicy: "network-only",
 })
 
-interface IProps {
+interface IProps extends HTMLAttributes<HTMLDivElement> {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
 }
 
-const TransactionHistory: FC<IProps> = ({ open, setOpen }) => {
+const TransactionHistory: FC<IProps> = ({ open, setOpen, ...rest }) => {
   const { chainId, account } = useActiveWeb3React()
 
   const scrollRef = useRef<any>(null)
   const titleRef = useRef<any>(null)
 
-  const [{ filter, scrollH, variants }, { setFilter }] =
-    useTransactionHistoryUI(scrollRef, titleRef, open)
+  const [{ filter }, { setFilter }] = useTransactionHistoryUI(
+    scrollRef,
+    titleRef,
+    open
+  )
 
   const [{ data, loading }, fetchMore] = useQueryPagination<Transaction>({
     query: UserTransactionsQuery,
@@ -52,82 +57,63 @@ const TransactionHistory: FC<IProps> = ({ open, setOpen }) => {
   })
 
   return (
-    <S.Container>
-      <S.Heading
-        animate={{
-          opacity: open ? 0 : 1,
-          transition: { duration: open ? 0.1 : 0.4 },
-        }}
-        ref={titleRef}
-      >
-        Transactions History
-      </S.Heading>
-      <S.Content
-        animate={open ? "visible" : "hidden"}
-        initial="hidden"
-        transition={{ duration: 0.2 }}
-        variants={variants}
-      >
-        <S.Header>
-          <S.HeaderButton
-            onClick={() => {
-              setFilter(TransactionType.INVEST)
-            }}
-            focused={filter === TransactionType.INVEST}
-          >
-            Investing <Invest active={filter === TransactionType.INVEST} />
-          </S.HeaderButton>
-          <S.HeaderButton
-            onClick={() => {
-              setFilter(TransactionType.SWAP)
-            }}
-            focused={filter === TransactionType.SWAP}
-          >
-            Swap <Swap active={filter === TransactionType.SWAP} />
-          </S.HeaderButton>
-          <S.HeaderButton
-            onClick={() => {
-              setFilter(TransactionType.DIVEST)
-            }}
-            focused={filter === TransactionType.DIVEST}
-          >
-            Withdraw <Withdraw active={filter === TransactionType.DIVEST} />
-          </S.HeaderButton>
-          <S.HeaderButton onClick={() => setOpen((prev) => !prev)}>
-            {open ? <Shrink /> : <Expand />}
-          </S.HeaderButton>
-        </S.Header>
-        <S.List
-          ref={scrollRef}
-          style={{
-            height: scrollH,
+    <S.Container {...rest}>
+      <S.Header>
+        <S.HeaderButton
+          isActive={filter === TransactionType.INVEST}
+          onClick={() => {
+            setFilter(TransactionType.INVEST)
           }}
         >
-          {!!data.length &&
-            data.map((tx) => (
-              <TransactionHistoryCard
-                key={tx.id}
-                payload={tx}
-                chainId={chainId}
-              />
-            ))}
+          Investing <S.HeaderButtonIcon name={ICON_NAMES.arrowDownDiagonal} />
+        </S.HeaderButton>
+        <S.HeaderButton
+          isActive={filter === TransactionType.DIVEST}
+          onClick={() => {
+            setFilter(TransactionType.DIVEST)
+          }}
+        >
+          Withdraw <S.HeaderButtonIcon name={ICON_NAMES.arrowUpDiagonal} />
+        </S.HeaderButton>
+        <S.HeaderButton
+          isActive={filter === TransactionType.SWAP}
+          onClick={() => {
+            setFilter(TransactionType.SWAP)
+          }}
+        >
+          Swap <S.HeaderButtonIcon name={ICON_NAMES.reload} />
+        </S.HeaderButton>
+      </S.Header>
+      <S.List ref={scrollRef}>
+        {!!data.length &&
+          data.map((tx) => (
+            <TransactionHistoryCard
+              key={tx.id}
+              payload={tx}
+              chainId={chainId}
+            />
+          ))}
 
-          {(!data || (data.length === 0 && loading)) && (
-            <S.ListPlaceholder>
-              <PulseSpinner />
-            </S.ListPlaceholder>
-          )}
+        {(!data || (data.length === 0 && loading)) && (
+          <S.ListPlaceholder>
+            <PulseSpinner />
+          </S.ListPlaceholder>
+        )}
 
-          {(!data || (!data.length && !loading)) && (
-            <S.ListPlaceholder>No transactions</S.ListPlaceholder>
-          )}
+        {(!data || (!data.length && !loading)) && (
+          <S.ListPlaceholder>No transactions</S.ListPlaceholder>
+        )}
+
+        {!loading && data.length && data.length >= DEFAULT_PAGINATION_COUNT ? (
           <LoadMore
             isLoading={loading && !!data.length}
             handleMore={fetchMore}
             r={scrollRef}
           />
-        </S.List>
-      </S.Content>
+        ) : (
+          <></>
+        )}
+      </S.List>
     </S.Container>
   )
 }

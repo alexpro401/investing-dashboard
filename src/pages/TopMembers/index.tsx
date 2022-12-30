@@ -9,7 +9,7 @@ import LoadMore from "components/LoadMore"
 import TopMembersBar from "components/TopMembersBar"
 import PoolStatisticCard from "components/cards/PoolStatistic"
 
-import { PoolType } from "constants/types"
+import { PoolType } from "consts/types"
 
 import {
   selectBasicPools,
@@ -27,10 +27,9 @@ import {
 } from "./styled"
 import { AppDispatch } from "state"
 import { setActivePoolType } from "state/pools/actions"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES, ROUTE_PATHS } from "consts"
 import { Icon } from "common"
 import { useBreakpoints } from "hooks"
-import { ROUTE_PATHS } from "constants/index"
 
 interface Props {
   poolType: PoolType

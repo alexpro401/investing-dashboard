@@ -1,5 +1,5 @@
 import Confirm from "components/Confirm"
-import { SubmitState } from "constants/types"
+import { SubmitState } from "consts/types"
 import usePayload from "hooks/usePayload"
 import { FC, useCallback } from "react"
 import { SpinnerCircularFixed } from "spinners-react"

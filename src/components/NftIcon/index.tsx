@@ -1,4 +1,4 @@
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { FC, ReactNode } from "react"
 import { isNil } from "lodash"
 import * as S from "./styled"

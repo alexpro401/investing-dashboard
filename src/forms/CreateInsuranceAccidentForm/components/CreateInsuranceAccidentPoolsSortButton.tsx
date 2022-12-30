@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { Icon } from "common"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { CreateInsuranceAccidentPoolsStyled as CIAPools } from "forms/CreateInsuranceAccidentForm/styled"
 
 interface Props {

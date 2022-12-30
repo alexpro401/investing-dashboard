@@ -2,7 +2,7 @@ import { FC } from "react"
 import { createPortal } from "react-dom"
 import { overlayVariants } from "motion/variants"
 
-import { sortItemsList } from "constants/index"
+import { sortItemsList } from "consts"
 import { useDispatch, useSelector } from "react-redux"
 
 import { AppDispatch } from "state"

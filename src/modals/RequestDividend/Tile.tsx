@@ -1,5 +1,5 @@
 import { BigNumber } from "@ethersproject/bignumber"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import useProposalAddress from "hooks/useProposalAddress"
 import useInvestProposalData from "hooks/useInvestProposalData"
 import { FC, useEffect, useState } from "react"

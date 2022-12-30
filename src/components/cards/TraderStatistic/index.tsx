@@ -8,7 +8,7 @@ import AccountInfo from "components/AccountInfo"
 import { CardInfo, Icon as CommonIcon } from "common"
 import { StatisticValue, PoolsIcons } from "./styled"
 
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { copyToClipboard } from "utils/clipboard"
 import { useAddToast } from "state/application/hooks"
 import { normalizeBigNumber, shortenAddress } from "utils"

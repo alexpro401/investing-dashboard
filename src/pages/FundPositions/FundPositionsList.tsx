@@ -14,7 +14,7 @@ import LoadMore from "components/LoadMore"
 import PoolPositionCard from "components/cards/position/Pool"
 
 import S, { BecomeInvestor } from "./styled"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { IPosition } from "interfaces/thegraphs/all-pools"
 import { createClient } from "urql"
 

@@ -11,7 +11,7 @@ import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
 import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
 import { CardInfo } from "common"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import Skeleton from "components/Skeleton"
 
 const DaoPoolCardVotingPower = React.lazy(

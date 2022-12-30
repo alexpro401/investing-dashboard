@@ -11,7 +11,7 @@ import {
 } from "react-router-dom"
 import { Breadcrumbs, DaoProposalsList } from "common"
 import { useBreakpoints } from "hooks"
-import { ROUTE_PATHS } from "constants/index"
+import { ROUTE_PATHS } from "consts/index"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 

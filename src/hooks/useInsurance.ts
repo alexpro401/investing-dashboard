@@ -5,7 +5,7 @@ import { useWeb3React } from "@web3-react/core"
 import { BigNumber } from "@ethersproject/bignumber"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { InsurancDueDay } from "queries/investors"
 import { Insurance } from "interfaces/thegraphs/investors"
 import { selectDexeAddress } from "state/contracts/selectors"

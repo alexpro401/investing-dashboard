@@ -1,4 +1,4 @@
-import { useMemo, MouseEventHandler, useCallback } from "react"
+import { useMemo, MouseEventHandler, useCallback, FC } from "react"
 import { Container, Text, BaseIcon } from "./styled"
 
 interface IProps {
@@ -19,7 +19,7 @@ interface IProps {
   onClick?: (e: MouseEventHandler) => void
 }
 
-const ExternalLink: React.FC<IProps> = ({
+const ExternalLink: FC<IProps> = ({
   href,
   target = "_blank",
   rel = "noopener noreferrer",

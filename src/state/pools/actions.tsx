@@ -1,5 +1,5 @@
 import { createAction } from "@reduxjs/toolkit"
-import { PoolType } from "constants/types"
+import { PoolType } from "consts/types"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 
 export const setFilter = createAction<{ name: string; value: any }>(

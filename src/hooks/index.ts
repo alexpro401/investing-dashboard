@@ -73,6 +73,7 @@ export * from "./useTokenPriceOutUSD"
 export * from "./useTokenRating"
 export * from "./useTransactionWaiter"
 export * from "./useCountdown"
+export * from "./useUserSettings"
 
 export * from "./dao"
 export * from "./pool"

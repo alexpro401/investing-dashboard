@@ -1,7 +1,7 @@
 import { BigNumber } from "@ethersproject/bignumber"
 import { useMemo } from "react"
 
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { normalizeBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
 

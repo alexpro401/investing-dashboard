@@ -3,11 +3,11 @@ import * as S from "./styled"
 import { normalizeBigNumber, shortenAddress } from "utils"
 import { BigNumber } from "@ethersproject/bignumber"
 import { isNil } from "lodash"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { divideBignumbers } from "utils/formulas"
 import { InsuranceAccidentInvestor } from "interfaces/insurance"
 import { useBreakpoints } from "hooks"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { Flex } from "theme"
 
 interface Props {

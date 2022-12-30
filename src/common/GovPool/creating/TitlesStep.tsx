@@ -36,7 +36,7 @@ import { CreateDaoCardStepNumber } from "../components"
 import * as S from "./styled"
 
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { readFromClipboard } from "utils/clipboard"
 import {
   isAddressValidator,
@@ -55,7 +55,7 @@ import { isValidUrl } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React, useBreakpoints, useFormValidation } from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
-import { SUPPORTED_SOCIALS } from "constants/socials"
+import { SUPPORTED_SOCIALS } from "consts/socials"
 import theme from "theme"
 import cosmoImg from "assets/others/cosmo.png"
 

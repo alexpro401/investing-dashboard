@@ -15,7 +15,7 @@ import {
 import { InputField, DurationField } from "fields"
 import ValidatorField from "components/ValidatorsList/ValidatorField"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 import { useFormValidation, useBreakpoints } from "hooks"
 import { isPercentage, required } from "utils/validators"

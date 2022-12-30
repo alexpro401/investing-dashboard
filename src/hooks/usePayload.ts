@@ -1,4 +1,4 @@
-import { SubmitState } from "constants/types"
+import { SubmitState } from "consts/types"
 import { useCallback } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, AppState } from "state"

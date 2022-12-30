@@ -1,4 +1,4 @@
-import { ChainMainTokenData } from "constants/chains"
+import { ChainMainTokenData } from "consts/chains"
 import { useActiveWeb3React } from "hooks"
 import { Token } from "interfaces"
 import { useMemo } from "react"

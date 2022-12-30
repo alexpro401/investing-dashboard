@@ -26,10 +26,10 @@ import {
   parseTransactionError,
 } from "utils"
 import { useActiveWeb3React } from "hooks"
-import { DATE_FORMAT } from "constants/time"
-import { SubmitState } from "constants/types"
+import { DATE_FORMAT } from "consts/time"
+import { SubmitState } from "consts/types"
 import { useERC20Data } from "state/erc20/hooks"
-import { ChainMainToken } from "constants/chains"
+import { ChainMainToken } from "consts/chains"
 import { useAddToast } from "state/application/hooks"
 import { selectGasByChain } from "state/gas/selectors"
 import { useCorePropertiesContract } from "contracts"

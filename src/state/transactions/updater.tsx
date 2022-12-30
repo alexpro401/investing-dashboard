@@ -4,7 +4,7 @@ import { useCallback, useMemo, useEffect } from "react"
 import {
   DEFAULT_TXN_DISMISS_MS,
   TRANSACTION_PENDING_DIVIDER,
-} from "constants/misc"
+} from "consts/misc"
 import { useAppDispatch, useAppSelector } from "state/hooks"
 import { checkedTransaction, finalizeTransaction } from "./actions"
 import { useAddToast, useRemoveToast } from "state/application/hooks"

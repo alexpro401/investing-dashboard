@@ -1,7 +1,7 @@
 import { getDaysInMonth, sub } from "date-fns"
 import { expandTimestamp, shortTimestamp } from "utils"
 import { usePriceHistory } from "state/pools/hooks"
-import { AGGREGATION_CODE } from "constants/chart"
+import { AGGREGATION_CODE } from "consts/chart"
 import { useAPI } from "api"
 import * as React from "react"
 import { ITokenHistoricalPrices } from "api/token/types"

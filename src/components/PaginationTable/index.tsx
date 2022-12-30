@@ -3,7 +3,7 @@ import { isNil, map } from "lodash"
 import { useQuery } from "urql"
 
 import theme, { Flex } from "theme"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { UseQueryArgs } from "urql/dist/types/hooks/useQuery"
 
 import * as S from "./styled"

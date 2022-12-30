@@ -1,4 +1,4 @@
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { useInsuranceContract } from "contracts"
 import { useCallback, useEffect, useState } from "react"
 

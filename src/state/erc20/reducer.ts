@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit"
-import { ChainMainTokenData } from "constants/chains"
+import { ChainMainTokenData } from "consts/chains"
 
 import { Token } from "interfaces"
 import { addToken, removeToken } from "state/erc20/actions"

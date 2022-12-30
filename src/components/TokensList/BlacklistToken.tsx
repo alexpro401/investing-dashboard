@@ -3,7 +3,7 @@ import { Currency, Token } from "lib/entities"
 import { Icon } from "common"
 import theme, { Flex } from "theme"
 
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 
 import TokenIcon from "components/TokenIcon"
 

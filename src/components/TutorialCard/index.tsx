@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react"
 import { AnimatePresence } from "framer-motion"
 
 import { Icon } from "common"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 
 import * as S from "./styled"
 

@@ -1,6 +1,6 @@
 import styled from "styled-components/macro"
 import { Card, CardDescription, CardHead, AppButton } from "common"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { respondTo } from "theme"
 import Management from "pages/Management"
 

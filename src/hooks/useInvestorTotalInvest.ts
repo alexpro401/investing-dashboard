@@ -3,7 +3,7 @@ import { createClient, useQuery } from "urql"
 import { isEmpty, isNil, forEach } from "lodash"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { addBignumbers } from "utils/formulas"
 import { InvestorPoolsPositionsQuery } from "queries"
 

@@ -1,5 +1,5 @@
 import { createAction } from "@reduxjs/toolkit"
-import { SubmitState } from "constants/types"
+import { SubmitState } from "consts/types"
 
 export const addToast = createAction<{ params: any }>("application/add-toast")
 

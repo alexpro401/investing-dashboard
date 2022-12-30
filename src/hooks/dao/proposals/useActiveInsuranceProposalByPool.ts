@@ -4,7 +4,7 @@ import { createClient } from "urql"
 import { isEmpty, isNil } from "lodash"
 
 import { useGovPoolContract } from "contracts"
-import { MAX_PAGINATION_COUNT } from "constants/misc"
+import { MAX_PAGINATION_COUNT } from "consts/misc"
 import { GovProposalsByPoolInMiscQuery } from "queries"
 import { IGovPool } from "interfaces/typechain/GovPool"
 import useQueryPagination from "hooks/useQueryPagination"

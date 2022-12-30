@@ -1,7 +1,7 @@
 import * as React from "react"
 import { createClient } from "urql"
 import { GovPoolsQuery } from "queries"
-import { ZERO_ADDR } from "constants/index"
+import { ZERO_ADDR } from "consts/index"
 import useQueryPagination from "hooks/useQueryPagination"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 

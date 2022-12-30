@@ -19,7 +19,7 @@ import { useGovPoolCreateValidatorInternalProposal } from "hooks/dao"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "common/FormSteps/styled"
-import { ROUTE_PATHS } from "constants/index"
+import { ROUTE_PATHS } from "consts"
 
 enum STEPS {
   validators = "validators",

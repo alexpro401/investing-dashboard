@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import { useParams } from "react-router-dom"
 import { Center, Flex } from "theme"
 
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import Token from "components/Token"
 import SwapPrice from "components/SwapPrice"
 import Header from "components/Header/Layout"

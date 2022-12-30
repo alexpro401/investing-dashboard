@@ -1,7 +1,7 @@
 import { createContext, useContext, useReducer, useCallback } from "react"
 import { Token } from "interfaces"
-import { sliderPropsByPeriodType } from "constants/index"
-import { IValidationError } from "constants/types"
+import { sliderPropsByPeriodType } from "consts"
+import { IValidationError } from "consts/types"
 
 interface IState {
   avatarBlobString: string

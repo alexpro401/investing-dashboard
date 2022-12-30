@@ -9,9 +9,9 @@ import { useGovPoolHelperContracts } from "hooks/dao"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import usePayload from "hooks/usePayload"
 import { useGovPoolCreateProposal, useGovPoolLatestProposalId } from "hooks/dao"
-import { SubmitState } from "constants/types"
+import { SubmitState } from "consts/types"
 import { isTxMined } from "utils"
-import { ROUTE_PATHS, ZERO_ADDR } from "constants/index"
+import { ROUTE_PATHS, ZERO_ADDR } from "consts"
 
 interface ICreateProposalChangeSettingsArgs {
   proposalInfo: {

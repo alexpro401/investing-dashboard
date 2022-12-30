@@ -19,8 +19,8 @@ import {
   usePriceFeedContract,
 } from "contracts"
 
-import { SubmitState } from "constants/types"
-import { ZERO } from "constants/index"
+import { SubmitState } from "consts/types"
+import { ZERO } from "consts"
 
 import {
   getAllowance,

@@ -2,7 +2,7 @@ import * as React from "react"
 import { map } from "lodash"
 
 import S from "./styled"
-import { TIMEFRAME } from "constants/chart"
+import { TIMEFRAME } from "consts/chart"
 
 interface Props {
   current: TIMEFRAME

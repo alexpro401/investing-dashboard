@@ -2,7 +2,7 @@ import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 import { useEffect, useMemo, useState } from "react"
 
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { normalizeBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
 import { usePriceFeedContract } from "contracts"

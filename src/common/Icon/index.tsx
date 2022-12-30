@@ -5,9 +5,12 @@ import {
   AngleRightIcon,
   AngleRightOutlinedIcon,
   AngleUpIcon,
+  ArrowDownDiagonalIcon,
   ArrowDownFilled,
   ArrowIcon,
+  ArrowUpDiagonalIcon,
   ArrowUpFilled,
+  BSCIcon,
   ChatOutline,
   CircleInfoIcon,
   CircleWarningIcon,
@@ -31,6 +34,7 @@ import {
   LinkedinIcon,
   LockedIcon,
   LogoIcon,
+  LogoutIcon,
   MediumIcon,
   MetamaskIcon,
   ModalCloseIcon,
@@ -55,7 +59,7 @@ import {
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 
 interface Props extends HTMLAttributes<HTMLOrSVGElement> {
   name: ICON_NAMES
@@ -170,6 +174,14 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return DexeTokenIcon as unknown as ElementType
       case ICON_NAMES.gradientCheck:
         return GradientCheckIcon as unknown as ElementType
+      case ICON_NAMES.logout:
+        return LogoutIcon as unknown as ElementType
+      case ICON_NAMES.arrowUpDiagonal:
+        return ArrowUpDiagonalIcon as unknown as ElementType
+      case ICON_NAMES.arrowDownDiagonal:
+        return ArrowDownDiagonalIcon as unknown as ElementType
+      case ICON_NAMES.bsc:
+        return BSCIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }

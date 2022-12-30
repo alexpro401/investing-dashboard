@@ -3,9 +3,9 @@ import { isEmpty, isNil, map } from "lodash"
 
 import * as S from "./styled"
 import theme, { Flex } from "theme"
+import { ICON_NAMES } from "consts/icon-names"
+import { DEFAULT_PAGINATION_COUNT } from "consts/misc"
 import { NoDataMessage } from "common"
-import { ICON_NAMES } from "constants/icon-names"
-import { DEFAULT_PAGINATION_COUNT } from "constants/misc"
 
 interface Props {
   nodeHead?: React.ReactNode

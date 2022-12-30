@@ -1,5 +1,5 @@
+import { ICON_NAMES } from "consts/icon-names"
 import { Icon, Overlay } from "common"
-import { ICON_NAMES } from "constants/icon-names"
 import { FC, ReactNode } from "react"
 import { createPortal } from "react-dom"
 import * as S from "./styled"

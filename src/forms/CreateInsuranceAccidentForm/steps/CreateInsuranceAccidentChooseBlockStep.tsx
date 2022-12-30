@@ -31,13 +31,13 @@ import {
   TIMEFRAME_FROM_DATE,
   TIMEFRAME_LIMIT_CODE,
   TIMEFRAME_AGGREGATION_CODE,
-} from "constants/chart"
+} from "consts/chart"
 import { usePriceHistory } from "state/pools/hooks"
 import { generatePoolPnlHistory, getLP, getPNL } from "utils/formulas"
 import { useERC20Data } from "state/erc20/hooks"
 import { expandTimestamp } from "utils"
 import Input from "components/Input"
-import { DATE_FORMAT, DATE_TIME_FORMAT } from "constants/time"
+import { DATE_FORMAT, DATE_TIME_FORMAT } from "consts/time"
 import DatePicker from "components/DatePicker"
 import { InputGroup } from "../styled"
 import Skeleton from "components/Skeleton"
@@ -45,8 +45,8 @@ import Chart from "components/Chart"
 import theme, { Text } from "theme"
 import { ChartTooltipPnl } from "components/Chart/tooltips"
 import { AlertType } from "context/AlertContext"
+import { DEFAULT_ALERT_HIDDEN_TIMEOUT } from "consts/misc"
 import { useAlert, useBreakpoints } from "hooks"
-import { DEFAULT_ALERT_HIDDEN_TIMEOUT } from "constants/misc"
 import { DateInput } from "forms/CreateInsuranceAccidentForm/styled/step-choose-block"
 
 const poolsClient = createClient({

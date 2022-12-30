@@ -9,7 +9,7 @@ import { Flex } from "theme"
 import { shortenAddress } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { Token } from "interfaces"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import Table from "components/Table"
 
 interface Props {

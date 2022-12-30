@@ -2,7 +2,7 @@ import { FC, HTMLAttributes, ReactNode, useContext, useMemo } from "react"
 
 import * as S from "./styled"
 import { stepsControllerContext } from "context/StepsControllerContext"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { useBreakpoints } from "hooks"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {

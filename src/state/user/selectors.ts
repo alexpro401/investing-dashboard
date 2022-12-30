@@ -2,7 +2,7 @@ import { createSelector } from "@reduxjs/toolkit"
 import { AppState } from "state"
 import { filter, forEach, isEmpty, isNil } from "lodash"
 import { addBignumbers, getLastInArray } from "utils/formulas"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { BigNumber } from "@ethersproject/bignumber"
 
 const selectUser = (state: AppState) => state.user

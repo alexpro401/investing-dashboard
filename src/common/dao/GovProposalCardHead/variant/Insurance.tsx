@@ -6,7 +6,7 @@ import TokenIcon from "components/TokenIcon"
 import { usePoolContract } from "hooks/usePool"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { useERC20Data } from "state/erc20/hooks"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 
 interface Props {
   name: string
