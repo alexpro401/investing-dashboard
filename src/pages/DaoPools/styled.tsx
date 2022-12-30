@@ -60,4 +60,11 @@ export const List = {
 
     ${({ center }) => (center ? centerGridItem : "")};
   `,
+  CardIconWrp: styled.div`
+    flex: 1 0 7px;
+    svg {
+      width: 7px;
+      height: 12px;
+    }
+  `,
 }

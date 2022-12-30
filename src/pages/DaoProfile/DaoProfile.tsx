@@ -120,7 +120,7 @@ const DaoProfile: React.FC = () => {
     )
   }, [daoAddress, chainId, currentTab, govPoolQuery])
 
-  const { isMobile } = useBreakpoints()
+  const { isMobile, isDesktop } = useBreakpoints()
 
   return (
     <>
@@ -142,7 +142,7 @@ const DaoProfile: React.FC = () => {
                     }
                   : {}) as IGovPoolQuery),
               }}
-              isMobile={isMobile}
+              isMobile={!isDesktop}
             />
             <S.Indents top side={false}>
               <DaoProfileChart chart={chart} setChart={setChart} />
