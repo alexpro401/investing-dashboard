@@ -242,14 +242,14 @@ function Pool() {
                       text={actions.rightNode.text}
                     />
                   </ButtonContainer>
-                  {!isTrader && isDesktop && (
+                  {!isTrader && (
                     <>
-                      <Divider />
+                      {!isDesktop && <Divider />}
                       <Flex
                         full
-                        ai={isDesktop ? "center" : "flex-end"}
+                        ai={!isDesktop ? "center" : "flex-end"}
                         jc="space-between"
-                        dir={isDesktop ? "row" : "column"}
+                        dir={!isDesktop ? "row" : "column"}
                       >
                         <Label>Your share</Label>
                         <Value.Medium color="#E4F2FF">
