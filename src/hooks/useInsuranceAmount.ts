@@ -1,3 +1,4 @@
+import { useForceUpdate } from "hooks/useForceUpdate"
 import { parseEther } from "@ethersproject/units"
 import { ZERO } from "consts"
 import { useInsuranceContract, usePriceFeedContract } from "contracts"
@@ -15,6 +16,8 @@ export const useInsuranceAmount = (account?: string | null) => {
   const [insuranceAmount, setInsuranceAmount] = useState(ZERO)
   const [stakeAmount, setStakeAmount] = useState(ZERO)
   const [dexePriceUSD, setDexePriceUSD] = useState(ZERO)
+
+  const [updateObserver, update] = useForceUpdate()
 
   const insuranceAmountUSD = useMemo(
     () => multiplyBignumbers([insuranceAmount, 18], [dexePriceUSD, 18]),
@@ -43,18 +46,21 @@ export const useInsuranceAmount = (account?: string | null) => {
   // update insurance balance on account change
   useEffect(() => {
     fetchInsuranceBalance().catch(console.error)
-  }, [fetchInsuranceBalance])
+  }, [updateObserver, fetchInsuranceBalance])
 
   // update insurance amount in USD on insuranceAmount change
   useEffect(() => {
     fetchDexePrice().catch(console.log)
-  }, [fetchDexePrice])
+  }, [updateObserver, fetchDexePrice])
 
-  return {
-    insuranceAmount,
-    stakeAmount,
-    insuranceAmountUSD,
-  }
+  return [
+    {
+      insuranceAmount,
+      stakeAmount,
+      insuranceAmountUSD,
+    },
+    update,
+  ] as const
 }
 
 export default useInsuranceAmount

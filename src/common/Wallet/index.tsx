@@ -17,7 +17,7 @@ export default function Wallet() {
   const { account } = useActiveWeb3React()
   const rootEl = useRef<HTMLDivElement>(null)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const { insuranceAmount } = useInsuranceAmount(account)
+  const [{ insuranceAmount }] = useInsuranceAmount(account)
 
   const [walletType, setWalletType] = useState<WalletType>("")
 

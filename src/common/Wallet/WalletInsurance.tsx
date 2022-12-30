@@ -14,7 +14,7 @@ import * as S from "./styled"
 
 export default function WalletInsurance() {
   const { account } = useActiveWeb3React()
-  const { insuranceAmount, stakeAmount } = useInsuranceAmount(account)
+  const [{ insuranceAmount, stakeAmount }] = useInsuranceAmount(account)
 
   const dexeAddress = useSelector(selectDexeAddress)
 
