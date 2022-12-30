@@ -21,41 +21,6 @@ const LogoIcon: FC = ({ ...rest }) => {
         d="M19.645 10.035C18.7039 10.2745 18.0023 10.7879 17.7798 11.4211C17.5402 12.0884 17.506 15.7675 17.6942 21.2092L17.7969 24.4092L19.0632 21.945L20.3295 19.4638L20.2953 16.76C20.2782 15.2713 20.3124 13.851 20.3637 13.6114C20.5691 12.8243 21.3562 12.6531 24.2995 12.7558L26.8835 12.8243L29.4332 11.5408L32 10.2745L28.2353 10.1548C26.1648 10.1034 23.5124 10.0179 22.3316 9.96652C21.1509 9.9323 19.953 9.96652 19.645 10.035Z"
         fill="url(#paint2_linear_856_106107)"
       />
-      <defs>
-        <linearGradient
-          id="paint0_linear_856_106107"
-          x1="5.7598"
-          y1="0.000121882"
-          x2="12.1424"
-          y2="17.2088"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#2680EB" />
-          <stop offset="1" stopColor="#7FFFD4" />
-        </linearGradient>
-        <linearGradient
-          id="paint1_linear_856_106107"
-          x1="3.47999e-07"
-          y1="9.95868"
-          x2="16.0851"
-          y2="27.8934"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#2680EB" />
-          <stop offset="1" stopColor="#7FFFD4" />
-        </linearGradient>
-        <linearGradient
-          id="paint2_linear_856_106107"
-          x1="17.5735"
-          y1="9.9531"
-          x2="33.6475"
-          y2="27.8574"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#2680EB" />
-          <stop offset="1" stopColor="#7FFFD4" />
-        </linearGradient>
-      </defs>
     </svg>
   )
 }
