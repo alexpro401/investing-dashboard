@@ -10,7 +10,13 @@ import {
   useState,
 } from "react"
 
-import { useForm, useError, useInsurance, useInsuranceDueDay } from "hooks"
+import {
+  useForm,
+  useError,
+  useInsurance,
+  useInsuranceDueDay,
+  useBreakpoints,
+} from "hooks"
 import { useAlert } from "hooks"
 import { isTxMined, normalizeBigNumber, parseTransactionError } from "utils"
 import { AlertType } from "context/AlertContext"
@@ -45,7 +51,6 @@ import InsuranceAccidentExist from "modals/InsuranceAccidentExist"
 import { createPortal } from "react-dom"
 import { SideStepsNavigationBar, StepsNavigation } from "common"
 import { hideTapBar, showTabBar } from "state/application/actions"
-import { useWindowSize } from "react-use"
 import { useNavigate } from "react-router-dom"
 
 const investorsPoolsClient = createClient({
@@ -492,8 +497,7 @@ const CreateInsuranceAccidentForm: FC = () => {
     }
   }
 
-  const { width: windowWidth } = useWindowSize()
-  const isMobile = useMemo(() => windowWidth < 768, [windowWidth])
+  const { isMobile } = useBreakpoints()
 
   return (
     <>

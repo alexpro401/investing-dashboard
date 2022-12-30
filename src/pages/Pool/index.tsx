@@ -40,7 +40,7 @@ import { multiplyBignumbers } from "utils/formulas"
 import { usePoolContract } from "hooks/usePool"
 import { useTraderPoolContract } from "contracts"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
-import { useWindowSize } from "react-use"
+import { useBreakpoints } from "hooks"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -85,8 +85,7 @@ function Pool() {
     })()
   }, [traderPool, account])
 
-  const { width: windowWidth } = useWindowSize()
-  const isMobile = useMemo(() => windowWidth < 1194, [windowWidth])
+  const { isDesktop } = useBreakpoints()
 
   const actions = useMemo(() => {
     if (!poolData) {
@@ -221,7 +220,11 @@ function Pool() {
         {!isNil(poolData) ? (
           <>
             <Indents top>
-              <PoolStatisticCard data={poolData} isMobile={isMobile} hideChart>
+              <PoolStatisticCard
+                data={poolData}
+                isMobile={!isDesktop}
+                hideChart
+              >
                 <>
                   <ButtonContainer>
                     <AppButton
@@ -239,14 +242,14 @@ function Pool() {
                       text={actions.rightNode.text}
                     />
                   </ButtonContainer>
-                  {!isTrader && isMobile && (
+                  {!isTrader && isDesktop && (
                     <>
                       <Divider />
                       <Flex
                         full
-                        ai={isMobile ? "center" : "flex-end"}
+                        ai={isDesktop ? "center" : "flex-end"}
                         jc="space-between"
-                        dir={isMobile ? "row" : "column"}
+                        dir={isDesktop ? "row" : "column"}
                       >
                         <Label>Your share</Label>
                         <Value.Medium color="#E4F2FF">
