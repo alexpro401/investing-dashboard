@@ -1,5 +1,5 @@
 import { FC, ReactNode, useEffect, useState } from "react"
-import { Icon, Wallet } from "common"
+import { AppLogo, Icon, Wallet } from "common"
 
 import HeaderTabs from "components/Header/Tabs"
 import { More, GoBack } from "./Components"
@@ -36,7 +36,7 @@ const Layout: FC<Props> = ({ children, left, right, tabs }) => {
         transition={{ duration: 0.2, ease: [0.29, 0.98, 0.29, 1] }}
       >
         <S.Bar>
-          <S.MobileLogo />
+          <AppLogo mobileOnly />
           <S.Title>{children}</S.Title>
           <Wallet />
         </S.Bar>

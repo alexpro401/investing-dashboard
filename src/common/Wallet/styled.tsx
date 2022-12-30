@@ -276,6 +276,9 @@ export const InsuranceAmountsRowLabel = styled.div`
 `
 
 export const InsuranceAmountsRowValue = styled.div`
+  display: flex;
+  gap: 5px;
+  align-items: center;
   text-align: right;
   font-size: 14px;
   line-height: 1.2;

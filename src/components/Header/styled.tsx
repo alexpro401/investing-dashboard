@@ -1,7 +1,5 @@
 import { Flex, BaseButton, respondTo } from "theme"
 import styled from "styled-components"
-import { Icon } from "common"
-import { ICON_NAMES } from "consts"
 
 export const Container = styled(Flex)`
   touch-action: none;
@@ -17,14 +15,6 @@ export const Container = styled(Flex)`
     background: #0e121b;
     box-shadow: none;
     justify-content: center;
-  }
-`
-
-export const MobileLogo = styled(Icon).attrs({ name: ICON_NAMES.logoIcon })`
-  display: block;
-
-  ${respondTo("sm")} {
-    display: none;
   }
 `
 
