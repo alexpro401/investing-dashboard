@@ -1,5 +1,4 @@
-import { FC, useState } from "react"
-import { useSelector } from "react-redux"
+import { FC, HTMLAttributes, useState } from "react"
 import { Flex } from "theme"
 import { titleVariants } from "motion/variants"
 
@@ -10,36 +9,17 @@ import TradersSort from "components/TradersSort"
 import { ITab } from "interfaces"
 import { usePoolsFilters } from "state/pools/hooks"
 
-import {
-  selectTotalBasicPools,
-  selectTotalInvestPools,
-} from "state/pools/selectors"
+interface Props extends HTMLAttributes<HTMLDivElement> {
+  tabs: ITab[]
+}
 
-const TopMembersBar: FC = () => {
-  const totalBasicPools = useSelector(selectTotalBasicPools)
-  const totalInvestPools = useSelector(selectTotalInvestPools)
-
+const TopMembersBar: FC<Props> = ({ tabs }) => {
   const [filters, dispatchFilter] = usePoolsFilters()
   const [isFiltersActive, setFiltersActive] = useState(false)
   const [isSearchActive, setSearchActive] = useState(filters.query !== "")
 
   const handleFiltersClick = () => !isFiltersActive && setFiltersActive(true)
   const handleSearchClick = () => !isSearchActive && setSearchActive(true)
-
-  const tabs: ITab[] = [
-    {
-      title: `All funds (${totalBasicPools + totalInvestPools})`,
-      source: "/",
-    },
-    {
-      title: `Basic (${totalBasicPools})`,
-      source: "/basic",
-    },
-    {
-      title: `Investment (${totalInvestPools})`,
-      source: "/invest",
-    },
-  ]
 
   return (
     <>

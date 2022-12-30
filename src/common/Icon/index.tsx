@@ -25,6 +25,7 @@ import {
   ExternalLinkIcon,
   FacebookIcon,
   FileDockIcon,
+  FilterIcon,
   FlameGradientIcon,
   GithubIcon,
   GlobeIcon,
@@ -182,6 +183,8 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return ArrowDownDiagonalIcon as unknown as ElementType
       case ICON_NAMES.bsc:
         return BSCIcon as unknown as ElementType
+      case ICON_NAMES.filter:
+        return FilterIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }
