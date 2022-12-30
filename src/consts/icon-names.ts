@@ -56,5 +56,4 @@ export enum ICON_NAMES {
   arrowUpDiagonal = "arrow-up-diagonal",
   arrowDownDiagonal = "arrow-down-diagonal",
   bsc = "bsc",
-  insurance = "insurance",
 }

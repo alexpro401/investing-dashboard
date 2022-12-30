@@ -1,7 +1,9 @@
-import theme, { Flex, respondTo, To } from "theme"
+import theme, { respondTo, To } from "theme"
 import styled from "styled-components/macro"
 import { motion } from "framer-motion"
 import { useMatch } from "react-router-dom"
+import { ICON_NAMES } from "consts"
+import { Icon } from "common"
 
 export const MobileMenu = styled(motion.div)`
   user-select: none;
@@ -49,12 +51,12 @@ const MobileIcon = styled.div`
   height: 35px;
 `
 
-export const LogoWrapper = styled(Flex)`
+export const DesktopLogo = styled(Icon).attrs({ name: ICON_NAMES.logoIcon })`
   width: 100px;
   height: 100px;
   justify-content: center;
   align-items: center;
-  display: none;
+  /* display: none; */
 
   ${respondTo("sm")} {
     display: flex;

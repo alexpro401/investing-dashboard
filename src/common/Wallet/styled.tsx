@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components/macro"
 import { Flex, respondTo } from "theme"
-import { Icon } from "common/index"
+import { Icon } from "common"
 import TransactionHistory from "components/TransactionHistory"
 import ExternalLink from "components/ExternalLink"
 
@@ -35,10 +35,12 @@ export const TogglerBtn = styled(motion.button)<{ isActive: boolean }>`
   cursor: pointer;
   background: #20283a;
   border-radius: 12px;
-  padding: 4px 6px;
+  // right padding is increased to 20px to prevent overlapping of the icon
+  padding: 4px 20px 4px 6px;
   min-width: 56px;
   color: ${(props) => props.theme.textColors.primary};
   border: none;
+  gap: 4px;
 
   &:before {
     content: "";
@@ -64,6 +66,19 @@ export const TogglerBtn = styled(motion.button)<{ isActive: boolean }>`
             opacity: 1;
           `
         : ""}
+  }
+`
+
+export const TogglerBtnAccount = styled.span`
+  font-size: 14px;
+  font-weight: 600;
+
+  color: #6781bd;
+
+  display: none;
+
+  ${respondTo("sm")} {
+    display: block;
   }
 `
 
@@ -128,7 +143,6 @@ export const DropdownContentWrp = styled(motion.div).attrs(() => ({
     right: 0;
     width: 375px;
   }
-}
 `
 
 export const Container = styled(Flex)`

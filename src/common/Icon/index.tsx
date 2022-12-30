@@ -30,7 +30,6 @@ import {
   GlobeIcon,
   GradientCheckIcon,
   GreenCheckIcon,
-  InsuranceIcon,
   InsuranceMultiplierIcon,
   LinkedinIcon,
   LockedIcon,
@@ -183,8 +182,6 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return ArrowDownDiagonalIcon as unknown as ElementType
       case ICON_NAMES.bsc:
         return BSCIcon as unknown as ElementType
-      case ICON_NAMES.insurance:
-        return InsuranceIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }

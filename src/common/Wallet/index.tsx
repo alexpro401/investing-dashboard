@@ -6,12 +6,18 @@ import * as S from "./styled"
 import { ICON_NAMES } from "consts"
 import { AnimatePresence } from "framer-motion"
 import { useClickAway } from "react-use"
+import { useActiveWeb3React, useInsuranceAmount } from "hooks"
+import { formatFiatNumber, shortenAddress } from "utils"
+import { formatEther } from "@ethersproject/units"
+import { MediumText } from "common/Typography"
 
 type WalletType = "account" | "insurance" | ""
 
 export default function Wallet() {
+  const { account } = useActiveWeb3React()
   const rootEl = useRef<HTMLDivElement>(null)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const insurance = useInsuranceAmount(account)
 
   const [walletType, setWalletType] = useState<WalletType>("")
 
@@ -49,7 +55,12 @@ export default function Wallet() {
         onClick={() => handleTogglerClick("insurance")}
         isActive={walletType === "insurance"}
       >
-        <S.TogglerBtnIcon name={ICON_NAMES.insurance} />
+        <S.TogglerBtnIcon name={ICON_NAMES.dexeTokenIcon} />
+        <MediumText weight={600} size="14px">
+          {!insurance.isZero()
+            ? formatFiatNumber(formatEther(insurance), 0)
+            : "Insurance"}
+        </MediumText>
         <S.TogglerBtnIconIndicator
           name={ICON_NAMES.angleDown}
           isActive={walletType === "insurance"}
@@ -60,6 +71,7 @@ export default function Wallet() {
         isActive={walletType === "account"}
       >
         <S.TogglerBtnIcon name={ICON_NAMES.bsc} />
+        <S.TogglerBtnAccount>{shortenAddress(account, 3)}</S.TogglerBtnAccount>
         <S.TogglerBtnIconIndicator
           name={ICON_NAMES.angleDown}
           isActive={walletType === "account"}
