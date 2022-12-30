@@ -43,6 +43,7 @@ const TabPoolLockedFunds: FC<{
       poolUsedInPositionsUSD,
       poolUsedToTotalPercentage,
     },
+    loading,
   ] = usePoolLockedFunds(poolData, poolInfo, baseToken)
 
   const [tf, setTf] = useState(TIMEFRAME.d)
@@ -103,6 +104,7 @@ const TabPoolLockedFunds: FC<{
             />
           </Chart>
         </Card>
+
         <Indents top side={false}>
           <Card>
             <Flex full ai="center" jc="space-between">

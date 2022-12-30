@@ -53,7 +53,7 @@ const Insurance = () => {
                 </S.InsuranceInfoCardDescription>
                 <S.InsuranceInfoCardAction
                   size="small"
-                  color="default"
+                  color={isMobile ? "secondary" : "default"}
                   onClick={onInsuranceCreateNavigate}
                   text="Создать новый пропозал"
                   disabled={checkingInvestmentStatus}

@@ -40,7 +40,7 @@ import { multiplyBignumbers } from "utils/formulas"
 import { usePoolContract } from "hooks/usePool"
 import { useTraderPoolContract } from "contracts"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
-import { useWindowSize } from "react-use"
+import { useBreakpoints } from "hooks"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -85,8 +85,7 @@ function Pool() {
     })()
   }, [traderPool, account])
 
-  const { width: windowWidth } = useWindowSize()
-  const isMobile = useMemo(() => windowWidth < 1194, [windowWidth])
+  const { isDesktop } = useBreakpoints()
 
   const actions = useMemo(() => {
     if (!poolData) {
@@ -132,21 +131,11 @@ function Pool() {
           tabs={[
             {
               name: "P&L",
-              child: load ? (
-                <Center>
-                  <GuardSpinner size={20} loading />
-                </Center>
-              ) : (
-                <TabPoolPnl address={poolData?.id} />
-              ),
+              child: <TabPoolPnl address={poolData?.id} />,
             },
             {
               name: "Locked funds",
-              child: load ? (
-                <Center>
-                  <GuardSpinner size={20} loading />
-                </Center>
-              ) : (
+              child: (
                 <TabPoolLockedFunds
                   address={poolData?.id}
                   poolData={poolData}
@@ -159,11 +148,7 @@ function Pool() {
             },
             {
               name: "About fund",
-              child: load ? (
-                <Center>
-                  <GuardSpinner size={20} loading />
-                </Center>
-              ) : (
+              child: (
                 <TabPoolInfo
                   data={poolData}
                   poolInfo={poolInfoData}
@@ -175,21 +160,13 @@ function Pool() {
             },
             {
               name: "Statistic",
-              child: load ? (
-                <Center>
-                  <GuardSpinner size={20} loading />
-                </Center>
-              ) : (
+              child: (
                 <TabPoolStatistic poolData={poolData} poolInfo={poolInfoData} />
               ),
             },
             {
               name: "Holders",
-              child: load ? (
-                <Center>
-                  <GuardSpinner size={20} loading />
-                </Center>
-              ) : (
+              child: (
                 <TabPoolHolders
                   poolData={poolData}
                   chainId={chainId}
@@ -221,7 +198,11 @@ function Pool() {
         {!isNil(poolData) ? (
           <>
             <Indents top>
-              <PoolStatisticCard data={poolData} isMobile={isMobile} hideChart>
+              <PoolStatisticCard
+                data={poolData}
+                isMobile={!isDesktop}
+                hideChart
+              >
                 <>
                   <ButtonContainer>
                     <AppButton
@@ -239,14 +220,14 @@ function Pool() {
                       text={actions.rightNode.text}
                     />
                   </ButtonContainer>
-                  {!isTrader && isMobile && (
+                  {!isTrader && (
                     <>
-                      <Divider />
+                      {!isDesktop && <Divider />}
                       <Flex
                         full
-                        ai={isMobile ? "center" : "flex-end"}
+                        ai={!isDesktop ? "center" : "flex-end"}
                         jc="space-between"
-                        dir={isMobile ? "row" : "column"}
+                        dir={!isDesktop ? "row" : "column"}
                       >
                         <Label>Your share</Label>
                         <Value.Medium color="#E4F2FF">
