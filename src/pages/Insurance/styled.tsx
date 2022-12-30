@@ -7,6 +7,7 @@ import Management from "pages/Management"
 export const Container = styled.div`
   margin: 0 auto;
   width: fill-available;
+  max-width: 1200px;
 `
 
 export const Content = styled.div`
