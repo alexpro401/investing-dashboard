@@ -30,6 +30,10 @@ import Header from "components/Header/Layout"
 import { ITab } from "interfaces"
 
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
+import { usePoolsFilters } from "state/pools/hooks"
+import { Filters, Search } from "components/Header/Components"
+import TradersSort from "components/TradersSort"
+import { debounce } from "lodash"
 
 interface Props {
   poolType: PoolType
@@ -125,9 +129,21 @@ function TopMembers() {
     },
   ]
 
+  const [, dispatchFilter] = usePoolsFilters()
+  const [isFiltersActive, setFiltersActive] = useState(false)
+
+  const handleFiltersClick = () => !isFiltersActive && setFiltersActive(true)
+
   const [searchInput, setSearchInput] = useState<string>("")
 
   const { isMobile } = useBreakpoints()
+
+  useEffect(
+    debounce(() => {
+      dispatchFilter("query", searchInput)
+    }, 500),
+    [searchInput]
+  )
 
   return (
     <S.StyledTopMembers>
@@ -170,6 +186,12 @@ function TopMembers() {
                 size="small"
                 iconLeft={ICON_NAMES.filter}
                 iconRight={ICON_NAMES.angleDown}
+                onClick={handleFiltersClick}
+              />
+
+              <TradersSort
+                handleClose={() => setFiltersActive(false)}
+                isOpen={isFiltersActive}
               />
             </S.TopMembersFiltersWrp>
           </S.TopMembersHeader>
