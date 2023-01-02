@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { AppButton, Icon } from "common"
 import RouteTabs from "components/RouteTabs"
 import { InputField } from "fields"
+import TradersSort from "components/TradersSort"
 
 export const StyledTopMembers = styled(motion.div)`
   height: fit-content;
@@ -110,6 +111,7 @@ export const TopMembersRouteTabsWrp = styled(RouteTabs)`
 `
 
 export const TopMembersFiltersWrp = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   margin-left: auto;
@@ -163,4 +165,10 @@ export const TopMembersFiltersBtn = styled(AppButton).attrs(() => ({
   font-weight: 700;
   letter-spacing: 0.01em;
   grid-gap: 4px;
+`
+
+export const TradersSortWrp = styled(TradersSort)`
+  position: absolute;
+  top: 110%;
+  right: 0;
 `

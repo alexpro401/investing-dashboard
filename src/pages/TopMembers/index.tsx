@@ -130,9 +130,7 @@ function TopMembers() {
   ]
 
   const [, dispatchFilter] = usePoolsFilters()
-  const [isFiltersActive, setFiltersActive] = useState(false)
-
-  const handleFiltersClick = () => !isFiltersActive && setFiltersActive(true)
+  const [isFiltersActive, setIsFiltersActive] = useState(false)
 
   const [searchInput, setSearchInput] = useState<string>("")
 
@@ -186,11 +184,11 @@ function TopMembers() {
                 size="small"
                 iconLeft={ICON_NAMES.filter}
                 iconRight={ICON_NAMES.angleDown}
-                onClick={handleFiltersClick}
+                onClick={() => setIsFiltersActive(!isFiltersActive)}
               />
 
-              <TradersSort
-                handleClose={() => setFiltersActive(false)}
+              <S.TradersSortWrp
+                handleClose={() => setIsFiltersActive(false)}
                 isOpen={isFiltersActive}
               />
             </S.TopMembersFiltersWrp>
