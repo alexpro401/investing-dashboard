@@ -5,14 +5,14 @@ import * as React from "react"
 
 import { Flex } from "theme"
 import Icon from "components/Icon"
-import { normalizeBigNumber } from "utils"
+import { isAddressZero, normalizeBigNumber } from "utils"
 import { useGovPoolDescription } from "hooks/dao"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
-import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
 import { CardInfo } from "common"
 import { ICON_NAMES } from "consts/icon-names"
 import Skeleton from "components/Skeleton"
+import { useERC20Data } from "state/erc20/hooks"
 
 const DaoPoolCardVotingPower = React.lazy(
   () => import("./DaoPoolCardVotingPower")
@@ -44,8 +44,11 @@ const DaoPoolCard: React.FC<Props> = ({
     []
   ) as unknown as React.MouseEventHandler<HTMLAnchorElement>
 
+  const [token] = useERC20Data(
+    !isAddressZero(data?.erc20Token) ? data.erc20Token : undefined
+  )
+
   const { descriptionObject } = useGovPoolDescription(id)
-  const [assetsExisting, assets] = useGovPoolVotingAssets(id)
   const [govPoolStatistic] = useGovPoolStatistic(data)
 
   const poolName = React.useMemo(() => {
@@ -57,12 +60,18 @@ const DaoPoolCard: React.FC<Props> = ({
   }, [data])
 
   const poolAssets = React.useMemo(() => {
+    const { erc20Token, erc721Token } = data
+    const haveToken = !isAddressZero(erc20Token)
+    const haveNft = !isAddressZero(erc721Token)
+
     let subTitle = ""
 
-    if (assetsExisting.haveToken) {
-      subTitle = `${assets.token?.symbol ?? ""} `
+    if (!haveToken && !haveNft) return subTitle
+
+    if (haveToken) {
+      subTitle = `${token?.symbol ?? ""} `
     }
-    if (assetsExisting.haveNft) {
+    if (haveNft) {
       if (subTitle.length > 0) {
         subTitle += "& "
       }
@@ -70,7 +79,7 @@ const DaoPoolCard: React.FC<Props> = ({
     }
 
     return subTitle
-  }, [assetsExisting, assets])
+  }, [data.erc20Token, data.erc721Token, token])
 
   const nodeHeadLeft = React.useMemo(
     () => (
