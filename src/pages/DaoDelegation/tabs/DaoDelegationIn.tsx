@@ -16,6 +16,8 @@ import { IGovPoolDelegationHistoryQuery } from "interfaces/thegraphs/gov-pools"
 import { Token } from "interfaces"
 import { useGovPoolHelperContracts } from "hooks/dao"
 import { NoDataMessage } from "common"
+import { useMemo } from "react"
+import { addBignumbers } from "utils/formulas"
 
 interface DaoDelegationInProps {
   token: Token | null
@@ -32,12 +34,22 @@ const DaoDelegationIn: React.FC<DaoDelegationInProps> = ({
     govPoolAddress ?? ""
   )
 
-  const [{ power }] = useGovPoolUserVotingPower({
+  const [{ power, nftPower }, loadingPower] = useGovPoolUserVotingPower({
     userKeeperAddress: govUserKeeperAddress ?? "",
     address: account ?? "",
     isMicroPool: true,
     useDelegated: false,
   })
+
+  const totalPower = useMemo(() => {
+    if (loadingPower) {
+      return "0.0"
+    }
+
+    const BN = addBignumbers([power, 18], [nftPower, 18])
+
+    return normalizeBigNumber(BN, 18, 2)
+  }, [power, nftPower, loadingPower])
 
   const [{ data, loading }, fetchMore] =
     useQueryPagination<IGovPoolDelegationHistoryQuery>({
@@ -88,7 +100,7 @@ const DaoDelegationIn: React.FC<DaoDelegationInProps> = ({
         <Flex full ai={"center"} jc={"space-between"} m={"0 0 16px"}>
           <Text color={theme.textColors.primary}>Total addresses: 90</Text>
           <Text color={theme.textColors.primary}>
-            Total delegate: {normalizeBigNumber(power, 18, 2)}
+            Total delegate: {totalPower}
           </Text>
         </Flex>
         <Flex full dir={"column"} gap={"8"}>
