@@ -87,7 +87,11 @@ const List: React.FC<Props> = ({ poolType }) => {
             to={generatePath(ROUTE_PATHS.poolProfile, { poolAddress: pool.id })}
           >
             <Flex p="16px 0 0" full>
-              <PoolStatisticCard data={pool} index={index}>
+              <PoolStatisticCard
+                data={pool}
+                index={index}
+                isMobile={!isDesktop}
+              >
                 {isDesktop ? (
                   <S.CardIconWrp>
                     <Icon name={ICON_NAMES.angleRight} color={"#6781BD"} />

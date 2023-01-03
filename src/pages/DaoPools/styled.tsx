@@ -23,6 +23,8 @@ export const Container = styled(motion.div).attrs(() => ({
   overflow: hidden;
   padding: 16px 0 0;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 `
 
 export const Indents = styled.div<{ top?: boolean; side?: boolean }>`
@@ -132,6 +134,13 @@ export const List = {
     font-weight: 700;
     letter-spacing: 0.01em;
     grid-gap: 4px;
+  `,
+  CardIconWrp: styled.div`
+    flex: 1 0 7px;
+    svg {
+      width: 7px;
+      height: 12px;
+    }
   `,
 }
 

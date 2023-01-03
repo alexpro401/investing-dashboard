@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { normalizeBigNumber } from "utils"
@@ -7,6 +7,8 @@ import useOpenPositionsPriceOutUSD from "hooks/useOpenPositionsPriceOutUSD"
 import { ZERO } from "consts"
 
 export function usePoolLockedFunds(poolData, poolInfo, baseToken) {
+  const [loading, setLoading] = useState(true)
+
   const _baseAndPositionBalances = useMemo(() => {
     if (!poolInfo) return []
 
@@ -119,7 +121,15 @@ export function usePoolLockedFunds(poolData, poolInfo, baseToken) {
     poolUsedToTotalPercentage,
   }
 
-  return [values]
+  useEffect(() => {
+    if (!poolData || !poolInfo || !baseToken) {
+      setLoading(true)
+    } else {
+      setLoading(false)
+    }
+  }, [poolData, poolInfo, baseToken])
+
+  return [values, loading] as [typeof values, boolean]
 }
 
 export default usePoolLockedFunds

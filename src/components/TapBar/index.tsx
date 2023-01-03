@@ -5,10 +5,11 @@ import TopTraders from "assets/menu/mobile/TopTraders"
 import Insurance from "assets/menu/mobile/Insurance"
 import Dao from "assets/menu/mobile/Dao"
 
-import { MobileMenu, NavItem, DesktopLogo } from "./styled"
+import { MobileMenu, NavItem } from "./styled"
 import { FC } from "react"
 import { MotionProps } from "framer-motion"
 import { ROUTE_PATHS } from "consts"
+import { AppLogo } from "common"
 
 interface Props extends MotionProps {}
 
@@ -27,7 +28,7 @@ export const TapBar: FC<Props> = ({ ...rest }) => {
       }}
       {...rest}
     >
-      <DesktopLogo />
+      <AppLogo desktopOnly size={100} />
       <NavItem path={ROUTE_PATHS.meTrader} Icon={Profile} text="My profile" />
       <NavItem path={ROUTE_PATHS.topMembers} Icon={TopTraders} text="Traders" />
       <NavItem path="/dao/list/top" Icon={Dao} text="DAO" />

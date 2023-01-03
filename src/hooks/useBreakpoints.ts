@@ -5,9 +5,18 @@ import { breakpoints } from "theme"
 export const useBreakpoints = () => {
   const { width: windowWidth } = useWindowSize()
 
-  const isMobile = useMemo(() => windowWidth < breakpoints.sm, [windowWidth])
-  const isTablet = useMemo(() => windowWidth < breakpoints.md, [windowWidth])
-  const isDesktop = useMemo(() => windowWidth >= breakpoints.lg, [windowWidth])
+  const isMobile = useMemo(
+    () => windowWidth < breakpoints.sm - 1,
+    [windowWidth]
+  )
+  const isTablet = useMemo(
+    () => windowWidth < breakpoints.md - 1,
+    [windowWidth]
+  )
+  const isDesktop = useMemo(
+    () => windowWidth >= breakpoints.lg - 1,
+    [windowWidth]
+  )
 
   return {
     isMobile,

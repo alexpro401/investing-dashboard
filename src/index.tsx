@@ -32,6 +32,7 @@ import MulticallUpdater from "state/multicall/updater"
 import ListsUpdater from "state/lists/updater"
 
 import { usePollBlockNumber } from "state/block/hooks"
+import GlobalGradients from "assets/gradients"
 
 const Web3ProviderNetwork = createWeb3ReactRoot("NETWORK")
 
@@ -79,6 +80,7 @@ const GlobalComponents = () => (
     <ErrorMessage />
     <MulticallUpdater />
     <ListsUpdater />
+    <GlobalGradients />
   </>
 )
 

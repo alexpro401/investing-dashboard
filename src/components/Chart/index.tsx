@@ -172,11 +172,11 @@ const Chart: React.FC<Props> = ({
     <div>
       {NodeHead}
       <S.Container dir={_nodesDirection}>
-        {_loading ? (
-          <ChartFallback h={_height} />
-        ) : (
-          <S.ChartWrapper h={_height}>
-            <React.Suspense fallback={<ChartFallback />}>
+        <S.ChartWrapper h={_height}>
+          {_loading ? (
+            <ChartFallback h={_height} />
+          ) : (
+            <React.Suspense fallback={<ChartFallback h={_height} />}>
               <CurrentChart
                 data={_data}
                 chart={_chart}
@@ -188,8 +188,8 @@ const Chart: React.FC<Props> = ({
                 {children}
               </CurrentChart>
             </React.Suspense>
-          </S.ChartWrapper>
-        )}
+          )}
+        </S.ChartWrapper>
         {!isNil(timeframe) && isMobile && (
           <Timeframe current={timeframe.get} set={timeframe.set} />
         )}

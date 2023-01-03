@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
 import { useWeb3React } from "@web3-react/core"
-import { EHeaderTitles } from "components/Header"
-import Header from "components/Header/Layout"
 
 import { useCopyClipboard } from "hooks"
 
