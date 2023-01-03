@@ -40,6 +40,8 @@ export interface IGovPoolExecutor {
 export interface IGovPoolQuery {
   id: string
   name: string
+  erc20Token: string
+  erc721Token: string
   votersCount: string
   creationTime: string
   creationBlock: string
