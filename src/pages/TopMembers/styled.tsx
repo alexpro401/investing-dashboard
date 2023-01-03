@@ -5,6 +5,7 @@ import { AppButton, Icon } from "common"
 import RouteTabs from "components/RouteTabs"
 import { InputField } from "fields"
 import TradersSort from "components/TradersSort"
+import { ICON_NAMES } from "../../consts"
 
 export const StyledTopMembers = styled(motion.div)`
   height: fit-content;
@@ -47,11 +48,15 @@ export const CardIconWrp = styled.div`
 `
 
 export const TopMembersPromoBlock = styled.div`
-  display: flex;
+  display: none;
   align-items: center;
   background: #101520;
   border-radius: 20px;
   gap: 12px;
+
+  ${respondTo("xs")} {
+    display: flex;
+  }
 `
 
 export const TopMembersPromoBlockImg = styled.img``
@@ -88,6 +93,7 @@ export const TopMembersHeader = styled.div`
   display: grid;
   grid-template-columns: 1fr max-content;
   gap: 19px;
+  margin: 18px 0;
 
   ${respondTo("sm")} {
     display: flex;
@@ -97,14 +103,23 @@ export const TopMembersHeader = styled.div`
 `
 
 export const TopMembersTitle = styled.h2`
-  font-size: 28px;
-  line-height: 1.25;
+  white-space: nowrap;
   font-weight: 900;
+  font-size: 24px;
+  line-height: 1.25;
   letter-spacing: -0.01em;
   color: ${({ theme }) => theme.textColors.primary};
+  margin: 0;
+
+  ${respondTo("sm")} {
+    font-size: 28px;
+  }
 `
 
 export const TopMembersRouteTabsWrp = styled(RouteTabs)`
+  grid-column: 1 / -1;
+  grid-row: 2 / 3;
+
   ${respondTo("sm")} {
     max-width: 365px;
   }
@@ -113,12 +128,37 @@ export const TopMembersRouteTabsWrp = styled(RouteTabs)`
 export const TopMembersFiltersWrp = styled.div`
   position: relative;
   display: flex;
+  justify-content: flex-end;
   align-items: center;
   margin-left: auto;
   gap: 24px;
+  width: 100%;
 `
 
-export const TopMembersSearchInput = styled(InputField)`
+export const TopMembersSearchBtn = styled(AppButton).attrs({
+  iconSize: 24,
+  iconRight: ICON_NAMES.search,
+  color: "secondary",
+  size: "small",
+})`
+  padding: 13px;
+  background: #141926;
+  border-radius: 12px;
+
+  ${respondTo("md")} {
+    display: none;
+  }
+`
+
+export const TopMembersSearchIcon = styled(Icon)`
+  color: #6781bd;
+  -webkit-text-fill-color: #6781bd;
+`
+
+export const TopMembersSearchInput = styled(InputField).attrs({
+  placeholder: "Search",
+  nodeLeft: <TopMembersSearchIcon name={ICON_NAMES.search} />,
+})`
   label {
     font-size: 14px;
     line-height: 1.5;
@@ -150,25 +190,26 @@ export const TopMembersSearchInput = styled(InputField)`
   }
 `
 
-export const TopMembersSearchIcon = styled(Icon)`
-  color: #6781bd;
-  -webkit-text-fill-color: #6781bd;
-`
-
 export const TopMembersFiltersBtn = styled(AppButton).attrs(() => ({
-  iconSize: "1.4em",
+  iconSize: 24,
+  color: "secondary",
+  size: "small",
+  iconLeft: ICON_NAMES.filter,
 }))`
-  color: ${({ theme }) => theme.brandColors.secondary};
   padding: 8px 8px;
   font-size: 14px;
   line-height: 1.2;
   font-weight: 700;
   letter-spacing: 0.01em;
   grid-gap: 4px;
+  background: #141926;
+  border-radius: 12px;
+  color: #6781bd;
 `
 
 export const TradersSortWrp = styled(TradersSort)`
   position: absolute;
   top: 110%;
   right: 0;
+  width: max-content;
 `

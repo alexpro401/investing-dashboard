@@ -34,6 +34,7 @@ import { usePoolsFilters } from "state/pools/hooks"
 import { Filters, Search } from "components/Header/Components"
 import TradersSort from "components/TradersSort"
 import { debounce } from "lodash"
+import { TopMembersSearchBtn } from "./styled"
 
 interface Props {
   poolType: PoolType
@@ -136,9 +137,10 @@ function TopMembers() {
   const [, dispatchFilter] = usePoolsFilters()
   const [isFiltersActive, setIsFiltersActive] = useState(false)
 
+  const [isMobileSearchShown, setIsMobileSearchShown] = useState(false)
   const [searchInput, setSearchInput] = useState<string>("")
 
-  const { isMobile } = useBreakpoints()
+  const { isTablet, isMobile } = useBreakpoints()
 
   useEffect(
     debounce(() => {
@@ -149,62 +151,66 @@ function TopMembers() {
 
   return (
     <S.StyledTopMembers>
-      {isMobile ? (
-        <TopMembersBar tabs={tabs} />
-      ) : (
-        <>
-          <Header>TOP Funds</Header>
-          <S.TopMembersPromoBlock>
-            <S.TopMembersPromoBlockImg src={tutorialImageSrc} />
-            <S.TopMembersPromoBlockDetails>
-              <S.TopMembersPromoBlockDetailsTitle>
-                Shape your Fund with your best ideas
-              </S.TopMembersPromoBlockDetailsTitle>
-              <S.TopMembersPromoBlockDetailsLink href={"#"}>
-                Read the tutorial
-              </S.TopMembersPromoBlockDetailsLink>
-            </S.TopMembersPromoBlockDetails>
-            <S.TopMembersPromoBlockActionBtn
-              text={"Create own Fund"}
-              color="tertiary"
-              routePath={ROUTE_PATHS.createFund}
+      <Header>TOP Funds</Header>
+      <S.TopMembersPromoBlock>
+        <S.TopMembersPromoBlockImg src={tutorialImageSrc} />
+        <S.TopMembersPromoBlockDetails>
+          <S.TopMembersPromoBlockDetailsTitle>
+            Shape your Fund with your best ideas
+          </S.TopMembersPromoBlockDetailsTitle>
+          <S.TopMembersPromoBlockDetailsLink href={"#"}>
+            Read the tutorial
+          </S.TopMembersPromoBlockDetailsLink>
+        </S.TopMembersPromoBlockDetails>
+        <S.TopMembersPromoBlockActionBtn
+          text={"Create own Fund"}
+          color="tertiary"
+          routePath={ROUTE_PATHS.createFund}
+        />
+      </S.TopMembersPromoBlock>
+      <S.TopMembersHeader>
+        <S.TopMembersTitle>Top Funds</S.TopMembersTitle>
+        <S.TopMembersRouteTabsWrp tabs={tabs} />
+        <S.TopMembersFiltersWrp>
+          {!isMobile && !isTablet ? (
+            <S.TopMembersSearchInput
+              value={searchInput}
+              onInput={(event) =>
+                setSearchInput(event.currentTarget.value as string)
+              }
             />
-          </S.TopMembersPromoBlock>
-          <S.TopMembersHeader>
-            <S.TopMembersTitle>Top Funds</S.TopMembersTitle>
-            <S.TopMembersRouteTabsWrp m="0" tabs={tabs} />
-            <S.TopMembersFiltersWrp>
-              <S.TopMembersSearchInput
-                value={searchInput}
-                onInput={(event) =>
-                  setSearchInput(event.currentTarget.value as string)
-                }
-                placeholder={"Search"}
-                nodeLeft={<S.TopMembersSearchIcon name={ICON_NAMES.search} />}
-              />
-              <S.TopMembersFiltersBtn
-                color="secondary"
-                text="Filter"
-                size="small"
-                iconLeft={ICON_NAMES.filter}
-                iconRight={ICON_NAMES.angleDown}
-                onClick={() => setIsFiltersActive(!isFiltersActive)}
-              />
+          ) : isMobileSearchShown ? (
+            <S.TopMembersSearchInput
+              value={searchInput}
+              onInput={(event) =>
+                setSearchInput(event.currentTarget.value as string)
+              }
+            />
+          ) : (
+            <></>
+          )}
+          <S.TopMembersSearchBtn
+            onClick={() => setIsMobileSearchShown(!isMobileSearchShown)}
+          />
+          <S.TopMembersFiltersBtn
+            text={isTablet ? "" : "Filters"}
+            iconLeft={ICON_NAMES.filter}
+            iconRight={isTablet ? undefined : ICON_NAMES.angleDown}
+            onClick={() => setIsFiltersActive(!isFiltersActive)}
+          />
 
-              <S.TradersSortWrp
-                handleClose={() => setIsFiltersActive(false)}
-                isOpen={isFiltersActive}
-              />
-            </S.TopMembersFiltersWrp>
-          </S.TopMembersHeader>
-        </>
-      )}
+          <S.TradersSortWrp
+            handleClose={() => setIsFiltersActive(false)}
+            isOpen={isFiltersActive}
+          />
+        </S.TopMembersFiltersWrp>
+      </S.TopMembersHeader>
       <Routes>
+        <Route path="all" element={<List poolType="ALL_POOL" />}></Route>
         <Route path="basic" element={<List poolType="BASIC_POOL" />}></Route>
         <Route path="invest" element={<List poolType="INVEST_POOL" />}></Route>
-        <Route path="all" element={<List poolType="ALL_POOL" />}></Route>
         <Route
-          path="*"
+          path="/"
           element={
             <Navigate
               replace
