@@ -7,17 +7,28 @@ import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import theme, { Center, Flex, Text } from "theme"
 import GovDelegateeCard from "components/cards/GovDelegatee"
-import { GovPoolDelegationHistoryByUserQuery } from "queries"
+import {
+  GovPoolDelegationHistoryByUserQuery,
+  GovVoterInPoolQuery,
+} from "queries"
 import useQueryPagination from "hooks/useQueryPagination"
 import LoadMore from "components/LoadMore"
 import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
 import { normalizeBigNumber } from "utils"
-import { IGovPoolDelegationHistoryQuery } from "interfaces/thegraphs/gov-pools"
+import {
+  IGovPoolDelegationHistoryQuery,
+  IGovPoolVoterQuery,
+} from "interfaces/thegraphs/gov-pools"
 import { Token } from "interfaces"
 import { useGovPoolHelperContracts } from "hooks/dao"
 import { NoDataMessage } from "common"
 import { useMemo } from "react"
 import { addBignumbers } from "utils/formulas"
+import { createClient, useQuery } from "urql"
+
+const govPoolsClient = createClient({
+  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
+})
 
 interface DaoDelegationInProps {
   token: Token | null
@@ -65,6 +76,32 @@ const DaoDelegationIn: React.FC<DaoDelegationInProps> = ({
       formatter: (d) => d.delegationHistories,
     })
 
+  const [votersInPool] = useQuery<{
+    voterInPools: IGovPoolVoterQuery[]
+  }>({
+    query: GovVoterInPoolQuery,
+    variables: React.useMemo(
+      () => ({
+        pool: govPoolAddress,
+        voter: account,
+      }),
+      [govPoolAddress, account]
+    ),
+    pause: isNil(account) || isNil(govPoolAddress),
+    context: govPoolsClient,
+  })
+
+  const totalAddresses = React.useMemo(() => {
+    if (
+      votersInPool.fetching ||
+      votersInPool.error ||
+      votersInPool.data === undefined
+    ) {
+      return "0"
+    }
+    return votersInPool.data?.voterInPools[0]?.currentDelegatorsCount ?? "0"
+  }, [votersInPool])
+
   const loader = React.useRef<any>()
 
   React.useEffect(() => {
@@ -98,7 +135,9 @@ const DaoDelegationIn: React.FC<DaoDelegationInProps> = ({
     <S.List ref={loader}>
       <S.Indents top>
         <Flex full ai={"center"} jc={"space-between"} m={"0 0 16px"}>
-          <Text color={theme.textColors.primary}>Total addresses: 90</Text>
+          <Text color={theme.textColors.primary}>
+            Total addresses: {totalAddresses}
+          </Text>
           <Text color={theme.textColors.primary}>
             Total delegate: {totalPower}
           </Text>
