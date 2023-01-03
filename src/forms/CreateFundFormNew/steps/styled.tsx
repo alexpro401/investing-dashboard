@@ -1,8 +1,11 @@
 import styled from "styled-components/macro"
 
-import { Icon } from "common"
+import { Collapse, Icon, SelectableCard } from "common"
 import theme, { respondTo } from "theme"
 import { InputField } from "fields"
+import { ICON_NAMES } from "consts"
+import { SelectableCardTitles } from "common/SelectableCard/styled"
+import Slider from "components/Slider"
 
 export const DesktopHeaderWrp = styled.div`
   margin-bottom: 16px;
@@ -60,4 +63,40 @@ export const BaseTokenIconWrp = styled.div`
 
 export const BaseTokenPlaceholder = styled.span`
   color: #788ab4;
+`
+
+export const EmissionNodeRight = styled.div`
+  color: #788ab4;
+`
+
+export const CheckIcon = styled(Icon).attrs({ name: ICON_NAMES.tileCheck })`
+  & > circle {
+    fill: none;
+    stroke: ${theme.brandColors.secondary};
+  }
+
+  & > path {
+    fill: none;
+    stroke: ${theme.brandColors.secondary};
+  }
+`
+
+export const FeeCardWrp = styled(SelectableCard)`
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 16px 8px;
+  gap: 8px;
+
+  ${SelectableCardTitles} {
+    align-items: center;
+    justify-content: center;
+  }
+` as typeof SelectableCard
+
+export const FeeSlider = styled(Slider)`
+  position: relative;
+  z-index: 12;
 `

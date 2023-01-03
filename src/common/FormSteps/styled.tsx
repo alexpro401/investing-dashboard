@@ -28,6 +28,7 @@ export const SideStepsNavigationBarWrp = styled(SideStepsNavigationBar)`
   min-width: 300px;
   position: sticky;
   top: 0px;
+  height: min-content;
 `
 
 export const StepsContainer = styled(motion.div).attrs(() => ({

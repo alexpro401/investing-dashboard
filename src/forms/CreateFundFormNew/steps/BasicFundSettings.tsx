@@ -31,7 +31,7 @@ import * as SForms from "common/FormSteps/styled"
 const BasicFundSettings: React.FC = () => {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const { nextCb, currentStepNumber } = useContext(stepsControllerContext)
+  const { nextCb } = useContext(stepsControllerContext)
   const {
     avatarUrl,
     description,

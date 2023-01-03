@@ -40,6 +40,7 @@ export const Rewards = styled.div`
   flex-direction: column;
   flex: 1 0 auto;
   gap: 24px;
+  width: 60%;
 `
 
 export const RewardsImg = styled.img`

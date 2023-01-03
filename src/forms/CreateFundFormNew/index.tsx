@@ -6,7 +6,7 @@ import { AnimatePresence } from "framer-motion"
 import { hideTapBar, showTabBar } from "state/application/actions"
 import { ROUTE_PATHS } from "consts/routes"
 import { useBreakpoints } from "hooks"
-import { BasicFundSettings } from "./steps"
+import { BasicFundSettings, AdditionalSettings, WithdrawalFee } from "./steps"
 
 import * as SForms from "common/FormSteps/styled"
 
@@ -92,6 +92,16 @@ const CreateFundFormNew: React.FC = () => {
           {currentStep === STEPS.basicFundSettings && (
             <SForms.StepsContainer>
               <BasicFundSettings />
+            </SForms.StepsContainer>
+          )}
+          {currentStep === STEPS.additionalSettings && (
+            <SForms.StepsContainer>
+              <AdditionalSettings />
+            </SForms.StepsContainer>
+          )}
+          {currentStep === STEPS.comission && (
+            <SForms.StepsContainer>
+              <WithdrawalFee />
             </SForms.StepsContainer>
           )}
           {!isMobile && (

@@ -1,6 +1,10 @@
 import styled, { createGlobalStyle } from "styled-components/macro"
 import { GradientBorder } from "theme"
 
+export const SliderWrapper = styled.div`
+  width: 100%;
+`
+
 export const SliderLine = styled.div`
   width: 100%;
   background: #2f333b;

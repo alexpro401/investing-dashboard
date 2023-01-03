@@ -10,6 +10,7 @@ import {
   InputWrapper,
   InputSymbol,
   SliderStyle,
+  SliderWrapper,
 } from "./styled"
 
 export const NumberInput = ({ value, onChange, onClick }) => (
@@ -40,6 +41,7 @@ const Slider: React.FC<Props> = ({
   hideInput = false,
   debounce = true,
   onChange,
+  ...rest
 }) => {
   const [v, setV] = useState(initial)
   const debounced = useDebounce(v, 250)
@@ -61,7 +63,7 @@ const Slider: React.FC<Props> = ({
   }
 
   return (
-    <>
+    <SliderWrapper {...rest}>
       <SliderStyle />
       <Flex full p="0 4px 10px 8px">
         <Flex full p="24px 0" ai="center">
@@ -84,7 +86,7 @@ const Slider: React.FC<Props> = ({
           </Flex>
         )}
       </Flex>
-    </>
+    </SliderWrapper>
   )
 }
 
