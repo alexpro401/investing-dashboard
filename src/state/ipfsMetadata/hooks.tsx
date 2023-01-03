@@ -5,6 +5,7 @@ import { debounce, isEmpty, isNil } from "lodash"
 import { getIpfsData } from "utils/ipfs"
 
 import {
+  selectDaoPoolMetadata,
   selectInsuranceAccident,
   selectInsuranceAccidentByPool,
   selectInsuranceAccidents,
@@ -12,12 +13,24 @@ import {
   selectPoolMetadata,
   selectUserMetadata,
 } from "./selectors"
-import { addInsuranceAccident, addPool, addProposal, addUser } from "./actions"
+import {
+  addDaoPool,
+  addInsuranceAccident,
+  addPool,
+  addProposal,
+  addUser,
+} from "./actions"
 import { IInvestProposalMetadata, IUserMetadata } from "./types"
 import { InsuranceAccident } from "interfaces/insurance"
-import { useInsuranceContract, useUserRegistryContract } from "contracts"
+import {
+  useGovPoolContract,
+  useInsuranceContract,
+  useUserRegistryContract,
+} from "contracts"
 import { DEFAULT_PAGINATION_COUNT } from "consts/misc"
 import { shortenAddress } from "utils"
+import { IpfsEntity } from "utils/ipfsEntity"
+import { IGovPoolDescription } from "types"
 
 export function usePoolMetadata(poolId, hash) {
   const dispatch = useDispatch()
@@ -338,4 +351,40 @@ export const useInsuranceAccidents = (): [
     },
     { fetch, fetchAll, getInsuranceAccidentByPool },
   ]
+}
+
+export function useDaoPoolMetadata(poolId) {
+  const dispatch = useDispatch()
+  const daoPoolMetadata = useSelector(selectDaoPoolMetadata(poolId))
+  const [loading, setLoading] = useState(false)
+
+  const govPoolContract = useGovPoolContract(poolId)
+
+  const fetchDaoPoolMetadata = useCallback(async () => {
+    try {
+      setLoading(true)
+      const hash = await govPoolContract?.descriptionURL()
+      const DaoPoolIpfsEntity = new IpfsEntity<IGovPoolDescription>({
+        path: hash,
+      })
+      const data = await DaoPoolIpfsEntity.load()
+
+      if (data && hash) {
+        dispatch(addDaoPool({ params: { poolId, hash, ...data } }))
+      }
+      setLoading(false)
+    } catch (error) {
+      console.error(error)
+      setLoading(false)
+    }
+  }, [dispatch, poolId, govPoolContract])
+
+  useEffect(() => {
+    if (!poolId) return
+    if (daoPoolMetadata === null) {
+      fetchDaoPoolMetadata()
+    }
+  }, [poolId, daoPoolMetadata, dispatch, fetchDaoPoolMetadata])
+
+  return [{ daoPoolMetadata, loading }, { fetchDaoPoolMetadata }]
 }

@@ -2,21 +2,19 @@ import * as S from "./styled"
 
 import { isNil } from "lodash"
 import * as React from "react"
+import { v4 as uuidv4 } from "uuid"
 
 import { Flex } from "theme"
 import Icon from "components/Icon"
+import Tooltip from "components/Tooltip"
+
+import { useERC20Data } from "state/erc20/hooks"
+import { useGovPoolHelperContracts } from "hooks"
 import { isAddressZero, normalizeBigNumber } from "utils"
-import { useGovPoolDescription } from "hooks/dao"
+import { useDaoPoolMetadata } from "state/ipfsMetadata/hooks"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
-import { CardInfo } from "common"
-import { ICON_NAMES } from "consts/icon-names"
-import Skeleton from "components/Skeleton"
-import { useERC20Data } from "state/erc20/hooks"
-
-const DaoPoolCardVotingPower = React.lazy(
-  () => import("./DaoPoolCardVotingPower")
-)
+import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   data: IGovPoolQuery
@@ -34,21 +32,17 @@ const DaoPoolCard: React.FC<Props> = ({
 }) => {
   const id = React.useMemo(() => data?.id ?? "", [data])
 
-  const [showVotingPower, setShowVotingPower] = React.useState(false)
-  const toggleVotingPowerView = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      event.preventDefault()
-      event.stopPropagation()
-      setShowVotingPower((prev) => !prev)
-    },
-    []
-  ) as unknown as React.MouseEventHandler<HTMLAnchorElement>
+  const { govUserKeeperAddress } = useGovPoolHelperContracts(id)
+  const [userVotingPower] = useGovPoolUserVotingPower({
+    userKeeperAddress: govUserKeeperAddress,
+    address: account,
+  })
 
   const [token] = useERC20Data(
     !isAddressZero(data?.erc20Token) ? data.erc20Token : undefined
   )
 
-  const { descriptionObject } = useGovPoolDescription(id)
+  const [{ daoPoolMetadata }] = useDaoPoolMetadata(id)
   const [govPoolStatistic] = useGovPoolStatistic(data)
 
   const poolName = React.useMemo(() => {
@@ -81,109 +75,80 @@ const DaoPoolCard: React.FC<Props> = ({
     return subTitle
   }, [data.erc20Token, data.erc721Token, token])
 
-  const nodeHeadLeft = React.useMemo(
-    () => (
-      <Flex ai="center" jc="flex-start">
-        <Icon
-          size={isMobile ? 38 : 100}
-          m="0 8px 0 0"
-          address={data?.id}
-          source={descriptionObject?.avatarUrl ?? ""}
-        />
-        <Flex dir="column" ai="flex-start" gap="4">
-          <S.DaoPoolCardTitle>{poolName}</S.DaoPoolCardTitle>
-          <S.DaoPoolCardDescription align="left">
-            {poolAssets}
-          </S.DaoPoolCardDescription>
-        </Flex>
-      </Flex>
-    ),
-    [data, descriptionObject, isMobile]
-  )
-
-  const nodeHeadRight = React.useMemo(
-    () => (
-      <Flex ai="flex-end" jc="flex-start" dir="column" gap="4">
-        <Flex
-          ai="flex-end"
-          jc="flex-start"
-          dir={isMobile ? "column" : "column-reverse"}
-          gap="4"
-        >
-          <Flex gap={"8"}>
-            {showVotingPower ? (
-              <React.Suspense
-                fallback={
-                  <Skeleton
-                    variant={"rect"}
-                    h={isMobile ? "16px" : "25px"}
-                    w={"80px"}
-                  />
-                }
-              >
-                <DaoPoolCardVotingPower
-                  account={account}
-                  pool={id}
-                  isMobile={isMobile}
-                />
-              </React.Suspense>
-            ) : null}
-            <S.DaoPoolCardShowVotingPower
-              onClick={toggleVotingPowerView}
-              name={
-                showVotingPower
-                  ? ICON_NAMES.modalClose
-                  : ICON_NAMES.angleLeftOutlined
-              }
-              dir={"left"}
-            />
-          </Flex>
-          <S.DaoPoolCardDescription>
-            {isMobile ? "My voting power" : "My power"}
-          </S.DaoPoolCardDescription>
-        </Flex>
-      </Flex>
-    ),
-    [showVotingPower, account, id, toggleVotingPowerView, isMobile]
-  )
-
-  const statistic = React.useMemo(
-    () => [
-      {
-        label: "TVL",
-        value: <>${normalizeBigNumber(govPoolStatistic.tvl.value, 18, 2)}</>,
-        info: "Info about TVL",
-      },
-      {
-        label: "MC/TVL",
-        value: <>{normalizeBigNumber(govPoolStatistic.mc_tvl.value, 18, 2)}</>,
-        info: "Info about MC/TVL",
-      },
-      {
-        label: "Members",
-        value: <>{String(govPoolStatistic.members.value ?? 0)}</>,
-        info: "Info about Members",
-      },
-      {
-        label: "LAU",
-        value: <>{normalizeBigNumber(govPoolStatistic.lau.value, 18, 0)}</>,
-        info: "Info about LAU",
-      },
-    ],
-    [govPoolStatistic]
-  )
-
   return (
-    <CardInfo
-      nodeHeadLeft={nodeHeadLeft}
-      nodeHeadRight={nodeHeadRight}
-      statistic={statistic}
-      isMobile={isMobile}
-      {...rest}
-    >
+    <S.DaoPoolCardRoot {...rest}>
+      <S.DaoPoolCardHeader>
+        <Flex ai="center" jc="flex-start">
+          <Icon
+            size={isMobile ? 38 : 100}
+            m="0 8px 0 0"
+            address={data?.id}
+            source={daoPoolMetadata?.avatarUrl ?? ""}
+          />
+          <Flex dir="column" ai="flex-start" gap="4">
+            <S.DaoPoolCardTitle>{poolName}</S.DaoPoolCardTitle>
+            <S.DaoPoolCardDescription align="left">
+              {poolAssets}
+            </S.DaoPoolCardDescription>
+          </Flex>
+        </Flex>
+        <Flex ai="flex-end" jc="flex-start" dir="column" gap="4">
+          <Flex
+            ai="flex-end"
+            jc="flex-start"
+            dir={isMobile ? "column" : "column-reverse"}
+            gap="4"
+          >
+            <S.DaoPoolCardVotingPower>
+              {normalizeBigNumber(userVotingPower.power, 18, 2)}
+            </S.DaoPoolCardVotingPower>
+            <S.DaoPoolCardDescription>
+              {isMobile ? "My voting power" : "My power"}
+            </S.DaoPoolCardDescription>
+          </Flex>
+        </Flex>
+      </S.DaoPoolCardHeader>
+      <S.DaoPoolCardStatisticWrp>
+        <S.DaoPoolCardStatisticItem alignItems={"flex-start"}>
+          <Flex gap={"4"}>
+            <S.DaoPoolCardStatisticLabel>TVL</S.DaoPoolCardStatisticLabel>
+            <Tooltip id={uuidv4()}>Info about TVL</Tooltip>
+          </Flex>
+          <S.DaoPoolCardStatisticValue>
+            ${normalizeBigNumber(govPoolStatistic.tvl.value, 18, 2)}
+          </S.DaoPoolCardStatisticValue>
+        </S.DaoPoolCardStatisticItem>
+        <S.DaoPoolCardStatisticItem alignItems={"flex-start"}>
+          <Flex gap={"4"}>
+            <S.DaoPoolCardStatisticLabel>MC/TVL</S.DaoPoolCardStatisticLabel>
+            <Tooltip id={uuidv4()}>Info about MC/TVL</Tooltip>
+          </Flex>
+          <S.DaoPoolCardStatisticValue>
+            ${normalizeBigNumber(govPoolStatistic.mc_tvl.value, 18, 2)}
+          </S.DaoPoolCardStatisticValue>
+        </S.DaoPoolCardStatisticItem>
+        <S.DaoPoolCardStatisticItem alignItems={"flex-start"}>
+          <Flex gap={"4"}>
+            <S.DaoPoolCardStatisticLabel>Members</S.DaoPoolCardStatisticLabel>
+            <Tooltip id={uuidv4()}>Info about Members</Tooltip>
+          </Flex>
+          <S.DaoPoolCardStatisticValue>
+            {String(govPoolStatistic.members.value ?? 0)}
+          </S.DaoPoolCardStatisticValue>
+        </S.DaoPoolCardStatisticItem>
+        <S.DaoPoolCardStatisticItem alignItems={"flex-end"}>
+          <Flex gap={"4"}>
+            <S.DaoPoolCardStatisticLabel>LAU</S.DaoPoolCardStatisticLabel>
+            <Tooltip id={uuidv4()}>Info about LAU</Tooltip>
+          </Flex>
+          <S.DaoPoolCardStatisticValue>
+            {normalizeBigNumber(govPoolStatistic.lau.value, 18, 0)}
+          </S.DaoPoolCardStatisticValue>
+        </S.DaoPoolCardStatisticItem>
+      </S.DaoPoolCardStatisticWrp>
       {children}
-    </CardInfo>
+    </S.DaoPoolCardRoot>
   )
 }
 
-export default React.memo(DaoPoolCard)
+export default DaoPoolCard

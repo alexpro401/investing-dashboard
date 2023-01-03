@@ -1,11 +1,30 @@
 import styled from "styled-components/macro"
-import { Text } from "theme"
-import { Icon } from "common"
+import { respondTo, Text } from "theme"
+import { Card, Icon } from "common"
 
-export const Root = styled.div`
+export const DaoPoolCardRoot = styled(Card)`
   background: ${(props) => props.theme.backgroundColors.secondary};
   border-radius: 20px;
   color: ${(props) => props.theme.textColors.primary};
+  cursor: pointer;
+
+  ${respondTo("lg")} {
+    flex-direction: row;
+    align-items: center;
+    border-radius: 60px 24px 24px 60px;
+    padding: 0 24px 0 0;
+  }
+`
+
+export const DaoPoolCardHeader = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  ${respondTo("lg")} {
+    min-width: 35%;
+  }
 `
 
 export const DaoPoolCardTitle = styled(Text).attrs(() => ({
@@ -53,10 +72,49 @@ export const DaoPoolCardVotingPower = styled(Text)`
   }
 `
 
-export const Content = styled.div`
+export const DaoPoolCardStatisticWrp = styled.div`
   width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr;
-  gap: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  ${respondTo("lg")} {
+    gap: 24px;
+  }
+`
+
+export const DaoPoolCardStatisticItem = styled.div<{ alignItems?: string }>`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: ${({ alignItems }) => alignItems ?? "flex-start"};
+  gap: 4px;
+
+  ${respondTo("lg")} {
+    gap: 0;
+  }
+`
+export const DaoPoolCardStatisticLabel = styled.div`
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 20px;
+  color: ${({ theme }) => theme.textColors.secondary};
+
+  ${respondTo("lg")} {
+    font-size: 12px;
+    color: #6781bd;
+  }
+`
+export const DaoPoolCardStatisticValue = styled.div`
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  color: rgba(228, 242, 255, 0.8);
+
+  ${respondTo("lg")} {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 25px;
+  }
 `
