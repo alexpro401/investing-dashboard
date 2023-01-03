@@ -15,6 +15,8 @@ import useQueryPagination from "hooks/useQueryPagination"
 import GovTokenDelegationCard from "components/cards/GovTokenDelegation"
 import { IGovVoterInPoolPairsQuery } from "interfaces/thegraphs/gov-pools"
 import { NoDataMessage } from "common"
+import { useGovPoolHelperContracts } from "hooks"
+import { useGovPoolVotingPowerMulticall } from "hooks/dao/useGovPoolUserVotingPower"
 
 interface Props {
   govPoolAddress?: string
@@ -51,6 +53,41 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress, token }) => {
           : withAmounts
       },
     })
+
+  const { govUserKeeperAddress } = useGovPoolHelperContracts(govPoolAddress)
+  const votingPowerParams = React.useMemo(
+    () => [
+      {
+        userKeeperAddress: govUserKeeperAddress,
+        address: account,
+        isMicroPool: false,
+        useDelegated: true,
+      },
+    ],
+    [account, govUserKeeperAddress]
+  )
+
+  const [votingPowerData, votingPowerDataLoading] =
+    useGovPoolVotingPowerMulticall(votingPowerParams)
+
+  const nftIdToVotingPowerMap = React.useMemo<Record<string, BigNumber>>(() => {
+    if (
+      !account ||
+      votingPowerDataLoading ||
+      isEmpty(votingPowerData.delegated)
+    ) {
+      return {}
+    }
+
+    return votingPowerData.delegated[account].nftIds.reduce(
+      (acc, nftId, index) => {
+        acc[nftId.toString()] =
+          votingPowerData.delegated[account].perNftPower[index]
+        return acc
+      },
+      {}
+    )
+  }, [votingPowerData, votingPowerDataLoading, account])
 
   const loader = React.useRef<any>()
 
@@ -90,6 +127,7 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress, token }) => {
             chainId={chainId}
             alwaysShowMore={data.length === 1 ? true : undefined}
             token={token}
+            nftsPower={nftIdToVotingPowerMap}
           />
         </S.Indents>
       ))}
