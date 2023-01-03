@@ -14,6 +14,8 @@ export interface IGovPoolVoterQuery {
   totalDPClaimed: string
   totalClaimedUSD: string
   claimedDPs: IGovDistributionProposal[]
+
+  currentDelegatorsCount: string
 }
 
 export interface IGovPoolVoterInProposalQuery {

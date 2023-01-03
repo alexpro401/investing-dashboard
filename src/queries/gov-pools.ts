@@ -12,6 +12,7 @@ const POOL_VOTER = `
   totalDPClaimed
   totalClaimedUSD
   claimedDPs {${DISTRIBUTION_PROPOSAL}}
+  currentDelegatorsCount
 `
 
 const POOL_SETTINGS = `
