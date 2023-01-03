@@ -1,7 +1,7 @@
 /**
  * Components which are used in Header
  */
-import { Dispatch, SetStateAction, FC, ReactNode } from "react"
+import { Dispatch, SetStateAction, FC, ReactNode, HTMLAttributes } from "react"
 import { ITopMembersFilters } from "interfaces"
 import IconSearch from "components/IconSearch"
 
@@ -59,7 +59,7 @@ export const Link = ({}: ILinkProps) => {
   )
 }
 
-interface ISearchProps {
+interface ISearchProps extends HTMLAttributes<HTMLDivElement> {
   onClick: () => void
   toggle: Dispatch<SetStateAction<boolean>>
   isSearchActive: boolean
@@ -72,6 +72,7 @@ export const Search = ({
   isSearchActive,
   filters,
   dispatchFilter,
+  ...rest
 }: ISearchProps) => {
   return (
     <IconSearch

@@ -1,12 +1,12 @@
 import { Flex, Center, To } from "theme"
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { CubeSpinner } from "react-spinners-kit"
-import { Routes, Route, generatePath } from "react-router-dom"
+import { Routes, Route, generatePath, Navigate } from "react-router-dom"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import LoadMore from "components/LoadMore"
-import TopMembersBar from "components/TopMembersBar"
+import TopMembersBar from "./TopMembersBar"
 import PoolStatisticCard from "components/cards/PoolStatistic"
 
 import { PoolType } from "consts/types"
@@ -16,20 +16,24 @@ import {
   selectInvestPools,
   selectPayload,
   selectPools,
+  selectTotalBasicPools,
+  selectTotalInvestPools,
 } from "state/pools/selectors"
 
-import {
-  StyledTopMembers,
-  MembersList,
-  ListContainer,
-  LoadingText,
-  CardIconWrp,
-} from "./styled"
+import * as S from "./styled"
 import { AppDispatch } from "state"
 import { setActivePoolType } from "state/pools/actions"
 import { ICON_NAMES, ROUTE_PATHS } from "consts"
 import { Icon } from "common"
 import { useBreakpoints } from "hooks"
+import Header from "components/Header/Layout"
+import { ITab } from "interfaces"
+
+import tutorialImageSrc from "assets/others/create-fund-docs.png"
+import { usePoolsFilters } from "state/pools/hooks"
+import { Filters, Search } from "components/Header/Components"
+import TradersSort from "components/TradersSort"
+import { debounce } from "lodash"
 
 interface Props {
   poolType: PoolType
@@ -71,15 +75,12 @@ const List: React.FC<Props> = ({ poolType }) => {
     <Center>
       <CubeSpinner size={40} loading />
       <Flex p="10px 0">
-        <LoadingText>Retrieving pools</LoadingText>
+        <S.LoadingText>Retrieving pools</S.LoadingText>
       </Flex>
     </Center>
   ) : (
-    <ListContainer>
-      <MembersList
-        ref={investScrollRef}
-        style={{ height: window.innerHeight - 117 }}
-      >
+    <S.ListContainer>
+      <S.MembersList ref={investScrollRef}>
         {pools[poolType].map((pool, index) => (
           <To
             key={pool.id}
@@ -92,9 +93,9 @@ const List: React.FC<Props> = ({ poolType }) => {
                 isMobile={!isDesktop}
               >
                 {isDesktop ? (
-                  <CardIconWrp>
+                  <S.CardIconWrp>
                     <Icon name={ICON_NAMES.angleRight} color={"#6781BD"} />
-                  </CardIconWrp>
+                  </S.CardIconWrp>
                 ) : (
                   <></>
                 )}
@@ -108,21 +109,113 @@ const List: React.FC<Props> = ({ poolType }) => {
           handleMore={loadMore}
           r={investScrollRef}
         />
-      </MembersList>
-    </ListContainer>
+      </S.MembersList>
+    </S.ListContainer>
   )
 }
 
 function TopMembers() {
+  const totalBasicPools = useSelector(selectTotalBasicPools)
+  const totalInvestPools = useSelector(selectTotalInvestPools)
+
+  const tabs: ITab[] = [
+    {
+      title: `All funds (${totalBasicPools + totalInvestPools})`,
+      source: "all",
+    },
+    {
+      title: `Basic (${totalBasicPools})`,
+      source: "basic",
+    },
+    {
+      title: `Investment (${totalInvestPools})`,
+      source: "invest",
+    },
+  ]
+
+  const [, dispatchFilter] = usePoolsFilters()
+  const [isFiltersActive, setIsFiltersActive] = useState(false)
+
+  const [searchInput, setSearchInput] = useState<string>("")
+
+  const { isMobile } = useBreakpoints()
+
+  useEffect(
+    debounce(() => {
+      dispatchFilter("query", searchInput)
+    }, 500),
+    [searchInput]
+  )
+
   return (
-    <StyledTopMembers>
-      <TopMembersBar />
+    <S.StyledTopMembers>
+      {isMobile ? (
+        <TopMembersBar tabs={tabs} />
+      ) : (
+        <>
+          <Header>TOP Funds</Header>
+          <S.TopMembersPromoBlock>
+            <S.TopMembersPromoBlockImg src={tutorialImageSrc} />
+            <S.TopMembersPromoBlockDetails>
+              <S.TopMembersPromoBlockDetailsTitle>
+                Shape your Fund with your best ideas
+              </S.TopMembersPromoBlockDetailsTitle>
+              <S.TopMembersPromoBlockDetailsLink href={"#"}>
+                Read the tutorial
+              </S.TopMembersPromoBlockDetailsLink>
+            </S.TopMembersPromoBlockDetails>
+            <S.TopMembersPromoBlockActionBtn
+              text={"Create own Fund"}
+              color="tertiary"
+              routePath={ROUTE_PATHS.createFund}
+            />
+          </S.TopMembersPromoBlock>
+          <S.TopMembersHeader>
+            <S.TopMembersTitle>Top Funds</S.TopMembersTitle>
+            <S.TopMembersRouteTabsWrp m="0" tabs={tabs} />
+            <S.TopMembersFiltersWrp>
+              <S.TopMembersSearchInput
+                value={searchInput}
+                onInput={(event) =>
+                  setSearchInput(event.currentTarget.value as string)
+                }
+                placeholder={"Search"}
+                nodeLeft={<S.TopMembersSearchIcon name={ICON_NAMES.search} />}
+              />
+              <S.TopMembersFiltersBtn
+                color="secondary"
+                text="Filter"
+                size="small"
+                iconLeft={ICON_NAMES.filter}
+                iconRight={ICON_NAMES.angleDown}
+                onClick={() => setIsFiltersActive(!isFiltersActive)}
+              />
+
+              <S.TradersSortWrp
+                handleClose={() => setIsFiltersActive(false)}
+                isOpen={isFiltersActive}
+              />
+            </S.TopMembersFiltersWrp>
+          </S.TopMembersHeader>
+        </>
+      )}
       <Routes>
-        <Route path="/" element={<List poolType="ALL_POOL" />}></Route>
         <Route path="basic" element={<List poolType="BASIC_POOL" />}></Route>
         <Route path="invest" element={<List poolType="INVEST_POOL" />}></Route>
+        <Route path="all" element={<List poolType="ALL_POOL" />}></Route>
+        <Route
+          path="*"
+          element={
+            <Navigate
+              replace
+              to={generatePath(ROUTE_PATHS.topMembers, {
+                "*": "all",
+              })}
+            />
+          }
+        ></Route>
       </Routes>
-    </StyledTopMembers>
+    </S.StyledTopMembers>
   )
 }
 

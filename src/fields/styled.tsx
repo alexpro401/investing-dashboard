@@ -1,4 +1,5 @@
 import theme from "../theme"
+import { css } from "styled-components/macro"
 
 export const fieldBg = theme.backgroundColors.secondary
 
@@ -25,7 +26,7 @@ export const fieldPaddings = `${fieldPaddingTop}px ${fieldPaddingRight}px ${fiel
 export const fieldErrorColor = "#ff0000"
 
 export const getDefaultFieldLabelStyles = () => {
-  return `
+  return css`
     font-size: ${fieldLabelFocusFontSize}px;
     line-height: ${fieldLabelLineHeight};
     color: ${fieldLabelFocusColor};
@@ -34,7 +35,7 @@ export const getDefaultFieldLabelStyles = () => {
 }
 
 export const getDefaultFieldTextStyles = () => {
-  return `
+  return css`
     font-size: ${fieldTextFontSize}px;
     line-height: ${fieldTextLineHeight};
     -webkit-text-fill-color: ${fieldTextColor};
@@ -45,21 +46,21 @@ export const getDefaultFieldTextStyles = () => {
 }
 
 export const getDefaultFieldBorderStyles = () => {
-  return `
+  return css`
     border: 1px solid ${"#293C54"};
     border-radius: 16px;
   `
 }
 
 export const getFieldSuccessBorderStyles = () => {
-  return `
+  return css`
     border: 1px solid ${theme.statusColors.success};
     border-radius: 16px;
   `
 }
 
 export const getDefaultFieldPlaceholderStyles = () => {
-  return `
+  return css`
     color: ${fieldPlaceholderColor};
     -webkit-text-fill-color: ${fieldPlaceholderColor};
     fill: ${fieldPlaceholderColor};
@@ -69,7 +70,7 @@ export const getDefaultFieldPlaceholderStyles = () => {
 }
 
 export const getDefaultFieldErrorStyles = () => {
-  return `
+  return css`
     overflow: hidden;
     color: ${fieldErrorColor};
     font-size: 10px;

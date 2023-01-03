@@ -1,20 +1,21 @@
 import styled from "styled-components/macro"
 import { respondTo } from "theme"
 import { motion } from "framer-motion"
+import { AppButton, Icon } from "common"
+import RouteTabs from "components/RouteTabs"
+import { InputField } from "fields"
+import TradersSort from "components/TradersSort"
 
 export const StyledTopMembers = styled(motion.div)`
-  padding: 0;
   height: fit-content;
   width: 100%;
+  max-width: 1200px;
+  padding: 0 24px;
+  margin: 0 auto;
 `
 
 export const MembersList = styled.div`
   width: 100%;
-  padding: 0 16px 30px;
-
-  ${respondTo("sm")} {
-    padding: 10px 32px 30px;
-  }
 `
 
 export const LoadingText = styled.div`
@@ -34,8 +35,6 @@ export const ListContainer = styled(motion.div)`
   touch-action: none;
   overscroll-behavior: none; */
 
-  max-width: 1200px;
-  margin: 0 auto;
   padding: 0;
 `
 
@@ -45,4 +44,131 @@ export const CardIconWrp = styled.div`
     width: 7px;
     height: 12px;
   }
+`
+
+export const TopMembersPromoBlock = styled.div`
+  display: flex;
+  align-items: center;
+  background: #101520;
+  border-radius: 20px;
+  gap: 12px;
+`
+
+export const TopMembersPromoBlockImg = styled.img``
+
+export const TopMembersPromoBlockDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`
+
+export const TopMembersPromoBlockDetailsTitle = styled.h3`
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 700;
+  margin: 0;
+  color: ${(props) => props.theme.textColors.secondary};
+`
+
+export const TopMembersPromoBlockDetailsLink = styled.a`
+  text-decoration: none;
+  color: ${(props) => props.theme.brandColors.secondary};
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+`
+
+export const TopMembersPromoBlockActionBtn = styled(AppButton)`
+  margin-left: auto;
+  border: none;
+`
+
+export const TopMembersHeader = styled.div`
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  gap: 19px;
+
+  ${respondTo("sm")} {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+`
+
+export const TopMembersTitle = styled.h2`
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  color: ${({ theme }) => theme.textColors.primary};
+`
+
+export const TopMembersRouteTabsWrp = styled(RouteTabs)`
+  ${respondTo("sm")} {
+    max-width: 365px;
+  }
+`
+
+export const TopMembersFiltersWrp = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  gap: 24px;
+`
+
+export const TopMembersSearchInput = styled(InputField)`
+  label {
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: #6781bd;
+    -webkit-text-fill-color: #6781bd;
+  }
+
+  & input {
+    background: #101520;
+    border-radius: 16px;
+    border: none;
+    padding-top: 9px;
+    padding-bottom: 9px;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: #6781bd;
+    -webkit-text-fill-color: #6781bd;
+
+    &:not(:read-only),
+    &:-webkit-autofill,
+    &:-webkit-autofill:focus {
+      box-shadow: inset 0 0 0 50px #101520;
+      background: #101520;
+    }
+  }
+`
+
+export const TopMembersSearchIcon = styled(Icon)`
+  color: #6781bd;
+  -webkit-text-fill-color: #6781bd;
+`
+
+export const TopMembersFiltersBtn = styled(AppButton).attrs(() => ({
+  iconSize: "1.4em",
+}))`
+  color: ${({ theme }) => theme.brandColors.secondary};
+  padding: 8px 8px;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  grid-gap: 4px;
+`
+
+export const TradersSortWrp = styled(TradersSort)`
+  position: absolute;
+  top: 110%;
+  right: 0;
 `
