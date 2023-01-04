@@ -1,6 +1,6 @@
 import styled from "styled-components/macro"
 
-import { Collapse, Icon, SelectableCard } from "common"
+import { Icon, SelectableCard } from "common"
 import theme, { respondTo } from "theme"
 import { InputField } from "fields"
 import { ICON_NAMES } from "consts"

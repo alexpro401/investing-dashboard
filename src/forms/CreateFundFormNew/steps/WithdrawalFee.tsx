@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react"
+import React, { useCallback, useContext, useMemo } from "react"
 
 import {
   CardHead,
@@ -41,9 +41,19 @@ const WithdrawalFee: React.FC = () => {
   const { nextCb } = useContext(stepsControllerContext)
   const { feeType, comission } = useContext(CreateFundContext)
 
+  const commisionIsValid = useMemo(() => {
+    const { min, max } = sliderLimitsByPeriodType[feeType.get]
+
+    if (comission.get < min || comission.get > max) return false
+
+    return true
+  }, [comission, feeType])
+
   const handleNextStep = useCallback(() => {
+    if (!commisionIsValid) return
+
     nextCb()
-  }, [nextCb])
+  }, [nextCb, commisionIsValid])
 
   return (
     <SForms.StepsRoot>
@@ -102,6 +112,7 @@ const WithdrawalFee: React.FC = () => {
                     initial={comission.get}
                     name="1 month comission"
                     onChange={(_, v) => comission.set(v)}
+                    error={!commisionIsValid}
                   />
                 )}
               </Flex>
@@ -125,6 +136,7 @@ const WithdrawalFee: React.FC = () => {
                     initial={comission.get}
                     name="3 month comission"
                     onChange={(_, v) => comission.set(v)}
+                    error={!commisionIsValid}
                   />
                 )}
               </Flex>
@@ -148,6 +160,7 @@ const WithdrawalFee: React.FC = () => {
                     initial={comission.get}
                     name="12 month comission"
                     onChange={(_, v) => comission.set(v)}
+                    error={!commisionIsValid}
                   />
                 )}
               </Flex>
@@ -192,6 +205,7 @@ const WithdrawalFee: React.FC = () => {
                       initial={comission.get}
                       name="1 month comission"
                       onChange={(_, v) => comission.set(v)}
+                      error={!commisionIsValid}
                     />
                   )}
                 </Flex>
@@ -221,6 +235,7 @@ const WithdrawalFee: React.FC = () => {
                       initial={comission.get}
                       name="3 month comission"
                       onChange={(_, v) => comission.set(v)}
+                      error={!commisionIsValid}
                     />
                   )}
                 </Flex>
@@ -250,6 +265,7 @@ const WithdrawalFee: React.FC = () => {
                       initial={comission.get}
                       name="12 month comission"
                       onChange={(_, v) => comission.set(v)}
+                      error={!commisionIsValid}
                     />
                   )}
                 </Flex>

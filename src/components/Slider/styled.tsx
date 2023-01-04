@@ -1,5 +1,6 @@
 import styled, { createGlobalStyle } from "styled-components/macro"
-import { GradientBorder } from "theme"
+
+import theme, { GradientBorder } from "theme"
 
 export const SliderWrapper = styled.div`
   width: 100%;
@@ -32,12 +33,19 @@ export const Percent = styled.input`
   position: relative;
 `
 
-export const InputWrapper = styled(GradientBorder)`
+export const InputWrapper = styled(GradientBorder)<{ isError: boolean }>`
   position: relative;
   border-radius: 41px;
   width: 55px;
   height: 25px;
   justify-content: center;
+  border: 2px solid transparent;
+  ${(props) =>
+    props.isError ? `border: 2px solid ${theme.statusColors.error};` : ""}
+
+  &:before {
+    ${(props) => (props.isError ? `background-image: none !important;` : "")}
+  }
 
   &:after {
     background: #191f2c;

@@ -199,51 +199,6 @@ const CreateFund: FC = () => {
                         </S.FundTypeCardsDesktop>
                       </>
                     )}
-
-                    <S.FundTypeCards>
-                      <S.FundTypeCardsTitle>
-                        Create and govern your DAO
-                      </S.FundTypeCardsTitle>
-
-                      <SelectableCard
-                        value={fundType}
-                        setValue={setFundType}
-                        valueToSet={FUND_TYPES.daoPool}
-                        nodeLeft={
-                          <RadioButton
-                            selected={fundType}
-                            value={FUND_TYPES.daoPool}
-                            onChange={() => {}}
-                          />
-                        }
-                        title="DAO pool"
-                        description={
-                          <p>
-                            One-stop platform to create and govern your DAO
-                            effectively and securely.
-                          </p>
-                        }
-                      >
-                        <Collapse isOpen={fundType === FUND_TYPES.daoPool}>
-                          <S.CreateFundDaoFeatures>
-                            {[
-                              "Interact with any DeFi protocol autonomously and automatically",
-                              "Manage DAOs via tokens, NFTs, or both",
-                              "Easily reward active DAO members",
-                              "Modify every DAO governance setting via proposals",
-                              "Implement different quorum settings for each proposal",
-                            ].map((el, idx) => (
-                              <S.CreateFundDaoFeaturesItem key={idx}>
-                                <S.CreateFundDaoFeaturesItemIcon
-                                  name={ICON_NAMES.greenCheck}
-                                />
-                                {el}
-                              </S.CreateFundDaoFeaturesItem>
-                            ))}
-                          </S.CreateFundDaoFeatures>
-                        </Collapse>
-                      </SelectableCard>
-                    </S.FundTypeCards>
                     <SForms.FormStepsNavigationWrp nextLabel={"Create fund"} />
                   </SForms.StepsRoot>
                 </SForms.StepsContainer>

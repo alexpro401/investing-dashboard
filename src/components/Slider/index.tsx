@@ -13,8 +13,8 @@ import {
   SliderWrapper,
 } from "./styled"
 
-export const NumberInput = ({ value, onChange, onClick }) => (
-  <InputWrapper>
+export const NumberInput = ({ value, onChange, onClick, isError }) => (
+  <InputWrapper isError={isError}>
     <Percent
       onClick={onClick}
       onChange={(v) => onChange(v.target.value)}
@@ -32,6 +32,7 @@ interface Props {
   debounce?: boolean
   limits: { min: number; max: number }
   onChange: (name: string, value: number) => void
+  error?: boolean
 }
 
 const Slider: React.FC<Props> = ({
@@ -41,6 +42,7 @@ const Slider: React.FC<Props> = ({
   hideInput = false,
   debounce = true,
   onChange,
+  error = false,
   ...rest
 }) => {
   const [v, setV] = useState(initial)
@@ -82,6 +84,7 @@ const Slider: React.FC<Props> = ({
               onClick={focusText}
               onChange={handleChange}
               value={debounce ? v : initial}
+              isError={error}
             />
           </Flex>
         )}
