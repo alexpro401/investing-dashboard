@@ -74,22 +74,22 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress, token }) => {
 
   const nftIdToVotingPowerMap = React.useMemo<Record<string, BigNumber>>(() => {
     if (
-      !account ||
+      !govUserKeeperAddress ||
       votingPowerDataLoading ||
       isEmpty(votingPowerData.delegated)
     ) {
       return {}
     }
 
-    return votingPowerData.delegated[account].nftIds.reduce(
+    return votingPowerData.delegated[govUserKeeperAddress].nftIds.reduce(
       (acc, nftId, index) => {
         acc[nftId.toString()] =
-          votingPowerData.delegated[account].perNftPower[index]
+          votingPowerData.delegated[govUserKeeperAddress].perNftPower[index]
         return acc
       },
       {}
     )
-  }, [votingPowerData, votingPowerDataLoading, account])
+  }, [votingPowerData, votingPowerDataLoading, govUserKeeperAddress])
 
   const loader = React.useRef<any>()
 
