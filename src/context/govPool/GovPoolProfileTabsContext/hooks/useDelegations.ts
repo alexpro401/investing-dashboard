@@ -8,8 +8,8 @@ import {
   useGovPoolNftVotingPower,
   useGovPoolDelegations,
   useGovPoolHelperContracts,
+  useGovPoolVotingPowerMulticall,
 } from "hooks/dao"
-import { useGovPoolVotingPowerMulticall } from "hooks/dao/useGovPoolUserVotingPower"
 import { DaoPoolDaoProfileTotalDelegationsQuery } from "queries/gov-pools"
 import { isAddress } from "utils"
 

@@ -15,8 +15,10 @@ import useQueryPagination from "hooks/useQueryPagination"
 import GovTokenDelegationCard from "components/cards/GovTokenDelegation"
 import { IGovVoterInPoolPairsQuery } from "interfaces/thegraphs/gov-pools"
 import { NoDataMessage } from "common"
-import { useGovPoolHelperContracts } from "hooks"
-import { useGovPoolVotingPowerMulticall } from "hooks/dao/useGovPoolUserVotingPower"
+import {
+  useGovPoolHelperContracts,
+  useGovPoolVotingPowerMulticall,
+} from "hooks"
 
 interface Props {
   govPoolAddress?: string
