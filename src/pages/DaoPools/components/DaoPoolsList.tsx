@@ -7,17 +7,16 @@ import { generatePath, useNavigate } from "react-router-dom"
 import theme, { Center } from "theme"
 import { Indents, List } from "../styled"
 import LoadMore from "components/LoadMore"
-import { ICON_NAMES, ROUTE_PATHS } from "consts"
+import { ICON_NAMES, ROUTE_PATHS, ZERO } from "consts"
 import { useBreakpoints, useGovPoolsList } from "hooks"
 import { DaoPoolCard, Icon, NoDataMessage } from "common"
 
 interface Props {}
 
 const DaoPoolsList: React.FC<Props> = () => {
-  const { account } = useWeb3React()
   const navigate = useNavigate()
 
-  const { pools, loading, fetchMore } = useGovPoolsList()
+  const { pools, votingPowers, loading, fetchMore } = useGovPoolsList()
 
   const listRef = React.useRef<any>()
 
@@ -49,7 +48,7 @@ const DaoPoolsList: React.FC<Props> = () => {
         <Indents key={pool.id} top={index > 0}>
           <DaoPoolCard
             data={pool}
-            account={account}
+            totalVotingPower={votingPowers[pool.id] ?? ZERO}
             isMobile={!isDesktop}
             onClick={() => {
               navigate(

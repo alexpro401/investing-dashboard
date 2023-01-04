@@ -11,7 +11,7 @@ import {
   useGovPoolHelperContractsMulticall,
   useGovPoolVotingPowerMulticall,
 } from "hooks"
-import { normalizeBigNumber } from "utils"
+import { addBignumbers } from "utils/formulas"
 
 const govPoolsClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
@@ -32,9 +32,6 @@ const useGovPoolsList = () => {
     useGovPoolHelperContractsMulticall(
       isNil(data) || isEmpty(data) ? [] : data.map((pool) => pool.id)
     )
-
-  console.groupCollapsed("useGovPoolsList")
-  // console.log("helperContracts", helperContracts)
 
   const votingPowerParams = React.useMemo(() => {
     if (!account || helperContractsLoading)
@@ -60,36 +57,38 @@ const useGovPoolsList = () => {
   const [votingPowerData, votingPowerDataLoading] =
     useGovPoolVotingPowerMulticall(votingPowerParams)
 
-  const _loading = React.useMemo(
+  const anyLoading = React.useMemo(
     () => loading || helperContractsLoading || votingPowerDataLoading,
     [loading, helperContractsLoading, votingPowerDataLoading]
   )
 
   const votingPowers = React.useMemo(() => {
-    if (votingPowerDataLoading) {
-      return []
+    if (anyLoading && !votingPowerData) {
+      return {}
     }
-    const userKeepers = Object.values(helperContracts).map(
-      (hc) => hc.userKeeper
-    )
 
-    console.log("votingPowerData", votingPowerData)
+    const result = {}
 
-    return userKeepers.map((userKeeperAddress) => {
-      const currentPowers = votingPowerData?.default[userKeeperAddress]
-      console.log(normalizeBigNumber(currentPowers?.power))
+    for (const [key, value] of Object.entries(helperContracts)) {
+      const poolVotingPowers = votingPowerData?.default[value.userKeeper]
 
-      return normalizeBigNumber(currentPowers?.power)
-    })
-  }, [helperContracts, votingPowerDataLoading, votingPowerData])
+      if (!poolVotingPowers) {
+        continue
+      }
 
-  console.log("votingPowers", votingPowers)
-  console.groupEnd()
+      result[key] = addBignumbers(
+        [poolVotingPowers.power, 18],
+        [poolVotingPowers.nftPower, 18]
+      )
+    }
+
+    return result
+  }, [anyLoading, helperContracts, votingPowerData])
 
   return {
     pools: data,
     votingPowers,
-    loading: _loading,
+    loading: anyLoading,
     fetchMore,
   }
 }
