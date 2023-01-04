@@ -255,7 +255,8 @@ const AdditionalSettings: React.FC = () => {
                         : undefined
                     }
                     weight={700}
-                    size={"16px"}
+                    size={"14px"}
+                    desktopSize={"16px"}
                   >
                     {fundManagers.get.length} адрес ви обрали
                   </RegularText>
@@ -307,7 +308,8 @@ const AdditionalSettings: React.FC = () => {
                         : undefined
                     }
                     weight={700}
-                    size={"16px"}
+                    size={"14px"}
+                    desktopSize={"16px"}
                   >
                     {privateAddresses.get.length} адрес ви обрали
                   </RegularText>

@@ -66,7 +66,7 @@ const Slider: React.FC<Props> = ({
     <SliderWrapper {...rest}>
       <SliderStyle />
       <Flex full p="0 4px 10px 8px">
-        <Flex full p="24px 0" ai="center">
+        <Flex full ai="center">
           {min !== 0 && <SliderLine />}
           <InputSlider
             min={min}
