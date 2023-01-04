@@ -1,5 +1,4 @@
 import { useMemo } from "react"
-import { isArray } from "lodash"
 import { Interface } from "@ethersproject/abi"
 import { BigNumber } from "@ethersproject/bignumber"
 
@@ -7,11 +6,15 @@ import { isAddress } from "utils"
 import { GovUserKeeper as GovUserKeeper_ABI } from "abi"
 import { useMultipleContractSingleData } from "state/multicall/hooks"
 
-interface IUseGovPoolUserVotingPower {
-  userKeeperAddress?: string
-  address?: string | null
-  isMicroPool?: boolean
-  useDelegated?: boolean
+interface IVotingPowerParams {
+  address?: (string | null | undefined)[]
+  isMicroPool?: boolean[]
+  useDelegated?: boolean[]
+}
+
+interface Props {
+  userKeeperAddresses: (string | null | undefined)[]
+  params: IVotingPowerParams
 }
 
 interface IVotingPowerResponse {
@@ -37,30 +40,31 @@ interface IUserVotingPowerMulticallResponse {
 
 const USER_KEEPER_INTERFACE = new Interface(GovUserKeeper_ABI)
 
-const useGovPoolVotingPowerMulticall = (
-  params: IUseGovPoolUserVotingPower[],
-  format = false
-): [data: IUserVotingPowerMulticallResponse, loading: boolean] => {
+const useGovPoolVotingPowerMulticall = ({
+  userKeeperAddresses,
+  params,
+}: Props): [data: IUserVotingPowerMulticallResponse, loading: boolean] => {
   const validatedList = useMemo(
-    () =>
-      params.filter(
-        (p) => isAddress(p.address) && isAddress(p.userKeeperAddress)
-      ),
-    [params]
+    () => userKeeperAddresses.filter((p) => isAddress(p)),
+    [userKeeperAddresses]
   )
 
   const validatedAddresses = useMemo(
-    () => validatedList.map((p) => p.userKeeperAddress as string),
+    () => validatedList.map((p) => p as string),
     [validatedList]
   )
 
   const validatedParams = useMemo(() => {
-    const addresses = validatedList.map((p) => p.address as string)
-    const isMicroPool = validatedList.map((p) => p.isMicroPool || false)
-    const useDelegated = validatedList.map((p) => p.useDelegated || false)
-
-    return [addresses, isMicroPool, useDelegated] as const
-  }, [validatedList])
+    return [
+      params.address,
+      params.isMicroPool || false,
+      params.useDelegated || false,
+    ] as unknown as [
+      address: string[],
+      isMicroPool: boolean[],
+      useDelegated: boolean[]
+    ]
+  }, [params.address, params.isMicroPool, params.useDelegated])
 
   const callResults = useMultipleContractSingleData(
     validatedAddresses,
@@ -75,102 +79,42 @@ const useGovPoolVotingPowerMulticall = (
   )
 
   return useMemo(() => {
-    if (format) {
-      return [
-        validatedParams.length > 0
-          ? validatedParams[0].reduce<IUserVotingPowerMulticallResponse>(
-              (memo, account, i) => {
-                const value = callResults?.[i]?.result?.[0]
-
-                if (!value) return memo
-
-                if (!isArray(value) || !value.length) return memo
-
-                params.map((p, i) => {
-                  const {
-                    power,
-                    nftPower,
-                    perNftPower,
-                    ownedBalance,
-                    ownedLength,
-                    nftIds,
-                  } = value[i]
-
-                  const result = {
-                    power,
-                    nftPower,
-                    perNftPower,
-                    ownedBalance,
-                    ownedLength,
-                    nftIds,
-                  }
-
-                  if (validatedParams[1][i]) {
-                    memo.micropool[validatedAddresses[i]] = result
-                  }
-
-                  if (validatedParams[2][i]) {
-                    memo.delegated[validatedAddresses[i]] = result
-                  }
-
-                  memo.default[validatedAddresses[i]] = result
-                })
-
-                return memo
-              },
-              {
-                default: {},
-                micropool: {},
-                delegated: {},
-              }
-            )
-          : {
-              default: {},
-              micropool: {},
-              delegated: {},
-            },
-        anyLoading,
-      ]
-    }
-
     return [
-      validatedParams.length > 0
-        ? validatedParams[0].reduce<IUserVotingPowerMulticallResponse>(
-            (memo, account, i) => {
+      validatedAddresses.length > 0
+        ? validatedAddresses.reduce(
+            (memo, address, i) => {
               const value = callResults?.[i]?.result?.[0]
 
               if (!value) return memo
 
-              if (!isArray(value) || !value.length) return memo
-
-              params.map((p, i) => {
+              validatedParams[0].map((_, i) => {
                 const {
-                  power,
+                  nftIds,
                   nftPower,
-                  perNftPower,
                   ownedBalance,
                   ownedLength,
-                  nftIds,
+                  perNftPower,
+                  power,
                 } = value[i]
 
-                const result = {
-                  power,
+                const data = {
+                  nftIds,
                   nftPower,
-                  perNftPower,
                   ownedBalance,
                   ownedLength,
-                  nftIds,
+                  perNftPower,
+                  power,
                 }
 
                 if (validatedParams[1][i]) {
-                  memo.micropool[account] = result
+                  memo.micropool[address as string] = data
                 }
 
                 if (validatedParams[2][i]) {
-                  memo.delegated[account] = result
+                  memo.delegated[address as string] = data
                 }
 
-                memo.default[account] = result
+                memo.default[address as string] = data
               })
 
               return memo
@@ -188,7 +132,7 @@ const useGovPoolVotingPowerMulticall = (
           },
       anyLoading,
     ]
-  }, [params, validatedParams, anyLoading, callResults, format])
+  }, [validatedParams, anyLoading, callResults, validatedAddresses])
 }
 
 export default useGovPoolVotingPowerMulticall

@@ -58,14 +58,14 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress, token }) => {
 
   const { govUserKeeperAddress } = useGovPoolHelperContracts(govPoolAddress)
   const votingPowerParams = React.useMemo(
-    () => [
-      {
-        userKeeperAddress: govUserKeeperAddress,
-        address: account,
-        isMicroPool: false,
-        useDelegated: true,
+    () => ({
+      userKeeperAddresses: [govUserKeeperAddress],
+      params: {
+        address: [account],
+        isMicroPool: [false],
+        useDelegated: [true],
       },
-    ],
+    }),
     [account, govUserKeeperAddress]
   )
 
