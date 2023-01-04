@@ -31,13 +31,11 @@ const DaoPoolCard: React.FC<Props> = ({
   totalVotingPower = ZERO,
   ...rest
 }) => {
-  const id = React.useMemo(() => data?.id ?? "", [data])
-
   const [token] = useERC20Data(
     !isAddressZero(data?.erc20Token) ? data.erc20Token : undefined
   )
 
-  const [{ daoPoolMetadata }] = useDaoPoolMetadata(id)
+  const [{ daoPoolMetadata }] = useDaoPoolMetadata(data?.id)
   const [govPoolStatistic] = useGovPoolStatistic(data)
 
   const poolName = React.useMemo(() => {
@@ -87,23 +85,33 @@ const DaoPoolCard: React.FC<Props> = ({
             </S.DaoPoolCardDescription>
           </Flex>
         </Flex>
-        <Flex ai="flex-end" jc="flex-start" dir="column" gap="4">
-          <Flex
-            ai="flex-end"
-            jc="flex-start"
-            dir={isMobile ? "column" : "column-reverse"}
-            gap="4"
-          >
-            <S.DaoPoolCardVotingPower>
-              {normalizeBigNumber(totalVotingPower, 18, 2)}
-            </S.DaoPoolCardVotingPower>
-            <S.DaoPoolCardDescription>
-              {isMobile ? "My voting power" : "My power"}
-            </S.DaoPoolCardDescription>
+        {isMobile && (
+          <Flex ai="flex-end" jc="flex-start" dir="column" gap="4">
+            <Flex ai="flex-end" jc="flex-start" dir={"column"} gap="4">
+              <S.DaoPoolCardVotingPower>
+                {normalizeBigNumber(totalVotingPower, 18, 2)}
+              </S.DaoPoolCardVotingPower>
+              <S.DaoPoolCardDescription>
+                My voting power
+              </S.DaoPoolCardDescription>
+            </Flex>
           </Flex>
-        </Flex>
+        )}
       </S.DaoPoolCardHeader>
       <S.DaoPoolCardStatisticWrp>
+        {!isMobile && (
+          <S.DaoPoolCardStatisticItem alignItems={"flex-start"}>
+            <Flex gap={"4"}>
+              <S.DaoPoolCardStatisticLabel>
+                My power
+              </S.DaoPoolCardStatisticLabel>
+              <Tooltip id={uuidv4()}>Info about voting power</Tooltip>
+            </Flex>
+            <S.DaoPoolCardStatisticValue>
+              {normalizeBigNumber(totalVotingPower, 18, 2)}
+            </S.DaoPoolCardStatisticValue>
+          </S.DaoPoolCardStatisticItem>
+        )}
         <S.DaoPoolCardStatisticItem alignItems={"flex-start"}>
           <Flex gap={"4"}>
             <S.DaoPoolCardStatisticLabel>TVL</S.DaoPoolCardStatisticLabel>

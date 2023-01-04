@@ -23,7 +23,8 @@ export const DaoPoolCardHeader = styled.div`
   justify-content: space-between;
 
   ${respondTo("lg")} {
-    min-width: 35%;
+    width: initial;
+    min-width: 30%;
   }
 `
 
@@ -43,7 +44,7 @@ export const DaoPoolCardDescription = styled(Text).attrs(() => ({
   font-weight: 400;
   color: ${({ theme }) => theme.textColors.secondary};
 
-  @media screen and (min-width: 1194px) {
+  ${respondTo("lg")} {
     font-size: 12px;
     font-weight: 500;
     color: #6781bd;
@@ -53,7 +54,7 @@ export const DaoPoolCardDescription = styled(Text).attrs(() => ({
 export const DaoPoolCardShowVotingPower = styled(Icon)`
   height: 16px;
 
-  @media screen and (min-width: 1194px) {
+  ${respondTo("lg")} {
     height: 25px;
   }
 `
@@ -64,7 +65,7 @@ export const DaoPoolCardVotingPower = styled(Text)`
   line-height: 1;
   color: ${({ theme }) => theme.statusColors.success};
 
-  @media screen and (min-width: 1194px) {
+  ${respondTo("lg")} {
     font-size: 20px;
     font-weight: 900;
     line-height: 25px;
