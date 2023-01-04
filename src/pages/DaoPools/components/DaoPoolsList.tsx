@@ -1,6 +1,5 @@
 import * as React from "react"
 import { isEmpty, isNil } from "lodash"
-import { useWeb3React } from "@web3-react/core"
 import { PulseSpinner } from "react-spinners-kit"
 import { generatePath, useNavigate } from "react-router-dom"
 
