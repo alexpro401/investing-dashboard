@@ -3,9 +3,9 @@ import { respondTo } from "theme"
 import { motion } from "framer-motion"
 import { AppButton, Icon } from "common"
 import RouteTabs from "components/RouteTabs"
-import { InputField } from "fields"
+import { ToggleSearchField } from "fields"
 import TradersSort from "components/TradersSort"
-import { ICON_NAMES } from "../../consts"
+import { ICON_NAMES } from "consts"
 
 export const StyledTopMembers = styled(motion.div)`
   height: fit-content;
@@ -135,59 +135,11 @@ export const TopMembersFiltersWrp = styled.div`
   width: 100%;
 `
 
-export const TopMembersSearchBtn = styled(AppButton).attrs({
-  iconSize: 24,
-  iconRight: ICON_NAMES.search,
-  color: "secondary",
-  size: "small",
-})`
-  padding: 13px;
-  background: #141926;
-  border-radius: 12px;
-
-  ${respondTo("md")} {
-    display: none;
-  }
-`
+export const ToggleSearchFieldWrp = styled(ToggleSearchField)``
 
 export const TopMembersSearchIcon = styled(Icon)`
   color: #6781bd;
   -webkit-text-fill-color: #6781bd;
-`
-
-export const TopMembersSearchInput = styled(InputField).attrs({
-  placeholder: "Search",
-  nodeLeft: <TopMembersSearchIcon name={ICON_NAMES.search} />,
-})`
-  label {
-    font-size: 14px;
-    line-height: 1.5;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    color: #6781bd;
-    -webkit-text-fill-color: #6781bd;
-  }
-
-  & input {
-    background: #101520;
-    border-radius: 16px;
-    border: none;
-    padding-top: 9px;
-    padding-bottom: 9px;
-    font-size: 14px;
-    line-height: 1.5;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    color: #6781bd;
-    -webkit-text-fill-color: #6781bd;
-
-    &:not(:read-only),
-    &:-webkit-autofill,
-    &:-webkit-autofill:focus {
-      box-shadow: inset 0 0 0 50px #101520;
-      background: #101520;
-    }
-  }
 `
 
 export const TopMembersFiltersBtn = styled(AppButton).attrs(() => ({

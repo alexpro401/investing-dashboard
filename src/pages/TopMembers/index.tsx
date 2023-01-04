@@ -1,12 +1,11 @@
 import { Flex, Center, To } from "theme"
-import React, { useEffect, useState } from "react"
+import React, { ElementType, useEffect, useMemo, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { CubeSpinner } from "react-spinners-kit"
 import { Routes, Route, generatePath, Navigate } from "react-router-dom"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import LoadMore from "components/LoadMore"
-import TopMembersBar from "./TopMembersBar"
 import PoolStatisticCard from "components/cards/PoolStatistic"
 
 import { PoolType } from "consts/types"
@@ -31,10 +30,7 @@ import { ITab } from "interfaces"
 
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import { usePoolsFilters } from "state/pools/hooks"
-import { Filters, Search } from "components/Header/Components"
-import TradersSort from "components/TradersSort"
 import { debounce } from "lodash"
-import { TopMembersSearchBtn } from "./styled"
 
 interface Props {
   poolType: PoolType
@@ -149,6 +145,35 @@ function TopMembers() {
     [searchInput]
   )
 
+  // const ListSearch = useMemo(
+  //   () =>
+  //     !isMobile && !isTablet ? (
+  //       <S.TopMembersSearchInput
+  //         value={searchInput}
+  //         onInput={(event) =>
+  //           setSearchInput(event.currentTarget.value as string)
+  //         }
+  //       />
+  //     ) : (
+  //       <>
+  //         {isMobileSearchShown ? (
+  //           <S.TopMembersSearchInput
+  //             value={searchInput}
+  //             onInput={(event) =>
+  //               setSearchInput(event.currentTarget.value as string)
+  //             }
+  //           />
+  //         ) : (
+  //           <></>
+  //         )}
+  //         <S.TopMembersSearchBtn
+  //           onClick={() => setIsMobileSearchShown(!isMobileSearchShown)}
+  //         />
+  //       </>
+  //     ),
+  //   [isMobile, isMobileSearchShown, isTablet, searchInput]
+  // )
+
   return (
     <S.StyledTopMembers>
       <Header>TOP Funds</Header>
@@ -172,25 +197,11 @@ function TopMembers() {
         <S.TopMembersTitle>Top Funds</S.TopMembersTitle>
         <S.TopMembersRouteTabsWrp tabs={tabs} />
         <S.TopMembersFiltersWrp>
-          {!isMobile && !isTablet ? (
-            <S.TopMembersSearchInput
-              value={searchInput}
-              onInput={(event) =>
-                setSearchInput(event.currentTarget.value as string)
-              }
-            />
-          ) : isMobileSearchShown ? (
-            <S.TopMembersSearchInput
-              value={searchInput}
-              onInput={(event) =>
-                setSearchInput(event.currentTarget.value as string)
-              }
-            />
-          ) : (
-            <></>
-          )}
-          <S.TopMembersSearchBtn
-            onClick={() => setIsMobileSearchShown(!isMobileSearchShown)}
+          <S.ToggleSearchFieldWrp
+            isToggled={isTablet || isMobileSearchShown}
+            setIsToggled={setIsMobileSearchShown}
+            modelValue={searchInput}
+            updateModelValue={(value: string) => setSearchInput(value)}
           />
           <S.TopMembersFiltersBtn
             text={isTablet ? "" : "Filters"}
