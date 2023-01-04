@@ -106,7 +106,8 @@ const useDelegations = ({ startLoading }: IUseDelegationsProps) => {
     totalNftDelegatee,
     delegatedVotingPowerByMe: myDelegations ? myDelegations.power : undefined,
     delegatedVotingPowerToMe: votingPowerData
-      ? votingPowerData.micropool[account ?? ""]?.power ?? undefined
+      ? votingPowerData.micropool[govUserKeeperAddress ?? ""]?.power ??
+        undefined
       : undefined,
   }
 }
