@@ -8,6 +8,7 @@ import RequireAuth from "pages/RequireAuth"
 
 import { Content } from "theme/GlobalStyle"
 import { ROUTE_PATHS } from "consts"
+import { shortenAddress } from "../utils"
 
 const Welcome = lazy(() => import("pages/Welcome"))
 const TopMembers = lazy(() => import("pages/TopMembers"))
@@ -358,7 +359,7 @@ export const router = createBrowserRouter([
                 path: "/dao/list/top",
               },
               {
-                label: `DAO ${params.daoAddress}`,
+                label: `DAO ${shortenAddress(params.daoAddress)}`,
                 path: generatePath(ROUTE_PATHS.daoItem, {
                   daoAddress: params.daoAddress,
                 }),
@@ -381,7 +382,7 @@ export const router = createBrowserRouter([
                 path: "/dao/list/top",
               },
               {
-                label: `DAO ${params.daoAddress}`,
+                label: `DAO ${shortenAddress(params.daoAddress)}`,
                 path: generatePath(ROUTE_PATHS.daoItem, {
                   daoAddress: params.daoAddress,
                 }),

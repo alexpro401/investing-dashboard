@@ -6,6 +6,13 @@ import { respondTo } from "theme"
 export const Root = styled.div`
   overflow: hidden auto;
   flex: 1;
+  max-width: 1220px;
+  width: 100%;
+  margin: 0 auto;
+
+  ${respondTo("sm")} {
+    padding: 0 10px;
+  }
 `
 
 export const HeadContainer = styled.div`
@@ -27,6 +34,7 @@ export const PageHeadTabs = styled(HeaderTabs)`
   height: auto;
   justify-content: flex-start;
   gap: 32px;
+  padding: 0;
 
   &:before {
     top: auto;
