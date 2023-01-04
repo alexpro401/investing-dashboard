@@ -8,7 +8,7 @@ interface Props extends MotionProps {
   modelValue: string
   updateModelValue: (value: string) => void
   isToggled: boolean
-  setIsToggled: (isToggled: boolean) => void
+  setIsToggled?: (isToggled: boolean) => void
 }
 
 const ToggleSearchField: FC<Props> = ({
@@ -16,20 +16,18 @@ const ToggleSearchField: FC<Props> = ({
   setIsToggled,
   modelValue,
   updateModelValue,
+  ...rest
 }) => {
   return (
     <S.ToggleSearchInputWrp
-      animate={
-        isToggled
-          ? {
-              width: "40px",
-            }
-          : {
-              width: "auto",
-            }
-      }
+      animate={{
+        width: isToggled ? "40px" : "150px",
+      }}
+      {...rest}
     >
-      <S.ToggleSearchButton onClick={() => setIsToggled(!isToggled)}>
+      <S.ToggleSearchButton
+        onClick={() => setIsToggled && setIsToggled(!isToggled)}
+      >
         <S.ToggleSearchIcon name={ICON_NAMES.search} />
       </S.ToggleSearchButton>
       <S.ToggleSearchInput

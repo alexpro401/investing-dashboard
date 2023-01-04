@@ -133,10 +133,10 @@ function TopMembers() {
   const [, dispatchFilter] = usePoolsFilters()
   const [isFiltersActive, setIsFiltersActive] = useState(false)
 
-  const [isMobileSearchShown, setIsMobileSearchShown] = useState(false)
+  const [isSearchToggled, setIsSearchToggled] = useState(true)
   const [searchInput, setSearchInput] = useState<string>("")
 
-  const { isTablet, isMobile } = useBreakpoints()
+  const { isTablet, isSmallTablet } = useBreakpoints()
 
   useEffect(
     debounce(() => {
@@ -144,35 +144,6 @@ function TopMembers() {
     }, 500),
     [searchInput]
   )
-
-  // const ListSearch = useMemo(
-  //   () =>
-  //     !isMobile && !isTablet ? (
-  //       <S.TopMembersSearchInput
-  //         value={searchInput}
-  //         onInput={(event) =>
-  //           setSearchInput(event.currentTarget.value as string)
-  //         }
-  //       />
-  //     ) : (
-  //       <>
-  //         {isMobileSearchShown ? (
-  //           <S.TopMembersSearchInput
-  //             value={searchInput}
-  //             onInput={(event) =>
-  //               setSearchInput(event.currentTarget.value as string)
-  //             }
-  //           />
-  //         ) : (
-  //           <></>
-  //         )}
-  //         <S.TopMembersSearchBtn
-  //           onClick={() => setIsMobileSearchShown(!isMobileSearchShown)}
-  //         />
-  //       </>
-  //     ),
-  //   [isMobile, isMobileSearchShown, isTablet, searchInput]
-  // )
 
   return (
     <S.StyledTopMembers>
@@ -198,8 +169,8 @@ function TopMembers() {
         <S.TopMembersRouteTabsWrp tabs={tabs} />
         <S.TopMembersFiltersWrp>
           <S.ToggleSearchFieldWrp
-            isToggled={isTablet || isMobileSearchShown}
-            setIsToggled={setIsMobileSearchShown}
+            isToggled={Boolean(!isSmallTablet && isSearchToggled)}
+            setIsToggled={isSmallTablet ? undefined : setIsSearchToggled}
             modelValue={searchInput}
             updateModelValue={(value: string) => setSearchInput(value)}
           />
@@ -221,7 +192,7 @@ function TopMembers() {
         <Route path="basic" element={<List poolType="BASIC_POOL" />}></Route>
         <Route path="invest" element={<List poolType="INVEST_POOL" />}></Route>
         <Route
-          path="/"
+          path="*"
           element={
             <Navigate
               replace
