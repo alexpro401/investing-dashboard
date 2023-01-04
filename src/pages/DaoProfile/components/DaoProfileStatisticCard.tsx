@@ -50,7 +50,6 @@ const DaoProfileStatisticCard: React.FC<Props> = ({
 
   return (
     <DaoPoolCard
-      account={account}
       data={govPoolQuery}
       isMobile={isMobile}
       totalVotingPower={totalUserVotingPower}
