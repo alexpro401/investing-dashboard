@@ -18,6 +18,8 @@ export const StepsFormContainer = styled(StepsControllerContextProvider)`
 export const StepsWrapper = styled.div`
   display: flex;
   flex: 1;
+  margin: 0 auto;
+  max-width: 1200px;
 
   ${respondTo("sm")} {
     padding-bottom: 40px;
@@ -45,7 +47,7 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   margin: 0 auto;
 
   ${respondTo("sm")} {
-    max-width: 775px;
+    max-width: 900px;
   }
 `
 
