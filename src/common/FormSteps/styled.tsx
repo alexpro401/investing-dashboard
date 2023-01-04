@@ -19,6 +19,7 @@ export const StepsWrapper = styled.div`
   display: flex;
   flex: 1;
   margin: 0 auto;
+  width: 100%;
   max-width: 1200px;
 
   ${respondTo("sm")} {

@@ -6,6 +6,8 @@ import { AnimatePresence } from "framer-motion"
 import { hideTapBar, showTabBar } from "state/application/actions"
 import { ROUTE_PATHS } from "consts/routes"
 import { useBreakpoints } from "hooks"
+import { useCreateFund } from "hooks/pool"
+import { useUserAgreement } from "state/user/hooks"
 import { BasicFundSettings, AdditionalSettings, WithdrawalFee } from "./steps"
 
 import * as SForms from "common/FormSteps/styled"
@@ -22,11 +24,19 @@ const STEPS_TITLES: Record<STEPS, string> = {
   [STEPS.comission]: "Comission",
 }
 
-const CreateFundFormNew: React.FC = () => {
+interface ICreateFundFormNewProps {
+  presettedFundType: "basic" | "investment"
+}
+
+const CreateFundFormNew: React.FC<ICreateFundFormNewProps> = ({
+  presettedFundType,
+}) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.basicFundSettings)
   const { isMobile } = useBreakpoints()
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
+  const { createFund, StepperModal } = useCreateFund({ presettedFundType })
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length, [])
   const currentStepNumber = useMemo(
@@ -41,6 +51,10 @@ const CreateFundFormNew: React.FC = () => {
       dispatch(showTabBar())
     }
   }, [dispatch])
+
+  const handleCreateFund = useCallback(() => {
+    createFund()
+  }, [createFund])
 
   const handlePrevStep = useCallback(() => {
     switch (currentStep) {
@@ -72,51 +86,58 @@ const CreateFundFormNew: React.FC = () => {
         break
       }
       case STEPS.comission: {
-        //TODO handle create fund
+        if (agreed) {
+          handleCreateFund()
+        } else {
+          setShowAgreement(true)
+        }
         break
       }
       default:
         break
     }
-  }, [currentStep, setCurrentStep])
+  }, [currentStep, setCurrentStep, agreed, setShowAgreement, handleCreateFund])
 
   return (
-    <SForms.StepsFormContainer
-      totalStepsAmount={totalStepsCount}
-      currentStepNumber={currentStepNumber}
-      prevCb={handlePrevStep}
-      nextCb={handleNextStep}
-    >
-      <AnimatePresence>
-        <SForms.StepsWrapper>
-          {currentStep === STEPS.basicFundSettings && (
-            <SForms.StepsContainer>
-              <BasicFundSettings />
-            </SForms.StepsContainer>
-          )}
-          {currentStep === STEPS.additionalSettings && (
-            <SForms.StepsContainer>
-              <AdditionalSettings />
-            </SForms.StepsContainer>
-          )}
-          {currentStep === STEPS.comission && (
-            <SForms.StepsContainer>
-              <WithdrawalFee />
-            </SForms.StepsContainer>
-          )}
-          {!isMobile && (
-            <SForms.SideStepsNavigationBarWrp
-              title={"Create standart fund"}
-              steps={Object.values(STEPS).map((step) => ({
-                number: Object.values(STEPS).indexOf(step),
-                title: STEPS_TITLES[step],
-              }))}
-              currentStep={Object.values(STEPS).indexOf(currentStep)}
-            />
-          )}
-        </SForms.StepsWrapper>
-      </AnimatePresence>
-    </SForms.StepsFormContainer>
+    <>
+      {StepperModal}
+      <SForms.StepsFormContainer
+        totalStepsAmount={totalStepsCount}
+        currentStepNumber={currentStepNumber}
+        prevCb={handlePrevStep}
+        nextCb={handleNextStep}
+      >
+        <AnimatePresence>
+          <SForms.StepsWrapper>
+            {currentStep === STEPS.basicFundSettings && (
+              <SForms.StepsContainer>
+                <BasicFundSettings />
+              </SForms.StepsContainer>
+            )}
+            {currentStep === STEPS.additionalSettings && (
+              <SForms.StepsContainer>
+                <AdditionalSettings />
+              </SForms.StepsContainer>
+            )}
+            {currentStep === STEPS.comission && (
+              <SForms.StepsContainer>
+                <WithdrawalFee />
+              </SForms.StepsContainer>
+            )}
+            {!isMobile && (
+              <SForms.SideStepsNavigationBarWrp
+                title={"Create standart fund"}
+                steps={Object.values(STEPS).map((step) => ({
+                  number: Object.values(STEPS).indexOf(step),
+                  title: STEPS_TITLES[step],
+                }))}
+                currentStep={Object.values(STEPS).indexOf(currentStep)}
+              />
+            )}
+          </SForms.StepsWrapper>
+        </AnimatePresence>
+      </SForms.StepsFormContainer>
+    </>
   )
 }
 

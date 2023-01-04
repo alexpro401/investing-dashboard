@@ -16,6 +16,7 @@ import {
   Icon,
   Headline1,
   RegularText,
+  CreateDaoCardStepNumber,
 } from "common"
 import { OverlapInputField, TextareaField } from "fields"
 import Avatar from "components/Avatar"
@@ -31,7 +32,7 @@ import * as SForms from "common/FormSteps/styled"
 const BasicFundSettings: React.FC = () => {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const { nextCb } = useContext(stepsControllerContext)
+  const { nextCb, currentStepNumber } = useContext(stepsControllerContext)
   const {
     avatarUrl,
     description,
@@ -139,6 +140,22 @@ const BasicFundSettings: React.FC = () => {
             accusamus ipsa deleniti!
           </RegularText>
         </S.DesktopHeaderWrp>
+      )}
+      {isMobile && (
+        <Card>
+          <CardHead
+            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+            title="Basic info"
+          />
+          <CardDescription>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum
+              natus eveniet, quibusdam quae culpa ratione non possimus optio
+              excepturi fugiat eaque quod commodi explicabo architecto nam
+              mollitia accusamus ipsa deleniti!
+            </p>
+          </CardDescription>
+        </Card>
       )}
       <Avatar
         m="0 auto"

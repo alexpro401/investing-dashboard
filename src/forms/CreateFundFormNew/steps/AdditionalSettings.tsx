@@ -10,6 +10,7 @@ import {
   Headline1,
   RegularText,
   AppButton,
+  CreateDaoCardStepNumber,
 } from "common"
 import { InputField } from "fields"
 import Switch from "components/Switch"
@@ -32,7 +33,7 @@ const AdditionalSettings: React.FC = () => {
   const [privateAddressesModalOpened, setPrivateAddrssesModalOpened] =
     useState<boolean>(false)
 
-  const { nextCb } = useContext(stepsControllerContext)
+  const { nextCb, currentStepNumber } = useContext(stepsControllerContext)
   const {
     isLimitedEmission,
     limitedEmission,
@@ -147,6 +148,20 @@ const AdditionalSettings: React.FC = () => {
             после создания фонда.
           </RegularText>
         </S.DesktopHeaderWrp>
+      )}
+      {isMobile && (
+        <Card>
+          <CardHead
+            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+            title="Additional settings"
+          />
+          <CardDescription>
+            <p>
+              Вы сможете изменять и управлять данными установками в любой момент
+              после создания фонда.
+            </p>
+          </CardDescription>
+        </Card>
       )}
       <Card>
         <CardHead

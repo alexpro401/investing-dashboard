@@ -119,7 +119,7 @@ const CreateFundContextProvider: React.FC<ICreateFundContextProviderProp> = ({
   const [_privateAddresses, _setPrivateAddresses] = useState<string[]>([])
 
   const [_feeType, _setFeeType] = useState<IFeeType>("1 month")
-  const [_comission, _setComission] = useState<number>(0)
+  const [_comission, _setComission] = useState<number>(20)
 
   return (
     <CreateFundContext.Provider

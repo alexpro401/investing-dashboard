@@ -13,7 +13,7 @@ const CreateFundBasicNew: React.FC = () => {
       <S.PageHolder>
         <S.PageContent>
           <CreateFundContextProvider>
-            <CreateFundFormNew />
+            <CreateFundFormNew presettedFundType="basic" />
           </CreateFundContextProvider>
         </S.PageContent>
       </S.PageHolder>

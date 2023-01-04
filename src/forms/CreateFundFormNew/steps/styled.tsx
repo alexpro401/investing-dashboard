@@ -81,9 +81,9 @@ export const CheckIcon = styled(Icon).attrs({ name: ICON_NAMES.tileCheck })`
   }
 `
 
-export const FeeMobileCardWrp = styled(SelectableCard)`
-  background-color: ${theme.textColors.secondaryNegative};
-` as typeof SelectableCard
+export const FeeMobileCardWrp = styled(
+  SelectableCard
+)`` as typeof SelectableCard
 
 export const FeeCardWrp = styled(SelectableCard)`
   width: 33%;
