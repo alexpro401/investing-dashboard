@@ -49,14 +49,15 @@ const useDelegations = ({ startLoading }: IUseDelegationsProps) => {
   })
 
   const votingPowerParams = useMemo(
-    () => [
-      {
-        userKeeperAddress: govUserKeeperAddress,
-        address: account,
-        isMicroPool: true,
-        useDelegated: false,
+    () => ({
+      userKeeperAddresses: [govUserKeeperAddress],
+      params: {
+        address: [account],
+        isMicroPool: [true],
+        useDelegated: [false],
       },
-    ],
+    }),
+
     [account, govUserKeeperAddress]
   )
 

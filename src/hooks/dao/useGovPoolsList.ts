@@ -33,26 +33,32 @@ const useGovPoolsList = () => {
       isNil(data) || isEmpty(data) ? [] : data.map((pool) => pool.id)
     )
 
-  // console.groupCollapsed("useGovPoolsList")
+  console.groupCollapsed("useGovPoolsList")
   // console.log("helperContracts", helperContracts)
 
   const votingPowerParams = React.useMemo(() => {
-    if (!account || helperContractsLoading) return []
+    if (!account || helperContractsLoading)
+      return {
+        userKeeperAddresses: [],
+        params: {
+          address: [undefined],
+        },
+      }
 
-    return Object.values(helperContracts).map((helperContract) => ({
-      userKeeperAddress: helperContract.userKeeper,
-      address: account,
-      isMicroPool: false,
-      useDelegated: false,
-    }))
+    return {
+      userKeeperAddresses: Object.values(helperContracts).map(
+        (hc) => hc.userKeeper
+      ) as string[],
+      params: {
+        address: [account, account, account],
+        isMicroPool: [false, true, false],
+        useDelegated: [false, false, true],
+      },
+    }
   }, [account, helperContracts, helperContractsLoading])
 
-  // console.log("votingPowerParams", votingPowerParams)
-
   const [votingPowerData, votingPowerDataLoading] =
-    useGovPoolVotingPowerMulticall(votingPowerParams, true)
-
-  // console.log([votingPowerData, votingPowerDataLoading])
+    useGovPoolVotingPowerMulticall(votingPowerParams)
 
   const _loading = React.useMemo(
     () => loading || helperContractsLoading || votingPowerDataLoading,
@@ -67,15 +73,18 @@ const useGovPoolsList = () => {
       (hc) => hc.userKeeper
     )
 
+    console.log("votingPowerData", votingPowerData)
+
     return userKeepers.map((userKeeperAddress) => {
       const currentPowers = votingPowerData?.default[userKeeperAddress]
+      console.log(normalizeBigNumber(currentPowers?.power))
 
       return normalizeBigNumber(currentPowers?.power)
     })
-  }, [votingPowerData, votingPowerDataLoading])
+  }, [helperContracts, votingPowerDataLoading, votingPowerData])
 
-  // console.log("votingPowers", votingPowers)
-  // console.groupEnd()
+  console.log("votingPowers", votingPowers)
+  console.groupEnd()
 
   return {
     pools: data,
