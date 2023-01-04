@@ -47,9 +47,9 @@ const useGovPoolsList = () => {
         (hc) => hc.userKeeper
       ) as string[],
       params: {
-        address: [account, account, account],
-        isMicroPool: [false, true, false],
-        useDelegated: [false, false, true],
+        address: [account],
+        isMicroPool: [false],
+        useDelegated: [true],
       },
     }
   }, [account, helperContracts, helperContractsLoading])
