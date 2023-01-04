@@ -1,15 +1,15 @@
 import * as React from "react"
 import { isEmpty, isNil } from "lodash"
+import { useWeb3React } from "@web3-react/core"
+import { PulseSpinner } from "react-spinners-kit"
+import { generatePath, useNavigate } from "react-router-dom"
 
-import { Indents, List } from "../styled"
 import theme, { Center } from "theme"
-import { DaoPoolCard, Icon, NoDataMessage } from "common"
+import { Indents, List } from "../styled"
 import LoadMore from "components/LoadMore"
 import { ICON_NAMES, ROUTE_PATHS } from "consts"
-import { PulseSpinner } from "react-spinners-kit"
-import { useWeb3React } from "@web3-react/core"
-import { generatePath, useNavigate } from "react-router-dom"
 import { useBreakpoints, useGovPoolsList } from "hooks"
+import { DaoPoolCard, Icon, NoDataMessage } from "common"
 
 interface Props {}
 
@@ -17,13 +17,13 @@ const DaoPoolsList: React.FC<Props> = () => {
   const { account } = useWeb3React()
   const navigate = useNavigate()
 
-  const { data, loading, fetchMore } = useGovPoolsList()
+  const { pools, loading, fetchMore } = useGovPoolsList()
 
   const listRef = React.useRef<any>()
 
   const { isDesktop } = useBreakpoints()
 
-  if (loading && (isNil(data) || isEmpty(data))) {
+  if (loading && (isNil(pools) || isEmpty(pools))) {
     return (
       <List.Scroll center>
         <Center>
@@ -33,7 +33,7 @@ const DaoPoolsList: React.FC<Props> = () => {
     )
   }
 
-  if (!loading && isEmpty(data)) {
+  if (!loading && isEmpty(pools)) {
     return (
       <List.Scroll center>
         <Center>
@@ -45,7 +45,7 @@ const DaoPoolsList: React.FC<Props> = () => {
 
   return (
     <List.Scroll ref={listRef} center={false}>
-      {data.map((pool, index) => (
+      {pools.map((pool, index) => (
         <Indents key={pool.id} top={index > 0}>
           <DaoPoolCard
             data={pool}
@@ -71,7 +71,7 @@ const DaoPoolsList: React.FC<Props> = () => {
       ))}
 
       <LoadMore
-        isLoading={loading && !!data.length}
+        isLoading={loading && !!pools.length}
         handleMore={fetchMore}
         r={listRef}
       />

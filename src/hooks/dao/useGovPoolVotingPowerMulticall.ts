@@ -38,7 +38,8 @@ interface IUserVotingPowerMulticallResponse {
 const USER_KEEPER_INTERFACE = new Interface(GovUserKeeper_ABI)
 
 const useGovPoolVotingPowerMulticall = (
-  params: IUseGovPoolUserVotingPower[]
+  params: IUseGovPoolUserVotingPower[],
+  format = false
 ): [data: IUserVotingPowerMulticallResponse, loading: boolean] => {
   const validatedList = useMemo(
     () =>
@@ -74,6 +75,64 @@ const useGovPoolVotingPowerMulticall = (
   )
 
   return useMemo(() => {
+    if (format) {
+      return [
+        validatedParams.length > 0
+          ? validatedParams[0].reduce<IUserVotingPowerMulticallResponse>(
+              (memo, account, i) => {
+                const value = callResults?.[i]?.result?.[0]
+
+                if (!value) return memo
+
+                if (!isArray(value) || !value.length) return memo
+
+                params.map((p, i) => {
+                  const {
+                    power,
+                    nftPower,
+                    perNftPower,
+                    ownedBalance,
+                    ownedLength,
+                    nftIds,
+                  } = value[i]
+
+                  const result = {
+                    power,
+                    nftPower,
+                    perNftPower,
+                    ownedBalance,
+                    ownedLength,
+                    nftIds,
+                  }
+
+                  if (validatedParams[1][i]) {
+                    memo.micropool[validatedAddresses[i]] = result
+                  }
+
+                  if (validatedParams[2][i]) {
+                    memo.delegated[validatedAddresses[i]] = result
+                  }
+
+                  memo.default[validatedAddresses[i]] = result
+                })
+
+                return memo
+              },
+              {
+                default: {},
+                micropool: {},
+                delegated: {},
+              }
+            )
+          : {
+              default: {},
+              micropool: {},
+              delegated: {},
+            },
+        anyLoading,
+      ]
+    }
+
     return [
       validatedParams.length > 0
         ? validatedParams[0].reduce<IUserVotingPowerMulticallResponse>(
@@ -129,7 +188,7 @@ const useGovPoolVotingPowerMulticall = (
           },
       anyLoading,
     ]
-  }, [params, validatedParams, anyLoading, callResults])
+  }, [params, validatedParams, anyLoading, callResults, format])
 }
 
 export default useGovPoolVotingPowerMulticall

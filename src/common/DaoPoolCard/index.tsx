@@ -15,6 +15,7 @@ import { useDaoPoolMetadata } from "state/ipfsMetadata/hooks"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
 import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
+import { ZERO } from "../../consts"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   data: IGovPoolQuery
@@ -31,12 +32,6 @@ const DaoPoolCard: React.FC<Props> = ({
   ...rest
 }) => {
   const id = React.useMemo(() => data?.id ?? "", [data])
-
-  const { govUserKeeperAddress } = useGovPoolHelperContracts(id)
-  const [userVotingPower] = useGovPoolUserVotingPower({
-    userKeeperAddress: govUserKeeperAddress,
-    address: account,
-  })
 
   const [token] = useERC20Data(
     !isAddressZero(data?.erc20Token) ? data.erc20Token : undefined
@@ -100,7 +95,7 @@ const DaoPoolCard: React.FC<Props> = ({
             gap="4"
           >
             <S.DaoPoolCardVotingPower>
-              {normalizeBigNumber(userVotingPower.power, 18, 2)}
+              {normalizeBigNumber(ZERO, 18, 2)}
             </S.DaoPoolCardVotingPower>
             <S.DaoPoolCardDescription>
               {isMobile ? "My voting power" : "My power"}
