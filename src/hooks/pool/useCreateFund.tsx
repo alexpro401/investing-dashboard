@@ -12,7 +12,8 @@ import { CreateFundContext, IFeeType } from "context/fund/CreateFundContext"
 import Stepper, { Step as IStep } from "components/Stepper"
 import Icon from "components/Icon"
 import TokenIcon from "components/TokenIcon"
-import { ModalIcons } from "common/Pool"
+import Modal from "components/Modal"
+import { ModalIcons, SuccessModal as SuccessModalComponent } from "common/Pool"
 
 import defaultAvatar from "assets/icons/default-avatar.svg"
 
@@ -61,6 +62,7 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
   const [steps, setSteps] = useState<IStep[]>([])
   const [isCreating, setIsCreating] = useState<boolean>(false)
   const [stepPending, setStepPending] = useState<boolean>(false)
+  const [successModalOpened, setSuccessModalOpened] = useState<boolean>(false)
 
   const traderPool = useTraderPoolContract(createdPoolAddress)
 
@@ -247,15 +249,21 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
       if (steps[step].title === "Success") {
         setIsCreating(false)
         setStepPending(false)
-        // navigate(`/success/${createdPoolAddress}`)
-        //TODO add success modal here
+        setSuccessModalOpened(true)
       }
     } catch (error) {
       setStepPending(false)
       setTransactionFail(true)
       console.log(error)
     }
-  }, [handleInvestorsAdd, handleManagersAdd, step, steps, handlePoolCreate])
+  }, [
+    handleInvestorsAdd,
+    handleManagersAdd,
+    step,
+    steps,
+    handlePoolCreate,
+    setSuccessModalOpened,
+  ])
 
   const StepperModal = useMemo(() => {
     if (steps.length === 0) return null
@@ -303,7 +311,25 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
     tickerSymbol,
   ])
 
-  return { createFund, StepperModal }
+  const SuccessModal = useMemo(
+    () => (
+      <Modal
+        isOpen={true}
+        isShowCloseBtn={false}
+        toggle={() => setSuccessModalOpened(!successModalOpened)}
+        title=""
+        maxWidth="450px"
+      >
+        <SuccessModalComponent
+          createdFundAddress={createdPoolAddress}
+          close={() => setSuccessModalOpened(false)}
+        />
+      </Modal>
+    ),
+    [successModalOpened, createdPoolAddress]
+  )
+
+  return { createFund, StepperModal, SuccessModal }
 }
 
 export default useCreateFund

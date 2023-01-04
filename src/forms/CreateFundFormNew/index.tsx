@@ -36,7 +36,9 @@ const CreateFundFormNew: React.FC<ICreateFundFormNewProps> = ({
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.basicFundSettings)
   const { isMobile } = useBreakpoints()
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()
-  const { createFund, StepperModal } = useCreateFund({ presettedFundType })
+  const { createFund, StepperModal, SuccessModal } = useCreateFund({
+    presettedFundType,
+  })
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length, [])
   const currentStepNumber = useMemo(
@@ -101,6 +103,7 @@ const CreateFundFormNew: React.FC<ICreateFundFormNewProps> = ({
   return (
     <>
       {StepperModal}
+      {SuccessModal}
       <SForms.StepsFormContainer
         totalStepsAmount={totalStepsCount}
         currentStepNumber={currentStepNumber}

@@ -1,1 +1,1 @@
-export { ModalIcons } from "./creating"
+export { ModalIcons, SuccessModal } from "./creating"
