@@ -9,26 +9,26 @@ import Icon from "components/Icon"
 import Tooltip from "components/Tooltip"
 
 import { useERC20Data } from "state/erc20/hooks"
-import { useGovPoolHelperContracts } from "hooks"
 import { isAddressZero, normalizeBigNumber } from "utils"
 import { useDaoPoolMetadata } from "state/ipfsMetadata/hooks"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
-import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
-import { ZERO } from "../../consts"
+import { BigNumber } from "@ethersproject/bignumber"
+import { ZERO } from "consts"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   data: IGovPoolQuery
   account?: string | null
   children?: React.ReactNode
   isMobile: boolean
+  totalVotingPower?: BigNumber
 }
 
 const DaoPoolCard: React.FC<Props> = ({
   data,
-  account,
   children,
   isMobile,
+  totalVotingPower = ZERO,
   ...rest
 }) => {
   const id = React.useMemo(() => data?.id ?? "", [data])
@@ -95,7 +95,7 @@ const DaoPoolCard: React.FC<Props> = ({
             gap="4"
           >
             <S.DaoPoolCardVotingPower>
-              {normalizeBigNumber(ZERO, 18, 2)}
+              {normalizeBigNumber(totalVotingPower, 18, 2)}
             </S.DaoPoolCardVotingPower>
             <S.DaoPoolCardDescription>
               {isMobile ? "My voting power" : "My power"}
