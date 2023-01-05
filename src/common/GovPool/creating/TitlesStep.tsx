@@ -582,6 +582,7 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
             </Card>
           </>
         )}
+
         {!isCreatingProposal && (
           <Card>
             <CardHead

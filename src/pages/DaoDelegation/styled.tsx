@@ -18,7 +18,7 @@ export const Container = styled(motion.div).attrs(() => ({
   margin: 0 auto;
   width: fill-available;
   overflow: hidden;
-  max-width: 1200px;
+  max-width: ${(props) => props.theme.pageContentMaxWidth};
 `
 
 export const Indents = styled.div<{ top?: boolean; side?: boolean }>`

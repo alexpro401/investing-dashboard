@@ -18,7 +18,7 @@ export const Container = styled(motion.div).attrs(() => ({
   max-height: 100%;
   overflow: hidden auto;
   padding-bottom: 16px;
-  max-width: 1200px;
+  max-width: ${(props) => props.theme.pageContentMaxWidth};
   margin: 0 auto;
 `
 

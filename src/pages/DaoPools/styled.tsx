@@ -23,7 +23,7 @@ export const Container = styled(motion.div).attrs(() => ({
   overflow: hidden;
   padding: 16px 0 0;
   width: 100%;
-  max-width: 1200px;
+  max-width: ${(props) => props.theme.pageContentMaxWidth};
   margin: 0 auto;
 `
 

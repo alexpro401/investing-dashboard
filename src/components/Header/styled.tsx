@@ -27,7 +27,7 @@ export const Bar = styled(Flex)`
 
   ${respondTo("sm")} {
     padding: 0 20px;
-    max-width: 1200px;
+    max-width: ${(props) => props.theme.pageContentMaxWidth};
   }
 
   ${respondTo("md")} {

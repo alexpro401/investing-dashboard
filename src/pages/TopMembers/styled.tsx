@@ -10,7 +10,7 @@ import { ICON_NAMES } from "consts"
 export const StyledTopMembers = styled(motion.div)`
   height: fit-content;
   width: 100%;
-  max-width: 1200px;
+  max-width: ${(props) => props.theme.pageContentMaxWidth};
   padding: 0 24px;
   margin: 0 auto;
 `
