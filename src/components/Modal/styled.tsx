@@ -15,6 +15,10 @@ export const Container = styled(motion.div)<{ maxWidth?: string }>`
   z-index: 100;
   padding: 0;
   max-width: ${({ maxWidth }) => maxWidth || "375px"};
+
+  * {
+    font-family: ${theme.appFontFamily};
+  }
 `
 
 export const Head = styled(Flex)`

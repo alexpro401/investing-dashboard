@@ -1,6 +1,7 @@
 import styled from "styled-components/macro"
 import { motion } from "framer-motion"
-import { Flex, GradientBorder } from "theme"
+
+import theme, { Flex, GradientBorder } from "theme"
 
 export const Overlay = styled(motion.div)`
   background: rgba(27, 27, 27, 0.6);
@@ -29,6 +30,10 @@ export const Container = styled(GradientBorder)`
   padding: 24px 16px;
   z-index: 105;
   flex-direction: column;
+
+  * {
+    font-family: ${theme.appFontFamily};
+  }
 
   @media screen and (min-width: 768px) {
     width: 420px;
