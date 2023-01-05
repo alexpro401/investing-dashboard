@@ -2,8 +2,8 @@ import { FC, ReactNode, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 import { isNil } from "lodash"
 
-import { Flex, Text, getAmountColor } from "theme"
-import { CardInfo } from "common"
+import { Flex } from "theme"
+import { CardInfo, PNLIndicator } from "common"
 import Icon from "components/Icon"
 import Skeleton from "components/Skeleton"
 import TokenIcon from "components/TokenIcon"
@@ -142,10 +142,7 @@ const PoolStatisticCard: FC<Props> = ({ data, index = 0, children }) => {
       <Flex ai="center" jc="flex-end">
         <div>
           <Flex ai="center" jc="flex-end" gap="4">
-            <Text fz={10} lh="12px" color={getAmountColor(pnl)}>
-              {Number(pnl) > 0 ? "+" : null}
-              {pnl}%
-            </Text>
+            <PNLIndicator pnl={pnl} />
             <S.Title>{formatNumber(priceLP, 2)}</S.Title>
           </Flex>
           <S.Description>{baseToken.symbol}</S.Description>

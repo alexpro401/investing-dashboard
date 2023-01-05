@@ -15,6 +15,7 @@ import Routes from "pages/Routes"
 
 import { SpecialModalBackground, AppWrapper } from "theme/GlobalStyle"
 import useIosHeightFix from "utils/useIosHeightFix"
+import InfoAccordion from "components/InfoAccordion"
 
 const App = () => {
   const eager = useEagerConnect()
@@ -29,7 +30,37 @@ const App = () => {
           <AppWrapper>
             <ConnectWalletContext>
               <NotificationsContext>
-                <Routes />
+                <InfoAccordion
+                  rows={[
+                    {
+                      title: "Title 1",
+                      tooltip: "Tooltip 1",
+                      value: "Value 1",
+                      pnl: "0.00",
+                      childrens: [
+                        {
+                          title: "Title 1.1",
+                          tooltip: "Tooltip 1.1",
+                          value: "Value 1.1",
+                          pnl: "0.00",
+                        },
+                        {
+                          title: "Title 1.2",
+                          tooltip: "Tooltip 1.2",
+                          value: "Value 1.2",
+                          pnl: "0.00",
+                        },
+                      ],
+                    },
+                    {
+                      title: "Title 2",
+                      tooltip: "Tooltip 2",
+                      value: "Value 2",
+                      pnl: "0.00",
+                    },
+                  ]}
+                />
+                {/* <Routes /> */}
               </NotificationsContext>
             </ConnectWalletContext>
           </AppWrapper>
