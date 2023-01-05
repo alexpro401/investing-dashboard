@@ -78,12 +78,6 @@ const BasicFundSettings: React.FC = () => {
         minLength: minLength(3),
         maxLength: maxLength(8),
       },
-      description: {
-        required,
-      },
-      strategy: {
-        required,
-      },
       baseToken: {
         required,
       },
