@@ -21,6 +21,23 @@ const SwiperGlobalStyle = css`
   }
 `
 
+const GlobalCssVars = css`
+  --app-padding-top: 16px;
+  --app-padding-right: 16px;
+  --app-padding-bottom: 16px;
+  --app-padding-left: 16px;
+
+  --app-padding: var(--app-padding-top) var(--app-padding-right)
+    var(--app-padding-bottom) var(--app-padding-left);
+
+  ${respondTo("sm")} {
+    --app-padding-top: 24px;
+    --app-padding-right: 24px;
+    --app-padding-bottom: 24px;
+    --app-padding-left: 24px;
+  }
+`
+
 const GlobalStyle: any = createGlobalStyle`
   body {
     width:100%;

@@ -19,7 +19,7 @@ import {
   selectOwnedPoolsData,
   selectTotalOwnedPoolsStatistic,
 } from "state/user/selectors"
-import { useNavigate } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
 import { ROUTE_PATHS } from "consts"
 import { useBreakpoints } from "hooks"
 
@@ -51,7 +51,7 @@ function Trader() {
     navigate("/me/investor")
   }, [navigate])
 
-  const { isTablet, isDesktop } = useBreakpoints()
+  const { isDesktop } = useBreakpoints()
 
   const PoolsList = useMemo(() => {
     if (loading && isEmpty(pools)) {
@@ -64,14 +64,19 @@ function Trader() {
 
     return map(pools, function (pool, index) {
       return (
-        <To key={pool.id} to={`/pool/profile/${pool.id}`}>
+        <To
+          key={pool.id}
+          to={generatePath(ROUTE_PATHS.poolProfile, {
+            poolAddress: pool.id,
+          })}
+        >
           <Indents>
-            <PoolStatisticCard data={pool} index={index} isMobile={isTablet} />
+            <PoolStatisticCard data={pool} index={index} />
           </Indents>
         </To>
       )
     })
-  }, [loading, pools, isTablet])
+  }, [loading, pools])
 
   return (
     <>

@@ -9,13 +9,13 @@ export const useBreakpoints = () => {
     () => windowWidth < breakpoints.sm - 1,
     [windowWidth]
   )
-  const isSmallTablet = useMemo(
+  const isMediumTablet = useMemo(
     () => windowWidth > breakpoints.xmd - 1,
     [windowWidth]
   )
   // TODO: should be windowWidth > breakpoints.md - 1
   const isTablet = useMemo(
-    () => windowWidth < breakpoints.md - 1,
+    () => windowWidth > breakpoints.sm - 1,
     [windowWidth]
   )
   const isDesktop = useMemo(
@@ -25,7 +25,7 @@ export const useBreakpoints = () => {
 
   return {
     isMobile,
-    isSmallTablet,
+    isMediumTablet,
     isTablet,
     isDesktop,
   }

@@ -136,7 +136,7 @@ function TopMembers() {
   const [isSearchToggled, setIsSearchToggled] = useState(true)
   const [searchInput, setSearchInput] = useState<string>("")
 
-  const { isTablet, isSmallTablet } = useBreakpoints()
+  const { isMediumTablet } = useBreakpoints()
 
   useEffect(
     debounce(() => {
@@ -169,15 +169,15 @@ function TopMembers() {
         <S.TopMembersRouteTabsWrp tabs={tabs} />
         <S.TopMembersFiltersWrp>
           <S.ToggleSearchFieldWrp
-            isToggled={Boolean(!isSmallTablet && isSearchToggled)}
-            setIsToggled={isSmallTablet ? undefined : setIsSearchToggled}
+            isToggled={Boolean(!isMediumTablet && isSearchToggled)}
+            setIsToggled={isMediumTablet ? undefined : setIsSearchToggled}
             modelValue={searchInput}
             updateModelValue={(value: string) => setSearchInput(value)}
           />
           <S.TopMembersFiltersBtn
-            text={isTablet ? "" : "Filters"}
+            text={isMediumTablet ? "Filters" : ""}
             iconLeft={ICON_NAMES.filter}
-            iconRight={isTablet ? undefined : ICON_NAMES.angleDown}
+            iconRight={isMediumTablet ? ICON_NAMES.angleDown : undefined}
             onClick={() => setIsFiltersActive(!isFiltersActive)}
           />
 

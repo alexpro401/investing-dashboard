@@ -77,7 +77,7 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
   const [isShowSocials, setIsShowSocials] = useState(false)
 
   const { chainId } = useActiveWeb3React()
-  const { isMobile, isTablet } = useBreakpoints()
+  const { isTablet } = useBreakpoints()
 
   const { nextCb } = useContext(stepsControllerContext)
 
@@ -472,7 +472,22 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
   return (
     <>
       <S.StepsRoot>
-        {isMobile && (
+        {isTablet ? (
+          <S.DesktopHeaderWrp>
+            <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+              Basic DAO settings
+            </Headline1>
+            <RegularText
+              color={theme.textColors.secondary}
+              desktopWeight={500}
+              desktopSize={"14px"}
+            >
+              {!isCreatingProposal
+                ? "Once created, the DAO settings can be changed only by voting via the appropriate proposal."
+                : "Make your changes below."}
+            </RegularText>
+          </S.DesktopHeaderWrp>
+        ) : (
           <Card>
             <CardHead
               nodeLeft={<CreateDaoCardStepNumber number={1} />}
@@ -493,22 +508,6 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
             </CardDescription>
           </Card>
         )}
-        {!isMobile && (
-          <S.DesktopHeaderWrp>
-            <Headline1 color={theme.statusColors.info} desktopWeight={900}>
-              Basic DAO settings
-            </Headline1>
-            <RegularText
-              color={theme.textColors.secondary}
-              desktopWeight={500}
-              desktopSize={"14px"}
-            >
-              {!isCreatingProposal
-                ? "Once created, the DAO settings can be changed only by voting via the appropriate proposal."
-                : "Make your changes below."}
-            </RegularText>
-          </S.DesktopHeaderWrp>
-        )}
 
         <Avatar
           m="0 auto"
@@ -527,7 +526,7 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
           </S.CreateFundDaoAvatarActions>
         </Avatar>
 
-        {isCreatingProposal && (
+        {isCreatingProposal ? (
           <>
             <Card>
               <CardHead
@@ -581,9 +580,7 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
               </CardFormControl>
             </Card>
           </>
-        )}
-
-        {!isCreatingProposal && (
+        ) : (
           <Card>
             <CardHead
               nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
@@ -626,23 +623,23 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
           </Card>
         )}
 
-        {!isCreatingProposal && (
-          <Card>
-            <CardHead
-              nodeLeft={<Icon name={ICON_NAMES.shieldCheck} />}
-              title="Governance token information"
-            />
-            <CardDescription>
-              <p>
-                For governance, you can choose any ERC-20 token, any (ERC-721)
-                NFT, or a hybrid of both.
-              </p>
-              <p>
-                *Token/NFT selected for governance cannot be changed once
-                initially set.
-              </p>
-            </CardDescription>
-            {!isTablet && (
+        {isTablet ? (
+          <>
+            <Card>
+              <CardHead
+                nodeLeft={<Icon name={ICON_NAMES.shieldCheck} />}
+                title="Governance token information"
+              />
+              <CardDescription>
+                <p>
+                  For governance, you can choose any ERC-20 token, any (ERC-721)
+                  NFT, or a hybrid of both.
+                </p>
+                <p>
+                  *Token/NFT selected for governance cannot be changed once
+                  initially set.
+                </p>
+              </CardDescription>
               <>
                 <S.ERCArea>
                   <S.ERCAreaHead>
@@ -703,70 +700,68 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
                   {IsERC721Collapse}
                 </S.ERCArea>
               </>
-            )}
-          </Card>
-        )}
-
-        {!isCreatingProposal && isTablet && (
-          <Card>
-            <CardHead
-              nodeLeft={<Icon name={ICON_NAMES.dollarOutline} />}
-              title="ERC-20"
-              nodeRight={
-                <Switch
-                  isOn={isErc20.get}
-                  onChange={(n, v) => {
-                    isErc20.set(v)
-                    if (!v && !isErc721.get) {
-                      isErc721.set(true)
-                    }
-                  }}
-                  name={"create-fund-title-step-is-erc20"}
-                />
-              }
-            />
-            <CardDescription>
-              <p>
-                Enter ERC-20 token address or create a new one. 1 token = 1
-                Voting power
-              </p>
-            </CardDescription>
-            {IsERC20Collapse}
-          </Card>
-        )}
-
-        {!isCreatingProposal && isTablet && (
-          <Card>
-            <CardHead
-              nodeLeft={<Icon name={ICON_NAMES.star} />}
-              title="ERC-721 (NFT)"
-              nodeRight={
-                <Switch
-                  isOn={isErc721.get}
-                  onChange={(n, v) => {
-                    isErc721.set(v)
-                    if (!v && !isErc20.get) {
-                      isErc20.set(true)
-                    }
-                  }}
-                  name={"create-fund-title-step-is-erc721"}
-                />
-              }
-            />
-            <CardDescription>
-              <p>
-                Enter the governing NFT (ERC-721) address, number of NFTs in the
-                series, and the voting power. For governance, you can choose any
-                ERC-20 token, any (ERC-721) NFT, or a hybrid of both.
-              </p>
-              <br />
-              <p>
-                With hybrid governance (ERC-20 + NFT), your NFT can have more
-                weight than a token, and thus should have more voting power.
-              </p>
-            </CardDescription>
-            {IsERC721Collapse}
-          </Card>
+            </Card>
+          </>
+        ) : (
+          <>
+            <Card>
+              <CardHead
+                nodeLeft={<Icon name={ICON_NAMES.dollarOutline} />}
+                title="ERC-20"
+                nodeRight={
+                  <Switch
+                    isOn={isErc20.get}
+                    onChange={(n, v) => {
+                      isErc20.set(v)
+                      if (!v && !isErc721.get) {
+                        isErc721.set(true)
+                      }
+                    }}
+                    name={"create-fund-title-step-is-erc20"}
+                  />
+                }
+              />
+              <CardDescription>
+                <p>
+                  Enter ERC-20 token address or create a new one. 1 token = 1
+                  Voting power
+                </p>
+              </CardDescription>
+              {IsERC20Collapse}
+            </Card>
+            <Card>
+              <CardHead
+                nodeLeft={<Icon name={ICON_NAMES.star} />}
+                title="ERC-721 (NFT)"
+                nodeRight={
+                  <Switch
+                    isOn={isErc721.get}
+                    onChange={(n, v) => {
+                      isErc721.set(v)
+                      if (!v && !isErc20.get) {
+                        isErc20.set(true)
+                      }
+                    }}
+                    name={"create-fund-title-step-is-erc721"}
+                  />
+                }
+              />
+              <CardDescription>
+                <p>
+                  Enter the governing NFT (ERC-721) address, number of NFTs in
+                  the series, and the voting power. For governance, you can
+                  choose any ERC-20 token, any (ERC-721) NFT, or a hybrid of
+                  both.
+                </p>
+                <br />
+                <p>
+                  With hybrid governance (ERC-20 + NFT), your NFT can have more
+                  weight than a token, and thus should have more voting power.
+                </p>
+              </CardDescription>
+              {IsERC721Collapse}
+            </Card>
+          </>
         )}
 
         <Card>
