@@ -23,7 +23,7 @@ export const Text = styled.span<{
   margin-top: ${({ removeIcon }) => (removeIcon ? 0 : "3px")};
 `
 
-const IconContainer = styled.div<{ iconPosition: string }>`
+export const IconContainer = styled.div<{ iconPosition: string }>`
   display: inline-block;
   order: ${({ iconPosition }) => (iconPosition === "right" ? "1" : "0")};
   width: 15px;

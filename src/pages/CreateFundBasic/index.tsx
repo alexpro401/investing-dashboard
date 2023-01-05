@@ -1,28 +1,24 @@
+import React from "react"
+
 import Header from "components/Header/Layout"
-import { FundContextProvider } from "context/CreateFundContext"
+import CreateFundContextProvider from "context/fund/CreateFundContext"
 import CreateFundForm from "forms/CreateFundForm"
 
-import { FC } from "react"
 import * as S from "./styled"
-import { opacityVariants } from "motion/variants"
 
-const CreateFundDaoPool: FC = () => {
+const CreateFundBasic: React.FC = () => {
   return (
-    <>
-      <Header>Create Fund basic</Header>
-      <S.Container
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        variants={opacityVariants}
-      >
-        <FundContextProvider>
-          <CreateFundForm presettedFundType="basic" />
-        </FundContextProvider>
-      </S.Container>
-    </>
+    <S.Root>
+      <Header>Create standart fund</Header>
+      <S.PageHolder>
+        <S.PageContent>
+          <CreateFundContextProvider>
+            <CreateFundForm presettedFundType="basic" />
+          </CreateFundContextProvider>
+        </S.PageContent>
+      </S.PageHolder>
+    </S.Root>
   )
 }
 
-export default CreateFundDaoPool
+export default CreateFundBasic

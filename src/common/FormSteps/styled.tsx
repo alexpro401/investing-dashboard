@@ -19,6 +19,7 @@ export const StepsWrapper = styled.div`
   display: flex;
   flex: 1;
   margin: 0 auto;
+  width: 100%;
   max-width: 1200px;
 
   ${respondTo("sm")} {
@@ -30,6 +31,7 @@ export const SideStepsNavigationBarWrp = styled(SideStepsNavigationBar)`
   min-width: 300px;
   position: sticky;
   top: 0px;
+  height: min-content;
 `
 
 export const StepsContainer = styled(motion.div).attrs(() => ({
