@@ -39,8 +39,8 @@ export const SuccessAvatarWrp = styled.div`
   justify-content: center;
   width: 100px;
   height: 100px;
-  margin: -50px 0 16px;
   background: transparent;
+  margin-bottom: 16px;
 
   &:before {
     content: "";
@@ -111,6 +111,7 @@ export const SuccessDescription = styled.div`
   }
 
   margin: auto 0;
+  margin-top: 16px;
   font-size: 16px;
   line-height: 1.5;
   font-weight: 500;

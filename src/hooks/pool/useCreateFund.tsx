@@ -314,7 +314,7 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
   const SuccessModal = useMemo(
     () => (
       <Modal
-        isOpen={true}
+        isOpen={successModalOpened}
         isShowCloseBtn={false}
         toggle={() => setSuccessModalOpened(!successModalOpened)}
         title=""
