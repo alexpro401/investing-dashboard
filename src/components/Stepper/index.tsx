@@ -25,6 +25,7 @@ import {
   Track,
 } from "./styled"
 import { AppButton } from "common"
+import { IStep } from "consts"
 
 const stepperRoot = document.getElementById("stepper")
 
@@ -32,18 +33,13 @@ const predefinedOffset = {
   "2": 79,
   "3": 52,
   "4": 39,
-}
-
-export interface Step {
-  title: string
-  description: string
-  buttonText: string
+  "5": 31,
 }
 
 interface Props {
   isOpen: boolean
   title: string
-  steps: Step[]
+  steps: IStep[]
   current: number
   pending: boolean
   failed?: boolean

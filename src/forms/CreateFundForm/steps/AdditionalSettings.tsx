@@ -16,7 +16,13 @@ import { InputField } from "fields"
 import Switch from "components/Switch"
 import AddressesModal from "modals/AddressesModal"
 import theme, { Flex } from "theme"
-import { useBreakpoints, useFormValidation } from "hooks"
+import {
+  AlertType,
+  useAlert,
+  useBreakpoints,
+  useFormValidation,
+  useOnce,
+} from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { CreateFundContext } from "context/fund/CreateFundContext"
 import { ICON_NAMES } from "consts"
@@ -27,6 +33,44 @@ import * as S from "./styled"
 
 const AdditionalSettings: React.FC = () => {
   const { isMobile } = useBreakpoints()
+  const [showAlert] = useAlert()
+
+  const warnManagers = useOnce(() => {
+    showAlert({
+      title: "About managers",
+      content: (
+        <>
+          All fund managers will have almost the same rights as the founder of
+          its fund, with the exception of the risk proposal creation.
+          <br />
+          <br />
+          It will be possible to the fund managers to interact with already
+          created risk proposals.
+        </>
+      ),
+      type: AlertType.info,
+      hideDuration: 1000000,
+    })
+  }, "warn-about-adding-managers")
+
+  const warnPrivateInvestors = useOnce(() => {
+    showAlert({
+      title: "About private investors",
+      content: (
+        <>
+          By adding addresses to this whitelist, you authorize the owners to
+          invest from these addresses in the fund.
+          <br />
+          <br />
+          Keep in mind that when this function is enabled, addresses that have
+          not been added to the following whitelist won&apos;t be able to
+          participate in investing in the fund.
+        </>
+      ),
+      type: AlertType.info,
+      hideDuration: 1000000,
+    })
+  }, "warn-about-private-investors")
 
   const [fundManagersModalOpened, setFundManagersModalOpened] =
     useState<boolean>(false)
@@ -242,7 +286,7 @@ const AdditionalSettings: React.FC = () => {
               onChange={(n, v) => {
                 isFundManagers.set(v)
                 if (v) {
-                  setFundManagersModalOpened(true)
+                  warnManagers()
                 }
               }}
               name={"create-fund-is-fund-managers-on"}
@@ -297,7 +341,7 @@ const AdditionalSettings: React.FC = () => {
               onChange={(n, v) => {
                 isPrivatAddresses.set(v)
                 if (v) {
-                  setPrivateAddrssesModalOpened(true)
+                  warnPrivateInvestors()
                 }
               }}
               name={"create-fund-is-private-addresses-on"}

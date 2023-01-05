@@ -74,6 +74,7 @@ export const ModalIcons: FC<ModalIconsProps> = ({
       <IconsContainer>
         <LeftIcon>{left}</LeftIcon>
         <RightIcon>{right}</RightIcon>
+        {"/"}
       </IconsContainer>
       <TickersContainer>
         <FundTicker>{fund}</FundTicker>

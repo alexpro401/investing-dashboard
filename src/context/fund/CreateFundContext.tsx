@@ -1,14 +1,14 @@
 import React, { createContext, useState, Dispatch, SetStateAction } from "react"
 
 import { Token } from "lib/entities"
-
-export type IFeeType = "1 month" | "3 month" | "12 month"
+import { ICommissionPeriodType } from "consts"
 
 interface ICreateFundContext {
   avatarUrl: { get: string; set: Dispatch<SetStateAction<string>> }
   fundName: { get: string; set: Dispatch<SetStateAction<string>> }
   tickerSymbol: { get: string; set: Dispatch<SetStateAction<string>> }
   description: { get: string; set: Dispatch<SetStateAction<string>> }
+  descriptionURL: { get: string; set: Dispatch<SetStateAction<string>> }
   strategy: { get: string; set: Dispatch<SetStateAction<string>> }
   baseToken: {
     get: undefined | Token
@@ -41,8 +41,8 @@ interface ICreateFundContext {
     set: Dispatch<SetStateAction<string[]>>
   }
   feeType: {
-    get: IFeeType
-    set: Dispatch<SetStateAction<IFeeType>>
+    get: ICommissionPeriodType
+    set: Dispatch<SetStateAction<ICommissionPeriodType>>
   }
   comission: {
     get: number
@@ -55,6 +55,7 @@ export const CreateFundContext = createContext<ICreateFundContext>({
   fundName: { get: "", set: () => {} },
   tickerSymbol: { get: "", set: () => {} },
   description: { get: "", set: () => {} },
+  descriptionURL: { get: "", set: () => {} },
   strategy: { get: "", set: () => {} },
   baseToken: { get: undefined, set: () => {} },
   isLimitedEmission: { get: false, set: () => {} },
@@ -103,6 +104,7 @@ const CreateFundContextProvider: React.FC<ICreateFundContextProviderProp> = ({
   const [_baseToken, _setBaseToken] = useState<undefined | Token>(undefined)
 
   const [_description, _setDescription] = useState<string>("")
+  const [_descriptionURL, _setDescriptionURL] = useState<string>("")
   const [_strategy, _setStrategy] = useState<string>("")
 
   const [_isLimitedEmission, _setIsLimitedEmmision] = useState<boolean>(false)
@@ -118,7 +120,7 @@ const CreateFundContextProvider: React.FC<ICreateFundContextProviderProp> = ({
   const [_isPrivatAddresses, _setIsPrivatAddresses] = useState<boolean>(false)
   const [_privateAddresses, _setPrivateAddresses] = useState<string[]>([])
 
-  const [_feeType, _setFeeType] = useState<IFeeType>("1 month")
+  const [_feeType, _setFeeType] = useState<ICommissionPeriodType>("1 month")
   const [_comission, _setComission] = useState<number>(20)
 
   return (
@@ -128,6 +130,7 @@ const CreateFundContextProvider: React.FC<ICreateFundContextProviderProp> = ({
         fundName: { get: _fundName, set: _setFundName },
         tickerSymbol: { get: _tickerSymbol, set: _setTickerSymbol },
         description: { get: _description, set: _setDescription },
+        descriptionURL: { get: _descriptionURL, set: _setDescriptionURL },
         strategy: { get: _strategy, set: _setStrategy },
         baseToken: { get: _baseToken, set: _setBaseToken },
         isLimitedEmission: {

@@ -7,25 +7,21 @@ import { usePoolFactoryContract, useTraderPoolContract } from "contracts"
 import { UpdateListType } from "consts/types"
 import { bigify, isTxMined } from "utils"
 import { IpfsEntity } from "utils/ipfsEntity"
-import { CreateFundContext, IFeeType } from "context/fund/CreateFundContext"
+import { CreateFundContext } from "context/fund/CreateFundContext"
 
-import Stepper, { Step as IStep } from "components/Stepper"
+import Stepper from "components/Stepper"
 import Icon from "components/Icon"
 import TokenIcon from "components/TokenIcon"
 import Modal from "components/Modal"
 import { ModalIcons, SuccessModal as SuccessModalComponent } from "common/Pool"
 
 import defaultAvatar from "assets/icons/default-avatar.svg"
+import { IStep, mapCommissionPeriodToNumber, mapPoolCreateSteps } from "consts"
+import { isString } from "lodash"
 
 const deployMethodByType = {
   basic: "deployBasicPool",
   investment: "deployInvestPool",
-}
-
-const mapFeeTypeToNumber: Record<IFeeType, number> = {
-  "1 month": 1,
-  "3 month": 3,
-  "12 month": 12,
 }
 
 interface IUseCreateFund {
@@ -40,6 +36,7 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
     tickerSymbol,
     avatarUrl,
     description,
+    descriptionURL,
     strategy,
     baseToken,
     feeType,
@@ -69,18 +66,6 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
   const handlePoolCreate = useCallback(async () => {
     if (!account || !traderPoolFactory || !baseToken.get) return
 
-    const poolIpfsMetadataEntity = new IpfsEntity({
-      data: JSON.stringify({
-        assets: [avatarUrl.get],
-        description: description.get,
-        strategy: strategy.get,
-        account,
-        timestamp: new Date().getTime() / 1000,
-      }),
-    })
-
-    await poolIpfsMetadataEntity.uploadSelf()
-
     const totalEmission = bigify(
       isLimitedEmission.get ? limitedEmission.get : "0",
       18
@@ -92,14 +77,14 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
     const percentage = bigify(comission.get.toString(), 25).toHexString()
 
     const poolParameters = {
-      descriptionURL: poolIpfsMetadataEntity._path,
+      descriptionURL: descriptionURL.get,
       trader: account,
       privatePool: isPrivatAddresses.get,
       totalLPEmission: totalEmission,
       baseToken: baseToken.get.address,
       baseTokenDecimals: baseToken.get.decimals,
       minimalInvestment: minInvest,
-      commissionPeriod: mapFeeTypeToNumber[feeType.get],
+      commissionPeriod: mapCommissionPeriodToNumber[feeType.get],
       commissionPercentage: percentage,
     }
 
@@ -118,9 +103,7 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
     })
   }, [
     account,
-    avatarUrl,
-    strategy,
-    description,
+    descriptionURL,
     baseToken,
     feeType,
     comission,
@@ -135,6 +118,28 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
     traderPoolFactory,
     addTransaction,
   ])
+
+  const handleIPFSUpload = useCallback(async () => {
+    if (!account) return
+
+    const poolIpfsMetadataEntity = new IpfsEntity({
+      data: JSON.stringify({
+        assets: [avatarUrl.get],
+        description: description.get,
+        strategy: strategy.get,
+        account,
+        timestamp: new Date().getTime() / 1000,
+      }),
+    })
+
+    await poolIpfsMetadataEntity.uploadSelf()
+
+    if (!isString(poolIpfsMetadataEntity._path)) {
+      throw new Error("IPFS upload failed")
+    }
+
+    descriptionURL.set(poolIpfsMetadataEntity._path)
+  }, [account, avatarUrl.get, description.get, strategy.get, descriptionURL])
 
   const handleManagersAdd = useCallback(async () => {
     const receipt = await traderPool?.modifyAdmins(
@@ -178,35 +183,19 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
     setTransactionFail(false)
 
     const stepsShape: IStep[] = [
-      {
-        title: "Create",
-        description:
-          "Create your fund by signing a transaction in your wallet. This will create ERC20 compatible token.",
-        buttonText: "Create fund",
-      },
+      mapPoolCreateSteps.IPFS,
+      mapPoolCreateSteps.CREATE,
     ]
 
     if (isFundManagers.get && fundManagers.get.length) {
-      stepsShape.push({
-        title: "Managers",
-        description: "Add managers to your fund.",
-        buttonText: "Add managers",
-      })
+      stepsShape.push(mapPoolCreateSteps.MANAGERS)
     }
 
     if (isPrivatAddresses.get && privateAddresses.get.length) {
-      stepsShape.push({
-        title: "Investors",
-        description: "Add investors to your fund.",
-        buttonText: "Add investors",
-      })
+      stepsShape.push(mapPoolCreateSteps.INVESTORS)
     }
 
-    stepsShape.push({
-      title: "Success",
-      description: "Your fund has been successfully created.",
-      buttonText: "Finish",
-    })
+    stepsShape.push(mapPoolCreateSteps.SUCCESS)
 
     setSteps(stepsShape)
     setIsCreating(true)
@@ -215,7 +204,15 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
   const handleNextStep = useCallback(async () => {
     try {
       setTransactionFail(false)
-      if (steps[step].title === "Create") {
+
+      if (steps[step].title === mapPoolCreateSteps.IPFS.title) {
+        setStepPending(true)
+        await handleIPFSUpload()
+        setStep(step + 1)
+        setStepPending(false)
+      }
+
+      if (steps[step].title === mapPoolCreateSteps.CREATE.title) {
         setStepPending(true)
         const tx = await handlePoolCreate()
 
@@ -226,7 +223,7 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
         }
       }
 
-      if (steps[step].title === "Managers") {
+      if (steps[step].title === mapPoolCreateSteps.MANAGERS.title) {
         setStepPending(true)
         const tx = await handleManagersAdd()
 
@@ -236,7 +233,7 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
         }
       }
 
-      if (steps[step].title === "Investors") {
+      if (steps[step].title === mapPoolCreateSteps.INVESTORS.title) {
         setStepPending(true)
         const tx = await handleInvestorsAdd()
 
@@ -246,7 +243,8 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
         }
       }
 
-      if (steps[step].title === "Success") {
+      // detect when last step and open success modal
+      if (steps.length - 2 === step) {
         setIsCreating(false)
         setStepPending(false)
         setSuccessModalOpened(true)
@@ -257,6 +255,7 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
       console.log(error)
     }
   }, [
+    handleIPFSUpload,
     handleInvestorsAdd,
     handleManagersAdd,
     step,
@@ -284,14 +283,15 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
             left={
               <Icon
                 m="0"
-                size={28}
+                size={32}
+                address="0x"
                 source={
                   avatarUrl.get.length > 0 ? avatarUrl.get : defaultAvatar
                 }
               />
             }
             right={
-              <TokenIcon m="0" size={28} address={baseToken.get.address} />
+              <TokenIcon m="0" size={32} address={baseToken.get.address} />
             }
             fund={tickerSymbol.get}
             base={baseToken.get.symbol ?? ""}

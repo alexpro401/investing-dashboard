@@ -12,11 +12,12 @@ import RadioButton from "components/RadioButton"
 import { useBreakpoints } from "hooks"
 import theme, { Flex } from "theme"
 import { stepsControllerContext } from "context/StepsControllerContext"
-import { CreateFundContext, IFeeType } from "context/fund/CreateFundContext"
+import { CreateFundContext } from "context/fund/CreateFundContext"
 
 import * as S from "./styled"
 import * as SForms from "common/FormSteps/styled"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
+import { ICommissionPeriodType } from "consts"
 
 const sliderLimitsByPeriodType = {
   "1 month": {
@@ -29,7 +30,7 @@ const sliderLimitsByPeriodType = {
   },
   "12 month": {
     min: 20,
-    max: 80,
+    max: 70,
   },
 }
 
@@ -119,7 +120,7 @@ const WithdrawalFee: React.FC = () => {
           <S.FeeCardWrp
             value={feeType.get}
             setValue={(v) => {
-              feeType.set(v as IFeeType)
+              feeType.set(v as ICommissionPeriodType)
               comission.set(20)
             }}
             valueToSet={"1 month"}
@@ -143,7 +144,7 @@ const WithdrawalFee: React.FC = () => {
           <S.FeeCardWrp
             value={feeType.get}
             setValue={(v) => {
-              feeType.set(v as IFeeType)
+              feeType.set(v as ICommissionPeriodType)
               comission.set(20)
             }}
             valueToSet={"3 month"}
@@ -167,7 +168,7 @@ const WithdrawalFee: React.FC = () => {
           <S.FeeCardWrp
             value={feeType.get}
             setValue={(v) => {
-              feeType.set(v as IFeeType)
+              feeType.set(v as ICommissionPeriodType)
               comission.set(20)
             }}
             valueToSet={"12 month"}
@@ -196,7 +197,7 @@ const WithdrawalFee: React.FC = () => {
             title="1 Months Fee withdrawal"
             value={feeType.get}
             setValue={(v) => {
-              feeType.set(v as IFeeType)
+              feeType.set(v as ICommissionPeriodType)
               comission.set(20)
             }}
             valueToSet={"1 month"}
@@ -226,7 +227,7 @@ const WithdrawalFee: React.FC = () => {
             title="3 Months Fee withdrawal"
             value={feeType.get}
             setValue={(v) => {
-              feeType.set(v as IFeeType)
+              feeType.set(v as ICommissionPeriodType)
               comission.set(20)
             }}
             valueToSet={"3 month"}
@@ -256,7 +257,7 @@ const WithdrawalFee: React.FC = () => {
             title="12 Months Fee withdrawal"
             value={feeType.get}
             setValue={(v) => {
-              feeType.set(v as IFeeType)
+              feeType.set(v as ICommissionPeriodType)
               comission.set(20)
             }}
             valueToSet={"12 month"}
