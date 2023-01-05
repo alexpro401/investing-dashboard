@@ -6,7 +6,7 @@ import { isEmpty, isNil, map, filter } from "lodash"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import * as S from "../styled"
-import theme, { Center, Text } from "theme"
+import theme, { Center } from "theme"
 
 import { Token } from "interfaces"
 import LoadMore from "components/LoadMore"
@@ -14,6 +14,11 @@ import { GovPoolActiveDelegations } from "queries"
 import useQueryPagination from "hooks/useQueryPagination"
 import GovTokenDelegationCard from "components/cards/GovTokenDelegation"
 import { IGovVoterInPoolPairsQuery } from "interfaces/thegraphs/gov-pools"
+import { NoDataMessage } from "common"
+import {
+  useGovPoolHelperContracts,
+  useGovPoolVotingPowerMulticall,
+} from "hooks"
 
 interface Props {
   govPoolAddress?: string
@@ -51,6 +56,41 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress, token }) => {
       },
     })
 
+  const { govUserKeeperAddress } = useGovPoolHelperContracts(govPoolAddress)
+  const votingPowerParams = React.useMemo(
+    () => ({
+      userKeeperAddresses: [govUserKeeperAddress],
+      params: {
+        address: [account],
+        isMicroPool: [false],
+        useDelegated: [true],
+      },
+    }),
+    [account, govUserKeeperAddress]
+  )
+
+  const [votingPowerData, votingPowerDataLoading] =
+    useGovPoolVotingPowerMulticall(votingPowerParams)
+
+  const nftIdToVotingPowerMap = React.useMemo<Record<string, BigNumber>>(() => {
+    if (
+      !govUserKeeperAddress ||
+      votingPowerDataLoading ||
+      isEmpty(votingPowerData.delegated)
+    ) {
+      return {}
+    }
+
+    return votingPowerData.delegated[govUserKeeperAddress].nftIds.reduce(
+      (acc, nftId, index) => {
+        acc[nftId.toString()] =
+          votingPowerData.delegated[govUserKeeperAddress].perNftPower[index]
+        return acc
+      },
+      {}
+    )
+  }, [votingPowerData, votingPowerDataLoading, govUserKeeperAddress])
+
   const loader = React.useRef<any>()
 
   React.useEffect(() => {
@@ -74,7 +114,7 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress, token }) => {
     return (
       <S.List>
         <Center>
-          <Text color={theme.textColors.secondary}>No Delegations</Text>
+          <NoDataMessage />
         </Center>
       </S.List>
     )
@@ -89,6 +129,7 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress, token }) => {
             chainId={chainId}
             alwaysShowMore={data.length === 1 ? true : undefined}
             token={token}
+            nftsPower={nftIdToVotingPowerMap}
           />
         </S.Indents>
       ))}

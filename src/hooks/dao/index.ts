@@ -32,4 +32,7 @@ export { default as useGovPoolExecutorToSettings } from "./useGovPoolExecutorToS
 export { default as useGovPoolSettingsIdToExecutors } from "./useGovPoolSettingsIdToExecutors"
 export { default as useGovPoolPendingRewards } from "./useGovPoolPendingRewards"
 export { default as useGovPoolNftVotingPower } from "./useGovPoolNftVotingPower"
+export { default as useGovPoolsList } from "./useGovPoolsList"
+export { default as useGovPoolHelperContractsMulticall } from "./useGovPoolHelperContractsMulticall"
+export { default as useGovPoolVotingPowerMulticall } from "./useGovPoolVotingPowerMulticall"
 export * from "./useGovUserKeeperGetTotalVoteWeight"

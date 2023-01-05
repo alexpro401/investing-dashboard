@@ -6,7 +6,7 @@ import { useERC20 } from "hooks"
 import { useErc721 } from "hooks/useErc721"
 
 import { Token } from "interfaces"
-import { ZERO, ZERO_ADDR } from "constants/index"
+import { ZERO, ZERO_ADDR } from "consts"
 import { parseTransactionError } from "utils"
 import { useGovUserKeeperContract } from "contracts"
 

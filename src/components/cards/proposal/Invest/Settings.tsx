@@ -23,7 +23,7 @@ import { AppButton } from "common"
 
 import { accordionSummaryVariants } from "motion/variants"
 import { Flex } from "theme"
-import { DATE_TIME_FORMAT } from "constants/time"
+import { DATE_TIME_FORMAT } from "consts/time"
 import { SettingsStyled as S } from "./styled"
 import { TraderPoolInvestProposal } from "interfaces/typechain"
 

@@ -13,9 +13,9 @@ import {
 } from "hooks/dao"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import usePayload from "hooks/usePayload"
-import { SubmitState } from "constants/types"
+import { SubmitState } from "consts/types"
 import { isTxMined } from "utils"
-import { ROUTE_PATHS, ZERO_ADDR } from "constants/index"
+import { ROUTE_PATHS, ZERO_ADDR } from "consts"
 import { IpfsEntity } from "utils/ipfsEntity"
 
 interface ICreateDaoProposalTypeArgs {
@@ -163,7 +163,7 @@ const useGovPoolCreateProposalType = ({
           onClick: () => {
             navigate(
               generatePath(ROUTE_PATHS.daoProposalVoting, {
-                daoProposal: daoPoolAddress,
+                daoPoolAddress: daoPoolAddress,
                 proposalId: String(latestProposalId),
               })
             )

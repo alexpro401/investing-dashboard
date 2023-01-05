@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { FC, useMemo } from "react"
 import { format } from "date-fns/esm"
 import { BigNumber } from "@ethersproject/bignumber"
 
@@ -8,7 +8,7 @@ import ExternalLink from "components/ExternalLink"
 
 import { usePoolContract } from "hooks/usePool"
 import { useERC20Data } from "state/erc20/hooks"
-import { DATE_TIME_FORMAT } from "constants/time"
+import { DATE_TIME_FORMAT } from "consts/time"
 import { expandTimestamp, formatBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
@@ -23,7 +23,7 @@ interface IProps {
   isInvest: boolean
 }
 
-const TransactionHistoryCardLiquidity: React.FC<IProps> = ({
+const TransactionHistoryCardLiquidity: FC<IProps> = ({
   hash,
   info,
   chainId,
@@ -56,7 +56,7 @@ const TransactionHistoryCardLiquidity: React.FC<IProps> = ({
         </S.CardIcons>
 
         <ExternalLink fz="13px" fw="500" color="#2680EB" href={explorerUrl}>
-          {isInvest ? "Invest" : "Divest"} {amount} {baseToken?.symbol}{" "}
+          {amount} {baseToken?.symbol}{" "}
         </ExternalLink>
       </Flex>
       <S.CardTime>{datetime}</S.CardTime>

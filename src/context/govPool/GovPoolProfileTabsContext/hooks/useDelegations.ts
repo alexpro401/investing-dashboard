@@ -8,8 +8,8 @@ import {
   useGovPoolNftVotingPower,
   useGovPoolDelegations,
   useGovPoolHelperContracts,
+  useGovPoolVotingPowerMulticall,
 } from "hooks/dao"
-import { useGovPoolVotingPowerMulticall } from "hooks/dao/useGovPoolUserVotingPower"
 import { DaoPoolDaoProfileTotalDelegationsQuery } from "queries/gov-pools"
 import { isAddress } from "utils"
 
@@ -49,14 +49,15 @@ const useDelegations = ({ startLoading }: IUseDelegationsProps) => {
   })
 
   const votingPowerParams = useMemo(
-    () => [
-      {
-        userKeeperAddress: govUserKeeperAddress,
-        address: account,
-        isMicroPool: true,
-        useDelegated: false,
+    () => ({
+      userKeeperAddresses: [govUserKeeperAddress],
+      params: {
+        address: [account],
+        isMicroPool: [true],
+        useDelegated: [false],
       },
-    ],
+    }),
+
     [account, govUserKeeperAddress]
   )
 
@@ -105,7 +106,8 @@ const useDelegations = ({ startLoading }: IUseDelegationsProps) => {
     totalNftDelegatee,
     delegatedVotingPowerByMe: myDelegations ? myDelegations.power : undefined,
     delegatedVotingPowerToMe: votingPowerData
-      ? votingPowerData.micropool[account ?? ""]?.power ?? undefined
+      ? votingPowerData.micropool[govUserKeeperAddress ?? ""]?.power ??
+        undefined
       : undefined,
   }
 }

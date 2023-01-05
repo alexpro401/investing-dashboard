@@ -2,9 +2,16 @@ import * as S from "./styled"
 
 import { FC, HTMLAttributes } from "react"
 import Header from "components/Header/Layout"
-import { Routes, Route, useParams, Navigate } from "react-router-dom"
-import { DaoProposalsList } from "common"
+import {
+  useParams,
+  Navigate,
+  generatePath,
+  Route,
+  Routes,
+} from "react-router-dom"
+import { Breadcrumbs, DaoProposalsList } from "common"
 import { useBreakpoints } from "hooks"
+import { ROUTE_PATHS } from "consts/index"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -14,37 +21,58 @@ const DaoProposals: FC<Props> = () => {
   const TABS = [
     {
       title: "Opened voting",
-      source: `/dao/${daoAddress}/proposals/opened`,
+      source: generatePath(ROUTE_PATHS.daoProposalList, {
+        daoAddress: daoAddress!,
+        "*": "opened",
+      }),
     },
     {
       title: "Ended voting",
-      source: `/dao/${daoAddress}/proposals/ended`,
+      source: generatePath(ROUTE_PATHS.daoProposalList, {
+        daoAddress: daoAddress!,
+        "*": "ended",
+      }),
     },
     {
       title: "Completed",
-      source: `/dao/${daoAddress}/proposals/completed`,
+      source: generatePath(ROUTE_PATHS.daoProposalList, {
+        daoAddress: daoAddress!,
+        "*": "completed",
+      }),
     },
   ]
 
   const ENDED_TABS = [
     {
       title: "Passed",
-      source: `/dao/${daoAddress}/proposals/ended/passed`,
+      source: generatePath(ROUTE_PATHS.daoProposalList, {
+        daoAddress: daoAddress!,
+        "*": "ended/passed",
+      }),
     },
     {
       title: "Rejected",
-      source: `/dao/${daoAddress}/proposals/ended/rejected`,
+      source: generatePath(ROUTE_PATHS.daoProposalList, {
+        daoAddress: daoAddress!,
+        "*": "ended/rejected",
+      }),
     },
   ]
 
   const COMPLETED_TABS = [
     {
       title: "All",
-      source: `/dao/${daoAddress}/proposals/completed/all`,
+      source: generatePath(ROUTE_PATHS.daoProposalList, {
+        daoAddress: daoAddress!,
+        "*": "completed/all",
+      }),
     },
     {
       title: "Rewards",
-      source: `/dao/${daoAddress}/proposals/completed/rewards`,
+      source: generatePath(ROUTE_PATHS.daoProposalList, {
+        daoAddress: daoAddress!,
+        "*": "completed/rewards",
+      }),
     },
   ]
 
@@ -53,7 +81,7 @@ const DaoProposals: FC<Props> = () => {
   return (
     <>
       <Header tabs={isMobile ? TABS : undefined}>
-        {isMobile ? "All Proposals" : <></>}
+        {isMobile ? "All Proposals" : <Breadcrumbs />}
       </Header>
       <S.Root>
         {!isMobile ? (
@@ -76,12 +104,15 @@ const DaoProposals: FC<Props> = () => {
             element={
               <Navigate
                 replace
-                to={`/dao/${daoAddress}/proposals/ended/passed`}
+                to={generatePath(ROUTE_PATHS.daoProposalList, {
+                  daoAddress: daoAddress!,
+                  "*": "ended/passed",
+                })}
               />
             }
           />
           <Route
-            path="/ended/passed"
+            path="ended/passed"
             element={
               <>
                 <S.PageSubTabs tabs={ENDED_TABS} />
@@ -93,7 +124,7 @@ const DaoProposals: FC<Props> = () => {
             }
           />
           <Route
-            path="/ended/rejected"
+            path="ended/rejected"
             element={
               <>
                 <S.PageSubTabs tabs={ENDED_TABS} />
@@ -109,13 +140,16 @@ const DaoProposals: FC<Props> = () => {
             element={
               <Navigate
                 replace
-                to={`/dao/${daoAddress}/proposals/completed/all`}
+                to={generatePath(ROUTE_PATHS.daoProposalList, {
+                  daoAddress: daoAddress!,
+                  "*": "completed/all",
+                })}
               />
             }
           />
 
           <Route
-            path="/completed/all"
+            path="completed/all"
             element={
               <>
                 <S.PageSubTabs tabs={COMPLETED_TABS} />
@@ -127,7 +161,7 @@ const DaoProposals: FC<Props> = () => {
             }
           />
           <Route
-            path="/completed/rewards"
+            path="completed/rewards"
             element={
               <>
                 <S.PageSubTabs tabs={COMPLETED_TABS} />

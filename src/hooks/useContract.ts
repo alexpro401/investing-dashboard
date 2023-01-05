@@ -4,7 +4,7 @@ import { getContract } from "utils/getContract"
 import { useActiveWeb3React } from "hooks"
 
 import { isAddress } from "utils"
-import { RPC_PROVIDERS } from "constants/providers"
+import { RPC_PROVIDERS } from "consts/providers"
 
 export function useContract<T extends Contract = Contract>(
   address: string | undefined,

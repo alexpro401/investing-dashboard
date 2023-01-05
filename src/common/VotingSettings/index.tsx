@@ -9,7 +9,7 @@ import {
   parseDurationShortString,
 } from "utils/time"
 import { cutStringZeroes, isAddress } from "utils"
-import { ZERO_ADDR } from "constants/index"
+import { ZERO_ADDR } from "consts"
 import { useERC20 } from "hooks"
 import getExplorerLink from "utils/getExplorerLink"
 import { ExplorerDataType } from "utils/getExplorerLink"

@@ -1,48 +1,16 @@
 import styled from "styled-components/macro"
-import { motion } from "framer-motion"
 
-import { opacityVariants } from "motion/variants"
 import { AppButton, SideStepsNavigationBar } from "common"
-import { respondTo } from "theme"
 
-export const ContainerWrp = styled.div`
-  overflow: hidden;
+export const DesktopHeaderWrp = styled.div`
+  margin-bottom: 16px;
   display: flex;
-  flex: 1;
-  width: 100%;
-  height: 100%;
-
-  ${respondTo("sm")} {
-    display: grid;
-    grid-template-columns: 1fr 0.65fr;
-    gap: 24px;
-    padding: 0 20px;
-  }
+  flex-direction: column;
 `
 
 export const SideStepsNavigationBarWrp = styled(SideStepsNavigationBar)`
   width: 100%;
   height: 100%;
-`
-
-export const StepsContainer = styled(motion.div).attrs(() => ({
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-  transition: { duration: 0.2 },
-  variants: opacityVariants,
-}))`
-  display: flex;
-  flex-direction: column;
-  overflow: hidden auto;
-  height: 100%;
-`
-export const StepsRoot = styled.div`
-  display: flex;
-  flex-direction: column;
-  transform: scale(1);
-  gap: 16px;
-  padding: 14px 16px 20px;
 `
 
 export const VotingSettingsModalButton = styled(AppButton)`

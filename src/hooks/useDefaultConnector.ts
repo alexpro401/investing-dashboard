@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useState } from "react"
 import { useWeb3React } from "@web3-react/core"
-import { connectorsByName } from "constants/connectors"
+import { connectorsByName } from "consts/connectors"
 
 export const useDefaultConnector = (isTried: boolean) => {
   const { activate, account } = useWeb3React()

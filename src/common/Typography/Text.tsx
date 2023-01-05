@@ -1,6 +1,8 @@
 import styled, { css } from "styled-components"
-import theme from "theme"
+
+import theme, { respondTo } from "theme"
 import DynamicComponent from "./DynamicTag"
+import expandTypographyWithProps from "./expandProps"
 
 /*
     # TEXT
@@ -14,14 +16,18 @@ const TextStyle = css`
   color: ${theme.textColors.primary};
 `
 
-const RegularTextStyle = css`
+const RegularTextStyle = (props) => css`
   ${TextStyle}
+
+  ${expandTypographyWithProps(props)}
 `
 
-const MediumTextStyle = css`
+const MediumTextStyle = (props) => css`
   ${TextStyle}
 
   font-weight: 500;
+
+  ${expandTypographyWithProps(props)}
 `
 
 const ButtonTextStyle = css`
@@ -45,11 +51,11 @@ const DescriptionTextStyle = css`
 `
 
 export const RegularText = styled(DynamicComponent).attrs({ tag: "span" })`
-  ${RegularTextStyle}
+  ${(props) => RegularTextStyle(props)}
 `
 
 export const MediumText = styled(DynamicComponent).attrs({ tag: "span" })`
-  ${MediumTextStyle}
+  ${(props) => MediumTextStyle(props)}
 `
 
 export const ButtonText = styled(DynamicComponent).attrs({ tag: "span" })`

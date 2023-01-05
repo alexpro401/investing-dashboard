@@ -1,16 +1,16 @@
 import React, { useContext, useCallback } from "react"
-import { createPortal } from "react-dom"
 
-import { StepsNavigation, CardHead, Card, CardDescription } from "common"
+import { CardHead, Card, CardDescription, Headline1, RegularText } from "common"
 import ValidatorsList from "components/ValidatorsList"
 import { CreateDaoCardStepNumber } from "common"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { ValidatorsListContext } from "context/govPool/proposals/ValidatorsListContext"
-import { useBreakpoints } from "hooks"
-import { useFormValidation } from "hooks/useFormValidation"
+import { useFormValidation, useBreakpoints } from "hooks"
 import { required, isAddressValidator } from "utils/validators"
+import theme from "theme"
 
-import * as S from "../styled"
+import * as S from "common/FormSteps/styled"
+import { DesktopHeaderWrp } from "../styled"
 
 const ValidatorsStep: React.FC = () => {
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
@@ -56,31 +56,47 @@ const ValidatorsStep: React.FC = () => {
     }
   }, [nextCb, touchForm, isFieldsValid, hiddenIdxs, balances])
 
-  const appNavigationEl = document.querySelector("#app-navigation")
-
   return (
     <S.StepsRoot>
-      <Card>
-        <CardHead
-          nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
-          title="Validators"
-        />
-        <CardDescription>
-          <p>
+      {isMobile && (
+        <Card>
+          <CardHead
+            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+            title="Validators"
+          />
+          <CardDescription>
+            <p>
+              Here you can propose adding/removing validators, and the change
+              voting power of each validator.
+            </p>
+            <p>Will be voted on by validators only.</p>
+          </CardDescription>
+        </Card>
+      )}
+      {!isMobile && (
+        <DesktopHeaderWrp>
+          <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+            Validators
+          </Headline1>
+          <RegularText
+            color={theme.textColors.secondary}
+            desktopWeight={500}
+            desktopSize={"14px"}
+          >
             Here you can propose adding/removing validators, and the change
             voting power of each validator.
-          </p>
-          <p>Will be voted on by validators only.</p>
-        </CardDescription>
-      </Card>
+          </RegularText>
+          <RegularText
+            color={theme.textColors.secondary}
+            desktopWeight={500}
+            desktopSize={"14px"}
+          >
+            Will be voted on by validators only.
+          </RegularText>
+        </DesktopHeaderWrp>
+      )}
       <ValidatorsList />
-      {isMobile &&
-        appNavigationEl &&
-        createPortal(
-          <StepsNavigation customNextCb={handleNextStep} />,
-          appNavigationEl
-        )}
-      {!isMobile && <StepsNavigation customNextCb={handleNextStep} />}
+      <S.FormStepsNavigationWrp customNextCb={handleNextStep} />
     </S.StepsRoot>
   )
 }

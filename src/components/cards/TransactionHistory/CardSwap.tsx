@@ -7,7 +7,7 @@ import ExternalLink from "components/ExternalLink"
 
 import { expandTimestamp } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
-import { DATE_TIME_FORMAT } from "constants/time"
+import { DATE_TIME_FORMAT } from "consts/time"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
 import S from "./styled"

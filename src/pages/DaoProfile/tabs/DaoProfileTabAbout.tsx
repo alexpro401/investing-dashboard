@@ -10,8 +10,8 @@ import TabFallback from "./TabFallback"
 import ExternalLink from "components/ExternalLink"
 
 import extractRootDomain from "utils/extractRootDomain"
-import { DATE_FORMAT } from "constants/time"
-import { ICON_NAMES } from "constants/icon-names"
+import { DATE_FORMAT } from "consts/time"
+import { ICON_NAMES } from "consts/icon-names"
 import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsContext/GovPoolProfileTabsContext"
 
 import { Divider, TextLabel, TextValue } from "../styled"

@@ -1,9 +1,8 @@
 import React, { useContext, useCallback } from "react"
 import { useParams } from "react-router-dom"
-import { createPortal } from "react-dom"
 import { BigNumber } from "@ethersproject/bignumber"
 import { formatUnits } from "@ethersproject/units"
-import { useActiveWeb3React, useBreakpoints } from "hooks"
+import { useActiveWeb3React } from "hooks"
 
 import { useGovPoolTreasury } from "hooks/dao"
 import {
@@ -14,25 +13,29 @@ import {
   CreateDaoCardStepNumber,
   TokenChip,
   AppButton,
-  StepsNavigation,
+  Headline1,
+  RegularText,
 } from "common"
 import ExternalLink from "components/ExternalLink"
 import { InputField, SelectField } from "fields"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { TokenDistributionCreatingContext } from "context/govPool/proposals/TokenDistributionContext"
+import { useBreakpoints } from "hooks"
 import { useFormValidation } from "hooks/useFormValidation"
 import { required, isBnLte } from "utils/validators"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { formatFiatNumber, formatTokenNumber } from "utils"
-import { cutStringZeroes } from "utils"
+import { formatFiatNumber, formatTokenNumber, cutStringZeroes } from "utils"
+import theme from "theme"
 
 import * as S from "../styled"
+import * as SForms from "common/FormSteps/styled"
 
 const TokenDistributionStep: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
   const [treasury] = useGovPoolTreasury(daoAddress)
 
   const { chainId } = useActiveWeb3React()
+  const { isMobile } = useBreakpoints()
   const { selectedTreasuryToken, tokenAmount } = useContext(
     TokenDistributionCreatingContext
   )
@@ -85,23 +88,38 @@ const TokenDistributionStep: React.FC = () => {
     }
   }, [nextCb, touchForm, isFieldsValid, selectedTreasuryToken])
 
-  const appNavigationEl = document.querySelector("#app-navigation")
-
-  const { isMobile } = useBreakpoints()
-
   return (
-    <S.StepsRoot>
-      <Card>
-        <CardHead
-          nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
-          title="Select token from treasury"
-        />
-        <CardDescription>
-          <p>
+    <SForms.StepsRoot>
+      {!isMobile && (
+        <S.DesktopHeaderWrp>
+          <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+            Select token from treasury
+          </Headline1>
+          <RegularText
+            color={theme.textColors.secondary}
+            desktopWeight={500}
+            desktopSize={"14px"}
+          >
             Choose the ERC-20 token for distibution — make sure to have enough
             of this token in the DAO treasury.
-          </p>
-        </CardDescription>
+          </RegularText>
+        </S.DesktopHeaderWrp>
+      )}
+      <Card>
+        {isMobile && (
+          <>
+            <CardHead
+              nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+              title="Select token from treasury"
+            />
+            <CardDescription>
+              <p>
+                Choose the ERC-20 token for distibution — make sure to have
+                enough of this token in the DAO treasury.
+              </p>
+            </CardDescription>
+          </>
+        )}
         <CardFormControl>
           <SelectField
             placeholder="ERC-20"
@@ -205,14 +223,8 @@ const TokenDistributionStep: React.FC = () => {
           />
         </CardFormControl>
       </Card>
-      {isMobile &&
-        appNavigationEl &&
-        createPortal(
-          <StepsNavigation customNextCb={handleNextStep} />,
-          appNavigationEl
-        )}
-      {!isMobile && <StepsNavigation customNextCb={handleNextStep} />}
-    </S.StepsRoot>
+      <SForms.FormStepsNavigationWrp customNextCb={handleNextStep} />
+    </SForms.StepsRoot>
   )
 }
 

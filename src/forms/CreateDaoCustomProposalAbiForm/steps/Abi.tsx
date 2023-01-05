@@ -6,7 +6,6 @@ import {
   useContext,
   useMemo,
 } from "react"
-import { createPortal } from "react-dom"
 import { useParams } from "react-router-dom"
 import theme from "theme"
 
@@ -17,7 +16,8 @@ import {
   CardHead,
   CollapsedCard,
   CreateDaoCardStepNumber,
-  StepsNavigation,
+  Headline1,
+  RegularText,
 } from "common"
 
 import {
@@ -29,7 +29,7 @@ import {
 
 import ABIConstructor from "modals/ABIConstructor"
 
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { AdvancedABIContext } from "context/govPool/proposals/custom/AdvancedABIContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
 
@@ -45,6 +45,7 @@ import { readFromClipboard } from "utils/clipboard"
 import { required, isAddressValidator } from "utils/validators"
 
 import * as S from "../styled"
+import * as SForms from "common/FormSteps/styled"
 
 // TODO: improvements
 // 1. save selected method & params decoded in context - needed to parse data in preview
@@ -55,12 +56,12 @@ const AbiStep: FC = () => {
     "daoAddress" | "executorAddress"
   >()
 
+  const { isMobile } = useBreakpoints()
   const [settingsId] = useGovPoolExecutorToSettings(daoAddress, executorAddress)
   const [executors] = useGovPoolSettingsIdToExecutors(
     daoAddress,
     settingsId ? settingsId.toString() : undefined
   )
-  const { isMobile } = useBreakpoints()
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
 
   const executorsShorten = useMemo(
@@ -348,24 +349,48 @@ const AbiStep: FC = () => {
     ]
   )
 
-  const appNavigationEl = document.querySelector("#app-navigation")
-
   return (
-    <S.StepsRoot>
-      <Card>
-        <CardHead
-          nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
-          title="Конструктор транзакции ABI"
-        />
-        <CardDescription>
-          <p>
+    <SForms.StepsRoot>
+      {isMobile && (
+        <Card>
+          <CardHead
+            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+            title="Конструктор транзакции ABI"
+          />
+          <CardDescription>
+            <p>
+              description Lorem ipsum dolor sit amet, consectetur adipiscing
+              elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+              aliqua. Ut enim ad minim{" "}
+            </p>
+          </CardDescription>
+
+          <S.CardFooter p="10px 0 0">
+            <AppButton
+              type="button"
+              text="+ Add more contract adresses"
+              color="default"
+              size="no-paddings"
+              onClick={onContractAddressAdd}
+            />
+          </S.CardFooter>
+        </Card>
+      )}
+      {!isMobile && (
+        <S.DesktopHeaderWrp>
+          <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+            Конструктор транзакции ABI
+          </Headline1>
+          <RegularText
+            color={theme.textColors.secondary}
+            desktopWeight={500}
+            desktopSize={"14px"}
+          >
             description Lorem ipsum dolor sit amet, consectetur adipiscing elit,
             sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Ut enim ad minim{" "}
-          </p>
-        </CardDescription>
-
-        <S.CardFooter p="10px 0 0">
+            Ut enim ad minim
+          </RegularText>
+          <br />
           <AppButton
             type="button"
             text="+ Add more contract adresses"
@@ -373,8 +398,8 @@ const AbiStep: FC = () => {
             size="no-paddings"
             onClick={onContractAddressAdd}
           />
-        </S.CardFooter>
-      </Card>
+        </S.DesktopHeaderWrp>
+      )}
 
       {contractAdresses.get.map(addressCardRenderer)}
 
@@ -390,14 +415,8 @@ const AbiStep: FC = () => {
         isOpen={modal.get !== ""}
         onClose={() => modal.set("")}
       />
-      {isMobile &&
-        appNavigationEl &&
-        createPortal(
-          <StepsNavigation customNextCb={handleNextStep} />,
-          appNavigationEl
-        )}
-      {!isMobile && <StepsNavigation customNextCb={handleNextStep} />}
-    </S.StepsRoot>
+      <SForms.FormStepsNavigationWrp customNextCb={handleNextStep} />
+    </SForms.StepsRoot>
   )
 }
 

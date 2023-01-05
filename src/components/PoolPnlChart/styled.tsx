@@ -7,7 +7,6 @@ const Styled = {
 
   Body: styled.div`
     overflow: hidden;
-    height: 130px;
   `,
 
   NoData: styled.div`

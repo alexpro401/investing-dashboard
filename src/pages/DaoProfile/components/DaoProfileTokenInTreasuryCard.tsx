@@ -6,7 +6,7 @@ import { TextLabel, TextValue, SliderItem, FlexLink, NftIcon } from "../styled"
 
 import TokenIcon from "components/TokenIcon"
 
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { isNil } from "lodash"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 

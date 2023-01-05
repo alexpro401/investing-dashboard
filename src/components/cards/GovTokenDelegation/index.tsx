@@ -10,11 +10,11 @@ import { normalizeBigNumber, shortenAddress } from "utils"
 import ExternalLink from "components/ExternalLink"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import * as S from "./styled"
-import { CHART_TYPE } from "constants/chart"
+import { CHART_TYPE } from "consts/chart"
 import Chart from "components/Chart"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import ERC721Row from "components/ERC721Row"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import ERC20Row from "components/ERC20Row"
 import { IGovVoterInPoolPairsQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolWithdrawableAssets from "hooks/dao/useGovPoolWithdrawableAssets"
@@ -22,6 +22,7 @@ import { Token } from "interfaces"
 
 import useGovPoolDelegations from "hooks/dao/useGovPoolDelegations"
 import { addBignumbers, subtractBignumbers } from "utils/formulas"
+import { BigNumber } from "@ethersproject/bignumber"
 
 const CustomLabel = ({ viewBox, total }) => {
   const { cx, cy } = viewBox
@@ -51,6 +52,7 @@ interface IProps {
   chainId?: number
   alwaysShowMore?: boolean
   token: Token | null
+  nftsPower: Record<string, BigNumber>
 }
 
 const GovTokenDelegationCard: React.FC<IProps> = ({
@@ -58,6 +60,7 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
   chainId,
   alwaysShowMore,
   token,
+  nftsPower,
 }) => {
   const navigate = useNavigate()
 
@@ -138,9 +141,8 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
   }, [data.from.pool.id, data.to.voter.id])
 
   const onDelegationTerminalNavigate = React.useCallback(() => {
-    // TODO: pass delegatee address
-    navigate(`/dao/${data.from.pool.id}/delegate`)
-  }, [data.from.pool.id])
+    navigate(`/dao/${data.from.pool.id}/delegate/${data.to.voter.id}`)
+  }, [data.from.pool.id, data.to.voter.id])
 
   const CollapseTrigger = React.useMemo(() => {
     if (isNil(alwaysShowMore) || !alwaysShowMore) {
@@ -213,18 +215,20 @@ const GovTokenDelegationCard: React.FC<IProps> = ({
                   <ERC721Row
                     key={uuidv4()}
                     isLocked
-                    votingPower={ZERO}
-                    tokenId={nft as string}
+                    votingPower={nftsPower[nft.toString()] ?? ZERO}
+                    tokenId={nft.toString()}
                     tokenUri="https://public.nftstatic.com/static/nft/res/nft-cex/S3/1664823519694_jkjs8973ujyphjznjmmjd5h88tay9e0x.png"
                   />
                 ))}
-              <ERC20Row
-                isLocked
-                delegated={data.delegateAmount}
-                available={withdrawableAssets?.tokens ?? ZERO}
-                tokenId={token?.address ?? ""}
-                tokenUri=""
-              />
+              {BigNumber.from(data.delegateAmount).gt(0) && (
+                <ERC20Row
+                  isLocked
+                  delegated={data.delegateAmount}
+                  available={withdrawableAssets?.tokens ?? ZERO}
+                  tokenId={token?.address ?? ""}
+                  tokenUri=""
+                />
+              )}
             </Flex>
             <S.ActionBase
               onClick={onUndelegationTerminalNavigate}

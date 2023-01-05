@@ -5,9 +5,10 @@ import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { Card, CardDescription, CardHead } from "common"
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
-import { DaoSettingsParameters } from "common"
-import { useFormValidation } from "hooks"
+import { DaoSettingsParameters, Headline1, RegularText } from "common"
+import { useFormValidation, useBreakpoints } from "hooks"
 import { isAddressValidator, isPercentage, required } from "utils/validators"
+import theme from "theme"
 
 import * as S from "./styled"
 
@@ -20,6 +21,7 @@ const DefaultProposalStep: FC<IDefaultProposalStepProps> = ({
 }) => {
   const { defaultProposalSettingForm } = useContext(GovPoolFormContext)
   const { currentStepNumber, nextCb } = useContext(stepsControllerContext)
+  const { isMobile } = useBreakpoints()
 
   const {
     delegatedVotingAllowed,
@@ -92,20 +94,37 @@ const DefaultProposalStep: FC<IDefaultProposalStepProps> = ({
       <S.StepsRoot>
         {defaultProposalSettingForm ? (
           <>
-            <Card>
-              <CardHead
-                nodeLeft={
-                  <CreateDaoCardStepNumber number={currentStepNumber} />
-                }
-                title="General voting settings"
-              />
-              <CardDescription>
-                <p>
+            {isMobile && (
+              <Card>
+                <CardHead
+                  nodeLeft={
+                    <CreateDaoCardStepNumber number={currentStepNumber} />
+                  }
+                  title="General voting settings"
+                />
+                <CardDescription>
+                  <p>
+                    Configure the settings for proposals, voting, vote
+                    delegation, and rewards for active members.
+                  </p>
+                </CardDescription>
+              </Card>
+            )}
+            {!isMobile && (
+              <S.DesktopHeaderWrp>
+                <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+                  General voting settings
+                </Headline1>
+                <RegularText
+                  color={theme.textColors.secondary}
+                  desktopWeight={500}
+                  desktopSize={"14px"}
+                >
                   Configure the settings for proposals, voting, vote delegation,
                   and rewards for active members.
-                </p>
-              </CardDescription>
-            </Card>
+                </RegularText>
+              </S.DesktopHeaderWrp>
+            )}
             <S.CenteredImage src={CreateFundDocsImage} />
             <DaoSettingsParameters
               poolParameters={defaultProposalSettingForm}

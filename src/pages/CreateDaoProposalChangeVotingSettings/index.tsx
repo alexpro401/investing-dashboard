@@ -1,6 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { createPortal } from "react-dom"
 import { useDispatch } from "react-redux"
 import { uniqBy } from "lodash"
 
@@ -9,16 +8,18 @@ import {
   CardHead,
   CardDescription,
   SelectableCard,
-  StepsNavigation,
   CreateDaoCardStepNumber,
+  Headline1,
+  RegularText,
 } from "common"
+import FormStepsLoaderWrapper from "common/FormSteps/FormStepsLoaderWrapper"
 import RadioButton from "components/RadioButton"
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import { useGovPoolCustomExecutors } from "hooks/dao"
 import { useBreakpoints } from "hooks"
 import Skeleton from "components/Skeleton"
-import { Flex } from "theme"
+import theme, { Flex } from "theme"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "./styled"
@@ -49,15 +50,11 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
     type: "default",
     specification: EDefaultVotingSettingsType.changeVotingSettings,
   })
-  const [appNavigationEl, setAppNavigationEl] = useState<Element | null>(null)
 
   const { isMobile } = useBreakpoints()
 
   useEffect(() => {
     dispatch(hideTapBar())
-    setTimeout(() => {
-      setAppNavigationEl(document.querySelector("#app-navigation"))
-    }, 100)
 
     return () => {
       dispatch(showTabBar())
@@ -150,34 +147,63 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
       <WithGovPoolAddressValidation
         daoPoolAddress={daoAddress ?? ""}
         loader={
-          <Flex
-            gap={"24"}
-            full
-            m="16px 0 0 0"
-            dir="column"
-            ai={"center"}
-            jc={"flex-start"}
-          >
-            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-          </Flex>
+          <FormStepsLoaderWrapper>
+            <Flex
+              gap={"24"}
+              full
+              m="16px 0 0 0"
+              dir="column"
+              ai={"flex-start"}
+              jc={"flex-start"}
+            >
+              {!isMobile && (
+                <>
+                  <Skeleton variant={"text"} w={"300px"} h={"40px"} />
+                  <Skeleton variant={"text"} w={"400px"} h={"20px"} />
+                </>
+              )}
+              {isMobile && (
+                <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+              )}
+              <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+              <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+              <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+            </Flex>
+          </FormStepsLoaderWrapper>
         }
       >
         <SForms.StepsWrapper>
           <SForms.StepsContainer>
             <S.PageHolder>
               <S.PageContent>
-                <Card>
-                  <CardHead
-                    nodeLeft={<CreateDaoCardStepNumber number={1} />}
-                    title="What do you want to change? "
-                  />
-                  <CardDescription>
-                    <p>Choose the setting you want to change.</p>
-                  </CardDescription>
-                </Card>
+                {isMobile && (
+                  <Card>
+                    <CardHead
+                      nodeLeft={<CreateDaoCardStepNumber number={1} />}
+                      title="What do you want to change? "
+                    />
+                    <CardDescription>
+                      <p>Choose the setting you want to change.</p>
+                    </CardDescription>
+                  </Card>
+                )}
+                {!isMobile && (
+                  <S.DesktopHeaderWrp>
+                    <Headline1
+                      color={theme.statusColors.info}
+                      desktopWeight={900}
+                    >
+                      What do you want to change?
+                    </Headline1>
+                    <RegularText
+                      color={theme.textColors.secondary}
+                      desktopWeight={500}
+                      desktopSize={"14px"}
+                    >
+                      Choose the settings you want to change
+                    </RegularText>
+                  </S.DesktopHeaderWrp>
+                )}
                 {defaultVotingSettingsTypes.map((el) => {
                   return (
                     <SelectableCard
@@ -231,10 +257,7 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
                       )
                     }
                   )}
-                {isMobile &&
-                  appNavigationEl &&
-                  createPortal(<StepsNavigation />, appNavigationEl)}
-                {!isMobile && <StepsNavigation />}
+                <SForms.FormStepsNavigationWrp />
               </S.PageContent>
             </S.PageHolder>
           </SForms.StepsContainer>

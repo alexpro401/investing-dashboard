@@ -3,10 +3,10 @@ import { format } from "date-fns"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { useActiveWeb3React } from "hooks"
-import { SupportedChainId } from "constants/chains"
+import { SupportedChainId } from "consts/chains"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { DATE_TIME_FORMAT } from "constants/time"
+import { DATE_TIME_FORMAT } from "consts/time"
 import { InvestorRiskyVest } from "interfaces/thegraphs/investors"
 import { divideBignumbers } from "utils/formulas"
 

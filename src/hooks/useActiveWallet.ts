@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useWeb3React } from "@web3-react/core"
-import { connectorsByName } from "constants/connectors"
+import { connectorsByName } from "consts/connectors"
 
 export function useActiveWallet() {
   const { connector, library, account } = useWeb3React()

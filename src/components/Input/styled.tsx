@@ -89,7 +89,7 @@ export const InputField = styled(motion.input)`
   height: 16px;
   padding: 0;
 
-  font-family: ${(props) => props.theme.appFontFamily};
+  font-familinputfieldy: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;

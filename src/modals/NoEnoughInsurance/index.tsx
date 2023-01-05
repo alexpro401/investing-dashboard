@@ -25,18 +25,16 @@ const NoEnoughInsurance: FC<Props> = ({ isOpen, onClose }) => {
       <S.Image src={confirmModalImage} alt="" />
       <Text fz={13} lh="150%" color="#E4F2FF" align="center">
         <p>Чтобы оформить страховой пропоузел вам необходимо:</p>
-        <br />
-        <ul>
-          <li>иметь действующую страховку минимум на 100 DEXE</li>
-          <li>
-            иметь страховку на момент страхового случая минимум на 100 DEXE
-          </li>
-        </ul>
+      </Text>
+      <br />
+      <Text fz={13} lh="150%" color="#E4F2FF" align="left">
+        <p>- иметь действующую страховку минимум на 100 DEXE</p>
+        <p>- иметь страховку на момент страхового случая минимум на 100 DEXE</p>
       </Text>
 
       <AppButton
         size="medium"
-        color="primary"
+        color="tertiary"
         onClick={navigateToStake}
         full
         text="Stake 100 DEXE"

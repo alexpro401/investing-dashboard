@@ -18,6 +18,9 @@ import {
   Collapse,
   Icon,
   TokenChip,
+  Headline1,
+  RegularText,
+  MediumText,
 } from "common"
 import {
   InputField,
@@ -33,9 +36,8 @@ import { CreateDaoCardStepNumber } from "../components"
 import * as S from "./styled"
 
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { readFromClipboard } from "utils/clipboard"
-import { useFormValidation } from "hooks/useFormValidation"
 import {
   isAddressValidator,
   isUrl,
@@ -51,9 +53,11 @@ import {
 } from "utils/validators"
 import { isValidUrl } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { useActiveWeb3React } from "hooks"
+import { useActiveWeb3React, useBreakpoints, useFormValidation } from "hooks"
 import { stepsControllerContext } from "context/StepsControllerContext"
-import { SUPPORTED_SOCIALS } from "constants/socials"
+import { SUPPORTED_SOCIALS } from "consts/socials"
+import theme from "theme"
+import cosmoImg from "assets/others/cosmo.png"
 
 interface ITitlesStepProps {
   isCreatingProposal?: boolean
@@ -73,6 +77,7 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
   const [isShowSocials, setIsShowSocials] = useState(false)
 
   const { chainId } = useActiveWeb3React()
+  const { isMobile, isTablet } = useBreakpoints()
 
   const { nextCb } = useContext(stepsControllerContext)
 
@@ -309,28 +314,201 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
     ]
   )
 
+  const IsERC20Collapse = useMemo(
+    () => (
+      <Collapse isOpen={isErc20.get}>
+        <CardFormControl>
+          <OverlapInputField
+            value={tokenAddress.get}
+            setValue={tokenAddress.set}
+            label="ERC-20 token"
+            labelNodeRight={
+              isFieldValid("tokenAddress") ? (
+                <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+              ) : (
+                <></>
+              )
+            }
+            errorMessage={getFieldErrorMessage("tokenAddress")}
+            onBlur={() => touchField("tokenAddress")}
+            nodeRight={
+              <AppButton
+                type="button"
+                text={"Paste"}
+                color="default"
+                size="no-paddings"
+                onClick={() => pasteFromClipboard(tokenAddress.set)}
+              />
+            }
+            overlapNodeLeft={
+              tokenAddress.get &&
+              erc20TokenData?.name &&
+              erc20TokenData?.symbol && (
+                <TokenChip
+                  name={erc20TokenData?.name}
+                  symbol={erc20TokenData?.symbol}
+                  link={erc20TokenExplorerLink}
+                />
+              )
+            }
+            overlapNodeRight={
+              tokenAddress.get &&
+              erc20TokenData?.name &&
+              erc20TokenData?.symbol && (
+                <AppButton
+                  type="button"
+                  text="Paste another"
+                  color="default"
+                  size="no-paddings"
+                  onClick={() => {
+                    tokenAddress.set("")
+                  }}
+                />
+              )
+            }
+            disabled={!!tokenAddress.get && !!erc20TokenData?.name}
+          />
+        </CardFormControl>
+      </Collapse>
+    ),
+    [
+      erc20TokenData,
+      erc20TokenExplorerLink,
+      getFieldErrorMessage,
+      isErc20,
+      isFieldValid,
+      pasteFromClipboard,
+      tokenAddress,
+      touchField,
+    ]
+  )
+
+  const IsERC721Collapse = useMemo(
+    () => (
+      <Collapse isOpen={isErc721.get}>
+        <CardFormControl>
+          <OverlapInputField
+            value={nftAddress.get}
+            setValue={nftAddress.set}
+            label="NFT ERC-721 address"
+            labelNodeRight={
+              isFieldValid("nftAddress") ? (
+                <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+              ) : (
+                <></>
+              )
+            }
+            nodeRight={
+              <AppButton
+                type="button"
+                color="default"
+                size="no-paddings"
+                onClick={() => pasteFromClipboard(nftAddress.set)}
+                text={"Paste"}
+              />
+            }
+            overlapNodeLeft={
+              erc721Name &&
+              erc721Symbol && (
+                <TokenChip
+                  name={erc721Name}
+                  symbol={erc721Symbol}
+                  link={erc20TokenExplorerLink}
+                />
+              )
+            }
+            overlapNodeRight={
+              erc721Name &&
+              erc721Symbol && (
+                <AppButton
+                  type="button"
+                  text="Paste another"
+                  color="default"
+                  size="no-paddings"
+                  onClick={() => {
+                    nftAddress.set("")
+                  }}
+                />
+              )
+            }
+            errorMessage={getFieldErrorMessage("nftAddress")}
+            onBlur={() => touchField("nftAddress")}
+          />
+          <InputField
+            value={totalPowerInTokens.get}
+            setValue={totalPowerInTokens.set}
+            label="Voting power of all NFTs"
+            errorMessage={getFieldErrorMessage("totalPowerInTokens")}
+            onBlur={() => touchField("totalPowerInTokens")}
+          />
+          {!erc721IsEnumerable && (
+            <InputField
+              value={nftsTotalSupply.get}
+              setValue={nftsTotalSupply.set}
+              label="Number of NFTs"
+              errorMessage={getFieldErrorMessage("nftsTotalSupply")}
+              onBlur={() => touchField("nftsTotalSupply")}
+            />
+          )}
+        </CardFormControl>
+      </Collapse>
+    ),
+    [
+      erc20TokenExplorerLink,
+      erc721IsEnumerable,
+      erc721Name,
+      erc721Symbol,
+      getFieldErrorMessage,
+      isErc721,
+      isFieldValid,
+      nftAddress,
+      nftsTotalSupply,
+      pasteFromClipboard,
+      totalPowerInTokens,
+      touchField,
+    ]
+  )
+
   return (
     <>
       <S.StepsRoot>
-        <Card>
-          <CardHead
-            nodeLeft={<CreateDaoCardStepNumber number={1} />}
-            title="DAO Profile"
-          />
-          <CardDescription>
-            {isCreatingProposal && <p>Make your changes below.</p>}
-            {!isCreatingProposal && (
-              <>
-                <p>Enter basic info about your DAO</p>
-                <br />
-                <p>
-                  *Once created, the DAO settings can be changed only by voting
-                  via the appropriate proposal.
-                </p>
-              </>
-            )}
-          </CardDescription>
-        </Card>
+        {isMobile && (
+          <Card>
+            <CardHead
+              nodeLeft={<CreateDaoCardStepNumber number={1} />}
+              title="DAO Profile"
+            />
+            <CardDescription>
+              {isCreatingProposal && <p>Make your changes below.</p>}
+              {!isCreatingProposal && (
+                <>
+                  <p>Enter basic info about your DAO</p>
+                  <br />
+                  <p>
+                    *Once created, the DAO settings can be changed only by
+                    voting via the appropriate proposal.
+                  </p>
+                </>
+              )}
+            </CardDescription>
+          </Card>
+        )}
+        {!isMobile && (
+          <S.DesktopHeaderWrp>
+            <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+              Basic DAO settings
+            </Headline1>
+            <RegularText
+              color={theme.textColors.secondary}
+              desktopWeight={500}
+              desktopSize={"14px"}
+            >
+              {!isCreatingProposal
+                ? "Once created, the DAO settings can be changed only by voting via the appropriate proposal."
+                : "Make your changes below."}
+            </RegularText>
+          </S.DesktopHeaderWrp>
+        )}
 
         <Avatar
           m="0 auto"
@@ -458,16 +636,77 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
                 For governance, you can choose any ERC-20 token, any (ERC-721)
                 NFT, or a hybrid of both.
               </p>
-              <br />
               <p>
                 *Token/NFT selected for governance cannot be changed once
                 initially set.
               </p>
             </CardDescription>
+            {!isTablet && (
+              <>
+                <S.ERCArea>
+                  <S.ERCAreaHead>
+                    <S.ERCImgWrp src={cosmoImg} alt="" />
+                    <S.ERCAreaDescription>
+                      <MediumText desktopSize="16px" desktopWeight={700}>
+                        ERC-20
+                      </MediumText>
+                      <RegularText
+                        desktopSize="14px"
+                        desktopWeight={400}
+                        color={theme.textColors.secondary}
+                      >
+                        Enter ERC-20 token address or create a new one. 1 token
+                        = 1 Voting power
+                      </RegularText>
+                    </S.ERCAreaDescription>
+                    <Switch
+                      isOn={isErc20.get}
+                      onChange={(n, v) => {
+                        isErc20.set(v)
+                        if (!v && !isErc721.get) {
+                          isErc721.set(true)
+                        }
+                      }}
+                      name={"create-fund-title-step-is-erc20"}
+                    />
+                  </S.ERCAreaHead>
+                  {IsERC20Collapse}
+                </S.ERCArea>
+                <S.ERCArea>
+                  <S.ERCAreaHead>
+                    <S.ERCImgWrp src={cosmoImg} alt="" />
+                    <S.ERCAreaDescription>
+                      <MediumText desktopSize="16px" desktopWeight={700}>
+                        ERC-721 (NFT)
+                      </MediumText>
+                      <RegularText
+                        desktopSize="14px"
+                        desktopWeight={400}
+                        color={theme.textColors.secondary}
+                      >
+                        Enter ERC-721 address, number of NFTs in the series, and
+                        how many votes will each NFT represent.
+                      </RegularText>
+                    </S.ERCAreaDescription>
+                    <Switch
+                      isOn={isErc721.get}
+                      onChange={(n, v) => {
+                        isErc721.set(v)
+                        if (!v && !isErc20.get) {
+                          isErc20.set(true)
+                        }
+                      }}
+                      name={"create-fund-title-step-is-erc721"}
+                    />
+                  </S.ERCAreaHead>
+                  {IsERC721Collapse}
+                </S.ERCArea>
+              </>
+            )}
           </Card>
         )}
 
-        {!isCreatingProposal && (
+        {!isCreatingProposal && isTablet && (
           <Card>
             <CardHead
               nodeLeft={<Icon name={ICON_NAMES.dollarOutline} />}
@@ -491,64 +730,11 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
                 Voting power
               </p>
             </CardDescription>
-            <Collapse isOpen={isErc20.get}>
-              <CardFormControl>
-                <OverlapInputField
-                  value={tokenAddress.get}
-                  setValue={tokenAddress.set}
-                  label="ERC-20 token"
-                  labelNodeRight={
-                    isFieldValid("tokenAddress") ? (
-                      <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
-                    ) : (
-                      <></>
-                    )
-                  }
-                  errorMessage={getFieldErrorMessage("tokenAddress")}
-                  onBlur={() => touchField("tokenAddress")}
-                  nodeRight={
-                    <AppButton
-                      type="button"
-                      text={"Paste"}
-                      color="default"
-                      size="no-paddings"
-                      onClick={() => pasteFromClipboard(tokenAddress.set)}
-                    />
-                  }
-                  overlapNodeLeft={
-                    tokenAddress.get &&
-                    erc20TokenData?.name &&
-                    erc20TokenData?.symbol && (
-                      <TokenChip
-                        name={erc20TokenData?.name}
-                        symbol={erc20TokenData?.symbol}
-                        link={erc20TokenExplorerLink}
-                      />
-                    )
-                  }
-                  overlapNodeRight={
-                    tokenAddress.get &&
-                    erc20TokenData?.name &&
-                    erc20TokenData?.symbol && (
-                      <AppButton
-                        type="button"
-                        text="Paste another"
-                        color="default"
-                        size="no-paddings"
-                        onClick={() => {
-                          tokenAddress.set("")
-                        }}
-                      />
-                    )
-                  }
-                  disabled={!!tokenAddress.get && !!erc20TokenData?.name}
-                />
-              </CardFormControl>
-            </Collapse>
+            {IsERC20Collapse}
           </Card>
         )}
 
-        {!isCreatingProposal && (
+        {!isCreatingProposal && isTablet && (
           <Card>
             <CardHead
               nodeLeft={<Icon name={ICON_NAMES.star} />}
@@ -578,73 +764,7 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
                 weight than a token, and thus should have more voting power.
               </p>
             </CardDescription>
-            <Collapse isOpen={isErc721.get}>
-              <CardFormControl>
-                <OverlapInputField
-                  value={nftAddress.get}
-                  setValue={nftAddress.set}
-                  label="NFT ERC-721 address"
-                  labelNodeRight={
-                    isFieldValid("nftAddress") ? (
-                      <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
-                    ) : (
-                      <></>
-                    )
-                  }
-                  nodeRight={
-                    <AppButton
-                      type="button"
-                      color="default"
-                      size="no-paddings"
-                      onClick={() => pasteFromClipboard(nftAddress.set)}
-                      text={"Paste"}
-                    />
-                  }
-                  overlapNodeLeft={
-                    erc721Name &&
-                    erc721Symbol && (
-                      <TokenChip
-                        name={erc721Name}
-                        symbol={erc721Symbol}
-                        link={erc20TokenExplorerLink}
-                      />
-                    )
-                  }
-                  overlapNodeRight={
-                    erc721Name &&
-                    erc721Symbol && (
-                      <AppButton
-                        type="button"
-                        text="Paste another"
-                        color="default"
-                        size="no-paddings"
-                        onClick={() => {
-                          nftAddress.set("")
-                        }}
-                      />
-                    )
-                  }
-                  errorMessage={getFieldErrorMessage("nftAddress")}
-                  onBlur={() => touchField("nftAddress")}
-                />
-                <InputField
-                  value={totalPowerInTokens.get}
-                  setValue={totalPowerInTokens.set}
-                  label="Voting power of all NFTs"
-                  errorMessage={getFieldErrorMessage("totalPowerInTokens")}
-                  onBlur={() => touchField("totalPowerInTokens")}
-                />
-                {!erc721IsEnumerable && (
-                  <InputField
-                    value={nftsTotalSupply.get}
-                    setValue={nftsTotalSupply.set}
-                    label="Number of NFTs"
-                    errorMessage={getFieldErrorMessage("nftsTotalSupply")}
-                    onBlur={() => touchField("nftsTotalSupply")}
-                  />
-                )}
-              </CardFormControl>
-            </Collapse>
+            {IsERC721Collapse}
           </Card>
         )}
 
@@ -659,7 +779,7 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
               profile, such as the DAO Memorandum.
             </p>
           </CardDescription>
-          <CardFormControl>
+          <S.SettingsWrapper>
             {documents.get.map((el, idx) => (
               <ExternalDocumentField
                 key={idx}
@@ -696,7 +816,7 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
                 }}
               />
             ))}
-          </CardFormControl>
+          </S.SettingsWrapper>
           <S.CardAddBtn
             color="default"
             text="+ Add more"

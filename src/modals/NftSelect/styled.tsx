@@ -1,5 +1,5 @@
 import { AppButton, Icon } from "common"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import styled from "styled-components/macro"
 import { Flex } from "theme"
 

@@ -13,12 +13,12 @@ import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import { DefaultProposalStep } from "common"
 import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
+import { useBreakpoints } from "hooks"
 import { useGovPoolCreateProposalChangeSettings } from "hooks/dao/proposals"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as S from "common/FormSteps/styled"
-import { useBreakpoints } from "hooks"
 
 enum STEPS {
   globalVotingSettings = "globalVotingSettings",
@@ -41,6 +41,7 @@ const CreateDaoProposalGlobalVotingSettings: React.FC = () => {
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
   )
+  const { isMobile } = useBreakpoints()
 
   useEffect(() => {
     dispatch(hideTapBar())
@@ -139,8 +140,6 @@ const CreateDaoProposalGlobalVotingSettings: React.FC = () => {
         break
     }
   }, [currentStep, handleCreateProposal])
-
-  const { isMobile } = useBreakpoints()
 
   return (
     <S.StepsFormContainer

@@ -3,7 +3,7 @@ import { DateRangePicker } from "react-date-range"
 import calendar from "assets/icons/calendar.svg"
 import Dropdown from "components/Dropdown"
 import { addDays, addYears, format } from "date-fns"
-import { calendarStaticRanges } from "constants/index"
+import { calendarStaticRanges } from "consts"
 
 import "./calendar.css"
 

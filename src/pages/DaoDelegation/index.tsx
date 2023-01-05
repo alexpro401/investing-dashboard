@@ -36,10 +36,10 @@ const DaoDelegation: React.FC = () => {
   return (
     <>
       <Header>Delegation</Header>
-      <S.Indents top>
-        <RouteTabs tabs={tabs} />
-      </S.Indents>
       <S.Container>
+        <S.Indents top>
+          <RouteTabs tabs={tabs} />
+        </S.Indents>
         <Routes>
           <Route
             path="out"

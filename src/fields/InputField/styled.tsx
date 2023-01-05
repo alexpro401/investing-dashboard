@@ -148,6 +148,7 @@ export const Label = styled(motion.label)<{
     color: ${fieldLabelColor};
     ${(props) =>
       props.isNodeLeftExist ? `left: calc(${fieldPaddingLeft * 3}px);` : ""}
+    max-width: calc(100% - 4px - ${fieldPaddingLeft * 2}px);
   }
 
   #${(props) => props.inputId}:not([disabled]):focus ~ &,
@@ -195,6 +196,7 @@ export const NodeRightWrp = styled(motion.div)`
 
 export const InputFieldHint = styled.span`
   display: block;
+  max-width: calc(100% - 30px);
   color: ${(props) => props.theme.textColors.secondary};
   font-size: 14px;
   line-height: 1.5;

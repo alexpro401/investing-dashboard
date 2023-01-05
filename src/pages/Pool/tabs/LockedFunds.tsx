@@ -10,7 +10,7 @@ import usePoolLockedFunds from "hooks/usePoolLockedFunds"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { Token } from "interfaces"
-import { CHART_TYPE, TIMEFRAME } from "constants/chart"
+import { CHART_TYPE, TIMEFRAME } from "consts/chart"
 import { usePoolLockedFundsHistory } from "hooks/usePool"
 import Chart from "components/Chart"
 import { TooltipLockedFundsChart } from "../components"
@@ -43,6 +43,7 @@ const TabPoolLockedFunds: FC<{
       poolUsedInPositionsUSD,
       poolUsedToTotalPercentage,
     },
+    loading,
   ] = usePoolLockedFunds(poolData, poolInfo, baseToken)
 
   const [tf, setTf] = useState(TIMEFRAME.d)
@@ -103,6 +104,7 @@ const TabPoolLockedFunds: FC<{
             />
           </Chart>
         </Card>
+
         <Indents top side={false}>
           <Card>
             <Flex full ai="center" jc="space-between">

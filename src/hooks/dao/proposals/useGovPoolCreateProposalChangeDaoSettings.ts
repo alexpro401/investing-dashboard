@@ -8,10 +8,10 @@ import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovPool } from "abi"
 import usePayload from "hooks/usePayload"
 import { useGovPoolCreateProposal, useGovPoolLatestProposalId } from "hooks/dao"
-import { SubmitState } from "constants/types"
+import { SubmitState } from "consts/types"
 import { isTxMined } from "utils"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
-import { ROUTE_PATHS } from "constants/index"
+import { ROUTE_PATHS } from "consts"
 
 interface ICreateProposalChangeDaoSettingsArgs extends IGovPoolDescription {
   proposalName: string
@@ -87,7 +87,7 @@ const useGovPoolCreateProposalChangeDaoSettings = (govPoolAddress: string) => {
           onClick: () => {
             navigate(
               generatePath(ROUTE_PATHS.daoProposalVoting, {
-                daoProposal: govPoolAddress,
+                daoPoolAddress: govPoolAddress,
                 proposalId: String(latestProposalId),
               })
             )

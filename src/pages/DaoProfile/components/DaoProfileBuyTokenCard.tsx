@@ -11,7 +11,7 @@ import TokenIcon from "components/TokenIcon"
 import ProgressLine from "components/ProgressLine"
 
 import { normalizeBigNumber } from "utils"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { percentageOfBignumbers } from "utils/formulas"
 
 interface Props {

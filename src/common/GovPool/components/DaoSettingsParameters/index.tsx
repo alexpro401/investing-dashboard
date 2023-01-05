@@ -20,17 +20,23 @@ import {
   Icon,
   TokenChip,
 } from "common/index"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import Switch from "components/Switch"
 import { DurationField, InputField, OverlapInputField } from "fields"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { EInputBorderColors } from "fields/InputField"
 import { readFromClipboard } from "utils/clipboard"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { useActiveWeb3React, useERC20, useFormValidation } from "hooks"
+import {
+  useActiveWeb3React,
+  useERC20,
+  useFormValidation,
+  useBreakpoints,
+} from "hooks"
 import { GovPoolSettingsForm } from "types"
 import { cutStringZeroes } from "utils"
 
+import cosmoImg from "assets/others/cosmo.png"
 import * as S from "./styled"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -63,6 +69,7 @@ const DaoSettingsParameters: FC<Props> = ({
     quorumValidators,
   } = poolParameters
 
+  const { isMobile } = useBreakpoints()
   const { isValidator, initialForm, defaultProposalSettingForm } =
     useContext(GovPoolFormContext)
 
@@ -244,43 +251,45 @@ const DaoSettingsParameters: FC<Props> = ({
           <p>General settings for voting.</p>
         </CardDescription>
         <CardFormControl>
-          <DurationField
-            value={duration.get}
-            setValue={duration.set}
-            label="*Duration of voting"
-            placeholder="1Y 6Mon 2w 1d"
-            errorMessage={getFieldErrorMessage("duration")}
-            onBlur={() => touchField("duration")}
-            borderColor={
-              isCreatingProposal && isDurationChanged
-                ? EInputBorderColors.success
-                : undefined
-            }
-            labelNodeRight={
-              isCreatingProposal && isFieldValid("duration") ? (
-                <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
-              ) : undefined
-            }
-          />
-          <InputField
-            value={quorum.get}
-            setValue={quorum.set}
-            type={"number"}
-            label="Votes needed for quorum"
-            errorMessage={getFieldErrorMessage("quorum")}
-            onBlur={() => touchField("quorum")}
-            nodeRight={"%"}
-            borderColor={
-              isCreatingProposal && isQuorumChanged
-                ? EInputBorderColors.success
-                : undefined
-            }
-            labelNodeRight={
-              isCreatingProposal && isFieldValid("quorum") ? (
-                <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
-              ) : undefined
-            }
-          />
+          <S.DurationParamsContainer>
+            <DurationField
+              value={duration.get}
+              setValue={duration.set}
+              label="*Duration of voting"
+              placeholder="1Y 6Mon 2w 1d"
+              errorMessage={getFieldErrorMessage("duration")}
+              onBlur={() => touchField("duration")}
+              borderColor={
+                isCreatingProposal && isDurationChanged
+                  ? EInputBorderColors.success
+                  : undefined
+              }
+              labelNodeRight={
+                isCreatingProposal && isFieldValid("duration") ? (
+                  <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+                ) : undefined
+              }
+            />
+            <InputField
+              value={quorum.get}
+              setValue={quorum.set}
+              type={"number"}
+              label="Votes needed for quorum"
+              errorMessage={getFieldErrorMessage("quorum")}
+              onBlur={() => touchField("quorum")}
+              nodeRight={<S.PercentLabel>%</S.PercentLabel>}
+              borderColor={
+                isCreatingProposal && isQuorumChanged
+                  ? EInputBorderColors.success
+                  : undefined
+              }
+              labelNodeRight={
+                isCreatingProposal && isFieldValid("quorum") ? (
+                  <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+                ) : undefined
+              }
+            />
+          </S.DurationParamsContainer>
         </CardFormControl>
       </Card>
 
@@ -300,41 +309,44 @@ const DaoSettingsParameters: FC<Props> = ({
             <p>Set parameters for a second voting stage for validators.</p>
           </CardDescription>
           <CardFormControl>
-            <DurationField
-              value={durationValidators.get}
-              setValue={durationValidators.set}
-              label="Length of voting period"
-              errorMessage={getFieldErrorMessage("durationValidators")}
-              onBlur={() => touchField("durationValidators")}
-              borderColor={
-                isCreatingProposal && isDurationValidatorsChanged
-                  ? EInputBorderColors.success
-                  : undefined
-              }
-              labelNodeRight={
-                isCreatingProposal && isFieldValid("durationValidators") ? (
-                  <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
-                ) : undefined
-              }
-            />
-            <InputField
-              value={quorumValidators.get}
-              setValue={quorumValidators.set}
-              type={"number"}
-              label="Votes needed for quorum"
-              errorMessage={getFieldErrorMessage("quorumValidators")}
-              onBlur={() => touchField("quorumValidators")}
-              borderColor={
-                isCreatingProposal && isQuorumValidatorsChanged
-                  ? EInputBorderColors.success
-                  : undefined
-              }
-              labelNodeRight={
-                isCreatingProposal && isFieldValid("quorumValidators") ? (
-                  <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
-                ) : undefined
-              }
-            />
+            <S.DurationParamsContainer>
+              <DurationField
+                value={durationValidators.get}
+                setValue={durationValidators.set}
+                label="Length of voting period"
+                errorMessage={getFieldErrorMessage("durationValidators")}
+                onBlur={() => touchField("durationValidators")}
+                borderColor={
+                  isCreatingProposal && isDurationValidatorsChanged
+                    ? EInputBorderColors.success
+                    : undefined
+                }
+                labelNodeRight={
+                  isCreatingProposal && isFieldValid("durationValidators") ? (
+                    <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+                  ) : undefined
+                }
+              />
+              <InputField
+                value={quorumValidators.get}
+                setValue={quorumValidators.set}
+                type={"number"}
+                label="Votes needed for quorum"
+                nodeRight={<S.PercentLabel>%</S.PercentLabel>}
+                errorMessage={getFieldErrorMessage("quorumValidators")}
+                onBlur={() => touchField("quorumValidators")}
+                borderColor={
+                  isCreatingProposal && isQuorumValidatorsChanged
+                    ? EInputBorderColors.success
+                    : undefined
+                }
+                labelNodeRight={
+                  isCreatingProposal && isFieldValid("quorumValidators") ? (
+                    <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+                  ) : undefined
+                }
+              />
+            </S.DurationParamsContainer>
           </CardFormControl>
         </Card>
       )}
@@ -430,118 +442,121 @@ const DaoSettingsParameters: FC<Props> = ({
 
         <Collapse isOpen={delegatedVotingAllowed.get}>
           {delegatedVotingAllowed.get && (
-            <CardFormControl>
-              <OverlapInputField
-                value={rewardToken.get}
-                setValue={rewardToken.set}
-                label="ERC-20 token for rewards"
-                hint="Address of the ERC-20 token used for rewards — you will need to send enough of this token to the DAO treasury."
-                labelNodeRight={
-                  isFieldValid("rewardToken") ? (
-                    <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
-                  ) : (
-                    <></>
-                  )
-                }
-                errorMessage={getFieldErrorMessage("rewardToken")}
-                onBlur={() => touchField("rewardToken")}
-                nodeRight={
-                  <AppButton
-                    type="button"
-                    text={erc20TokenData?.name ? "Paste another" : "Paste"}
-                    color="default"
-                    size="no-paddings"
-                    onClick={() =>
-                      erc20TokenData?.name
-                        ? rewardToken.set("")
-                        : pasteFromClipboard(rewardToken.set)
-                    }
-                  />
-                }
-                overlapNodeLeft={
-                  erc20TokenData?.name &&
-                  erc20TokenData?.symbol && (
-                    <TokenChip
-                      name={erc20TokenData?.name}
-                      symbol={erc20TokenData?.symbol}
-                      link={erc20TokenExplorerLink}
-                    />
-                  )
-                }
-                overlapNodeRight={
-                  erc20TokenData?.name &&
-                  erc20TokenData?.symbol && (
+            <S.RewardsContainer>
+              <S.Rewards>
+                <OverlapInputField
+                  value={rewardToken.get}
+                  setValue={rewardToken.set}
+                  label="ERC-20 token for rewards"
+                  hint="Address of the ERC-20 token used for rewards — you will need to send enough of this token to the DAO treasury."
+                  labelNodeRight={
+                    isFieldValid("rewardToken") ? (
+                      <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+                    ) : (
+                      <></>
+                    )
+                  }
+                  errorMessage={getFieldErrorMessage("rewardToken")}
+                  onBlur={() => touchField("rewardToken")}
+                  nodeRight={
                     <AppButton
                       type="button"
-                      text="Paste another"
+                      text={erc20TokenData?.name ? "Paste another" : "Paste"}
                       color="default"
                       size="no-paddings"
-                      onClick={() => {
-                        rewardToken.set("")
-                      }}
+                      onClick={() =>
+                        erc20TokenData?.name
+                          ? rewardToken.set("")
+                          : pasteFromClipboard(rewardToken.set)
+                      }
                     />
-                  )
-                }
-                disabled={!!erc20TokenData?.name}
-              />
-              <InputField
-                value={creationReward.get}
-                setValue={creationReward.set}
-                type={"number"}
-                label="Amount of tokens for creator"
-                errorMessage={getFieldErrorMessage("creationReward")}
-                onBlur={() => touchField("creationReward")}
-                borderColor={
-                  isCreatingProposal && isCreationRewardChanged
-                    ? EInputBorderColors.success
-                    : undefined
-                }
-                labelNodeRight={
-                  isCreatingProposal && isFieldValid("creationReward") ? (
-                    <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
-                  ) : undefined
-                }
-                hint="Size of the reward for an accepted proposal."
-              />
-              <InputField
-                value={voteRewardsCoefficient.get}
-                setValue={voteRewardsCoefficient.set}
-                type={"number"}
-                label="Amount of tokens for the voter"
-                errorMessage={getFieldErrorMessage("voteRewardsCoefficient")}
-                onBlur={() => touchField("voteRewardsCoefficient")}
-                borderColor={
-                  isCreatingProposal && isVoteRewardsCoefficientChanged
-                    ? EInputBorderColors.success
-                    : undefined
-                }
-                labelNodeRight={
-                  isCreatingProposal &&
-                  isFieldValid("voteRewardsCoefficient") ? (
-                    <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
-                  ) : undefined
-                }
-              />
-              <InputField
-                value={executionReward.get}
-                setValue={executionReward.set}
-                type={"number"}
-                label="Amount of tokens for tx. executor"
-                errorMessage={getFieldErrorMessage("executionReward")}
-                onBlur={() => touchField("executionReward")}
-                borderColor={
-                  isCreatingProposal && isExecutionRewardChanged
-                    ? EInputBorderColors.success
-                    : undefined
-                }
-                labelNodeRight={
-                  isCreatingProposal && isFieldValid("executionReward") ? (
-                    <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
-                  ) : undefined
-                }
-                hint="Set % of memeber’s voting tokens to be received as reward (e.g. 1% = 1 reward token for every 100 voted with)"
-              />
-            </CardFormControl>
+                  }
+                  overlapNodeLeft={
+                    erc20TokenData?.name &&
+                    erc20TokenData?.symbol && (
+                      <TokenChip
+                        name={erc20TokenData?.name}
+                        symbol={erc20TokenData?.symbol}
+                        link={erc20TokenExplorerLink}
+                      />
+                    )
+                  }
+                  overlapNodeRight={
+                    erc20TokenData?.name &&
+                    erc20TokenData?.symbol && (
+                      <AppButton
+                        type="button"
+                        text="Paste another"
+                        color="default"
+                        size="no-paddings"
+                        onClick={() => {
+                          rewardToken.set("")
+                        }}
+                      />
+                    )
+                  }
+                  disabled={!!erc20TokenData?.name}
+                />
+                <InputField
+                  value={creationReward.get}
+                  setValue={creationReward.set}
+                  type={"number"}
+                  label="Amount of tokens for creator"
+                  errorMessage={getFieldErrorMessage("creationReward")}
+                  onBlur={() => touchField("creationReward")}
+                  borderColor={
+                    isCreatingProposal && isCreationRewardChanged
+                      ? EInputBorderColors.success
+                      : undefined
+                  }
+                  labelNodeRight={
+                    isCreatingProposal && isFieldValid("creationReward") ? (
+                      <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+                    ) : undefined
+                  }
+                  hint="Size of the reward for an accepted proposal."
+                />
+                <InputField
+                  value={voteRewardsCoefficient.get}
+                  setValue={voteRewardsCoefficient.set}
+                  type={"number"}
+                  label="Amount of tokens for the voter"
+                  errorMessage={getFieldErrorMessage("voteRewardsCoefficient")}
+                  onBlur={() => touchField("voteRewardsCoefficient")}
+                  borderColor={
+                    isCreatingProposal && isVoteRewardsCoefficientChanged
+                      ? EInputBorderColors.success
+                      : undefined
+                  }
+                  labelNodeRight={
+                    isCreatingProposal &&
+                    isFieldValid("voteRewardsCoefficient") ? (
+                      <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+                    ) : undefined
+                  }
+                />
+                <InputField
+                  value={executionReward.get}
+                  setValue={executionReward.set}
+                  type={"number"}
+                  label="Amount of tokens for tx. executor"
+                  errorMessage={getFieldErrorMessage("executionReward")}
+                  onBlur={() => touchField("executionReward")}
+                  borderColor={
+                    isCreatingProposal && isExecutionRewardChanged
+                      ? EInputBorderColors.success
+                      : undefined
+                  }
+                  labelNodeRight={
+                    isCreatingProposal && isFieldValid("executionReward") ? (
+                      <S.SuccessLabelIcon name={ICON_NAMES.greenCheck} />
+                    ) : undefined
+                  }
+                  hint="Set % of memeber’s voting tokens to be received as reward (e.g. 1% = 1 reward token for every 100 voted with)"
+                />
+              </S.Rewards>
+              {!isMobile && <S.RewardsImg src={cosmoImg} alt="" />}
+            </S.RewardsContainer>
           )}
         </Collapse>
       </Card>

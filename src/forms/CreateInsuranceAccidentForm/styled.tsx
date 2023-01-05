@@ -1,7 +1,44 @@
 import styled from "styled-components/macro"
-import { Flex } from "theme"
+import { Flex, respondTo } from "theme"
+import { motion } from "framer-motion"
+import { opacityVariants } from "motion/variants"
+import StepsControllerContext from "context/StepsControllerContext"
+import { Card, CardHead, CardDescription } from "common"
 
-export const Container = styled.div``
+export const Container = styled(StepsControllerContext)`
+  display: flex;
+  margin: 0 auto;
+  width: 100%;
+  flex: 1;
+`
+
+export const StepsWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  height: 100%;
+`
+
+export const StepsContainer = styled(motion.div).attrs(() => ({
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.2 },
+  variants: opacityVariants,
+}))`
+  overflow: hidden auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  max-width: 775px;
+  margin: 0 auto;
+  align-self: center;
+
+  ${respondTo("lg")} {
+    padding-bottom: 40px;
+  }
+`
 
 export const StepsRoot = styled.div`
   display: flex;
@@ -9,6 +46,10 @@ export const StepsRoot = styled.div`
   transform: scale(1);
   gap: 16px;
   padding: 14px 16px 20px;
+
+  ${respondTo("lg")} {
+    padding: 20px 0;
+  }
 `
 
 export const StepNumber = {
@@ -65,12 +106,23 @@ export const CreateInsuranceAccidentPoolsStyled = {
   Card: styled.div<{ active: boolean }>`
     width: 100%;
     border-radius: 12px;
-    background: #181e2c;
-    border: 1px solid ${(p) => (p.active ? "#9AE2CB" : "#181e2c")};
+    background: ${({ theme }) => theme.backgroundColors.secondary};
+    border: 1px solid
+      ${(p) =>
+        p.active
+          ? p.theme.statusColors.success
+          : p.theme.backgroundColors.secondary};
     cursor: pointer;
 
     &:not(:last-child) {
       margin-bottom: 16px;
+    }
+
+    ${respondTo("lg")} {
+      background: transparent;
+      border-radius: 60px 24px 24px 60px;
+      border: 1px solid
+        ${(p) => (p.active ? p.theme.statusColors.success : "transparent")};
     }
   `,
   CardContent: styled(Flex)`
@@ -101,5 +153,38 @@ export const InputGroup = styled.div`
 
   & > *:nth-child(2) {
     width: 55%;
+  }
+`
+
+export const CreateInsuranceAccidentTopCard = styled(Card)`
+  ${respondTo("sm")} {
+    background: transparent;
+    gap: 8px;
+  }
+`
+
+export const CreateInsuranceAccidentTopCardHead = styled(CardHead)`
+  & > span {
+    ${respondTo("sm")} {
+      font-weight: 900;
+      font-size: 24px;
+      line-height: 30px;
+      letter-spacing: -0.01em;
+      color: #2669eb;
+    }
+  }
+`
+
+export const CreateInsuranceAccidentTopCardDescription = styled(
+  CardDescription
+)`
+  & > span {
+    ${respondTo("sm")} {
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 170%;
+      letter-spacing: 0.01em;
+      color: #b1c7fc;
+    }
   }
 `

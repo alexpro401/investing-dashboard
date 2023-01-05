@@ -5,10 +5,11 @@ import Header from "components/Header/Layout"
 import TutorialCard from "components/TutorialCard"
 import WithUserIsDaoValidatorValidation from "components/WithUserIsDaoValidatorValidation"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
-import { SelectableCard, Icon } from "common"
-import { ICON_NAMES, ROUTE_PATHS } from "constants/index"
+import { ICON_NAMES, ROUTE_PATHS } from "consts"
+import { SelectableCard, Icon, Headline1, RegularText } from "common"
 import Skeleton from "components/Skeleton"
-import { Flex } from "theme"
+import theme, { Flex } from "theme"
+import { useBreakpoints } from "hooks"
 
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
@@ -28,6 +29,7 @@ interface IProposalType {
 const CreateDaoProposalValidatorSelectType: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
   const navigate = useNavigate()
+  const { isMobile } = useBreakpoints()
   const [selectedValidatorProposalType, setSelectedValidatorProposalType] =
     useState<EValidatorProposalType>(EValidatorProposalType.validatorSettings)
 
@@ -35,11 +37,11 @@ const CreateDaoProposalValidatorSelectType: React.FC = () => {
     const nextProposalTypePath = {
       [EValidatorProposalType.validatorSettings]: generatePath(
         ROUTE_PATHS.daoProposalCreateInternalValidatorsSettings,
-        { daoAddress }
+        { daoAddress: daoAddress! }
       ),
       [EValidatorProposalType.votingSettings]: generatePath(
         ROUTE_PATHS.daoProposalCreateInternalValidatorsVotingSettings,
-        { daoAddress }
+        { daoAddress: daoAddress! }
       ),
     }[selectedValidatorProposalType]
 
@@ -80,20 +82,32 @@ const CreateDaoProposalValidatorSelectType: React.FC = () => {
 
   const loader = useMemo(
     () => (
-      <Flex
-        gap={"24"}
-        full
-        m="16px 0 0 0"
-        dir="column"
-        ai={"center"}
-        jc={"flex-start"}
-      >
-        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-        <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
-      </Flex>
+      <S.PageHolder>
+        <S.PageContent>
+          <Flex
+            gap={"24"}
+            full
+            m="16px 0 0 0"
+            dir="column"
+            ai={"flex-start"}
+            jc={"flex-start"}
+          >
+            {!isMobile && (
+              <>
+                <Skeleton variant={"rect"} w={"300px"} h={"40px"} />
+                <Skeleton variant={"rect"} w={"400px"} h={"20px"} />
+              </>
+            )}
+            {isMobile && (
+              <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+            )}
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+            <Skeleton variant={"rect"} w={"calc(100% - 32px)"} h={"80px"} />
+          </Flex>
+        </S.PageContent>
+      </S.PageHolder>
     ),
-    []
+    [isMobile]
   )
 
   return (
@@ -109,12 +123,31 @@ const CreateDaoProposalValidatorSelectType: React.FC = () => {
         >
           <S.PageHolder>
             <S.PageContent>
-              <TutorialCard
-                text={"Shape your DAO with your best ideas."}
-                linkText={"Read the tutorial"}
-                imageSrc={tutorialImageSrc}
-                href={"https://github.com/"}
-              />
+              {isMobile && (
+                <TutorialCard
+                  text={"Shape your DAO with your best ideas."}
+                  linkText={"Read the tutorial"}
+                  imageSrc={tutorialImageSrc}
+                  href={"https://github.com/"}
+                />
+              )}
+              {!isMobile && (
+                <S.HeaderWrp>
+                  <Headline1
+                    color={theme.statusColors.info}
+                    desktopWeight={900}
+                  >
+                    Choose type of proposal for validators
+                  </Headline1>
+                  <RegularText
+                    color={theme.textColors.secondary}
+                    desktopWeight={500}
+                    desktopSize={"14px"}
+                  >
+                    тут знаходиться тестовий текст
+                  </RegularText>
+                </S.HeaderWrp>
+              )}
               {proposalTypes.map(({ description, iconName, title, type }) => {
                 return (
                   <SelectableCard

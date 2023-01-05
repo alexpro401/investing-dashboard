@@ -1,6 +1,6 @@
 import { Icon } from "common"
 import Checkbox from "components/Checkbox"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { FC, ReactNode } from "react"
 import { Flex } from "theme"
 

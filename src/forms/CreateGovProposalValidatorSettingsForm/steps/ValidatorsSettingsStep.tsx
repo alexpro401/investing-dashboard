@@ -1,15 +1,15 @@
 import React, { useCallback, useContext, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
-import { createPortal } from "react-dom"
 import { parseUnits, formatUnits } from "@ethersproject/units"
 
 import {
-  StepsNavigation,
   CardHead,
   Card,
   CardDescription,
   Icon,
   AppButton,
+  Headline1,
+  RegularText,
 } from "common"
 import { OverlapInputField } from "fields"
 import { stepsControllerContext } from "context/StepsControllerContext"
@@ -18,18 +18,20 @@ import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { CreateDaoCardStepNumber } from "common"
 import ValidatorsList from "components/ValidatorsList"
 import GovVotingSettings from "modals/GovVotingSettings"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
 import { readFromClipboard } from "utils/clipboard"
 import {
   useFormValidation,
-  useBreakpoints,
   useGovUserKeeperGetTotalVoteWeight,
+  useBreakpoints,
 } from "hooks"
 import { required, isAddressValidator } from "utils/validators"
 import { cutStringZeroes } from "utils"
 import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
+import theme from "theme"
 
 import * as S from "../styled"
+import * as SForms from "common/FormSteps/styled"
 
 const ValidatorsSettingsStep: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
@@ -39,6 +41,7 @@ const ValidatorsSettingsStep: React.FC = () => {
     useContext(ValidatorsListContext)
   const { initialForm } = useContext(GovPoolFormContext)
   const totalVoteWeight = useGovUserKeeperGetTotalVoteWeight(daoAddress ?? "")
+  const { isMobile } = useBreakpoints()
 
   const [previousSettingsOpened, setPreviousSettingsOpened] = useState(false)
   const { isFieldsValid, touchForm } = useFormValidation(
@@ -116,10 +119,6 @@ const ValidatorsSettingsStep: React.FC = () => {
     return cutStringZeroes(formatUnits(quorumResult, 25))
   }, [totalVoteWeight, initialForm])
 
-  const appNavigationEl = document.querySelector("#app-navigation")
-
-  const { isMobile } = useBreakpoints()
-
   return (
     <>
       <GovVotingSettings
@@ -150,33 +149,90 @@ const ValidatorsSettingsStep: React.FC = () => {
           initialForm._validatorsBalancesSettingsForm.executionReward
         }
       />
-      <S.StepsRoot>
-        <Card>
-          <CardHead
-            nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
-            title="Validators"
-          />
-          <CardDescription>
+      <SForms.StepsRoot>
+        {isMobile && (
+          <Card>
+            <CardHead
+              nodeLeft={<CreateDaoCardStepNumber number={currentStepNumber} />}
+              title="Validators"
+            />
+            <CardDescription>
+              {haveAtLeastOneValidator && (
+                <>
+                  <p>
+                    Here you can propose adding/removing validators, and the
+                    change voting power of each validator.
+                  </p>
+                  <p>Will be voted on by users only.</p>
+                </>
+              )}
+              {!haveAtLeastOneValidator && (
+                <>
+                  <p>
+                    Here you can designate trusted DAO members to serve as
+                    validators who will hold a validator-only second vote on
+                    every passed proposal to filter out potentially malicious
+                    proposals.
+                  </p>
+                  <p>
+                    Validators can also create special proposals to be voted on
+                    exclusively among themselves.
+                  </p>
+                </>
+              )}
+              <br />
+              <S.VotingSettingsModalButton
+                text="View current voting settings"
+                color="default"
+                size="no-paddings"
+                onClick={handleOpenPreviousSettings}
+              />
+            </CardDescription>
+          </Card>
+        )}
+        {!isMobile && (
+          <S.DesktopHeaderWrp>
+            <Headline1 color={theme.statusColors.info} desktopWeight={900}>
+              Validators
+            </Headline1>
             {haveAtLeastOneValidator && (
               <>
-                <p>
+                <RegularText
+                  color={theme.textColors.secondary}
+                  desktopWeight={500}
+                  desktopSize={"14px"}
+                >
                   Here you can propose adding/removing validators, and the
                   change voting power of each validator.
-                </p>
-                <p>Will be voted on by users only.</p>
+                </RegularText>
+                <RegularText
+                  color={theme.textColors.secondary}
+                  desktopWeight={500}
+                  desktopSize={"14px"}
+                >
+                  Will be voted on by users only.
+                </RegularText>
               </>
             )}
             {!haveAtLeastOneValidator && (
               <>
-                <p>
+                <RegularText
+                  color={theme.textColors.secondary}
+                  desktopWeight={500}
+                  desktopSize={"14px"}
+                >
                   Here you can designate trusted DAO members to serve as
                   validators who will hold a validator-only second vote on every
                   passed proposal to filter out potentially malicious proposals.
-                </p>
-                <p>
+                </RegularText>
+                <RegularText
+                  color={theme.textColors.secondary}
+                  desktopWeight={500}
+                  desktopSize={"14px"}
+                >
                   Validators can also create special proposals to be voted on
                   exclusively among themselves.
-                </p>
+                </RegularText>
               </>
             )}
             <br />
@@ -186,8 +242,8 @@ const ValidatorsSettingsStep: React.FC = () => {
               size="no-paddings"
               onClick={handleOpenPreviousSettings}
             />
-          </CardDescription>
-        </Card>
+          </S.DesktopHeaderWrp>
+        )}
         {haveAtLeastOneValidator && <ValidatorsList />}
         {!haveAtLeastOneValidator && (
           <Card>
@@ -225,17 +281,8 @@ const ValidatorsSettingsStep: React.FC = () => {
             />
           </Card>
         )}
-      </S.StepsRoot>
-      {appNavigationEl ? (
-        createPortal(
-          <StepsNavigation customNextCb={handleNextStep} />,
-          appNavigationEl
-        )
-      ) : !isMobile ? (
-        <StepsNavigation customNextCb={handleNextStep} />
-      ) : (
-        <></>
-      )}
+        <SForms.FormStepsNavigationWrp customNextCb={handleNextStep} />
+      </SForms.StepsRoot>
     </>
   )
 }

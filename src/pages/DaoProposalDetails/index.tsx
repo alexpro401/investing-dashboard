@@ -12,8 +12,8 @@ import * as React from "react"
 import { FC, HTMLAttributes, useMemo, useState } from "react"
 import { useGovPoolProposal, useGovPoolProposals, useBreakpoints } from "hooks"
 import { useParams } from "react-router-dom"
-import { Icon } from "common"
-import { ICON_NAMES } from "constants/icon-names"
+import { ICON_NAMES } from "consts/icon-names"
+import { Breadcrumbs, Icon } from "common"
 import { ValidatorsVote } from "pages/ValidatorsVote"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
@@ -50,7 +50,7 @@ const DaoProposalDetails: FC<Props> = ({}) => {
 
   return (
     <>
-      <Header>{isMobile ? "Proposal" : ""}</Header>
+      <Header>{isMobile ? "Proposal" : <Breadcrumbs />}</Header>
       <S.DaoProposalDetails>
         {isLoaded ? (
           isLoadFailed ? (

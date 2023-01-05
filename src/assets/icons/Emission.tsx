@@ -1,5 +1,5 @@
 import { memo, FC } from "react"
-import { IconProps } from "constants/types"
+import { IconProps } from "consts/types"
 import { motion } from "framer-motion"
 
 const Emission: FC<IconProps> = ({ active }) => {

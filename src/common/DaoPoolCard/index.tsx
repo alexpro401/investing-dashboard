@@ -7,31 +7,36 @@ import { v4 as uuidv4 } from "uuid"
 import { Flex } from "theme"
 import Icon from "components/Icon"
 import Tooltip from "components/Tooltip"
-import { normalizeBigNumber } from "utils"
-import { useGovPoolDescription, useGovPoolHelperContracts } from "hooks/dao"
+
+import { useERC20Data } from "state/erc20/hooks"
+import { isAddressZero, normalizeBigNumber } from "utils"
+import { useDaoPoolMetadata } from "state/ipfsMetadata/hooks"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
-import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
-import useGovPoolUserVotingPower from "hooks/dao/useGovPoolUserVotingPower"
-import { ZERO } from "constants/index"
+import { BigNumber } from "@ethersproject/bignumber"
+import { ZERO } from "consts"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   data: IGovPoolQuery
   account?: string | null
   children?: React.ReactNode
+  isMobile: boolean
+  totalVotingPower?: BigNumber
 }
 
-const DaoPoolCard: React.FC<Props> = ({ data, account, children, ...rest }) => {
-  const id = React.useMemo(() => data?.id ?? "", [data])
+const DaoPoolCard: React.FC<Props> = ({
+  data,
+  children,
+  isMobile,
+  totalVotingPower = ZERO,
+  ...rest
+}) => {
+  const [token] = useERC20Data(
+    !isAddressZero(data?.erc20Token) ? data.erc20Token : undefined
+  )
 
-  const { descriptionObject } = useGovPoolDescription(id)
-  const [assetsExisting, assets] = useGovPoolVotingAssets(id)
-  const [{ tvl, mc_tvl, members, lau }] = useGovPoolStatistic(data)
-  const { govUserKeeperAddress } = useGovPoolHelperContracts(id ?? "")
-  const [userVotingPower] = useGovPoolUserVotingPower({
-    userKeeperAddress: govUserKeeperAddress,
-    address: account,
-  })
+  const [{ daoPoolMetadata }] = useDaoPoolMetadata(data?.id)
+  const [govPoolStatistic] = useGovPoolStatistic(data)
 
   const poolName = React.useMemo(() => {
     if (isNil(data)) return ""
@@ -42,12 +47,18 @@ const DaoPoolCard: React.FC<Props> = ({ data, account, children, ...rest }) => {
   }, [data])
 
   const poolAssets = React.useMemo(() => {
+    const { erc20Token, erc721Token } = data
+    const haveToken = !isAddressZero(erc20Token)
+    const haveNft = !isAddressZero(erc721Token)
+
     let subTitle = ""
 
-    if (assetsExisting.haveToken) {
-      subTitle = `${assets.token?.symbol} `
+    if (!haveToken && !haveNft) return subTitle
+
+    if (haveToken) {
+      subTitle = `${token?.symbol ?? ""} `
     }
-    if (assetsExisting.haveNft) {
+    if (haveNft) {
       if (subTitle.length > 0) {
         subTitle += "& "
       }
@@ -55,17 +66,17 @@ const DaoPoolCard: React.FC<Props> = ({ data, account, children, ...rest }) => {
     }
 
     return subTitle
-  }, [assetsExisting, assets])
+  }, [data.erc20Token, data.erc721Token, token])
 
   return (
-    <S.Root {...rest}>
-      <S.DaoPoolCardHead>
+    <S.DaoPoolCardRoot {...rest}>
+      <S.DaoPoolCardHeader>
         <Flex ai="center" jc="flex-start">
           <Icon
-            size={38}
+            size={isMobile ? 38 : 100}
             m="0 8px 0 0"
             address={data?.id}
-            source={descriptionObject?.avatarUrl ?? ""}
+            source={daoPoolMetadata?.avatarUrl ?? ""}
           />
           <Flex dir="column" ai="flex-start" gap="4">
             <S.DaoPoolCardTitle>{poolName}</S.DaoPoolCardTitle>
@@ -74,55 +85,73 @@ const DaoPoolCard: React.FC<Props> = ({ data, account, children, ...rest }) => {
             </S.DaoPoolCardDescription>
           </Flex>
         </Flex>
-        <Flex ai="flex-end" jc="flex-start" dir="column" gap="4">
-          <S.DaoPoolCardVotingPower>
-            {normalizeBigNumber(userVotingPower.power, 18, 0)}
-          </S.DaoPoolCardVotingPower>
-          <S.DaoPoolCardDescription>My voting power</S.DaoPoolCardDescription>
-        </Flex>
-      </S.DaoPoolCardHead>
-      <S.DaoPoolCardDivider />
-      <Flex full ai={"center"} jc={"space-between"} p={"12px"} gap={"10"}>
-        <Flex full dir={"column"} gap={"4"} ai={"flex-start"}>
-          <Flex full ai={"center"} jc={"flex-start"} gap={"4"}>
-            <S.DaoPoolCardBlockInfoLabel>TVL</S.DaoPoolCardBlockInfoLabel>
+        {isMobile && (
+          <Flex ai="flex-end" jc="flex-start" dir="column" gap="4">
+            <Flex ai="flex-end" jc="flex-start" dir={"column"} gap="4">
+              <S.DaoPoolCardVotingPower>
+                {normalizeBigNumber(totalVotingPower, 18, 2)}
+              </S.DaoPoolCardVotingPower>
+              <S.DaoPoolCardDescription>
+                My voting power
+              </S.DaoPoolCardDescription>
+            </Flex>
+          </Flex>
+        )}
+      </S.DaoPoolCardHeader>
+      <S.DaoPoolCardStatisticWrp>
+        {!isMobile && (
+          <S.DaoPoolCardStatisticItem alignItems={"flex-start"}>
+            <Flex gap={"4"}>
+              <S.DaoPoolCardStatisticLabel>
+                My power
+              </S.DaoPoolCardStatisticLabel>
+              <Tooltip id={uuidv4()}>Info about voting power</Tooltip>
+            </Flex>
+            <S.DaoPoolCardStatisticValue>
+              {normalizeBigNumber(totalVotingPower, 18, 2)}
+            </S.DaoPoolCardStatisticValue>
+          </S.DaoPoolCardStatisticItem>
+        )}
+        <S.DaoPoolCardStatisticItem alignItems={"flex-start"}>
+          <Flex gap={"4"}>
+            <S.DaoPoolCardStatisticLabel>TVL</S.DaoPoolCardStatisticLabel>
             <Tooltip id={uuidv4()}>Info about TVL</Tooltip>
           </Flex>
-          <S.DaoPoolCardBlockInfoValue>
-            ${normalizeBigNumber(tvl.value, 18, 2)}
-          </S.DaoPoolCardBlockInfoValue>
-        </Flex>
-        <Flex full dir={"column"} gap={"4"} ai={"flex-start"}>
-          <Flex full ai={"center"} jc={"flex-start"} gap={"4"}>
-            <S.DaoPoolCardBlockInfoLabel>MC/TVL</S.DaoPoolCardBlockInfoLabel>
+          <S.DaoPoolCardStatisticValue>
+            ${normalizeBigNumber(govPoolStatistic.tvl.value, 18, 2)}
+          </S.DaoPoolCardStatisticValue>
+        </S.DaoPoolCardStatisticItem>
+        <S.DaoPoolCardStatisticItem alignItems={"flex-start"}>
+          <Flex gap={"4"}>
+            <S.DaoPoolCardStatisticLabel>MC/TVL</S.DaoPoolCardStatisticLabel>
             <Tooltip id={uuidv4()}>Info about MC/TVL</Tooltip>
           </Flex>
-          <S.DaoPoolCardBlockInfoValue>
-            {normalizeBigNumber(mc_tvl.value, 18, 2)}
-          </S.DaoPoolCardBlockInfoValue>
-        </Flex>
-        <Flex full dir={"column"} gap={"4"} ai={"flex-start"}>
-          <Flex full ai={"center"} jc={"flex-start"} gap={"4"}>
-            <S.DaoPoolCardBlockInfoLabel>Members</S.DaoPoolCardBlockInfoLabel>
+          <S.DaoPoolCardStatisticValue>
+            ${normalizeBigNumber(govPoolStatistic.mc_tvl.value, 18, 2)}
+          </S.DaoPoolCardStatisticValue>
+        </S.DaoPoolCardStatisticItem>
+        <S.DaoPoolCardStatisticItem alignItems={"flex-start"}>
+          <Flex gap={"4"}>
+            <S.DaoPoolCardStatisticLabel>Members</S.DaoPoolCardStatisticLabel>
             <Tooltip id={uuidv4()}>Info about Members</Tooltip>
           </Flex>
-          <S.DaoPoolCardBlockInfoValue>
-            {String(members.value ?? 0)}
-          </S.DaoPoolCardBlockInfoValue>
-        </Flex>
-        <Flex full dir={"column"} gap={"4"} ai={"flex-end"}>
-          <Flex full ai={"center"} jc={"flex-end"} gap={"4"}>
-            <S.DaoPoolCardBlockInfoLabel>LAU</S.DaoPoolCardBlockInfoLabel>
+          <S.DaoPoolCardStatisticValue>
+            {String(govPoolStatistic.members.value ?? 0)}
+          </S.DaoPoolCardStatisticValue>
+        </S.DaoPoolCardStatisticItem>
+        <S.DaoPoolCardStatisticItem alignItems={"flex-end"}>
+          <Flex gap={"4"}>
+            <S.DaoPoolCardStatisticLabel>LAU</S.DaoPoolCardStatisticLabel>
             <Tooltip id={uuidv4()}>Info about LAU</Tooltip>
           </Flex>
-          <S.DaoPoolCardBlockInfoValue>
-            {normalizeBigNumber(lau.value, 18, 0)}
-          </S.DaoPoolCardBlockInfoValue>
-        </Flex>
-      </Flex>
+          <S.DaoPoolCardStatisticValue>
+            {normalizeBigNumber(govPoolStatistic.lau.value, 18, 0)}
+          </S.DaoPoolCardStatisticValue>
+        </S.DaoPoolCardStatisticItem>
+      </S.DaoPoolCardStatisticWrp>
       {children}
-    </S.Root>
+    </S.DaoPoolCardRoot>
   )
 }
 
-export default React.memo(DaoPoolCard)
+export default DaoPoolCard

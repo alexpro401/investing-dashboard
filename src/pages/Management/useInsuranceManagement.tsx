@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react"
 import { useSelector } from "react-redux"
 import { useWeb3React } from "@web3-react/core"
 
-import { useERC20 } from "hooks"
+import { useERC20, useInsuranceAmount } from "hooks"
 import {
   selectDexeAddress,
   selectInsuranceAddress,
@@ -14,12 +14,12 @@ import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
 import { parseEther } from "@ethersproject/units"
 
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 
-import { SubmitState, SwapDirection } from "constants/types"
+import { SubmitState, SwapDirection } from "consts/types"
 
 import { getAllowance, parseTransactionError, isTxMined } from "utils"
 import { BigNumber } from "@ethersproject/bignumber"
@@ -34,9 +34,10 @@ const useInsuranceManagement = () => {
   const [direction, setDirection] = useState<SwapDirection>("deposit")
 
   const [, setError] = useError()
-  const [stakeAmount, setStakeAmount] = useState(ZERO)
-  const [insuranceAmount, setInsuranceAmount] = useState(ZERO)
-  const [insuranceAmountUSD, setInsuranceAmountUSD] = useState(ZERO)
+  const [
+    { stakeAmount, insuranceAmount, insuranceAmountUSD },
+    fetchInsuranceBalance,
+  ] = useInsuranceAmount(account)
   const [inPrice, setInPrice] = useState(ZERO)
   const [outPrice, setOutPrice] = useState(ZERO)
   const [allowance, setAllowance] = useState("-1")
@@ -63,24 +64,6 @@ const useInsuranceManagement = () => {
     )
     setAllowance(allowance.toString())
   }, [account, dexeAddress, insuranceAddress, library])
-
-  const fetchInsuranceAmountInUSD = useCallback(async () => {
-    if (!priceFeed || insuranceAmount.isZero()) return
-
-    const price = await priceFeed.getNormalizedPriceOutUSD(
-      dexeAddress,
-      insuranceAmount
-    )
-    setInsuranceAmountUSD(price[0])
-  }, [dexeAddress, insuranceAmount, priceFeed])
-
-  const fetchInsuranceBalance = useCallback(async () => {
-    if (!insurance || !account) return
-
-    const userInsurance = await insurance.getInsurance(account)
-    setStakeAmount(userInsurance[0])
-    setInsuranceAmount(userInsurance[1])
-  }, [account, insurance])
 
   const handleError = useCallback(
     (error) => {
@@ -234,17 +217,6 @@ const useInsuranceManagement = () => {
     fetchInsuranceBalance()
     refetchBalance()
   }, [fetchAndUpdateAllowance, fetchInsuranceBalance, refetchBalance])
-
-  // update insurance amount in USD on insuranceAmount change
-  useEffect(() => {
-    fetchInsuranceAmountInUSD().catch(console.log)
-  }, [fetchInsuranceAmountInUSD])
-
-  // update insurance balance on account change
-  useEffect(() => {
-    if (!insurance || !account) return
-    fetchInsuranceBalance().catch(console.log)
-  }, [insurance, account, fetchInsuranceBalance])
 
   // update allowance
   useEffect(() => {

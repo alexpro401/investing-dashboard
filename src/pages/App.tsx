@@ -30,7 +30,7 @@ const App = () => {
           <AppWrapper>
             <ConnectWalletContext>
               <NotificationsContext>
-                <InfoAccordion
+                {/* <InfoAccordion
                   rows={[
                     {
                       title: "Title 1",
@@ -59,8 +59,8 @@ const App = () => {
                       pnl: "0.00",
                     },
                   ]}
-                />
-                {/* <Routes /> */}
+                /> */}
+                <Routes />
               </NotificationsContext>
             </ConnectWalletContext>
           </AppWrapper>

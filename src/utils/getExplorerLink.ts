@@ -1,4 +1,4 @@
-import { SupportedChainId } from "constants/chains"
+import { SupportedChainId } from "consts/chains"
 
 const BSCSCAN_PREFIXES = {
   [SupportedChainId.BINANCE_SMART_CHAIN]: "https://bscscan.com",

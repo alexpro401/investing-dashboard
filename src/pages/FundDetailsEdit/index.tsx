@@ -25,7 +25,7 @@ import Avatar from "components/Avatar"
 import TextArea from "components/TextArea"
 import Input from "components/Input"
 import AddressChips from "components/AddressChips"
-import Stepper, { Step as IStep } from "components/Stepper"
+import Stepper from "components/Stepper"
 import TokenIcon from "components/TokenIcon"
 import Icon from "components/Icon"
 
@@ -44,7 +44,6 @@ import { usePoolContract, usePoolQuery } from "hooks/usePool"
 import { useAddToast } from "state/application/hooks"
 
 import { useERC20Data } from "state/erc20/hooks"
-import { UpdateListType } from "constants/types"
 import { useUserAgreement } from "state/user/hooks"
 import { addPool } from "state/ipfsMetadata/actions"
 import { TransactionType } from "state/transactions/types"
@@ -52,6 +51,7 @@ import { useTransactionAdder } from "state/transactions/hooks"
 import { useTraderPoolContract } from "contracts"
 import { IpfsEntity } from "utils/ipfsEntity"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
+import { IStep, UpdateListType } from "consts"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",

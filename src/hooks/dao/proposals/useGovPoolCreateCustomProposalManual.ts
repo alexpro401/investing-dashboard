@@ -6,9 +6,9 @@ import useGovPoolLatestProposalId from "../useGovPoolLatestProposalId"
 import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
 import usePayload from "hooks/usePayload"
 import useError from "hooks/useError"
-import { SubmitState } from "constants/types"
+import { SubmitState } from "consts/types"
 import { isTxMined, parseTransactionError } from "utils"
-import { ROUTE_PATHS } from "constants/index"
+import { ROUTE_PATHS } from "consts"
 
 interface ICreateProposalArgs {
   executors: string[]
@@ -68,7 +68,7 @@ const useGovPoolCreateCustomProposalManual = (
             onClick: () => {
               navigate(
                 generatePath(ROUTE_PATHS.daoProposalVoting, {
-                  daoProposal: govPoolAddress,
+                  daoPoolAddress: govPoolAddress!,
                   proposalId: String(latestProposalId.toNumber() + 1),
                 })
               )

@@ -1,4 +1,4 @@
-import theme, { Flex, respondTo, To } from "theme"
+import theme, { respondTo, To } from "theme"
 import styled from "styled-components/macro"
 import { motion } from "framer-motion"
 import { useMatch } from "react-router-dom"
@@ -9,7 +9,6 @@ export const MobileMenu = styled(motion.div)`
   align-items: center;
   justify-content: space-around;
   width: 100%;
-  z-index: 100;
   background: #0e121b;
   border-radius: 8px 8px 0 0;
 
@@ -48,18 +47,6 @@ const MobileIcon = styled.div`
   align-items: center;
   width: 35px;
   height: 35px;
-`
-
-export const LogoWrapper = styled(Flex)`
-  width: 100px;
-  height: 100px;
-  justify-content: center;
-  align-items: center;
-  display: none;
-
-  ${respondTo("sm")} {
-    display: flex;
-  }
 `
 
 const MobileLabel = styled.div<{ active: boolean }>`

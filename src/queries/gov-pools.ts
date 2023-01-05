@@ -12,6 +12,7 @@ const POOL_VOTER = `
   totalDPClaimed
   totalClaimedUSD
   claimedDPs {${DISTRIBUTION_PROPOSAL}}
+  currentDelegatorsCount
 `
 
 const POOL_SETTINGS = `
@@ -31,6 +32,8 @@ const POOL_EXECUTOR = `
 const POOL = `
   id
   name
+  erc20Token
+  erc721Token
   votersCount
   creationTime
   creationBlock

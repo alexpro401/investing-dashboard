@@ -11,9 +11,10 @@ import { shortenAddress } from "utils"
 interface Props {
   account?: string | null
   children?: ReactNode
+  isMobile?: boolean
 }
 
-const AccountInfo: FC<Props> = ({ account, children }) => {
+const AccountInfo: FC<Props> = ({ account, children, isMobile }) => {
   const [{ loading, userName, userAvatar }] = useUserMetadata(account)
 
   const name = useMemo(() => {
@@ -22,10 +23,17 @@ const AccountInfo: FC<Props> = ({ account, children }) => {
     return userName.length > 15 ? shortenAddress(userName, 7) : userName
   }, [userName])
 
+  const _isMobile = useMemo(() => {
+    if (isNil(isMobile)) return false
+    return isMobile
+  }, [isMobile])
+
+  const iconSize = _isMobile ? 38 : 100
+
   if (loading) {
     return (
       <Flex ai="center" jc="flex-start">
-        <Skeleton variant="circle" w="38px" h="38px" />
+        <Skeleton variant="circle" w={`${iconSize}px`} h={`${iconSize}px`} />
         <Flex dir="column" ai="flex-start" jc="space-between" m="0 0 0 10px">
           <Skeleton variant="text" h="21px" w="121px" />
           {!isNil(children) && (
@@ -38,7 +46,7 @@ const AccountInfo: FC<Props> = ({ account, children }) => {
 
   return (
     <Flex ai="center" jc="flex-start">
-      <Avatar size={38} url={userAvatar} address={account} />
+      <Avatar size={iconSize} url={userAvatar} address={account} />
       <Flex p="0 0 0 10px" dir="column" ai="flex-start">
         <Text color="#ffffff" fz={16} lh="19px" fw={600}>
           {name}

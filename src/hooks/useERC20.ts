@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react"
 
 import { isAddress } from "utils"
 import { Token } from "interfaces"
-import { ZERO, ZERO_ADDR } from "constants/index"
+import { ZERO, ZERO_ADDR } from "consts"
 import { useActiveWeb3React } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
 import { getBalanceOf } from "utils/getContract"

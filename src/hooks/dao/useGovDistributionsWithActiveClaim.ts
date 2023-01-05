@@ -9,7 +9,7 @@ import {
   IGovProposalQuery,
 } from "interfaces/thegraphs/gov-pools"
 import useQueryPagination from "hooks/useQueryPagination"
-import { ZERO_ADDR } from "constants/index"
+import { ZERO_ADDR } from "consts"
 
 const govPoolsClient = createClient({
   url: process.env.REACT_APP_DAO_POOLS_API_URL || "",

@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { useGovBalance } from "hooks/dao"
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 
 import {
   IGovNftBalance,

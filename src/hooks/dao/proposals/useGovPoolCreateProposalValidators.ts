@@ -8,9 +8,9 @@ import { encodeAbiMethod } from "utils/encodeAbi"
 import { GovValidators } from "abi"
 import usePayload from "hooks/usePayload"
 import { useGovPoolCreateProposal, useGovPoolLatestProposalId } from "hooks/dao"
-import { SubmitState } from "constants/types"
+import { SubmitState } from "consts/types"
 import { isTxMined } from "utils"
-import { ROUTE_PATHS } from "constants/index"
+import { ROUTE_PATHS } from "consts"
 
 interface ICreateProposalArgs {
   proposalName: string
@@ -65,7 +65,7 @@ const useGovPoolCreateProposalValidators = (govPoolAddress: string) => {
           onClick: () => {
             navigate(
               generatePath(ROUTE_PATHS.daoProposalVoting, {
-                daoAddress: govPoolAddress,
+                daoPoolAddress: govPoolAddress,
                 proposalId: String(latestProposalId),
               })
             )

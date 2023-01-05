@@ -20,7 +20,8 @@ import {
   selectTotalOwnedPoolsStatistic,
 } from "state/user/selectors"
 import { useNavigate } from "react-router-dom"
-import { ROUTE_PATHS } from "constants/index"
+import { ROUTE_PATHS } from "consts"
+import { useBreakpoints } from "hooks"
 
 function Trader() {
   const { account } = useWeb3React()
@@ -50,6 +51,8 @@ function Trader() {
     navigate("/me/investor")
   }, [navigate])
 
+  const { isTablet, isDesktop } = useBreakpoints()
+
   const PoolsList = useMemo(() => {
     if (loading && isEmpty(pools)) {
       return <PulseSpinner />
@@ -63,12 +66,12 @@ function Trader() {
       return (
         <To key={pool.id} to={`/pool/profile/${pool.id}`}>
           <Indents>
-            <PoolStatisticCard data={pool} index={index} />
+            <PoolStatisticCard data={pool} index={index} isMobile={isTablet} />
           </Indents>
         </To>
       )
     })
-  }, [loading, pools])
+  }, [loading, pools, isTablet])
 
   return (
     <>
@@ -81,6 +84,7 @@ function Trader() {
             account={account}
             data={totalStatistic}
             pools={pools}
+            isMobile={!isDesktop}
           />
         </Indents>
         <List.Container>

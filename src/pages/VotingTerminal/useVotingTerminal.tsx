@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react"
 
-import { ZERO } from "constants/index"
+import { ZERO } from "consts"
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
 
 import {

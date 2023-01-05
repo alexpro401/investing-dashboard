@@ -14,6 +14,10 @@ export const PageHolder = styled(motion.div).attrs(() => ({
   overflow-y: auto;
 `
 
+export const HeaderWrp = styled.div`
+  margin-bottom: 16px;
+`
+
 export const SubmitButton = styled(AppButton)`
   width: 100%;
   flex-shrink: 0;
@@ -22,5 +26,7 @@ export const SubmitButton = styled(AppButton)`
 export const PageContent = styled.div`
   display: flex;
   flex-direction: column;
+  margin: 0 auto;
   gap: 15px;
+  max-width: 800px;
 `
