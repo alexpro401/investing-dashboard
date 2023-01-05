@@ -8,6 +8,7 @@ import {
   removeUser,
   addProposal,
   addInsuranceAccident,
+  addDaoPool,
 } from "./actions"
 import { InsuranceAccident } from "interfaces/insurance"
 
@@ -16,11 +17,13 @@ export interface IpfsMetadataState {
   pools: Record<string, Record<string, IPoolMetadata>>
   proposals: Record<string, Record<string, IInvestProposalMetadata>>
   insuranceAccidents: Record<string, InsuranceAccident>
+  daoPools: Record<string, any>
 }
 
 export const initialState: IpfsMetadataState = {
   user: {},
   pools: {},
+  daoPools: {},
   proposals: {},
   insuranceAccidents: {},
 }
@@ -71,6 +74,14 @@ export default createReducer(initialState, (builder) =>
       state.insuranceAccidents = {
         ...state.insuranceAccidents,
         [params.hash]: params.data,
+      }
+    })
+    .addCase(addDaoPool, (state, { payload }) => {
+      const {
+        params: { poolId, hash, ...poolMeta },
+      } = payload
+      if (!state.daoPools[poolId] || state.daoPools[poolId].hash !== hash) {
+        state.daoPools[poolId] = { hash, ...poolMeta }
       }
     })
 )

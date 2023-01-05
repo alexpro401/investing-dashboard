@@ -2,8 +2,14 @@ import { createAction } from "@reduxjs/toolkit"
 
 import { IInvestProposalMetadata, IPoolMetadata, IUserMetadata } from "./types"
 import { InsuranceAccident } from "interfaces/insurance"
+import { IGovPoolDescription } from "types"
 
 interface IAddPool extends IPoolMetadata {
+  poolId: string
+  hash: string
+}
+
+interface IAddDaoPool extends IGovPoolDescription {
   poolId: string
   hash: string
 }
@@ -35,3 +41,8 @@ export const addProposal = createAction<{
 export const addInsuranceAccident = createAction<{
   params: { hash: string; data: InsuranceAccident }
 }>("ipfs/add-insurance-accident")
+
+// dao
+export const addDaoPool = createAction<{ params: IAddDaoPool }>(
+  "ipfs/add-dao-pool"
+)

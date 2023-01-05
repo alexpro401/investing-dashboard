@@ -1,28 +1,27 @@
 import * as React from "react"
 import { isEmpty, isNil } from "lodash"
-
-import { Indents, List } from "../styled"
-import theme, { Center, To } from "theme"
-import { DaoPoolCard, Icon, NoDataMessage } from "common"
-import LoadMore from "components/LoadMore"
-import { ICON_NAMES, ROUTE_PATHS } from "consts"
 import { PulseSpinner } from "react-spinners-kit"
-import { useWeb3React } from "@web3-react/core"
-import { generatePath } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
+
+import theme, { Center } from "theme"
+import { Indents, List } from "../styled"
+import LoadMore from "components/LoadMore"
+import { ICON_NAMES, ROUTE_PATHS, ZERO } from "consts"
 import { useBreakpoints, useGovPoolsList } from "hooks"
+import { DaoPoolCard, Icon, NoDataMessage } from "common"
 
 interface Props {}
 
 const DaoPoolsList: React.FC<Props> = () => {
-  const { account } = useWeb3React()
+  const navigate = useNavigate()
 
-  const { data, loading, fetchMore } = useGovPoolsList()
+  const { pools, votingPowers, loading, fetchMore } = useGovPoolsList()
 
   const listRef = React.useRef<any>()
 
   const { isDesktop } = useBreakpoints()
 
-  if (loading && (isNil(data) || isEmpty(data))) {
+  if (loading && (isNil(pools) || isEmpty(pools))) {
     return (
       <List.Scroll center>
         <Center>
@@ -32,7 +31,7 @@ const DaoPoolsList: React.FC<Props> = () => {
     )
   }
 
-  if (!loading && isEmpty(data)) {
+  if (!loading && isEmpty(pools)) {
     return (
       <List.Scroll center>
         <Center>
@@ -44,24 +43,33 @@ const DaoPoolsList: React.FC<Props> = () => {
 
   return (
     <List.Scroll ref={listRef} center={false}>
-      {data.map((pool, index) => (
+      {pools.map((pool, index) => (
         <Indents key={pool.id} top={index > 0}>
-          <To to={generatePath(ROUTE_PATHS.daoItem, { daoAddress: pool.id })}>
-            <DaoPoolCard data={pool} account={account} isMobile={!isDesktop}>
-              {isDesktop ? (
-                <List.CardIconWrp>
-                  <Icon name={ICON_NAMES.angleRight} color={"#6781BD"} />
-                </List.CardIconWrp>
-              ) : (
-                <></>
-              )}
-            </DaoPoolCard>
-          </To>
+          <DaoPoolCard
+            data={pool}
+            totalVotingPower={votingPowers[pool.id] ?? ZERO}
+            isMobile={!isDesktop}
+            onClick={() => {
+              navigate(
+                generatePath(ROUTE_PATHS.daoItem, {
+                  daoAddress: pool.id,
+                })
+              )
+            }}
+          >
+            {isDesktop ? (
+              <List.CardIconWrp>
+                <Icon name={ICON_NAMES.angleRight} color={"#6781BD"} />
+              </List.CardIconWrp>
+            ) : (
+              <></>
+            )}
+          </DaoPoolCard>
         </Indents>
       ))}
 
       <LoadMore
-        isLoading={loading && !!data.length}
+        isLoading={loading && !!pools.length}
         handleMore={fetchMore}
         r={listRef}
       />

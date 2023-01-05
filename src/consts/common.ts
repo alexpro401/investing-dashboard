@@ -7,6 +7,7 @@ import { BigNumber } from "@ethersproject/bignumber"
 export const ZERO = BigNumber.from("0")
 
 export const ZERO_ADDR = "0x0000000000000000000000000000000000000000"
+export const ZERO_ADDR_SHORT = "0x00000000"
 
 export const poolTypes: {
   all: "ALL_POOL"
