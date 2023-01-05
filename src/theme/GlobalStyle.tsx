@@ -39,6 +39,8 @@ const GlobalCssVars = css`
 `
 
 const GlobalStyle: any = createGlobalStyle`
+  ${GlobalCssVars};
+  
   body {
     width:100%;
     overflow-x:hidden;
