@@ -17,7 +17,7 @@ export default function Wallet() {
   const { account } = useActiveWeb3React()
   const rootEl = useRef<HTMLDivElement>(null)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const insurance = useInsuranceAmount(account)
+  const [{ insuranceAmount }] = useInsuranceAmount(account)
 
   const [walletType, setWalletType] = useState<WalletType>("")
 
@@ -57,8 +57,8 @@ export default function Wallet() {
       >
         <S.TogglerBtnIcon name={ICON_NAMES.dexeTokenIcon} />
         <MediumText weight={600} size="14px">
-          {!insurance.isZero()
-            ? formatFiatNumber(formatEther(insurance), 0)
+          {!insuranceAmount.isZero()
+            ? formatFiatNumber(formatEther(insuranceAmount), 0)
             : "Insurance"}
         </MediumText>
         <S.TogglerBtnIconIndicator

@@ -27,7 +27,7 @@ import { InvestorQuery } from "queries"
 import { IInvestorQuery } from "interfaces/thegraphs/investors"
 import InvestedFund from "components/cards/InvestedFund"
 import InvestorStatisticCard from "components/cards/InvestorStatistic"
-import { useWindowSize } from "react-use"
+import { useBreakpoints } from "hooks"
 
 const poolsClient = createClient({
   url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
@@ -79,8 +79,7 @@ function Investor() {
     navigate("/me/trader")
   }
 
-  const { width: windowWidth } = useWindowSize()
-  const isMobile = useMemo(() => windowWidth < 1194, [windowWidth])
+  const { isMobile } = useBreakpoints()
 
   const InvestorPools = useMemo(() => {
     if ((isNil(investorPools) && fetchingInvestorPools) || isNil(account)) {

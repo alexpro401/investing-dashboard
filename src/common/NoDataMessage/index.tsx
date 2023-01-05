@@ -12,7 +12,7 @@ const NoDataMessage: FC<Props> = ({
 }) => {
   return (
     <S.Root {...rest}>
-      <S.NoDataIcon name={ICON_NAMES.clear} />
+      {/* <S.NoDataIcon name={ICON_NAMES.clear} /> */}
       <S.NoDataTitle>{message}</S.NoDataTitle>
     </S.Root>
   )

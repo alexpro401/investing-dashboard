@@ -5,11 +5,10 @@ import { AnimatePresence } from "framer-motion"
 
 import Header from "components/Header/Layout"
 import TutorialCard from "components/TutorialCard"
-import { Collapse, SelectableCard, Headline1, RegularText } from "common"
+import { SelectableCard, Headline1, RegularText } from "common"
 
 import { useBreakpoints } from "hooks"
 import theme from "theme"
-import { ICON_NAMES } from "consts/icon-names"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
 import CreateFundDocsImage from "assets/others/create-fund-docs.png"
@@ -21,7 +20,6 @@ import * as SForms from "common/FormSteps/styled"
 enum FUND_TYPES {
   basic = "basic",
   investment = "investment",
-  daoPool = "daoPool",
 }
 
 enum STEPS {
@@ -61,7 +59,7 @@ const CreateFund: FC = () => {
         ? "/create-fund/basic"
         : fundType === FUND_TYPES.investment
         ? "/create-fund/investment"
-        : "/create-fund/dao"
+        : "/"
 
     navigate(targetRoute)
   }, [fundType, navigate])

@@ -208,7 +208,7 @@ const PoolStatisticCard: FC<Props> = ({
 
     return (
       <Flex ai={"center"} jc={"space-between"} gap={"88"}>
-        {isTablet && _Chart}
+        {!isMobile && isTablet && _Chart}
         <Flex ai="center" jc="flex-end">
           {!isDesktop && (
             <div>
@@ -226,7 +226,7 @@ const PoolStatisticCard: FC<Props> = ({
         </Flex>
       </Flex>
     )
-  }, [data, baseToken, priceLP, pnl, isDesktop, isTablet, _Chart])
+  }, [data, baseToken, priceLP, pnl, isDesktop, isTablet, isMobile, _Chart])
 
   const _children = useMemo(() => {
     if (isDesktop && !isNil(data)) {

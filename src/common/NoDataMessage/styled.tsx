@@ -11,6 +11,7 @@ export const Root = styled.div`
   color: ${(props) => props.theme.textColors.secondary};
   font-size: 24px;
   padding: 8px;
+  min-height: 200px;
 `
 
 export const NoDataIcon = styled(Icon)`
