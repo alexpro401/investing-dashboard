@@ -71,7 +71,7 @@ const DaoPools: React.FC = () => {
                   <S.List.RouteTabsWrp m="0" tabs={tabs} />
                   <S.Action
                     text="+ Create new"
-                    routePath={generatePath(ROUTE_PATHS.createFund)}
+                    routePath={generatePath(ROUTE_PATHS.createFundDao)}
                   />
                 </>
               ) : (

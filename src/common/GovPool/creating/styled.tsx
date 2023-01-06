@@ -112,7 +112,7 @@ export const SuccessBackdrop = styled.div`
     min-width: 420px;
     margin-top: 0;
     background: #181e2c;
-    padding: 16px;
+    padding: var(--app-padding);
     border-radius: 20px;
   }
 `

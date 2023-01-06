@@ -1,4 +1,4 @@
-import styled from "styled-components/macro"
+import styled, { css } from "styled-components/macro"
 import { motion } from "framer-motion"
 
 import { opacityVariants } from "motion/variants"
@@ -38,13 +38,20 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   exit: { opacity: 0 },
   transition: { duration: 0.2 },
   variants: opacityVariants,
-}))`
+}))<{ isWithPaddings?: boolean }>`
   overflow: hidden;
   position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
   gap: var(--app-gap);
+
+  ${(props) =>
+    props.isWithPaddings
+      ? css`
+          padding: var(--app-padding);
+        `
+      : ""}
 `
 
 export const StepsRoot = styled.div`

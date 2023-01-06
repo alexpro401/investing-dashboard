@@ -71,8 +71,8 @@ const CreateFund: FC = () => {
   return (
     <>
       <Header>Create Fund</Header>
-      <S.PageHolder>
-        <S.PageContent>
+      <S.Root isWithPaddings={true}>
+        <S.PageHolder>
           <SForms.StepsFormContainer
             currentStepNumber={1}
             totalStepsAmount={totalStepsCount}
@@ -212,8 +212,8 @@ const CreateFund: FC = () => {
               </SForms.StepsWrapper>
             </AnimatePresence>
           </SForms.StepsFormContainer>
-        </S.PageContent>
-      </S.PageHolder>
+        </S.PageHolder>
+      </S.Root>
     </>
   )
 }
