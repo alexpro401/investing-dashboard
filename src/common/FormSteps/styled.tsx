@@ -9,7 +9,6 @@ import FormStepsNavigation from "common/FormStepsNavigation"
 
 export const StepsFormContainer = styled(StepsControllerContextProvider)`
   display: flex;
-  margin: 0 auto;
   width: 100%;
   height: 100%;
   overflow-y: auto;
@@ -18,8 +17,6 @@ export const StepsFormContainer = styled(StepsControllerContextProvider)`
 export const StepsWrapper = styled.div`
   display: flex;
   flex: 1;
-  margin: 0 auto;
-  max-width: 1200px;
 
   ${respondTo("sm")} {
     padding-bottom: 40px;
@@ -30,6 +27,7 @@ export const SideStepsNavigationBarWrp = styled(SideStepsNavigationBar)`
   min-width: 300px;
   position: sticky;
   top: 0px;
+  height: min-content;
 `
 
 export const StepsContainer = styled(motion.div).attrs(() => ({

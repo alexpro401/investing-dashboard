@@ -9,10 +9,7 @@ import { ICON_NAMES } from "consts"
 
 export const StyledTopMembers = styled(motion.div)`
   height: fit-content;
-  width: 100%;
-  max-width: 1200px;
   padding: 0 24px;
-  margin: 0 auto;
 `
 
 export const MembersList = styled.div`
@@ -95,7 +92,7 @@ export const TopMembersHeader = styled.div`
   gap: 19px;
   margin: 18px 0;
 
-  ${respondTo("sm")} {
+  ${respondTo("xmd")} {
     display: flex;
     align-items: center;
     gap: 24px;
@@ -120,7 +117,7 @@ export const TopMembersRouteTabsWrp = styled(RouteTabs)`
   grid-column: 1 / -1;
   grid-row: 2 / 3;
 
-  ${respondTo("sm")} {
+  ${respondTo("xmd")} {
     max-width: 365px;
   }
 `
@@ -133,6 +130,10 @@ export const TopMembersFiltersWrp = styled.div`
   margin-left: auto;
   gap: 24px;
   width: 100%;
+
+  ${respondTo("xs")} {
+    width: auto;
+  }
 `
 
 export const ToggleSearchFieldWrp = styled(ToggleSearchField)``

@@ -47,7 +47,11 @@ export const StepsNavigationButton = styled(AppButton)<{
       : props.theme.textColors.secondary};
 
   ${respondTo("sm")} {
-    min-width: 280px;
+    min-width: 180px;
     border-width: 0;
+  }
+
+  ${respondTo("md")} {
+    min-width: 280px;
   }
 `

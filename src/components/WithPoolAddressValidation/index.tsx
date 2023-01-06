@@ -1,18 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react"
-import { createClient } from "urql"
 
 import Page404 from "components/Page404"
 
 import image404Src from "assets/others/create-fund-docs.png"
-import { AppState } from "state"
-import { useSelector } from "react-redux"
-import { usePoolQuery } from "hooks/usePool"
-import { selectPoolByAddress } from "state/pools/selectors"
-import { isNil } from "lodash"
-
-const allPoolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-})
+import { usePoolRegistryContract } from "contracts"
 
 interface IProps {
   poolAddress: string
@@ -27,25 +18,22 @@ const WithPoolAddressValidation: React.FC<IProps> = ({
 }) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [isValid, setIsValid] = useState<boolean>(false)
-
-  const poolDataStore = useSelector((s: AppState) =>
-    selectPoolByAddress(s, poolAddress)
-  )
-  const [poolDataQuery] = usePoolQuery(poolAddress, allPoolsClient)
+  const poolRegistry = usePoolRegistryContract()
 
   const checkPoolAddressValidation = useCallback(async () => {
     setLoading(true)
 
+    if (!poolRegistry) return
+
     try {
-      if (!isNil(poolDataStore) || !isNil(poolDataQuery)) {
-        setIsValid(true)
-      }
+      const isTraderPool = await poolRegistry.isTraderPool(poolAddress)
+      setIsValid(isTraderPool)
     } catch (error) {
       setIsValid(false)
     } finally {
       setLoading(false)
     }
-  }, [poolAddress, poolDataStore, poolDataQuery])
+  }, [poolAddress, poolRegistry])
 
   useEffect(() => {
     checkPoolAddressValidation()

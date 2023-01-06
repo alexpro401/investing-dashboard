@@ -84,11 +84,7 @@ const List: React.FC<Props> = ({ poolType }) => {
             to={generatePath(ROUTE_PATHS.poolProfile, { poolAddress: pool.id })}
           >
             <Flex p="16px 0 0" full>
-              <PoolStatisticCard
-                data={pool}
-                index={index}
-                isMobile={!isDesktop}
-              >
+              <PoolStatisticCard data={pool} index={index}>
                 {isDesktop ? (
                   <S.CardIconWrp>
                     <Icon name={ICON_NAMES.angleRight} color={"#6781BD"} />
@@ -118,25 +114,25 @@ function TopMembers() {
   const tabs: ITab[] = [
     {
       title: `All funds (${totalBasicPools + totalInvestPools})`,
-      source: "all",
+      source: generatePath(ROUTE_PATHS.topMembers, { "*": "all" }),
     },
     {
       title: `Basic (${totalBasicPools})`,
-      source: "basic",
+      source: generatePath(ROUTE_PATHS.topMembers, { "*": "basic" }),
     },
     {
       title: `Investment (${totalInvestPools})`,
-      source: "invest",
+      source: generatePath(ROUTE_PATHS.topMembers, { "*": "invest" }),
     },
   ]
 
   const [, dispatchFilter] = usePoolsFilters()
   const [isFiltersActive, setIsFiltersActive] = useState(false)
 
-  const [isMobileSearchShown, setIsMobileSearchShown] = useState(false)
+  const [isSearchToggled, setIsSearchToggled] = useState(true)
   const [searchInput, setSearchInput] = useState<string>("")
 
-  const { isTablet, isMobile } = useBreakpoints()
+  const { isMediumTablet } = useBreakpoints()
 
   useEffect(
     debounce(() => {
@@ -144,35 +140,6 @@ function TopMembers() {
     }, 500),
     [searchInput]
   )
-
-  // const ListSearch = useMemo(
-  //   () =>
-  //     !isMobile && !isTablet ? (
-  //       <S.TopMembersSearchInput
-  //         value={searchInput}
-  //         onInput={(event) =>
-  //           setSearchInput(event.currentTarget.value as string)
-  //         }
-  //       />
-  //     ) : (
-  //       <>
-  //         {isMobileSearchShown ? (
-  //           <S.TopMembersSearchInput
-  //             value={searchInput}
-  //             onInput={(event) =>
-  //               setSearchInput(event.currentTarget.value as string)
-  //             }
-  //           />
-  //         ) : (
-  //           <></>
-  //         )}
-  //         <S.TopMembersSearchBtn
-  //           onClick={() => setIsMobileSearchShown(!isMobileSearchShown)}
-  //         />
-  //       </>
-  //     ),
-  //   [isMobile, isMobileSearchShown, isTablet, searchInput]
-  // )
 
   return (
     <S.StyledTopMembers>
@@ -198,15 +165,15 @@ function TopMembers() {
         <S.TopMembersRouteTabsWrp tabs={tabs} />
         <S.TopMembersFiltersWrp>
           <S.ToggleSearchFieldWrp
-            isToggled={isTablet || isMobileSearchShown}
-            setIsToggled={setIsMobileSearchShown}
+            isToggled={Boolean(!isMediumTablet && isSearchToggled)}
+            setIsToggled={isMediumTablet ? undefined : setIsSearchToggled}
             modelValue={searchInput}
             updateModelValue={(value: string) => setSearchInput(value)}
           />
           <S.TopMembersFiltersBtn
-            text={isTablet ? "" : "Filters"}
+            text={isMediumTablet ? "Filters" : ""}
             iconLeft={ICON_NAMES.filter}
-            iconRight={isTablet ? undefined : ICON_NAMES.angleDown}
+            iconRight={isMediumTablet ? ICON_NAMES.angleDown : undefined}
             onClick={() => setIsFiltersActive(!isFiltersActive)}
           />
 
@@ -221,7 +188,7 @@ function TopMembers() {
         <Route path="basic" element={<List poolType="BASIC_POOL" />}></Route>
         <Route path="invest" element={<List poolType="INVEST_POOL" />}></Route>
         <Route
-          path="/"
+          path="*"
           element={
             <Navigate
               replace

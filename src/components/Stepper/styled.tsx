@@ -1,6 +1,6 @@
 import { motion } from "framer-motion"
 import styled from "styled-components/macro"
-import { Flex } from "theme"
+import { Flex, respondTo } from "theme"
 
 export const Container = styled(motion.div)`
   position: fixed;
@@ -15,6 +15,11 @@ export const Container = styled(motion.div)`
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.15);
   border-radius: 15px;
   z-index: 90;
+
+  ${respondTo("sm")} {
+    width: fill-available;
+    max-width: 420px;
+  }
 `
 
 export const Overlay = styled(motion.div)`

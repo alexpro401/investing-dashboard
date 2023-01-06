@@ -5,6 +5,7 @@ import { isNil } from "lodash"
 import * as S from "./styled"
 import { Flex } from "theme"
 import Tooltip from "components/Tooltip"
+import { useBreakpoints } from "../../hooks"
 
 interface Statistic {
   label: ReactNode
@@ -17,18 +18,12 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   nodeHeadRight?: ReactNode
   children?: ReactNode
   statistic: Statistic[]
-  isMobile: boolean
 }
 
 const CardInfo: FC<Props> = (props) => {
-  const {
-    nodeHeadLeft,
-    nodeHeadRight,
-    statistic,
-    children,
-    isMobile,
-    ...rest
-  } = props
+  const { nodeHeadLeft, nodeHeadRight, statistic, children, ...rest } = props
+
+  const { isMobile } = useBreakpoints()
 
   return (
     <S.Container {...rest}>

@@ -1,60 +1,12 @@
 import { addDays, addMonths, addYears } from "date-fns"
 import { parseEther } from "@ethersproject/units"
 import { createStaticRanges } from "react-date-range"
-import { ISortItem } from "interfaces"
 import { BigNumber } from "@ethersproject/bignumber"
 
 export const ZERO = BigNumber.from("0")
 
 export const ZERO_ADDR = "0x0000000000000000000000000000000000000000"
-
-export const poolTypes: {
-  all: "ALL_POOL"
-  basic: "BASIC_POOL"
-  invest: "INVEST_POOL"
-} = {
-  all: "ALL_POOL",
-  basic: "BASIC_POOL",
-  invest: "INVEST_POOL",
-}
-
-export const sortItemsList: ISortItem[] = [
-  {
-    label: "Max Loss",
-    key: "maxLoss",
-    direction: "",
-  },
-  {
-    label: "Investors amount",
-    key: "investorsCount",
-    direction: "",
-  },
-  {
-    label: "Date of creation",
-    key: "creationTime",
-    direction: "",
-  },
-  {
-    label: "Total trades",
-    key: "totalTrades",
-    direction: "",
-  },
-  {
-    label: "Max. total closed positions",
-    key: "totalClosedPositions",
-    direction: "",
-  },
-  {
-    label: "Max. average trades ",
-    key: "averageTrades",
-    direction: "",
-  },
-  {
-    label: "Average position time ",
-    key: "averagePositionTime",
-    direction: "",
-  },
-]
+export const ZERO_ADDR_SHORT = "0x00000000"
 
 export const currencies = [
   "BTC",
@@ -152,39 +104,3 @@ export const EXCHANGE_DEFAULT_PERCENTS = [
     percent: parseEther("0.75"),
   },
 ]
-
-export const performanceFees = [
-  {
-    id: 0,
-    title: "1 Month Fee withdrawal",
-    description: "Performance Fee limits of 20% to 30%",
-    monthes: 1,
-  },
-  {
-    id: 1,
-    title: "3 Months Fee withdrawal",
-    description: "Performance Fee limits of 20% to 50%",
-    monthes: 3,
-  },
-  {
-    id: 2,
-    title: "12 Months Fee withdrawal",
-    description: "Performance Fee limits of 20% to 70%",
-    monthes: 12,
-  },
-]
-
-export const sliderPropsByPeriodType = {
-  "0": {
-    min: 20,
-    max: 30,
-  },
-  "1": {
-    min: 20,
-    max: 50,
-  },
-  "2": {
-    min: 20,
-    max: 70,
-  },
-}

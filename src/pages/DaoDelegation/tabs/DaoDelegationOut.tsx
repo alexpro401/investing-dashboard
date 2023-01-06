@@ -15,8 +15,10 @@ import useQueryPagination from "hooks/useQueryPagination"
 import GovTokenDelegationCard from "components/cards/GovTokenDelegation"
 import { IGovVoterInPoolPairsQuery } from "interfaces/thegraphs/gov-pools"
 import { NoDataMessage } from "common"
-import { useGovPoolHelperContracts } from "hooks"
-import { useGovPoolVotingPowerMulticall } from "hooks/dao/useGovPoolUserVotingPower"
+import {
+  useGovPoolHelperContracts,
+  useGovPoolVotingPowerMulticall,
+} from "hooks"
 
 interface Props {
   govPoolAddress?: string
@@ -56,14 +58,14 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress, token }) => {
 
   const { govUserKeeperAddress } = useGovPoolHelperContracts(govPoolAddress)
   const votingPowerParams = React.useMemo(
-    () => [
-      {
-        userKeeperAddress: govUserKeeperAddress,
-        address: account,
-        isMicroPool: false,
-        useDelegated: true,
+    () => ({
+      userKeeperAddresses: [govUserKeeperAddress],
+      params: {
+        address: [account],
+        isMicroPool: [false],
+        useDelegated: [true],
       },
-    ],
+    }),
     [account, govUserKeeperAddress]
   )
 
@@ -72,22 +74,22 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress, token }) => {
 
   const nftIdToVotingPowerMap = React.useMemo<Record<string, BigNumber>>(() => {
     if (
-      !account ||
+      !govUserKeeperAddress ||
       votingPowerDataLoading ||
       isEmpty(votingPowerData.delegated)
     ) {
       return {}
     }
 
-    return votingPowerData.delegated[account].nftIds.reduce(
+    return votingPowerData.delegated[govUserKeeperAddress].nftIds.reduce(
       (acc, nftId, index) => {
         acc[nftId.toString()] =
-          votingPowerData.delegated[account].perNftPower[index]
+          votingPowerData.delegated[govUserKeeperAddress].perNftPower[index]
         return acc
       },
       {}
     )
-  }, [votingPowerData, votingPowerDataLoading, account])
+  }, [votingPowerData, votingPowerDataLoading, govUserKeeperAddress])
 
   const loader = React.useRef<any>()
 

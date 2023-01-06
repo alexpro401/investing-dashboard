@@ -56,6 +56,12 @@ export const AuthOutletWrp = styled.div`
   display: flex;
   flex: 1;
   background: ${(props) => props.theme.backgroundColors.primary};
+
+  & > * {
+    max-width: ${(props) => props.theme.pageContentMaxWidth};
+    width: 100%;
+    margin: 0 auto;
+  }
 `
 
 export const AuthOutlet = styled(Outlet)`

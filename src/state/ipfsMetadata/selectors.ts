@@ -67,3 +67,12 @@ export const selectInsuranceAccidentByPool = (pool?: string) => {
     return result
   })
 }
+
+export const selectDaoPoolMetadata = (poolId) =>
+  createSelector([selectIpfsMetadataState], (metadata) => {
+    if (!metadata.daoPools[poolId]) {
+      return null
+    }
+
+    return metadata.daoPools[poolId]
+  })

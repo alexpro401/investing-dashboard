@@ -1,23 +1,28 @@
-import { useContext } from "react"
+import * as S from "../styled"
+import * as React from "react"
 import { v4 as uuidv4 } from "uuid"
 import { Web3ReactContextInterface } from "@web3-react/core/dist/types"
 
-import { Icon } from "common"
 import { Flex, Text } from "theme"
+import { Icon, DaoPoolCard } from "common"
 import Tooltip from "components/Tooltip"
 import { ICON_NAMES } from "consts/icon-names"
-import { DaoPoolCard } from "common"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommonContext/GovPoolProfileCommonContext"
 import { formatTokenNumber } from "utils"
 
-import * as S from "../styled"
+import {
+  useBreakpoints,
+  useGovPoolHelperContracts,
+  useGovPoolUserVotingPower,
+} from "hooks"
+import { addBignumbers } from "utils/formulas"
+import { ZERO } from "consts"
 
 interface Props extends Pick<Web3ReactContextInterface, "account"> {
   isValidator: boolean
   handleOpenCreateProposalModal: () => void
   govPoolQuery: IGovPoolQuery
-  isMobile: boolean
 }
 
 const DaoProfileStatisticCard: React.FC<Props> = ({
@@ -25,14 +30,30 @@ const DaoProfileStatisticCard: React.FC<Props> = ({
   handleOpenCreateProposalModal,
   account,
   govPoolQuery,
-  isMobile,
 }) => {
-  const { validatorsToken, validatorsTotalVotes } = useContext(
+  const { isMobile } = useBreakpoints()
+
+  const { validatorsToken, validatorsTotalVotes } = React.useContext(
     GovPoolProfileCommonContext
   )
 
+  const { govUserKeeperAddress } = useGovPoolHelperContracts(govPoolQuery?.id)
+  const [userVotingPowers] = useGovPoolUserVotingPower({
+    userKeeperAddress: govUserKeeperAddress,
+    address: account,
+  })
+
+  const totalUserVotingPower = React.useMemo(() => {
+    if (!userVotingPowers) return ZERO
+
+    return addBignumbers(
+      [userVotingPowers.power, 18],
+      [userVotingPowers.nftPower, 18]
+    )
+  }, [userVotingPowers])
+
   return (
-    <DaoPoolCard account={account} data={govPoolQuery} isMobile={isMobile}>
+    <DaoPoolCard data={govPoolQuery} totalVotingPower={totalUserVotingPower}>
       <Flex full dir={"column"} gap={"12"}>
         <S.CardButtons>
           <S.NewProposal onClick={handleOpenCreateProposalModal} />

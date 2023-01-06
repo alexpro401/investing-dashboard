@@ -142,7 +142,6 @@ const DaoProfile: React.FC = () => {
                     }
                   : {}) as IGovPoolQuery),
               }}
-              isMobile={!isDesktop}
             />
             <S.Indents top side={false}>
               <DaoProfileChart chart={chart} setChart={setChart} />
