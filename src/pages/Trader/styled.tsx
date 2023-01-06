@@ -9,10 +9,6 @@ export const Container = styled.div`
   grid-gap: 40px;
   overflow: hidden;
   padding: 16px 0 0;
-  width: 100%;
-
-  max-width: ${(props) => props.theme.pageContentMaxWidth};
-  margin: 0 auto;
 `
 
 export const Indents = styled.div`
@@ -46,6 +42,7 @@ export const List = {
   Scroll: styled.div<{ center: boolean }>`
     display: grid;
     grid-template-rows: max-content;
+    align-content: start;
     grid-gap: 16px;
     overflow-y: auto;
     padding: 0 0 16px;

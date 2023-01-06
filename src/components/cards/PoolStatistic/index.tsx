@@ -256,7 +256,6 @@ const PoolStatisticCard: FC<Props> = ({
         nodeHeadLeft={leftNode}
         nodeHeadRight={rightNode}
         statistic={userStatistic}
-        isMobile={isMobile}
       >
         {_children}
       </CardInfo>

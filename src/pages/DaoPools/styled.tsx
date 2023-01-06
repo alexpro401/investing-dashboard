@@ -22,9 +22,6 @@ export const Container = styled(motion.div).attrs(() => ({
   grid-gap: 16px;
   overflow: hidden;
   padding: 16px 0 0;
-  width: 100%;
-  max-width: ${(props) => props.theme.pageContentMaxWidth};
-  margin: 0 auto;
 `
 
 export const Indents = styled.div<{ top?: boolean; side?: boolean }>`

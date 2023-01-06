@@ -21,7 +21,6 @@ import {
 } from "state/user/selectors"
 import { generatePath, useNavigate } from "react-router-dom"
 import { ROUTE_PATHS } from "consts"
-import { useBreakpoints } from "hooks"
 
 function Trader() {
   const { account } = useWeb3React()
@@ -45,13 +44,11 @@ function Trader() {
     return () => clearAllBodyScrollLocks()
   }, [scrollRef])
 
-  const _poolsInView = useMemo(() => !isEmpty(pools), [loading, pools, account])
+  const _poolsInView = useMemo(() => !isEmpty(pools), [pools])
 
   const redirectToInvestor = useCallback(() => {
     navigate("/me/investor")
   }, [navigate])
-
-  const { isDesktop } = useBreakpoints()
 
   const PoolsList = useMemo(() => {
     if (loading && isEmpty(pools)) {
@@ -89,7 +86,6 @@ function Trader() {
             account={account}
             data={totalStatistic}
             pools={pools}
-            isMobile={!isDesktop}
           />
         </Indents>
         <List.Container>

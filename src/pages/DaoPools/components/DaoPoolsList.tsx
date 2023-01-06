@@ -48,7 +48,6 @@ const DaoPoolsList: React.FC<Props> = () => {
           <DaoPoolCard
             data={pool}
             totalVotingPower={votingPowers[pool.id] ?? ZERO}
-            isMobile={!isDesktop}
             onClick={() => {
               navigate(
                 generatePath(ROUTE_PATHS.daoItem, {
