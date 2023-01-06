@@ -45,8 +45,8 @@ export const List = {
   `,
   Scroll: styled.div<{ center: boolean }>`
     display: grid;
-    grid-template-rows: max-content;
     grid-gap: 16px;
+    align-content: start;
     overflow-y: auto;
     padding: 0 0 16px;
 
