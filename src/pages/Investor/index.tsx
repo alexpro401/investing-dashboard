@@ -135,7 +135,7 @@ function Investor() {
         My investor profile
       </Header>
       <Container>
-        <InvestorStatisticCard activePools={_activePools} isMobile={isMobile} />
+        <InvestorStatisticCard activePools={_activePools} />
 
         <TabCard>
           <TabContainer>

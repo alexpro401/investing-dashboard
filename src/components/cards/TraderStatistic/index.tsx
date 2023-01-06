@@ -13,6 +13,7 @@ import { copyToClipboard } from "utils/clipboard"
 import { useAddToast } from "state/application/hooks"
 import { normalizeBigNumber, shortenAddress } from "utils"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
+import { useBreakpoints } from "../../../hooks"
 
 interface Props {
   account?: string | null
@@ -23,10 +24,10 @@ interface Props {
     investorsCount: BigNumber | any
   }
   pools: IPoolQuery[]
-
-  isMobile: boolean
 }
-const TraderStatisticCard: FC<Props> = ({ account, data, pools, isMobile }) => {
+const TraderStatisticCard: FC<Props> = ({ account, data, pools }) => {
+  const { isMobile } = useBreakpoints()
+
   const addToast = useAddToast()
 
   const statistic = useMemo(
@@ -79,7 +80,7 @@ const TraderStatisticCard: FC<Props> = ({ account, data, pools, isMobile }) => {
   const leftNode = useMemo(
     () => (
       <div onClick={copyAccountToClipboard}>
-        <AccountInfo account={account} isMobile={isMobile}>
+        <AccountInfo account={account}>
           <Flex ai="center" jc="flex-start" gap="3" m="2px 0 0">
             <Text color="#B1C7FC" fz={13} lh="15px">
               {shortenAddress(account, 2)}
@@ -101,7 +102,6 @@ const TraderStatisticCard: FC<Props> = ({ account, data, pools, isMobile }) => {
         nodeHeadLeft={leftNode}
         nodeHeadRight={rightNode}
         statistic={statistic}
-        isMobile={isMobile}
       />
     </>
   )
