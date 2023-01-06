@@ -10,9 +10,9 @@ export const DaoProposalDetails = styled.div`
   overflow: hidden auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--app-gap);
   color: ${(props) => props.theme.textColors.primary};
-  padding: 16px;
+  padding: var(--app-padding);
   flex: 1;
 `
 
@@ -20,7 +20,7 @@ export const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 16px;
+  gap: var(--app-gap);
 
   ${respondTo("sm")} {
     display: grid;
@@ -33,7 +33,7 @@ export const PageContainer = styled.div`
 export const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--app-gap);
 
   ${respondTo("sm")} {
     grid-column: 1 / 2;
@@ -43,7 +43,7 @@ export const ContentWrapper = styled.div`
 export const VotingContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--app-gap);
 
   ${respondTo("sm")} {
     grid-column: 2 / 3;
@@ -199,7 +199,7 @@ export const DaoProposalDetailsRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 16px;
+  gap: var(--app-gap);
 
   & > * {
     &:first-child {

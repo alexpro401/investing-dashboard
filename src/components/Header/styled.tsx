@@ -5,14 +5,14 @@ export const Container = styled(Flex)`
   touch-action: none;
   user-select: none;
   width: 100%;
-  background: #0e121b;
+  background: ${(props) => props.theme.backgroundColors.primary};
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.15);
   flex-direction: column;
 
   ${respondTo("sm")} {
     padding: 0 10px;
     height: 84px;
-    background: #0e121b;
+    background: ${(props) => props.theme.backgroundColors.primary};
     box-shadow: none;
     justify-content: center;
   }
@@ -36,49 +36,31 @@ export const Bar = styled(Flex)`
 `
 
 export const ClickableArea = styled(BaseButton)`
-  padding: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 24px;
   min-width: 24px;
+  padding: 12px 0;
 `
 
 export const Tabs = styled(Flex)`
   width: 100%;
   height: 34px;
-  padding: 0 10px;
   position: relative;
-  justify-content: space-around;
+  justify-content: space-between;
+  gap: var(--app-gap);
 
   &:before {
     position: absolute;
-    top: 0;
-    right: 0;
+    bottom: 0;
     left: 0;
-    margin: auto;
     width: 100%;
+    margin: auto;
     content: "";
     height: 1px;
-    background: radial-gradient(
-          54.8% 53% at 50% 50%,
-          #587eb7 0%,
-          rgba(88, 126, 183, 0) 100%
-        )
-        /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
-      radial-gradient(
-          60% 51.57% at 50% 50%,
-          #6d99db 0%,
-          rgba(109, 153, 219, 0) 100%
-        )
-        /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
-      radial-gradient(
-          69.43% 69.43% at 50% 50%,
-          rgba(5, 5, 5, 0.5) 0%,
-          rgba(82, 82, 82, 0) 100%
-        )
-        /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
-    opacity: 0.1;
+    background: #181e2c;
+    opacity: 1;
   }
 `
 
@@ -110,7 +92,8 @@ export const Tab = styled(ClickableArea)<{ active?: boolean }>`
       0 2px 5px rgba(164, 235, 212, 0.14);
     border-radius: 2px 2px 0 0;
     height: 2px;
-    width: 100%;
+    width: ${(props) => (props.active ? "100%" : "0")};
+    transition: opacity, width 0.2s ease-in-out;
   }
 `
 
