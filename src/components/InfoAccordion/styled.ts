@@ -3,10 +3,22 @@ import { Flex } from "theme"
 
 export const Row = styled(Flex)`
   width: fill-available;
-  justify-content: space-between;
+  justify-content: flex-start;
+  flex-direction: column;
 `
 
-export const Body = styled(Flex)``
+export const Content = styled(Flex)`
+  justify-content: space-between;
+  width: fill-available;
+`
+
+export const Body = styled(Flex)`
+  width: fill-available;
+  justify-content: flex-start;
+  flex-direction: column;
+  padding-right: 20px;
+  box-sizing: border-box;
+`
 
 export const Title = styled(Flex)`
   font-weight: 400;
@@ -23,5 +35,9 @@ export const Value = styled(Flex)`
   color: #e4f2ff;
 `
 
-export const Left = styled(Flex)``
-export const Right = styled(Flex)``
+export const Left = styled(Flex)`
+  gap: 4px;
+`
+export const Right = styled(Flex)`
+  gap: 4px;
+`

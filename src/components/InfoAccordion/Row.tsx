@@ -14,14 +14,16 @@ const Row: FC<Props> = ({ data, children }) => {
 
   return (
     <S.Row>
-      <S.Left>
-        <Tooltip id={title}>{tooltip}</Tooltip>
-        <S.Title>{title}</S.Title>
-      </S.Left>
-      <S.Right>
-        <S.Value>{value}</S.Value>
-        <PNLIndicator pnl={pnl} fontSize={13} />
-      </S.Right>
+      <S.Content>
+        <S.Left>
+          <Tooltip id={title}>{tooltip}</Tooltip>
+          <S.Title>{title}</S.Title>
+        </S.Left>
+        <S.Right>
+          <S.Value>{value}</S.Value>
+          <PNLIndicator type="brackets" pnl={pnl} fontSize={13} />
+        </S.Right>
+      </S.Content>
       <S.Body>{children}</S.Body>
     </S.Row>
   )

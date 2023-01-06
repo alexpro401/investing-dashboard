@@ -15,7 +15,7 @@ interface Props {
 
 const InfoAccordion: FC<Props> = ({ rows }) => {
   return (
-    <>
+    <div>
       {rows.map((row) => (
         <Row key={row.title} data={row}>
           {row.childrens && (
@@ -27,7 +27,7 @@ const InfoAccordion: FC<Props> = ({ rows }) => {
           )}
         </Row>
       ))}
-    </>
+    </div>
   )
 }
 
