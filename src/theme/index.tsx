@@ -4,6 +4,8 @@ import { motion } from "framer-motion"
 import { colorsTheme } from "./colors.theme"
 import { respondTo } from "./mixins.theme"
 
+export const pageContentMaxWidth = "1200px"
+
 export const ease = [0.29, 0.98, 0.29, 1]
 
 export const breakpoints = {
@@ -246,5 +248,6 @@ export * from "./mixins.theme"
 export default {
   textPrimary: "#FAFAFA",
   appFontFamily: "Gilroy",
+  pageContentMaxWidth,
   ...colorsTheme,
 }

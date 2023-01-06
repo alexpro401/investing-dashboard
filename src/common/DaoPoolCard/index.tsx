@@ -15,22 +15,23 @@ import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
 import { BigNumber } from "@ethersproject/bignumber"
 import { ZERO } from "consts"
+import { useBreakpoints } from "hooks"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   data: IGovPoolQuery
   account?: string | null
   children?: React.ReactNode
-  isMobile: boolean
   totalVotingPower?: BigNumber
 }
 
 const DaoPoolCard: React.FC<Props> = ({
   data,
   children,
-  isMobile,
   totalVotingPower = ZERO,
   ...rest
 }) => {
+  const { isMobile } = useBreakpoints()
+
   const [token] = useERC20Data(
     !isAddressZero(data?.erc20Token) ? data.erc20Token : undefined
   )

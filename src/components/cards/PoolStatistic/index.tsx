@@ -39,7 +39,6 @@ type Props = {
   data: IPoolQuery
   index?: number
   children?: ReactNode
-  isMobile?: boolean
   hideChart?: boolean
   stroke?: string
 } & HTMLAttributes<HTMLDivElement> &
@@ -144,8 +143,8 @@ const PoolStatisticCard: FC<Props> = ({
       hideChart ? null : (
         <div
           style={{
-            height: isTablet ? "39px" : "35px",
-            width: isTablet ? "180px" : "118px",
+            height: isDesktop ? "39px" : "35px",
+            width: isDesktop ? "180px" : "118px",
             margin: "auto",
             flex: "1 0 118px",
           }}
@@ -153,7 +152,7 @@ const PoolStatisticCard: FC<Props> = ({
           <Chart
             type={CHART_TYPE.area}
             data={history}
-            height={isTablet ? "39px" : "35px"}
+            height={isDesktop ? "39px" : "35px"}
             chart={{
               stackOffset: "silhouette",
             }}
@@ -170,7 +169,7 @@ const PoolStatisticCard: FC<Props> = ({
           />
         </div>
       ),
-    [history, fetchingHistory, stroke, hideChart, isTablet]
+    [history, fetchingHistory, stroke, hideChart]
   )
 
   const leftNode = useMemo(() => {
@@ -208,7 +207,7 @@ const PoolStatisticCard: FC<Props> = ({
 
     return (
       <Flex ai={"center"} jc={"space-between"} gap={"88"}>
-        {!isMobile && isTablet && _Chart}
+        {isTablet && !isDesktop && _Chart}
         <Flex ai="center" jc="flex-end">
           {!isDesktop && (
             <div>
@@ -226,7 +225,7 @@ const PoolStatisticCard: FC<Props> = ({
         </Flex>
       </Flex>
     )
-  }, [data, baseToken, priceLP, pnl, isDesktop, isTablet, isMobile, _Chart])
+  }, [data, baseToken, priceLP, pnl, isDesktop, isTablet, _Chart])
 
   const _children = useMemo(() => {
     if (isDesktop && !isNil(data)) {
@@ -257,7 +256,6 @@ const PoolStatisticCard: FC<Props> = ({
         nodeHeadLeft={leftNode}
         nodeHeadRight={rightNode}
         statistic={userStatistic}
-        isMobile={isMobile}
       >
         {_children}
       </CardInfo>

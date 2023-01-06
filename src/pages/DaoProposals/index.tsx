@@ -80,18 +80,12 @@ const DaoProposals: FC<Props> = () => {
 
   return (
     <>
-      <Header tabs={isMobile ? TABS : undefined}>
-        {isMobile ? "All Proposals" : <Breadcrumbs />}
-      </Header>
+      <Header>{isMobile ? "All Proposals" : <Breadcrumbs />}</Header>
       <S.Root>
-        {!isMobile ? (
-          <S.HeadContainer>
-            <S.PageTitle>All Proposals</S.PageTitle>
-            <S.PageHeadTabs tabs={TABS} />
-          </S.HeadContainer>
-        ) : (
-          <></>
-        )}
+        <S.HeadContainer>
+          <S.PageTitle>All Proposals</S.PageTitle>
+          <S.PageHeadTabs tabs={TABS} />
+        </S.HeadContainer>
         <Routes>
           <Route
             path="opened"

@@ -11,7 +11,11 @@ import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommonContext/GovPoolProfileCommonContext"
 import { formatTokenNumber } from "utils"
 
-import { useGovPoolHelperContracts, useGovPoolUserVotingPower } from "hooks"
+import {
+  useBreakpoints,
+  useGovPoolHelperContracts,
+  useGovPoolUserVotingPower,
+} from "hooks"
 import { addBignumbers } from "utils/formulas"
 import { ZERO } from "consts"
 
@@ -19,7 +23,6 @@ interface Props extends Pick<Web3ReactContextInterface, "account"> {
   isValidator: boolean
   handleOpenCreateProposalModal: () => void
   govPoolQuery: IGovPoolQuery
-  isMobile: boolean
 }
 
 const DaoProfileStatisticCard: React.FC<Props> = ({
@@ -27,8 +30,9 @@ const DaoProfileStatisticCard: React.FC<Props> = ({
   handleOpenCreateProposalModal,
   account,
   govPoolQuery,
-  isMobile,
 }) => {
+  const { isMobile } = useBreakpoints()
+
   const { validatorsToken, validatorsTotalVotes } = React.useContext(
     GovPoolProfileCommonContext
   )
@@ -49,11 +53,7 @@ const DaoProfileStatisticCard: React.FC<Props> = ({
   }, [userVotingPowers])
 
   return (
-    <DaoPoolCard
-      data={govPoolQuery}
-      isMobile={isMobile}
-      totalVotingPower={totalUserVotingPower}
-    >
+    <DaoPoolCard data={govPoolQuery} totalVotingPower={totalUserVotingPower}>
       <Flex full dir={"column"} gap={"12"}>
         <S.CardButtons>
           <S.NewProposal onClick={handleOpenCreateProposalModal} />
