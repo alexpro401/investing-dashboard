@@ -1,17 +1,14 @@
 import styled from "styled-components/macro"
 import { motion } from "framer-motion"
 
-import { Icon, StepsNavigation, Card, AppButton, CardFormControl } from "common"
+import { Icon, Card, AppButton, CardFormControl } from "common"
 import StepsControllerContext from "context/StepsControllerContext"
 import { opacityVariants } from "motion/variants"
-import {
-  getDefaultFieldBorderStyles,
-  getDefaultFieldErrorStyles,
-} from "fields/styled"
+import { getDefaultFieldErrorStyles } from "fields/styled"
 import { Input } from "fields/InputField/styled"
 import { InputField } from "fields"
 import ExternalLink from "components/ExternalLink"
-import theme, { respondTo } from "theme"
+import { respondTo } from "theme"
 import FormStepsNavigation from "common/FormStepsNavigation"
 
 export const Container = styled(StepsControllerContext)`
@@ -33,6 +30,7 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   display: flex;
   flex-direction: column;
   height: 100%;
+  gap: var(--app-gap);
 `
 
 export const DesktopHeaderWrp = styled.div`
@@ -69,19 +67,14 @@ export const StepsRoot = styled.div`
   display: flex;
   flex-direction: column;
   transform: scale(1);
-  gap: 16px;
-  padding: 14px 16px 20px;
+  gap: var(--app-gap);
   flex: 1;
 `
 
 export const ConditionalParameters = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
-`
-
-export const StepsBottomNavigation = styled(StepsNavigation)`
-  margin-top: auto;
+  gap: var(--app-gap);
 `
 
 export const FormStepsNavigationWrp = styled(FormStepsNavigation)``

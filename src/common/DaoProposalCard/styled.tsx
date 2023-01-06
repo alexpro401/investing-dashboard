@@ -18,6 +18,7 @@ export const DaoProposalCardBody = styled.div`
   ${respondTo("sm")} {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
     gap: 16px 48px;
   }
 `
@@ -78,8 +79,7 @@ export const DaoCenteredButton = styled(AppButton)`
   grid-column: 1 / -1;
   width: 100%;
 
-  ${respondTo("sm")} {
+  ${respondTo("md")} {
     width: auto;
-    margin-left: auto;
   }
 `

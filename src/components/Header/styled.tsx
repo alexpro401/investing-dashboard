@@ -22,17 +22,8 @@ export const Bar = styled(Flex)`
   width: 100%;
   height: 45px;
   justify-content: space-between;
-
-  padding: 0 16px;
-
-  ${respondTo("sm")} {
-    padding: 0 20px;
-    max-width: ${(props) => props.theme.pageContentMaxWidth};
-  }
-
-  ${respondTo("md")} {
-    padding: 0;
-  }
+  max-width: ${(props) => props.theme.pageContentMaxWidth};
+  padding: 0 var(--app-padding-right) 0 var(--app-padding-left);
 `
 
 export const ClickableArea = styled(BaseButton)`

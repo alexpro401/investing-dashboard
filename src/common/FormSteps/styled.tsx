@@ -17,6 +17,7 @@ export const StepsFormContainer = styled(StepsControllerContextProvider)`
 export const StepsWrapper = styled.div`
   display: flex;
   flex: 1;
+  gap: var(--app-gap);
 
   ${respondTo("sm")} {
     padding-bottom: 40px;
@@ -26,8 +27,9 @@ export const StepsWrapper = styled.div`
 export const SideStepsNavigationBarWrp = styled(SideStepsNavigationBar)`
   min-width: 300px;
   position: sticky;
-  top: 0px;
+  top: 0;
   height: min-content;
+  padding: 0;
 `
 
 export const StepsContainer = styled(motion.div).attrs(() => ({
@@ -42,19 +44,14 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin: 0 auto;
-
-  ${respondTo("sm")} {
-    max-width: 900px;
-  }
+  gap: var(--app-gap);
 `
 
 export const StepsRoot = styled.div`
   display: flex;
   flex-direction: column;
   transform: scale(1);
-  gap: 16px;
-  padding: 14px 16px 20px;
+  gap: var(--app-gap);
 `
 
 export const FormStepsNavigationWrp = styled(FormStepsNavigation)``
