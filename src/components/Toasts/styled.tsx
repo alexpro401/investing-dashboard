@@ -31,6 +31,10 @@ export const Container = styled(motion.div)<{ width?: string }>`
   margin: 16px 16px 0;
   border-radius: 16px;
   background: ${theme.textColors.secondaryNegative};
+
+  * {
+    font-family: ${theme.appFontFamily};
+  }
 `
 
 export const Close = styled.div`

@@ -118,15 +118,15 @@ function TopMembers() {
   const tabs: ITab[] = [
     {
       title: `All funds (${totalBasicPools + totalInvestPools})`,
-      source: "all",
+      source: generatePath(ROUTE_PATHS.topMembers, { "*": "all" }),
     },
     {
       title: `Basic (${totalBasicPools})`,
-      source: "basic",
+      source: generatePath(ROUTE_PATHS.topMembers, { "*": "basic" }),
     },
     {
       title: `Investment (${totalInvestPools})`,
-      source: "invest",
+      source: generatePath(ROUTE_PATHS.topMembers, { "*": "invest" }),
     },
   ]
 

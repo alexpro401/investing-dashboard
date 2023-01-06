@@ -42,6 +42,7 @@ export const CreateFundDaoFeaturesDesktop = styled(SelectableCard)`
   text-align: center;
   padding: 24px;
   gap: 8px;
+
   ${SelectableCardTitles} {
     align-items: center;
     justify-content: center;

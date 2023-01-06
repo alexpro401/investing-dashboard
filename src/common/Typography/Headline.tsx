@@ -22,7 +22,7 @@ const Headline1Style = (props) => css`
 
   ${respondTo("sm")} {
     font-size: ${props.desktopSize || "24px"};
-    font-weight: ${props.desktopWeight || "700"};
+    font-weight: ${props.desktopWeight || "600"};
   }
 `
 
