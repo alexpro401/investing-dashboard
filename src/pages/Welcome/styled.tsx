@@ -10,7 +10,7 @@ export const Container = styled(Flex)`
   width: 100%;
   height: 100%;
   padding: 40px 32px;
-  max-width: 1200px;
+  max-width: ${(props) => props.theme.pageContentMaxWidth};
   margin: auto;
 
   &:before {

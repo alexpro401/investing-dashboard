@@ -4,11 +4,7 @@ import { ICON_NAMES } from "consts/icon-names"
 import { respondTo } from "theme"
 import Management from "pages/Management"
 
-export const Container = styled.div`
-  margin: 0 auto;
-  width: fill-available;
-  max-width: 1200px;
-`
+export const Container = styled.div``
 
 export const Content = styled.div`
   width: inherit;

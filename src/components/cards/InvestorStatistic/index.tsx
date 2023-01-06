@@ -15,12 +15,14 @@ import useInvestorTotalInvest from "hooks/useInvestorTotalInvest"
 import { normalizeBigNumber } from "utils"
 import useInvestorTV from "hooks/useInvestorTV"
 import Tooltip from "components/Tooltip"
+import { useBreakpoints } from "../../../hooks"
 
 interface Props {
   activePools: InvestorPoolQuery[]
-  isMobile: boolean
 }
-const InvestorStatisticCard: FC<Props> = ({ activePools, isMobile }) => {
+const InvestorStatisticCard: FC<Props> = ({ activePools }) => {
+  const { isMobile } = useBreakpoints()
+
   const { account } = useWeb3React()
 
   const [{ usd: totalInvestUSD }, { loading: totalLoading }] =
@@ -85,7 +87,7 @@ const InvestorStatisticCard: FC<Props> = ({ activePools, isMobile }) => {
 
   const leftNode = useMemo(
     () => (
-      <AccountInfo account={account} isMobile={isMobile}>
+      <AccountInfo account={account}>
         <Flex full ai="center" jc="flex-start" gap="6">
           <Text fz={12} lh="15px" color="#5a6071">
             Investing
@@ -116,7 +118,6 @@ const InvestorStatisticCard: FC<Props> = ({ activePools, isMobile }) => {
         nodeHeadLeft={leftNode}
         nodeHeadRight={rightNode}
         statistic={userStatistic}
-        isMobile={isMobile}
       >
         <S.ButtonContainer>
           <S.NewInvestment text={"+ New investment"} routePath="/" />
