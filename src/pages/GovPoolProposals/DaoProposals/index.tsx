@@ -166,6 +166,7 @@ const DaoProposals: FC<Props> = () => {
               </>
             }
           />
+          <Route path="/" element={<Navigate replace to={TABS[0].source} />} />
         </Routes>
       </S.Root>
     </>

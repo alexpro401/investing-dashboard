@@ -2,6 +2,8 @@ import styled from "styled-components/macro"
 import { motion } from "framer-motion"
 
 export const OutletWrp = styled.div`
+  display: flex;
+  flex-direction: column;
   overflow: hidden auto;
   padding: var(--app-padding);
 `
@@ -13,6 +15,7 @@ export const PageHolder = styled(motion.div).attrs(() => ({
   transition: { duration: 0.2 },
 }))`
   width: 100%;
+  flex: 1;
 `
 
 export const PageContent = styled.div`

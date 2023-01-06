@@ -9,7 +9,6 @@ export const Root = styled.div`
   gap: var(--app-gap);
   overflow: hidden auto;
   flex: 1;
-  padding: var(--app-padding);
 `
 
 export const HeadContainer = styled.div`

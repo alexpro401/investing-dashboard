@@ -7,12 +7,10 @@ import PoolPriceDiff from "components/PoolPriceDiff"
 import PoolStatisticCard from "components/cards/PoolStatistic"
 
 export const DaoProposalDetails = styled.div`
-  overflow: hidden auto;
   display: flex;
   flex-direction: column;
   gap: var(--app-gap);
   color: ${(props) => props.theme.textColors.primary};
-  padding: var(--app-padding);
   flex: 1;
 `
 

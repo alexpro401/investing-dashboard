@@ -10,7 +10,6 @@ export const Container = styled(Flex)`
   flex-direction: column;
 
   ${respondTo("sm")} {
-    padding: 0 10px;
     height: 84px;
     background: ${(props) => props.theme.backgroundColors.primary};
     box-shadow: none;
