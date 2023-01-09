@@ -1,34 +1,44 @@
-import { FC, useState } from "react"
+import { FC, useCallback, useState } from "react"
 
 import CircularProgress from "components/CircularProgress"
 import IconButton from "components/IconButton"
 import TransactionSlippage from "components/TransactionSlippage"
+import InfoAccordion, { Info } from "components/InfoAccordion"
 
 import settings from "assets/icons/settings.svg"
-import close from "assets/icons/close-big.svg"
 
 import * as S from "./styled"
+import { Icon } from "common"
+import { ICON_NAMES } from "consts"
+import { useRouteState } from "hooks"
 
 interface Props {
   title: string
   children: React.ReactNode
-  button: React.ReactNode
+  form: React.ReactNode
+  buttons: React.ReactNode[]
+  info?: Info[]
   slippage?: string
   setSlippage?: (v: string) => void
-  onClose: () => void
 }
 
 const Exchange: FC<Props> = ({
   title,
   children,
-  button,
+  form,
+  buttons,
+  info,
   slippage,
   setSlippage,
-  onClose,
 }) => {
   const [isSlippageOpen, setSlippageOpen] = useState(false)
+  const state = useRouteState()
 
   const withSlippage = !!slippage && !!setSlippage
+
+  const handleClose = useCallback(() => {
+    console.log(state)
+  }, [state])
 
   return (
     <S.Card>
@@ -42,20 +52,19 @@ const Exchange: FC<Props> = ({
             media={settings}
             onClick={() => setSlippageOpen(!isSlippageOpen)}
           />
-          <IconButton
-            size={10}
-            filled
-            media={close}
-            onClick={() => onClose()}
-          />
+          <Icon name={ICON_NAMES.modalClose} onClick={handleClose} />
         </S.IconsGroup>
       </S.CardHeader>
 
+      <S.CardForm>{form}</S.CardForm>
+
       {children}
 
-      <S.ButtonDivider />
+      {buttons.map((b) => b)}
 
-      {button}
+      {info && <S.ButtonDivider />}
+
+      {info && <InfoAccordion rows={info} />}
 
       {withSlippage && (
         <TransactionSlippage

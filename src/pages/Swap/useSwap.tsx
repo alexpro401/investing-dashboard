@@ -9,7 +9,10 @@ import {
 import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { ITraderPoolExchangeAmount } from "interfaces/contracts/ITraderPool"
+import {
+  IPoolInfo,
+  ITraderPoolExchangeAmount,
+} from "interfaces/contracts/ITraderPool"
 import { ExchangeType } from "interfaces/exchange"
 import { ExchangeForm } from "interfaces/exchange"
 import { SubmitState, SwapDirection, TradeType } from "consts/types"
@@ -19,9 +22,13 @@ import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 import useGasTracker from "state/gas/hooks"
 
-import { usePoolContract, usePoolPosition, usePoolQuery } from "hooks/usePool"
-import useError from "hooks/useError"
-import usePayload from "hooks/usePayload"
+import {
+  usePoolPosition,
+  usePoolQuery,
+  useTraderPoolInfoMulticall,
+  useError,
+  usePayload,
+} from "hooks"
 
 import { usePriceFeedContract, useTraderPoolContract } from "contracts"
 
@@ -63,6 +70,7 @@ interface UseSwapInfo {
 
 interface UseSwapResponse {
   info: UseSwapInfo
+  infoLoading: boolean
   direction: SwapDirection
   gasPrice: string
   oneTokenCost: BigNumber
@@ -70,10 +78,8 @@ interface UseSwapResponse {
   receivedAfterSlippage: BigNumber
   priceImpact: string
   slippage: string
-  isSlippageOpen: boolean
   swapPath: string[]
   setSlippage: Dispatch<SetStateAction<string>>
-  setSlippageOpen: Dispatch<SetStateAction<boolean>>
   handleFromChange: (v: string) => void
   handleToChange: (v: string) => void
   handleSubmit: () => void
@@ -85,7 +91,11 @@ const useSwap = ({
   from,
   to,
 }: UseSwapProps): [ExchangeForm, UseSwapResponse] => {
-  const [, poolInfo, refreshPoolInfo] = usePoolContract(pool)
+  const [poolInfos, poolInfoLoading] = useTraderPoolInfoMulticall<IPoolInfo>(
+    useMemo(() => [pool], [pool]),
+    "getPoolInfo"
+  )
+
   const priceFeed = usePriceFeedContract()
   const traderPool = useTraderPoolContract(pool)
   const addTransaction = useTransactionAdder()
@@ -94,8 +104,6 @@ const useSwap = ({
   const [fromToken] = useERC20Data(from)
   const [toToken] = useERC20Data(to)
 
-  const [avgBuyingPrice, setAvgBuyingPrice] = useState(ZERO)
-  const [avgSellingPrice, setAvgSellingPrice] = useState(ZERO)
   const [traderShare, setTraderShare] = useState(ZERO)
   const [totalLockedLP, setTotalLockedLP] = useState(ZERO)
   const [pnl, setPNL] = useState(ZERO)
@@ -105,7 +113,6 @@ const useSwap = ({
   const [gasPrice, setGasPrice] = useState("0.00")
   const [, setError] = useError()
   const [slippage, setSlippage] = useState("0.10")
-  const [isSlippageOpen, setSlippageOpen] = useState(false)
   const [, setWalletPrompting] = usePayload()
   const [fromAmount, setFromAmount] = useState("0")
   const [toAmount, setToAmount] = useState("0")
@@ -120,6 +127,8 @@ const useSwap = ({
     "from"
   )
 
+  const poolInfo = poolInfos[pool || ""]
+
   const [baseTokenData] = useERC20Data(poolInfo?.parameters.baseToken)
   const [{ priceUSD }] = usePoolPrice(pool)
   const [history] = usePoolQuery(pool)
@@ -132,6 +141,38 @@ const useSwap = ({
     }
   }, [gasTrackerResponse])
 
+  const infoLoading: boolean = useMemo(() => {
+    return (
+      poolInfoLoading ||
+      !poolInfo ||
+      !priceFeed ||
+      !traderPool ||
+      !baseTokenData
+    )
+  }, [baseTokenData, poolInfo, priceFeed, traderPool, poolInfoLoading])
+
+  const avgBuyingPrice = useMemo(() => {
+    if (!position) return ZERO
+
+    const baseOpen = BigNumber.from(position.totalBaseOpenVolume)
+    const positionOpen = BigNumber.from(position.totalPositionOpenVolume)
+
+    if (positionOpen.isZero()) return ZERO
+
+    return divideBignumbers([baseOpen, 18], [positionOpen, 18])
+  }, [position])
+
+  const avgSellingPrice = useMemo(() => {
+    if (!position) return ZERO
+
+    const baseClose = BigNumber.from(position.totalBaseCloseVolume)
+    const positionClose = BigNumber.from(position.totalPositionCloseVolume)
+
+    if (positionClose.isZero()) return ZERO
+
+    return divideBignumbers([baseClose, 18], [positionClose, 18])
+  }, [position])
+
   const info = useMemo(() => {
     const pnlUSD = multiplyBignumbers([pnlLP, 18], [priceUSD, 18])
     const traderLP = multiplyBignumbers([pnlLP, 18], [traderShare, 18])
@@ -141,7 +182,7 @@ const useSwap = ({
     return {
       fundPNL: {
         lp: `${normalizeBigNumber(pnlLP, 18, 2)} ${poolInfo?.ticker}`,
-        percent: `${normalizeBigNumber(pnl, 4, 2)}%`,
+        percent: normalizeBigNumber(pnl, 4, 2),
         usd: `${normalizeBigNumber(pnlUSD, 18, 2)} USD`,
         traderLP: `${normalizeBigNumber(traderLP, 18, 2)} ${poolInfo?.ticker}`,
         traderUSD: `${normalizeBigNumber(traderPNLUSD, 18, 2)} USD`,
@@ -366,10 +407,6 @@ const useSwap = ({
     [poolInfo]
   )
 
-  const runUpdate = useCallback(() => {
-    refreshPoolInfo()
-  }, [refreshPoolInfo])
-
   const exchangeParams = useMemo(() => {
     return {
       from: {
@@ -440,7 +477,6 @@ const useSwap = ({
       })
 
       if (isTxMined(receipt)) {
-        runUpdate()
         setWalletPrompting(SubmitState.SUCCESS)
       }
     } catch (error: any) {
@@ -462,7 +498,6 @@ const useSwap = ({
     to,
     transactionOptions,
     addTransaction,
-    runUpdate,
     setError,
     setWalletPrompting,
   ])
@@ -492,15 +527,6 @@ const useSwap = ({
     if (!isAddress(from) || !isAddress(to)) return
     fetchAndUpdatePrices().catch(console.error)
   }, [traderPool, priceFeed, from, to])
-
-  // global updater
-  useEffect(() => {
-    const interval = setInterval(() => {
-      runUpdate()
-    }, Number(process.env.REACT_APP_UPDATE_INTERVAL))
-
-    return () => clearInterval(interval)
-  }, [runUpdate])
 
   // balance updater
   useEffect(() => {
@@ -569,40 +595,20 @@ const useSwap = ({
     })()
   }, [estimateGas, fromAmount, getGasPrice])
 
-  // update avg buy/sell price
-  useEffect(() => {
-    if (!position) return
-
-    const baseOpen = BigNumber.from(position.totalBaseOpenVolume)
-    const positionOpen = BigNumber.from(position.totalPositionOpenVolume)
-
-    if (positionOpen.isZero()) return
-    const buyingPrice = divideBignumbers([baseOpen, 18], [positionOpen, 18])
-    setAvgBuyingPrice(buyingPrice)
-
-    const baseClose = BigNumber.from(position.totalBaseCloseVolume)
-    const positionClose = BigNumber.from(position.totalPositionCloseVolume)
-
-    if (positionClose.isZero()) return
-    const sellingPrice = divideBignumbers([baseClose, 18], [positionClose, 18])
-    setAvgSellingPrice(sellingPrice)
-  }, [position])
-
   return [
     form,
     {
       info,
+      infoLoading,
       direction,
       gasPrice,
       receivedAfterSlippage,
       priceImpact,
       oneTokenCost,
       oneUSDCost,
-      isSlippageOpen,
       slippage,
       swapPath,
       setSlippage,
-      setSlippageOpen,
       handleSubmit,
       handleFromChange,
       handleToChange,

@@ -68,7 +68,7 @@ const SwapPrice: React.FC<Props> = ({
   const icon = (
     <AngleIcon
       variants={rotate180Variants}
-      animate={isExpanded ? "visible" : "hidden"}
+      animate={isExpanded ? "hidden" : "visible"}
       src={angle}
     />
   )

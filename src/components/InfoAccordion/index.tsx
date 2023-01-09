@@ -1,11 +1,12 @@
 import { FC, ReactNode } from "react"
 import Row from "./Row"
+import * as S from "./styled"
 
 export interface Info {
   title: string
   tooltip?: ReactNode
   value: string
-  pnl: string
+  pnl?: string
   childrens?: Info[]
 }
 
@@ -15,7 +16,7 @@ interface Props {
 
 const InfoAccordion: FC<Props> = ({ rows }) => {
   return (
-    <div>
+    <S.Container>
       {rows.map((row) => (
         <Row key={row.title} data={row}>
           {row.childrens && (
@@ -27,7 +28,7 @@ const InfoAccordion: FC<Props> = ({ rows }) => {
           )}
         </Row>
       ))}
-    </div>
+    </S.Container>
   )
 }
 

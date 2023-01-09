@@ -1,15 +1,24 @@
+import { motion } from "framer-motion"
 import styled from "styled-components"
 import { Flex } from "theme"
+
+export const Container = styled(Flex)`
+  flex-direction: column;
+  width: fill-available;
+  gap: 8px;
+`
 
 export const Row = styled(Flex)`
   width: fill-available;
   justify-content: flex-start;
   flex-direction: column;
+  gap: 8px;
 `
 
 export const Content = styled(Flex)`
   justify-content: space-between;
   width: fill-available;
+  height: 16px;
 `
 
 export const Body = styled(Flex)`
@@ -18,6 +27,7 @@ export const Body = styled(Flex)`
   flex-direction: column;
   padding-right: 20px;
   box-sizing: border-box;
+  gap: 8px;
 `
 
 export const Title = styled(Flex)`
@@ -40,4 +50,14 @@ export const Left = styled(Flex)`
 `
 export const Right = styled(Flex)`
   gap: 4px;
+`
+
+export const AngleIconWrapper = styled(motion.div)`
+  color: #b1c7fc;
+  height: 16px;
+  width: 16px;
+
+  & > svg {
+    transform: rotate(180deg);
+  }
 `

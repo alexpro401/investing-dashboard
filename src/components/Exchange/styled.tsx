@@ -10,7 +10,7 @@ import TokenIcon from "components/TokenIcon"
 import { DividendToken } from "interfaces"
 import { AppButton } from "common"
 
-export const InputContainer = styled(GradientBorder)<{ height?: string }>`
+export const InputContainer = styled(Flex)<{ height?: string }>`
   flex-direction: column;
   justify-content: space-between;
   padding: 16px 16px 16px 16px;
@@ -18,9 +18,8 @@ export const InputContainer = styled(GradientBorder)<{ height?: string }>`
   width: 100%;
   height: ${(props) => (props.height ? props.height : "100px")};
 
-  &:after {
-    background: #141926;
-  }
+  background: #141926;
+  border: 1px solid #293c54;
 `
 
 export const RiskyContainer = styled(GradientBorder)`
@@ -52,7 +51,7 @@ export const Price = styled(Text)`
   font-size: 13px;
   line-height: 13px;
   letter-spacing: 0.3px;
-  color: #788ab4;
+  color: #b1c7fc;
   user-select: none;
 `
 export const Balance = styled(Flex)`
@@ -70,7 +69,7 @@ export const Tokens = styled.span`
   line-height: 13px;
   text-align: right;
   letter-spacing: 0.3px;
-  color: #788ab4;
+  color: #b1c7fc;
   margin-right: 3px;
 `
 
@@ -116,10 +115,10 @@ export const Input = styled.input`
   }
 
   &:disabled {
-    color: #788ab4 !important;
+    color: #b1c7fc !important;
 
     &::placeholder {
-      color: #788ab4 !important;
+      color: #b1c7fc !important;
     }
   }
 `
@@ -143,10 +142,10 @@ export const InputS = styled.input`
   }
 
   &:disabled {
-    color: #788ab4 !important;
+    color: #b1c7fc !important;
 
     &::placeholder {
-      color: #788ab4 !important;
+      color: #b1c7fc !important;
     }
   }
 `
@@ -244,10 +243,8 @@ export const PriceText = styled(Text)`
 // DIVIDER
 
 export const DividerContainer = styled(Flex)`
-  margin-top: 2px;
-  margin-bottom: 2px;
   user-select: none;
-  height: 24px;
+  height: 18px;
   position: relative;
 `
 
@@ -264,7 +261,7 @@ export const PercentButton = styled.div<{ active?: boolean }>`
   line-height: 14px;
   letter-spacing: 0.5px;
 
-  color: ${(props) => (props.active ? "#E4F2FF" : "#788ab4")};
+  color: ${(props) => (props.active ? "#E4F2FF" : "#B1C7FC")};
 
   border-radius: 3px;
 
@@ -310,11 +307,16 @@ export const Card = styled(BasicCard)`
   background: #181e2c;
   max-width: 450px;
   margin: auto;
+  gap: 16px;
 `
 
 export const CardHeader = styled(Flex)`
   width: 100%;
-  padding: 4px 0 24px;
+`
+
+export const CardForm = styled(Flex)`
+  flex-direction: column;
+  width: 100%;
 `
 
 export const Title = styled.div<{ active?: boolean }>`
@@ -323,7 +325,7 @@ export const Title = styled.div<{ active?: boolean }>`
   font-weight: 600;
   font-size: 16px;
   line-height: 16px;
-  color: ${(props) => (props.active ? "#e4f2ff" : "#788AB4")};
+  color: ${(props) => (props.active ? "#e4f2ff" : "#B1C7FC")};
 
   &:nth-child(2) {
     margin-left: 24px;
@@ -361,7 +363,7 @@ export const InfoGrey = styled.div`
   font-weight: 400;
   font-size: 13px;
   line-height: 15px;
-  color: #788ab4;
+  color: #b1c7fc;
 `
 
 export const InfoWhite = styled.div`
@@ -465,7 +467,7 @@ export const TokenText = styled.div`
   font-weight: 400;
   font-size: 13px;
   line-height: 100%;
-  color: #788ab4;
+  color: #b1c7fc;
 `
 
 // DIVIDENDS INPUT
@@ -486,8 +488,6 @@ export const AddButton = styled.button`
 export const ButtonDivider = styled.div`
   width: fill-available;
   height: 1px;
-  margin-top: 16px;
-  margin-bottom: 16px;
 
   background: #1c2437;
   border-radius: 16px;
