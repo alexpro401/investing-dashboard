@@ -13,7 +13,7 @@ import { copyToClipboard } from "utils/clipboard"
 import { useAddToast } from "state/application/hooks"
 import { normalizeBigNumber, shortenAddress } from "utils"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
-import { useBreakpoints } from "../../../hooks"
+import { useBreakpoints } from "hooks"
 
 interface Props {
   account?: string | null

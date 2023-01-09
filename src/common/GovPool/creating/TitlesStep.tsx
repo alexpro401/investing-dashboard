@@ -581,186 +581,188 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
             </Card>
           </>
         ) : (
-          <Card>
-            <CardHead
-              nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
-              title="About DAO "
-            />
-            <CardDescription>
-              <p>Add your DAO’s website, description, and social links.</p>
-            </CardDescription>
-            <CardFormControl>
-              <InputField
-                value={daoName.get}
-                setValue={daoName.set}
-                label="DAO name"
-                labelNodeRight={
-                  isFieldValid("daoName") ? (
-                    <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
-                  ) : (
-                    <></>
-                  )
-                }
-                errorMessage={getFieldErrorMessage("daoName")}
-                onBlur={() => touchField("daoName")}
-              />
-              <TextareaField
-                value={description.get}
-                setValue={description.set}
-                label="Description"
-                errorMessage={getFieldErrorMessage("description")}
-                onBlur={() => touchField("description")}
-              />
-              <InputField
-                value={websiteUrl.get}
-                setValue={websiteUrl.set}
-                label="Site"
-                errorMessage={getFieldErrorMessage("websiteUrl")}
-                onBlur={() => touchField("websiteUrl")}
-              />
-            </CardFormControl>
-            {SocialLinks}
-          </Card>
-        )}
-
-        {isTablet ? (
           <>
             <Card>
               <CardHead
-                nodeLeft={<Icon name={ICON_NAMES.shieldCheck} />}
-                title="Governance token information"
+                nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
+                title="About DAO "
               />
               <CardDescription>
-                <p>
-                  For governance, you can choose any ERC-20 token, any (ERC-721)
-                  NFT, or a hybrid of both.
-                </p>
-                <p>
-                  *Token/NFT selected for governance cannot be changed once
-                  initially set.
-                </p>
+                <p>Add your DAO’s website, description, and social links.</p>
               </CardDescription>
+              <CardFormControl>
+                <InputField
+                  value={daoName.get}
+                  setValue={daoName.set}
+                  label="DAO name"
+                  labelNodeRight={
+                    isFieldValid("daoName") ? (
+                      <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                    ) : (
+                      <></>
+                    )
+                  }
+                  errorMessage={getFieldErrorMessage("daoName")}
+                  onBlur={() => touchField("daoName")}
+                />
+                <TextareaField
+                  value={description.get}
+                  setValue={description.set}
+                  label="Description"
+                  errorMessage={getFieldErrorMessage("description")}
+                  onBlur={() => touchField("description")}
+                />
+                <InputField
+                  value={websiteUrl.get}
+                  setValue={websiteUrl.set}
+                  label="Site"
+                  errorMessage={getFieldErrorMessage("websiteUrl")}
+                  onBlur={() => touchField("websiteUrl")}
+                />
+              </CardFormControl>
+              {SocialLinks}
+            </Card>
+            {isTablet ? (
               <>
-                <S.ERCArea>
-                  <S.ERCAreaHead>
-                    <S.ERCImgWrp src={cosmoImg} alt="" />
-                    <S.ERCAreaDescription>
-                      <MediumText desktopSize="16px" desktopWeight={700}>
-                        ERC-20
-                      </MediumText>
-                      <RegularText
-                        desktopSize="14px"
-                        desktopWeight={400}
-                        color={theme.textColors.secondary}
-                      >
-                        Enter ERC-20 token address or create a new one. 1 token
-                        = 1 Voting power
-                      </RegularText>
-                    </S.ERCAreaDescription>
-                    <Switch
-                      isOn={isErc20.get}
-                      onChange={(n, v) => {
-                        isErc20.set(v)
-                        if (!v && !isErc721.get) {
-                          isErc721.set(true)
-                        }
-                      }}
-                      name={"create-fund-title-step-is-erc20"}
-                    />
-                  </S.ERCAreaHead>
-                  {IsERC20Collapse}
-                </S.ERCArea>
-                <S.ERCArea>
-                  <S.ERCAreaHead>
-                    <S.ERCImgWrp src={cosmoImg} alt="" />
-                    <S.ERCAreaDescription>
-                      <MediumText desktopSize="16px" desktopWeight={700}>
-                        ERC-721 (NFT)
-                      </MediumText>
-                      <RegularText
-                        desktopSize="14px"
-                        desktopWeight={400}
-                        color={theme.textColors.secondary}
-                      >
-                        Enter ERC-721 address, number of NFTs in the series, and
-                        how many votes will each NFT represent.
-                      </RegularText>
-                    </S.ERCAreaDescription>
-                    <Switch
-                      isOn={isErc721.get}
-                      onChange={(n, v) => {
-                        isErc721.set(v)
-                        if (!v && !isErc20.get) {
-                          isErc20.set(true)
-                        }
-                      }}
-                      name={"create-fund-title-step-is-erc721"}
-                    />
-                  </S.ERCAreaHead>
-                  {IsERC721Collapse}
-                </S.ERCArea>
+                <Card>
+                  <CardHead
+                    nodeLeft={<Icon name={ICON_NAMES.shieldCheck} />}
+                    title="Governance token information"
+                  />
+                  <CardDescription>
+                    <p>
+                      For governance, you can choose any ERC-20 token, any
+                      (ERC-721) NFT, or a hybrid of both.
+                    </p>
+                    <p>
+                      *Token/NFT selected for governance cannot be changed once
+                      initially set.
+                    </p>
+                  </CardDescription>
+                  <>
+                    <S.ERCArea>
+                      <S.ERCAreaHead>
+                        <S.ERCImgWrp src={cosmoImg} alt="" />
+                        <S.ERCAreaDescription>
+                          <MediumText desktopSize="16px" desktopWeight={700}>
+                            ERC-20
+                          </MediumText>
+                          <RegularText
+                            desktopSize="14px"
+                            desktopWeight={400}
+                            color={theme.textColors.secondary}
+                          >
+                            Enter ERC-20 token address or create a new one. 1
+                            token = 1 Voting power
+                          </RegularText>
+                        </S.ERCAreaDescription>
+                        <Switch
+                          isOn={isErc20.get}
+                          onChange={(n, v) => {
+                            isErc20.set(v)
+                            if (!v && !isErc721.get) {
+                              isErc721.set(true)
+                            }
+                          }}
+                          name={"create-fund-title-step-is-erc20"}
+                        />
+                      </S.ERCAreaHead>
+                      {IsERC20Collapse}
+                    </S.ERCArea>
+                    <S.ERCArea>
+                      <S.ERCAreaHead>
+                        <S.ERCImgWrp src={cosmoImg} alt="" />
+                        <S.ERCAreaDescription>
+                          <MediumText desktopSize="16px" desktopWeight={700}>
+                            ERC-721 (NFT)
+                          </MediumText>
+                          <RegularText
+                            desktopSize="14px"
+                            desktopWeight={400}
+                            color={theme.textColors.secondary}
+                          >
+                            Enter ERC-721 address, number of NFTs in the series,
+                            and how many votes will each NFT represent.
+                          </RegularText>
+                        </S.ERCAreaDescription>
+                        <Switch
+                          isOn={isErc721.get}
+                          onChange={(n, v) => {
+                            isErc721.set(v)
+                            if (!v && !isErc20.get) {
+                              isErc20.set(true)
+                            }
+                          }}
+                          name={"create-fund-title-step-is-erc721"}
+                        />
+                      </S.ERCAreaHead>
+                      {IsERC721Collapse}
+                    </S.ERCArea>
+                  </>
+                </Card>
               </>
-            </Card>
-          </>
-        ) : (
-          <>
-            <Card>
-              <CardHead
-                nodeLeft={<Icon name={ICON_NAMES.dollarOutline} />}
-                title="ERC-20"
-                nodeRight={
-                  <Switch
-                    isOn={isErc20.get}
-                    onChange={(n, v) => {
-                      isErc20.set(v)
-                      if (!v && !isErc721.get) {
-                        isErc721.set(true)
-                      }
-                    }}
-                    name={"create-fund-title-step-is-erc20"}
+            ) : (
+              <>
+                <Card>
+                  <CardHead
+                    nodeLeft={<Icon name={ICON_NAMES.dollarOutline} />}
+                    title="ERC-20"
+                    nodeRight={
+                      <Switch
+                        isOn={isErc20.get}
+                        onChange={(n, v) => {
+                          isErc20.set(v)
+                          if (!v && !isErc721.get) {
+                            isErc721.set(true)
+                          }
+                        }}
+                        name={"create-fund-title-step-is-erc20"}
+                      />
+                    }
                   />
-                }
-              />
-              <CardDescription>
-                <p>
-                  Enter ERC-20 token address or create a new one. 1 token = 1
-                  Voting power
-                </p>
-              </CardDescription>
-              {IsERC20Collapse}
-            </Card>
-            <Card>
-              <CardHead
-                nodeLeft={<Icon name={ICON_NAMES.star} />}
-                title="ERC-721 (NFT)"
-                nodeRight={
-                  <Switch
-                    isOn={isErc721.get}
-                    onChange={(n, v) => {
-                      isErc721.set(v)
-                      if (!v && !isErc20.get) {
-                        isErc20.set(true)
-                      }
-                    }}
-                    name={"create-fund-title-step-is-erc721"}
+                  <CardDescription>
+                    <p>
+                      Enter ERC-20 token address or create a new one. 1 token =
+                      1 Voting power
+                    </p>
+                  </CardDescription>
+                  {IsERC20Collapse}
+                </Card>
+                <Card>
+                  <CardHead
+                    nodeLeft={<Icon name={ICON_NAMES.star} />}
+                    title="ERC-721 (NFT)"
+                    nodeRight={
+                      <Switch
+                        isOn={isErc721.get}
+                        onChange={(n, v) => {
+                          isErc721.set(v)
+                          if (!v && !isErc20.get) {
+                            isErc20.set(true)
+                          }
+                        }}
+                        name={"create-fund-title-step-is-erc721"}
+                      />
+                    }
                   />
-                }
-              />
-              <CardDescription>
-                <p>
-                  Enter the governing NFT (ERC-721) address, number of NFTs in
-                  the series, and the voting power. For governance, you can
-                  choose any ERC-20 token, any (ERC-721) NFT, or a hybrid of
-                  both.
-                </p>
-                <br />
-                <p>
-                  With hybrid governance (ERC-20 + NFT), your NFT can have more
-                  weight than a token, and thus should have more voting power.
-                </p>
-              </CardDescription>
-              {IsERC721Collapse}
-            </Card>
+                  <CardDescription>
+                    <p>
+                      Enter the governing NFT (ERC-721) address, number of NFTs
+                      in the series, and the voting power. For governance, you
+                      can choose any ERC-20 token, any (ERC-721) NFT, or a
+                      hybrid of both.
+                    </p>
+                    <br />
+                    <p>
+                      With hybrid governance (ERC-20 + NFT), your NFT can have
+                      more weight than a token, and thus should have more voting
+                      power.
+                    </p>
+                  </CardDescription>
+                  {IsERC721Collapse}
+                </Card>
+              </>
+            )}
           </>
         )}
 

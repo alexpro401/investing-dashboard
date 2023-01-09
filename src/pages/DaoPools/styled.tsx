@@ -19,16 +19,14 @@ export const Container = styled(motion.div).attrs(() => ({
 }))`
   display: grid;
   grid-template-rows: max-content 1fr;
-  grid-gap: 16px;
+  grid-gap: var(--app-gap);
   overflow: hidden;
-  padding: 16px 0 0;
+  padding: var(--app-padding);
+  padding-bottom: 0;
 `
 
 export const Indents = styled.div<{ top?: boolean; side?: boolean }>`
   width: 100%;
-  margin-top: ${({ top = false }) => (top ? "16px" : "0")};
-  padding-left: ${({ side = true }) => (side ? "16px" : "0")};
-  padding-right: ${({ side = true }) => (side ? "16px" : "0")};
 `
 
 export const Action = styled(AppButton).attrs(() => ({
@@ -68,10 +66,13 @@ export const List = {
     font-weight: 900;
     letter-spacing: -0.01em;
     color: ${({ theme }) => theme.textColors.primary};
+    margin: 0;
   `,
   Scroll: styled.div<{ center: boolean }>`
+    display: flex;
+    flex-direction: column;
+    gap: var(--app-gap);
     overflow-y: auto;
-    padding: 0 0 16px;
 
     ${({ center }) => (center ? centerGridItem : "")};
   `,

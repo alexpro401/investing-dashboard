@@ -1,7 +1,16 @@
-import styled from "styled-components/macro"
+import styled, { css } from "styled-components/macro"
 import { motion } from "framer-motion"
 import { Icon, SelectableCard } from "common"
 import { SelectableCardTitles } from "common/SelectableCard/styled"
+
+export const Root = styled.div<{ isWithPaddings?: boolean }>`
+  overflow: hidden auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  padding: ${(props) => (props.isWithPaddings ? css`var(--app-padding);` : "")};
+`
 
 export const PageHolder = styled(motion.div).attrs(() => ({
   initial: { opacity: 0 },
@@ -9,16 +18,10 @@ export const PageHolder = styled(motion.div).attrs(() => ({
   exit: { opacity: 0 },
   transition: { duration: 0.2 },
 }))`
-  width: 100%;
-  overflow-y: auto;
-`
-
-export const PageContent = styled.div`
-  overflow: hidden auto;
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  height: 100%;
+  gap: var(--app-gap);
+  flex: 1;
 `
 
 export const DesktopHeaderWrp = styled.div`

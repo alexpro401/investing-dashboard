@@ -7,7 +7,7 @@ import { Flex, Text } from "theme"
 import Avatar from "components/Avatar"
 import Skeleton from "components/Skeleton"
 import { shortenAddress } from "utils"
-import { useBreakpoints } from "../../hooks"
+import { useBreakpoints } from "hooks"
 
 interface Props {
   account?: string | null
