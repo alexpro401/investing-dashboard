@@ -22,6 +22,7 @@ enum EProposalType {
   tokenDistribution = "tokenDistribution",
   validatorSettings = "validatorSettings",
   changeTokenPrice = "changeTokenPrice",
+  tokenSale = "tokenSale",
   createNew = "createNew",
 }
 
@@ -65,6 +66,7 @@ const CreateProposalSelectType: React.FC = () => {
         [EProposalType.tokenDistribution]: "/token-distribution",
         [EProposalType.validatorSettings]: "/validator-settings",
         [EProposalType.changeTokenPrice]: "/",
+        [EProposalType.tokenSale]: "/token-sale",
         [EProposalType.createNew]: "/custom",
       }[selectedCard.specification]
 
@@ -153,6 +155,19 @@ const CreateProposalSelectType: React.FC = () => {
         description: (
           <>
             <p>Adjust the sales price of your token.</p>
+          </>
+        ),
+        iconName: ICON_NAMES.dollarOutline,
+      },
+      {
+        type: EProposalType.tokenSale,
+        title: "Token sale",
+        description: (
+          <>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus
+              odit commodi veritatis.
+            </p>
           </>
         ),
         iconName: ICON_NAMES.dollarOutline,

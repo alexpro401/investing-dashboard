@@ -9,7 +9,6 @@ import GovPoolFormContextProvider from "context/govPool/GovPoolFormContext"
 import FormStepsLoaderWrapper from "common/FormSteps/FormStepsLoaderWrapper"
 import { useGovPoolDescription } from "hooks/dao"
 import Skeleton from "components/Skeleton"
-import { Flex } from "theme"
 import { GovPoolFormOptions } from "types"
 import { INITIAL_DAO_PROPOSAL } from "consts/dao"
 

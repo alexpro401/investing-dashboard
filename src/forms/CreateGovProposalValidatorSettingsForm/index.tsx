@@ -132,6 +132,7 @@ const CreateGovProposalValidatorSettingsForm: React.FC = () => {
           )}
           {!isMobile && (
             <S.SideStepsNavigationBarWrp
+              title={"Create proposal"}
               steps={Object.values(STEPS).map((step) => ({
                 number: Object.values(STEPS).indexOf(step),
                 title: STEPS_TITLES[step],

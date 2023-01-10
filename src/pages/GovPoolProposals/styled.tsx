@@ -19,7 +19,6 @@ export const PageHolder = styled(motion.div).attrs(() => ({
 `
 
 export const PageContent = styled.div`
-  overflow: hidden auto;
   display: flex;
   flex-direction: column;
   gap: var(--app-gap);

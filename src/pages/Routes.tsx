@@ -91,6 +91,9 @@ const DaoProposalChangeTokenDistribution = lazy(
       "pages/GovPoolProposals/CreateDaoProposalChangeVotingSettings/subpages/TokenDistribution"
     )
 )
+const DaoProposalTokenSale = lazy(
+  () => import("pages/GovPoolProposals/CreateDaoProposalTokenSale")
+)
 const DaoProposalChangeCustomSettings = lazy(
   () =>
     import(
@@ -328,6 +331,10 @@ export const router = createBrowserRouter([
               {
                 path: ROUTE_PATHS.daoProposalCreateTokenDistribution,
                 element: <DaoProposalTokenDistribution />,
+              },
+              {
+                path: ROUTE_PATHS.daoProposalCreateTokenSale,
+                element: <DaoProposalTokenSale />,
               },
               {
                 path: ROUTE_PATHS.daoProposalCreateInternalSelectType,

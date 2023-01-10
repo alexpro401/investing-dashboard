@@ -27,7 +27,7 @@ export const StepsWrapper = styled.div`
 export const SideStepsNavigationBarWrp = styled(SideStepsNavigationBar)`
   min-width: 300px;
   position: sticky;
-  top: 0;
+  top: 0px;
   height: min-content;
   padding: 0;
 `

@@ -11,7 +11,6 @@ import { useGovPoolSetting, useGovPoolValidatorsCount } from "hooks/dao"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { INITIAL_DAO_PROPOSAL } from "consts/dao"
 import Skeleton from "components/Skeleton"
-import { Flex } from "theme"
 import { ZERO_ADDR } from "consts"
 
 import * as S from "../styled"
