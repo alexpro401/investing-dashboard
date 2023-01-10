@@ -25,13 +25,7 @@ import {
   InvestProposalQuery,
 } from "./invest-pools"
 
-import {
-  InvestorQuery,
-  InvestorPositionsQuery,
-  InvestorPoolsPositionsQuery,
-  InvestorPoolsInvestedForQuery,
-  InvestorProposalsPositionsQuery,
-} from "./investors"
+export * from "./investors"
 
 import { UserTransactionsQuery } from "./interactions"
 import {
@@ -55,11 +49,7 @@ export {
   PoolsQueryWithSort,
   PoolsQueryByTypeWithSort,
   BasicPositionsQuery,
-  InvestorQuery,
   InvestProposalQuery,
-  InvestorPositionsQuery,
-  InvestorPoolsPositionsQuery,
-  InvestorPoolsInvestedForQuery,
   InvestorRiskyProposalsQuery,
   InvestorInvestProposalsQuery,
   RiskyPositionsQuery,
@@ -69,7 +59,6 @@ export {
   RiskyProposalPositionQuery,
   PoolPositionLast,
   PositionsByIdsQuery,
-  InvestorProposalsPositionsQuery,
   GovPoolQuery,
   GovPoolsQuery,
   GovVoterInPoolQuery,

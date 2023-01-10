@@ -7,6 +7,8 @@ const INVESTOR_POSITION_VEST = `
   volumeBase
   volumeLP
   volumeUSD
+  volumeBTC
+  volumeNative
 `
 
 const InvestorPositionsQuery = `
@@ -89,6 +91,10 @@ const INVESTOR_POOL_POSITION = `
   totalLPDivestVolume
   totalUSDInvestVolume
   totalUSDDivestVolume
+  totalBTCInvestVolume
+  totalBTCDivestVolume
+  totalNativeDivestVolume
+  totalNativeInvestVolume
 `
 
 const INVESTOR_POOL_LP_HISTORY = `
@@ -100,7 +106,7 @@ const INVESTOR_POOL_LP_HISTORY = `
 /**
  * Investor pool position by pool and investor
  * @param { string } pool - pool address
- * @param { string } investor - investor acccount
+ * @param { string } investor - investor account
  **/
 const InvestorPoolPositionQuery = `
   query ($pool: String!, $investors: [String]!) {
@@ -227,6 +233,22 @@ const InvestorPoolsPositionsQuery = `
   }
 `
 
+const InvestorVestsInPoolQuery = `
+query ($investor: String!, $pool: String!, $offset: Int, $limit: Int) {
+  vests(
+    skip: $offset, first: $limit,
+    where: {
+      investorPoolPosition_: {
+        investor: $investor, 
+        pool: $pool
+      }
+    }
+  ) {
+    ${INVESTOR_POSITION_VEST}
+  }
+}
+`
+
 export {
   InvestorQuery,
   InvestorPositionsQuery,
@@ -239,4 +261,5 @@ export {
   InvestorsPoolsLpHistoryQuery,
   InvestorsInsuranceHistoriesQuery,
   InvestorProposalsPositionsQuery,
+  InvestorVestsInPoolQuery,
 }

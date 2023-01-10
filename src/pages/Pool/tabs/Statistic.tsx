@@ -1,6 +1,7 @@
-import { FC, useMemo } from "react"
+import { FC, useMemo, ReactNode } from "react"
 import { getDay } from "date-fns"
 import { v4 as uuidv4 } from "uuid"
+import { useWeb3React } from "@web3-react/core"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
@@ -12,14 +13,25 @@ import { GridTwoColumn, Indents, Label, ProgressBar, Value } from "../styled"
 import { Card } from "common"
 import { Flex } from "theme"
 import Tooltip from "components/Tooltip"
-import { usePoolSortino } from "hooks/pool"
+import {
+  usePoolSortino,
+  usePoolAlternativePnlUSD,
+  useInvestorAllVestsInPool,
+  usePoolAlternativePnlToken,
+} from "hooks"
 
 const MAX_INVESTORS = 1000
 const MAX_OPEN_TRADES = 25
-const sortinoTokens = [
-  "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-  "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-]
+const addressWETH = "0x8babbb98678facc7342735486c851abd7a0d17ca"
+const addressWBTC = "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
+const sortinoTokens = [addressWETH, addressWBTC]
+
+function getUSDRenderValue(value: BigNumber): ReactNode {
+  if (value.lt(0)) {
+    return `-$${normalizeBigNumber(value.abs(), 18, 2)}`
+  }
+  return `$${normalizeBigNumber(value, 18, 2)}`
+}
 
 interface Props {
   poolData: IPoolQuery
@@ -27,7 +39,53 @@ interface Props {
 }
 
 const TabPoolStatistic: FC<Props> = ({ poolData, poolInfo }) => {
+  const { account } = useWeb3React()
+
+  const { data: investorVests, loading: investorVestsLoading } =
+    useInvestorAllVestsInPool(account, poolData.id)
+
   const sortino = usePoolSortino(poolData.id, sortinoTokens)
+
+  const altPnlUSD = usePoolAlternativePnlUSD(investorVests, poolData.baseToken)
+
+  const altPnlUSD_USD = useMemo(
+    () => getUSDRenderValue(altPnlUSD.usd),
+    [altPnlUSD]
+  )
+  const altPnlUSD_Percentage = useMemo(
+    () => normalizeBigNumber(altPnlUSD.percentage),
+    [altPnlUSD]
+  )
+
+  const altPnlInETH = usePoolAlternativePnlToken(
+    investorVests,
+    poolData.baseToken,
+    addressWETH
+  )
+
+  const altPnlETH_USD = useMemo(
+    () => getUSDRenderValue(altPnlInETH.usd),
+    [altPnlInETH]
+  )
+  const altPnlETH_Percentage = useMemo(
+    () => normalizeBigNumber(altPnlInETH.percentage),
+    [altPnlInETH]
+  )
+
+  const altPnlInBTC = usePoolAlternativePnlToken(
+    investorVests,
+    poolData.baseToken,
+    addressWBTC
+  )
+
+  const altPnlBTC_USD = useMemo(
+    () => getUSDRenderValue(altPnlInBTC.usd),
+    [altPnlInBTC]
+  )
+  const altPnlBTC_Percentage = useMemo(
+    () => normalizeBigNumber(altPnlInBTC.percentage),
+    [altPnlInBTC]
+  )
 
   const investorsCount = Number(poolData?.investorsCount) || 0
   const openPositionsLen = Number(poolInfo?.openPositions.length) || 0
@@ -38,17 +96,28 @@ const TabPoolStatistic: FC<Props> = ({ poolData, poolInfo }) => {
     return normalizeBigNumber(poolData.orderSize, 4, 2)
   }, [poolData])
 
-  const dailyProfit = useMemo(() => {
-    if (!poolData) return "0"
-
-    const days = getDay(expandTimestamp(poolData.creationTime))
-    if (days === 0) return "0"
+  const pnlPerc = useMemo(() => {
+    if (!poolData) return "0.0"
 
     const priceLP = getPriceLP(poolData.priceHistory)
-    const pnl = getPNL(priceLP)
-
-    return (Number(pnl) / days).toFixed(2)
+    return getPNL(priceLP)
   }, [poolData])
+
+  const pnlUSD = useMemo(() => {
+    if (!poolData || !poolData.priceHistory[0]) return "$0.0"
+
+    const BN = BigNumber.from(poolData.priceHistory[0]?.percPNLUSD)
+    return getUSDRenderValue(BN)
+  }, [poolData])
+
+  const dailyProfit = useMemo(() => {
+    if (!poolData) return "0.0"
+
+    const days = getDay(expandTimestamp(poolData.creationTime))
+    if (days === 0) return "0.0"
+
+    return (Number(pnlPerc) / days).toFixed(2)
+  }, [poolData, pnlPerc])
 
   const timePosition = useMemo(() => {
     if (!poolData) return ""
@@ -87,15 +156,18 @@ const TabPoolStatistic: FC<Props> = ({ poolData, poolInfo }) => {
             <Flex full ai="center" jc="space-between">
               <Label>DEXE</Label>
               <div>
-                <Value.Medium color="#E4F2FF">$230,000</Value.Medium>&nbsp;
-                <Value.Medium color="#B1C7FC">(50%)</Value.Medium>
+                <Value.Medium color="#E4F2FF">{pnlUSD}</Value.Medium>&nbsp;
+                <Value.Medium color="#B1C7FC">({pnlPerc}%)</Value.Medium>
               </div>
             </Flex>
             <Flex full ai="center" jc="space-between">
               <Label>USD</Label>
               <div>
-                <Value.Medium color="#E4F2FF">$500,000</Value.Medium>&nbsp;
-                <Value.Medium color="#B1C7FC">(500%)</Value.Medium>
+                <Value.Medium color="#E4F2FF">{altPnlUSD_USD}</Value.Medium>
+                &nbsp;
+                <Value.Medium color="#B1C7FC">
+                  ({altPnlUSD_Percentage}%)
+                </Value.Medium>
               </div>
             </Flex>
           </GridTwoColumn>
@@ -103,15 +175,21 @@ const TabPoolStatistic: FC<Props> = ({ poolData, poolInfo }) => {
             <Flex full ai="center" jc="space-between">
               <Label>ETH</Label>
               <div>
-                <Value.Medium color="#E4F2FF">$30,214</Value.Medium>&nbsp;
-                <Value.Medium color="#B1C7FC">(50%)</Value.Medium>
+                <Value.Medium color="#E4F2FF">{altPnlETH_USD}</Value.Medium>
+                &nbsp;
+                <Value.Medium color="#B1C7FC">
+                  ({altPnlETH_Percentage}%)
+                </Value.Medium>
               </div>
             </Flex>
             <Flex full ai="center" jc="space-between">
               <Label>BTC</Label>
               <div>
-                <Value.Medium color="#E4F2FF">3,134</Value.Medium>&nbsp;
-                <Value.Medium color="#B1C7FC">(238%)</Value.Medium>
+                <Value.Medium color="#E4F2FF">{altPnlBTC_USD}</Value.Medium>
+                &nbsp;
+                <Value.Medium color="#B1C7FC">
+                  ({altPnlBTC_Percentage}%)
+                </Value.Medium>
               </div>
             </Flex>
           </GridTwoColumn>
