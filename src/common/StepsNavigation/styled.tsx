@@ -31,7 +31,7 @@ export const StepsNavigationActions = styled.div`
 
   ${respondTo("sm")} {
     justify-content: flex-end;
-    padding: 0 20px;
+    padding: 0;
   }
 `
 

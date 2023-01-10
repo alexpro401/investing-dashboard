@@ -5,7 +5,7 @@ import { isNil } from "lodash"
 import * as S from "./styled"
 import { Flex } from "theme"
 import Tooltip from "components/Tooltip"
-import { useBreakpoints } from "../../hooks"
+import { useBreakpoints } from "hooks"
 
 interface Statistic {
   label: ReactNode
