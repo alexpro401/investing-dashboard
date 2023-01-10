@@ -1,9 +1,6 @@
 import { useMemo } from "react"
-import { createClient, useQuery } from "urql"
-
-const GovPoolGraphClient = createClient({
-  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
-})
+import { useQuery } from "urql"
+import { graphClientDaoPools } from "utils/graphClient"
 
 export const useGovPoolProposalVotingHistory = (
   offset = 0,
@@ -36,7 +33,7 @@ export const useGovPoolProposalVotingHistory = (
         }
       }
     `,
-    context: GovPoolGraphClient,
+    context: graphClientDaoPools,
   })
 
   const proposalVotes = useMemo(() => {

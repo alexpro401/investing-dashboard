@@ -1,5 +1,4 @@
 import { Routes, Route, useParams } from "react-router-dom"
-import { createClient, Provider as GraphProvider } from "urql"
 
 import Header from "components/Header/Layout"
 
@@ -10,10 +9,6 @@ import S from "./styled"
 import { Center } from "theme"
 import { GuardSpinner } from "react-spinners-kit"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
-
-const AllPoolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-})
 
 const FundPositions = () => {
   const { poolAddress } = useParams()
@@ -66,10 +61,4 @@ const FundPositions = () => {
   )
 }
 
-const FundPositionsWithProvider = () => (
-  <GraphProvider value={AllPoolsClient}>
-    <FundPositions />
-  </GraphProvider>
-)
-
-export default FundPositionsWithProvider
+export default FundPositions

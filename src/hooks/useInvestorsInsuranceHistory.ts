@@ -4,6 +4,7 @@ import { useQuery } from "urql"
 import { getDaysToDate } from "utils"
 import { InvestorsInsuranceHistoriesQuery } from "queries/investors"
 import { Insurance } from "interfaces/thegraphs/investors"
+import { graphClientInvestors } from "utils/graphClient"
 
 interface Response {
   data: Insurance[]
@@ -33,6 +34,7 @@ export const useInvestorsInsuranceHistory = (date, investors): Result => {
     query: InvestorsInsuranceHistoriesQuery,
     variables,
     pause,
+    context: graphClientInvestors,
   })
 
   return useMemo<Result>(

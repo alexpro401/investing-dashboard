@@ -1,6 +1,7 @@
 import { useQuery } from "urql"
 import { IInvestorInvestedPools } from "interfaces/thegraphs/invest-pools"
 import { InvestorPoolsInvestedForQuery } from "queries"
+import { graphClientInvestors } from "utils/graphClient"
 
 export function useInvestorProposalPools(address?: string, poolType?: string) {
   const [response] = useQuery<{
@@ -8,6 +9,7 @@ export function useInvestorProposalPools(address?: string, poolType?: string) {
   }>({
     query: InvestorPoolsInvestedForQuery,
     variables: { address, poolType },
+    context: graphClientInvestors,
   })
 
   if (response.data?.investors && response.data?.investors.length === 0) {

@@ -11,6 +11,7 @@ import {
   InvestProposalWithdrawals,
   InvestProposalSupplies,
 } from "queries/invest-pools"
+import { graphClientInvestors, graphClientInvestPools } from "utils/graphClient"
 
 export function useInvestProposalData(
   proposalId?: string
@@ -20,6 +21,7 @@ export function useInvestProposalData(
   }>({
     query: InvestProposalQuery,
     variables: { proposalId },
+    context: graphClientInvestPools,
   })
 
   return response.data?.proposal
@@ -43,6 +45,7 @@ export function useInvestProposalClaims({
   }>({
     query: InvestorClaims,
     variables: { id },
+    context: graphClientInvestors,
   })
 
   return response.data?.proposalClaims
@@ -60,6 +63,7 @@ export function useInvestProposalWithdraws(proposalAddress, proposalId) {
   }>({
     query: InvestProposalWithdrawals,
     variables: { id },
+    context: graphClientInvestPools,
   })
 
   return response.data?.proposal?.withdraws
@@ -81,6 +85,7 @@ export function useInvestProposalSupplies(
   }>({
     query: InvestProposalSupplies,
     variables: { id },
+    context: graphClientInvestPools,
   })
 
   return [response.data?.proposal?.supplies, response.data?.proposal?.APR]

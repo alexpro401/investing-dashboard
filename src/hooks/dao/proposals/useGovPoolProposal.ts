@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { IpfsEntity } from "utils/ipfsEntity"
-import { createClient, useQuery } from "urql"
+import { useQuery } from "urql"
 import { useActiveWeb3React } from "hooks"
 import {
   useGovPoolExecutor,
@@ -13,10 +13,7 @@ import { useERC20 } from "hooks"
 import { useSelector } from "react-redux"
 import { selectInsuranceAddress } from "state/contracts/selectors"
 import { InsuranceAccident } from "interfaces/insurance"
-
-const GovPoolGraphClient = createClient({
-  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
-})
+import { graphClientDaoPools } from "utils/graphClient"
 
 export const useGovPoolProposal = (
   wrappedProposalView: WrappedProposalView,
@@ -48,7 +45,7 @@ export const useGovPoolProposal = (
         }
       }
     `,
-    context: GovPoolGraphClient,
+    context: graphClientDaoPools,
   })
 
   const insuranceAddress = useSelector(selectInsuranceAddress)

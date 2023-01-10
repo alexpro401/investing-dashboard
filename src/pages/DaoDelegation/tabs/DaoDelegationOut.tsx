@@ -19,6 +19,7 @@ import {
   useGovPoolHelperContracts,
   useGovPoolVotingPowerMulticall,
 } from "hooks"
+import { graphClientDaoPools } from "utils/graphClient"
 
 interface Props {
   govPoolAddress?: string
@@ -54,6 +55,7 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress, token }) => {
           ? filter(withAmounts, (dh) => loadedData.includes(dh))
           : withAmounts
       },
+      context: graphClientDaoPools,
     })
 
   const { govUserKeeperAddress } = useGovPoolHelperContracts(govPoolAddress)

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react"
-import { createClient, useQuery } from "urql"
+import { useQuery } from "urql"
 
 import { GovPoolQuery } from "queries"
 import { usePoolRegistryContract } from "contracts"
@@ -7,10 +7,7 @@ import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import Page404 from "components/Page404"
 
 import image404Src from "assets/others/create-fund-docs.png"
-
-const govPoolsClient = createClient({
-  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
-})
+import { graphClientDaoPools } from "utils/graphClient"
 
 interface IProps {
   daoPoolAddress: string
@@ -30,7 +27,7 @@ const WithGovPoolAddressValidation: React.FC<IProps> = ({
   const [{ data: govPoolFromRedux }] = useQuery<{ daoPool: IGovPoolQuery }>({
     query: GovPoolQuery,
     variables: useMemo(() => ({ address: daoPoolAddress }), [daoPoolAddress]),
-    context: govPoolsClient,
+    context: graphClientDaoPools,
   })
 
   const checkGovAddressValidation = useCallback(async () => {

@@ -1,5 +1,4 @@
 import * as React from "react"
-import { createClient } from "urql"
 import { isEmpty, isNil } from "lodash"
 import { useWeb3React } from "@web3-react/core"
 
@@ -12,11 +11,7 @@ import {
   useGovPoolVotingPowerMulticall,
 } from "hooks"
 import { addBignumbers } from "utils/formulas"
-
-const govPoolsClient = createClient({
-  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
+import { graphClientDaoPools } from "utils/graphClient"
 
 const useGovPoolsList = () => {
   const { account } = useWeb3React()
@@ -24,7 +19,7 @@ const useGovPoolsList = () => {
   const [{ data, loading }, fetchMore] = useQueryPagination<IGovPoolQuery>({
     query: GovPoolsQuery,
     variables: React.useMemo(() => ({ excludeIds: [ZERO_ADDR] }), []),
-    context: govPoolsClient,
+    context: graphClientDaoPools,
     formatter: (d) => d.daoPools,
   })
 

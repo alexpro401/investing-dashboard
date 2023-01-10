@@ -15,6 +15,7 @@ import { InsuranceAccidentInvestorsTotalsInfo } from "../interfaces/insurance"
 import { divideBignumbers, multiplyBignumbers } from "../utils/formulas"
 import { parseTransactionError } from "../utils"
 import useError from "./useError"
+import { graphClientInvestors } from "../utils/graphClient"
 
 interface IValues {
   stakeDexe: BigNumber
@@ -91,6 +92,7 @@ export const useInsuranceDueDay = (
     query: InsurancDueDay,
     variables: { account, day },
     pause,
+    context: graphClientInvestors,
   })
 
   return [

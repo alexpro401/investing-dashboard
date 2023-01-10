@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react"
-import { createClient, useQuery } from "urql"
+import { useQuery } from "urql"
 import { isEmpty, isNil, forEach } from "lodash"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { ZERO } from "consts"
 import { addBignumbers } from "utils/formulas"
 import { InvestorPoolsPositionsQuery } from "queries"
-
-const investorGraphClient = createClient({
-  url: process.env.REACT_APP_INVESTORS_API_URL || "",
-  requestPolicy: "network-only",
-})
+import { graphClientInvestors } from "utils/graphClient"
 
 export function useInvestorTotalInvest(address?: string | null) {
   const [loading, setLoading] = useState(true)
@@ -26,7 +22,7 @@ export function useInvestorTotalInvest(address?: string | null) {
       limit,
       address,
     },
-    context: investorGraphClient,
+    context: graphClientInvestors,
   })
 
   useEffect(() => {

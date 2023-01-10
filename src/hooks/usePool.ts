@@ -37,6 +37,7 @@ import {
 } from "consts/chart"
 import { usePriceHistory } from "state/pools/hooks"
 import { useAPI } from "api"
+import { graphClientAllPools } from "utils/graphClient"
 
 /**
  * Returns TheGraph info about the pool
@@ -52,6 +53,7 @@ export function usePoolQuery(
     query: PoolQuery,
     variables: { address },
     ...(!isNil(context) ? { context } : {}),
+    context: graphClientAllPools,
   })
 
   return [pool.data?.traderPool, executeQuery]
@@ -68,6 +70,7 @@ export function usePoolPosition(poolId, tokenId) {
   }>({
     query: PoolPositionLast,
     variables: { poolId, tokenId },
+    context: graphClientAllPools,
   })
 
   useEffect(() => {
@@ -122,6 +125,7 @@ export function usePoolsByInvestors(investors: string[]) {
     variables: {
       investors,
     },
+    context: graphClientAllPools,
   })
 }
 

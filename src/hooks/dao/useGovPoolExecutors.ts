@@ -1,10 +1,11 @@
 import { useMemo } from "react"
-import { createClient, useQuery } from "urql"
+import { useQuery } from "urql"
 
 import { GovPoolExecutorsQuery } from "queries/gov-pools"
 import { isAddress } from "utils"
 import { useGovPoolExecutorType } from "hooks/dao"
 import { IExecutor, IExecutorType } from "types"
+import { graphClientDaoPools } from "utils/graphClient"
 
 interface IExecutorExtended extends IExecutor {
   type: IExecutorType
@@ -14,11 +15,6 @@ interface IExecutorsQueryData {
   daoPool: { executors: IExecutor[] }
 }
 
-const daoGraphClient = createClient({
-  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
-
 const useGovPoolExecutors = (
   govPoolAddress?: string
 ): [IExecutorExtended[], boolean] => {
@@ -26,7 +22,7 @@ const useGovPoolExecutors = (
     query: GovPoolExecutorsQuery,
     pause: !isAddress(govPoolAddress),
     variables: useMemo(() => ({ address: govPoolAddress }), [govPoolAddress]),
-    context: daoGraphClient,
+    context: graphClientDaoPools,
   })
 
   const executorTypes = useGovPoolExecutorType(

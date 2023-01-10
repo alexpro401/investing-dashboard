@@ -2,6 +2,7 @@ import { useQuery } from "urql"
 import { IRiskyPosition } from "interfaces/thegraphs/basic-pools"
 import { RiskyProposalPositionQuery } from "queries"
 import { useEffect, useState } from "react"
+import { graphClientBasicPools } from "../utils/graphClient"
 
 interface ProposalPosition {
   positions: IRiskyPosition[]
@@ -30,6 +31,7 @@ export function useRiskyPosition({
       }`,
       closed,
     },
+    context: graphClientBasicPools,
   })
 
   useEffect(() => {

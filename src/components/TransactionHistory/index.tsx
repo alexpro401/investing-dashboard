@@ -1,5 +1,4 @@
 import { PulseSpinner } from "react-spinners-kit"
-import { createClient } from "urql"
 import {
   Dispatch,
   FC,
@@ -22,11 +21,7 @@ import TransactionHistoryCard from "components/cards/TransactionHistory"
 import * as S from "./styled"
 import { Transaction } from "interfaces/thegraphs/interactions"
 import { DEFAULT_PAGINATION_COUNT, ICON_NAMES } from "consts"
-
-const interactionsClient = createClient({
-  url: process.env.REACT_APP_INTERACTIONS_API_URL || "",
-  requestPolicy: "network-only",
-})
+import { graphClientInteractions } from "utils/graphClient"
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   open: boolean
@@ -52,7 +47,7 @@ const TransactionHistory: FC<IProps> = ({ open, setOpen, ...rest }) => {
       [account, filter]
     ),
     pause: useMemo(() => !account || !filter, [account, filter]),
-    context: interactionsClient,
+    context: graphClientInteractions,
     formatter: (d) => d.transactions,
   })
 

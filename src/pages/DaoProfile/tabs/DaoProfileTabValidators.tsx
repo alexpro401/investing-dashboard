@@ -1,5 +1,4 @@
 import React, { useContext, useMemo, useCallback } from "react"
-import { createClient } from "urql"
 import { useParams } from "react-router-dom"
 import { BigNumber } from "@ethersproject/bignumber"
 
@@ -18,11 +17,7 @@ import { formatTokenNumber } from "utils"
 import { DaoPoolDaoProfileValidatorsQuery } from "queries/validators"
 
 import { FlexLink, Image, TextValue } from "../styled"
-
-const daoValidatorsGraphClient = createClient({
-  url: process.env.REACT_APP_DAO_VALIDATORS_API_URL || "",
-  requestPolicy: "network-only",
-})
+import { graphClientDaoValidators } from "utils/graphClient"
 
 interface Props {
   chainId?: number
@@ -133,7 +128,7 @@ const DaoProfileTabValidators: React.FC<Props> = ({ chainId }) => {
               row={getTableRow}
               nodeHead={TableHead}
               query={DaoPoolDaoProfileValidatorsQuery}
-              context={daoValidatorsGraphClient}
+              context={graphClientDaoValidators}
               variables={{ address: daoAddress }}
               formatter={(d) => d.daoPool.validators}
             />

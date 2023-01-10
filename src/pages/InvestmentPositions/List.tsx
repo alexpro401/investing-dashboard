@@ -9,12 +9,7 @@ import { IInvestorProposal } from "interfaces/thegraphs/invest-pools"
 import LoadMore from "components/LoadMore"
 import InvestPositionCard from "components/cards/position/Invest"
 import S from "./styled"
-import { createClient } from "urql"
-
-const investorsClient = createClient({
-  url: process.env.REACT_APP_INVESTORS_API_URL || "",
-  requestPolicy: "network-only",
-})
+import { graphClientInvestors } from "utils/graphClient"
 
 interface IProps {
   account?: string | null
@@ -29,7 +24,7 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
       [closed, account]
     ),
     pause: !account,
-    context: investorsClient,
+    context: graphClientInvestors,
     formatter: (d) => d.investorPoolPositions,
   })
 

@@ -3,6 +3,7 @@ import { useMemo } from "react"
 import { useQuery } from "urql"
 import { InvestorPoolPositionQuery } from "queries/investors"
 import { InvestorPoolPosition } from "interfaces/thegraphs/investors"
+import { graphClientInvestors } from "../utils/graphClient"
 
 interface Response {
   data: any
@@ -36,6 +37,7 @@ export const useInvestorsLastPoolPosition = (
     query: InvestorPoolPositionQuery,
     variables,
     pause,
+    context: graphClientInvestors,
   })
 
   return useMemo(
