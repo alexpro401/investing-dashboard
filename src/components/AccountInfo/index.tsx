@@ -15,7 +15,7 @@ interface Props {
 }
 
 const AccountInfo: FC<Props> = ({ account, children }) => {
-  const { isMobile } = useBreakpoints()
+  const { isDesktop } = useBreakpoints()
 
   const [{ loading, userName, userAvatar }] = useUserMetadata(account)
 
@@ -25,12 +25,7 @@ const AccountInfo: FC<Props> = ({ account, children }) => {
     return userName.length > 15 ? shortenAddress(userName, 7) : userName
   }, [userName])
 
-  const _isMobile = useMemo(() => {
-    if (isNil(isMobile)) return false
-    return isMobile
-  }, [isMobile])
-
-  const iconSize = _isMobile ? 38 : 100
+  const iconSize = isDesktop ? 100 : 38
 
   if (loading) {
     return (
