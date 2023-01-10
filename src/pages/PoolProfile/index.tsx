@@ -2,38 +2,32 @@ import { useWeb3React } from "@web3-react/core"
 import { GuardSpinner } from "react-spinners-kit"
 import { createClient, Provider as GraphProvider } from "urql"
 import { useState, useEffect, useMemo } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { generatePath, useNavigate, useParams } from "react-router-dom"
 import { isNil } from "lodash"
 import { useSelector } from "react-redux"
 
 import { Center, Flex } from "theme"
-import Tabs from "common/Tabs"
-import Pools from "components/Header/Pools"
+import { Pools } from "pages/PoolProfile/components"
 import Header from "components/Header/Layout"
 import { AppButton } from "common"
 import PoolStatisticCard from "components/cards/PoolStatistic"
 
-import {
-  Container,
-  ButtonContainer,
-  Indents,
-  Label,
-  Value,
-  Divider,
-} from "./styled"
+import * as S from "./styled"
 
-import TabPoolPnl from "./tabs/Pnl"
-import TabPoolLockedFunds from "./tabs/LockedFunds"
-import TabPoolStatistic from "./tabs/Statistic"
-import TabPoolInfo from "./tabs/Info"
-import TabPoolHolders from "./tabs/Holders"
+import {
+  TabPoolPnl,
+  TabPoolLockedFunds,
+  TabPoolStatistic,
+  TabPoolInfo,
+  TabPoolHolders,
+} from "./tabs"
 
 import { AppState } from "state"
 import { useERC20Data } from "state/erc20/hooks"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { selectPoolByAddress } from "state/pools/selectors"
 
-import { ZERO } from "consts"
+import { ROUTE_PATHS, ZERO } from "consts"
 import { normalizeBigNumber } from "utils"
 import usePoolPrice from "hooks/usePoolPrice"
 import { multiplyBignumbers } from "utils/formulas"
@@ -99,9 +93,15 @@ function Pool() {
         leftNode: {
           onClick: () =>
             navigate(
-              `/pool/swap/${poolData?.type}/${poolData?.id}/${poolData?.baseToken}/0x`
+              generatePath(ROUTE_PATHS.poolSwap, {
+                poolType: poolData?.type,
+                poolToken: poolData?.id,
+                inputToken: poolData?.baseToken,
+                outputToken: "0x",
+                "*": "",
+              })
             ),
-          text: "Open new trade",
+          text: "+ Open new trade",
         },
         rightNode: {
           onClick: () => navigate(`/fund-positions/${poolData?.id}/open`),
@@ -122,85 +122,21 @@ function Pool() {
     }
   }, [isTrader, poolData, navigate])
 
-  const PoolPageTabs = useMemo(() => {
-    const load = isNil(poolData) || isNil(poolInfoData)
-
-    return (
-      <Indents>
-        <Tabs
-          tabs={[
-            {
-              name: "P&L",
-              child: <TabPoolPnl address={poolData?.id} />,
-            },
-            {
-              name: "Locked funds",
-              child: (
-                <TabPoolLockedFunds
-                  address={poolData?.id}
-                  poolData={poolData}
-                  poolInfo={poolInfoData}
-                  baseToken={baseToken}
-                  isTrader={isTrader}
-                  accountLPsPrice={accountLPsPrice}
-                />
-              ),
-            },
-            {
-              name: "About fund",
-              child: (
-                <TabPoolInfo
-                  data={poolData}
-                  poolInfo={poolInfoData}
-                  baseToken={baseToken}
-                  poolMetadata={poolMetadata}
-                  isTrader={isTrader}
-                />
-              ),
-            },
-            {
-              name: "Statistic",
-              child: (
-                <TabPoolStatistic poolData={poolData} poolInfo={poolInfoData} />
-              ),
-            },
-            {
-              name: "Holders",
-              child: (
-                <TabPoolHolders
-                  poolData={poolData}
-                  chainId={chainId}
-                  baseToken={baseToken}
-                />
-              ),
-            },
-          ]}
-        />
-      </Indents>
-    )
-  }, [
-    poolData,
-    poolInfoData,
-    baseToken,
-    isTrader,
-    accountLPsPrice,
-    poolMetadata,
-    chainId,
-  ])
-
   return (
     <>
-      <Header>
-        My trader profile
-        <Pools />
-      </Header>
-      <Container>
-        {!isNil(poolData) ? (
-          <>
-            <Indents top>
+      <Header />
+      <S.Container>
+        <S.Content>
+          <Pools />
+          {isNil(poolData) ? (
+            <Center>
+              <GuardSpinner size={20} loading />
+            </Center>
+          ) : (
+            <>
               <PoolStatisticCard data={poolData} hideChart>
                 <>
-                  <ButtonContainer>
+                  <S.ButtonContainer>
                     <AppButton
                       color="secondary"
                       size="small"
@@ -215,35 +151,94 @@ function Pool() {
                       full
                       text={actions.rightNode.text}
                     />
-                  </ButtonContainer>
+                  </S.ButtonContainer>
                   {!isTrader && (
                     <>
-                      {!isDesktop && <Divider />}
+                      {!isDesktop && <S.Divider />}
                       <Flex
                         full
                         ai={!isDesktop ? "center" : "flex-end"}
                         jc="space-between"
                         dir={!isDesktop ? "row" : "column"}
                       >
-                        <Label>Your share</Label>
-                        <Value.Medium color="#E4F2FF">
+                        <S.Label>Your share</S.Label>
+                        <S.Value.Medium color="#E4F2FF">
                           {normalizeBigNumber(accountLPs, 18, 2)}{" "}
                           {poolData?.ticker}
-                        </Value.Medium>
+                        </S.Value.Medium>
                       </Flex>
                     </>
                   )}
                 </>
               </PoolStatisticCard>
-            </Indents>
-            {PoolPageTabs}
-          </>
-        ) : (
-          <Center>
-            <GuardSpinner size={20} loading />
-          </Center>
-        )}
-      </Container>
+              <S.TabsWrp
+                tabs={[
+                  {
+                    name: "P&L",
+                    child: (
+                      <S.TabContainer>
+                        <TabPoolPnl address={poolData?.id} />
+                      </S.TabContainer>
+                    ),
+                  },
+                  {
+                    name: "Locked funds",
+                    child: (
+                      <S.TabContainer>
+                        <TabPoolLockedFunds
+                          address={poolData?.id}
+                          poolData={poolData}
+                          poolInfo={poolInfoData}
+                          baseToken={baseToken}
+                          isTrader={isTrader}
+                          accountLPsPrice={accountLPsPrice}
+                        />
+                      </S.TabContainer>
+                    ),
+                  },
+                  {
+                    name: "About fund",
+                    child: (
+                      <S.TabContainer>
+                        <TabPoolInfo
+                          data={poolData}
+                          poolInfo={poolInfoData}
+                          baseToken={baseToken}
+                          poolMetadata={poolMetadata}
+                          isTrader={isTrader}
+                        />
+                      </S.TabContainer>
+                    ),
+                  },
+                  {
+                    name: "Statistic",
+                    child: (
+                      <S.TabContainer>
+                        <TabPoolStatistic
+                          poolData={poolData}
+                          poolInfo={poolInfoData}
+                        />
+                      </S.TabContainer>
+                    ),
+                  },
+                  {
+                    name: "Holders",
+                    child: (
+                      <S.TabContainer>
+                        <TabPoolHolders
+                          poolData={poolData}
+                          chainId={chainId}
+                          baseToken={baseToken}
+                        />
+                      </S.TabContainer>
+                    ),
+                  },
+                ]}
+              />
+            </>
+          )}
+        </S.Content>
+      </S.Container>
     </>
   )
 }

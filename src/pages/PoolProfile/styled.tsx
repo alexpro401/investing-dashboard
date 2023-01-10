@@ -1,7 +1,7 @@
 import styled from "styled-components/macro"
 import { motion } from "framer-motion"
 
-import { AppButton } from "common"
+import { AppButton, Tabs } from "common"
 import { Text } from "theme"
 
 export const Container = styled(motion.div).attrs(() => ({
@@ -10,20 +10,14 @@ export const Container = styled(motion.div).attrs(() => ({
   exit: { opacity: 0 },
   transition: { duration: 0.2 },
 }))`
-  display: grid;
-  grid-template-rows: min-content 1fr;
-  grid-template-columns: 1fr;
-  grid-gap: 40px;
-  max-height: 100%;
   overflow: hidden auto;
-  padding-bottom: 16px;
 `
 
-export const Indents = styled.div<{ top?: boolean; side?: boolean }>`
-  width: 100%;
-  margin-top: ${({ top = false }) => (top ? "16px" : "0")};
-  padding-left: ${({ side = true }) => (side ? "16px" : "0")};
-  padding-right: ${({ side = true }) => (side ? "16px" : "0")};
+export const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
+  padding: var(--app-padding);
 `
 
 export const Label = styled(Text).attrs(() => ({
@@ -114,4 +108,14 @@ export const Divider = styled.div`
   height: 1px;
   width: 100%;
   background: #20293a;
+`
+
+export const TabsWrp = styled(Tabs)`
+  flex: 1;
+`
+
+export const TabContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
 `

@@ -16,6 +16,8 @@ import { shortenAddress } from "utils"
 import { ICON_NAMES } from "consts/icon-names"
 import { isNil } from "lodash"
 import dexe from "assets/icons/dexe-dark.svg"
+import { generatePath } from "react-router-dom"
+import { ROUTE_PATHS } from "../../consts"
 
 export const Scroll = styled.div`
   padding: 16px 0;
@@ -215,7 +217,12 @@ export const PoolCard: React.FC<{
 }) => {
   const [{ poolMetadata }] = usePoolMetadata(address, descriptionURL)
   return (
-    <To onClick={onClick} to={`/pool/profile/${address}`}>
+    <To
+      onClick={onClick}
+      to={generatePath(ROUTE_PATHS.poolProfile, {
+        poolAddress: address,
+      })}
+    >
       <Row>
         <Flex jc="flex-start">
           <PoolIcons>
