@@ -16,6 +16,7 @@ import {
   CircleWarningIcon,
   ClearIcon,
   ClockCircledIcon,
+  CalendarIcon,
   CloseIcon,
   CogIcon,
   Copy,
@@ -185,6 +186,8 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return BSCIcon as unknown as ElementType
       case ICON_NAMES.filter:
         return FilterIcon as unknown as ElementType
+      case ICON_NAMES.calendar:
+        return CalendarIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }

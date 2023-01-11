@@ -13,12 +13,12 @@ import {
   RegularText,
 } from "common"
 import ExternalLink from "components/ExternalLink"
-import { SelectField, InputField } from "fields"
+import { SelectField, InputField, DateField } from "fields"
 import { useFormValidation, useActiveWeb3React, useBreakpoints } from "hooks"
 import { useGovPoolTreasury } from "hooks/dao"
 import { TokenSaleCreatingContext } from "context/govPool/proposals/TokenSaleContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
-import { required, isBnLte } from "utils/validators"
+import { required, isBnLte, isBnGt } from "utils/validators"
 import { formatFiatNumber, formatTokenNumber, cutStringZeroes } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import theme from "theme"
@@ -31,9 +31,14 @@ const SettingsStep: React.FC = () => {
   const [treasury] = useGovPoolTreasury(daoAddress)
   const { chainId } = useActiveWeb3React()
   const { isMobile } = useBreakpoints()
-  const { selectedTreasuryToken, tokenAmount } = useContext(
-    TokenSaleCreatingContext
-  )
+  const {
+    selectedTreasuryToken,
+    tokenAmount,
+    minAllocation,
+    maxAllocation,
+    sellStartDate,
+    sellEndDate,
+  } = useContext(TokenSaleCreatingContext)
   const { nextCb } = useContext(stepsControllerContext)
   const { getFieldErrorMessage, touchField, touchForm, isFieldsValid } =
     useFormValidation(
@@ -63,6 +68,13 @@ const SettingsStep: React.FC = () => {
                         )} ${
                           selectedTreasuryToken.get.contract_ticker_symbol
                         } токенів. Оберіть валідне число`
+                      ),
+                      isBnGt: isBnGt(
+                        formatUnits(
+                          BigNumber.from("0"),
+                          selectedTreasuryToken.get.contract_decimals
+                        ),
+                        selectedTreasuryToken.get.contract_decimals
                       ),
                     }
                   : {}),
@@ -176,6 +188,7 @@ const SettingsStep: React.FC = () => {
               value={tokenAmount.get}
               setValue={tokenAmount.set}
               label={"Кількість токенів"}
+              type="number"
               errorMessage={getFieldErrorMessage("tokenAmount")}
               onBlur={() => touchField("tokenAmount")}
               nodeRight={
@@ -210,28 +223,42 @@ const SettingsStep: React.FC = () => {
           <CardFormControl>
             <S.BaseTokenSettingsGrid>
               <InputField
-                value={""}
-                setValue={() => {}}
-                label={"Кількість токенів"}
-                nodeRight={<span>BNB</span>}
+                value={minAllocation.get}
+                setValue={minAllocation.set}
+                type="number"
+                label={"Мін алокація"}
+                nodeRight={
+                  selectedTreasuryToken.get?.contract_ticker_symbol ? (
+                    <S.BaseInputPlaceholder>
+                      {selectedTreasuryToken.get.contract_ticker_symbol}
+                    </S.BaseInputPlaceholder>
+                  ) : null
+                }
               />
               <InputField
-                value={""}
-                setValue={() => {}}
-                label={"Кількість токенів"}
-                nodeRight={<span>BNB</span>}
+                value={maxAllocation.get}
+                setValue={maxAllocation.set}
+                type="number"
+                label={"Макс алокація"}
+                nodeRight={
+                  selectedTreasuryToken.get?.contract_ticker_symbol ? (
+                    <S.BaseInputPlaceholder>
+                      {selectedTreasuryToken.get.contract_ticker_symbol}
+                    </S.BaseInputPlaceholder>
+                  ) : null
+                }
               />
-              <InputField
-                value={""}
-                setValue={() => {}}
-                label={"Кількість токенів"}
-                nodeRight={<span>BNB</span>}
+              <DateField
+                date={sellStartDate.get}
+                setDate={sellStartDate.set}
+                placeholder={"Початок продажу"}
+                minDate={new Date()}
               />
-              <InputField
-                value={""}
-                setValue={() => {}}
-                label={"Кількість токенів"}
-                nodeRight={<span>BNB</span>}
+              <DateField
+                date={sellEndDate.get}
+                setDate={sellEndDate.set}
+                placeholder={"Кінець продажу"}
+                minDate={new Date()}
               />
             </S.BaseTokenSettingsGrid>
           </CardFormControl>
