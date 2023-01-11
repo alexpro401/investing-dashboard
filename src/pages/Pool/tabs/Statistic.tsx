@@ -17,14 +17,14 @@ import {
   usePoolSortino,
   usePoolAlternativePnlUSD,
   useInvestorAllVestsInPool,
-  usePoolAlternativePnlToken,
+  usePoolAlternativePnlTokens,
 } from "hooks"
 
 const MAX_INVESTORS = 1000
 const MAX_OPEN_TRADES = 25
 const addressWETH = "0x8babbb98678facc7342735486c851abd7a0d17ca"
 const addressWBTC = "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
-const sortinoTokens = [addressWETH, addressWBTC]
+const altTokens = [addressWETH, addressWBTC]
 
 function getUSDRenderValue(value: BigNumber): ReactNode {
   if (value.lt(0)) {
@@ -41,10 +41,12 @@ interface Props {
 const TabPoolStatistic: FC<Props> = ({ poolData, poolInfo }) => {
   const { account } = useWeb3React()
 
-  const { data: investorVests, loading: investorVestsLoading } =
-    useInvestorAllVestsInPool(account, poolData.id)
+  const { data: investorVests } = useInvestorAllVestsInPool(
+    account,
+    poolData.id
+  )
 
-  const sortino = usePoolSortino(poolData.id, sortinoTokens)
+  const sortino = usePoolSortino(poolData.id, altTokens)
 
   const altPnlUSD = usePoolAlternativePnlUSD(investorVests, poolData.baseToken)
 
@@ -57,34 +59,28 @@ const TabPoolStatistic: FC<Props> = ({ poolData, poolInfo }) => {
     [altPnlUSD]
   )
 
-  const altPnlInETH = usePoolAlternativePnlToken(
+  const altPnlTokens = usePoolAlternativePnlTokens(
     investorVests,
     poolData.baseToken,
-    addressWETH
+    { eth: addressWETH, btc: addressWBTC }
   )
 
   const altPnlETH_USD = useMemo(
-    () => getUSDRenderValue(altPnlInETH.usd),
-    [altPnlInETH]
+    () => getUSDRenderValue(altPnlTokens.usd.eth),
+    [altPnlTokens]
   )
   const altPnlETH_Percentage = useMemo(
-    () => normalizeBigNumber(altPnlInETH.percentage),
-    [altPnlInETH]
-  )
-
-  const altPnlInBTC = usePoolAlternativePnlToken(
-    investorVests,
-    poolData.baseToken,
-    addressWBTC
+    () => normalizeBigNumber(altPnlTokens.percentage.eth),
+    [altPnlTokens]
   )
 
   const altPnlBTC_USD = useMemo(
-    () => getUSDRenderValue(altPnlInBTC.usd),
-    [altPnlInBTC]
+    () => getUSDRenderValue(altPnlTokens.usd.btc),
+    [altPnlTokens]
   )
   const altPnlBTC_Percentage = useMemo(
-    () => normalizeBigNumber(altPnlInBTC.percentage),
-    [altPnlInBTC]
+    () => normalizeBigNumber(altPnlTokens.percentage.btc),
+    [altPnlTokens]
   )
 
   const investorsCount = Number(poolData?.investorsCount) || 0
@@ -128,13 +124,13 @@ const TabPoolStatistic: FC<Props> = ({ poolData, poolInfo }) => {
   const sortinoETH = useMemo(() => {
     if (!sortino) return <>♾️</>
 
-    return Number([sortino[sortinoTokens[0]]]).toFixed(2)
+    return Number([sortino[altTokens[0]]]).toFixed(2)
   }, [sortino])
 
   const sortinoBTC = useMemo(() => {
     if (!sortino) return <>♾️</>
 
-    return Number([sortino[sortinoTokens[1]]]).toFixed(2)
+    return Number([sortino[altTokens[1]]]).toFixed(2)
   }, [sortino])
 
   const totalTrades = useMemo(() => {
