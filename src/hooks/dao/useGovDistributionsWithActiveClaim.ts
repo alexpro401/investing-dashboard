@@ -1,6 +1,6 @@
 import * as React from "react"
 import { isEmpty, isNil } from "lodash"
-import { createClient, useQuery } from "urql"
+import { useQuery } from "urql"
 import { useWeb3React } from "@web3-react/core"
 
 import { GovProposalsWithDistributionQuery, GovVoterInPoolQuery } from "queries"
@@ -10,11 +10,7 @@ import {
 } from "interfaces/thegraphs/gov-pools"
 import useQueryPagination from "hooks/useQueryPagination"
 import { ZERO_ADDR } from "consts"
-
-const govPoolsClient = createClient({
-  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
+import { graphClientDaoPools } from "utils/graphClient"
 
 interface VoterInPoolResponse {
   voterInPools: IGovPoolVoterQuery[]
@@ -33,7 +29,7 @@ const useGovDistributionsWithActiveClaim = (daoPoolAddress?: string) => {
       [daoPoolAddress, account]
     ),
     pause: isNil(account) || isNil(daoPoolAddress),
-    context: govPoolsClient,
+    context: graphClientDaoPools,
   })
 
   return useQueryPagination<IGovProposalQuery>({
@@ -61,7 +57,7 @@ const useGovDistributionsWithActiveClaim = (daoPoolAddress?: string) => {
         isNil(data.voterInPools[0].claimedDPs),
       [daoPoolAddress, account, fetching, data]
     ),
-    context: govPoolsClient,
+    context: graphClientDaoPools,
     formatter: (d) => d.proposals,
   })
 }

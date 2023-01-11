@@ -30,7 +30,7 @@ const DaoPoolCard: React.FC<Props> = ({
   totalVotingPower = ZERO,
   ...rest
 }) => {
-  const { isMobile } = useBreakpoints()
+  const { isDesktop } = useBreakpoints()
 
   const [token] = useERC20Data(
     !isAddressZero(data?.erc20Token) ? data.erc20Token : undefined
@@ -74,7 +74,7 @@ const DaoPoolCard: React.FC<Props> = ({
       <S.DaoPoolCardHeader>
         <Flex ai="center" jc="flex-start">
           <Icon
-            size={isMobile ? 38 : 100}
+            size={isDesktop ? 100 : 38}
             m="0 8px 0 0"
             address={data?.id}
             source={daoPoolMetadata?.avatarUrl ?? ""}
@@ -86,7 +86,7 @@ const DaoPoolCard: React.FC<Props> = ({
             </S.DaoPoolCardDescription>
           </Flex>
         </Flex>
-        {isMobile && (
+        {!isDesktop && (
           <Flex ai="flex-end" jc="flex-start" dir="column" gap="4">
             <Flex ai="flex-end" jc="flex-start" dir={"column"} gap="4">
               <S.DaoPoolCardVotingPower>
@@ -100,7 +100,7 @@ const DaoPoolCard: React.FC<Props> = ({
         )}
       </S.DaoPoolCardHeader>
       <S.DaoPoolCardStatisticWrp>
-        {!isMobile && (
+        {isDesktop && (
           <S.DaoPoolCardStatisticItem alignItems={"flex-start"}>
             <Flex gap={"4"}>
               <S.DaoPoolCardStatisticLabel>

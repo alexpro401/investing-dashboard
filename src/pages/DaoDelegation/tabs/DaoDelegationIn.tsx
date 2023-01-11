@@ -24,11 +24,8 @@ import { useGovPoolHelperContracts } from "hooks/dao"
 import { NoDataMessage } from "common"
 import { useMemo } from "react"
 import { addBignumbers } from "utils/formulas"
-import { createClient, useQuery } from "urql"
-
-const govPoolsClient = createClient({
-  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
-})
+import { useQuery } from "urql"
+import { graphClientDaoPools } from "utils/graphClient"
 
 interface DaoDelegationInProps {
   token: Token | null
@@ -74,6 +71,7 @@ const DaoDelegationIn: React.FC<DaoDelegationInProps> = ({
       ),
       pause: isNil(account) || isNil(govPoolAddress),
       formatter: (d) => d.delegationHistories,
+      context: graphClientDaoPools,
     })
 
   const [votersInPool] = useQuery<{
@@ -88,7 +86,7 @@ const DaoDelegationIn: React.FC<DaoDelegationInProps> = ({
       [govPoolAddress, account]
     ),
     pause: isNil(account) || isNil(govPoolAddress),
-    context: govPoolsClient,
+    context: graphClientDaoPools,
   })
 
   const totalAddresses = React.useMemo(() => {

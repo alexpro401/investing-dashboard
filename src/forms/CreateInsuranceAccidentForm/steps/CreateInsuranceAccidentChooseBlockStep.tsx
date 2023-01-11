@@ -7,7 +7,6 @@ import {
   useMemo,
   useState,
 } from "react"
-import { createClient, Provider as GraphProvider } from "urql"
 import { isEmpty, isEqual, isNil } from "lodash"
 import { Tooltip } from "recharts"
 import { format } from "date-fns"
@@ -48,10 +47,7 @@ import { AlertType } from "context/AlertContext"
 import { DEFAULT_ALERT_HIDDEN_TIMEOUT } from "consts/misc"
 import { useAlert, useBreakpoints } from "hooks"
 import { DateInput } from "forms/CreateInsuranceAccidentForm/styled/step-choose-block"
-
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-})
+import { graphClientAllPools } from "utils/graphClient"
 
 const CreateInsuranceAccidentChooseBlockStep: FC = () => {
   const { isMobile } = useBreakpoints()
@@ -317,12 +313,4 @@ const CreateInsuranceAccidentChooseBlockStep: FC = () => {
   )
 }
 
-const CreateInsuranceAccidentChooseBlockStepWithProvider = (props) => {
-  return (
-    <GraphProvider value={poolsClient}>
-      <CreateInsuranceAccidentChooseBlockStep {...props} />
-    </GraphProvider>
-  )
-}
-
-export default CreateInsuranceAccidentChooseBlockStepWithProvider
+export default CreateInsuranceAccidentChooseBlockStep

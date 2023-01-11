@@ -23,7 +23,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 const CardInfo: FC<Props> = (props) => {
   const { nodeHeadLeft, nodeHeadRight, statistic, children, ...rest } = props
 
-  const { isMobile } = useBreakpoints()
+  const { isDesktop } = useBreakpoints()
 
   return (
     <S.Container {...rest}>
@@ -35,17 +35,17 @@ const CardInfo: FC<Props> = (props) => {
           <S.HeaderNodeRight>{nodeHeadRight}</S.HeaderNodeRight>
         ) : null}
       </S.Header>
-      {isMobile && <S.Divider />}
+      {!isDesktop && <S.Divider />}
       <Flex
         full
         ai={"center"}
         jc={"space-between"}
-        gap={isMobile ? "12" : "32"}
+        gap={isDesktop ? "32" : "12"}
       >
         {statistic.map((item, i) => (
           <Flex
             full
-            gap={isMobile ? "4" : "0"}
+            gap={isDesktop ? "0" : "4"}
             dir={"column"}
             key={uuidv4()}
             ai={statistic.length === i + 1 ? "flex-end" : "flex-start"}

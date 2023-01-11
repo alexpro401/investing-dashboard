@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from "react"
-import { createClient, Provider as GraphProvider } from "urql"
 import { useParams, useNavigate, useLocation } from "react-router-dom"
 
 import { Center, Flex } from "theme"
@@ -38,10 +37,6 @@ import useSwapRiskyProposal, {
 import { useUserAgreement } from "state/user/hooks"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { GuardSpinner } from "react-spinners-kit"
-
-const basicClient = createClient({
-  url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
-})
 
 const SwapRiskyProposal = () => {
   const params: UseSwapRiskyParams = useParams()
@@ -365,18 +360,16 @@ const SwapRiskyProposalWithProvider = () => {
   const params: UseSwapRiskyParams = useParams()
 
   return (
-    <GraphProvider value={basicClient}>
-      <WithPoolAddressValidation
-        poolAddress={params.poolAddress ?? ""}
-        loader={
-          <Center>
-            <GuardSpinner size={20} loading />
-          </Center>
-        }
-      >
-        <SwapRiskyProposal />
-      </WithPoolAddressValidation>
-    </GraphProvider>
+    <WithPoolAddressValidation
+      poolAddress={params.poolAddress ?? ""}
+      loader={
+        <Center>
+          <GuardSpinner size={20} loading />
+        </Center>
+      }
+    >
+      <SwapRiskyProposal />
+    </WithPoolAddressValidation>
   )
 }
 

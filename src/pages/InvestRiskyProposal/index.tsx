@@ -1,7 +1,6 @@
 import { Center, Flex } from "theme"
 import { useCallback, useMemo } from "react"
 import { useParams } from "react-router-dom"
-import { createClient, Provider as GraphProvider } from "urql"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import IconButton from "components/IconButton"
@@ -35,10 +34,6 @@ import { useUserAgreement } from "state/user/hooks"
 import useInvestRiskyProposal from "./useInvestRiskyProposal"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { GuardSpinner } from "react-spinners-kit"
-
-const basicClient = createClient({
-  url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
-})
 
 function InvestRiskyProposal() {
   const { poolAddress, proposalId } = useParams()
@@ -304,18 +299,16 @@ function InvestRiskyProposal() {
 const InvestRiskyProposalWithProvider = () => {
   const { poolAddress } = useParams()
   return (
-    <GraphProvider value={basicClient}>
-      <WithPoolAddressValidation
-        poolAddress={poolAddress ?? ""}
-        loader={
-          <Center>
-            <GuardSpinner size={20} loading />
-          </Center>
-        }
-      >
-        <InvestRiskyProposal />
-      </WithPoolAddressValidation>
-    </GraphProvider>
+    <WithPoolAddressValidation
+      poolAddress={poolAddress ?? ""}
+      loader={
+        <Center>
+          <GuardSpinner size={20} loading />
+        </Center>
+      }
+    >
+      <InvestRiskyProposal />
+    </WithPoolAddressValidation>
   )
 }
 

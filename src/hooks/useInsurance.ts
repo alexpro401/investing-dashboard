@@ -6,15 +6,16 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { ZERO } from "consts"
-import { InsurancDueDay } from "queries/investors"
+import { InsuranceDueDayQuery } from "queries"
 import { Insurance } from "interfaces/thegraphs/investors"
 import { selectDexeAddress } from "state/contracts/selectors"
 import { useInsuranceContract, usePriceFeedContract } from "contracts"
 import useTokenPriceOutUSD from "./useTokenPriceOutUSD"
 import { InsuranceAccidentInvestorsTotalsInfo } from "../interfaces/insurance"
-import { divideBignumbers, multiplyBignumbers } from "../utils/formulas"
-import { parseTransactionError } from "../utils"
+import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
+import { parseTransactionError } from "utils"
 import useError from "./useError"
+import { graphClientInvestors } from "utils/graphClient"
 
 interface IValues {
   stakeDexe: BigNumber
@@ -88,9 +89,10 @@ export const useInsuranceDueDay = (
   const [response, refetch] = useQuery<{
     insuranceHistories: Insurance[]
   }>({
-    query: InsurancDueDay,
+    query: InsuranceDueDayQuery,
     variables: { account, day },
     pause,
+    context: graphClientInvestors,
   })
 
   return [
