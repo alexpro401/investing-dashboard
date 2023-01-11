@@ -9,7 +9,6 @@ import {
   useParams,
 } from "react-router-dom"
 import { useSelector } from "react-redux"
-import { createClient, Provider as GraphProvider } from "urql"
 
 import Header from "components/Header/Layout"
 import IconButton from "components/IconButton"
@@ -68,10 +67,6 @@ import {
 } from "./styled"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { GuardSpinner } from "react-spinners-kit"
-
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-})
 
 const isFaqRead = localStorage.getItem("risky-proposal-faq-read") === "true"
 
@@ -434,18 +429,16 @@ const CreateRiskyProposalWithProvider = () => {
   const { poolAddress } = useParams()
 
   return (
-    <GraphProvider value={poolsClient}>
-      <WithPoolAddressValidation
-        poolAddress={poolAddress ?? ""}
-        loader={
-          <Center>
-            <GuardSpinner size={20} loading />
-          </Center>
-        }
-      >
-        <CreateRiskyProposal />
-      </WithPoolAddressValidation>
-    </GraphProvider>
+    <WithPoolAddressValidation
+      poolAddress={poolAddress ?? ""}
+      loader={
+        <Center>
+          <GuardSpinner size={20} loading />
+        </Center>
+      }
+    >
+      <CreateRiskyProposal />
+    </WithPoolAddressValidation>
   )
 }
 

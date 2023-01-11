@@ -10,12 +10,7 @@ import WithdrawalHistoryCard from "components/cards/WithdrawalHistory"
 
 import S from "./styled"
 import { IFeeHistory } from "interfaces/thegraphs/all-pools"
-import { createClient } from "urql"
-
-const allPoolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
+import { graphClientAllPools } from "utils/graphClient"
 
 interface IProps {
   unlockDate: string
@@ -27,7 +22,7 @@ const WithdrawalsHistory: FC<IProps> = ({ unlockDate, poolAddress }) => {
     query: FundFeeHistoryQuery,
     variables: useMemo(() => ({ address: poolAddress }), [poolAddress]),
     pause: !poolAddress,
-    context: allPoolsClient,
+    context: graphClientAllPools,
     formatter: (d) => d.feeHistories,
   })
 

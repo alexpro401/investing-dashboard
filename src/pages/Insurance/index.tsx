@@ -1,5 +1,3 @@
-import { createClient, Provider as GraphProvider } from "urql"
-
 import useInsurancePage from "./useInsurancePage"
 
 import * as S from "./styled"
@@ -7,10 +5,6 @@ import { Flex, Text } from "theme"
 import { useBreakpoints } from "hooks"
 import { DaoProposalsList } from "common"
 import Header from "components/Header/Layout"
-
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-})
 
 const Insurance = () => {
   const [{ checkingInvestmentStatus }, { onInsuranceCreateNavigate }] =
@@ -87,12 +81,4 @@ const Insurance = () => {
   )
 }
 
-const InsuranceWithProvider = (props) => {
-  return (
-    <GraphProvider value={poolsClient}>
-      <Insurance {...props} />
-    </GraphProvider>
-  )
-}
-
-export default InsuranceWithProvider
+export default Insurance

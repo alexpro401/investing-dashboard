@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { createClient, useQuery } from "urql"
+import { useQuery } from "urql"
 
-import { GovPoolExecutorQuery } from "queries/gov-pools"
+import { GovPoolExecutorQuery } from "queries"
 import { isAddress } from "utils"
 import { IExecutor, IExecutorType } from "types"
 import { parseIpfsString } from "utils/ipfs"
 import { IpfsEntity } from "utils/ipfsEntity"
 import useGovPoolExecutorType from "./useGovPoolExecutorType"
+import { graphClientDaoPools } from "utils/graphClient"
 
 interface IResultExecutor extends IExecutor {
   type: IExecutorType
@@ -17,11 +18,6 @@ interface IResultExecutor extends IExecutor {
 interface IExecutorQueryData {
   daoPool: { executors: IExecutor[] }
 }
-
-const daoGraphClient = createClient({
-  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
 
 const useGovPoolExecutor = (
   govPoolAddress: string | undefined,
@@ -34,7 +30,7 @@ const useGovPoolExecutor = (
       () => ({ address: govPoolAddress, executorAddress }),
       [govPoolAddress, executorAddress]
     ),
-    context: daoGraphClient,
+    context: graphClientDaoPools,
   })
   const [lastExecutorAddressSnapshot, setLastExecutorAddressSnapshot] =
     useState<IExecutor | undefined>(undefined)

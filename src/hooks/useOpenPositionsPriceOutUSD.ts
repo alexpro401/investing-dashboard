@@ -8,6 +8,7 @@ import { ZERO } from "consts"
 import { PositionsByIdsQuery } from "queries"
 import { addBignumbers } from "utils/formulas"
 import { usePriceFeedContract } from "contracts"
+import { graphClientAllPools } from "utils/graphClient"
 
 /**
  * Hook get pool positions, fetch positions tokens and prices of locked tokens in USD
@@ -43,6 +44,7 @@ export const useOpenPositionsPriceOutUSD = (
     query: PositionsByIdsQuery,
     variables,
     pause,
+    context: graphClientAllPools,
   })
 
   // Clear state to prevent memory leak

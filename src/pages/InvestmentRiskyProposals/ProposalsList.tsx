@@ -1,7 +1,6 @@
 import { FC, useMemo, useState, useEffect, useRef } from "react"
 import { PulseSpinner } from "react-spinners-kit"
 import { v4 as uuidv4 } from "uuid"
-import { createClient } from "urql"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { useActiveWeb3React } from "hooks"
@@ -16,11 +15,7 @@ import RiskyProposalCard from "components/cards/proposal/Risky"
 import S from "./styled"
 import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
 import { isNil, map } from "lodash"
-
-const basicPoolsClient = createClient({
-  url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
+import { graphClientBasicPools } from "utils/graphClient"
 
 interface IRiskyCardInitializer {
   account: string
@@ -94,7 +89,7 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
       [activePools]
     ),
     pause: isNil(activePools),
-    context: basicPoolsClient,
+    context: graphClientBasicPools,
     formatter: (d) =>
       map(d.proposals, (p) => ({ id: String(p.id).slice(42), ...p })),
   })

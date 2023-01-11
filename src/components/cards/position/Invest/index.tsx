@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { parseEther, parseUnits } from "@ethersproject/units"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
-import { createClient, Provider as GraphProvider } from "urql"
 import { format } from "date-fns/esm"
 
 import { ZERO } from "consts"
@@ -36,10 +35,6 @@ import S from "./styled"
 interface Props {
   position: IInvestorProposal
 }
-
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-})
 
 const InvestPositionCard: React.FC<Props> = ({ position }) => {
   const navigate = useNavigate()
@@ -590,12 +585,4 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   )
 }
 
-const InvestPositionCardWithProvider = (props) => {
-  return (
-    <GraphProvider value={poolsClient}>
-      <InvestPositionCard {...props} />
-    </GraphProvider>
-  )
-}
-
-export default InvestPositionCardWithProvider
+export default InvestPositionCard

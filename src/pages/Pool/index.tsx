@@ -1,6 +1,5 @@
 import { useWeb3React } from "@web3-react/core"
 import { GuardSpinner } from "react-spinners-kit"
-import { createClient, Provider as GraphProvider } from "urql"
 import { useState, useEffect, useMemo } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { isNil } from "lodash"
@@ -41,11 +40,6 @@ import { usePoolContract } from "hooks/usePool"
 import { useTraderPoolContract } from "contracts"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { useBreakpoints } from "hooks"
-
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
 
 function Pool() {
   const navigate = useNavigate()
@@ -194,65 +188,6 @@ function Pool() {
         My trader profile
         <Pools />
       </Header>
-      <Container>
-        {!isNil(poolData) ? (
-          <>
-            <Indents top>
-              <PoolStatisticCard data={poolData} hideChart>
-                <>
-                  <ButtonContainer>
-                    <AppButton
-                      color="secondary"
-                      size="small"
-                      full
-                      onClick={actions.leftNode.onClick}
-                      text={actions.leftNode.text}
-                    />
-                    <AppButton
-                      color="primary"
-                      size="small"
-                      onClick={actions.rightNode.onClick}
-                      full
-                      text={actions.rightNode.text}
-                    />
-                  </ButtonContainer>
-                  {!isTrader && (
-                    <>
-                      {!isDesktop && <Divider />}
-                      <Flex
-                        full
-                        ai={!isDesktop ? "center" : "flex-end"}
-                        jc="space-between"
-                        dir={!isDesktop ? "row" : "column"}
-                      >
-                        <Label>Your share</Label>
-                        <Value.Medium color="#E4F2FF">
-                          {normalizeBigNumber(accountLPs, 18, 2)}{" "}
-                          {poolData?.ticker}
-                        </Value.Medium>
-                      </Flex>
-                    </>
-                  )}
-                </>
-              </PoolStatisticCard>
-            </Indents>
-            {PoolPageTabs}
-          </>
-        ) : (
-          <Center>
-            <GuardSpinner size={20} loading />
-          </Center>
-        )}
-      </Container>
-    </>
-  )
-}
-
-const PoolWithProviders = () => {
-  const { poolAddress } = useParams()
-
-  return (
-    <GraphProvider value={poolsClient}>
       <WithPoolAddressValidation
         poolAddress={poolAddress ?? ""}
         loader={
@@ -261,10 +196,59 @@ const PoolWithProviders = () => {
           </Center>
         }
       >
-        <Pool />
+        <Container>
+          {!isNil(poolData) ? (
+            <>
+              <Indents top>
+                <PoolStatisticCard data={poolData} hideChart>
+                  <>
+                    <ButtonContainer>
+                      <AppButton
+                        color="secondary"
+                        size="small"
+                        full
+                        onClick={actions.leftNode.onClick}
+                        text={actions.leftNode.text}
+                      />
+                      <AppButton
+                        color="primary"
+                        size="small"
+                        onClick={actions.rightNode.onClick}
+                        full
+                        text={actions.rightNode.text}
+                      />
+                    </ButtonContainer>
+                    {!isTrader && (
+                      <>
+                        {!isDesktop && <Divider />}
+                        <Flex
+                          full
+                          ai={!isDesktop ? "center" : "flex-end"}
+                          jc="space-between"
+                          dir={!isDesktop ? "row" : "column"}
+                        >
+                          <Label>Your share</Label>
+                          <Value.Medium color="#E4F2FF">
+                            {normalizeBigNumber(accountLPs, 18, 2)}{" "}
+                            {poolData?.ticker}
+                          </Value.Medium>
+                        </Flex>
+                      </>
+                    )}
+                  </>
+                </PoolStatisticCard>
+              </Indents>
+              {PoolPageTabs}
+            </>
+          ) : (
+            <Center>
+              <GuardSpinner size={20} loading />
+            </Center>
+          )}
+        </Container>
       </WithPoolAddressValidation>
-    </GraphProvider>
+    </>
   )
 }
 
-export default PoolWithProviders
+export default Pool

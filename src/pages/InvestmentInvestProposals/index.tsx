@@ -1,6 +1,5 @@
 import { useMemo } from "react"
 import { Routes, Route } from "react-router-dom"
-import { createClient, Provider as GraphProvider } from "urql"
 
 import RouteTabs from "components/RouteTabs"
 import InvestProposalsList from "./ProposalsList"
@@ -8,10 +7,6 @@ import InvestProposalsList from "./ProposalsList"
 import { ITab } from "interfaces"
 import { useActiveWeb3React } from "hooks"
 import useInvestorProposalPools from "hooks/useInvestorProposalPools"
-
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-})
 
 const InvestmentInvestProposals = () => {
   const { account } = useActiveWeb3React()
@@ -55,10 +50,4 @@ const InvestmentInvestProposals = () => {
   )
 }
 
-const InvestmentInvestProposalsWithProvider = () => (
-  <GraphProvider value={poolsClient}>
-    <InvestmentInvestProposals />
-  </GraphProvider>
-)
-
-export default InvestmentInvestProposalsWithProvider
+export default InvestmentInvestProposals

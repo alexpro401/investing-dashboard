@@ -14,8 +14,6 @@ import TransactionSlippage from "components/TransactionSlippage"
 import Header from "components/Header/Layout"
 import TokenSelect from "modals/TokenSelect"
 
-import { createClient, Provider as GraphProvider } from "urql"
-
 import settings from "assets/icons/settings.svg"
 import close from "assets/icons/close-big.svg"
 import swapPathIcon from "assets/icons/swap-path.svg"
@@ -44,10 +42,6 @@ import { Currency } from "lib/entities"
 import useRiskyProposals from "hooks/useRiskyProposals"
 import usePoolType, { POOL_TYPE } from "hooks/usePoolType"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
-
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-})
 
 enum ModalView {
   FROM = "from",
@@ -449,17 +443,15 @@ const Swap = () => {
 export default function SwapWithProvider() {
   const { poolToken } = useParams()
   return (
-    <GraphProvider value={poolsClient}>
-      <WithPoolAddressValidation
-        poolAddress={poolToken ?? ""}
-        loader={
-          <Center>
-            <GuardSpinner size={20} loading />
-          </Center>
-        }
-      >
-        <Swap />
-      </WithPoolAddressValidation>
-    </GraphProvider>
+    <WithPoolAddressValidation
+      poolAddress={poolToken ?? ""}
+      loader={
+        <Center>
+          <GuardSpinner size={20} loading />
+        </Center>
+      }
+    >
+      <Swap />
+    </WithPoolAddressValidation>
   )
 }

@@ -1,7 +1,6 @@
 import { FC } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { format } from "date-fns/esm"
-import { createClient, Provider as GraphProvider } from "urql"
 
 import { expandTimestamp, formatBigNumber } from "utils"
 
@@ -40,10 +39,6 @@ import { SubmitState } from "consts/types"
 import TransactionSent from "modals/TransactionSent"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { GuardSpinner } from "react-spinners-kit"
-
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-})
 
 const CreateInvestmentProposal: FC = () => {
   const { poolAddress } = useParams()
@@ -245,18 +240,16 @@ const CreateInvestmentProposal: FC = () => {
 const CreateInvestmentProposalWithProvider = () => {
   const { poolAddress } = useParams()
   return (
-    <GraphProvider value={poolsClient}>
-      <WithPoolAddressValidation
-        poolAddress={poolAddress ?? ""}
-        loader={
-          <Center>
-            <GuardSpinner size={20} loading />
-          </Center>
-        }
-      >
-        <CreateInvestmentProposal />
-      </WithPoolAddressValidation>
-    </GraphProvider>
+    <WithPoolAddressValidation
+      poolAddress={poolAddress ?? ""}
+      loader={
+        <Center>
+          <GuardSpinner size={20} loading />
+        </Center>
+      }
+    >
+      <CreateInvestmentProposal />
+    </WithPoolAddressValidation>
   )
 }
 

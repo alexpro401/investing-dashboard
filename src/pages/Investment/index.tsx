@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom"
-import { createClient, Provider as GraphProvider } from "urql"
 
 import { ITab } from "interfaces"
 
@@ -10,10 +9,6 @@ import InvestmentInvestProposals from "pages/InvestmentInvestProposals"
 import Header from "components/Header/Layout"
 
 import { Container } from "./styled"
-
-const poolsClient = createClient({
-  url: process.env.REACT_APP_INVESTORS_API_URL || "",
-})
 
 const InvestPositions = () => {
   const tabs: ITab[] = [
@@ -64,12 +59,4 @@ const InvestPositions = () => {
   )
 }
 
-const InvestPositionsWithProvider = () => {
-  return (
-    <GraphProvider value={poolsClient}>
-      <InvestPositions />
-    </GraphProvider>
-  )
-}
-
-export default InvestPositionsWithProvider
+export default InvestPositions

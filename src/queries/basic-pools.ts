@@ -32,7 +32,7 @@ const RISKY_PROPOSAL_POSITION = `
   }
 `
 
-const RiskyPositionsQuery = `
+export const RiskyPositionsQuery = `
   query ($poolAddressList: [String]!, $closed: Boolean!, $offset: Int!, $limit: Int!) {
     proposalPositions(
       skip: $offset, first: $limit, 
@@ -46,28 +46,7 @@ const RiskyPositionsQuery = `
   }
 `
 
-const InvestorRiskyPositionByIdQuery = `
-  query ($id: String!) {
-    proposalPosition(id: $id) {
-      id
-      totalBaseOpenVolume
-      totalBaseCloseVolume
-      totalPositionOpenVolume
-      totalPositionCloseVolume
-      totalUSDOpenVolume
-      totalUSDCloseVolume
-      proposal {
-        token
-        basicPool {
-          id
-          baseToken
-        }
-      }
-    }
-  }
-`
-
-const RiskyProposalPositionQuery = `
+export const RiskyProposalPositionQuery = `
   query ($proposalAddress: String!, $closed: Boolean!) {
     proposal(id: $proposalAddress) {
       positions (where: { isClosed: $closed }) {
@@ -77,7 +56,7 @@ const RiskyProposalPositionQuery = `
   }
 `
 
-const InvestorRiskyProposalsQuery = `
+export const InvestorRiskyProposalsQuery = `
   query ($offset: Int!, $limit: Int!, $activePools: [String]!) {
     proposals(skip: $offset, first: $limit, where: { basicPool_in: $activePools }){
       id
@@ -87,10 +66,3 @@ const InvestorRiskyProposalsQuery = `
     }
   }
 `
-
-export {
-  RiskyProposalPositionQuery,
-  RiskyPositionsQuery,
-  InvestorRiskyPositionByIdQuery,
-  InvestorRiskyProposalsQuery,
-}

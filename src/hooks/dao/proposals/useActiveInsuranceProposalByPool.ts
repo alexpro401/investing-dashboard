@@ -1,6 +1,5 @@
 import * as React from "react"
 import { useSelector } from "react-redux"
-import { createClient } from "urql"
 import { isEmpty, isNil } from "lodash"
 
 import { useGovPoolContract } from "contracts"
@@ -11,14 +10,9 @@ import useQueryPagination from "hooks/useQueryPagination"
 import { ProposalState, proposalStatusToStates } from "types"
 import { selectInsuranceAddress } from "state/contracts/selectors"
 import { IGovProposalQuery } from "interfaces/thegraphs/gov-pools"
+import { graphClientDaoPools } from "utils/graphClient"
 
-const daoPoolsApiUrl = process.env.REACT_APP_DAO_POOLS_API_URL ?? ""
 const dexeDaoPoolAddress = process.env.REACT_APP_DEXE_DAO_ADDRESS ?? ""
-
-const govPoolsClient = createClient({
-  url: daoPoolsApiUrl,
-  requestPolicy: "network-only",
-})
 
 interface ActiveInsuranceProposal {
   query: IGovProposalQuery
@@ -54,7 +48,7 @@ const useActiveInsuranceProposalByPool = (
           [_pool]
         ),
         pause: !_pool || isEmpty(dexeDaoPoolAddress),
-        context: govPoolsClient,
+        context: graphClientDaoPools,
         formatter: (response) => response?.proposals,
       },
       {

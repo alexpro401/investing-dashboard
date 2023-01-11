@@ -1,6 +1,5 @@
 import * as React from "react"
 import { Route, Routes, useParams } from "react-router-dom"
-import { createClient, Provider as GraphProvider } from "urql"
 
 import * as S from "./styled"
 import { DaoDelegationOut, DaoDelegationIn } from "./tabs"
@@ -10,11 +9,6 @@ import RouteTabs from "components/RouteTabs"
 import { ITab } from "interfaces"
 import useGovPoolVotingAssets from "hooks/dao/useGovPoolVotingAssets"
 import { useERC20 } from "hooks"
-
-const govPoolsClient = createClient({
-  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
 
 const DaoDelegation: React.FC = () => {
   const params = useParams<"daoAddress">()
@@ -65,12 +59,4 @@ const DaoDelegation: React.FC = () => {
   )
 }
 
-const DaoDelegationWithProvider = () => {
-  return (
-    <GraphProvider value={govPoolsClient}>
-      <DaoDelegation />
-    </GraphProvider>
-  )
-}
-
-export default DaoDelegationWithProvider
+export default DaoDelegation
