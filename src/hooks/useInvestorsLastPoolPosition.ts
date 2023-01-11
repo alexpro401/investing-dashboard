@@ -3,7 +3,7 @@ import { useMemo } from "react"
 import { useQuery } from "urql"
 import { InvestorPoolPositionQuery } from "queries"
 import { InvestorPoolPosition } from "interfaces/thegraphs/investors"
-import { graphClientInvestors } from "../utils/graphClient"
+import { graphClientInvestors } from "utils/graphClient"
 
 interface Response {
   data: any

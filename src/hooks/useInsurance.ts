@@ -12,10 +12,10 @@ import { selectDexeAddress } from "state/contracts/selectors"
 import { useInsuranceContract, usePriceFeedContract } from "contracts"
 import useTokenPriceOutUSD from "./useTokenPriceOutUSD"
 import { InsuranceAccidentInvestorsTotalsInfo } from "../interfaces/insurance"
-import { divideBignumbers, multiplyBignumbers } from "../utils/formulas"
-import { parseTransactionError } from "../utils"
+import { divideBignumbers, multiplyBignumbers } from "utils/formulas"
+import { parseTransactionError } from "utils"
 import useError from "./useError"
-import { graphClientInvestors } from "../utils/graphClient"
+import { graphClientInvestors } from "utils/graphClient"
 
 interface IValues {
   stakeDexe: BigNumber
