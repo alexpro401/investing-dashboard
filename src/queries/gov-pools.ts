@@ -257,6 +257,39 @@ const DaoPoolProfileTopNftDelegateeQuery = `
   }
 `
 
+const GovPoolProposalQuery = `
+  query($govPoolAddress: String!, $proposalId: Int!) {
+    proposals(where: { pool: $govPoolAddress, proposalId: $proposalId }) {
+      id
+      executor
+      creator
+      voters
+      distributionProposal {
+        token
+        amount
+      }
+    }
+  }
+`
+const GovPoolProposalVotesQuery = `
+  query($proposalId: String!, $offset: Int!, $limit: Int!) {
+    proposalVotes(where:{ proposal: $proposalId }, first: $limit, skip: $offset) {
+      voter {
+        voter {
+          voter {
+            id
+          }
+        }
+      }
+      personalAmount
+      timestamp
+      proposal {
+        votesCount
+      }
+    }
+  }
+`
+
 export {
   GovPoolQuery,
   GovPoolsQuery,
@@ -273,4 +306,6 @@ export {
   DaoPoolDaoProfileTotalDelegationsQuery,
   DaoPoolProfileTopTokenDelegateeQuery,
   DaoPoolProfileTopNftDelegateeQuery,
+  GovPoolProposalQuery,
+  GovPoolProposalVotesQuery,
 }

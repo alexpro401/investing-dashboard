@@ -1,6 +1,7 @@
 import { useMemo } from "react"
 import { useQuery } from "urql"
 import { graphClientDaoPools } from "utils/graphClient"
+import { GovPoolProposalVotesQuery } from "queries"
 
 export const useGovPoolProposalVotingHistory = (
   offset = 0,
@@ -9,30 +10,24 @@ export const useGovPoolProposalVotingHistory = (
   proposalId?: string
 ) => {
   const ID = useMemo(() => {
-    return `${govPoolAddress}${
-      Number(proposalId) < 10 ? `0${proposalId}` : proposalId
-    }000000`
+    if (!govPoolAddress) return
+
+    return govPoolAddress.concat(
+      `${Number(proposalId) < 10 ? `0${proposalId}` : proposalId}000000`
+    )
   }, [govPoolAddress, proposalId])
 
   const [{ data, fetching, error }] = useQuery({
-    query: `
-      query {
-        proposalVotes(where:{proposal: "${ID}"}, first:${limit}, skip:${offset}) {
-            voter {
-              voter {
-                voter {
-                  id
-                }
-              }
-            }
-            personalAmount
-            timestamp
-            proposal {
-              votesCount
-            }
-        }
-      }
-    `,
+    query: GovPoolProposalVotesQuery,
+    variables: useMemo(
+      () => ({
+        proposalId: ID,
+        offset,
+        limit,
+      }),
+      [ID, offset, limit]
+    ),
+    pause: useMemo(() => !ID, [ID]),
     context: graphClientDaoPools,
   })
 

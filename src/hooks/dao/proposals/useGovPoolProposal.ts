@@ -14,6 +14,7 @@ import { useSelector } from "react-redux"
 import { selectInsuranceAddress } from "state/contracts/selectors"
 import { InsuranceAccident } from "interfaces/insurance"
 import { graphClientDaoPools } from "utils/graphClient"
+import { GovPoolProposalQuery } from "queries"
 
 export const useGovPoolProposal = (
   wrappedProposalView: WrappedProposalView,
@@ -31,20 +32,15 @@ export const useGovPoolProposal = (
   const { account } = useActiveWeb3React()
 
   const [{ data: daoPoolGraph }] = useQuery({
-    query: `
-      query {
-        proposals(where: { pool: "${govPoolAddress}", proposalId: "${wrappedProposalView?.proposalId}" }) {
-          id
-          executor
-          creator
-          voters
-          distributionProposal {
-            token
-            amount
-          }
-        }
-      }
-    `,
+    query: GovPoolProposalQuery,
+    variables: useMemo(
+      () => ({ govPoolAddress, proposalId: wrappedProposalView?.proposalId }),
+      [govPoolAddress, wrappedProposalView]
+    ),
+    pause: useMemo(
+      () => !govPoolAddress || !wrappedProposalView?.proposalId,
+      [govPoolAddress, wrappedProposalView]
+    ),
     context: graphClientDaoPools,
   })
 

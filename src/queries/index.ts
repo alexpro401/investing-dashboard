@@ -43,6 +43,8 @@ import {
   GovProposalsWithDistributionQuery,
   GovPoolDelegationHistoryByUserQuery,
   GovProposalsByPoolInMiscQuery,
+  GovPoolProposalQuery,
+  GovPoolProposalVotesQuery,
 } from "./gov-pools"
 
 export {
@@ -78,4 +80,6 @@ export {
   GovProposalsWithDistributionQuery,
   GovPoolDelegationHistoryByUserQuery,
   GovProposalsByPoolInMiscQuery,
+  GovPoolProposalQuery,
+  GovPoolProposalVotesQuery,
 }
