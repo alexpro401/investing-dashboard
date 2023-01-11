@@ -2,7 +2,7 @@ import { isNil } from "lodash"
 import { useMemo } from "react"
 import { useQuery } from "urql"
 import { getDaysToDate } from "utils"
-import { InvestorsInsuranceHistoriesQuery } from "queries/investors"
+import { InvestorsInsuranceHistoriesQuery } from "queries"
 import { Insurance } from "interfaces/thegraphs/investors"
 import { graphClientInvestors } from "utils/graphClient"
 

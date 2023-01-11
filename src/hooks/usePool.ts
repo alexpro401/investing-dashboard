@@ -11,8 +11,11 @@ import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { ILeverageInfo } from "interfaces/contracts/ITraderPool"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { isAddress } from "utils"
-import { PoolPositionLast, PoolQuery } from "queries"
-import { PoolsByInvestorsQuery } from "queries/all-pools"
+import {
+  PoolQuery,
+  PoolPositionLastQuery,
+  PoolsByInvestorsQuery,
+} from "queries"
 import { useTraderPoolContract } from "contracts"
 
 import { ZERO } from "consts"
@@ -68,7 +71,7 @@ export function usePoolPosition(poolId, tokenId) {
   const [pool] = useQuery<{
     positions: IPosition[]
   }>({
-    query: PoolPositionLast,
+    query: PoolPositionLastQuery,
     variables: { poolId, tokenId },
     context: graphClientAllPools,
   })

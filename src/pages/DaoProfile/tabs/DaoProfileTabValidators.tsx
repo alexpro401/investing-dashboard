@@ -14,7 +14,7 @@ import usersImageUrl from "assets/images/users.svg"
 import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsContext/GovPoolProfileTabsContext"
 import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommonContext/GovPoolProfileCommonContext"
 import { formatTokenNumber } from "utils"
-import { DaoPoolDaoProfileValidatorsQuery } from "queries/validators"
+import { DaoPoolDaoProfileValidatorsQuery } from "queries"
 
 import { FlexLink, Image, TextValue } from "../styled"
 import { graphClientDaoValidators } from "utils/graphClient"

@@ -10,7 +10,7 @@ import {
   useGovPoolHelperContracts,
   useGovPoolVotingPowerMulticall,
 } from "hooks/dao"
-import { DaoPoolDaoProfileTotalDelegationsQuery } from "queries/gov-pools"
+import { DaoPoolDaoProfileTotalDelegationsQuery } from "queries"
 import { isAddress } from "utils"
 import { graphClientDaoPools } from "utils/graphClient"
 

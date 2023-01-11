@@ -15,7 +15,7 @@ import {
 import {
   GovMemberProposalsHistoryCountQuery,
   GovVoterInPoolQuery,
-} from "queries/gov-pools"
+} from "queries"
 import { isAddress } from "utils"
 import { graphClientDaoPools } from "utils/graphClient"
 

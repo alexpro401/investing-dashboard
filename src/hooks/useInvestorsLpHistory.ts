@@ -2,7 +2,7 @@ import { isNil, isFunction } from "lodash"
 import { useMemo } from "react"
 import { useQuery } from "urql"
 import { getDaysToDate } from "utils"
-import { InvestorsPoolsLpHistoryQuery } from "queries/investors"
+import { InvestorsPoolsLpHistoryQuery } from "queries"
 import { InvestorPoolPositionWithHistory } from "interfaces/thegraphs/investors"
 import { graphClientInvestors } from "../utils/graphClient"
 

@@ -36,7 +36,7 @@ import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsCon
 import {
   DaoPoolProfileTopTokenDelegateeQuery,
   DaoPoolProfileTopNftDelegateeQuery,
-} from "queries/gov-pools"
+} from "queries"
 import { graphClientDaoPools } from "utils/graphClient"
 
 interface ITokenDelegatee {

@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { useQuery } from "urql"
 
-import { GovPoolExecutorsQuery } from "queries/gov-pools"
+import { GovPoolExecutorsQuery } from "queries"
 import { isAddress } from "utils"
 import { useGovPoolExecutorType } from "hooks/dao"
 import { IExecutor, IExecutorType } from "types"

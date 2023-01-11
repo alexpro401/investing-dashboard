@@ -5,12 +5,12 @@ import {
   IInvestProposalWithdraw,
   IInvestProposalSupply,
 } from "interfaces/thegraphs/invest-pools"
-import { InvestProposalQuery } from "queries"
-import { InvestorClaims } from "queries/investors"
 import {
-  InvestProposalWithdrawals,
-  InvestProposalSupplies,
-} from "queries/invest-pools"
+  InvestProposalQuery,
+  InvestorClaimsQuery,
+  InvestProposalWithdrawalsQuery,
+  InvestProposalSuppliesQuery,
+} from "queries"
 import { graphClientInvestors, graphClientInvestPools } from "utils/graphClient"
 
 export function useInvestProposalData(
@@ -43,7 +43,7 @@ export function useInvestProposalClaims({
   const [response] = useQuery<{
     proposalClaims: IInvestorClaims[]
   }>({
-    query: InvestorClaims,
+    query: InvestorClaimsQuery,
     variables: { id },
     context: graphClientInvestors,
   })
@@ -61,7 +61,7 @@ export function useInvestProposalWithdraws(proposalAddress, proposalId) {
       withdraws: IInvestProposalWithdraw[]
     }
   }>({
-    query: InvestProposalWithdrawals,
+    query: InvestProposalWithdrawalsQuery,
     variables: { id },
     context: graphClientInvestPools,
   })
@@ -83,7 +83,7 @@ export function useInvestProposalSupplies(
       supplies: IInvestProposalSupply[]
     }
   }>({
-    query: InvestProposalSupplies,
+    query: InvestProposalSuppliesQuery,
     variables: { id },
     context: graphClientInvestPools,
   })

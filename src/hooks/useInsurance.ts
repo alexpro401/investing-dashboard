@@ -6,7 +6,7 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { ZERO } from "consts"
-import { InsurancDueDay } from "queries/investors"
+import { InsuranceDueDayQuery } from "queries"
 import { Insurance } from "interfaces/thegraphs/investors"
 import { selectDexeAddress } from "state/contracts/selectors"
 import { useInsuranceContract, usePriceFeedContract } from "contracts"
@@ -89,7 +89,7 @@ export const useInsuranceDueDay = (
   const [response, refetch] = useQuery<{
     insuranceHistories: Insurance[]
   }>({
-    query: InsurancDueDay,
+    query: InsuranceDueDayQuery,
     variables: { account, day },
     pause,
     context: graphClientInvestors,

@@ -1,4 +1,4 @@
-const UserTransactionsQuery = `
+export const UserTransactionsQuery = `
   query($offset: Int!, $limit: Int!, $address: String!, $transactionTypes: [Int]!) {
     transactions(
       skip: $offset, first: $limit, 
@@ -27,5 +27,3 @@ const UserTransactionsQuery = `
     }
   }
 `
-
-export { UserTransactionsQuery }

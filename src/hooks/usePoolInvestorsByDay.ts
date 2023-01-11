@@ -2,7 +2,7 @@ import { isNil } from "lodash"
 import { useMemo } from "react"
 import { useQuery } from "urql"
 import { getDaysToDate } from "utils"
-import { TraderPoolHistoriesQuery } from "queries/investors"
+import { TraderPoolHistoriesQuery } from "queries"
 import { graphClientInvestors } from "utils/graphClient"
 
 export const usePoolInvestorsByDay = (date, pool) => {

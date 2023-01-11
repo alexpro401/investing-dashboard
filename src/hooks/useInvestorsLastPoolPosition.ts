@@ -1,7 +1,7 @@
 import { isNil, isFunction } from "lodash"
 import { useMemo } from "react"
 import { useQuery } from "urql"
-import { InvestorPoolPositionQuery } from "queries/investors"
+import { InvestorPoolPositionQuery } from "queries"
 import { InvestorPoolPosition } from "interfaces/thegraphs/investors"
 import { graphClientInvestors } from "../utils/graphClient"
 

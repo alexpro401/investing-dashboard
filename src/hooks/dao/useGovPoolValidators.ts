@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { useQuery } from "urql"
 
-import { DaoPoolValidatorsQuery } from "queries/validators"
+import { DaoPoolValidatorsQuery } from "queries"
 import { isAddress } from "utils"
 import { graphClientDaoValidators } from "utils/graphClient"
 

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useQuery } from "urql"
 
-import { GovPoolExecutorQuery } from "queries/gov-pools"
+import { GovPoolExecutorQuery } from "queries"
 import { isAddress } from "utils"
 import { IExecutor, IExecutorType } from "types"
 import { parseIpfsString } from "utils/ipfs"
