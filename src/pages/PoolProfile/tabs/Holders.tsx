@@ -3,7 +3,7 @@ import { isNil } from "lodash"
 import { v4 as uuidv4 } from "uuid"
 
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
-import { Value, Link } from "../styled"
+import { Value, Link } from "./styled"
 import { Card, Icon } from "common"
 import { Flex } from "theme"
 import { shortenAddress } from "utils"

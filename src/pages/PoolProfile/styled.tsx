@@ -1,8 +1,9 @@
 import styled from "styled-components/macro"
 import { motion } from "framer-motion"
 
-import { AppButton, Tabs } from "common"
-import { Text } from "theme"
+import { AppButton, Icon, Tabs } from "common"
+import { respondTo } from "theme"
+import { PoolAppearance, PoolBaseToken } from "./components"
 
 export const Container = styled(motion.div).attrs(() => ({
   initial: { opacity: 0 },
@@ -20,88 +21,117 @@ export const Content = styled.div`
   padding: var(--app-padding);
 `
 
-export const Label = styled(Text).attrs(() => ({
-  color: "#B1C7FC",
-  fz: 13,
-  fw: 500,
-  lh: "15px",
-}))``
+export const PoolProfileDefaultInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
+  overflow: hidden;
+  background: #141926;
+  border-radius: 20px;
+  padding: var(--app-padding);
 
-export const Value = {
-  Big: styled(Text).attrs(() => ({
-    fz: 16,
-    fw: 700,
-    lh: "19px",
-  }))``,
-  Medium: styled(Text).attrs(() => ({
-    fz: 13,
-    fw: 600,
-    lh: "16px",
-  }))``,
-  MediumThin: styled(Text).attrs(() => ({
-    fz: 13,
-    fw: 500,
-    lh: "19px",
-  }))``,
-}
-
-export const AppButtonFull = styled(AppButton)`
-  width: 100%;
-`
-export const AppLink = styled(AppButton).attrs(() => ({
-  color: "default",
-  size: "small",
-}))`
-  padding: 0;
-  border-radius: 0;
+  ${respondTo("xs")} {
+    background: transparent;
+    padding: 0;
+  }
 `
 
-export const GridTwoColumn = styled.div`
+export const PoolProfileGeneral = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
+
+export const PoolProfileAppearance = styled(PoolAppearance)``
+
+export const PoolProfileBaseToken = styled(PoolBaseToken)``
+
+export const PoolProfileStatisticsWrp = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
+
+  ${respondTo("xs")} {
+    padding: var(--app-padding);
+  }
+
+  ${respondTo("lg")} {
+    background: #101520;
+    border-radius: 20px;
+  }
+`
+
+export const PoolProfileStatistics = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--app-gap);
+`
+
+export const PoolProfileActions = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: 48px;
+  grid-gap: var(--app-gap);
 `
 
-export const Link = styled.a`
-  display: block;
+export const PoolProfileActionBtn = styled(AppButton).attrs((props) => ({
+  size: "small",
+}))`
   width: 100%;
-  text-decoration: none;
-  color: initial;
+
+  // temp hotfix
+  border: none;
 `
 
-const BarContainer = styled.div`
-  background: #293c54;
-  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 6px;
-  height: 3px;
-  width: 100%;
+export const PageHeadDetailsRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: var(--app-gap);
 `
 
-const BarProgress = styled.div<{ w: number }>`
-  background: #7fffd4;
-  box-shadow: 0 1px 4px rgba(164, 235, 212, 0.29),
-    0 2px 5px rgba(164, 235, 212, 0.14);
-  border-radius: 2px;
-  height: 3px;
-  width: ${(props) => props.w || 0}%;
-  transition: width 0.3s ease-in-out;
+export const PoolDetailsBadge = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `
 
-export const ProgressBar = ({ w }) => {
-  return (
-    <BarContainer>
-      <BarProgress w={w} />
-    </BarContainer>
-  )
-}
+export const PoolDetailsBadgeIcon = styled(Icon)`
+  color: ${(props) => props.theme.brandColors.secondary};
+`
+
+export const PoolDetailsBadgeText = styled.span`
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: ${(props) => props.theme.textColors.primary};
+
+  /* TEMP */
+  transform: translateY(4px);
+`
+
+export const PoolHeadStatistics = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--app-gap);
+  background: #101520;
+  border-radius: 20px;
+  padding: var(--app-padding);
+`
 
 export const ButtonContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: min-content;
-  grid-gap: 16px;
+  grid-gap: var(--app-gap);
   width: 100%;
   margin: auto 0;
+
+  ${respondTo("sm")} {
+    grid-template-columns: repeat(2, minmax(0, 180px));
+    margin: 0;
+    width: auto;
+  }
 `
 
 export const Divider = styled.div`

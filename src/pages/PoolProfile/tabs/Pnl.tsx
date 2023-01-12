@@ -7,7 +7,7 @@ import PoolPnlChart from "components/PoolPnlChart"
 
 import { usePoolPnlInfo } from "hooks/usePool"
 
-import { Label } from "../styled"
+import * as S from "./styled"
 import { GuardSpinner } from "react-spinners-kit"
 
 const TabPoolPnl: FC<{ address: string }> = ({ address }) => {
@@ -30,13 +30,13 @@ const TabPoolPnl: FC<{ address: string }> = ({ address }) => {
         />
         <div>
           <Flex full ai="center" jc="space-between">
-            <Label>Total P&L LP - {baseToken?.symbol}</Label>
+            <S.Label>Total P&L LP - {baseToken?.symbol}</S.Label>
             <Text color="#E4F2FF" fz={13} fw={600} lh="15px">
               {totalPnlPercentage}% ({totalPnlBase?.format} {baseToken?.symbol})
             </Text>
           </Flex>
           <Flex full ai="center" jc="space-between" m="12px 0 0">
-            <Label>Total P&L LP - USD</Label>
+            <S.Label>Total P&L LP - USD</S.Label>
             <Text color="#E4F2FF" fz={13} fw={600} lh="15px">
               {totalUSDPnlPerc}% ({totalUSDPnlUSD} USD)
             </Text>

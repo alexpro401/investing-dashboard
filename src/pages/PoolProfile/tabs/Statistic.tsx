@@ -8,7 +8,7 @@ import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 
 import { expandTimestamp, normalizeBigNumber } from "utils"
 import { getPNL, getPriceLP } from "utils/formulas"
-import { GridTwoColumn, Label, ProgressBar, Value } from "../styled"
+import * as S from "./styled"
 import { Card } from "common"
 import { Flex } from "theme"
 import Tooltip from "components/Tooltip"
@@ -81,114 +81,114 @@ const TabPoolStatistic: FC<Props> = ({ poolData, poolInfo }) => {
   return (
     <>
       <Card>
-        <Value.Medium color="#9AE2CB">Total P&L</Value.Medium>
-        <GridTwoColumn>
+        <S.Value.Medium color="#9AE2CB">Total P&L</S.Value.Medium>
+        <S.GridTwoColumn>
           <Flex full ai="center" jc="space-between">
-            <Label>DEXE</Label>
+            <S.Label>DEXE</S.Label>
             <div>
-              <Value.Medium color="#E4F2FF">$230,000</Value.Medium>&nbsp;
-              <Value.Medium color="#B1C7FC">(50%)</Value.Medium>
+              <S.Value.Medium color="#E4F2FF">$230,000</S.Value.Medium>&nbsp;
+              <S.Value.Medium color="#B1C7FC">(50%)</S.Value.Medium>
             </div>
           </Flex>
           <Flex full ai="center" jc="space-between">
-            <Label>USD</Label>
+            <S.Label>USD</S.Label>
             <div>
-              <Value.Medium color="#E4F2FF">$500,000</Value.Medium>&nbsp;
-              <Value.Medium color="#B1C7FC">(500%)</Value.Medium>
+              <S.Value.Medium color="#E4F2FF">$500,000</S.Value.Medium>&nbsp;
+              <S.Value.Medium color="#B1C7FC">(500%)</S.Value.Medium>
             </div>
           </Flex>
-        </GridTwoColumn>
-        <GridTwoColumn>
+        </S.GridTwoColumn>
+        <S.GridTwoColumn>
           <Flex full ai="center" jc="space-between">
-            <Label>ETH</Label>
+            <S.Label>ETH</S.Label>
             <div>
-              <Value.Medium color="#E4F2FF">$30,214</Value.Medium>&nbsp;
-              <Value.Medium color="#B1C7FC">(50%)</Value.Medium>
+              <S.Value.Medium color="#E4F2FF">$30,214</S.Value.Medium>&nbsp;
+              <S.Value.Medium color="#B1C7FC">(50%)</S.Value.Medium>
             </div>
           </Flex>
           <Flex full ai="center" jc="space-between">
-            <Label>BTC</Label>
+            <S.Label>BTC</S.Label>
             <div>
-              <Value.Medium color="#E4F2FF">3,134</Value.Medium>&nbsp;
-              <Value.Medium color="#B1C7FC">(238%)</Value.Medium>
+              <S.Value.Medium color="#E4F2FF">3,134</S.Value.Medium>&nbsp;
+              <S.Value.Medium color="#B1C7FC">(238%)</S.Value.Medium>
             </div>
           </Flex>
-        </GridTwoColumn>
+        </S.GridTwoColumn>
       </Card>
 
       <Card>
-        <Value.Medium color="#9AE2CB">Average</Value.Medium>
-        <GridTwoColumn>
+        <S.Value.Medium color="#9AE2CB">Average</S.Value.Medium>
+        <S.GridTwoColumn>
           <Flex full ai="center" jc="space-between">
-            <Label>Trades per Day</Label>
-            <Value.Medium color="#E4F2FF">
+            <S.Label>Trades per Day</S.Label>
+            <S.Value.Medium color="#E4F2FF">
               {poolData.averageTrades}
-            </Value.Medium>
+            </S.Value.Medium>
           </Flex>
           <Flex full ai="center" jc="space-between">
-            <Label>Order Size</Label>
-            <Value.Medium color="#E4F2FF">{orderSize}%</Value.Medium>
+            <S.Label>Order Size</S.Label>
+            <S.Value.Medium color="#E4F2FF">{orderSize}%</S.Value.Medium>
           </Flex>
-        </GridTwoColumn>
+        </S.GridTwoColumn>
 
-        <GridTwoColumn>
+        <S.GridTwoColumn>
           <Flex full ai="center" jc="space-between">
-            <Label>Daily Profit</Label>
-            <Value.Medium color="#E4F2FF">{dailyProfit}%</Value.Medium>
+            <S.Label>Daily Profit</S.Label>
+            <S.Value.Medium color="#E4F2FF">{dailyProfit}%</S.Value.Medium>
           </Flex>
           <Flex full ai="center" jc="space-between">
-            <Label>Time Positions</Label>
-            <Value.Medium color="#E4F2FF">{timePosition}</Value.Medium>
+            <S.Label>Time Positions</S.Label>
+            <S.Value.Medium color="#E4F2FF">{timePosition}</S.Value.Medium>
           </Flex>
-        </GridTwoColumn>
+        </S.GridTwoColumn>
 
-        <GridTwoColumn>
+        <S.GridTwoColumn>
           <Flex full ai="center" jc="space-between">
-            <Label>Sortino (ETH)</Label>
-            <Value.Medium color="#E4F2FF">{sortinoETH}</Value.Medium>
+            <S.Label>Sortino (ETH)</S.Label>
+            <S.Value.Medium color="#E4F2FF">{sortinoETH}</S.Value.Medium>
           </Flex>
           <Flex full ai="center" jc="space-between">
-            <Label>Sortino (BTC)</Label>
-            <Value.Medium color="#E4F2FF">{sortinoBTC}</Value.Medium>
+            <S.Label>Sortino (BTC)</S.Label>
+            <S.Value.Medium color="#E4F2FF">{sortinoBTC}</S.Value.Medium>
           </Flex>
-        </GridTwoColumn>
+        </S.GridTwoColumn>
 
-        <GridTwoColumn>
+        <S.GridTwoColumn>
           <Flex full ai="center" jc="space-between">
-            <Label>Trades</Label>
-            <Value.Medium color="#E4F2FF">{totalTrades}</Value.Medium>
+            <S.Label>Trades</S.Label>
+            <S.Value.Medium color="#E4F2FF">{totalTrades}</S.Value.Medium>
           </Flex>
           <Flex full ai="center" jc="space-between">
-            <Label>Max. loss</Label>
-            <Value.Medium color="#E4F2FF">{maxLoss}%</Value.Medium>
+            <S.Label>Max. loss</S.Label>
+            <S.Value.Medium color="#E4F2FF">{maxLoss}%</S.Value.Medium>
           </Flex>
-        </GridTwoColumn>
+        </S.GridTwoColumn>
       </Card>
 
       <Card>
         <div>
           <Flex full ai="center" jc="space-between" m="0 0 12px">
-            <Label>Depositors - {investorsCount}</Label>
+            <S.Label>Depositors - {investorsCount}</S.Label>
             <Flex ai="center" jc="flex-end" gap="4">
-              <Value.MediumThin color="#E4F2FF">
+              <S.Value.MediumThin color="#E4F2FF">
                 {MAX_INVESTORS - investorsCount} Left
-              </Value.MediumThin>
+              </S.Value.MediumThin>
               <Tooltip id={uuidv4()}>Depositors</Tooltip>
             </Flex>
           </Flex>
-          <ProgressBar w={(investorsCount / MAX_INVESTORS) * 100} />
+          <S.ProgressBar w={(investorsCount / MAX_INVESTORS) * 100} />
         </div>
         <div>
           <Flex full ai="center" jc="space-between" m="4px 0 12px">
-            <Label>Fund positions - {openPositionsLen}</Label>
+            <S.Label>Fund positions - {openPositionsLen}</S.Label>
             <Flex ai="center" jc="flex-end" gap="4">
-              <Value.MediumThin color="#E4F2FF">
+              <S.Value.MediumThin color="#E4F2FF">
                 {MAX_OPEN_TRADES - openPositionsLen} Left
-              </Value.MediumThin>
+              </S.Value.MediumThin>
               <Tooltip id={uuidv4()}>Fund positions</Tooltip>
             </Flex>
           </Flex>
-          <ProgressBar w={(openPositionsLen / MAX_OPEN_TRADES) * 100} />
+          <S.ProgressBar w={(openPositionsLen / MAX_OPEN_TRADES) * 100} />
         </div>
       </Card>
     </>

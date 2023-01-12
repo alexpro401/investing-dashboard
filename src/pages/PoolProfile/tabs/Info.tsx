@@ -4,7 +4,7 @@ import { formatEther } from "@ethersproject/units"
 
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import { AppLink, Label, ProgressBar, Value } from "../styled"
+import * as S from "./styled"
 import { Card } from "common"
 import { Flex } from "theme"
 import { format } from "date-fns"
@@ -108,44 +108,46 @@ const TabPoolInfo: FC<Props> = ({
   return (
     <>
       <Card>
-        <Value.Medium color="#9AE2CB">Information</Value.Medium>
+        <S.Value.Medium color="#9AE2CB">Information</S.Value.Medium>
         <Flex full ai="center" jc="space-between">
-          <Label>Creation date</Label>
-          <Value.Medium color="#E4F2FF">{creationTime}</Value.Medium>
+          <S.Label>Creation date</S.Label>
+          <S.Value.Medium color="#E4F2FF">{creationTime}</S.Value.Medium>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <Label>Fund address</Label>
-          <Value.Medium color="#E4F2FF">
+          <S.Label>Fund address</S.Label>
+          <S.Value.Medium color="#E4F2FF">
             {shortenAddress(data.id, 2)}
-          </Value.Medium>
+          </S.Value.Medium>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <Label>Basic token</Label>
-          <Value.Medium color="#E4F2FF">{baseToken?.symbol}</Value.Medium>
+          <S.Label>Basic token</S.Label>
+          <S.Value.Medium color="#E4F2FF">{baseToken?.symbol}</S.Value.Medium>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <Label>Fund ticker</Label>
-          <Value.Medium color="#E4F2FF">{data.ticker}</Value.Medium>
+          <S.Label>Fund ticker</S.Label>
+          <S.Value.Medium color="#E4F2FF">{data.ticker}</S.Value.Medium>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <Label>Fund name</Label>
-          <Value.Medium color="#E4F2FF">{data.name}</Value.Medium>
+          <S.Label>Fund name</S.Label>
+          <S.Value.Medium color="#E4F2FF">{data.name}</S.Value.Medium>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <Label>Type of fund</Label>
-          <Value.Medium color="#E4F2FF">{fundTypes[data.type]}</Value.Medium>
+          <S.Label>Type of fund</S.Label>
+          <S.Value.Medium color="#E4F2FF">
+            {fundTypes[data.type]}
+          </S.Value.Medium>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <Label></Label>
-          <Value.Medium color="#E4F2FF"></Value.Medium>
+          <S.Label></S.Label>
+          <S.Value.Medium color="#E4F2FF"></S.Value.Medium>
         </Flex>
       </Card>
 
       <Card>
         <Flex full ai="center" jc="space-between">
-          <Value.Medium color="#9AE2CB">Fund settings</Value.Medium>
+          <S.Value.Medium color="#9AE2CB">Fund settings</S.Value.Medium>
           {isTrader && (
-            <AppLink
+            <S.AppLink
               text="Manage"
               routePath={`/fund-details/${data.id}/edit`}
             />
@@ -153,26 +155,28 @@ const TabPoolInfo: FC<Props> = ({
         </Flex>
 
         <Flex full ai="center" jc="space-between">
-          <Label>Minimum investment amount</Label>
-          <Value.Medium color="#E4F2FF">{minimalInvestment}</Value.Medium>
+          <S.Label>Minimum investment amount</S.Label>
+          <S.Value.Medium color="#E4F2FF">{minimalInvestment}</S.Value.Medium>
         </Flex>
         {emission.unlimited && (
           <Flex full ai="center" jc="space-between">
-            <Label>Emission</Label>
-            <Value.Medium color="#E4F2FF">{emission.value}</Value.Medium>
+            <S.Label>Emission</S.Label>
+            <S.Value.Medium color="#E4F2FF">{emission.value}</S.Value.Medium>
           </Flex>
         )}
         <Flex full ai="center" jc="space-between">
-          <Label>Fund managers</Label>
-          <Value.Medium color="#E4F2FF">{adminsCount}</Value.Medium>
+          <S.Label>Fund managers</S.Label>
+          <S.Value.Medium color="#E4F2FF">{adminsCount}</S.Value.Medium>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <Label>Limit who can invest</Label>
-          <Value.Medium color="#E4F2FF">{whitelistCount}</Value.Medium>
+          <S.Label>Limit who can invest</S.Label>
+          <S.Value.Medium color="#E4F2FF">{whitelistCount}</S.Value.Medium>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <Label>Performance Fee</Label>
-          <Value.Medium color="#E4F2FF">{commissionPercentage}%</Value.Medium>
+          <S.Label>Performance Fee</S.Label>
+          <S.Value.Medium color="#E4F2FF">
+            {commissionPercentage}%
+          </S.Value.Medium>
         </Flex>
       </Card>
       {!emission.unlimited && (
@@ -180,39 +184,44 @@ const TabPoolInfo: FC<Props> = ({
           <Flex full ai="center" jc="space-between">
             <Flex ai="center" gap="4">
               <Tooltip id={uuidv4()}>Emmission explain</Tooltip>
-              <Label>Emission</Label>
+              <S.Label>Emission</S.Label>
             </Flex>
-            <Value.Medium color="#E4F2FF">{emissionLeft.value}</Value.Medium>
+            <S.Value.Medium color="#E4F2FF">
+              {emissionLeft.value}
+            </S.Value.Medium>
           </Flex>
-          <ProgressBar w={emissionLeft.percentage} />
+          <S.ProgressBar w={emissionLeft.percentage} />
         </Card>
       )}
 
       <Card>
         <Flex full ai="center" jc="space-between">
-          <Value.Medium color="#9AE2CB">Fund description</Value.Medium>
+          <S.Value.Medium color="#9AE2CB">Fund description</S.Value.Medium>
           {isTrader && (
-            <AppLink text="Edit" routePath={`/fund-details/${data.id}/edit`} />
+            <S.AppLink
+              text="Edit"
+              routePath={`/fund-details/${data.id}/edit`}
+            />
           )}
         </Flex>
-        <Value.MediumThin
+        <S.Value.MediumThin
           color={!isEmpty(poolMetadata.description) ? "#E4F2FF" : "#B1C7FC"}
         >
           {!isEmpty(poolMetadata.description)
             ? poolMetadata.description
             : "No description provided"}
-        </Value.MediumThin>
+        </S.Value.MediumThin>
 
         <Flex full ai="center" jc="space-between">
-          <Value.Medium color="#9AE2CB">Fund strategy</Value.Medium>
+          <S.Value.Medium color="#9AE2CB">Fund strategy</S.Value.Medium>
         </Flex>
-        <Value.MediumThin
+        <S.Value.MediumThin
           color={!isEmpty(poolMetadata.strategy) ? "#E4F2FF" : "#B1C7FC"}
         >
           {!isEmpty(poolMetadata.strategy)
             ? poolMetadata.strategy
             : "No strategy provided"}
-        </Value.MediumThin>
+        </S.Value.MediumThin>
       </Card>
     </>
   )

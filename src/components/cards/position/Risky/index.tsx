@@ -19,7 +19,7 @@ import SharedS, {
 import S from "./styled"
 
 import useRiskyPosition from "./useRiskyPosition"
-import { ROUTE_PATHS } from "../../../../consts"
+import { ROUTE_PATHS } from "consts"
 
 interface Props {
   position: IRiskyPosition

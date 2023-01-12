@@ -5,7 +5,7 @@ import { Tooltip } from "recharts"
 
 import { Flex } from "theme"
 import { Card } from "common"
-import { Label, Value, AppButtonFull, ProgressBar } from "../styled"
+import * as S from "./styled"
 import usePoolLockedFunds from "hooks/usePoolLockedFunds"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
@@ -59,16 +59,16 @@ const TabPoolLockedFunds: FC<{
       <Card>
         <Flex full ai="center" jc="space-between">
           <div>
-            <Value.Big block color="#E4F2FF" p="0 0 4px">
+            <S.Value.Big block color="#E4F2FF" p="0 0 4px">
               ${investorsFundsUSD}
-            </Value.Big>
-            <Label>Total Investors funds</Label>
+            </S.Value.Big>
+            <S.Label>Total Investors funds</S.Label>
           </div>
           <div>
-            <Value.Big block color="#E4F2FF" p="0 0 4px" align="right">
+            <S.Value.Big block color="#E4F2FF" p="0 0 4px" align="right">
               ${accountLPsPrice}
-            </Value.Big>
-            <Label align="right">My funds</Label>
+            </S.Value.Big>
+            <S.Label align="right">My funds</S.Label>
           </div>
         </Flex>
         <Chart
@@ -105,39 +105,45 @@ const TabPoolLockedFunds: FC<{
       </Card>
       <Card>
         <Flex full ai="center" jc="space-between">
-          <Label align="right">Investor funds</Label>
+          <S.Label align="right">Investor funds</S.Label>
           <Flex ai="center" jc="flex-end">
-            <Value.Medium color="#E4F2FF">${investorsFundsUSD}</Value.Medium>
+            <S.Value.Medium color="#E4F2FF">
+              ${investorsFundsUSD}
+            </S.Value.Medium>
             &nbsp;
-            <Value.Medium color="#B1C7FC">
+            <S.Value.Medium color="#B1C7FC">
               {investorsFundsBase} {baseSymbol}
-            </Value.Medium>
+            </S.Value.Medium>
           </Flex>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <Label align="right">Personal funds</Label>
+          <S.Label align="right">Personal funds</S.Label>
           <Flex ai="center" jc="flex-end">
-            <Value.Medium color="#E4F2FF">${traderFundsUSD}</Value.Medium>
+            <S.Value.Medium color="#E4F2FF">${traderFundsUSD}</S.Value.Medium>
             &nbsp;
-            <Value.Medium color="#B1C7FC">
+            <S.Value.Medium color="#B1C7FC">
               {traderFundsBase} {baseSymbol}
-            </Value.Medium>
+            </S.Value.Medium>
           </Flex>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <Label align="right">Fund used ({poolUsedToTotalPercentage}%)</Label>
+          <S.Label align="right">
+            Fund used ({poolUsedToTotalPercentage}%)
+          </S.Label>
           <Flex ai="center" jc="flex-end">
-            <Value.Medium color="#E4F2FF">
+            <S.Value.Medium color="#E4F2FF">
               ${poolUsedInPositionsUSD.format}&nbsp;/&nbsp;
-            </Value.Medium>
+            </S.Value.Medium>
             &nbsp;
-            <Value.Medium color="#B1C7FC">{totalPoolUSD.format}</Value.Medium>
+            <S.Value.Medium color="#B1C7FC">
+              {totalPoolUSD.format}
+            </S.Value.Medium>
           </Flex>
         </Flex>
-        <ProgressBar w={Number(poolUsedToTotalPercentage)} />
+        <S.ProgressBar w={Number(poolUsedToTotalPercentage)} />
         {isTrader && (
           <Flex full>
-            <AppButtonFull
+            <S.AppButtonFull
               onClick={onTerminalNavigate}
               text="Invest more in my fund"
             />

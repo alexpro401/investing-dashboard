@@ -17,7 +17,7 @@ import { ICON_NAMES } from "consts/icon-names"
 import { isNil } from "lodash"
 import dexe from "assets/icons/dexe-dark.svg"
 import { generatePath } from "react-router-dom"
-import { ROUTE_PATHS } from "../../consts"
+import { ROUTE_PATHS } from "consts"
 
 export const Scroll = styled.div`
   padding: 16px 0;

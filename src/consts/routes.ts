@@ -28,7 +28,7 @@ export enum ROUTE_PATHS {
   createFundDao = "/create-fund/dao/*",
   createFundSuccess = "/success/:poolAddress",
 
-  fundPositions = "fund-positions/:poolAddress/*",
+  fundPositions = "/fund-positions/:poolAddress/*",
   fundDetails = "fund-details/:poolAddress/*",
 
   insurance = "insurance",

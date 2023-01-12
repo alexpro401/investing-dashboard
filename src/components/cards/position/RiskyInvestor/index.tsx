@@ -12,7 +12,7 @@ import S from "./styled"
 
 import useRiskyPosition from "./useRiskyPosition"
 import { InvestorRiskyPositionWithVests } from "interfaces/thegraphs/investors"
-import { ROUTE_PATHS } from "../../../../consts"
+import { ROUTE_PATHS } from "consts"
 
 interface InvestorRiskyPositionProposalData {
   token: string
