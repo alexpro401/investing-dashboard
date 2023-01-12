@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
-import { createClient, useQuery } from "urql"
+import { useQuery } from "urql"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { useActiveWeb3React } from "hooks"
@@ -10,8 +10,9 @@ import {
   useGovPoolHelperContracts,
   useGovPoolVotingPowerMulticall,
 } from "hooks/dao"
-import { DaoPoolDaoProfileTotalDelegationsQuery } from "queries/gov-pools"
+import { DaoPoolDaoProfileTotalDelegationsQuery } from "queries"
 import { isAddress } from "utils"
+import { graphClientDaoPools } from "utils/graphClient"
 
 interface IUseDelegationsProps {
   startLoading: boolean
@@ -23,11 +24,6 @@ interface ITotalDelegationsQuery {
     totalCurrentNFTDelegated: string[]
   }
 }
-
-const daoGraphClient = createClient({
-  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
 
 const useDelegations = ({ startLoading }: IUseDelegationsProps) => {
   const { daoAddress } = useParams<"daoAddress">()
@@ -71,12 +67,11 @@ const useDelegations = ({ startLoading }: IUseDelegationsProps) => {
     useQuery<ITotalDelegationsQuery>({
       query: DaoPoolDaoProfileTotalDelegationsQuery,
       variables: useMemo(() => ({ address: daoAddress }), [daoAddress]),
-      context: daoGraphClient,
+      context: graphClientDaoPools,
       pause: useMemo(
         () => !startLoading || !isAddress(daoAddress) || !isAddress(account),
         [daoAddress, account, startLoading]
       ),
-      requestPolicy: "network-only",
     })
 
   useEffect(() => {

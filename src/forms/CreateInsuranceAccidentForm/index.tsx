@@ -1,6 +1,5 @@
 import { isEmpty, isNil, reduce } from "lodash"
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
-import { createClient, Provider as GraphProvider } from "urql"
 import {
   FC,
   useCallback,
@@ -52,10 +51,6 @@ import { createPortal } from "react-dom"
 import { SideStepsNavigationBar, StepsNavigation } from "common"
 import { hideTapBar, showTabBar } from "state/application/actions"
 import { useNavigate } from "react-router-dom"
-
-const investorsPoolsClient = createClient({
-  url: process.env.REACT_APP_INVESTORS_API_URL || "",
-})
 
 enum STEPS {
   chooseFund = "choose-fund",
@@ -565,12 +560,4 @@ const CreateInsuranceAccidentForm: FC = () => {
   )
 }
 
-const CreateInsuranceAccidentFormWithProvider = (props) => {
-  return (
-    <GraphProvider value={investorsPoolsClient}>
-      <CreateInsuranceAccidentForm {...props} />
-    </GraphProvider>
-  )
-}
-
-export default CreateInsuranceAccidentFormWithProvider
+export default CreateInsuranceAccidentForm

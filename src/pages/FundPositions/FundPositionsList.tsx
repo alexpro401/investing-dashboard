@@ -16,12 +16,8 @@ import PoolPositionCard from "components/cards/position/Pool"
 import S, { BecomeInvestor } from "./styled"
 import { ZERO } from "consts"
 import { IPosition } from "interfaces/thegraphs/all-pools"
-import { createClient } from "urql"
 
-const allPoolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
+import { graphClientAllPools } from "utils/graphClient"
 
 const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
   const { poolAddress } = useParams()
@@ -41,7 +37,7 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
       [closed, poolAddress]
     ),
     pause: !poolAddress,
-    context: allPoolsClient,
+    context: graphClientAllPools,
     formatter: (d) => d.positions,
   })
 

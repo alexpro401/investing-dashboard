@@ -10,7 +10,7 @@ import theme, { Center } from "theme"
 
 import { Token } from "interfaces"
 import LoadMore from "components/LoadMore"
-import { GovPoolActiveDelegations } from "queries"
+import { GovPoolActiveDelegationsQuery } from "queries"
 import useQueryPagination from "hooks/useQueryPagination"
 import GovTokenDelegationCard from "components/cards/GovTokenDelegation"
 import { IGovVoterInPoolPairsQuery } from "interfaces/thegraphs/gov-pools"
@@ -19,6 +19,7 @@ import {
   useGovPoolHelperContracts,
   useGovPoolVotingPowerMulticall,
 } from "hooks"
+import { graphClientDaoPools } from "utils/graphClient"
 
 interface Props {
   govPoolAddress?: string
@@ -30,7 +31,7 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress, token }) => {
 
   const [{ data, loading }, fetchMore] =
     useQueryPagination<IGovVoterInPoolPairsQuery>({
-      query: GovPoolActiveDelegations(true),
+      query: GovPoolActiveDelegationsQuery(true),
       variables: React.useMemo(
         () => ({
           account: String(account)
@@ -54,6 +55,7 @@ const DaoDelegationOut: React.FC<Props> = ({ govPoolAddress, token }) => {
           ? filter(withAmounts, (dh) => loadedData.includes(dh))
           : withAmounts
       },
+      context: graphClientDaoPools,
     })
 
   const { govUserKeeperAddress } = useGovPoolHelperContracts(govPoolAddress)
