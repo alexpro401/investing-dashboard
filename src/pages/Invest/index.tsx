@@ -1,41 +1,25 @@
 import { useMemo } from "react"
 import { useParams } from "react-router-dom"
-import { Center, Flex } from "theme"
+import { Center } from "theme"
 
 import { ICON_NAMES } from "consts/icon-names"
 import Token from "components/Token"
 import SwapPrice from "components/SwapPrice"
 import Header from "components/Header/Layout"
-import IconButton from "components/IconButton"
 import ExchangeDivider from "components/Exchange/Divider"
-import CircularProgress from "components/CircularProgress"
 import { AppButton } from "common"
 import ExchangeInput from "components/Exchange/ExchangeInput"
-import TransactionSlippage from "components/TransactionSlippage"
 
 import { useUserAgreement } from "state/user/hooks"
 
 import { cutDecimalPlaces, fromBig, shortenAddress } from "utils"
-
-import close from "assets/icons/close-big.svg"
-import settings from "assets/icons/settings.svg"
-
-import {
-  Container,
-  Card,
-  CardHeader,
-  Title,
-  IconsGroup,
-  InfoCard,
-  InfoRow,
-  InfoGrey,
-  InfoWhite,
-  InfoDropdown,
-} from "components/Exchange/styled"
+import { Container } from "components/Exchange/styled"
 
 import useInvest from "./useInvest"
 import { GuardSpinner } from "react-spinners-kit"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
+import { Exchange } from "components/Exchange"
+import { Info } from "components/InfoAccordion"
 
 const Invest = () => {
   const { poolAddress } = useParams<{
@@ -47,14 +31,12 @@ const Invest = () => {
     {
       info,
       allowance,
-      isSlippageOpen,
       slippage,
       gasPrice,
       swapPrice,
       swapPriceUSD,
       direction,
       updateAllowance,
-      setSlippageOpen,
       setSlippage,
       handleDirectionChange,
       handlePercentageChange,
@@ -136,56 +118,35 @@ const Invest = () => {
   ])
 
   const freeLiquidity = useMemo(() => {
-    if (!info.freeLiquidity.lp) return <InfoGrey>Loading</InfoGrey>
+    if (!info.freeLiquidity.lp) return "Loading"
 
-    if (typeof info.freeLiquidity.lp === "number")
-      return <InfoGrey>Unlimited</InfoGrey>
+    if (typeof info.freeLiquidity.lp === "number") return "Unlimited"
 
-    return (
-      <Flex gap="4">
-        <InfoWhite>
-          {fromBig(cutDecimalPlaces(info.freeLiquidity.lp))} LP
-        </InfoWhite>
-        <InfoGrey>({fromBig(info.freeLiquidity.percent)}%)</InfoGrey>
-      </Flex>
-    )
+    return `${fromBig(cutDecimalPlaces(info.freeLiquidity.lp))} LP (${fromBig(
+      info.freeLiquidity.percent
+    )}%)`
   }, [info])
 
   const availableToInvest = useMemo(() => {
-    if (!info.availableToInvest.amount) return <InfoGrey>Loading</InfoGrey>
+    if (!info.availableToInvest.amount) return "Loading"
 
-    return (
-      <Flex gap="4">
-        <InfoWhite>
-          {fromBig(cutDecimalPlaces(info.availableToInvest.amount))}
-        </InfoWhite>
-        <InfoGrey>{info.symbol}</InfoGrey>
-      </Flex>
-    )
+    return `${fromBig(cutDecimalPlaces(info.availableToInvest.amount))} ${
+      info.symbol
+    }`
   }, [info])
 
   const minInvestAmount = useMemo(() => {
-    if (!info.minInvestAmount.amount) return <InfoGrey>Loading</InfoGrey>
+    if (!info.minInvestAmount.amount) return "Loading"
 
-    return (
-      <Flex gap="4">
-        <InfoWhite>
-          {fromBig(cutDecimalPlaces(info.minInvestAmount.amount))}
-        </InfoWhite>
-        <InfoGrey>{info.symbol}</InfoGrey>
-      </Flex>
-    )
+    return `${fromBig(cutDecimalPlaces(info.minInvestAmount.amount))} ${
+      info.symbol
+    }`
   }, [info])
 
   const totalPositionSize = useMemo(() => {
-    return (
-      <Flex gap="4">
-        <InfoWhite>
-          {fromBig(cutDecimalPlaces(info.fundPositions.total))}
-        </InfoWhite>
-        <InfoGrey>{info.symbol}</InfoGrey>
-      </Flex>
-    )
+    return `${fromBig(cutDecimalPlaces(info.fundPositions.total))} ${
+      info.symbol
+    }`
   }, [info])
 
   const positions = useMemo(() => {
@@ -195,21 +156,7 @@ const Invest = () => {
   }, [info])
 
   const form = (
-    <Card>
-      <CardHeader>
-        <Title active>Swap</Title>
-        <IconsGroup>
-          <CircularProgress />
-          <IconButton
-            size={12}
-            filled
-            media={settings}
-            onClick={() => setSlippageOpen(!isSlippageOpen)}
-          />
-          <IconButton size={10} filled media={close} onClick={() => {}} />
-        </IconsGroup>
-      </CardHeader>
-
+    <>
       <ExchangeInput
         price={from.price}
         amount={from.amount}
@@ -236,48 +183,43 @@ const Invest = () => {
         decimal={to.decimals}
         customIcon={to.icon}
       />
-
-      <SwapPrice
-        fromSymbol={from.symbol}
-        toSymbol={to.symbol}
-        tokensCost={swapPrice}
-        usdCost={swapPriceUSD}
-        gasPrice={gasPrice}
-      />
-
-      <Flex p="16px 0 0" full>
-        {button}
-      </Flex>
-
-      <InfoCard gap="12">
-        <InfoRow>
-          <InfoGrey>Free Liquidity</InfoGrey>
-          {freeLiquidity}
-        </InfoRow>
-        <InfoRow>
-          <InfoGrey>Available to invest</InfoGrey>
-          {availableToInvest}
-        </InfoRow>
-        <InfoRow>
-          <InfoGrey>Min invest amount</InfoGrey>
-          {minInvestAmount}
-        </InfoRow>
-        <InfoDropdown
-          left={<InfoGrey>Total fund positions: </InfoGrey>}
-          right={totalPositionSize}
-        >
-          {positions}
-        </InfoDropdown>
-      </InfoCard>
-
-      <TransactionSlippage
-        slippage={slippage}
-        onChange={setSlippage}
-        isOpen={isSlippageOpen}
-        toggle={(v) => setSlippageOpen(v)}
-      />
-    </Card>
+    </>
   )
+
+  const infoData: Info[] | undefined = useMemo(() => {
+    if (!info) return
+
+    return [
+      {
+        title: "Free Liquidity",
+        value: freeLiquidity,
+        tooltip: "Free Liquidity",
+      },
+      {
+        title: "Available to Invest",
+        value: availableToInvest,
+        tooltip: "Available to Invest",
+      },
+      {
+        title: "Min Invest Amount",
+        value: minInvestAmount,
+        tooltip: "Min Invest Amount",
+      },
+      {
+        title: "Total fund positions",
+        value: totalPositionSize,
+        tooltip: "Total fund positions",
+        childrens: positions,
+      },
+    ]
+  }, [
+    availableToInvest,
+    freeLiquidity,
+    positions,
+    info,
+    minInvestAmount,
+    totalPositionSize,
+  ])
 
   return (
     <>
@@ -288,7 +230,22 @@ const Invest = () => {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        {form}
+        <Exchange
+          title="Invest"
+          slippage={slippage}
+          setSlippage={setSlippage}
+          buttons={[button]}
+          form={form}
+          info={infoData}
+        >
+          <SwapPrice
+            fromSymbol={from.symbol}
+            toSymbol={to.symbol}
+            tokensCost={swapPrice}
+            usdCost={swapPriceUSD}
+            gasPrice={gasPrice}
+          />
+        </Exchange>
       </Container>
     </>
   )

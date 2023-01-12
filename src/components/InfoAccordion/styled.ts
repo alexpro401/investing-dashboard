@@ -31,7 +31,7 @@ export const Body = styled(Flex)`
 `
 
 export const Title = styled(Flex)`
-  font-weight: 500;
+  font-weight: 400;
   font-size: 14px;
   line-height: 16px;
   letter-spacing: 0.01em;

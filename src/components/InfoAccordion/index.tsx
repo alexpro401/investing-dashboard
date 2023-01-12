@@ -1,4 +1,5 @@
-import { FC, ReactNode } from "react"
+import { isArray } from "lodash"
+import React, { FC, ReactNode } from "react"
 import Row from "./Row"
 import * as S from "./styled"
 
@@ -7,7 +8,7 @@ export interface Info {
   tooltip?: ReactNode
   value: string
   pnl?: string
-  childrens?: Info[]
+  childrens?: Info[] | JSX.Element[]
 }
 
 interface Props {
@@ -21,9 +22,14 @@ const InfoAccordion: FC<Props> = ({ rows }) => {
         <Row key={row.title} data={row}>
           {row.childrens && (
             <>
-              {row.childrens.map((child) => (
-                <Row key={child.title} data={child} />
-              ))}
+              {isArray(row.childrens) &&
+                row.childrens.map((child) =>
+                  React.isValidElement(child) ? (
+                    child
+                  ) : (
+                    <Row key={child.title} data={child} />
+                  )
+                )}
             </>
           )}
         </Row>
