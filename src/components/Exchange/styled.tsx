@@ -18,8 +18,8 @@ export const InputContainer = styled(Flex)<{ height?: string }>`
   width: 100%;
   height: ${(props) => (props.height ? props.height : "100px")};
 
-  background: #141926;
-  border: 1px solid #293c54;
+  background: #0e1320;
+  border: 1px solid rgba(40, 51, 74, 0.5);
 `
 
 export const RiskyContainer = styled(GradientBorder)`
@@ -46,12 +46,11 @@ export const InputBottom = styled(Flex)`
 
 export const Price = styled(Text)`
   font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 13px;
-  letter-spacing: 0.3px;
-  color: #b1c7fc;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14px;
+  text-align: right;
+  color: #6781bd;
   user-select: none;
 `
 export const Balance = styled(Flex)`
@@ -63,14 +62,15 @@ export const Balance = styled(Flex)`
 
 export const Tokens = styled.span`
   font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 13px;
   text-align: right;
-  letter-spacing: 0.3px;
-  color: #b1c7fc;
   margin-right: 3px;
+
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14px;
+  text-align: right;
+
+  color: #6781bd;
 `
 
 export const Symbol = styled.span`
@@ -87,20 +87,19 @@ export const Symbol = styled.span`
 
 export const Max = styled(Text)`
   font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 500;
-  font-size: 13px;
-  line-height: 10px;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 110%;
   text-align: right;
-  letter-spacing: 0.3px;
-  color: #2680eb;
+  color: #2669eb;
 `
 
 export const Input = styled.input`
   font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
   font-weight: 600;
-  font-size: 22px;
+  font-size: 20px;
+  line-height: 24px;
+  letter-spacing: 0.01em;
   color: #e4f2ff;
   outline: none;
   background: transparent;
@@ -150,19 +149,16 @@ export const InputS = styled.input`
   }
 `
 
-export const ActiveSymbol = styled(GradientBorder)`
+export const ActiveSymbol = styled(Flex)`
   cursor: pointer;
   user-select: none;
   display: flex;
   align-items: center;
   padding: 5px 9px 5px 5px;
   min-height: 37px;
-  box-shadow: inset -44px 7px 11px rgba(0, 0, 0, 0.03);
   border-radius: 19px;
 
-  &:after {
-    background: #121928;
-  }
+  background: rgba(40, 51, 74, 0.5);
 `
 
 export const SymbolLabel = styled.span`
@@ -255,15 +251,13 @@ export const PercentButton = styled.div<{ active?: boolean }>`
   cursor: pointer;
 
   font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 14px;
-  letter-spacing: 0.5px;
-
-  color: ${(props) => (props.active ? "#E4F2FF" : "#B1C7FC")};
 
   border-radius: 3px;
+
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14px;
+  color: #6781bd;
 
   &:first-child {
     border-top-left-radius: 0;
@@ -304,8 +298,8 @@ export const Card = styled(BasicCard)`
   padding: 20px 16px;
   position: relative;
   border-radius: 20px;
-  background: #181e2c;
-  max-width: 450px;
+  background: #141926;
+  max-width: 420px;
   margin: auto;
   gap: 16px;
 `

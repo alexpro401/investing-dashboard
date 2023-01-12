@@ -31,17 +31,19 @@ export const Body = styled(Flex)`
 `
 
 export const Title = styled(Flex)`
-  font-weight: 400;
-  font-size: 13px;
+  font-weight: 500;
+  font-size: 14px;
   line-height: 16px;
+  letter-spacing: 0.01em;
   color: #b1c7fc;
 `
 
 export const Value = styled(Flex)`
-  font-weight: 500;
-  font-size: 13px;
-  line-height: 15px;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
   text-align: right;
+  letter-spacing: 0.01em;
   color: #e4f2ff;
 `
 

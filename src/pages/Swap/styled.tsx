@@ -53,8 +53,6 @@ export const CreateProposal = styled(AppButton).attrs(() => ({
   iconLeft: ICON_NAMES.plus,
   iconSize: 26,
 }))`
-  padding: 16px 0 0;
-
   & > svg {
     transform: translate(2px, -2px);
   }

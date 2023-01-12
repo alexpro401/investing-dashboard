@@ -48,7 +48,6 @@ const Exchange: FC<Props> = ({
           <CircularProgress />
           <IconButton
             size={12}
-            filled
             media={settings}
             onClick={() => setSlippageOpen(!isSlippageOpen)}
           />
