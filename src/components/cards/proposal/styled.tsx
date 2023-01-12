@@ -1,17 +1,14 @@
 import styled from "styled-components/macro"
-import { Flex, GradientBorder } from "theme"
+import { Flex } from "theme"
 
-export const Card = styled(GradientBorder)`
+export const Card = styled.div`
   width: 100%;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+  background: ${({ theme }) => theme.backgroundColors.secondary};
   border-radius: 16px;
   flex-direction: column;
   margin-bottom: 18px;
   z-index: initial;
-
-  &:after {
-    background: #181e2c;
-  }
 `
 export const Head = styled(Flex)<{ p: string }>`
   width: 100%;
