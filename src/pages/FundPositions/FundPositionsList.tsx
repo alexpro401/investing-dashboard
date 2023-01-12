@@ -18,6 +18,7 @@ import { ZERO } from "consts"
 import { IPosition } from "interfaces/thegraphs/all-pools"
 
 import { graphClientAllPools } from "utils/graphClient"
+import { NoDataMessage } from "common"
 
 const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
   const { poolAddress } = useParams()
@@ -99,11 +100,7 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
   }
 
   if (data && data.length === 0) {
-    return (
-      <S.Content>
-        <S.WithoutData>No {closed ? "closed" : "open"} positions</S.WithoutData>
-      </S.Content>
-    )
+    return <NoDataMessage />
   }
 
   return (

@@ -1,32 +1,55 @@
 import { FC } from "react"
-import styled, { css } from "styled-components/macro"
+import styled from "styled-components/macro"
 
 import { AppButton } from "common"
-import { Flex, GradientBorder } from "theme"
+import { Flex, GradientBorder, respondTo } from "theme"
+import HeaderTabs from "components/Header/Tabs"
 
-const ContainerBase = css`
-  width: 100%;
+export const Root = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
+  padding: var(--app-padding);
+  overflow: hidden auto;
+  flex: 1;
+`
+
+export const HeadContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
+`
+
+export const PageTitle = styled.h2`
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 900;
+  color: #e4f2ff;
+  margin: 0;
+`
+
+export const PageHeadTabs = styled(HeaderTabs)`
+  ${respondTo("sm")} {
+    justify-content: flex-start;
+  }
 `
 
 const Styled = {
   Container: styled.div`
     box-sizing: border-box;
-
-    ${ContainerBase}
+    width: 100%;
   `,
   List: styled.div`
-    padding: 16px;
     position: relative;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-
-    ${ContainerBase}
+    width: 100%;
   `,
   Content: styled(Flex)`
     align-items: center;
     justify-content: center;
     position: relative;
-    ${ContainerBase}
+    width: 100%;
   `,
   WithoutData: styled.div`
     font-family: ${(props) => props.theme.appFontFamily};

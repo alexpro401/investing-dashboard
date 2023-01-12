@@ -1,26 +1,32 @@
 import styled from "styled-components/macro"
-import { Flex } from "theme"
+import { respondTo } from "theme"
+import RouteTabs from "components/RouteTabs"
 
-const Styled = {
-  Container: styled.div``,
+export const ListTopWrp = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 
-  Content: styled(Flex)``,
+  ${respondTo("sm")} {
+    justify-content: space-between;
+  }
+`
 
-  List: styled.div`
-    padding: 16px;
-    position: relative;
-    overflow-y: auto;
-  `,
+export const PageSubTabs = styled(RouteTabs)`
+  ${respondTo("sm")} {
+    width: max-content;
+    min-width: 350px;
+  }
+`
 
-  ListLoading: styled(Flex)``,
-  WithoutData: styled.div`
-    font-family: ${(props) => props.theme.appFontFamily};
-    font-style: normal;
-    font-weight: 600;
-    font-size: 13px;
-    line-height: 16px;
-    color: #e4f2ff;
-  `,
-}
-
-export default Styled
+export const ListTopInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+  letter-spacing: 0.01em;
+  color: ${({ theme }) => theme.brandColors.secondary};
+`
