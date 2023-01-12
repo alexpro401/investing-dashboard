@@ -28,9 +28,9 @@ const altTokens = [addressWETH, addressWBTC]
 
 function getUSDRenderValue(value: BigNumber): ReactNode {
   if (value.lt(0)) {
-    return `-$${normalizeBigNumber(value.abs(), 18, 2)}`
+    return `-$${normalizeBigNumber(value.abs(), 18, 5)}`
   }
-  return `$${normalizeBigNumber(value, 18, 2)}`
+  return `$${normalizeBigNumber(value, 18, 5)}`
 }
 
 interface Props {

@@ -29,7 +29,7 @@ const usePoolAlternativePnlTokens = (
     () => vests?.filter((vest) => vest.isInvest) ?? [],
     [vests]
   )
-
+  // Tokens prices in USD
   const tokenHistoricalPrices = React.useMemo(() => {
     if (!investList || isEmpty(investList)) return []
 
@@ -49,33 +49,60 @@ const usePoolAlternativePnlTokens = (
     })
   }, [investList])
 
-  // ATIP - Average Token Invest Price
-  const averageDepositPriceInUSD = React.useMemo(() => {
-    if (isEmpty(tokenHistoricalPrices)) return { eth: ZERO, btc: ZERO }
-
-    const totalInvestingPrice = tokenHistoricalPrices.reduce(
-      (acc, price) => ({
-        eth: addBignumbers([acc.eth, 18], [price.eth, 18]),
-        btc: addBignumbers([acc.btc, 18], [price.btc, 18]),
+  // Token count on invests
+  const totalTokensVolume = React.useMemo(() => {
+    return investList.reduce(
+      (acc, vest) => ({
+        eth: addBignumbers(
+          [acc.eth, 18],
+          [BigNumber.from(vest.volumeNative), 18]
+        ),
+        btc: addBignumbers([acc.btc, 18], [BigNumber.from(vest.volumeBTC), 18]),
       }),
+      { eth: ZERO, btc: ZERO }
+    )
+  }, [investList])
+
+  // WATP
+  const weightedAverageTokensPrice = React.useMemo(() => {
+    const volumes = investList.reduce(
+      (acc, vest, index) => {
+        const { volumeNative, volumeBTC } = vest
+        return {
+          eth: addBignumbers(
+            [acc.eth, 18],
+            [
+              multiplyBignumbers(
+                [BigNumber.from(volumeNative), 18],
+                [tokenHistoricalPrices[index].eth, 18]
+              ),
+              18,
+            ]
+          ),
+          btc: addBignumbers(
+            [acc.btc, 18],
+            [
+              multiplyBignumbers(
+                [BigNumber.from(volumeBTC), 18],
+                [tokenHistoricalPrices[index].btc, 18]
+              ),
+              18,
+            ]
+          ),
+        }
+      },
       { eth: ZERO, btc: ZERO }
     )
 
     return {
-      eth: divideBignumbers(
-        [totalInvestingPrice.eth, 18],
-        [BigNumber.from(tokenHistoricalPrices.length), 18]
-      ),
-      btc: divideBignumbers(
-        [totalInvestingPrice.btc, 18],
-        [BigNumber.from(tokenHistoricalPrices.length), 18]
-      ),
+      eth: divideBignumbers([volumes.eth, 18], [totalTokensVolume.eth, 18]),
+      btc: divideBignumbers([volumes.btc, 18], [totalTokensVolume.btc, 18]),
     }
-  }, [tokenHistoricalPrices])
+  }, [investList, totalTokensVolume, tokenHistoricalPrices])
 
-  // PNL_USD = (CTP - ATIP) / ATIP
+  // PNL_USD = (CTP - WATP) / WATP
   const pnlUSD = React.useMemo(() => {
-    const { eth, btc } = averageDepositPriceInUSD
+    const { eth, btc } = weightedAverageTokensPrice
 
     const _eth = divideBignumbers(
       [subtractBignumbers([ethPriceOutUSD, 18], [eth, 18]), 18],
@@ -88,7 +115,7 @@ const usePoolAlternativePnlTokens = (
     )
 
     return { eth: _eth, btc: _btc }
-  }, [ethPriceOutUSD, btcPriceOutUSD, averageDepositPriceInUSD])
+  }, [ethPriceOutUSD, btcPriceOutUSD, weightedAverageTokensPrice])
 
   // PNL = PNL_USD * 100
   const pnlPercentage = React.useMemo(() => {
