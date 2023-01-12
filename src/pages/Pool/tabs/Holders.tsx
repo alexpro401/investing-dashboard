@@ -6,11 +6,13 @@ import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { Indents, Value, Link } from "../styled"
 import { Card, Icon } from "common"
 import { Flex } from "theme"
-import { shortenAddress } from "utils"
+import { normalizeBigNumber, shortenAddress } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { Token } from "interfaces"
 import { ICON_NAMES } from "consts/icon-names"
 import Table from "components/Table"
+import { useSingleContractMultipleData } from "state/multicall/hooks"
+import { useTraderPoolContract } from "contracts"
 
 interface Props {
   poolData: IPoolQuery
@@ -20,6 +22,34 @@ interface Props {
 
 const TabPoolHolders: FC<Props> = ({ poolData, baseToken, chainId }) => {
   const total = Number(poolData?.investorsCount) || 0
+
+  const traderPool = useTraderPoolContract(poolData.id)
+
+  const investors = useMemo(() => {
+    if (!poolData || !poolData.investors) return []
+
+    return poolData.investors.map((i) => [i.id])
+  }, [poolData])
+
+  const balances = useSingleContractMultipleData(
+    traderPool,
+    "balanceOf",
+    investors
+  )
+
+  const usersToBalancesMap = useMemo(() => {
+    if (!balances || balances.some((b) => b.loading)) {
+      return {}
+    }
+
+    return investors.reduce(
+      (acc, investor, index) => ({
+        ...acc,
+        [investor[0]]: balances[index].result?.[0],
+      }),
+      {}
+    )
+  }, [balances, investors])
 
   const getInvestorExplorerLink = useCallback(
     (id) => {
@@ -56,7 +86,9 @@ const TabPoolHolders: FC<Props> = ({ poolData, baseToken, chainId }) => {
           </Value.MediumThin>
 
           <Flex ai="center" jc="flex-end" gap="4">
-            <Value.Medium color="#E4F2FF">100,500</Value.Medium>
+            <Value.Medium color="#E4F2FF">
+              {normalizeBigNumber(usersToBalancesMap[id], 18, 6)}
+            </Value.Medium>
             <Value.Medium color="#B1C7FC">
               {baseToken?.symbol ?? ""}
             </Value.Medium>
@@ -64,7 +96,7 @@ const TabPoolHolders: FC<Props> = ({ poolData, baseToken, chainId }) => {
         </Flex>
       </Link>
     ),
-    []
+    [usersToBalancesMap]
   )
 
   return (
