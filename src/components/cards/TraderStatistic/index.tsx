@@ -13,7 +13,6 @@ import { copyToClipboard } from "utils/clipboard"
 import { useAddToast } from "state/application/hooks"
 import { normalizeBigNumber, shortenAddress } from "utils"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
-import { useBreakpoints } from "../../../hooks"
 
 interface Props {
   account?: string | null
@@ -26,8 +25,6 @@ interface Props {
   pools: IPoolQuery[]
 }
 const TraderStatisticCard: FC<Props> = ({ account, data, pools }) => {
-  const { isMobile } = useBreakpoints()
-
   const addToast = useAddToast()
 
   const statistic = useMemo(
@@ -91,7 +88,7 @@ const TraderStatisticCard: FC<Props> = ({ account, data, pools }) => {
       </div>
     ),
 
-    [account, isMobile]
+    [account]
   )
 
   const rightNode = useMemo(() => <PoolsIcons pools={pools} />, [pools])

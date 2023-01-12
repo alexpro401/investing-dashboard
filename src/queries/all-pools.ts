@@ -46,7 +46,7 @@ const PRICE_HISTORY_FULL = (startDate, block) => `
   }
 `
 
-const PriceHistoryQuery = (startDate, block?) => `
+export const PriceHistoryQuery = (startDate, block?) => `
   query ($address: String!, $minTimeframe: Int!, $maxTimeframe: Int!, $limit: Int!, $startDate: Int!) {
     traderPool(id: $address) {
       ${PRICE_HISTORY_FULL(startDate, block)}
@@ -88,7 +88,7 @@ const POOL = `
   ${PRICE_HISTORY_LAST}
 `
 
-const PoolQuery = `
+export const PoolQuery = `
   query ($address: String!) {
     traderPool(id: $address) {
       ${POOL}
@@ -96,14 +96,14 @@ const PoolQuery = `
   }
 `
 
-const OwnedPoolsQuery = `
+export const OwnedPoolsQuery = `
   query ($address: String!) {
     traderPools(orderBy: creationTime, first: 100, where: { trader: $address }) {
       ${POOL}
     }
   }
 `
-const ManagedPoolsQuery = `
+export const ManagedPoolsQuery = `
   query ($address: String!) {
     traderPools(
       orderBy: creationTime, first: 100, 
@@ -117,7 +117,7 @@ const ManagedPoolsQuery = `
   }
 `
 
-const PoolsQuery = `
+export const PoolsQuery = `
   query ($q: String!) {
     traderPools(where: { ticker_contains_nocase: $q } first: 100) {
       ${POOL}
@@ -125,7 +125,7 @@ const PoolsQuery = `
   }
 `
 
-const PoolsQueryWithSort = `
+export const PoolsQueryWithSort = `
   query ($q: String!, $orderBy: String!, $orderDirection: String!) {
     traderPools(where: { ticker_contains_nocase: $q } first: 100 orderBy: $orderBy orderDirection: $orderDirection) {
       ${POOL}
@@ -133,7 +133,7 @@ const PoolsQueryWithSort = `
   }
 `
 
-const PoolsQueryByType = `
+export const PoolsQueryByType = `
   query ($q: String!, $type: String!) {
     traderPools(where: { ticker_contains_nocase: $q, type: $type } first: 100) {
       ${POOL}
@@ -141,7 +141,7 @@ const PoolsQueryByType = `
   }
 `
 
-const PoolsQueryByTypeWithSort = `
+export const PoolsQueryByTypeWithSort = `
   query ($q: String!, $type: String!, $orderBy: String!, $orderDirection: String!) {
     traderPools(where: { ticker_contains_nocase: $q, type: $type } first: 100 orderBy: $orderBy orderDirection: $orderDirection) {
       ${POOL}
@@ -149,7 +149,7 @@ const PoolsQueryByTypeWithSort = `
   }
 `
 
-const PoolsByInvestorsQuery = `
+export const PoolsByInvestorsQuery = `
   query ($investors: [String]!) {
     traderPools(
       where: { investors_contains: $investors },
@@ -201,7 +201,7 @@ const POSITION = `
   }
 `
 
-const PositionsByIdsQuery = `
+export const PositionsByIdsQuery = `
   query ($idList: [String]!) {
     positions(first: 25, where: { id_in: $idList }) {
       ${POSITION_DATA}
@@ -209,7 +209,7 @@ const PositionsByIdsQuery = `
   }
 `
 
-const BasicPositionsQuery = `
+export const BasicPositionsQuery = `
   query ($offset: Int!, $limit: Int!, $address: String!, $closed: Boolean!) {
     positions(
       skip: $offset, first: $limit,
@@ -224,7 +224,7 @@ const BasicPositionsQuery = `
   }
 `
 
-const PoolPositionLast = `
+export const PoolPositionLastQuery = `
 query ($poolId: String!, $tokenId: String!) {
   positions(
     first: 1,
@@ -240,7 +240,7 @@ query ($poolId: String!, $tokenId: String!) {
 `
 
 // Fund fee history
-const FundFeeHistoryQuery = `
+export const FundFeeHistoryQuery = `
   query($offset: Int!, $limit: Int!, $address: String!) {
     feeHistories(
       skip: $offset, first: $limit,
@@ -259,19 +259,3 @@ const FundFeeHistoryQuery = `
     }
   }
 `
-
-export {
-  PoolQuery,
-  PoolsQuery,
-  PoolsQueryByType,
-  PriceHistoryQuery,
-  OwnedPoolsQuery,
-  ManagedPoolsQuery,
-  PoolsQueryWithSort,
-  PoolsQueryByTypeWithSort,
-  PoolPositionLast,
-  BasicPositionsQuery,
-  FundFeeHistoryQuery,
-  PositionsByIdsQuery,
-  PoolsByInvestorsQuery,
-}

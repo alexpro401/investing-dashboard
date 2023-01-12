@@ -147,23 +147,23 @@ const CreateFundDaoForm: FC = () => {
       <AnimatePresence>
         <SForms.StepsWrapper ref={stepsWrapperRef}>
           {currentStep === STEPS.titles.number ? (
-            <SForms.StepsContainer>
+            <SForms.StepsContainer isWithPaddings={true}>
               <TitlesStep />
             </SForms.StepsContainer>
           ) : currentStep === STEPS.isDaoValidator.number ? (
-            <SForms.StepsContainer>
+            <SForms.StepsContainer isWithPaddings={true}>
               <IsDaoValidatorStep />
             </SForms.StepsContainer>
           ) : currentStep === STEPS.defaultProposalSetting.number ? (
-            <SForms.StepsContainer>
+            <SForms.StepsContainer isWithPaddings={true}>
               <DefaultProposalStep />
             </SForms.StepsContainer>
           ) : currentStep === STEPS.isCustomVoteSelecting.number ? (
-            <SForms.StepsContainer>
+            <SForms.StepsContainer isWithPaddings={true}>
               <IsCustomVotingStep />
             </SForms.StepsContainer>
           ) : currentStep === STEPS.isTokenDistributionSettings.number ? (
-            <SForms.StepsContainer>
+            <SForms.StepsContainer isWithPaddings={true}>
               <IsDistributionProposalStep />
             </SForms.StepsContainer>
           ) : currentStep === STEPS.success.number ? (

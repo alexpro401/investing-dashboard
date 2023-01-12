@@ -15,7 +15,7 @@ import useInvestorTotalInvest from "hooks/useInvestorTotalInvest"
 import { normalizeBigNumber } from "utils"
 import useInvestorTV from "hooks/useInvestorTV"
 import Tooltip from "components/Tooltip"
-import { useBreakpoints } from "../../../hooks"
+import { useBreakpoints } from "hooks"
 
 interface Props {
   activePools: InvestorPoolQuery[]

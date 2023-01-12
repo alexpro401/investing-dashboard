@@ -1,5 +1,4 @@
 import { FC } from "react"
-import { createClient, Provider as GraphProvider } from "urql"
 
 import CreateInsuranceAccidentCardStepNumber from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentCardStepNumber"
 import CreateInsuranceAccidentPools from "forms/CreateInsuranceAccidentForm/components/CreateInsuranceAccidentPools"
@@ -12,10 +11,6 @@ import {
 } from "forms/CreateInsuranceAccidentForm/styled"
 import useOwnedAndInvestedPools from "hooks/useOwnedAndInvestedPools"
 import { useBreakpoints } from "hooks"
-
-const allPoolsApiUrl = process.env.REACT_APP_ALL_POOLS_API_URL ?? ""
-
-const allPoolsClient = createClient({ url: allPoolsApiUrl })
 
 const CreateInsuranceAccidentChooseFundStep: FC = () => {
   const [{ data: pools, total, fetching }] = useOwnedAndInvestedPools()
@@ -53,12 +48,4 @@ const CreateInsuranceAccidentChooseFundStep: FC = () => {
   )
 }
 
-const CreateInsuranceAccidentChooseFundStepWithProvider = (props) => {
-  return (
-    <GraphProvider value={allPoolsClient}>
-      <CreateInsuranceAccidentChooseFundStep {...props} />
-    </GraphProvider>
-  )
-}
-
-export default CreateInsuranceAccidentChooseFundStepWithProvider
+export default CreateInsuranceAccidentChooseFundStep

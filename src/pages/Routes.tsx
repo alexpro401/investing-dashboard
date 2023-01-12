@@ -8,15 +8,20 @@ import RequireAuth from "pages/RequireAuth"
 
 import { Content } from "theme/GlobalStyle"
 import { ROUTE_PATHS } from "consts"
+import { shortenAddress } from "../utils"
 
 const Welcome = lazy(() => import("pages/Welcome"))
 const TopMembers = lazy(() => import("pages/TopMembers"))
 const Invest = lazy(() => import("pages/Invest"))
 const DaoProfile = lazy(() => import("pages/DaoProfile"))
 const CreateFund = lazy(() => import("pages/CreateFund"))
-const CreateFundDaoPool = lazy(() => import("pages/CreateFundDaoPool"))
-const CreateFundBasic = lazy(() => import("pages/CreateFundBasic"))
-const CreateFundInvestment = lazy(() => import("pages/CreateFundInvestment"))
+const CreateFundDaoPool = lazy(
+  () => import("pages/CreateFund/CreateFundDaoPool")
+)
+const CreateFundBasic = lazy(() => import("pages/CreateFund/CreateFundBasic"))
+const CreateFundInvestment = lazy(
+  () => import("pages/CreateFund/CreateFundInvestment")
+)
 const Investor = lazy(() => import("pages/Investor"))
 const Trader = lazy(() => import("pages/Trader"))
 const Pool = lazy(() => import("pages/Pool"))
@@ -41,66 +46,82 @@ const InvestInvestmentProposal = lazy(
 const WithdrawInvestmentProposal = lazy(
   () => import("pages/WithdrawInvestmentProposal")
 )
+
+const GovPoolProposals = lazy(() => import("pages/GovPoolProposals"))
+
 const CreateDaoProposalSelectType = lazy(
-  () => import("pages/CreateDaoProposalSelectType")
+  () => import("pages/GovPoolProposals/CreateDaoProposalSelectType")
 )
 const CreateDaoProposalValidatorSelectType = lazy(
-  () => import("pages/CreateDaoProposalValidatorSelectType")
+  () => import("pages/GovPoolProposals/CreateDaoProposalValidatorSelectType")
 )
 const CreateDaoProposalValidatorSettings = lazy(
-  () => import("pages/CreateDaoProposalValidatorSettings")
+  () => import("pages/GovPoolProposals/CreateDaoProposalValidatorSettings")
 )
 const CreateDaoProposalValidatorChangeValidatorSettings = lazy(
-  () => import("pages/CreateDaoProposalValidatorChangeValidatorSettings")
+  () =>
+    import(
+      "pages/GovPoolProposals/CreateDaoProposalValidatorChangeValidatorSettings"
+    )
 )
 const CreateDaoProposalValidatorChangeVotingSettings = lazy(
-  () => import("pages/CreateDaoProposalValidatorChangeVotingSettings")
+  () =>
+    import(
+      "pages/GovPoolProposals/CreateDaoProposalValidatorChangeVotingSettings"
+    )
 )
-const CreateDaoProposalType = lazy(() => import("pages/CreateDaoProposalType"))
+const CreateDaoProposalType = lazy(
+  () => import("pages/GovPoolProposals/CreateDaoProposalType")
+)
 const CreateDaoProposalChangeDaoSettings = lazy(
-  () => import("pages/CreateDaoProposalChangeDaoSettings")
+  () => import("pages/GovPoolProposals/CreateDaoProposalChangeDaoSettings")
 )
 const CreateDaoProposalChangeVotingSettings = lazy(
-  () => import("pages/CreateDaoProposalChangeVotingSettings")
+  () => import("pages/GovPoolProposals/CreateDaoProposalChangeVotingSettings")
 )
 const DaoProposalChangeGlobalVotingSettings = lazy(
   () =>
     import(
-      "pages/CreateDaoProposalChangeVotingSettings/subpages/GlobalVotingSettings"
+      "pages/GovPoolProposals/CreateDaoProposalChangeVotingSettings/subpages/GlobalVotingSettings"
     )
 )
 const DaoProposalChangeTokenDistribution = lazy(
   () =>
     import(
-      "pages/CreateDaoProposalChangeVotingSettings/subpages/TokenDistribution"
+      "pages/GovPoolProposals/CreateDaoProposalChangeVotingSettings/subpages/TokenDistribution"
     )
 )
 const DaoProposalChangeCustomSettings = lazy(
   () =>
     import(
-      "pages/CreateDaoProposalChangeVotingSettings/subpages/CustomSettings"
+      "pages/GovPoolProposals/CreateDaoProposalChangeVotingSettings/subpages/CustomSettings"
     )
 )
 const DaoProposalTokenDistribution = lazy(
-  () => import("pages/CreateDaoProposalTokenDistribution")
+  () => import("pages/GovPoolProposals/CreateDaoProposalTokenDistribution")
 )
 const CreateDaoCustomProposalSelectType = lazy(
-  () => import("pages/CreateDaoCustomProposal")
+  () => import("pages/GovPoolProposals/CreateDaoCustomProposal")
 )
 const CreateDaoCustomProposalAbi = lazy(
-  () => import("pages/CreateDaoCustomProposal/subpages/Abi")
+  () => import("pages/GovPoolProposals/CreateDaoCustomProposal/subpages/Abi")
 )
 const CreateDaoCustomProposalWalletConnect = lazy(
-  () => import("pages/CreateDaoCustomProposal/subpages/WalletConnect")
+  () =>
+    import(
+      "pages/GovPoolProposals/CreateDaoCustomProposal/subpages/WalletConnect"
+    )
 )
 const CreateDaoCustomProposalManual = lazy(
-  () => import("pages/CreateDaoCustomProposal/subpages/Manual")
+  () => import("pages/GovPoolProposals/CreateDaoCustomProposal/subpages/Manual")
 )
 
 /* dao proposals */
 
-const DaoProposals = lazy(() => import("pages/DaoProposals"))
-const DaoProposalDetails = lazy(() => import("pages/DaoProposalDetails"))
+const DaoProposals = lazy(() => import("pages/GovPoolProposals/DaoProposals"))
+const DaoProposalDetails = lazy(
+  () => import("pages/GovPoolProposals/DaoProposalDetails")
+)
 // const Insurance = lazy(() => import("pages/Insurance"))
 
 const PrivacyPolicy = lazy(() => import("pages/PrivacyPolicy"))
@@ -286,112 +307,117 @@ export const router = createBrowserRouter([
             element: <DaoPoolClaim />,
           },
           {
-            path: ROUTE_PATHS.daoProposalCreateSelectType,
-            element: <CreateDaoProposalSelectType />,
-          },
-          {
-            path: ROUTE_PATHS.daoProposalCreateCustom,
-            element: <CreateDaoProposalType />,
-          },
-          {
-            path: ROUTE_PATHS.daoProposalCreateProfile,
-            element: <CreateDaoProposalChangeDaoSettings />,
-          },
-          {
-            path: ROUTE_PATHS.daoProposalCreateValidatorSettings,
-            element: <CreateDaoProposalValidatorSettings />,
-          },
-          {
-            path: ROUTE_PATHS.daoProposalCreateTokenDistribution,
-            element: <DaoProposalTokenDistribution />,
-          },
-          {
-            path: ROUTE_PATHS.daoProposalCreateInternalSelectType,
-            element: <CreateDaoProposalChangeVotingSettings />,
-          },
-          {
-            path: ROUTE_PATHS.daoProposalCreateInternalGlobal,
-            element: <DaoProposalChangeGlobalVotingSettings />,
-          },
-          {
-            path: ROUTE_PATHS.daoProposalCreateInternalTokenDistribution,
-            element: <DaoProposalChangeTokenDistribution />,
-          },
-          {
-            path: ROUTE_PATHS.daoProposalCreateInternalCustom,
-            element: <DaoProposalChangeCustomSettings />,
-          },
-          {
-            path: ROUTE_PATHS.daoProposalCreateInternalValidatorsSelectType,
-            element: <CreateDaoProposalValidatorSelectType />,
-          },
-          {
-            path: ROUTE_PATHS.daoProposalCreateInternalValidatorsSettings,
-            element: <CreateDaoProposalValidatorChangeValidatorSettings />,
-          },
-          {
-            path: ROUTE_PATHS.daoProposalCreateInternalValidatorsVotingSettings,
-            element: <CreateDaoProposalValidatorChangeVotingSettings />,
-          },
-          {
-            path: ROUTE_PATHS.daoProposalCreateCustomSelectType,
-            element: <CreateDaoCustomProposalSelectType />,
-          },
-          {
-            path: ROUTE_PATHS.daoProposalCreateCustomABI,
-            element: <CreateDaoCustomProposalAbi />,
-          },
-          {
-            path: ROUTE_PATHS.daoProposalCreateCustomWalletConnect,
-            element: <CreateDaoCustomProposalWalletConnect />,
-          },
-          {
-            path: ROUTE_PATHS.daoProposalCreateCustomManual,
-            element: <CreateDaoCustomProposalManual />,
-          },
-          {
-            path: ROUTE_PATHS.daoProposalList,
-            element: <DaoProposals />,
-            handle: (params) => [
+            element: <GovPoolProposals />,
+            children: [
               {
-                label: "DAOs",
-                path: "/dao/list/top",
+                path: ROUTE_PATHS.daoProposalCreateSelectType,
+                element: <CreateDaoProposalSelectType />,
               },
               {
-                label: `DAO ${params.daoAddress}`,
-                path: generatePath(ROUTE_PATHS.daoItem, {
-                  daoAddress: params.daoAddress,
-                }),
+                path: ROUTE_PATHS.daoProposalCreateCustom,
+                element: <CreateDaoProposalType />,
               },
               {
-                label: `Proposals`,
-                path: generatePath(ROUTE_PATHS.daoProposalList, {
-                  daoAddress: params.daoAddress,
-                  "*": "opened", // FIXME
-                }),
-              },
-            ],
-          },
-          {
-            path: ROUTE_PATHS.daoProposalItem,
-            element: <DaoProposalDetails />,
-            handle: (params) => [
-              {
-                label: "DAOs",
-                path: "/dao/list/top",
+                path: ROUTE_PATHS.daoProposalCreateProfile,
+                element: <CreateDaoProposalChangeDaoSettings />,
               },
               {
-                label: `DAO ${params.daoAddress}`,
-                path: generatePath(ROUTE_PATHS.daoItem, {
-                  daoAddress: params.daoAddress,
-                }),
+                path: ROUTE_PATHS.daoProposalCreateValidatorSettings,
+                element: <CreateDaoProposalValidatorSettings />,
               },
               {
-                label: `Proposals`,
-                path: generatePath(ROUTE_PATHS.daoProposalList, {
-                  daoAddress: params.daoAddress,
-                  "*": "opened", // FIXME
-                }),
+                path: ROUTE_PATHS.daoProposalCreateTokenDistribution,
+                element: <DaoProposalTokenDistribution />,
+              },
+              {
+                path: ROUTE_PATHS.daoProposalCreateInternalSelectType,
+                element: <CreateDaoProposalChangeVotingSettings />,
+              },
+              {
+                path: ROUTE_PATHS.daoProposalCreateInternalGlobal,
+                element: <DaoProposalChangeGlobalVotingSettings />,
+              },
+              {
+                path: ROUTE_PATHS.daoProposalCreateInternalTokenDistribution,
+                element: <DaoProposalChangeTokenDistribution />,
+              },
+              {
+                path: ROUTE_PATHS.daoProposalCreateInternalCustom,
+                element: <DaoProposalChangeCustomSettings />,
+              },
+              {
+                path: ROUTE_PATHS.daoProposalCreateInternalValidatorsSelectType,
+                element: <CreateDaoProposalValidatorSelectType />,
+              },
+              {
+                path: ROUTE_PATHS.daoProposalCreateInternalValidatorsSettings,
+                element: <CreateDaoProposalValidatorChangeValidatorSettings />,
+              },
+              {
+                path: ROUTE_PATHS.daoProposalCreateInternalValidatorsVotingSettings,
+                element: <CreateDaoProposalValidatorChangeVotingSettings />,
+              },
+              {
+                path: ROUTE_PATHS.daoProposalCreateCustomSelectType,
+                element: <CreateDaoCustomProposalSelectType />,
+              },
+              {
+                path: ROUTE_PATHS.daoProposalCreateCustomABI,
+                element: <CreateDaoCustomProposalAbi />,
+              },
+              {
+                path: ROUTE_PATHS.daoProposalCreateCustomWalletConnect,
+                element: <CreateDaoCustomProposalWalletConnect />,
+              },
+              {
+                path: ROUTE_PATHS.daoProposalCreateCustomManual,
+                element: <CreateDaoCustomProposalManual />,
+              },
+              {
+                path: ROUTE_PATHS.daoProposalList,
+                element: <DaoProposals />,
+                handle: (params) => [
+                  {
+                    label: "DAOs",
+                    path: "/dao/list/top",
+                  },
+                  {
+                    label: `DAO ${shortenAddress(params.daoAddress)}`,
+                    path: generatePath(ROUTE_PATHS.daoItem, {
+                      daoAddress: params.daoAddress,
+                    }),
+                  },
+                  {
+                    label: `Proposals`,
+                    path: generatePath(ROUTE_PATHS.daoProposalList, {
+                      daoAddress: params.daoAddress,
+                      "*": "opened", // FIXME
+                    }),
+                  },
+                ],
+              },
+              {
+                path: ROUTE_PATHS.daoProposalItem,
+                element: <DaoProposalDetails />,
+                handle: (params) => [
+                  {
+                    label: "DAOs",
+                    path: "/dao/list/top",
+                  },
+                  {
+                    label: `DAO ${shortenAddress(params.daoAddress)}`,
+                    path: generatePath(ROUTE_PATHS.daoItem, {
+                      daoAddress: params.daoAddress,
+                    }),
+                  },
+                  {
+                    label: `Proposals`,
+                    path: generatePath(ROUTE_PATHS.daoProposalList, {
+                      daoAddress: params.daoAddress,
+                      "*": "opened", // FIXME
+                    }),
+                  },
+                ],
               },
             ],
           },

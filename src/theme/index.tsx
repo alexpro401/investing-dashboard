@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { colorsTheme } from "./colors.theme"
 import { respondTo } from "./mixins.theme"
 
-export const pageContentMaxWidth = "1200px"
+export const pageContentMaxWidth = css`calc(1200px + var(--app-padding-left) * 2)`
 
 export const ease = [0.29, 0.98, 0.29, 1]
 

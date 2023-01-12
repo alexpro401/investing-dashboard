@@ -7,7 +7,6 @@ import React, {
 } from "react"
 import { useNavigate } from "react-router-dom"
 import { v4 as uuidv4 } from "uuid"
-import { createClient } from "urql"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import theme, { Flex, Text } from "theme"
@@ -37,7 +36,8 @@ import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsCon
 import {
   DaoPoolProfileTopTokenDelegateeQuery,
   DaoPoolProfileTopNftDelegateeQuery,
-} from "queries/gov-pools"
+} from "queries"
+import { graphClientDaoPools } from "utils/graphClient"
 
 interface ITokenDelegatee {
   id: string
@@ -56,11 +56,6 @@ interface Props {
 }
 
 type IDelegationLeaderboardTab = "token" | "nft"
-
-const daoGraphClient = createClient({
-  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
 
 const DaoProfileTabDelegations: React.FC<Props> = ({ chainId, daoAddress }) => {
   const navigate = useNavigate()
@@ -274,7 +269,7 @@ const DaoProfileTabDelegations: React.FC<Props> = ({ chainId, daoAddress }) => {
                     row={getTokenDelegateeTableRow}
                     nodeHead={TableHead}
                     query={DaoPoolProfileTopTokenDelegateeQuery}
-                    context={daoGraphClient}
+                    context={graphClientDaoPools}
                     variables={{ pool: daoAddress }}
                     formatter={(d) => d.voterInPools}
                   />
@@ -294,7 +289,7 @@ const DaoProfileTabDelegations: React.FC<Props> = ({ chainId, daoAddress }) => {
                     row={getNftDelegateeTableRow}
                     nodeHead={TableHead}
                     query={DaoPoolProfileTopNftDelegateeQuery}
-                    context={daoGraphClient}
+                    context={graphClientDaoPools}
                     variables={{ pool: daoAddress }}
                     formatter={(d) =>
                       d.voterInPools.map((el) => ({ ...el, votingPower: "" }))

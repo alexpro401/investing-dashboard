@@ -28,7 +28,6 @@ import {
   useNavigateWithState,
 } from "hooks"
 
-import { createClient, Provider as GraphProvider } from "urql"
 import { cutDecimalPlaces, fromBig } from "utils"
 
 import swapPathIcon from "assets/icons/swap-path.svg"
@@ -38,10 +37,6 @@ import * as ExchangeStyles from "components/Exchange/styled"
 import * as S from "./styled"
 
 import useSwap from "./useSwap"
-
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-})
 
 enum ModalView {
   FROM = "from",
@@ -411,17 +406,15 @@ const Swap = () => {
 export default function SwapWithProvider() {
   const { poolToken } = useParams()
   return (
-    <GraphProvider value={poolsClient}>
-      <WithPoolAddressValidation
-        poolAddress={poolToken ?? ""}
-        loader={
-          <Center>
-            <GuardSpinner size={20} loading />
-          </Center>
-        }
-      >
-        <Swap />
-      </WithPoolAddressValidation>
-    </GraphProvider>
+    <WithPoolAddressValidation
+      poolAddress={poolToken ?? ""}
+      loader={
+        <Center>
+          <GuardSpinner size={20} loading />
+        </Center>
+      }
+    >
+      <Swap />
+    </WithPoolAddressValidation>
   )
 }

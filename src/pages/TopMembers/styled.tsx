@@ -9,7 +9,7 @@ import { ICON_NAMES } from "consts"
 
 export const StyledTopMembers = styled(motion.div)`
   height: fit-content;
-  padding: 0 24px;
+  padding: var(--app-padding);
 `
 
 export const MembersList = styled.div`

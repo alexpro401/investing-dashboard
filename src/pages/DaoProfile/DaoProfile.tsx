@@ -29,15 +29,12 @@ import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsCon
 import Tabs from "common/Tabs"
 import { Flex } from "theme"
 
-import { createClient, useQuery } from "urql"
+import { useQuery } from "urql"
 import { GovPoolQuery } from "queries"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import { useBreakpoints } from "hooks"
 import { Breadcrumbs } from "common"
-
-const govPoolsClient = createClient({
-  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
-})
+import { graphClientDaoPools } from "utils/graphClient"
 
 const DaoProfile: React.FC = () => {
   const { account, chainId } = useWeb3React()
@@ -48,7 +45,7 @@ const DaoProfile: React.FC = () => {
   const [govPoolQuery] = useQuery<{ daoPool: IGovPoolQuery }>({
     query: GovPoolQuery,
     variables: useMemo(() => ({ address: daoAddress }), [daoAddress]),
-    context: govPoolsClient,
+    context: graphClientDaoPools,
   })
 
   const isValidator = true

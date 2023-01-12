@@ -1,13 +1,9 @@
 import { useMemo } from "react"
-import { createClient, useQuery } from "urql"
+import { useQuery } from "urql"
 
-import { DaoPoolValidatorsQuery } from "queries/validators"
+import { DaoPoolValidatorsQuery } from "queries"
 import { isAddress } from "utils"
-
-const daoValidatorsGraphClient = createClient({
-  url: process.env.REACT_APP_DAO_VALIDATORS_API_URL || "",
-  requestPolicy: "network-only",
-})
+import { graphClientDaoValidators } from "utils/graphClient"
 
 interface IValidator {
   id: string
@@ -25,7 +21,7 @@ const useGovPoolValidators = (daoAddress: string): [IValidator[], boolean] => {
     variables: {
       address: daoAddress,
     },
-    context: daoValidatorsGraphClient,
+    context: graphClientDaoValidators,
   })
 
   const validators = useMemo<IValidator[]>(() => {

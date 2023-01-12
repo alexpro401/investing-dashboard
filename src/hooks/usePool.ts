@@ -11,8 +11,11 @@ import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { ILeverageInfo } from "interfaces/contracts/ITraderPool"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { isAddress } from "utils"
-import { PoolPositionLast, PoolQuery } from "queries"
-import { PoolsByInvestorsQuery } from "queries/all-pools"
+import {
+  PoolQuery,
+  PoolPositionLastQuery,
+  PoolsByInvestorsQuery,
+} from "queries"
 import { useTraderPoolContract } from "contracts"
 
 import { ZERO } from "consts"
@@ -40,6 +43,7 @@ import { useAPI } from "api"
 import { TraderPool } from "abi"
 import { Interface } from "@ethersproject/abi"
 import { useMultipleContractSingleData } from "state/multicall/hooks"
+import { graphClientAllPools } from "utils/graphClient"
 
 /**
  * Returns TheGraph info about the pool
@@ -55,6 +59,7 @@ export function usePoolQuery(
     query: PoolQuery,
     variables: { address },
     ...(!isNil(context) ? { context } : {}),
+    context: graphClientAllPools,
   })
 
   return [pool.data?.traderPool, executeQuery]
@@ -82,9 +87,9 @@ export function usePoolPosition(poolId?: string, tokenId?: string) {
   const [pool] = useQuery<{
     positions: IPosition[]
   }>({
-    query: PoolPositionLast,
-    variables: params,
-    pause: isDataInvalid,
+    query: PoolPositionLastQuery,
+    variables: { poolId, tokenId },
+    context: graphClientAllPools,
   })
 
   useEffect(() => {
@@ -180,6 +185,7 @@ export function usePoolsByInvestors(investors: string[]) {
     variables: {
       investors,
     },
+    context: graphClientAllPools,
   })
 }
 

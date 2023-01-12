@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useCallback } from "react"
 import { useParams } from "react-router-dom"
-import { createClient, useQuery } from "urql"
+import { useQuery } from "urql"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { useActiveWeb3React } from "hooks"
@@ -15,13 +15,9 @@ import {
 import {
   GovMemberProposalsHistoryCountQuery,
   GovVoterInPoolQuery,
-} from "queries/gov-pools"
+} from "queries"
 import { isAddress } from "utils"
-
-const daoGraphClient = createClient({
-  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
+import { graphClientDaoPools } from "utils/graphClient"
 
 interface IUseMyBalanceProps {
   startLoading: boolean
@@ -80,12 +76,11 @@ const useMyBalance = ({ startLoading }: IUseMyBalanceProps) => {
       () => ({ address: daoAddress, voters: [account] }),
       [daoAddress, account]
     ),
-    context: daoGraphClient,
+    context: graphClientDaoPools,
     pause: useMemo(
       () => !startLoading || !isAddress(daoAddress) || !isAddress(account),
       [daoAddress, account, startLoading]
     ),
-    requestPolicy: "network-only",
   })
 
   const [{ fetching: voterFetching, data: voterData }] = useQuery({
@@ -94,12 +89,11 @@ const useMyBalance = ({ startLoading }: IUseMyBalanceProps) => {
       () => ({ pool: daoAddress, voter: account }),
       [daoAddress, account]
     ),
-    context: daoGraphClient,
+    context: graphClientDaoPools,
     pause: useMemo(
       () => !startLoading || !isAddress(daoAddress) || !isAddress(account),
       [daoAddress, account, startLoading]
     ),
-    requestPolicy: "network-only",
   })
 
   useEffect(() => {

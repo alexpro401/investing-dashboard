@@ -89,7 +89,7 @@ const PROPOSAL = `
   votes {${PROPOSAL_VOTE}}
 `
 
-const GovPoolQuery = `
+export const GovPoolQuery = `
   query ($address: String!) {
     daoPool(id: $address) {
       ${POOL}
@@ -97,7 +97,7 @@ const GovPoolQuery = `
   }
 `
 
-const GovPoolsQuery = `
+export const GovPoolsQuery = `
   query($offset: Int!, $limit: Int!, $excludeIds: [String]!) {
     daoPools(
     skip: $offset, first: $limit, 
@@ -109,7 +109,7 @@ const GovPoolsQuery = `
   }
 `
 
-const GovPoolDelegationHistoryByUserQuery = (isUserDelegator = true) => `
+export const GovPoolDelegationHistoryByUserQuery = (isUserDelegator = true) => `
   query ($offset: Int!, $limit: Int!, $address: String!, $account: String!) {
     delegationHistories(
       skip: $offset, first: $limit, 
@@ -124,7 +124,7 @@ const GovPoolDelegationHistoryByUserQuery = (isUserDelegator = true) => `
   }
 `
 
-const GovPoolActiveDelegations = (isUserDelegator = true) => `
+export const GovPoolActiveDelegationsQuery = (isUserDelegator = true) => `
   query ($offset: Int!, $limit: Int!, $account: String!) {
     voterInPoolPairs(
       skip: $offset, first: $limit, 
@@ -136,7 +136,7 @@ const GovPoolActiveDelegations = (isUserDelegator = true) => `
   }
 `
 
-const GovPoolExecutorQuery = `
+export const GovPoolExecutorQuery = `
   query ($address: String!, $executorAddress: String!) {
     daoPool(id: $address) {
       executors(where: { executorAddress: $executorAddress }) {${POOL_EXECUTOR}}
@@ -144,7 +144,7 @@ const GovPoolExecutorQuery = `
   }
 `
 
-const GovPoolExecutorsQuery = `
+export const GovPoolExecutorsQuery = `
   query ($address: String!) {
     daoPool(id: $address) {
       executors {${POOL_EXECUTOR}}
@@ -152,7 +152,7 @@ const GovPoolExecutorsQuery = `
   }
 `
 
-const GovPoolExecutorsBySettingIdQuery = `
+export const GovPoolExecutorsBySettingIdQuery = `
   query ($address: String!, $settingsId: String!) {
     daoPool(id: $address) {
       executors(where: { settings_: { settingsId: $settingsId } }) {${POOL_EXECUTOR}}
@@ -160,7 +160,7 @@ const GovPoolExecutorsBySettingIdQuery = `
   }
 `
 
-const GovVoterInPoolQuery = `
+export const GovVoterInPoolQuery = `
   query ($voter: String!, $pool: String!) {
     voterInPools(where: { pool: $pool, voter: $voter }) {
       ${POOL_VOTER}
@@ -168,7 +168,7 @@ const GovVoterInPoolQuery = `
   }
 `
 
-const GovProposalsWithDistributionQuery = `
+export const GovProposalsWithDistributionQuery = `
   query (
     $offset: Int!, $limit: Int!, 
     $isDP: Boolean!, $pool: String!,
@@ -185,33 +185,7 @@ const GovProposalsWithDistributionQuery = `
   }
 `
 
-const GovProposalsWithRewardsQuery = `
-  query(
-    $offset: Int!, $limit: Int!, 
-    $executorExclude: String!, $voters: [String]!, $pool: String!
-  ) {
-    proposals(
-      skip: $offset, first: $limit,
-      orderBy: id, orderDirection: asc,
-      where: { executor_not: $executorExclude, voters_contains: $voters, pool: $pool }
-    ) {
-      voters {
-        pools {
-          proposals(where: { claimedReward: 0 }) {
-            id 
-            totalVoteAmount
-            totalDelegatedVoteAmount
-            claimedReward
-            claimedDpRewardUSD
-            proposal { id }
-          }
-        }
-      }
-    }
-  }
-`
-
-const GovMemberProposalsHistoryCountQuery = `
+export const GovMemberProposalsHistoryCountQuery = `
   query($address: String!, $voters: [String]!) {
     proposals(where: { pool_: { id: $address }, voters_contains: $voters }) {
       proposalId
@@ -219,7 +193,7 @@ const GovMemberProposalsHistoryCountQuery = `
   }
 `
 
-const GovProposalsByPoolInMiscQuery = `
+export const GovProposalsByPoolInMiscQuery = `
   query($offset: Int!, $limit: Int!, $misc: String!, $pool: String!) {
     proposals(
       skip: $offset, first: $limit, 
@@ -230,7 +204,7 @@ const GovProposalsByPoolInMiscQuery = `
   }
 `
 
-const DaoPoolDaoProfileTotalDelegationsQuery = `
+export const DaoPoolDaoProfileTotalDelegationsQuery = `
   query($address: String!) {
     daoPool(id: $address) {
       totalCurrentTokenDelegated,
@@ -239,7 +213,7 @@ const DaoPoolDaoProfileTotalDelegationsQuery = `
   }
 `
 
-const DaoPoolProfileTopTokenDelegateeQuery = `
+export const DaoPoolProfileTopTokenDelegateeQuery = `
   query($offset: Int!, $limit: Int, $pool: String!) {
     voterInPools(where: { pool_: { id: $pool } }, skip: $offset, first: $limit, orderBy: receivedDelegation, orderDirection: desc) {
       id,
@@ -248,7 +222,7 @@ const DaoPoolProfileTopTokenDelegateeQuery = `
   }
 `
 
-const DaoPoolProfileTopNftDelegateeQuery = `
+export const DaoPoolProfileTopNftDelegateeQuery = `
   query($offset: Int!, $limit: Int, $pool: String!) {
     voterInPools(where: { pool_: { id: $pool } }, skip: $offset, first: $limit, orderBy: receivedNFTDelegation, orderDirection: desc) {
       id,
@@ -257,20 +231,35 @@ const DaoPoolProfileTopNftDelegateeQuery = `
   }
 `
 
-export {
-  GovPoolQuery,
-  GovPoolsQuery,
-  GovVoterInPoolQuery,
-  GovPoolDelegationHistoryByUserQuery,
-  GovPoolExecutorQuery,
-  GovPoolExecutorsQuery,
-  GovPoolExecutorsBySettingIdQuery,
-  GovPoolActiveDelegations,
-  GovProposalsWithRewardsQuery,
-  GovProposalsWithDistributionQuery,
-  GovMemberProposalsHistoryCountQuery,
-  GovProposalsByPoolInMiscQuery,
-  DaoPoolDaoProfileTotalDelegationsQuery,
-  DaoPoolProfileTopTokenDelegateeQuery,
-  DaoPoolProfileTopNftDelegateeQuery,
-}
+export const GovPoolProposalQuery = `
+  query($govPoolAddress: String!, $proposalId: Int!) {
+    proposals(where: { pool: $govPoolAddress, proposalId: $proposalId }) {
+      id
+      executor
+      creator
+      voters
+      distributionProposal {
+        token
+        amount
+      }
+    }
+  }
+`
+export const GovPoolProposalVotesQuery = `
+  query($proposalId: String!, $offset: Int!, $limit: Int!) {
+    proposalVotes(where:{ proposal: $proposalId }, first: $limit, skip: $offset) {
+      voter {
+        voter {
+          voter {
+            id
+          }
+        }
+      }
+      personalAmount
+      timestamp
+      proposal {
+        votesCount
+      }
+    }
+  }
+`

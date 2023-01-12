@@ -11,7 +11,7 @@ const INVEST_PROPOSAL = `
   APR
 `
 
-const InvestProposalQuery = `
+export const InvestProposalQuery = `
   query ($proposalId: String!) {
     proposal(id: $proposalId) {
       ${INVEST_PROPOSAL}
@@ -34,7 +34,7 @@ const INVESTOR_INVEST_PROPOSAL = `
     baseToken
   }
 `
-const InvestorInvestProposalsQuery = (invested) => {
+export const InvestorInvestProposalsQuery = (invested) => {
   const condition = invested ? "investPool_in" : "investPool_not_in"
   return `
   query ($activePools: [String]!, $offset: Int!, $limit: Int!) {
@@ -45,7 +45,7 @@ const InvestorInvestProposalsQuery = (invested) => {
 `
 }
 
-const InvestProposalWithdrawals = `
+export const InvestProposalWithdrawalsQuery = `
   query ($id: String!) {
     proposal(id: $id) {
       withdraws (orderBy: timestamp, orderDirection: desc) {
@@ -57,7 +57,7 @@ const InvestProposalWithdrawals = `
   }
 `
 
-const InvestProposalSupplies = `
+export const InvestProposalSuppliesQuery = `
   query ($id: String!) {
     proposal(id: $id) {
       APR
@@ -71,10 +71,3 @@ const InvestProposalSupplies = `
     }
   }
 `
-
-export {
-  InvestProposalQuery,
-  InvestorInvestProposalsQuery,
-  InvestProposalWithdrawals,
-  InvestProposalSupplies,
-}
