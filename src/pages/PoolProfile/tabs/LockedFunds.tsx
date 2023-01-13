@@ -13,6 +13,7 @@ import Chart from "components/Chart"
 import { TooltipLockedFundsChart } from "pages/PoolProfile/components"
 import { PoolProfileContext } from "pages/PoolProfile/context"
 import { ROUTE_PATHS } from "consts"
+import { normalizeBigNumber } from "../../../utils"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -54,7 +55,7 @@ const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
           </div>
           <div>
             <S.Value.Big block color="#E4F2FF" p="0 0 4px" align="right">
-              ${accountLPsPrice}
+              ${normalizeBigNumber(accountLPsPrice)}
             </S.Value.Big>
             <S.Label align="right">My funds</S.Label>
           </div>

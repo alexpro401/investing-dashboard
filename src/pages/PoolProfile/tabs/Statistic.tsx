@@ -5,6 +5,7 @@ import { Card } from "common"
 import { Flex } from "theme"
 import Tooltip from "components/Tooltip"
 import { PoolProfileContext } from "pages/PoolProfile/context"
+import { normalizeBigNumber } from "../../../utils"
 
 const MAX_INVESTORS = 1000
 const MAX_OPEN_TRADES = 25
@@ -62,7 +63,6 @@ const TabPoolStatistic: FC<Props> = ({ ...rest }) => {
           </Flex>
         </S.GridTwoColumn>
       </Card>
-
       <Card>
         <S.Value.Medium color="#9AE2CB">Average</S.Value.Medium>
         <S.GridTwoColumn>
@@ -74,7 +74,9 @@ const TabPoolStatistic: FC<Props> = ({ ...rest }) => {
           </Flex>
           <Flex full ai="center" jc="space-between">
             <S.Label>Order Size</S.Label>
-            <S.Value.Medium color="#E4F2FF">{orderSize}%</S.Value.Medium>
+            <S.Value.Medium color="#E4F2FF">
+              {normalizeBigNumber(orderSize, 4, 2)}%
+            </S.Value.Medium>
           </Flex>
         </S.GridTwoColumn>
 
@@ -107,11 +109,12 @@ const TabPoolStatistic: FC<Props> = ({ ...rest }) => {
           </Flex>
           <Flex full ai="center" jc="space-between">
             <S.Label>Max. loss</S.Label>
-            <S.Value.Medium color="#E4F2FF">{maxLoss}%</S.Value.Medium>
+            <S.Value.Medium color="#E4F2FF">
+              {normalizeBigNumber(maxLoss, 4, 2)}%
+            </S.Value.Medium>
           </Flex>
         </S.GridTwoColumn>
       </Card>
-
       <Card>
         <div>
           <Flex full ai="center" jc="space-between" m="0 0 12px">

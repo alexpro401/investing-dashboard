@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid"
 import * as S from "./styled"
 import { Card } from "common"
 import { Flex } from "theme"
-import { shortenAddress } from "utils"
+import { normalizeBigNumber, shortenAddress } from "utils"
 import Tooltip from "components/Tooltip"
 import { isEmpty } from "lodash"
 import { PoolProfileContext } from "pages/PoolProfile/context"
@@ -87,7 +87,9 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
         {emission.unlimited && (
           <Flex full ai="center" jc="space-between">
             <S.Label>Emission</S.Label>
-            <S.Value.Medium color="#E4F2FF">{emission.value}</S.Value.Medium>
+            <S.Value.Medium color="#E4F2FF">
+              {normalizeBigNumber(emission.value, 18, 6)}
+            </S.Value.Medium>
           </Flex>
         )}
         <Flex full ai="center" jc="space-between">
@@ -96,12 +98,14 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
         </Flex>
         <Flex full ai="center" jc="space-between">
           <S.Label>Limit who can invest</S.Label>
-          <S.Value.Medium color="#E4F2FF">{whitelistCount}</S.Value.Medium>
+          <S.Value.Medium color="#E4F2FF">
+            {whitelistCount ? `${whitelistCount} addresses` : "off"}
+          </S.Value.Medium>
         </Flex>
         <Flex full ai="center" jc="space-between">
           <S.Label>Performance Fee</S.Label>
           <S.Value.Medium color="#E4F2FF">
-            {commissionPercentage}%
+            {normalizeBigNumber(commissionPercentage, 25, 0)}%
           </S.Value.Medium>
         </Flex>
       </Card>

@@ -20,16 +20,16 @@ import {
   usePoolPrice,
   usePoolSortino,
   usePoolStatistics,
+  usePoolLockedFunds,
 } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
 import { DATE_FORMAT, TIMEFRAME, ZERO } from "consts"
 import { getPNL, getPriceLP, multiplyBignumbers } from "utils/formulas"
-import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
+import { expandTimestamp } from "utils"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { Center } from "theme"
 import { GuardSpinner } from "react-spinners-kit"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import usePoolLockedFunds from "../../../hooks/usePoolLockedFunds"
 import { format, getDay } from "date-fns"
 import { formatEther } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
@@ -168,11 +168,9 @@ const PoolProfileContextProvider: FC<Props> = ({ children }) => {
   const [accountLPs, setAccountLPs] = useState(ZERO)
 
   const accountLPsPrice = useMemo(() => {
-    if (accountLPs.isZero() || priceUSD.isZero()) {
-      return "0.0"
-    }
-    const BN = multiplyBignumbers([accountLPs, 18], [priceUSD, 18])
-    return normalizeBigNumber(BN, 18, 2)
+    if (accountLPs.isZero() || priceUSD.isZero()) return BigNumber.from(0)
+
+    return multiplyBignumbers([accountLPs, 18], [priceUSD, 18])
   }, [priceUSD, accountLPs])
 
   useEffect(() => {
@@ -237,19 +235,20 @@ const PoolProfileContextProvider: FC<Props> = ({ children }) => {
   }, [poolInfo, baseToken])
 
   const emission = useMemo(() => {
-    if (!poolInfo) return { unlimited: true, value: "Unlimited" }
+    if (!poolInfo) return { unlimited: true, value: BigNumber.from(0) }
 
-    const value = formatBigNumber(poolInfo.parameters.totalLPEmission, 18, 6)
-    const unlimited = value === "0.0" || value === "0.00"
+    const value = poolInfo.parameters.totalLPEmission
 
-    return { unlimited, value: unlimited ? "Unlimited" : value }
+    const unlimited = value.isZero()
+
+    return { unlimited, value: value }
   }, [poolInfo])
 
   const emissionLeft = useMemo(() => {
     if (!poolInfo || emission.unlimited)
       return {
         percentage: 0,
-        value: "0.0",
+        value: BigNumber.from(0),
       }
 
     const total = poolInfo.parameters.totalLPEmission
@@ -268,25 +267,25 @@ const PoolProfileContextProvider: FC<Props> = ({ children }) => {
 
     return {
       percentage: percent,
-      value: formatBigNumber(dif, 18, 6),
+      value: dif,
     }
   }, [poolInfo, emission])
 
-  const adminsCount = useMemo(() => {
-    if (!poolData) return 0
-    return poolData.admins.length
-  }, [poolData])
+  const adminsCount = useMemo(
+    () => (poolData ? poolData.admins.length : 0),
+    [poolData]
+  )
 
   const whitelistCount = useMemo(() => {
-    if (!poolData) return "off"
-    return poolData.privateInvestors.length > 0
-      ? `${poolData.privateInvestors.length} addresses`
-      : "off"
+    if (!poolData) return 0
+
+    return poolData?.privateInvestors?.length || 0
   }, [poolData])
 
-  const commissionPercentage = useMemo<string>(() => {
-    if (!poolInfo) return "0"
-    return formatBigNumber(poolInfo.parameters.commissionPercentage, 25, 0)
+  const commissionPercentage = useMemo(() => {
+    if (!poolInfo) return BigNumber.from(0)
+
+    return poolInfo.parameters.commissionPercentage
   }, [poolInfo])
 
   const sortinoTokens = [
@@ -301,9 +300,9 @@ const PoolProfileContextProvider: FC<Props> = ({ children }) => {
   const openPositionsLen = Number(poolInfo?.openPositions.length) || 0
 
   const orderSize = useMemo(() => {
-    if (!poolData) return "0"
+    if (!poolData) return BigNumber.from(0)
 
-    return normalizeBigNumber(poolData.orderSize, 4, 2)
+    return poolData.orderSize
   }, [poolData])
 
   const dailyProfit = useMemo(() => {
@@ -328,22 +327,24 @@ const PoolProfileContextProvider: FC<Props> = ({ children }) => {
     if (!sortino) return <>♾️</>
 
     return Number([sortino[sortinoTokens[0]]]).toFixed(2)
-  }, [sortino])
+  }, [sortino, sortinoTokens])
 
   const sortinoBTC = useMemo(() => {
     if (!sortino) return <>♾️</>
 
     return Number([sortino[sortinoTokens[1]]]).toFixed(2)
-  }, [sortino])
+  }, [sortino, sortinoTokens])
 
   const totalTrades = useMemo(() => {
     if (!poolData) return "0"
+
     return poolData.totalTrades
   }, [poolData])
 
   const maxLoss = useMemo(() => {
-    if (!poolData) return "0"
-    return normalizeBigNumber(BigNumber.from(poolData.maxLoss), 4, 2)
+    if (!poolData) return BigNumber.from(0)
+
+    return BigNumber.from(poolData.maxLoss)
   }, [poolData])
 
   return (
