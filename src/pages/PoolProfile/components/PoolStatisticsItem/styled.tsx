@@ -1,6 +1,6 @@
 import styled from "styled-components/macro"
 import TokenIcon from "components/TokenIcon"
-import { respondTo } from "../../../../theme"
+import { respondTo } from "theme"
 
 export const PoolStatisticsItem = styled.div`
   display: flex;

@@ -1,18 +1,16 @@
-import { FC, useMemo } from "react"
+import { FC, HTMLAttributes, useContext, useMemo } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { formatEther } from "@ethersproject/units"
 
-import { IPoolQuery } from "interfaces/thegraphs/all-pools"
-import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import * as S from "./styled"
 import { Card } from "common"
 import { Flex } from "theme"
 import { format } from "date-fns"
 import { expandTimestamp, formatBigNumber, shortenAddress } from "utils"
 import { DATE_FORMAT } from "consts/time"
-import { Token } from "interfaces"
 import Tooltip from "components/Tooltip"
 import { isEmpty } from "lodash"
+import { PoolProfileContext } from "pages/PoolProfile/context"
 
 function percentage(used, total) {
   return (used / total) * 100
@@ -23,28 +21,19 @@ const fundTypes = {
   INVEST_POOL: "Invest",
 }
 
-interface Props {
-  data: IPoolQuery
-  poolInfo: IPoolInfo | null
-  poolMetadata: any
-  baseToken: Token | null
-  isTrader: boolean
-}
+interface Props extends HTMLAttributes<HTMLDivElement> {}
 
-const TabPoolInfo: FC<Props> = ({
-  data,
-  poolInfo,
-  poolMetadata,
-  baseToken,
-  isTrader,
-}) => {
+const TabPoolInfo: FC<Props> = ({ ...rest }) => {
+  const { poolData, poolMetadata, baseToken, isTrader, poolInfo } =
+    useContext(PoolProfileContext)
+
   const creationTime = useMemo(() => {
-    if (!!data) {
-      return format(expandTimestamp(data.creationTime), DATE_FORMAT)
+    if (!!poolData) {
+      return format(expandTimestamp(poolData.creationTime), DATE_FORMAT)
     }
 
     return "-"
-  }, [data])
+  }, [poolData])
 
   const minimalInvestment = useMemo(() => {
     if (!poolInfo || !baseToken) return "0"
@@ -89,16 +78,16 @@ const TabPoolInfo: FC<Props> = ({
   }, [poolInfo, emission])
 
   const adminsCount = useMemo(() => {
-    if (!data) return 0
-    return data.admins.length
-  }, [data])
+    if (!poolData) return 0
+    return poolData.admins.length
+  }, [poolData])
 
   const whitelistCount = useMemo(() => {
-    if (!data) return "off"
-    return data.privateInvestors.length > 0
-      ? `${data.privateInvestors.length} addresses`
+    if (!poolData) return "off"
+    return poolData.privateInvestors.length > 0
+      ? `${poolData.privateInvestors.length} addresses`
       : "off"
-  }, [data])
+  }, [poolData])
 
   const commissionPercentage = useMemo<string>(() => {
     if (!poolInfo) return "0"
@@ -116,7 +105,7 @@ const TabPoolInfo: FC<Props> = ({
         <Flex full ai="center" jc="space-between">
           <S.Label>Fund address</S.Label>
           <S.Value.Medium color="#E4F2FF">
-            {shortenAddress(data.id, 2)}
+            {shortenAddress(poolData.id, 2)}
           </S.Value.Medium>
         </Flex>
         <Flex full ai="center" jc="space-between">
@@ -125,16 +114,16 @@ const TabPoolInfo: FC<Props> = ({
         </Flex>
         <Flex full ai="center" jc="space-between">
           <S.Label>Fund ticker</S.Label>
-          <S.Value.Medium color="#E4F2FF">{data.ticker}</S.Value.Medium>
+          <S.Value.Medium color="#E4F2FF">{poolData.ticker}</S.Value.Medium>
         </Flex>
         <Flex full ai="center" jc="space-between">
           <S.Label>Fund name</S.Label>
-          <S.Value.Medium color="#E4F2FF">{data.name}</S.Value.Medium>
+          <S.Value.Medium color="#E4F2FF">{poolData.name}</S.Value.Medium>
         </Flex>
         <Flex full ai="center" jc="space-between">
           <S.Label>Type of fund</S.Label>
           <S.Value.Medium color="#E4F2FF">
-            {fundTypes[data.type]}
+            {fundTypes[poolData.type]}
           </S.Value.Medium>
         </Flex>
         <Flex full ai="center" jc="space-between">
@@ -149,7 +138,7 @@ const TabPoolInfo: FC<Props> = ({
           {isTrader && (
             <S.AppLink
               text="Manage"
-              routePath={`/fund-details/${data.id}/edit`}
+              routePath={`/fund-details/${poolData.id}/edit`}
             />
           )}
         </Flex>
@@ -200,7 +189,7 @@ const TabPoolInfo: FC<Props> = ({
           {isTrader && (
             <S.AppLink
               text="Edit"
-              routePath={`/fund-details/${data.id}/edit`}
+              routePath={`/fund-details/${poolData.id}/edit`}
             />
           )}
         </Flex>

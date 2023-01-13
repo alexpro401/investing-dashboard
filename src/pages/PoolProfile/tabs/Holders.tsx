@@ -1,26 +1,26 @@
-import { FC, useCallback, useMemo } from "react"
+import { FC, HTMLAttributes, useCallback, useContext, useMemo } from "react"
 import { isNil } from "lodash"
 import { v4 as uuidv4 } from "uuid"
 
-import { IPoolQuery } from "interfaces/thegraphs/all-pools"
 import { Value, Link } from "./styled"
 import { Card, Icon } from "common"
 import { Flex } from "theme"
 import { normalizeBigNumber, shortenAddress } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { Token } from "interfaces"
 import { ICON_NAMES } from "consts/icon-names"
 import Table from "components/Table"
 import { useSingleContractMultipleData } from "state/multicall/hooks"
 import { useTraderPoolContract } from "contracts"
+import { PoolProfileContext } from "pages/PoolProfile/context"
+import { useWeb3React } from "@web3-react/core"
 
-interface Props {
-  poolData: IPoolQuery
-  baseToken: Token | null
-  chainId?: number
-}
+interface Props extends HTMLAttributes<HTMLDivElement> {}
 
-const TabPoolHolders: FC<Props> = ({ poolData, baseToken, chainId }) => {
+const TabPoolHolders: FC<Props> = ({ ...rest }) => {
+  const { chainId } = useWeb3React()
+
+  const { poolData, baseToken, poolInfo } = useContext(PoolProfileContext)
+
   const total = Number(poolData?.investorsCount) || 0
 
   const traderPool = useTraderPoolContract(poolData.id)

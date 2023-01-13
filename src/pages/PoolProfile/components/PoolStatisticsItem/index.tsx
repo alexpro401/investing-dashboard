@@ -1,6 +1,6 @@
 import { FC, HTMLAttributes } from "react"
 import * as S from "./styled"
-import { useBreakpoints } from "../../../../hooks"
+import { useBreakpoints } from "hooks"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   tokenAddress?: string

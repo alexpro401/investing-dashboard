@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react"
+import { FC, HTMLAttributes, useContext, useMemo } from "react"
 import { getDay } from "date-fns"
 import { v4 as uuidv4 } from "uuid"
 import { BigNumber } from "@ethersproject/bignumber"
@@ -13,6 +13,7 @@ import { Card } from "common"
 import { Flex } from "theme"
 import Tooltip from "components/Tooltip"
 import { usePoolSortino } from "hooks/pool"
+import { PoolProfileContext } from "../context"
 
 const MAX_INVESTORS = 1000
 const MAX_OPEN_TRADES = 25
@@ -21,12 +22,11 @@ const sortinoTokens = [
   "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
 ]
 
-interface Props {
-  poolData: IPoolQuery
-  poolInfo: IPoolInfo | null
-}
+interface Props extends HTMLAttributes<HTMLDivElement> {}
 
-const TabPoolStatistic: FC<Props> = ({ poolData, poolInfo }) => {
+const TabPoolStatistic: FC<Props> = ({ ...rest }) => {
+  const { poolData, poolInfo } = useContext(PoolProfileContext)
+
   const sortino = usePoolSortino(poolData.id, sortinoTokens)
 
   const investorsCount = Number(poolData?.investorsCount) || 0

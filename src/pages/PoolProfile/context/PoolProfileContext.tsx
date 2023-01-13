@@ -21,6 +21,7 @@ import { normalizeBigNumber } from "utils"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { Center } from "theme"
 import { GuardSpinner } from "react-spinners-kit"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 
 interface IPoolProfileContext {
   poolData: any
@@ -32,7 +33,9 @@ interface IPoolProfileContext {
   pnl: any
   pnl24h: any
   depositors: any
+  accountLPsPrice: any
   isTrader: boolean
+  poolInfo: IPoolInfo
 }
 
 export const PoolProfileContext = createContext<IPoolProfileContext>({
@@ -45,7 +48,9 @@ export const PoolProfileContext = createContext<IPoolProfileContext>({
   pnl: undefined,
   pnl24h: undefined,
   depositors: undefined,
+  accountLPsPrice: undefined,
   isTrader: false,
+  poolInfo: {} as IPoolInfo,
 })
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
@@ -53,10 +58,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {}
 const PoolProfileContextProvider: FC<Props> = ({ children }) => {
   const { poolAddress } = useParams()
 
-  const {
-    account,
-    // chainId
-  } = useWeb3React()
+  const { account } = useWeb3React()
 
   const traderPool = useTraderPoolContract(poolAddress)
   const poolData = useSelector((s: AppState) =>
@@ -66,7 +68,7 @@ const PoolProfileContextProvider: FC<Props> = ({ children }) => {
   const { priceLP, tvl, apy, pnl, pnl24h, depositors } =
     usePoolStatistics(poolData)
 
-  const [, poolInfoData] = usePoolContract(poolAddress)
+  const [, poolInfo] = usePoolContract(poolAddress)
   const [{ poolMetadata }] = usePoolMetadata(
     poolData?.id,
     poolData?.descriptionURL
@@ -125,6 +127,8 @@ const PoolProfileContextProvider: FC<Props> = ({ children }) => {
           pnl24h,
           depositors,
           isTrader,
+          accountLPsPrice,
+          poolInfo: poolInfo as IPoolInfo,
         }}
       >
         {children}

@@ -1,5 +1,5 @@
 import { isNil } from "lodash"
-import { FC, useCallback, useState } from "react"
+import { FC, HTMLAttributes, useCallback, useContext, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Tooltip } from "recharts"
 
@@ -7,29 +7,18 @@ import { Flex } from "theme"
 import { Card } from "common"
 import * as S from "./styled"
 import usePoolLockedFunds from "hooks/usePoolLockedFunds"
-import { IPoolQuery } from "interfaces/thegraphs/all-pools"
-import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import { Token } from "interfaces"
 import { CHART_TYPE, TIMEFRAME } from "consts/chart"
 import { usePoolLockedFundsHistory } from "hooks/usePool"
 import Chart from "components/Chart"
 import { TooltipLockedFundsChart } from "../components"
+import { PoolProfileContext } from "../context"
 
-const TabPoolLockedFunds: FC<{
-  address: string
-  isTrader: boolean
-  poolData: IPoolQuery
-  poolInfo: IPoolInfo | null
-  baseToken: Token | null
-  accountLPsPrice: string
-}> = ({
-  address,
-  poolData,
-  poolInfo,
-  baseToken,
-  isTrader,
-  accountLPsPrice,
-}) => {
+interface Props extends HTMLAttributes<HTMLDivElement> {}
+
+const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
+  const { poolData, baseToken, isTrader, accountLPsPrice, poolInfo } =
+    useContext(PoolProfileContext)
+
   const navigate = useNavigate()
 
   const [
@@ -47,12 +36,12 @@ const TabPoolLockedFunds: FC<{
   ] = usePoolLockedFunds(poolData, poolInfo, baseToken)
 
   const [tf, setTf] = useState(TIMEFRAME.d)
-  const [data, fetching] = usePoolLockedFundsHistory(address, tf)
+  const [data, fetching] = usePoolLockedFundsHistory(poolData.id, tf)
 
   const onTerminalNavigate = useCallback(() => {
-    if (isNil(address)) return
-    navigate(`/pool/invest/${address}`)
-  }, [address, navigate])
+    if (isNil(poolData.id)) return
+    navigate(`/pool/invest/${poolData.id}`)
+  }, [poolData.id, navigate])
 
   return (
     <>

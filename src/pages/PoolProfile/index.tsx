@@ -3,18 +3,18 @@ import { useContext, useMemo } from "react"
 import { generatePath } from "react-router-dom"
 import { isNil } from "lodash"
 
+import {
+  TabPoolHolders,
+  TabPoolInfo,
+  TabPoolLockedFunds,
+  TabPoolPnl,
+  TabPoolStatistic,
+} from "./tabs"
+
 import { Center } from "theme"
 import Header from "components/Header/Layout"
 
 import * as S from "./styled"
-
-// import {
-//   TabPoolHolders,
-//   TabPoolInfo,
-//   TabPoolLockedFunds,
-//   TabPoolPnl,
-//   TabPoolStatistic,
-// } from "./tabs"
 
 import { DATE_FORMAT, ICON_NAMES, ROUTE_PATHS } from "consts"
 import { DateUtil, formatNumber, normalizeBigNumber } from "utils"
@@ -201,70 +201,50 @@ const PoolProfileContent = () => {
                 </S.PoolProfileStatisticsWrp>
               </S.PoolProfileDefaultInfo>
 
-              {/*<S.TabsWrp*/}
-              {/*  tabs={[*/}
-              {/*    {*/}
-              {/*      name: "P&L",*/}
-              {/*      child: (*/}
-              {/*        <S.TabContainer>*/}
-              {/*          <TabPoolPnl address={poolData?.id} />*/}
-              {/*        </S.TabContainer>*/}
-              {/*      ),*/}
-              {/*    },*/}
-              {/*    {*/}
-              {/*      name: "Locked funds",*/}
-              {/*      child: (*/}
-              {/*        <S.TabContainer>*/}
-              {/*          <TabPoolLockedFunds*/}
-              {/*            address={poolData?.id}*/}
-              {/*            poolData={poolData}*/}
-              {/*            poolInfo={poolInfoData}*/}
-              {/*            baseToken={baseToken}*/}
-              {/*            isTrader={isTrader}*/}
-              {/*            accountLPsPrice={accountLPsPrice}*/}
-              {/*          />*/}
-              {/*        </S.TabContainer>*/}
-              {/*      ),*/}
-              {/*    },*/}
-              {/*    {*/}
-              {/*      name: "About fund",*/}
-              {/*      child: (*/}
-              {/*        <S.TabContainer>*/}
-              {/*          <TabPoolInfo*/}
-              {/*            data={poolData}*/}
-              {/*            poolInfo={poolInfoData}*/}
-              {/*            baseToken={baseToken}*/}
-              {/*            poolMetadata={poolMetadata}*/}
-              {/*            isTrader={isTrader}*/}
-              {/*          />*/}
-              {/*        </S.TabContainer>*/}
-              {/*      ),*/}
-              {/*    },*/}
-              {/*    {*/}
-              {/*      name: "Statistic",*/}
-              {/*      child: (*/}
-              {/*        <S.TabContainer>*/}
-              {/*          <TabPoolStatistic*/}
-              {/*            poolData={poolData}*/}
-              {/*            poolInfo={poolInfoData}*/}
-              {/*          />*/}
-              {/*        </S.TabContainer>*/}
-              {/*      ),*/}
-              {/*    },*/}
-              {/*    {*/}
-              {/*      name: "Holders",*/}
-              {/*      child: (*/}
-              {/*        <S.TabContainer>*/}
-              {/*          <TabPoolHolders*/}
-              {/*            poolData={poolData}*/}
-              {/*            chainId={chainId}*/}
-              {/*            baseToken={baseToken}*/}
-              {/*          />*/}
-              {/*        </S.TabContainer>*/}
-              {/*      ),*/}
-              {/*    },*/}
-              {/*  ]}*/}
-              {/*/>*/}
+              <S.TabsWrp
+                tabs={[
+                  {
+                    name: "P&L",
+                    child: (
+                      <S.TabContainer>
+                        <TabPoolPnl />
+                      </S.TabContainer>
+                    ),
+                  },
+                  {
+                    name: "Locked funds",
+                    child: (
+                      <S.TabContainer>
+                        <TabPoolLockedFunds />
+                      </S.TabContainer>
+                    ),
+                  },
+                  {
+                    name: "About fund",
+                    child: (
+                      <S.TabContainer>
+                        <TabPoolInfo />
+                      </S.TabContainer>
+                    ),
+                  },
+                  {
+                    name: "Statistic",
+                    child: (
+                      <S.TabContainer>
+                        <TabPoolStatistic />
+                      </S.TabContainer>
+                    ),
+                  },
+                  {
+                    name: "Holders",
+                    child: (
+                      <S.TabContainer>
+                        <TabPoolHolders />
+                      </S.TabContainer>
+                    ),
+                  },
+                ]}
+              />
             </>
           )}
         </S.Content>
