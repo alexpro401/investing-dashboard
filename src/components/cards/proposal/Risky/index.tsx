@@ -165,7 +165,7 @@ const RiskyProposalCard: FC<Props> = (props) => {
           )}
           <BodyItem
             label={isTrader ? "Max size (LP)" : "Proposal size LP"}
-            amount={maxSizeLP.normalized}
+            amount={normalizeBigNumber(maxSizeLP, 18, 6)}
           />
           <BodyItem
             label={
@@ -180,13 +180,13 @@ const RiskyProposalCard: FC<Props> = (props) => {
           />
           <BodyItem
             label="Fullness (LP)"
-            amount={fullness.value}
+            amount={normalizeBigNumber(fullness.value, 18, 6)}
             completed={fullness.completed}
             ai="flex-end"
           />
           <BodyItem
             label={`Max. Invest Price (${proposalSymbol})`}
-            amount={maxInvestPrice.value}
+            amount={normalizeBigNumber(maxInvestPrice.value, 18, 2)}
             completed={maxInvestPrice.completed}
           />
           {isDesktop && !isTrader && (
@@ -237,7 +237,7 @@ const RiskyProposalCard: FC<Props> = (props) => {
           )}
           <BodyItem
             label={`Current price (${proposalSymbol})`}
-            amount={currentPrice.value}
+            amount={normalizeBigNumber(currentPrice, 18, 2)}
           />
 
           <BodyItem
@@ -332,11 +332,11 @@ const RiskyProposalCard: FC<Props> = (props) => {
           visible={isSettingsOpen}
           setVisible={setIsSettingsOpen}
           timestamp={expirationDate.initial}
-          maxSizeLP={maxSizeLP.value}
-          maxInvestPrice={maxInvestPrice.initial}
+          maxSizeLP={maxSizeLP}
+          maxInvestPrice={maxInvestPrice.value}
           proposalPool={proposalPool}
-          fullness={fullness.initial}
-          currentPrice={currentPrice.initial}
+          fullness={fullness.value}
+          currentPrice={currentPrice}
           proposalId={proposalId}
           successCallback={onUpdateRestrictions}
           proposalSymbol={proposalToken?.symbol}

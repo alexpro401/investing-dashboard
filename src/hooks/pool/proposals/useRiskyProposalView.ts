@@ -31,22 +31,17 @@ type UseRiskyProposalViewResponseValues = {
   tokenRating: number
   canInvest: boolean
   proposalTokenLink: string
-  maxSizeLP: {
-    value: BigNumber
-    normalized: string
-  }
+  maxSizeLP: BigNumber
   yourSizeLP: BigNumber
   fullness: {
-    value: string
+    value: BigNumber
     completed: boolean
-    initial: BigNumber
   }
   maxInvestPrice: {
-    value: string
+    value: BigNumber
     completed: boolean
-    initial: BigNumber
   }
-  currentPrice: { value: string; initial: BigNumber }
+  currentPrice: BigNumber
   expirationDate: {
     value: string
     completed: boolean
@@ -111,10 +106,7 @@ export const useRiskyProposalView = (
   /**
    * Proposal limit in LP's
    */
-  const [maxSizeLP, setMaxSizeLP] = useState<{
-    value: BigNumber
-    normalized: string
-  }>({ value: ZERO, normalized: "0" })
+  const [maxSizeLP, setMaxSizeLP] = useState<BigNumber>(ZERO)
 
   /**
    * Maximum price of proposal token
@@ -123,10 +115,9 @@ export const useRiskyProposalView = (
    * @returns initial - maximum price in BigNumber
    */
   const [maxInvestPrice, setMaxInvestPrice] = useState<{
-    value: string
+    value: BigNumber
     completed: boolean
-    initial: BigNumber
-  }>({ value: "0", completed: false, initial: ZERO })
+  }>({ value: ZERO, completed: false })
 
   /**
    * Symbol of proposal
@@ -143,38 +134,33 @@ export const useRiskyProposalView = (
    * @returns initial - fullness in BigNumber
    */
   const fullness = useMemo<{
-    value: string
+    value: BigNumber
     completed: boolean
-    initial: BigNumber
   }>(() => {
     if (
       !proposal?.proposalInfo?.proposalLimits?.investLPLimit ||
       !proposal.proposalInfo.lpLocked
     ) {
-      return { value: "0", completed: false, initial: ZERO }
+      return { value: ZERO, completed: false }
     }
 
     const { lpLocked, proposalLimits } = proposal.proposalInfo
 
     return {
-      value: normalizeBigNumber(lpLocked, 18, 6),
+      value: lpLocked,
       completed: lpLocked.gte(proposalLimits.investLPLimit),
-      initial: lpLocked,
     }
   }, [proposal])
 
   /**
    * Exact price on 1 position token in base tokens
    */
-  const currentPrice = useMemo<{ value: string; initial: BigNumber }>(() => {
+  const currentPrice = useMemo<BigNumber>(() => {
     if (!markPriceOpen) {
-      return { value: "0", initial: ZERO }
+      return ZERO
     }
 
-    return {
-      value: normalizeBigNumber(markPriceOpen, 18, 2),
-      initial: markPriceOpen,
-    }
+    return markPriceOpen
   }, [markPriceOpen])
 
   /**
@@ -207,11 +193,11 @@ export const useRiskyProposalView = (
    * Trader LP's size in %
    */
   const traderSizePercentage = useMemo(() => {
-    if (maxSizeLP.value.isZero() || !traderSizeLP || traderSizeLP.isZero()) {
+    if (maxSizeLP.isZero() || !traderSizeLP || traderSizeLP.isZero()) {
       return ZERO
     }
 
-    return percentageOfBignumbers(traderSizeLP, maxSizeLP.value)
+    return percentageOfBignumbers(traderSizeLP, maxSizeLP)
   }, [maxSizeLP, traderSizeLP])
 
   /**
@@ -259,10 +245,7 @@ export const useRiskyProposalView = (
 
     const { investLPLimit } = proposal.proposalInfo.proposalLimits
 
-    setMaxSizeLP({
-      value: investLPLimit,
-      normalized: normalizeBigNumber(investLPLimit, 18, 6),
-    })
+    setMaxSizeLP(investLPLimit)
   }, [proposal])
 
   // Set maximum invest price
@@ -280,9 +263,8 @@ export const useRiskyProposalView = (
     } = proposal
 
     setMaxInvestPrice({
-      value: normalizeBigNumber(proposalLimits.maxTokenPriceLimit, 18, 2),
+      value: proposalLimits.maxTokenPriceLimit,
       completed: positionTokenPrice.gte(proposalLimits.maxTokenPriceLimit),
-      initial: proposalLimits.maxTokenPriceLimit,
     })
   }, [proposal])
 
@@ -420,19 +402,15 @@ export const useRiskyProposalView = (
     }
 
     if (maxSize) {
-      setMaxSizeLP({
-        value: maxSize,
-        normalized: normalizeBigNumber(maxSize, 18, 6),
-      })
+      setMaxSizeLP(maxSize)
     }
 
     if (maxInvest) {
       const { positionTokenPrice } = proposal
 
       setMaxInvestPrice({
-        value: normalizeBigNumber(maxInvest, 18, 2),
+        value: maxInvest,
         completed: positionTokenPrice.gte(maxInvest),
-        initial: maxInvest,
       })
     }
   }
