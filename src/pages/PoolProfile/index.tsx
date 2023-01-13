@@ -1,100 +1,45 @@
-import { useWeb3React } from "@web3-react/core"
 import { GuardSpinner } from "react-spinners-kit"
-import { useEffect, useMemo, useState } from "react"
-import { generatePath, useParams } from "react-router-dom"
+import { useContext, useMemo } from "react"
+import { generatePath } from "react-router-dom"
 import { isNil } from "lodash"
-import { useSelector } from "react-redux"
 
 import { Center } from "theme"
 import Header from "components/Header/Layout"
 
 import * as S from "./styled"
 
-import {
-  TabPoolHolders,
-  TabPoolInfo,
-  TabPoolLockedFunds,
-  TabPoolPnl,
-  TabPoolStatistic,
-} from "./tabs"
+// import {
+//   TabPoolHolders,
+//   TabPoolInfo,
+//   TabPoolLockedFunds,
+//   TabPoolPnl,
+//   TabPoolStatistic,
+// } from "./tabs"
 
-import { AppState } from "state"
-import { useERC20Data } from "state/erc20/hooks"
-import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-import { selectPoolByAddress } from "state/pools/selectors"
-
-import {
-  DATE_FORMAT,
-  ICON_NAMES,
-  ROUTE_PATHS,
-  // ZERO,
-} from "consts"
+import { DATE_FORMAT, ICON_NAMES, ROUTE_PATHS } from "consts"
 import { DateUtil, formatNumber, normalizeBigNumber } from "utils"
-// import { multiplyBignumbers } from "utils/formulas"
-import { useTraderPoolContract } from "contracts"
-import WithPoolAddressValidation from "components/WithPoolAddressValidation"
+import { useBreakpoints } from "hooks"
+import { PoolStatisticsItem } from "pages/PoolProfile/components"
 import {
-  useBreakpoints,
-  // usePoolContract,
-  // usePoolPrice,
-  usePoolStatistics,
-} from "hooks"
-import { PoolStatisticsItem } from "./components"
+  PoolProfileContext,
+  PoolProfileContextProvider,
+} from "pages/PoolProfile/context"
 
-const PoolProfile = () => {
-  const { poolAddress } = useParams()
-
+const PoolProfileContent = () => {
   const { isSmallTablet } = useBreakpoints()
 
   const {
-    account,
-    // chainId
-  } = useWeb3React()
-
-  const traderPool = useTraderPoolContract(poolAddress)
-  const poolData = useSelector((s: AppState) =>
-    selectPoolByAddress(s, poolAddress)
-  )
-
-  const { priceLP, tvl, apy, pnl, pnl24h, depositors } =
-    usePoolStatistics(poolData)
-
-  // const [, poolInfoData] = usePoolContract(poolAddress)
-  const [{ poolMetadata }] = usePoolMetadata(
-    poolData?.id,
-    poolData?.descriptionURL
-  )
-
-  // const [{ priceUSD }] = usePoolPrice(poolAddress)
-
-  const [baseToken] = useERC20Data(poolData?.baseToken)
-
-  const [isTrader, setIsTrader] = useState(false)
-
-  // const [accountLPs, setAccountLPs] = useState(ZERO)
-
-  // const accountLPsPrice = useMemo(() => {
-  //   if (accountLPs.isZero() || priceUSD.isZero()) {
-  //     return "0.0"
-  //   }
-  //   const BN = multiplyBignumbers([accountLPs, 18], [priceUSD, 18])
-  //   return normalizeBigNumber(BN, 18, 2)
-  // }, [priceUSD, accountLPs])
-
-  useEffect(() => {
-    if (!traderPool || !account) return
-    ;(async () => {
-      const [
-        isAdmin,
-        // balance,
-      ] = await Promise.all([
-        traderPool.isTraderAdmin(account),
-        // traderPool.balanceOf(account),
-      ])
-      setIsTrader(isAdmin)
-      // setAccountLPs(balance)
-    })()
-  }, [traderPool, account])
+    poolData,
+    poolMetadata,
+    baseToken,
+    priceLP,
+    tvl,
+    apy,
+    pnl,
+    pnl24h,
+    depositors,
+    isTrader,
+  } = useContext(PoolProfileContext)
 
   const actions = useMemo(
     () => (
@@ -159,7 +104,7 @@ const PoolProfile = () => {
   )
 
   return (
-    <WithPoolAddressValidation poolAddress={poolAddress ?? ""} loader={loader}>
+    <>
       <Header />
       <S.Container>
         <S.Content>
@@ -324,7 +269,15 @@ const PoolProfile = () => {
           )}
         </S.Content>
       </S.Container>
-    </WithPoolAddressValidation>
+    </>
+  )
+}
+
+const PoolProfile = () => {
+  return (
+    <PoolProfileContextProvider>
+      <PoolProfileContent />
+    </PoolProfileContextProvider>
   )
 }
 
