@@ -146,6 +146,67 @@ export const Divider = styled.div`
   background: #20293a;
 `
 
+export const OptionalTabSplitter = styled.div`
+  display: flex;
+  gap: var(--app-gap);
+`
+
+export const SpecificStatistics = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--app-gap) / 2);
+  max-width: 275px;
+  width: 100%;
+  height: 100%;
+`
+
+export const SpecificStatisticsTitle = styled.div`
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+  letter-spacing: 0.01em;
+
+  /* Main/blue */
+
+  color: #2669eb;
+
+  &:not(:first-child) {
+    margin-top: calc(var(--app-gap) / 2);
+  }
+`
+
+export const SpecificStatisticsRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--app-gap);
+  background: #0f141e;
+  padding: 2px 0;
+`
+
+export const SpecificStatisticsLabel = styled.div`
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+
+  /* Text/white */
+
+  color: #e4f2ff;
+`
+
+export const SpecificStatisticsValue = styled.div`
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16px;
+  text-align: right;
+  letter-spacing: 0.01em;
+
+  /* Text/white */
+
+  color: #e4f2ff;
+`
+
 export const TabsWrp = styled(Tabs)`
   flex: 1;
 `

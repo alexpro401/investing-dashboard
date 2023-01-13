@@ -26,7 +26,7 @@ import {
 } from "pages/PoolProfile/context"
 
 const PoolProfileContent = () => {
-  const { isSmallTablet } = useBreakpoints()
+  const { isSmallTablet, isMediumTablet } = useBreakpoints()
 
   const {
     poolData,
@@ -199,50 +199,191 @@ const PoolProfileContent = () => {
                 </S.PoolProfileStatisticsWrp>
               </S.PoolProfileDefaultInfo>
 
-              <S.TabsWrp
-                tabs={[
-                  {
-                    name: "P&L",
-                    child: (
-                      <S.TabContainer>
-                        <TabPoolPnl />
-                      </S.TabContainer>
-                    ),
-                  },
-                  {
-                    name: "Locked funds",
-                    child: (
-                      <S.TabContainer>
-                        <TabPoolLockedFunds />
-                      </S.TabContainer>
-                    ),
-                  },
-                  {
-                    name: "About fund",
-                    child: (
-                      <S.TabContainer>
-                        <TabPoolInfo />
-                      </S.TabContainer>
-                    ),
-                  },
-                  {
-                    name: "Statistic",
-                    child: (
-                      <S.TabContainer>
-                        <TabPoolStatistic />
-                      </S.TabContainer>
-                    ),
-                  },
-                  {
-                    name: "Holders",
-                    child: (
-                      <S.TabContainer>
-                        <TabPoolHolders />
-                      </S.TabContainer>
-                    ),
-                  },
-                ]}
-              />
+              <S.OptionalTabSplitter>
+                <S.TabsWrp
+                  tabs={[
+                    {
+                      name: "P&L",
+                      child: (
+                        <S.TabContainer>
+                          <TabPoolPnl />
+                        </S.TabContainer>
+                      ),
+                    },
+                    {
+                      name: "Locked funds",
+                      child: (
+                        <S.TabContainer>
+                          <TabPoolLockedFunds />
+                        </S.TabContainer>
+                      ),
+                    },
+                    ...(!isSmallTablet
+                      ? [
+                          {
+                            name: "About fund",
+                            child: (
+                              <S.TabContainer>
+                                <TabPoolInfo />
+                              </S.TabContainer>
+                            ),
+                          },
+                          {
+                            name: "Statistic",
+                            child: (
+                              <S.TabContainer>
+                                <TabPoolStatistic />
+                              </S.TabContainer>
+                            ),
+                          },
+                          {
+                            name: "Holders",
+                            child: (
+                              <S.TabContainer>
+                                <TabPoolHolders />
+                              </S.TabContainer>
+                            ),
+                          },
+                        ]
+                      : []),
+                  ]}
+                />
+                {isMediumTablet ? (
+                  <S.SpecificStatistics>
+                    <S.SpecificStatisticsTitle>
+                      Statistic
+                    </S.SpecificStatisticsTitle>
+                    <S.SpecificStatisticsRow>
+                      <S.SpecificStatisticsLabel>
+                        Trades per Day
+                      </S.SpecificStatisticsLabel>
+                      <S.SpecificStatisticsValue>2.1</S.SpecificStatisticsValue>
+                    </S.SpecificStatisticsRow>
+                    <S.SpecificStatisticsRow>
+                      <S.SpecificStatisticsLabel>
+                        Trades per Day
+                      </S.SpecificStatisticsLabel>
+                      <S.SpecificStatisticsValue>2.1</S.SpecificStatisticsValue>
+                    </S.SpecificStatisticsRow>
+                    <S.SpecificStatisticsRow>
+                      <S.SpecificStatisticsLabel>
+                        Trades per Day
+                      </S.SpecificStatisticsLabel>
+                      <S.SpecificStatisticsValue>2.1</S.SpecificStatisticsValue>
+                    </S.SpecificStatisticsRow>
+                    <S.SpecificStatisticsRow>
+                      <S.SpecificStatisticsLabel>
+                        Trades per Day
+                      </S.SpecificStatisticsLabel>
+                      <S.SpecificStatisticsValue>2.1</S.SpecificStatisticsValue>
+                    </S.SpecificStatisticsRow>
+                    <S.SpecificStatisticsRow>
+                      <S.SpecificStatisticsLabel>
+                        Trades per Day
+                      </S.SpecificStatisticsLabel>
+                      <S.SpecificStatisticsValue>2.1</S.SpecificStatisticsValue>
+                    </S.SpecificStatisticsRow>
+                    <S.SpecificStatisticsRow>
+                      <S.SpecificStatisticsLabel>
+                        Trades per Day
+                      </S.SpecificStatisticsLabel>
+                      <S.SpecificStatisticsValue>2.1</S.SpecificStatisticsValue>
+                    </S.SpecificStatisticsRow>
+                    <S.SpecificStatisticsTitle>
+                      Total P&L
+                    </S.SpecificStatisticsTitle>
+                    <S.SpecificStatisticsRow>
+                      <S.SpecificStatisticsLabel>
+                        Trades per Day
+                      </S.SpecificStatisticsLabel>
+                      <S.SpecificStatisticsValue>2.1</S.SpecificStatisticsValue>
+                    </S.SpecificStatisticsRow>
+                    <S.SpecificStatisticsRow>
+                      <S.SpecificStatisticsLabel>
+                        Trades per Day
+                      </S.SpecificStatisticsLabel>
+                      <S.SpecificStatisticsValue>2.1</S.SpecificStatisticsValue>
+                    </S.SpecificStatisticsRow>
+                    <S.SpecificStatisticsRow>
+                      <S.SpecificStatisticsLabel>
+                        Trades per Day
+                      </S.SpecificStatisticsLabel>
+                      <S.SpecificStatisticsValue>2.1</S.SpecificStatisticsValue>
+                    </S.SpecificStatisticsRow>
+                    <S.SpecificStatisticsRow>
+                      <S.SpecificStatisticsLabel>
+                        Trades per Day
+                      </S.SpecificStatisticsLabel>
+                      <S.SpecificStatisticsValue>2.1</S.SpecificStatisticsValue>
+                    </S.SpecificStatisticsRow>
+                    <S.SpecificStatisticsTitle>
+                      Details
+                    </S.SpecificStatisticsTitle>
+                    <S.SpecificStatisticsRow>
+                      <S.SpecificStatisticsLabel>
+                        Trades per Day
+                      </S.SpecificStatisticsLabel>
+                      <S.SpecificStatisticsValue>2.1</S.SpecificStatisticsValue>
+                    </S.SpecificStatisticsRow>
+                    <S.SpecificStatisticsRow>
+                      <S.SpecificStatisticsLabel>
+                        Trades per Day
+                      </S.SpecificStatisticsLabel>
+                      <S.SpecificStatisticsValue>2.1</S.SpecificStatisticsValue>
+                    </S.SpecificStatisticsRow>
+                    <S.SpecificStatisticsRow>
+                      <S.SpecificStatisticsLabel>
+                        Trades per Day
+                      </S.SpecificStatisticsLabel>
+                      <S.SpecificStatisticsValue>2.1</S.SpecificStatisticsValue>
+                    </S.SpecificStatisticsRow>
+                    <S.SpecificStatisticsRow>
+                      <S.SpecificStatisticsLabel>
+                        Trades per Day
+                      </S.SpecificStatisticsLabel>
+                      <S.SpecificStatisticsValue>2.1</S.SpecificStatisticsValue>
+                    </S.SpecificStatisticsRow>
+                  </S.SpecificStatistics>
+                ) : (
+                  <></>
+                )}
+              </S.OptionalTabSplitter>
+              {isSmallTablet ? (
+                <S.TabsWrp
+                  tabs={[
+                    ...(!isMediumTablet
+                      ? [
+                          {
+                            name: "Statistic",
+                            child: (
+                              <S.TabContainer>
+                                <TabPoolStatistic />
+                              </S.TabContainer>
+                            ),
+                          },
+                        ]
+                      : []),
+                    {
+                      name: "About fund",
+                      child: (
+                        <S.TabContainer>
+                          <TabPoolInfo />
+                        </S.TabContainer>
+                      ),
+                    },
+                    {
+                      name: "Holders",
+                      child: (
+                        <S.TabContainer>
+                          <TabPoolHolders />
+                        </S.TabContainer>
+                      ),
+                    },
+                  ]}
+                />
+              ) : (
+                <></>
+              )}
             </>
           )}
         </S.Content>
