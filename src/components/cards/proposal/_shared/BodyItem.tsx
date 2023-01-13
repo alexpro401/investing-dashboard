@@ -1,7 +1,6 @@
 import { FC, ReactNode } from "react"
 import styled from "styled-components/macro"
-import { Flex } from "theme"
-import Amount from "components/Amount"
+import { Flex, respondTo } from "theme"
 import checkGreenIcon from "assets/icons/green-check.svg"
 
 export const BodyItemStyled = {
@@ -10,6 +9,10 @@ export const BodyItemStyled = {
     flex-direction: column;
     align-items: ${(props) => props.ai};
     justify-content: flex-start;
+
+    ${respondTo("lg")} {
+      align-items: flex-start;
+    }
   `,
   Label: styled(Flex)`
     min-height: 16px;
@@ -22,6 +25,40 @@ export const BodyItemStyled = {
     line-height: 100%;
     letter-spacing: 0.03em;
     color: #616d8b;
+
+    ${respondTo("lg")} {
+      font-size: 12px;
+      line-height: 14px;
+      color: #6781bd;
+    }
+  `,
+  ValueWrp: styled.div`
+    display: flex;
+    min-height: 20px;
+  `,
+  Value: styled.span<{ fz?: string }>`
+    font-size: ${(props) => props.fz ?? "13px"};
+    font-weight: 600;
+    line-height: 20px;
+    color: ${({ theme }) => theme.textColors.primary};
+
+    ${respondTo("lg")} {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 19px;
+    }
+  `,
+  ValueSymbol: styled.span`
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 20px;
+    color: #788ab4;
+
+    ${respondTo("lg")} {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 19px;
+    }
   `,
 }
 
@@ -47,7 +84,12 @@ const BodyItem: FC<IBodyItemProps> = ({
       {label}
       {completed && <img src={checkGreenIcon} />}
     </BodyItemStyled.Label>
-    <Amount value={amount} symbol={symbol} fz={fz} />
+    <BodyItemStyled.ValueWrp>
+      <BodyItemStyled.Value fz={fz}>{amount}</BodyItemStyled.Value>
+      {symbol && (
+        <BodyItemStyled.ValueSymbol>&nbsp;{symbol}</BodyItemStyled.ValueSymbol>
+      )}
+    </BodyItemStyled.ValueWrp>
   </BodyItemStyled.Container>
 )
 

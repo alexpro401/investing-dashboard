@@ -1,33 +1,16 @@
-import {
-  MouseEvent,
-  FC,
-  useEffect,
-  useMemo,
-  useState,
-  useCallback,
-} from "react"
-import { format } from "date-fns"
-import { useNavigate } from "react-router-dom"
-import { parseUnits } from "@ethersproject/units"
-import { BigNumber } from "@ethersproject/bignumber"
-
-import { ZERO } from "consts"
-import { useActiveWeb3React } from "hooks"
-import { useERC20Data } from "state/erc20/hooks"
-import { DATE_TIME_FORMAT } from "consts/time"
-import { percentageOfBignumbers } from "utils/formulas"
+import { FC, useState } from "react"
+import { useBreakpoints, useRiskyProposalView } from "hooks"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-import { expandTimestamp, normalizeBigNumber } from "utils"
+import { normalizeBigNumber } from "utils"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
-import { Flex } from "theme"
+import theme, { Flex } from "theme"
 import Icon from "components/Icon"
 import Tooltip from "components/Tooltip"
 import TokenIcon from "components/TokenIcon"
 import IconButton from "components/IconButton"
 import ExternalLink from "components/ExternalLink"
-import { AppButton } from "common"
+import { AppButton, Icon as IconCommon } from "common"
 
 import * as S from "./styled"
 import { BodyItem } from "components/cards/proposal/_shared"
@@ -41,10 +24,9 @@ import {
 
 import settingsIcon from "assets/icons/settings.svg"
 import settingsGreenIcon from "assets/icons/settings-green.svg"
-import useTokenRating from "hooks/useTokenRating"
 import { TraderPoolRiskyProposal } from "interfaces/typechain"
 import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
-import { usePriceFeedContract } from "contracts"
+import { ICON_NAMES } from "consts"
 
 const MAX_INVESTORS_COUNT = 1000
 
@@ -57,439 +39,130 @@ interface Props {
   poolInfo: IPoolInfo
 }
 
-const RiskyProposalCard: FC<Props> = ({
-  proposal,
-  proposalId,
-  poolAddress,
-  proposalPool,
-  poolInfo,
-  isTrader,
-}) => {
-  const navigate = useNavigate()
-  const { account, chainId } = useActiveWeb3React()
-  const [proposalToken] = useERC20Data(proposal.proposalInfo.token)
-  const priceFeed = usePriceFeedContract()
-  const getTokenRating = useTokenRating()
-
-  const [{ poolMetadata }] = usePoolMetadata(
+const RiskyProposalCard: FC<Props> = (props) => {
+  const {
+    proposal,
+    proposalId,
     poolAddress,
-    poolInfo?.parameters.descriptionURL
-  )
+    proposalPool,
+    isTrader,
+    poolInfo,
+  } = props
 
+  const ipfsUrl = poolInfo?.parameters.descriptionURL ?? ""
+  const [{ poolMetadata }] = usePoolMetadata(poolAddress, ipfsUrl)
+
+  const [
+    {
+      proposalSymbol,
+      tokenRating,
+      canInvest,
+      proposalTokenLink,
+      maxSizeLP,
+      yourSizeLP,
+      traderSizeLP,
+      fullness,
+      maxInvestPrice,
+      currentPrice,
+      expirationDate,
+      investors,
+      positionSize,
+      proposalToken,
+      traderSizePercentage,
+    },
+    { navigateToPool, onAddMore, onInvest, onUpdateRestrictions },
+  ] = useRiskyProposalView(props)
+
+  const { isDesktop } = useBreakpoints()
   const [tooltip, showTooltip] = useState(true)
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false)
-
-  const [markPriceOpen, setMarkPriceOpen] = useState(ZERO)
-  const [yourSizeLP, setYourSizeLP] = useState<BigNumber>(ZERO)
-  const [traderSizeLP, setTraderSizeLP] = useState<BigNumber>(ZERO)
-
-  const [tokenRating, setTokenRating] = useState<number>(0)
-
-  /**
-   * Date of proposal expiration
-   * @returns value - expiration date
-   * @returns completed - true if expiration date greater that current
-   * @returns initial - expiration date in short format
-   */
-  const [expirationDate, setExpirationDate] = useState<{
-    value: string
-    completed: boolean
-    initial: BigNumber
-  }>({
-    value: "0",
-    completed: false,
-    initial: ZERO,
-  })
-
-  /**
-   * Proposal limit in LP's
-   */
-  const [maxSizeLP, setMaxSizeLP] = useState<{
-    value: BigNumber
-    normalized: string
-  }>({ value: ZERO, normalized: "0" })
-
-  /**
-   * Maximum price of proposal token
-   * @returns value - maximum price
-   * @returns completed - true if positionTokenPrice >= maxTokenPriceLimit
-   * @returns initial - maximum price in BigNumber
-   */
-  const [maxInvestPrice, setMaxInvestPrice] = useState<{
-    value: string
-    completed: boolean
-    initial: BigNumber
-  }>({ value: "0", completed: false, initial: ZERO })
-
-  /**
-   * Symbol of proposal
-   */
-  const proposalSymbol = useMemo<string>(() => {
-    if (!proposalToken || !proposalToken.symbol) return ""
-    return proposalToken.symbol
-  }, [proposalToken])
-
-  /**
-   * Proposal fullness in LP's
-   * @returns value - fullness
-   * @returns completed - true if lpLocked >= investLPLimit
-   * @returns initial - fullness in BigNumber
-   */
-  const fullness = useMemo<{
-    value: string
-    completed: boolean
-    initial: BigNumber
-  }>(() => {
-    if (
-      !proposal?.proposalInfo?.proposalLimits?.investLPLimit ||
-      !proposal.proposalInfo.lpLocked
-    ) {
-      return { value: "0", completed: false, initial: ZERO }
-    }
-
-    const { lpLocked, proposalLimits } = proposal.proposalInfo
-
-    return {
-      value: normalizeBigNumber(lpLocked, 18, 6),
-      completed: lpLocked.gte(proposalLimits.investLPLimit),
-      initial: lpLocked,
-    }
-  }, [proposal])
-
-  /**
-   * Exact price on 1 position token in base tokens
-   */
-  const currentPrice = useMemo<{ value: string; initial: BigNumber }>(() => {
-    if (!markPriceOpen) {
-      return { value: "0", initial: ZERO }
-    }
-
-    return {
-      value: normalizeBigNumber(markPriceOpen, 18, 2),
-      initial: markPriceOpen,
-    }
-  }, [markPriceOpen])
-
-  /**
-   * Count of investors
-   * @returns value - count of investors
-   * @returns completed - true if investors count equal MAX_INVESTORS_COUNT
-   */
-  const investors = useMemo<{ value: string; completed: boolean }>(() => {
-    if (!proposal || !proposal?.totalInvestors) {
-      return { value: "0", completed: false }
-    }
-
-    const result = proposal.totalInvestors.toString()
-
-    return { value: result, completed: Number(result) === MAX_INVESTORS_COUNT }
-  }, [proposal])
-
-  /**
-   * Position current balance
-   */
-  const positionSize = useMemo<string>(() => {
-    if (!proposal || !proposal?.proposalInfo.balancePosition) {
-      return "0"
-    }
-
-    return normalizeBigNumber(proposal.proposalInfo.balancePosition, 18, 6)
-  }, [proposal])
-
-  /**
-   * Trader LP's size in %
-   */
-  const traderSizePercentage = useMemo(() => {
-    if (maxSizeLP.value.isZero() || !traderSizeLP || traderSizeLP.isZero()) {
-      return ZERO
-    }
-
-    return percentageOfBignumbers(traderSizeLP, maxSizeLP.value)
-  }, [maxSizeLP, traderSizeLP])
-
-  /**
-   * Indicating that proposal open or closed for investment (respectively true or false)
-   */
-  const canInvest = useMemo<boolean>(() => {
-    return !expirationDate.completed && !maxInvestPrice.completed
-  }, [expirationDate.completed, maxInvestPrice.completed])
-
-  // Set expiration date
-  useEffect(() => {
-    if (!proposal || !proposal?.proposalInfo.proposalLimits.timestampLimit) {
-      return
-    }
-
-    const { timestampLimit } = proposal.proposalInfo.proposalLimits
-
-    const expandedTimestampLimit = expandTimestamp(
-      Number(timestampLimit.toString())
-    )
-    const currentTimestamp = new Date().valueOf()
-
-    setExpirationDate({
-      value: format(expandedTimestampLimit, DATE_TIME_FORMAT),
-      completed: currentTimestamp - expandedTimestampLimit >= 0,
-      initial: timestampLimit,
-    })
-  }, [proposal])
-
-  // Set investing limit
-  useEffect(() => {
-    if (!proposal || !proposal?.proposalInfo.proposalLimits.investLPLimit) {
-      return
-    }
-
-    const { investLPLimit } = proposal.proposalInfo.proposalLimits
-
-    setMaxSizeLP({
-      value: investLPLimit,
-      normalized: normalizeBigNumber(investLPLimit, 18, 6),
-    })
-  }, [proposal])
-
-  // Set maximum invest price
-  useEffect(() => {
-    if (
-      !proposal ||
-      !proposal?.proposalInfo.proposalLimits.maxTokenPriceLimit
-    ) {
-      return
-    }
-
-    const {
-      positionTokenPrice,
-      proposalInfo: { proposalLimits },
-    } = proposal
-
-    setMaxInvestPrice({
-      value: normalizeBigNumber(proposalLimits.maxTokenPriceLimit, 18, 2),
-      completed: positionTokenPrice.gte(proposalLimits.maxTokenPriceLimit),
-      initial: proposalLimits.maxTokenPriceLimit,
-    })
-  }, [proposal])
-
-  // Fetch current user locked funds in proposal
-  useEffect(() => {
-    if (!proposalPool || proposalId === undefined || !account) return
-    ;(async () => {
-      try {
-        const balance = await proposalPool.getActiveInvestmentsInfo(
-          account,
-          proposalId,
-          1
-        )
-        if (balance && balance[0]) {
-          setYourSizeLP(balance[0].lpInvested)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    })()
-  }, [account, proposalId, proposalPool])
-
-  // Fetch trader locked funds in proposal
-  useEffect(() => {
-    if (!proposalPool || !poolInfo || proposalId === undefined) {
-      return
-    }
-
-    ;(async () => {
-      try {
-        const balance = await proposalPool.getActiveInvestmentsInfo(
-          poolInfo.parameters.trader,
-          proposalId,
-          1
-        )
-
-        if (balance && balance[0]) {
-          setTraderSizeLP(balance[0].lpInvested)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    })()
-  }, [poolInfo, proposalId, proposalPool])
-
-  // Fetch mark price from priceFeed when proposal is open
-  useEffect(() => {
-    if (!priceFeed || !proposalToken) return
-    ;(async () => {
-      try {
-        const amount = parseUnits("1", 18)
-        const price = await priceFeed.getNormalizedPriceOutUSD(
-          proposalToken.address,
-          amount.toHexString()
-        )
-        if (price && price.amountOut) {
-          setMarkPriceOpen(price.amountOut)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    })()
-  }, [priceFeed, proposalToken])
-
-  // Fetch token rating
-  useEffect(() => {
-    if (!chainId || !proposal) return
-    ;(async () => {
-      try {
-        const rating = await getTokenRating(
-          chainId,
-          proposal.proposalInfo.token
-        )
-        setTokenRating(rating)
-      } catch (error) {
-        console.error(error)
-      }
-    })()
-  }, [chainId, proposal, getTokenRating])
-
-  /**
-   * Navigate to pool page
-   * @param e - click event
-   */
-  const navigateToPool = useCallback(
-    (e: MouseEvent<HTMLElement>): void => {
-      e.stopPropagation()
-      navigate(`/pool/profile/${poolAddress}`)
-    },
-    [navigate, poolAddress]
-  )
-
-  /**
-   * Navigate to risky invest terminal
-   * @param e - click event
-   */
-  const onAddMore = useCallback(
-    (e: MouseEvent<HTMLElement>): void => {
-      e.stopPropagation()
-      navigate(`/invest-risky-proposal/${poolAddress}/${proposalId}`)
-    },
-    [navigate, poolAddress, proposalId]
-  )
-
-  /**
-   * Navigate to risky invest terminal
-   * @param e - click event
-   */
-  const onInvest = useCallback(
-    (e?: MouseEvent<HTMLButtonElement | MouseEvent>): void => {
-      if (e) e.stopPropagation()
-      if (isTrader) {
-        navigate(`/swap-risky-proposal/${poolAddress}/${proposalId}/deposit`)
-      } else {
-        navigate(`/invest-risky-proposal/${poolAddress}/${proposalId}`)
-      }
-    },
-    [navigate, poolAddress, proposalId, isTrader]
-  )
-
-  const onUpdateRestrictions = (
-    timestamp: number,
-    maxSize: BigNumber,
-    maxInvest: BigNumber
-  ) => {
-    if (timestamp) {
-      const expanded = expandTimestamp(timestamp)
-      const currentTimestamp = new Date().valueOf()
-
-      setExpirationDate({
-        value: format(expanded, DATE_TIME_FORMAT),
-        completed: currentTimestamp - expanded >= 0,
-        initial: BigNumber.from(String(timestamp)),
-      })
-    }
-
-    if (maxSize) {
-      setMaxSizeLP({
-        value: maxSize,
-        normalized: normalizeBigNumber(maxSize, 18, 6),
-      })
-    }
-
-    if (maxInvest) {
-      const { positionTokenPrice } = proposal
-
-      setMaxInvestPrice({
-        value: normalizeBigNumber(maxInvest, 18, 2),
-        completed: positionTokenPrice.gte(maxInvest),
-        initial: maxInvest,
-      })
-    }
-  }
 
   return (
     <>
       <SharedS.Card>
-        <SharedS.Head p={isTrader ? "8px 8px 7px 16px" : "8px 16px 7px 16px"}>
-          <Flex>
-            <TokenIcon address={proposal.proposalInfo.token} m="0" size={24} />
+        {!isDesktop && (
+          <SharedS.Head p={isTrader ? "8px 8px 7px 16px" : "8px 16px 7px 16px"}>
+            <Flex>
+              <TokenIcon
+                address={proposal.proposalInfo.token}
+                m="0"
+                size={24}
+              />
 
-            {isTrader ? (
-              <SharedS.Title>{proposalSymbol}</SharedS.Title>
-            ) : (
-              <Flex ai="center">
+              {isTrader ? (
                 <SharedS.Title>{proposalSymbol}</SharedS.Title>
-                <Rating rating={tokenRating} />
-                <Flex m="0 0 -5px">
-                  <Tooltip
-                    id={`risky-proposal-rating-info-${proposalId}-${poolAddress}`}
-                    size="small"
-                  >
-                    Risky proposal rating info
-                  </Tooltip>
+              ) : (
+                <Flex ai="center">
+                  <SharedS.Title>{proposalSymbol}</SharedS.Title>
+                  <Rating rating={tokenRating} />
+                  <Flex m="0 0 -5px">
+                    <Tooltip
+                      id={`risky-proposal-rating-info-${proposalId}-${poolAddress}`}
+                      size="small"
+                    >
+                      Risky proposal rating info
+                    </Tooltip>
+                  </Flex>
                 </Flex>
-              </Flex>
-            )}
-          </Flex>
+              )}
+            </Flex>
 
-          <Flex>
-            {isTrader ? (
-              <>
-                <S.Status active={canInvest}>
-                  {canInvest ? "Open investing" : "Closed investing"}
-                </S.Status>
-                <Flex m="0 0 0 4px">
-                  <IconButton
-                    size={12}
-                    media={isSettingsOpen ? settingsGreenIcon : settingsIcon}
-                    onClick={() => {
-                      setIsSettingsOpen(!isSettingsOpen)
-                    }}
+            <Flex>
+              {isTrader ? (
+                <>
+                  <S.Status active={canInvest ?? false}>
+                    {canInvest ? "Open investing" : "Closed investing"}
+                  </S.Status>
+                  <Flex m="0 0 0 4px">
+                    <IconButton
+                      size={12}
+                      media={isSettingsOpen ? settingsGreenIcon : settingsIcon}
+                      onClick={() => {
+                        setIsSettingsOpen(!isSettingsOpen)
+                      }}
+                    />
+                  </Flex>
+                </>
+              ) : (
+                <Flex onClick={navigateToPool} gap={"4"}>
+                  <S.Ticker>{poolInfo?.ticker ?? ""}</S.Ticker>
+                  <TokenIcon
+                    address={poolInfo?.parameters.baseToken}
+                    m="0"
+                    size={24}
                   />
                 </Flex>
-              </>
-            ) : (
-              <Flex onClick={navigateToPool}>
-                <S.Ticker>{poolInfo?.ticker ?? ""}</S.Ticker>
-                <TokenIcon
-                  address={poolInfo?.parameters.baseToken}
-                  m="0 0 0 4px"
-                  size={24}
-                />
-              </Flex>
-            )}
-          </Flex>
-          {isSettingsOpen && (
-            <RiskyCardSettings
-              visible={isSettingsOpen}
-              setVisible={setIsSettingsOpen}
-              timestamp={expirationDate.initial}
-              maxSizeLP={maxSizeLP.value}
-              maxInvestPrice={maxInvestPrice.initial}
-              proposalPool={proposalPool}
-              fullness={fullness.initial}
-              currentPrice={currentPrice.initial}
-              proposalId={proposalId}
-              successCallback={onUpdateRestrictions}
-              proposalSymbol={proposalToken?.symbol}
-              poolAddress={poolAddress}
-            />
-          )}
-        </SharedS.Head>
+              )}
+            </Flex>
+          </SharedS.Head>
+        )}
         <SharedS.Body>
+          {isDesktop && (
+            <Flex gap={"8"}>
+              <TokenIcon
+                address={proposal.proposalInfo.token}
+                m="0"
+                size={36}
+              />
+              <BodyItem
+                label="Proposal token"
+                amount={
+                  <Flex ai="center" gap={"8"}>
+                    <ExternalLink
+                      color={theme.textColors.primary}
+                      href={proposalTokenLink}
+                      fz={"16px"}
+                      fw={"700"}
+                    >
+                      {proposalSymbol}
+                    </ExternalLink>
+
+                    <Rating rating={tokenRating} />
+                  </Flex>
+                }
+              />
+            </Flex>
+          )}
           <BodyItem
             label={isTrader ? "Max size (LP)" : "Proposal size LP"}
             amount={maxSizeLP.normalized}
@@ -516,10 +189,57 @@ const RiskyProposalCard: FC<Props> = ({
             amount={maxInvestPrice.value}
             completed={maxInvestPrice.completed}
           />
+          {isDesktop && !isTrader && (
+            <BodyItem
+              label={"Trader size"}
+              amount={
+                <Flex gap={"4"} ai={"center"}>
+                  <IconCommon name={ICON_NAMES.warnCircledFilled} />
+                  <span>{normalizeBigNumber(traderSizeLP, 18, 2)}</span>
+                  <span>
+                    ({normalizeBigNumber(traderSizePercentage, 18, 2)}%)
+                  </span>
+                </Flex>
+              }
+            />
+          )}
+          {isDesktop && (
+            <>
+              {isTrader ? (
+                <Flex>
+                  <S.Status active={canInvest}>
+                    {canInvest ? "Open investing" : "Closed investing"}
+                  </S.Status>
+                  <Flex m="0 0 0 4px">
+                    <IconButton
+                      size={12}
+                      media={isSettingsOpen ? settingsGreenIcon : settingsIcon}
+                      onClick={() => {
+                        setIsSettingsOpen(!isSettingsOpen)
+                      }}
+                    />
+                  </Flex>
+                </Flex>
+              ) : (
+                <Flex gap={"8"}>
+                  <TokenIcon
+                    address={poolInfo?.parameters.baseToken}
+                    m="0"
+                    size={isDesktop ? 36 : 24}
+                  />
+                  <BodyItem
+                    label="Fund ticker"
+                    amount={poolInfo?.ticker ?? ""}
+                  />
+                </Flex>
+              )}
+            </>
+          )}
           <BodyItem
             label={`Current price (${proposalSymbol})`}
             amount={currentPrice.value}
           />
+
           <BodyItem
             fz={"11px"}
             label="Expiration date"
@@ -537,7 +257,7 @@ const RiskyProposalCard: FC<Props> = ({
             label={`Position size (${proposalSymbol})`}
             amount={positionSize}
           />
-          <Flex full>
+          {!isDesktop && (
             <AppButton
               full
               text={isTrader ? "Terminal" : "Stake LP"}
@@ -546,10 +266,21 @@ const RiskyProposalCard: FC<Props> = ({
               disabled={!canInvest}
               color={canInvest ? "primary" : "secondary"}
             />
-          </Flex>
+          )}
+
+          {isDesktop && !isTrader && (
+            <AppButton
+              full
+              text={"Stake LP"}
+              onClick={() => onInvest}
+              size="small"
+              disabled={!canInvest}
+              color={canInvest ? "primary" : "secondary"}
+            />
+          )}
         </SharedS.Body>
 
-        {!isTrader && (
+        {!isDesktop && !isTrader && (
           <SharedS.Footer>
             <Flex
               data-tip
@@ -589,22 +320,29 @@ const RiskyProposalCard: FC<Props> = ({
               </Flex>
             </Flex>
             <div>
-              {chainId && (
-                <ExternalLink
-                  color="#2680EB"
-                  href={getExplorerLink(
-                    chainId,
-                    proposal.proposalInfo.token,
-                    ExplorerDataType.ADDRESS
-                  )}
-                >
-                  Сheck token
-                </ExternalLink>
-              )}
+              <ExternalLink color="#2680EB" href={proposalTokenLink}>
+                Сheck token
+              </ExternalLink>
             </div>
           </SharedS.Footer>
         )}
       </SharedS.Card>
+      {isSettingsOpen && (
+        <RiskyCardSettings
+          visible={isSettingsOpen}
+          setVisible={setIsSettingsOpen}
+          timestamp={expirationDate.initial}
+          maxSizeLP={maxSizeLP.value}
+          maxInvestPrice={maxInvestPrice.initial}
+          proposalPool={proposalPool}
+          fullness={fullness.initial}
+          currentPrice={currentPrice.initial}
+          proposalId={proposalId}
+          successCallback={onUpdateRestrictions}
+          proposalSymbol={proposalToken?.symbol}
+          poolAddress={poolAddress}
+        />
+      )}
     </>
   )
 }

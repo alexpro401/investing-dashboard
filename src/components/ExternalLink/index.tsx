@@ -28,6 +28,7 @@ const ExternalLink: FC<IProps> = ({
   color = "white",
   iconPosition = "right",
   iconColor,
+  iconSize = "15px",
   icon = null,
   removeIcon = false,
   fw,
@@ -54,8 +55,14 @@ const ExternalLink: FC<IProps> = ({
       return icon
     }
 
-    return <BaseIcon color={iconColor ?? color} iconPosition={iconPosition} />
-  }, [color, icon, iconColor, iconPosition, removeIcon])
+    return (
+      <BaseIcon
+        color={iconColor ?? color}
+        iconPosition={iconPosition}
+        iconSize={iconSize}
+      />
+    )
+  }, [color, icon, iconColor, iconPosition, removeIcon, iconSize])
 
   return (
     <Container

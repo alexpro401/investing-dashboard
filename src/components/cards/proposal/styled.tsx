@@ -1,14 +1,20 @@
 import styled from "styled-components/macro"
-import { Flex } from "theme"
+import { Flex, respondTo } from "theme"
 
 export const Card = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 100%;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
   background: ${({ theme }) => theme.backgroundColors.secondary};
   border-radius: 16px;
-  flex-direction: column;
   margin-bottom: 18px;
   z-index: initial;
+
+  ${respondTo("lg")} {
+    flex-direction: row;
+    padding: var(--app-padding);
+  }
 `
 export const Head = styled(Flex)<{ p: string }>`
   width: 100%;
@@ -16,6 +22,14 @@ export const Head = styled(Flex)<{ p: string }>`
   padding: ${(props) => props.p};
   border-bottom: 1px solid #1d2635;
   position: relative;
+
+  ${respondTo("lg")} {
+    width: initial;
+    flex-direction: column;
+    align-items: flex-start;
+    border-bottom: none;
+    padding: 0;
+  }
 `
 export const Body = styled.div`
   width: 100%;
@@ -24,6 +38,12 @@ export const Body = styled.div`
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
   gap: 16px 5px;
+
+  ${respondTo("lg")} {
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    padding: 0;
+  }
 `
 export const Title = styled.div`
   min-width: 24px;
@@ -46,6 +66,13 @@ export const Footer = styled(Flex)`
   justify-content: space-between;
   padding: 10px 16px 8px;
   border-top: 1px solid #1d2635;
+
+  ${respondTo("lg")} {
+    width: initial;
+    flex-direction: column;
+    border-top: none;
+    padding: 0;
+  }
 `
 export const FundIconContainer = styled.div`
   position: relative;

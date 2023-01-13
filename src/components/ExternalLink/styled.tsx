@@ -23,11 +23,14 @@ export const Text = styled.span<{
   margin-top: ${({ removeIcon }) => (removeIcon ? 0 : "3px")};
 `
 
-export const IconContainer = styled.div<{ iconPosition: string }>`
+export const IconContainer = styled.div<{
+  iconPosition: string
+  iconSize: string
+}>`
   display: inline-block;
   order: ${({ iconPosition }) => (iconPosition === "right" ? "1" : "0")};
-  width: 15px;
-  height: 15px;
+  width: ${({ iconSize }) => iconSize ?? "15px"};
+  height: ${({ iconSize }) => iconSize ?? "15px"};
   transform: translateY(3px);
 
   svg {
@@ -36,9 +39,9 @@ export const IconContainer = styled.div<{ iconPosition: string }>`
   }
 `
 
-export const BaseIcon = ({ color, iconPosition }) => {
+export const BaseIcon = ({ color, iconPosition, iconSize }) => {
   return (
-    <IconContainer iconPosition={iconPosition}>
+    <IconContainer iconPosition={iconPosition} iconSize={iconSize}>
       <svg fill="none">
         <path
           d="M6.857 4H4.571A.571.571 0 0 0 4 4.571v6.858c0 .315.256.571.571.571h6.858a.571.571 0 0 0 .571-.571V9.143"
