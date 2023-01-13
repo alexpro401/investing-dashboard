@@ -63,6 +63,7 @@ export const PoolProfileStatisticsWrp = styled.div`
 
 export const PoolProfileStatistics = styled.div`
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--app-gap);
@@ -72,6 +73,11 @@ export const PoolProfileActions = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: var(--app-gap);
+  width: 100%;
+
+  ${respondTo("lg")} {
+    width: auto;
+  }
 `
 
 export const PoolProfileActionBtn = styled(AppButton).attrs((props) => ({

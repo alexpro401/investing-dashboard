@@ -1,15 +1,12 @@
 import { useWeb3React } from "@web3-react/core"
 import { GuardSpinner } from "react-spinners-kit"
 import { useEffect, useMemo, useState } from "react"
-import { generatePath, useNavigate, useParams } from "react-router-dom"
+import { generatePath, useParams } from "react-router-dom"
 import { isNil } from "lodash"
 import { useSelector } from "react-redux"
 
-import { Center, Flex } from "theme"
-import { Pools } from "pages/PoolProfile/components"
+import { Center } from "theme"
 import Header from "components/Header/Layout"
-import { AppButton } from "common"
-import PoolStatisticCard from "components/cards/PoolStatistic"
 
 import * as S from "./styled"
 
@@ -26,25 +23,33 @@ import { useERC20Data } from "state/erc20/hooks"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { selectPoolByAddress } from "state/pools/selectors"
 
-import { DATE_FORMAT, ICON_NAMES, ROUTE_PATHS, ZERO } from "consts"
+import {
+  DATE_FORMAT,
+  ICON_NAMES,
+  ROUTE_PATHS,
+  // ZERO,
+} from "consts"
 import { DateUtil, formatNumber, normalizeBigNumber } from "utils"
-import { multiplyBignumbers } from "utils/formulas"
+// import { multiplyBignumbers } from "utils/formulas"
 import { useTraderPoolContract } from "contracts"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import {
   useBreakpoints,
-  usePoolContract,
-  usePoolPrice,
+  // usePoolContract,
+  // usePoolPrice,
   usePoolStatistics,
 } from "hooks"
 import { PoolStatisticsItem } from "./components"
-import { PoolProfileDefaultInfo, PoolProfileGeneral } from "./styled"
 
 const PoolProfile = () => {
   const { poolAddress } = useParams()
-  const navigate = useNavigate()
-  const { isSmallTablet, isDesktop, isTablet } = useBreakpoints()
-  const { account, chainId } = useWeb3React()
+
+  const { isSmallTablet } = useBreakpoints()
+
+  const {
+    account,
+    // chainId
+  } = useWeb3React()
 
   const traderPool = useTraderPoolContract(poolAddress)
   const poolData = useSelector((s: AppState) =>
@@ -54,34 +59,40 @@ const PoolProfile = () => {
   const { priceLP, tvl, apy, pnl, pnl24h, depositors } =
     usePoolStatistics(poolData)
 
-  const [, poolInfoData] = usePoolContract(poolAddress)
+  // const [, poolInfoData] = usePoolContract(poolAddress)
   const [{ poolMetadata }] = usePoolMetadata(
     poolData?.id,
     poolData?.descriptionURL
   )
 
-  const [{ priceUSD }] = usePoolPrice(poolAddress)
+  // const [{ priceUSD }] = usePoolPrice(poolAddress)
+
   const [baseToken] = useERC20Data(poolData?.baseToken)
 
   const [isTrader, setIsTrader] = useState(false)
-  const [accountLPs, setAccountLPs] = useState(ZERO)
-  const accountLPsPrice = useMemo(() => {
-    if (accountLPs.isZero() || priceUSD.isZero()) {
-      return "0.0"
-    }
-    const BN = multiplyBignumbers([accountLPs, 18], [priceUSD, 18])
-    return normalizeBigNumber(BN, 18, 2)
-  }, [priceUSD, accountLPs])
+
+  // const [accountLPs, setAccountLPs] = useState(ZERO)
+
+  // const accountLPsPrice = useMemo(() => {
+  //   if (accountLPs.isZero() || priceUSD.isZero()) {
+  //     return "0.0"
+  //   }
+  //   const BN = multiplyBignumbers([accountLPs, 18], [priceUSD, 18])
+  //   return normalizeBigNumber(BN, 18, 2)
+  // }, [priceUSD, accountLPs])
 
   useEffect(() => {
     if (!traderPool || !account) return
     ;(async () => {
-      const [isAdmin, balance] = await Promise.all([
+      const [
+        isAdmin,
+        // balance,
+      ] = await Promise.all([
         traderPool.isTraderAdmin(account),
-        traderPool.balanceOf(account),
+        // traderPool.balanceOf(account),
       ])
       setIsTrader(isAdmin)
-      setAccountLPs(balance)
+      // setAccountLPs(balance)
     })()
   }, [traderPool, account])
 
@@ -204,7 +215,7 @@ const PoolProfile = () => {
                     <></>
                   ) : (
                     <S.PoolProfileBaseToken
-                      tokenAddress={poolData?.baseToken}
+                      tokenAddress={baseToken?.address}
                       label={baseToken?.symbol}
                       value={formatNumber(priceLP, 2)}
                       percentage={pnl24h}
@@ -215,7 +226,7 @@ const PoolProfile = () => {
                   <S.PoolProfileStatistics>
                     {isSmallTablet ? (
                       <S.PoolProfileBaseToken
-                        tokenAddress={poolData?.baseToken}
+                        tokenAddress={baseToken?.address}
                         label={baseToken?.symbol}
                         value={formatNumber(priceLP, 2)}
                         percentage={pnl24h}
@@ -237,117 +248,78 @@ const PoolProfile = () => {
 
                     <PoolStatisticsItem
                       label={"P&L"}
-                      value={`${pnl}%`}
+                      value={`${normalizeBigNumber(pnl, 4)}%`}
                       percentage={"1.13%"}
                     />
-                    {isDesktop ? actions : <></>}
+                    {actions}
                   </S.PoolProfileStatistics>
-                  {!isDesktop ? actions : <></>}
                 </S.PoolProfileStatisticsWrp>
               </S.PoolProfileDefaultInfo>
 
-              {/*<PoolStatisticCard data={poolData} hideChart>*/}
-              {/*  <>*/}
-              {/*    <S.ButtonContainer>*/}
-              {/*      <AppButton*/}
-              {/*          color="secondary"*/}
-              {/*          size="small"*/}
-              {/*          full*/}
-              {/*          onClick={actions.leftNode.onClick}*/}
-              {/*          text={actions.leftNode.text}*/}
-              {/*      />*/}
-              {/*      <AppButton*/}
-              {/*          color="primary"*/}
-              {/*          size="small"*/}
-              {/*          onClick={actions.rightNode.onClick}*/}
-              {/*          full*/}
-              {/*          text={actions.rightNode.text}*/}
-              {/*      />*/}
-              {/*    </S.ButtonContainer>*/}
-              {/*    {!isTrader && (*/}
-              {/*        <>*/}
-              {/*          {!isDesktop && <S.Divider />}*/}
-              {/*          <Flex*/}
-              {/*              full*/}
-              {/*              ai={!isDesktop ? "center" : "flex-end"}*/}
-              {/*              jc="space-between"*/}
-              {/*              dir={!isDesktop ? "row" : "column"}*/}
-              {/*          >*/}
-              {/*            <S.Label>Your share</S.Label>*/}
-              {/*            <S.Value.Medium color="#E4F2FF">*/}
-              {/*              {normalizeBigNumber(accountLPs, 18, 2)}{" "}*/}
-              {/*              {poolData?.ticker}*/}
-              {/*            </S.Value.Medium>*/}
-              {/*          </Flex>*/}
-              {/*        </>*/}
-              {/*    )}*/}
-              {/*  </>*/}
-              {/*</PoolStatisticCard>*/}
-
-              <S.TabsWrp
-                tabs={[
-                  {
-                    name: "P&L",
-                    child: (
-                      <S.TabContainer>
-                        <TabPoolPnl address={poolData?.id} />
-                      </S.TabContainer>
-                    ),
-                  },
-                  {
-                    name: "Locked funds",
-                    child: (
-                      <S.TabContainer>
-                        <TabPoolLockedFunds
-                          address={poolData?.id}
-                          poolData={poolData}
-                          poolInfo={poolInfoData}
-                          baseToken={baseToken}
-                          isTrader={isTrader}
-                          accountLPsPrice={accountLPsPrice}
-                        />
-                      </S.TabContainer>
-                    ),
-                  },
-                  {
-                    name: "About fund",
-                    child: (
-                      <S.TabContainer>
-                        <TabPoolInfo
-                          data={poolData}
-                          poolInfo={poolInfoData}
-                          baseToken={baseToken}
-                          poolMetadata={poolMetadata}
-                          isTrader={isTrader}
-                        />
-                      </S.TabContainer>
-                    ),
-                  },
-                  {
-                    name: "Statistic",
-                    child: (
-                      <S.TabContainer>
-                        <TabPoolStatistic
-                          poolData={poolData}
-                          poolInfo={poolInfoData}
-                        />
-                      </S.TabContainer>
-                    ),
-                  },
-                  {
-                    name: "Holders",
-                    child: (
-                      <S.TabContainer>
-                        <TabPoolHolders
-                          poolData={poolData}
-                          chainId={chainId}
-                          baseToken={baseToken}
-                        />
-                      </S.TabContainer>
-                    ),
-                  },
-                ]}
-              />
+              {/*<S.TabsWrp*/}
+              {/*  tabs={[*/}
+              {/*    {*/}
+              {/*      name: "P&L",*/}
+              {/*      child: (*/}
+              {/*        <S.TabContainer>*/}
+              {/*          <TabPoolPnl address={poolData?.id} />*/}
+              {/*        </S.TabContainer>*/}
+              {/*      ),*/}
+              {/*    },*/}
+              {/*    {*/}
+              {/*      name: "Locked funds",*/}
+              {/*      child: (*/}
+              {/*        <S.TabContainer>*/}
+              {/*          <TabPoolLockedFunds*/}
+              {/*            address={poolData?.id}*/}
+              {/*            poolData={poolData}*/}
+              {/*            poolInfo={poolInfoData}*/}
+              {/*            baseToken={baseToken}*/}
+              {/*            isTrader={isTrader}*/}
+              {/*            accountLPsPrice={accountLPsPrice}*/}
+              {/*          />*/}
+              {/*        </S.TabContainer>*/}
+              {/*      ),*/}
+              {/*    },*/}
+              {/*    {*/}
+              {/*      name: "About fund",*/}
+              {/*      child: (*/}
+              {/*        <S.TabContainer>*/}
+              {/*          <TabPoolInfo*/}
+              {/*            data={poolData}*/}
+              {/*            poolInfo={poolInfoData}*/}
+              {/*            baseToken={baseToken}*/}
+              {/*            poolMetadata={poolMetadata}*/}
+              {/*            isTrader={isTrader}*/}
+              {/*          />*/}
+              {/*        </S.TabContainer>*/}
+              {/*      ),*/}
+              {/*    },*/}
+              {/*    {*/}
+              {/*      name: "Statistic",*/}
+              {/*      child: (*/}
+              {/*        <S.TabContainer>*/}
+              {/*          <TabPoolStatistic*/}
+              {/*            poolData={poolData}*/}
+              {/*            poolInfo={poolInfoData}*/}
+              {/*          />*/}
+              {/*        </S.TabContainer>*/}
+              {/*      ),*/}
+              {/*    },*/}
+              {/*    {*/}
+              {/*      name: "Holders",*/}
+              {/*      child: (*/}
+              {/*        <S.TabContainer>*/}
+              {/*          <TabPoolHolders*/}
+              {/*            poolData={poolData}*/}
+              {/*            chainId={chainId}*/}
+              {/*            baseToken={baseToken}*/}
+              {/*          />*/}
+              {/*        </S.TabContainer>*/}
+              {/*      ),*/}
+              {/*    },*/}
+              {/*  ]}*/}
+              {/*/>*/}
             </>
           )}
         </S.Content>
