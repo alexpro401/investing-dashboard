@@ -126,7 +126,7 @@ const PoolProfileContent = () => {
                       <S.PageHeadDetailsRow>
                         <S.PoolDetailsBadge>
                           <S.PoolDetailsBadgeIcon
-                            name={ICON_NAMES.dollarOutline}
+                            name={ICON_NAMES.chatOutline}
                           />
                           <S.PoolDetailsBadgeText>
                             {DateUtil.format(
@@ -144,9 +144,7 @@ const PoolProfileContent = () => {
                           </S.PoolDetailsBadgeText>
                         </S.PoolDetailsBadge>
                         <S.PoolDetailsBadge>
-                          <S.PoolDetailsBadgeIcon
-                            name={ICON_NAMES.dollarOutline}
-                          />
+                          <S.PoolDetailsBadgeIcon name={ICON_NAMES.users} />
                           <S.PoolDetailsBadgeText>
                             {depositors}
                           </S.PoolDetailsBadgeText>

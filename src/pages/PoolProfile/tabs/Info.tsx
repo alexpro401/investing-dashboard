@@ -1,20 +1,13 @@
-import { FC, HTMLAttributes, useContext, useMemo } from "react"
+import { FC, HTMLAttributes, useContext } from "react"
 import { v4 as uuidv4 } from "uuid"
-import { formatEther } from "@ethersproject/units"
 
 import * as S from "./styled"
 import { Card } from "common"
 import { Flex } from "theme"
-import { format } from "date-fns"
-import { expandTimestamp, formatBigNumber, shortenAddress } from "utils"
-import { DATE_FORMAT } from "consts/time"
+import { shortenAddress } from "utils"
 import Tooltip from "components/Tooltip"
 import { isEmpty } from "lodash"
 import { PoolProfileContext } from "pages/PoolProfile/context"
-
-function percentage(used, total) {
-  return (used / total) * 100
-}
 
 const fundTypes = {
   BASIC_POOL: "Basic",
@@ -24,75 +17,19 @@ const fundTypes = {
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const TabPoolInfo: FC<Props> = ({ ...rest }) => {
-  const { poolData, poolMetadata, baseToken, isTrader, poolInfo } =
-    useContext(PoolProfileContext)
-
-  const creationTime = useMemo(() => {
-    if (!!poolData) {
-      return format(expandTimestamp(poolData.creationTime), DATE_FORMAT)
-    }
-
-    return "-"
-  }, [poolData])
-
-  const minimalInvestment = useMemo(() => {
-    if (!poolInfo || !baseToken) return "0"
-
-    const res = formatEther(poolInfo.parameters.minimalInvestment)
-
-    return `${res} ${baseToken.symbol}`
-  }, [poolInfo, baseToken])
-
-  const emission = useMemo(() => {
-    if (!poolInfo) return { unlimited: true, value: "Unlimited" }
-
-    const value = formatBigNumber(poolInfo.parameters.totalLPEmission, 18, 6)
-    const unlimited = value === "0.0" || value === "0.00"
-
-    return { unlimited, value: unlimited ? "Unlimited" : value }
-  }, [poolInfo])
-
-  const emissionLeft = useMemo(() => {
-    if (!poolInfo || emission.unlimited)
-      return {
-        percentage: 0,
-        value: "0.0",
-      }
-
-    const total = poolInfo.parameters.totalLPEmission
-    const used = poolInfo.lpSupply.add(poolInfo.lpLockedInProposals)
-
-    const dif = total.sub(used)
-
-    const percent = percentage(
-      Number(formatEther(used)).toFixed(2),
-      Number(formatEther(total)).toFixed(2)
-    )
-
-    console.log({ percent, value: formatBigNumber(dif, 18, 6) })
-
-    return {
-      percentage: percent,
-      value: formatBigNumber(dif, 18, 6),
-    }
-  }, [poolInfo, emission])
-
-  const adminsCount = useMemo(() => {
-    if (!poolData) return 0
-    return poolData.admins.length
-  }, [poolData])
-
-  const whitelistCount = useMemo(() => {
-    if (!poolData) return "off"
-    return poolData.privateInvestors.length > 0
-      ? `${poolData.privateInvestors.length} addresses`
-      : "off"
-  }, [poolData])
-
-  const commissionPercentage = useMemo<string>(() => {
-    if (!poolInfo) return "0"
-    return formatBigNumber(poolInfo.parameters.commissionPercentage, 25, 0)
-  }, [poolInfo])
+  const {
+    poolData,
+    poolMetadata,
+    baseToken,
+    isTrader,
+    creationTime,
+    minimalInvestment,
+    emission,
+    emissionLeft,
+    adminsCount,
+    whitelistCount,
+    commissionPercentage,
+  } = useContext(PoolProfileContext)
 
   return (
     <>

@@ -19,9 +19,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {}
 const TabPoolHolders: FC<Props> = ({ ...rest }) => {
   const { chainId } = useWeb3React()
 
-  const { poolData, baseToken, poolInfo } = useContext(PoolProfileContext)
-
-  const total = Number(poolData?.investorsCount) || 0
+  const { poolData, baseToken } = useContext(PoolProfileContext)
 
   const traderPool = useTraderPoolContract(poolData.id)
 
@@ -59,16 +57,6 @@ const TabPoolHolders: FC<Props> = ({ ...rest }) => {
     [chainId]
   )
 
-  const TableHead = useMemo(
-    () => (
-      <Flex full ai="center" jc="space-between">
-        <Value.Medium color="#E4F2FF">Addresses: {total}</Value.Medium>
-        <Value.Medium color="#E4F2FF">Amount</Value.Medium>
-      </Flex>
-    ),
-    [total]
-  )
-
   const getTableRow = useCallback(
     ({ id }) => (
       <Link
@@ -96,12 +84,23 @@ const TabPoolHolders: FC<Props> = ({ ...rest }) => {
         </Flex>
       </Link>
     ),
-    [usersToBalancesMap]
+    [baseToken.symbol, getInvestorExplorerLink, usersToBalancesMap]
   )
 
   return (
     <Card>
-      <Table data={poolData.investors} nodeHead={TableHead} row={getTableRow} />
+      <Table
+        data={poolData.investors}
+        nodeHead={
+          <Flex full ai="center" jc="space-between">
+            <Value.Medium color="#E4F2FF">
+              Addresses: {poolData?.investorsCount}
+            </Value.Medium>
+            <Value.Medium color="#E4F2FF">Amount</Value.Medium>
+          </Flex>
+        }
+        row={getTableRow}
+      />
     </Card>
   )
 }

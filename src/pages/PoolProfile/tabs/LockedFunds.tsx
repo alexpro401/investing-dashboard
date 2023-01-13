@@ -1,6 +1,6 @@
 import { isNil } from "lodash"
 import { FC, HTMLAttributes, useCallback, useContext, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
 import { Tooltip } from "recharts"
 
 import { Flex } from "theme"
@@ -10,37 +10,36 @@ import usePoolLockedFunds from "hooks/usePoolLockedFunds"
 import { CHART_TYPE, TIMEFRAME } from "consts/chart"
 import { usePoolLockedFundsHistory } from "hooks/usePool"
 import Chart from "components/Chart"
-import { TooltipLockedFundsChart } from "../components"
-import { PoolProfileContext } from "../context"
+import { TooltipLockedFundsChart } from "pages/PoolProfile/components"
+import { PoolProfileContext } from "pages/PoolProfile/context"
+import { ROUTE_PATHS } from "consts"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
-  const { poolData, baseToken, isTrader, accountLPsPrice, poolInfo } =
-    useContext(PoolProfileContext)
+  const {
+    poolData,
+    isTrader,
+    accountLPsPrice,
+    baseSymbol,
+    totalPoolUSD,
+    traderFundsUSD,
+    traderFundsBase,
+    investorsFundsUSD,
+    investorsFundsBase,
+    poolUsedInPositionsUSD,
+    poolUsedToTotalPercentage,
+    tf,
+    setTf,
+    poolLockedFundHistoryChartData,
+    isPoolLockedFundHistoryChartDataFetching,
+  } = useContext(PoolProfileContext)
 
   const navigate = useNavigate()
 
-  const [
-    {
-      baseSymbol,
-      totalPoolUSD,
-      traderFundsUSD,
-      traderFundsBase,
-      investorsFundsUSD,
-      investorsFundsBase,
-      poolUsedInPositionsUSD,
-      poolUsedToTotalPercentage,
-    },
-    loading,
-  ] = usePoolLockedFunds(poolData, poolInfo, baseToken)
-
-  const [tf, setTf] = useState(TIMEFRAME.d)
-  const [data, fetching] = usePoolLockedFundsHistory(poolData.id, tf)
-
   const onTerminalNavigate = useCallback(() => {
     if (isNil(poolData.id)) return
-    navigate(`/pool/invest/${poolData.id}`)
+    navigate(generatePath(ROUTE_PATHS.poolInvest, { poolAddress: poolData.id }))
   }, [poolData.id, navigate])
 
   return (
@@ -63,7 +62,7 @@ const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
         <Chart
           type={CHART_TYPE.area}
           height={"130px"}
-          data={data}
+          data={poolLockedFundHistoryChartData}
           chart={{
             stackOffset: "silhouette",
           }}
@@ -83,7 +82,7 @@ const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
           ]}
           timeframe={{ get: tf, set: setTf }}
           timeframePosition="bottom"
-          loading={fetching}
+          loading={isPoolLockedFundHistoryChartDataFetching}
         >
           <Tooltip
             content={(p) => {

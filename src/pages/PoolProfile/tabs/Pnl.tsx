@@ -5,8 +5,6 @@ import { Center, Flex, Text } from "theme"
 import BarChart from "components/BarChart"
 import PoolPnlChart from "components/PoolPnlChart"
 
-import { usePoolPnlInfo } from "hooks/usePool"
-
 import * as S from "./styled"
 import { GuardSpinner } from "react-spinners-kit"
 import { PoolProfileContext } from "pages/PoolProfile/context"
@@ -14,12 +12,14 @@ import { PoolProfileContext } from "pages/PoolProfile/context"
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const TabPoolPnl: FC<Props> = ({ ...rest }) => {
-  const { poolData, baseToken } = useContext(PoolProfileContext)
-
-  const [
-    ,
-    { totalPnlPercentage, totalPnlBase, totalUSDPnlPerc, totalUSDPnlUSD },
-  ] = usePoolPnlInfo(poolData.id)
+  const {
+    poolData,
+    baseToken,
+    totalPnlPercentage,
+    totalPnlBase,
+    totalUSDPnlPerc,
+    totalUSDPnlUSD,
+  } = useContext(PoolProfileContext)
 
   return !poolData ? (
     <Center>
@@ -49,10 +49,6 @@ const TabPoolPnl: FC<Props> = ({ ...rest }) => {
         </div>
       </Card>
       <Card>
-        {/*<Flex full ai="center" jc="space-between">*/}
-        {/*  <Value.Big color="#E4F2FF">December, 2022</Value.Big>*/}
-        {/*  <Value.Big color="#9AE2CB">+ 234%</Value.Big>*/}
-        {/*</Flex>*/}
         <BarChart address={poolData.id} />
       </Card>
     </>

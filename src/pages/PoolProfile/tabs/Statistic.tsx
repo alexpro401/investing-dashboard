@@ -1,82 +1,29 @@
-import { FC, HTMLAttributes, useContext, useMemo } from "react"
-import { getDay } from "date-fns"
+import { FC, HTMLAttributes, useContext } from "react"
 import { v4 as uuidv4 } from "uuid"
-import { BigNumber } from "@ethersproject/bignumber"
-
-import { IPoolQuery } from "interfaces/thegraphs/all-pools"
-import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-
-import { expandTimestamp, normalizeBigNumber } from "utils"
-import { getPNL, getPriceLP } from "utils/formulas"
 import * as S from "./styled"
 import { Card } from "common"
 import { Flex } from "theme"
 import Tooltip from "components/Tooltip"
-import { usePoolSortino } from "hooks/pool"
-import { PoolProfileContext } from "../context"
+import { PoolProfileContext } from "pages/PoolProfile/context"
 
 const MAX_INVESTORS = 1000
 const MAX_OPEN_TRADES = 25
-const sortinoTokens = [
-  "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-  "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-]
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const TabPoolStatistic: FC<Props> = ({ ...rest }) => {
-  const { poolData, poolInfo } = useContext(PoolProfileContext)
-
-  const sortino = usePoolSortino(poolData.id, sortinoTokens)
-
-  const investorsCount = Number(poolData?.investorsCount) || 0
-  const openPositionsLen = Number(poolInfo?.openPositions.length) || 0
-
-  const orderSize = useMemo(() => {
-    if (!poolData) return "0"
-
-    return normalizeBigNumber(poolData.orderSize, 4, 2)
-  }, [poolData])
-
-  const dailyProfit = useMemo(() => {
-    if (!poolData) return "0"
-
-    const days = getDay(expandTimestamp(poolData.creationTime))
-    if (days === 0) return "0"
-
-    const priceLP = getPriceLP(poolData.priceHistory)
-    const pnl = getPNL(priceLP)
-
-    return (Number(pnl) / days).toFixed(2)
-  }, [poolData])
-
-  const timePosition = useMemo(() => {
-    if (!poolData) return ""
-    const date = new Date(poolData.averagePositionTime * 1000)
-    return `${date.getUTCHours()}H`
-  }, [poolData])
-
-  const sortinoETH = useMemo(() => {
-    if (!sortino) return <>♾️</>
-
-    return Number([sortino[sortinoTokens[0]]]).toFixed(2)
-  }, [sortino])
-
-  const sortinoBTC = useMemo(() => {
-    if (!sortino) return <>♾️</>
-
-    return Number([sortino[sortinoTokens[1]]]).toFixed(2)
-  }, [sortino])
-
-  const totalTrades = useMemo(() => {
-    if (!poolData) return "0"
-    return poolData.totalTrades
-  }, [poolData])
-
-  const maxLoss = useMemo(() => {
-    if (!poolData) return "0"
-    return normalizeBigNumber(BigNumber.from(poolData.maxLoss), 4, 2)
-  }, [poolData])
+  const {
+    poolData,
+    investorsCount,
+    openPositionsLen,
+    orderSize,
+    dailyProfit,
+    timePosition,
+    sortinoETH,
+    sortinoBTC,
+    totalTrades,
+    maxLoss,
+  } = useContext(PoolProfileContext)
 
   return (
     <>
