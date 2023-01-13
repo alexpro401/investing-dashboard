@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useState } from "react"
+import { FC, memo, useCallback, useMemo, useState } from "react"
 
 import TokensList from "components/TokensList"
 import Modal from "components/Modal"
@@ -264,4 +264,4 @@ const TokenSelect: FC<Props> = ({
   )
 }
 
-export default TokenSelect
+export default memo(TokenSelect)

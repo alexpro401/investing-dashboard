@@ -149,7 +149,7 @@ export const InputS = styled.input`
   }
 `
 
-export const ActiveSymbol = styled(Flex)`
+export const ActiveSymbol = styled(Flex)<{ background?: string }>`
   cursor: pointer;
   user-select: none;
   display: flex;
@@ -158,7 +158,7 @@ export const ActiveSymbol = styled(Flex)`
   min-height: 37px;
   border-radius: 19px;
 
-  background: rgba(40, 51, 74, 0.5);
+  background: ${(props) => props.background || "rgba(40, 51, 74, 0.5)"};
 `
 
 export const SymbolLabel = styled.span`

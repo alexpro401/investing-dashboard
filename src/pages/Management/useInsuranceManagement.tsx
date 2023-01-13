@@ -98,7 +98,11 @@ const useInsuranceManagement = () => {
     }
 
     const handleSell = async () => {
-      const amount = BigNumber.from(toAmount)
+      const amount = divideBignumbers(
+        [BigNumber.from(toAmount), 18],
+        [parseEther("10"), 18]
+      )
+
       const response = await insurance?.withdraw(amount)
       const receipt = await addTransaction(response, {
         type: TransactionType.INSURANCE_UNSTAKE,
@@ -255,7 +259,7 @@ const useInsuranceManagement = () => {
     setSlippage,
     isSlippageOpen,
     setSlippageOpen,
-  }
+  } as const
 }
 
 export default useInsuranceManagement

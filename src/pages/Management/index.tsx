@@ -12,6 +12,7 @@ import { formatBigNumber } from "utils"
 import { Card, CardHeader, Title } from "components/Exchange/styled"
 import useInsuranceManagement from "./useInsuranceManagement"
 import * as S from "./styled"
+import InfoAccordion, { Info } from "components/InfoAccordion"
 
 function Management(props) {
   const {
@@ -117,6 +118,26 @@ function Management(props) {
     />
   )
 
+  const info: Info[] | undefined = useMemo(() => {
+    return [
+      {
+        title: "Total Stake",
+        value: `${formatBigNumber(stakeAmount, 18, 2)}`,
+        tooltip: `Total amount of DEXE staked in the insurance pool`,
+      },
+      {
+        title: "Insurance amount",
+        value: `${formatBigNumber(insuranceAmount, 18, 2)}`,
+        tooltip: `Total amount of DEXE insurance LP tokens`,
+      },
+      {
+        title: "Insurance amount in USD",
+        value: `${formatBigNumber(insuranceAmountUSD, 18, 2)}`,
+        tooltip: `Total amount of DEXE insurance LP tokens in USD`,
+      },
+    ]
+  }, [insuranceAmount, insuranceAmountUSD, stakeAmount])
+
   return (
     <Card {...props}>
       <CardHeader>
@@ -138,29 +159,7 @@ function Management(props) {
 
       {direction === "deposit" ? from : to}
 
-      <S.PriceCard>
-        <S.Row>
-          <S.Label>Total Stake:</S.Label>
-          <Flex>
-            <S.Amount>{formatBigNumber(stakeAmount, 18, 2)}</S.Amount>
-            <S.Label>DEXE</S.Label>
-          </Flex>
-        </S.Row>
-        <S.Row>
-          <S.Label>Insurance amount:</S.Label>
-          <Flex>
-            <S.Amount>{formatBigNumber(insuranceAmount, 18, 2)}</S.Amount>
-            <S.Label>DEXE</S.Label>
-          </Flex>
-        </S.Row>
-        <S.Row>
-          <S.Label>Insurance amount in USD:</S.Label>
-          <Flex>
-            <S.Amount>{formatBigNumber(insuranceAmountUSD, 18, 2)}</S.Amount>
-            <S.Label>USD</S.Label>
-          </Flex>
-        </S.Row>
-      </S.PriceCard>
+      <InfoAccordion rows={info} />
 
       {button}
 

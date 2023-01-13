@@ -28,7 +28,7 @@ import {
   useNavigateWithState,
 } from "hooks"
 
-import { cutDecimalPlaces, fromBig } from "utils"
+import { cutDecimalPlaces, fromBig, isAddress } from "utils"
 
 import swapPathIcon from "assets/icons/swap-path.svg"
 
@@ -52,7 +52,6 @@ const Swap = () => {
   const poolType = usePoolType(poolToken)
 
   const routeState = useRouteState()
-  console.log(routeState)
 
   const [
     formState,
@@ -181,6 +180,19 @@ const Swap = () => {
   }, [direction, from.symbol, to.symbol])
 
   const button = useMemo(() => {
+    if (!isAddress(from.address) || !isAddress(to.address)) {
+      return (
+        <AppButton
+          disabled
+          size="large"
+          color="secondary"
+          onClick={onSubmit}
+          text="Select token"
+          full
+        />
+      )
+    }
+
     if (from.amount === "0" || to.amount === "0") {
       return (
         <AppButton
