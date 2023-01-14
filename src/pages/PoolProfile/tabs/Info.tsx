@@ -34,44 +34,44 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
   return (
     <>
       <Card>
-        <S.Value.Medium color="#9AE2CB">Information</S.Value.Medium>
+        <S.TabCardTitle color="#9AE2CB">Information</S.TabCardTitle>
         <Flex full ai="center" jc="space-between">
-          <S.Label>Creation date</S.Label>
-          <S.Value.Medium color="#E4F2FF">{creationTime}</S.Value.Medium>
+          <S.TabCardLabel>Creation date</S.TabCardLabel>
+          <S.TabCardValue color="#E4F2FF">{creationTime}</S.TabCardValue>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <S.Label>Fund address</S.Label>
-          <S.Value.Medium color="#E4F2FF">
+          <S.TabCardLabel>Fund address</S.TabCardLabel>
+          <S.TabCardValue color="#E4F2FF">
             {shortenAddress(poolData.id, 2)}
-          </S.Value.Medium>
+          </S.TabCardValue>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <S.Label>Basic token</S.Label>
-          <S.Value.Medium color="#E4F2FF">{baseToken?.symbol}</S.Value.Medium>
+          <S.TabCardLabel>Basic token</S.TabCardLabel>
+          <S.TabCardValue color="#E4F2FF">{baseToken?.symbol}</S.TabCardValue>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <S.Label>Fund ticker</S.Label>
-          <S.Value.Medium color="#E4F2FF">{poolData.ticker}</S.Value.Medium>
+          <S.TabCardLabel>Fund ticker</S.TabCardLabel>
+          <S.TabCardValue color="#E4F2FF">{poolData.ticker}</S.TabCardValue>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <S.Label>Fund name</S.Label>
-          <S.Value.Medium color="#E4F2FF">{poolData.name}</S.Value.Medium>
+          <S.TabCardLabel>Fund name</S.TabCardLabel>
+          <S.TabCardValue color="#E4F2FF">{poolData.name}</S.TabCardValue>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <S.Label>Type of fund</S.Label>
-          <S.Value.Medium color="#E4F2FF">
+          <S.TabCardLabel>Type of fund</S.TabCardLabel>
+          <S.TabCardValue color="#E4F2FF">
             {fundTypes[poolData.type]}
-          </S.Value.Medium>
+          </S.TabCardValue>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <S.Label></S.Label>
-          <S.Value.Medium color="#E4F2FF"></S.Value.Medium>
+          <S.TabCardLabel></S.TabCardLabel>
+          <S.TabCardValue color="#E4F2FF"></S.TabCardValue>
         </Flex>
       </Card>
 
       <Card>
         <Flex full ai="center" jc="space-between">
-          <S.Value.Medium color="#9AE2CB">Fund settings</S.Value.Medium>
+          <S.TabCardTitle color="#9AE2CB">Fund settings</S.TabCardTitle>
           {isTrader && (
             <S.AppLink
               text="Manage"
@@ -81,32 +81,32 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
         </Flex>
 
         <Flex full ai="center" jc="space-between">
-          <S.Label>Minimum investment amount</S.Label>
-          <S.Value.Medium color="#E4F2FF">{minimalInvestment}</S.Value.Medium>
+          <S.TabCardLabel>Minimum investment amount</S.TabCardLabel>
+          <S.TabCardValue color="#E4F2FF">{minimalInvestment}</S.TabCardValue>
         </Flex>
         {emission.unlimited && (
           <Flex full ai="center" jc="space-between">
-            <S.Label>Emission</S.Label>
-            <S.Value.Medium color="#E4F2FF">
+            <S.TabCardLabel>Emission</S.TabCardLabel>
+            <S.TabCardValue color="#E4F2FF">
               {normalizeBigNumber(emission.value, 18, 6)}
-            </S.Value.Medium>
+            </S.TabCardValue>
           </Flex>
         )}
         <Flex full ai="center" jc="space-between">
-          <S.Label>Fund managers</S.Label>
-          <S.Value.Medium color="#E4F2FF">{adminsCount}</S.Value.Medium>
+          <S.TabCardLabel>Fund managers</S.TabCardLabel>
+          <S.TabCardValue color="#E4F2FF">{adminsCount}</S.TabCardValue>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <S.Label>Limit who can invest</S.Label>
-          <S.Value.Medium color="#E4F2FF">
+          <S.TabCardLabel>Limit who can invest</S.TabCardLabel>
+          <S.TabCardValue color="#E4F2FF">
             {whitelistCount ? `${whitelistCount} addresses` : "off"}
-          </S.Value.Medium>
+          </S.TabCardValue>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <S.Label>Performance Fee</S.Label>
-          <S.Value.Medium color="#E4F2FF">
+          <S.TabCardLabel>Performance Fee</S.TabCardLabel>
+          <S.TabCardValue color="#E4F2FF">
             {normalizeBigNumber(commissionPercentage, 25, 0)}%
-          </S.Value.Medium>
+          </S.TabCardValue>
         </Flex>
       </Card>
       {!emission.unlimited && (
@@ -114,11 +114,11 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
           <Flex full ai="center" jc="space-between">
             <Flex ai="center" gap="4">
               <Tooltip id={uuidv4()}>Emmission explain</Tooltip>
-              <S.Label>Emission</S.Label>
+              <S.TabCardLabel>Emission</S.TabCardLabel>
             </Flex>
-            <S.Value.Medium color="#E4F2FF">
+            <S.TabCardValue color="#E4F2FF">
               {emissionLeft.value}
-            </S.Value.Medium>
+            </S.TabCardValue>
           </Flex>
           <S.ProgressBar w={emissionLeft.percentage} />
         </Card>
@@ -126,7 +126,7 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
 
       <Card>
         <Flex full ai="center" jc="space-between">
-          <S.Value.Medium color="#9AE2CB">Fund description</S.Value.Medium>
+          <S.TabCardTitle color="#9AE2CB">Fund description</S.TabCardTitle>
           {isTrader && (
             <S.AppLink
               text="Edit"
@@ -134,24 +134,24 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
             />
           )}
         </Flex>
-        <S.Value.MediumThin
+        <S.TabCardValue
           color={!isEmpty(poolMetadata.description) ? "#E4F2FF" : "#B1C7FC"}
         >
           {!isEmpty(poolMetadata.description)
             ? poolMetadata.description
             : "No description provided"}
-        </S.Value.MediumThin>
+        </S.TabCardValue>
 
         <Flex full ai="center" jc="space-between">
-          <S.Value.Medium color="#9AE2CB">Fund strategy</S.Value.Medium>
+          <S.TabCardValue color="#9AE2CB">Fund strategy</S.TabCardValue>
         </Flex>
-        <S.Value.MediumThin
+        <S.TabCardValue
           color={!isEmpty(poolMetadata.strategy) ? "#E4F2FF" : "#B1C7FC"}
         >
           {!isEmpty(poolMetadata.strategy)
             ? poolMetadata.strategy
             : "No strategy provided"}
-        </S.Value.MediumThin>
+        </S.TabCardValue>
       </Card>
     </>
   )

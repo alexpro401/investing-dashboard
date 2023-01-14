@@ -5,7 +5,7 @@ import { Card } from "common"
 import { Flex } from "theme"
 import Tooltip from "components/Tooltip"
 import { PoolProfileContext } from "pages/PoolProfile/context"
-import { normalizeBigNumber } from "../../../utils"
+import { normalizeBigNumber } from "utils"
 
 const MAX_INVESTORS = 1000
 const MAX_OPEN_TRADES = 25
@@ -29,100 +29,100 @@ const TabPoolStatistic: FC<Props> = ({ ...rest }) => {
   return (
     <>
       <Card>
-        <S.Value.Medium color="#9AE2CB">Total P&L</S.Value.Medium>
+        <S.TabCardTitle color="#9AE2CB">Total P&L</S.TabCardTitle>
         <S.GridTwoColumn>
           <Flex full ai="center" jc="space-between">
-            <S.Label>DEXE</S.Label>
+            <S.TabCardLabel>DEXE</S.TabCardLabel>
             <div>
-              <S.Value.Medium color="#E4F2FF">$230,000</S.Value.Medium>&nbsp;
-              <S.Value.Medium color="#B1C7FC">(50%)</S.Value.Medium>
+              <S.TabCardValue color="#E4F2FF">$230,000</S.TabCardValue>&nbsp;
+              <S.TabCardLabel color="#B1C7FC">(50%)</S.TabCardLabel>
             </div>
           </Flex>
           <Flex full ai="center" jc="space-between">
-            <S.Label>USD</S.Label>
+            <S.TabCardLabel>USD</S.TabCardLabel>
             <div>
-              <S.Value.Medium color="#E4F2FF">$500,000</S.Value.Medium>&nbsp;
-              <S.Value.Medium color="#B1C7FC">(500%)</S.Value.Medium>
+              <S.TabCardValue color="#E4F2FF">$500,000</S.TabCardValue>&nbsp;
+              <S.TabCardLabel color="#B1C7FC">(500%)</S.TabCardLabel>
             </div>
           </Flex>
         </S.GridTwoColumn>
         <S.GridTwoColumn>
           <Flex full ai="center" jc="space-between">
-            <S.Label>ETH</S.Label>
+            <S.TabCardLabel>ETH</S.TabCardLabel>
             <div>
-              <S.Value.Medium color="#E4F2FF">$30,214</S.Value.Medium>&nbsp;
-              <S.Value.Medium color="#B1C7FC">(50%)</S.Value.Medium>
+              <S.TabCardValue color="#E4F2FF">$30,214</S.TabCardValue>&nbsp;
+              <S.TabCardLabel color="#B1C7FC">(50%)</S.TabCardLabel>
             </div>
           </Flex>
           <Flex full ai="center" jc="space-between">
-            <S.Label>BTC</S.Label>
+            <S.TabCardLabel>BTC</S.TabCardLabel>
             <div>
-              <S.Value.Medium color="#E4F2FF">3,134</S.Value.Medium>&nbsp;
-              <S.Value.Medium color="#B1C7FC">(238%)</S.Value.Medium>
+              <S.TabCardValue color="#E4F2FF">3,134</S.TabCardValue>&nbsp;
+              <S.TabCardLabel color="#B1C7FC">(238%)</S.TabCardLabel>
             </div>
           </Flex>
         </S.GridTwoColumn>
       </Card>
       <Card>
-        <S.Value.Medium color="#9AE2CB">Average</S.Value.Medium>
+        <S.TabCardTitle color="#9AE2CB">Average</S.TabCardTitle>
         <S.GridTwoColumn>
           <Flex full ai="center" jc="space-between">
-            <S.Label>Trades per Day</S.Label>
-            <S.Value.Medium color="#E4F2FF">
+            <S.TabCardLabel>Trades per Day</S.TabCardLabel>
+            <S.TabCardValue color="#E4F2FF">
               {poolData.averageTrades}
-            </S.Value.Medium>
+            </S.TabCardValue>
           </Flex>
           <Flex full ai="center" jc="space-between">
-            <S.Label>Order Size</S.Label>
-            <S.Value.Medium color="#E4F2FF">
+            <S.TabCardLabel>Order Size</S.TabCardLabel>
+            <S.TabCardValue color="#E4F2FF">
               {normalizeBigNumber(orderSize, 4, 2)}%
-            </S.Value.Medium>
+            </S.TabCardValue>
           </Flex>
         </S.GridTwoColumn>
 
         <S.GridTwoColumn>
           <Flex full ai="center" jc="space-between">
-            <S.Label>Daily Profit</S.Label>
-            <S.Value.Medium color="#E4F2FF">{dailyProfit}%</S.Value.Medium>
+            <S.TabCardLabel>Daily Profit</S.TabCardLabel>
+            <S.TabCardValue color="#E4F2FF">{dailyProfit}%</S.TabCardValue>
           </Flex>
           <Flex full ai="center" jc="space-between">
-            <S.Label>Time Positions</S.Label>
-            <S.Value.Medium color="#E4F2FF">{timePosition}</S.Value.Medium>
-          </Flex>
-        </S.GridTwoColumn>
-
-        <S.GridTwoColumn>
-          <Flex full ai="center" jc="space-between">
-            <S.Label>Sortino (ETH)</S.Label>
-            <S.Value.Medium color="#E4F2FF">{sortinoETH}</S.Value.Medium>
-          </Flex>
-          <Flex full ai="center" jc="space-between">
-            <S.Label>Sortino (BTC)</S.Label>
-            <S.Value.Medium color="#E4F2FF">{sortinoBTC}</S.Value.Medium>
+            <S.TabCardLabel>Time Positions</S.TabCardLabel>
+            <S.TabCardValue color="#E4F2FF">{timePosition}</S.TabCardValue>
           </Flex>
         </S.GridTwoColumn>
 
         <S.GridTwoColumn>
           <Flex full ai="center" jc="space-between">
-            <S.Label>Trades</S.Label>
-            <S.Value.Medium color="#E4F2FF">{totalTrades}</S.Value.Medium>
+            <S.TabCardLabel>Sortino (ETH)</S.TabCardLabel>
+            <S.TabCardValue color="#E4F2FF">{sortinoETH}</S.TabCardValue>
           </Flex>
           <Flex full ai="center" jc="space-between">
-            <S.Label>Max. loss</S.Label>
-            <S.Value.Medium color="#E4F2FF">
+            <S.TabCardLabel>Sortino (BTC)</S.TabCardLabel>
+            <S.TabCardValue color="#E4F2FF">{sortinoBTC}</S.TabCardValue>
+          </Flex>
+        </S.GridTwoColumn>
+
+        <S.GridTwoColumn>
+          <Flex full ai="center" jc="space-between">
+            <S.TabCardLabel>Trades</S.TabCardLabel>
+            <S.TabCardValue color="#E4F2FF">{totalTrades}</S.TabCardValue>
+          </Flex>
+          <Flex full ai="center" jc="space-between">
+            <S.TabCardLabel>Max. loss</S.TabCardLabel>
+            <S.TabCardValue color="#E4F2FF">
               {normalizeBigNumber(maxLoss, 4, 2)}%
-            </S.Value.Medium>
+            </S.TabCardValue>
           </Flex>
         </S.GridTwoColumn>
       </Card>
       <Card>
         <div>
           <Flex full ai="center" jc="space-between" m="0 0 12px">
-            <S.Label>Depositors - {investorsCount}</S.Label>
+            <S.TabCardValue>Depositors - {investorsCount}</S.TabCardValue>
             <Flex ai="center" jc="flex-end" gap="4">
-              <S.Value.MediumThin color="#E4F2FF">
+              <S.TabCardLabel color="#E4F2FF">
                 {MAX_INVESTORS - investorsCount} Left
-              </S.Value.MediumThin>
+              </S.TabCardLabel>
               <Tooltip id={uuidv4()}>Depositors</Tooltip>
             </Flex>
           </Flex>
@@ -130,11 +130,11 @@ const TabPoolStatistic: FC<Props> = ({ ...rest }) => {
         </div>
         <div>
           <Flex full ai="center" jc="space-between" m="4px 0 12px">
-            <S.Label>Fund positions - {openPositionsLen}</S.Label>
+            <S.TabCardValue>Fund positions - {openPositionsLen}</S.TabCardValue>
             <Flex ai="center" jc="flex-end" gap="4">
-              <S.Value.MediumThin color="#E4F2FF">
+              <S.TabCardLabel color="#E4F2FF">
                 {MAX_OPEN_TRADES - openPositionsLen} Left
-              </S.Value.MediumThin>
+              </S.TabCardLabel>
               <Tooltip id={uuidv4()}>Fund positions</Tooltip>
             </Flex>
           </Flex>

@@ -2,7 +2,7 @@ import { FC, HTMLAttributes, useCallback, useContext, useMemo } from "react"
 import { isNil } from "lodash"
 import { v4 as uuidv4 } from "uuid"
 
-import { Value, Link } from "./styled"
+import * as S from "./styled"
 import { Card, Icon } from "common"
 import { Flex } from "theme"
 import { normalizeBigNumber, shortenAddress } from "utils"
@@ -59,30 +59,28 @@ const TabPoolHolders: FC<Props> = ({ ...rest }) => {
 
   const getTableRow = useCallback(
     ({ id }) => (
-      <Link
+      <S.Link
         key={uuidv4()}
         href={getInvestorExplorerLink(id)}
         target="_blank"
         rel="noopener noreferrer"
       >
         <Flex full ai="center" jc="space-between" p={"16px 0"}>
-          <Value.MediumThin color="#E4F2FF" block>
+          <S.TabCardValue>
             <Flex ai="center" jc="flex-start" gap="4">
               {shortenAddress(id, 4)}
               <Icon name={ICON_NAMES.externalLink} />
             </Flex>
-          </Value.MediumThin>
+          </S.TabCardValue>
 
           <Flex ai="center" jc="flex-end" gap="4">
-            <Value.Medium color="#E4F2FF">
+            <S.TabCardValue>
               {normalizeBigNumber(usersToBalancesMap[id], 18, 6)}
-            </Value.Medium>
-            <Value.Medium color="#B1C7FC">
-              {baseToken?.symbol ?? ""}
-            </Value.Medium>
+            </S.TabCardValue>
+            <S.TabCardValue>{baseToken?.symbol ?? ""}</S.TabCardValue>
           </Flex>
         </Flex>
-      </Link>
+      </S.Link>
     ),
     [baseToken.symbol, getInvestorExplorerLink, usersToBalancesMap]
   )
@@ -93,10 +91,8 @@ const TabPoolHolders: FC<Props> = ({ ...rest }) => {
         data={poolData.investors}
         nodeHead={
           <Flex full ai="center" jc="space-between">
-            <Value.Medium color="#E4F2FF">
-              Addresses: {poolData?.investorsCount}
-            </Value.Medium>
-            <Value.Medium color="#E4F2FF">Amount</Value.Medium>
+            <S.TabCardLabel>Holders: {poolData?.investorsCount}</S.TabCardLabel>
+            <S.TabCardLabel>Amount</S.TabCardLabel>
           </Flex>
         }
         row={getTableRow}

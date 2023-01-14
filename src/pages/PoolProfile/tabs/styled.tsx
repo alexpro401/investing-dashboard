@@ -2,30 +2,26 @@ import styled from "styled-components/macro"
 import { Text } from "theme"
 import { AppButton } from "common"
 
-export const Label = styled(Text).attrs(() => ({
-  color: "#B1C7FC",
-  fz: 13,
-  fw: 500,
-  lh: "15px",
-}))``
+export const TabCardTitle = styled.span`
+  font-size: 14px;
+  line-height: 1.25;
+  font-weight: 600;
+  color: ${(props) => props.theme.brandColors.secondary};
+`
 
-export const Value = {
-  Big: styled(Text).attrs(() => ({
-    fz: 16,
-    fw: 700,
-    lh: "19px",
-  }))``,
-  Medium: styled(Text).attrs(() => ({
-    fz: 13,
-    fw: 600,
-    lh: "16px",
-  }))``,
-  MediumThin: styled(Text).attrs(() => ({
-    fz: 13,
-    fw: 500,
-    lh: "19px",
-  }))``,
-}
+export const TabCardLabel = styled.span`
+  font-size: 13px;
+  line-height: 1.25;
+  font-weight: 500;
+  color: ${(props) => props.theme.textColors.secondary};
+`
+
+export const TabCardValue = styled.span`
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.25;
+  color: ${(props) => props.theme.textColors.primary};
+`
 
 export const Link = styled.a`
   display: block;
@@ -36,6 +32,7 @@ export const Link = styled.a`
 
 export const AppButtonFull = styled(AppButton)`
   width: 100%;
+  border: none;
 `
 
 export const AppLink = styled(AppButton).attrs(() => ({

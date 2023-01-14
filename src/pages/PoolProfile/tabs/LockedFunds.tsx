@@ -1,19 +1,18 @@
 import { isNil } from "lodash"
-import { FC, HTMLAttributes, useCallback, useContext, useState } from "react"
+import { FC, HTMLAttributes, useCallback, useContext } from "react"
 import { generatePath, useNavigate } from "react-router-dom"
 import { Tooltip } from "recharts"
 
 import { Flex } from "theme"
 import { Card } from "common"
 import * as S from "./styled"
-import usePoolLockedFunds from "hooks/usePoolLockedFunds"
-import { CHART_TYPE, TIMEFRAME } from "consts/chart"
-import { usePoolLockedFundsHistory } from "hooks/usePool"
+import { CHART_TYPE } from "consts/chart"
 import Chart from "components/Chart"
 import { TooltipLockedFundsChart } from "pages/PoolProfile/components"
 import { PoolProfileContext } from "pages/PoolProfile/context"
 import { ROUTE_PATHS } from "consts"
-import { normalizeBigNumber } from "../../../utils"
+import { normalizeBigNumber } from "utils"
+import { useWindowSize } from "react-use"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -43,24 +42,25 @@ const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
     navigate(generatePath(ROUTE_PATHS.poolInvest, { poolAddress: poolData.id }))
   }, [poolData.id, navigate])
 
+  const { width: windowWidth } = useWindowSize()
+
   return (
     <>
       <Card>
-        <Flex full ai="center" jc="space-between">
-          <div>
-            <S.Value.Big block color="#E4F2FF" p="0 0 4px">
-              ${investorsFundsUSD}
-            </S.Value.Big>
-            <S.Label>Total Investors funds</S.Label>
-          </div>
-          <div>
-            <S.Value.Big block color="#E4F2FF" p="0 0 4px" align="right">
+        <Flex dir="column" full ai="center" jc="space-between">
+          <Flex full>
+            <S.TabCardLabel>Total Investors funds</S.TabCardLabel>
+            <S.TabCardValue>${investorsFundsUSD}</S.TabCardValue>
+          </Flex>
+          <Flex full>
+            <S.TabCardLabel>My funds</S.TabCardLabel>
+            <S.TabCardValue>
               ${normalizeBigNumber(accountLPsPrice)}
-            </S.Value.Big>
-            <S.Label align="right">My funds</S.Label>
-          </div>
+            </S.TabCardValue>
+          </Flex>
         </Flex>
         <Chart
+          key={windowWidth}
           type={CHART_TYPE.area}
           height={"130px"}
           data={poolLockedFundHistoryChartData}
@@ -94,39 +94,35 @@ const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
       </Card>
       <Card>
         <Flex full ai="center" jc="space-between">
-          <S.Label align="right">Investor funds</S.Label>
+          <S.TabCardLabel>Investor funds</S.TabCardLabel>
           <Flex ai="center" jc="flex-end">
-            <S.Value.Medium color="#E4F2FF">
-              ${investorsFundsUSD}
-            </S.Value.Medium>
+            <S.TabCardValue>${investorsFundsUSD}</S.TabCardValue>
             &nbsp;
-            <S.Value.Medium color="#B1C7FC">
+            <S.TabCardLabel color="#B1C7FC">
               {investorsFundsBase} {baseSymbol}
-            </S.Value.Medium>
+            </S.TabCardLabel>
           </Flex>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <S.Label align="right">Personal funds</S.Label>
+          <S.TabCardLabel>Personal funds</S.TabCardLabel>
           <Flex ai="center" jc="flex-end">
-            <S.Value.Medium color="#E4F2FF">${traderFundsUSD}</S.Value.Medium>
+            <S.TabCardValue>${traderFundsUSD}</S.TabCardValue>
             &nbsp;
-            <S.Value.Medium color="#B1C7FC">
+            <S.TabCardLabel>
               {traderFundsBase} {baseSymbol}
-            </S.Value.Medium>
+            </S.TabCardLabel>
           </Flex>
         </Flex>
         <Flex full ai="center" jc="space-between">
-          <S.Label align="right">
+          <S.TabCardLabel>
             Fund used ({poolUsedToTotalPercentage}%)
-          </S.Label>
+          </S.TabCardLabel>
           <Flex ai="center" jc="flex-end">
-            <S.Value.Medium color="#E4F2FF">
+            <S.TabCardValue>
               ${poolUsedInPositionsUSD.format}&nbsp;/&nbsp;
-            </S.Value.Medium>
+            </S.TabCardValue>
             &nbsp;
-            <S.Value.Medium color="#B1C7FC">
-              {totalPoolUSD.format}
-            </S.Value.Medium>
+            <S.TabCardValue>{totalPoolUSD.format}</S.TabCardValue>
           </Flex>
         </Flex>
         <S.ProgressBar w={Number(poolUsedToTotalPercentage)} />
@@ -134,6 +130,7 @@ const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
           <Flex full>
             <S.AppButtonFull
               onClick={onTerminalNavigate}
+              color="tertiary"
               text="Invest more in my fund"
             />
           </Flex>
