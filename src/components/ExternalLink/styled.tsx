@@ -11,6 +11,7 @@ export const Container = styled.a<{ color: string; fw?: string; fz?: string }>`
   letter-spacing: 0.03em;
 
   text-decoration: none;
+  white-space: nowrap;
 `
 
 export const Text = styled.span<{

@@ -276,7 +276,7 @@ const RiskyProposalCard: FC<Props> = (props) => {
             <AppButton
               full
               text={isTrader ? "Terminal" : "Stake LP"}
-              onClick={() => onInvest}
+              onClick={onInvest}
               size="x-small"
               disabled={!canInvest}
               color={canInvest ? "primary" : "secondary"}
@@ -298,32 +298,34 @@ const RiskyProposalCard: FC<Props> = (props) => {
                     setTimeout(() => showTooltip(true), 50)
                   }}
                 >
-                  {!isDesktop && (
-                    <SharedS.FundIconContainer>
-                      <Icon
-                        size={24}
-                        m="0"
-                        source={
-                          poolMetadata?.assets[poolMetadata?.assets.length - 1]
-                        }
-                        address={poolAddress}
-                      />
-                      {tooltip && (
-                        <TraderInfoBadge
-                          id={`risky-proposal-trader-info-${proposalId}-${poolAddress}`}
-                          content="This is more than the average investment at risk proposals. Check on xxxxx what kind of token it is before trusting it."
+                  <Flex>
+                    {!isDesktop && (
+                      <SharedS.FundIconContainer>
+                        <Icon
+                          size={24}
+                          m="0"
+                          source={
+                            poolMetadata?.assets[
+                              poolMetadata?.assets.length - 1
+                            ]
+                          }
+                          address={poolAddress}
                         />
-                      )}
-                    </SharedS.FundIconContainer>
-                  )}
-                  {TraderSizeView}
+                        {tooltip && (
+                          <TraderInfoBadge
+                            id={`risky-proposal-trader-info-${proposalId}-${poolAddress}`}
+                            content="This is more than the average investment at risk proposals. Check on xxxxx what kind of token it is before trusting it."
+                          />
+                        )}
+                      </SharedS.FundIconContainer>
+                    )}
+                    {TraderSizeView}
+                  </Flex>
                 </Flex>
                 {!isDesktop && (
-                  <div>
-                    <ExternalLink color="#2680EB" href={proposalTokenLink}>
-                      Сheck token
-                    </ExternalLink>
-                  </div>
+                  <ExternalLink color="#2680EB" href={proposalTokenLink}>
+                    Сheck token
+                  </ExternalLink>
                 )}
               </>
             )}
@@ -333,7 +335,7 @@ const RiskyProposalCard: FC<Props> = (props) => {
                 <AppButton
                   full
                   text={isTrader ? "Terminal" : "Stake LP"}
-                  onClick={() => onInvest}
+                  onClick={onInvest}
                   size="small"
                   disabled={!canInvest}
                   color={"tertiary"}
