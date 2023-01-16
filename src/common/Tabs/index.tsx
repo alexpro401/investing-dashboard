@@ -15,7 +15,13 @@ interface IProps {
   gap?: number
 }
 
-const Tabs: FC<IProps> = ({ tabs, initialTab = 0, onChangeTab, gap }) => {
+const Tabs: FC<IProps> = ({
+  tabs,
+  initialTab = 0,
+  onChangeTab,
+  gap,
+  ...rest
+}) => {
   const [activeTab, setTab] = useState(initialTab)
 
   useEffect(() => {
@@ -34,7 +40,7 @@ const Tabs: FC<IProps> = ({ tabs, initialTab = 0, onChangeTab, gap }) => {
   )
 
   return (
-    <S.Container>
+    <S.Container {...rest}>
       <S.List count={tabs.length} gap={gap}>
         {tabs.map(({ name }, index) => {
           return (

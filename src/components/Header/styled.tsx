@@ -140,44 +140,6 @@ export const Icons = styled(Flex)`
   }
 `
 
-export const PortraitsPlus = styled(Flex)`
-  background: #181e2c;
-  border-radius: 6px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-left: 7px;
-  text-align: center;
-  width: 26px;
-  height: 26px;
-
-  color: #616d8b;
-  font-size: 18px;
-  font-weight: 500;
-  font-family: ${(props) => props.theme.appFontFamily};
-  line-height: 18px;
-`
-
-export const FundWrapper = styled.div`
-  width: 26px;
-  height: 26px;
-  border-radius: 50px;
-  border: 0 solid #363f4e80;
-  position: absolute;
-`
-
-export const Funds = styled(Flex)`
-  position: relative;
-  width: 44px;
-
-  & > ${FundWrapper}:nth-child(1) {
-    right: 0;
-  }
-  & > ${FundWrapper}:nth-child(2) {
-    right: 10px;
-  }
-`
-
 export const IconButton = styled.img`
   margin: 0 3px;
 `

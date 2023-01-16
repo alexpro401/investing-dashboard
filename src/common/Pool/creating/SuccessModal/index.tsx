@@ -2,13 +2,14 @@ import React, { useContext } from "react"
 
 import { CreateFundContext } from "context/fund/CreateFundContext"
 import { useActiveWeb3React, useBreakpoints } from "hooks"
-import { ICON_NAMES } from "consts"
+import { ICON_NAMES, ROUTE_PATHS } from "consts"
 import { shortenAddress } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import theme, { Flex } from "theme"
 
 import * as S from "./styled"
 import defaultAvatar from "assets/icons/default-avatar.svg"
+import { generatePath } from "react-router-dom"
 
 interface ISuccessModalProps {
   createdFundAddress: string
@@ -104,7 +105,9 @@ const SuccessModal: React.FC<ISuccessModalProps> = ({
             text="Activate my fund"
             size="large"
             color={isMobile ? "primary" : "tertiary"}
-            routePath={`/pool/profile/${createdFundAddress}`}
+            routePath={generatePath(ROUTE_PATHS.poolProfile, {
+              poolAddress: createdFundAddress,
+            })}
             onClick={() => close()}
           />
           <S.SuccessCloseBtn
