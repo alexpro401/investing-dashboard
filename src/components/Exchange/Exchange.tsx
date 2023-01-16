@@ -14,7 +14,7 @@ import { useRouteState } from "hooks"
 
 interface Props {
   title: string
-  children: React.ReactNode
+  children?: React.ReactNode
   form: React.ReactNode
   buttons: React.ReactNode[]
   info?: Info[]

@@ -27,18 +27,14 @@ import {
 import useInvestInvestmentProposal from "./useInvestInvestmentProposal"
 import { GuardSpinner } from "react-spinners-kit"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
+import { Exchange } from "components/Exchange"
+import { Info } from "components/InfoAccordion"
 
 function InvestInvestmentProposal() {
   const { poolAddress, proposalId } = useParams()
   const [
-    { info, formData, isSlippageOpen, fromAmount, toAmount, slippage },
-    {
-      setSlippageOpen,
-      setSlippage,
-      handleFromChange,
-      handleSubmit,
-      handlePercentageChange,
-    },
+    { info, formData, fromAmount, toAmount, slippage },
+    { setSlippage, handleFromChange, handleSubmit, handlePercentageChange },
   ] = useInvestInvestmentProposal(poolAddress, proposalId)
 
   const button = useMemo(() => {
@@ -76,67 +72,49 @@ function InvestInvestmentProposal() {
         text={`Stake ${formData.to.symbol}`}
       />
     )
-  }, [formData.to.symbol, fromAmount, handleSubmit, toAmount])
+  }, [
+    formData.from.amount,
+    formData.from.balance,
+    formData.to.symbol,
+    fromAmount,
+    handleSubmit,
+    toAmount,
+  ])
 
-  const proposalTVL = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoGrey>Proposal TVL:</InfoGrey>
-        <Flex gap="4">
-          <InfoWhite>
-            {info.tvl.base} {info.tvl.ticker}
-          </InfoWhite>
-          <InfoGrey>(${info.tvl.usd})</InfoGrey>
-        </Flex>
-      </InfoRow>
-    )
-  }, [info.tvl.base, info.tvl.ticker, info.tvl.usd])
-
-  const fullness = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoGrey>Fullness:</InfoGrey>
-        <Flex gap="4">
-          <InfoWhite>{info.fullness}%</InfoWhite>
-        </Flex>
-      </InfoRow>
-    )
-  }, [info.fullness])
-
-  const averagePrice = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoGrey>Average LP price:</InfoGrey>
-        <Flex gap="4">
-          <InfoWhite>1 ISDX = {info.avgPriceLP} USD</InfoWhite>
-        </Flex>
-      </InfoRow>
-    )
-  }, [info.avgPriceLP])
-
-  const expirationDate = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoGrey>Expiration date:</InfoGrey>
-        <Flex gap="4">
-          <InfoWhite>{info.expirationDate}</InfoWhite>
-        </Flex>
-      </InfoRow>
-    )
-  }, [info.expirationDate])
+  const cardInfo: Info[] = useMemo(() => {
+    return [
+      {
+        title: "Proposal TVL",
+        value: `${info.tvl.base} ${info.tvl.ticker} ($${info.tvl.usd})`,
+        tooltip: "Total value locked in the proposal",
+      },
+      {
+        title: "Fullness",
+        value: `${info.fullness}%`,
+        tooltip: "Percentage of the proposal that has been staked",
+      },
+      {
+        title: "Average LP price",
+        value: `1 ISDX = ${info.avgPriceLP} USD`,
+        tooltip: "Average price of the LP token in USD",
+      },
+      {
+        title: "Expiration date",
+        value: info.expirationDate,
+        tooltip: "Date when the proposal will expire",
+      },
+    ]
+  }, [
+    info.avgPriceLP,
+    info.expirationDate,
+    info.fullness,
+    info.tvl.base,
+    info.tvl.ticker,
+    info.tvl.usd,
+  ])
 
   const form = (
-    <Card>
-      <CardHeader>
-        <Flex>
-          <Title active>Stake</Title>
-        </Flex>
-        <IconsGroup>
-          <CircularProgress />
-          <IconButton size={10} filled media={close} onClick={() => {}} />
-        </IconsGroup>
-      </CardHeader>
-
+    <>
       <ExchangeInput
         price={formData.from.price}
         amount={formData.from.amount}
@@ -159,25 +137,7 @@ function InvestInvestmentProposal() {
         customIcon={formData.to.icon}
         decimal={formData.to.decimals}
       />
-
-      <Flex full p="16px 0 0">
-        {button}
-      </Flex>
-
-      <InfoCard gap="12">
-        {proposalTVL}
-        {fullness}
-        {averagePrice}
-        {expirationDate}
-      </InfoCard>
-
-      <TransactionSlippage
-        slippage={slippage}
-        onChange={setSlippage}
-        isOpen={isSlippageOpen}
-        toggle={(v) => setSlippageOpen(v)}
-      />
-    </Card>
+    </>
   )
 
   return (
@@ -189,7 +149,13 @@ function InvestInvestmentProposal() {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        {form}
+        <Exchange
+          title="Stake LP2 tokens"
+          buttons={[button]}
+          form={form}
+          slippage={slippage}
+          setSlippage={setSlippage}
+        />
       </Container>
     </>
   )
