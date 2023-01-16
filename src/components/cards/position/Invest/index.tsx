@@ -6,7 +6,7 @@ import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { format } from "date-fns/esm"
 
 import { ZERO } from "consts"
-import { useActiveWeb3React } from "hooks"
+import { useActiveWeb3React, useBreakpoints } from "hooks"
 import { DATE_FORMAT } from "consts/time"
 import usePoolPrice from "hooks/usePoolPrice"
 import { useERC20Data } from "state/erc20/hooks"
@@ -64,10 +64,8 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     useState<BigNumber>(ZERO)
 
   const [owedBaseCommission, setOwedBaseCommission] = useState<BigNumber>(ZERO)
-  const [commissionAmountUSD, setCommissionAmountUSD] = useState<{
-    big: BigNumber
-    format: string
-  }>({ big: ZERO, format: "0" })
+  const [commissionAmountUSD, setCommissionAmountUSD] =
+    useState<BigNumber>(ZERO)
 
   const [_totalAccountInvestedLP, _setTotalAccountInvestedLP] =
     useState<BigNumber>(ZERO)
@@ -110,19 +108,13 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     return baseToken.symbol
   }, [baseToken])
 
-  const positionOpenLPAmount = useMemo<{
-    big: BigNumber
-    format: string
-  }>(() => {
+  const positionOpenLPAmount = useMemo<BigNumber>(() => {
     if (!position.totalLPInvestVolume || !position.totalLPDivestVolume) {
-      return { big: ZERO, format: "0" }
+      return ZERO
     }
 
     if (position.isClosed) {
-      return {
-        big: position.totalLPInvestVolume,
-        format: normalizeBigNumber(position.totalLPInvestVolume, 18, 6),
-      }
+      return position.totalLPInvestVolume
     } else {
       const investFixed = FixedNumber.fromValue(
         position.totalLPInvestVolume,
@@ -133,9 +125,8 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
         18
       )
       const res = investFixed.subUnsafe(divestFixed)
-      const big = parseEther(res._value)
 
-      return { big, format: normalizeBigNumber(big, 18, 6) }
+      return parseEther(res._value)
     }
   }, [position])
 
@@ -218,7 +209,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
       [entryPriceBase, 18]
     )
 
-    return multiplyBignumbers([priceDiff, 18], [positionOpenLPAmount.big, 18])
+    return multiplyBignumbers([priceDiff, 18], [positionOpenLPAmount, 18])
   }, [markPriceBase, entryPriceBase, positionOpenLPAmount])
 
   const pnlUSD = useMemo(() => {
@@ -231,7 +222,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
       [entryPriceUSD, 18]
     )
 
-    return multiplyBignumbers([priceDiff, 18], [positionOpenLPAmount.big, 18])
+    return multiplyBignumbers([priceDiff, 18], [positionOpenLPAmount, 18])
   }, [entryPriceUSD, markPriceUSD, positionOpenLPAmount])
 
   // Commission data
@@ -241,10 +232,10 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
    */
   const commissionPercentage = useMemo(() => {
     if (!poolInfo || !poolInfo.parameters) {
-      return "0"
+      return ZERO
     }
 
-    return normalizeBigNumber(poolInfo.parameters.commissionPercentage, 25, 0)
+    return poolInfo.parameters.commissionPercentage
   }, [poolInfo])
 
   /**
@@ -287,28 +278,22 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
       priceUSD.isZero() ||
       _totalAccountInvestedLP.isZero()
     ) {
-      return { big: ZERO, format: "0" }
+      return ZERO
     }
 
     const usd = FixedNumber.fromValue(priceUSD, 18)
     const lp = FixedNumber.fromValue(_totalAccountInvestedLP, 18)
     const res = usd.mulUnsafe(lp)
 
-    return {
-      big: parseEther(res._value),
-      format: formatBigNumber(parseEther(res._value), 18, 2),
-    }
+    return parseEther(res._value)
   }, [_totalAccountInvestedLP, priceUSD])
 
   /**
    * Total investments in pool (in baseToken)
    */
-  const totalPoolInvestmentsUSD = useMemo<{
-    big: BigNumber
-    format: string
-  }>(() => {
+  const totalPoolInvestmentsUSD = useMemo<BigNumber>(() => {
     if (!poolInfo || !priceUSD || priceUSD.isZero()) {
-      return { big: ZERO, format: "0" }
+      return ZERO
     }
 
     if (isTrader) {
@@ -321,10 +306,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
 
     const res = usd.mulUnsafe(supply.subUnsafe(traderLP))
 
-    return {
-      big: parseEther(res._value),
-      format: formatBigNumber(parseEther(res._value), 18, 2),
-    }
+    return parseEther(res._value)
   }, [fundsLockedInvestorUSD, isTrader, poolInfo, priceUSD])
 
   /**
@@ -333,15 +315,15 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   const fundsLockedInvestorPercentage = useMemo(() => {
     if (
       !fundsLockedInvestorUSD ||
-      fundsLockedInvestorUSD.big.isZero() ||
+      fundsLockedInvestorUSD.isZero() ||
       !totalPoolInvestmentsUSD ||
-      totalPoolInvestmentsUSD.big.isZero()
+      totalPoolInvestmentsUSD.isZero()
     ) {
       return "0"
     }
     const percent = percentageOfBignumbers(
-      fundsLockedInvestorUSD.big,
-      totalPoolInvestmentsUSD.big
+      fundsLockedInvestorUSD,
+      totalPoolInvestmentsUSD
     )
     return formatBigNumber(percent, 18, 2)
   }, [fundsLockedInvestorUSD, totalPoolInvestmentsUSD])
@@ -433,10 +415,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
           owedBaseCommission.toHexString()
         )
         if (price && price.amountOut) {
-          setCommissionAmountUSD({
-            big: price.amountOut,
-            format: formatBigNumber(price.amountOut, 18, 2),
-          })
+          setCommissionAmountUSD(price.amountOut)
         }
       } catch (error) {
         console.error(error)
@@ -472,6 +451,8 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     },
   ]
 
+  const { isDesktop } = useBreakpoints()
+
   return (
     <>
       <SharedS.Container>
@@ -484,7 +465,11 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
                 source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
                 address={position.pool.id}
               />
-              <S.Amount>{positionOpenLPAmount.format}</S.Amount>
+              {!isDesktop && (
+                <S.Amount>
+                  {normalizeBigNumber(positionOpenLPAmount, 18, 6)}
+                </S.Amount>
+              )}
               <S.PositionSymbol>{poolInfo?.ticker}</S.PositionSymbol>
               <SharedS.PNL value={pnlPercentage.normalized}>
                 {Number(pnlPercentage.normalized) > 0 && "+"}
@@ -493,6 +478,11 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
             </Flex>
             <Flex>
               <S.FundSymbol>{baseTokenSymbol}</S.FundSymbol>
+              {isDesktop && (
+                <S.Amount>
+                  {normalizeBigNumber(positionOpenLPAmount, 18, 6)}
+                </S.Amount>
+              )}
               <TokenIcon address={baseToken?.address} m="0" size={24} />
             </Flex>
           </SharedS.Head>
@@ -561,12 +551,12 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
         >
           <AmountRow
             title={`${commissionPeriod} month Performance Fee`}
-            value={`${commissionPercentage}%`}
+            value={`${normalizeBigNumber(commissionPercentage, 25, 0)}%`}
           />
           <AmountRow
             m="14px 0 0"
             title="Paid Performance Fee  "
-            value={`$${commissionAmountUSD.format}`}
+            value={`$${formatBigNumber(commissionAmountUSD, 18, 2)}`}
           />
           <AmountRow
             full
@@ -577,7 +567,11 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
           <AmountRow
             m="14px 0 0"
             title={`Investor funds locked (${fundsLockedInvestorPercentage}%)`}
-            value={`$${fundsLockedInvestorUSD.format}/$${totalPoolInvestmentsUSD.format}`}
+            value={`$${formatBigNumber(
+              fundsLockedInvestorUSD,
+              18,
+              2
+            )}/$${formatBigNumber(totalPoolInvestmentsUSD, 18, 2)}`}
           />
         </SharedS.ExtraItem>
       </SharedS.Container>
