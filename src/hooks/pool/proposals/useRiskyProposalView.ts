@@ -1,6 +1,6 @@
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react"
 import { format } from "date-fns"
-import { useNavigate } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
 import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 
@@ -11,7 +11,7 @@ import { useActiveWeb3React } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
 import { usePriceFeedContract } from "contracts"
 import useTokenRating from "hooks/useTokenRating"
-import { DATE_TIME_FORMAT, ZERO } from "consts"
+import { DATE_TIME_FORMAT, ROUTE_PATHS, ZERO } from "consts"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 import { percentageOfBignumbers } from "utils/formulas"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
@@ -352,7 +352,11 @@ export const useRiskyProposalView = (
   const navigateToPool = useCallback(
     (e: MouseEvent<HTMLElement>): void => {
       e.stopPropagation()
-      navigate(`/pool/profile/${poolAddress}`)
+      navigate(
+        generatePath(ROUTE_PATHS.poolProfile, {
+          poolAddress: poolAddress,
+        })
+      )
     },
     [navigate, poolAddress]
   )
