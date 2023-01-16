@@ -3,15 +3,14 @@ import { useParams } from "react-router-dom"
 import { useQuery } from "urql"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { useActiveWeb3React } from "hooks"
 import {
+  useActiveWeb3React,
   useGovPoolPendingRewards,
   useGovPoolWithdrawableAssets,
-} from "hooks/dao"
-import {
   useERC20GovBalance,
   useERC721GovBalance,
-} from "hooks/dao/useGovPoolMemberBalance"
+} from "hooks"
+
 import {
   GovMemberProposalsHistoryCountQuery,
   GovVoterInPoolQuery,

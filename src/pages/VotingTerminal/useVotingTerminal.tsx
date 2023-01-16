@@ -4,23 +4,20 @@ import { ZERO } from "consts"
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
 
 import {
+  useActiveWeb3React,
+  useERC721Allowance,
+  useERC721GovBalance,
+  useERC20Allowance,
+  useTokenPriceOutUSD,
   useGovPoolVote,
   useGovPoolHelperContracts,
   useGovPoolVotingAssets,
-} from "hooks/dao"
-
-import { useActiveWeb3React, useERC721Allowance } from "hooks"
-import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import { useERC20Allowance } from "hooks"
+} from "hooks"
 
 import { useERC20Data } from "state/erc20/hooks"
 import { multiplyBignumbers } from "utils/formulas"
-import {
-  useERC20GovBalance,
-  useERC721GovBalance,
-} from "hooks/dao/useGovPoolMemberBalance"
-import { useUserVotes } from "./useUserVotes"
 import { useNftPowerMap } from "./useNftPowerMap"
+import { useVotingBalances } from "./useVotingBalances"
 
 // TODO: implement canParticipate hook
 export enum ButtonTypes {
@@ -49,7 +46,6 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
     useGovPoolVotingAssets(daoPoolAddress)
   const { vote, voteDelegated } = useGovPoolVote(daoPoolAddress)
 
-  const erc20Balances = useERC20GovBalance(daoPoolAddress)
   const erc721Balances = useERC721GovBalance(daoPoolAddress)
 
   const [fromData] = useERC20Data(tokenAddress)
@@ -67,28 +63,12 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
     govUserKeeperAddress
   )
 
-  const userVotes = useUserVotes({ daoPoolAddress, proposalId, account })
-
-  // merge all lists in one
-  const allNftsId = useMemo(() => {
-    if (withDelegated) {
-      return [
-        ...erc721Balances.poolBalance,
-        ...erc721Balances.walletBalance,
-        ...erc721Balances.delegatedBalance,
-      ].map((v) => v.toString())
-    }
-
-    return [...erc721Balances.poolBalance, ...erc721Balances.walletBalance].map(
-      (v) => v.toString()
-    )
-  }, [erc721Balances, withDelegated])
-
-  const availableERC721Ids = useMemo(() => {
-    return allNftsId.filter((id) => {
-      return !userVotes.erc721.total.includes(id)
-    })
-  }, [allNftsId, userVotes.erc721.total])
+  const { allNftsId, availableERC721Ids, tokenBalances } = useVotingBalances({
+    daoPoolAddress,
+    proposalId,
+    withDelegated,
+    account,
+  })
 
   const nftPowerMap = useNftPowerMap({
     govUserKeeperAddress,
@@ -96,64 +76,6 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
     withDelegated,
     allNftsId,
   })
-
-  // all token balances with advanced calculations
-  const tokenBalances = useMemo(() => {
-    const advancedBalances = {
-      erc20LockedWithoutVotes: erc20Balances.poolBalance.sub(
-        userVotes.erc20.owned
-      ),
-      erc20DelegatedWithoutVotes: erc20Balances.delegatedBalance.sub(
-        userVotes.erc20.delegated
-      ),
-      erc20LockedAndDelegatedBalance: erc20Balances.delegatedBalance.add(
-        erc20Balances.poolBalance
-      ),
-      erc20LockedAndDelegatedBalanceWithoutVotes: erc20Balances.delegatedBalance
-        .sub(userVotes.erc20.delegated)
-        .add(erc20Balances.poolBalance.sub(userVotes.erc20.owned)),
-
-      erc721LockedWithoutVotes: erc721Balances.poolBalance.filter(
-        (id) => !userVotes.erc721.owned.includes(id.toString())
-      ),
-      erc721LockedAndDelegatedBalance: [
-        ...erc721Balances.poolBalance,
-        ...erc721Balances.delegatedBalance,
-      ],
-    }
-
-    return {
-      ...advancedBalances,
-      erc20: withDelegated
-        ? advancedBalances.erc20LockedAndDelegatedBalanceWithoutVotes.add(
-            erc20Balances.walletBalance
-          )
-        : advancedBalances.erc20LockedWithoutVotes.add(
-            erc20Balances.walletBalance
-          ),
-      erc721: withDelegated
-        ? [
-            ...advancedBalances.erc721LockedWithoutVotes,
-            ...erc721Balances.delegatedBalance,
-            ...erc721Balances.walletBalance,
-          ]
-        : [
-            ...advancedBalances.erc721LockedWithoutVotes,
-            ...erc721Balances.walletBalance,
-          ],
-    }
-  }, [
-    erc20Balances.delegatedBalance,
-    erc20Balances.poolBalance,
-    erc20Balances.walletBalance,
-    erc721Balances.delegatedBalance,
-    erc721Balances.poolBalance,
-    erc721Balances.walletBalance,
-    userVotes.erc20.delegated,
-    userVotes.erc20.owned,
-    userVotes.erc721.owned,
-    withDelegated,
-  ])
 
   const ERC20DepositAmount = useMemo(() => {
     return ERC20Amount.sub(
@@ -349,8 +271,8 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
   const handleVoteDelegated = useCallback(
     (proposalId: number) => {
       // calculate erc20 vote amount without delegated balance
-      const voteAmount = ERC20Amount.gte(erc20Balances.delegatedBalance)
-        ? erc20Balances.delegatedBalance
+      const voteAmount = ERC20Amount.gte(tokenBalances.erc20DelegatedBalance)
+        ? tokenBalances.erc20DelegatedBalance
         : ERC20Amount
 
       const voteNftIds = delegatedERC721Selected
@@ -360,7 +282,7 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
     [
       ERC20Amount,
       delegatedERC721Selected,
-      erc20Balances.delegatedBalance,
+      tokenBalances.erc20DelegatedBalance,
       voteDelegated,
     ]
   )
@@ -402,9 +324,9 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
 
   return {
     formInfo,
-    allNftsId: availableERC721Ids,
+    availableERC721Ids,
     ERC721Amount,
-    ERC721Voted: userVotes.erc721.total,
+    ERC721Voted: tokenBalances.erc721TotalVoted,
     ERC20DepositAmount,
     isERC20Approved,
     unapprowedERC721Selected,

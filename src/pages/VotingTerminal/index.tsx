@@ -11,7 +11,6 @@ import { v4 as uuidv4 } from "uuid"
 import Switch from "components/Switch"
 import { ICON_NAMES } from "consts/icon-names"
 import { useParams } from "react-router-dom"
-import { Container } from "components/Exchange/styled"
 import Header from "components/Header/Layout"
 import { normalizeBigNumber } from "utils"
 import { Exchange } from "components/Exchange"
@@ -25,7 +24,7 @@ interface Props {
 export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
   const {
     formInfo,
-    allNftsId,
+    availableERC721Ids,
     withDelegated,
     selectOpen,
     nftPowerMap,
@@ -165,7 +164,7 @@ export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
             <NftInput
               nftPowerMap={nftPowerMap}
               selectedNfts={ERC721Amount}
-              onSelectAll={() => selectNfts(allNftsId)}
+              onSelectAll={() => selectNfts(availableERC721Ids)}
               onSelect={() => setSelectOpen(true)}
               balance={formInfo.erc721.balance || ZERO}
               address={formInfo.erc721.address}
@@ -179,7 +178,7 @@ export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
         handleSelect={selectNfts}
         isOpen={selectOpen}
         onClose={() => setSelectOpen(false)}
-        nftIds={allNftsId}
+        nftIds={availableERC721Ids}
         votedNfts={ERC721Voted}
         nftPowerMap={nftPowerMap}
       />
@@ -194,14 +193,14 @@ const VotingTerminalPage = () => {
   return (
     <>
       <Header>Vote for proposal</Header>
-      <Container
+      <S.Container
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
         <VotingTerminal {...params} />
-      </Container>
+      </S.Container>
     </>
   )
 }
