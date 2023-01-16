@@ -91,7 +91,10 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
     pause: isNil(activePools),
     context: graphClientBasicPools,
     formatter: (d) =>
-      map(d.proposals, (p) => ({ id: String(p.id).slice(42), ...p })),
+      map(d.proposals, (p) => ({
+        ...p,
+        id: String(p.id).charAt(String(p.id).length - 1),
+      })),
   })
 
   const loader = useRef<any>()
