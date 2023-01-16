@@ -1,12 +1,12 @@
 import { useMemo } from "react"
 import { Routes, Route } from "react-router-dom"
 
-import RouteTabs from "components/RouteTabs"
 import InvestProposalsList from "./ProposalsList"
 
 import { ITab } from "interfaces"
 import { useActiveWeb3React } from "hooks"
 import useInvestorProposalPools from "hooks/useInvestorProposalPools"
+import * as S from "./styled"
 
 const InvestmentInvestProposals = () => {
   const { account } = useActiveWeb3React()
@@ -31,7 +31,7 @@ const InvestmentInvestProposals = () => {
 
   return (
     <>
-      <RouteTabs m="16px 16px 0" tabs={tabs} />
+      <S.PageSubTabs tabs={tabs} />
       <Routes>
         <Route
           path="new"

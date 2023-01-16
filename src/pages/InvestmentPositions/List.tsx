@@ -1,6 +1,5 @@
-import { FC, useMemo, useEffect, useRef } from "react"
+import { FC, useMemo } from "react"
 import { PulseSpinner } from "react-spinners-kit"
-import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { InvestorPositionsQuery } from "queries"
 import useQueryPagination from "hooks/useQueryPagination"
@@ -8,8 +7,9 @@ import { IInvestorProposal } from "interfaces/thegraphs/invest-pools"
 
 import LoadMore from "components/LoadMore"
 import InvestPositionCard from "components/cards/position/Invest"
-import S from "./styled"
 import { graphClientInvestors } from "utils/graphClient"
+import { NoDataMessage } from "../../common"
+import { Center } from "../../theme"
 
 interface IProps {
   account?: string | null
@@ -28,46 +28,24 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
     formatter: (d) => d.investorPoolPositions,
   })
 
-  const loader = useRef<any>()
-
-  // manually disable scrolling *refresh this effect when ref container dissapeared from DOM
-  useEffect(() => {
-    if (!loader.current) return
-    disableBodyScroll(loader.current)
-
-    return () => clearAllBodyScrollLocks()
-  }, [loader, loading])
-
   if (!account || !data || (data.length === 0 && loading)) {
     return (
-      <S.Content>
+      <Center>
         <PulseSpinner />
-      </S.Content>
+      </Center>
     )
   }
 
   if (data && data.length === 0 && !loading) {
-    return (
-      <S.Content>
-        <S.WithoutData>
-          No {closed ? "closed" : "open"} positions yet
-        </S.WithoutData>
-      </S.Content>
-    )
+    return <NoDataMessage />
   }
 
   return (
     <>
-      <S.List ref={loader}>
-        {data.map((p) => (
-          <InvestPositionCard key={p.id} position={p} />
-        ))}
-        <LoadMore
-          isLoading={loading && !!data.length}
-          handleMore={fetchMore}
-          r={loader}
-        />
-      </S.List>
+      {data.map((p) => (
+        <InvestPositionCard key={p.id} position={p} />
+      ))}
+      <LoadMore isLoading={loading && !!data.length} handleMore={fetchMore} />
     </>
   )
 }

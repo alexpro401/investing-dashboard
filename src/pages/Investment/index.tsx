@@ -8,10 +8,13 @@ import InvestmentInvestProposals from "pages/InvestmentInvestProposals"
 
 import Header from "components/Header/Layout"
 
-import { Container } from "./styled"
+import * as S from "./styled"
+import { useBreakpoints } from "hooks"
 
 const InvestPositions = () => {
-  const tabs: ITab[] = [
+  const { isMobile } = useBreakpoints()
+
+  const TABS: ITab[] = [
     {
       title: "My positions",
       source: "/investment/positions/open",
@@ -41,8 +44,12 @@ const InvestPositions = () => {
 
   return (
     <>
-      <Header tabs={tabs}>My investment</Header>
-      <Container>
+      <Header>{isMobile && "My investment"}</Header>
+      <S.Root>
+        <S.HeadContainer>
+          <S.PageTitle>All Proposals</S.PageTitle>
+          <S.PageHeadTabs tabs={TABS} />
+        </S.HeadContainer>
         <Routes>
           <Route path="positions/*" element={<InvestmentPositions />}></Route>
           <Route
@@ -54,7 +61,7 @@ const InvestPositions = () => {
             element={<InvestmentInvestProposals />}
           ></Route>
         </Routes>
-      </Container>
+      </S.Root>
     </>
   )
 }

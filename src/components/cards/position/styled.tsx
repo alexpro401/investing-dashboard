@@ -12,9 +12,7 @@ import { ColorizedNumber, Flex, GradientBorder } from "theme"
 import shareIcon from "assets/icons/share.svg"
 
 const Styled = {
-  Container: styled.div`
-    margin-bottom: 18px;
-  `,
+  Container: styled.div``,
   Card: styled(GradientBorder)`
     width: 100%;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);

@@ -1,7 +1,6 @@
-import { FC, useMemo, useState, useEffect, useRef } from "react"
+import { FC, useMemo, useState, useEffect } from "react"
 import { PulseSpinner } from "react-spinners-kit"
 import { v4 as uuidv4 } from "uuid"
-import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { InvestorInvestProposalsQuery } from "queries"
 import useQueryPagination from "hooks/useQueryPagination"
@@ -13,10 +12,11 @@ import InvestProposalCard from "components/cards/proposal/Invest"
 
 import { RequestDividendsProvider } from "modals/RequestDividend/useRequestDividendsContext"
 
-import S from "./styled"
 import { IInvestProposal } from "interfaces/thegraphs/invest-pools"
 import { map } from "lodash"
 import { graphClientInvestPools } from "utils/graphClient"
+import { Center } from "theme"
+import { NoDataMessage } from "common"
 
 interface IInvestProposalCardInitializer {
   poolAddress?: string
@@ -69,49 +69,29 @@ const InvestmentInvestProposalsList: FC<IProps> = ({
       map(d.proposals, (p) => ({ id: String(p.id).slice(42), ...p })),
   })
 
-  const loader = useRef<any>()
-
-  // manually disable scrolling *refresh this effect when ref container dissapeared from DOM
-  useEffect(() => {
-    if (!loader.current) return
-    disableBodyScroll(loader.current)
-
-    return () => clearAllBodyScrollLocks()
-  }, [loader, loading])
-
   if (!activePools || !data || (data.length === 0 && loading)) {
     return (
-      <S.Content>
+      <Center>
         <PulseSpinner />
-      </S.Content>
+      </Center>
     )
   }
 
   if (data && data.length === 0 && !loading) {
-    return (
-      <S.Content>
-        <S.WithoutData>No proposals yet</S.WithoutData>
-      </S.Content>
-    )
+    return <NoDataMessage />
   }
 
   return (
     <>
       <RequestDividendsProvider>
-        <S.List ref={loader}>
-          {data.map((p) => (
-            <InvestProposalCardInitializer
-              key={uuidv4()}
-              proposalId={Number(p.id) - 1}
-              poolAddress={p.investPool.id}
-            />
-          ))}
-          <LoadMore
-            isLoading={loading && !!data.length}
-            handleMore={fetchMore}
-            r={loader}
+        {data.map((p) => (
+          <InvestProposalCardInitializer
+            key={uuidv4()}
+            proposalId={Number(p.id) - 1}
+            poolAddress={p.investPool.id}
           />
-        </S.List>
+        ))}
+        <LoadMore isLoading={loading && !!data.length} handleMore={fetchMore} />
       </RequestDividendsProvider>
     </>
   )

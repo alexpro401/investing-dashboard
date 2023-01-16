@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router-dom"
 
-import RouteTabs from "components/RouteTabs"
 import InvestmentPositionsList from "./List"
 
 import { ITab } from "interfaces"
 import { useActiveWeb3React } from "hooks"
+import * as S from "./styled"
 
 const InvestmentPositions = () => {
   const { account } = useActiveWeb3React()
@@ -22,7 +22,7 @@ const InvestmentPositions = () => {
 
   return (
     <>
-      <RouteTabs m="16px 16px 0" tabs={tabs} />
+      <S.PageSubTabs tabs={tabs} />
       <Routes>
         <Route
           path="open"

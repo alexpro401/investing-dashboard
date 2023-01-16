@@ -1,6 +1,5 @@
-import { FC, useMemo, useEffect, useRef } from "react"
+import { FC, useMemo } from "react"
 import { PulseSpinner } from "react-spinners-kit"
-import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 import { isNil } from "lodash"
 
 import { useActiveWeb3React } from "hooks"
@@ -14,8 +13,9 @@ import { InvestorRiskyPositionWithVests } from "interfaces/thegraphs/investors"
 import LoadMore from "components/LoadMore"
 import RiskyInvestorPositionCard from "components/cards/position/RiskyInvestor"
 
-import S from "./styled"
 import { graphClientInvestors } from "utils/graphClient"
+import { NoDataMessage } from "common"
+import { Center } from "../../theme"
 
 interface IRiskyCardInitializer {
   position: InvestorRiskyPositionWithVests
@@ -98,45 +98,24 @@ const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
       formatter: (d) => d.proposalPositions,
     })
 
-  const loader = useRef<any>()
-
-  useEffect(() => {
-    if (!loader.current) return
-    disableBodyScroll(loader.current)
-
-    return () => clearAllBodyScrollLocks()
-  }, [loader, loading])
-
   if (!activePools || !data || !account || (data.length === 0 && loading)) {
     return (
-      <S.Content>
+      <Center>
         <PulseSpinner />
-      </S.Content>
+      </Center>
     )
   }
 
   if (data && data.length === 0 && !loading) {
-    return (
-      <S.Content>
-        <S.WithoutData>
-          No {closed ? "closed" : "open"} positions yet
-        </S.WithoutData>
-      </S.Content>
-    )
+    return <NoDataMessage />
   }
 
   return (
     <>
-      <S.List ref={loader}>
-        {data.map((p) => (
-          <RiskyPositionCardInitializer key={p.id} position={p} />
-        ))}
-        <LoadMore
-          isLoading={loading && !!data.length}
-          handleMore={fetchMore}
-          r={loader}
-        />
-      </S.List>
+      {data.map((p) => (
+        <RiskyPositionCardInitializer key={p.id} position={p} />
+      ))}
+      <LoadMore isLoading={loading && !!data.length} handleMore={fetchMore} />
     </>
   )
 }
