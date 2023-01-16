@@ -1,4 +1,11 @@
 import styled from "styled-components/macro"
+import { AppButton } from "common"
+import { rgba } from "polished"
+import { respondTo } from "theme"
+
+export const Root = styled.div`
+  position: relative;
+`
 
 export const Status = styled.div<{ active: boolean }>`
   padding: 5px 6px;
@@ -21,14 +28,20 @@ export const Ticker = styled.div`
   color: #788ab4;
 `
 
-export const AddButton = styled.div`
+export const AddButton = styled(AppButton)`
   margin-left: 0.5px;
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 600;
+  padding: 0;
   font-size: 11px;
-  line-height: 100%;
-  color: #2680eb;
-  white-space: nowrap;
-  cursor: pointer;
+
+  ${respondTo("lg")} {
+    margin-left: 4px;
+    background: ${({ theme }) => theme.brandColors.secondary};
+    font-size: 12px;
+    line-height: 14px;
+    padding: 2px 6px;
+  }
+`
+
+export const RiskyProposalCardSettingsButton = styled(AppButton)`
+  background: ${({ theme }) => rgba(theme.brandColors.secondary, 0.15)};
 `

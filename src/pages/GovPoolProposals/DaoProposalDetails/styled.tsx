@@ -1,3 +1,4 @@
+import { rgba } from "polished"
 import styled, { css } from "styled-components/macro"
 import { AppButton, Card, Icon } from "common"
 import { VotingTerminal } from "pages/VotingTerminal"
@@ -429,7 +430,7 @@ export const DaoProposalInsuranceDescriptionCard = styled(
 `
 export const DaoProposalInsuranceChatLink = styled(AppButton)`
   width: 100%;
-  background: rgba(38, 105, 235, 0.15);
+  background: ${({ theme }) => rgba(theme.brandColors.secondary, 0.15)};
 `
 export const DaoProposalInsuranceChartCard = styled(DaoProposalDetailsCard)`
   ${respondTo("sm")} {

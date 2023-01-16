@@ -1,10 +1,11 @@
 import styled from "styled-components/macro"
 
-import { GradientBorder } from "theme"
+import { GradientBorder, respondTo } from "theme"
 
 export const SettingsStyled = {
   Container: styled(GradientBorder)`
     width: 97%;
+    max-width: 420px;
     padding: 16px 16px 13px;
     position: absolute;
     top: 38px;
@@ -13,7 +14,11 @@ export const SettingsStyled = {
     border-radius: 20px;
 
     &:after {
-      background: #181e2c;
+      background: ${({ theme }) => theme.backgroundColors.secondary};
+    }
+
+    ${respondTo("lg")} {
+      top: -100px;
     }
   `,
   Row: styled.div<{ minInputW?: string }>`
@@ -53,7 +58,7 @@ export const SettingsStyled = {
     font-weight: 400;
     font-size: 13px;
     line-height: 15px;
-    color: #db6d6d;
+    color: ${({ theme }) => theme.statusColors.error};
   `,
   ButtonGroup: styled.div`
     width: 100%;

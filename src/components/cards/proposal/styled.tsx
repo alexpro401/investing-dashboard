@@ -25,6 +25,7 @@ export const Head = styled(Flex)<{ p: string }>`
 
   ${respondTo("lg")} {
     width: initial;
+    min-width: 200px;
     flex-direction: column;
     align-items: flex-start;
     border-bottom: none;
@@ -37,10 +38,10 @@ export const Body = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  gap: 16px 5px;
+  gap: var(--app-gap) 5px;
 
   ${respondTo("lg")} {
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(2, 1fr);
     padding: 0;
   }
@@ -69,7 +70,9 @@ export const Footer = styled(Flex)`
 
   ${respondTo("lg")} {
     width: initial;
+    min-width: 160px;
     flex-direction: column;
+    align-items: flex-end;
     border-top: none;
     padding: 0;
   }
