@@ -8,10 +8,10 @@ import { Flex } from "theme"
 import useDelegateTerminal, { ButtonTypes } from "./useDelegateTerminal"
 import { ICON_NAMES } from "consts/icon-names"
 import { useParams } from "react-router-dom"
-import { Container } from "components/Exchange/styled"
 import Header from "components/Header/Layout"
 import WalletInput from "components/Exchange/WalletInput"
 import ExternalLink from "components/ExternalLink"
+import { Exchange } from "components/Exchange"
 
 interface Props {
   daoPoolAddress?: string
@@ -114,65 +114,57 @@ export const DelegateTerminal: FC<Props> = ({ daoPoolAddress, delegatee }) => {
   )
 
   return (
-    <>
-      <S.Card>
-        <S.CardHeader>
-          <S.Title active>Delegate</S.Title>
-        </S.CardHeader>
-
-        <S.DescriptionContainer>
-          You can delegate your votes to another DAO member so they can vote on
-          your behalf.{" "}
-          <ExternalLink removeIcon href="#" fz="13px" fw="400">
-            Details
-          </ExternalLink>
-          <br />
-          <br />
-          Adjust your token delegation below.
-        </S.DescriptionContainer>
-
-        <Flex p="8px" full ai="center"></Flex>
-
-        {formInfo.haveToken && (
-          <ExchangeInput
-            price={ERC20Price}
-            amount={ERC20Amount.toString()}
-            balance={formInfo.erc20.balance || ZERO}
-            address={formInfo.erc20.address}
-            symbol={formInfo.erc20.symbol}
-            decimal={formInfo.erc20.decimal}
-            onChange={handleERC20Change}
-          />
-        )}
-
-        {formInfo.haveNft && (
-          <>
-            <Flex full p="4px" />
-            <NftInput
-              nftPowerMap={nftPowerMap}
-              selectedNfts={ERC721Amount}
-              onSelectAll={() => selectNfts(allNftsId)}
-              onSelect={() => setSelectOpen(true)}
-              balance={formInfo.erc721.balance || ZERO}
-              address={formInfo.erc721.address}
+    <Exchange
+      title="Delegate"
+      buttons={[button]}
+      form={
+        <>
+          <S.DescriptionContainer>
+            You can delegate your votes to another DAO member so they can vote
+            on your behalf.{" "}
+            <ExternalLink removeIcon href="#" fz="13px" fw="400">
+              Details
+            </ExternalLink>
+            <br />
+            <br />
+            Adjust your token delegation below.
+          </S.DescriptionContainer>
+          <Flex p="8px" full ai="center"></Flex>
+          {formInfo.haveToken && (
+            <ExchangeInput
+              price={ERC20Price}
+              amount={ERC20Amount.toString()}
+              balance={formInfo.erc20.balance || ZERO}
+              address={formInfo.erc20.address}
+              symbol={formInfo.erc20.symbol}
+              decimal={formInfo.erc20.decimal}
+              onChange={handleERC20Change}
             />
-          </>
-        )}
-
-        <Flex full p="4px" />
-
-        <WalletInput
-          address={formInfo.address.delegatee}
-          amount={formInfo.address.totalPower.toString()}
-          nodeLeft="Votes to be received"
-          nodeRight="Receiver address"
-          onChange={setDelegatee}
-        />
-
-        <Flex p="16px 0 0" full>
-          {button}
-        </Flex>
-      </S.Card>
+          )}
+          {formInfo.haveNft && (
+            <>
+              <Flex full p="4px" />
+              <NftInput
+                nftPowerMap={nftPowerMap}
+                selectedNfts={ERC721Amount}
+                onSelectAll={() => selectNfts(allNftsId)}
+                onSelect={() => setSelectOpen(true)}
+                balance={formInfo.erc721.balance || ZERO}
+                address={formInfo.erc721.address}
+              />
+            </>
+          )}
+          <Flex full p="4px" />
+          <WalletInput
+            address={formInfo.address.delegatee}
+            amount={formInfo.address.totalPower.toString()}
+            nodeLeft="Votes to be received"
+            nodeRight="Receiver address"
+            onChange={setDelegatee}
+          />
+        </>
+      }
+    >
       <NftSelect
         nftPowerMap={nftPowerMap}
         defaultValue={selectedNftsStrings}
@@ -181,7 +173,7 @@ export const DelegateTerminal: FC<Props> = ({ daoPoolAddress, delegatee }) => {
         onClose={() => setSelectOpen(false)}
         nftIds={allNftsId}
       />
-    </>
+    </Exchange>
   )
 }
 
@@ -192,14 +184,14 @@ const DelegateTerminalPage = () => {
   return (
     <>
       <Header>Delegate DAO tokens</Header>
-      <Container
+      <S.Container
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
         <DelegateTerminal {...params} />
-      </Container>
+      </S.Container>
     </>
   )
 }
