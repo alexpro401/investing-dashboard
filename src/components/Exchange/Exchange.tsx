@@ -20,6 +20,7 @@ interface Props {
   info?: Info[]
   slippage?: string
   setSlippage?: (v: string) => void
+  withClose?: boolean
 }
 
 const Exchange: FC<Props> = ({
@@ -30,6 +31,7 @@ const Exchange: FC<Props> = ({
   info,
   slippage,
   setSlippage,
+  withClose = true,
 }) => {
   const [isSlippageOpen, setSlippageOpen] = useState(false)
   const state = useRouteState()
@@ -46,12 +48,16 @@ const Exchange: FC<Props> = ({
         <S.Title active>{title}</S.Title>
         <S.IconsGroup>
           <CircularProgress />
-          <IconButton
-            size={12}
-            media={settings}
-            onClick={() => setSlippageOpen(!isSlippageOpen)}
-          />
-          <Icon name={ICON_NAMES.modalClose} onClick={handleClose} />
+          {withSlippage && (
+            <IconButton
+              size={12}
+              media={settings}
+              onClick={() => setSlippageOpen(!isSlippageOpen)}
+            />
+          )}
+          {withClose && (
+            <Icon name={ICON_NAMES.modalClose} onClick={handleClose} />
+          )}
         </S.IconsGroup>
       </S.CardHeader>
 

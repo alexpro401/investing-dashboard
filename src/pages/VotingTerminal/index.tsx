@@ -14,6 +14,7 @@ import { useParams } from "react-router-dom"
 import { Container } from "components/Exchange/styled"
 import Header from "components/Header/Layout"
 import { normalizeBigNumber } from "utils"
+import { Exchange } from "components/Exchange"
 
 interface Props {
   daoPoolAddress?: string
@@ -103,7 +104,16 @@ export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
         text="Confirm voting"
       />
     )
-  }, [buttonType, handleApprove, handleSubmit])
+  }, [
+    ERC20DepositAmount,
+    buttonType,
+    formInfo.erc20.decimal,
+    formInfo.erc20.symbol,
+    handleApprove,
+    handleSubmit,
+    isERC20Approved,
+    unapprowedERC721Selected,
+  ])
 
   // wrapper function to close modal on submit
   const selectNfts = useCallback(
@@ -120,53 +130,50 @@ export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
   )
 
   return (
-    <>
-      <S.Card>
-        <S.CardHeader>
-          <S.Title active>Vote to create</S.Title>
-        </S.CardHeader>
-
-        <Flex p="0 8px 12px 8px" full ai="center">
-          <Flex gap="6" ai="center">
-            <Tooltip id={uuidv4()}>text</Tooltip>
-            <S.TooltipText>Voting with delegated tokens</S.TooltipText>
+    <Exchange
+      title="Vote to create"
+      buttons={[button]}
+      form={
+        <>
+          <Flex p="0 8px 12px 8px" full ai="center">
+            <Flex gap="6" ai="center">
+              <Tooltip id={uuidv4()}>text</Tooltip>
+              <S.TooltipText>Voting with delegated tokens</S.TooltipText>
+            </Flex>
+            <Switch
+              isOn={withDelegated}
+              name={uuidv4()}
+              onChange={(n, v) => toggleDelegated(v)}
+            />
           </Flex>
-          <Switch
-            isOn={withDelegated}
-            name={uuidv4()}
-            onChange={(n, v) => toggleDelegated(v)}
-          />
-        </Flex>
 
-        {formInfo.haveToken && (
-          <ExchangeInput
-            price={ERC20Price}
-            amount={ERC20Amount.toString()}
-            balance={formInfo.erc20.balance || ZERO}
-            address={formInfo.erc20.address}
-            symbol={formInfo.erc20.symbol}
-            decimal={formInfo.erc20.decimal}
-            onChange={handleERC20Change}
-          />
-        )}
+          {formInfo.haveToken && (
+            <ExchangeInput
+              price={ERC20Price}
+              amount={ERC20Amount.toString()}
+              balance={formInfo.erc20.balance || ZERO}
+              address={formInfo.erc20.address}
+              symbol={formInfo.erc20.symbol}
+              decimal={formInfo.erc20.decimal}
+              onChange={handleERC20Change}
+            />
+          )}
 
-        <Flex full p="4px" />
+          <Flex full p="4px" />
 
-        {formInfo.haveNft && (
-          <NftInput
-            nftPowerMap={nftPowerMap}
-            selectedNfts={ERC721Amount}
-            onSelectAll={() => selectNfts(allNftsId)}
-            onSelect={() => setSelectOpen(true)}
-            balance={formInfo.erc721.balance || ZERO}
-            address={formInfo.erc721.address}
-          />
-        )}
-
-        <Flex p="16px 0 0" full>
-          {button}
-        </Flex>
-      </S.Card>
+          {formInfo.haveNft && (
+            <NftInput
+              nftPowerMap={nftPowerMap}
+              selectedNfts={ERC721Amount}
+              onSelectAll={() => selectNfts(allNftsId)}
+              onSelect={() => setSelectOpen(true)}
+              balance={formInfo.erc721.balance || ZERO}
+              address={formInfo.erc721.address}
+            />
+          )}
+        </>
+      }
+    >
       <NftSelect
         defaultValue={selectedNftsStrings}
         handleSelect={selectNfts}
@@ -176,7 +183,7 @@ export const VotingTerminal: FC<Props> = ({ daoPoolAddress, proposalId }) => {
         votedNfts={ERC721Voted}
         nftPowerMap={nftPowerMap}
       />
-    </>
+    </Exchange>
   )
 }
 

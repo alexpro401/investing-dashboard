@@ -4,7 +4,6 @@ import { ZERO } from "consts"
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
 
 import {
-  useGovPoolUserVotingPower,
   useGovPoolVote,
   useGovPoolHelperContracts,
   useGovPoolVotingAssets,
@@ -21,6 +20,7 @@ import {
   useERC721GovBalance,
 } from "hooks/dao/useGovPoolMemberBalance"
 import { useUserVotes } from "./useUserVotes"
+import { useNftPowerMap } from "./useNftPowerMap"
 
 // TODO: implement canParticipate hook
 export enum ButtonTypes {
@@ -69,17 +69,6 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
 
   const userVotes = useUserVotes({ daoPoolAddress, proposalId, account })
 
-  // get power for all nfts
-  const [userOwnedPower] = useGovPoolUserVotingPower({
-    userKeeperAddress: govUserKeeperAddress || "",
-    address: account,
-  })
-  const [userDelegatedPower] = useGovPoolUserVotingPower({
-    address: account,
-    userKeeperAddress: govUserKeeperAddress || "",
-    isMicroPool: true,
-  })
-
   // merge all lists in one
   const allNftsId = useMemo(() => {
     if (withDelegated) {
@@ -95,36 +84,18 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
     )
   }, [erc721Balances, withDelegated])
 
-  const filteredERC721Ids = useMemo(() => {
+  const availableERC721Ids = useMemo(() => {
     return allNftsId.filter((id) => {
       return !userVotes.erc721.total.includes(id)
     })
   }, [allNftsId, userVotes.erc721.total])
 
-  // merge all power in one
-  const allNftsPower = useMemo(() => {
-    if (withDelegated) {
-      return [
-        ...userOwnedPower.perNftPower,
-        ...userDelegatedPower.perNftPower,
-      ].map((v) => v.toString())
-    }
-
-    return [...userOwnedPower.perNftPower].map((v) => v.toString())
-  }, [
-    userDelegatedPower.perNftPower,
-    userOwnedPower.perNftPower,
+  const nftPowerMap = useNftPowerMap({
+    govUserKeeperAddress,
+    account,
     withDelegated,
-  ])
-
-  const nftPowerMap = useMemo(() => {
-    return allNftsId.reduce((acc, id, index) => {
-      return {
-        ...acc,
-        [id]: allNftsPower[index],
-      }
-    }, {})
-  }, [allNftsId, allNftsPower])
+    allNftsId,
+  })
 
   // all token balances with advanced calculations
   const tokenBalances = useMemo(() => {
@@ -431,7 +402,7 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
 
   return {
     formInfo,
-    allNftsId: filteredERC721Ids,
+    allNftsId: availableERC721Ids,
     ERC721Amount,
     ERC721Voted: userVotes.erc721.total,
     ERC20DepositAmount,
