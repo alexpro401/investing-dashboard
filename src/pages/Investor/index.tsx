@@ -1,5 +1,5 @@
 import { useWeb3React } from "@web3-react/core"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, generatePath } from "react-router-dom"
 import { useQuery } from "urql"
 import { useMemo } from "react"
 import { isEmpty, isNil } from "lodash"
@@ -29,6 +29,7 @@ import InvestedFund from "components/cards/InvestedFund"
 import InvestorStatisticCard from "components/cards/InvestorStatistic"
 import { useBreakpoints } from "hooks"
 import { graphClientInvestors } from "utils/graphClient"
+import { ROUTE_PATHS } from "consts"
 
 function Investor() {
   const navigate = useNavigate()
@@ -108,7 +109,12 @@ function Investor() {
           </TabContainer>
           <PoolsList maxH={investorPools.traderPools.length >= 3}>
             {investorPools.traderPools.map((traderPool) => (
-              <To key={uuidv4()} to={`/pool/profile/${traderPool.id}`}>
+              <To
+                key={uuidv4()}
+                to={generatePath(ROUTE_PATHS.poolProfile, {
+                  poolAddress: traderPool.id,
+                })}
+              >
                 <InvestedFund data={traderPool} account={account} />
               </To>
             ))}

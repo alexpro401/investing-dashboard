@@ -1,5 +1,5 @@
 import { FC, MouseEvent, useCallback, useMemo, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 
 import { Flex } from "theme"
@@ -12,6 +12,7 @@ import S from "./styled"
 
 import useRiskyPosition from "./useRiskyPosition"
 import { InvestorRiskyPositionWithVests } from "interfaces/thegraphs/investors"
+import { ROUTE_PATHS } from "consts"
 
 interface InvestorRiskyPositionProposalData {
   token: string
@@ -77,7 +78,11 @@ const RiskyInvestorPositionCard: FC<Props> = ({
   const navigateToPool = useCallback(
     (e: MouseEvent<HTMLElement>): void => {
       e.stopPropagation()
-      navigate(`/pool/profile/${position.pool.id}`)
+      navigate(
+        generatePath(ROUTE_PATHS.poolProfile, {
+          poolAddress: position.pool.id,
+        })
+      )
     },
     [navigate, position]
   )

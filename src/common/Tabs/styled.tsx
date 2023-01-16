@@ -44,11 +44,14 @@ export const Tab = styled(motion.div)<{ active }>`
   display: flex;
   align-items: center;
   font-style: normal;
-  font-weight: normal;
-  font-size: 13px;
-  line-height: 15px;
   text-align: center;
-  color: ${(props) => (props.active ? "#9AE2CB" : "#b1c7fc")};
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 500;
+  color: ${(props) =>
+    props.active
+      ? props.theme.brandColors.secondary
+      : props.theme.textColors.secondary};
   position: relative;
   cursor: pointer;
 
@@ -66,7 +69,7 @@ export const Tab = styled(motion.div)<{ active }>`
     left: 0;
     right: 0;
     height: ${(props) => (props.active ? "1px" : 0)};
-    background: #7fffd4;
+    background: ${(props) => props.theme.brandColors.secondary};
     border-radius: 1px;
     transition: height ease-in-out 0.3s;
     z-index: 1;

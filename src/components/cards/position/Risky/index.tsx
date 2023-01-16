@@ -1,5 +1,5 @@
 import { FC, MouseEvent, useCallback, useMemo, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 
 import { getProposalId } from "utils"
@@ -19,6 +19,7 @@ import SharedS, {
 import S from "./styled"
 
 import useRiskyPosition from "./useRiskyPosition"
+import { ROUTE_PATHS } from "consts"
 
 interface Props {
   position: IRiskyPosition
@@ -89,7 +90,11 @@ const RiskyPositionCard: FC<Props> = ({
   const navigateToPool = useCallback(
     (e: MouseEvent<HTMLElement>): void => {
       e.stopPropagation()
-      navigate(`/pool/profile/${position.proposal.basicPool.id}`)
+      navigate(
+        generatePath(ROUTE_PATHS.poolProfile, {
+          poolAddress: position.proposal.basicPool.id,
+        })
+      )
     },
     [navigate, position]
   )
