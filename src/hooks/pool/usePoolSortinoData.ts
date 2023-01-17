@@ -93,7 +93,7 @@ const usePoolSortinoData = (
     }
     ;(async () => {
       const _tokensHistoricalPrices = {} as ITokenHistoricalPrices
-      console.log(actualPortfolioReturnPeriod)
+
       for (const token of tokens) {
         const tokenPrices = await TokenAPI.getHistoricalPrices(token, [
           actualPortfolioReturnPeriod.start,
