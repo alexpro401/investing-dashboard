@@ -155,11 +155,11 @@
             {
                 "indexed": false,
                 "internalType": "address",
-                "name": "investor",
+                "name": "user",
                 "type": "address"
             }
         ],
-        "name": "InvestorAdded",
+        "name": "Joined",
         "type": "event"
     },
     {
@@ -168,11 +168,11 @@
             {
                 "indexed": false,
                 "internalType": "address",
-                "name": "investor",
+                "name": "user",
                 "type": "address"
             }
         ],
-        "name": "InvestorRemoved",
+        "name": "Left",
         "type": "event"
     },
     {
@@ -554,7 +554,7 @@
                 "type": "address"
             }
         ],
-        "name": "checkNewInvestor",
+        "name": "checkJoin",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -567,7 +567,7 @@
                 "type": "address"
             }
         ],
-        "name": "checkRemoveInvestor",
+        "name": "checkLeave",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -587,6 +587,11 @@
     },
     {
         "inputs": [
+            {
+                "internalType": "string",
+                "name": "descriptionURL",
+                "type": "string"
+            },
             {
                 "internalType": "address",
                 "name": "token",
