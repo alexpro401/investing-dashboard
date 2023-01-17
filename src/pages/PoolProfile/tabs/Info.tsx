@@ -125,9 +125,11 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
               <Tooltip id={uuidv4()}>Emmission explain</Tooltip>
               <S.TabCardLabel>Emission</S.TabCardLabel>
             </Flex>
-            <S.TabCardValue>{availableLPTokens.value}</S.TabCardValue>
+            <S.TabCardValue>
+              {availableLPTokens.value?.toString() || 0}
+            </S.TabCardValue>
           </Flex>
-          <S.ProgressBar w={availableLPTokens.percentage} />
+          <S.ProgressBar w={availableLPTokens.percentage?.toNumber() || 0} />
         </Card>
       )}
 

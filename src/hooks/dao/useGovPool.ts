@@ -177,23 +177,25 @@ export const useGovPool = (address?: string) => {
 
         const gasLimit = await tryEstimateGas("executeAndClaim", proposalId)
 
-        const txResult = await govPoolContract?.executeAndClaim(proposalId, {
-          ...transactionOptions,
-          gasLimit,
-          from: account,
-        })
+        // FIXME: use multicall instead
+        // const txResult = await govPoolContract?.executeAndClaim(proposalId, {
+        //   ...transactionOptions,
+        //   gasLimit,
+        //   from: account,
+        // })
 
         setPayload(SubmitState.WAIT_CONFIRM)
 
-        const receipt = await addTransaction(txResult, {
-          type: TransactionType.GOV_POOL_MOVE_TO_VALIDATORS,
-        })
+        // const receipt = await addTransaction(txResult, {
+        //   type: TransactionType.GOV_POOL_MOVE_TO_VALIDATORS,
+        // })
 
-        if (isTxMined(receipt)) {
-          setPayload(SubmitState.SUCCESS)
-        }
+        // if (isTxMined(receipt)) {
+        //   setPayload(SubmitState.SUCCESS)
+        // }
 
-        return receipt
+        // return receipt
+        return {} as any
       } catch (error) {
         setPayload(SubmitState.IDLE)
 
@@ -222,9 +224,9 @@ export const useGovPool = (address?: string) => {
       if (!account) return
 
       try {
-        const rewardsAmount = await govPoolContract?.pendingRewards(
-          proposalId,
-          account
+        const rewardsAmount = await govPoolContract?.getPendingRewards(
+          account,
+          [proposalId]
         )
         return rewardsAmount
       } catch (error) {}

@@ -325,7 +325,7 @@ const PoolProfileContextProvider: FC<Props> = ({ children }) => {
 
     const dif = total.sub(used)
 
-    const percent = used.sub(total).mul(100).toNumber().toFixed(2)
+    const percent = used.sub(total).mul(100)
 
     return {
       percentage: percent,

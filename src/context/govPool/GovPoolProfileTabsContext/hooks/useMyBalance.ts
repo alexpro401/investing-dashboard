@@ -56,7 +56,11 @@ const useMyBalance = ({ startLoading }: IUseMyBalanceProps) => {
             account: account ?? "",
           })
 
-          if (result && result.gt(BigNumber.from("0"))) {
+          if (
+            result &&
+            result instanceof BigNumber &&
+            result.gt(BigNumber.from("0"))
+          ) {
             pendingRewardsCount++
           }
         } catch (error) {
