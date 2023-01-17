@@ -29,8 +29,8 @@ const useGovPoolVote = (daoPoolAddress?: string) => {
         setPayload(SubmitState.WAIT_CONFIRM)
         const transactionResponse = await govPool.vote(
           proposalId,
-          depositAmount,
-          depositNfts,
+          // depositAmount, FIXME
+          // depositNfts,
           voteAmount,
           voteNftIds
         )

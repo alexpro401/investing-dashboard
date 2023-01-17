@@ -290,6 +290,7 @@ const useCreateDAO = () => {
             ? 0
             : userKeeperParams.nftsTotalSupply.get,
       },
+      verifier: ZERO_ADDR,
       descriptionURL: additionalData._path,
     }
 

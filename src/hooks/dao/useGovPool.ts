@@ -177,6 +177,8 @@ export const useGovPool = (address?: string) => {
 
         const gasLimit = await tryEstimateGas("executeAndClaim", proposalId)
 
+        // FIXME
+        // @ts-ignore
         const txResult = await govPoolContract?.executeAndClaim(proposalId, {
           ...transactionOptions,
           gasLimit,
@@ -222,9 +224,10 @@ export const useGovPool = (address?: string) => {
       if (!account) return
 
       try {
-        const rewardsAmount = await govPoolContract?.pendingRewards(
-          proposalId,
-          account
+        // FIXME
+        const rewardsAmount = await govPoolContract?.getPendingRewards(
+          account,
+          [proposalId]
         )
         return rewardsAmount
       } catch (error) {}
