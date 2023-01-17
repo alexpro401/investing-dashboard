@@ -154,6 +154,7 @@ const useCreateRiskyProposal = (
       )
 
       const createResponse = await basicTraderPool.createProposal(
+        "descriptionURL",
         tokenAddress,
         amount,
         {
