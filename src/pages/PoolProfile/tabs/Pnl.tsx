@@ -1,7 +1,7 @@
 import { FC, HTMLAttributes, useContext } from "react"
 
 import { Card } from "common"
-import { Center, Flex, Text } from "theme"
+import { Center, Flex } from "theme"
 import BarChart from "components/BarChart"
 import PoolPnlChart from "components/PoolPnlChart"
 
@@ -40,15 +40,15 @@ const TabPoolPnl: FC<Props> = ({ ...rest }) => {
         <div>
           <Flex full ai="center" jc="space-between">
             <S.TabCardLabel>Total P&L LP - {baseToken?.symbol}</S.TabCardLabel>
-            <Text color="#E4F2FF" fz={13} fw={600} lh="15px">
+            <S.TabCardValue>
               {totalPnlPercentage}% ({totalPnlBase?.format} {baseToken?.symbol})
-            </Text>
+            </S.TabCardValue>
           </Flex>
           <Flex full ai="center" jc="space-between" m="12px 0 0">
             <S.TabCardLabel>Total P&L LP - USD</S.TabCardLabel>
-            <Text color="#E4F2FF" fz={13} fw={600} lh="15px">
+            <S.TabCardValue>
               {totalUSDPnlPerc}% ({totalUSDPnlUSD} USD)
-            </Text>
+            </S.TabCardValue>
           </Flex>
         </div>
       </Card>

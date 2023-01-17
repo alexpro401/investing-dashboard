@@ -49,21 +49,29 @@ const PoolProfileContent = () => {
             <S.PoolProfileActionBtn
               text="+ Open new trade"
               color="secondary"
-              routePath={generatePath(ROUTE_PATHS.poolSwap, {
-                poolType: poolData?.type,
-                poolToken: poolData?.id,
-                inputToken: poolData?.baseToken,
-                outputToken: "0x",
-                "*": "",
-              })}
+              routePath={
+                poolData
+                  ? generatePath(ROUTE_PATHS.poolSwap, {
+                      poolType: poolData?.type,
+                      poolToken: poolData?.id,
+                      inputToken: poolData?.baseToken,
+                      outputToken: "0x",
+                      "*": "",
+                    })
+                  : ""
+              }
             />
             <S.PoolProfileActionBtn
               text="Fund positions"
               color="tertiary"
-              routePath={generatePath(ROUTE_PATHS.fundPositions, {
-                poolAddress: poolData?.id,
-                "*": "open",
-              })}
+              routePath={
+                poolData
+                  ? generatePath(ROUTE_PATHS.fundPositions, {
+                      poolAddress: poolData?.id,
+                      "*": "open",
+                    })
+                  : ""
+              }
             />
           </>
         ) : (
@@ -71,21 +79,29 @@ const PoolProfileContent = () => {
             <S.PoolProfileActionBtn
               text="Fund positions"
               color="secondary"
-              routePath={generatePath(ROUTE_PATHS.fundPositions, {
-                poolAddress: poolData?.id,
-                "*": "open",
-              })}
+              routePath={
+                poolData
+                  ? generatePath(ROUTE_PATHS.fundPositions, {
+                      poolAddress: poolData?.id,
+                      "*": "open",
+                    })
+                  : ""
+              }
             />
             <S.PoolProfileActionBtn
               text={`Buy ${poolData?.ticker}`}
               color="tertiary"
-              routePath={generatePath(ROUTE_PATHS.poolSwap, {
-                poolType: poolData?.type,
-                poolToken: poolData?.id,
-                inputToken: poolData?.baseToken,
-                outputToken: "0x",
-                "*": "",
-              })}
+              routePath={
+                poolData
+                  ? generatePath(ROUTE_PATHS.poolSwap, {
+                      poolType: poolData?.type,
+                      poolToken: poolData?.id,
+                      inputToken: poolData?.baseToken,
+                      outputToken: "0x",
+                      "*": "",
+                    })
+                  : ""
+              }
             />
           </>
         )}

@@ -98,7 +98,7 @@ const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
           <Flex ai="center" jc="flex-end">
             <S.TabCardValue>${investorsFundsUSD}</S.TabCardValue>
             &nbsp;
-            <S.TabCardLabel color="#B1C7FC">
+            <S.TabCardLabel>
               {investorsFundsBase} {baseSymbol}
             </S.TabCardLabel>
           </Flex>
