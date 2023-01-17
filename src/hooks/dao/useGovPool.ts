@@ -19,6 +19,8 @@ import { isTxMined, parseTransactionError } from "utils"
 import { get } from "lodash"
 import { IGovPool } from "interfaces/typechain/GovPool"
 import { useEffectOnce } from "react-use"
+import { encodeAbiMethod } from "utils/encodeAbi"
+import { GovPool } from "abi"
 
 export const useGovPool = (address?: string) => {
   const { account } = useActiveWeb3React()
@@ -175,15 +177,11 @@ export const useGovPool = (address?: string) => {
       try {
         if (!govPoolContract || !account) return
 
-        const gasLimit = await tryEstimateGas("executeAndClaim", proposalId)
+        const execute = encodeAbiMethod(GovPool, "execute", [proposalId])
 
-        // FIXME
-        // @ts-ignore
-        const txResult = await govPoolContract?.executeAndClaim(proposalId, {
-          ...transactionOptions,
-          gasLimit,
-          from: account,
-        })
+        const claim = encodeAbiMethod(GovPool, "claimRewards", [[proposalId]])
+
+        const txResult = await govPoolContract.multicall([execute, claim])
 
         setPayload(SubmitState.WAIT_CONFIRM)
 
@@ -208,15 +206,7 @@ export const useGovPool = (address?: string) => {
         return undefined
       }
     },
-    [
-      account,
-      addTransaction,
-      govPoolContract,
-      setError,
-      setPayload,
-      transactionOptions,
-      tryEstimateGas,
-    ]
+    [account, addTransaction, govPoolContract, setError, setPayload]
   )
 
   const pendingRewards = useCallback(
