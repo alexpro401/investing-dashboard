@@ -56,7 +56,7 @@ export const RiskyPositionsListHead = styled.div<{
 
     & > * {
       flex: 1 0 155px;
-      max-width: ${({ childMaxWidth }) => childMaxWidth ?? "167px"};
+      max-width: ${({ childMaxWidth }) => childMaxWidth ?? "162px"};
     }
   }
 `
