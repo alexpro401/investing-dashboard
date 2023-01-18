@@ -45,3 +45,25 @@ export const AddButton = styled(AppButton)`
 export const RiskyProposalCardSettingsButton = styled(AppButton)`
   background: ${({ theme }) => rgba(theme.brandColors.secondary, 0.15)};
 `
+
+export const DescriptionWrp = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 0 16px;
+
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 130%;
+  letter-spacing: 0.01em;
+  color: #e4f2ff;
+
+  ${respondTo("lg")} {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 170%;
+    padding: 0;
+    margin-top: 16px;
+  }
+`

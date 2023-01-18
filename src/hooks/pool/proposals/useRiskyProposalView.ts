@@ -3,6 +3,7 @@ import { format } from "date-fns"
 import { generatePath, useNavigate } from "react-router-dom"
 import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
+import { isEmpty } from "lodash"
 
 import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
 import { TraderPoolRiskyProposal } from "interfaces/typechain"
@@ -16,6 +17,7 @@ import { expandTimestamp, normalizeBigNumber } from "utils"
 import { percentageOfBignumbers } from "utils/formulas"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { Token } from "interfaces"
+import { IpfsEntity } from "utils/ipfsEntity"
 
 interface Props {
   proposal: IRiskyProposalInfo[0]
@@ -52,6 +54,7 @@ type UseRiskyProposalViewResponseValues = {
   traderSizeLP: BigNumber
   traderSizePercentage: BigNumber
   proposalToken: Token | null
+  description: string
 }
 type UseRiskyProposalViewResponseMethods = {
   navigateToPool
@@ -86,6 +89,25 @@ export const useRiskyProposalView = (
   const [yourSizeLP, setYourSizeLP] = useState<BigNumber>(ZERO)
   const [traderSizeLP, setTraderSizeLP] = useState<BigNumber>(ZERO)
   const [tokenRating, setTokenRating] = useState<number>(0)
+  const [description, setDescription] = useState<string>("")
+
+  // Fetch description from IPFS
+  useEffect(() => {
+    if (!proposal || isEmpty(proposal.proposalInfo.descriptionURL)) return
+    ;(async () => {
+      try {
+        const riskyProposalIpfsEntity = new IpfsEntity<string>({
+          path: proposal.proposalInfo.descriptionURL,
+        })
+
+        const _description = await riskyProposalIpfsEntity.load()
+
+        setDescription(_description)
+      } catch (e) {
+        throw new Error("Failed to load description")
+      }
+    })()
+  }, [proposal])
 
   /**
    * Date of proposal expiration
@@ -436,6 +458,7 @@ export const useRiskyProposalView = (
       traderSizeLP,
       traderSizePercentage,
       proposalToken,
+      description,
     },
     { navigateToPool, onAddMore, onInvest, onUpdateRestrictions },
   ]

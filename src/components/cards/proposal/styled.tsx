@@ -1,9 +1,7 @@
 import styled from "styled-components/macro"
 import { Flex, respondTo } from "theme"
 
-export const Card = styled.div`
-  display: flex;
-  flex-direction: column;
+export const Root = styled.div`
   width: 100%;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
   background: ${({ theme }) => theme.backgroundColors.secondary};
@@ -12,8 +10,16 @@ export const Card = styled.div`
   z-index: initial;
 
   ${respondTo("lg")} {
-    flex-direction: row;
     padding: var(--app-padding);
+  }
+`
+export const Card = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  ${respondTo("lg")} {
+    flex-direction: row;
   }
 `
 export const Head = styled(Flex)<{ p: string }>`
@@ -94,4 +100,9 @@ export const SizeTitle = styled.div`
 
 export const LPSizeContainer = styled.div`
   width: 137px;
+`
+
+export const FlexBreak = styled.div`
+  flex-basis: 100%;
+  height: 0;
 `

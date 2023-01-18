@@ -1,4 +1,4 @@
-import { FC, useState, useMemo } from "react"
+import { FC, useMemo, useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 
 import { useBreakpoints, useRiskyProposalView } from "hooks"
@@ -18,10 +18,10 @@ import * as S from "./styled"
 import { BodyItem } from "components/cards/proposal/_shared"
 import * as SharedS from "components/cards/proposal/styled"
 import {
+  Rating,
   RiskyCardSettings,
   TraderInfoBadge,
   TraderLPSize,
-  Rating,
 } from "./components"
 
 import settingsIcon from "assets/icons/settings.svg"
@@ -29,6 +29,7 @@ import settingsGreenIcon from "assets/icons/settings-green.svg"
 import { TraderPoolRiskyProposal } from "interfaces/typechain"
 import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
 import { ICON_NAMES } from "consts"
+import ReadMore from "components/ReadMore"
 
 const MAX_INVESTORS_COUNT = 1000
 
@@ -71,6 +72,7 @@ const RiskyProposalCard: FC<Props> = (props) => {
       positionSize,
       proposalToken,
       traderSizePercentage,
+      description,
     },
     { navigateToPool, onAddMore, onInvest, onUpdateRestrictions },
   ] = useRiskyProposalView(props)
@@ -193,167 +195,195 @@ const RiskyProposalCard: FC<Props> = (props) => {
 
   return (
     <S.Root>
-      <SharedS.Card>
-        <SharedS.Head p={isTrader ? "8px 8px 7px 16px" : "8px 16px 7px 16px"}>
-          {ProposalTokenView}
+      <SharedS.Root>
+        <SharedS.Card>
+          <SharedS.Head p={isTrader ? "8px 8px 7px 16px" : "8px 16px 7px 16px"}>
+            {ProposalTokenView}
 
-          {isTrader && !isDesktop ? (
-            <Flex>
-              <S.Status active={canInvest ?? false}>
-                {canInvest ? "Open investing" : "Closed investing"}
-              </S.Status>
-              <Flex m="0 0 0 4px">
-                <IconButton
-                  size={12}
-                  media={isSettingsOpen ? settingsGreenIcon : settingsIcon}
-                  onClick={() => {
-                    setIsSettingsOpen(!isSettingsOpen)
-                  }}
-                />
-              </Flex>
-            </Flex>
-          ) : (
-            PoolTokenView
-          )}
-        </SharedS.Head>
-
-        <SharedS.Body>
-          <BodyItem
-            label={isTrader ? "Max size (LP)" : "Proposal size LP"}
-            amount={normalizeBigNumber(maxSizeLP, 18, 6)}
-          />
-          <BodyItem
-            label={
+            {isTrader && !isDesktop ? (
               <Flex>
-                <span>Your size (LP)</span>
-                {isTrader && (
-                  <S.AddButton
-                    text={"+ Add"}
-                    onClick={onAddMore}
-                    size={"x-small"}
-                    color={isDesktop ? "secondary" : "default"}
+                <S.Status active={canInvest ?? false}>
+                  {canInvest ? "Open investing" : "Closed investing"}
+                </S.Status>
+                <Flex m="0 0 0 4px">
+                  <IconButton
+                    size={12}
+                    media={isSettingsOpen ? settingsGreenIcon : settingsIcon}
+                    onClick={() => {
+                      setIsSettingsOpen(!isSettingsOpen)
+                    }}
                   />
-                )}
-              </Flex>
-            }
-            amount={normalizeBigNumber(yourSizeLP, 18, 6)}
-          />
-          <BodyItem
-            label="Fullness (LP)"
-            amount={normalizeBigNumber(fullness.value, 18, 6)}
-            completed={fullness.completed}
-            ai="flex-end"
-          />
-          <BodyItem
-            label={`Max. Invest Price (${proposalSymbol})`}
-            amount={normalizeBigNumber(maxInvestPrice.value, 18, 2)}
-            completed={maxInvestPrice.completed}
-          />
-
-          <BodyItem
-            label={`Current price (${proposalSymbol})`}
-            amount={normalizeBigNumber(currentPrice, 18, 2)}
-          />
-
-          <BodyItem
-            fz={"11px"}
-            label="Expiration date"
-            amount={expirationDate.value}
-            completed={expirationDate.completed}
-            ai="flex-end"
-          />
-          <BodyItem
-            label="Investors"
-            amount={investors.value}
-            completed={investors.completed}
-            symbol={`/ ${MAX_INVESTORS_COUNT}`}
-          />
-          <BodyItem
-            label={`Position size (${proposalSymbol})`}
-            amount={positionSize}
-          />
-          {!isDesktop && (
-            <AppButton
-              full
-              text={isTrader ? "Terminal" : "Stake LP"}
-              onClick={onInvest}
-              size="x-small"
-              disabled={!canInvest}
-              color={canInvest ? "primary" : "secondary"}
-            />
-          )}
-        </SharedS.Body>
-
-        {showFooter && (
-          <SharedS.Footer>
-            {!isTrader && (
-              <>
-                <Flex
-                  full
-                  data-tip
-                  data-for={`risky-proposal-trader-info-${proposalId}-${poolAddress}`}
-                  onMouseEnter={() => showTooltip(true)}
-                  onMouseLeave={() => {
-                    showTooltip(false)
-                    setTimeout(() => showTooltip(true), 50)
-                  }}
-                >
-                  <Flex>
-                    {!isDesktop && (
-                      <SharedS.FundIconContainer>
-                        <Icon
-                          size={24}
-                          m="0"
-                          source={
-                            poolMetadata?.assets[
-                              poolMetadata?.assets.length - 1
-                            ]
-                          }
-                          address={poolAddress}
-                        />
-                        {tooltip && (
-                          <TraderInfoBadge
-                            id={`risky-proposal-trader-info-${proposalId}-${poolAddress}`}
-                            content="This is more than the average investment at risk proposals. Check on xxxxx what kind of token it is before trusting it."
-                          />
-                        )}
-                      </SharedS.FundIconContainer>
-                    )}
-                    {TraderSizeView}
-                  </Flex>
                 </Flex>
-                {!isDesktop && (
-                  <ExternalLink color="#2680EB" href={proposalTokenLink}>
-                    Сheck token
-                  </ExternalLink>
-                )}
-              </>
+              </Flex>
+            ) : (
+              PoolTokenView
             )}
+          </SharedS.Head>
 
-            {isDesktop && (
-              <>
-                <AppButton
-                  full
-                  text={isTrader ? "Terminal" : "Stake LP"}
-                  onClick={onInvest}
-                  size="small"
-                  disabled={!canInvest}
-                  color={"tertiary"}
-                />
-                {isTrader && (
-                  <S.RiskyProposalCardSettingsButton
-                    full
-                    text={"Settings"}
-                    onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                    size="small"
-                    color={"default"}
-                  />
-                )}
-              </>
+          <SharedS.Body>
+            <BodyItem
+              label={isTrader ? "Max size (LP)" : "Proposal size LP"}
+              amount={normalizeBigNumber(maxSizeLP, 18, 6)}
+            />
+            <BodyItem
+              label={
+                <Flex>
+                  <span>Your size (LP)</span>
+                  {isTrader && (
+                    <S.AddButton
+                      text={"+ Add"}
+                      onClick={onAddMore}
+                      size={"x-small"}
+                      color={isDesktop ? "secondary" : "default"}
+                    />
+                  )}
+                </Flex>
+              }
+              amount={normalizeBigNumber(yourSizeLP, 18, 6)}
+            />
+            <BodyItem
+              label="Fullness (LP)"
+              amount={normalizeBigNumber(fullness.value, 18, 6)}
+              completed={fullness.completed}
+              ai="flex-end"
+            />
+            <BodyItem
+              label={`Max. Invest Price (${proposalSymbol})`}
+              amount={normalizeBigNumber(maxInvestPrice.value, 18, 2)}
+              completed={maxInvestPrice.completed}
+            />
+
+            <BodyItem
+              label={`Current price (${proposalSymbol})`}
+              amount={normalizeBigNumber(currentPrice, 18, 2)}
+            />
+
+            <BodyItem
+              fz={"11px"}
+              label="Expiration date"
+              amount={expirationDate.value}
+              completed={expirationDate.completed}
+              ai="flex-end"
+            />
+            <BodyItem
+              label="Investors"
+              amount={investors.value}
+              completed={investors.completed}
+              symbol={`/ ${MAX_INVESTORS_COUNT}`}
+            />
+            <BodyItem
+              label={`Position size (${proposalSymbol})`}
+              amount={positionSize}
+            />
+            {!isDesktop && (
+              <AppButton
+                full
+                text={isTrader ? "Terminal" : "Stake LP"}
+                onClick={onInvest}
+                size="x-small"
+                disabled={!canInvest}
+                color={canInvest ? "primary" : "secondary"}
+              />
             )}
-          </SharedS.Footer>
+          </SharedS.Body>
+
+          {!isDesktop && (
+            <S.DescriptionWrp>
+              <ReadMore
+                content={
+                  description.length > 0
+                    ? description
+                    : "No description provided to proposal"
+                }
+                maxLen={10}
+              />
+            </S.DescriptionWrp>
+          )}
+
+          {showFooter && (
+            <SharedS.Footer>
+              {!isTrader && (
+                <>
+                  <Flex
+                    full
+                    data-tip
+                    data-for={`risky-proposal-trader-info-${proposalId}-${poolAddress}`}
+                    onMouseEnter={() => showTooltip(true)}
+                    onMouseLeave={() => {
+                      showTooltip(false)
+                      setTimeout(() => showTooltip(true), 50)
+                    }}
+                  >
+                    <Flex>
+                      {!isDesktop && (
+                        <SharedS.FundIconContainer>
+                          <Icon
+                            size={24}
+                            m="0"
+                            source={
+                              poolMetadata?.assets[
+                                poolMetadata?.assets.length - 1
+                              ]
+                            }
+                            address={poolAddress}
+                          />
+                          {tooltip && (
+                            <TraderInfoBadge
+                              id={`risky-proposal-trader-info-${proposalId}-${poolAddress}`}
+                              content="This is more than the average investment at risk proposals. Check on xxxxx what kind of token it is before trusting it."
+                            />
+                          )}
+                        </SharedS.FundIconContainer>
+                      )}
+                      {TraderSizeView}
+                    </Flex>
+                  </Flex>
+                  {!isDesktop && (
+                    <ExternalLink color="#2680EB" href={proposalTokenLink}>
+                      Сheck token
+                    </ExternalLink>
+                  )}
+                </>
+              )}
+
+              {isDesktop && (
+                <>
+                  <AppButton
+                    full
+                    text={isTrader ? "Terminal" : "Stake LP"}
+                    onClick={onInvest}
+                    size="small"
+                    disabled={!canInvest}
+                    color={"tertiary"}
+                  />
+                  {isTrader && (
+                    <S.RiskyProposalCardSettingsButton
+                      full
+                      text={"Settings"}
+                      onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                      size="small"
+                      color={"default"}
+                    />
+                  )}
+                </>
+              )}
+            </SharedS.Footer>
+          )}
+        </SharedS.Card>
+        {isDesktop && (
+          <S.DescriptionWrp>
+            <IconCommon name={ICON_NAMES.fileDock} />
+            <ReadMore
+              content={
+                description.length > 0
+                  ? description
+                  : "No description provided to proposal"
+              }
+              maxLen={140}
+            />
+          </S.DescriptionWrp>
         )}
-      </SharedS.Card>
+      </SharedS.Root>
       {isSettingsOpen && (
         <RiskyCardSettings
           visible={isSettingsOpen}

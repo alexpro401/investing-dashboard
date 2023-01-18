@@ -16,7 +16,7 @@ import { AppButton } from "common"
 
 const Styled = {
   Container: styled.div``,
-  Card: styled(GradientBorder)<{ showPositions: boolean }>`
+  Card: styled(GradientBorder)<{ showPositions?: boolean }>`
     width: 100%;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
     border-radius: 16px;
@@ -40,7 +40,7 @@ const Styled = {
       flex-direction: row;
       box-shadow: none;
       border-radius: ${({ showPositions }) =>
-        showPositions ? "16px 16px 0 0" : "16px"};
+        !isNil(showPositions) && showPositions ? "16px 16px 0 0" : "16px"};
     }
   `,
   Head: styled(Flex)`
