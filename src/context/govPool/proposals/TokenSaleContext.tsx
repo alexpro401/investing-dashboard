@@ -1,17 +1,44 @@
-import React, { createContext, Dispatch, SetStateAction, useState } from "react"
+import React, { createContext, useState, useCallback } from "react"
 
 import { ITreasuryToken } from "api/token/types"
 
+interface ISellPair {
+  tokenAddress: string
+  amount: string
+}
+
+interface ITokenSaleProposal {
+  selectedTreasuryToken: ITreasuryToken | null
+  tokenAmount: string
+  minAllocation: string
+  maxAllocation: string
+  sellStartDate: number
+  sellEndDate: number
+  proposalName: string
+  proposalDescription: string
+  sellPairs: ISellPair[]
+}
+
+const TOKEN_SALE_PROPOSAL_BASE: ITokenSaleProposal = {
+  selectedTreasuryToken: null,
+  tokenAmount: "",
+  minAllocation: "",
+  maxAllocation: "",
+  sellStartDate: 0,
+  sellEndDate: 0,
+  proposalName: "",
+  proposalDescription: "",
+  sellPairs: [{ tokenAddress: "", amount: "" }],
+}
+
 interface ITokenSaleCreatingContext {
-  selectedTreasuryToken: {
-    get: ITreasuryToken | null
-    set: Dispatch<SetStateAction<ITreasuryToken | null>>
-  }
-  tokenAmount: { get: string; set: Dispatch<SetStateAction<string>> }
-  minAllocation: { get: string; set: Dispatch<SetStateAction<string>> }
-  maxAllocation: { get: string; set: Dispatch<SetStateAction<string>> }
-  sellStartDate: { get: number; set: Dispatch<SetStateAction<number>> }
-  sellEndDate: { get: number; set: Dispatch<SetStateAction<number>> }
+  tokenSaleProposals: ITokenSaleProposal[]
+  handleUpdateTokenSaleProposal: <T extends keyof ITokenSaleProposal>(
+    index: number,
+    field: T,
+    value: ITokenSaleProposal[T]
+  ) => void
+  currentProposalIndex: number
 }
 
 interface ITokenSaleContextProviderProps {
@@ -20,37 +47,37 @@ interface ITokenSaleContextProviderProps {
 
 export const TokenSaleCreatingContext =
   createContext<ITokenSaleCreatingContext>({
-    selectedTreasuryToken: { get: null, set: () => {} },
-    tokenAmount: { get: "", set: () => {} },
-    minAllocation: { get: "", set: () => {} },
-    maxAllocation: { get: "", set: () => {} },
-    sellStartDate: { get: 0, set: () => {} },
-    sellEndDate: { get: 0, set: () => {} },
+    tokenSaleProposals: [],
+    currentProposalIndex: 0,
+    handleUpdateTokenSaleProposal: () => {},
   })
 
 const TokenSaleCreatingContextProvider: React.FC<
   ITokenSaleContextProviderProps
 > = ({ children }) => {
-  const [_selectedTreasuryToken, _setSelectedTreasuryToken] =
-    useState<ITreasuryToken | null>(null)
-  const [_tokenAmount, _seTokenAmount] = useState<string>("")
-  const [_minAllocation, _setMinAllocation] = useState<string>("")
-  const [_maxAllocation, _setMaxAllocation] = useState<string>("")
-  const [_sellStartDate, _setSellStartDate] = useState<number>(0)
-  const [_sellEndDate, _setSellEndDate] = useState<number>(0)
+  const [_tokenSaleProposals, _setTokenSaleProposals] = useState<
+    ITokenSaleProposal[]
+  >([TOKEN_SALE_PROPOSAL_BASE])
+  const [_currentProposalIndex, _setCurrentProposalIndex] = useState<number>(0)
+
+  const handleUpdateTokenSaleProposal = useCallback(function <
+    T extends keyof ITokenSaleProposal
+  >(index: number, field: T, value: ITokenSaleProposal[T]) {
+    _setTokenSaleProposals((arr) => {
+      const newArr = [...arr]
+      newArr[index] = { ...newArr[index], [field]: value }
+
+      return newArr
+    })
+  },
+  [])
 
   return (
     <TokenSaleCreatingContext.Provider
       value={{
-        selectedTreasuryToken: {
-          get: _selectedTreasuryToken,
-          set: _setSelectedTreasuryToken,
-        },
-        tokenAmount: { get: _tokenAmount, set: _seTokenAmount },
-        minAllocation: { get: _minAllocation, set: _setMinAllocation },
-        maxAllocation: { get: _maxAllocation, set: _setMaxAllocation },
-        sellStartDate: { get: _sellStartDate, set: _setSellStartDate },
-        sellEndDate: { get: _sellEndDate, set: _setSellEndDate },
+        tokenSaleProposals: _tokenSaleProposals,
+        handleUpdateTokenSaleProposal,
+        currentProposalIndex: _currentProposalIndex,
       }}
     >
       {children}

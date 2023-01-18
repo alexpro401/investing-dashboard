@@ -18,6 +18,7 @@ interface IDateFieldProps extends React.HTMLAttributes<HTMLDivElement> {
   disabled?: boolean
   readonly?: boolean
   minDate?: Date
+  errorMessage?: string
 }
 
 const DateField: React.FC<IDateFieldProps> = ({
@@ -27,6 +28,7 @@ const DateField: React.FC<IDateFieldProps> = ({
   disabled = false,
   readonly = false,
   minDate,
+  errorMessage,
   ...rest
 }) => {
   const [isCalendarOpened, setIsCalendarOpened] = useState<boolean>(false)
@@ -70,6 +72,7 @@ const DateField: React.FC<IDateFieldProps> = ({
             ) : null}
           </Flex>
         }
+        errorMessage={errorMessage}
       />
       <DatePicker
         isOpen={isCalendarOpened}

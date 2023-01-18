@@ -1,5 +1,6 @@
 import styled from "styled-components/macro"
 
+import { AppButton } from "common"
 import theme, { respondTo } from "theme"
 
 export const DesktopHeaderWrp = styled.div`
@@ -65,6 +66,14 @@ export const TokenUsdAmount = styled.span`
 
 export const BaseInputPlaceholder = styled.span`
   color: #788ab4;
+`
+
+export const AddPairButton = styled(AppButton).attrs(() => ({
+  color: "default",
+  size: "no-paddings",
+}))`
+  margin: 0 auto;
+  margin-top: 20px;
 `
 
 export const BaseTokenSettingsGrid = styled.div`

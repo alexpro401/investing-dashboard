@@ -11,7 +11,6 @@ import {
   VestingParamsStep,
   WhitelistStep,
 } from "./steps"
-import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 
 import * as S from "common/FormSteps/styled"
 
@@ -111,11 +110,6 @@ const CreateDaoProposalTokenSaleForm: React.FC = () => {
           {currentStep === STEPS.whitelist && (
             <S.StepsContainer>
               <WhitelistStep />
-            </S.StepsContainer>
-          )}
-          {currentStep === STEPS.basicInfo && (
-            <S.StepsContainer>
-              <CreateDaoProposalGeneralForm />
             </S.StepsContainer>
           )}
           {!isMobile && (

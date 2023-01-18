@@ -5,7 +5,6 @@ import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
 import Skeleton from "components/Skeleton"
 import FormStepsLoaderWrapper from "common/FormSteps/FormStepsLoaderWrapper"
-import GovProposalCreatingContextProvider from "context/govPool/proposals/GovProposalCreatingContext"
 import TokenSaleCreatingContextProvider from "context/govPool/proposals/TokenSaleContext"
 import CreateDaoProposalTokenSaleForm from "forms/CreateDaoProposalTokenSaleForm"
 import { useBreakpoints } from "hooks"
@@ -39,15 +38,13 @@ const CreateDaoProposalTokenSale: React.FC = () => {
           </FormStepsLoaderWrapper>
         }
       >
-        <GovProposalCreatingContextProvider>
-          <TokenSaleCreatingContextProvider>
-            <S.PageHolder>
-              <S.PageContent>
-                <CreateDaoProposalTokenSaleForm />
-              </S.PageContent>
-            </S.PageHolder>
-          </TokenSaleCreatingContextProvider>
-        </GovProposalCreatingContextProvider>
+        <TokenSaleCreatingContextProvider>
+          <S.PageHolder>
+            <S.PageContent>
+              <CreateDaoProposalTokenSaleForm />
+            </S.PageContent>
+          </S.PageHolder>
+        </TokenSaleCreatingContextProvider>
       </WithGovPoolAddressValidation>
     </>
   )

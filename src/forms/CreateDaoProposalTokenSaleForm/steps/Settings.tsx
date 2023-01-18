@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react"
+import React, { useCallback, useContext, useMemo } from "react"
 import { useParams } from "react-router-dom"
 import { BigNumber } from "@ethersproject/bignumber"
 import { formatUnits } from "@ethersproject/units"
@@ -11,14 +11,27 @@ import {
   AppButton,
   Headline1,
   RegularText,
+  CardDescription,
 } from "common"
 import ExternalLink from "components/ExternalLink"
-import { SelectField, InputField, DateField } from "fields"
+import {
+  SelectField,
+  InputField,
+  DateField,
+  TextareaField,
+  TokenSalePairField,
+} from "fields"
 import { useFormValidation, useActiveWeb3React, useBreakpoints } from "hooks"
 import { useGovPoolTreasury } from "hooks/dao"
 import { TokenSaleCreatingContext } from "context/govPool/proposals/TokenSaleContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
-import { required, isBnLte, isBnGt } from "utils/validators"
+import {
+  required,
+  isBnLte,
+  isBnGt,
+  minLength,
+  maxLength,
+} from "utils/validators"
 import { formatFiatNumber, formatTokenNumber, cutStringZeroes } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import theme from "theme"
@@ -32,49 +45,124 @@ const SettingsStep: React.FC = () => {
   const { chainId } = useActiveWeb3React()
   const { isMobile } = useBreakpoints()
   const {
+    currentProposalIndex,
+    handleUpdateTokenSaleProposal,
+    tokenSaleProposals,
+  } = useContext(TokenSaleCreatingContext)
+
+  const {
     selectedTreasuryToken,
     tokenAmount,
     minAllocation,
     maxAllocation,
     sellStartDate,
     sellEndDate,
-  } = useContext(TokenSaleCreatingContext)
+    proposalDescription,
+    proposalName,
+    sellPairs,
+  } = useMemo(
+    () => tokenSaleProposals[currentProposalIndex],
+    [tokenSaleProposals, currentProposalIndex]
+  )
+
   const { nextCb } = useContext(stepsControllerContext)
   const { getFieldErrorMessage, touchField, touchForm, isFieldsValid } =
     useFormValidation(
       {
-        selectedTreasuryToken: selectedTreasuryToken.get,
-        tokenAmount: tokenAmount.get,
+        selectedTreasuryToken: selectedTreasuryToken,
+        tokenAmount: tokenAmount,
+        proposalName: proposalName,
+        proposalDescription: proposalDescription,
+        sellStartDate: sellStartDate.toString(),
+        sellEndDate: sellEndDate.toString(),
+        minAllocation: minAllocation === "" ? "0" : minAllocation,
+        maxAllocation: maxAllocation === "" ? "0" : maxAllocation,
       },
       {
         selectedTreasuryToken: { required },
-        ...(selectedTreasuryToken.get
+        proposalName: {
+          required,
+          minLength: minLength(4),
+          maxLength: maxLength(40),
+        },
+        proposalDescription: {
+          maxLength: maxLength(1000),
+        },
+        sellStartDate: {
+          required,
+          isBnGt: isBnGt(
+            formatUnits(BigNumber.from("0"), 18),
+            18,
+            "Please enter valid date"
+          ),
+        },
+        sellEndDate: {
+          required,
+          isBnGt: isBnGt(
+            sellStartDate.toString(),
+            18,
+            "End date must be greater than start date"
+          ),
+        },
+        ...(selectedTreasuryToken
           ? {
               tokenAmount: {
                 required,
-                ...(tokenAmount.get
+                ...(tokenAmount
                   ? {
                       isBnLte: isBnLte(
                         formatUnits(
-                          selectedTreasuryToken.get.balance,
-                          selectedTreasuryToken.get.contract_decimals
+                          selectedTreasuryToken.balance,
+                          selectedTreasuryToken.contract_decimals
                         ).toString(),
-                        selectedTreasuryToken.get.contract_decimals,
+                        selectedTreasuryToken.contract_decimals,
                         `Дао пул максимум має ${cutStringZeroes(
                           formatUnits(
-                            selectedTreasuryToken.get.balance,
-                            selectedTreasuryToken.get.contract_decimals
+                            selectedTreasuryToken.balance,
+                            selectedTreasuryToken.contract_decimals
                           ).toString()
                         )} ${
-                          selectedTreasuryToken.get.contract_ticker_symbol
+                          selectedTreasuryToken.contract_ticker_symbol
                         } токенів. Оберіть валідне число`
                       ),
                       isBnGt: isBnGt(
                         formatUnits(
                           BigNumber.from("0"),
-                          selectedTreasuryToken.get.contract_decimals
+                          selectedTreasuryToken.contract_decimals
                         ),
-                        selectedTreasuryToken.get.contract_decimals
+                        selectedTreasuryToken.contract_decimals
+                      ),
+                    }
+                  : {}),
+              },
+              minAllocation: {
+                required,
+                ...(tokenAmount
+                  ? {
+                      isBnGt: isBnGt(
+                        formatUnits(
+                          BigNumber.from("0"),
+                          selectedTreasuryToken.contract_decimals
+                        ),
+                        selectedTreasuryToken.contract_decimals,
+                        "Min allocation must be greater than 0"
+                      ),
+                    }
+                  : {}),
+              },
+              maxAllocation: {
+                required,
+                ...(tokenAmount
+                  ? {
+                      isBnLte: isBnLte(
+                        tokenAmount === "" ? "0" : tokenAmount,
+                        selectedTreasuryToken.contract_decimals,
+                        "Max allocation must be less than selected total token amount"
+                      ),
+                      isBnGt: isBnGt(
+                        minAllocation === "" ? "0" : minAllocation,
+                        selectedTreasuryToken.contract_decimals,
+                        "Max allocation must be greater than min allocation"
                       ),
                     }
                   : {}),
@@ -91,6 +179,46 @@ const SettingsStep: React.FC = () => {
       nextCb()
     }
   }, [nextCb, touchForm, isFieldsValid])
+
+  const handleChangeSellPair = useCallback(
+    (
+      index: number,
+      { tokenAddress, amount }: { tokenAddress: string; amount: string }
+    ) => {
+      const newSellPairs = [...sellPairs]
+      newSellPairs[index] = { ...newSellPairs[index], tokenAddress, amount }
+
+      handleUpdateTokenSaleProposal(
+        currentProposalIndex,
+        "sellPairs",
+        newSellPairs
+      )
+    },
+    [handleUpdateTokenSaleProposal, currentProposalIndex, sellPairs]
+  )
+
+  const handleDeleteSellPair = useCallback(
+    (index: number) => {
+      if (sellPairs.length === 1) return
+
+      const newSellPairs = [...sellPairs].filter((_, idx) => idx !== index)
+
+      handleUpdateTokenSaleProposal(
+        currentProposalIndex,
+        "sellPairs",
+        newSellPairs
+      )
+    },
+    [handleUpdateTokenSaleProposal, currentProposalIndex, sellPairs]
+  )
+
+  const handleAddSellPair = useCallback(() => {
+    handleUpdateTokenSaleProposal(
+      currentProposalIndex,
+      "sellPairs",
+      sellPairs.concat([{ amount: "", tokenAddress: "" }])
+    )
+  }, [handleUpdateTokenSaleProposal, currentProposalIndex, sellPairs])
 
   return (
     <>
@@ -112,13 +240,48 @@ const SettingsStep: React.FC = () => {
           </S.DesktopHeaderWrp>
         )}
         <Card>
+          <CardHead title={"Опис пропоузалу"} />
+          <CardFormControl>
+            <InputField
+              value={proposalName}
+              setValue={(v) =>
+                handleUpdateTokenSaleProposal(
+                  currentProposalIndex,
+                  "proposalName",
+                  v
+                )
+              }
+              label="Proposal name"
+              errorMessage={getFieldErrorMessage("proposalName")}
+              onBlur={() => touchField("proposalName")}
+            />
+            <TextareaField
+              value={proposalDescription}
+              setValue={(v) =>
+                handleUpdateTokenSaleProposal(
+                  currentProposalIndex,
+                  "proposalDescription",
+                  v
+                )
+              }
+              label="Description"
+              errorMessage={getFieldErrorMessage("proposalDescription")}
+              onBlur={() => touchField("proposalDescription")}
+            />
+          </CardFormControl>
+        </Card>
+        <Card>
           <CardHead title={"Токен"} />
           <CardFormControl>
             <SelectField
               placeholder="Оберіть токен з трежері"
-              selected={selectedTreasuryToken.get ?? undefined}
+              selected={selectedTreasuryToken ?? undefined}
               setSelected={(newSelectedToken) =>
-                selectedTreasuryToken.set(newSelectedToken)
+                handleUpdateTokenSaleProposal(
+                  currentProposalIndex,
+                  "selectedTreasuryToken",
+                  newSelectedToken
+                )
               }
               list={treasury?.items ?? []}
               searchingFields={[
@@ -185,28 +348,34 @@ const SettingsStep: React.FC = () => {
               )}
             />
             <InputField
-              value={tokenAmount.get}
-              setValue={tokenAmount.set}
+              value={tokenAmount}
+              setValue={(value: string) => {
+                handleUpdateTokenSaleProposal(
+                  currentProposalIndex,
+                  "tokenAmount",
+                  value
+                )
+              }}
               label={"Кількість токенів"}
               type="number"
               errorMessage={getFieldErrorMessage("tokenAmount")}
               onBlur={() => touchField("tokenAmount")}
               nodeRight={
-                !!selectedTreasuryToken.get && (
+                !!selectedTreasuryToken && (
                   <AppButton
                     type="button"
                     text={"Max"}
                     color="default"
                     size="no-paddings"
                     onClick={() =>
-                      selectedTreasuryToken.get?.balance
-                        ? tokenAmount.set(
+                      selectedTreasuryToken?.balance
+                        ? handleUpdateTokenSaleProposal(
+                            currentProposalIndex,
+                            "tokenAmount",
                             cutStringZeroes(
                               formatUnits(
-                                BigNumber.from(
-                                  selectedTreasuryToken.get.balance
-                                ),
-                                selectedTreasuryToken.get.contract_decimals
+                                BigNumber.from(selectedTreasuryToken.balance),
+                                selectedTreasuryToken.contract_decimals
                               )
                             )
                           )
@@ -219,46 +388,112 @@ const SettingsStep: React.FC = () => {
           </CardFormControl>
         </Card>
         <Card>
+          <CardHead title="Продаж" />
+          <CardDescription>
+            <p>
+              Оберіть пару або додайте декілька, до якої буде продаватись токен
+            </p>
+          </CardDescription>
+          <CardFormControl>
+            {sellPairs.map(({ amount, tokenAddress }, index) => (
+              <TokenSalePairField
+                key={index}
+                tokenAddress={tokenAddress}
+                amount={amount}
+                setAmount={(v) =>
+                  handleChangeSellPair(index, {
+                    tokenAddress,
+                    amount: v,
+                  })
+                }
+                setTokenAddress={(newAddress) =>
+                  handleChangeSellPair(index, {
+                    tokenAddress: newAddress,
+                    amount,
+                  })
+                }
+                onDelete={() => handleDeleteSellPair(index)}
+              />
+            ))}
+            <S.AddPairButton
+              text={"+ Add new pair"}
+              onClick={handleAddSellPair}
+            />
+          </CardFormControl>
+        </Card>
+        <Card>
           <CardHead title={"Базові налаштування токен сейлу"} />
           <CardFormControl>
             <S.BaseTokenSettingsGrid>
               <InputField
-                value={minAllocation.get}
-                setValue={minAllocation.set}
+                value={minAllocation}
+                setValue={(value: string) =>
+                  handleUpdateTokenSaleProposal(
+                    currentProposalIndex,
+                    "minAllocation",
+                    value
+                  )
+                }
                 type="number"
                 label={"Мін алокація"}
                 nodeRight={
-                  selectedTreasuryToken.get?.contract_ticker_symbol ? (
+                  selectedTreasuryToken?.contract_ticker_symbol ? (
                     <S.BaseInputPlaceholder>
-                      {selectedTreasuryToken.get.contract_ticker_symbol}
+                      {selectedTreasuryToken.contract_ticker_symbol}
                     </S.BaseInputPlaceholder>
                   ) : null
                 }
+                errorMessage={getFieldErrorMessage("minAllocation")}
+                onBlur={() => touchField("minAllocation")}
               />
               <InputField
-                value={maxAllocation.get}
-                setValue={maxAllocation.set}
+                value={maxAllocation}
+                setValue={(value: string) =>
+                  handleUpdateTokenSaleProposal(
+                    currentProposalIndex,
+                    "maxAllocation",
+                    value
+                  )
+                }
                 type="number"
                 label={"Макс алокація"}
                 nodeRight={
-                  selectedTreasuryToken.get?.contract_ticker_symbol ? (
+                  selectedTreasuryToken?.contract_ticker_symbol ? (
                     <S.BaseInputPlaceholder>
-                      {selectedTreasuryToken.get.contract_ticker_symbol}
+                      {selectedTreasuryToken.contract_ticker_symbol}
                     </S.BaseInputPlaceholder>
                   ) : null
                 }
+                errorMessage={getFieldErrorMessage("maxAllocation")}
+                onBlur={() => touchField("maxAllocation")}
               />
               <DateField
-                date={sellStartDate.get}
-                setDate={sellStartDate.set}
+                date={sellStartDate}
+                setDate={(value: number) => {
+                  handleUpdateTokenSaleProposal(
+                    currentProposalIndex,
+                    "sellStartDate",
+                    value
+                  )
+                  touchField("sellStartDate")
+                }}
                 placeholder={"Початок продажу"}
                 minDate={new Date()}
+                errorMessage={getFieldErrorMessage("sellStartDate")}
               />
               <DateField
-                date={sellEndDate.get}
-                setDate={sellEndDate.set}
+                date={sellEndDate}
+                setDate={(value: number) => {
+                  handleUpdateTokenSaleProposal(
+                    currentProposalIndex,
+                    "sellEndDate",
+                    value
+                  )
+                  touchField("sellEndDate")
+                }}
                 placeholder={"Кінець продажу"}
                 minDate={new Date()}
+                errorMessage={getFieldErrorMessage("sellEndDate")}
               />
             </S.BaseTokenSettingsGrid>
           </CardFormControl>
