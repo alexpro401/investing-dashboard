@@ -15,7 +15,10 @@ import RiskyInvestorPositionCard from "components/cards/position/RiskyInvestor"
 
 import { graphClientInvestors } from "utils/graphClient"
 import { NoDataMessage } from "common"
-import { Center } from "../../theme"
+import { Center } from "theme"
+import * as S from "./styled"
+import Tooltip from "../../components/Tooltip"
+import { v4 as uuidv4 } from "uuid"
 
 interface IRiskyCardInitializer {
   position: InvestorRiskyPositionWithVests
@@ -112,9 +115,34 @@ const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
 
   return (
     <>
-      {data.map((p) => (
-        <RiskyPositionCardInitializer key={p.id} position={p} />
-      ))}
+      <S.InvestorRiskyPositionsListWrp>
+        <S.InvestorRiskyPositionsListHead>
+          <S.InvestorRiskyPositionsListHeadItem>
+            Fund
+          </S.InvestorRiskyPositionsListHeadItem>
+
+          <S.InvestorRiskyPositionsListHeadItem>
+            My Volume
+          </S.InvestorRiskyPositionsListHeadItem>
+
+          <S.InvestorRiskyPositionsListHeadItem>
+            <span>Entry Price</span>
+            <Tooltip id={uuidv4()}>Explain Entry Price</Tooltip>
+          </S.InvestorRiskyPositionsListHeadItem>
+
+          <S.InvestorRiskyPositionsListHeadItem>
+            <span>Current price</span>
+            <Tooltip id={uuidv4()}>Explain Current price</Tooltip>
+          </S.InvestorRiskyPositionsListHeadItem>
+
+          <S.InvestorRiskyPositionsListHeadItem>
+            P&L in %
+          </S.InvestorRiskyPositionsListHeadItem>
+        </S.InvestorRiskyPositionsListHead>
+        {data.map((p) => (
+          <RiskyPositionCardInitializer key={p.id} position={p} />
+        ))}
+      </S.InvestorRiskyPositionsListWrp>
       <LoadMore isLoading={loading && !!data.length} handleMore={fetchMore} />
     </>
   )

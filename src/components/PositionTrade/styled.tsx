@@ -41,7 +41,7 @@ export const Item = styled(Flex)`
   ${respondTo("lg")} {
     width: initial;
     flex: 1 0 155px;
-    max-width: 169px;
+    max-width: 160px;
     justify-content: center;
 
     &:last-child {
