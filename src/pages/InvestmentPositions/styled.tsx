@@ -33,6 +33,9 @@ export const ListTopInfo = styled.div`
 
 export const InvestorPositionsListWrp = styled.div`
   ${respondTo("lg")} {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     background: rgba(20, 25, 38, 0.5);
     border-radius: 20px;
     padding: 0 8px 8px;
@@ -47,7 +50,7 @@ export const InvestorPositionsListHead = styled.div<{ childMaxWidth?: string }>`
     flex-direction: row;
     align-items: flex-start;
     grid-column-gap: 12px;
-    padding: 8px 16px;
+    padding: 8px 16px 0;
 
     & > * {
       flex: 1 0 155px;
