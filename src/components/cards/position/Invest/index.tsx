@@ -5,7 +5,7 @@ import { parseEther, parseUnits } from "@ethersproject/units"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { format } from "date-fns/esm"
 
-import { ZERO } from "consts"
+import { ICON_NAMES, ZERO } from "consts"
 import { useActiveWeb3React, useBreakpoints } from "hooks"
 import { DATE_FORMAT } from "consts/time"
 import usePoolPrice from "hooks/usePoolPrice"
@@ -22,7 +22,7 @@ import { usePriceFeedContract, useTraderPoolContract } from "contracts"
 import { IInvestorProposal } from "interfaces/thegraphs/invest-pools"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 
-import { Flex } from "theme"
+import theme, { Flex } from "theme"
 import Icon from "components/Icon"
 import TokenIcon from "components/TokenIcon"
 import AmountRow from "components/Amount/Row"
@@ -30,13 +30,15 @@ import PositionTrade from "components/PositionTrade"
 
 import { accordionSummaryVariants } from "motion/variants"
 import SharedS, { BodyItem, Actions } from "components/cards/position/styled"
-import S from "./styled"
+import * as S from "./styled"
+import { NoDataMessage, Icon as IconCommon } from "common"
 
 interface Props {
   position: IInvestorProposal
 }
 
 const InvestPositionCard: React.FC<Props> = ({ position }) => {
+  const { isDesktop } = useBreakpoints()
   const navigate = useNavigate()
   const { account } = useActiveWeb3React()
   const traderPool = useTraderPoolContract(position.pool.id)
@@ -44,6 +46,10 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   const [{ priceUSD }] = usePoolPrice(position.pool.id)
   const [baseToken] = useERC20Data(position.pool.token)
   const priceFeed = usePriceFeedContract()
+
+  const tokenCurrentPriceUSD = useTokenPriceOutUSD({
+    tokenAddress: position.pool.token,
+  })
 
   const [{ poolMetadata }] = usePoolMetadata(
     position.pool.id,
@@ -74,7 +80,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   const [showPositions, setShowPositions] = useState<boolean>(false)
   const [showComission, setShowComission] = useState<boolean>(false)
   const toggleExtraContent = useCallback(() => {
-    if (position.isClosed) {
+    if (position.isClosed || isDesktop) {
       setShowPositions(!showPositions)
     } else {
       if (showPositions) {
@@ -84,8 +90,11 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
         setShowComission(false)
       }
     }
-    setShowExtra(!showExtra)
-  }, [showExtra, position.isClosed, showComission, showPositions])
+
+    if (!isDesktop) {
+      setShowExtra(!showExtra)
+    }
+  }, [showExtra, position.isClosed, showComission, showPositions, isDesktop])
 
   const togglePositions = useCallback(() => {
     if (!showPositions && showComission) {
@@ -114,7 +123,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     }
 
     if (position.isClosed) {
-      return position.totalLPInvestVolume
+      return BigNumber.from(position.totalLPInvestVolume)
     } else {
       const investFixed = FixedNumber.fromValue(
         position.totalLPInvestVolume,
@@ -129,6 +138,17 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
       return parseEther(res._value)
     }
   }, [position])
+
+  const positionOpenLPAmountUSD = useMemo<BigNumber>(() => {
+    if (positionOpenLPAmount.isZero() || tokenCurrentPriceUSD.isZero()) {
+      return ZERO
+    }
+
+    return multiplyBignumbers(
+      [positionOpenLPAmount, 18],
+      [tokenCurrentPriceUSD, 18]
+    )
+  }, [positionOpenLPAmount, tokenCurrentPriceUSD])
 
   const entryPriceBase = useMemo<BigNumber>(() => {
     if (!position) return ZERO
@@ -451,8 +471,6 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
     },
   ]
 
-  const { isDesktop } = useBreakpoints()
-
   return (
     <>
       <SharedS.Container>
@@ -465,54 +483,105 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
                 source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
                 address={position.pool.id}
               />
-              {!isDesktop && (
-                <S.Amount>
-                  {normalizeBigNumber(positionOpenLPAmount, 18, 6)}
-                </S.Amount>
-              )}
-              <S.PositionSymbol>{poolInfo?.ticker}</S.PositionSymbol>
-              <SharedS.PNL value={pnlPercentage.normalized}>
-                {Number(pnlPercentage.normalized) > 0 && "+"}
-                {pnlPercentage.normalized}%
-              </SharedS.PNL>
+              <S.Amount>
+                {normalizeBigNumber(positionOpenLPAmount, 18, 6)}
+              </S.Amount>
+              <Flex dir={"row"} ai={"flex-start"} gap={"4"}>
+                <S.PositionSymbol>{poolInfo?.ticker}</S.PositionSymbol>
+                <SharedS.PNL value={pnlPercentage.normalized}>
+                  {Number(pnlPercentage.normalized) > 0 && "+"}
+                  {pnlPercentage.normalized}%
+                </SharedS.PNL>
+              </Flex>
             </Flex>
             <Flex>
               <S.FundSymbol>{baseTokenSymbol}</S.FundSymbol>
-              {isDesktop && (
-                <S.Amount>
-                  {normalizeBigNumber(positionOpenLPAmount, 18, 6)}
-                </S.Amount>
-              )}
               <TokenIcon address={baseToken?.address} m="0" size={24} />
             </Flex>
           </SharedS.Head>
 
           <SharedS.Body>
+            {isDesktop && (
+              <>
+                <Flex ai="center" gap={"8"} jc={"flex-start"}>
+                  <Icon
+                    m="0"
+                    size={32}
+                    source={
+                      poolMetadata?.assets[poolMetadata?.assets.length - 1]
+                    }
+                    address={position.pool.id}
+                  />
+                  <Flex dir={"column"} ai={"flex-start"} gap={"4"}>
+                    <S.PositionSymbol>{poolInfo?.ticker}</S.PositionSymbol>
+                    <SharedS.PNL value={pnlPercentage.normalized}>
+                      {Number(pnlPercentage.normalized) > 0 && "+"}
+                      {pnlPercentage.normalized}%
+                    </SharedS.PNL>
+                  </Flex>
+                </Flex>
+                <Flex gap={"8"} jc={"flex-start"}>
+                  <TokenIcon address={baseToken?.address} m="0" size={32} />
+                  <BodyItem
+                    amount={positionOpenLPAmount}
+                    amountUSD={positionOpenLPAmountUSD}
+                  />
+                </Flex>
+              </>
+            )}
             <BodyItem
-              label={"Entry Price " + baseTokenSymbol}
+              label={!isDesktop ? "Entry Price " + baseTokenSymbol : null}
               amount={entryPriceBase}
               amountUSD={entryPriceUSD}
             />
             <BodyItem
               label={
-                (position.isClosed ? "Closed price " : "Current price ") +
-                baseTokenSymbol
+                !isDesktop
+                  ? (position.isClosed ? "Closed price " : "Current price ") +
+                    baseTokenSymbol
+                  : null
               }
               amount={markPriceBase}
               amountUSD={markPriceUSD}
             />
             <BodyItem
-              label={`P&L ${baseTokenSymbol}`}
+              label={!isDesktop ? `P&L ${baseTokenSymbol}` : null}
               amount={pnlBase}
               pnl={pnlPercentage.value}
               amountUSD={pnlUSD}
-              ai="flex-end"
+              ai={isDesktop ? "flex-start" : "flex-end"}
             />
+            {isDesktop && (
+              <Flex gap={"40"} jc={position.isClosed ? "flex-end" : "initial"}>
+                {!position.isClosed && (
+                  <>
+                    <SharedS.ActionBuy
+                      text={"Buy more"}
+                      onClick={onNavigateTerminal}
+                      color={"default"}
+                      size={"no-paddings"}
+                    />
+                    <SharedS.ActionSell
+                      text={"Close positions"}
+                      onClick={onNavigateTerminal}
+                      color={"default"}
+                      size={"no-paddings"}
+                    />
+                  </>
+                )}
+                <IconCommon
+                  name={
+                    showPositions ? ICON_NAMES.angleDown : ICON_NAMES.angleUp
+                  }
+                  color={theme.textColors.secondary}
+                />
+              </Flex>
+            )}
           </SharedS.Body>
         </SharedS.Card>
 
         <AnimatePresence>
-          {!position.isClosed && (
+          {!position.isClosed && !isDesktop && (
             <Actions actions={actions} visible={showExtra} />
           )}
         </AnimatePresence>
@@ -538,9 +607,7 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
               ))}
             </SharedS.TradesList>
           ) : (
-            <Flex full jc="center" p="12px 0">
-              <SharedS.WitoutData>No trades</SharedS.WitoutData>
-            </Flex>
+            <NoDataMessage />
           )}
         </SharedS.ExtraItem>
         <SharedS.ExtraItem

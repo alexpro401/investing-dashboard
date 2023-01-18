@@ -1,27 +1,43 @@
 import styled from "styled-components/macro"
 import { motion } from "framer-motion"
-import { FC, MouseEvent, useMemo } from "react"
+import { FC, MouseEvent, ReactNode, useMemo } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { normalizeBigNumber } from "utils"
 
 import Amount from "components/Amount"
 import { accordionSummaryVariants } from "motion/variants"
-import { ColorizedNumber, Flex, GradientBorder } from "theme"
+import { ColorizedNumber, Flex, GradientBorder, respondTo } from "theme"
 
 import shareIcon from "assets/icons/share.svg"
+import { isNil } from "lodash"
+import { useBreakpoints } from "hooks"
+import { AppButton } from "common"
 
 const Styled = {
   Container: styled.div``,
   Card: styled(GradientBorder)`
     width: 100%;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
     border-radius: 16px;
     flex-direction: column;
     cursor: pointer;
 
     &::after {
-      background: #181e2c;
+      background: ${({ theme }) => theme.backgroundColors.secondary};
+      ${respondTo("lg")} {
+        background: #141926;
+      }
+    }
+
+    &::before {
+      ${respondTo("lg")} {
+        background: transparent;
+      }
+    }
+
+    ${respondTo("lg")} {
+      flex-direction: row;
     }
   `,
   Head: styled(Flex)`
@@ -30,6 +46,10 @@ const Styled = {
     justify-content: space-between;
     flex-wrap: wrap;
     border-bottom: 1px solid #1d2635;
+
+    ${respondTo("lg")} {
+      display: none;
+    }
   `,
   Body: styled.div`
     width: 100%;
@@ -39,6 +59,16 @@ const Styled = {
     grid-template-rows: 1fr;
     grid-column-gap: 12px;
     overflow-x: auto;
+
+    ${respondTo("lg")} {
+      display: flex;
+      flex-direction: row;
+      //grid-template-columns: repeat(6, 1fr);
+
+      & > * {
+        flex: 1 0 155px;
+      }
+    }
   `,
   TradesList: styled.div`
     max-height: 180px;
@@ -69,15 +99,33 @@ const Styled = {
     margin-left: 4px;
     font-size: 12px;
     transform: translateY(2px);
+
+    ${respondTo("lg")} {
+      align-self: flex-end;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 14px;
+      padding: 2px 8px;
+      width: auto;
+
+      color: #e4f2ff;
+
+      background: ${(props) => (props.value > 0 ? "#337833" : "#68282C")};
+      border-radius: 5px;
+    }
   `,
-  WitoutData: styled.div`
-    font-family: ${(props) => props.theme.appFontFamily};
-    font-style: normal;
-    font-weight: 500;
+  ActionBuy: styled(AppButton)`
     font-size: 14px;
-    line-height: 100%;
-    color: #e4f2ff;
-    margin-right: 4px;
+    line-height: 17px;
+    color: #5baa99;
+  `,
+  ActionSell: styled(AppButton)`
+    font-size: 14px;
+    line-height: 17px;
+    color: #a75b5b;
   `,
 }
 
@@ -114,6 +162,13 @@ export const BodyItemStyled = {
     line-height: 100%;
     color: #788ab4;
     margin-top: 8px;
+
+    ${respondTo("lg")} {
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 14px;
+      margin-top: 4px;
+    }
   `,
 }
 
@@ -130,7 +185,7 @@ const getAmountSymbol = (amount) => {
 }
 
 interface IBodyItemProps {
-  label: string
+  label?: ReactNode
   amount: BigNumber
   symbol?: string
   pnl?: BigNumber
@@ -151,9 +206,16 @@ export const BodyItem: FC<IBodyItemProps> = ({
     return normalizeBigNumber(amountUSD, 18, 2)
   }, [amountUSD])
 
+  const { isDesktop } = useBreakpoints()
+
   return (
-    <Flex full dir="column" ai={ai ?? "flex-start"}>
-      <BodyItemStyled.Label>{label}</BodyItemStyled.Label>
+    <Flex
+      full={!isDesktop}
+      dir="column"
+      ai={ai ?? "flex-start"}
+      jc={isDesktop ? "flex-start" : "initial"}
+    >
+      {!isNil(label) && <BodyItemStyled.Label>{label}</BodyItemStyled.Label>}
       <Flex>
         <Amount
           value={
@@ -163,6 +225,8 @@ export const BodyItem: FC<IBodyItemProps> = ({
             </>
           }
           symbol={symbol}
+          fz={isDesktop ? "16px" : "13px"}
+          lh={isDesktop ? "19px" : "16px"}
         />
       </Flex>
       <BodyItemStyled.StablePrice>
