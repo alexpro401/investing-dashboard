@@ -17,7 +17,11 @@ const useGovPoolPendingRewards = (daoAddress?: string) => {
       if (!account || !govPoolContract) return
 
       try {
-        return govPoolContract?.getPendingRewards(account, [proposalId])
+        const rewardsAmount = await govPoolContract?.getPendingRewards(
+          account,
+          [proposalId]
+        )
+        return rewardsAmount
       } catch (error) {}
 
       return BigNumber.from("0")
