@@ -16,7 +16,7 @@ import { AppButton } from "common"
 
 const Styled = {
   Container: styled.div``,
-  Card: styled(GradientBorder)`
+  Card: styled(GradientBorder)<{ showPositions: boolean }>`
     width: 100%;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
     border-radius: 16px;
@@ -38,6 +38,9 @@ const Styled = {
 
     ${respondTo("lg")} {
       flex-direction: row;
+      box-shadow: none;
+      border-radius: ${({ showPositions }) =>
+        showPositions ? "16px 16px 0 0" : "16px"};
     }
   `,
   Head: styled(Flex)`
@@ -63,7 +66,6 @@ const Styled = {
     ${respondTo("lg")} {
       display: flex;
       flex-direction: row;
-      //grid-template-columns: repeat(6, 1fr);
 
       & > * {
         flex: 1 0 155px;
@@ -78,6 +80,11 @@ const Styled = {
     ::-webkit-scrollbar {
       display: none;
     }
+
+    ${respondTo("lg")} {
+      max-height: initial;
+      overflow-y: initial;
+    }
   `,
   ExtraItem: styled(GradientBorder)<{ p?: string }>`
     width: 100%;
@@ -88,6 +95,17 @@ const Styled = {
 
     &::after {
       background: #181e2c;
+    }
+
+    ${respondTo("lg")} {
+      margin-top: 0;
+      border-radius: 0 0 20px 20px;
+      &::after {
+        background: #141926;
+      }
+      &::before {
+        background: transparent;
+      }
     }
   `,
   PNL: styled(ColorizedNumber)`

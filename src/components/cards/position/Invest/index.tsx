@@ -119,7 +119,10 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   return (
     <>
       <SharedS.Container>
-        <SharedS.Card onClick={toggleExtraContent}>
+        <SharedS.Card
+          onClick={toggleExtraContent}
+          showPositions={showPositions}
+        >
           <SharedS.Head>
             <Flex ai="center">
               <Icon
