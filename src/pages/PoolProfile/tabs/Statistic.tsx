@@ -6,9 +6,20 @@ import { Flex } from "theme"
 import Tooltip from "components/Tooltip"
 import { PoolProfileContext } from "pages/PoolProfile/context"
 import { normalizeBigNumber } from "utils"
+import { BigNumber } from "@ethersproject/bignumber"
 
 const MAX_INVESTORS = 1000
 const MAX_OPEN_TRADES = 25
+
+function getUSDRenderValue(value?: BigNumber): string {
+  if (!value) return "$0.00"
+
+  if (value.lt(0)) {
+    return `-$${normalizeBigNumber(value.abs(), 18, 5)}`
+  }
+
+  return `$${normalizeBigNumber(value, 18, 5)}`
+}
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -45,7 +56,7 @@ const TabPoolStatistic: FC<Props> = ({ ...rest }) => {
             <S.TabCardLabel>USD</S.TabCardLabel>
             <div>
               <S.TabCardValue>
-                {normalizeBigNumber(pnl?.total?.usd?.amount, 18, 2)}
+                {getUSDRenderValue(pnl?.total?.usd?.amount)}
               </S.TabCardValue>
               &nbsp;
               <S.TabCardLabel>({pnl?.total?.usd?.percent}%)</S.TabCardLabel>
@@ -57,7 +68,7 @@ const TabPoolStatistic: FC<Props> = ({ ...rest }) => {
             <S.TabCardLabel>ETH</S.TabCardLabel>
             <div>
               <S.TabCardValue>
-                {normalizeBigNumber(pnl?.total?.eth?.amount, 18, 2)}
+                {getUSDRenderValue(pnl?.total?.eth?.amount)}
               </S.TabCardValue>
               &nbsp;
               <S.TabCardLabel>({pnl?.total?.eth?.percent}%)</S.TabCardLabel>
@@ -67,7 +78,7 @@ const TabPoolStatistic: FC<Props> = ({ ...rest }) => {
             <S.TabCardLabel>BTC</S.TabCardLabel>
             <div>
               <S.TabCardValue>
-                {normalizeBigNumber(pnl?.total?.btc?.amount, 18, 2)}
+                {getUSDRenderValue(pnl?.total?.btc?.amount)}
               </S.TabCardValue>
               &nbsp;
               <S.TabCardLabel>({pnl?.total?.btc?.percent}%)</S.TabCardLabel>

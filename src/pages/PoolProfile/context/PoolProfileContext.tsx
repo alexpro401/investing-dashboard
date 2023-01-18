@@ -2,7 +2,6 @@ import {
   createContext,
   FC,
   HTMLAttributes,
-  ReactNode,
   useEffect,
   useMemo,
   useState,
@@ -16,7 +15,6 @@ import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import {
   usePoolContract,
   usePoolLockedFundsHistory,
-  usePoolPnlInfo,
   usePoolPrice,
   usePoolSortino,
   usePoolStatistics,
@@ -27,7 +25,7 @@ import {
 } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
 import { PoolType, TIMEFRAME, ZERO } from "consts"
-import { getPNL, getPriceLP } from "utils/formulas"
+import { getPNL, getPriceLP, multiplyBignumbers } from "utils/formulas"
 import { expandTimestamp, normalizeBigNumber } from "utils"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { Center } from "theme"
@@ -184,7 +182,10 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
   }, [traderPool, account])
 
   const accountLPsPrice = useMemo(() => {
-    return accountLPs?.mul(priceUSD) || BigNumber.from(0)
+    if (accountLPs.isZero() || priceUSD.isZero()) {
+      return ZERO
+    }
+    return multiplyBignumbers([accountLPs, 18], [priceUSD, 18])
   }, [priceUSD, accountLPs])
 
   const [
@@ -243,23 +244,10 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
     }
   }, [_sortino, sortinoTokens])
 
-  function getUSDRenderValue(value: BigNumber): ReactNode {
-    if (value.lt(0)) {
-      return `-$${normalizeBigNumber(value.abs(), 18, 5)}`
-    }
-
-    return `$${normalizeBigNumber(value, 18, 5)}`
-  }
-
   const { data: investorVests } = useInvestorAllVestsInPool(
     account,
     poolData?.id
   )
-
-  const [
-    ,
-    { totalPnlPercentage, totalPnlBase, totalUSDPnlPerc, totalUSDPnlUSD },
-  ] = usePoolPnlInfo(poolData?.id)
 
   const altPnlUSD = usePoolAlternativePnlUSD(investorVests, poolData?.baseToken)
 
