@@ -13,6 +13,7 @@ import S from "./styled"
 import useRiskyPosition from "./useRiskyPosition"
 import { InvestorRiskyPositionWithVests } from "interfaces/thegraphs/investors"
 import { ROUTE_PATHS } from "consts"
+import { NoDataMessage } from "../../../../common"
 
 interface InvestorRiskyPositionProposalData {
   token: string
@@ -180,9 +181,7 @@ const RiskyInvestorPositionCard: FC<Props> = ({
               ))}
             </SharedS.TradesList>
           ) : (
-            <Flex full jc="center" p="12px 0">
-              <SharedS.WitoutData>No trades</SharedS.WitoutData>
-            </Flex>
+            <NoDataMessage />
           )}
         </SharedS.ExtraItem>
       </SharedS.Container>

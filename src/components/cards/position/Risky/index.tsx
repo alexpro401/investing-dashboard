@@ -20,6 +20,7 @@ import S from "./styled"
 
 import useRiskyPosition from "./useRiskyPosition"
 import { ROUTE_PATHS } from "consts"
+import { NoDataMessage } from "common"
 
 interface Props {
   position: IRiskyPosition
@@ -300,9 +301,7 @@ const RiskyPositionCard: FC<Props> = ({
               ))}
             </SharedS.TradesList>
           ) : (
-            <Flex full jc="center" p="12px 0">
-              <SharedS.WitoutData>No trades</SharedS.WitoutData>
-            </Flex>
+            <NoDataMessage />
           )}
         </SharedS.ExtraItem>
       </SharedS.Container>

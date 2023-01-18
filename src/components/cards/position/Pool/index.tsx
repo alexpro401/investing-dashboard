@@ -12,6 +12,7 @@ import SharedS, { BodyItem, Actions } from "components/cards/position/styled"
 import usePoolPosition from "./usePoolPosition"
 import usePoolPositionCard from "./usePoolPositionCard"
 import S from "./styled"
+import { NoDataMessage } from "common"
 
 interface Props {
   position: IPosition
@@ -129,9 +130,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
               ))}
             </SharedS.TradesList>
           ) : (
-            <Flex full jc="center" p="12px 0">
-              <SharedS.WitoutData>No trades</SharedS.WitoutData>
-            </Flex>
+            <NoDataMessage />
           )}
         </SharedS.ExtraItem>
       </SharedS.Container>
