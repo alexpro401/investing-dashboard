@@ -226,6 +226,8 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
 
   const handleVote = useCallback(
     (proposalId: number) => {
+      if (!account) return
+
       // calculate erc20 deposit amount without locked and delegated and voted balance
       const depositAmount = isOwnedERC20Used ? ERC20DepositAmount : ZERO
 
@@ -248,6 +250,7 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
       if (voteAmount.isZero() && voteNftIds.length === 0) return
 
       return vote(
+        account,
         proposalId,
         depositAmount,
         depositNfts,
@@ -256,6 +259,7 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
       )
     },
     [
+      account,
       isOwnedERC20Used,
       ERC20DepositAmount,
       withDelegated,

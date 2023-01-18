@@ -7,6 +7,8 @@ import usePayload from "hooks/usePayload"
 import useError from "hooks/useError"
 import { TransactionType } from "state/transactions/types"
 import { isTxMined, parseTransactionError } from "utils"
+import { encodeAbiMethod } from "utils/encodeAbi"
+import { GovPool } from "abi"
 
 const useGovPoolVote = (daoPoolAddress?: string) => {
   const govPool = useGovPoolContract(daoPoolAddress)
@@ -16,6 +18,7 @@ const useGovPoolVote = (daoPoolAddress?: string) => {
 
   const vote = useCallback(
     async (
+      account: string,
       proposalId: BigNumberish,
       depositAmount: BigNumberish,
       depositNfts: BigNumberish[],
@@ -27,13 +30,19 @@ const useGovPoolVote = (daoPoolAddress?: string) => {
 
       try {
         setPayload(SubmitState.WAIT_CONFIRM)
-        const transactionResponse = await govPool.vote(
-          proposalId,
+        const deposit = encodeAbiMethod(GovPool, "deposit", [
+          account,
           depositAmount,
           depositNfts,
+        ])
+
+        const vote = encodeAbiMethod(GovPool, "vote", [
+          proposalId,
           voteAmount,
-          voteNftIds
-        )
+          voteNftIds,
+        ])
+
+        const transactionResponse = await govPool.multicall([deposit, vote])
 
         const receipt = await addTransaction(transactionResponse, {
           type: TransactionType.GOV_POOL_VOTE,
