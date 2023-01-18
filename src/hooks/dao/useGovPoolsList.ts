@@ -62,8 +62,6 @@ const useGovPoolsList = () => {
   const [descriptions, descriptionsLoading] =
     useGovPoolDescriptionsMulticall(descriptionsParams)
 
-  console.log([descriptions, descriptionsLoading])
-
   const anyLoading = React.useMemo(
     () =>
       loading ||
