@@ -269,38 +269,6 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
     { eth: addressWETH, btc: addressWBTC }
   )
 
-  const altPnlETH_USD = useMemo(
-    () => getUSDRenderValue(altPnlTokens.usd.eth),
-    [altPnlTokens]
-  )
-  const altPnlETH_Percentage = useMemo(
-    () => normalizeBigNumber(altPnlTokens.percentage.eth),
-    [altPnlTokens]
-  )
-
-  const altPnlBTC_USD = useMemo(
-    () => getUSDRenderValue(altPnlTokens.usd.btc),
-    [altPnlTokens]
-  )
-  const altPnlBTC_Percentage = useMemo(
-    () => normalizeBigNumber(altPnlTokens.percentage.btc),
-    [altPnlTokens]
-  )
-
-  const pnlPerc = useMemo(() => {
-    if (!poolData) return "0.0"
-
-    const priceLP = getPriceLP(poolData?.priceHistory)
-    return getPNL(priceLP)
-  }, [poolData])
-
-  const pnlUSD = useMemo(() => {
-    if (!poolData || !poolData?.priceHistory[0]) return "$0.0"
-
-    const BN = BigNumber.from(poolData?.priceHistory[0]?.percPNLUSD)
-    return getUSDRenderValue(BN)
-  }, [poolData])
-
   const availableLPTokens = useMemo(() => {
     if (!poolInfo || poolInfo.parameters.totalLPEmission.isZero())
       return {
@@ -359,6 +327,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
           sortino,
           maxLoss: poolData?.maxLoss,
 
+          // in USD
           pnl: {
             _24h: {
               base: {
@@ -399,7 +368,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
           },
 
           depositors,
-          priceLP: priceLP,
+          priceLP,
           tvl,
           apy,
 
