@@ -13,7 +13,12 @@ import { useTraderPoolContract } from "contracts"
 import LoadMore from "components/LoadMore"
 import PoolPositionCard from "components/cards/position/Pool"
 
-import S, { BecomeInvestor } from "./styled"
+import S, {
+  BecomeInvestor,
+  PoolPositionsListWrp,
+  PoolPositionsListHead,
+  PoolPositionsListHeadItem,
+} from "./styled"
 import { ZERO } from "consts"
 import { IPosition } from "interfaces/thegraphs/all-pools"
 
@@ -112,17 +117,26 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
           positionCount={openPositionsCount}
         />
       )}
-      <S.List ref={loader}>
-        {data &&
-          data.map((position) => (
-            <PoolPositionCard key={position.id} position={position} />
-          ))}
-        <LoadMore
-          isLoading={loading && !!data.length}
-          handleMore={fetchMore}
-          r={loader}
-        />
-      </S.List>
+      <PoolPositionsListWrp>
+        <PoolPositionsListHead>
+          <PoolPositionsListHeadItem>Pool</PoolPositionsListHeadItem>
+          <PoolPositionsListHeadItem>Volume</PoolPositionsListHeadItem>
+          <PoolPositionsListHeadItem>Entry Price</PoolPositionsListHeadItem>
+          <PoolPositionsListHeadItem>
+            {closed ? "Closed price " : "Current price "}
+          </PoolPositionsListHeadItem>
+          <PoolPositionsListHeadItem>P&L</PoolPositionsListHeadItem>
+        </PoolPositionsListHead>
+        {data.map((position) => (
+          <PoolPositionCard key={position.id} position={position} />
+        ))}
+      </PoolPositionsListWrp>
+
+      <LoadMore
+        isLoading={loading && !!data.length}
+        handleMore={fetchMore}
+        r={undefined}
+      />
     </>
   )
 }

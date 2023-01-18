@@ -34,6 +34,51 @@ export const PageHeadTabs = styled(HeaderTabs)`
   }
 `
 
+export const PoolPositionsListWrp = styled.div`
+  ${respondTo("lg")} {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(20, 25, 38, 0.5);
+    border-radius: 20px;
+    padding: 0 8px 8px;
+  }
+`
+
+export const PoolPositionsListHead = styled.div<{
+  childMaxWidth?: string
+}>`
+  display: none;
+
+  ${respondTo("lg")} {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    grid-column-gap: 12px;
+    padding: 8px 16px 0;
+
+    & > * {
+      flex: 1 0 155px;
+      max-width: ${({ childMaxWidth }) => childMaxWidth ?? "167px"};
+    }
+  }
+`
+
+export const PoolPositionsListHeadItem = styled.div`
+  ${respondTo("lg")} {
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0 4px;
+    padding: 8px 0;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+    color: #6781bd;
+  }
+`
+
 const Styled = {
   Container: styled.div`
     box-sizing: border-box;
