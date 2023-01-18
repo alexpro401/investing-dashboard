@@ -1,13 +1,15 @@
 import { Routes, Route } from "react-router-dom"
+import { v4 as uuidv4 } from "uuid"
 
-import InvestmentPositionsList from "./List"
-
-import { ITab } from "interfaces"
-import { useActiveWeb3React } from "hooks"
 import * as S from "./styled"
+import { ITab } from "interfaces"
+import Tooltip from "components/Tooltip"
+import InvestmentPositionsList from "./List"
+import { useActiveWeb3React, useBreakpoints } from "hooks"
 
 const InvestmentPositions = () => {
   const { account } = useActiveWeb3React()
+  const { isMobile } = useBreakpoints()
 
   const tabs: ITab[] = [
     {
@@ -22,7 +24,15 @@ const InvestmentPositions = () => {
 
   return (
     <>
-      <S.PageSubTabs tabs={tabs} />
+      <S.ListTopWrp>
+        <S.PageSubTabs tabs={tabs} />
+        {!isMobile && (
+          <S.ListTopInfo>
+            <span>Whitelist positions</span>
+            <Tooltip id={uuidv4()}>Info???</Tooltip>
+          </S.ListTopInfo>
+        )}
+      </S.ListTopWrp>
       <Routes>
         <Route
           path="open"
