@@ -1,9 +1,9 @@
 import { useCallback, useState, MouseEvent } from "react"
-import { useNavigate } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { format } from "date-fns/esm"
 
-import { ICON_NAMES } from "consts"
+import { ICON_NAMES, ROUTE_PATHS } from "consts"
 import { useBreakpoints } from "hooks"
 import { DATE_FORMAT } from "consts/time"
 import { IInvestorProposal } from "interfaces/thegraphs/invest-pools"
@@ -88,10 +88,11 @@ const InvestPositionCard: React.FC<Props> = ({ position }) => {
   }, [showComission, showPositions])
 
   const onNavigateTerminal = (e?: MouseEvent<HTMLElement>): void => {
-    if (e) {
-      e.stopPropagation()
-    }
-    navigate(`/pool/invest/${position.pool.id}`)
+    if (e) e.stopPropagation()
+
+    navigate(
+      generatePath(ROUTE_PATHS.poolInvest, { poolAddress: position.pool.id })
+    )
   }
 
   const actions = [
