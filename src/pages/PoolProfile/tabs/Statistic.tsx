@@ -14,24 +14,16 @@ interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const TabPoolStatistic: FC<Props> = ({ ...rest }) => {
   const {
-    poolData,
-    investorsCount,
-    openPositionsLen,
+    openPosition,
+    trades,
     orderSize,
-    dailyProfit,
-    timePosition,
-    sortinoETH,
-    sortinoBTC,
-    totalTrades,
+    dailyProfitPercent,
+    timePositions,
+    sortino,
     maxLoss,
-    altPnlUSD_USD,
-    altPnlUSD_Percentage,
-    altPnlETH_USD,
-    altPnlETH_Percentage,
-    altPnlBTC_USD,
-    altPnlBTC_Percentage,
-    pnlPerc,
-    pnlUSD,
+
+    pnl,
+    depositors,
   } = useContext(PoolProfileContext)
 
   return (
@@ -42,16 +34,21 @@ const TabPoolStatistic: FC<Props> = ({ ...rest }) => {
           <Flex full ai="center" jc="space-between">
             <S.TabCardLabel>DEXE</S.TabCardLabel>
             <div>
-              <S.TabCardValue>{pnlUSD}</S.TabCardValue>&nbsp;
-              <S.TabCardLabel>({pnlPerc}%)</S.TabCardLabel>
+              <S.TabCardValue>
+                {normalizeBigNumber(pnl?.total?.dexe?.amount, 18, 2)}
+              </S.TabCardValue>
+              &nbsp;
+              <S.TabCardLabel>({pnl?.total?.dexe?.percent}%)</S.TabCardLabel>
             </div>
           </Flex>
           <Flex full ai="center" jc="space-between">
             <S.TabCardLabel>USD</S.TabCardLabel>
             <div>
-              <S.TabCardValue>{altPnlUSD_USD}</S.TabCardValue>
+              <S.TabCardValue>
+                {normalizeBigNumber(pnl?.total?.usd?.amount, 18, 2)}
+              </S.TabCardValue>
               &nbsp;
-              <S.TabCardLabel>({altPnlUSD_Percentage}%)</S.TabCardLabel>
+              <S.TabCardLabel>({pnl?.total?.usd?.percent}%)</S.TabCardLabel>
             </div>
           </Flex>
         </S.GridTwoColumn>
@@ -59,17 +56,21 @@ const TabPoolStatistic: FC<Props> = ({ ...rest }) => {
           <Flex full ai="center" jc="space-between">
             <S.TabCardLabel>ETH</S.TabCardLabel>
             <div>
-              <S.TabCardValue>{altPnlETH_USD}</S.TabCardValue>
+              <S.TabCardValue>
+                {normalizeBigNumber(pnl?.total?.eth?.amount, 18, 2)}
+              </S.TabCardValue>
               &nbsp;
-              <S.TabCardLabel>({altPnlETH_Percentage}%)</S.TabCardLabel>
+              <S.TabCardLabel>({pnl?.total?.eth?.percent}%)</S.TabCardLabel>
             </div>
           </Flex>
           <Flex full ai="center" jc="space-between">
             <S.TabCardLabel>BTC</S.TabCardLabel>
             <div>
-              <S.TabCardValue>{altPnlBTC_USD}</S.TabCardValue>
+              <S.TabCardValue>
+                {normalizeBigNumber(pnl?.total?.btc?.amount, 18, 2)}
+              </S.TabCardValue>
               &nbsp;
-              <S.TabCardLabel>({altPnlBTC_Percentage}%)</S.TabCardLabel>
+              <S.TabCardLabel>({pnl?.total?.btc?.percent}%)</S.TabCardLabel>
             </div>
           </Flex>
         </S.GridTwoColumn>
@@ -79,7 +80,7 @@ const TabPoolStatistic: FC<Props> = ({ ...rest }) => {
         <S.GridTwoColumn>
           <Flex full ai="center" jc="space-between">
             <S.TabCardLabel>Trades per Day</S.TabCardLabel>
-            <S.TabCardValue>{poolData.averageTrades}</S.TabCardValue>
+            <S.TabCardValue>{trades?.perDay}</S.TabCardValue>
           </Flex>
           <Flex full ai="center" jc="space-between">
             <S.TabCardLabel>Order Size</S.TabCardLabel>
@@ -92,29 +93,29 @@ const TabPoolStatistic: FC<Props> = ({ ...rest }) => {
         <S.GridTwoColumn>
           <Flex full ai="center" jc="space-between">
             <S.TabCardLabel>Daily Profit</S.TabCardLabel>
-            <S.TabCardValue>{dailyProfit}%</S.TabCardValue>
+            <S.TabCardValue>{dailyProfitPercent}%</S.TabCardValue>
           </Flex>
           <Flex full ai="center" jc="space-between">
             <S.TabCardLabel>Time Positions</S.TabCardLabel>
-            <S.TabCardValue>{timePosition}</S.TabCardValue>
+            <S.TabCardValue>{timePositions}</S.TabCardValue>
           </Flex>
         </S.GridTwoColumn>
 
         <S.GridTwoColumn>
           <Flex full ai="center" jc="space-between">
             <S.TabCardLabel>Sortino (ETH)</S.TabCardLabel>
-            <S.TabCardValue>{sortinoETH}</S.TabCardValue>
+            <S.TabCardValue>{sortino?.eth}</S.TabCardValue>
           </Flex>
           <Flex full ai="center" jc="space-between">
             <S.TabCardLabel>Sortino (BTC)</S.TabCardLabel>
-            <S.TabCardValue>{sortinoBTC}</S.TabCardValue>
+            <S.TabCardValue>{sortino?.btc}</S.TabCardValue>
           </Flex>
         </S.GridTwoColumn>
 
         <S.GridTwoColumn>
           <Flex full ai="center" jc="space-between">
             <S.TabCardLabel>Trades</S.TabCardLabel>
-            <S.TabCardValue>{totalTrades}</S.TabCardValue>
+            <S.TabCardValue>{trades?.total}</S.TabCardValue>
           </Flex>
           <Flex full ai="center" jc="space-between">
             <S.TabCardLabel>Max. loss</S.TabCardLabel>
@@ -127,27 +128,33 @@ const TabPoolStatistic: FC<Props> = ({ ...rest }) => {
       <Card>
         <div>
           <Flex full ai="center" jc="space-between" m="0 0 12px">
-            <S.TabCardValue>Depositors - {investorsCount}</S.TabCardValue>
+            <S.TabCardValue>Depositors - {depositors}</S.TabCardValue>
             <Flex ai="center" jc="flex-end" gap="4">
               <S.TabCardLabel>
-                {MAX_INVESTORS - investorsCount} Left
+                {MAX_INVESTORS - (depositors || 0)} Left
               </S.TabCardLabel>
               <Tooltip id={uuidv4()}>Depositors</Tooltip>
             </Flex>
           </Flex>
-          <S.ProgressBar w={(investorsCount / MAX_INVESTORS) * 100} />
+          <S.ProgressBar
+            w={depositors ? (depositors / MAX_INVESTORS) * 100 : 0}
+          />
         </div>
         <div>
           <Flex full ai="center" jc="space-between" m="4px 0 12px">
-            <S.TabCardValue>Fund positions - {openPositionsLen}</S.TabCardValue>
+            <S.TabCardValue>
+              Fund positions - {openPosition?.length || 0}
+            </S.TabCardValue>
             <Flex ai="center" jc="flex-end" gap="4">
               <S.TabCardLabel>
-                {MAX_OPEN_TRADES - openPositionsLen} Left
+                {MAX_OPEN_TRADES - (openPosition?.length || 0)} Left
               </S.TabCardLabel>
               <Tooltip id={uuidv4()}>Fund positions</Tooltip>
             </Flex>
           </Flex>
-          <S.ProgressBar w={(openPositionsLen / MAX_OPEN_TRADES) * 100} />
+          <S.ProgressBar
+            w={((openPosition?.length || 0) / MAX_OPEN_TRADES) * 100}
+          />
         </div>
       </Card>
     </>

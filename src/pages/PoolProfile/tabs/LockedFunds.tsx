@@ -18,29 +18,18 @@ interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
   const {
-    poolData,
+    fundAddress,
     isTrader,
-    accountLPsPrice,
-    baseSymbol,
-    totalPoolUSD,
-    traderFundsUSD,
-    traderFundsBase,
-    investorsFundsUSD,
-    investorsFundsBase,
-    poolUsedInPositionsUSD,
-    poolUsedToTotalPercentage,
-    tf,
-    setTf,
-    poolLockedFundHistoryChartData,
-    isPoolLockedFundHistoryChartDataFetching,
+
+    lockedFunds,
   } = useContext(PoolProfileContext)
 
   const navigate = useNavigate()
 
   const onTerminalNavigate = useCallback(() => {
-    if (isNil(poolData.id)) return
-    navigate(generatePath(ROUTE_PATHS.poolInvest, { poolAddress: poolData.id }))
-  }, [poolData.id, navigate])
+    if (isNil(fundAddress)) return
+    navigate(generatePath(ROUTE_PATHS.poolInvest, { poolAddress: fundAddress }))
+  }, [fundAddress, navigate])
 
   const { width: windowWidth } = useWindowSize()
 
@@ -50,12 +39,12 @@ const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
         <Flex dir="column" full ai="center" jc="space-between">
           <Flex full>
             <S.TabCardLabel>Total Investors funds</S.TabCardLabel>
-            <S.TabCardValue>${investorsFundsUSD}</S.TabCardValue>
+            <S.TabCardValue>${lockedFunds?.investorsFundsUSD}</S.TabCardValue>
           </Flex>
           <Flex full>
             <S.TabCardLabel>My funds</S.TabCardLabel>
             <S.TabCardValue>
-              ${normalizeBigNumber(accountLPsPrice)}
+              ${normalizeBigNumber(lockedFunds?.accountLPsPrice)}
             </S.TabCardValue>
           </Flex>
         </Flex>
@@ -63,7 +52,7 @@ const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
           key={windowWidth}
           type={CHART_TYPE.area}
           height={"130px"}
-          data={poolLockedFundHistoryChartData}
+          data={lockedFunds?.poolLockedFundHistoryChartData}
           chart={{
             stackOffset: "silhouette",
           }}
@@ -81,9 +70,9 @@ const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
               stroke: "#9AE2CB",
             },
           ]}
-          timeframe={{ get: tf, set: setTf }}
+          timeframe={{ get: lockedFunds?.tf, set: lockedFunds?.setTf }}
           timeframePosition="bottom"
-          loading={isPoolLockedFundHistoryChartDataFetching}
+          loading={lockedFunds?.isPoolLockedFundHistoryChartDataFetching}
         >
           <Tooltip
             content={(p) => {
@@ -96,36 +85,36 @@ const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
         <Flex full ai="center" jc="space-between">
           <S.TabCardLabel>Investor funds</S.TabCardLabel>
           <Flex ai="center" jc="flex-end">
-            <S.TabCardValue>${investorsFundsUSD}</S.TabCardValue>
+            <S.TabCardValue>${lockedFunds?.investorsFundsUSD}</S.TabCardValue>
             &nbsp;
             <S.TabCardLabel>
-              {investorsFundsBase} {baseSymbol}
+              {lockedFunds?.investorsFundsBase} {lockedFunds?.baseSymbol}
             </S.TabCardLabel>
           </Flex>
         </Flex>
         <Flex full ai="center" jc="space-between">
           <S.TabCardLabel>Personal funds</S.TabCardLabel>
           <Flex ai="center" jc="flex-end">
-            <S.TabCardValue>${traderFundsUSD}</S.TabCardValue>
+            <S.TabCardValue>${lockedFunds?.traderFundsUSD}</S.TabCardValue>
             &nbsp;
             <S.TabCardLabel>
-              {traderFundsBase} {baseSymbol}
+              {lockedFunds?.traderFundsBase} {lockedFunds?.baseSymbol}
             </S.TabCardLabel>
           </Flex>
         </Flex>
         <Flex full ai="center" jc="space-between">
           <S.TabCardLabel>
-            Fund used ({poolUsedToTotalPercentage}%)
+            Fund used ({lockedFunds?.poolUsedToTotalPercentage}%)
           </S.TabCardLabel>
           <Flex ai="center" jc="flex-end">
             <S.TabCardValue>
-              ${poolUsedInPositionsUSD.format}&nbsp;/&nbsp;
+              ${lockedFunds?.poolUsedInPositionsUSD.format}&nbsp;/&nbsp;
             </S.TabCardValue>
             &nbsp;
-            <S.TabCardValue>{totalPoolUSD.format}</S.TabCardValue>
+            <S.TabCardValue>{lockedFunds?.totalPoolUSD.format}</S.TabCardValue>
           </Flex>
         </Flex>
-        <S.ProgressBar w={Number(poolUsedToTotalPercentage)} />
+        <S.ProgressBar w={Number(lockedFunds?.poolUsedToTotalPercentage)} />
         {isTrader && (
           <Flex full>
             <S.AppButtonFull

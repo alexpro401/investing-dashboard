@@ -20,21 +20,26 @@ interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const TabPoolInfo: FC<Props> = ({ ...rest }) => {
   const {
-    isTrader,
-    creationDate,
+    fundType,
     fundAddress,
-    baseToken,
+    basicToken,
     fundTicker,
     fundName,
-    fundType,
+
     minInvestAmount,
     emission,
+    availableLPTokens,
+
+    creationDate,
+    isTrader,
+
+    performanceFee,
+
     fundManagers,
     whiteList,
-    performanceFee,
+
     fundDescription,
     fundStrategy,
-    availableLPTokens,
   } = useContext(PoolProfileContext)
 
   return (
@@ -43,9 +48,14 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
         <S.TabCardTitle>Information</S.TabCardTitle>
         <Flex full ai="center" jc="space-between">
           <S.TabCardLabel>Creation date</S.TabCardLabel>
-          <S.TabCardValue>
-            {DateUtil.format(creationDate, DATE_FORMAT)}
-          </S.TabCardValue>
+          {creationDate && (
+            <S.TabCardValue>
+              {DateUtil.format(
+                DateUtil.fromTimestamp(creationDate) as Date,
+                DATE_FORMAT
+              )}
+            </S.TabCardValue>
+          )}
         </Flex>
         <Flex full ai="center" jc="space-between">
           <S.TabCardLabel>Fund address</S.TabCardLabel>
@@ -53,7 +63,7 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
         </Flex>
         <Flex full ai="center" jc="space-between">
           <S.TabCardLabel>Basic token</S.TabCardLabel>
-          <S.TabCardValue>{baseToken?.symbol}</S.TabCardValue>
+          <S.TabCardValue>{basicToken?.symbol}</S.TabCardValue>
         </Flex>
         <Flex full ai="center" jc="space-between">
           <S.TabCardLabel>Fund ticker</S.TabCardLabel>
@@ -63,10 +73,12 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
           <S.TabCardLabel>Fund name</S.TabCardLabel>
           <S.TabCardValue>{fundName}</S.TabCardValue>
         </Flex>
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardLabel>Type of fund</S.TabCardLabel>
-          <S.TabCardValue>{fundTypes[fundType]}</S.TabCardValue>
-        </Flex>
+        {fundType && (
+          <Flex full ai="center" jc="space-between">
+            <S.TabCardLabel>Type of fund</S.TabCardLabel>
+            <S.TabCardValue>{fundTypes[fundType]}</S.TabCardValue>
+          </Flex>
+        )}
         <Flex full ai="center" jc="space-between">
           <S.TabCardLabel></S.TabCardLabel>
           <S.TabCardValue></S.TabCardValue>
@@ -76,7 +88,7 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
       <Card>
         <Flex full ai="center" jc="space-between">
           <S.TabCardTitle>Fund settings</S.TabCardTitle>
-          {isTrader && (
+          {isTrader && fundAddress && (
             <S.AppLink
               text="Manage"
               routePath={generatePath(ROUTE_PATHS.fundDetails, {
@@ -93,11 +105,11 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
             {normalizeBigNumber(minInvestAmount, 18, 2)}
           </S.TabCardValue>
         </Flex>
-        {emission.isZero() && (
+        {emission?.isZero() && (
           <Flex full ai="center" jc="space-between">
             <S.TabCardLabel>Emission</S.TabCardLabel>
             <S.TabCardValue>
-              {normalizeBigNumber(emission.value, 18, 6)}
+              {normalizeBigNumber(emission, 18, 6)}
             </S.TabCardValue>
           </Flex>
         )}
@@ -118,7 +130,7 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
           </S.TabCardValue>
         </Flex>
       </Card>
-      {!emission.isZero() && (
+      {!emission?.isZero() && (
         <Card>
           <Flex full ai="center" jc="space-between">
             <Flex ai="center" gap="4">
@@ -126,17 +138,17 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
               <S.TabCardLabel>Emission</S.TabCardLabel>
             </Flex>
             <S.TabCardValue>
-              {availableLPTokens.value?.toString() || 0}
+              {availableLPTokens?.value?.toString() || 0}
             </S.TabCardValue>
           </Flex>
-          <S.ProgressBar w={availableLPTokens.percentage?.toNumber() || 0} />
+          <S.ProgressBar w={availableLPTokens?.percentage || 0} />
         </Card>
       )}
 
       <Card>
         <Flex full ai="center" jc="space-between">
           <S.TabCardTitle>Fund description</S.TabCardTitle>
-          {isTrader && (
+          {isTrader && fundAddress && (
             <S.AppLink
               text="Edit"
               routePath={generatePath(ROUTE_PATHS.fundDetails, {
