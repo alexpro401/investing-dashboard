@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { createClient, useQuery } from "urql"
+import { useQuery } from "urql"
 
 import { usePoolRegistryContract } from "contracts"
 import { AppDispatch, AppState } from "state"
@@ -23,6 +23,7 @@ import {
 } from "interfaces/thegraphs/all-pools"
 
 import { OwnedPoolsQuery, ManagedPoolsQuery, PriceHistoryQuery } from "queries"
+import { graphClientAllPools } from "utils/graphClient"
 
 /**
  * Returns top members filter state variables and setter
@@ -53,6 +54,7 @@ export function useOwnedPools(
     pause: !isAddress(address),
     query: OwnedPoolsQuery,
     variables: { address },
+    context: graphClientAllPools,
   })
 
   useEffect(() => {
@@ -77,6 +79,7 @@ export function useManagedPools(
     pause: !isAddress(address),
     query: ManagedPoolsQuery,
     variables: { address },
+    context: graphClientAllPools,
   })
 
   useEffect(() => {
@@ -87,10 +90,6 @@ export function useManagedPools(
   return [pools, pool.fetching]
 }
 
-const allPoolsGraphClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
 /**
  * Returns map of pool price history
  */
@@ -116,7 +115,7 @@ export function usePriceHistory(
       block,
     },
     pause: pause || !address || !startDate,
-    context: allPoolsGraphClient,
+    context: graphClientAllPools,
   })
 
   useEffect(() => {
@@ -190,7 +189,7 @@ export function usePools(): () => void {
 
   const [response, handleMore] = useQuery<{
     traderPools: IPoolQuery[]
-  }>(queryArgs)
+  }>({ ...queryArgs, context: graphClientAllPools })
 
   useEffect(() => {
     if (!dispatch) return

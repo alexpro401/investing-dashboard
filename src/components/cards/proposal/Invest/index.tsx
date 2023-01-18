@@ -7,11 +7,11 @@ import {
   useState,
 } from "react"
 import { format } from "date-fns"
-import { useNavigate } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { ZERO } from "consts"
+import { ROUTE_PATHS, ZERO } from "consts"
 import { getIpfsData } from "utils/ipfs"
 import { useActiveWeb3React } from "hooks"
 import usePoolPrice from "hooks/usePoolPrice"
@@ -403,7 +403,11 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   const navigateToPool = useCallback(
     (e: MouseEvent<HTMLElement>): void => {
       e.stopPropagation()
-      navigate(`/pool/profile/${poolAddress}`)
+      navigate(
+        generatePath(ROUTE_PATHS.poolProfile, {
+          poolAddress: poolAddress,
+        })
+      )
     },
     [navigate, poolAddress]
   )

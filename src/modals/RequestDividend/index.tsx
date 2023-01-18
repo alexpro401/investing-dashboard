@@ -1,6 +1,5 @@
 import { FC, useMemo } from "react"
 import { Flex } from "theme"
-import { createClient, Provider as GraphProvider } from "urql"
 
 import Modal from "components/Modal"
 import Token from "components/Token"
@@ -20,14 +19,6 @@ import * as S from "./styled"
 import formatDistanceToNow from "date-fns/formatDistanceToNow"
 import format from "date-fns/format"
 import { DATE_TIME_FORMAT } from "consts/time"
-
-const investPoolsClient = createClient({
-  url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",
-})
-
-const investorsPoolsClient = createClient({
-  url: process.env.REACT_APP_INVESTORS_API_URL || "",
-})
 
 interface Props {
   isOpen: boolean
@@ -109,13 +100,12 @@ const RequestDividend: FC<Props> = ({ isOpen, onClose, params }) => {
 
   return (
     <Modal isOpen={isOpen} toggle={onClose} title="Request a dividend">
-      <GraphProvider value={investPoolsClient}>
-        <Tile
-          poolAddress={params.poolAddress}
-          proposalId={params.proposalId}
-          token={token}
-        />
-      </GraphProvider>
+      <Tile
+        poolAddress={params.poolAddress}
+        proposalId={params.proposalId}
+        token={token}
+      />
+
       <S.Body>
         {proposalSize}
         <InfoDropdown
@@ -142,12 +132,4 @@ const RequestDividend: FC<Props> = ({ isOpen, onClose, params }) => {
   )
 }
 
-const RequestDividendWithProvider = (props) => {
-  return (
-    <GraphProvider value={investorsPoolsClient}>
-      <RequestDividend {...props} />
-    </GraphProvider>
-  )
-}
-
-export default RequestDividendWithProvider
+export default RequestDividend

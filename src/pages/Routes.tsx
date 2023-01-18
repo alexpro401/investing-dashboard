@@ -24,7 +24,7 @@ const CreateFundInvestment = lazy(
 )
 const Investor = lazy(() => import("pages/Investor"))
 const Trader = lazy(() => import("pages/Trader"))
-const Pool = lazy(() => import("pages/Pool"))
+const PoolProfile = lazy(() => import("pages/PoolProfile"))
 const Swap = lazy(() => import("pages/Swap"))
 const Success = lazy(() => import("pages/Success"))
 const Notifications = lazy(() => import("pages/Notifications"))
@@ -191,7 +191,7 @@ export const router = createBrowserRouter([
           },
           {
             path: ROUTE_PATHS.poolProfile,
-            element: <Pool />,
+            element: <PoolProfile />,
           },
           {
             path: ROUTE_PATHS.riskyProposalCreate,

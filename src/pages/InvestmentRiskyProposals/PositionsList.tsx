@@ -1,6 +1,5 @@
 import { FC, useMemo, useEffect, useRef } from "react"
 import { PulseSpinner } from "react-spinners-kit"
-import { createClient } from "urql"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 import { isNil } from "lodash"
 
@@ -16,11 +15,7 @@ import LoadMore from "components/LoadMore"
 import RiskyInvestorPositionCard from "components/cards/position/RiskyInvestor"
 
 import S from "./styled"
-
-const investorsClient = createClient({
-  url: process.env.REACT_APP_INVESTORS_API_URL || "",
-  requestPolicy: "network-only",
-})
+import { graphClientInvestors } from "utils/graphClient"
 
 interface IRiskyCardInitializer {
   position: InvestorRiskyPositionWithVests
@@ -99,7 +94,7 @@ const InvestmentRiskyPositionsList: FC<IProps> = ({ activePools, closed }) => {
         [closed, account]
       ),
       pause: isNil(closed) || isNil(account),
-      context: investorsClient,
+      context: graphClientInvestors,
       formatter: (d) => d.proposalPositions,
     })
 

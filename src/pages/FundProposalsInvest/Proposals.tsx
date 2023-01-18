@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react"
 import { useParams } from "react-router-dom"
 import { PulseSpinner } from "react-spinners-kit"
-import { createClient, Provider as GraphProvider } from "urql"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import useInvestProposals from "hooks/useInvestmentProposals"
@@ -12,10 +11,6 @@ import InvestProposalCard from "components/cards/proposal/Invest"
 import { RequestDividendsProvider } from "modals/RequestDividend/useRequestDividendsContext"
 
 import S from "./styled"
-
-const poolsClient = createClient({
-  url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",
-})
 
 const FundProposalsInvest = () => {
   const { poolAddress } = useParams()
@@ -63,11 +58,9 @@ const FundProposalsInvest = () => {
 
 const FundProposalsInvestWithProvider = (props) => {
   return (
-    <GraphProvider value={poolsClient}>
-      <RequestDividendsProvider>
-        <FundProposalsInvest {...props} />
-      </RequestDividendsProvider>
-    </GraphProvider>
+    <RequestDividendsProvider>
+      <FundProposalsInvest {...props} />
+    </RequestDividendsProvider>
   )
 }
 

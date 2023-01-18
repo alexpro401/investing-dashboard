@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from "react"
 import { useParams } from "react-router-dom"
 import { BigNumber } from "@ethersproject/bignumber"
-import { createClient, Provider as GraphProvider } from "urql"
 
 import { Center, Flex } from "theme"
 import SwapPrice from "components/SwapPrice"
@@ -32,10 +31,7 @@ import {
 import useWithdrawInvestmentProposal from "./useWithdrawInvestmentProposal"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { GuardSpinner } from "react-spinners-kit"
-
-const investPoolsClient = createClient({
-  url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",
-})
+import { graphClientInvestPools } from "utils/graphClient"
 
 function WithdrawInvestmentProposal() {
   const { poolAddress, proposalId } = useParams()
@@ -238,18 +234,16 @@ function WithdrawInvestmentProposal() {
 const WithdrawInvestmentProposalWithProvider = () => {
   const { poolAddress } = useParams()
   return (
-    <GraphProvider value={investPoolsClient}>
-      <WithPoolAddressValidation
-        poolAddress={poolAddress ?? ""}
-        loader={
-          <Center>
-            <GuardSpinner size={20} loading />
-          </Center>
-        }
-      >
-        <WithdrawInvestmentProposal />
-      </WithPoolAddressValidation>
-    </GraphProvider>
+    <WithPoolAddressValidation
+      poolAddress={poolAddress ?? ""}
+      loader={
+        <Center>
+          <GuardSpinner size={20} loading />
+        </Center>
+      }
+    >
+      <WithdrawInvestmentProposal />
+    </WithPoolAddressValidation>
   )
 }
 

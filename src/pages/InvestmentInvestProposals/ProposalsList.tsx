@@ -1,5 +1,4 @@
 import { FC, useMemo, useState, useEffect, useRef } from "react"
-import { createClient } from "urql"
 import { PulseSpinner } from "react-spinners-kit"
 import { v4 as uuidv4 } from "uuid"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
@@ -17,11 +16,7 @@ import { RequestDividendsProvider } from "modals/RequestDividend/useRequestDivid
 import S from "./styled"
 import { IInvestProposal } from "interfaces/thegraphs/invest-pools"
 import { map } from "lodash"
-
-const investPoolsClient = createClient({
-  url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
+import { graphClientInvestPools } from "utils/graphClient"
 
 interface IInvestProposalCardInitializer {
   poolAddress?: string
@@ -69,7 +64,7 @@ const InvestmentInvestProposalsList: FC<IProps> = ({
     query: InvestorInvestProposalsQuery(invested),
     variables: useMemo(() => ({ activePools }), [activePools]),
     pause: !activePools,
-    context: investPoolsClient,
+    context: graphClientInvestPools,
     formatter: (d) =>
       map(d.proposals, (p) => ({ id: String(p.id).slice(42), ...p })),
   })

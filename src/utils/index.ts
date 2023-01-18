@@ -15,7 +15,7 @@ import {
   PoolsQueryByType,
   PoolsQueryByTypeWithSort,
   PoolsQueryWithSort,
-} from "queries/all-pools"
+} from "queries"
 import extractRootDomain from "./extractRootDomain"
 import { isEqual } from "lodash"
 import { ERC20 as ERC20Types } from "interfaces/typechain"

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { IpfsEntity } from "utils/ipfsEntity"
-import { createClient, useQuery } from "urql"
+import { useQuery } from "urql"
 import { useActiveWeb3React } from "hooks"
 import {
   useGovPoolExecutor,
@@ -13,10 +13,8 @@ import { useERC20 } from "hooks"
 import { useSelector } from "react-redux"
 import { selectInsuranceAddress } from "state/contracts/selectors"
 import { InsuranceAccident } from "interfaces/insurance"
-
-const GovPoolGraphClient = createClient({
-  url: process.env.REACT_APP_DAO_POOLS_API_URL || "",
-})
+import { graphClientDaoPools } from "utils/graphClient"
+import { GovPoolProposalQuery } from "queries"
 
 export const useGovPoolProposal = (
   wrappedProposalView: WrappedProposalView,
@@ -34,21 +32,16 @@ export const useGovPoolProposal = (
   const { account } = useActiveWeb3React()
 
   const [{ data: daoPoolGraph }] = useQuery({
-    query: `
-      query {
-        proposals(where: { pool: "${govPoolAddress}", proposalId: "${wrappedProposalView?.proposalId}" }) {
-          id
-          executor
-          creator
-          voters
-          distributionProposal {
-            token
-            amount
-          }
-        }
-      }
-    `,
-    context: GovPoolGraphClient,
+    query: GovPoolProposalQuery,
+    variables: useMemo(
+      () => ({ govPoolAddress, proposalId: wrappedProposalView?.proposalId }),
+      [govPoolAddress, wrappedProposalView]
+    ),
+    pause: useMemo(
+      () => !govPoolAddress || !wrappedProposalView?.proposalId,
+      [govPoolAddress, wrappedProposalView]
+    ),
+    context: graphClientDaoPools,
   })
 
   const insuranceAddress = useSelector(selectInsuranceAddress)

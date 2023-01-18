@@ -52,7 +52,7 @@ const PoolStatisticCard: FC<Props> = ({
   stroke = theme.statusColors.success,
   ...rest
 }) => {
-  const { isMobile, isTablet, isDesktop } = useBreakpoints()
+  const { isTablet, isDesktop } = useBreakpoints()
   const [{ poolMetadata: metadata }] = usePoolMetadata(
     data.id,
     data?.descriptionURL

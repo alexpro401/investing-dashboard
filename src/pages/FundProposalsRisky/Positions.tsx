@@ -1,6 +1,5 @@
 import { FC, useMemo, useRef, useEffect } from "react"
 import { PulseSpinner } from "react-spinners-kit"
-import { createClient } from "urql"
 import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { useActiveWeb3React } from "hooks"
@@ -15,11 +14,7 @@ import RiskyPositionCard from "components/cards/position/Risky"
 import S from "./styled"
 import { IRiskyPosition } from "interfaces/thegraphs/basic-pools"
 import { map } from "lodash"
-
-const basicPoolClient = createClient({
-  url: process.env.REACT_APP_BASIC_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
+import { graphClientBasicPools } from "utils/graphClient"
 
 interface IProps {
   poolAddress?: string
@@ -42,7 +37,7 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
       [closed, poolAddress]
     ),
     pause: !poolAddress,
-    context: basicPoolClient,
+    context: graphClientBasicPools,
     formatter: (d) =>
       map(d.proposalPositions, (p) => ({
         ...p,

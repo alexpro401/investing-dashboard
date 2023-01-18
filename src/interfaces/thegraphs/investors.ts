@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
+import { BigNumberish } from "@ethersproject/bignumber"
 
 export interface IInvestorClaims {
   amountDividendsTokens: string[]
@@ -80,4 +80,16 @@ export interface IInvestorQuery {
   id: string
   activePools: InvestorPoolQuery[]
   allPools: InvestorPoolQuery[]
+}
+
+export interface InvestorVest {
+  id: string
+  hash: string
+  isInvest: boolean
+  timestamp: string
+  volumeBase: BigNumberish
+  volumeLP: BigNumberish
+  volumeUSD: BigNumberish
+  volumeBTC: BigNumberish
+  volumeNative: BigNumberish
 }

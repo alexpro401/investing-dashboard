@@ -7,9 +7,11 @@ const INVESTOR_POSITION_VEST = `
   volumeBase
   volumeLP
   volumeUSD
+  volumeBTC
+  volumeNative
 `
 
-const InvestorPositionsQuery = `
+export const InvestorPositionsQuery = `
   query ($address: String!, $closed: Boolean!, $offset: Int!, $limit: Int!) {
     investorPoolPositions(skip: $offset, first: $limit, where: {investor: $address, isClosed: $closed}) {
       id
@@ -33,7 +35,7 @@ const InvestorPositionsQuery = `
 `
 
 // Investor proposals
-const InvestorPoolsInvestedForQuery = `
+export const InvestorPoolsInvestedForQuery = `
   query ($address: String!, $poolType: String!) {
     investors(where: { id: $address }) {
       activePools(where: { type: $poolType }) { id }
@@ -42,7 +44,7 @@ const InvestorPoolsInvestedForQuery = `
 `
 
 // Investor claims
-const InvestorClaims = `
+export const InvestorClaimsQuery = `
   query ($id: String!) {
     proposalClaims (orderBy: timestamp, orderDirection: desc, where: {
        proposal_in: [$id]
@@ -65,7 +67,7 @@ const INSURANCE_HISTORY = `
 `
 
 // Insurance to day
-const InsurancDueDay = `
+export const InsuranceDueDayQuery = `
   query ($account: String!, $day: String!) {
     insuranceHistories (
       first: 1,
@@ -89,6 +91,10 @@ const INVESTOR_POOL_POSITION = `
   totalLPDivestVolume
   totalUSDInvestVolume
   totalUSDDivestVolume
+  totalBTCInvestVolume
+  totalBTCDivestVolume
+  totalNativeDivestVolume
+  totalNativeInvestVolume
 `
 
 const INVESTOR_POOL_LP_HISTORY = `
@@ -100,9 +106,9 @@ const INVESTOR_POOL_LP_HISTORY = `
 /**
  * Investor pool position by pool and investor
  * @param { string } pool - pool address
- * @param { string } investor - investor acccount
+ * @param { string } investor - investor account
  **/
-const InvestorPoolPositionQuery = `
+export const InvestorPoolPositionQuery = `
   query ($pool: String!, $investors: [String]!) {
     investorPoolPositions (
       first: 1000,
@@ -119,7 +125,7 @@ const InvestorPoolPositionQuery = `
  * @param { string } pools - pools address list
  * @param { string } investors - investors acccounts list
  **/
-const InvestorsPoolsLpHistoryQuery = `
+export const InvestorsPoolsLpHistoryQuery = `
  query ($day: String!, $pools: [String]!, $investors: [String]!) {
   investorPoolPositions(
     where: { 
@@ -134,7 +140,7 @@ const InvestorsPoolsLpHistoryQuery = `
  }
 `
 
-const TraderPoolHistoriesQuery = `
+export const TraderPoolHistoriesQuery = `
   query ($day: String!, $pool: String!) {
     traderPoolHistories(
       first: 1,
@@ -146,7 +152,7 @@ const TraderPoolHistoriesQuery = `
   }
 `
 
-const InvestorsInsuranceHistoriesQuery = `
+export const InvestorsInsuranceHistoriesQuery = `
   query ($day: String!, $investors: [String]!) {
     investors(where: { id_in: $investors }) {
       insuranceHistory(
@@ -190,7 +196,7 @@ const INVESTOR_PROPOSAL_POSITION = `
   }
 `
 
-const InvestorProposalsPositionsQuery = `
+export const InvestorProposalsPositionsQuery = `
   query ($address: String!, $type: String!, $closed: Boolean!, $offset: Int!, $limit: Int!) {
     proposalPositions(
       skip: $offset, first: $limit, 
@@ -211,7 +217,7 @@ const INVESTOR = `
   allPools { id type token }
 `
 
-const InvestorQuery = `
+export const InvestorQuery = `
   query ($address: String!) {
     investor(id: $address) {
       ${INVESTOR}
@@ -219,7 +225,7 @@ const InvestorQuery = `
   }
 `
 
-const InvestorPoolsPositionsQuery = `
+export const InvestorPoolsPositionsQuery = `
   query ($address: String!, $offset: Int!, $limit: Int!) {
     investorPoolPositions(skip: $offset, first: $limit, where: {investor: $address}) {
       ${INVESTOR_POOL_POSITION}
@@ -227,16 +233,18 @@ const InvestorPoolsPositionsQuery = `
   }
 `
 
-export {
-  InvestorQuery,
-  InvestorPositionsQuery,
-  InvestorPoolsInvestedForQuery,
-  InvestorClaims,
-  InsurancDueDay,
-  InvestorPoolsPositionsQuery,
-  TraderPoolHistoriesQuery,
-  InvestorPoolPositionQuery,
-  InvestorsPoolsLpHistoryQuery,
-  InvestorsInsuranceHistoriesQuery,
-  InvestorProposalsPositionsQuery,
+export const InvestorVestsInPoolQuery = `
+query ($investor: String!, $pool: String!, $offset: Int, $limit: Int) {
+  vests(
+    skip: $offset, first: $limit,
+    where: {
+      investorPoolPosition_: {
+        investor: $investor, 
+        pool: $pool
+      }
+    }
+  ) {
+    ${INVESTOR_POSITION_VEST}
+  }
 }
+`

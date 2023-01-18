@@ -15,7 +15,6 @@ import TransactionSlippage from "components/TransactionSlippage"
 
 import { useUserAgreement } from "state/user/hooks"
 
-import { createClient, Provider as GraphProvider } from "urql"
 import { cutDecimalPlaces, fromBig, shortenAddress } from "utils"
 
 import close from "assets/icons/close-big.svg"
@@ -37,10 +36,6 @@ import {
 import useInvest from "./useInvest"
 import { GuardSpinner } from "react-spinners-kit"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
-
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-})
 
 const Invest = () => {
   const { poolAddress } = useParams<{
@@ -302,18 +297,16 @@ const Invest = () => {
 const InvestWithProvider = () => {
   const { poolAddress } = useParams()
   return (
-    <GraphProvider value={poolsClient}>
-      <WithPoolAddressValidation
-        poolAddress={poolAddress ?? ""}
-        loader={
-          <Center>
-            <GuardSpinner size={20} loading />
-          </Center>
-        }
-      >
-        <Invest />
-      </WithPoolAddressValidation>
-    </GraphProvider>
+    <WithPoolAddressValidation
+      poolAddress={poolAddress ?? ""}
+      loader={
+        <Center>
+          <GuardSpinner size={20} loading />
+        </Center>
+      }
+    >
+      <Invest />
+    </WithPoolAddressValidation>
   )
 }
 

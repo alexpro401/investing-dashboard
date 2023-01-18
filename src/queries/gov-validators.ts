@@ -3,7 +3,7 @@ const VALIDATOR = `
   balance
 `
 
-const DaoPoolValidatorsQuery = `
+export const DaoPoolValidatorsQuery = `
   query($address: String!) {
     daoPools(where: { id: $address }) {
       validators {
@@ -13,7 +13,7 @@ const DaoPoolValidatorsQuery = `
   }
 `
 
-const DaoPoolDaoProfileValidatorsQuery = `
+export const DaoPoolDaoProfileValidatorsQuery = `
   query($offset: Int!, $limit: Int!, $address: String!) {
     daoPool(id: $address) {
       validators(skip: $offset, first: $limit, orderBy: balance, orderDirection: desc) {
@@ -23,5 +23,3 @@ const DaoPoolDaoProfileValidatorsQuery = `
     }
   }
 `
-
-export { DaoPoolValidatorsQuery, DaoPoolDaoProfileValidatorsQuery }

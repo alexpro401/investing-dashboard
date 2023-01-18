@@ -1,4 +1,4 @@
-import { useMemo, useState, ReactNode } from "react"
+import { useMemo, useState, ReactNode, HTMLAttributes, FC } from "react"
 import { useWeb3React } from "@web3-react/core"
 import { useNavigate } from "react-router-dom"
 import { CircleSpinner } from "react-spinners-kit"
@@ -13,24 +13,25 @@ import { selectInvolvedPoolsData } from "state/user/selectors"
 
 import AddFund from "assets/icons/AddFund"
 
-import { PortraitsPlus, Funds, FundWrapper } from "./styled"
+import * as S from "./styled"
 
 const FundItem = ({ pool }) => {
   const [{ poolMetadata }] = usePoolMetadata(pool.id, pool.descriptionURL)
 
   return (
-    <FundWrapper>
+    <S.FundWrapper>
       <Icon
         size={24}
         source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
         address={pool.id}
       />
-    </FundWrapper>
+    </S.FundWrapper>
   )
 }
 
-interface IPortaitsProps {}
-const Pools = ({}: IPortaitsProps) => {
+interface Props extends HTMLAttributes<HTMLDivElement> {}
+
+const Pools: FC<Props> = ({ ...rest }) => {
   const navigate = useNavigate()
   const { account } = useWeb3React()
 
@@ -61,9 +62,9 @@ const Pools = ({}: IPortaitsProps) => {
 
   if (loading && !(owned.length > 0 || managed.length > 0)) {
     return (
-      <PortraitsPlus>
+      <S.PortraitsPlus>
         <CircleSpinner color="#A4EBD4" size={16} loading />
-      </PortraitsPlus>
+      </S.PortraitsPlus>
     )
   }
 
@@ -76,15 +77,15 @@ const Pools = ({}: IPortaitsProps) => {
           isOpen={isModalOpen}
           toggle={() => setModal(false)}
         />
-        <Funds onClick={() => setModal(true)}>{fundsPreview}</Funds>
+        <S.Funds onClick={() => setModal(true)}>{fundsPreview}</S.Funds>
       </>
     )
   }
 
   return (
-    <Funds>
+    <S.Funds {...rest}>
       <AddFund onClick={createFund} />
-    </Funds>
+    </S.Funds>
   )
 }
 

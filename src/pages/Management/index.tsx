@@ -1,6 +1,5 @@
 import { Flex } from "theme"
 import { useMemo } from "react"
-import { createClient, Provider as GraphProvider } from "urql"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { ICON_NAMES } from "consts/icon-names"
@@ -13,10 +12,6 @@ import { formatBigNumber } from "utils"
 import { Card, CardHeader, Title } from "components/Exchange/styled"
 import useInsuranceManagement from "./useInsuranceManagement"
 import * as S from "./styled"
-
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-})
 
 function Management(props) {
   const {
@@ -179,10 +174,4 @@ function Management(props) {
   )
 }
 
-export default function ManagementWithProvider(props) {
-  return (
-    <GraphProvider value={poolsClient}>
-      <Management {...props} />
-    </GraphProvider>
-  )
-}
+export default Management

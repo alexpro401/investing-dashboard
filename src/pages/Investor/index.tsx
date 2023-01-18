@@ -1,6 +1,6 @@
 import { useWeb3React } from "@web3-react/core"
-import { useParams, useNavigate } from "react-router-dom"
-import { createClient, Provider as GraphProvider, useQuery } from "urql"
+import { useParams, useNavigate, generatePath } from "react-router-dom"
+import { useQuery } from "urql"
 import { useMemo } from "react"
 import { isEmpty, isNil } from "lodash"
 import { v4 as uuidv4 } from "uuid"
@@ -28,16 +28,8 @@ import { IInvestorQuery } from "interfaces/thegraphs/investors"
 import InvestedFund from "components/cards/InvestedFund"
 import InvestorStatisticCard from "components/cards/InvestorStatistic"
 import { useBreakpoints } from "hooks"
-
-const poolsClient = createClient({
-  url: process.env.REACT_APP_ALL_POOLS_API_URL || "",
-  requestPolicy: "network-only",
-})
-
-const investorGraphClient = createClient({
-  url: process.env.REACT_APP_INVESTORS_API_URL || "",
-  requestPolicy: "network-only",
-})
+import { graphClientInvestors } from "utils/graphClient"
+import { ROUTE_PATHS } from "consts"
 
 function Investor() {
   const navigate = useNavigate()
@@ -52,7 +44,7 @@ function Investor() {
     variables: {
       address: account,
     },
-    context: investorGraphClient,
+    context: graphClientInvestors,
   })
 
   const { data: investorData, fetching: investorFetching } = investorResp
@@ -117,7 +109,12 @@ function Investor() {
           </TabContainer>
           <PoolsList maxH={investorPools.traderPools.length >= 3}>
             {investorPools.traderPools.map((traderPool) => (
-              <To key={uuidv4()} to={`/pool/profile/${traderPool.id}`}>
+              <To
+                key={uuidv4()}
+                to={generatePath(ROUTE_PATHS.poolProfile, {
+                  poolAddress: traderPool.id,
+                })}
+              >
                 <InvestedFund data={traderPool} account={account} />
               </To>
             ))}
@@ -164,12 +161,4 @@ function Investor() {
   )
 }
 
-const InvestorWithProvider = () => {
-  return (
-    <GraphProvider value={poolsClient}>
-      <Investor />
-    </GraphProvider>
-  )
-}
-
-export default InvestorWithProvider
+export default Investor

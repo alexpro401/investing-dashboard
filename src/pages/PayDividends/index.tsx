@@ -1,7 +1,6 @@
 import { Center, Flex } from "theme"
 import { useCallback, useMemo, useState } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
-import { createClient, Provider as GraphProvider } from "urql"
 import { useWeb3React } from "@web3-react/core"
 import format from "date-fns/format"
 import formatDistanceToNow from "date-fns/formatDistanceToNow"
@@ -44,10 +43,6 @@ import { useAllTokens } from "hooks/useToken"
 import { Currency } from "lib/entities"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { GuardSpinner } from "react-spinners-kit"
-
-const investPoolClient = createClient({
-  url: process.env.REACT_APP_INVEST_POOLS_API_URL || "",
-})
 
 function PayDividends() {
   const { chainId } = useWeb3React()
@@ -291,20 +286,18 @@ const PayDividendsWithProvider = () => {
   const { poolAddress } = useParams()
 
   return (
-    <GraphProvider value={investPoolClient}>
-      <WithPoolAddressValidation
-        poolAddress={poolAddress ?? ""}
-        loader={
-          <Center>
-            <GuardSpinner size={20} loading />
-          </Center>
-        }
-      >
-        <ConvertToDividendsProvider>
-          <PayDividends />
-        </ConvertToDividendsProvider>
-      </WithPoolAddressValidation>
-    </GraphProvider>
+    <WithPoolAddressValidation
+      poolAddress={poolAddress ?? ""}
+      loader={
+        <Center>
+          <GuardSpinner size={20} loading />
+        </Center>
+      }
+    >
+      <ConvertToDividendsProvider>
+        <PayDividends />
+      </ConvertToDividendsProvider>
+    </WithPoolAddressValidation>
   )
 }
 

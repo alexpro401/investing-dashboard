@@ -7,11 +7,11 @@ import {
   useCallback,
 } from "react"
 import { format } from "date-fns"
-import { useNavigate } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
 import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { ZERO } from "consts"
+import { ROUTE_PATHS, ZERO } from "consts"
 import { useActiveWeb3React } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
 import { DATE_TIME_FORMAT } from "consts/time"
@@ -353,7 +353,11 @@ const RiskyProposalCard: FC<Props> = ({
   const navigateToPool = useCallback(
     (e: MouseEvent<HTMLElement>): void => {
       e.stopPropagation()
-      navigate(`/pool/profile/${poolAddress}`)
+      navigate(
+        generatePath(ROUTE_PATHS.poolProfile, {
+          poolAddress: poolAddress,
+        })
+      )
     },
     [navigate, poolAddress]
   )
