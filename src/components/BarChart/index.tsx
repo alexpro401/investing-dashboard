@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, FC } from "react"
 import { AGGREGATION_CODE } from "consts/chart"
 import { opacityVariants } from "motion/variants"
 import { usePriceHistory } from "state/pools/hooks"
@@ -43,7 +43,7 @@ interface IProps {
   m?: string
 }
 
-const BarChart: React.FC<IProps> = ({ address, withTip, m }) => {
+const BarChart: FC<IProps> = ({ address, withTip, m }) => {
   const [history] = usePriceHistory(
     address,
     [AGGREGATION_CODE.m1 - 1, AGGREGATION_CODE.m1],

@@ -6,7 +6,6 @@ import {
   useMemo,
   useState,
 } from "react"
-import { useParams } from "react-router-dom"
 import { useWeb3React } from "@web3-react/core"
 import { useTraderPoolContract } from "contracts"
 import { useSelector } from "react-redux"
@@ -16,144 +15,149 @@ import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import {
   usePoolContract,
   usePoolLockedFundsHistory,
-  usePoolPnlInfo,
   usePoolPrice,
   usePoolSortino,
   usePoolStatistics,
   usePoolLockedFunds,
+  useInvestorAllVestsInPool,
+  usePoolAlternativePnlUSD,
+  usePoolAlternativePnlTokens,
 } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
-import { DATE_FORMAT, TIMEFRAME, ZERO } from "consts"
+import { PoolType, TIMEFRAME, ZERO } from "consts"
 import { getPNL, getPriceLP, multiplyBignumbers } from "utils/formulas"
-import { expandTimestamp } from "utils"
+import { expandTimestamp, normalizeBigNumber } from "utils"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { Center } from "theme"
 import { GuardSpinner } from "react-spinners-kit"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import { format, getDay } from "date-fns"
-import { formatEther } from "@ethersproject/units"
+import { getDay } from "date-fns"
 import { BigNumber } from "@ethersproject/bignumber"
+import { Token } from "interfaces"
+import { Investor } from "interfaces/thegraphs/all-pools"
 
 interface IPoolProfileContext {
-  poolData: any
-  poolMetadata: any
-  baseToken: any
-  priceLP: any
-  tvl: any
-  apy: any
-  pnl: any
-  pnl24h: any
-  depositors: any
-  accountLPsPrice: any
-  isTrader: boolean
-  poolInfo: IPoolInfo
+  isTrader?: boolean
 
-  totalPnlPercentage: any
-  totalPnlBase: any
-  totalUSDPnlPerc: any
-  totalUSDPnlUSD: any
+  creationDate?: number
+  fundAddress?: string
+  basicToken?: Token | null
+  fundTicker?: string
+  fundName?: string
+  fundType?: PoolType
+  fundImageUrl?: string
 
-  baseSymbol: any
-  totalPoolUSD: any
-  traderFundsUSD: any
-  traderFundsBase: any
-  investorsFundsUSD: any
-  investorsFundsBase: any
-  poolUsedInPositionsUSD: any
-  poolUsedToTotalPercentage: any
-  tf: any
-  setTf: any
-  poolLockedFundHistoryChartData: any
-  isPoolLockedFundHistoryChartDataFetching: any
+  minInvestAmount?: BigNumber
+  emission?: BigNumber
+  availableLPTokens?: { percentage: number; value: BigNumber }
+  fundManagers?: string[]
+  whiteList?: Investor[]
+  openPosition?: string[]
+  isInvestorStricted?: boolean
+  performanceFee?: BigNumber
 
-  creationTime: any
-  minimalInvestment: any
-  emission: any
-  emissionLeft: any
-  adminsCount: any
-  whitelistCount: any
-  commissionPercentage: any
+  fundDescription?: string
+  fundStrategy?: string
 
-  sortino: any
-  investorsCount: any
-  openPositionsLen: any
-  orderSize: any
-  dailyProfit: any
-  timePosition: any
-  sortinoETH: any
-  sortinoBTC: any
-  totalTrades: any
-  maxLoss: any
+  trades?: {
+    perDay: number
+    total: number
+  }
+  orderSize?: BigNumber
+  dailyProfitPercent?: number
+  timePositions?: string
+  sortino?: { eth: string; btc: string }
+  maxLoss?: number
+
+  pnl?: {
+    total?: {
+      base: {
+        amount?: BigNumber
+        percent?: number
+      }
+      dexe: {
+        amount?: BigNumber
+        percent?: number
+      }
+      usd: {
+        amount?: BigNumber
+        percent?: number
+      }
+      eth: {
+        amount?: BigNumber
+        percent?: number
+      }
+      btc: {
+        amount?: BigNumber
+        percent?: number
+      }
+    }
+    _24h?: {
+      base: {
+        amount?: BigNumber
+        percent?: number
+      }
+    }
+  }
+
+  depositors?: number
+  apy?: BigNumber
+  tvl?: number
+  priceLP?: string
+
+  lockedFunds?: {
+    accountLPsPrice: any
+
+    poolLockedFundHistoryChartData: any
+    isPoolLockedFundHistoryChartDataFetching: any
+
+    tf: any
+    setTf: any
+
+    baseSymbol?: any
+    totalPoolUSD?: any
+    traderFundsUSD?: any
+    traderFundsBase?: any
+    investorsFundsUSD?: any
+    investorsFundsBase?: any
+    poolUsedInPositionsUSD?: any
+    poolUsedToTotalPercentage?: any
+  }
+
+  poolInvestors?: Investor[]
 }
 
-export const PoolProfileContext = createContext<IPoolProfileContext>({
-  poolData: undefined,
-  poolMetadata: undefined,
-  baseToken: undefined,
-  priceLP: undefined,
-  tvl: undefined,
-  apy: undefined,
-  pnl: undefined,
-  pnl24h: undefined,
-  depositors: undefined,
-  accountLPsPrice: undefined,
-  isTrader: false,
-  poolInfo: {} as IPoolInfo,
+export const PoolProfileContext = createContext<IPoolProfileContext>({})
 
-  totalPnlPercentage: undefined,
-  totalPnlBase: undefined,
-  totalUSDPnlPerc: undefined,
-  totalUSDPnlUSD: undefined,
+interface Props extends HTMLAttributes<HTMLDivElement> {
+  poolAddress: string
+}
 
-  baseSymbol: undefined,
-  totalPoolUSD: undefined,
-  traderFundsUSD: undefined,
-  traderFundsBase: undefined,
-  investorsFundsUSD: undefined,
-  investorsFundsBase: undefined,
-  poolUsedInPositionsUSD: undefined,
-  poolUsedToTotalPercentage: undefined,
-  tf: undefined,
-  setTf: undefined,
-  poolLockedFundHistoryChartData: undefined,
-  isPoolLockedFundHistoryChartDataFetching: undefined,
-
-  creationTime: undefined,
-  minimalInvestment: undefined,
-  emission: undefined,
-  emissionLeft: undefined,
-  adminsCount: undefined,
-  whitelistCount: undefined,
-  commissionPercentage: undefined,
-
-  sortino: undefined,
-  investorsCount: undefined,
-  openPositionsLen: undefined,
-  orderSize: undefined,
-  dailyProfit: undefined,
-  timePosition: undefined,
-  sortinoETH: undefined,
-  sortinoBTC: undefined,
-  totalTrades: undefined,
-  maxLoss: undefined,
-})
-
-interface Props extends HTMLAttributes<HTMLDivElement> {}
-
-const PoolProfileContextProvider: FC<Props> = ({ children }) => {
-  const { poolAddress } = useParams()
+const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
+  const [isTrader, setIsTrader] = useState(false)
 
   const { account } = useWeb3React()
 
   const traderPool = useTraderPoolContract(poolAddress)
+
   const poolData = useSelector((s: AppState) =>
     selectPoolByAddress(s, poolAddress)
   )
 
-  const { priceLP, tvl, apy, pnl, pnl24h, depositors } =
+  const loader = useMemo(
+    () => (
+      <Center>
+        <GuardSpinner size={20} loading />
+      </Center>
+    ),
+    []
+  )
+
+  const { depositors, pnlBase24hPercent, pnlBasePercent, priceLP, apy, tvl } =
     usePoolStatistics(poolData)
 
   const [, poolInfo] = usePoolContract(poolAddress)
+
   const [{ poolMetadata }] = usePoolMetadata(
     poolData?.id,
     poolData?.descriptionURL
@@ -163,15 +167,7 @@ const PoolProfileContextProvider: FC<Props> = ({ children }) => {
 
   const [baseToken] = useERC20Data(poolData?.baseToken)
 
-  const [isTrader, setIsTrader] = useState(false)
-
   const [accountLPs, setAccountLPs] = useState(ZERO)
-
-  const accountLPsPrice = useMemo(() => {
-    if (accountLPs.isZero() || priceUSD.isZero()) return BigNumber.from(0)
-
-    return multiplyBignumbers([accountLPs, 18], [priceUSD, 18])
-  }, [priceUSD, accountLPs])
 
   useEffect(() => {
     if (!traderPool || !account) return
@@ -185,19 +181,12 @@ const PoolProfileContextProvider: FC<Props> = ({ children }) => {
     })()
   }, [traderPool, account])
 
-  const loader = useMemo(
-    () => (
-      <Center>
-        <GuardSpinner size={20} loading />
-      </Center>
-    ),
-    []
-  )
-
-  const [
-    ,
-    { totalPnlPercentage, totalPnlBase, totalUSDPnlPerc, totalUSDPnlUSD },
-  ] = usePoolPnlInfo(poolData.id)
+  const accountLPsPrice = useMemo(() => {
+    if (accountLPs.isZero() || priceUSD.isZero()) {
+      return ZERO
+    }
+    return multiplyBignumbers([accountLPs, 18], [priceUSD, 18])
+  }, [priceUSD, accountLPs])
 
   const [
     {
@@ -210,42 +199,66 @@ const PoolProfileContextProvider: FC<Props> = ({ children }) => {
       poolUsedInPositionsUSD,
       poolUsedToTotalPercentage,
     },
-  ] = usePoolLockedFunds(poolData, poolInfo, baseToken)
+  ] = usePoolLockedFunds(poolData, poolInfo as IPoolInfo, baseToken as Token)
 
   const [tf, setTf] = useState(TIMEFRAME.d)
   const [
     poolLockedFundHistoryChartData,
     isPoolLockedFundHistoryChartDataFetching,
-  ] = usePoolLockedFundsHistory(poolData.id, tf)
+  ] = usePoolLockedFundsHistory(poolData?.id, tf)
 
-  const creationTime = useMemo(() => {
-    if (!!poolData) {
-      return format(expandTimestamp(poolData.creationTime), DATE_FORMAT)
-    }
+  const sortinoTokens = [
+    "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+  ]
 
-    return "-"
+  const addressWETH = "0x8babbb98678facc7342735486c851abd7a0d17ca"
+  const addressWBTC = "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
+
+  const _sortino = usePoolSortino(poolData?.id, sortinoTokens)
+
+  const dailyProfitPercent = useMemo(() => {
+    if (!poolData) return 0
+
+    const days = getDay(expandTimestamp(poolData?.creationTime))
+    if (days === 0) return 0
+
+    const priceLP = getPriceLP(poolData?.priceHistory)
+    const pnl = getPNL(priceLP)
+
+    return Number(pnl) / days
   }, [poolData])
 
-  const minimalInvestment = useMemo(() => {
-    if (!poolInfo || !baseToken) return "0"
+  const timePositions = useMemo(() => {
+    if (!poolData) return ""
 
-    const res = formatEther(poolInfo.parameters.minimalInvestment)
+    const date = new Date(poolData?.averagePositionTime * 1000)
 
-    return `${res} ${baseToken.symbol}`
-  }, [poolInfo, baseToken])
+    return `${date.getUTCHours()}H`
+  }, [poolData])
 
-  const emission = useMemo(() => {
-    if (!poolInfo) return { unlimited: true, value: BigNumber.from(0) }
+  const sortino = useMemo(() => {
+    return {
+      eth: !_sortino ? "♾️" : Number([_sortino[sortinoTokens[0]]]).toFixed(2),
+      btc: !_sortino ? "♾️" : Number([_sortino[sortinoTokens[1]]]).toFixed(2),
+    }
+  }, [_sortino, sortinoTokens])
 
-    const value = poolInfo.parameters.totalLPEmission
+  const { data: investorVests } = useInvestorAllVestsInPool(
+    account,
+    poolData?.id
+  )
 
-    const unlimited = value.isZero()
+  const altPnlUSD = usePoolAlternativePnlUSD(investorVests, poolData?.baseToken)
 
-    return { unlimited, value: value }
-  }, [poolInfo])
+  const altPnlTokens = usePoolAlternativePnlTokens(
+    investorVests,
+    poolData?.baseToken,
+    { eth: addressWETH, btc: addressWBTC }
+  )
 
-  const emissionLeft = useMemo(() => {
-    if (!poolInfo || emission.unlimited)
+  const availableLPTokens = useMemo(() => {
+    if (!poolInfo || poolInfo.parameters.totalLPEmission.isZero())
       return {
         percentage: 0,
         value: BigNumber.from(0),
@@ -256,150 +269,115 @@ const PoolProfileContextProvider: FC<Props> = ({ children }) => {
 
     const dif = total.sub(used)
 
-    function percentage(used, total) {
-      return (used / total) * 100
-    }
-
-    const percent = percentage(
-      Number(formatEther(used)).toFixed(2),
-      Number(formatEther(total)).toFixed(2)
-    )
+    const percent = Number(normalizeBigNumber(used.sub(total).mul(100), 25))
 
     return {
       percentage: percent,
       value: dif,
     }
-  }, [poolInfo, emission])
-
-  const adminsCount = useMemo(
-    () => (poolData ? poolData.admins.length : 0),
-    [poolData]
-  )
-
-  const whitelistCount = useMemo(() => {
-    if (!poolData) return 0
-
-    return poolData?.privateInvestors?.length || 0
-  }, [poolData])
-
-  const commissionPercentage = useMemo(() => {
-    if (!poolInfo) return BigNumber.from(0)
-
-    return poolInfo.parameters.commissionPercentage
   }, [poolInfo])
-
-  const sortinoTokens = [
-    "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-    "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-  ]
-
-  const sortino = usePoolSortino(poolData.id, sortinoTokens)
-
-  const investorsCount = Number(poolData?.investorsCount) || 0
-
-  const openPositionsLen = Number(poolInfo?.openPositions.length) || 0
-
-  const orderSize = useMemo(() => {
-    if (!poolData) return BigNumber.from(0)
-
-    return poolData.orderSize
-  }, [poolData])
-
-  const dailyProfit = useMemo(() => {
-    if (!poolData) return "0"
-
-    const days = getDay(expandTimestamp(poolData.creationTime))
-    if (days === 0) return "0"
-
-    const priceLP = getPriceLP(poolData.priceHistory)
-    const pnl = getPNL(priceLP)
-
-    return (Number(pnl) / days).toFixed(2)
-  }, [poolData])
-
-  const timePosition = useMemo(() => {
-    if (!poolData) return ""
-    const date = new Date(poolData.averagePositionTime * 1000)
-    return `${date.getUTCHours()}H`
-  }, [poolData])
-
-  const sortinoETH = useMemo(() => {
-    if (!sortino) return <>♾️</>
-
-    return Number([sortino[sortinoTokens[0]]]).toFixed(2)
-  }, [sortino, sortinoTokens])
-
-  const sortinoBTC = useMemo(() => {
-    if (!sortino) return <>♾️</>
-
-    return Number([sortino[sortinoTokens[1]]]).toFixed(2)
-  }, [sortino, sortinoTokens])
-
-  const totalTrades = useMemo(() => {
-    if (!poolData) return "0"
-
-    return poolData.totalTrades
-  }, [poolData])
-
-  const maxLoss = useMemo(() => {
-    if (!poolData) return BigNumber.from(0)
-
-    return BigNumber.from(poolData.maxLoss)
-  }, [poolData])
 
   return (
     <WithPoolAddressValidation poolAddress={poolAddress ?? ""} loader={loader}>
       <PoolProfileContext.Provider
         value={{
-          poolData,
-          poolMetadata,
-          baseToken,
+          isTrader,
+
+          creationDate: poolData?.creationTime,
+          fundAddress: poolData?.id,
+          basicToken: baseToken,
+          fundTicker: poolData?.ticker,
+          fundName: poolData?.name,
+          fundType: poolData?.type,
+          fundImageUrl: poolMetadata?.assets[poolMetadata?.assets.length - 1],
+
+          minInvestAmount: poolInfo?.parameters.minimalInvestment,
+          emission: poolInfo?.parameters.totalLPEmission,
+          // if emission.isZero() then we ain't show availableLPTokens
+          availableLPTokens,
+          fundManagers: poolData?.admins,
+          poolInvestors: poolData?.investors,
+          whiteList: poolData?.privateInvestors,
+          openPosition: poolInfo?.openPositions,
+          isInvestorStricted: !!poolData?.privateInvestors?.length,
+          performanceFee: poolInfo?.parameters.commissionPercentage,
+
+          fundDescription: poolMetadata?.description,
+          fundStrategy: poolMetadata?.strategy,
+
+          trades: {
+            perDay: poolData?.averageTrades,
+            total: poolData?.totalTrades,
+          },
+          orderSize: poolData?.orderSize,
+          dailyProfitPercent,
+          timePositions,
+          sortino,
+          maxLoss: poolData?.maxLoss,
+
+          // in USD
+          pnl: {
+            _24h: {
+              base: {
+                amount: BigNumber.from(0),
+                percent: pnlBase24hPercent as number,
+              },
+            },
+            total: {
+              base: {
+                amount: BigNumber.from(
+                  poolData?.priceHistory[0]?.absPNLBase | 0
+                ),
+                percent: pnlBasePercent,
+              },
+              dexe: {
+                amount: BigNumber.from(
+                  poolData?.priceHistory[0]?.absPNLBase | 0
+                ),
+                percent: pnlBasePercent,
+              },
+              usd: {
+                amount: altPnlUSD.usd,
+                percent: Number(normalizeBigNumber(altPnlUSD.percentage, 25)),
+              },
+              eth: {
+                amount: altPnlTokens?.usd?.eth,
+                percent: Number(
+                  normalizeBigNumber(altPnlTokens?.percentage?.eth, 25)
+                ),
+              },
+              btc: {
+                amount: altPnlTokens?.usd?.btc,
+                percent: Number(
+                  normalizeBigNumber(altPnlTokens?.percentage?.btc, 25)
+                ),
+              },
+            },
+          },
+
+          depositors,
           priceLP,
           tvl,
           apy,
-          pnl,
-          pnl24h,
-          depositors,
-          isTrader,
-          accountLPsPrice,
-          poolInfo: poolInfo as IPoolInfo,
 
-          totalPnlPercentage,
-          totalPnlBase,
-          totalUSDPnlPerc,
-          totalUSDPnlUSD,
+          lockedFunds: {
+            accountLPsPrice,
 
-          baseSymbol,
-          totalPoolUSD,
-          traderFundsUSD,
-          traderFundsBase,
-          investorsFundsUSD,
-          investorsFundsBase,
-          poolUsedInPositionsUSD,
-          poolUsedToTotalPercentage,
-          tf,
-          setTf,
-          poolLockedFundHistoryChartData,
-          isPoolLockedFundHistoryChartDataFetching,
+            poolLockedFundHistoryChartData,
+            isPoolLockedFundHistoryChartDataFetching,
 
-          creationTime,
-          minimalInvestment,
-          emission,
-          emissionLeft,
-          adminsCount,
-          whitelistCount,
-          commissionPercentage,
+            tf,
+            setTf,
 
-          sortino,
-          investorsCount,
-          openPositionsLen,
-          orderSize,
-          dailyProfit,
-          timePosition,
-          sortinoETH,
-          sortinoBTC,
-          totalTrades,
-          maxLoss,
+            baseSymbol,
+            totalPoolUSD,
+            traderFundsUSD,
+            traderFundsBase,
+            investorsFundsUSD,
+            investorsFundsBase,
+            poolUsedInPositionsUSD,
+            poolUsedToTotalPercentage,
+          },
         }}
       >
         {children}

@@ -5,8 +5,15 @@ import { normalizeBigNumber } from "utils"
 import { percentageOfBignumbers, subtractBignumbers } from "utils/formulas"
 import useOpenPositionsPriceOutUSD from "hooks/useOpenPositionsPriceOutUSD"
 import { ZERO } from "consts"
+import { IPoolQuery } from "interfaces/thegraphs/all-pools"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
+import { Token } from "interfaces"
 
-export function usePoolLockedFunds(poolData, poolInfo, baseToken) {
+export function usePoolLockedFunds(
+  poolData?: IPoolQuery,
+  poolInfo?: IPoolInfo,
+  baseToken?: Token
+) {
   const [loading, setLoading] = useState(true)
 
   const _baseAndPositionBalances = useMemo(() => {
@@ -19,6 +26,7 @@ export function usePoolLockedFunds(poolData, poolInfo, baseToken) {
   const positionAmountsMap = useMemo(() => {
     if (
       !poolInfo ||
+      !poolData?.id ||
       !poolInfo.openPositions.length ||
       !_baseAndPositionBalances.length
     ) {
@@ -27,14 +35,14 @@ export function usePoolLockedFunds(poolData, poolInfo, baseToken) {
 
     return new Map<string, BigNumber>(
       poolInfo.openPositions.map((p, i) => [
-        `${poolData.id}${p}${0}`.toLowerCase(),
+        `${poolData?.id}${p}${0}`.toLowerCase(),
         _baseAndPositionBalances[i],
       ])
     )
   }, [_baseAndPositionBalances, poolData, poolInfo])
 
   const lockedAmountUSD = useOpenPositionsPriceOutUSD(
-    poolData.id,
+    poolData?.id,
     positionAmountsMap,
     poolInfo?.openPositions
   )
