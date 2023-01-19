@@ -77,7 +77,10 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
   return (
     <>
       <SharedS.Container>
-        <SharedS.Card onClick={toggleExtraContent}>
+        <SharedS.Card
+          onClick={toggleExtraContent}
+          showPositions={showPositions}
+        >
           <SharedS.Head>
             <Flex>
               <TokenIcon address={position.positionToken} m="0" size={24} />
