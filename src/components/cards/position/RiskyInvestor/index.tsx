@@ -81,6 +81,7 @@ const RiskyInvestorPositionCard: FC<Props> = ({
       navigate(
         generatePath(ROUTE_PATHS.poolProfile, {
           poolAddress: position.pool.id,
+          "*": "",
         })
       )
     },

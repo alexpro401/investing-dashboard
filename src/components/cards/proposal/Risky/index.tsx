@@ -356,6 +356,7 @@ const RiskyProposalCard: FC<Props> = ({
       navigate(
         generatePath(ROUTE_PATHS.poolProfile, {
           poolAddress: poolAddress,
+          "*": "",
         })
       )
     },

@@ -113,6 +113,7 @@ function Investor() {
                 key={uuidv4()}
                 to={generatePath(ROUTE_PATHS.poolProfile, {
                   poolAddress: traderPool.id,
+                  "*": "",
                 })}
               >
                 <InvestedFund data={traderPool} account={account} />

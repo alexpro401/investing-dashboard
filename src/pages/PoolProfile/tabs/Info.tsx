@@ -87,9 +87,9 @@ const TabPoolInfo: FC<Props> = () => {
           {isTrader && fundAddress && (
             <S.AppLink
               text="Manage"
-              routePath={generatePath(ROUTE_PATHS.fundDetails, {
+              routePath={generatePath(ROUTE_PATHS.poolProfile, {
                 poolAddress: fundAddress,
-                "*": "edit",
+                "*": "details",
               })}
             />
           )}
@@ -147,9 +147,9 @@ const TabPoolInfo: FC<Props> = () => {
           {isTrader && fundAddress && (
             <S.AppLink
               text="Edit"
-              routePath={generatePath(ROUTE_PATHS.fundDetails, {
+              routePath={generatePath(ROUTE_PATHS.poolProfile, {
                 poolAddress: fundAddress,
-                "*": "",
+                "*": "details",
               })}
             />
           )}

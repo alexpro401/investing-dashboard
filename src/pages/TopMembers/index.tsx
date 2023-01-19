@@ -81,7 +81,10 @@ const List: React.FC<Props> = ({ poolType }) => {
         {pools[poolType].map((pool, index) => (
           <To
             key={pool.id}
-            to={generatePath(ROUTE_PATHS.poolProfile, { poolAddress: pool.id })}
+            to={generatePath(ROUTE_PATHS.poolProfile, {
+              poolAddress: pool.id,
+              "*": "",
+            })}
           >
             <Flex p="16px 0 0" full>
               <PoolStatisticCard data={pool} index={index}>

@@ -221,6 +221,7 @@ export const PoolCard: React.FC<{
       onClick={onClick}
       to={generatePath(ROUTE_PATHS.poolProfile, {
         poolAddress: address,
+        "*": "",
       })}
     >
       <Row>

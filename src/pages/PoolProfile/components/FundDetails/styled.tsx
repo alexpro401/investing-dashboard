@@ -13,8 +13,13 @@ export const Container = styled(motion.div).attrs(() => ({
   exit: "hidden",
   transition: { duration: 0.2 },
 }))`
-  margin: 0 auto;
-  width: fill-available;
-  overflow-y: auto;
-  background-color: #040a0f;
+  overflow: hidden auto;
+`
+
+export const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
+  padding: var(--app-padding);
+  min-height: 100%;
 `

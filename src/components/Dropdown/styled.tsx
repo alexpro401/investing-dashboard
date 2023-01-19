@@ -35,18 +35,9 @@ export const Value = styled(Text)`
 `
 
 export const Body = styled(motion.div)<{ position?: "right" | "left" }>`
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
-  overflow: hidden;
-  border-radius: 7px;
   z-index: 20;
-  min-width: 176px;
-  max-width: 100vh;
-  width: fit-content;
-  height: fit-content;
-
-  margin: auto;
   position: absolute;
-  top: 110%;
+  top: 125%;
 
   ${(props) =>
     props.position === "right"

@@ -1,5 +1,5 @@
 import { useContext, useMemo } from "react"
-import { generatePath, useParams } from "react-router-dom"
+import { generatePath, Route, Routes, useParams } from "react-router-dom"
 
 import {
   TabPoolHolders,
@@ -22,9 +22,15 @@ import {
   PoolProfileContext,
   PoolProfileContextProvider,
 } from "pages/PoolProfile/context"
-import { localizePoolType } from "../../localization"
+import { localizePoolType } from "localization"
+import FundDetails from "./components/FundDetails"
+import { copyToClipboard } from "utils/clipboard"
+import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
+import { useWeb3React } from "@web3-react/core"
 
 const PoolProfileContent = () => {
+  const { chainId } = useWeb3React()
+
   const { isSmallTablet, isMediumTablet } = useBreakpoints()
 
   const {
@@ -167,17 +173,38 @@ const PoolProfileContent = () => {
                     }
                   >
                     <S.PoolProfileGeneralActionsDropdownContent>
-                      <S.PoolProfileGeneralActionsDropdownItem>
-                        Lorem ipsum dolor sit amet.
+                      <S.PoolProfileGeneralActionsDropdownItem
+                        onClick={() => {
+                          window.open(
+                            getExplorerLink(
+                              chainId || 0,
+                              fundAddress,
+                              ExplorerDataType.ADDRESS
+                            ),
+                            "_blank"
+                          )
+                        }}
+                      >
+                        <S.PoolProfileGeneralActionsDropdownItemIcon
+                          name={ICON_NAMES.externalLink}
+                        />
+                        View on bscscan
+                      </S.PoolProfileGeneralActionsDropdownItem>
+                      <S.PoolProfileGeneralActionsDropdownItem
+                        onClick={() => {
+                          copyToClipboard(fundAddress || "")
+                        }}
+                      >
+                        <S.PoolProfileGeneralActionsDropdownItemIcon
+                          name={ICON_NAMES.copy}
+                        />
+                        Copy address
                       </S.PoolProfileGeneralActionsDropdownItem>
                       <S.PoolProfileGeneralActionsDropdownItem>
-                        Lorem ipsum dolor sit amet.
-                      </S.PoolProfileGeneralActionsDropdownItem>
-                      <S.PoolProfileGeneralActionsDropdownItem>
-                        Lorem ipsum dolor sit amet.
-                      </S.PoolProfileGeneralActionsDropdownItem>
-                      <S.PoolProfileGeneralActionsDropdownItem>
-                        Lorem ipsum dolor sit amet.
+                        <S.PoolProfileGeneralActionsDropdownItemIcon
+                          name={ICON_NAMES.github}
+                        />
+                        Github
                       </S.PoolProfileGeneralActionsDropdownItem>
                     </S.PoolProfileGeneralActionsDropdownContent>
                   </Dropdown>
@@ -445,11 +472,28 @@ const PoolProfileContent = () => {
 const PoolProfile = () => {
   const { poolAddress } = useParams()
 
+  const { isSmallTablet } = useBreakpoints()
+
   if (!poolAddress) return <></>
 
   return (
     <PoolProfileContextProvider poolAddress={poolAddress}>
-      <PoolProfileContent />
+      {!isSmallTablet ? (
+        <Routes>
+          <Route path="/" element={<PoolProfileContent />} />
+          <Route
+            path="details"
+            element={
+              <>
+                <Header />
+                <FundDetails />
+              </>
+            }
+          />
+        </Routes>
+      ) : (
+        <PoolProfileContent />
+      )}
     </PoolProfileContextProvider>
   )
 }

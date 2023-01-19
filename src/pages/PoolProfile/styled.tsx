@@ -74,17 +74,30 @@ export const PoolProfileGeneralActionsDropdownToggler = styled.button`
 export const PoolProfileGeneralActionsDropdownTogglerIcon = styled(Icon)``
 
 export const PoolProfileGeneralActionsDropdownContent = styled.div`
+  overflow: hidden auto;
   display: flex;
   flex-direction: column;
-  gap: var(--app-gap);
   width: max-content;
-  background: ${(props) => props.theme.backgroundColors.secondary};
+  height: 100%;
   color: ${(props) => props.theme.textColors.primary};
-  padding: var(--app-padding);
+  border-radius: 20px;
+  background-color: #20283a;
 `
 
 export const PoolProfileGeneralActionsDropdownItem = styled.div`
-  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: #6781bd;
+  padding: 16px 24px 16px 12px;
+`
+
+export const PoolProfileGeneralActionsDropdownItemIcon = styled(Icon)`
+  width: 24px;
 `
 
 export const PoolProfileAppearance = styled(PoolAppearance)``
