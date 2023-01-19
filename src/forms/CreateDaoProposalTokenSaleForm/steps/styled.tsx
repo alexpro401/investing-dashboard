@@ -6,6 +6,8 @@ import { fieldErrorColor } from "fields/styled"
 
 export const DesktopHeaderWrp = styled.div`
   margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
 `
 
 export const TokenContainer = styled.div`

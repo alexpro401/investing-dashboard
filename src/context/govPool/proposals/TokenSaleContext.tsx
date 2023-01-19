@@ -70,7 +70,9 @@ interface ITokenSaleCreatingContext {
     field: T,
     value: ITokenSaleProposal[T]
   ) => void
+  handleAddTokenSaleProposal: () => void
   currentProposalIndex: number
+  setCurrentProposalIndex: (v: number) => void
   settingsValidation: IFormValidation
   vestingValidation: IFormValidation
   whitelistValidation: IFormValidation
@@ -84,7 +86,9 @@ export const TokenSaleCreatingContext =
   createContext<ITokenSaleCreatingContext>({
     tokenSaleProposals: [],
     currentProposalIndex: 0,
+    setCurrentProposalIndex: () => {},
     handleUpdateTokenSaleProposal: () => {},
+    handleAddTokenSaleProposal: () => {},
     settingsValidation: {} as IFormValidation,
     vestingValidation: {} as IFormValidation,
     whitelistValidation: {} as IFormValidation,
@@ -98,6 +102,8 @@ const TokenSaleCreatingContextProvider: React.FC<
   >([TOKEN_SALE_PROPOSAL_BASE])
   const [_currentProposalIndex, _setCurrentProposalIndex] = useState<number>(0)
 
+  const [, setTriggerRerender] = useState<boolean>(false)
+
   const handleUpdateTokenSaleProposal = useCallback(function <
     T extends keyof ITokenSaleProposal
   >(index: number, field: T, value: ITokenSaleProposal[T]) {
@@ -109,6 +115,15 @@ const TokenSaleCreatingContextProvider: React.FC<
     })
   },
   [])
+
+  const handleAddTokenSaleProposal = useCallback(() => {
+    _setTokenSaleProposals((arr) => {
+      const newArr = [...arr].concat([TOKEN_SALE_PROPOSAL_BASE])
+
+      return newArr
+    })
+    setTriggerRerender((v) => !v)
+  }, [])
 
   const {
     selectedTreasuryToken,
@@ -308,7 +323,9 @@ const TokenSaleCreatingContextProvider: React.FC<
       value={{
         tokenSaleProposals: _tokenSaleProposals,
         handleUpdateTokenSaleProposal,
+        handleAddTokenSaleProposal,
         currentProposalIndex: _currentProposalIndex,
+        setCurrentProposalIndex: _setCurrentProposalIndex,
         settingsValidation,
         vestingValidation,
         whitelistValidation,

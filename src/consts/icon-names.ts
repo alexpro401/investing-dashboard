@@ -58,4 +58,5 @@ export enum ICON_NAMES {
   arrowDownDiagonal = "arrow-down-diagonal",
   bsc = "bsc",
   filter = "filter",
+  plusOutline = "plus-outline",
 }

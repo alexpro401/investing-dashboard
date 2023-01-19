@@ -106,8 +106,6 @@ const TokenSalePairField: React.FC<ITokenSalPairFieldProps> = ({
     )
   }
 
-  console.log({ tokenErrorMessage, amountErrorMessage })
-
   return (
     <OverlapInputField
       value={" "}

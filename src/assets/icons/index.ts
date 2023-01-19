@@ -57,3 +57,4 @@ export { default as ArrowDownDiagonalIcon } from "assets/icons/ArrowDownDiagonal
 export { default as CalendarIcon } from "assets/icons/CalendarIcon"
 export { default as BSCIcon } from "assets/icons/BSCIcon"
 export { default as FilterIcon } from "assets/icons/FilterIcon"
+export { default as PlusOutline } from "assets/icons/PlusOutline"
