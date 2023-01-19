@@ -12,6 +12,8 @@ import {
   BeforeYouStart,
 } from "./steps"
 import SideBarNavigation from "./SideBarNavigation"
+import TokenSaleProposalsNavigation from "./TokenSaleProposalsNavigation"
+import AddTokenSaleButton from "./AddTokenSaleButton"
 
 import * as S from "common/FormSteps/styled"
 
@@ -20,13 +22,6 @@ enum STEPS {
   settings = "settings",
   vestingParams = "vestingParams",
   whitelist = "whitelist",
-}
-
-const STEPS_TITLES: Record<STEPS, string> = {
-  [STEPS.beforeYouStart]: "Before you start",
-  [STEPS.settings]: "Налаштування",
-  [STEPS.vestingParams]: "Параметри вестінга",
-  [STEPS.whitelist]: "Вайтліст",
 }
 
 const CreateDaoProposalTokenSaleForm: React.FC = () => {
@@ -97,6 +92,18 @@ const CreateDaoProposalTokenSaleForm: React.FC = () => {
     }
   }, [currentStep])
 
+  const TokenSaleProposalsNavigationHeader = useMemo(() => {
+    if (isMobile)
+      return (
+        <>
+          <TokenSaleProposalsNavigation />
+          <AddTokenSaleButton />
+        </>
+      )
+
+    return null
+  }, [isMobile])
+
   return (
     <S.StepsFormContainer
       totalStepsAmount={totalStepsCount}
@@ -114,32 +121,23 @@ const CreateDaoProposalTokenSaleForm: React.FC = () => {
           )}
           {currentStep === STEPS.settings && (
             <S.StepsContainer>
+              {TokenSaleProposalsNavigationHeader}
               <SettingsStep />
             </S.StepsContainer>
           )}
           {currentStep === STEPS.vestingParams && (
             <S.StepsContainer>
+              {TokenSaleProposalsNavigationHeader}
               <VestingParamsStep />
             </S.StepsContainer>
           )}
           {currentStep === STEPS.whitelist && (
             <S.StepsContainer>
+              {TokenSaleProposalsNavigationHeader}
               <WhitelistStep />
             </S.StepsContainer>
           )}
-          {!isMobile && (
-            <>
-              {/* <S.SideStepsNavigationBarWrp
-                title={"Create proposal"}
-                steps={Object.values(STEPS).map((step) => ({
-                  number: Object.values(STEPS).indexOf(step),
-                  title: STEPS_TITLES[step],
-                }))}
-                currentStep={Object.values(STEPS).indexOf(currentStep)}
-              /> */}
-              <SideBarNavigation />
-            </>
-          )}
+          {!isMobile && <SideBarNavigation />}
         </S.StepsWrapper>
       </AnimatePresence>
     </S.StepsFormContainer>

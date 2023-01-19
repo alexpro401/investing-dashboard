@@ -1,3 +1,5 @@
+import { AppButton } from "common"
+import { ICON_NAMES } from "consts"
 import styled, { css } from "styled-components/macro"
 
 import theme, { Flex } from "theme"
@@ -222,4 +224,15 @@ export const TokenSellStep = styled(Flex).attrs(() => ({
             color: #293c54;
           }
         `}
+`
+
+export const DeleteTokenSellProposalButton = styled(AppButton).attrs(() => ({
+  color: "default",
+  iconLeft: ICON_NAMES.trash,
+  iconSize: 15,
+  size: "no-paddings",
+}))`
+  color: ${theme.statusColors.error} !important;
+  align-self: flex-start;
+  margin-top: 15px;
 `

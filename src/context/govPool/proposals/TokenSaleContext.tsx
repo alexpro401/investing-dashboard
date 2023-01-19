@@ -71,6 +71,7 @@ interface ITokenSaleCreatingContext {
     value: ITokenSaleProposal[T]
   ) => void
   handleAddTokenSaleProposal: () => void
+  handleDeleteTokenSellProposal: (index: number) => void
   currentProposalIndex: number
   setCurrentProposalIndex: (v: number) => void
   settingsValidation: IFormValidation
@@ -89,6 +90,7 @@ export const TokenSaleCreatingContext =
     setCurrentProposalIndex: () => {},
     handleUpdateTokenSaleProposal: () => {},
     handleAddTokenSaleProposal: () => {},
+    handleDeleteTokenSellProposal: () => {},
     settingsValidation: {} as IFormValidation,
     vestingValidation: {} as IFormValidation,
     whitelistValidation: {} as IFormValidation,
@@ -101,8 +103,6 @@ const TokenSaleCreatingContextProvider: React.FC<
     ITokenSaleProposal[]
   >([TOKEN_SALE_PROPOSAL_BASE])
   const [_currentProposalIndex, _setCurrentProposalIndex] = useState<number>(0)
-
-  const [, setTriggerRerender] = useState<boolean>(false)
 
   const handleUpdateTokenSaleProposal = useCallback(function <
     T extends keyof ITokenSaleProposal
@@ -122,7 +122,14 @@ const TokenSaleCreatingContextProvider: React.FC<
 
       return newArr
     })
-    setTriggerRerender((v) => !v)
+  }, [])
+
+  const handleDeleteTokenSellProposal = useCallback((idx: number) => {
+    _setTokenSaleProposals((arr) => {
+      const newArr = [...arr].filter((_, index) => index !== idx)
+
+      return newArr
+    })
   }, [])
 
   const {
@@ -324,6 +331,7 @@ const TokenSaleCreatingContextProvider: React.FC<
         tokenSaleProposals: _tokenSaleProposals,
         handleUpdateTokenSaleProposal,
         handleAddTokenSaleProposal,
+        handleDeleteTokenSellProposal,
         currentProposalIndex: _currentProposalIndex,
         setCurrentProposalIndex: _setCurrentProposalIndex,
         settingsValidation,

@@ -12,12 +12,12 @@ import {
 import { InputField } from "fields"
 import { TokenSaleCreatingContext } from "context/govPool/proposals/TokenSaleContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
+import { readFromClipboard } from "utils/clipboard"
+import { isAddress, shortenAddress } from "utils"
 import Switch from "components/Switch"
 import { ICON_NAMES } from "consts"
 
 import * as SForms from "common/FormSteps/styled"
-import { readFromClipboard } from "utils/clipboard"
-import { isAddress, shortenAddress } from "utils"
 
 const WhitelistStep: React.FC = () => {
   const { nextCb } = useContext(stepsControllerContext)
@@ -62,13 +62,27 @@ const WhitelistStep: React.FC = () => {
     touchField("whitelistAddressesValid")
   }, [handleUpdateTokenSaleProposal, currentProposalIndex, touchField])
 
+  const handleCopyWhitelist = useCallback(
+    (idx: number) => {
+      const whitelistFromAnotherTokenSell =
+        tokenSaleProposals[idx].whitelistAddresses
+
+      handleUpdateTokenSaleProposal(
+        currentProposalIndex,
+        "whitelistAddresses",
+        whitelistFromAnotherTokenSell
+      )
+    },
+    [tokenSaleProposals, handleUpdateTokenSaleProposal, currentProposalIndex]
+  )
+
   return (
     <>
       <SForms.StepsRoot>
         <Card>
           <CardHead
             nodeLeft={<Icon name={ICON_NAMES.users} />}
-            title="Add validator"
+            title="Додати вайтліст"
             nodeRight={
               <Switch
                 isOn={isWhitelist}
@@ -91,6 +105,30 @@ const WhitelistStep: React.FC = () => {
           {isWhitelist && (
             <CardFormControl>
               <Collapse isOpen={isWhitelist}>
+                {tokenSaleProposals.map(({ whitelistAddresses }, index) => {
+                  if (
+                    !isWhitelist ||
+                    whitelistAddresses.filter((el) => isAddress(el)).length !==
+                      whitelistAddresses.length ||
+                    whitelistAddresses.length === 0
+                  )
+                    return null
+
+                  if (index === currentProposalIndex) return null
+
+                  return (
+                    <AppButton
+                      key={index}
+                      color="default"
+                      size="no-paddings"
+                      text={`Використовувати вайтліст з ${
+                        index + 1
+                      } токенсейлу`}
+                      onClick={() => handleCopyWhitelist(index)}
+                      style={{ marginBottom: "16px" }}
+                    />
+                  )
+                })}
                 <InputField
                   readonly
                   value={whitelistAddresses
