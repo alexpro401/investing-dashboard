@@ -1,70 +1,66 @@
 import styled from "styled-components/macro"
 
 import { GradientBorder, respondTo } from "theme"
+import { AppButton } from "common"
 
-export const SettingsStyled = {
-  Container: styled(GradientBorder)`
-    width: 97%;
-    max-width: 420px;
-    padding: 16px 16px 13px;
-    position: absolute;
-    top: 38px;
-    right: 0;
-    box-shadow: 7px 4px 21px #0a1420;
-    border-radius: 20px;
+export const Container = styled(GradientBorder)`
+  width: 97%;
+  max-width: 420px;
+  position: absolute;
+  top: 38px;
+  right: 0;
+  box-shadow: 7px 4px 21px #0a1420;
+  border-radius: 20px;
+  z-index: 101;
+
+  &:after {
+    background: ${({ theme }) => theme.backgroundColors.secondary};
+  }
+
+  ${respondTo("lg")} {
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: none;
 
     &:after {
-      background: ${({ theme }) => theme.backgroundColors.secondary};
+      background: ${({ theme }) => theme.textColors.secondaryNegative};
     }
+    &:before {
+      background: initial;
+    }
+  }
+`
 
-    ${respondTo("lg")} {
-      top: -100px;
-    }
-  `,
-  Row: styled.div<{ minInputW?: string }>`
-    width: 100%;
-    display: grid;
-    grid-template-columns:
-      max-content
-      minmax(max-content, 1fr)
-      ${({ minInputW }) => minInputW ?? "62px"}
-      minmax(28px, max-content);
-    grid-template-rows: 1fr;
-    align-items: center;
-    gap: 4.5px;
-  `,
-  Title: styled.div`
-    font-family: ${(props) => props.theme.appFontFamily};
-    font-style: normal;
-    font-weight: 400;
-    font-size: 13px;
-    line-height: 15px;
-    color: #788ab4;
-  `,
-  InputType: styled.div`
-    font-family: ${(props) => props.theme.appFontFamily};
-    font-style: normal;
-    font-weight: 400;
-    font-size: 13px;
-    line-height: 15px;
-    color: #788ab4;
-    text-align: right;
-  `,
-  ErrorMessage: styled.div`
-    width: 100%;
-    margin: 4px 0;
-    font-family: ${(props) => props.theme.appFontFamily};
-    font-style: normal;
-    font-weight: 400;
-    font-size: 13px;
-    line-height: 15px;
-    color: ${({ theme }) => theme.statusColors.error};
-  `,
-  ButtonGroup: styled.div`
-    width: 100%;
-    margin: 4px 0 0;
-    display: grid;
-    grid-template-columns: 0.8fr 1fr;
-    gap: 16px;
-  `,
-}
+export const Header = styled.div`
+  padding: 20px 16px;
+  border-bottom: 1px solid #293c54;
+`
+export const HeaderTitle = styled.div`
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+  letter-spacing: 0.01em;
+  color: #e4f2ff;
+`
+export const HeaderCloseButton = styled(AppButton)`
+  width: 26px;
+  height: 26px;
+  padding: 0;
+`
+
+export const Body = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px 0;
+  padding: var(--app-padding);
+`
+
+export const ButtonGroup = styled.div`
+  width: 100%;
+  margin: 4px 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+`
