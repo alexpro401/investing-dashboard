@@ -5,29 +5,20 @@ import { AnimatePresence } from "framer-motion"
 
 import { hideTapBar, showTabBar } from "state/application/actions"
 import { useBreakpoints } from "hooks"
-import {
-  SettingsStep,
-  TokenSaleStep,
-  VestingParamsStep,
-  WhitelistStep,
-} from "./steps"
+import { SettingsStep, VestingParamsStep, WhitelistStep } from "./steps"
 
 import * as S from "common/FormSteps/styled"
 
 enum STEPS {
   settings = "settings",
   vestingParams = "vestingParams",
-  tokenSale = "tokenSale",
   whitelist = "whitelist",
-  basicInfo = "basicInfo",
 }
 
 const STEPS_TITLES: Record<STEPS, string> = {
   [STEPS.settings]: "Налаштування",
   [STEPS.vestingParams]: "Параметри вестінга",
-  [STEPS.tokenSale]: "Продаж токену",
   [STEPS.whitelist]: "Вайтліст",
-  [STEPS.basicInfo]: "Basic info",
 }
 
 const CreateDaoProposalTokenSaleForm: React.FC = () => {
@@ -64,16 +55,8 @@ const CreateDaoProposalTokenSaleForm: React.FC = () => {
         setCurrentStep(STEPS.settings)
         break
       }
-      case STEPS.tokenSale: {
-        setCurrentStep(STEPS.vestingParams)
-        break
-      }
       case STEPS.whitelist: {
-        setCurrentStep(STEPS.tokenSale)
-        break
-      }
-      case STEPS.basicInfo: {
-        setCurrentStep(STEPS.whitelist)
+        setCurrentStep(STEPS.vestingParams)
         break
       }
       default:
@@ -81,7 +64,22 @@ const CreateDaoProposalTokenSaleForm: React.FC = () => {
     }
   }, [navigate, currentStep, daoAddress])
 
-  const handleNextStep = useCallback(() => {}, [])
+  const handleNextStep = useCallback(() => {
+    switch (currentStep) {
+      case STEPS.settings: {
+        setCurrentStep(STEPS.vestingParams)
+        break
+      }
+      case STEPS.vestingParams: {
+        setCurrentStep(STEPS.whitelist)
+        break
+      }
+      case STEPS.vestingParams: {
+        //TODO create proposal here
+        break
+      }
+    }
+  }, [currentStep])
 
   return (
     <S.StepsFormContainer
@@ -100,11 +98,6 @@ const CreateDaoProposalTokenSaleForm: React.FC = () => {
           {currentStep === STEPS.vestingParams && (
             <S.StepsContainer>
               <VestingParamsStep />
-            </S.StepsContainer>
-          )}
-          {currentStep === STEPS.tokenSale && (
-            <S.StepsContainer>
-              <TokenSaleStep />
             </S.StepsContainer>
           )}
           {currentStep === STEPS.whitelist && (

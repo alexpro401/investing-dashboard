@@ -1,7 +1,8 @@
 import styled from "styled-components/macro"
 
-import { AppButton } from "common"
+import { AppButton, Icon } from "common"
 import theme, { respondTo } from "theme"
+import { fieldErrorColor } from "fields/styled"
 
 export const DesktopHeaderWrp = styled.div`
   margin-bottom: 16px;
@@ -66,6 +67,12 @@ export const TokenUsdAmount = styled.span`
 
 export const BaseInputPlaceholder = styled.span`
   color: #788ab4;
+`
+
+export const ErrorMessage = styled.span`
+  color: ${fieldErrorColor};
+  font-size: 12px;
+  text-align: center;
 `
 
 export const AddPairButton = styled(AppButton).attrs(() => ({

@@ -39,7 +39,6 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   transition: { duration: 0.2 },
   variants: opacityVariants,
 }))<{ isWithPaddings?: boolean }>`
-  overflow: hidden;
   position: relative;
   display: flex;
   flex-direction: column;

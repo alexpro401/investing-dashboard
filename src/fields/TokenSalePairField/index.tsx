@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import React, { useCallback, useMemo } from "react"
 
 import { AppButton, TokenChip } from "common"
 import { useBreakpoints, useERC20 } from "hooks"
@@ -15,7 +15,8 @@ interface ITokenSalPairFieldProps {
   amount?: string
   setAmount: (v: string) => void
   onDelete: () => void
-  errorMessage?: string
+  tokenErrorMessage?: string
+  amountErrorMessage?: string
 }
 
 const TokenSalePairField: React.FC<ITokenSalPairFieldProps> = ({
@@ -24,9 +25,10 @@ const TokenSalePairField: React.FC<ITokenSalPairFieldProps> = ({
   amount = "",
   setAmount,
   onDelete,
-  errorMessage,
+  tokenErrorMessage,
+  amountErrorMessage,
 }) => {
-  const { isMediumTablet } = useBreakpoints()
+  const { isDesktop } = useBreakpoints()
   const [, tokenData] = useERC20(tokenAddress)
 
   const handlePasteTokenAddress = useCallback(async () => {
@@ -50,7 +52,15 @@ const TokenSalePairField: React.FC<ITokenSalPairFieldProps> = ({
     [setAmount]
   )
 
-  if (isMediumTablet) {
+  const comboErrorMessage = useMemo(() => {
+    if (tokenErrorMessage !== "") return tokenErrorMessage
+
+    if (amountErrorMessage !== "") return amountErrorMessage
+
+    return undefined
+  }, [tokenErrorMessage, amountErrorMessage])
+
+  if (isDesktop) {
     return (
       <S.DektopFieldContainer>
         <S.DesktopLeftInput
@@ -79,7 +89,7 @@ const TokenSalePairField: React.FC<ITokenSalPairFieldProps> = ({
               </Flex>
             )
           }
-          errorMessage={errorMessage}
+          errorMessage={tokenErrorMessage}
         />
         <S.DesktopRightInput
           type={"number"}
@@ -90,10 +100,13 @@ const TokenSalePairField: React.FC<ITokenSalPairFieldProps> = ({
           nodeRight={
             <S.TokenPlaceholder>{tokenData?.name ?? "XXX"}</S.TokenPlaceholder>
           }
+          errorMessage={amountErrorMessage}
         />
       </S.DektopFieldContainer>
     )
   }
+
+  console.log({ tokenErrorMessage, amountErrorMessage })
 
   return (
     <OverlapInputField
@@ -135,6 +148,7 @@ const TokenSalePairField: React.FC<ITokenSalPairFieldProps> = ({
           />
         )
       }
+      errorMessage={comboErrorMessage}
     />
   )
 }
