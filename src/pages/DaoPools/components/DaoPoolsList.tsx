@@ -67,7 +67,11 @@ const DaoPoolsList: React.FC<Props> = () => {
         </Indents>
       ))}
 
-      <LoadMore isLoading={loading && !!pools.length} handleMore={fetchMore} />
+      <LoadMore
+        isLoading={loading && !!pools.length}
+        handleMore={fetchMore}
+        r={undefined}
+      />
     </List.Scroll>
   )
 }
