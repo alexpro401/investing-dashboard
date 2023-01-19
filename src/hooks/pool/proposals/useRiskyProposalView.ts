@@ -104,7 +104,7 @@ export const useRiskyProposalView = (
 
         setDescription(_description)
       } catch (e) {
-        throw new Error("Failed to load description")
+        setDescription("Failed to load description")
       }
     })()
   }, [proposal])
