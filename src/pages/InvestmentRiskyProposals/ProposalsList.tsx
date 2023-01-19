@@ -1,7 +1,6 @@
-import { FC, useMemo, useState, useEffect, useRef } from "react"
+import { FC, useMemo, useState, useEffect } from "react"
 import { PulseSpinner } from "react-spinners-kit"
 import { v4 as uuidv4 } from "uuid"
-import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { useActiveWeb3React } from "hooks"
 import { usePoolContract } from "hooks/usePool"
@@ -12,10 +11,11 @@ import { useTraderPoolRiskyProposalContract } from "contracts"
 import LoadMore from "components/LoadMore"
 import RiskyProposalCard from "components/cards/proposal/Risky"
 
-import S from "./styled"
 import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
 import { isNil, map } from "lodash"
 import { graphClientBasicPools } from "utils/graphClient"
+import { NoDataMessage } from "common"
+import { Center } from "theme"
 
 interface IRiskyCardInitializer {
   account: string
@@ -41,7 +41,7 @@ function RiskyProposalCardInitializer({
   }, [account, poolInfo])
 
   useEffect(() => {
-    if (!proposalPool || !poolAddress) return
+    if (!proposalPool || !poolAddress || isNil(proposalId)) return
     ;(async () => {
       try {
         const data = await proposalPool.getProposalInfos(proposalId, 1)
@@ -91,52 +91,35 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
     pause: isNil(activePools),
     context: graphClientBasicPools,
     formatter: (d) =>
-      map(d.proposals, (p) => ({ id: String(p.id).slice(42), ...p })),
+      map(d.proposals, (p) => ({
+        ...p,
+        id: String(p.id).charAt(String(p.id).length - 1),
+      })),
   })
-
-  const loader = useRef<any>()
-
-  // manually disable scrolling *refresh this effect when ref container disappeared from DOM
-  useEffect(() => {
-    if (!loader.current) return
-    disableBodyScroll(loader.current)
-
-    return () => clearAllBodyScrollLocks()
-  }, [loader, loading])
 
   if (!account || !activePools || !data || (data.length === 0 && loading)) {
     return (
-      <S.Content>
+      <Center>
         <PulseSpinner />
-      </S.Content>
+      </Center>
     )
   }
 
   if (data && data.length === 0 && !loading) {
-    return (
-      <S.Content>
-        <S.WithoutData>No proposal yet</S.WithoutData>
-      </S.Content>
-    )
+    return <NoDataMessage />
   }
 
   return (
     <>
-      <S.List ref={loader}>
-        {data.map((p) => (
-          <RiskyProposalCardInitializer
-            key={uuidv4()}
-            account={account}
-            proposalId={Number(p.id) - 1}
-            poolAddress={p.basicPool.id}
-          />
-        ))}
-        <LoadMore
-          isLoading={loading && !!data.length}
-          handleMore={fetchMore}
-          r={loader}
+      {data.map((p) => (
+        <RiskyProposalCardInitializer
+          key={uuidv4()}
+          account={account}
+          proposalId={Number(p.id) - 1}
+          poolAddress={p.basicPool.id}
         />
-      </S.List>
+      ))}
+      <LoadMore isLoading={loading && !!data.length} handleMore={fetchMore} />
     </>
   )
 }

@@ -1,16 +1,25 @@
 import styled from "styled-components/macro"
-import { Flex, GradientBorder } from "theme"
+import { Flex, respondTo } from "theme"
 
-export const Card = styled(GradientBorder)`
+export const Root = styled.div`
   width: 100%;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+  background: ${({ theme }) => theme.backgroundColors.secondary};
   border-radius: 16px;
-  flex-direction: column;
   margin-bottom: 18px;
   z-index: initial;
 
-  &:after {
-    background: #181e2c;
+  ${respondTo("lg")} {
+    padding: var(--app-padding);
+  }
+`
+export const Card = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  ${respondTo("lg")} {
+    flex-direction: row;
   }
 `
 export const Head = styled(Flex)<{ p: string }>`
@@ -19,6 +28,15 @@ export const Head = styled(Flex)<{ p: string }>`
   padding: ${(props) => props.p};
   border-bottom: 1px solid #1d2635;
   position: relative;
+
+  ${respondTo("lg")} {
+    width: initial;
+    min-width: 200px;
+    flex-direction: column;
+    align-items: flex-start;
+    border-bottom: none;
+    padding: 0;
+  }
 `
 export const Body = styled.div`
   width: 100%;
@@ -26,7 +44,13 @@ export const Body = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  gap: 16px 5px;
+  gap: var(--app-gap) 5px;
+
+  ${respondTo("lg")} {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    padding: 0;
+  }
 `
 export const Title = styled.div`
   min-width: 24px;
@@ -49,6 +73,15 @@ export const Footer = styled(Flex)`
   justify-content: space-between;
   padding: 10px 16px 8px;
   border-top: 1px solid #1d2635;
+
+  ${respondTo("lg")} {
+    width: initial;
+    min-width: 160px;
+    flex-direction: column;
+    align-items: flex-end;
+    border-top: none;
+    padding: 0;
+  }
 `
 export const FundIconContainer = styled.div`
   position: relative;
@@ -67,4 +100,9 @@ export const SizeTitle = styled.div`
 
 export const LPSizeContainer = styled.div`
   width: 137px;
+`
+
+export const FlexBreak = styled.div`
+  flex-basis: 100%;
+  height: 0;
 `

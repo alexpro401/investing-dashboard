@@ -1,16 +1,19 @@
 import { FC } from "react"
+import { v4 as uuidv4 } from "uuid"
 import { Routes, Route, useParams } from "react-router-dom"
 
 import { ITab } from "interfaces"
 
-import RouteTabs from "components/RouteTabs"
 import Proposals from "./Proposals"
 import Positions from "./Positions"
 
-import S from "./styled"
+import * as S from "./styled"
+import { useBreakpoints } from "hooks"
+import Tooltip from "components/Tooltip"
 
 const FundProposalsRisky: FC = () => {
   const { poolAddress } = useParams()
+  const { isMobile } = useBreakpoints()
 
   const tabs: ITab[] = [
     {
@@ -29,23 +32,27 @@ const FundProposalsRisky: FC = () => {
 
   return (
     <>
-      <RouteTabs m="16px 16px 0" tabs={tabs} />
-      <S.Container>
-        <Routes>
-          <Route
-            path="open"
-            element={<Proposals poolAddress={poolAddress} />}
-          />
-          <Route
-            path="positions"
-            element={<Positions closed={false} poolAddress={poolAddress} />}
-          />
-          <Route
-            path="closed"
-            element={<Positions closed={true} poolAddress={poolAddress} />}
-          />
-        </Routes>
-      </S.Container>
+      <S.ListTopWrp>
+        <S.PageSubTabs tabs={tabs} />
+        {!isMobile && (
+          <S.ListTopInfo>
+            <span>Risk proposal</span>
+            <Tooltip id={uuidv4()}>Info???</Tooltip>
+          </S.ListTopInfo>
+        )}
+      </S.ListTopWrp>
+
+      <Routes>
+        <Route path="open" element={<Proposals poolAddress={poolAddress} />} />
+        <Route
+          path="positions"
+          element={<Positions closed={false} poolAddress={poolAddress} />}
+        />
+        <Route
+          path="closed"
+          element={<Positions closed={true} poolAddress={poolAddress} />}
+        />
+      </Routes>
     </>
   )
 }

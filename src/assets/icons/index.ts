@@ -56,3 +56,4 @@ export { default as ArrowUpDiagonalIcon } from "assets/icons/ArrowUpDiagonalIcon
 export { default as ArrowDownDiagonalIcon } from "assets/icons/ArrowDownDiagonalIcon"
 export { default as BSCIcon } from "assets/icons/BSCIcon"
 export { default as FilterIcon } from "assets/icons/FilterIcon"
+export { default as WarnCircledFilledIcon } from "assets/icons/WarnCircledFilledIcon"
