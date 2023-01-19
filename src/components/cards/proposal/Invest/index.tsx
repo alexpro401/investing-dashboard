@@ -636,13 +636,13 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
                       onClick={() => onTerminalNavigate(TerminalType.Invest)}
                     />
                     {/* TODO: must render with some condition? */}
-                    {/*<AppButton*/}
-                    {/*  full*/}
-                    {/*  text={"Request a dividend"}*/}
-                    {/*  color={"secondary"}*/}
-                    {/*  size={"small"}*/}
-                    {/*  onClick={() => requestDividends(poolAddress, proposalId)}*/}
-                    {/*/>*/}
+                    <AppButton
+                      full
+                      text={"Request a dividend"}
+                      color={"secondary"}
+                      size={"small"}
+                      onClick={() => requestDividends(poolAddress, proposalId)}
+                    />
                   </>
                 )}
               </Flex>
