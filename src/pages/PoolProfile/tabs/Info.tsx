@@ -8,17 +8,13 @@ import { DateUtil, normalizeBigNumber, shortenAddress } from "utils"
 import Tooltip from "components/Tooltip"
 import { isEmpty } from "lodash"
 import { PoolProfileContext } from "pages/PoolProfile/context"
-import { DATE_FORMAT, ROUTE_PATHS } from "../../../consts"
+import { DATE_FORMAT, ROUTE_PATHS } from "consts"
 import { generatePath } from "react-router-dom"
-
-const fundTypes = {
-  BASIC_POOL: "Basic",
-  INVEST_POOL: "Invest",
-}
+import { localizePoolType } from "localization"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
-const TabPoolInfo: FC<Props> = ({ ...rest }) => {
+const TabPoolInfo: FC<Props> = () => {
   const {
     fundType,
     fundAddress,
@@ -76,7 +72,7 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
         {fundType && (
           <Flex full ai="center" jc="space-between">
             <S.TabCardLabel>Type of fund</S.TabCardLabel>
-            <S.TabCardValue>{fundTypes[fundType]}</S.TabCardValue>
+            <S.TabCardValue>{localizePoolType(fundType)}</S.TabCardValue>
           </Flex>
         )}
         <Flex full ai="center" jc="space-between">

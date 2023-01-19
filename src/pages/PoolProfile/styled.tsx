@@ -42,6 +42,51 @@ export const PoolProfileGeneral = styled.div`
   align-items: center;
 `
 
+export const PoolProfileGeneralActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: var(--app-gap);
+`
+
+export const PoolProfileGeneralActionsFundType = styled.div`
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: ${(props) => props.theme.brandColors.secondary};
+  border: 1px solid ${(props) => props.theme.brandColors.secondary};
+  border-radius: 35px;
+  padding: 4px 8px;
+`
+
+export const PoolProfileGeneralActionsDropdownToggler = styled.button`
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #6781bd;
+  color: #6781bd;
+`
+
+export const PoolProfileGeneralActionsDropdownTogglerIcon = styled(Icon)``
+
+export const PoolProfileGeneralActionsDropdownContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
+  width: max-content;
+  background: ${(props) => props.theme.backgroundColors.secondary};
+  color: ${(props) => props.theme.textColors.primary};
+  padding: var(--app-padding);
+`
+
+export const PoolProfileGeneralActionsDropdownItem = styled.div`
+  padding: 4px 8px;
+`
+
 export const PoolProfileAppearance = styled(PoolAppearance)``
 
 export const PoolProfileBaseToken = styled(PoolBaseToken)``
@@ -114,16 +159,6 @@ export const PoolDetailsBadgeText = styled.span`
 
   /* TEMP */
   transform: translateY(4px);
-`
-
-export const PoolHeadStatistics = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--app-gap);
-  background: #101520;
-  border-radius: 20px;
-  padding: var(--app-padding);
 `
 
 export const ButtonContainer = styled.div`

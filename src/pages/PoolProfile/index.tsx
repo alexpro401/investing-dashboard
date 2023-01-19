@@ -1,4 +1,3 @@
-import { GuardSpinner } from "react-spinners-kit"
 import { useContext, useMemo } from "react"
 import { generatePath, useParams } from "react-router-dom"
 
@@ -10,8 +9,8 @@ import {
   TabPoolStatistic,
 } from "./tabs"
 
-import { Center } from "theme"
 import Header from "components/Header/Layout"
+import Dropdown from "components/Dropdown"
 
 import * as S from "./styled"
 
@@ -23,6 +22,7 @@ import {
   PoolProfileContext,
   PoolProfileContextProvider,
 } from "pages/PoolProfile/context"
+import { localizePoolType } from "../../localization"
 
 const PoolProfileContent = () => {
   const { isSmallTablet, isMediumTablet } = useBreakpoints()
@@ -47,7 +47,6 @@ const PoolProfileContent = () => {
     dailyProfitPercent,
     timePositions,
     sortino,
-    maxLoss,
     emission,
     minInvestAmount,
     fundManagers,
@@ -93,12 +92,8 @@ const PoolProfileContent = () => {
               <S.PoolProfileActionBtn
                 text={`Buy ${fundTicker}`}
                 color="tertiary"
-                routePath={generatePath(ROUTE_PATHS.poolSwap, {
-                  poolType: fundType,
-                  poolToken: fundAddress,
-                  inputToken: basicToken.address,
-                  outputToken: "0x",
-                  "*": "",
+                routePath={generatePath(ROUTE_PATHS.poolInvest, {
+                  poolAddress: fundAddress,
                 })}
               />
             </>
@@ -155,8 +150,38 @@ const PoolProfileContent = () => {
                   <></>
                 )}
               </S.PoolProfileAppearance>
+
               {isSmallTablet ? (
-                <></>
+                <S.PoolProfileGeneralActions>
+                  <S.PoolProfileGeneralActionsFundType>
+                    {localizePoolType(fundType)}
+                  </S.PoolProfileGeneralActionsFundType>
+                  <Dropdown
+                    name="pool-profile-general-actions-dropdown"
+                    label={
+                      <S.PoolProfileGeneralActionsDropdownToggler>
+                        <S.PoolProfileGeneralActionsDropdownTogglerIcon
+                          name={ICON_NAMES.angleDown}
+                        />
+                      </S.PoolProfileGeneralActionsDropdownToggler>
+                    }
+                  >
+                    <S.PoolProfileGeneralActionsDropdownContent>
+                      <S.PoolProfileGeneralActionsDropdownItem>
+                        Lorem ipsum dolor sit amet.
+                      </S.PoolProfileGeneralActionsDropdownItem>
+                      <S.PoolProfileGeneralActionsDropdownItem>
+                        Lorem ipsum dolor sit amet.
+                      </S.PoolProfileGeneralActionsDropdownItem>
+                      <S.PoolProfileGeneralActionsDropdownItem>
+                        Lorem ipsum dolor sit amet.
+                      </S.PoolProfileGeneralActionsDropdownItem>
+                      <S.PoolProfileGeneralActionsDropdownItem>
+                        Lorem ipsum dolor sit amet.
+                      </S.PoolProfileGeneralActionsDropdownItem>
+                    </S.PoolProfileGeneralActionsDropdownContent>
+                  </Dropdown>
+                </S.PoolProfileGeneralActions>
               ) : (
                 priceLP && (
                   <S.PoolProfileBaseToken
