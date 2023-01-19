@@ -1,28 +1,13 @@
 import { useMemo } from "react"
 import { useParams } from "react-router-dom"
 
-import { Center, Flex } from "theme"
+import { Center } from "theme"
 import Header from "components/Header/Layout"
-import IconButton from "components/IconButton"
 import ExchangeDivider from "components/Exchange/Divider"
-import CircularProgress from "components/CircularProgress"
 import { AppButton } from "common"
 import ExchangeInput from "components/Exchange/ExchangeInput"
-import TransactionSlippage from "components/TransactionSlippage"
 
-import close from "assets/icons/close-big.svg"
-
-import {
-  Container,
-  Card,
-  CardHeader,
-  Title,
-  IconsGroup,
-  InfoCard,
-  InfoRow,
-  InfoGrey,
-  InfoWhite,
-} from "components/Exchange/styled"
+import { Container } from "components/Exchange/styled"
 
 import useInvestInvestmentProposal from "./useInvestInvestmentProposal"
 import { GuardSpinner } from "react-spinners-kit"
@@ -155,6 +140,7 @@ function InvestInvestmentProposal() {
           form={form}
           slippage={slippage}
           setSlippage={setSlippage}
+          info={cardInfo}
         />
       </Container>
     </>
