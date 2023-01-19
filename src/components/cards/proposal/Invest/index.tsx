@@ -509,6 +509,9 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     proposalPool,
     ticker,
     toggleSettings,
+    isDesktop,
+    poolAddress,
+    poolMetadata,
   ])
 
   const body = useMemo(() => {
