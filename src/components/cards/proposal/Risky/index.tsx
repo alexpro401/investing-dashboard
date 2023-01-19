@@ -295,7 +295,7 @@ const RiskyProposalCard: FC<Props> = (props) => {
                     ? description
                     : "No description provided to proposal"
                 }
-                maxLen={10}
+                maxLen={description.length > 0 ? 10 : 100}
               />
             </S.DescriptionWrp>
           )}

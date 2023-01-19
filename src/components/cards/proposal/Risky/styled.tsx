@@ -51,7 +51,7 @@ export const DescriptionWrp = styled.div`
   align-items: flex-start;
   justify-content: flex-start;
   gap: 16px;
-  padding: 0 16px;
+  padding: 0 16px 16px;
 
   font-weight: 400;
   font-size: 13px;
