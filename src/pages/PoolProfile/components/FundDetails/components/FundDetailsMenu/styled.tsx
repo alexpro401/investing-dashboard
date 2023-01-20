@@ -1,5 +1,6 @@
 import styled from "styled-components/macro"
 import { Icon } from "common"
+import { NavLink } from "react-router-dom"
 
 export const Container = styled.div`
   display: flex;
@@ -41,7 +42,7 @@ export const MenuWrp = styled.div`
   border-radius: 20px;
 `
 
-export const MenuItem = styled.div`
+export const MenuItem = styled(NavLink)`
   display: flex;
   align-items: center;
   gap: 8px;

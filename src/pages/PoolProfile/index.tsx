@@ -1,5 +1,12 @@
 import { useContext, useMemo } from "react"
-import { generatePath, Route, Routes, useParams } from "react-router-dom"
+import {
+  generatePath,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+  useParams,
+} from "react-router-dom"
 
 import {
   TabPoolHolders,
@@ -23,10 +30,18 @@ import {
   PoolProfileContextProvider,
 } from "pages/PoolProfile/context"
 import { localizePoolType } from "localization"
-import FundDetails from "./components/FundDetails"
 import { copyToClipboard } from "utils/clipboard"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useWeb3React } from "@web3-react/core"
+import {
+  FundDetailsEdit,
+  FundDetailsFee,
+  FundDetailsInvestment,
+  FundDetailsManager,
+  FundDetailsMenu,
+  FundDetailsWhitelist,
+} from "./components/FundDetails/components"
+import UpdateFundContext from "../../context/UpdateFundContext"
 
 const PoolProfileContent = () => {
   const { chainId } = useWeb3React()
@@ -480,16 +495,36 @@ const PoolProfile = () => {
     <PoolProfileContextProvider poolAddress={poolAddress}>
       {!isSmallTablet ? (
         <Routes>
-          <Route path="/" element={<PoolProfileContent />} />
           <Route
             path="details"
             element={
               <>
                 <Header />
-                <FundDetails />
+                <S.Container>
+                  <S.Content>
+                    <Outlet />
+                  </S.Content>
+                </S.Container>
               </>
             }
-          />
+          >
+            <Route
+              path="general"
+              element={
+                <UpdateFundContext>
+                  <FundDetailsEdit />
+                </UpdateFundContext>
+              }
+            />
+            <Route path="investment" element={<FundDetailsInvestment />} />
+            <Route path="whitelist" element={<FundDetailsWhitelist />} />
+            <Route path="manager" element={<FundDetailsManager />} />
+            <Route path="fee" element={<FundDetailsFee />} />
+            <Route path="menu" element={<FundDetailsMenu />} />
+            <Route index element={<Navigate replace to="menu" />} />
+          </Route>
+
+          <Route index path="/" element={<PoolProfileContent />} />
         </Routes>
       ) : (
         <PoolProfileContent />
