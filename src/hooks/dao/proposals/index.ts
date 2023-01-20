@@ -5,6 +5,7 @@ export { default as useGovPoolCreateProposalChangeDaoSettings } from "./useGovPo
 export { default as useGovPoolCreateProposalChangeSettings } from "./useGovPoolCreateProposalChangeSettings"
 export { default as useGovPoolCreateDistributionProposal } from "./useGovPoolCreateDistributionProposal"
 export { default as useGovPoolCreateCustomProposalManual } from "./useGovPoolCreateCustomProposalManual"
+export { default as useGovPoolCreateTokenSaleProposal } from "./useGovPoolCreateTokenSaleProposal"
 export { default as useActiveInsuranceProposalByPool } from "./useActiveInsuranceProposalByPool"
 
 export * from "./useGovPoolCreateProposal"

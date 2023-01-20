@@ -1,5 +1,6 @@
-import React, { useCallback, useMemo, useState } from "react"
+import React, { useCallback, useMemo, useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { useDispatch } from "react-redux"
 import { v4 as uuidv4 } from "uuid"
 import { uniqBy } from "lodash"
 
@@ -10,11 +11,13 @@ import { ICON_NAMES } from "consts/icon-names"
 import { SelectableCard, Icon, Collapse, Headline1, RegularText } from "common"
 import { useBreakpoints } from "hooks"
 import { useGovPoolCustomExecutors } from "hooks/dao"
-import Skeleton from "components/Skeleton"
-import theme, { Flex } from "theme"
+import theme from "theme"
+import { SkeletonGlobalLoader, SkeletonCustomProposals } from "./components"
+import { hideTapBar, showTabBar } from "state/application/actions"
 
 import tutorialImageSrc from "assets/others/create-fund-docs.png"
 import * as S from "./styled"
+import * as SForms from "common/FormSteps/styled"
 
 enum EProposalType {
   daoProfileModification = "daoProfileModification",
@@ -42,6 +45,7 @@ interface ISelectedCard {
 
 const CreateProposalSelectType: React.FC = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { daoAddress } = useParams<"daoAddress">()
   const [selectedCard, setSelectedCard] = useState<ISelectedCard>({
     type: "default",
@@ -55,8 +59,15 @@ const CreateProposalSelectType: React.FC = () => {
     return uniqBy(customExecutors, "settings.settingsId")
   }, [customExecutors])
 
-  const proceedToNextStep = useCallback(async () => {
-    //TODO NAVIGATE to path related to selected proposal type
+  useEffect(() => {
+    dispatch(hideTapBar())
+
+    return () => {
+      dispatch(showTabBar())
+    }
+  }, [dispatch])
+
+  const handleNextStep = useCallback(() => {
     if (selectedCard.type === "default" && selectedCard.specification) {
       const slug = `/dao/${daoAddress}/create-proposal`
 
@@ -205,7 +216,7 @@ const CreateProposalSelectType: React.FC = () => {
     return defaultProposalTypes.map(
       ({ description, guide, iconName, title, type }) => {
         return (
-          <SelectableCard
+          <S.ProposalSelectableCard
             key={type}
             value={selectedCard?.specification as EProposalType}
             setValue={handleSelectDefaultVotingType}
@@ -228,7 +239,7 @@ const CreateProposalSelectType: React.FC = () => {
                 <S.ProposalTypeGuide>{guide}</S.ProposalTypeGuide>
               </Collapse>
             )}
-          </SelectableCard>
+          </S.ProposalSelectableCard>
         )
       }
     )
@@ -240,19 +251,7 @@ const CreateProposalSelectType: React.FC = () => {
   ])
 
   const renderCustomProposals = useMemo(() => {
-    if (customExecutorsLoading)
-      return (
-        <>
-          <Flex gap={"24"} full dir="column" ai={"center"}>
-            <Skeleton
-              variant={"rect"}
-              w={isMobile ? "100%" : "100%"}
-              h={isMobile ? "65px" : "90px"}
-            />
-          </Flex>
-          {!isMobile && <Skeleton variant={"rect"} w={"100%"} h={"90px"} />}
-        </>
-      )
+    if (customExecutorsLoading) return <SkeletonCustomProposals />
 
     return customExecutorsFiltered.map(
       ({ id, proposalName, proposalDescription, executorAddress }) => {
@@ -271,130 +270,112 @@ const CreateProposalSelectType: React.FC = () => {
     )
   }, [
     customExecutorsLoading,
-    isMobile,
     customExecutorsFiltered,
     handleSelectCustomProposal,
     selectedCard,
   ])
 
+  const handlePrevStep = useCallback(() => {
+    navigate(`/dao/${daoAddress}`)
+  }, [navigate, daoAddress])
+
   return (
-    <>
+    <SForms.StepsFormContainer
+      totalStepsAmount={2}
+      currentStepNumber={1}
+      prevCb={handlePrevStep}
+      nextCb={handleNextStep}
+    >
       <Header>Create proposal</Header>
       <WithGovPoolAddressValidation
         daoPoolAddress={daoAddress ?? ""}
         loader={
           <S.PageHolder>
             <S.Content>
-              <S.SkeletonLoader alignItems={isMobile ? "center" : "flex-start"}>
-                {isMobile ? (
-                  <>
-                    <Skeleton variant={"rect"} w={"calc(100%)"} h={"80px"} />
-                    <Skeleton variant={"rect"} w={"calc(100%)"} h={"80px"} />
-                    <Skeleton variant={"rect"} w={"calc(100%)"} h={"80px"} />
-                    <Skeleton variant={"rect"} w={"calc(100%)"} h={"80px"} />
-                  </>
-                ) : (
-                  <>
-                    <Skeleton variant={"text"} w={"300px"} h={"20px"} />
-                    <Flex gap={"16"} full dir="row" wrap="wrap">
-                      <Skeleton
-                        variant={"rect"}
-                        w={"calc(50% - 20px)"}
-                        h={"120px"}
-                      />
-                      <Skeleton
-                        variant={"rect"}
-                        w={"calc(50% - 20px)"}
-                        h={"120px"}
-                      />
-                      <Skeleton
-                        variant={"rect"}
-                        w={"calc(50% - 20px)"}
-                        h={"120px"}
-                      />
-                      <Skeleton
-                        variant={"rect"}
-                        w={"calc(50% - 20px)"}
-                        h={"120px"}
-                      />
-                    </Flex>
-                    <Skeleton variant={"text"} w={"300px"} h={"20px"} />
-                    <Flex gap={"16"} full dir="row" wrap="wrap">
-                      <Skeleton
-                        variant={"rect"}
-                        w={"calc(50% - 20px)"}
-                        h={"120px"}
-                      />
-                      <Skeleton
-                        variant={"rect"}
-                        w={"calc(50% - 20px)"}
-                        h={"120px"}
-                      />
-                    </Flex>
-                  </>
-                )}
-              </S.SkeletonLoader>
+              <SkeletonGlobalLoader />
             </S.Content>
           </S.PageHolder>
         }
       >
-        <S.PageHolder>
-          <S.Content>
-            {isMobile && (
-              <>
-                <TutorialCard
-                  text={"Shape your DAO with your best ideas."}
-                  linkText={"Read the tutorial"}
-                  imageSrc={tutorialImageSrc}
-                  href={"https://github.com/"}
-                />
-                <S.HeaderWrp>
-                  <S.CreateProposalSelectTypeTitle>
-                    Choose type of proposal
-                  </S.CreateProposalSelectTypeTitle>
-                  <S.CreateProposalSelectTypeCreateNew
-                    to={`/dao/${daoAddress}/create-proposal/custom`}
-                  >
-                    + Create new
-                  </S.CreateProposalSelectTypeCreateNew>
-                </S.HeaderWrp>
-              </>
-            )}
-            {!isMobile && (
-              <S.DesktopHeaderWrp>
-                <Headline1 color={theme.statusColors.info} desktopWeight={900}>
-                  Choose type of proposal
-                </Headline1>
-                <RegularText
-                  color={theme.textColors.secondary}
-                  desktopWeight={500}
-                  desktopSize={"14px"}
-                >
-                  тут знаходиться тестовий текст
-                </RegularText>
-              </S.DesktopHeaderWrp>
-            )}
-            {!isMobile && <S.BlockTitle>Шаблони пропоузалів</S.BlockTitle>}
-            {isMobile && renderDefaultProposals}
-            {!isMobile && <S.BlockGrid>{renderDefaultProposals}</S.BlockGrid>}
-            {!isMobile &&
-              (customExecutorsLoading ||
-                (!customExecutorsLoading &&
-                  customExecutorsFiltered.length !== 0)) && (
-                <S.BlockTitle>Шаблони кастомних пропоузалів</S.BlockTitle>
-              )}
-            {isMobile && renderCustomProposals}
-            {!isMobile && <S.BlockGrid>{renderCustomProposals}</S.BlockGrid>}
-            <S.CreateProposalSelectTypeSubmitButton
-              type="button"
-              size="large"
-              onClick={proceedToNextStep}
-              text={"Start creating proposal"}
+        <SForms.StepsWrapper>
+          <SForms.StepsContainer>
+            <S.PageHolder>
+              <S.Content>
+                {isMobile && (
+                  <>
+                    <TutorialCard
+                      text={"Shape your DAO with your best ideas."}
+                      linkText={"Read the tutorial"}
+                      imageSrc={tutorialImageSrc}
+                      href={"https://github.com/"}
+                    />
+                    <S.HeaderWrp>
+                      <S.CreateProposalSelectTypeTitle>
+                        Choose type of proposal
+                      </S.CreateProposalSelectTypeTitle>
+                      <S.CreateProposalSelectTypeCreateNew
+                        to={`/dao/${daoAddress}/create-proposal/custom`}
+                      >
+                        + Create new
+                      </S.CreateProposalSelectTypeCreateNew>
+                    </S.HeaderWrp>
+                  </>
+                )}
+                {!isMobile && (
+                  <S.DesktopHeaderWrp>
+                    <Headline1
+                      color={theme.statusColors.info}
+                      desktopWeight={900}
+                    >
+                      Choose type of proposal
+                    </Headline1>
+                    <RegularText
+                      color={theme.textColors.secondary}
+                      desktopWeight={500}
+                      desktopSize={"14px"}
+                    >
+                      тут знаходиться тестовий текст
+                    </RegularText>
+                  </S.DesktopHeaderWrp>
+                )}
+                {!isMobile && <S.BlockTitle>Шаблони пропоузалів</S.BlockTitle>}
+                {isMobile && renderDefaultProposals}
+                {!isMobile && (
+                  <S.BlockGrid>{renderDefaultProposals}</S.BlockGrid>
+                )}
+                {!isMobile &&
+                  (customExecutorsLoading ||
+                    (!customExecutorsLoading &&
+                      customExecutorsFiltered.length !== 0)) && (
+                    <S.BlockTitle>Шаблони кастомних пропоузалів</S.BlockTitle>
+                  )}
+                {isMobile && renderCustomProposals}
+                {!isMobile && (
+                  <S.BlockGrid>{renderCustomProposals}</S.BlockGrid>
+                )}
+                <SForms.FormStepsNavigationWrp />
+              </S.Content>
+            </S.PageHolder>
+          </SForms.StepsContainer>
+          {!isMobile && (
+            <SForms.SideStepsNavigationBarWrp
+              title={"Create proposal"}
+              steps={[
+                {
+                  number: 1,
+                  title: "Title",
+                },
+                {
+                  number: 2,
+                  title: "Type of proposal",
+                },
+              ]}
+              currentStep={1}
             />
-          </S.Content>
-        </S.PageHolder>
+          )}
+        </SForms.StepsWrapper>
       </WithGovPoolAddressValidation>
-    </>
+    </SForms.StepsFormContainer>
   )
 }
 
