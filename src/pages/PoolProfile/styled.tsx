@@ -264,3 +264,33 @@ export const TabContainer = styled.div`
   flex-direction: column;
   gap: var(--app-gap);
 `
+
+export const ModalHeadWrp = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: ${(props) => props.theme.textColors.primary};
+`
+
+export const ModalHeadBackBtn = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: inherit;
+`
+
+export const ModalHeadIcon = styled(Icon)`
+  width: 14px;
+  height: 14px;
+  color: inherit;
+`
+
+export const ModalBodyWrp = styled.div`
+  padding: 16px;
+`

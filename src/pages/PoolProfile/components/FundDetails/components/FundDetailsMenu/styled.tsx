@@ -42,11 +42,17 @@ export const MenuWrp = styled.div`
   border-radius: 20px;
 `
 
-export const MenuItem = styled(NavLink)`
+export const MenuItem = styled.button`
   display: flex;
   align-items: center;
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
   gap: 8px;
   padding: 20px;
+  color: ${(props) => props.theme.textColors.primary};
 `
 
 export const MenuItemIconLeft = styled(Icon)`

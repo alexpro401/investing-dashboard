@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react"
+import { useContext, useMemo, useState } from "react"
 import {
   generatePath,
   Navigate,
@@ -42,6 +42,9 @@ import {
   FundDetailsWhitelist,
 } from "./components/FundDetails/components"
 import UpdateFundContext from "../../context/UpdateFundContext"
+import Modal from "components/Modal"
+import { useEffectOnce } from "react-use"
+import { Bus, sleep } from "helpers"
 
 const PoolProfileContent = () => {
   const { chainId } = useWeb3React()
@@ -489,6 +492,59 @@ const PoolProfile = () => {
 
   const { isSmallTablet } = useBreakpoints()
 
+  const [isManageModalShown, setIsManageModalShown] = useState(false)
+  const [modalContent, setModalContent] = useState<
+    "menu" | "general" | "investment" | "whitelist" | "manager" | "fee"
+  >("menu")
+
+  useEffectOnce(() => {
+    Bus.on("manage-modal", () => {
+      setIsManageModalShown(true)
+    })
+    Bus.on("manage-modal/menu", () => {
+      setModalContent("menu")
+    })
+    Bus.on("manage-modal/general", () => {
+      setModalContent("general")
+    })
+    Bus.on("manage-modal/investment", () => {
+      setModalContent("investment")
+    })
+    Bus.on("manage-modal/whitelist", () => {
+      setModalContent("whitelist")
+    })
+    Bus.on("manage-modal/manager", () => {
+      setModalContent("manager")
+    })
+    Bus.on("manage-modal/fee", () => {
+      setModalContent("fee")
+    })
+
+    return () => {
+      Bus.off("manage-modal", () => {
+        setIsManageModalShown(false)
+      })
+      Bus.on("manage-modal/menu", () => {
+        setModalContent("menu")
+      })
+      Bus.on("manage-modal/general", () => {
+        setModalContent("menu")
+      })
+      Bus.on("manage-modal/investment", () => {
+        setModalContent("menu")
+      })
+      Bus.on("manage-modal/whitelist", () => {
+        setModalContent("menu")
+      })
+      Bus.on("manage-modal/manager", () => {
+        setModalContent("menu")
+      })
+      Bus.on("manage-modal/fee", () => {
+        setModalContent("menu")
+      })
+    }
+  })
+
   if (!poolAddress) return <></>
 
   return (
@@ -527,7 +583,47 @@ const PoolProfile = () => {
           <Route index path="/" element={<PoolProfileContent />} />
         </Routes>
       ) : (
-        <PoolProfileContent />
+        <>
+          <PoolProfileContent />
+          <Modal
+            isOpen={isManageModalShown}
+            toggle={async () => {
+              setIsManageModalShown(false)
+              await sleep(500)
+              setModalContent("menu")
+            }}
+            title={
+              modalContent === "menu" ? (
+                "Manage fund"
+              ) : (
+                <S.ModalHeadWrp>
+                  <S.ModalHeadBackBtn onClick={() => setModalContent("menu")}>
+                    <S.ModalHeadIcon name={ICON_NAMES.angleLeft} />
+                  </S.ModalHeadBackBtn>
+                  Manage Fund
+                </S.ModalHeadWrp>
+              )
+            }
+            maxWidth="420px"
+          >
+            <S.ModalBodyWrp>
+              {
+                {
+                  general: (
+                    <UpdateFundContext>
+                      <FundDetailsEdit />
+                    </UpdateFundContext>
+                  ),
+                  investment: <FundDetailsInvestment />,
+                  whitelist: <FundDetailsWhitelist />,
+                  manager: <FundDetailsManager />,
+                  fee: <FundDetailsFee />,
+                  menu: <FundDetailsMenu />,
+                }[modalContent]
+              }
+            </S.ModalBodyWrp>
+          </Modal>
+        </>
       )}
     </PoolProfileContextProvider>
   )

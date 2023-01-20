@@ -9,8 +9,10 @@ import Tooltip from "components/Tooltip"
 import { isEmpty } from "lodash"
 import { PoolProfileContext } from "pages/PoolProfile/context"
 import { DATE_FORMAT, ROUTE_PATHS } from "consts"
-import { generatePath } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
 import { localizePoolType } from "localization"
+import { Bus } from "helpers"
+import { useBreakpoints } from "hooks"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -37,6 +39,10 @@ const TabPoolInfo: FC<Props> = () => {
     fundDescription,
     fundStrategy,
   } = useContext(PoolProfileContext)
+
+  const { isSmallTablet } = useBreakpoints()
+
+  const navigate = useNavigate()
 
   return (
     <>
@@ -87,10 +93,18 @@ const TabPoolInfo: FC<Props> = () => {
           {isTrader && fundAddress && (
             <S.AppLink
               text="Manage"
-              routePath={generatePath(ROUTE_PATHS.poolProfile, {
-                poolAddress: fundAddress,
-                "*": "details",
-              })}
+              onClick={() => {
+                if (isSmallTablet) {
+                  Bus.emit("manage-modal")
+                } else {
+                  navigate(
+                    generatePath(ROUTE_PATHS.poolProfile, {
+                      poolAddress: fundAddress,
+                      "*": "details",
+                    })
+                  )
+                }
+              }}
             />
           )}
         </Flex>
@@ -147,10 +161,18 @@ const TabPoolInfo: FC<Props> = () => {
           {isTrader && fundAddress && (
             <S.AppLink
               text="Edit"
-              routePath={generatePath(ROUTE_PATHS.poolProfile, {
-                poolAddress: fundAddress,
-                "*": "details",
-              })}
+              onClick={() => {
+                if (isSmallTablet) {
+                  Bus.emit("manage-modal")
+                } else {
+                  navigate(
+                    generatePath(ROUTE_PATHS.poolProfile, {
+                      poolAddress: fundAddress,
+                      "*": "details",
+                    })
+                  )
+                }
+              }}
             />
           )}
         </Flex>

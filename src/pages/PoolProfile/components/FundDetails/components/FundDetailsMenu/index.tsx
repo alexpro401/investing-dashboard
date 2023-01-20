@@ -3,12 +3,18 @@ import { FC, HTMLAttributes, useContext, useMemo } from "react"
 import * as S from "./styled"
 import { ICON_NAMES, ROUTE_PATHS } from "consts"
 import { PoolProfileContext } from "pages/PoolProfile/context"
-import { generatePath } from "react-router-dom"
+import { generatePath, useNavigate } from "react-router-dom"
+import { useBreakpoints } from "hooks"
+import { Bus } from "../../../../../../helpers"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const FundDetailsMenu: FC<Props> = ({ ...rest }) => {
   const { fundImageUrl, fundAddress } = useContext(PoolProfileContext)
+
+  const navigate = useNavigate()
+
+  const { isSmallTablet } = useBreakpoints()
 
   const currentLocationPath = useMemo(
     () =>
@@ -24,27 +30,57 @@ const FundDetailsMenu: FC<Props> = ({ ...rest }) => {
       {
         title: "Fund Details",
         iconName: ICON_NAMES.fileDock,
-        routePath: currentLocationPath.concat("/general"),
+        handleClick: () => {
+          if (isSmallTablet) {
+            Bus.emit("manage-modal/general")
+          } else {
+            navigate(currentLocationPath.concat("/general"))
+          }
+        },
       },
       {
         title: "Investment",
         iconName: ICON_NAMES.dollarOutline,
-        routePath: currentLocationPath.concat("/investment"),
+        handleClick: () => {
+          if (isSmallTablet) {
+            Bus.emit("manage-modal/investment")
+          } else {
+            navigate(currentLocationPath.concat("/investment"))
+          }
+        },
       },
       {
         title: "Limit who can invest",
         iconName: ICON_NAMES.usersGroup,
-        routePath: currentLocationPath.concat("/whitelist"),
+        handleClick: () => {
+          if (isSmallTablet) {
+            Bus.emit("manage-modal/whitelist")
+          } else {
+            navigate(currentLocationPath.concat("/whitelist"))
+          }
+        },
       },
       {
         title: "Fund manager",
         iconName: ICON_NAMES.users,
-        routePath: currentLocationPath.concat("/manager"),
+        handleClick: () => {
+          if (isSmallTablet) {
+            Bus.emit("manage-modal/manager")
+          } else {
+            navigate(currentLocationPath.concat("/manager"))
+          }
+        },
       },
       {
         title: "Performance Fee",
         iconName: ICON_NAMES.dollarOutline,
-        routePath: currentLocationPath.concat("/fee"),
+        handleClick: () => {
+          if (isSmallTablet) {
+            Bus.emit("manage-modal/fee")
+          } else {
+            navigate(currentLocationPath.concat("/fee"))
+          }
+        },
       },
     ]
   }, [currentLocationPath])
@@ -58,7 +94,7 @@ const FundDetailsMenu: FC<Props> = ({ ...rest }) => {
 
       <S.MenuWrp>
         {menuItems.map((el, idx) => (
-          <S.MenuItem key={idx} to={el.routePath}>
+          <S.MenuItem key={idx} onClick={el.handleClick}>
             <S.MenuItemIconLeft name={el.iconName} />
             {el.title}
             <S.MenuItemIconRight name={ICON_NAMES.angleRight} />
