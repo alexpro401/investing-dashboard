@@ -41,7 +41,7 @@ import {
   FundDetailsMenu,
   FundDetailsWhitelist,
 } from "./components/FundDetails/components"
-import UpdateFundContext from "../../context/UpdateFundContext"
+import UpdateFundContext from "context/UpdateFundContext"
 import Modal from "components/Modal"
 import { useEffectOnce } from "react-use"
 import { Bus, sleep } from "helpers"

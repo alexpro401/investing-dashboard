@@ -19,6 +19,7 @@ export const Content = styled.div`
   flex-direction: column;
   gap: var(--app-gap);
   padding: var(--app-padding);
+  min-height: 100%;
 `
 
 export const PoolProfileDefaultInfo = styled.div`

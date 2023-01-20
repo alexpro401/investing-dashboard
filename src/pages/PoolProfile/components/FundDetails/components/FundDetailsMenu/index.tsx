@@ -5,7 +5,7 @@ import { ICON_NAMES, ROUTE_PATHS } from "consts"
 import { PoolProfileContext } from "pages/PoolProfile/context"
 import { generatePath, useNavigate } from "react-router-dom"
 import { useBreakpoints } from "hooks"
-import { Bus } from "../../../../../../helpers"
+import { Bus } from "helpers"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
