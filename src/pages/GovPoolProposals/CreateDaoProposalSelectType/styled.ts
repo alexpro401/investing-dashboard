@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom"
 import styled from "styled-components/macro"
 
 import theme, { respondTo } from "theme"
-import { AppButton, SelectableCard } from "common"
+import { SelectableCard } from "common"
 import Tooltip from "components/Tooltip"
 import {
   SelectableCardTitles,

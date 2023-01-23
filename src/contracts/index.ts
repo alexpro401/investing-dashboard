@@ -60,7 +60,7 @@ import {
   GovSettings,
   GovUserKeeper,
   GovValidators,
-  // TokenSaleProposal,
+  TokenSaleProposal,
   Multicall,
 } from "interfaces/typechain"
 
@@ -198,9 +198,9 @@ export function useGovValidatorsContract(poolAddress: Address) {
   )
 }
 
-// export function useTokenSaleProposalContract(poolAddress: Address) {
-//   return useContract<TokenSaleProposal>(poolAddress, TokenSaletProposal_ABI)
-// }
+export function useTokenSaleProposalContract(poolAddress: Address) {
+  return useContract<TokenSaleProposal>(poolAddress, TokenSaletProposal_ABI)
+}
 
 export function useMulticallContract() {
   const { chainId } = useActiveWeb3React()
