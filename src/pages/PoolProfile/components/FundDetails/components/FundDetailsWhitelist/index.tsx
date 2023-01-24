@@ -79,8 +79,7 @@ const FundDetailsWhitelist: FC<Props> = () => {
       <Collapse isOpen={isWhiteListEnabled}>
         <Card>
           <CardHead
-            nodeLeft={<Icon name={ICON_NAMES.dollarOutline} />}
-            title="Min Investment Amount"
+            title={`Addresses: ${whitelist?.length || 0}`}
             nodeRight={
               <S.HeadResetBtn
                 text={"Delete available"}
@@ -159,8 +158,8 @@ const FundDetailsWhitelist: FC<Props> = () => {
     <>
       <Card>
         <CardHead
-          nodeLeft={<Icon name={ICON_NAMES.dollarOutline} />}
-          title="Min Investment Amount"
+          nodeLeft={<Icon name={ICON_NAMES.usersGroup} />}
+          title="Limit who can invest"
           nodeRight={
             <Switch
               isOn={isWhiteListEnabled}
@@ -173,8 +172,9 @@ const FundDetailsWhitelist: FC<Props> = () => {
         />
         <CardDescription>
           <p>
-            Вы можете ограничить минимальную инвестицию в ваш фонд. Это можно
-            менять в любой момент
+            Вы можете сделать ваш пул приватным, добавив определенные адреса.
+            Вайтлистом можно будет управлять позже. Так же вы можете вкл/выкл
+            эту фичу в любой момент.
           </p>
         </CardDescription>
       </Card>
