@@ -23,7 +23,7 @@ import { hideTapBar, showTabBar } from "state/application/actions"
 import { isAddress, shortenAddress } from "utils"
 
 import * as S from "./styled"
-import { readFromClipboard } from "../../../../../../utils/clipboard"
+import { readFromClipboard } from "utils/clipboard"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -77,71 +77,83 @@ const FundDetailsWhitelist: FC<Props> = () => {
   const WhiteListCollapse = useMemo(() => {
     return (
       <Collapse isOpen={isWhiteListEnabled}>
-        <CardFormControl>
-          <S.AddressBalanceAddBtn onClick={handleAddItemToWhitelist}>
-            Paste address
-            <S.AddressBalanceAddBtnStubWrp>
-              <S.AddressBalanceAddBtnInputStub>
-                0,00
-              </S.AddressBalanceAddBtnInputStub>
-              <S.AddressBalanceAddBtnSymbolStub>
-                TKN
-              </S.AddressBalanceAddBtnSymbolStub>
-            </S.AddressBalanceAddBtnStubWrp>
-          </S.AddressBalanceAddBtn>
-          {whitelist.map((item, idx) => (
-            <S.AddressBalanceFieldWrp
-              key={idx}
-              addressValue={shortenAddress(item.address)}
-              updateAddressValue={(v) =>
-                setWhitelist((prev) => {
-                  const newWhitelist = [...prev]
-                  newWhitelist[idx].address = v
+        <Card>
+          <CardHead
+            nodeLeft={<Icon name={ICON_NAMES.dollarOutline} />}
+            title="Min Investment Amount"
+            nodeRight={
+              <S.HeadResetBtn
+                text={"Delete available"}
+                onClick={() => setWhitelist([])}
+              />
+            }
+          />
+          <CardFormControl>
+            <S.AddressBalanceAddBtn onClick={handleAddItemToWhitelist}>
+              Paste address
+              <S.AddressBalanceAddBtnStubWrp>
+                <S.AddressBalanceAddBtnInputStub>
+                  0,00
+                </S.AddressBalanceAddBtnInputStub>
+                <S.AddressBalanceAddBtnSymbolStub>
+                  TKN
+                </S.AddressBalanceAddBtnSymbolStub>
+              </S.AddressBalanceAddBtnStubWrp>
+            </S.AddressBalanceAddBtn>
+            {whitelist.map((item, idx) => (
+              <S.AddressBalanceFieldWrp
+                key={idx}
+                addressValue={shortenAddress(item.address)}
+                updateAddressValue={(v) =>
+                  setWhitelist((prev) => {
+                    const newWhitelist = [...prev]
+                    newWhitelist[idx].address = v
 
-                  return newWhitelist
-                })
-              }
-              onFilledNodeLeft={
-                item.isDisabled ? (
-                  <S.RefreshBtnIcon
-                    onClick={() => {
-                      setWhitelist((prev) => {
-                        const newWhitelist = [...prev]
-                        newWhitelist[idx].isDisabled = false
+                    return newWhitelist
+                  })
+                }
+                onFilledNodeLeft={
+                  item.isDisabled ? (
+                    <S.RefreshBtnIcon
+                      onClick={() => {
+                        setWhitelist((prev) => {
+                          const newWhitelist = [...prev]
+                          newWhitelist[idx].isDisabled = false
 
-                        return newWhitelist
-                      })
-                    }}
-                  />
-                ) : (
-                  <S.DisableBtnIcon
-                    onClick={() => {
-                      setWhitelist((prev) => {
-                        const newWhitelist = [...prev]
-                        newWhitelist[idx].isDisabled = true
+                          return newWhitelist
+                        })
+                      }}
+                    />
+                  ) : (
+                    <S.DisableBtnIcon
+                      onClick={() => {
+                        setWhitelist((prev) => {
+                          const newWhitelist = [...prev]
+                          newWhitelist[idx].isDisabled = true
 
-                        return newWhitelist
-                      })
-                    }}
-                  />
-                )
-              }
-              isItemDisabled={item.isDisabled}
-              balanceValue={item.balance}
-              updateBalanceValue={(v) => {
-                setWhitelist((prev) => {
-                  const newWhitelist = [...prev]
-                  newWhitelist[idx].balance = v
-                  return newWhitelist
-                })
-              }}
-              tokenSymbol={"ETH"}
-            />
-          ))}
-        </CardFormControl>
+                          return newWhitelist
+                        })
+                      }}
+                    />
+                  )
+                }
+                isItemDisabled={item.isDisabled}
+                balanceValue={item.balance}
+                updateBalanceValue={(v) => {
+                  setWhitelist((prev) => {
+                    const newWhitelist = [...prev]
+                    newWhitelist[idx].balance = v
+                    return newWhitelist
+                  })
+                }}
+                tokenSymbol={"ETH"}
+              />
+            ))}
+          </CardFormControl>
+        </Card>
       </Collapse>
     )
-  }, [isWhiteListEnabled, whitelist])
+  }, [handleAddItemToWhitelist, isWhiteListEnabled, whitelist])
 
   return (
     <>
@@ -165,8 +177,9 @@ const FundDetailsWhitelist: FC<Props> = () => {
             менять в любой момент
           </p>
         </CardDescription>
-        {WhiteListCollapse}
       </Card>
+      {WhiteListCollapse}
+      <S.FormSubmitBtn text="Confirm changes" />
     </>
   )
 }

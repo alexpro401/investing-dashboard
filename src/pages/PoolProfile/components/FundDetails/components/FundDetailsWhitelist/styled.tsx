@@ -2,11 +2,8 @@ import { AppButton } from "common"
 import { ICON_NAMES } from "consts"
 import styled, { css } from "styled-components/macro"
 import { AddressBalanceField } from "fields"
-import {
-  fieldPaddings,
-  fieldTextColor,
-  getDefaultFieldBorderStyles,
-} from "fields/styled"
+import { fieldPaddings, getDefaultFieldBorderStyles } from "fields/styled"
+import { respondTo } from "theme"
 
 export const RefreshBtnIcon = styled(AppButton).attrs(() => ({
   iconLeft: ICON_NAMES.reload,
@@ -77,4 +74,27 @@ export const AddressBalanceAddBtnSymbolStub = styled.span`
   line-height: 1.2;
   font-weight: 500;
   color: ${(props) => props.theme.textColors.secondary};
+`
+
+export const FormSubmitBtn = styled(AppButton).attrs(() => ({
+  color: "tertiary",
+}))`
+  border: none;
+  margin-top: auto;
+  width: 100%;
+
+  ${respondTo("xs")} {
+    margin-top: 0;
+  }
+`
+
+export const HeadResetBtn = styled(AppButton).attrs(() => ({
+  color: "default",
+  size: "no-paddings",
+}))`
+  text-align: right;
+  color: ${(props) => props.theme.statusColors.error};
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 600;
 `
