@@ -1,24 +1,14 @@
 import styled from "styled-components/macro"
 import { RotateSpinner } from "react-spinners-kit"
 
-import { Flex, GradientBorder } from "theme"
+import { Flex, GradientBorder, respondTo } from "theme"
 import insuranceBG from "assets/background/insurance-card.svg"
 import dexePlaceholder from "assets/icons/dexe-placeholder.svg"
+import { Card } from "common"
 
 const Styled = {
   Container: styled.div<{ loading?: boolean }>`
     position: relative;
-    padding: 16px;
-    width: fill-available;
-    background: #0e121b;
-
-    height: ${({ loading = false }) =>
-      loading ? "calc(100vh - 128px)" : "initial"};
-
-    @media all and (display-mode: standalone) {
-      height: ${({ loading = false }) =>
-        loading ? "calc(100vh - 149px)" : "initial"};
-    }
   `,
   FeeDateCard: styled(Flex)`
     justify-content: center;
@@ -68,7 +58,7 @@ const Styled = {
   LoadingContent: styled(Flex)`
     height: inherit;
   `,
-  MainCard: styled(GradientBorder)`
+  MainCard: styled(Card)`
     width: 100%;
     padding: 13px 16px 20px;
     border-radius: 20px;
@@ -76,6 +66,10 @@ const Styled = {
 
     &:after {
       background: #0f1421;
+    }
+
+    ${respondTo("xs")} {
+      padding: 0;
     }
   `,
   MainCardTitle: styled.div<{ m?: string }>`
@@ -101,15 +95,16 @@ const Styled = {
     text-align: right;
   `,
   OptimizeWithdrawal: styled(GradientBorder)`
-    width: 100%;
     margin-top: 16px;
     padding: 16px 8px 16px 14px;
     border-radius: 16px;
     align-items: center;
     justify-content: space-between;
+    background: transparent;
+    width: fill-available;
 
     &:after {
-      background: #0f1421;
+      background: ${(props) => props.theme.backgroundColors.secondary};
     }
   `,
   OptimizeWithdrawalTitle: styled.div`
@@ -120,6 +115,30 @@ const Styled = {
     line-height: 15px;
     color: #ffffff;
     margin-left: 8px;
+  `,
+  WithdrawalHistoryTitle: styled.span`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 24px auto;
+    width: 100%;
+    font-family: ${(props) => props.theme.appFontFamily};
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 19px;
+    text-align: center;
+    color: #e4f2ff;
+  `,
+  WithdrawalHistoryBtn: styled.button`
+    background: transparent;
+    border: none;
+    align-self: center;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 24px;
+    color: ${(props) => props.theme.brandColors.secondary};
   `,
 }
 

@@ -35,6 +35,7 @@ import { getDay } from "date-fns"
 import { BigNumber } from "@ethersproject/bignumber"
 import { Token } from "interfaces"
 import { Investor } from "interfaces/thegraphs/all-pools"
+import useFundFee from "./useFundFee"
 
 interface IPoolProfileContext {
   isTrader?: boolean
@@ -125,6 +126,39 @@ interface IPoolProfileContext {
   }
 
   poolInvestors?: Investor[]
+
+  perfomanceFee?: {
+    perfomancePoolData?: any
+    perfomancePpoolInfo?: any
+
+    optimizeWithdrawal?: any
+
+    fundCommissionPercentage?: any
+    unlockDate?: any
+
+    totalFundCommissionFeeBase?: any
+    totalFundCommissionFeeUSD?: any
+
+    fundsUnderManagementDexe?: any
+
+    fundProfitWithoutTraderUSD?: any
+    fundProfitWithoutTraderDEXE?: any
+    fundProfitWithoutTraderPercentage?: any
+
+    platformCommissionUSD?: any
+    platformCommissionBase?: any
+    platformCommissionPercentage?: any
+
+    traderCommissionUSD?: any
+    traderCommissionBase?: any
+
+    netInvestorsProfitUSD?: any
+    netInvestorsProfitDEXE?: any
+    netInvestorsProfitPercentage?: any
+
+    setOptimizeWithdrawal?: any
+    withdrawCommission?: any
+  }
 }
 
 export const PoolProfileContext = createContext<IPoolProfileContext>({})
@@ -277,6 +311,38 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
     }
   }, [poolInfo])
 
+  // perfomance fee
+  const [
+    [perfomancePoolData, perfomancePpoolInfo],
+    {
+      optimizeWithdrawal,
+
+      fundCommissionPercentage,
+      unlockDate,
+
+      totalFundCommissionFeeBase,
+      totalFundCommissionFeeUSD,
+
+      fundsUnderManagementDexe,
+
+      fundProfitWithoutTraderUSD,
+      fundProfitWithoutTraderDEXE,
+      fundProfitWithoutTraderPercentage,
+
+      platformCommissionUSD,
+      platformCommissionBase,
+      platformCommissionPercentage,
+
+      traderCommissionUSD,
+      traderCommissionBase,
+
+      netInvestorsProfitUSD,
+      netInvestorsProfitDEXE,
+      netInvestorsProfitPercentage,
+    },
+    { setOptimizeWithdrawal, withdrawCommission },
+  ] = useFundFee(poolAddress)
+
   return (
     <WithPoolAddressValidation poolAddress={poolAddress ?? ""} loader={loader}>
       <PoolProfileContext.Provider
@@ -377,6 +443,39 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
             investorsFundsBase,
             poolUsedInPositionsUSD,
             poolUsedToTotalPercentage,
+          },
+
+          perfomanceFee: {
+            perfomancePoolData,
+            perfomancePpoolInfo,
+
+            optimizeWithdrawal,
+
+            fundCommissionPercentage,
+            unlockDate,
+
+            totalFundCommissionFeeBase,
+            totalFundCommissionFeeUSD,
+
+            fundsUnderManagementDexe,
+
+            fundProfitWithoutTraderUSD,
+            fundProfitWithoutTraderDEXE,
+            fundProfitWithoutTraderPercentage,
+
+            platformCommissionUSD,
+            platformCommissionBase,
+            platformCommissionPercentage,
+
+            traderCommissionUSD,
+            traderCommissionBase,
+
+            netInvestorsProfitUSD,
+            netInvestorsProfitDEXE,
+            netInvestorsProfitPercentage,
+
+            setOptimizeWithdrawal,
+            withdrawCommission,
           },
         }}
       >

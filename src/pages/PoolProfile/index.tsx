@@ -40,7 +40,8 @@ import {
   FundDetailsManager,
   FundDetailsMenu,
   FundDetailsWhitelist,
-} from "./components/FundDetails/components"
+  FundDetailsWithdrawalHistory,
+} from "pages/PoolProfile/components/FundDetails/components"
 import UpdateFundContext from "context/UpdateFundContext"
 import Modal from "components/Modal"
 import { useEffectOnce } from "react-use"
@@ -494,7 +495,13 @@ const PoolProfile = () => {
 
   const [isManageModalShown, setIsManageModalShown] = useState(false)
   const [modalContent, setModalContent] = useState<
-    "menu" | "general" | "investment" | "whitelist" | "manager" | "fee"
+    | "menu"
+    | "general"
+    | "investment"
+    | "whitelist"
+    | "manager"
+    | "fee"
+    | "withdrawal_history"
   >("menu")
 
   useEffectOnce(() => {
@@ -519,27 +526,33 @@ const PoolProfile = () => {
     Bus.on("manage-modal/fee", () => {
       setModalContent("fee")
     })
+    Bus.on("manage-modal/withdrawal-history", () => {
+      setModalContent("withdrawal_history")
+    })
 
     return () => {
       Bus.off("manage-modal", () => {
         setIsManageModalShown(false)
       })
-      Bus.on("manage-modal/menu", () => {
+      Bus.off("manage-modal/menu", () => {
         setModalContent("menu")
       })
-      Bus.on("manage-modal/general", () => {
+      Bus.off("manage-modal/general", () => {
         setModalContent("menu")
       })
-      Bus.on("manage-modal/investment", () => {
+      Bus.off("manage-modal/investment", () => {
         setModalContent("menu")
       })
-      Bus.on("manage-modal/whitelist", () => {
+      Bus.off("manage-modal/whitelist", () => {
         setModalContent("menu")
       })
-      Bus.on("manage-modal/manager", () => {
+      Bus.off("manage-modal/manager", () => {
         setModalContent("menu")
       })
-      Bus.on("manage-modal/fee", () => {
+      Bus.off("manage-modal/fee", () => {
+        setModalContent("menu")
+      })
+      Bus.off("manage-modal/withdrawal-history", () => {
         setModalContent("menu")
       })
     }
@@ -619,6 +632,7 @@ const PoolProfile = () => {
                   manager: <FundDetailsManager />,
                   fee: <FundDetailsFee />,
                   menu: <FundDetailsMenu />,
+                  withdrawal_history: <FundDetailsWithdrawalHistory />,
                 }[modalContent]
               }
             </S.ModalBodyWrp>

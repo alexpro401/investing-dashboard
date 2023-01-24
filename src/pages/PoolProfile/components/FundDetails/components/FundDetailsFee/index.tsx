@@ -1,5 +1,4 @@
-import { FC, useCallback } from "react"
-import { useParams } from "react-router-dom"
+import { FC, useCallback, useContext } from "react"
 
 import { useERC20Data } from "state/erc20/hooks"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
@@ -13,69 +12,47 @@ import Tooltip from "components/Tooltip"
 import Accordion from "components/Accordion"
 import AmountRow from "components/Amount/Row"
 import PoolPnlChart from "components/PoolPnlChart"
-import WithdrawalsHistory from "components/WithdrawalsHistory"
-
-import useFundFee from "./useFundFee"
 
 import S, { PageLoading } from "./styled"
 import { useUserAgreement } from "state/user/hooks"
 import { GuardSpinner } from "react-spinners-kit"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
+import { useBreakpoints } from "hooks"
+import { FundDetailsWithdrawalHistory } from "pages/PoolProfile/components/FundDetails"
+import { PoolProfileContext } from "pages/PoolProfile/context"
+import { Bus } from "../../../../../../helpers"
 
 const FundDetailsFee: FC = () => {
-  const { poolAddress } = useParams()
-  const [
-    [poolData, poolInfo],
-    {
-      optimizeWithdrawal,
+  const { perfomanceFee, fundAddress, fundTicker, fundName, basicToken } =
+    useContext(PoolProfileContext)
 
-      fundCommissionPercentage,
-      unlockDate,
-
-      totalFundCommissionFeeBase,
-      totalFundCommissionFeeUSD,
-
-      fundsUnderManagementDexe,
-
-      fundProfitWithoutTraderUSD,
-      fundProfitWithoutTraderDEXE,
-      fundProfitWithoutTraderPercentage,
-
-      platformCommissionUSD,
-      platformCommissionBase,
-      platformCommissionPercentage,
-
-      traderCommissionUSD,
-      traderCommissionBase,
-
-      netInvestorsProfitUSD,
-      netInvestorsProfitDEXE,
-      netInvestorsProfitPercentage,
-    },
-    { setOptimizeWithdrawal, withdrawCommission },
-  ] = useFundFee(poolAddress)
+  const { isSmallTablet } = useBreakpoints()
 
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
   const onSubmit = useCallback(() => {
-    agreed ? withdrawCommission() : setShowAgreement(true)
-  }, [agreed, withdrawCommission, setShowAgreement])
+    agreed ? perfomanceFee?.withdrawCommission() : setShowAgreement(true)
+  }, [agreed, perfomanceFee, setShowAgreement])
 
-  const [baseToken] = useERC20Data(poolData?.baseToken)
+  const [baseToken] = useERC20Data(perfomanceFee?.perfomancePoolData?.baseToken)
 
   const [{ poolMetadata }] = usePoolMetadata(
-    poolAddress,
-    poolInfo?.parameters.descriptionURL
+    fundAddress,
+    perfomanceFee?.perfomancePpoolInfo?.parameters.descriptionURL
   )
 
-  if (!poolData || !poolInfo || !poolMetadata) {
+  if (
+    !perfomanceFee?.perfomancePoolData ||
+    !perfomanceFee?.perfomancePpoolInfo ||
+    !poolMetadata
+  ) {
     return <PageLoading />
   }
 
   return (
     <>
       <WithPoolAddressValidation
-        poolAddress={poolAddress ?? ""}
+        poolAddress={fundAddress ?? ""}
         loader={
           <Center>
             <GuardSpinner size={20} loading />
@@ -83,12 +60,16 @@ const FundDetailsFee: FC = () => {
         }
       >
         <S.Container>
-          <S.FeeDateCard>
-            <S.FeeDateText>
-              Performance Fee {fundCommissionPercentage.format}% are available
-              from {unlockDate}
-            </S.FeeDateText>
-          </S.FeeDateCard>
+          {isSmallTablet ? (
+            <></>
+          ) : (
+            <S.FeeDateCard>
+              <S.FeeDateText>
+                Performance Fee {perfomanceFee?.fundCommissionPercentage.format}
+                % are available from {perfomanceFee?.unlockDate}
+              </S.FeeDateText>
+            </S.FeeDateCard>
+          )}
 
           <S.MainCard>
             <Flex dir="row" full>
@@ -97,78 +78,84 @@ const FundDetailsFee: FC = () => {
                   size={38}
                   m="0 8px 0 0"
                   source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
-                  address={poolAddress}
+                  address={fundAddress}
                 />
                 <div>
-                  <S.MainCardTitle>{poolData.ticker}</S.MainCardTitle>
+                  <S.MainCardTitle>{fundTicker}</S.MainCardTitle>
                   <S.MainCardDescription m="2px 0 0">
-                    {poolData.name}
+                    {fundName}
                   </S.MainCardDescription>
                 </div>
               </Flex>
               <S.MainCardHeaderRight>
-                <S.MainCardTitle>${totalFundCommissionFeeUSD}</S.MainCardTitle>
+                <S.MainCardTitle>
+                  ${perfomanceFee?.totalFundCommissionFeeUSD}
+                </S.MainCardTitle>
                 <S.MainCardDescription m="2px 0 0">
-                  {totalFundCommissionFeeBase} {baseToken?.symbol}
+                  {perfomanceFee?.totalFundCommissionFeeBase}{" "}
+                  {baseToken?.symbol}
                 </S.MainCardDescription>
               </S.MainCardHeaderRight>
             </Flex>
 
             <PoolPnlChart
-              address={poolAddress}
-              baseToken={poolData?.baseToken}
+              address={fundAddress}
+              baseToken={basicToken?.address}
             />
 
             <Flex full dir="column" m={"16px 0 0"}>
               <AmountRow
                 title="Funds under management"
-                value={fundsUnderManagementDexe}
+                value={perfomanceFee?.fundsUnderManagementDexe}
                 symbol="DEXE"
               />
               <Accordion
                 title="Fund Profit (Without your funds)"
-                value={fundProfitWithoutTraderUSD.format}
+                value={perfomanceFee?.fundProfitWithoutTraderUSD.format}
                 symbol="USD"
                 m="8px 0 0"
               >
                 <Flex full dir="column" ai="flex-end">
-                  <Amount value={fundProfitWithoutTraderDEXE} symbol={"DEXE"} />
                   <Amount
-                    value={`${fundProfitWithoutTraderPercentage}%`}
+                    value={perfomanceFee?.fundProfitWithoutTraderDEXE}
+                    symbol={"DEXE"}
+                  />
+                  <Amount
+                    value={`${perfomanceFee?.fundProfitWithoutTraderPercentage}%`}
                     m="4px 0 0"
                   />
                 </Flex>
               </Accordion>
               <Accordion
                 title="Platform Fee"
-                value={platformCommissionUSD}
+                value={perfomanceFee?.platformCommissionUSD}
                 symbol="USD"
                 m="8px 0 0"
               >
                 <Flex full dir="column" ai="flex-end">
                   <Amount
-                    value={platformCommissionBase}
+                    value={perfomanceFee?.platformCommissionBase}
                     symbol={baseToken?.symbol}
                   />
                   <Amount
-                    value={`${platformCommissionPercentage} %`}
+                    value={`${perfomanceFee?.platformCommissionPercentage} %`}
                     m="4px 0 0"
                   />
                 </Flex>
               </Accordion>
               <Accordion
                 title="Perfomance Fee"
-                value={traderCommissionUSD}
+                value={perfomanceFee?.traderCommissionUSD}
                 symbol="USD"
                 m="8px 0 0"
               >
                 <Flex full dir="column" ai="flex-end">
                   <Amount
-                    value={traderCommissionBase}
+                    value={perfomanceFee?.traderCommissionBase}
                     symbol={baseToken?.symbol}
                   />
                   <Amount
-                    value={`${fundCommissionPercentage.format} %`}
+                    value={`${perfomanceFee?.fundCommissionPercentage.format} %`}
                     m="4px 0 0"
                   />
                 </Flex>
@@ -176,14 +163,17 @@ const FundDetailsFee: FC = () => {
 
               <Accordion
                 title="Net Investor Profit"
-                value={netInvestorsProfitUSD.format}
+                value={perfomanceFee?.netInvestorsProfitUSD.format}
                 symbol="USD"
                 m="8px 0 0"
               >
                 <Flex full dir="column" ai="flex-end">
-                  <Amount value={netInvestorsProfitDEXE} symbol={"DEXE"} />
                   <Amount
-                    value={`${netInvestorsProfitPercentage} %`}
+                    value={perfomanceFee?.netInvestorsProfitDEXE}
+                    symbol={"DEXE"}
+                  />
+                  <Amount
+                    value={`${perfomanceFee?.netInvestorsProfitPercentage} %`}
                     m="4px 0 0"
                   />
                 </Flex>
@@ -201,9 +191,9 @@ const FundDetailsFee: FC = () => {
                 </S.OptimizeWithdrawalTitle>
               </Flex>
               <Switch
-                isOn={optimizeWithdrawal}
+                isOn={perfomanceFee?.optimizeWithdrawal}
                 name="optimize-withdrawal"
-                onChange={(n, s) => setOptimizeWithdrawal(s)}
+                onChange={(n, s) => perfomanceFee?.setOptimizeWithdrawal(s)}
               />
             </S.OptimizeWithdrawal>
 
@@ -218,13 +208,20 @@ const FundDetailsFee: FC = () => {
             </Flex>
           </S.MainCard>
 
-          {poolAddress && (
-            <Flex dir="column" full m="40px 0 0">
-              <WithdrawalsHistory
-                unlockDate={unlockDate}
-                poolAddress={poolAddress}
-              />
-            </Flex>
+          {isSmallTablet ? (
+            <S.WithdrawalHistoryBtn
+              type="button"
+              onClick={() => Bus.emit("manage-modal/withdrawal-history")}
+            >
+              Withdrawal history
+            </S.WithdrawalHistoryBtn>
+          ) : (
+            <>
+              <S.WithdrawalHistoryTitle>
+                Withdrawal history
+              </S.WithdrawalHistoryTitle>
+              <FundDetailsWithdrawalHistory />
+            </>
           )}
         </S.Container>
       </WithPoolAddressValidation>
