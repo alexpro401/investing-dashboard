@@ -16,6 +16,8 @@ import {
   calcPositionPnlPercentage,
 } from "utils/formulas"
 import { ITokenBase } from "interfaces"
+import { usePoolMetadata } from "../../../../state/ipfsMetadata/hooks"
+import { usePoolContract } from "../../../../hooks"
 
 interface IAmount {
   big: BigNumber
@@ -38,12 +40,19 @@ interface IPayload {
   pnlUSD: BigNumber
   positionToken: ITokenBase | null
   baseToken: ITokenBase | null
+  poolMetadata: any
 }
 
 function usePoolPosition(position: IPosition): [IPayload] {
   const priceFeed = usePriceFeedContract()
   const [positionToken] = useERC20Data(position.positionToken)
   const [baseToken] = useERC20Data(position.traderPool.baseToken)
+  const [, poolInfo] = usePoolContract(position.traderPool.id)
+
+  const [{ poolMetadata }] = usePoolMetadata(
+    position.traderPool.id,
+    poolInfo?.parameters.descriptionURL
+  )
 
   const currentPriceUSD = useTokenPriceOutUSD({
     tokenAddress: position.positionToken,
@@ -229,6 +238,7 @@ function usePoolPosition(position: IPosition): [IPayload] {
       pnlUSD,
       positionToken,
       baseToken,
+      poolMetadata,
     },
   ]
 }

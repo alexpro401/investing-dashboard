@@ -5,10 +5,9 @@ import { PulseSpinner } from "react-spinners-kit"
 import { PoolType } from "consts/types"
 import { usePoolRegistryContract } from "contracts"
 
+import { Flex } from "theme"
 import FundProposalsRisky from "pages/FundProposalsRisky"
 import FundProposalsInvest from "pages/FundProposalsInvest"
-
-import S from "./styled"
 
 const FundProposals = () => {
   const { poolAddress } = useParams()
@@ -31,9 +30,9 @@ const FundProposals = () => {
 
   if (!poolType) {
     return (
-      <S.Container full ai="center" jc="center">
+      <Flex full ai="center" jc="center">
         <PulseSpinner />
-      </S.Container>
+      </Flex>
     )
   }
 

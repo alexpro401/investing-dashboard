@@ -1,16 +1,15 @@
-import { FC, useEffect, useMemo, useRef } from "react"
+import { FC, useMemo } from "react"
 import { PulseSpinner } from "react-spinners-kit"
-import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { useActiveWeb3React } from "hooks"
 import { usePoolContract } from "hooks/usePool"
 import useRiskyProposals from "hooks/useRiskyProposals"
 import { useTraderPoolRiskyProposalContract } from "contracts"
 
+import { Flex } from "theme"
+import { NoDataMessage } from "common"
 import LoadMore from "components/LoadMore"
 import RiskyProposalCard from "components/cards/proposal/Risky"
-
-import S from "./styled"
 
 interface IProps {
   poolAddress?: string
@@ -21,15 +20,6 @@ const FundProposalsRisky: FC<IProps> = ({ poolAddress }) => {
   const proposalPool = useTraderPoolRiskyProposalContract(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
   const [{ data, loading }, fetchMore] = useRiskyProposals(poolAddress)
-
-  const loader = useRef<any>()
-
-  useEffect(() => {
-    if (!loader.current) return
-    disableBodyScroll(loader.current)
-
-    return () => clearAllBodyScrollLocks()
-  }, [loader, loading])
 
   const isTrader = useMemo<boolean>(() => {
     if (!account || !poolInfo) {
@@ -45,22 +35,18 @@ const FundProposalsRisky: FC<IProps> = ({ poolAddress }) => {
     (data.length === 0 && loading)
   ) {
     return (
-      <S.ListLoading full ai="center" jc="center">
+      <Flex full ai="center" jc="center">
         <PulseSpinner />
-      </S.ListLoading>
+      </Flex>
     )
   }
 
   if (data && data.length === 0 && !loading) {
-    return (
-      <S.Content full ai="center" jc="center">
-        <S.WithoutData>No proposals</S.WithoutData>
-      </S.Content>
-    )
+    return <NoDataMessage />
   }
 
   return (
-    <S.List ref={loader}>
+    <>
       {data.map((proposal, index) => (
         <RiskyProposalCard
           key={index}
@@ -72,8 +58,8 @@ const FundProposalsRisky: FC<IProps> = ({ poolAddress }) => {
           isTrader={isTrader}
         />
       ))}
-      <LoadMore isLoading={loading} handleMore={fetchMore} r={loader} />
-    </S.List>
+      <LoadMore isLoading={loading} handleMore={fetchMore} />
+    </>
   )
 }
 

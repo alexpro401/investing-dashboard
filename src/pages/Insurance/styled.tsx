@@ -1,4 +1,5 @@
 import styled from "styled-components/macro"
+import { rgba } from "polished"
 import { Card, CardDescription, CardHead, AppButton } from "common"
 import { ICON_NAMES } from "consts/icon-names"
 import { respondTo } from "theme"
@@ -49,7 +50,7 @@ export const InsuranceInfoCardAction = styled(AppButton)`
   background: #28334a;
 
   ${respondTo("sm")} {
-    background: rgba(38, 105, 235, 0.15);
+    background: ${({ theme }) => rgba(theme.brandColors.secondary, 0.15)};
     width: initial;
     border-radius: 16px;
   }

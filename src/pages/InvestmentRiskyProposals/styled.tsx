@@ -1,28 +1,55 @@
 import styled from "styled-components/macro"
-import { Flex } from "theme"
+import RouteTabs from "components/RouteTabs"
+import { respondTo } from "theme"
 
-const Styled = {
-  List: styled.div`
-    width: 100%;
-    height: 100%;
-    padding: 16px;
-    position: relative;
-    overflow-y: auto;
-  `,
-  Content: styled(Flex)`
-    width: 100%;
-    height: inherit;
-    align-items: center;
-    justify-content: center;
-  `,
-  WithoutData: styled.div`
-    font-family: ${(props) => props.theme.appFontFamily};
-    font-style: normal;
-    font-weight: 600;
-    font-size: 13px;
-    line-height: 16px;
-    color: #e4f2ff;
-  `,
-}
+export const PageSubTabs = styled(RouteTabs)`
+  ${respondTo("sm")} {
+    width: max-content;
+    min-width: 350px;
+  }
+`
 
-export default Styled
+export const InvestorRiskyPositionsListWrp = styled.div`
+  ${respondTo("lg")} {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(20, 25, 38, 0.5);
+    border-radius: 20px;
+    padding: 0 8px 8px;
+  }
+`
+
+export const InvestorRiskyPositionsListHead = styled.div<{
+  childMaxWidth?: string
+}>`
+  display: none;
+
+  ${respondTo("lg")} {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    grid-column-gap: 12px;
+    padding: 8px 16px 0;
+
+    & > * {
+      flex: 1 0 155px;
+      max-width: ${({ childMaxWidth }) => childMaxWidth ?? "167px"};
+    }
+  }
+`
+
+export const InvestorRiskyPositionsListHeadItem = styled.div`
+  ${respondTo("lg")} {
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0 4px;
+    padding: 8px 0;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+    color: #6781bd;
+  }
+`

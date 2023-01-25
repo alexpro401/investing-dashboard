@@ -11,9 +11,9 @@ import { generatePath, useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { ROUTE_PATHS, ZERO } from "consts"
+import { ICON_NAMES, ROUTE_PATHS, ZERO } from "consts"
 import { getIpfsData } from "utils/ipfs"
-import { useActiveWeb3React } from "hooks"
+import { useActiveWeb3React, useBreakpoints } from "hooks"
 import usePoolPrice from "hooks/usePoolPrice"
 import { usePoolContract } from "hooks/usePool"
 import { useERC20Data } from "state/erc20/hooks"
@@ -33,9 +33,9 @@ import Skeleton from "components/Skeleton"
 import ReadMore from "components/ReadMore"
 import TokenIcon from "components/TokenIcon"
 import IconButton from "components/IconButton"
-import { Actions } from "components/cards/proposal/_shared"
+import { Actions, BodyItem } from "components/cards/proposal/_shared"
 
-import S from "./styled"
+import S, { Root } from "./styled"
 import BodyTrader from "./BodyTrader"
 import BodyInvestor from "./BodyInvestor"
 import InvestCardSettings from "./Settings"
@@ -45,6 +45,7 @@ import settingsGreenIcon from "assets/icons/settings-green.svg"
 import useRequestDividendsContext from "modals/RequestDividend/useRequestDividendsContext"
 import useProposalAddress from "hooks/useProposalAddress"
 import { IInvestProposalInfo } from "interfaces/contracts/ITraderPoolInvestProposal"
+import { AppButton, Icon as IconCommon } from "common"
 
 interface Props {
   proposal: IInvestProposalInfo[0]
@@ -52,6 +53,7 @@ interface Props {
 }
 
 const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
+  const { isDesktop } = useBreakpoints()
   const navigate = useNavigate()
   const { account } = useActiveWeb3React()
   const priceFeed = usePriceFeedContract()
@@ -127,11 +129,11 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
   const [expirationDate, setExpirationDate] = useState<{
     value: string
     completed: boolean
-    initial: BigNumber
+    initial: string
   }>({
     value: "0",
     completed: false,
-    initial: ZERO,
+    initial: "0",
   })
 
   /**
@@ -221,7 +223,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     setExpirationDate({
       value: format(expandedTimestampLimit, DATE_TIME_FORMAT),
       completed: currentTimestamp - expandedTimestampLimit >= 0,
-      initial: timestampLimit,
+      initial: timestampLimit.toString(),
     })
   }, [proposal])
 
@@ -421,7 +423,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
       setExpirationDate({
         value: format(expanded, DATE_TIME_FORMAT),
         completed: currentTimestamp - expanded >= 0,
-        initial: BigNumber.from(String(timestamp)),
+        initial: String(timestamp),
       })
     }
 
@@ -443,8 +445,32 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
       )
     }
 
-    return isTrader ? (
-      <>
+    if (isTrader) {
+      return isDesktop ? (
+        <Flex ai={"center"} jc={"flex-start"} gap={"8"}>
+          <Icon
+            size={36}
+            m="0"
+            source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
+            address={poolAddress}
+          />
+          <BodyItem
+            label={"Proposal ticker"}
+            amount={
+              <Flex ai={"center"} gap={"4"}>
+                <span>{ticker}</span>
+                <Flex m="0 0 0 4px">
+                  <IconButton
+                    size={12}
+                    media={isSettingsOpen ? settingsGreenIcon : settingsIcon}
+                    onClick={toggleSettings}
+                  />
+                </Flex>
+              </Flex>
+            }
+          />
+        </Flex>
+      ) : (
         <Flex>
           <S.Status active={!completed}>
             {!completed ? "Open investing" : "Closed investing"}
@@ -457,18 +483,14 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
             />
           </Flex>
         </Flex>
-        <InvestCardSettings
-          ticker={ticker}
-          visible={isSettingsOpen}
-          setVisible={setIsSettingsOpen}
-          proposalPool={proposalPool}
-          proposalId={proposalId}
-          successCallback={onUpdateRestrictions}
-          timestamp={expirationDate.initial}
-          maxSizeLP={maxSizeLP.big}
-          fullness={fullness}
-        />
-      </>
+      )
+    }
+
+    return isDesktop ? (
+      <Flex onClick={navigateToPool} gap={"8"}>
+        <TokenIcon address={poolInfo?.parameters.baseToken} m="0" size={36} />
+        <BodyItem label={"Fund ticker"} amount={ticker} />
+      </Flex>
     ) : (
       <Flex onClick={navigateToPool}>
         <S.FundSymbol>{poolInfo?.ticker}</S.FundSymbol>
@@ -488,6 +510,9 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
     proposalPool,
     ticker,
     toggleSettings,
+    isDesktop,
+    poolAddress,
+    poolMetadata,
   ])
 
   const body = useMemo(() => {
@@ -557,46 +582,108 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
 
   return (
     <>
-      <S.Container>
-        <S.Card onClick={toggleExtra}>
-          <S.Head isTrader={isTrader}>
-            <Flex>
-              <Icon
-                size={24}
-                m="0"
-                source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
-                address={poolAddress}
-              />
-              <S.Title>{ticker}</S.Title>
-            </Flex>
-            {headerRight}
-          </S.Head>
-          <S.Body>{body}</S.Body>
-          <S.ReadMoreContainer
-            color={
-              typeof description === "string" && description.length > 0
-                ? "#e4f2ff"
-                : "#414653"
-            }
-          >
-            {description === null ? (
-              <Skeleton variant="rect" h="22px" />
-            ) : (
+      <Root>
+        <S.Container>
+          <S.Card onClick={toggleExtra}>
+            <S.Head isTrader={isTrader}>
+              {((!isTrader && !isDesktop) || !isDesktop) && (
+                <Flex ai={"center"} jc={"flex-start"} gap={"8"}>
+                  <Icon
+                    size={isDesktop ? 36 : 24}
+                    m="0"
+                    source={
+                      poolMetadata?.assets[poolMetadata?.assets.length - 1]
+                    }
+                    address={poolAddress}
+                  />
+                  {isDesktop ? (
+                    <BodyItem label={"Fund ticker"} amount={ticker} />
+                  ) : (
+                    <S.Title>{ticker}</S.Title>
+                  )}
+                </Flex>
+              )}
+              {headerRight}
+            </S.Head>
+            <S.Body>{body}</S.Body>
+            {isDesktop && (
+              <Flex dir={"column"} ai={"flex-end"} jc={"flex-start"} gap={"16"}>
+                {isTrader ? (
+                  <>
+                    <AppButton
+                      full
+                      text={"Pay dividends"}
+                      color={"tertiary"}
+                      size={"small"}
+                      onClick={() =>
+                        onTerminalNavigate(TerminalType.PayDividends)
+                      }
+                    />
+                    <AppButton
+                      full
+                      text={"Withdraw"}
+                      color={"secondary"}
+                      size={"small"}
+                      onClick={() => onTerminalNavigate(TerminalType.Withdraw)}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <AppButton
+                      full
+                      text={"Stake LP"}
+                      color={"tertiary"}
+                      size={"small"}
+                      onClick={() => onTerminalNavigate(TerminalType.Invest)}
+                    />
+                    {/* TODO: must render with some condition? */}
+                    <AppButton
+                      full
+                      text={"Request a dividend"}
+                      color={"secondary"}
+                      size={"small"}
+                      onClick={() => requestDividends(poolAddress, proposalId)}
+                    />
+                  </>
+                )}
+              </Flex>
+            )}
+            <S.ReadMoreContainer
+              color={
+                typeof description === "string" && description.length > 0
+                  ? "#e4f2ff"
+                  : "#414653"
+              }
+            >
+              <IconCommon name={ICON_NAMES.fileDock} />
               <ReadMore
                 content={
-                  description.length > 0
+                  !!description && description.length > 0
                     ? description
                     : "No description provided to proposal"
                 }
                 maxLen={85}
               />
-            )}
-          </S.ReadMoreContainer>
-        </S.Card>
+            </S.ReadMoreContainer>
+          </S.Card>
+        </S.Container>
         <AnimatePresence>
-          {!completed && <Actions actions={actions} visible={openExtra} />}
+          {!completed && !isDesktop && (
+            <Actions actions={actions} visible={openExtra} />
+          )}
         </AnimatePresence>
-      </S.Container>
+        <InvestCardSettings
+          ticker={ticker}
+          visible={isSettingsOpen}
+          setVisible={setIsSettingsOpen}
+          proposalPool={proposalPool}
+          proposalId={proposalId}
+          successCallback={onUpdateRestrictions}
+          timestamp={expirationDate.initial}
+          maxSizeLP={maxSizeLP.big}
+          fullness={fullness}
+        />
+      </Root>
     </>
   )
 }

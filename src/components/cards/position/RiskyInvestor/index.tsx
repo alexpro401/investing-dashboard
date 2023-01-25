@@ -2,18 +2,19 @@ import { FC, MouseEvent, useCallback, useMemo, useState } from "react"
 import { generatePath, useNavigate } from "react-router-dom"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 
-import { Flex } from "theme"
+import theme, { Flex } from "theme"
 import Icon from "components/Icon"
 import TokenIcon from "components/TokenIcon"
 import VestCard from "components/cards/Vest"
 import { accordionSummaryVariants } from "motion/variants"
 import SharedS, { BodyItem, Share } from "components/cards/position/styled"
-import S from "./styled"
+import * as S from "./styled"
 
 import useRiskyPosition from "./useRiskyPosition"
 import { InvestorRiskyPositionWithVests } from "interfaces/thegraphs/investors"
-import { ROUTE_PATHS } from "consts"
-
+import { ICON_NAMES, ROUTE_PATHS } from "consts"
+import { Icon as IconCommon, NoDataMessage } from "common"
+import { useBreakpoints } from "hooks"
 interface InvestorRiskyPositionProposalData {
   token: string
   pool: {
@@ -35,6 +36,7 @@ const RiskyInvestorPositionCard: FC<Props> = ({
   poolMetadata,
   proposalId,
 }) => {
+  const { isDesktop } = useBreakpoints()
   const navigate = useNavigate()
 
   const [
@@ -100,7 +102,7 @@ const RiskyInvestorPositionCard: FC<Props> = ({
   return (
     <>
       <SharedS.Container>
-        <SharedS.Card onClick={toggleVests}>
+        <SharedS.Card onClick={toggleVests} showPositions={showVests}>
           <SharedS.Head>
             <Flex>
               <S.Symbols>
@@ -141,28 +143,88 @@ const RiskyInvestorPositionCard: FC<Props> = ({
               </Flex>
             </Flex>
           </SharedS.Head>
-          <SharedS.Body>
+          <S.Body>
+            {isDesktop && (
+              <>
+                <Flex>
+                  <Flex onClick={navigateToPool} gap={"8"}>
+                    <Icon
+                      m="0"
+                      size={32}
+                      source={
+                        poolMetadata?.assets[poolMetadata?.assets.length - 1]
+                      }
+                      address={position.pool.id}
+                    />
+                    <S.FundSymbol>{poolInfo?.ticker}</S.FundSymbol>
+                  </Flex>
+                </Flex>
+                <Flex jc={"flex-start"} gap={"8"}>
+                  <S.Symbols>
+                    <S.SymbolItem>
+                      <TokenIcon
+                        address={positionToken?.address}
+                        m="0"
+                        size={24}
+                      />
+                    </S.SymbolItem>
+                    <S.SymbolItem>
+                      <TokenIcon address={baseToken?.address} m="0" size={26} />
+                    </S.SymbolItem>
+                  </S.Symbols>
+                  <Flex dir={"column"} gap={"4"}>
+                    {!position.isClosed ? (
+                      <Flex>
+                        <S.Amount>{positionVolume.format}</S.Amount>
+                        <S.PositionSymbol>LP2</S.PositionSymbol>
+                      </Flex>
+                    ) : (
+                      <Flex>
+                        <S.PositionSymbol>
+                          {positionTokenSymbol}
+                        </S.PositionSymbol>
+                        <S.FundSymbol>/{baseTokenSymbol}</S.FundSymbol>
+                      </Flex>
+                    )}
+                    <SharedS.PNL value={pnlPercentage.format}>
+                      {pnlPercentage.format}%
+                    </SharedS.PNL>
+                    {position.isClosed && <Share onClick={onShare} />}
+                  </Flex>
+                </Flex>
+              </>
+            )}
             <BodyItem
-              label={`Entry Price ${baseTokenSymbol}`}
+              label={!isDesktop ? `Entry Price ${baseTokenSymbol}` : null}
               amount={entryPriceBase}
               amountUSD={entryPriceUSD}
             />
             <BodyItem
               label={
-                (position.isClosed ? "Closed price " : "Current price ") +
-                baseTokenSymbol
+                !isDesktop
+                  ? (position.isClosed ? "Closed price " : "Current price ") +
+                    baseTokenSymbol
+                  : null
               }
               amount={markPriceBase}
               amountUSD={markPriceUSD}
             />
             <BodyItem
-              label={`P&L ${baseTokenSymbol}`}
+              label={!isDesktop ? `P&L ${baseTokenSymbol}` : null}
               amount={pnlBase}
               pnl={pnlPercentage.big}
               amountUSD={pnlUSD}
-              ai="flex-end"
+              ai={!isDesktop ? "flex-end" : "initial"}
             />
-          </SharedS.Body>
+            {isDesktop && (
+              <Flex jc={"flex-end"} full>
+                <IconCommon
+                  name={showVests ? ICON_NAMES.angleDown : ICON_NAMES.angleUp}
+                  color={theme.textColors.secondary}
+                />
+              </Flex>
+            )}
+          </S.Body>
         </SharedS.Card>
 
         <SharedS.ExtraItem
@@ -181,9 +243,7 @@ const RiskyInvestorPositionCard: FC<Props> = ({
               ))}
             </SharedS.TradesList>
           ) : (
-            <Flex full jc="center" p="12px 0">
-              <SharedS.WitoutData>No trades</SharedS.WitoutData>
-            </Flex>
+            <NoDataMessage />
           )}
         </SharedS.ExtraItem>
       </SharedS.Container>

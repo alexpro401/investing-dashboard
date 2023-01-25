@@ -19,7 +19,7 @@ const LoadMoreIcon = styled(motion.div)`
 `
 
 const LoadMore: React.FC<{
-  r: any
+  r?: any
   isLoading: boolean
   handleMore: () => void
 }> = ({ r, isLoading, handleMore }) => {

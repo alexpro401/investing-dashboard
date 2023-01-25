@@ -29,6 +29,7 @@ export enum ICON_NAMES {
   twitter = "twitter",
   warn = "warn",
   warnCircled = "warn-circled",
+  warnCircledFilled = "warn-circled-filled",
   search = "search",
   clear = "clear",
   github = "github",

@@ -1,15 +1,18 @@
-import { FC, useMemo, useEffect, useRef } from "react"
+import { FC, useMemo } from "react"
+import { v4 as uuidv4 } from "uuid"
 import { PulseSpinner } from "react-spinners-kit"
-import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { InvestorPositionsQuery } from "queries"
+import { graphClientInvestors } from "utils/graphClient"
 import useQueryPagination from "hooks/useQueryPagination"
 import { IInvestorProposal } from "interfaces/thegraphs/invest-pools"
 
+import { Center } from "theme"
+import { NoDataMessage } from "common"
+import Tooltip from "components/Tooltip"
 import LoadMore from "components/LoadMore"
 import InvestPositionCard from "components/cards/position/Invest"
-import S from "./styled"
-import { graphClientInvestors } from "utils/graphClient"
+import * as S from "./styled"
 
 interface IProps {
   account?: string | null
@@ -28,46 +31,46 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
     formatter: (d) => d.investorPoolPositions,
   })
 
-  const loader = useRef<any>()
-
-  // manually disable scrolling *refresh this effect when ref container dissapeared from DOM
-  useEffect(() => {
-    if (!loader.current) return
-    disableBodyScroll(loader.current)
-
-    return () => clearAllBodyScrollLocks()
-  }, [loader, loading])
-
-  if (!account || !data || (data.length === 0 && loading)) {
+  if (!account || !data || loading) {
     return (
-      <S.Content>
+      <Center>
         <PulseSpinner />
-      </S.Content>
+      </Center>
     )
   }
 
   if (data && data.length === 0 && !loading) {
-    return (
-      <S.Content>
-        <S.WithoutData>
-          No {closed ? "closed" : "open"} positions yet
-        </S.WithoutData>
-      </S.Content>
-    )
+    return <NoDataMessage />
   }
 
   return (
     <>
-      <S.List ref={loader}>
+      <S.InvestorPositionsListWrp>
+        <S.InvestorPositionsListHead childMaxWidth={closed ? "182px" : "167px"}>
+          <S.InvestorPositionsListHeadItem>
+            Fund
+          </S.InvestorPositionsListHeadItem>
+          <S.InvestorPositionsListHeadItem>
+            My Volume
+          </S.InvestorPositionsListHeadItem>
+          <S.InvestorPositionsListHeadItem>
+            <span>Entry Price</span>
+            <Tooltip id={uuidv4()}>Explain Entry Price</Tooltip>
+          </S.InvestorPositionsListHeadItem>
+          <S.InvestorPositionsListHeadItem>
+            <span>Current price</span>
+            <Tooltip id={uuidv4()}>Explain Current price</Tooltip>
+          </S.InvestorPositionsListHeadItem>
+          <S.InvestorPositionsListHeadItem>
+            P&L in %
+          </S.InvestorPositionsListHeadItem>
+          <S.InvestorPositionsListHeadItem />
+        </S.InvestorPositionsListHead>
         {data.map((p) => (
           <InvestPositionCard key={p.id} position={p} />
         ))}
-        <LoadMore
-          isLoading={loading && !!data.length}
-          handleMore={fetchMore}
-          r={loader}
-        />
-      </S.List>
+      </S.InvestorPositionsListWrp>
+      <LoadMore isLoading={loading && !!data.length} handleMore={fetchMore} />
     </>
   )
 }

@@ -1,11 +1,11 @@
 import {
-  FC,
-  useState,
   Dispatch,
-  ReactNode,
+  FC,
   MouseEvent,
-  useCallback,
+  ReactNode,
   SetStateAction,
+  useCallback,
+  useState,
 } from "react"
 import { format } from "date-fns"
 import { BigNumber } from "@ethersproject/bignumber"
@@ -16,17 +16,18 @@ import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { expandTimestamp, isTxMined, normalizeBigNumber } from "utils"
 
-import Input from "components/Input"
-import Tooltip from "components/Tooltip"
 import DatePicker from "components/DatePicker"
 import { AppButton } from "common"
 
 import { Flex } from "theme"
 import { accordionSummaryVariants } from "motion/variants"
 import { DATE_TIME_FORMAT } from "consts/time"
-import { SettingsStyled as S } from "./styled-settings"
+import * as S from "./styled-settings"
 import { useUserAgreement } from "state/user/hooks"
 import { TraderPoolRiskyProposal } from "interfaces/typechain"
+
+import { InputField } from "fields"
+import { ICON_NAMES } from "consts"
 
 interface Values {
   timestampLimit: number
@@ -101,7 +102,6 @@ const RiskyCardSettings: FC<Props> = ({
   currentPrice,
   proposalPool,
   proposalId,
-  proposalSymbol,
   poolAddress,
   successCallback,
 }) => {
@@ -236,99 +236,82 @@ const RiskyCardSettings: FC<Props> = ({
   }
 
   return (
-    <S.Container
-      initial="hidden"
-      animate={visible ? "visible" : "hidden"}
-      exit="hidden"
-      variants={accordionSummaryVariants}
-    >
-      <div>
-        <S.Row minInputW="148px">
-          <Tooltip id="rp-expiration-date">End of risky proposal</Tooltip>
-          <S.Title>Expiration date:</S.Title>
-          <div>
-            <Input
-              disabled
-              theme="grey"
+    <>
+      <S.Container
+        initial="hidden"
+        animate={visible ? "visible" : "hidden"}
+        exit="hidden"
+        variants={accordionSummaryVariants}
+      >
+        <S.Header>
+          <Flex full ai={"center"} jc={"space-between"}>
+            <S.HeaderTitle>Investment proposal settings:</S.HeaderTitle>
+            <S.HeaderCloseButton
+              color={"secondary"}
+              size={"x-small"}
+              iconRight={ICON_NAMES.close}
+              onClick={() => handleCancel()}
+            />
+          </Flex>
+        </S.Header>
+        <S.Body>
+          <InputField
+            value={format(expandTimestamp(timestampLimit), DATE_TIME_FORMAT)}
+            onChange={() => {}}
+            onClick={() => setDateOpen(!isDateOpen)}
+            label="Expiration date"
+          />
+          <InputField
+            placeholder="---"
+            value={investLPLimit}
+            label="LPs available for staking"
+            setValue={(v) => setInvestLPLimit(v)}
+            errorMessage={
+              errors.investLPLimit !== null
+                ? String(errors.investLPLimit)
+                : undefined
+            }
+          />
+          <InputField
+            placeholder="---"
+            value={maxTokenPriceLimit}
+            label="Maximum invest price"
+            setValue={(v) => setMaxTokenPriceLimit(v)}
+            errorMessage={
+              errors.maxTokenPriceLimit !== null
+                ? String(errors.maxTokenPriceLimit)
+                : undefined
+            }
+          />
+          <S.ButtonGroup>
+            <AppButton
+              full
+              color="secondary"
+              type="button"
               size="small"
-              value={format(expandTimestamp(timestampLimit), DATE_TIME_FORMAT)}
-              placeholder={format(
-                expandTimestamp(timestampLimit),
-                DATE_TIME_FORMAT
-              )}
-              onClick={() => setDateOpen(!isDateOpen)}
+              text="Cancel"
+              onClick={() => handleCancel()}
             />
-            <DatePicker
-              isOpen={isDateOpen}
-              timestamp={expandTimestamp(timestampLimit)}
-              toggle={() => setDateOpen(false)}
-              onChange={setTimestampLimit}
-              minDate={new Date()}
-            />
-          </div>
-          <S.InputType>GMT</S.InputType>
-        </S.Row>
-        <Flex full dir="column" m="12px 0">
-          <S.Row minInputW="79px">
-            <Tooltip id="rp-available-staking">Staking</Tooltip>
-            <S.Title>LPs available for staking</S.Title>
-            <Input
-              theme="grey"
+            <AppButton
+              full
+              color="tertiary"
+              type="button"
               size="small"
-              type="number"
-              inputmode="decimal"
-              value={investLPLimit}
-              placeholder="---"
-              onChange={(v) => setInvestLPLimit(v)}
-              error={errors.investLPLimit !== null}
+              text="Done"
+              onClick={() => handleSubmit()}
+              disabled={isSubmiting}
             />
-            <S.InputType>LP</S.InputType>
-          </S.Row>
-          {errors.investLPLimit !== null && (
-            <S.ErrorMessage>{errors.investLPLimit}</S.ErrorMessage>
-          )}
-        </Flex>
-        <Flex full dir="column" m="12px 0">
-          <S.Row>
-            <Tooltip id="rp-max-invest">Maximum invest price</Tooltip>
-            <S.Title>Maximum invest price</S.Title>
-            <Input
-              theme="grey"
-              size="small"
-              type="number"
-              inputmode="decimal"
-              value={maxTokenPriceLimit}
-              placeholder="---"
-              onChange={(v) => setMaxTokenPriceLimit(v)}
-              error={errors.maxTokenPriceLimit !== null}
-            />
-            <S.InputType>{proposalSymbol}</S.InputType>
-          </S.Row>
-          {errors.maxTokenPriceLimit !== null && (
-            <S.ErrorMessage>{errors.maxTokenPriceLimit}</S.ErrorMessage>
-          )}
-        </Flex>
-      </div>
-      <S.ButtonGroup>
-        <AppButton
-          full
-          color="secondary"
-          type="button"
-          size="x-small"
-          text="Cancel"
-          onClick={() => handleCancel()}
+          </S.ButtonGroup>
+        </S.Body>
+        <DatePicker
+          isOpen={isDateOpen}
+          timestamp={expandTimestamp(timestampLimit)}
+          toggle={() => setDateOpen(false)}
+          onChange={setTimestampLimit}
+          minDate={new Date()}
         />
-        <AppButton
-          full
-          color="primary"
-          type="button"
-          size="x-small"
-          text="Apply changes"
-          onClick={() => handleSubmit()}
-          disabled={isSubmiting}
-        />
-      </S.ButtonGroup>
-    </S.Container>
+      </S.Container>
+    </>
   )
 }
 
