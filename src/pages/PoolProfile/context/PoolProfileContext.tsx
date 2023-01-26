@@ -2,6 +2,7 @@ import {
   createContext,
   FC,
   HTMLAttributes,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -26,7 +27,7 @@ import {
 import { useERC20Data } from "state/erc20/hooks"
 import { PoolType, TIMEFRAME, ZERO } from "consts"
 import { getPNL, getPriceLP, multiplyBignumbers } from "utils/formulas"
-import { expandTimestamp, normalizeBigNumber } from "utils"
+import { bigify, expandTimestamp, isTxMined, normalizeBigNumber } from "utils"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { Center } from "theme"
 import { GuardSpinner } from "react-spinners-kit"
@@ -36,6 +37,11 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { Token } from "interfaces"
 import { Investor } from "interfaces/thegraphs/all-pools"
 import useFundFee from "./useFundFee"
+import { TransactionType } from "state/transactions/types"
+import { useTransactionAdder } from "state/transactions/hooks"
+import { IpfsEntity } from "utils/ipfsEntity"
+import { IPoolMetadata } from "state/ipfsMetadata/types"
+import { sleep } from "helpers"
 
 interface IPoolProfileContext {
   isTrader?: boolean
@@ -159,6 +165,15 @@ interface IPoolProfileContext {
     setOptimizeWithdrawal?: any
     withdrawCommission?: any
   }
+
+  updatePoolParameters?: (opts?: {
+    avatarUrl?: string
+    fundDescription?: string
+    fundStrategy?: string
+    account?: string
+    totalLPEmission?: string
+    minimalInvestment?: string
+  }) => Promise<void>
 }
 
 export const PoolProfileContext = createContext<IPoolProfileContext>({})
@@ -343,6 +358,74 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
     { setOptimizeWithdrawal, withdrawCommission },
   ] = useFundFee(poolAddress)
 
+  const traderPoolContract = useTraderPoolContract(poolData.id)
+  const addTransaction = useTransactionAdder()
+
+  const updatePoolParameters = useCallback(
+    async (opts?: {
+      avatarUrl?: string
+      fundDescription?: string
+      fundStrategy?: string
+      account?: string
+      totalLPEmission?: string
+      minimalInvestment?: string
+    }) => {
+      let descriptionURL = poolData?.descriptionURL
+
+      if (
+        opts?.avatarUrl ||
+        opts?.fundDescription ||
+        opts?.fundStrategy ||
+        opts?.account
+      ) {
+        const poolMetadataIpfsEntity = new IpfsEntity({
+          data: JSON.stringify({
+            description: opts?.fundDescription || poolMetadata?.description,
+            strategy: opts?.fundStrategy || poolMetadata?.strategy,
+            assets: opts?.avatarUrl
+              ? [...(poolMetadata?.assets || []), opts.avatarUrl]
+              : poolMetadata?.assets,
+            account: opts?.account || poolMetadata?.account,
+            timestamp: new Date().getTime() / 1000,
+          } as IPoolMetadata & { timestamp: number }),
+        })
+
+        await poolMetadataIpfsEntity.uploadSelf()
+
+        await sleep(500)
+
+        descriptionURL = poolMetadataIpfsEntity.path
+      }
+
+      const tx = await traderPoolContract?.changePoolParameters(
+        descriptionURL,
+        Boolean(poolInfo?.parameters?.privatePool),
+        opts?.totalLPEmission
+          ? bigify(opts.totalLPEmission, 18).toHexString()
+          : poolInfo?.parameters.totalLPEmission?.toHexString() || "0",
+        opts?.minimalInvestment
+          ? bigify(opts.minimalInvestment, 18).toHexString()
+          : poolInfo?.parameters.minimalInvestment?.toHexString() || "0"
+      )
+
+      await addTransaction(tx, {
+        type: TransactionType.POOL_EDIT,
+        baseCurrencyId: baseToken?.address,
+        fundName: poolData?.name,
+      })
+      // TODO: update pools item || list
+    },
+    [
+      addTransaction,
+      baseToken,
+      poolData.descriptionURL,
+      poolData.name,
+      poolInfo,
+      poolMetadata,
+      traderPoolContract,
+    ]
+  )
+
   return (
     <WithPoolAddressValidation poolAddress={poolAddress ?? ""} loader={loader}>
       <PoolProfileContext.Provider
@@ -477,6 +560,8 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
             setOptimizeWithdrawal,
             withdrawCommission,
           },
+
+          updatePoolParameters,
         }}
       >
         {children}

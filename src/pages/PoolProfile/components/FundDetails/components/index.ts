@@ -1,4 +1,4 @@
-export { default as FundDetailsEdit } from "./FundDetailsEdit"
+export { default as FundDetailsGeneral } from "./FundDetailsGeneral"
 export { default as FundDetailsFee } from "./FundDetailsFee"
 export { default as FundDetailsMenu } from "./FundDetailsMenu"
 export { default as FundDetailsInvestment } from "./FundDetailsInvestment"

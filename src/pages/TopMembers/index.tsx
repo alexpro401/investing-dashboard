@@ -1,5 +1,5 @@
 import { Flex, Center, To } from "theme"
-import React, { ElementType, useEffect, useMemo, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { CubeSpinner } from "react-spinners-kit"
 import { Routes, Route, generatePath, Navigate } from "react-router-dom"

@@ -34,7 +34,7 @@ import { copyToClipboard } from "utils/clipboard"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useWeb3React } from "@web3-react/core"
 import {
-  FundDetailsEdit,
+  FundDetailsGeneral,
   FundDetailsFee,
   FundDetailsInvestment,
   FundDetailsManager,
@@ -42,7 +42,6 @@ import {
   FundDetailsWhitelist,
   FundDetailsWithdrawalHistory,
 } from "pages/PoolProfile/components/FundDetails/components"
-import UpdateFundContext from "context/UpdateFundContext"
 import Modal from "components/Modal"
 import { useEffectOnce } from "react-use"
 import { Bus, sleep } from "helpers"
@@ -577,14 +576,7 @@ const PoolProfile = () => {
               </>
             }
           >
-            <Route
-              path="general"
-              element={
-                <UpdateFundContext>
-                  <FundDetailsEdit />
-                </UpdateFundContext>
-              }
-            />
+            <Route path="general" element={<FundDetailsGeneral />} />
             <Route path="investment" element={<FundDetailsInvestment />} />
             <Route path="whitelist" element={<FundDetailsWhitelist />} />
             <Route path="manager" element={<FundDetailsManager />} />
@@ -612,8 +604,8 @@ const PoolProfile = () => {
                 <S.ModalHeadWrp>
                   <S.ModalHeadBackBtn onClick={() => setModalContent("menu")}>
                     <S.ModalHeadIcon name={ICON_NAMES.angleLeft} />
+                    Manage Fund
                   </S.ModalHeadBackBtn>
-                  Manage Fund
                 </S.ModalHeadWrp>
               )
             }
@@ -622,11 +614,7 @@ const PoolProfile = () => {
             <S.ModalBodyWrp>
               {
                 {
-                  general: (
-                    <UpdateFundContext>
-                      <FundDetailsEdit />
-                    </UpdateFundContext>
-                  ),
+                  general: <FundDetailsGeneral />,
                   investment: <FundDetailsInvestment />,
                   whitelist: <FundDetailsWhitelist />,
                   manager: <FundDetailsManager />,

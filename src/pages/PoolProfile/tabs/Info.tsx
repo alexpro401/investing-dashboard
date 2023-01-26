@@ -6,7 +6,6 @@ import { Card } from "common"
 import { Flex } from "theme"
 import { DateUtil, normalizeBigNumber, shortenAddress } from "utils"
 import Tooltip from "components/Tooltip"
-import { isEmpty } from "lodash"
 import { PoolProfileContext } from "pages/PoolProfile/context"
 import { DATE_FORMAT, ROUTE_PATHS } from "consts"
 import { generatePath, useNavigate } from "react-router-dom"
@@ -177,16 +176,14 @@ const TabPoolInfo: FC<Props> = () => {
           )}
         </Flex>
         <S.TabCardValue>
-          {!isEmpty(fundDescription)
-            ? fundDescription
-            : "No description provided"}
+          {fundDescription || "No description provided"}
         </S.TabCardValue>
 
         <Flex full ai="center" jc="space-between">
           <S.TabCardTitle>Fund strategy</S.TabCardTitle>
         </Flex>
         <S.TabCardValue>
-          {!isEmpty(fundStrategy) ? fundStrategy : "No strategy provided"}
+          {fundStrategy || "No strategy provided"}
         </S.TabCardValue>
       </Card>
     </>

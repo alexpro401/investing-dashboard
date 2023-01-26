@@ -269,12 +269,6 @@ export const TabContainer = styled.div`
 export const ModalHeadWrp = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  line-height: 1.2;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  color: ${(props) => props.theme.textColors.primary};
 `
 
 export const ModalHeadBackBtn = styled.button`
@@ -283,7 +277,13 @@ export const ModalHeadBackBtn = styled.button`
   align-items: center;
   background: transparent;
   border: none;
-  color: inherit;
+  cursor: pointer;
+  gap: 8px;
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: ${(props) => props.theme.textColors.primary};
 `
 
 export const ModalHeadIcon = styled(Icon)`

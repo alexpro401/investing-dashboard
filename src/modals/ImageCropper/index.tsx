@@ -20,6 +20,7 @@ const StyledModal = Modal.styled`
   height: 350px;
   position: relative;
   overflow: hidden;
+  z-index: 1000;
 `
 
 const SliderContainer = styled.div`

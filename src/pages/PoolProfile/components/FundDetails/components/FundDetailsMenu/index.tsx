@@ -1,4 +1,11 @@
-import { FC, HTMLAttributes, useContext, useMemo } from "react"
+import {
+  FC,
+  HTMLAttributes,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react"
 
 import * as S from "./styled"
 import { ICON_NAMES, ROUTE_PATHS } from "consts"
@@ -6,11 +13,15 @@ import { PoolProfileContext } from "pages/PoolProfile/context"
 import { generatePath, useNavigate } from "react-router-dom"
 import { useBreakpoints } from "hooks"
 import { Bus } from "helpers"
+import Avatar from "components/Avatar"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const FundDetailsMenu: FC<Props> = ({ ...rest }) => {
-  const { fundImageUrl, fundAddress } = useContext(PoolProfileContext)
+  const { fundImageUrl, fundAddress, updatePoolParameters } =
+    useContext(PoolProfileContext)
+
+  const [avatarUrl, setAvatarUrl] = useState(fundImageUrl || "")
 
   const navigate = useNavigate()
 
@@ -83,13 +94,37 @@ const FundDetailsMenu: FC<Props> = ({ ...rest }) => {
         },
       },
     ]
-  }, [currentLocationPath])
+  }, [currentLocationPath, isSmallTablet, navigate])
+
+  const updatePoolProfileAvatar = useCallback(
+    async (url: string) => {
+      if (!updatePoolParameters) return
+
+      console.log(url)
+
+      try {
+        setAvatarUrl(url)
+        await updatePoolParameters({ avatarUrl: url })
+        Bus.emit("manage-modal/menu")
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    [updatePoolParameters]
+  )
 
   return (
     <S.Container>
       <S.FundAvatarWrp>
-        <S.FundAvatarImg src={fundImageUrl} />
-        <S.FundAvatarChangeBtn> Change fund photo</S.FundAvatarChangeBtn>
+        <Avatar
+          m="0 auto"
+          onCrop={(key, url) => updatePoolProfileAvatar(url)}
+          showUploader
+          size={100}
+          url={avatarUrl}
+        >
+          <S.FundAvatarChangeBtn>Change fund photo</S.FundAvatarChangeBtn>
+        </Avatar>
       </S.FundAvatarWrp>
 
       <S.MenuWrp>

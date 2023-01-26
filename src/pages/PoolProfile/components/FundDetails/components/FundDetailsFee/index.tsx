@@ -20,7 +20,7 @@ import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { useBreakpoints } from "hooks"
 import { FundDetailsWithdrawalHistory } from "pages/PoolProfile/components/FundDetails"
 import { PoolProfileContext } from "pages/PoolProfile/context"
-import { Bus } from "../../../../../../helpers"
+import { Bus } from "helpers"
 
 const FundDetailsFee: FC = () => {
   const { perfomanceFee, fundAddress, fundTicker, fundName, basicToken } =

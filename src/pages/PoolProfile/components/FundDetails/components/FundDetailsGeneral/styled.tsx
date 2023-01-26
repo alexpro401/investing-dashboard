@@ -1,7 +1,8 @@
 import { ReactNode, FC } from "react"
 import styled from "styled-components/macro"
 
-import { Flex, GradientBorder } from "theme"
+import { Flex, GradientBorder, respondTo } from "theme"
+import { AppButton } from "common"
 
 export const Container = styled.div<{ loading?: boolean }>`
   position: relative;
@@ -209,3 +210,15 @@ export const ModalIcons: FC<ModalIconsProps> = ({
     </ModalIconsContainer>
   )
 }
+
+export const FormSubmitBtn = styled(AppButton).attrs(() => ({
+  color: "tertiary",
+}))`
+  border: none;
+  margin-top: auto;
+  width: 100%;
+
+  ${respondTo("xs")} {
+    margin-top: 0;
+  }
+`

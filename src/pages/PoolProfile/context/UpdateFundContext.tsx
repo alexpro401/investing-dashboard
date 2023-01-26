@@ -1,66 +1,128 @@
-import { FC, useState, useEffect, useMemo, useCallback } from "react"
-import { useParams } from "react-router-dom"
-import { useWeb3React } from "@web3-react/core"
-import { RotateSpinner, PulseSpinner, GuardSpinner } from "react-spinners-kit"
-import { formatEther, parseEther } from "@ethersproject/units"
-import { useDispatch } from "react-redux"
-
-import {
-  Container,
-  AvatarWrapper,
-  LinkButton,
-  Steps,
-  Step,
-  StepTitle,
-  StepBody,
-  ModalIcons,
-  ValidationError,
-  InputRow,
-} from "./styled"
-import { Center, Flex } from "theme"
-import SwitchRow, { InputText } from "components/SwitchRow"
-import { AppButton } from "common"
-import Avatar from "components/Avatar"
-import TextArea from "components/TextArea"
-import Input from "components/Input"
-import AddressChips from "components/AddressChips"
-import Stepper from "components/Stepper"
-import TokenIcon from "components/TokenIcon"
-import Icon from "components/Icon"
-
-import BasicSettings from "./BasicSettings"
-
-import ManagersIcon from "assets/icons/Managers"
-import InvestorsIcon from "assets/icons/Investors"
-import EmissionIcon from "assets/icons/Emission"
-import MinInvestIcon from "assets/icons/MinInvestAmount"
-
-import { bigify, formatBigNumber, shortenAddress, isTxMined } from "utils"
-import { arrayDifference } from "utils/array"
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
+import { arrayDifference, arrayIntersection, arrayIncludes } from "utils/array"
 import { getIpfsData } from "utils/ipfs"
-import { useUpdateFundContext } from "context/UpdateFundContext"
-import { usePoolContract, usePoolQuery } from "hooks/usePool"
-import { useAddToast } from "state/application/hooks"
-
-import { useERC20Data } from "state/erc20/hooks"
-import { useUserAgreement } from "state/user/hooks"
-import { addPool } from "state/ipfsMetadata/actions"
-import { TransactionType } from "state/transactions/types"
-import { useTransactionAdder } from "state/transactions/hooks"
-import { useTraderPoolContract } from "contracts"
-import { IpfsEntity } from "utils/ipfsEntity"
-import WithPoolAddressValidation from "components/WithPoolAddressValidation"
+import { formatEther, parseEther } from "@ethersproject/units"
 import { IStep, UpdateListType } from "consts"
+import { useAddToast } from "state/application/hooks"
+import { useTransactionAdder } from "state/transactions/hooks"
+import { useUserAgreement } from "state/user/hooks"
+import { IpfsEntity } from "utils/ipfsEntity"
+import { bigify, formatBigNumber, isTxMined, shortenAddress } from "utils"
+import { TransactionType } from "state/transactions/types"
+import { addPool } from "state/ipfsMetadata/actions"
+import { ValidationError } from "../components/FundDetails/components/FundDetailsGeneral/styled"
+import { PoolProfileContext } from "./PoolProfileContext"
+import { useDispatch } from "react-redux"
+import { useWeb3React } from "@web3-react/core"
+import { usePoolContract, usePoolQuery } from "hooks"
+import { useERC20Data } from "state/erc20/hooks"
+import { useTraderPoolContract } from "contracts"
 
-const FundDetailsEdit: FC = () => {
-  const dispatch = useDispatch()
-  const { poolAddress } = useParams()
-  const { account } = useWeb3React()
+interface IState {
+  loading: boolean
 
-  const [poolData] = usePoolQuery(poolAddress)
-  const [, poolInfoData] = usePoolContract(poolAddress)
-  const [baseData] = useERC20Data(poolData?.baseToken)
-  const traderPool = useTraderPoolContract(poolData?.id)
+  avatarBlobString: string
+  assets: string[]
+
+  description: string
+  descriptionInitial: string
+  strategy: string
+  strategyInitial: string
+
+  totalLPEmission: string
+  totalLPEmissionInitial: string
+  minimalInvestment: string
+  minimalInvestmentInitial: string
+
+  managers: string[]
+  managersInitial: string[]
+  managersAdded: string[]
+  managersRemoved: string[]
+
+  investors: string[]
+  investorsInitial: string[]
+  investorsAdded: string[]
+  investorsRemoved: string[]
+
+  validationErrors: IValidationError[]
+}
+
+interface IValidationError {
+  message: string
+  field: string
+}
+
+interface IContext extends IState {
+  handleChange: (name: string, value: any) => void
+  setInitial: (payload: any) => void
+  setInitialIpfs: (payload: any) => void
+  setDefault: () => void
+  poolParametersSaveCallback: () => void
+  managersRemoveCallback: () => void
+  managersAddCallback: () => void
+  investorsRemoveCallback: () => void
+  investorsAddCallback: () => void
+  isIpfsDataUpdated: () => boolean
+  isPoolParametersUpdated: () => boolean
+  handleValidate: () => boolean
+}
+
+const defaultState = {
+  loading: true,
+
+  avatarBlobString: "",
+  assets: [],
+
+  description: "",
+  descriptionInitial: "",
+  strategy: "",
+  strategyInitial: "",
+
+  totalLPEmission: "",
+  totalLPEmissionInitial: "",
+  minimalInvestment: "",
+  minimalInvestmentInitial: "",
+
+  managers: [],
+  managersInitial: [],
+  managersAdded: [],
+  managersRemoved: [],
+
+  investors: [],
+  investorsInitial: [],
+  investorsAdded: [],
+  investorsRemoved: [],
+
+  validationErrors: [],
+}
+
+const defaultContext = {
+  ...defaultState,
+  handleChange: () => {},
+  setInitial: () => {},
+  setDefault: () => {},
+  setInitialIpfs: () => {},
+  poolParametersSaveCallback: () => {},
+  managersRemoveCallback: () => {},
+  managersAddCallback: () => {},
+  investorsRemoveCallback: () => {},
+  investorsAddCallback: () => {},
+  isIpfsDataUpdated: () => false,
+  isPoolParametersUpdated: () => false,
+  handleValidate: () => false,
+}
+
+export const FundContext = createContext<IContext>(defaultContext)
+
+export const useUpdateFundContext = () => {
+  const { fundAddress } = useContext(PoolProfileContext)
 
   const {
     loading,
@@ -95,7 +157,15 @@ const FundDetailsEdit: FC = () => {
     investorsAdded,
 
     validationErrors,
-  } = useUpdateFundContext()
+  } = useContext(FundContext)
+
+  const dispatch = useDispatch()
+  const { account } = useWeb3React()
+
+  const [poolData] = usePoolQuery(fundAddress)
+  const [, poolInfoData] = usePoolContract(fundAddress)
+  const [baseData] = useERC20Data(poolData?.baseToken)
+  const traderPool = useTraderPoolContract(poolData?.id)
 
   const avatar = useMemo(() => {
     if (avatarBlobString.length > 0) {
@@ -121,7 +191,7 @@ const FundDetailsEdit: FC = () => {
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
   const handleParametersUpdate = useCallback(async () => {
-    if (!traderPool || !poolData || !poolInfoData || !account || !poolAddress) {
+    if (!traderPool || !poolData || !poolInfoData || !account || !fundAddress) {
       return
     }
 
@@ -171,7 +241,7 @@ const FundDetailsEdit: FC = () => {
       dispatch(
         addPool({
           params: {
-            poolId: poolAddress,
+            poolId: fundAddress,
             hash: receipt.hash,
             assets: assetsParam,
             description,
@@ -197,7 +267,7 @@ const FundDetailsEdit: FC = () => {
     totalLPEmission,
     addTransaction,
     dispatch,
-    poolAddress,
+    fundAddress,
   ])
 
   const handleManagersRemove = useCallback(async () => {
@@ -206,9 +276,9 @@ const FundDetailsEdit: FC = () => {
     return addTransaction(receipt, {
       type: TransactionType.POOL_UPDATE_MANAGERS,
       editType: UpdateListType.REMOVE,
-      poolId: poolAddress,
+      poolId: fundAddress,
     })
-  }, [traderPool, managersRemoved, addTransaction, poolAddress])
+  }, [traderPool, managersRemoved, addTransaction, fundAddress])
 
   const handleManagersAdd = useCallback(async () => {
     const receipt = await traderPool?.modifyAdmins(managersAdded, true)
@@ -216,9 +286,9 @@ const FundDetailsEdit: FC = () => {
     return addTransaction(receipt, {
       type: TransactionType.POOL_UPDATE_MANAGERS,
       editType: UpdateListType.ADD,
-      poolId: poolAddress,
+      poolId: fundAddress,
     })
-  }, [traderPool, managersAdded, addTransaction, poolAddress])
+  }, [traderPool, managersAdded, addTransaction, fundAddress])
 
   const handleInvestorsRemove = useCallback(async () => {
     const receipt = await traderPool?.modifyPrivateInvestors(
@@ -229,9 +299,9 @@ const FundDetailsEdit: FC = () => {
     return addTransaction(receipt, {
       type: TransactionType.POOL_UPDATE_INVESTORS,
       editType: UpdateListType.REMOVE,
-      poolId: poolAddress,
+      poolId: fundAddress,
     })
-  }, [traderPool, investorsRemoved, addTransaction, poolAddress])
+  }, [traderPool, investorsRemoved, addTransaction, fundAddress])
 
   const handleInvestorsAdd = useCallback(async () => {
     const receipt = await traderPool?.modifyPrivateInvestors(
@@ -242,9 +312,9 @@ const FundDetailsEdit: FC = () => {
     return addTransaction(receipt, {
       type: TransactionType.POOL_UPDATE_INVESTORS,
       editType: UpdateListType.ADD,
-      poolId: poolAddress,
+      poolId: fundAddress,
     })
-  }, [traderPool, investorsAdded, addTransaction, poolAddress])
+  }, [traderPool, investorsAdded, addTransaction, fundAddress])
 
   const handleSubmit = async () => {
     if (stepsFormating) return
@@ -518,202 +588,282 @@ const FundDetailsEdit: FC = () => {
     }
   }, [setDefault])
 
-  if (loading || !poolData || !poolInfoData) {
-    return (
-      <Container loading>
-        <Flex full ai="center" jc="center">
-          <RotateSpinner />
-        </Flex>
-      </Container>
-    )
+  return {}
+}
+
+const propertiesMapping = {
+  managers: {
+    initial: "managersInitial",
+    added: "managersAdded",
+    removed: "managersRemoved",
+  },
+  investors: {
+    initial: "investorsInitial",
+    added: "investorsAdded",
+    removed: "investorsRemoved",
+  },
+}
+
+interface Props {
+  children?: React.ReactNode
+}
+
+class UpdateFundContext extends React.Component<Props> {
+  static contextType = FundContext
+
+  state = {
+    loading: true,
+
+    avatarBlobString: "",
+    assets: [],
+
+    description: "",
+    descriptionInitial: "",
+    strategy: "",
+    strategyInitial: "",
+
+    totalLPEmission: "",
+    totalLPEmissionInitial: "",
+    minimalInvestment: "",
+    minimalInvestmentInitial: "",
+
+    managers: [],
+    managersInitial: [],
+    managersAdded: [],
+    managersRemoved: [],
+
+    investors: [],
+    investorsInitial: [],
+    investorsAdded: [],
+    investorsRemoved: [],
+
+    validationErrors: [],
   }
 
-  return (
-    <>
-      {!!steps.length && (
-        <Stepper
-          failed={transactionFail}
-          isOpen={isCreating}
-          onClose={onStepperClose}
-          onSubmit={handleNextStep}
-          current={step}
-          pending={stepPending}
-          steps={steps}
-          title="Updating of fund"
-        >
-          {baseData?.address && (
-            <ModalIcons
-              left={
-                <Icon
-                  m="0"
-                  size={28}
-                  source={avatarBlobString}
-                  address={poolAddress}
-                />
-              }
-              right={<TokenIcon m="0" size={28} address={baseData.address} />}
-              fund={poolData.ticker}
-              base={baseData.symbol}
-            />
-          )}
-        </Stepper>
-      )}
-
-      <Container>
-        <AvatarWrapper>
-          <Avatar
-            m="0 auto"
-            url={avatar}
-            onCrop={handleChange}
-            showUploader
-            size={100}
-            address={poolAddress}
-          >
-            <LinkButton>Change fund photo</LinkButton>
-          </Avatar>
-        </AvatarWrapper>
-        <Steps>
-          <Step>
-            <StepTitle>Basic settings</StepTitle>
-            <StepBody>
-              <BasicSettings
-                poolData={poolData}
-                baseToken={baseData}
-                commissionPercentage={
-                  poolInfoData?.parameters.commissionPercentage
-                }
-              />
-            </StepBody>
-          </Step>
-          <Step>
-            <StepTitle>Fund Details</StepTitle>
-            <StepBody>
-              <Flex full p="0">
-                <TextArea
-                  theme="black"
-                  defaultValue={description}
-                  name="description"
-                  placeholder="Fund description"
-                  onChange={handleChange}
-                />
-              </Flex>
-              <Flex full p="32px 0 0">
-                <TextArea
-                  theme="black"
-                  defaultValue={strategy}
-                  name="strategy"
-                  placeholder="Fund strategy"
-                  onChange={handleChange}
-                />
-              </Flex>
-            </StepBody>
-          </Step>
-          <Step>
-            <StepTitle>Investment</StepTitle>
-            <StepBody>
-              <SwitchRow
-                icon={<EmissionIcon active={isEmissionLimited} />}
-                title="Limited Emission"
-                isOn={isEmissionLimited}
-                name="_emissionLimited"
-                onChange={handleEmissionRowChange}
-              >
-                <InputRow>
-                  <Input
-                    type="number"
-                    inputmode="decimal"
-                    value={totalLPEmission}
-                    placeholder="---"
-                    label="LP tokens emission"
-                    onChange={(value) => handleChange("totalLPEmission", value)}
-                    rightIcon={<InputText>LP</InputText>}
-                  />
-                  {getFieldErrors("totalLPEmission")}
-                </InputRow>
-              </SwitchRow>
-              <SwitchRow
-                icon={<MinInvestIcon active={isMinimalInvest} />}
-                title="Minimum investment amount"
-                isOn={isMinimalInvest}
-                name="_minInvestRestricted"
-                onChange={handleMinInvestRowChange}
-              >
-                <InputRow>
-                  <Input
-                    type="number"
-                    inputmode="decimal"
-                    value={minimalInvestment}
-                    placeholder="---"
-                    onChange={(v) => handleChange("minimalInvestment", v)}
-                    label="Minimum investment amount"
-                    rightIcon={<InputText>{baseData?.symbol}</InputText>}
-                  />
-                  {getFieldErrors("minimalInvestment")}
-                </InputRow>
-              </SwitchRow>
-              <SwitchRow
-                icon={<ManagersIcon active={isManagersAdded} />}
-                title="New fund managers"
-                isOn={isManagersAdded}
-                name="_managersRestricted"
-                onChange={setManagers}
-              >
-                <AddressChips
-                  items={managers}
-                  onChange={(v) => handleChange("managers", v)}
-                  limit={100}
-                  label="0x..."
-                />
-              </SwitchRow>
-              <SwitchRow
-                icon={<InvestorsIcon active={isInvestorsAdded} />}
-                title="Invited investors"
-                isOn={isInvestorsAdded}
-                name="_investorsRestricted"
-                onChange={setInvestors}
-              >
-                <AddressChips
-                  items={investors}
-                  onChange={(v) => handleInvestorsRowChange(v)}
-                  limit={100}
-                  label="0x..."
-                />
-              </SwitchRow>
-            </StepBody>
-          </Step>
-        </Steps>
-        <Flex full p="0 16px 61px">
-          <AppButton
-            full
-            size="large"
-            color="primary"
-            onClick={() => (agreed ? handleSubmit() : setShowAgreement(true))}
-            text="Confirm changes"
-            iconRight={
-              stepsFormating && (
-                <PulseSpinner color="#34455F" size={15} loading />
-              )
-            }
-          />
-        </Flex>
-      </Container>
-    </>
-  )
-}
-
-export default function FundDetailsEditWithProvider() {
-  const { poolAddress } = useParams()
-
-  return (
-    <WithPoolAddressValidation
-      poolAddress={poolAddress ?? ""}
-      loader={
-        <Center>
-          <GuardSpinner size={20} loading />
-        </Center>
+  handleChange = (name: string, value: any) => {
+    if (Object.prototype.toString.call(value) === "[object Array]") {
+      if (value.length < this.state[name].length) {
+        this.updateRemovedList(name, value)
+      } else {
+        this.updateAddingList(name, value)
       }
-    >
-      <FundDetailsEdit />
-    </WithPoolAddressValidation>
-  )
+
+      this.setState({
+        [name]: [...value],
+      })
+
+      return
+    }
+
+    this.setState({ [name]: value })
+  }
+
+  updateRemovedList = (name: string, value: any) => {
+    const { initial, removed, added } = propertiesMapping[name]
+    // Who removed
+    const removedAddress = arrayDifference<string>(this.state[name], value)[0]
+    const inInitial = arrayIncludes<string>(this.state[initial], removedAddress)
+
+    // Add in list for removing if address has been in initial list
+    if (inInitial) {
+      this.setState({
+        [removed]: [...this.state[removed], removedAddress],
+      })
+    }
+
+    // Clear added list from removed address
+    this.setState({
+      [added]: arrayIntersection<string>(this.state[added], value),
+    })
+  }
+
+  updateAddingList = (name: string, value: any) => {
+    const { initial, removed, added } = propertiesMapping[name]
+    // Who added
+    const addedAddress = arrayDifference<string>(value, this.state[name])[0]
+    const inInitial = arrayIncludes<string>(this.state[initial], addedAddress)
+
+    // Add in list for adding if address doesnt been in initial list
+    if (!inInitial) {
+      this.setState({
+        [added]: [...this.state[added], addedAddress],
+      })
+    }
+
+    // Clear removed list from added address
+    this.setState({
+      [removed]: this.state[removed].filter((x) => x !== addedAddress),
+    })
+  }
+
+  // Set initial pool data
+  setInitial = (payload: any) => {
+    this.setState({
+      loading: false,
+      investorsInitial: payload.investors,
+      managersInitial: payload.managers,
+      totalLPEmissionInitial: payload.totalLPEmission,
+      minimalInvestmentInitial: payload.minimalInvestment,
+      ...payload,
+    })
+  }
+
+  // Set initial data from IPFS
+  setInitialIpfs = (payload: any) => {
+    this.setState({
+      descriptionInitial: payload.description,
+      strategyInitial: payload.strategy,
+      ...payload,
+    })
+  }
+
+  setDefault = () => {
+    this.setState(defaultState)
+  }
+
+  // Clean pool parameters state after saving
+  poolParametersSaveCallback = () => {
+    this.setState({
+      avatarBlobString: "",
+      assets: [...this.state.assets, this.state.avatarBlobString],
+      descriptionInitial: this.state.description,
+      strategyInitial: this.state.strategy,
+      totalLPEmissionInitial: this.state.totalLPEmission,
+      minimalInvestmentInitial: this.state.minimalInvestment,
+    })
+  }
+
+  // Clean managers state after removing
+  managersRemoveCallback = () => {
+    const newManagersInitial = arrayDifference(
+      this.state.managersInitial,
+      this.state.managersRemoved
+    )
+
+    this.setState({
+      managersInitial: newManagersInitial,
+      managersRemoved: [],
+    })
+  }
+
+  // Clean managers state after adding
+  managersAddCallback = () => {
+    const newManagersInitial = [
+      ...this.state.managersInitial,
+      ...this.state.managersAdded,
+    ]
+
+    this.setState({
+      managersInitial: newManagersInitial,
+      managersAdded: [],
+    })
+  }
+
+  // Clean investors state after removing
+  investorsRemoveCallback = () => {
+    const newInvestorsInitial = arrayDifference(
+      this.state.investorsInitial,
+      this.state.investorsRemoved
+    )
+
+    this.setState({
+      investorsInitial: newInvestorsInitial,
+      investorsRemoved: [],
+    })
+  }
+
+  // Clean investors state after adding
+  investorsAddCallback = () => {
+    const newInvestorsInitial = [
+      ...this.state.investorsInitial,
+      ...this.state.investorsAdded,
+    ]
+
+    this.setState({
+      investorsInitial: newInvestorsInitial,
+      investorsAdded: [],
+    })
+  }
+
+  isIpfsDataUpdated = () => {
+    if (
+      this.state.avatarBlobString !== "" ||
+      this.state.description !== this.state.descriptionInitial ||
+      this.state.strategy !== this.state.strategyInitial
+    ) {
+      return true
+    }
+    return false
+  }
+
+  isPoolParametersUpdated = () => {
+    if (
+      this.isIpfsDataUpdated() ||
+      this.state.totalLPEmission !== this.state.totalLPEmissionInitial ||
+      this.state.minimalInvestment !== this.state.minimalInvestmentInitial
+    ) {
+      return true
+    }
+    return false
+  }
+
+  handleValidate = () => {
+    const { totalLPEmission, minimalInvestment } = this.state
+
+    const errors: IValidationError[] = []
+
+    // TOTAL LPEmission
+
+    if (totalLPEmission !== "") {
+      if (isNaN(Number(totalLPEmission))) {
+        errors.push({
+          message: "Total LP emission must be a number",
+          field: "totalLPEmission",
+        })
+      }
+    }
+
+    // MINIMAL INVESTMENT
+
+    if (minimalInvestment !== "") {
+      if (isNaN(Number(minimalInvestment))) {
+        errors.push({
+          message: "Minimal investment must be a number",
+          field: "minimalInvestment",
+        })
+      }
+    }
+
+    this.setState({ validationErrors: errors })
+
+    return !errors.length
+  }
+
+  render() {
+    const { children } = this.props
+
+    return (
+      <FundContext.Provider
+        value={{
+          ...this.state,
+          handleChange: this.handleChange,
+          setInitial: this.setInitial,
+          setInitialIpfs: this.setInitialIpfs,
+          setDefault: this.setDefault,
+          poolParametersSaveCallback: this.poolParametersSaveCallback,
+          managersRemoveCallback: this.managersRemoveCallback,
+          managersAddCallback: this.managersAddCallback,
+          investorsRemoveCallback: this.investorsRemoveCallback,
+          investorsAddCallback: this.investorsAddCallback,
+          isIpfsDataUpdated: this.isIpfsDataUpdated,
+          isPoolParametersUpdated: this.isPoolParametersUpdated,
+          handleValidate: this.handleValidate,
+        }}
+      >
+        {children}
+      </FundContext.Provider>
+    )
+  }
 }
+
+export default UpdateFundContext
