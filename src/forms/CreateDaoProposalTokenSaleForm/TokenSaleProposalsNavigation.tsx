@@ -27,7 +27,7 @@ const TokenSaleProposalsNavigation: React.FC = () => {
   const { currentStepNumber, setStep } = useContext(stepsControllerContext)
 
   const actionsActive = useMemo(() => {
-    if (currentStepNumber < 4) return false
+    if (currentStepNumber < 5) return false
 
     if (
       settingsValidation.isFieldsValid &&
@@ -48,7 +48,7 @@ const TokenSaleProposalsNavigation: React.FC = () => {
     (idx: number) => {
       setCurrentProposalIndex(idx)
       if (setStep) {
-        setStep(1)
+        setStep(2)
       }
     },
     [setCurrentProposalIndex, setStep]
@@ -59,7 +59,7 @@ const TokenSaleProposalsNavigation: React.FC = () => {
       setCurrentProposalIndex(0)
       handleDeleteTokenSellProposal(idx)
       if (setStep) {
-        setStep(1)
+        setStep(2)
       }
     },
     [handleDeleteTokenSellProposal, setStep, setCurrentProposalIndex]
@@ -73,17 +73,17 @@ const TokenSaleProposalsNavigation: React.FC = () => {
             <S.TokenSellProposalWrapper key={index}>
               <S.TokenSellProposalHeader>
                 <S.TokenSellProposalHeaderLeft>
-                  <S.TokenSellProposalTitle isSelected={currentStepNumber > 1}>
+                  <S.TokenSellProposalTitle isSelected={currentStepNumber > 2}>
                     Token Sale №{index + 1}
                   </S.TokenSellProposalTitle>
                 </S.TokenSellProposalHeaderLeft>
                 <S.TokenSellProposalHeaderRight
-                  isActive={currentStepNumber > 1}
+                  isActive={currentStepNumber > 2}
                 >
                   <Icon name={ICON_NAMES.angleUp} />
                 </S.TokenSellProposalHeaderRight>
               </S.TokenSellProposalHeader>
-              {currentStepNumber > 1 && (
+              {currentStepNumber > 2 && (
                 <Collapse isOpen style={{ width: "100%" }}>
                   <S.TokenSellSteps>
                     {TOKEN_SELL_STEPS.map(
@@ -109,7 +109,7 @@ const TokenSaleProposalsNavigation: React.FC = () => {
                   </S.TokenSellSteps>
                 </Collapse>
               )}
-              {currentStepNumber > 1 && tokenSaleProposals.length !== 1 && (
+              {currentStepNumber > 2 && tokenSaleProposals.length !== 1 && (
                 <S.DeleteTokenSellProposalButton
                   text={"Delete"}
                   onClick={() => onDeleteTokenSellProposal(index)}

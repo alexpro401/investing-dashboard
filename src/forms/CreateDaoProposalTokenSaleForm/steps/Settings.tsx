@@ -129,7 +129,7 @@ const SettingsStep: React.FC = () => {
           </S.DesktopHeaderWrp>
         )}
         <Card>
-          <CardHead title={"Опис пропоузалу"} />
+          <CardHead title={"Опис токен сейлу"} />
           <CardFormControl>
             <InputField
               value={proposalName}
@@ -140,7 +140,7 @@ const SettingsStep: React.FC = () => {
                   v
                 )
               }
-              label="Proposal name"
+              label="Ім'я токен сейлу"
               errorMessage={getFieldErrorMessage("proposalName")}
               onBlur={() => touchField("proposalName")}
             />

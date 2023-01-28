@@ -20,7 +20,7 @@ const AddTokenSaleButton: React.FC = () => {
   } = useContext(TokenSaleCreatingContext)
 
   const actionsActive = useMemo(() => {
-    if (currentStepNumber < 4) return false
+    if (currentStepNumber < 5) return false
 
     if (
       settingsValidation.isFieldsValid &&

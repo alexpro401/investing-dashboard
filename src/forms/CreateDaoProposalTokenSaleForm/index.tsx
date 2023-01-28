@@ -1,10 +1,21 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react"
+import React, {
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+  useContext,
+} from "react"
 import { useDispatch } from "react-redux"
 import { useParams, useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
+import { parseUnits } from "@ethersproject/units"
 
 import { hideTapBar, showTabBar } from "state/application/actions"
 import { useBreakpoints } from "hooks"
+import { useGovPoolCreateTokenSaleProposal } from "hooks/dao/proposals"
+import { TokenSaleCreatingContext } from "context/govPool/proposals/TokenSaleContext"
+import { GovProposalCreatingContext } from "context/govPool/proposals/GovProposalCreatingContext"
+import CreateDaoProposalGeneralForm from "forms/CreateDaoProposalGeneralForm"
 import {
   SettingsStep,
   VestingParamsStep,
@@ -19,6 +30,7 @@ import * as S from "common/FormSteps/styled"
 
 enum STEPS {
   beforeYouStart = "beforeYouStart",
+  basicInfo = "basicInfo",
   settings = "settings",
   vestingParams = "vestingParams",
   whitelist = "whitelist",
@@ -31,6 +43,14 @@ const CreateDaoProposalTokenSaleForm: React.FC = () => {
   const { isMobile } = useBreakpoints()
 
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.beforeYouStart)
+  const { tokenSaleProposals } = useContext(TokenSaleCreatingContext)
+  const { proposalName, proposalDescription } = useContext(
+    GovProposalCreatingContext
+  )
+
+  const createProposal = useGovPoolCreateTokenSaleProposal({
+    govPoolAddress: daoAddress,
+  })
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length, [])
   const currentStepNumber = useMemo(
@@ -46,6 +66,39 @@ const CreateDaoProposalTokenSaleForm: React.FC = () => {
     }
   }, [dispatch])
 
+  const handleCreateProposal = useCallback(() => {
+    createProposal({
+      proposalName: proposalName.get,
+      proposalDescription: proposalDescription.get,
+      tiers: tokenSaleProposals.map((proposal) => ({
+        metadata: {
+          name: proposal.proposalName,
+          description: proposal.proposalDescription,
+        },
+        saleEndTime: proposal.sellEndDate.toString(),
+        saleStartTime: proposal.sellStartDate.toString(),
+        vestingSettings: {
+          cliffPeriod: proposal.cliffDuration.toString(),
+          unlockStep: proposal.unlockStepDuration.toString(),
+          vestingDuration: proposal.lockedDuration.toString(),
+          vestingPercentage: parseUnits(
+            proposal.lockedPercent.toString(),
+            25
+          ).toString(),
+        },
+        minAllocationPerUser: parseUnits(proposal.minAllocation, 18).toString(),
+        maxAllocationPerUser: parseUnits(proposal.maxAllocation, 18).toString(),
+        saleTokenAddress:
+          proposal.selectedTreasuryToken?.contract_address ?? "",
+        totalTokenProvided: parseUnits(proposal.tokenAmount, 18).toString(),
+        purchaseTokenAddresses: proposal.sellPairs.map((el) => el.tokenAddress),
+        exchangeRates: proposal.sellPairs.map((el) =>
+          parseUnits(el.amount, 25).toString()
+        ),
+      })),
+    })
+  }, [createProposal, tokenSaleProposals, proposalName, proposalDescription])
+
   const handlePrevStep = useCallback(() => {
     switch (currentStep) {
       case STEPS.beforeYouStart: {
@@ -54,8 +107,12 @@ const CreateDaoProposalTokenSaleForm: React.FC = () => {
         }
         break
       }
-      case STEPS.settings: {
+      case STEPS.basicInfo: {
         setCurrentStep(STEPS.beforeYouStart)
+        break
+      }
+      case STEPS.settings: {
+        setCurrentStep(STEPS.basicInfo)
         break
       }
       case STEPS.vestingParams: {
@@ -74,6 +131,10 @@ const CreateDaoProposalTokenSaleForm: React.FC = () => {
   const handleNextStep = useCallback(() => {
     switch (currentStep) {
       case STEPS.beforeYouStart: {
+        setCurrentStep(STEPS.basicInfo)
+        break
+      }
+      case STEPS.basicInfo: {
         setCurrentStep(STEPS.settings)
         break
       }
@@ -85,12 +146,12 @@ const CreateDaoProposalTokenSaleForm: React.FC = () => {
         setCurrentStep(STEPS.whitelist)
         break
       }
-      case STEPS.vestingParams: {
-        //TODO create proposal here
+      case STEPS.whitelist: {
+        handleCreateProposal()
         break
       }
     }
-  }, [currentStep])
+  }, [currentStep, handleCreateProposal])
 
   const TokenSaleProposalsNavigationHeader = useMemo(() => {
     if (isMobile)
@@ -117,6 +178,11 @@ const CreateDaoProposalTokenSaleForm: React.FC = () => {
           {currentStep === STEPS.beforeYouStart && (
             <S.StepsContainer>
               <BeforeYouStart />
+            </S.StepsContainer>
+          )}
+          {currentStep === STEPS.basicInfo && (
+            <S.StepsContainer>
+              <CreateDaoProposalGeneralForm nextLabel={"Continue"} />
             </S.StepsContainer>
           )}
           {currentStep === STEPS.settings && (

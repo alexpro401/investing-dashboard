@@ -17,6 +17,8 @@ import { isAddress, shortenAddress } from "utils"
 import Switch from "components/Switch"
 import { ICON_NAMES } from "consts"
 
+import { CreatingProposalSuccessModal } from "common/GovProposal"
+
 import * as SForms from "common/FormSteps/styled"
 
 const WhitelistStep: React.FC = () => {
@@ -78,6 +80,7 @@ const WhitelistStep: React.FC = () => {
 
   return (
     <>
+      <CreatingProposalSuccessModal />
       <SForms.StepsRoot>
         <Card>
           <CardHead
@@ -150,7 +153,10 @@ const WhitelistStep: React.FC = () => {
           )}
         </Card>
       </SForms.StepsRoot>
-      <SForms.FormStepsNavigationWrp customNextCb={handleNextStep} />
+      <SForms.FormStepsNavigationWrp
+        customNextCb={handleNextStep}
+        nextLabel={"Create proposal"}
+      />
     </>
   )
 }

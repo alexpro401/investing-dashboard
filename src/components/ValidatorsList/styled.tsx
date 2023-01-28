@@ -1,6 +1,6 @@
 import styled from "styled-components/macro"
 
-import theme from "theme"
+import theme, { respondTo } from "theme"
 import { AppButton } from "common"
 
 export const ValidatorsSection = styled.div`
@@ -8,6 +8,10 @@ export const ValidatorsSection = styled.div`
   border-radius: 20px;
   width: 100%;
   padding: 16px;
+
+  ${respondTo("sm")} {
+    padding: 24px;
+  }
 `
 
 export const ValidatorsSectionHeader = styled.div`
@@ -17,11 +21,20 @@ export const ValidatorsSectionHeader = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+
+  ${respondTo("sm")} {
+    margin-bottom: 24px;
+  }
 `
 
 export const HeaderButton = styled(AppButton)`
   font-size: 13px;
   line-height: 16px;
+
+  ${respondTo("sm")} {
+    font-size: 16px;
+    line-height: 19px;
+  }
 `
 
 export const ValidatorsList = styled.div`
