@@ -198,8 +198,8 @@ export function useGovValidatorsContract(poolAddress: Address) {
   )
 }
 
-export function useTokenSaleProposalContract(poolAddress: Address) {
-  return useContract<TokenSaleProposal>(poolAddress, TokenSaletProposal_ABI)
+export function useTokenSaleProposalContract(govPoolAddress: Address) {
+  return useContract<TokenSaleProposal>(govPoolAddress, TokenSaletProposal_ABI)
 }
 
 export function useMulticallContract() {

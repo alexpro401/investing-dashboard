@@ -3,7 +3,11 @@ import { generatePath, useNavigate } from "react-router-dom"
 
 import { useTokenSaleProposalContract } from "contracts"
 import { useActiveWeb3React } from "hooks"
-import { useGovPoolLatestProposalId, useGovPoolCreateProposal } from "hooks/dao"
+import {
+  useGovPoolLatestProposalId,
+  useGovPoolCreateProposal,
+  useGovTokenSaleContractAddress,
+} from "hooks/dao"
 import usePayload from "hooks/usePayload"
 import useError from "hooks/useError"
 import { isTxMined, parseTransactionError } from "utils"
@@ -46,6 +50,8 @@ const useGovPoolCreateTokenSaleProposal = ({
   govPoolAddress?: string | undefined
 }) => {
   const navigate = useNavigate()
+  const tokenSaleProposalContractAddress =
+    useGovTokenSaleContractAddress(govPoolAddress)
   const tokenSaleProposalContract = useTokenSaleProposalContract(govPoolAddress)
 
   const { setSuccessModalState, closeSuccessModalState } = useContext(
@@ -64,7 +70,13 @@ const useGovPoolCreateTokenSaleProposal = ({
       proposalName,
       proposalDescription,
     }: ICreateProposalArgs) => {
-      if (!tokenSaleProposalContract || !account || !govPoolAddress) return
+      if (
+        !tokenSaleProposalContract ||
+        !account ||
+        !govPoolAddress ||
+        !tokenSaleProposalContractAddress
+      )
+        return
 
       try {
         setPayload(SubmitState.SIGN)
@@ -84,8 +96,7 @@ const useGovPoolCreateTokenSaleProposal = ({
         const receipt = await createGovProposal(
           { proposalName, proposalDescription },
           "",
-          // TODO hardcoded for only one DAO Pool, in future get from graph
-          ["0x2811353d0b0be0c1ee818291ddfd8c5d2d798a91"],
+          [tokenSaleProposalContractAddress],
           [0],
           [encodedCreateTiersExecution]
         )
@@ -130,6 +141,7 @@ const useGovPoolCreateTokenSaleProposal = ({
       setPayload,
       createGovProposal,
       setError,
+      tokenSaleProposalContractAddress,
     ]
   )
 
