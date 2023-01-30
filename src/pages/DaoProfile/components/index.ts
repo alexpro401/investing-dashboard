@@ -6,3 +6,4 @@ export { default as DaoProfileTokensInTreasuryCard } from "./DaoProfileTokensInT
 export { default as DaoProfileEmptyBalanceCard } from "./DaoProfileEmptyBalanceCard"
 export { default as DaoProfileUserBalancesCard } from "./DaoProfileUserBalancesCard"
 export { default as DaoProfileValueWithActionCard } from "./DaoProfileValueWithActionCard"
+export { default as DesktopRouteTabs } from "./DesktopRouteTabs"

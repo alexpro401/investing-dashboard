@@ -36,6 +36,8 @@ const DaoProfileTabValidators: React.FC<Props> = ({ chainId }) => {
     GovPoolProfileCommonContext
   )
 
+  console.log("validatorsLoading: ", validatorsLoading)
+
   const TableHead = useMemo(
     () => (
       <Flex full ai="center" jc="space-between">

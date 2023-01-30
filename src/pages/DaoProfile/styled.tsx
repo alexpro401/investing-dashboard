@@ -4,7 +4,6 @@ import { Link } from "react-router-dom"
 
 import theme, { Flex, Text } from "theme"
 import { AppButton } from "common"
-import RouteTabs from "components/RouteTabs"
 
 const variants = {
   hidden: { opacity: 0 },

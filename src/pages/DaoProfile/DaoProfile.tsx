@@ -1,5 +1,19 @@
-import React, { useCallback, useMemo, useState, useContext } from "react"
-import { useParams } from "react-router-dom"
+import React, {
+  useCallback,
+  useMemo,
+  useState,
+  useContext,
+  useEffect,
+} from "react"
+import {
+  useParams,
+  Routes,
+  Route,
+  Link,
+  generatePath,
+  useNavigate,
+  Navigate,
+} from "react-router-dom"
 import { useWeb3React } from "@web3-react/core"
 
 import * as S from "./styled"
@@ -7,20 +21,16 @@ import {
   DaoProfileStatisticCard,
   DaoProfileChart,
   DaoProfileTokensInTreasuryCard,
+  DesktopRouteTabs,
 } from "./components"
+import { ROUTE_PATHS } from "consts"
 import { TabFallback } from "./tabs"
-const DaoProfileTabAbout = React.lazy(() => import("./tabs/DaoProfileTabAbout"))
-const DaoProfileTabBalance = React.lazy(
-  () => import("./tabs/DaoProfileTabBalance")
-)
-const DaoProfileTabValidators = React.lazy(
-  () => import("./tabs/DaoProfileTabValidators")
-)
-const DaoProfileTabDelegations = React.lazy(
-  () => import("./tabs/DaoProfileTabDelegations")
-)
 import { PageChart } from "./types"
-import { EDaoProfileTab } from "types"
+import {
+  EDaoProfileTab,
+  mapProfileTabToRoute,
+  mapProfileTabToTitle,
+} from "types/govPoolProfile.types"
 
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
@@ -36,9 +46,21 @@ import { useBreakpoints } from "hooks"
 import { Breadcrumbs } from "common"
 import { graphClientDaoPools } from "utils/graphClient"
 
+const DaoProfileTabAbout = React.lazy(() => import("./tabs/DaoProfileTabAbout"))
+const DaoProfileTabBalance = React.lazy(
+  () => import("./tabs/DaoProfileTabBalance")
+)
+const DaoProfileTabValidators = React.lazy(
+  () => import("./tabs/DaoProfileTabValidators")
+)
+const DaoProfileTabDelegations = React.lazy(
+  () => import("./tabs/DaoProfileTabDelegations")
+)
+
 const DaoProfile: React.FC = () => {
   const { account, chainId } = useWeb3React()
   const { daoAddress } = useParams()
+  const navigate = useNavigate()
 
   const { currentTab, daoDescription } = useContext(GovPoolProfileTabsContext)
 
@@ -63,67 +85,126 @@ const DaoProfile: React.FC = () => {
     setCreateProposalModalOpened(false)
   }, [])
 
+  const TABS_CONTENT = {
+    [EDaoProfileTab.about]: (
+      <React.Suspense fallback={<TabFallback />}>
+        <DaoProfileTabAbout
+          creationTime={
+            govPoolQuery.data?.daoPool?.creationTime
+              ? Number(govPoolQuery.data.daoPool.creationTime)
+              : undefined
+          }
+        />
+      </React.Suspense>
+    ),
+    [EDaoProfileTab.my_balance]: (
+      <React.Suspense fallback={<TabFallback />}>
+        <DaoProfileTabBalance daoAddress={daoAddress} />
+      </React.Suspense>
+    ),
+    [EDaoProfileTab.validators]: (
+      <React.Suspense fallback={<TabFallback />}>
+        <DaoProfileTabValidators chainId={chainId} />
+      </React.Suspense>
+    ),
+    [EDaoProfileTab.delegations]: (
+      <React.Suspense fallback={<TabFallback />}>
+        <DaoProfileTabDelegations chainId={chainId} daoAddress={daoAddress} />
+      </React.Suspense>
+    ),
+  }
+
+  const TABS = useMemo(
+    () => [
+      {
+        name: mapProfileTabToTitle[EDaoProfileTab.about],
+        child: TABS_CONTENT[EDaoProfileTab.about],
+        route: generatePath(ROUTE_PATHS.daoProfile, {
+          daoAddress: daoAddress ?? "",
+          "*": mapProfileTabToRoute[EDaoProfileTab.about],
+        }),
+        onClick: () => currentTab.set(EDaoProfileTab.about),
+        internalRoute: mapProfileTabToRoute[EDaoProfileTab.about],
+      },
+      {
+        name: mapProfileTabToTitle[EDaoProfileTab.my_balance],
+        child: TABS_CONTENT[EDaoProfileTab.my_balance],
+        route: generatePath(ROUTE_PATHS.daoProfile, {
+          daoAddress: daoAddress ?? "",
+          "*": mapProfileTabToRoute[EDaoProfileTab.my_balance],
+        }),
+        onClick: () => currentTab.set(EDaoProfileTab.my_balance),
+        internalRoute: mapProfileTabToRoute[EDaoProfileTab.my_balance],
+      },
+      {
+        name: mapProfileTabToTitle[EDaoProfileTab.validators],
+        child: TABS_CONTENT[EDaoProfileTab.validators],
+        route: generatePath(ROUTE_PATHS.daoProfile, {
+          daoAddress: daoAddress ?? "",
+          "*": mapProfileTabToRoute[EDaoProfileTab.validators],
+        }),
+        onClick: () => currentTab.set(EDaoProfileTab.validators),
+        internalRoute: mapProfileTabToRoute[EDaoProfileTab.validators],
+      },
+      {
+        name: mapProfileTabToTitle[EDaoProfileTab.delegations],
+        child: TABS_CONTENT[EDaoProfileTab.delegations],
+        route: generatePath(ROUTE_PATHS.daoProfile, {
+          daoAddress: daoAddress ?? "",
+          "*": mapProfileTabToRoute[EDaoProfileTab.delegations],
+        }),
+        onClick: () => currentTab.set(EDaoProfileTab.delegations),
+        internalRoute: mapProfileTabToRoute[EDaoProfileTab.delegations],
+      },
+    ],
+    [TABS_CONTENT, currentTab, daoAddress]
+  )
+
   const DaoProfilePageTabs = useMemo(() => {
     return (
       <S.Indents>
         <Tabs
-          tabs={[
-            {
-              name: EDaoProfileTab.about,
-              child: (
-                <React.Suspense fallback={<TabFallback />}>
-                  <DaoProfileTabAbout
-                    creationTime={
-                      govPoolQuery.data?.daoPool?.creationTime
-                        ? Number(govPoolQuery.data.daoPool.creationTime)
-                        : undefined
-                    }
-                  />
-                </React.Suspense>
-              ),
-            },
-            {
-              name: EDaoProfileTab.my_balance,
-              child: (
-                <React.Suspense fallback={<TabFallback />}>
-                  <DaoProfileTabBalance daoAddress={daoAddress} />
-                </React.Suspense>
-              ),
-            },
-            {
-              name: EDaoProfileTab.validators,
-              child: (
-                <React.Suspense fallback={<TabFallback />}>
-                  <DaoProfileTabValidators chainId={chainId} />
-                </React.Suspense>
-              ),
-            },
-            {
-              name: EDaoProfileTab.delegations,
-              child: (
-                <React.Suspense fallback={<TabFallback />}>
-                  <DaoProfileTabDelegations
-                    chainId={chainId}
-                    daoAddress={daoAddress}
-                  />
-                </React.Suspense>
-              ),
-            },
-          ]}
+          tabs={TABS}
           initialTab={0}
           onChangeTab={({ name }) => currentTab.set(name as EDaoProfileTab)}
         />
       </S.Indents>
     )
-  }, [daoAddress, chainId, currentTab, govPoolQuery])
+  }, [currentTab, TABS])
 
   const { isMobile, isDesktop } = useBreakpoints()
+
+  useEffect(() => {
+    if (isMobile) {
+      navigate(
+        generatePath(ROUTE_PATHS.daoProfile, {
+          daoAddress: daoAddress ?? "",
+          "*": "",
+        })
+      )
+    }
+  }, [isMobile, daoAddress, navigate])
+
+  useEffect(() => {
+    if (!isMobile) {
+      //TODO handle redirect to some step when we come to pages first time
+    }
+  }, [isMobile])
 
   return (
     <>
       <Header>{isMobile ? "Dao Profile" : <Breadcrumbs />}</Header>
       <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
         <S.Container>
+          {!isMobile && (
+            <DesktopRouteTabs
+              tabs={TABS.map((tab) => ({
+                source: tab.route,
+                title: tab.name,
+                onClick: tab.onClick,
+              }))}
+            />
+          )}
           <S.Indents top>
             <DaoProfileStatisticCard
               isValidator={isValidator}
@@ -154,9 +235,35 @@ const DaoProfile: React.FC = () => {
               <DaoProfileTokensInTreasuryCard />
             </S.Indents>
           </S.Indents>
-          <Flex full m="40px 0 16px">
-            {DaoProfilePageTabs}
-          </Flex>
+          {isMobile && (
+            <>
+              <Flex full m="40px 0 16px">
+                {DaoProfilePageTabs}
+              </Flex>
+            </>
+          )}
+          {!isMobile && (
+            <Routes>
+              {TABS.map((tab, index) => (
+                <Route
+                  key={index}
+                  element={tab.child}
+                  path={tab.internalRoute}
+                />
+              ))}
+              <Route
+                path="*"
+                element={
+                  <Navigate
+                    to={generatePath(ROUTE_PATHS.daoProfile, {
+                      daoAddress: daoAddress ?? "",
+                      "*": mapProfileTabToRoute[EDaoProfileTab.about],
+                    })}
+                  />
+                }
+              />
+            </Routes>
+          )}
         </S.Container>
       </WithGovPoolAddressValidation>
       <ChooseDaoProposalAsPerson
