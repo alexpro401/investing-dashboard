@@ -24,11 +24,15 @@ import {
 } from "common"
 import { ICON_NAMES } from "consts"
 import Switch from "components/Switch"
+import { useForm, useFormValidation } from "hooks"
+import { required } from "utils/validators"
+import { Bus, sleep } from "helpers"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const FundDetailsManager: FC<Props> = () => {
-  const {} = useContext(PoolProfileContext)
+  const { fundManagers: _fundManagers, updatePoolManagers } =
+    useContext(PoolProfileContext)
 
   const [isFundManagersEnabled, setIsFundManagersEnabled] = useState(true)
 
@@ -38,6 +42,34 @@ const FundDetailsManager: FC<Props> = () => {
       address: string
     }[]
   >([])
+
+  const setDefaultFundManagers = useCallback(() => {
+    setFundManagers([
+      ...(_fundManagers?.map((el) => ({ isDisabled: false, address: el })) ||
+        []),
+    ])
+  }, [_fundManagers])
+
+  useEffectOnce(() => {
+    setDefaultFundManagers()
+  })
+
+  const { disableForm, enableForm, isFormDisabled } = useForm()
+  const { getFieldErrorMessage, touchField, touchForm, isFieldsValid } =
+    useFormValidation(
+      {
+        fundManagers,
+      },
+      {
+        fundManagers: {
+          $every: {
+            address: {
+              required,
+            },
+          },
+        },
+      }
+    )
 
   const dispatch = useDispatch()
 
@@ -67,7 +99,6 @@ const FundDetailsManager: FC<Props> = () => {
         {
           isDisabled: false,
           address: textFromClipboard,
-          balance: "",
         },
       ]
     })
@@ -82,12 +113,16 @@ const FundDetailsManager: FC<Props> = () => {
             nodeRight={
               <S.HeadResetBtn
                 text={"Delete all"}
-                onClick={() => setFundManagers([])}
+                onClick={() => setDefaultFundManagers()}
+                disabled={isFormDisabled}
               />
             }
           />
           <CardFormControl>
-            <S.AddressBalanceAddBtn onClick={handleAddItemToFundManagers}>
+            <S.AddressBalanceAddBtn
+              onClick={handleAddItemToFundManagers}
+              disabled={isFormDisabled}
+            >
               Paste address
             </S.AddressBalanceAddBtn>
             {fundManagers.map((item, idx) => (
@@ -128,13 +163,49 @@ const FundDetailsManager: FC<Props> = () => {
                   )
                 }
                 isItemDisabled={item.isDisabled}
+                errorMessage={getFieldErrorMessage(`fundManagers[${idx}]`)}
+                onBlur={() => touchField(`fundManagers[${idx}]`)}
+                disabled={isFormDisabled}
               />
             ))}
           </CardFormControl>
         </Card>
       </Collapse>
     )
-  }, [handleAddItemToFundManagers, isFundManagersEnabled, fundManagers])
+  }, [
+    isFundManagersEnabled,
+    fundManagers,
+    isFormDisabled,
+    handleAddItemToFundManagers,
+    setDefaultFundManagers,
+    getFieldErrorMessage,
+    touchField,
+  ])
+
+  const submit = useCallback(async () => {
+    touchForm()
+    await sleep(100)
+    if (!updatePoolManagers || !isFieldsValid) return
+
+    disableForm()
+
+    try {
+      await updatePoolManagers(fundManagers)
+
+      Bus.emit("manage-modal/menu")
+    } catch (error) {
+      console.log(error)
+    }
+
+    enableForm()
+  }, [
+    disableForm,
+    enableForm,
+    fundManagers,
+    isFieldsValid,
+    touchForm,
+    updatePoolManagers,
+  ])
 
   return (
     <>
@@ -160,7 +231,11 @@ const FundDetailsManager: FC<Props> = () => {
         </CardDescription>
       </Card>
       {FundManagersCollapse}
-      <S.FormSubmitBtn text="Confirm changes" />
+      <S.FormSubmitBtn
+        text="Confirm changes"
+        onClick={submit}
+        disabled={isFormDisabled}
+      />
     </>
   )
 }

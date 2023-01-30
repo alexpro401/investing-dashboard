@@ -25,9 +25,9 @@ import {
   usePoolAlternativePnlTokens,
 } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
-import { PoolType, TIMEFRAME, ZERO } from "consts"
+import { PoolType, TIMEFRAME, UpdateListType, ZERO } from "consts"
 import { getPNL, getPriceLP, multiplyBignumbers } from "utils/formulas"
-import { bigify, expandTimestamp, isTxMined, normalizeBigNumber } from "utils"
+import { bigify, expandTimestamp, normalizeBigNumber } from "utils"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { Center } from "theme"
 import { GuardSpinner } from "react-spinners-kit"
@@ -174,6 +174,13 @@ interface IPoolProfileContext {
     totalLPEmission?: string
     minimalInvestment?: string
   }) => Promise<void>
+
+  updatePoolManagers?: (
+    managersList: {
+      isDisabled: boolean
+      address: string
+    }[]
+  ) => Promise<void>
 }
 
 export const PoolProfileContext = createContext<IPoolProfileContext>({})
@@ -426,6 +433,51 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
     ]
   )
 
+  const updatePoolManagers = useCallback(
+    async (
+      managersList: {
+        isDisabled: boolean
+        address: string
+      }[]
+    ) => {
+      const investorsToRemove = managersList.filter(
+        (el) => el.isDisabled && poolData?.admins.includes(el.address)
+      )
+      const investorsToAdd = managersList.filter(
+        (el) => !el.isDisabled && !poolData?.admins.includes(el.address)
+      )
+
+      if (investorsToRemove && investorsToRemove.length) {
+        const tx = await traderPoolContract?.modifyAdmins(
+          investorsToRemove.map((el) => el.address),
+          false
+        )
+
+        await addTransaction(tx, {
+          type: TransactionType.POOL_UPDATE_MANAGERS,
+          editType: UpdateListType.REMOVE,
+          poolId: poolData?.id,
+        })
+      }
+
+      await sleep(500)
+
+      if (investorsToAdd && investorsToAdd.length) {
+        const tx = await traderPoolContract?.modifyAdmins(
+          investorsToAdd.map((el) => el.address),
+          true
+        )
+
+        await addTransaction(tx, {
+          type: TransactionType.POOL_UPDATE_MANAGERS,
+          editType: UpdateListType.ADD,
+          poolId: poolData?.id,
+        })
+      }
+    },
+    [addTransaction, poolData, traderPoolContract]
+  )
+
   return (
     <WithPoolAddressValidation poolAddress={poolAddress ?? ""} loader={loader}>
       <PoolProfileContext.Provider
@@ -562,6 +614,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
           },
 
           updatePoolParameters,
+          updatePoolManagers,
         }}
       >
         {children}

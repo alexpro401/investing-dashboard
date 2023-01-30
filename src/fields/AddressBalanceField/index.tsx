@@ -17,6 +17,10 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   updateBalanceValue?: (value: string) => void
 
   tokenSymbol?: string
+
+  errorMessage?: string
+
+  disabled?: boolean
 }
 
 const AddressBalanceField: FC<Props> = ({
@@ -29,6 +33,13 @@ const AddressBalanceField: FC<Props> = ({
   updateBalanceValue,
 
   tokenSymbol,
+
+  errorMessage,
+
+  onBlur,
+
+  disabled,
+
   ...rest
 }) => {
   const pasteAddress = useCallback(async () => {
@@ -69,6 +80,9 @@ const AddressBalanceField: FC<Props> = ({
             <></>
           )
         }
+        errorMessage={errorMessage}
+        onBlur={onBlur}
+        disabled={disabled}
       />
     </S.FieldContainer>
   )

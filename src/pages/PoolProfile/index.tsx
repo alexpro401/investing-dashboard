@@ -5,6 +5,7 @@ import {
   Outlet,
   Route,
   Routes,
+  useNavigate,
   useParams,
 } from "react-router-dom"
 
@@ -489,6 +490,7 @@ const PoolProfileContent = () => {
 
 const PoolProfile = () => {
   const { poolAddress } = useParams()
+  const navigate = useNavigate()
 
   const { isSmallTablet } = useBreakpoints()
 
@@ -509,6 +511,15 @@ const PoolProfile = () => {
     })
     Bus.on("manage-modal/menu", () => {
       setModalContent("menu")
+
+      if (!isSmallTablet) {
+        navigate(
+          generatePath(ROUTE_PATHS.poolProfile, {
+            poolAddress: poolAddress || "",
+            "*": "details",
+          })
+        )
+      }
     })
     Bus.on("manage-modal/general", () => {
       setModalContent("general")
