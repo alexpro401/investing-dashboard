@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useState,
   useMemo,
+  useRef,
 } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
@@ -41,6 +42,7 @@ const CreateDaoProposalTokenDistributionForm: React.FC = () => {
   const { selectedTreasuryToken, tokenAmount } = useContext(
     TokenDistributionCreatingContext
   )
+  const stepsWrapperRef = useRef<HTMLDivElement>(null)
 
   const { isMobile } = useBreakpoints()
 
@@ -59,6 +61,14 @@ const CreateDaoProposalTokenDistributionForm: React.FC = () => {
     () => Object.values(STEPS).indexOf(currentStep) + 1,
     [currentStep]
   )
+
+  useEffect(() => {
+    if (stepsWrapperRef.current) {
+      stepsWrapperRef.current.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+  }, [currentStep, stepsWrapperRef])
 
   const handleCreateProposal = useCallback(() => {
     if (!selectedTreasuryToken.get) return
@@ -118,7 +128,7 @@ const CreateDaoProposalTokenDistributionForm: React.FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        <S.StepsWrapper>
+        <S.StepsWrapper ref={stepsWrapperRef}>
           {currentStep === STEPS.tokenDistribution && (
             <S.StepsContainer>
               <TokenDistributionStep />

@@ -4,6 +4,7 @@ import React, {
   useMemo,
   useState,
   useEffect,
+  useRef,
 } from "react"
 import { AnimatePresence } from "framer-motion"
 import { useDispatch } from "react-redux"
@@ -44,6 +45,7 @@ const CreateGovProposalValidatorChangeValidatorSettingsForm: React.FC = () => {
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
   )
+  const stepsWrapperRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     dispatch(hideTapBar())
@@ -58,6 +60,14 @@ const CreateGovProposalValidatorChangeValidatorSettingsForm: React.FC = () => {
     () => Object.values(STEPS).indexOf(currentStep) + 1,
     [currentStep]
   )
+
+  useEffect(() => {
+    if (stepsWrapperRef.current) {
+      stepsWrapperRef.current.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+  }, [currentStep, stepsWrapperRef])
 
   const handleCreateProposal = useCallback(() => {
     const _balances = balances
@@ -126,7 +136,7 @@ const CreateGovProposalValidatorChangeValidatorSettingsForm: React.FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        <S.StepsWrapper>
+        <S.StepsWrapper ref={stepsWrapperRef}>
           {currentStep === STEPS.validators && (
             <S.StepsContainer>
               <ValidatorsStep />

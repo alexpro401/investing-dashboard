@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
 } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useDispatch } from "react-redux"
@@ -36,6 +37,7 @@ const CreateGovProposalValidatorSettingsForm: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.validators)
   const createProposal = useGovPoolCreateProposalValidators(daoAddress ?? "")
+  const stepsWrapperRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     dispatch(hideTapBar())
@@ -55,6 +57,14 @@ const CreateGovProposalValidatorSettingsForm: React.FC = () => {
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
   )
+
+  useEffect(() => {
+    if (stepsWrapperRef.current) {
+      stepsWrapperRef.current.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+  }, [currentStep, stepsWrapperRef])
 
   const handleCreateProposal = useCallback(() => {
     const _balances = balances
@@ -119,7 +129,7 @@ const CreateGovProposalValidatorSettingsForm: React.FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        <S.StepsWrapper>
+        <S.StepsWrapper ref={stepsWrapperRef}>
           {currentStep === STEPS.validators && (
             <S.StepsContainer>
               <ValidatorsSettingsStep />

@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
 } from "react"
 import { AnimatePresence } from "framer-motion"
 import { useDispatch } from "react-redux"
@@ -42,6 +43,7 @@ const CreateProposalChangeDAOSettingsForm: React.FC = () => {
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
   )
+  const stepsWrapperRef = useRef<HTMLDivElement>(null)
   const {
     avatarUrl,
     daoName,
@@ -66,6 +68,14 @@ const CreateProposalChangeDAOSettingsForm: React.FC = () => {
     () => Object.values(STEPS).indexOf(currentStep) + 1,
     [currentStep]
   )
+
+  useEffect(() => {
+    if (stepsWrapperRef.current) {
+      stepsWrapperRef.current.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+  }, [currentStep, stepsWrapperRef])
 
   const handleCreateChangeDaoSettingsProposal = useCallback(() => {
     createProposal({
@@ -130,7 +140,7 @@ const CreateProposalChangeDAOSettingsForm: React.FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        <S.StepsWrapper>
+        <S.StepsWrapper ref={stepsWrapperRef}>
           {currentStep === STEPS.daoSettings && (
             <S.StepsContainer>
               <TitlesStep isCreatingProposal />

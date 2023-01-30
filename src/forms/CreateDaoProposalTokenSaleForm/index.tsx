@@ -4,6 +4,7 @@ import React, {
   useMemo,
   useCallback,
   useContext,
+  useRef,
 } from "react"
 import { useDispatch } from "react-redux"
 import { useParams, useNavigate } from "react-router-dom"
@@ -41,6 +42,7 @@ const CreateDaoProposalTokenSaleForm: React.FC = () => {
   const navigate = useNavigate()
   const { daoAddress } = useParams<"daoAddress">()
   const { isMobile } = useBreakpoints()
+  const stepsWrapperRef = useRef<HTMLDivElement>(null)
 
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.beforeYouStart)
   const { tokenSaleProposals } = useContext(TokenSaleCreatingContext)
@@ -65,6 +67,14 @@ const CreateDaoProposalTokenSaleForm: React.FC = () => {
       dispatch(showTabBar())
     }
   }, [dispatch])
+
+  useEffect(() => {
+    if (stepsWrapperRef.current) {
+      stepsWrapperRef.current.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+  }, [currentStep, stepsWrapperRef])
 
   const handleCreateProposal = useCallback(() => {
     createProposal({
@@ -174,7 +184,7 @@ const CreateDaoProposalTokenSaleForm: React.FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        <S.StepsWrapper>
+        <S.StepsWrapper ref={stepsWrapperRef}>
           {currentStep === STEPS.beforeYouStart && (
             <S.StepsContainer>
               <BeforeYouStart />
