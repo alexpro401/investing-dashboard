@@ -46,6 +46,8 @@ import { sleep } from "helpers"
 interface IPoolProfileContext {
   isTrader?: boolean
 
+  isPoolPrivate?: boolean
+
   creationDate?: number
   fundAddress?: string
   basicToken?: Token | null
@@ -177,6 +179,13 @@ interface IPoolProfileContext {
 
   updatePoolManagers?: (
     managersList: {
+      isDisabled: boolean
+      address: string
+    }[]
+  ) => Promise<void>
+
+  updatePoolInvestors?: (
+    investorsList: {
       isDisabled: boolean
       address: string
     }[]
@@ -376,6 +385,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
       account?: string
       totalLPEmission?: string
       minimalInvestment?: string
+      isFundPrivate?: boolean
     }) => {
       let descriptionURL = poolData?.descriptionURL
 
@@ -406,7 +416,9 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
 
       const tx = await traderPoolContract?.changePoolParameters(
         descriptionURL,
-        Boolean(poolInfo?.parameters?.privatePool),
+        opts?.isFundPrivate === undefined
+          ? Boolean(poolInfo?.parameters?.privatePool)
+          : opts?.isFundPrivate,
         opts?.totalLPEmission
           ? bigify(opts.totalLPEmission, 18).toHexString()
           : poolInfo?.parameters.totalLPEmission?.toHexString() || "0",
@@ -440,16 +452,16 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
         address: string
       }[]
     ) => {
-      const investorsToRemove = managersList.filter(
+      const managersToRemove = managersList.filter(
         (el) => el.isDisabled && poolData?.admins.includes(el.address)
       )
-      const investorsToAdd = managersList.filter(
+      const managersToAdd = managersList.filter(
         (el) => !el.isDisabled && !poolData?.admins.includes(el.address)
       )
 
-      if (investorsToRemove && investorsToRemove.length) {
+      if (managersToRemove && managersToRemove.length) {
         const tx = await traderPoolContract?.modifyAdmins(
-          investorsToRemove.map((el) => el.address),
+          managersToRemove.map((el) => el.address),
           false
         )
 
@@ -462,9 +474,9 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
 
       await sleep(500)
 
-      if (investorsToAdd && investorsToAdd.length) {
+      if (managersToAdd && managersToAdd.length) {
         const tx = await traderPoolContract?.modifyAdmins(
-          investorsToAdd.map((el) => el.address),
+          managersToAdd.map((el) => el.address),
           true
         )
 
@@ -478,11 +490,70 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
     [addTransaction, poolData, traderPoolContract]
   )
 
+  const updatePoolInvestors = useCallback(
+    async (
+      investorsList: {
+        isDisabled: boolean
+        address: string
+      }[]
+    ) => {
+      const investorsToRemove = investorsList.filter(
+        (el) =>
+          el.isDisabled &&
+          poolData?.privateInvestors.find(
+            (investor) => investor.id === el.address
+          )
+      )
+      const investorsToAdd = investorsList.filter(
+        (el) =>
+          !el.isDisabled &&
+          !poolData?.privateInvestors.find(
+            (investor) => investor.id === el.address
+          )
+      )
+
+      if (investorsToAdd?.length && !poolInfo?.parameters?.privatePool) {
+        await updatePoolParameters({ isFundPrivate: true })
+      }
+
+      if (investorsToRemove && investorsToRemove.length) {
+        const tx = await traderPoolContract?.modifyPrivateInvestors(
+          investorsToRemove.map((el) => el.address),
+          false
+        )
+
+        await addTransaction(tx, {
+          type: TransactionType.POOL_UPDATE_INVESTORS,
+          editType: UpdateListType.REMOVE,
+          poolId: poolData?.id,
+        })
+      }
+
+      await sleep(500)
+
+      if (investorsToAdd && investorsToAdd.length) {
+        const tx = await traderPoolContract?.modifyPrivateInvestors(
+          investorsToAdd.map((el) => el.address),
+          true
+        )
+
+        await addTransaction(tx, {
+          type: TransactionType.POOL_UPDATE_INVESTORS,
+          editType: UpdateListType.ADD,
+          poolId: poolData?.id,
+        })
+      }
+    },
+    [addTransaction, poolData, traderPoolContract]
+  )
+
   return (
     <WithPoolAddressValidation poolAddress={poolAddress ?? ""} loader={loader}>
       <PoolProfileContext.Provider
         value={{
           isTrader,
+
+          isPoolPrivate: Boolean(poolInfo?.parameters?.privatePool),
 
           creationDate: poolData?.creationTime,
           fundAddress: poolData?.id,
@@ -615,6 +686,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
 
           updatePoolParameters,
           updatePoolManagers,
+          updatePoolInvestors,
         }}
       >
         {children}

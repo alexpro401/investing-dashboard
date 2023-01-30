@@ -15,32 +15,79 @@ import {
   Collapse,
   Icon,
 } from "common"
-import { ICON_NAMES } from "consts"
+import { ICON_NAMES, ZERO } from "consts"
 import Switch from "components/Switch"
 import { useDispatch } from "react-redux"
 import { useEffectOnce } from "react-use"
 import { hideTapBar, showTabBar } from "state/application/actions"
-import { isAddress, shortenAddress } from "utils"
+import { formatBigNumber, isAddress, shortenAddress } from "utils"
 
 import * as S from "./styled"
 import { readFromClipboard } from "utils/clipboard"
+import { Bus, sleep } from "helpers"
+import { useForm, useFormValidation } from "hooks"
+import { required } from "utils/validators"
+import { useTraderPoolContract } from "contracts"
+import { BigNumber } from "ethers"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const FundDetailsWhitelist: FC<Props> = () => {
-  const {} = useContext(PoolProfileContext)
+  const {
+    isPoolPrivate,
+    fundAddress,
+    whiteList: _whitelist,
+    updatePoolInvestors,
+  } = useContext(PoolProfileContext)
 
-  const [isWhiteListEnabled, setIsWhitelistEnabled] = useState(true)
+  const poolContract = useTraderPoolContract(fundAddress)
+
+  const [isWhiteListEnabled, setIsWhitelistEnabled] = useState(!!isPoolPrivate)
 
   const [whitelist, setWhitelist] = useState<
     {
       isDisabled: boolean
       address: string
-      balance: string
+      balance: BigNumber
     }[]
   >([])
 
+  const setDefaultFundInvestors = useCallback(async () => {
+    if (!_whitelist) return
+
+    const whiteListWithBalances = await Promise.all(
+      _whitelist.map(async (el) => ({
+        isDisabled: false,
+        address: el.id,
+        balance: (await poolContract?.balanceOf(el.id)) || ZERO,
+      }))
+    )
+
+    setWhitelist(whiteListWithBalances)
+  }, [_whitelist, poolContract])
+
+  useEffectOnce(() => {
+    setDefaultFundInvestors()
+  })
+
   const dispatch = useDispatch()
+
+  const { disableForm, enableForm, isFormDisabled } = useForm()
+  const { getFieldErrorMessage, touchField, touchForm, isFieldsValid } =
+    useFormValidation(
+      {
+        whitelist,
+      },
+      {
+        whitelist: {
+          $every: {
+            address: {
+              required,
+            },
+          },
+        },
+      }
+    )
 
   useEffectOnce(() => {
     dispatch(hideTapBar())
@@ -68,7 +115,7 @@ const FundDetailsWhitelist: FC<Props> = () => {
         {
           isDisabled: false,
           address: textFromClipboard,
-          balance: "",
+          balance: ZERO,
         },
       ]
     })
@@ -83,12 +130,16 @@ const FundDetailsWhitelist: FC<Props> = () => {
             nodeRight={
               <S.HeadResetBtn
                 text={"Delete available"}
-                onClick={() => setWhitelist([])}
+                onClick={() => setDefaultFundInvestors()}
+                disabled={isFormDisabled}
               />
             }
           />
           <CardFormControl>
-            <S.AddressBalanceAddBtn onClick={handleAddItemToWhitelist}>
+            <S.AddressBalanceAddBtn
+              onClick={handleAddItemToWhitelist}
+              disabled={isFormDisabled}
+            >
               Paste address
               <S.AddressBalanceAddBtnStubWrp>
                 <S.AddressBalanceAddBtnInputStub>
@@ -137,22 +188,56 @@ const FundDetailsWhitelist: FC<Props> = () => {
                   )
                 }
                 isItemDisabled={item.isDisabled}
-                balanceValue={item.balance}
-                updateBalanceValue={(v) => {
-                  setWhitelist((prev) => {
-                    const newWhitelist = [...prev]
-                    newWhitelist[idx].balance = v
-                    return newWhitelist
-                  })
-                }}
+                balanceValue={formatBigNumber(item.balance)}
                 tokenSymbol={"ETH"}
+                errorMessage={getFieldErrorMessage(`whitelist[${idx}]`)}
+                onBlur={() => touchField(`whitelist[${idx}]`)}
+                disabled={isFormDisabled}
               />
             ))}
           </CardFormControl>
         </Card>
       </Collapse>
     )
-  }, [handleAddItemToWhitelist, isWhiteListEnabled, whitelist])
+  }, [
+    getFieldErrorMessage,
+    handleAddItemToWhitelist,
+    isFormDisabled,
+    isWhiteListEnabled,
+    setDefaultFundInvestors,
+    touchField,
+    whitelist,
+  ])
+
+  const submit = useCallback(async () => {
+    touchForm()
+    await sleep(100)
+    if (!updatePoolInvestors || !isFieldsValid) return
+
+    disableForm()
+
+    try {
+      await updatePoolInvestors(
+        whitelist?.map((el) => ({
+          address: el.address,
+          isDisabled: el.isDisabled,
+        }))
+      )
+
+      Bus.emit("manage-modal/menu")
+    } catch (error) {
+      console.log(error)
+    }
+
+    enableForm()
+  }, [
+    disableForm,
+    enableForm,
+    isFieldsValid,
+    touchForm,
+    updatePoolInvestors,
+    whitelist,
+  ])
 
   return (
     <>
@@ -179,7 +264,11 @@ const FundDetailsWhitelist: FC<Props> = () => {
         </CardDescription>
       </Card>
       {WhiteListCollapse}
-      <S.FormSubmitBtn text="Confirm changes" />
+      <S.FormSubmitBtn
+        text="Confirm changes"
+        onClick={submit}
+        disabled={isFormDisabled}
+      />
     </>
   )
 }

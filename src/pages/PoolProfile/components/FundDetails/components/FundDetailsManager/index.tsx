@@ -34,7 +34,9 @@ const FundDetailsManager: FC<Props> = () => {
   const { fundManagers: _fundManagers, updatePoolManagers } =
     useContext(PoolProfileContext)
 
-  const [isFundManagersEnabled, setIsFundManagersEnabled] = useState(true)
+  const [isFundManagersEnabled, setIsFundManagersEnabled] = useState(
+    !!_fundManagers?.length
+  )
 
   const [fundManagers, setFundManagers] = useState<
     {
@@ -163,8 +165,10 @@ const FundDetailsManager: FC<Props> = () => {
                   )
                 }
                 isItemDisabled={item.isDisabled}
-                errorMessage={getFieldErrorMessage(`fundManagers[${idx}]`)}
-                onBlur={() => touchField(`fundManagers[${idx}]`)}
+                errorMessage={getFieldErrorMessage(
+                  `fundManagers[${idx}].address`
+                )}
+                onBlur={() => touchField(`fundManagers[${idx}].address`)}
                 disabled={isFormDisabled}
               />
             ))}
