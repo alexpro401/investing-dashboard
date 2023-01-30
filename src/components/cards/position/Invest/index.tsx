@@ -6,7 +6,7 @@ import { format } from "date-fns/esm"
 import { ICON_NAMES, ROUTE_PATHS } from "consts"
 import { useBreakpoints } from "hooks"
 import { DATE_FORMAT } from "consts/time"
-import { IInvestorProposal } from "interfaces/thegraphs/invest-pools"
+import { InvestorPosition } from "interfaces/thegraphs/invest-pools"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 
 import theme, { Flex } from "theme"
@@ -22,7 +22,7 @@ import { NoDataMessage, Icon as IconCommon } from "common"
 import useInvestorPositionCard from "./useInvestorPositionCard"
 
 interface Props {
-  position: IInvestorProposal
+  position: InvestorPosition
 }
 
 const InvestPositionCard: React.FC<Props> = ({ position }) => {

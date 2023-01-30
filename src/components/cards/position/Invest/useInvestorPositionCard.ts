@@ -1,4 +1,4 @@
-import { IInvestorProposal } from "interfaces/thegraphs/invest-pools"
+import { InvestorPosition } from "interfaces/thegraphs/invest-pools"
 import { useActiveWeb3React, usePoolContract } from "hooks"
 import { usePriceFeedContract, useTraderPoolContract } from "contracts"
 import usePoolPrice from "hooks/usePoolPrice"
@@ -16,7 +16,7 @@ import {
 } from "utils/formulas"
 import { normalizeBigNumber } from "utils"
 
-const useInvestorPositionCard = (position: IInvestorProposal) => {
+const useInvestorPositionCard = (position: InvestorPosition) => {
   const { account } = useActiveWeb3React()
   const traderPool = useTraderPoolContract(position.pool.id)
   const [, poolInfo] = usePoolContract(position.pool.id)

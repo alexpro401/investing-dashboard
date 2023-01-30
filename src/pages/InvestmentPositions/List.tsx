@@ -5,7 +5,7 @@ import { PulseSpinner } from "react-spinners-kit"
 import { InvestorPositionsQuery } from "queries"
 import { graphClientInvestors } from "utils/graphClient"
 import useQueryPagination from "hooks/useQueryPagination"
-import { IInvestorProposal } from "interfaces/thegraphs/invest-pools"
+import { InvestorPosition } from "interfaces/thegraphs/invest-pools"
 
 import { Center } from "theme"
 import { NoDataMessage } from "common"
@@ -20,7 +20,7 @@ interface IProps {
 }
 
 const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
-  const [{ data, loading }, fetchMore] = useQueryPagination<IInvestorProposal>({
+  const [{ data, loading }, fetchMore] = useQueryPagination<InvestorPosition>({
     query: InvestorPositionsQuery,
     variables: useMemo(
       () => ({ address: String(account).toLowerCase(), closed }),
