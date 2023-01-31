@@ -35,20 +35,6 @@ const Styled = {
         : "none"};
     border-radius: 24px;
   `,
-  TabAmount: styled(Flex)`
-    min-width: 12px;
-    height: 12px;
-    margin-left: 4px;
-    padding: 3px 4px 2px 3.5px;
-    justify-content: center;
-    align-items: center;
-    border-radius: 6px;
-    background: linear-gradient(267.88deg, #d75e65 -0.85%, #e77171 98.22%);
-    font-weight: 700;
-    font-size: 9px;
-    line-height: 8px;
-    color: #ffffff;
-  `,
 }
 
 export default Styled
