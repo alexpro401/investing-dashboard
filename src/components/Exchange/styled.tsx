@@ -477,6 +477,7 @@ export const AddButton = styled.button`
   line-height: 19px;
   text-align: center;
   color: #2669eb;
+  cursor: pointer;
 `
 
 export const ButtonDivider = styled.div`
@@ -485,6 +486,7 @@ export const ButtonDivider = styled.div`
 
   background: #1c2437;
   border-radius: 16px;
+  margin: 16px 0;
 `
 
 const DividendsTokenContainer = styled(Flex)`

@@ -43,6 +43,7 @@ import { useAllTokens } from "hooks/useToken"
 import { Currency } from "lib/entities"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { GuardSpinner } from "react-spinners-kit"
+import { Exchange } from "components/Exchange"
 
 function PayDividends() {
   const { chainId } = useWeb3React()
@@ -84,67 +85,6 @@ function PayDividends() {
     },
     [activeIndex, handleDividendTokenSelect, handleModalClose]
   )
-
-  // TODO: check terms and conditions agreement
-  const button = useMemo(() => {
-    const inufficientTokens = tokens.filter((token) =>
-      token.balance.lt(token.amount)
-    )
-
-    if (inufficientTokens.length) {
-      return (
-        <AppButton
-          disabled
-          size="large"
-          full
-          text="insufficient balance"
-          color="secondary"
-        />
-      )
-    }
-
-    const lockedTokens = tokens.filter((token) =>
-      token.allowance.lt(token.amount)
-    )
-
-    if (lockedTokens.length) {
-      return (
-        <AppButton
-          size="large"
-          color="secondary"
-          onClick={() => updateAllowance(lockedTokens[0].data.address)}
-          text={`Unlock Token ${lockedTokens[0].data.symbol}`}
-          full
-          iconRight={ICON_NAMES.locked}
-        />
-      )
-    }
-
-    const disabled =
-      tokens.filter((token) => token.amount.isZero()).length === tokens.length
-
-    if (disabled) {
-      return (
-        <AppButton
-          disabled
-          size="large"
-          color="secondary"
-          full
-          text="Enter amount"
-        />
-      )
-    }
-
-    return (
-      <AppButton
-        size="large"
-        color="primary"
-        onClick={handleSubmit}
-        full
-        text="Pay dividends"
-      />
-    )
-  }, [handleSubmit, tokens, updateAllowance])
 
   const lastDividends = useMemo(() => {
     if (!supplies || !supplies.length)
@@ -215,29 +155,87 @@ function PayDividends() {
     )
   }, [info.APR])
 
-  const form = (
-    <Card>
-      <CardHeader>
-        <Flex>
-          <Title active>Pay dividends</Title>
-        </Flex>
-        <IconsGroup>
-          <CircularProgress />
-          <IconButton size={10} filled media={close} onClick={() => {}} />
-        </IconsGroup>
-      </CardHeader>
+  // TODO: check terms and conditions agreement
+  const button = useMemo(() => {
+    const inufficientTokens = tokens.filter((token) =>
+      token.balance.lt(token.amount)
+    )
 
+    if (inufficientTokens.length) {
+      return (
+        <AppButton
+          disabled
+          size="large"
+          full
+          text="insufficient balance"
+          color="secondary"
+        />
+      )
+    }
+
+    const lockedTokens = tokens.filter((token) =>
+      token.allowance.lt(token.amount)
+    )
+
+    if (lockedTokens.length) {
+      return (
+        <AppButton
+          size="large"
+          color="secondary"
+          onClick={() => updateAllowance(lockedTokens[0].data.address)}
+          text={`Unlock Token ${lockedTokens[0].data.symbol}`}
+          full
+          iconRight={ICON_NAMES.locked}
+        />
+      )
+    }
+
+    const disabled =
+      tokens.filter((token) => token.amount.isZero()).length === tokens.length
+
+    if (disabled) {
+      return (
+        <AppButton
+          disabled
+          size="large"
+          color="secondary"
+          full
+          text="Enter amount"
+        />
+      )
+    }
+
+    return (
+      <AppButton
+        size="large"
+        color="primary"
+        onClick={handleSubmit}
+        full
+        text="Pay dividends"
+      />
+    )
+  }, [handleSubmit, tokens, updateAllowance])
+
+  const convertToDividendsButton = useMemo(() => {
+    return (
+      poolAddress &&
+      proposalId && (
+        <BlueButton onClick={() => convertToDividends(poolAddress, proposalId)}>
+          Convert balance to dividends
+        </BlueButton>
+      )
+    )
+  }, [convertToDividends, poolAddress, proposalId])
+
+  const form = (
+    <>
       <DividendsInput
         tokens={tokens}
         onChange={handleFromChange}
         onSelect={openTokenSelect}
       />
 
-      <Flex full p="16px 0 0">
-        {button}
-      </Flex>
-
-      <InfoCard gap="12">
+      {/* <InfoCard gap="12">
         {proposalTVL}
         {APR}
         <InfoDropdown
@@ -246,18 +244,8 @@ function PayDividends() {
         >
           {lastDividendsContent}
         </InfoDropdown>
-      </InfoCard>
-
-      <Flex p="16px 0 0">
-        {poolAddress && proposalId && (
-          <BlueButton
-            onClick={() => convertToDividends(poolAddress, proposalId)}
-          >
-            Convert balance to dividends
-          </BlueButton>
-        )}
-      </Flex>
-    </Card>
+      </InfoCard> */}
+    </>
   )
 
   return (
@@ -269,7 +257,12 @@ function PayDividends() {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        {form}
+        {/* {form} */}
+        <Exchange
+          title="Pay dividends"
+          form={form}
+          buttons={[button, convertToDividendsButton]}
+        />
       </Container>
       <TokenSelect
         allBalances={balances}
