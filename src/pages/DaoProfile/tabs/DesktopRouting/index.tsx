@@ -17,8 +17,8 @@ import {
 } from "types/govPoolProfile.types"
 import TabFallback from "../TabFallback"
 
-const DaoProfileTabAboutMobile = React.lazy(
-  () => import("../mobile/DaoProfileTabAbout")
+const DaoProfileTabAboutDesktop = React.lazy(
+  () => import("../desktop/AboutTab")
 )
 const DaoProfileTabBalanceMobile = React.lazy(
   () => import("../mobile/DaoProfileTabBalance")
@@ -46,9 +46,7 @@ const DesktopRouting: React.FC = () => {
   const TABS_DESKTOP_CONTENT = {
     [EDaoProfileTab.about]: (
       <React.Suspense fallback={<TabFallback />}>
-        <DaoProfileTabAboutMobile
-          creationTime={creationTime ? Number(creationTime) : undefined}
-        />
+        <DaoProfileTabAboutDesktop />
       </React.Suspense>
     ),
     [EDaoProfileTab.my_balance]: (

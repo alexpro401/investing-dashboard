@@ -42,6 +42,8 @@ interface IGovPoolProfileCommonContext {
   haveNft: boolean
   haveToken: boolean
   mainToken: Token | null
+  nftName: string
+  nftAddress: string
   treasuryTokens: ITreasuryToken[]
   treasuryNftCollections: INftCollection[]
   treasuryLoading: boolean
@@ -57,6 +59,8 @@ export const GovPoolProfileCommonContext =
     haveNft: false,
     haveToken: false,
     mainToken: null,
+    nftName: "",
+    nftAddress: "",
     treasuryTokens: [],
     treasuryNftCollections: [],
     treasuryLoading: false,
@@ -131,8 +135,13 @@ const GovPoolProfileCommonContextProvider: React.FC<
   const [validatorsTotalVotes] = useGovValidatorsTokenTotalSupply(daoAddress)
   const { descriptionObject } = useGovPoolDescription(daoAddress)
 
-  const [{ haveNft, haveToken }, { token: mainToken }] =
-    useGovPoolVotingAssets(daoAddress)
+  const [
+    { haveNft, haveToken },
+    {
+      token: mainToken,
+      nft: { name: nftName, address: nftAddress },
+    },
+  ] = useGovPoolVotingAssets(daoAddress)
 
   useEffect(() => {
     setupTreasury()
@@ -149,6 +158,8 @@ const GovPoolProfileCommonContextProvider: React.FC<
         haveNft,
         haveToken,
         mainToken,
+        nftName,
+        nftAddress,
         treasuryTokens: treasuryTokens ? treasuryTokens.items : [],
         treasuryLoading: treasuryTokensLoading || treasuryNFTsLoading || false,
         treasuryNftCollections,
