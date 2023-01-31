@@ -42,7 +42,7 @@ export const localizePoolType = (poolType?: PoolType) => {
 ## Rules to follow
 
 1. All keys should be in kebab case
-2. If you create a new localization key in component - first of all, it should be started with component name in kebab-case
+2. If you create a new localization key in component file - first of all, it should be started with file name in kebab-case, perfectly - one component per file
 3. If you create a new localization key in other files as like as class methods or functions - if you localize something global, create file with function in src/localization/helpers as like as [localizePoolType](./helpers/localizePoolType.ts)
 4. Created key you should define in [resources](./resources) with each language files e.g. if you have en.json and ua.json files - you should define key in both files
 5. In localization json file already defined a few structures:

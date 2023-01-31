@@ -14,6 +14,7 @@ import { selectInvolvedPoolsData } from "state/user/selectors"
 import AddFund from "assets/icons/AddFund"
 
 import * as S from "./styled"
+import { ROUTE_PATHS } from "consts"
 
 const FundItem = ({ pool }) => {
   const [{ poolMetadata }] = usePoolMetadata(pool.id, pool.descriptionURL)
@@ -31,7 +32,7 @@ const FundItem = ({ pool }) => {
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
-const Pools: FC<Props> = ({ ...rest }) => {
+const AccountInvestmentPools: FC<Props> = ({ ...rest }) => {
   const navigate = useNavigate()
   const { account } = useWeb3React()
 
@@ -41,7 +42,7 @@ const Pools: FC<Props> = ({ ...rest }) => {
   const { loading } = useSelector(selectPayload)
 
   const createFund = () => {
-    navigate("/create-fund")
+    navigate(ROUTE_PATHS.createFund)
   }
 
   const fundsPreview = useMemo<ReactNode>(() => {
@@ -89,4 +90,4 @@ const Pools: FC<Props> = ({ ...rest }) => {
   )
 }
 
-export default Pools
+export default AccountInvestmentPools

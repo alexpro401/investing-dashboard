@@ -70,6 +70,7 @@ export const PoolProfileGeneralActionsDropdownToggler = styled.button`
   border-radius: 50%;
   border: 1px solid #6781bd;
   color: #6781bd;
+  padding: 0;
 `
 
 export const PoolProfileGeneralActionsDropdownTogglerIcon = styled(Icon)``

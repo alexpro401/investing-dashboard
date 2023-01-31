@@ -44,7 +44,12 @@ import { IPoolMetadata } from "state/ipfsMetadata/types"
 import { sleep } from "helpers"
 
 interface IPoolProfileContext {
+  traderInfo?: {
+    address?: string
+  }
+
   isTrader?: boolean
+  accountLPs?: BigNumber
 
   isPoolPrivate?: boolean
 
@@ -548,7 +553,12 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
     <WithPoolAddressValidation poolAddress={poolAddress ?? ""} loader={loader}>
       <PoolProfileContext.Provider
         value={{
+          traderInfo: {
+            address: poolData?.trader,
+          },
+
           isTrader,
+          accountLPs,
 
           isPoolPrivate: Boolean(poolInfo?.parameters?.privatePool),
 

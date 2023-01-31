@@ -25,7 +25,7 @@ import * as S from "./styled"
 import { DATE_FORMAT, ICON_NAMES, ROUTE_PATHS } from "consts"
 import { DateUtil, formatNumber, normalizeBigNumber } from "utils"
 import { useBreakpoints } from "hooks"
-import { PoolStatisticsItem } from "pages/PoolProfile/components"
+import { AccountInvestmentPools } from "common"
 import {
   PoolProfileContext,
   PoolProfileContextProvider,
@@ -42,17 +42,22 @@ import {
   FundDetailsMenu,
   FundDetailsWhitelist,
   FundDetailsWithdrawalHistory,
-} from "pages/PoolProfile/components/FundDetails/components"
+  TraderPoolsList,
+  PoolStatisticsItem,
+} from "pages/PoolProfile/components"
 import Modal from "components/Modal"
 import { useEffectOnce } from "react-use"
 import { Bus, sleep } from "helpers"
+import { useTranslation } from "react-i18next"
 
 const PoolProfileContent = () => {
   const { chainId } = useWeb3React()
 
-  const { isSmallTablet, isMediumTablet } = useBreakpoints()
+  const { isSmallTablet, isTablet, isMediumTablet } = useBreakpoints()
 
   const {
+    traderInfo,
+
     fundType,
     fundAddress,
     basicToken,
@@ -62,6 +67,7 @@ const PoolProfileContent = () => {
 
     creationDate,
     isTrader,
+    accountLPs,
     pnl,
     depositors,
     priceLP,
@@ -131,12 +137,14 @@ const PoolProfileContent = () => {
     [basicToken, fundAddress, fundTicker, fundType, isTrader]
   )
 
+  const { t } = useTranslation()
+
   return (
     <>
       <Header />
       <S.Container>
         <S.Content>
-          {/*<Pools />*/}
+          {isTrader ? <AccountInvestmentPools /> : <TraderPoolsList />}
           <S.PoolProfileDefaultInfo>
             <S.PoolProfileGeneral>
               <S.PoolProfileAppearance
@@ -178,18 +186,23 @@ const PoolProfileContent = () => {
 
               {isSmallTablet ? (
                 <S.PoolProfileGeneralActions>
-                  <S.PoolProfileGeneralActionsFundType>
-                    {localizePoolType(fundType)}
-                  </S.PoolProfileGeneralActionsFundType>
+                  {isTablet ? (
+                    <S.PoolProfileGeneralActionsFundType>
+                      {localizePoolType(fundType)}
+                    </S.PoolProfileGeneralActionsFundType>
+                  ) : (
+                    <></>
+                  )}
                   <Dropdown
                     name="pool-profile-general-actions-dropdown"
                     label={
                       <S.PoolProfileGeneralActionsDropdownToggler>
                         <S.PoolProfileGeneralActionsDropdownTogglerIcon
-                          name={ICON_NAMES.angleDown}
+                          name={ICON_NAMES.dotsHorizontal}
                         />
                       </S.PoolProfileGeneralActionsDropdownToggler>
                     }
+                    position="right"
                   >
                     <S.PoolProfileGeneralActionsDropdownContent>
                       <S.PoolProfileGeneralActionsDropdownItem
@@ -207,7 +220,7 @@ const PoolProfileContent = () => {
                         <S.PoolProfileGeneralActionsDropdownItemIcon
                           name={ICON_NAMES.externalLink}
                         />
-                        View on bscscan
+                        {t("pool-profile.explorer-link")}
                       </S.PoolProfileGeneralActionsDropdownItem>
                       <S.PoolProfileGeneralActionsDropdownItem
                         onClick={() => {
@@ -217,7 +230,7 @@ const PoolProfileContent = () => {
                         <S.PoolProfileGeneralActionsDropdownItemIcon
                           name={ICON_NAMES.copy}
                         />
-                        Copy address
+                        {t("pool-profile.copy-btn")}
                       </S.PoolProfileGeneralActionsDropdownItem>
                       <S.PoolProfileGeneralActionsDropdownItem>
                         <S.PoolProfileGeneralActionsDropdownItemIcon
@@ -256,19 +269,29 @@ const PoolProfileContent = () => {
                 <PoolStatisticsItem
                   label={"TVL"}
                   value={`$${normalizeBigNumber(tvl, 18, 2)}`}
-                  percentage={"1.13%"}
+                  percentage={-1.13}
+                  tooltipMsg={"Lorem ipsum dolor sit amet!"}
                 />
 
                 <PoolStatisticsItem
                   label={"APY"}
                   value={apy?.toString()}
-                  percentage={"1.13%"}
+                  percentage={1.13}
+                  tooltipMsg={"Lorem ipsum dolor sit amet!"}
+                />
+
+                <PoolStatisticsItem
+                  label={"My share"}
+                  value={normalizeBigNumber(accountLPs, 18, 2)}
+                  percentage={-1.13}
+                  tooltipMsg={"Lorem ipsum dolor sit amet!"}
                 />
 
                 <PoolStatisticsItem
                   label={"P&L"}
                   value={`${pnl?.total?.base.percent}%`}
-                  percentage={"1.13%"}
+                  percentage={1.13}
+                  tooltipMsg={"Lorem ipsum dolor sit amet!"}
                 />
                 {actions}
               </S.PoolProfileStatistics>
@@ -326,10 +349,12 @@ const PoolProfileContent = () => {
             />
             {isMediumTablet ? (
               <S.SpecificStatistics>
-                <S.SpecificStatisticsTitle>Statistic</S.SpecificStatisticsTitle>
+                <S.SpecificStatisticsTitle>
+                  {t("pool-profile.statistic-heading")}
+                </S.SpecificStatisticsTitle>
                 <S.SpecificStatisticsRow>
                   <S.SpecificStatisticsLabel>
-                    Trades per Day
+                    {t("pool-profile.trades-per-day-lbl")}
                   </S.SpecificStatisticsLabel>
                   <S.SpecificStatisticsValue>
                     {trades?.perDay}
@@ -337,7 +362,7 @@ const PoolProfileContent = () => {
                 </S.SpecificStatisticsRow>
                 <S.SpecificStatisticsRow>
                   <S.SpecificStatisticsLabel>
-                    Order size
+                    {t("pool-profile.order-size-lbl")}
                   </S.SpecificStatisticsLabel>
                   <S.SpecificStatisticsValue>
                     {normalizeBigNumber(orderSize, 18)}
@@ -345,7 +370,7 @@ const PoolProfileContent = () => {
                 </S.SpecificStatisticsRow>
                 <S.SpecificStatisticsRow>
                   <S.SpecificStatisticsLabel>
-                    Daily profit
+                    {t("pool-profile.daily-profit-lbl")}
                   </S.SpecificStatisticsLabel>
                   <S.SpecificStatisticsValue>
                     {dailyProfitPercent}%
@@ -353,7 +378,7 @@ const PoolProfileContent = () => {
                 </S.SpecificStatisticsRow>
                 <S.SpecificStatisticsRow>
                   <S.SpecificStatisticsLabel>
-                    Time positions
+                    {t("pool-profile.time-positions-lbl")}
                   </S.SpecificStatisticsLabel>
                   <S.SpecificStatisticsValue>
                     {timePositions}
@@ -361,7 +386,9 @@ const PoolProfileContent = () => {
                 </S.SpecificStatisticsRow>
                 <S.SpecificStatisticsRow>
                   <S.SpecificStatisticsLabel>
-                    Sortino (ETH)
+                    {t("pool-profile.sortino-lbl", {
+                      currency: "ETH",
+                    })}
                   </S.SpecificStatisticsLabel>
                   <S.SpecificStatisticsValue>
                     {sortino?.eth}
@@ -369,49 +396,52 @@ const PoolProfileContent = () => {
                 </S.SpecificStatisticsRow>
                 <S.SpecificStatisticsRow>
                   <S.SpecificStatisticsLabel>
-                    Sortino (BTC)
+                    {t("pool-profile.sortino-lbl", {
+                      currency: "BTC",
+                    })}
                   </S.SpecificStatisticsLabel>
                   <S.SpecificStatisticsValue>
                     {sortino?.btc}
                   </S.SpecificStatisticsValue>
                 </S.SpecificStatisticsRow>
-                <S.SpecificStatisticsTitle>Total P&L</S.SpecificStatisticsTitle>
-                <S.SpecificStatisticsRow>
-                  <S.SpecificStatisticsLabel>DEXE</S.SpecificStatisticsLabel>
-                  <S.SpecificStatisticsValue>
-                    {`${normalizeBigNumber(pnl?.total?.dexe?.amount, 18)} (${
-                      pnl?.total?.dexe?.percent
-                    }%)`}
-                  </S.SpecificStatisticsValue>
-                </S.SpecificStatisticsRow>
-                <S.SpecificStatisticsRow>
-                  <S.SpecificStatisticsLabel>USD</S.SpecificStatisticsLabel>
-                  <S.SpecificStatisticsValue>
-                    {`${normalizeBigNumber(pnl?.total?.usd?.amount, 18)} (${
-                      pnl?.total?.usd?.percent
-                    }%)`}
-                  </S.SpecificStatisticsValue>
-                </S.SpecificStatisticsRow>
-                <S.SpecificStatisticsRow>
-                  <S.SpecificStatisticsLabel>ETH</S.SpecificStatisticsLabel>
-                  <S.SpecificStatisticsValue>
-                    {`${normalizeBigNumber(pnl?.total?.eth?.amount, 18)} (${
-                      pnl?.total?.eth?.percent
-                    }%)`}
-                  </S.SpecificStatisticsValue>
-                </S.SpecificStatisticsRow>
-                <S.SpecificStatisticsRow>
-                  <S.SpecificStatisticsLabel>BTC</S.SpecificStatisticsLabel>
-                  <S.SpecificStatisticsValue>
-                    {`${normalizeBigNumber(pnl?.total?.btc?.amount, 18)} (${
-                      pnl?.total?.btc?.percent
-                    }%)`}
-                  </S.SpecificStatisticsValue>
-                </S.SpecificStatisticsRow>
-                <S.SpecificStatisticsTitle>Details</S.SpecificStatisticsTitle>
+                <S.SpecificStatisticsTitle>
+                  {t("pool-profile.total-pnl-heading")}
+                </S.SpecificStatisticsTitle>
+                {[
+                  {
+                    label: "DEXE",
+                    amount: pnl?.total?.dexe?.amount,
+                    percent: pnl?.total?.dexe?.percent,
+                  },
+                  {
+                    label: "USD",
+                    amount: pnl?.total?.usd?.amount,
+                    percent: pnl?.total?.usd?.percent,
+                  },
+                  {
+                    label: "ETH",
+                    amount: pnl?.total?.eth?.amount,
+                    percent: pnl?.total?.eth?.percent,
+                  },
+                  {
+                    label: "BTC",
+                    amount: pnl?.total?.btc?.amount,
+                    percent: pnl?.total?.btc?.percent,
+                  },
+                ].map((el, idx) => (
+                  <S.SpecificStatisticsRow key={idx}>
+                    <S.SpecificStatisticsLabel>DEXE</S.SpecificStatisticsLabel>
+                    <S.SpecificStatisticsValue>
+                      {`${normalizeBigNumber(el.amount, 18)} (${el.percent}%)`}
+                    </S.SpecificStatisticsValue>
+                  </S.SpecificStatisticsRow>
+                ))}
+                <S.SpecificStatisticsTitle>
+                  {t("pool-profile.details-heading")}
+                </S.SpecificStatisticsTitle>
                 <S.SpecificStatisticsRow>
                   <S.SpecificStatisticsLabel>
-                    Emission
+                    {t("pool-profile.emission-lbl")}
                   </S.SpecificStatisticsLabel>
                   <S.SpecificStatisticsValue>
                     {normalizeBigNumber(emission, 18)}
@@ -419,7 +449,7 @@ const PoolProfileContent = () => {
                 </S.SpecificStatisticsRow>
                 <S.SpecificStatisticsRow>
                   <S.SpecificStatisticsLabel>
-                    Min. invest amount
+                    {t("pool-profile.min-invest-amount-lbl")}
                   </S.SpecificStatisticsLabel>
                   <S.SpecificStatisticsValue>
                     {normalizeBigNumber(minInvestAmount, 18)}
@@ -427,7 +457,7 @@ const PoolProfileContent = () => {
                 </S.SpecificStatisticsRow>
                 <S.SpecificStatisticsRow>
                   <S.SpecificStatisticsLabel>
-                    Fund managers
+                    {t("pool-profile.fund-managers-lbl")}
                   </S.SpecificStatisticsLabel>
                   <S.SpecificStatisticsValue>
                     {fundManagers?.length || 0}
@@ -435,7 +465,7 @@ const PoolProfileContent = () => {
                 </S.SpecificStatisticsRow>
                 <S.SpecificStatisticsRow>
                   <S.SpecificStatisticsLabel>
-                    Whitelist
+                    {t("pool-profile.whitelist-lbl")}
                   </S.SpecificStatisticsLabel>
                   <S.SpecificStatisticsValue>
                     {whiteList?.length || 0}
@@ -491,6 +521,7 @@ const PoolProfileContent = () => {
 const PoolProfile = () => {
   const { poolAddress } = useParams()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const { isSmallTablet } = useBreakpoints()
 
@@ -615,7 +646,7 @@ const PoolProfile = () => {
                 <S.ModalHeadWrp>
                   <S.ModalHeadBackBtn onClick={() => setModalContent("menu")}>
                     <S.ModalHeadIcon name={ICON_NAMES.angleLeft} />
-                    Manage Fund
+                    {t("pool-profile.manage-fund-modal-title")}
                   </S.ModalHeadBackBtn>
                 </S.ModalHeadWrp>
               )

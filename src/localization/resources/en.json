@@ -43,5 +43,25 @@
       "invest-pool": "Invest pool",
       "basic-pool": "Basic pool"
     }
+  },
+  "pool-profile": {
+    "explorer-link": "View on bscscan",
+    "copy-btn": "Copy address",
+    "statistic-heading": "Statistic",
+    "trades-per-day-lbl": "Trades per day",
+    "order-size-lbl": "Order size",
+    "daily-profit-lbl": "Daily profit",
+    "time-positions-lbl": "Time positions",
+    "sortino-lbl": "Sortino ({currency})",
+    "total-pnl-heading": "Total P&L",
+    "details-heading": "Details",
+    "emission-lbl": "Emission",
+    "min-invest-amount-lbl": "Min. invest amount",
+    "fund-managers-lbl": "Fund managers",
+    "whitelist-lbl": "Whitelist",
+    "manage-fund-modal-title": "Manage Fund"
+  },
+  "trader-pools-list": {
+    "tooltip-msg": "Tooltip message"
   }
 }

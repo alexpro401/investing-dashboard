@@ -28,6 +28,9 @@ export const PoolStatisticsItemDetails = styled.div`
 `
 
 export const PoolStatisticsItemDetailsLabel = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 4px;
   align-self: flex-start;
   font-weight: 500;
   font-size: 12px;

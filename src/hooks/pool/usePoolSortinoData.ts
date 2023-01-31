@@ -94,20 +94,26 @@ const usePoolSortinoData = (
       return
     }
     ;(async () => {
-      const _tokensHistoricalPrices = {} as ITokenHistoricalPrices
-
-      for (const token of tokens) {
-        const tokenPrices = await TokenAPI.getHistoricalPrices(token, [
-          actualPortfolioReturnPeriod.start,
-          actualPortfolioReturnPeriod.end,
-        ])
-
-        if (tokenPrices) {
-          _tokensHistoricalPrices[token] = tokenPrices[token]
+      try {
+        const _tokensHistoricalPrices = await Promise.all(
+          tokens.map(
+            async (el) =>
+              (
+                await TokenAPI.getHistoricalPrices(el, [
+                  actualPortfolioReturnPeriod.start,
+                  actualPortfolioReturnPeriod.end,
+                ])
+              )[el]
+          )
+        )
+        if (_tokensHistoricalPrices) {
+          setTokensHistoricalPrices(
+            _tokensHistoricalPrices as unknown as ITokenHistoricalPrices
+          )
         }
+      } catch (error) {
+        console.error(error)
       }
-
-      setTokensHistoricalPrices(_tokensHistoricalPrices)
     })()
   }, [TokenAPI, tokens, actualPortfolioReturnPeriod])
 

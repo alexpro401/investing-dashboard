@@ -51,8 +51,8 @@ export const Body = styled(motion.div)<{ position?: "right" | "left" }>`
   ${respondTo("md")} {
     position: absolute;
     top: 50px;
-    right: ${(props) => (props?.position === "left" ? "30%" : "0")};
-    left: ${(props) => (props?.position === "right" ? "30%" : "0")};
+    right: ${(props) => (props?.position === "left" ? "auto" : "0")};
+    left: ${(props) => (props?.position === "right" ? "auto" : "0")};
   }
 `
 
