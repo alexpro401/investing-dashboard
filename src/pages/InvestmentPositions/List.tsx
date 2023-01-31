@@ -8,10 +8,9 @@ import useQueryPagination from "hooks/useQueryPagination"
 import { InvestorPosition } from "interfaces/thegraphs/invest-pools"
 
 import { Center } from "theme"
-import { NoDataMessage } from "common"
+import { NoDataMessage, CardInvestorPosition } from "common"
 import Tooltip from "components/Tooltip"
 import LoadMore from "components/LoadMore"
-import InvestPositionCard from "components/cards/position/Invest"
 import * as S from "./styled"
 
 interface IProps {
@@ -46,7 +45,7 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
   return (
     <>
       <S.InvestorPositionsListWrp>
-        <S.InvestorPositionsListHead childMaxWidth={closed ? "182px" : "167px"}>
+        <S.InvestorPositionsListHead>
           <S.InvestorPositionsListHeadItem>
             Fund
           </S.InvestorPositionsListHeadItem>
@@ -67,7 +66,7 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
           <S.InvestorPositionsListHeadItem />
         </S.InvestorPositionsListHead>
         {data.map((p) => (
-          <InvestPositionCard key={p.id} position={p} />
+          <CardInvestorPosition key={p.id} position={p} />
         ))}
       </S.InvestorPositionsListWrp>
       <LoadMore isLoading={loading && !!data.length} handleMore={fetchMore} />

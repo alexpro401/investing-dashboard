@@ -77,3 +77,4 @@ export * from "./useOnce"
 
 export * from "./dao"
 export * from "./pool"
+export * from "./investor"

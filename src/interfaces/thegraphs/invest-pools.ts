@@ -55,7 +55,7 @@ export interface InvestorPosition {
     type: string
     token: string
   }
-  vest: InvestorPositionVest[]
+  vest?: InvestorPositionVest[]
 }
 
 // Investor proposals

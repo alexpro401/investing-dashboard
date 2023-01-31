@@ -25,6 +25,7 @@ export { default as Overlay } from "./Overlay"
 export { default as Breadcrumbs } from "./Breadcrumbs"
 export { default as AppLogo } from "./AppLogo"
 export { default as Tabs } from "./Tabs"
+export { default as CardInvestorPosition } from "./CardInvestorPosition"
 
 export * from "./Typography"
 export * from "./dao"
