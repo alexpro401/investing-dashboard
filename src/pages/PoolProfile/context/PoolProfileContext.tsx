@@ -205,6 +205,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
 
   const traderPool = useTraderPoolContract(poolAddress)
 
+  // FIXME: if pool just created, it will be undefined
   const poolData = useSelector((s: AppState) =>
     selectPoolByAddress(s, poolAddress)
   )
@@ -224,13 +225,13 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
   const [, poolInfo] = usePoolContract(poolAddress)
 
   const [{ poolMetadata }] = usePoolMetadata(
-    poolData?.id,
-    poolData?.descriptionURL
+    poolAddress,
+    poolInfo?.parameters.descriptionURL
   )
 
   const [{ priceUSD }] = usePoolPrice(poolAddress)
 
-  const [baseToken] = useERC20Data(poolData?.baseToken)
+  const [baseToken] = useERC20Data(poolInfo?.parameters.baseToken)
 
   const [accountLPs, setAccountLPs] = useState(ZERO)
 
@@ -270,7 +271,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
   const [
     poolLockedFundHistoryChartData,
     isPoolLockedFundHistoryChartDataFetching,
-  ] = usePoolLockedFundsHistory(poolData?.id, tf)
+  ] = usePoolLockedFundsHistory(poolAddress, tf)
 
   const sortinoTokens = [
     "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
@@ -280,7 +281,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
   const addressWETH = "0x8babbb98678facc7342735486c851abd7a0d17ca"
   const addressWBTC = "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
 
-  const _sortino = usePoolSortino(poolData?.id, sortinoTokens)
+  const _sortino = usePoolSortino(poolAddress, sortinoTokens)
 
   const dailyProfitPercent = useMemo(() => {
     if (!poolData) return 0
@@ -311,14 +312,17 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
 
   const { data: investorVests } = useInvestorAllVestsInPool(
     account,
-    poolData?.id
+    poolAddress
   )
 
-  const altPnlUSD = usePoolAlternativePnlUSD(investorVests, poolData?.baseToken)
+  const altPnlUSD = usePoolAlternativePnlUSD(
+    investorVests,
+    poolInfo?.parameters.baseToken
+  )
 
   const altPnlTokens = usePoolAlternativePnlTokens(
     investorVests,
-    poolData?.baseToken,
+    poolInfo?.parameters.baseToken,
     { eth: addressWETH, btc: addressWBTC }
   )
 
@@ -374,7 +378,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
     { setOptimizeWithdrawal, withdrawCommission },
   ] = useFundFee(poolAddress)
 
-  const traderPoolContract = useTraderPoolContract(poolData.id)
+  const traderPoolContract = useTraderPoolContract(poolAddress)
   const addTransaction = useTransactionAdder()
 
   const updatePoolParameters = useCallback(
@@ -387,7 +391,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
       minimalInvestment?: string
       isFundPrivate?: boolean
     }) => {
-      let descriptionURL = poolData?.descriptionURL
+      let descriptionURL = poolInfo!.parameters.descriptionURL
 
       if (
         opts?.avatarUrl ||
@@ -430,19 +434,12 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
       await addTransaction(tx, {
         type: TransactionType.POOL_EDIT,
         baseCurrencyId: baseToken?.address,
-        fundName: poolData?.name,
+        fundName: poolInfo?.name,
       })
       // TODO: update pools item || list
+      // FIXME: poolData is undefined sometimes
     },
-    [
-      addTransaction,
-      baseToken,
-      poolData.descriptionURL,
-      poolData.name,
-      poolInfo,
-      poolMetadata,
-      traderPoolContract,
-    ]
+    [addTransaction, baseToken, poolInfo, poolMetadata, traderPoolContract]
   )
 
   const updatePoolManagers = useCallback(
@@ -468,7 +465,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
         await addTransaction(tx, {
           type: TransactionType.POOL_UPDATE_MANAGERS,
           editType: UpdateListType.REMOVE,
-          poolId: poolData?.id,
+          poolId: poolAddress,
         })
       }
 
@@ -483,7 +480,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
         await addTransaction(tx, {
           type: TransactionType.POOL_UPDATE_MANAGERS,
           editType: UpdateListType.ADD,
-          poolId: poolData?.id,
+          poolId: poolAddress,
         })
       }
     },
@@ -525,7 +522,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
         await addTransaction(tx, {
           type: TransactionType.POOL_UPDATE_INVESTORS,
           editType: UpdateListType.REMOVE,
-          poolId: poolData?.id,
+          poolId: poolAddress,
         })
       }
 
@@ -540,7 +537,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
         await addTransaction(tx, {
           type: TransactionType.POOL_UPDATE_INVESTORS,
           editType: UpdateListType.ADD,
-          poolId: poolData?.id,
+          poolId: poolAddress,
         })
       }
     },
@@ -556,10 +553,10 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
           isPoolPrivate: Boolean(poolInfo?.parameters?.privatePool),
 
           creationDate: poolData?.creationTime,
-          fundAddress: poolData?.id,
+          fundAddress: poolAddress,
           basicToken: baseToken,
-          fundTicker: poolData?.ticker,
-          fundName: poolData?.name,
+          fundTicker: poolInfo?.ticker,
+          fundName: poolInfo?.name,
           fundType: poolData?.type,
           fundImageUrl: poolMetadata?.assets[poolMetadata?.assets.length - 1],
 
