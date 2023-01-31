@@ -281,6 +281,62 @@ export function useMultipleContractSingleData(
   }, [cache, chainId, results, contractInterface, fragment])
 }
 
+export function useMultipleContractMultipleData(
+  addresses: (string | undefined)[],
+  contractInterface: Interface,
+  methodName: string,
+  callInputs: OptionalMethodInputs[],
+  options?: ListenerOptions
+): CallState[] {
+  const fragment = useMemo(
+    () => contractInterface.getFunction(methodName),
+    [contractInterface, methodName]
+  )
+
+  const callData = useMemo(() => {
+    if (!fragment && !isValidMethodArgs(callInputs) && !addresses) {
+      return undefined
+    }
+    return addresses.reduce((acc, address, index) => {
+      if (!address) return acc
+      return {
+        ...acc,
+        [address]: contractInterface.encodeFunctionData(
+          fragment,
+          callInputs?.[index] || []
+        ),
+      }
+    }, {})
+  }, [addresses, callInputs, contractInterface, fragment])
+
+  const calls = useMemo<(Call | undefined)[]>(() => {
+    if (!fragment || !addresses || !callData) return []
+    return addresses.map((address) => {
+      return address && callData[address]
+        ? {
+            address,
+            callData: callData[address],
+          }
+        : undefined
+    })
+  }, [addresses, callData, fragment])
+
+  const results = useCallsData(calls, options)
+
+  const { chainId } = useWeb3React()
+
+  const { cache } = useSWRConfig()
+
+  return useMemo(() => {
+    const currentBlockNumber = cache.get(
+      unstable_serialize(["blockNumber", chainId])
+    )
+    return results.map((result) =>
+      toCallState(result, contractInterface, fragment, currentBlockNumber)
+    )
+  }, [cache, chainId, results, contractInterface, fragment])
+}
+
 export function useSingleCallResult(
   contract: Contract | null | undefined,
   methodName: string,
