@@ -1,6 +1,5 @@
-import { FC, useMemo, useRef, useEffect } from "react"
+import { FC, useMemo } from "react"
 import { PulseSpinner } from "react-spinners-kit"
-import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
 
 import { useActiveWeb3React } from "hooks"
 import { RiskyPositionsQuery } from "queries"
@@ -11,10 +10,14 @@ import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import LoadMore from "components/LoadMore"
 import RiskyPositionCard from "components/cards/position/Risky"
 
-import S from "./styled"
 import { IRiskyPosition } from "interfaces/thegraphs/basic-pools"
 import { map } from "lodash"
 import { graphClientBasicPools } from "utils/graphClient"
+import { NoDataMessage } from "common"
+import { Flex } from "theme"
+import * as S from "./styled"
+import Tooltip from "components/Tooltip"
+import { v4 as uuidv4 } from "uuid"
 
 interface IProps {
   poolAddress?: string
@@ -50,15 +53,6 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
       })),
   })
 
-  const loader = useRef<any>()
-
-  useEffect(() => {
-    if (!loader.current) return
-    disableBodyScroll(loader.current)
-
-    return () => clearAllBodyScrollLocks()
-  }, [loader, loading])
-
   const isTrader = useMemo<boolean>(() => {
     if (!account || !poolInfo) {
       return false
@@ -75,37 +69,45 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
     (data.length === 0 && loading)
   ) {
     return (
-      <S.ListLoading full ai="center" jc="center">
+      <Flex full ai="center" jc="center">
         <PulseSpinner />
-      </S.ListLoading>
+      </Flex>
     )
   }
 
   if (data && data.length === 0 && !loading) {
-    return (
-      <S.ListLoading full ai="center" jc="center">
-        <S.WithoutData>No positions</S.WithoutData>
-      </S.ListLoading>
-    )
+    return <NoDataMessage />
   }
 
   return (
-    <S.List ref={loader}>
-      {data.map((p) => (
-        <RiskyPositionCard
-          key={p.id}
-          position={p}
-          isTrader={isTrader}
-          poolInfo={poolInfo}
-          poolMetadata={poolMetadata}
-        />
-      ))}
-      <LoadMore
-        isLoading={loading && !!data.length}
-        handleMore={fetchMore}
-        r={loader}
-      />
-    </S.List>
+    <>
+      <S.RiskyPositionsListWrp>
+        <S.RiskyPositionsListHead>
+          <S.RiskyPositionsListHeadItem>Fund</S.RiskyPositionsListHeadItem>
+          <S.RiskyPositionsListHeadItem>My Volume</S.RiskyPositionsListHeadItem>
+          <S.RiskyPositionsListHeadItem>
+            <span>Entry Price</span>
+            <Tooltip id={uuidv4()}>Explain Entry Price</Tooltip>
+          </S.RiskyPositionsListHeadItem>
+          <S.RiskyPositionsListHeadItem>
+            <span>Current price</span>
+            <Tooltip id={uuidv4()}>Explain Current price</Tooltip>
+          </S.RiskyPositionsListHeadItem>
+          <S.RiskyPositionsListHeadItem>P&L in %</S.RiskyPositionsListHeadItem>
+        </S.RiskyPositionsListHead>
+        {data.map((p) => (
+          <RiskyPositionCard
+            key={p.id}
+            position={p}
+            isTrader={isTrader}
+            poolInfo={poolInfo}
+            poolMetadata={poolMetadata}
+          />
+        ))}
+      </S.RiskyPositionsListWrp>
+
+      <LoadMore isLoading={loading && !!data.length} handleMore={fetchMore} />
+    </>
   )
 }
 

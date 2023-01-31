@@ -19,15 +19,48 @@ interface Props extends HTMLAttributes<HTMLDivElement> {}
 const TabPoolHolders: FC<Props> = ({ ...rest }) => {
   const { chainId } = useWeb3React()
 
-  const { poolData, baseToken } = useContext(PoolProfileContext)
+  const {
+    isTrader,
+    creationDate,
+    fundAddress,
+    basicToken,
+    fundTicker,
+    fundName,
+    fundType,
+    fundImageUrl,
+    minInvestAmount,
+    emission,
+    availableLPTokens,
+    fundManagers,
+    poolInvestors,
+    whiteList,
+    openPosition,
+    isInvestorStricted,
+    performanceFee,
+    fundDescription,
+    fundStrategy,
+    trades,
+    orderSize,
+    dailyProfitPercent,
+    timePositions,
+    sortino,
+    maxLoss,
 
-  const traderPool = useTraderPoolContract(poolData.id)
+    pnl,
+    depositors,
+    apy,
+    tvl,
+    priceLP,
+    lockedFunds,
+  } = useContext(PoolProfileContext)
+
+  const traderPool = useTraderPoolContract(fundAddress)
 
   const investors = useMemo(() => {
-    if (!poolData || !poolData.investors) return []
+    if (!poolInvestors) return []
 
-    return poolData.investors.map((i) => [i.id])
-  }, [poolData])
+    return poolInvestors.map((i) => [i.id])
+  }, [poolInvestors])
 
   const balances = useSingleContractMultipleData(
     traderPool,
@@ -77,26 +110,28 @@ const TabPoolHolders: FC<Props> = ({ ...rest }) => {
             <S.TabCardValue>
               {normalizeBigNumber(usersToBalancesMap[id], 18, 6)}
             </S.TabCardValue>
-            <S.TabCardValue>{baseToken?.symbol ?? ""}</S.TabCardValue>
+            <S.TabCardValue>{basicToken?.symbol ?? ""}</S.TabCardValue>
           </Flex>
         </Flex>
       </S.Link>
     ),
-    [baseToken.symbol, getInvestorExplorerLink, usersToBalancesMap]
+    [basicToken, getInvestorExplorerLink, usersToBalancesMap]
   )
 
   return (
     <Card>
-      <Table
-        data={poolData.investors}
-        nodeHead={
-          <Flex full ai="center" jc="space-between">
-            <S.TabCardLabel>Holders: {poolData?.investorsCount}</S.TabCardLabel>
-            <S.TabCardLabel>Amount</S.TabCardLabel>
-          </Flex>
-        }
-        row={getTableRow}
-      />
+      {poolInvestors && (
+        <Table
+          data={poolInvestors}
+          nodeHead={
+            <Flex full ai="center" jc="space-between">
+              <S.TabCardLabel>Holders: {poolInvestors?.length}</S.TabCardLabel>
+              <S.TabCardLabel>Amount</S.TabCardLabel>
+            </Flex>
+          }
+          row={getTableRow}
+        />
+      )}
     </Card>
   )
 }

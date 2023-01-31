@@ -3,18 +3,20 @@ import styled from "styled-components/macro"
 import { GradientBorder, respondTo } from "theme"
 import { AppButton } from "common"
 
-export const Container = styled(GradientBorder)`
-  width: 97%;
+// Settings popup styled
+export const Container = styled(GradientBorder).attrs(() => ({
+  ["data-id"]: "invest-proposal-limits-form",
+}))`
+  width: 100%;
   max-width: 420px;
   position: absolute;
   top: 38px;
   right: 0;
   box-shadow: 7px 4px 21px #0a1420;
   border-radius: 20px;
-  z-index: 101;
 
   &:after {
-    background: ${({ theme }) => theme.backgroundColors.secondary};
+    background: #181e2c;
   }
 
   ${respondTo("lg")} {
@@ -49,7 +51,7 @@ export const HeaderCloseButton = styled(AppButton)`
   padding: 0;
 `
 
-export const Body = styled.div`
+export const Content = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;

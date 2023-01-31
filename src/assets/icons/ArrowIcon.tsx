@@ -44,9 +44,16 @@ const Svg = styled.svg<{ direction: ArrowDirection }>`
   transform: rotate(${({ direction }) => getRotation(direction)});
 `
 
-const ArrowIcon: React.FC<Props> = ({ color, dir = "right" }) => {
+const ArrowIcon: React.FC<Props> = ({ color, dir = "right", ...rest }) => {
   return (
-    <Svg width="16" height="17" viewBox="0 0 16 17" fill="none" direction={dir}>
+    <Svg
+      width="16"
+      height="17"
+      viewBox="0 0 16 17"
+      fill="none"
+      direction={dir}
+      {...rest}
+    >
       <path
         d="M5.33366 11.167L10.667 5.83366"
         stroke={color ?? "currentColor"}

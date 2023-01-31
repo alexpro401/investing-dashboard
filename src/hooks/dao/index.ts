@@ -35,5 +35,6 @@ export { default as useGovPoolHelperContractsMulticall } from "./useGovPoolHelpe
 export { default as useGovPoolVotingPowerMulticall } from "./useGovPoolVotingPowerMulticall"
 export { default as useGovPoolUserVotes } from "./useGovPoolUserVotes"
 export * from "./useGovPoolMemberBalance"
+export { default as useGovPoolDescriptionsMulticall } from "./useGovPoolDescriptionsMulticall"
 export * from "./useGovUserKeeperGetTotalVoteWeight"
 export * from "./useGovPoolWithdrawableAssets"

@@ -1,29 +1,32 @@
 import styled from "styled-components/macro"
-import { Flex } from "theme"
+import { respondTo } from "theme"
+import HeaderTabs from "components/Header/Tabs"
 
-export const Container = styled.div`
-  width: 100%;
-  box-sizing: border-box;
+export const Root = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
+  padding: var(--app-padding);
+  overflow: hidden auto;
+  flex: 1;
 `
 
-export const List = styled.div<{ withExtraTabs?: boolean }>`
-  width: 100%;
-  height: fill-content;
-  height: ${(props) =>
-    props.withExtraTabs ? "calc(100vh - 174px)" : "calc(100vh - 128px)"};
-  padding: 16px;
-  position: relative;
-  overflow-y: auto;
+export const HeadContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
+`
 
-  @media all and (display-mode: standalone) {
-    height: ${(props) =>
-      props.withExtraTabs ? "calc(100vh - 197px)" : "calc(100vh - 149px)"};
+export const PageTitle = styled.h2`
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 900;
+  color: #e4f2ff;
+  margin: 0;
+`
+
+export const PageHeadTabs = styled(HeaderTabs)`
+  ${respondTo("sm")} {
+    justify-content: flex-start;
   }
-`
-
-export const LoaderContainer = styled(Flex)`
-  width: 100%;
-  height: inherit;
-  align-items: center;
-  justify-content: center;
 `

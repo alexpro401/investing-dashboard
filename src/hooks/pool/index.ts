@@ -6,4 +6,5 @@ export { default as useInvestorAllVestsInPool } from "./useInvestorAllVestsInPoo
 export { default as usePoolAlternativePnlUSD } from "./usePoolAlternativePnlUSD"
 export { default as usePoolAlternativePnlTokens } from "./usePoolAlternativePnlTokens"
 
+export * from "./proposals"
 export * from "./usePoolStatistics"

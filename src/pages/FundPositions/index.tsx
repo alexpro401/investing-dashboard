@@ -5,40 +5,40 @@ import Header from "components/Header/Layout"
 import FundProposals from "pages/FundProposals"
 import FundPositionsList from "./FundPositionsList"
 
-import S from "./styled"
+import * as S from "./styled"
 import { Center } from "theme"
 import { GuardSpinner } from "react-spinners-kit"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
+import { useBreakpoints } from "hooks"
 
 const FundPositions = () => {
   const { poolAddress } = useParams()
+  const { isMobile } = useBreakpoints()
+
+  const TABS = [
+    {
+      title: "Open positions",
+      source: `/fund-positions/${poolAddress}/open`,
+    },
+    {
+      title: "Proposals",
+      source: `/fund-positions/${poolAddress}/proposals/open`,
+      activeSource: [
+        `/fund-positions/${poolAddress}/proposals/open`,
+        `/fund-positions/${poolAddress}/proposals/positions`,
+        `/fund-positions/${poolAddress}/proposals/closed`,
+      ],
+    },
+    {
+      title: "Closed positions",
+      source: `/fund-positions/${poolAddress}/closed`,
+    },
+  ]
 
   return (
     <>
-      <Header
-        tabs={[
-          {
-            title: "Open positions",
-            source: `/fund-positions/${poolAddress}/open`,
-          },
-          {
-            title: "Proposals",
-            source: `/fund-positions/${poolAddress}/proposals/open`,
-            activeSource: [
-              `/fund-positions/${poolAddress}/proposals/open`,
-              `/fund-positions/${poolAddress}/proposals/positions`,
-              `/fund-positions/${poolAddress}/proposals/closed`,
-            ],
-          },
-          {
-            title: "Closed positions",
-            source: `/fund-positions/${poolAddress}/closed`,
-          },
-        ]}
-      >
-        Fund Positions
-      </Header>
-      <S.Container>
+      <Header>{isMobile && "Fund Positions"}</Header>
+      <S.Root>
         <WithPoolAddressValidation
           poolAddress={poolAddress ?? ""}
           loader={
@@ -47,6 +47,10 @@ const FundPositions = () => {
             </Center>
           }
         >
+          <S.HeadContainer>
+            <S.PageTitle>All Proposals</S.PageTitle>
+            <S.PageHeadTabs tabs={TABS} />
+          </S.HeadContainer>
           <Routes>
             <Route path="open" element={<FundPositionsList closed={false} />} />
             <Route path="proposals/*" element={<FundProposals />} />
@@ -56,7 +60,7 @@ const FundPositions = () => {
             />
           </Routes>
         </WithPoolAddressValidation>
-      </S.Container>
+      </S.Root>
     </>
   )
 }

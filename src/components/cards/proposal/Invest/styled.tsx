@@ -1,19 +1,36 @@
 import styled from "styled-components/macro"
 
-import { Flex, GradientBorder } from "theme"
+import { Flex, GradientBorder, respondTo } from "theme"
+
+export const Root = styled.div`
+  position: relative;
+`
 
 const Styled = {
   Container: styled.div`
-    margin-bottom: 18px;
-  `,
-  Card: styled(GradientBorder)`
     width: 100%;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+    background: ${({ theme }) => theme.backgroundColors.secondary};
     border-radius: 16px;
-    flex-direction: column;
+    margin-bottom: 18px;
+    z-index: initial;
 
-    &:after {
-      background: #181e2c;
+    ${respondTo("lg")} {
+      padding: var(--app-padding);
+      background: rgba(20, 25, 38, 0.5);
+      box-shadow: initial;
+      margin-bottom: 0;
+    }
+  `,
+  Card: styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    ${respondTo("lg")} {
+      display: grid;
+      grid-template-columns: minmax(0, 150px) 1fr max-content;
+      grid-template-rows: 1fr max-content;
     }
   `,
   Head: styled(Flex)<{ isTrader: boolean | null }>`
@@ -25,6 +42,15 @@ const Styled = {
         : "8px 14px 7px 16px"};
     border-bottom: 1px solid #1d2635;
     position: relative;
+
+    ${respondTo("lg")} {
+      width: initial;
+      flex-direction: column;
+      align-items: flex-start;
+      border-bottom: none;
+      padding: 0;
+      justify-content: center;
+    }
   `,
   Body: styled.div`
     width: 100%;
@@ -32,6 +58,20 @@ const Styled = {
     display: grid;
     grid-template-columns: 0.3fr 0.35fr 0.35fr;
     gap: 16px 6px;
+
+    ${respondTo("lg")} {
+      width: initial;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      padding: 0;
+
+      & > * {
+        flex: 0 1 135px;
+        width: initial;
+        min-width: 120px;
+      }
+    }
   `,
   Title: styled.div`
     font-family: ${(props) => props.theme.appFontFamily};
@@ -74,94 +114,23 @@ const Styled = {
     transform: translateY(2px);
   `,
   ReadMoreContainer: styled.div<{ color: string }>`
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
     width: 100%;
     padding: 0 14px 16px 16px;
     font-weight: 400;
     font-size: 13px;
     line-height: 130%;
     color: ${(p) => p.color};
+
+    ${respondTo("lg")} {
+      padding: var(--app-padding-top) 0 0;
+      border-top: 1px solid rgba(32, 41, 58, 0.6);
+      grid-column: 1/4;
+      margin-top: 18px;
+    }
   `,
 }
 
 export default Styled
-
-// Settings popup styled
-export const SettingsStyled = {
-  Container: styled(GradientBorder).attrs(() => ({
-    ["data-id"]: "invest-proposal-limits-form",
-  }))`
-    width: 100%;
-    position: absolute;
-    top: 38px;
-    right: 0;
-    box-shadow: 7px 4px 21px #0a1420;
-    border-radius: 20px;
-
-    &:after {
-      background: #181e2c;
-    }
-  `,
-  Head: styled(Flex)`
-    width: 100%;
-    padding: 20px 16px;
-    border-bottom: 1px solid rgba(41, 60, 84, 0.3);
-  `,
-  Title: styled.div`
-    font-family: ${(props) => props.theme.appFontFamily};
-    font-style: normal;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 19px;
-    color: #e4f2ff;
-  `,
-  Content: styled.div`
-    width: 100%;
-    padding: 16px 16px 13px;
-  `,
-  Row: styled.div<{ minInputW?: string }>`
-    width: 100%;
-    display: grid;
-    grid-template-columns:
-      max-content
-      minmax(max-content, 1fr)
-      ${({ minInputW }) => minInputW ?? "62px"}
-      minmax(28px, max-content);
-    grid-template-rows: 1fr;
-    align-items: center;
-    gap: 4.5px;
-  `,
-  Label: styled.div`
-    font-family: ${(props) => props.theme.appFontFamily};
-    font-style: normal;
-    font-weight: 400;
-    font-size: 13px;
-    line-height: 15px;
-    color: #788ab4;
-  `,
-  InputType: styled.div`
-    font-family: ${(props) => props.theme.appFontFamily};
-    font-style: normal;
-    font-weight: 400;
-    font-size: 13px;
-    line-height: 15px;
-    color: #788ab4;
-    text-align: right;
-  `,
-  ErrorMessage: styled.div`
-    width: 100%;
-    margin: 4px 0;
-    font-family: ${(props) => props.theme.appFontFamily};
-    font-style: normal;
-    font-weight: 400;
-    font-size: 13px;
-    line-height: 15px;
-    color: #db6d6d;
-  `,
-  ButtonGroup: styled.div`
-    width: 100%;
-    margin: 4px 0 0;
-    display: grid;
-    grid-template-columns: 0.8fr 1fr;
-    gap: 16px;
-  `,
-}

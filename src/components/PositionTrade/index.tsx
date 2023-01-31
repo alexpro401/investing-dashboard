@@ -3,15 +3,17 @@ import { format } from "date-fns"
 import { parseEther } from "@ethersproject/units"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 
-import { useActiveWeb3React } from "hooks"
+import { useActiveWeb3React, useBreakpoints } from "hooks"
 import { SupportedChainId } from "consts/chains"
 import { expandTimestamp, formatBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { DATE_TIME_FORMAT } from "consts/time"
 
-import S from "./styled"
+import * as S from "./styled"
 
 import externalLinkIcon from "assets/icons/external-link.svg"
+import { Flex } from "theme"
+import { ICON_NAMES } from "consts"
 
 interface Props {
   data: any
@@ -34,6 +36,7 @@ const PositionTrade: React.FC<Props> = ({
   ...rest
 }) => {
   const { chainId } = useActiveWeb3React()
+  const { isDesktop } = useBreakpoints()
 
   const href = useMemo(() => {
     if (data && chainId) {
@@ -113,15 +116,35 @@ const PositionTrade: React.FC<Props> = ({
       rel="noopener noreferrer"
     >
       <S.Content>
-        <S.Item>
-          <S.Label>
-            {date}
-            <S.ExternalLinkIcon src={externalLinkIcon} />
-          </S.Label>
-          <S.Value>
-            {PositionDirection} {volume}
-          </S.Value>
-        </S.Item>
+        {isDesktop ? (
+          <S.Item>
+            <Flex full jc={"flex-start"} gap={"8"}>
+              <S.DirectionIconWrp>
+                <S.DirectionIcon
+                  name={ICON_NAMES.arrow}
+                  dir={isBuy ? "bottom-left" : "top-right"}
+                />
+              </S.DirectionIconWrp>
+              {PositionDirection}
+            </Flex>
+          </S.Item>
+        ) : (
+          <S.Item>
+            <S.Label>
+              {date}
+              <S.ExternalLinkIcon src={externalLinkIcon} />
+            </S.Label>
+            <S.Value>
+              {PositionDirection} {volume}
+            </S.Value>
+          </S.Item>
+        )}
+        {isDesktop && (
+          <S.Item>
+            <S.Label>Amount LP</S.Label>
+            <S.Value>{volume}</S.Value>
+          </S.Item>
+        )}
         <S.Item>
           <S.Label>Price ({baseTokenSymbol ?? ""})</S.Label>
           <S.Value>{priceBaseToken}</S.Value>
@@ -130,6 +153,14 @@ const PositionTrade: React.FC<Props> = ({
           <S.Label>Price USD</S.Label>
           <S.Value>${_priceUsd}</S.Value>
         </S.Item>
+        {isDesktop && (
+          <S.Item>
+            <S.Value>
+              {date}
+              <S.ExternalLinkIcon src={externalLinkIcon} />
+            </S.Value>
+          </S.Item>
+        )}
       </S.Content>
     </S.Container>
   )

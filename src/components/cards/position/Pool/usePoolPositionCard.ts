@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import { MouseEvent, useMemo, useState, useCallback, useEffect } from "react"
 
-import { useActiveWeb3React } from "hooks"
+import { useActiveWeb3React, useBreakpoints } from "hooks"
 import { usePoolRegistryContract } from "contracts"
 
 interface IPayload {
@@ -21,6 +21,7 @@ function usePoolPositionCard(
   positionToken: string,
   closed: boolean
 ): [IPayload, IActions] {
+  const { isDesktop } = useBreakpoints()
   const navigate = useNavigate()
   const { account } = useActiveWeb3React()
   const traderPoolRegistry = usePoolRegistryContract()
@@ -42,7 +43,7 @@ function usePoolPositionCard(
   }, [showPositions])
 
   const toggleExtraContent = useCallback(() => {
-    if (isTrader && !closed) {
+    if (isTrader && !closed && !isDesktop) {
       if (openExtra) {
         setShowPositions(false)
       }
@@ -50,7 +51,7 @@ function usePoolPositionCard(
     } else {
       togglePositions()
     }
-  }, [isTrader, openExtra, closed, togglePositions])
+  }, [isTrader, openExtra, closed, togglePositions, isDesktop])
 
   /**
    * Navigate to terminal
