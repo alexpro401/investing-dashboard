@@ -1,6 +1,13 @@
-import React, { createContext, useCallback, useEffect, useState } from "react"
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
+} from "react"
 import { useParams } from "react-router-dom"
 import { BigNumber } from "@ethersproject/bignumber"
+import { useQuery, UseQueryState } from "urql"
 
 import { useActiveWeb3React } from "hooks"
 import {
@@ -8,10 +15,15 @@ import {
   useGovValidatorsTokenTotalSupply,
   useGovPoolVotingAssets,
   useGovPoolTreasury,
+  useGovPoolDescription,
 } from "hooks/dao"
 import { Token } from "interfaces"
 import { useAPI } from "api"
 import { ITreasuryToken } from "api/token/types"
+import { IGovPoolDescription } from "types"
+import { graphClientDaoPools } from "utils/graphClient"
+import { GovPoolQuery } from "queries"
+import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 
 interface INftCollection {
   name: string
@@ -22,9 +34,11 @@ interface INftCollection {
 }
 
 interface IGovPoolProfileCommonContext {
+  govPoolQuery: UseQueryState<{ daoPool: IGovPoolQuery }> | undefined
   validatorsTokenAddress: string
   validatorsToken: Token | null
   validatorsTotalVotes: BigNumber | null
+  descriptionObject: IGovPoolDescription | null | undefined
   haveNft: boolean
   haveToken: boolean
   mainToken: Token | null
@@ -35,9 +49,11 @@ interface IGovPoolProfileCommonContext {
 
 export const GovPoolProfileCommonContext =
   createContext<IGovPoolProfileCommonContext>({
+    govPoolQuery: undefined,
     validatorsTokenAddress: "",
     validatorsToken: null,
     validatorsTotalVotes: null,
+    descriptionObject: undefined,
     haveNft: false,
     haveToken: false,
     mainToken: null,
@@ -61,6 +77,12 @@ const GovPoolProfileCommonContextProvider: React.FC<
   >([])
   const [treasuryNFTsLoading, setTreasuryNFTsLoading] = useState<boolean>(true)
   const { chainId } = useActiveWeb3React()
+
+  const [govPoolQuery] = useQuery<{ daoPool: IGovPoolQuery }>({
+    query: GovPoolQuery,
+    variables: useMemo(() => ({ address: daoAddress }), [daoAddress]),
+    context: graphClientDaoPools,
+  })
 
   const setupTreasury = useCallback(async () => {
     if (!chainId || !daoAddress) return
@@ -107,6 +129,7 @@ const GovPoolProfileCommonContextProvider: React.FC<
     useGovValidatorsValidatorsToken(daoAddress ?? "")
 
   const [validatorsTotalVotes] = useGovValidatorsTokenTotalSupply(daoAddress)
+  const { descriptionObject } = useGovPoolDescription(daoAddress)
 
   const [{ haveNft, haveToken }, { token: mainToken }] =
     useGovPoolVotingAssets(daoAddress)
@@ -118,9 +141,11 @@ const GovPoolProfileCommonContextProvider: React.FC<
   return (
     <GovPoolProfileCommonContext.Provider
       value={{
+        govPoolQuery,
         validatorsToken,
         validatorsTokenAddress,
         validatorsTotalVotes,
+        descriptionObject,
         haveNft,
         haveToken,
         mainToken,

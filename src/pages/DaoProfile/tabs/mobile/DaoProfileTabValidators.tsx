@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import theme, { Flex } from "theme"
-import TabFallback from "./TabFallback"
+import TabFallback from "../TabFallback"
 import { Card, Icon } from "common"
 import PaginationTable from "components/PaginationTable"
 import { v4 as uuidv4 } from "uuid"
@@ -16,7 +16,7 @@ import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommo
 import { formatTokenNumber } from "utils"
 import { DaoPoolDaoProfileValidatorsQuery } from "queries"
 
-import { FlexLink, Image, TextValue } from "../styled"
+import { FlexLink, Image, TextValue } from "../../styled"
 import { graphClientDaoValidators } from "utils/graphClient"
 
 interface Props {

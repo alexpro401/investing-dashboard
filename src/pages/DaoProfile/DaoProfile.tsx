@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useContext } from "react"
+import React, { useState, useContext } from "react"
 import { useParams } from "react-router-dom"
 import { useWeb3React } from "@web3-react/core"
 
@@ -13,14 +13,11 @@ import { PageChart } from "./types"
 
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
-import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsContext/GovPoolProfileTabsContext"
+import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommonContext/GovPoolProfileCommonContext"
 
-import { useQuery } from "urql"
-import { GovPoolQuery } from "queries"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import { useBreakpoints } from "hooks"
 import { Breadcrumbs } from "common"
-import { graphClientDaoPools } from "utils/graphClient"
 
 import * as S from "./styled"
 
@@ -28,14 +25,9 @@ const DaoProfile: React.FC = () => {
   const { account } = useWeb3React()
   const { daoAddress } = useParams()
 
-  const { daoDescription } = useContext(GovPoolProfileTabsContext)
-
-  const [govPoolQuery] = useQuery<{ daoPool: IGovPoolQuery }>({
-    query: GovPoolQuery,
-    variables: useMemo(() => ({ address: daoAddress }), [daoAddress]),
-    context: graphClientDaoPools,
-  })
-
+  const { govPoolQuery, descriptionObject } = useContext(
+    GovPoolProfileCommonContext
+  )
   const isValidator = true
 
   const [chart, setChart] = useState<PageChart>(PageChart.tvl)
@@ -54,11 +46,11 @@ const DaoProfile: React.FC = () => {
                 isValidator={isValidator}
                 account={account}
                 govPoolQuery={{
-                  ...((govPoolQuery.data?.daoPool
+                  ...((govPoolQuery?.data?.daoPool
                     ? {
                         ...govPoolQuery.data?.daoPool,
-                        name: daoDescription
-                          ? daoDescription.daoName
+                        name: descriptionObject
+                          ? descriptionObject.daoName
                           : govPoolQuery.data.daoPool.name,
                       }
                     : {}) as IGovPoolQuery),
@@ -72,13 +64,7 @@ const DaoProfile: React.FC = () => {
               </S.Indents>
             </S.Indents>
           )}
-          <Routing
-            creationTime={
-              govPoolQuery.data?.daoPool?.creationTime
-                ? Number(govPoolQuery.data.daoPool.creationTime)
-                : undefined
-            }
-          />
+          <Routing />
         </S.Container>
       </WithGovPoolAddressValidation>
     </>
