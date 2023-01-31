@@ -3,47 +3,38 @@ import { useCallback, useMemo, useState } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { useWeb3React } from "@web3-react/core"
 import format from "date-fns/format"
+import { Currency } from "lib/entities"
+import { GuardSpinner } from "react-spinners-kit"
 import formatDistanceToNow from "date-fns/formatDistanceToNow"
 
 import { DATE_TIME_FORMAT } from "consts/time"
 
+import { useAllTokenBalances } from "hooks/useBalance"
+import { useAllTokens } from "hooks/useToken"
+
+import { AppButton } from "common"
 import { ICON_NAMES } from "consts/icon-names"
 import ExternalLink from "components/ExternalLink"
-import IconButton from "components/IconButton"
+import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import DividendsInput from "components/Exchange/DividendsInput"
-import { AppButton } from "common"
-import CircularProgress from "components/CircularProgress"
 import Header from "components/Header/Layout"
+import { Exchange } from "components/Exchange"
+import { Info } from "components/InfoAccordion"
 import TokenSelect from "modals/TokenSelect"
+import useConvertToDividendsContext, {
+  ConvertToDividendsProvider,
+} from "modals/ConvertToDividends/useConvertToDividendsContext"
 
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
-import close from "assets/icons/close-big.svg"
-
 import {
   Container,
-  Card,
-  CardHeader,
-  Title,
-  IconsGroup,
-  InfoCard,
   InfoRow,
   InfoGrey,
-  InfoDropdown,
-  InfoWhite,
   BlueButton,
 } from "components/Exchange/styled"
 
 import usePayDividends from "./usePayDividends"
-import useConvertToDividendsContext, {
-  ConvertToDividendsProvider,
-} from "modals/ConvertToDividends/useConvertToDividendsContext"
-import { useAllTokenBalances } from "hooks/useBalance"
-import { useAllTokens } from "hooks/useToken"
-import { Currency } from "lib/entities"
-import WithPoolAddressValidation from "components/WithPoolAddressValidation"
-import { GuardSpinner } from "react-spinners-kit"
-import { Exchange } from "components/Exchange"
 
 function PayDividends() {
   const { chainId } = useWeb3React()
@@ -87,21 +78,11 @@ function PayDividends() {
   )
 
   const lastDividends = useMemo(() => {
-    if (!supplies || !supplies.length)
-      return (
-        <Flex gap="4">
-          <InfoWhite>-</InfoWhite>
-        </Flex>
-      )
+    if (!supplies || !supplies.length) return "-"
 
-    return (
-      <Flex gap="4">
-        <InfoWhite>
-          {formatDistanceToNow(new Date(Number(supplies[0].timestamp) * 1000))}{" "}
-          ago
-        </InfoWhite>
-      </Flex>
-    )
+    return `${formatDistanceToNow(
+      new Date(Number(supplies[0].timestamp) * 1000)
+    )} ago`
   }, [supplies])
 
   const lastDividendsContent = useMemo(() => {
@@ -128,32 +109,6 @@ function PayDividends() {
       </InfoRow>
     ))
   }, [supplies, chainId])
-
-  const proposalTVL = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoGrey>Proposal TVL</InfoGrey>
-        <Flex gap="4">
-          <InfoWhite>
-            {info.tvl.base} {info.ticker}
-          </InfoWhite>
-          <InfoGrey>(${info.tvl.usd})</InfoGrey>
-        </Flex>
-      </InfoRow>
-    )
-  }, [info.tvl.base, info.ticker, info.tvl.usd])
-
-  const APR = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoGrey>APR after dividend</InfoGrey>
-        <Flex gap="4">
-          <InfoWhite>{info.APR.percent}%</InfoWhite>
-          <InfoGrey>(${info.APR.usd})</InfoGrey>
-        </Flex>
-      </InfoRow>
-    )
-  }, [info.APR])
 
   // TODO: check terms and conditions agreement
   const button = useMemo(() => {
@@ -234,19 +189,39 @@ function PayDividends() {
         onChange={handleFromChange}
         onSelect={openTokenSelect}
       />
-
-      {/* <InfoCard gap="12">
-        {proposalTVL}
-        {APR}
-        <InfoDropdown
-          left={<InfoGrey>Last paid dividend</InfoGrey>}
-          right={lastDividends}
-        >
-          {lastDividendsContent}
-        </InfoDropdown>
-      </InfoCard> */}
     </>
   )
+
+  const exchangeInfo: Info[] = useMemo(() => {
+    return [
+      {
+        title: "Proposal TVL",
+        value: `${info.tvl.base} ${info.ticker} ($${info.tvl.usd})`,
+        tooltip:
+          "Proposal TVL is the total value of all tokens in the proposal",
+      },
+      {
+        title: "APR after dividend",
+        value: `${info.APR.percent}% ($${info.APR.usd})`,
+        tooltip:
+          "APR after dividend is the annual percentage rate of the proposal after paying dividends",
+      },
+      {
+        title: "Last paid dividend",
+        value: lastDividends,
+        tooltip: "Last paid dividend is the date of the last dividend payment",
+        childrens: lastDividendsContent,
+      },
+    ]
+  }, [
+    info.APR.percent,
+    info.APR.usd,
+    info.ticker,
+    info.tvl.base,
+    info.tvl.usd,
+    lastDividends,
+    lastDividendsContent,
+  ])
 
   return (
     <>
@@ -257,11 +232,11 @@ function PayDividends() {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        {/* {form} */}
         <Exchange
           title="Pay dividends"
           form={form}
           buttons={[button, convertToDividendsButton]}
+          info={exchangeInfo}
         />
       </Container>
       <TokenSelect
