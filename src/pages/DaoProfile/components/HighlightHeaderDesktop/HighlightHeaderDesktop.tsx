@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from "uuid"
 
 import { useActiveWeb3React } from "hooks"
 
-import IconProfile from "components/Icon"
 import { Icon } from "common"
 import ExternalLink from "components/ExternalLink"
 import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommonContext/GovPoolProfileCommonContext"
@@ -58,7 +57,7 @@ const HighlightHeaderDesktop: React.FC = () => {
 
   return (
     <S.HeaderWrp>
-      <IconProfile
+      <S.IconProfile
         size={100}
         m="0 8px 0 0"
         address={daoPoolQueryInfo?.id}
