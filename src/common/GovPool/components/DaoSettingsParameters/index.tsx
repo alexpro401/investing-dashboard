@@ -250,7 +250,7 @@ const DaoSettingsParameters: FC<Props> = ({
         <CardDescription>
           <p>General settings for voting.</p>
         </CardDescription>
-        <CardFormControl>
+        <S.DurationCardFormControl>
           <S.DurationParamsContainer>
             <DurationField
               value={duration.get}
@@ -290,7 +290,7 @@ const DaoSettingsParameters: FC<Props> = ({
               }
             />
           </S.DurationParamsContainer>
-        </CardFormControl>
+        </S.DurationCardFormControl>
       </Card>
 
       {isValidator.get && (
@@ -308,7 +308,7 @@ const DaoSettingsParameters: FC<Props> = ({
             <br />
             <p>Set parameters for a second voting stage for validators.</p>
           </CardDescription>
-          <CardFormControl>
+          <S.DurationCardFormControl>
             <S.DurationParamsContainer>
               <DurationField
                 value={durationValidators.get}
@@ -347,7 +347,7 @@ const DaoSettingsParameters: FC<Props> = ({
                 }
               />
             </S.DurationParamsContainer>
-          </CardFormControl>
+          </S.DurationCardFormControl>
         </Card>
       )}
 
@@ -379,7 +379,7 @@ const DaoSettingsParameters: FC<Props> = ({
         <CardDescription>
           <p>Set the minimum voting power required for:</p>
         </CardDescription>
-        <CardFormControl>
+        <S.DurationCardFormControl>
           <InputField
             value={minVotesForVoting.get}
             setValue={minVotesForVoting.set}
@@ -417,7 +417,7 @@ const DaoSettingsParameters: FC<Props> = ({
               ) : undefined
             }
           />
-        </CardFormControl>
+        </S.DurationCardFormControl>
       </Card>
 
       <Card>
@@ -436,7 +436,6 @@ const DaoSettingsParameters: FC<Props> = ({
           <p>
             Motivate DAO members by automatically rewarding governance activity.
           </p>
-          <br />
           <p>*Rewards only granted for accepted proposals. </p>
         </CardDescription>
 

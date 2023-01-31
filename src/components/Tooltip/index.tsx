@@ -1,6 +1,5 @@
 import { ReactNode, useState } from "react"
 import ReactTooltip from "react-tooltip"
-import ReactDOMServer from "react-dom/server"
 
 import TooltipIcon from "assets/icons/TooltipIcon"
 import styled, { createGlobalStyle } from "styled-components/macro"

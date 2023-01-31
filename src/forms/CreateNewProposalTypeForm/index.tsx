@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
 } from "react"
 import { AnimatePresence } from "framer-motion"
 import { useNavigate, useParams } from "react-router-dom"
@@ -41,6 +42,7 @@ const CreateNewProposalTypeForm: React.FC = () => {
   const createDaoProposalType = useGovPoolCreateProposalType({
     daoPoolAddress: daoAddress ?? "",
   })
+  const stepsWrapperRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     dispatch(hideTapBar())
@@ -63,6 +65,14 @@ const CreateNewProposalTypeForm: React.FC = () => {
     () => Object.values(STEPS).indexOf(currentStep) + 1,
     [currentStep]
   )
+
+  useEffect(() => {
+    if (stepsWrapperRef.current) {
+      stepsWrapperRef.current.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+  }, [currentStep, stepsWrapperRef])
 
   const handleCreateDaoProposalType = useCallback(() => {
     const {
@@ -169,7 +179,7 @@ const CreateNewProposalTypeForm: React.FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        <S.StepsWrapper>
+        <S.StepsWrapper ref={stepsWrapperRef}>
           {currentStep === STEPS.generalVotingSettings && (
             <S.StepsContainer>
               <DefaultProposalStep isCreatingProposal />

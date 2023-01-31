@@ -5,6 +5,7 @@ interface StepsControllerContext {
     title: string
     number: number
   }[]
+  setStep?: (n: number) => void
   totalStepsAmount: number
   currentStepNumber: number
   prevCb: (cb?: () => void) => void
@@ -24,6 +25,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
     title: string
     number: number
   }[]
+  setStep?: (n: number) => void
   totalStepsAmount?: number
   currentStepNumber: number
   prevCb: (cb?: () => void) => void
@@ -32,6 +34,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 
 const StepsControllerContext: FC<Props> = ({
   steps,
+  setStep,
   totalStepsAmount,
   currentStepNumber,
   prevCb,
@@ -43,6 +46,7 @@ const StepsControllerContext: FC<Props> = ({
     <stepsControllerContext.Provider
       value={{
         steps,
+        setStep,
         totalStepsAmount: Number(totalStepsAmount || steps?.length),
         currentStepNumber,
         prevCb,

@@ -14,7 +14,7 @@ import { Collapse } from "common"
 interface Props<V extends string | number>
   extends HTMLAttributes<HTMLTextAreaElement> {
   value: V
-  setValue: Dispatch<SetStateAction<V>>
+  setValue: (v: V) => void
   label?: string
   placeholder?: string
   errorMessage?: string

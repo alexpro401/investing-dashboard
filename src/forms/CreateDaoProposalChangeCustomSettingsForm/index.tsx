@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
 } from "react"
 import { useParams, useNavigate, generatePath } from "react-router-dom"
 import { useDispatch } from "react-redux"
@@ -44,8 +45,8 @@ const CreateDaoProposalChangeCustomSettingsForm: React.FC = () => {
   const { proposalName, proposalDescription } = useContext(
     GovProposalCreatingContext
   )
-
   const { isMobile } = useBreakpoints()
+  const stepsWrapperRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     dispatch(hideTapBar())
@@ -65,6 +66,14 @@ const CreateDaoProposalChangeCustomSettingsForm: React.FC = () => {
     () => Object.values(STEPS).indexOf(currentStep) + 2,
     [currentStep]
   )
+
+  useEffect(() => {
+    if (stepsWrapperRef.current) {
+      stepsWrapperRef.current.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+  }, [currentStep, stepsWrapperRef])
 
   const handleCreateProposal = useCallback(() => {
     if (!settingId) return
@@ -161,7 +170,7 @@ const CreateDaoProposalChangeCustomSettingsForm: React.FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        <S.StepsWrapper>
+        <S.StepsWrapper ref={stepsWrapperRef}>
           {currentStep === STEPS.customSettings && (
             <S.StepsContainer>
               <DefaultProposalStep isCreatingProposal />

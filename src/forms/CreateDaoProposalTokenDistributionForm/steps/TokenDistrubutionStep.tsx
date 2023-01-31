@@ -22,7 +22,7 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 import { TokenDistributionCreatingContext } from "context/govPool/proposals/TokenDistributionContext"
 import { useBreakpoints } from "hooks"
 import { useFormValidation } from "hooks/useFormValidation"
-import { required, isBnLte } from "utils/validators"
+import { required, isBnLte, isBnGt } from "utils/validators"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { formatFiatNumber, formatTokenNumber, cutStringZeroes } from "utils"
 import theme from "theme"
@@ -69,6 +69,13 @@ const TokenDistributionStep: React.FC = () => {
                         )} ${
                           selectedTreasuryToken.get.contract_ticker_symbol
                         } токенів. Оберіть валідне число`
+                      ),
+                      isBnGt: isBnGt(
+                        formatUnits(
+                          BigNumber.from("0"),
+                          selectedTreasuryToken.get.contract_decimals
+                        ),
+                        selectedTreasuryToken.get.contract_decimals
                       ),
                     }
                   : {}),

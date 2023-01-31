@@ -125,7 +125,7 @@ const DefaultProposalStep: FC<IDefaultProposalStepProps> = ({
                 </RegularText>
               </S.DesktopHeaderWrp>
             )}
-            <S.CenteredImage src={CreateFundDocsImage} />
+            {isMobile && <S.CenteredImage src={CreateFundDocsImage} />}
             <DaoSettingsParameters
               poolParameters={defaultProposalSettingForm}
               formValidation={formValidation}

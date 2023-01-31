@@ -1,11 +1,15 @@
-import { Flex } from "theme"
 import Calendar from "react-calendar"
-import { modalContainerVariants } from "motion/variants"
+import { createPortal } from "react-dom"
 import { format, getHours, getMinutes } from "date-fns/esm"
+
+import { modalContainerVariants } from "motion/variants"
 import { keepHoursAndMinutes } from "utils"
+import { Flex } from "theme"
 
 import { Container, TimeLabel, TimeInput, Overlay } from "./styled"
 import "./styles.css"
+
+const modalRoot = document.getElementById("modal")
 
 interface Props {
   isOpen: boolean
@@ -41,7 +45,9 @@ const DatePicker: React.FC<Props> = ({
     onChange(newTimestamp)
   }
 
-  return (
+  if (!modalRoot) return null
+
+  return createPortal(
     <>
       <Overlay
         onClick={toggle}
@@ -79,10 +85,11 @@ const DatePicker: React.FC<Props> = ({
             min="00:00"
             max="23:59"
             value={format(timestamp, "HH:mm")}
-          ></TimeInput>
+          />
         </Flex>
       </Container>
-    </>
+    </>,
+    modalRoot
   )
 }
 

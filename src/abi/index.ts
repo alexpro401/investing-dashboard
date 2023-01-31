@@ -30,6 +30,7 @@ import GovSettings from "./GovSettings.json"
 import GovUserKeeper from "./GovUserKeeper.json"
 import GovValidators from "./GovValidators.json"
 import DistributionProposal from "./DistributionProposal.json"
+import TokenSaleProposal from "./TokenSaleProposal.json"
 
 import Multicall from "./Multicall.json"
 
@@ -53,5 +54,6 @@ export {
   GovUserKeeper,
   GovValidators,
   DistributionProposal,
+  TokenSaleProposal,
   Multicall,
 }
