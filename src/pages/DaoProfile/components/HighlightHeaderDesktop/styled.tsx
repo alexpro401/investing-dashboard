@@ -9,7 +9,6 @@ export const HeaderWrp = styled(Flex).attrs(() => ({
   full: true,
   ai: "stretch",
 }))`
-  margin-top: 24px;
   margin-left: 20px;
   margin-right: 20px;
   width: calc(100% - 40px);
@@ -48,7 +47,7 @@ export const TitleLinks = styled(Flex).attrs(() => ({
   gap: "16",
 }))`
   flex-shrink: 0;
-  align-self: start;
+  flex-wrap: wrap;
 `
 
 export const TitleLink = styled(ExternalLink)`

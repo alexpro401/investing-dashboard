@@ -10,6 +10,7 @@ const Styled = {
     border-radius: 24px;
     margin-left: 20px;
     border: 2px solid #141926;
+    margin-bottom: 24px;
   `,
   Tab: styled(Link)<{ active?: boolean }>`
     display: flex;

@@ -8,3 +8,4 @@ export { default as DaoProfileUserBalancesCard } from "./DaoProfileUserBalancesC
 export { default as DaoProfileValueWithActionCard } from "./DaoProfileValueWithActionCard"
 export { default as DesktopRouteTabs } from "./DesktopRouteTabs"
 export { default as HighlightHeaderDesktop } from "./HighlightHeaderDesktop/HighlightHeaderDesktop"
+export { default as DesktopStatistic } from "./DesktopStatistic"

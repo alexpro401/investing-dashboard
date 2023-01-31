@@ -20,7 +20,7 @@ const Routing: React.FC = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { daoAddress } = useParams()
-  const { isMobile } = useBreakpoints()
+  const { isBigTablet } = useBreakpoints()
   const { currentTab } = useContext(GovPoolProfileTabsContext)
 
   const handleDesktopInitialTab = useCallback(() => {
@@ -36,7 +36,7 @@ const Routing: React.FC = () => {
   }, [location, currentTab])
 
   useEffect(() => {
-    if (isMobile) {
+    if (!isBigTablet) {
       navigate(
         generatePath(ROUTE_PATHS.daoProfile, {
           daoAddress: daoAddress ?? "",
@@ -44,15 +44,15 @@ const Routing: React.FC = () => {
         })
       )
     }
-  }, [isMobile, daoAddress, navigate])
+  }, [isBigTablet, daoAddress, navigate])
 
   useEffect(() => {
-    if (!isMobile) {
+    if (isBigTablet) {
       handleDesktopInitialTab()
     }
-  }, [isMobile, handleDesktopInitialTab])
+  }, [isBigTablet, handleDesktopInitialTab])
 
-  if (isMobile) return <MobileRouting />
+  if (!isBigTablet) return <MobileRouting />
 
   return <DesktopRouting />
 }
