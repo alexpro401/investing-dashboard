@@ -12,7 +12,7 @@ interface Props {
 }
 
 const Row: FC<Props> = ({ data, children }) => {
-  const { title, tooltip, value, pnl } = data
+  const { title, tooltip, value, pnl, rightNode } = data
   const hasChildren = !!children
 
   const [isOpened, setIsOpened] = useState(false)
@@ -31,6 +31,7 @@ const Row: FC<Props> = ({ data, children }) => {
           <S.Title>{title}</S.Title>
         </S.Left>
         <S.Right onClick={handleBodyChange}>
+          {!!rightNode && rightNode}
           <S.Value>{value}</S.Value>
           {pnl && <PNLIndicator type="brackets" pnl={pnl} fontSize={13} />}
           {hasChildren && (

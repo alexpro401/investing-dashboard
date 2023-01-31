@@ -22,17 +22,8 @@ export const InputContainer = styled(Flex)<{ height?: string }>`
   border: 1px solid rgba(40, 51, 74, 0.5);
 `
 
-export const RiskyContainer = styled(GradientBorder)`
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 16px 16px 16px 16px;
-  border-radius: 20px;
-  width: 100%;
+export const RiskyContainer = styled(InputContainer)`
   height: fit-content;
-
-  &:after {
-    background: #141926;
-  }
 `
 
 export const InputTop = styled(Flex)`
@@ -486,7 +477,6 @@ export const ButtonDivider = styled.div`
 
   background: #1c2437;
   border-radius: 16px;
-  margin: 16px 0;
 `
 
 const DividendsTokenContainer = styled(Flex)`

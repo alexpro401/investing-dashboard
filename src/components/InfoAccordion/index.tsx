@@ -6,6 +6,7 @@ import * as S from "./styled"
 export interface Info {
   title: string
   tooltip?: ReactNode
+  rightNode?: ReactNode
   value: string
   pnl?: string
   childrens?: Info[] | JSX.Element[]

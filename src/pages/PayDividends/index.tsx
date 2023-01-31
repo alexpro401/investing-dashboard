@@ -35,6 +35,7 @@ import {
 } from "components/Exchange/styled"
 
 import usePayDividends from "./usePayDividends"
+import { useUserAgreement } from "state/user/hooks"
 
 function PayDividends() {
   const { chainId } = useWeb3React()
@@ -46,6 +47,8 @@ function PayDividends() {
   const [balances, balancesIsLoading] = useAllTokenBalances()
   const allTokens = useAllTokens()
 
+  const [{ agreed }, { setShowAgreement }] = useUserAgreement()
+
   const [
     { tokens, info, supplies },
     {
@@ -55,6 +58,10 @@ function PayDividends() {
       updateAllowance,
     },
   ] = usePayDividends(poolAddress, proposalId)
+
+  const onSubmit = useCallback(() => {
+    agreed ? handleSubmit() : setShowAgreement(true)
+  }, [agreed, handleSubmit, setShowAgreement])
 
   const openTokenSelect = (index: number) => {
     setActiveIndex(index)
@@ -110,7 +117,6 @@ function PayDividends() {
     ))
   }, [supplies, chainId])
 
-  // TODO: check terms and conditions agreement
   const button = useMemo(() => {
     const inufficientTokens = tokens.filter((token) =>
       token.balance.lt(token.amount)
@@ -164,12 +170,12 @@ function PayDividends() {
       <AppButton
         size="large"
         color="primary"
-        onClick={handleSubmit}
+        onClick={onSubmit}
         full
         text="Pay dividends"
       />
     )
-  }, [handleSubmit, tokens, updateAllowance])
+  }, [onSubmit, tokens, updateAllowance])
 
   const convertToDividendsButton = useMemo(() => {
     return (
