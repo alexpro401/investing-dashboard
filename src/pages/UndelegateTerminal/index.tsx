@@ -11,6 +11,7 @@ import { Container } from "components/Exchange/styled"
 import Header from "components/Header/Layout"
 import WalletInput from "components/Exchange/WalletInput"
 import { shortenAddress } from "utils"
+import { Exchange } from "components/Exchange"
 
 interface Props {
   daoPoolAddress?: string
@@ -76,51 +77,46 @@ export const UndelegateTerminal: FC<Props> = ({
   )
 
   return (
-    <>
-      <S.Card>
-        <S.CardHeader>
-          <S.Title active>Withdraw</S.Title>
-        </S.CardHeader>
-
-        {formInfo.haveToken && (
-          <ExchangeInput
-            price={ERC20Price}
-            amount={ERC20Amount.toString()}
-            balance={formInfo.erc20.balance || ZERO}
-            address={formInfo.erc20.address}
-            symbol={formInfo.erc20.symbol}
-            decimal={formInfo.erc20.decimal}
-            onChange={handleERC20Change}
-          />
-        )}
-
-        {formInfo.haveNft && (
-          <>
-            <Flex full p="4px" />
-            <NftInput
-              nftPowerMap={nftPowerMap}
-              selectedNfts={ERC721Amount}
-              onSelectAll={() => selectNfts(allNftsId)}
-              onSelect={() => setSelectOpen(true)}
-              balance={formInfo.erc721.balance || ZERO}
-              address={formInfo.erc721.address}
+    <Exchange
+      title="Withdraw"
+      buttons={[button]}
+      form={
+        <>
+          {formInfo.haveToken && (
+            <ExchangeInput
+              price={ERC20Price}
+              amount={ERC20Amount.toString()}
+              balance={formInfo.erc20.balance || ZERO}
+              address={formInfo.erc20.address}
+              symbol={formInfo.erc20.symbol}
+              decimal={formInfo.erc20.decimal}
+              onChange={handleERC20Change}
             />
-          </>
-        )}
+          )}
 
-        <Flex full p="4px" />
+          {formInfo.haveNft && (
+            <>
+              <Flex full p="4px" />
+              <NftInput
+                nftPowerMap={nftPowerMap}
+                selectedNfts={ERC721Amount}
+                onSelectAll={() => selectNfts(allNftsId)}
+                onSelect={() => setSelectOpen(true)}
+                balance={formInfo.erc721.balance || ZERO}
+                address={formInfo.erc721.address}
+              />
+            </>
+          )}
 
-        <WalletInput
-          address={formInfo.address.address}
-          amount={formInfo.address.totalPower.toString()}
-          nodeLeft="Votes to be received"
-          nodeRight="Receiver address"
-        />
-
-        <Flex p="16px 0 0" full>
-          {button}
-        </Flex>
-      </S.Card>
+          <WalletInput
+            address={formInfo.address.address}
+            amount={formInfo.address.totalPower.toString()}
+            nodeLeft="Votes to be received"
+            nodeRight="Receiver address"
+          />
+        </>
+      }
+    >
       <NftSelect
         nftPowerMap={nftPowerMap}
         defaultValue={selectedNftsStrings}
@@ -129,7 +125,7 @@ export const UndelegateTerminal: FC<Props> = ({
         onClose={() => setSelectOpen(false)}
         nftIds={allNftsId}
       />
-    </>
+    </Exchange>
   )
 }
 
