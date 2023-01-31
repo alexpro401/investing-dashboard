@@ -25,6 +25,8 @@ const useGovPoolNftVotingPower = (
 
     if (nftIds.length === 0) {
       setLoading(false)
+      setNftPower(BigNumber.from("0"))
+      setPerNftPower([])
       return
     }
 

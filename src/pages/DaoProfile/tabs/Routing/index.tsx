@@ -76,8 +76,6 @@ const Routing: React.FC<IRoutingProps> = ({ creationTime }) => {
 
     for (const tab in EDaoProfileTab) {
       if (mapProfileTabToRoute[EDaoProfileTab[tab]] === locationTab) {
-        console.log("selectedTab: ", tab)
-
         currentTab.set(EDaoProfileTab[tab])
         break
       }

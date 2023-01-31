@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, useContext } from "react"
+import React, { useMemo, useState, useContext } from "react"
 import { useParams } from "react-router-dom"
 import { useWeb3React } from "@web3-react/core"
 
@@ -13,7 +13,6 @@ import { PageChart } from "./types"
 
 import Header from "components/Header/Layout"
 import WithGovPoolAddressValidation from "components/WithGovPoolAddressValidation"
-import ChooseDaoProposalAsPerson from "modals/ChooseDaoProposalAsPerson"
 import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsContext/GovPoolProfileTabsContext"
 
 import { useQuery } from "urql"
@@ -41,17 +40,6 @@ const DaoProfile: React.FC = () => {
 
   const [chart, setChart] = useState<PageChart>(PageChart.tvl)
 
-  const [createProposalModalOpened, setCreateProposalModalOpened] =
-    useState<boolean>(false)
-
-  const handleOpenCreateProposalModal = useCallback(() => {
-    setCreateProposalModalOpened(true)
-  }, [])
-
-  const handleCloseCreateProposalModal = useCallback(() => {
-    setCreateProposalModalOpened(false)
-  }, [])
-
   const { isMobile } = useBreakpoints()
 
   return (
@@ -60,36 +48,30 @@ const DaoProfile: React.FC = () => {
       <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
         <S.Container>
           {!isMobile && <DesktopRouteTabs />}
-          <S.Indents top>
-            <DaoProfileStatisticCard
-              isValidator={isValidator}
-              handleOpenCreateProposalModal={handleOpenCreateProposalModal}
-              account={account}
-              govPoolQuery={{
-                ...((govPoolQuery.data?.daoPool
-                  ? {
-                      ...govPoolQuery.data?.daoPool,
-                      name: daoDescription
-                        ? daoDescription.daoName
-                        : govPoolQuery.data.daoPool.name,
-                    }
-                  : {}) as IGovPoolQuery),
-              }}
-            />
-            <S.Indents top side={false}>
-              <DaoProfileChart chart={chart} setChart={setChart} />
-            </S.Indents>
-            {/* TODO */}
-            {/* <S.Indents top side={false}>
-              <DaoProfileBuyTokenCard
-                total={BigNumber.from(100)}
-                available={BigNumber.from(34)}
+          {isMobile && (
+            <S.Indents top>
+              <DaoProfileStatisticCard
+                isValidator={isValidator}
+                account={account}
+                govPoolQuery={{
+                  ...((govPoolQuery.data?.daoPool
+                    ? {
+                        ...govPoolQuery.data?.daoPool,
+                        name: daoDescription
+                          ? daoDescription.daoName
+                          : govPoolQuery.data.daoPool.name,
+                      }
+                    : {}) as IGovPoolQuery),
+                }}
               />
-            </S.Indents> */}
-            <S.Indents top side={false}>
-              <DaoProfileTokensInTreasuryCard />
+              <S.Indents top side={false}>
+                <DaoProfileChart chart={chart} setChart={setChart} />
+              </S.Indents>
+              <S.Indents top side={false}>
+                <DaoProfileTokensInTreasuryCard />
+              </S.Indents>
             </S.Indents>
-          </S.Indents>
+          )}
           <Routing
             creationTime={
               govPoolQuery.data?.daoPool?.creationTime
@@ -99,11 +81,6 @@ const DaoProfile: React.FC = () => {
           />
         </S.Container>
       </WithGovPoolAddressValidation>
-      <ChooseDaoProposalAsPerson
-        isOpen={createProposalModalOpened}
-        daoAddress={daoAddress ?? ""}
-        toggle={handleCloseCreateProposalModal}
-      />
     </>
   )
 }
