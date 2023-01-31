@@ -59,6 +59,7 @@ import {
   WarnCircledIcon,
   WarnIcon,
   PlusOutline,
+  WarnCircledFilledIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -137,6 +138,8 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return ClearIcon as unknown as ElementType
       case ICON_NAMES.warnCircled:
         return WarnCircledIcon as unknown as ElementType
+      case ICON_NAMES.warnCircledFilled:
+        return WarnCircledFilledIcon as unknown as ElementType
       case ICON_NAMES.github:
         return GithubIcon as unknown as ElementType
       case ICON_NAMES.infoCircled:

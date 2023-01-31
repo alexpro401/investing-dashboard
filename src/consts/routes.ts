@@ -29,7 +29,7 @@ export enum ROUTE_PATHS {
   createFundSuccess = "/success/:poolAddress",
 
   fundPositions = "/fund-positions/:poolAddress/*",
-  fundDetails = "fund-details/:poolAddress/*",
+  fundDetails = "/fund-details/:poolAddress/*",
 
   insurance = "insurance",
   insuranceCreate = "insurance/create",

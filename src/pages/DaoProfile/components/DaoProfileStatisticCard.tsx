@@ -18,6 +18,7 @@ import {
 } from "hooks"
 import { addBignumbers } from "utils/formulas"
 import { ZERO } from "consts"
+import { useDaoPoolMetadata } from "state/ipfsMetadata/hooks"
 
 interface Props extends Pick<Web3ReactContextInterface, "account"> {
   isValidator: boolean
@@ -37,6 +38,7 @@ const DaoProfileStatisticCard: React.FC<Props> = ({
     GovPoolProfileCommonContext
   )
 
+  const [{ daoPoolMetadata }] = useDaoPoolMetadata(govPoolQuery?.id)
   const { govUserKeeperAddress } = useGovPoolHelperContracts(govPoolQuery?.id)
   const [userVotingPowers] = useGovPoolUserVotingPower({
     userKeeperAddress: govUserKeeperAddress,
@@ -53,7 +55,11 @@ const DaoProfileStatisticCard: React.FC<Props> = ({
   }, [userVotingPowers])
 
   return (
-    <DaoPoolCard data={govPoolQuery} totalVotingPower={totalUserVotingPower}>
+    <DaoPoolCard
+      data={govPoolQuery}
+      totalVotingPower={totalUserVotingPower}
+      metadata={daoPoolMetadata}
+    >
       <Flex full dir={"column"} gap={"12"}>
         <S.CardButtons>
           <S.NewProposal onClick={handleOpenCreateProposalModal} />

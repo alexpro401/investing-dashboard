@@ -1,59 +1,56 @@
 import { FC, HTMLAttributes, useContext } from "react"
 
 import { Card } from "common"
-import { Center, Flex, Text } from "theme"
+import { Flex } from "theme"
 import BarChart from "components/BarChart"
 import PoolPnlChart from "components/PoolPnlChart"
 
 import * as S from "./styled"
-import { GuardSpinner } from "react-spinners-kit"
 import { PoolProfileContext } from "pages/PoolProfile/context"
 import { useWindowSize } from "react-use"
+import { normalizeBigNumber } from "utils"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const TabPoolPnl: FC<Props> = ({ ...rest }) => {
-  const {
-    poolData,
-    baseToken,
-    totalPnlPercentage,
-    totalPnlBase,
-    totalUSDPnlPerc,
-    totalUSDPnlUSD,
-  } = useContext(PoolProfileContext)
+  const { fundAddress, basicToken, pnl } = useContext(PoolProfileContext)
 
   const { width: windowWidth } = useWindowSize()
 
-  return !poolData ? (
-    <Center>
-      <GuardSpinner size={20} loading />
-    </Center>
-  ) : (
+  return (
     <>
       <Card>
         <PoolPnlChart
           key={windowWidth}
-          address={poolData.id}
-          baseToken={poolData?.baseToken}
+          address={fundAddress}
+          baseToken={basicToken?.address}
           tfPosition="bottom"
         />
         <div>
           <Flex full ai="center" jc="space-between">
-            <S.TabCardLabel>Total P&L LP - {baseToken?.symbol}</S.TabCardLabel>
-            <Text color="#E4F2FF" fz={13} fw={600} lh="15px">
-              {totalPnlPercentage}% ({totalPnlBase?.format} {baseToken?.symbol})
-            </Text>
+            <S.TabCardLabel>Total P&L LP - {basicToken?.symbol}</S.TabCardLabel>
+            <S.TabCardValue>
+              {`${pnl?.total?.base.percent}% (${normalizeBigNumber(
+                pnl?.total?.base?.amount,
+                18,
+                6
+              )} ${basicToken?.symbol})`}
+            </S.TabCardValue>
           </Flex>
           <Flex full ai="center" jc="space-between" m="12px 0 0">
             <S.TabCardLabel>Total P&L LP - USD</S.TabCardLabel>
-            <Text color="#E4F2FF" fz={13} fw={600} lh="15px">
-              {totalUSDPnlPerc}% ({totalUSDPnlUSD} USD)
-            </Text>
+            <S.TabCardValue>
+              {`${pnl?.total?.usd.percent}% (${normalizeBigNumber(
+                pnl?.total?.usd?.amount,
+                18,
+                2
+              )} ${basicToken?.symbol})`}
+            </S.TabCardValue>
           </Flex>
         </div>
       </Card>
       <Card>
-        <BarChart address={poolData.id} />
+        <BarChart address={fundAddress} />
       </Card>
     </>
   )

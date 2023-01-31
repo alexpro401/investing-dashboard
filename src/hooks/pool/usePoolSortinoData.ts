@@ -35,9 +35,11 @@ function getActualPortfolioReturnPeriod(periods) {
   const last = new Date(expandTimestamp(periods[periods.length - 1].timestamp))
   const daysInLastMonth = getDaysInMonth(last)
 
-  const start = new Date(`${first.getFullYear()}-${first.getMonth()}-01 00:01`)
+  const start = new Date(
+    `${first.getFullYear()}-${first.getMonth() + 1}-01 00:01`
+  )
   const end = new Date(
-    `${last.getFullYear()}-${last.getMonth()}-${daysInLastMonth} 23:59`
+    `${last.getFullYear()}-${last.getMonth() + 1}-${daysInLastMonth} 23:59`
   )
 
   return {
@@ -104,6 +106,7 @@ const usePoolSortinoData = (
           _tokensHistoricalPrices[token] = tokenPrices[token]
         }
       }
+
       setTokensHistoricalPrices(_tokensHistoricalPrices)
     })()
   }, [TokenAPI, tokens, actualPortfolioReturnPeriod])

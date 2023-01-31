@@ -6,6 +6,7 @@ import {
   SetStateAction,
   useState,
   useCallback,
+  useEffect,
 } from "react"
 import { format } from "date-fns"
 import { BigNumber } from "@ethersproject/bignumber"
@@ -16,16 +17,16 @@ import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { expandTimestamp, isTxMined, normalizeBigNumber } from "utils"
 
-import Input from "components/Input"
-import Tooltip from "components/Tooltip"
 import DatePicker from "components/DatePicker"
 import { AppButton } from "common"
 
 import { accordionSummaryVariants } from "motion/variants"
 import { Flex } from "theme"
 import { DATE_TIME_FORMAT } from "consts/time"
-import { SettingsStyled as S } from "./styled"
+import * as S from "./styled-settings"
 import { TraderPoolInvestProposal } from "interfaces/typechain"
+import { ICON_NAMES } from "consts"
+import { InputField } from "fields"
 
 interface Values {
   timestampLimit: number
@@ -48,6 +49,11 @@ const useUpdateInvestProposal = ({
     normalizeBigNumber(maxSizeLP, 18, 6)
   )
 
+  useEffect(() => {
+    setTimestampLimit(timestamp.toString())
+    setInvestLPLimit(normalizeBigNumber(maxSizeLP, 18, 6))
+  }, [timestamp, maxSizeLP])
+
   return [
     { timestampLimit, investLPLimit },
     { setTimestampLimit, setInvestLPLimit },
@@ -66,7 +72,7 @@ interface Props {
   visible: boolean
   setVisible: Dispatch<SetStateAction<boolean>>
 
-  timestamp: BigNumber
+  timestamp: string
   maxSizeLP: BigNumber
   fullness: BigNumber
   proposalPool: TraderPoolInvestProposal | null
@@ -164,7 +170,7 @@ const InvestCardSettings: FC<Props> = ({
         })
 
         if (isTxMined(tx)) {
-          // Update data in card
+          // Update data in card
           successCallback(timestampLimit, parseUnits(investLPLimit, 18))
           onCancel()
         }
@@ -189,75 +195,64 @@ const InvestCardSettings: FC<Props> = ({
       variants={accordionSummaryVariants}
       onClick={(e) => e.stopPropagation()}
     >
-      <S.Head>
-        <S.Title>Investment proposal {ticker} settings</S.Title>
-      </S.Head>
-      <S.Content>
-        <S.Row minInputW="148px">
-          <Tooltip id="rp-expiration-date">End of invest proposal</Tooltip>
-          <S.Label>Expiration date:</S.Label>
-          <div>
-            <Input
-              disabled
-              theme="grey"
-              size="small"
-              value={format(expandTimestamp(timestampLimit), DATE_TIME_FORMAT)}
-              placeholder={format(
-                expandTimestamp(timestampLimit),
-                DATE_TIME_FORMAT
-              )}
-              onClick={() => setDateOpen(!isDateOpen)}
-            />
-            <DatePicker
-              isOpen={isDateOpen}
-              timestamp={expandTimestamp(timestampLimit)}
-              toggle={() => setDateOpen(false)}
-              onChange={setTimestampLimit}
-              minDate={new Date()}
-            />
-          </div>
-          <S.InputType>GMT</S.InputType>
-        </S.Row>
-        <Flex full dir="column" m="12px 0">
-          <S.Row minInputW="79px">
-            <Tooltip id="rp-available-staking">Staking</Tooltip>
-            <S.Label>LPs available for staking:</S.Label>
-            <Input
-              theme="grey"
-              size="small"
-              type="number"
-              inputmode="decimal"
-              value={investLPLimit}
-              placeholder="---"
-              onChange={(v) => setInvestLPLimit(v)}
-              error={errors.investLPLimit !== null}
-            />
-            <S.InputType> {ticker}</S.InputType>
-          </S.Row>
-          {errors.investLPLimit !== null && (
-            <S.ErrorMessage>{errors.investLPLimit}</S.ErrorMessage>
-          )}
+      <S.Header>
+        <Flex full ai={"center"} jc={"space-between"}>
+          <S.HeaderTitle>Investment proposal {ticker} settings:</S.HeaderTitle>
+          <S.HeaderCloseButton
+            color={"secondary"}
+            size={"x-small"}
+            iconRight={ICON_NAMES.close}
+            onClick={() => handleCancel()}
+          />
         </Flex>
+      </S.Header>
+
+      <S.Content>
+        <InputField
+          value={format(expandTimestamp(timestampLimit), DATE_TIME_FORMAT)}
+          onChange={() => {}}
+          onClick={() => setDateOpen(!isDateOpen)}
+          label="Expiration date"
+        />
+
+        <InputField
+          placeholder="---"
+          value={investLPLimit}
+          label="LPs available for staking"
+          setValue={(v) => setInvestLPLimit(v)}
+          errorMessage={
+            errors.investLPLimit !== null
+              ? String(errors.investLPLimit)
+              : undefined
+          }
+        />
         <S.ButtonGroup>
           <AppButton
             full
             color="secondary"
             type="button"
-            size="x-small"
+            size="small"
             text="Cancel"
             onClick={() => handleCancel()}
           />
           <AppButton
             full
-            color="primary"
+            color="tertiary"
             type="button"
-            size="x-small"
-            text="Apply changes"
+            size="small"
+            text="Done"
             onClick={() => handleSubmit()}
             disabled={isSubmiting}
           />
         </S.ButtonGroup>
       </S.Content>
+      <DatePicker
+        isOpen={isDateOpen}
+        timestamp={expandTimestamp(timestampLimit)}
+        toggle={() => setDateOpen(false)}
+        onChange={setTimestampLimit}
+        minDate={new Date()}
+      />
     </S.Container>
   )
 }

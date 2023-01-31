@@ -15,9 +15,8 @@ interface Props {}
 const DaoPoolsList: React.FC<Props> = () => {
   const navigate = useNavigate()
 
-  const { pools, votingPowers, loading, fetchMore } = useGovPoolsList()
-
-  const listRef = React.useRef<any>()
+  const { pools, votingPowers, descriptions, loading, fetchMore } =
+    useGovPoolsList()
 
   const { isDesktop } = useBreakpoints()
 
@@ -42,12 +41,13 @@ const DaoPoolsList: React.FC<Props> = () => {
   }
 
   return (
-    <List.Scroll ref={listRef} center={false}>
+    <List.Scroll center={false}>
       {pools.map((pool, index) => (
         <Indents key={pool.id} top={index > 0}>
           <DaoPoolCard
             data={pool}
             totalVotingPower={votingPowers[pool.id] ?? ZERO}
+            metadata={descriptions[pool.id] ?? null}
             onClick={() => {
               navigate(
                 generatePath(ROUTE_PATHS.daoItem, {
@@ -70,7 +70,7 @@ const DaoPoolsList: React.FC<Props> = () => {
       <LoadMore
         isLoading={loading && !!pools.length}
         handleMore={fetchMore}
-        r={listRef}
+        r={undefined}
       />
     </List.Scroll>
   )

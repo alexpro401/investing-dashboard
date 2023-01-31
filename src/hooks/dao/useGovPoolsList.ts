@@ -9,6 +9,7 @@ import {
   useQueryPagination,
   useGovPoolHelperContractsMulticall,
   useGovPoolVotingPowerMulticall,
+  useGovPoolDescriptionsMulticall,
 } from "hooks"
 import { addBignumbers } from "utils/formulas"
 import { graphClientDaoPools } from "utils/graphClient"
@@ -52,13 +53,31 @@ const useGovPoolsList = () => {
   const [votingPowerData, votingPowerDataLoading] =
     useGovPoolVotingPowerMulticall(votingPowerParams)
 
+  const descriptionsParams = React.useMemo(() => {
+    if (!data || isEmpty(data)) return []
+
+    return data.map((pool) => pool.id)
+  }, [data])
+
+  const [descriptions, descriptionsLoading] =
+    useGovPoolDescriptionsMulticall(descriptionsParams)
+
   const anyLoading = React.useMemo(
-    () => loading || helperContractsLoading || votingPowerDataLoading,
-    [loading, helperContractsLoading, votingPowerDataLoading]
+    () =>
+      loading ||
+      helperContractsLoading ||
+      votingPowerDataLoading ||
+      descriptionsLoading,
+    [
+      loading,
+      helperContractsLoading,
+      votingPowerDataLoading,
+      descriptionsLoading,
+    ]
   )
 
   const votingPowers = React.useMemo(() => {
-    if (anyLoading && !votingPowerData) {
+    if (votingPowerDataLoading && !votingPowerData) {
       return {}
     }
 
@@ -78,11 +97,12 @@ const useGovPoolsList = () => {
     }
 
     return result
-  }, [anyLoading, helperContracts, votingPowerData])
+  }, [votingPowerDataLoading, helperContracts, votingPowerData])
 
   return {
     pools: data,
     votingPowers,
+    descriptions,
     loading: anyLoading,
     fetchMore,
   }

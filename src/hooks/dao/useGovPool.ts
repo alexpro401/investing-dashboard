@@ -214,7 +214,6 @@ export const useGovPool = (address?: string) => {
       if (!account) return
 
       try {
-        // FIXME
         const rewardsAmount = await govPoolContract?.getPendingRewards(
           account,
           [proposalId]

@@ -2,7 +2,7 @@ import { FC, useMemo } from "react"
 import { format } from "date-fns"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { useActiveWeb3React } from "hooks"
+import { useActiveWeb3React, useBreakpoints } from "hooks"
 import { SupportedChainId } from "consts/chains"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
@@ -10,9 +10,11 @@ import { DATE_TIME_FORMAT } from "consts/time"
 import { InvestorRiskyVest } from "interfaces/thegraphs/investors"
 import { divideBignumbers } from "utils/formulas"
 
-import S from "./styled"
+import * as S from "./styled"
 
 import externalLinkIcon from "assets/icons/external-link.svg"
+import { Flex } from "theme"
+import { ICON_NAMES } from "consts"
 
 interface Props {
   data: InvestorRiskyVest
@@ -21,6 +23,7 @@ interface Props {
 
 const VestCard: FC<Props> = ({ data, baseTokenSymbol, ...rest }) => {
   const { chainId } = useActiveWeb3React()
+  const { isDesktop } = useBreakpoints()
 
   const href = useMemo(() => {
     if (data && chainId) {
@@ -80,15 +83,29 @@ const VestCard: FC<Props> = ({ data, baseTokenSymbol, ...rest }) => {
       rel="noopener noreferrer"
     >
       <S.Content>
-        <S.Item>
-          <S.Label>
-            {date}
-            <S.ExternalLinkIcon src={externalLinkIcon} />
-          </S.Label>
-          <S.Value>
-            {PositionDirection} {volumeLP2} LP2
-          </S.Value>
-        </S.Item>
+        {isDesktop ? (
+          <S.Item>
+            <Flex full jc={"flex-start"} gap={"8"}>
+              <S.DirectionIconWrp>
+                <S.DirectionIcon
+                  name={ICON_NAMES.arrow}
+                  dir={data.isInvest ? "bottom-left" : "top-right"}
+                />
+              </S.DirectionIconWrp>
+              {PositionDirection}
+            </Flex>
+          </S.Item>
+        ) : (
+          <S.Item>
+            <S.Label>
+              {date}
+              <S.ExternalLinkIcon src={externalLinkIcon} />
+            </S.Label>
+            <S.Value>
+              {PositionDirection} {volumeLP2} LP2
+            </S.Value>
+          </S.Item>
+        )}
         <S.Item>
           <S.Label>Price ({baseTokenSymbol ?? ""})</S.Label>
           <S.Value>{LP2PriceBase}</S.Value>
@@ -97,6 +114,14 @@ const VestCard: FC<Props> = ({ data, baseTokenSymbol, ...rest }) => {
           <S.Label>Price USD</S.Label>
           <S.Value>${LP2PriceUSD}</S.Value>
         </S.Item>
+        {isDesktop && (
+          <S.Item>
+            <S.Value>
+              {date}
+              <S.ExternalLinkIcon src={externalLinkIcon} />
+            </S.Value>
+          </S.Item>
+        )}
       </S.Content>
     </S.Container>
   )

@@ -10,24 +10,26 @@ import Tooltip from "components/Tooltip"
 
 import { useERC20Data } from "state/erc20/hooks"
 import { isAddressZero, normalizeBigNumber } from "utils"
-import { useDaoPoolMetadata } from "state/ipfsMetadata/hooks"
 import { IGovPoolQuery } from "interfaces/thegraphs/gov-pools"
 import useGovPoolStatistic from "hooks/dao/useGovPoolStatistic"
 import { BigNumber } from "@ethersproject/bignumber"
 import { ZERO } from "consts"
 import { useBreakpoints } from "hooks"
+import { IGovPoolDescription } from "types"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   data: IGovPoolQuery
   account?: string | null
   children?: React.ReactNode
   totalVotingPower?: BigNumber
+  metadata: IGovPoolDescription | null
 }
 
 const DaoPoolCard: React.FC<Props> = ({
   data,
   children,
   totalVotingPower = ZERO,
+  metadata,
   ...rest
 }) => {
   const { isDesktop } = useBreakpoints()
@@ -36,7 +38,6 @@ const DaoPoolCard: React.FC<Props> = ({
     !isAddressZero(data?.erc20Token) ? data.erc20Token : undefined
   )
 
-  const [{ daoPoolMetadata }] = useDaoPoolMetadata(data?.id)
   const [govPoolStatistic] = useGovPoolStatistic(data)
 
   const poolName = React.useMemo(() => {
@@ -67,7 +68,7 @@ const DaoPoolCard: React.FC<Props> = ({
     }
 
     return subTitle
-  }, [data.erc20Token, data.erc721Token, token])
+  }, [data, token])
 
   return (
     <S.DaoPoolCardRoot {...rest}>
@@ -77,7 +78,7 @@ const DaoPoolCard: React.FC<Props> = ({
             size={isDesktop ? 100 : 38}
             m="0 8px 0 0"
             address={data?.id}
-            source={daoPoolMetadata?.avatarUrl ?? ""}
+            source={metadata?.avatarUrl ?? ""}
           />
           <Flex dir="column" ai="flex-start" gap="4">
             <S.DaoPoolCardTitle>{poolName}</S.DaoPoolCardTitle>

@@ -3,6 +3,7 @@ import { FC } from "react"
 import { AppButton } from "common"
 import { BodyItem } from "components/cards/proposal/_shared"
 import { BigNumber } from "@ethersproject/bignumber"
+import { useBreakpoints } from "../../../../hooks"
 
 interface Props {
   ticker: string
@@ -35,6 +36,8 @@ const BodyInvestor: FC<Props> = ({
   poolPriceUSD,
   onInvest,
 }) => {
+  const { isDesktop } = useBreakpoints()
+
   return (
     <>
       {invested ? (
@@ -77,17 +80,19 @@ const BodyInvestor: FC<Props> = ({
           />
           <BodyItem label="Custodian" amount={"-"} />
           <BodyItem label="LP price ($)" amount={poolPriceUSD} />
-          <div>
-            <AppButton
-              full
-              onClick={(e) => {
-                e?.stopPropagation()
-                onInvest()
-              }}
-              size="x-small"
-              text="Stake LP"
-            />
-          </div>
+          {!isDesktop && (
+            <div>
+              <AppButton
+                full
+                onClick={(e) => {
+                  e?.stopPropagation()
+                  onInvest()
+                }}
+                size="x-small"
+                text="Stake LP"
+              />
+            </div>
+          )}
         </>
       )}
     </>

@@ -13,9 +13,12 @@ export const usePoolStatistics = (poolData?: IPoolQuery) => {
 
   const apy = useMemo(() => lastHistoryPoint?.APY, [lastHistoryPoint])
 
-  const pnl = useMemo(() => lastHistoryPoint?.percPNLBase, [lastHistoryPoint])
+  const pnlBasePercent = useMemo(
+    () => lastHistoryPoint?.percPNLBase,
+    [lastHistoryPoint]
+  )
 
-  const pnl24h = getPNL(priceLP)
+  const pnlBase24hPercent = getPNL(priceLP)
 
   const depositors = useMemo(() => poolData?.investorsCount, [poolData])
 
@@ -24,8 +27,8 @@ export const usePoolStatistics = (poolData?: IPoolQuery) => {
 
     tvl,
     apy,
-    pnl,
-    pnl24h,
+    pnlBasePercent,
+    pnlBase24hPercent,
     depositors,
   }
 }

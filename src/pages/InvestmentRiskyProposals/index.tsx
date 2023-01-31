@@ -1,13 +1,13 @@
 import { useMemo } from "react"
 import { Routes, Route } from "react-router-dom"
 
-import RouteTabs from "components/RouteTabs"
 import RiskyProposalsList from "./ProposalsList"
 import RiskyPositionsList from "./PositionsList"
 
 import { ITab } from "interfaces"
 import { useActiveWeb3React } from "hooks"
 import useInvestorProposalPools from "hooks/useInvestorProposalPools"
+import * as S from "./styled"
 
 const InvestmentRiskyProposals = () => {
   const { account } = useActiveWeb3React()
@@ -36,7 +36,7 @@ const InvestmentRiskyProposals = () => {
 
   return (
     <>
-      <RouteTabs m="16px 16px 0" tabs={tabs} />
+      <S.PageSubTabs tabs={tabs} />
       <Routes>
         <Route
           path="open"
