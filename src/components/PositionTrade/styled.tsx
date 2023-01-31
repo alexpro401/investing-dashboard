@@ -15,17 +15,13 @@ export const Container = styled.a`
 export const Content = styled.div`
   display: grid;
   grid-template-columns: 0.5fr 0.25fr 0.25fr;
-  gap: 18px;
+  gap: var(--app-gap);
   width: 100%;
   padding: 12px 15px;
 
   ${respondTo("lg")} {
-    display: flex;
-    flex-direction: row;
-
-    & > * {
-      flex: 1 0 155px;
-    }
+    grid-template-columns: repeat(4, minmax(0, 145px)) 1fr;
+    justify-items: flex-start;
   }
 `
 export const Item = styled(Flex)`
@@ -39,9 +35,7 @@ export const Item = styled(Flex)`
   }
 
   ${respondTo("lg")} {
-    width: initial;
-    flex: 1 0 155px;
-    max-width: 160px;
+    align-self: stretch;
     justify-content: center;
 
     &:last-child {
