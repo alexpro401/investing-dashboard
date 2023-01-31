@@ -30,7 +30,7 @@ export const CardHeadTitle = styled.span`
 `
 
 export const NodeLeft = styled.div`
-  margin-right: 12px;
+  margin-right: 8px;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -104,3 +104,14 @@ export const isBnLte: ValidatorFunc =
       message ??
       `This field must be less than ${cutStringZeroes(comparableString)}`,
   })
+
+export const isBnGt: ValidatorFunc =
+  (comparableString: string, decimals: number, message?: string) =>
+  (string: string) => ({
+    isValid: parseUnits(string, decimals).gt(
+      parseUnits(comparableString, decimals)
+    ),
+    message:
+      message ??
+      `This field must be greater than ${cutStringZeroes(comparableString)}`,
+  })

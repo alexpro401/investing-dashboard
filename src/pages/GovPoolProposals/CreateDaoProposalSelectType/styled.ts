@@ -1,12 +1,16 @@
 import { NavLink } from "react-router-dom"
 import styled from "styled-components/macro"
-import { motion } from "framer-motion"
 
-import theme from "theme"
-import { AppButton } from "common"
+import theme, { respondTo } from "theme"
+import { SelectableCard } from "common"
 import Tooltip from "components/Tooltip"
+import {
+  SelectableCardTitles,
+  SelectableCardHead,
+} from "common/SelectableCard/styled"
+import { NodeRight } from "common/Card/styled"
 
-export { PageHolder, SkeletonLoader } from "../styled"
+export { PageHolder } from "../styled"
 
 export const Content = styled.div`
   display: flex;
@@ -25,7 +29,7 @@ export const HeaderWrp = styled.div`
 `
 
 export const DesktopHeaderWrp = styled.div`
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 `
 
 export const BlockTitle = styled.span`
@@ -37,7 +41,7 @@ export const BlockTitle = styled.span`
 export const BlockGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 24px;
 `
 
 export const CreateProposalSelectTypeTitle = styled.span`
@@ -57,11 +61,34 @@ export const CreateProposalSelectTypeCreateNew = styled(NavLink)`
   font-size: 16px;
   line-height: 19px;
 `
-export const CreateProposalSelectTypeSubmitButton = styled(AppButton)`
-  margin-top: auto;
-  width: 100%;
-  flex-shrink: 0;
-`
+
+export const ProposalSelectableCard = styled(SelectableCard)`
+  ${SelectableCardTitles} {
+    ${NodeRight} {
+      margin-left: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+
+  ${SelectableCardHead} {
+    ${respondTo("sm")} {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 12px;
+    }
+  }
+` as typeof SelectableCard
+
 export const ProposalTypeGuide = styled.div`
   overflow: visible;
   display: grid;

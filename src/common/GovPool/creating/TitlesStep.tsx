@@ -527,59 +527,54 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
         </Avatar>
 
         {isCreatingProposal ? (
-          <>
-            <Card>
-              <CardHead
-                nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
-                title="DAO Name"
+          <Card>
+            <CardHead
+              nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
+              title="About DAO"
+            />
+            <CardDescription>
+              <p>Add your DAO’s website, description, and social links.</p>
+            </CardDescription>
+            <CardFormControl>
+              <InputField
+                value={daoName.get}
+                setValue={daoName.set}
+                label="DAO name"
+                labelNodeRight={
+                  isFieldValid("daoName") ? (
+                    <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                  ) : (
+                    <></>
+                  )
+                }
+                errorMessage={getFieldErrorMessage("daoName")}
+                onBlur={() => touchField("daoName")}
               />
-              <CardDescription>
-                <p>Up to 15 characters</p>
-              </CardDescription>
-              <CardFormControl>
-                <InputField
-                  value={daoName.get}
-                  setValue={daoName.set}
-                  label="DAO name"
-                  labelNodeRight={
-                    isFieldValid("daoName") ? (
-                      <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
-                    ) : (
-                      <></>
-                    )
-                  }
-                  errorMessage={getFieldErrorMessage("daoName")}
-                  onBlur={() => touchField("daoName")}
-                />
-              </CardFormControl>
-            </Card>
-            <Card>
-              <CardHead
-                nodeLeft={<Icon name={ICON_NAMES.globe} />}
-                title="Additional Info"
+              <TextareaField
+                value={description.get}
+                setValue={description.set}
+                label="Description"
+                errorMessage={getFieldErrorMessage("description")}
+                onBlur={() => touchField("description")}
               />
-              <CardDescription>
-                <p>Add your DAO’s website, description, and social links.</p>
-              </CardDescription>
-              <CardFormControl>
-                <InputField
-                  value={websiteUrl.get}
-                  setValue={websiteUrl.set}
-                  label="Site"
-                  errorMessage={getFieldErrorMessage("websiteUrl")}
-                  onBlur={() => touchField("websiteUrl")}
-                />
-                <TextareaField
-                  value={description.get}
-                  setValue={description.set}
-                  label="Description"
-                  errorMessage={getFieldErrorMessage("description")}
-                  onBlur={() => touchField("description")}
-                />
-                {SocialLinks}
-              </CardFormControl>
-            </Card>
-          </>
+              <InputField
+                value={websiteUrl.get}
+                setValue={websiteUrl.set}
+                label="DAO site"
+                errorMessage={getFieldErrorMessage("websiteUrl")}
+                onBlur={() => touchField("websiteUrl")}
+                nodeRight={
+                  <AppButton
+                    color="default"
+                    size="no-paddings"
+                    text="Paste"
+                    onClick={() => pasteFromClipboard(websiteUrl.set)}
+                  />
+                }
+              />
+              {SocialLinks}
+            </CardFormControl>
+          </Card>
         ) : (
           <>
             <Card>
@@ -615,9 +610,17 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
                 <InputField
                   value={websiteUrl.get}
                   setValue={websiteUrl.set}
-                  label="Site"
+                  label="DAO site"
                   errorMessage={getFieldErrorMessage("websiteUrl")}
                   onBlur={() => touchField("websiteUrl")}
+                  nodeRight={
+                    <AppButton
+                      color="default"
+                      size="no-paddings"
+                      text="Paste"
+                      onClick={() => pasteFromClipboard(websiteUrl.set)}
+                    />
+                  }
                 />
               </CardFormControl>
               {SocialLinks}
@@ -777,44 +780,48 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
               profile, such as the DAO Memorandum.
             </p>
           </CardDescription>
-          <S.SettingsWrapper>
-            {documents.get.map((el, idx) => (
-              <ExternalDocumentField
-                key={idx}
-                value={el}
-                setValue={(doc) => documents.set(doc, idx)}
-                topFieldNodeRight={
-                  documents.get.length > 1 ? (
-                    <AppButton
-                      type="button"
-                      color="default"
-                      size="no-paddings"
-                      iconRight={ICON_NAMES.trash}
-                      onClick={() =>
-                        documents.set(documents.get.filter((_, i) => i !== idx))
-                      }
-                    />
-                  ) : null
-                }
-                label={`Document ${idx + 1}`}
-                labelNodeRight={
-                  !!el.name && !!el.url && isValidUrl(el.url) ? (
-                    <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
-                  ) : (
-                    <></>
-                  )
-                }
-                errorMessage={
-                  getFieldErrorMessage(`documents[${idx}].url`) ||
-                  getFieldErrorMessage(`documents[${idx}].name`)
-                }
-                onBlur={() => {
-                  touchField(`documents[${idx}].name`)
-                  touchField(`documents[${idx}].url`)
-                }}
-              />
-            ))}
-          </S.SettingsWrapper>
+          {documents.get.length !== 0 && (
+            <S.SettingsWrapper>
+              {documents.get.map((el, idx) => (
+                <ExternalDocumentField
+                  key={idx}
+                  value={el}
+                  setValue={(doc) => documents.set(doc, idx)}
+                  topFieldNodeRight={
+                    documents.get.length > 1 ? (
+                      <AppButton
+                        type="button"
+                        color="default"
+                        size="no-paddings"
+                        iconRight={ICON_NAMES.trash}
+                        onClick={() =>
+                          documents.set(
+                            documents.get.filter((_, i) => i !== idx)
+                          )
+                        }
+                      />
+                    ) : null
+                  }
+                  label={`Document ${idx + 1}`}
+                  labelNodeRight={
+                    !!el.name && !!el.url && isValidUrl(el.url) ? (
+                      <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                    ) : (
+                      <></>
+                    )
+                  }
+                  errorMessage={
+                    getFieldErrorMessage(`documents[${idx}].url`) ||
+                    getFieldErrorMessage(`documents[${idx}].name`)
+                  }
+                  onBlur={() => {
+                    touchField(`documents[${idx}].name`)
+                    touchField(`documents[${idx}].url`)
+                  }}
+                />
+              ))}
+            </S.SettingsWrapper>
+          )}
           <S.CardAddBtn
             color="default"
             text="+ Add more"

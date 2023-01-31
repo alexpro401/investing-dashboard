@@ -4,7 +4,7 @@ import theme from "theme"
 import { AppButton, Icon } from "common"
 
 export const DesktopHeaderWrp = styled.div`
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   display: flex;
   flex-direction: column;
 `

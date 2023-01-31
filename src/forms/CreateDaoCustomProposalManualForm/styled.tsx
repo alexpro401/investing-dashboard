@@ -3,7 +3,7 @@ import styled from "styled-components/macro"
 import { Flex } from "theme"
 
 export const DesktopHeaderWrp = styled.div`
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   display: flex;
   flex-direction: column;
 `

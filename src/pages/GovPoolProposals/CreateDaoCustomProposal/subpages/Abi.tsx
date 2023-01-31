@@ -8,7 +8,6 @@ import AdvancedABIContextProvider from "context/govPool/proposals/custom/Advance
 import CreateDaoProposalAbiForm from "forms/CreateDaoCustomProposalAbiForm"
 import Skeleton from "components/Skeleton"
 import FormStepsLoaderWrapper from "common/FormSteps/FormStepsLoaderWrapper"
-import { Flex } from "theme"
 import { useBreakpoints } from "hooks"
 
 import * as S from "../styled"
