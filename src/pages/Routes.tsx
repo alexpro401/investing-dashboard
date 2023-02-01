@@ -191,6 +191,21 @@ export const router = createBrowserRouter([
           {
             path: ROUTE_PATHS.poolProfile,
             element: <PoolProfile />,
+            handle: (params) => [
+              {
+                label: "Pools",
+                path: generatePath(ROUTE_PATHS.topMembers, {
+                  "*": "all",
+                }),
+              },
+              {
+                label: shortenAddress(params.poolAddress),
+                path: generatePath(ROUTE_PATHS.poolProfile, {
+                  poolAddress: params.poolAddress,
+                  "*": "",
+                }),
+              },
+            ],
           },
           {
             path: ROUTE_PATHS.riskyProposalCreate,

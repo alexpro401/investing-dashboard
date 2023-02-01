@@ -45,6 +45,7 @@
     }
   },
   "pool-profile": {
+    "manage-fund-btn": "Manage Fund",
     "explorer-link": "View on bscscan",
     "copy-btn": "Copy address",
     "statistic-heading": "Statistic",
@@ -59,7 +60,8 @@
     "min-invest-amount-lbl": "Min. invest amount",
     "fund-managers-lbl": "Fund managers",
     "whitelist-lbl": "Whitelist",
-    "manage-fund-modal-title": "Manage Fund"
+    "manage-fund-modal-title": "Manage Fund",
+    "invest-self-link": "Invest more in my fund"
   },
   "trader-pools-list": {
     "tooltip-msg": "Tooltip message"

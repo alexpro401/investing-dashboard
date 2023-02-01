@@ -17,17 +17,12 @@ interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const TabPoolInfo: FC<Props> = () => {
   const {
-    fundType,
     fundAddress,
-    basicToken,
-    fundTicker,
-    fundName,
 
     minInvestAmount,
     emission,
     availableLPTokens,
 
-    creationDate,
     isTrader,
 
     performanceFee,
@@ -48,20 +43,11 @@ const TabPoolInfo: FC<Props> = () => {
       <Card>
         <Flex full ai="center" jc="space-between">
           <S.TabCardTitle>Fund settings</S.TabCardTitle>
-          {isTrader && fundAddress && (
+          {isTrader && fundAddress && !isSmallTablet && (
             <S.AppLink
               text="Manage"
               onClick={() => {
-                if (isSmallTablet) {
-                  Bus.emit("manage-modal")
-                } else {
-                  navigate(
-                    generatePath(ROUTE_PATHS.poolProfile, {
-                      poolAddress: fundAddress,
-                      "*": "details",
-                    })
-                  )
-                }
+                Bus.emit("manage-modal")
               }}
             />
           )}
@@ -116,20 +102,11 @@ const TabPoolInfo: FC<Props> = () => {
       <Card>
         <Flex full ai="center" jc="space-between">
           <S.TabCardTitle>Fund description</S.TabCardTitle>
-          {isTrader && fundAddress && (
+          {isTrader && fundAddress && !isSmallTablet && (
             <S.AppLink
               text="Edit"
               onClick={() => {
-                if (isSmallTablet) {
-                  Bus.emit("manage-modal")
-                } else {
-                  navigate(
-                    generatePath(ROUTE_PATHS.poolProfile, {
-                      poolAddress: fundAddress,
-                      "*": "details",
-                    })
-                  )
-                }
+                Bus.emit("manage-modal")
               }}
             />
           )}
@@ -138,13 +115,32 @@ const TabPoolInfo: FC<Props> = () => {
           {fundDescription || "No description provided"}
         </S.TabCardValue>
 
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardTitle>Fund strategy</S.TabCardTitle>
-        </Flex>
-        <S.TabCardValue>
-          {fundStrategy || "No strategy provided"}
-        </S.TabCardValue>
+        {!isSmallTablet ? (
+          <>
+            <Flex full ai="center" jc="space-between">
+              <S.TabCardTitle>Fund strategy</S.TabCardTitle>
+            </Flex>
+            <S.TabCardValue>
+              {fundStrategy || "No strategy provided"}
+            </S.TabCardValue>
+          </>
+        ) : (
+          <></>
+        )}
       </Card>
+
+      {isSmallTablet ? (
+        <Card>
+          <Flex full ai="center" jc="space-between">
+            <S.TabCardTitle>Fund strategy</S.TabCardTitle>
+          </Flex>
+          <S.TabCardValue>
+            {fundStrategy || "No strategy provided"}
+          </S.TabCardValue>
+        </Card>
+      ) : (
+        <></>
+      )}
     </>
   )
 }

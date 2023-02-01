@@ -27,6 +27,7 @@ export { default as AppLogo } from "./AppLogo"
 export { default as Tabs } from "./Tabs"
 export { default as AccountInvestmentPools } from "./AccountInvestmentPools"
 export { default as PoolStatisticsItem } from "./PoolStatisticsItem"
+export { default as Dropdown } from "./Dropdown"
 
 export * from "./Typography"
 export * from "./dao"
