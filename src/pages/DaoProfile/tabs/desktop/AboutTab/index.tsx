@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react"
 
 import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommonContext/GovPoolProfileCommonContext"
+import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsContext/GovPoolProfileTabsContext"
 import { Flex } from "theme"
 import TabFallback from "../../TabFallback"
 import {
@@ -16,10 +17,11 @@ import * as S from "./styled"
 
 const AboutTab: React.FC = () => {
   const { descriptionObject } = useContext(GovPoolProfileCommonContext)
+  const { aboutDaoLoading } = useContext(GovPoolProfileTabsContext)
 
   const [chart, setChart] = useState<PageChart>(PageChart.tvl)
 
-  if (descriptionObject === undefined) return <TabFallback />
+  if (descriptionObject === undefined || aboutDaoLoading) return <TabFallback />
 
   return (
     <Flex full gap="48" dir="column">

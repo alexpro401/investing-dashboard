@@ -2,6 +2,8 @@ import styled from "styled-components/macro"
 
 import theme, { Flex } from "theme"
 import { AppButton } from "common"
+import { PoolStatisticsItem } from "pages/PoolProfile/components"
+import { PoolStatisticsItemDetailsLabel } from "common/PoolStatisticsItem/styled"
 
 export const Root = styled(Flex).attrs(() => ({
   full: true,
@@ -44,4 +46,10 @@ export const Statistics = styled(Flex).attrs(() => ({
   gap: "16",
 }))`
   flex: 1 1 auto;
+`
+
+export const PoolStatisticsItemMyVotes = styled(PoolStatisticsItem)`
+  ${PoolStatisticsItemDetailsLabel} {
+    color: ${theme.brandColors.secondary};
+  }
 `

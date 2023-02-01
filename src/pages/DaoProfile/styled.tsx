@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import styled from "styled-components/macro"
+import styled, { css } from "styled-components/macro"
 import { Link } from "react-router-dom"
 
 import theme, { Flex, respondTo, Text } from "theme"
@@ -77,10 +77,22 @@ export const ChartFilterItem = styled(Text).attrs(() => ({
   variants: ChartFilterItemVariants,
   initial: ChartFilterItemVariants.hidden,
   transition: { duration: 0.2 },
-}))`
+}))<{ isActive: boolean }>`
   padding: 2px 8px;
   border-radius: 20px;
   cursor: pointer;
+
+  ${respondTo("md")} {
+    padding: 4px 16px;
+
+    ${(props) =>
+      props.isActive
+        ? css`
+            font-weight: 700 !important;
+            color: ${theme.brandColors.secondary} !important;
+          `
+        : css``}
+  }
 `
 
 const DaoProfileTextShared = {

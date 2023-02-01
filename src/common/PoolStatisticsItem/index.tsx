@@ -10,6 +10,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   label?: string
   value?: string
   percentage?: number
+  percentageLabel?: string
   tooltipMsg?: string
 }
 
@@ -19,6 +20,7 @@ export const PoolStatisticsItem: FC<Props> = ({
   label,
   value,
   percentage,
+  percentageLabel,
   tooltipMsg,
   ...rest
 }) => {
@@ -50,6 +52,13 @@ export const PoolStatisticsItem: FC<Props> = ({
               <S.PoolStatisticsItemDetailsPercentage isRaise={percentage >= 0}>
                 {percentage >= 0 ? `+${percentage}%` : `${percentage}%`}
               </S.PoolStatisticsItemDetailsPercentage>
+            ) : (
+              <></>
+            )}
+            {isSmallTablet && percentageLabel !== undefined ? (
+              <S.PoolStatisticsItemDetailsPercentageLabel>
+                {percentageLabel}
+              </S.PoolStatisticsItemDetailsPercentageLabel>
             ) : (
               <></>
             )}

@@ -13,6 +13,7 @@ import extractRootDomain from "utils/extractRootDomain"
 import { DATE_FORMAT } from "consts/time"
 import { ICON_NAMES } from "consts/icon-names"
 import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommonContext/GovPoolProfileCommonContext"
+import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsContext/GovPoolProfileTabsContext"
 
 import { Divider, TextLabel, TextValue } from "../../styled"
 
@@ -24,8 +25,9 @@ const DaoProfileTabAbout: React.FC<IDaoProfileTabAboutProps> = ({
   creationTime,
 }) => {
   const { descriptionObject } = useContext(GovPoolProfileCommonContext)
+  const { aboutDaoLoading } = useContext(GovPoolProfileTabsContext)
 
-  if (descriptionObject === undefined) return <TabFallback />
+  if (descriptionObject === undefined || aboutDaoLoading) return <TabFallback />
 
   if (descriptionObject === null) {
     return (

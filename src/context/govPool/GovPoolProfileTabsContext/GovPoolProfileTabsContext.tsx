@@ -2,7 +2,12 @@ import { createContext, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { EDaoProfileTab } from "types/govPoolProfile.types"
-import { useValidators, useDelegations, useMyBalance } from "./hooks"
+import {
+  useValidators,
+  useDelegations,
+  useMyBalance,
+  useAboutDao,
+} from "./hooks"
 
 type UintArrayStructOutput = [BigNumber[], BigNumber] & {
   values: BigNumber[]
@@ -27,6 +32,10 @@ interface INftDelegatee {
 
 interface IGovPoolProfileTabsContext {
   currentTab: { get: EDaoProfileTab; set: (value: EDaoProfileTab) => void }
+
+  //about
+  myVotingPower: BigNumber | undefined
+  aboutDaoLoading: boolean
 
   //validators
   validatorsCount: number | null
@@ -73,6 +82,10 @@ interface IGovPoolProfileTabsContext {
 export const GovPoolProfileTabsContext =
   createContext<IGovPoolProfileTabsContext>({
     currentTab: { get: EDaoProfileTab.about, set: () => {} },
+
+    //about
+    myVotingPower: undefined,
+    aboutDaoLoading: false,
 
     //validators
     validatorsCount: null,
@@ -133,6 +146,10 @@ const GovPoolProfileTabsContextProvider: React.FC<
     undefined | INftDelegatee[]
   >(undefined)
 
+  const { loading: aboutDaoLoading, myVotingPower } = useAboutDao({
+    startLoading: _currentTab === EDaoProfileTab.about,
+  })
+
   const { validatorsCount, loading: validatorsLoading } = useValidators({
     startLoading: _currentTab === EDaoProfileTab.validators,
   })
@@ -165,6 +182,10 @@ const GovPoolProfileTabsContextProvider: React.FC<
     <GovPoolProfileTabsContext.Provider
       value={{
         currentTab: { get: _currentTab, set: _setCurrentTab },
+
+        //about
+        myVotingPower,
+        aboutDaoLoading,
 
         //validators
         validatorsCount: validatorsCount,

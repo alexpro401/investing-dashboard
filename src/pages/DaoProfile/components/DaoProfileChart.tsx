@@ -4,6 +4,10 @@ import { v4 as uuidv4 } from "uuid"
 
 import { PageChart } from "../types"
 import { Flex } from "theme"
+import Chart from "components/Chart"
+import { CHART_TYPE, TIMEFRAME } from "consts/chart"
+import { useBreakpoints } from "hooks"
+
 import {
   ChartFilter,
   ChartFilterItem,
@@ -11,8 +15,6 @@ import {
   TextValue,
   DaoChartCardWrap,
 } from "../styled"
-import Chart from "components/Chart"
-import { CHART_TYPE, TIMEFRAME } from "consts/chart"
 
 const FakeChartData = [
   {
@@ -79,26 +81,11 @@ interface Props {
 const DaoProfileChart: React.FC<Props> = ({ chart, setChart }) => {
   const timeframe = React.useState(TIMEFRAME.m)
   const activePoint = React.useState<any>()
+  const { isBigTablet } = useBreakpoints()
 
   React.useEffect(() => {
     activePoint[1](undefined)
   }, [chart])
-
-  const ChartActiveDotValues = React.useMemo(
-    () => (
-      <Flex dir="column" ai="flex-start" jc="center" gap="4">
-        <TextValue fw={700}>
-          {isNil(activePoint[0])
-            ? "0.0"
-            : activePoint[0].activePayload[0].payload[
-                activePoint[0].activePayload[0].name
-              ]}
-        </TextValue>
-        <TextLabel fw={500}>Total</TextLabel>
-      </Flex>
-    ),
-    [activePoint]
-  )
 
   const ChartToggle = React.useMemo(
     () => (
@@ -108,14 +95,37 @@ const DaoProfileChart: React.FC<Props> = ({ chart, setChart }) => {
             key={uuidv4()}
             onClick={() => setChart(name)}
             animate={chart === name ? "visible" : "hidden"}
+            isActive={chart === name}
           >
             {name}
           </ChartFilterItem>
         ))}
       </ChartFilter>
     ),
-    [chart]
+    [chart, setChart]
   )
+
+  const ChartActiveDotValues = React.useMemo(
+    () => (
+      <>
+        {!isBigTablet && (
+          <Flex dir="column" ai="flex-start" jc="center" gap="4">
+            <TextValue fw={700}>
+              {isNil(activePoint[0])
+                ? "0.0"
+                : activePoint[0].activePayload[0].payload[
+                    activePoint[0].activePayload[0].name
+                  ]}
+            </TextValue>
+            <TextLabel fw={500}>Total</TextLabel>
+          </Flex>
+        )}
+        {isBigTablet && ChartToggle}
+      </>
+    ),
+    [activePoint, isBigTablet, ChartToggle]
+  )
+
   const onChoosePoint = React.useCallback(
     (p) => {
       if (
