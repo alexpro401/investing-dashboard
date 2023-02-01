@@ -56,8 +56,6 @@ const PoolProfileContent = () => {
   const { isSmallTablet, isTablet, isMediumTablet } = useBreakpoints()
 
   const {
-    traderInfo,
-
     fundType,
     fundAddress,
     basicToken,
@@ -232,12 +230,27 @@ const PoolProfileContent = () => {
                         />
                         {t("pool-profile.copy-btn")}
                       </S.PoolProfileGeneralActionsDropdownItem>
-                      <S.PoolProfileGeneralActionsDropdownItem>
-                        <S.PoolProfileGeneralActionsDropdownItemIcon
-                          name={ICON_NAMES.github}
-                        />
-                        Github
-                      </S.PoolProfileGeneralActionsDropdownItem>
+                      {!isMediumTablet ? (
+                        [
+                          { link: "", icon: ICON_NAMES.github, name: "Github" },
+                          { link: "", icon: ICON_NAMES.github, name: "Github" },
+                          { link: "", icon: ICON_NAMES.github, name: "Github" },
+                          { link: "", icon: ICON_NAMES.github, name: "Github" },
+                          { link: "", icon: ICON_NAMES.github, name: "Github" },
+                        ].map((el, idx) => (
+                          <S.PoolProfileGeneralActionsDropdownItem
+                            key={idx}
+                            onClick={() => window.open(el.link, "_blank")}
+                          >
+                            <S.PoolProfileGeneralActionsDropdownItemIcon
+                              name={el.icon}
+                            />
+                            {el.name}
+                          </S.PoolProfileGeneralActionsDropdownItem>
+                        ))
+                      ) : (
+                        <></>
+                      )}
                     </S.PoolProfileGeneralActionsDropdownContent>
                   </Dropdown>
                 </S.PoolProfileGeneralActions>

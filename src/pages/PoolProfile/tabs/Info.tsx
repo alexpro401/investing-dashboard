@@ -46,47 +46,6 @@ const TabPoolInfo: FC<Props> = () => {
   return (
     <>
       <Card>
-        <S.TabCardTitle>Information</S.TabCardTitle>
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardLabel>Creation date</S.TabCardLabel>
-          {creationDate && (
-            <S.TabCardValue>
-              {DateUtil.format(
-                DateUtil.fromTimestamp(creationDate) as Date,
-                DATE_FORMAT
-              )}
-            </S.TabCardValue>
-          )}
-        </Flex>
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardLabel>Fund address</S.TabCardLabel>
-          <S.TabCardValue>{shortenAddress(fundAddress, 2)}</S.TabCardValue>
-        </Flex>
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardLabel>Basic token</S.TabCardLabel>
-          <S.TabCardValue>{basicToken?.symbol}</S.TabCardValue>
-        </Flex>
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardLabel>Fund ticker</S.TabCardLabel>
-          <S.TabCardValue>{fundTicker}</S.TabCardValue>
-        </Flex>
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardLabel>Fund name</S.TabCardLabel>
-          <S.TabCardValue>{fundName}</S.TabCardValue>
-        </Flex>
-        {fundType && (
-          <Flex full ai="center" jc="space-between">
-            <S.TabCardLabel>Type of fund</S.TabCardLabel>
-            <S.TabCardValue>{localizePoolType(fundType)}</S.TabCardValue>
-          </Flex>
-        )}
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardLabel></S.TabCardLabel>
-          <S.TabCardValue></S.TabCardValue>
-        </Flex>
-      </Card>
-
-      <Card>
         <Flex full ai="center" jc="space-between">
           <S.TabCardTitle>Fund settings</S.TabCardTitle>
           {isTrader && fundAddress && (
