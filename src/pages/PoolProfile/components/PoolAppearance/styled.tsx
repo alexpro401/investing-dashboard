@@ -1,5 +1,7 @@
 import styled from "styled-components/macro"
 import { respondTo } from "theme"
+import { Icon } from "common"
+import { ICON_NAMES } from "consts"
 
 export const PoolAppearanceContainer = styled.div`
   display: flex;
@@ -34,6 +36,8 @@ export const PoolAppearanceDetails = styled.div`
 `
 
 export const PoolAppearanceTitles = styled.div`
+  align-self: flex-start;
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -43,6 +47,28 @@ export const PoolAppearanceTitles = styled.div`
     flex-direction: row;
     gap: 4px;
   }
+`
+
+export const PoolAppearanceShareBtn = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 105%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${(props) => props.theme.brandColors.secondary};
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+`
+
+export const PoolAppearanceShareIcon = styled(Icon).attrs({
+  name: ICON_NAMES.share,
+})`
+  width: 14px;
+  height: 14px;
 `
 
 export const PoolAppearanceSymbol = styled.div`

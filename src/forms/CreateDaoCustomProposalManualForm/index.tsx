@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
 } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
@@ -52,12 +53,21 @@ const CreateDaoCustomProposalManualForm: React.FC = () => {
 
   const [currentStep, setCurrentStep] = useState<STEPS>(STEPS.manualInfo)
   const createProposal = useGovPoolCreateCustomProposalManual(daoAddress)
+  const stepsWrapperRef = useRef<HTMLDivElement>(null)
 
   const totalStepsCount = useMemo(() => Object.values(STEPS).length + 1, [])
   const currentStepNumber = useMemo(
     () => Object.values(STEPS).indexOf(currentStep) + 2,
     [currentStep]
   )
+
+  useEffect(() => {
+    if (stepsWrapperRef.current) {
+      stepsWrapperRef.current.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+  }, [currentStep, stepsWrapperRef])
 
   const handeCreateProposal = useCallback(() => {
     createProposal({
@@ -130,7 +140,7 @@ const CreateDaoCustomProposalManualForm: React.FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        <S.StepsWrapper>
+        <S.StepsWrapper ref={stepsWrapperRef}>
           {currentStep === STEPS.manualInfo && (
             <S.StepsContainer>
               <ManualStep />

@@ -7,6 +7,11 @@ export const SuccessLabelIcon = styled(Icon)`
   color: ${theme.statusColors.success};
 `
 
+export const DurationCardFormControl = styled(CardFormControl)`
+  padding: 0;
+  padding-top: 16px;
+`
+
 export const DurationParamsContainer = styled.div`
   display: flex;
   flex-direction: column;

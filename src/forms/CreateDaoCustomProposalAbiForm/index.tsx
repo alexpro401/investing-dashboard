@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
 } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
@@ -47,6 +48,7 @@ const CreateDaoCustomProposalAbiForm: React.FC = () => {
     executorValue,
     encodedMethods,
   } = useContext(AdvancedABIContext)
+  const stepsWrapperRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     dispatch(hideTapBar())
@@ -99,6 +101,14 @@ const CreateDaoCustomProposalAbiForm: React.FC = () => {
     encodedMethods,
   ])
 
+  useEffect(() => {
+    if (stepsWrapperRef.current) {
+      stepsWrapperRef.current.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+  }, [currentStep, stepsWrapperRef])
+
   const handlePrevStep = useCallback(() => {
     switch (currentStep) {
       case STEPS.abiInfo: {
@@ -141,7 +151,7 @@ const CreateDaoCustomProposalAbiForm: React.FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        <S.StepsWrapper>
+        <S.StepsWrapper ref={stepsWrapperRef}>
           {currentStep === STEPS.abiInfo && (
             <S.StepsContainer>
               <AbiStep />

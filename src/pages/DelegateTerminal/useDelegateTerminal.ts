@@ -1,26 +1,27 @@
+import { useCallback, useMemo, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { ZERO } from "consts"
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
-import { useERC721Tokens, useOwnedERC721Tokens } from "hooks/useERC721List"
-import { useCallback, useMemo, useState } from "react"
-import {
-  useGovPoolUserVotingPower,
-  useGovPoolMemberBalance,
-  useGovPoolHelperContracts,
-  useGovPoolVotingAssets,
-  useGovPoolDelegate,
-  useGovPoolDeposit,
-} from "hooks/dao"
-import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import { multiplyBignumbers } from "utils/formulas"
 import { useERC20Data } from "state/erc20/hooks"
+
 import {
   useActiveWeb3React,
   useERC20Allowance,
   useERC721Allowance,
+  useTokenPriceOutUSD,
+  useGovPoolWithdrawableAssetsQuery,
+  useERC20GovBalance,
+  useGovPoolUserVotingPower,
+  useGovPoolHelperContracts,
+  useGovPoolVotingAssets,
+  useGovPoolDelegate,
+  useGovPoolDeposit,
+  useERC721Tokens,
+  useOwnedERC721Tokens,
 } from "hooks"
-import { useGovPoolWithdrawableAssetsQuery } from "hooks/dao/useGovPoolWithdrawableAssets"
-import { useNavigate } from "react-router-dom"
+
 import { isAddress } from "utils"
+import { addBignumbers, multiplyBignumbers } from "utils/formulas"
 
 export enum ButtonTypes {
   UNLOCK = "UNLOCK",
@@ -68,8 +69,8 @@ const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
 
   const [{ tokenAddress, nftAddress, haveToken, haveNft }] =
     useGovPoolVotingAssets(daoPoolAddress)
-  const { ERC20Balance, ERC721Balance, tokenBalanceLocked } =
-    useGovPoolMemberBalance(daoPoolAddress)
+
+  const erc20Balances = useERC20GovBalance(daoPoolAddress)
 
   const [fromData] = useERC20Data(tokenAddress)
   const priceUSD = useTokenPriceOutUSD({ tokenAddress })
@@ -93,6 +94,13 @@ const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
   // user nfts ids lists
   const userTokens = useERC721Tokens(daoPoolAddress)
 
+  const ERC20Balance = useMemo(() => {
+    return addBignumbers(
+      [erc20Balances.walletBalance, 18],
+      [erc20Balances.poolBalance, 18]
+    )
+  }, [erc20Balances.poolBalance, erc20Balances.walletBalance])
+
   // merge all lists in one
   const allNftsId = useMemo(() => {
     return userTokens.map((v) => v.toString())
@@ -113,21 +121,23 @@ const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
   }, [allNftsId, allNftsPower])
 
   const isOwnedERC20Used = useMemo(() => {
-    return ERC20Amount.gt(tokenBalanceLocked)
-  }, [ERC20Amount, tokenBalanceLocked])
+    return ERC20Amount.gt(erc20Balances.poolBalance)
+  }, [ERC20Amount, erc20Balances.poolBalance])
 
   const isERC20Approved = useMemo(() => {
     if (!isOwnedERC20Used) return true
 
+    if (ERC20Amount.lt(erc20Balances.poolBalance)) return true
+
     return ERC20Allowances[tokenAddress]?.gte(
-      ERC20Amount.sub(tokenBalanceLocked)
+      ERC20Amount.sub(erc20Balances.poolBalance)
     )
   }, [
     ERC20Amount,
     ERC20Allowances,
     isOwnedERC20Used,
     tokenAddress,
-    tokenBalanceLocked,
+    erc20Balances.poolBalance,
   ])
 
   const isERC20Deposited = useMemo(() => {
@@ -180,7 +190,7 @@ const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
       },
       erc721: {
         address: nftAddress,
-        balance: ERC721Balance,
+        balance: BigNumber.from(allNftsId.length),
       },
       address: {
         totalPower: totalPower,
@@ -189,12 +199,12 @@ const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
     }
   }, [
     haveToken,
+    allNftsId.length,
     haveNft,
     tokenAddress,
     fromData,
     ERC20Balance,
     nftAddress,
-    ERC721Balance,
     totalPower,
     delegatee,
   ])

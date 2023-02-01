@@ -91,6 +91,9 @@ const DaoProposalChangeTokenDistribution = lazy(
       "pages/GovPoolProposals/CreateDaoProposalChangeVotingSettings/subpages/TokenDistribution"
     )
 )
+const DaoProposalTokenSale = lazy(
+  () => import("pages/GovPoolProposals/CreateDaoProposalTokenSale")
+)
 const DaoProposalChangeCustomSettings = lazy(
   () =>
     import(
@@ -129,7 +132,6 @@ const ServiceTerms = lazy(() => import("pages/ServiceTerms"))
 const Insurance = lazy(() => import("pages/Insurance"))
 const InsuranceCreate = lazy(() => import("pages/InsuranceCreate"))
 const FundPositions = lazy(() => import("pages/FundPositions"))
-const FundDetails = lazy(() => import("pages/FundDetails")) // TODO: my trader profile
 const Investment = lazy(() => import("pages/Investment"))
 const DaoPools = lazy(() => import("pages/DaoPools"))
 const DaoDelegation = lazy(() => import("pages/DaoDelegation"))
@@ -247,10 +249,6 @@ export const router = createBrowserRouter([
             element: <FundPositions />,
           },
           {
-            path: ROUTE_PATHS.fundDetails,
-            element: <FundDetails />,
-          },
-          {
             path: ROUTE_PATHS.insurance,
             element: <Insurance />,
           },
@@ -328,6 +326,10 @@ export const router = createBrowserRouter([
               {
                 path: ROUTE_PATHS.daoProposalCreateTokenDistribution,
                 element: <DaoProposalTokenDistribution />,
+              },
+              {
+                path: ROUTE_PATHS.daoProposalCreateTokenSale,
+                element: <DaoProposalTokenSale />,
               },
               {
                 path: ROUTE_PATHS.daoProposalCreateInternalSelectType,

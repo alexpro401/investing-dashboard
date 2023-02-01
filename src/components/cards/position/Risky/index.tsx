@@ -103,6 +103,7 @@ const RiskyPositionCard: FC<Props> = ({
       navigate(
         generatePath(ROUTE_PATHS.poolProfile, {
           poolAddress: position.proposal.basicPool.id,
+          "*": "",
         })
       )
     },

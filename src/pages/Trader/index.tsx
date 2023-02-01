@@ -65,6 +65,7 @@ function Trader() {
           key={pool.id}
           to={generatePath(ROUTE_PATHS.poolProfile, {
             poolAddress: pool.id,
+            "*": "",
           })}
         >
           <Indents>

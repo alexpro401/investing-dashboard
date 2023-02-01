@@ -8,17 +8,12 @@ import {
 import { Collapse, Icon } from "common"
 import theme from "theme"
 
-export const Root = styled.div<{
-  isDisabled?: boolean
-  isReadonly?: boolean
-}>`
+export const Root = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
   width: 100%;
   flex: 1;
-
-  ${(props) => (props.isDisabled || props.isReadonly ? "opacity: 0.5" : "")}
 `
 
 export const ErrorMessage = styled(motion.span).attrs(() => ({

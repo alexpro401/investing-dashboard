@@ -104,9 +104,10 @@ function SelectField<T>({
   })
 
   return (
-    <S.Root isReadonly={readonly} isDisabled={disabled} {...rest}>
+    <S.Root {...rest}>
       <OverlapInputField
-        readonly={!searchingIsActive}
+        readonly={!searchingIsActive || readonly}
+        disabled={disabled}
         label={selected ? "" : placeholder}
         placeholder={selected ? "" : placeholder}
         value={searchingIsActive && !selected ? searchingValue : ""}

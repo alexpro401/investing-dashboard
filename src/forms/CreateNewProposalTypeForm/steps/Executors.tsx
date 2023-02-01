@@ -12,7 +12,6 @@ import {
 } from "common"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import { createCustomProposalTypeContext } from "context/govPool/proposals/regular/CreateCustomProposalType"
-import { InputField } from "fields"
 import { readFromClipboard } from "utils/clipboard"
 import { useBreakpoints } from "hooks"
 import { useFormValidation } from "hooks/useFormValidation"
@@ -103,7 +102,7 @@ const ExecutorsStep: React.FC = () => {
       {executorAddresses.get.map((el, index) => {
         return (
           <CollapsedCard title={`Contract ${index + 1}`} key={el.id}>
-            <InputField
+            <S.InputFieldWrp
               value={el.address}
               setValue={(value: string) => {
                 executorAddresses.set(index, value)

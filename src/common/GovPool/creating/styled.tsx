@@ -69,6 +69,10 @@ export const StepsRoot = styled.div`
   transform: scale(1);
   gap: var(--app-gap);
   flex: 1;
+
+  ${respondTo("sm")} {
+    gap: 32px;
+  }
 `
 
 export const ConditionalParameters = styled.div`

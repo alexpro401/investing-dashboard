@@ -76,7 +76,6 @@ interface InvestInfo {
 
 interface UseInvestResponse {
   info: InvestInfo
-  isSlippageOpen: boolean
   allowance?: BigNumber
   gasPrice: string
   swapPrice: BigNumber
@@ -84,7 +83,6 @@ interface UseInvestResponse {
   slippage: string
   direction: SwapDirection
   updateAllowance: () => void
-  setSlippageOpen: Dispatch<SetStateAction<boolean>>
   setSlippage: Dispatch<SetStateAction<string>>
   handleDirectionChange: () => void
   handlePercentageChange: (percent: any) => void
@@ -128,7 +126,6 @@ const useInvest = ({
   const [lpTokenBalance, setLPBalance] = useState(ZERO)
   const [allowance, setAllowance] = useState<BigNumber | undefined>()
   const [, setWalletPrompting] = usePayload()
-  const [isSlippageOpen, setSlippageOpen] = useState(false)
   const [positions, setPositions] = useState<
     InvestInfo["fundPositions"]["positions"]
   >([])
@@ -815,7 +812,6 @@ const useInvest = ({
     formWithDirection,
     {
       info,
-      isSlippageOpen,
       gasPrice,
       swapPrice,
       swapPriceUSD,
@@ -823,7 +819,6 @@ const useInvest = ({
       slippage,
       direction,
       updateAllowance,
-      setSlippageOpen,
       setSlippage,
       handleDirectionChange,
       handlePercentageChange,

@@ -33,6 +33,7 @@ import ListsUpdater from "state/lists/updater"
 
 import { usePollBlockNumber } from "state/block/hooks"
 import GlobalGradients from "assets/gradients"
+import "localization"
 
 const Web3ProviderNetwork = createWeb3ReactRoot("NETWORK")
 

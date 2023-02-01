@@ -121,7 +121,10 @@ const ExchangeInput: React.FC<IToProps> = ({
           )}
         />
 
-        <ActiveSymbol onClick={onSelect}>
+        <ActiveSymbol
+          background={!!noData ? "#2669EB" : undefined}
+          onClick={onSelect}
+        >
           {!noData && icon}
           {noData ? (
             <SelectToken>Select Token</SelectToken>

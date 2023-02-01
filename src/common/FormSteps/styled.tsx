@@ -27,7 +27,7 @@ export const StepsWrapper = styled.div`
 export const SideStepsNavigationBarWrp = styled(SideStepsNavigationBar)`
   min-width: 300px;
   position: sticky;
-  top: 0;
+  top: 0px;
   height: min-content;
   padding: 0;
 `
@@ -39,7 +39,6 @@ export const StepsContainer = styled(motion.div).attrs(() => ({
   transition: { duration: 0.2 },
   variants: opacityVariants,
 }))<{ isWithPaddings?: boolean }>`
-  overflow: hidden;
   position: relative;
   display: flex;
   flex-direction: column;

@@ -23,6 +23,7 @@ import {
   AddButton,
 } from "./styled"
 import { DividendToken } from "interfaces"
+import { Flex } from "theme"
 
 interface Props {
   tokens: DividendToken[]
@@ -40,7 +41,7 @@ const DividendsInput: React.FC<Props> = ({ tokens, onChange, onSelect }) => {
   }
 
   return (
-    <InputContainer height="fit-content">
+    <InputContainer height="fit-content" gap="16px">
       {tokens.map(({ address, amount, data, price, balance }, index) => {
         return (
           <Fragment key={address}>
@@ -74,7 +75,9 @@ const DividendsInput: React.FC<Props> = ({ tokens, onChange, onSelect }) => {
                 <Icon src={angleIcon} />
               </ActiveSymbol>
             </InputBottom>
-            <ButtonDivider />
+            <Flex p="16px" full>
+              <ButtonDivider />
+            </Flex>
           </Fragment>
         )
       })}
