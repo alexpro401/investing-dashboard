@@ -132,7 +132,6 @@ const ServiceTerms = lazy(() => import("pages/ServiceTerms"))
 const Insurance = lazy(() => import("pages/Insurance"))
 const InsuranceCreate = lazy(() => import("pages/InsuranceCreate"))
 const FundPositions = lazy(() => import("pages/FundPositions"))
-const FundDetails = lazy(() => import("pages/FundDetails")) // TODO: my trader profile
 const Investment = lazy(() => import("pages/Investment"))
 const DaoPools = lazy(() => import("pages/DaoPools"))
 const DaoDelegation = lazy(() => import("pages/DaoDelegation"))
@@ -248,10 +247,6 @@ export const router = createBrowserRouter([
           {
             path: ROUTE_PATHS.fundPositions,
             element: <FundPositions />,
-          },
-          {
-            path: ROUTE_PATHS.fundDetails,
-            element: <FundDetails />,
           },
           {
             path: ROUTE_PATHS.insurance,

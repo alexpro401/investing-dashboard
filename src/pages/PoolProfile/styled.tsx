@@ -19,6 +19,7 @@ export const Content = styled.div`
   flex-direction: column;
   gap: var(--app-gap);
   padding: var(--app-padding);
+  min-height: 100%;
 `
 
 export const PoolProfileDefaultInfo = styled.div`
@@ -40,6 +41,65 @@ export const PoolProfileGeneral = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+`
+
+export const PoolProfileGeneralActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: var(--app-gap);
+`
+
+export const PoolProfileGeneralActionsFundType = styled.div`
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: ${(props) => props.theme.brandColors.secondary};
+  border: 1px solid ${(props) => props.theme.brandColors.secondary};
+  border-radius: 35px;
+  padding: 4px 8px;
+`
+
+export const PoolProfileGeneralActionsDropdownToggler = styled.button`
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #6781bd;
+  color: #6781bd;
+  padding: 0;
+`
+
+export const PoolProfileGeneralActionsDropdownTogglerIcon = styled(Icon)``
+
+export const PoolProfileGeneralActionsDropdownContent = styled.div`
+  overflow: hidden auto;
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  height: 100%;
+  color: ${(props) => props.theme.textColors.primary};
+  border-radius: 20px;
+  background-color: #20283a;
+`
+
+export const PoolProfileGeneralActionsDropdownItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: #6781bd;
+  padding: 16px 24px 16px 12px;
+`
+
+export const PoolProfileGeneralActionsDropdownItemIcon = styled(Icon)`
+  width: 24px;
 `
 
 export const PoolProfileAppearance = styled(PoolAppearance)``
@@ -114,16 +174,6 @@ export const PoolDetailsBadgeText = styled.span`
 
   /* TEMP */
   transform: translateY(4px);
-`
-
-export const PoolHeadStatistics = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--app-gap);
-  background: #101520;
-  border-radius: 20px;
-  padding: var(--app-padding);
 `
 
 export const ButtonContainer = styled.div`
@@ -215,4 +265,34 @@ export const TabContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: var(--app-gap);
+`
+
+export const ModalHeadWrp = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+export const ModalHeadBackBtn = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  gap: 8px;
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: ${(props) => props.theme.textColors.primary};
+`
+
+export const ModalHeadIcon = styled(Icon)`
+  width: 14px;
+  height: 14px;
+  color: inherit;
+`
+
+export const ModalBodyWrp = styled.div`
+  padding: 16px;
 `

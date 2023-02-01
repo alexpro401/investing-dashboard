@@ -25,6 +25,8 @@ export { default as Overlay } from "./Overlay"
 export { default as Breadcrumbs } from "./Breadcrumbs"
 export { default as AppLogo } from "./AppLogo"
 export { default as Tabs } from "./Tabs"
+export { default as AccountInvestmentPools } from "./AccountInvestmentPools"
+export { default as PoolStatisticsItem } from "./PoolStatisticsItem"
 
 export * from "./Typography"
 export * from "./dao"

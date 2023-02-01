@@ -6,19 +6,16 @@ import { Card } from "common"
 import { Flex } from "theme"
 import { DateUtil, normalizeBigNumber, shortenAddress } from "utils"
 import Tooltip from "components/Tooltip"
-import { isEmpty } from "lodash"
 import { PoolProfileContext } from "pages/PoolProfile/context"
-import { DATE_FORMAT, ROUTE_PATHS } from "../../../consts"
-import { generatePath } from "react-router-dom"
-
-const fundTypes = {
-  BASIC_POOL: "Basic",
-  INVEST_POOL: "Invest",
-}
+import { DATE_FORMAT, ROUTE_PATHS } from "consts"
+import { generatePath, useNavigate } from "react-router-dom"
+import { localizePoolType } from "localization"
+import { Bus } from "helpers"
+import { useBreakpoints } from "hooks"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
-const TabPoolInfo: FC<Props> = ({ ...rest }) => {
+const TabPoolInfo: FC<Props> = () => {
   const {
     fundType,
     fundAddress,
@@ -42,59 +39,30 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
     fundStrategy,
   } = useContext(PoolProfileContext)
 
+  const { isSmallTablet } = useBreakpoints()
+
+  const navigate = useNavigate()
+
   return (
     <>
-      <Card>
-        <S.TabCardTitle>Information</S.TabCardTitle>
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardLabel>Creation date</S.TabCardLabel>
-          {creationDate && (
-            <S.TabCardValue>
-              {DateUtil.format(
-                DateUtil.fromTimestamp(creationDate) as Date,
-                DATE_FORMAT
-              )}
-            </S.TabCardValue>
-          )}
-        </Flex>
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardLabel>Fund address</S.TabCardLabel>
-          <S.TabCardValue>{shortenAddress(fundAddress, 2)}</S.TabCardValue>
-        </Flex>
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardLabel>Basic token</S.TabCardLabel>
-          <S.TabCardValue>{basicToken?.symbol}</S.TabCardValue>
-        </Flex>
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardLabel>Fund ticker</S.TabCardLabel>
-          <S.TabCardValue>{fundTicker}</S.TabCardValue>
-        </Flex>
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardLabel>Fund name</S.TabCardLabel>
-          <S.TabCardValue>{fundName}</S.TabCardValue>
-        </Flex>
-        {fundType && (
-          <Flex full ai="center" jc="space-between">
-            <S.TabCardLabel>Type of fund</S.TabCardLabel>
-            <S.TabCardValue>{fundTypes[fundType]}</S.TabCardValue>
-          </Flex>
-        )}
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardLabel></S.TabCardLabel>
-          <S.TabCardValue></S.TabCardValue>
-        </Flex>
-      </Card>
-
       <Card>
         <Flex full ai="center" jc="space-between">
           <S.TabCardTitle>Fund settings</S.TabCardTitle>
           {isTrader && fundAddress && (
             <S.AppLink
               text="Manage"
-              routePath={generatePath(ROUTE_PATHS.fundDetails, {
-                poolAddress: fundAddress,
-                "*": "edit",
-              })}
+              onClick={() => {
+                if (isSmallTablet) {
+                  Bus.emit("manage-modal")
+                } else {
+                  navigate(
+                    generatePath(ROUTE_PATHS.poolProfile, {
+                      poolAddress: fundAddress,
+                      "*": "details",
+                    })
+                  )
+                }
+              }}
             />
           )}
         </Flex>
@@ -151,24 +119,30 @@ const TabPoolInfo: FC<Props> = ({ ...rest }) => {
           {isTrader && fundAddress && (
             <S.AppLink
               text="Edit"
-              routePath={generatePath(ROUTE_PATHS.fundDetails, {
-                poolAddress: fundAddress,
-                "*": "",
-              })}
+              onClick={() => {
+                if (isSmallTablet) {
+                  Bus.emit("manage-modal")
+                } else {
+                  navigate(
+                    generatePath(ROUTE_PATHS.poolProfile, {
+                      poolAddress: fundAddress,
+                      "*": "details",
+                    })
+                  )
+                }
+              }}
             />
           )}
         </Flex>
         <S.TabCardValue>
-          {!isEmpty(fundDescription)
-            ? fundDescription
-            : "No description provided"}
+          {fundDescription || "No description provided"}
         </S.TabCardValue>
 
         <Flex full ai="center" jc="space-between">
           <S.TabCardTitle>Fund strategy</S.TabCardTitle>
         </Flex>
         <S.TabCardValue>
-          {!isEmpty(fundStrategy) ? fundStrategy : "No strategy provided"}
+          {fundStrategy || "No strategy provided"}
         </S.TabCardValue>
       </Card>
     </>

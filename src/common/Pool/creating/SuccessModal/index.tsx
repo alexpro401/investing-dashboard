@@ -107,6 +107,7 @@ const SuccessModal: React.FC<ISuccessModalProps> = ({
             color={isMobile ? "primary" : "tertiary"}
             routePath={generatePath(ROUTE_PATHS.poolProfile, {
               poolAddress: createdFundAddress,
+              "*": "",
             })}
             onClick={() => close()}
           />

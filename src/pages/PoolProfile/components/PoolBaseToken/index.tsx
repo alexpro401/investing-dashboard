@@ -8,7 +8,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   imgUrl?: string
   label?: string
   value?: string | number
-  percentage?: string | number
+  percentage?: number
 }
 
 const PoolBaseToken: FC<Props> = ({
@@ -17,11 +17,8 @@ const PoolBaseToken: FC<Props> = ({
   label,
   value,
   percentage,
-  children,
   ...rest
 }) => {
-  const { isSmallTablet } = useBreakpoints()
-
   return (
     <S.PoolBaseTokenContainer {...rest}>
       <S.PoolBaseTokenDetails>
@@ -29,9 +26,9 @@ const PoolBaseToken: FC<Props> = ({
           <>
             <S.PoolBaseTokenDetailsValue>
               {value}
-              {Number(percentage) ? (
-                <S.PoolBaseTokenDetailsPercentage>
-                  {Number(percentage)}%
+              {percentage !== undefined ? (
+                <S.PoolBaseTokenDetailsPercentage isRaise={percentage >= 0}>
+                  {percentage >= 0 ? `+${percentage}%` : `${percentage}%`}
                 </S.PoolBaseTokenDetailsPercentage>
               ) : (
                 <></>

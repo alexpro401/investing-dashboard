@@ -16,8 +16,8 @@ import {
   calcPositionPnlPercentage,
 } from "utils/formulas"
 import { ITokenBase } from "interfaces"
-import { usePoolMetadata } from "../../../../state/ipfsMetadata/hooks"
-import { usePoolContract } from "../../../../hooks"
+import { usePoolMetadata } from "state/ipfsMetadata/hooks"
+import { usePoolContract } from "hooks"
 
 interface IAmount {
   big: BigNumber

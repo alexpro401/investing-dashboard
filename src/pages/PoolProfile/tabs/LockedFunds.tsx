@@ -13,6 +13,7 @@ import { PoolProfileContext } from "pages/PoolProfile/context"
 import { ROUTE_PATHS } from "consts"
 import { normalizeBigNumber } from "utils"
 import { useWindowSize } from "react-use"
+import { useBreakpoints } from "hooks"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -28,8 +29,11 @@ const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
 
   const onTerminalNavigate = useCallback(() => {
     if (isNil(fundAddress)) return
+
     navigate(generatePath(ROUTE_PATHS.poolInvest, { poolAddress: fundAddress }))
   }, [fundAddress, navigate])
+
+  const { isSmallTablet } = useBreakpoints()
 
   const { width: windowWidth } = useWindowSize()
 
@@ -115,7 +119,7 @@ const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
           </Flex>
         </Flex>
         <S.ProgressBar w={Number(lockedFunds?.poolUsedToTotalPercentage)} />
-        {isTrader && (
+        {isTrader && !isSmallTablet && (
           <Flex full>
             <S.AppButtonFull
               onClick={onTerminalNavigate}
