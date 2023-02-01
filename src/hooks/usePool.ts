@@ -40,6 +40,9 @@ import {
 } from "consts/chart"
 import { usePriceHistory } from "state/pools/hooks"
 import { useAPI } from "api"
+import { TraderPool } from "abi"
+import { Interface } from "@ethersproject/abi"
+import { useMultipleContractSingleData } from "state/multicall/hooks"
 import { graphClientAllPools } from "utils/graphClient"
 
 /**
@@ -65,8 +68,21 @@ export function usePoolQuery(
 /**
  * Returns TheGraph info about specified position
  */
-export function usePoolPosition(poolId, tokenId) {
+export function usePoolPosition(poolId?: string, tokenId?: string) {
   const [position, setPosition] = useState<IPosition | undefined>()
+
+  const isDataInvalid = useMemo(() => {
+    return !isAddress(poolId) || !isAddress(tokenId)
+  }, [poolId, tokenId])
+
+  const params = useMemo(() => {
+    if (isDataInvalid) return undefined
+
+    return {
+      poolId: poolId!.toLocaleLowerCase(),
+      tokenId: tokenId!.toLocaleLowerCase(),
+    }
+  }, [isDataInvalid, poolId, tokenId])
 
   const [pool] = useQuery<{
     positions: IPosition[]
@@ -83,6 +99,47 @@ export function usePoolPosition(poolId, tokenId) {
   }, [pool])
 
   return position
+}
+
+const TRADER_POOL_INTERFACE = new Interface(TraderPool)
+
+export const useTraderPoolInfoMulticall = <T>(
+  poolAddresses: (string | undefined)[],
+  methodName: "getLeverageInfo" | "getPoolInfo"
+): [{ [poolAddress: string]: T | undefined }, boolean] => {
+  const validatedPools = useMemo(
+    () => poolAddresses?.filter((address) => isAddress(address)) ?? [],
+    [poolAddresses]
+  )
+
+  const poolInfo = useMultipleContractSingleData(
+    validatedPools,
+    TRADER_POOL_INTERFACE,
+    useMemo(() => methodName, [methodName]),
+    useMemo(() => undefined, [])
+  )
+
+  const anyLoading: boolean = useMemo(
+    () => poolInfo.some((callState) => callState.loading),
+    [poolInfo]
+  )
+
+  return useMemo(() => {
+    return [
+      validatedPools.length > 0
+        ? validatedPools.reduce((memo, poolAddress) => {
+            const result = poolInfo?.[0]?.result?.[0]
+
+            if (result) {
+              memo[poolAddress!] = result
+            }
+
+            return memo
+          }, {})
+        : {},
+      anyLoading,
+    ]
+  }, [validatedPools, anyLoading, poolInfo])
 }
 
 /**

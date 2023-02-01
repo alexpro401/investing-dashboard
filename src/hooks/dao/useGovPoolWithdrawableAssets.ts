@@ -72,7 +72,7 @@ export const useGovPoolWithdrawableAssetsQuery = (
   return assets
 }
 
-const useGovPoolWithdrawableAssets = ({
+export const useGovPoolWithdrawableAssets = ({
   daoPoolAddress,
   delegator,
   delegatee = ZERO_ADDR,
@@ -99,5 +99,3 @@ const useGovPoolWithdrawableAssets = ({
 
   return withdrawableAssets
 }
-
-export default useGovPoolWithdrawableAssets

@@ -647,7 +647,7 @@ const PoolProfile = () => {
           <PoolProfileContent />
           <Modal
             isOpen={isManageModalShown}
-            toggle={async () => {
+            onClose={async () => {
               setIsManageModalShown(false)
               await sleep(500)
               setModalContent("menu")

@@ -24,9 +24,9 @@ const Token: FC<Props> = ({ data }) => {
       </Flex>
       <Flex gap="4">
         <InfoWhite>
-          {normalizeBigNumber(cutDecimalPlaces(data?.amount))}
+          {normalizeBigNumber(cutDecimalPlaces(data?.amount))}{" "}
+          {tokenData?.symbol}
         </InfoWhite>
-        <InfoGrey>{tokenData?.symbol}</InfoGrey>
       </Flex>
     </InfoRow>
   )

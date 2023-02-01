@@ -87,7 +87,7 @@ const ABIConstructor: FC<Props> = ({
     <Modal
       maxWidth="fit-content"
       isOpen={isOpen}
-      toggle={onClose}
+      onClose={onClose}
       title={"Choose method: " + filteredWritableMethods.length}
     >
       <S.Container>

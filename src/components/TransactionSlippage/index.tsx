@@ -1,7 +1,7 @@
-import React from "react"
+import React, { useRef } from "react"
+import { useClickAway } from "react-use"
 import {
   Container,
-  Overlay,
   Title,
   TextGray,
   Input,
@@ -62,11 +62,20 @@ const TransactionSlippage: React.FC<Props> = ({
   slippage,
   onChange,
 }) => {
+  const rootEl = useRef<HTMLDivElement>(null)
+
+  useClickAway(rootEl, (event) => {
+    event.stopPropagation()
+    if (isOpen) {
+      toggle(false)
+    }
+  })
+
   const slippageValidity = getSlippageValidity(slippage)
 
   return isOpen ? (
     <>
-      <Container>
+      <Container ref={rootEl}>
         <Title>Transaction slippage</Title>
         <TextGray p="16px 0" color="#666f87">
           Your tranzaction will revert if the price changes unfavorably by more
@@ -81,11 +90,12 @@ const TransactionSlippage: React.FC<Props> = ({
             Auto
           </Button>
         </ControlsGroup>
-        <TextGray p="16px 0 0" color={SLIPPAGE_TEXT[slippageValidity].color}>
-          {SLIPPAGE_TEXT[slippageValidity].text}
-        </TextGray>
+        {!!SLIPPAGE_TEXT[slippageValidity].text && (
+          <TextGray p="16px 0 0" color={SLIPPAGE_TEXT[slippageValidity].color}>
+            {SLIPPAGE_TEXT[slippageValidity].text}
+          </TextGray>
+        )}
       </Container>
-      <Overlay onClick={() => toggle(false)} />
     </>
   ) : null
 }

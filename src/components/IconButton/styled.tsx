@@ -2,6 +2,7 @@ import styled from "styled-components/macro"
 import { Flex } from "theme"
 
 export const Container = styled(Flex)<{ withBackground: boolean }>`
+  cursor: pointer;
   height: 26px;
   width: 26px;
   justify-content: center;

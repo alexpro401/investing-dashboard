@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useState } from "react"
+import { FC, memo, useCallback, useMemo, useState } from "react"
 
 import TokensList from "components/TokensList"
 import Modal from "components/Modal"
@@ -258,10 +258,10 @@ const TokenSelect: FC<Props> = ({
   )
 
   return (
-    <Modal isOpen={isOpen} toggle={onClose} title={"Select token"}>
+    <Modal isOpen={isOpen} onClose={onClose} title={"Select token"}>
       {isOpen && content}
     </Modal>
   )
 }
 
-export default TokenSelect
+export default memo(TokenSelect)

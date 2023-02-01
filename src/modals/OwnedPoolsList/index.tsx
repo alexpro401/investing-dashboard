@@ -115,7 +115,7 @@ const OwnedPoolsList: FC<Props> = ({
   })
 
   return (
-    <Modal isOpen={isOpen} toggle={toggle} title="All my funds">
+    <Modal isOpen={isOpen} onClose={toggle} title="All my funds">
       <>
         <AccountCard account={account} />
         <Divider />

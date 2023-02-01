@@ -4,10 +4,10 @@ import { useParams, useLocation } from "react-router-dom"
 import ExchangeInput from "components/Exchange/ExchangeInput"
 import * as S from "components/Exchange/styled"
 import { ZERO } from "consts"
-import { Flex } from "theme"
 import useValidatorsVote, { ButtonTypes } from "./useValidatorsVote"
 import { Container } from "components/Exchange/styled"
 import Header from "components/Header/Layout"
+import { Exchange } from "components/Exchange"
 
 export interface Props {
   daoPoolAddress?: string
@@ -49,28 +49,24 @@ export const ValidatorsVote: FC<Props> = ({
   }, [buttonType, proposalId, handleSubmit])
 
   return (
-    <>
-      <S.Card>
-        <S.CardHeader>
-          <S.Title active>Validator voting</S.Title>
-        </S.CardHeader>
-
-        <ExchangeInput
-          customPrice={<S.Price>Validators token</S.Price>}
-          price={ZERO}
-          amount={ERC20Amount.toString()}
-          balance={formInfo.erc20.balance || ZERO}
-          address={formInfo.erc20.address}
-          symbol={formInfo.erc20.symbol}
-          decimal={formInfo.erc20.decimal}
-          onChange={handleERC20Change}
-        />
-
-        <Flex p="16px 0 0" full>
-          {button}
-        </Flex>
-      </S.Card>
-    </>
+    <Exchange
+      title="Validator voting"
+      buttons={[button]}
+      form={
+        <>
+          <ExchangeInput
+            customPrice={<S.Price>Validators token</S.Price>}
+            price={ZERO}
+            amount={ERC20Amount.toString()}
+            balance={formInfo.erc20.balance || ZERO}
+            address={formInfo.erc20.address}
+            symbol={formInfo.erc20.symbol}
+            decimal={formInfo.erc20.decimal}
+            onChange={handleERC20Change}
+          />
+        </>
+      }
+    ></Exchange>
   )
 }
 
