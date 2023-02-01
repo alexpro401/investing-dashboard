@@ -9,7 +9,7 @@ export enum ROUTE_PATHS {
 
   poolSwap = "/pool/swap/:poolType/:poolToken/:inputToken/:outputToken/*",
   poolInvest = "/pool/invest/:poolAddress",
-  poolProfile = "/pool/profile/:poolAddress",
+  poolProfile = "/pool/profile/:poolAddress/*",
 
   riskyProposalCreate = "/create-risky-proposal/:poolAddress/:tokenAddress/*",
   riskyProposalInvest = "/invest-risky-proposal/:poolAddress/:proposalId",
@@ -29,7 +29,6 @@ export enum ROUTE_PATHS {
   createFundSuccess = "/success/:poolAddress",
 
   fundPositions = "/fund-positions/:poolAddress/*",
-  fundDetails = "/fund-details/:poolAddress/*",
 
   insurance = "insurance",
   insuranceCreate = "insurance/create",

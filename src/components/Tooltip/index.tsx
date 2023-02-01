@@ -8,6 +8,9 @@ import { GradientBorderBase } from "theme"
 
 const TooltipStyles: any = createGlobalStyle`
   button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 0;
   }
 

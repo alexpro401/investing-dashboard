@@ -44,7 +44,12 @@ const usePoolAlternativePnlUSD = (
         expandTimestamp(Number(vest.timestamp))
       )
 
-      const prices = await TokenAPI.getHistoricalPrices(baseToken, timestamps)
+      let prices
+      try {
+        prices = await TokenAPI.getHistoricalPrices(baseToken, timestamps)
+      } catch (error) {
+        console.error({ error })
+      }
 
       if (prices) {
         const pricesDTO = Object.entries(prices).reduce(

@@ -3,7 +3,7 @@ import { FC } from "react"
 import { AppButton } from "common"
 import { BodyItem } from "components/cards/proposal/_shared"
 import { BigNumber } from "@ethersproject/bignumber"
-import { useBreakpoints } from "../../../../hooks"
+import { useBreakpoints } from "hooks"
 
 interface Props {
   ticker: string

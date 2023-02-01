@@ -2,6 +2,7 @@ import {
   createContext,
   FC,
   HTMLAttributes,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -24,9 +25,9 @@ import {
   usePoolAlternativePnlTokens,
 } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
-import { PoolType, TIMEFRAME, ZERO } from "consts"
+import { PoolType, TIMEFRAME, UpdateListType, ZERO } from "consts"
 import { getPNL, getPriceLP, multiplyBignumbers } from "utils/formulas"
-import { expandTimestamp, normalizeBigNumber } from "utils"
+import { bigify, expandTimestamp, normalizeBigNumber } from "utils"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { Center } from "theme"
 import { GuardSpinner } from "react-spinners-kit"
@@ -35,9 +36,22 @@ import { getDay } from "date-fns"
 import { BigNumber } from "@ethersproject/bignumber"
 import { Token } from "interfaces"
 import { Investor } from "interfaces/thegraphs/all-pools"
+import useFundFee from "./useFundFee"
+import { TransactionType } from "state/transactions/types"
+import { useTransactionAdder } from "state/transactions/hooks"
+import { IpfsEntity } from "utils/ipfsEntity"
+import { IPoolMetadata } from "state/ipfsMetadata/types"
+import { sleep } from "helpers"
 
 interface IPoolProfileContext {
+  traderInfo?: {
+    address?: string
+  }
+
   isTrader?: boolean
+  accountLPs?: BigNumber
+
+  isPoolPrivate?: boolean
 
   creationDate?: number
   fundAddress?: string
@@ -125,6 +139,62 @@ interface IPoolProfileContext {
   }
 
   poolInvestors?: Investor[]
+
+  perfomanceFee?: {
+    perfomancePoolData?: any
+    perfomancePpoolInfo?: any
+
+    optimizeWithdrawal?: any
+
+    fundCommissionPercentage?: any
+    unlockDate?: any
+
+    totalFundCommissionFeeBase?: any
+    totalFundCommissionFeeUSD?: any
+
+    fundsUnderManagementDexe?: any
+
+    fundProfitWithoutTraderUSD?: any
+    fundProfitWithoutTraderDEXE?: any
+    fundProfitWithoutTraderPercentage?: any
+
+    platformCommissionUSD?: any
+    platformCommissionBase?: any
+    platformCommissionPercentage?: any
+
+    traderCommissionUSD?: any
+    traderCommissionBase?: any
+
+    netInvestorsProfitUSD?: any
+    netInvestorsProfitDEXE?: any
+    netInvestorsProfitPercentage?: any
+
+    setOptimizeWithdrawal?: any
+    withdrawCommission?: any
+  }
+
+  updatePoolParameters?: (opts?: {
+    avatarUrl?: string
+    fundDescription?: string
+    fundStrategy?: string
+    account?: string
+    totalLPEmission?: string
+    minimalInvestment?: string
+  }) => Promise<void>
+
+  updatePoolManagers?: (
+    managersList: {
+      isDisabled: boolean
+      address: string
+    }[]
+  ) => Promise<void>
+
+  updatePoolInvestors?: (
+    investorsList: {
+      isDisabled: boolean
+      address: string
+    }[]
+  ) => Promise<void>
 }
 
 export const PoolProfileContext = createContext<IPoolProfileContext>({})
@@ -140,6 +210,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
 
   const traderPool = useTraderPoolContract(poolAddress)
 
+  // FIXME: if pool just created, it will be undefined
   const poolData = useSelector((s: AppState) =>
     selectPoolByAddress(s, poolAddress)
   )
@@ -159,13 +230,13 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
   const [, poolInfo] = usePoolContract(poolAddress)
 
   const [{ poolMetadata }] = usePoolMetadata(
-    poolData?.id,
-    poolData?.descriptionURL
+    poolAddress,
+    poolInfo?.parameters.descriptionURL
   )
 
   const [{ priceUSD }] = usePoolPrice(poolAddress)
 
-  const [baseToken] = useERC20Data(poolData?.baseToken)
+  const [baseToken] = useERC20Data(poolInfo?.parameters.baseToken)
 
   const [accountLPs, setAccountLPs] = useState(ZERO)
 
@@ -205,7 +276,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
   const [
     poolLockedFundHistoryChartData,
     isPoolLockedFundHistoryChartDataFetching,
-  ] = usePoolLockedFundsHistory(poolData?.id, tf)
+  ] = usePoolLockedFundsHistory(poolAddress, tf)
 
   const sortinoTokens = [
     "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
@@ -215,7 +286,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
   const addressWETH = "0x8babbb98678facc7342735486c851abd7a0d17ca"
   const addressWBTC = "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
 
-  const _sortino = usePoolSortino(poolData?.id, sortinoTokens)
+  const _sortino = usePoolSortino(poolAddress, sortinoTokens)
 
   const dailyProfitPercent = useMemo(() => {
     if (!poolData) return 0
@@ -246,14 +317,17 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
 
   const { data: investorVests } = useInvestorAllVestsInPool(
     account,
-    poolData?.id
+    poolAddress
   )
 
-  const altPnlUSD = usePoolAlternativePnlUSD(investorVests, poolData?.baseToken)
+  const altPnlUSD = usePoolAlternativePnlUSD(
+    investorVests,
+    poolInfo?.parameters.baseToken
+  )
 
   const altPnlTokens = usePoolAlternativePnlTokens(
     investorVests,
-    poolData?.baseToken,
+    poolInfo?.parameters.baseToken,
     { eth: addressWETH, btc: addressWBTC }
   )
 
@@ -277,17 +351,222 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
     }
   }, [poolInfo])
 
+  // perfomance fee
+  const [
+    [perfomancePoolData, perfomancePpoolInfo],
+    {
+      optimizeWithdrawal,
+
+      fundCommissionPercentage,
+      unlockDate,
+
+      totalFundCommissionFeeBase,
+      totalFundCommissionFeeUSD,
+
+      fundsUnderManagementDexe,
+
+      fundProfitWithoutTraderUSD,
+      fundProfitWithoutTraderDEXE,
+      fundProfitWithoutTraderPercentage,
+
+      platformCommissionUSD,
+      platformCommissionBase,
+      platformCommissionPercentage,
+
+      traderCommissionUSD,
+      traderCommissionBase,
+
+      netInvestorsProfitUSD,
+      netInvestorsProfitDEXE,
+      netInvestorsProfitPercentage,
+    },
+    { setOptimizeWithdrawal, withdrawCommission },
+  ] = useFundFee(poolAddress)
+
+  const traderPoolContract = useTraderPoolContract(poolAddress)
+  const addTransaction = useTransactionAdder()
+
+  const updatePoolParameters = useCallback(
+    async (opts?: {
+      avatarUrl?: string
+      fundDescription?: string
+      fundStrategy?: string
+      account?: string
+      totalLPEmission?: string
+      minimalInvestment?: string
+      isFundPrivate?: boolean
+    }) => {
+      let descriptionURL = poolInfo!.parameters.descriptionURL
+
+      if (
+        opts?.avatarUrl ||
+        opts?.fundDescription ||
+        opts?.fundStrategy ||
+        opts?.account
+      ) {
+        const poolMetadataIpfsEntity = new IpfsEntity({
+          data: JSON.stringify({
+            description: opts?.fundDescription || poolMetadata?.description,
+            strategy: opts?.fundStrategy || poolMetadata?.strategy,
+            assets: opts?.avatarUrl
+              ? [...(poolMetadata?.assets || []), opts.avatarUrl]
+              : poolMetadata?.assets,
+            account: opts?.account || poolMetadata?.account,
+            timestamp: new Date().getTime() / 1000,
+          } as IPoolMetadata & { timestamp: number }),
+        })
+
+        await poolMetadataIpfsEntity.uploadSelf()
+
+        await sleep(500)
+
+        descriptionURL = poolMetadataIpfsEntity.path
+      }
+
+      const tx = await traderPoolContract?.changePoolParameters(
+        descriptionURL,
+        opts?.isFundPrivate === undefined
+          ? Boolean(poolInfo?.parameters?.privatePool)
+          : opts?.isFundPrivate,
+        opts?.totalLPEmission
+          ? bigify(opts.totalLPEmission, 18).toHexString()
+          : poolInfo?.parameters.totalLPEmission?.toHexString() || "0",
+        opts?.minimalInvestment
+          ? bigify(opts.minimalInvestment, 18).toHexString()
+          : poolInfo?.parameters.minimalInvestment?.toHexString() || "0"
+      )
+
+      await addTransaction(tx, {
+        type: TransactionType.POOL_EDIT,
+        baseCurrencyId: baseToken?.address,
+        fundName: poolInfo?.name,
+      })
+      // TODO: update pools item || list
+      // FIXME: poolData is undefined sometimes
+    },
+    [addTransaction, baseToken, poolInfo, poolMetadata, traderPoolContract]
+  )
+
+  const updatePoolManagers = useCallback(
+    async (
+      managersList: {
+        isDisabled: boolean
+        address: string
+      }[]
+    ) => {
+      const managersToRemove = managersList.filter(
+        (el) => el.isDisabled && poolData?.admins.includes(el.address)
+      )
+      const managersToAdd = managersList.filter(
+        (el) => !el.isDisabled && !poolData?.admins.includes(el.address)
+      )
+
+      if (managersToRemove && managersToRemove.length) {
+        const tx = await traderPoolContract?.modifyAdmins(
+          managersToRemove.map((el) => el.address),
+          false
+        )
+
+        await addTransaction(tx, {
+          type: TransactionType.POOL_UPDATE_MANAGERS,
+          editType: UpdateListType.REMOVE,
+          poolId: poolAddress,
+        })
+      }
+
+      await sleep(500)
+
+      if (managersToAdd && managersToAdd.length) {
+        const tx = await traderPoolContract?.modifyAdmins(
+          managersToAdd.map((el) => el.address),
+          true
+        )
+
+        await addTransaction(tx, {
+          type: TransactionType.POOL_UPDATE_MANAGERS,
+          editType: UpdateListType.ADD,
+          poolId: poolAddress,
+        })
+      }
+    },
+    [addTransaction, poolData, traderPoolContract]
+  )
+
+  const updatePoolInvestors = useCallback(
+    async (
+      investorsList: {
+        isDisabled: boolean
+        address: string
+      }[]
+    ) => {
+      const investorsToRemove = investorsList.filter(
+        (el) =>
+          el.isDisabled &&
+          poolData?.privateInvestors.find(
+            (investor) => investor.id === el.address
+          )
+      )
+      const investorsToAdd = investorsList.filter(
+        (el) =>
+          !el.isDisabled &&
+          !poolData?.privateInvestors.find(
+            (investor) => investor.id === el.address
+          )
+      )
+
+      if (investorsToAdd?.length && !poolInfo?.parameters?.privatePool) {
+        await updatePoolParameters({ isFundPrivate: true })
+      }
+
+      if (investorsToRemove && investorsToRemove.length) {
+        const tx = await traderPoolContract?.modifyPrivateInvestors(
+          investorsToRemove.map((el) => el.address),
+          false
+        )
+
+        await addTransaction(tx, {
+          type: TransactionType.POOL_UPDATE_INVESTORS,
+          editType: UpdateListType.REMOVE,
+          poolId: poolAddress,
+        })
+      }
+
+      await sleep(500)
+
+      if (investorsToAdd && investorsToAdd.length) {
+        const tx = await traderPoolContract?.modifyPrivateInvestors(
+          investorsToAdd.map((el) => el.address),
+          true
+        )
+
+        await addTransaction(tx, {
+          type: TransactionType.POOL_UPDATE_INVESTORS,
+          editType: UpdateListType.ADD,
+          poolId: poolAddress,
+        })
+      }
+    },
+    [addTransaction, poolData, traderPoolContract]
+  )
+
   return (
     <WithPoolAddressValidation poolAddress={poolAddress ?? ""} loader={loader}>
       <PoolProfileContext.Provider
         value={{
+          traderInfo: {
+            address: poolData?.trader,
+          },
+
           isTrader,
+          accountLPs,
+
+          isPoolPrivate: Boolean(poolInfo?.parameters?.privatePool),
 
           creationDate: poolData?.creationTime,
-          fundAddress: poolData?.id,
+          fundAddress: poolAddress,
           basicToken: baseToken,
-          fundTicker: poolData?.ticker,
-          fundName: poolData?.name,
+          fundTicker: poolInfo?.ticker,
+          fundName: poolInfo?.name,
           fundType: poolData?.type,
           fundImageUrl: poolMetadata?.assets[poolMetadata?.assets.length - 1],
 
@@ -378,6 +657,43 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
             poolUsedInPositionsUSD,
             poolUsedToTotalPercentage,
           },
+
+          perfomanceFee: {
+            perfomancePoolData,
+            perfomancePpoolInfo,
+
+            optimizeWithdrawal,
+
+            fundCommissionPercentage,
+            unlockDate,
+
+            totalFundCommissionFeeBase,
+            totalFundCommissionFeeUSD,
+
+            fundsUnderManagementDexe,
+
+            fundProfitWithoutTraderUSD,
+            fundProfitWithoutTraderDEXE,
+            fundProfitWithoutTraderPercentage,
+
+            platformCommissionUSD,
+            platformCommissionBase,
+            platformCommissionPercentage,
+
+            traderCommissionUSD,
+            traderCommissionBase,
+
+            netInvestorsProfitUSD,
+            netInvestorsProfitDEXE,
+            netInvestorsProfitPercentage,
+
+            setOptimizeWithdrawal,
+            withdrawCommission,
+          },
+
+          updatePoolParameters,
+          updatePoolManagers,
+          updatePoolInvestors,
         }}
       >
         {children}

@@ -46,7 +46,6 @@ const WithdrawalsHistory: FC<IProps> = ({ unlockDate, poolAddress }) => {
 
   return (
     <>
-      <S.Title>Withdrawal history</S.Title>
       <S.Container>
         {data.length > 0 && (
           <S.ListHeader>

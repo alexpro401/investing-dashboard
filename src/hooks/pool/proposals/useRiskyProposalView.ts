@@ -377,6 +377,7 @@ export const useRiskyProposalView = (
       navigate(
         generatePath(ROUTE_PATHS.poolProfile, {
           poolAddress: poolAddress,
+          "*": "",
         })
       )
     },

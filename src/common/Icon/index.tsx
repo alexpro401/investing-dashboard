@@ -60,6 +60,7 @@ import {
   WarnIcon,
   PlusOutline,
   WarnCircledFilledIcon,
+  DotsHorizontalIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -190,6 +191,8 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return BSCIcon as unknown as ElementType
       case ICON_NAMES.filter:
         return FilterIcon as unknown as ElementType
+      case ICON_NAMES.dotsHorizontal:
+        return DotsHorizontalIcon as unknown as ElementType
       case ICON_NAMES.calendar:
         return CalendarIcon as unknown as ElementType
       case ICON_NAMES.plusOutline:

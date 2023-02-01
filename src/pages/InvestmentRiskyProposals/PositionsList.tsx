@@ -17,7 +17,7 @@ import { graphClientInvestors } from "utils/graphClient"
 import { NoDataMessage } from "common"
 import { Center } from "theme"
 import * as S from "./styled"
-import Tooltip from "../../components/Tooltip"
+import Tooltip from "components/Tooltip"
 import { v4 as uuidv4 } from "uuid"
 
 interface IRiskyCardInitializer {

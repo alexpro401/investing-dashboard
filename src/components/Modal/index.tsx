@@ -9,7 +9,7 @@ const modalRoot = document.getElementById("modal")
 
 interface Props {
   isOpen: boolean
-  title: string
+  title: string | ReactNode
   children?: ReactNode
   maxWidth?: string
   isShowCloseBtn?: boolean
@@ -49,7 +49,15 @@ const Modal: FC<Props> = ({
       >
         {isShowCloseBtn || title ? (
           <S.Head>
-            {title ? <S.Title>{title}</S.Title> : <> </>}
+            {title ? (
+              typeof title === "string" ? (
+                <S.Title>{title}</S.Title>
+              ) : (
+                title
+              )
+            ) : (
+              <> </>
+            )}
             {isShowCloseBtn ? (
               <Icon name={ICON_NAMES.modalClose} onClick={onClose} />
             ) : (

@@ -1,21 +1,11 @@
 import styled from "styled-components/macro"
-import { Flex, GradientBorder } from "theme"
+import { Flex } from "theme"
+import { Card } from "common"
 
 const Styled = {
-  Title: styled.div`
-    width: 100%;
-    font-family: ${(props) => props.theme.appFontFamily};
-    font-style: normal;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 19px;
-    text-align: center;
-    color: #e4f2ff;
-  `,
-  Container: styled(GradientBorder)`
+  Container: styled(Card)`
     width: 100%;
     height: 241px;
-    margin-top: 16px;
     border-radius: 15px;
     flex-direction: column;
 
