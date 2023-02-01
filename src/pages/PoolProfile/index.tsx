@@ -49,7 +49,6 @@ import Modal from "components/Modal"
 import { useEffectOnce } from "react-use"
 import { Bus, sleep } from "helpers"
 import { useTranslation } from "react-i18next"
-import { TraderInvestSelfBtn, TraderInvestSelfLinkIcon } from "./styled"
 
 const PoolProfileContent = () => {
   const { chainId } = useWeb3React()
