@@ -1,6 +1,5 @@
 import { ReactNode, useState } from "react"
 import ReactTooltip from "react-tooltip"
-import ReactDOMServer from "react-dom/server"
 
 import TooltipIcon from "assets/icons/TooltipIcon"
 import styled, { createGlobalStyle } from "styled-components/macro"
@@ -9,6 +8,9 @@ import { GradientBorderBase } from "theme"
 
 const TooltipStyles: any = createGlobalStyle`
   button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 0;
   }
 

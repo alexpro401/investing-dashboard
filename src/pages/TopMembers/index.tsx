@@ -1,5 +1,5 @@
 import { Flex, Center, To } from "theme"
-import React, { ElementType, useEffect, useMemo, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { CubeSpinner } from "react-spinners-kit"
 import { Routes, Route, generatePath, Navigate } from "react-router-dom"
@@ -81,7 +81,10 @@ const List: React.FC<Props> = ({ poolType }) => {
         {pools[poolType].map((pool, index) => (
           <To
             key={pool.id}
-            to={generatePath(ROUTE_PATHS.poolProfile, { poolAddress: pool.id })}
+            to={generatePath(ROUTE_PATHS.poolProfile, {
+              poolAddress: pool.id,
+              "*": "",
+            })}
           >
             <Flex p="16px 0 0" full>
               <PoolStatisticCard data={pool} index={index}>

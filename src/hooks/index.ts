@@ -74,6 +74,8 @@ export * from "./useTransactionWaiter"
 export * from "./useCountdown"
 export * from "./useUserSettings"
 export * from "./useOnce"
+export * from "./useRouteState"
 
 export * from "./dao"
 export * from "./pool"
+export * from "./investor"

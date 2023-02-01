@@ -44,7 +44,7 @@ const ChooseDaoProposalAsPerson: React.FC<IChooseProposalAsPersonProps> = ({
   }, [navigate, isUserValidator, daoAddress])
 
   return (
-    <Modal isOpen={isOpen} title="Create proposal as a:" toggle={toggle}>
+    <Modal isOpen={isOpen} title="Create proposal as a:" onClose={toggle}>
       <S.PersonProposalList>
         <S.PersonProposal onClick={handleGoToGeneralProposals}>
           <S.ProposalTopbar>

@@ -32,7 +32,7 @@ export interface IInvestProposalQuery {
   proposals: IInvestProposal[]
 }
 
-export interface IInvestorProposalVest {
+export interface InvestorPositionVest {
   id: string
   isInvest: boolean
   timestamp: string
@@ -41,7 +41,7 @@ export interface IInvestorProposalVest {
   volumeUSD: BigNumber
 }
 
-export interface IInvestorProposal {
+export interface InvestorPosition {
   id: string
   isClosed: boolean
   totalBaseInvestVolume: BigNumber
@@ -55,7 +55,7 @@ export interface IInvestorProposal {
     type: string
     token: string
   }
-  vest: IInvestorProposalVest[]
+  vest?: InvestorPositionVest[]
 }
 
 // Investor proposals

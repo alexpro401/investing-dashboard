@@ -5,33 +5,24 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { Center, Flex } from "theme"
 import SwapPrice from "components/SwapPrice"
 import Header from "components/Header/Layout"
-import IconButton from "components/IconButton"
 import ExchangeDivider from "components/Exchange/Divider"
-import CircularProgress from "components/CircularProgress"
 import { AppButton } from "common"
 import ExchangeInput from "components/Exchange/ExchangeInput"
 
 import { useUserAgreement } from "state/user/hooks"
 
-import close from "assets/icons/close-big.svg"
-
 import {
   Container,
-  Card,
-  CardHeader,
-  Title,
-  IconsGroup,
-  InfoCard,
   InfoRow,
   InfoGrey,
-  InfoDropdown,
   InfoWhite,
 } from "components/Exchange/styled"
 
 import useWithdrawInvestmentProposal from "./useWithdrawInvestmentProposal"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { GuardSpinner } from "react-spinners-kit"
-import { graphClientInvestPools } from "utils/graphClient"
+import { Exchange } from "components/Exchange"
+import { Info } from "components/InfoAccordion"
 
 function WithdrawInvestmentProposal() {
   const { poolAddress, proposalId } = useParams()
@@ -89,84 +80,20 @@ function WithdrawInvestmentProposal() {
     )
   }, [onSubmit, from.amount, from.balance])
 
-  const lastWithdraw = useMemo(() => {
-    return (
-      <Flex gap="4">
-        <InfoGrey>
-          {info.withdrawals.length ? info.withdrawals[0].date : "-"}
-        </InfoGrey>
-      </Flex>
-    )
-  }, [info.withdrawals])
-
   const lastWithdrawContent = useMemo(() => {
-    return (
-      <>
-        {info.withdrawals.map((withdraw) => (
-          <InfoRow key={withdraw.id}>
-            <InfoGrey>{withdraw.date}</InfoGrey>
-            <Flex gap="4">
-              <InfoWhite>{withdraw.amount}</InfoWhite>
-              <InfoGrey>{from.symbol}</InfoGrey>
-            </Flex>
-          </InfoRow>
-        ))}
-      </>
-    )
+    return info.withdrawals.map((withdraw) => (
+      <InfoRow key={withdraw.id}>
+        <InfoGrey>{withdraw.date}</InfoGrey>
+        <Flex gap="4">
+          <InfoWhite>{withdraw.amount}</InfoWhite>
+          <InfoGrey>{from.symbol}</InfoGrey>
+        </Flex>
+      </InfoRow>
+    ))
   }, [from.symbol, info.withdrawals])
 
-  const fullness = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoGrey>Fullness:</InfoGrey>
-        <Flex gap="4">
-          <InfoWhite>
-            {info.tvl.current} {from.symbol}
-          </InfoWhite>
-          <InfoGrey>
-            /{info.tvl.max} {from.symbol}
-          </InfoGrey>
-        </Flex>
-      </InfoRow>
-    )
-  }, [from.symbol, info.tvl])
-
-  const averageLpPrice = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoGrey>Average LP price:</InfoGrey>
-        <Flex gap="4">
-          <InfoWhite>
-            {info.avgPriceLP.base} {from.symbol} = {info.avgPriceLP.usd} USD
-          </InfoWhite>
-        </Flex>
-      </InfoRow>
-    )
-  }, [from.symbol, info.avgPriceLP.base, info.avgPriceLP.usd])
-
-  const expirationDate = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoGrey>Expiration date:</InfoGrey>
-        <Flex gap="4">
-          <InfoWhite>{info.expirationDate}</InfoWhite>
-        </Flex>
-      </InfoRow>
-    )
-  }, [info.expirationDate])
-
   const form = (
-    <Card>
-      <CardHeader>
-        <Flex>
-          <Title active>Withdraw</Title>
-        </Flex>
-        <IconsGroup>
-          <CircularProgress />
-          <IconButton size={10} filled media={close} onClick={() => {}} />
-        </IconsGroup>
-      </CardHeader>
-
+    <>
       <ExchangeInput
         price={from.price}
         amount={from.amount}
@@ -190,31 +117,42 @@ function WithdrawInvestmentProposal() {
         decimal={to.decimals}
         customBalance={<InfoGrey>My address wallet</InfoGrey>}
       />
-
-      <SwapPrice
-        gasPrice={gasPrice}
-        toSymbol={from.symbol}
-        fromSymbol="USD"
-        tokensCost={baseTokenPrice}
-      />
-
-      <Flex full p="16px 0 0">
-        {button}
-      </Flex>
-
-      <InfoCard gap="12">
-        {fullness}
-        {averageLpPrice}
-        {expirationDate}
-        <InfoDropdown
-          left={<InfoGrey>Last withdraw</InfoGrey>}
-          right={lastWithdraw}
-        >
-          {lastWithdrawContent}
-        </InfoDropdown>
-      </InfoCard>
-    </Card>
+    </>
   )
+
+  const withdrawInfo: Info[] = useMemo(() => {
+    return [
+      {
+        title: "Fullness",
+        value: `${info.tvl.current} ${from.symbol} / ${info.tvl.max} ${from.symbol}`,
+        tooltip: "Current fullness of the pool",
+      },
+      {
+        title: "Average LP price",
+        value: `${info.avgPriceLP.base} ${from.symbol} = ${info.avgPriceLP.usd} USD`,
+        tooltip: "Average price of LP tokens in USD",
+      },
+      {
+        title: "Expiration date",
+        value: info.expirationDate,
+        tooltip: "Date when the pool will be closed",
+      },
+      {
+        title: "Last withdraw",
+        value: info.withdrawals.length ? info.withdrawals[0].date : "-",
+        tooltip: "Date of the last withdraw",
+        childrens: lastWithdrawContent,
+      },
+    ]
+  }, [
+    from.symbol,
+    info.avgPriceLP.base,
+    info.avgPriceLP.usd,
+    info.expirationDate,
+    info.tvl,
+    info.withdrawals,
+    lastWithdrawContent,
+  ])
 
   return (
     <>
@@ -225,7 +163,19 @@ function WithdrawInvestmentProposal() {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        {form}
+        <Exchange
+          title="Withdraw to address"
+          info={withdrawInfo}
+          form={form}
+          buttons={[button]}
+        >
+          <SwapPrice
+            gasPrice={gasPrice}
+            toSymbol={from.symbol}
+            fromSymbol="USD"
+            tokensCost={baseTokenPrice}
+          />
+        </Exchange>
       </Container>
     </>
   )

@@ -408,6 +408,7 @@ const InvestProposalCard: FC<Props> = ({ proposal, poolAddress }) => {
       navigate(
         generatePath(ROUTE_PATHS.poolProfile, {
           poolAddress: poolAddress,
+          "*": "",
         })
       )
     },

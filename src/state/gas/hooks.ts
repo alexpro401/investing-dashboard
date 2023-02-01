@@ -1,5 +1,6 @@
 import { useWeb3React } from "@web3-react/core"
 import { GasPriceResponse } from "api/gas-price/types"
+import { isNaN } from "lodash"
 import { useCallback } from "react"
 import { useSelector } from "react-redux"
 import { selectGasByChain } from "./selectors"
@@ -18,10 +19,13 @@ const useGasTracker = (): [
 
       const { UsdPrice, ProposeGasPrice } = gas
 
-      return (
+      const gasPrice =
         (gasLimit * 1.1 * parseFloat(UsdPrice) * parseFloat(ProposeGasPrice)) /
         1000000000
-      ).toFixed(2)
+
+      if (isNaN(gasPrice)) return "0.00"
+
+      return gasPrice.toFixed(2)
     },
     [gas]
   )

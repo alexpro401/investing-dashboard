@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
 } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useDispatch } from "react-redux"
@@ -42,6 +43,7 @@ const CreateGovProposalValidatorChangeVotingSettingsForm: React.FC = () => {
   const { duration, quorum, initialForm } = useContext(
     ChangeVotingSettingsContext
   )
+  const stepsWrapperRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     dispatch(hideTapBar())
@@ -60,6 +62,14 @@ const CreateGovProposalValidatorChangeVotingSettingsForm: React.FC = () => {
     () => Object.values(STEPS).indexOf(currentStep) + 1,
     [currentStep]
   )
+
+  useEffect(() => {
+    if (stepsWrapperRef.current) {
+      stepsWrapperRef.current.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+  }, [currentStep, stepsWrapperRef])
 
   const handleCreateProposal = useCallback(() => {
     const durationChanged = initialForm.duration !== duration.get
@@ -135,7 +145,7 @@ const CreateGovProposalValidatorChangeVotingSettingsForm: React.FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        <S.StepsWrapper>
+        <S.StepsWrapper ref={stepsWrapperRef}>
           {currentStep === STEPS.votingSettings && (
             <S.StepsContainer>
               <VotingSettings />

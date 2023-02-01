@@ -56,7 +56,6 @@ const useInvestRiskyProposal = (
   {
     info: RiskyInvestInfo
     formWithDirection: RiskyForm
-    isSlippageOpen: boolean
     fromBalance: BigNumber
     toBalance: BigNumber
     inPrice: BigNumber
@@ -75,7 +74,6 @@ const useInvestRiskyProposal = (
   },
   {
     setFromAmount: (amount: string) => void
-    setSlippageOpen: (state: boolean) => void
     setToAmount: (amount: string) => void
     setToAddress: (address: string) => void
     setFromAddress: (address: string) => void
@@ -106,7 +104,6 @@ const useInvestRiskyProposal = (
   const [fromAmount, setFromAmount] = useState("0")
   const [toAmount, setToAmount] = useState("0")
   const [slippage, setSlippage] = useState("0.10")
-  const [isSlippageOpen, setSlippageOpen] = useState(false)
   const [toSelectorOpened, setToSelector] = useState(false)
   const [fromSelectorOpened, setFromSelector] = useState(false)
   const [direction, setDirection] = useState<SwapDirection>("deposit")
@@ -661,7 +658,6 @@ const useInvestRiskyProposal = (
     {
       info,
       formWithDirection,
-      isSlippageOpen,
       fromBalance,
       toBalance,
       oneTokenCost,
@@ -679,7 +675,6 @@ const useInvestRiskyProposal = (
       slippage,
     },
     {
-      setSlippageOpen,
       setFromAmount,
       setToAmount,
       setToAddress,

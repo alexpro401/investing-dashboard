@@ -72,9 +72,13 @@ function usePoolPositionCard(
         url += `/${positionToken}/${baseToken}`
       }
 
-      navigate(url)
+      navigate(url, {
+        state: {
+          pathname: `/fund-positions/${poolId}/${closed ? "closed" : "open"}`,
+        },
+      })
     },
-    [baseToken, navigate, poolId, poolType, positionToken]
+    [baseToken, closed, navigate, poolId, poolType, positionToken]
   )
 
   // SIDE EFFECTS

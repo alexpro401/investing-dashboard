@@ -25,11 +25,16 @@ import { DesktopHeaderWrp } from "./styled"
 interface ICreateDaoProposalGeneralFormProps {
   withProposalTypeName?: boolean
   withProposalTypeDescription?: boolean
+  nextLabel?: string
 }
 
 const CreateDaoProposalGeneralForm: React.FC<
   ICreateDaoProposalGeneralFormProps
-> = ({ withProposalTypeName = false, withProposalTypeDescription = false }) => {
+> = ({
+  withProposalTypeName = false,
+  withProposalTypeDescription = false,
+  nextLabel = "Create Proposal",
+}) => {
   const { isMobile } = useBreakpoints()
 
   const {
@@ -172,7 +177,7 @@ const CreateDaoProposalGeneralForm: React.FC<
         </Card>
         <S.FormStepsNavigationWrp
           customNextCb={handleNextStepCb}
-          nextLabel={"Create Proposal"}
+          nextLabel={nextLabel}
         />
       </S.StepsRoot>
     </>

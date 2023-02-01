@@ -1,11 +1,20 @@
-import styled from "styled-components/macro"
+import styled, { css } from "styled-components/macro"
 import { motion } from "framer-motion"
 
 import { Icon, Card, Collapse } from "common"
-import theme from "theme"
+import theme, { respondTo } from "theme"
 
 export const CollCard = styled(Card)<{ isOpen: boolean }>`
-  ${(props) => (!props.isOpen ? "gap: 0" : "")}
+  ${(props) =>
+    !props.isOpen
+      ? "gap: 0"
+      : css`
+          gap: 16px;
+
+          ${respondTo("sm")} {
+            gap: 24px;
+          }
+        `}
 `
 
 export const CollCardTopbar = styled.div`

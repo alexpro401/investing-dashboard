@@ -17,10 +17,10 @@ import ERC721Row from "components/ERC721Row"
 import { ZERO } from "consts"
 import ERC20Row from "components/ERC20Row"
 import { IGovVoterInPoolPairsQuery } from "interfaces/thegraphs/gov-pools"
-import useGovPoolWithdrawableAssets from "hooks/dao/useGovPoolWithdrawableAssets"
 import { Token } from "interfaces"
 
-import useGovPoolDelegations from "hooks/dao/useGovPoolDelegations"
+import { useGovPoolWithdrawableAssets, useGovPoolDelegations } from "hooks"
+
 import { addBignumbers, subtractBignumbers } from "utils/formulas"
 import { BigNumber } from "@ethersproject/bignumber"
 

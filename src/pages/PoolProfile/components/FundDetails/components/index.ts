@@ -1,0 +1,7 @@
+export { default as FundDetailsGeneral } from "./FundDetailsGeneral"
+export { default as FundDetailsFee } from "./FundDetailsFee"
+export { default as FundDetailsMenu } from "./FundDetailsMenu"
+export { default as FundDetailsInvestment } from "./FundDetailsInvestment"
+export { default as FundDetailsManager } from "./FundDetailsManager"
+export { default as FundDetailsWhitelist } from "./FundDetailsWhitelist"
+export { default as FundDetailsWithdrawalHistory } from "./FundDetailsWithdrawalHistory"

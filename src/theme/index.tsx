@@ -173,20 +173,6 @@ export const GradientBorderLightGreen = styled(Flex)<{ focused?: boolean }>`
   }
 `
 
-export const GradientBorderSearch = styled(Flex)<{ focused?: boolean }>`
-  ${GradientBorderBase}
-
-  &:before {
-    background-image: ${(props) =>
-      props.focused
-        ? "linear-gradient(to bottom right,#a4ebd4 100%,#63b49b 100%)"
-        : "linear-gradient(to bottom right,#28334A 0%,#28334A 100%)"};
-  }
-  &:after {
-    background: ${(props) => (props.focused ? "#141926" : "#141A27")};
-  }
-`
-
 export const Text = styled(motion.span)<{
   color?: string
   fz?: number

@@ -1,0 +1,67 @@
+{
+  "validations": {
+    "field-error_required": "Please fill out this field",
+    "field-error_minLength": "This field must contain minimum {{minLength}} symbols",
+    "field-error_maxLength": "This field must contain maximum {{maxLength}} symbols"
+  },
+  "errors": {
+    "default": "Oops... Something went wrong",
+    "provider-user-rejected-request": "User rejected request.",
+    "provider-unauthorized": "The requested method and/or account has not been authorized by the user.",
+    "provider-unsupported-method": "The Provider does not support the requested method.",
+    "provider-disconnected": "The Provider is disconnected from all chains.",
+    "provider-chain-disconnected": "The Provider is not connected to the requested chain.",
+    "provider-parse-error": "Invalid JSON standard",
+    "provider-invalid-request": "JSON is not a valid request object standard",
+    "provider-method-not-found": "Method does not exist standard",
+    "provider-invalid-params": "Invalid method parameters standard",
+    "provider-internal-error": "Internal JSON-RPC error standard",
+    "provider-invalid-input": "Missing or invalid parameters non-standard",
+    "provider-resource-not-found": "equested resource not found non-standard",
+    "provider-resource-unavailable": "Requested resource not available non-standard",
+    "provider-transaction-rejected": "Transaction creation failed non-standard",
+    "provider-method-not-supported": "Method is not implemented non-standard",
+    "provider-limit-exceeded": "Request exceeds defined limit non-standard",
+    "provider-json-rpc-version-not-supported": "Version of JSON-RPC protocol is not supported non-standard",
+    "provider-wrapper-method-not-found": "provider not exist or hasn't this method"
+  },
+  "notifications": {
+    "default-title-success": "Success",
+    "default-title-error": "Error",
+    "default-title-warning": "Warning",
+    "default-title-info": "Info",
+    "default-title-default": "Just a message",
+    "default-message-success": "Action successful",
+    "default-message-error": "Something went wrong",
+    "default-message-warning": "Something you are doing is not recommended",
+    "default-message-info": "Something is happening. Just want you to know that",
+    "default-message-default": "Just a message"
+  },
+  "filters": {
+    "pool-type": {
+      "all-pool": "All pool",
+      "invest-pool": "Invest pool",
+      "basic-pool": "Basic pool"
+    }
+  },
+  "pool-profile": {
+    "explorer-link": "View on bscscan",
+    "copy-btn": "Copy address",
+    "statistic-heading": "Statistic",
+    "trades-per-day-lbl": "Trades per day",
+    "order-size-lbl": "Order size",
+    "daily-profit-lbl": "Daily profit",
+    "time-positions-lbl": "Time positions",
+    "sortino-lbl": "Sortino ({currency})",
+    "total-pnl-heading": "Total P&L",
+    "details-heading": "Details",
+    "emission-lbl": "Emission",
+    "min-invest-amount-lbl": "Min. invest amount",
+    "fund-managers-lbl": "Fund managers",
+    "whitelist-lbl": "Whitelist",
+    "manage-fund-modal-title": "Manage Fund"
+  },
+  "trader-pools-list": {
+    "tooltip-msg": "Tooltip message"
+  }
+}

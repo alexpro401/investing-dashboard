@@ -263,3 +263,13 @@ export const GovPoolProposalVotesQuery = `
     }
   }
 `
+
+export const GovPoolTokenSaleQuery = `
+  query($address: String!) {
+    daoPool(id: $address) {
+      tokenSales {
+        id
+      }
+    }
+  }
+`

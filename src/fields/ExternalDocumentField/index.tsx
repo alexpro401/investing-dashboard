@@ -128,7 +128,6 @@ const ExternalDocumentField: FC<Props> = ({
             />
           }
           errorMessage={errorMessage}
-          disabled={isShowUrlOverlap}
           readonly={isShowUrlOverlap}
           onBlur={validateAndShowUrlOverlap}
         />
