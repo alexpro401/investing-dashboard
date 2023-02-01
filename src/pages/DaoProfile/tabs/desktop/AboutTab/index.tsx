@@ -7,6 +7,7 @@ import {
   HighlightHeaderDesktop,
   DesktopStatistic,
   DaoProfileChart,
+  DaoProfileTokensInTreasuryCard,
 } from "../../../components"
 import { PageChart } from "../../../types"
 
@@ -30,7 +31,9 @@ const AboutTab: React.FC = () => {
         <S.ChartSection>
           <DaoProfileChart chart={chart} setChart={setChart} />
         </S.ChartSection>
-        <S.TreasurySection></S.TreasurySection>
+        <S.TreasurySection>
+          <DaoProfileTokensInTreasuryCard />
+        </S.TreasurySection>
       </S.ChartTreasuryWrp>
     </Flex>
   )

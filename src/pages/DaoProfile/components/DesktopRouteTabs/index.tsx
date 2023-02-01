@@ -1,7 +1,6 @@
 import React, { useContext, useMemo } from "react"
-import { useLocation, useParams, generatePath } from "react-router-dom"
+import { useParams, generatePath } from "react-router-dom"
 
-import isActiveRoute from "utils/isActiveRoute"
 import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsContext/GovPoolProfileTabsContext"
 import { ROUTE_PATHS } from "consts"
 import {
@@ -9,43 +8,41 @@ import {
   mapProfileTabToRoute,
   mapProfileTabToTitle,
 } from "types/govPoolProfile.types"
-
-import S from "./styled"
+import RouteTabs from "components/RouteTabs"
 
 const DesktopRouteTabs: React.FC = () => {
-  const { pathname } = useLocation()
   const { currentTab } = useContext(GovPoolProfileTabsContext)
   const { daoAddress } = useParams()
 
   const DESKTOP_ROUTE_TABS = useMemo(
     () => [
       {
-        name: mapProfileTabToTitle[EDaoProfileTab.about],
-        route: generatePath(ROUTE_PATHS.daoProfile, {
+        title: mapProfileTabToTitle[EDaoProfileTab.about],
+        source: generatePath(ROUTE_PATHS.daoProfile, {
           daoAddress: daoAddress ?? "",
           "*": mapProfileTabToRoute[EDaoProfileTab.about],
         }),
         onClick: () => currentTab.set(EDaoProfileTab.about),
       },
       {
-        name: mapProfileTabToTitle[EDaoProfileTab.my_balance],
-        route: generatePath(ROUTE_PATHS.daoProfile, {
+        title: mapProfileTabToTitle[EDaoProfileTab.my_balance],
+        source: generatePath(ROUTE_PATHS.daoProfile, {
           daoAddress: daoAddress ?? "",
           "*": mapProfileTabToRoute[EDaoProfileTab.my_balance],
         }),
         onClick: () => currentTab.set(EDaoProfileTab.my_balance),
       },
       {
-        name: mapProfileTabToTitle[EDaoProfileTab.validators],
-        route: generatePath(ROUTE_PATHS.daoProfile, {
+        title: mapProfileTabToTitle[EDaoProfileTab.validators],
+        source: generatePath(ROUTE_PATHS.daoProfile, {
           daoAddress: daoAddress ?? "",
           "*": mapProfileTabToRoute[EDaoProfileTab.validators],
         }),
         onClick: () => currentTab.set(EDaoProfileTab.validators),
       },
       {
-        name: mapProfileTabToTitle[EDaoProfileTab.delegations],
-        route: generatePath(ROUTE_PATHS.daoProfile, {
+        title: mapProfileTabToTitle[EDaoProfileTab.delegations],
+        source: generatePath(ROUTE_PATHS.daoProfile, {
           daoAddress: daoAddress ?? "",
           "*": mapProfileTabToRoute[EDaoProfileTab.delegations],
         }),
@@ -55,25 +52,7 @@ const DesktopRouteTabs: React.FC = () => {
     [currentTab, daoAddress]
   )
 
-  return (
-    <S.Tabs
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      exit={{ y: -20, opacity: 0 }}
-      transition={{ duration: 0.2 }}
-    >
-      {DESKTOP_ROUTE_TABS.map((tab, tabIndex) => (
-        <S.Tab
-          key={tabIndex}
-          to={tab.route}
-          active={isActiveRoute(pathname, tab.route)}
-          onClick={tab.onClick}
-        >
-          {tab.name}
-        </S.Tab>
-      ))}
-    </S.Tabs>
-  )
+  return <RouteTabs tabs={DESKTOP_ROUTE_TABS} full={false} themeType={"blue"} />
 }
 
 export default DesktopRouteTabs

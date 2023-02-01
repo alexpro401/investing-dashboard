@@ -18,6 +18,7 @@ import {
   SliderHeader,
   TextLabel,
   TreasuryEmptyText,
+  DaoTreasuryCardWrap,
 } from "../styled"
 
 interface ITokenView {
@@ -143,7 +144,7 @@ const DaoProfileTokensInTreasuryCard: React.FC = () => {
   )
 
   return (
-    <Card>
+    <DaoTreasuryCardWrap>
       <SliderHeader>
         <TextLabel fw={500}>Token in treasury</TextLabel>
         <TextLabel fw={500}>Amount</TextLabel>
@@ -211,7 +212,7 @@ const DaoProfileTokensInTreasuryCard: React.FC = () => {
           text="Пополнить трежери DAO"
         />
       )}
-    </Card>
+    </DaoTreasuryCardWrap>
   )
 }
 

@@ -26,24 +26,24 @@ const DesktopStatistic: React.FC = () => {
       <S.Root>
         <S.Statistics>
           <PoolStatisticsItem
-            label={"TVL"}
-            value={`$100.3133`}
-            percentage={"1.13%"}
+            label={"My votes"}
+            value={"24,888"}
+            percentage={"Votes"}
           />
           <PoolStatisticsItem
             label={"TVL"}
-            value={`$100.3133`}
-            percentage={"1.13%"}
+            value={`$24,888`}
+            percentage={"+1.13%"}
           />
           <PoolStatisticsItem
-            label={"TVL"}
-            value={`$100.3133`}
-            percentage={"1.13%"}
+            label={"APY"}
+            value={"0.00%"}
+            percentage={"-1.13%"}
           />
           <PoolStatisticsItem
-            label={"TVL"}
-            value={`$100.3133`}
-            percentage={"1.13%"}
+            label={"APR"}
+            value={"0.00%"}
+            percentage={"-1.13%"}
           />
         </S.Statistics>
         <S.Actions>

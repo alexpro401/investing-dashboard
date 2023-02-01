@@ -2,8 +2,8 @@ import { motion } from "framer-motion"
 import styled from "styled-components/macro"
 import { Link } from "react-router-dom"
 
-import theme, { Flex, Text } from "theme"
-import { AppButton } from "common"
+import theme, { Flex, respondTo, Text } from "theme"
+import { AppButton, Card } from "common"
 
 const variants = {
   hidden: { opacity: 0 },
@@ -249,4 +249,23 @@ export const DelegationTab = styled(Text).attrs(() => ({
   justify-content: center;
   border-radius: 20px;
   cursor: pointer;
+`
+
+export const DaoTreasuryCardWrap = styled(Card)`
+  width: 100%;
+
+  ${respondTo("md")} {
+    height: 100%;
+    padding: 16px;
+  }
+`
+
+export const DaoChartCardWrap = styled(Card)`
+  width: 100%;
+
+  ${respondTo("md")} {
+    height: 100%;
+    width: auto;
+    padding: 16px;
+  }
 `

@@ -3,9 +3,14 @@ import { isNil, map } from "lodash"
 import { v4 as uuidv4 } from "uuid"
 
 import { PageChart } from "../types"
-import { Card } from "common"
 import { Flex } from "theme"
-import { ChartFilter, ChartFilterItem, TextLabel, TextValue } from "../styled"
+import {
+  ChartFilter,
+  ChartFilterItem,
+  TextLabel,
+  TextValue,
+  DaoChartCardWrap,
+} from "../styled"
 import Chart from "components/Chart"
 import { CHART_TYPE, TIMEFRAME } from "consts/chart"
 
@@ -124,7 +129,7 @@ const DaoProfileChart: React.FC<Props> = ({ chart, setChart }) => {
   )
 
   return (
-    <Card>
+    <DaoChartCardWrap>
       <Chart
         type={CHART_TYPE.area}
         height="130px"
@@ -140,7 +145,7 @@ const DaoProfileChart: React.FC<Props> = ({ chart, setChart }) => {
         nodeHeadRight={ChartToggle}
         loading={false}
       />
-    </Card>
+    </DaoChartCardWrap>
   )
 }
 

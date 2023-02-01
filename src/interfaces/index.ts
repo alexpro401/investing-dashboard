@@ -183,4 +183,5 @@ export interface ITab {
   source: string
   activeSource?: string[]
   amount?: number
+  onClick?: () => void
 }

@@ -32,15 +32,19 @@ const DaoProfile: React.FC = () => {
 
   const [chart, setChart] = useState<PageChart>(PageChart.tvl)
 
-  const { isMobile } = useBreakpoints()
+  const { isBigTablet } = useBreakpoints()
 
   return (
     <>
-      <Header>{isMobile ? "Dao Profile" : <Breadcrumbs />}</Header>
+      <Header>{!isBigTablet ? "Dao Profile" : <Breadcrumbs />}</Header>
       <WithGovPoolAddressValidation daoPoolAddress={daoAddress ?? ""}>
         <S.Container>
-          {!isMobile && <DesktopRouteTabs />}
-          {isMobile && (
+          {isBigTablet && (
+            <S.Indents side>
+              <DesktopRouteTabs />
+            </S.Indents>
+          )}
+          {!isBigTablet && (
             <S.Indents top>
               <DaoProfileStatisticCard
                 isValidator={isValidator}
@@ -64,7 +68,9 @@ const DaoProfile: React.FC = () => {
               </S.Indents>
             </S.Indents>
           )}
-          <Routing />
+          <S.Indents top side>
+            <Routing />
+          </S.Indents>
         </S.Container>
       </WithGovPoolAddressValidation>
     </>
