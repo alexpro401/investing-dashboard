@@ -20,11 +20,18 @@ import { GuardSpinner } from "react-spinners-kit"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { Exchange } from "components/Exchange"
 import { Info } from "components/InfoAccordion"
+import { useRouteState } from "hooks"
 
 const Invest = () => {
   const { poolAddress } = useParams<{
     poolAddress: string
   }>()
+
+  const routeState = useRouteState()
+  const initialDirection = routeState?.initialDirection
+
+  const isDirectionReceived =
+    initialDirection === "deposit" || initialDirection === "withdraw"
 
   const [
     { from, to },
@@ -45,7 +52,7 @@ const Invest = () => {
     },
   ] = useInvest({
     poolAddress,
-    initialDirection: "deposit",
+    initialDirection: isDirectionReceived ? initialDirection : "deposit",
   })
 
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()

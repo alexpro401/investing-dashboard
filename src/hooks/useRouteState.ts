@@ -6,6 +6,7 @@ import { NavigateOptions, useLocation, useNavigate } from "react-router-dom"
 
 interface routerStateType {
   from?: { pathname?: string }
+  initialDirection?: "deposit" | "withdraw"
 }
 
 export const useRouteState = () => {
