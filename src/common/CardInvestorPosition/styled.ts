@@ -37,6 +37,7 @@ export const CardInvestorPositionBody = styled.div<{
   background: ${({ theme }) => theme.backgroundColors.secondary};
 
   ${respondTo("lg")} {
+    min-height: 69px;
     gap: 0 var(--app-gap);
     padding: 12px 16px;
     grid-template-columns: repeat(5, minmax(0, 145px)) 1fr;
@@ -167,8 +168,6 @@ export const PNL = styled(ColorizedNumber)`
     align-items: center;
     justify-content: center;
 
-    align-self: flex-end;
-
     font-size: 12px;
     font-weight: 500;
     line-height: 14px;
@@ -220,8 +219,9 @@ export const CardInvestorPositionExtra = styled(GradientBorder)`
 
 export const CardInvestorPositionVestsWrp = styled.div`
   max-height: 180px;
-  min-height: 141.5px;
   overflow-y: auto;
+  background: #181e2c;
+  border-radius: 20px;
 
   -webkit-overflow-scrolling: touch;
   ::-webkit-scrollbar {
@@ -231,8 +231,17 @@ export const CardInvestorPositionVestsWrp = styled.div`
   ${respondTo("lg")} {
     max-height: initial;
     overflow-y: initial;
+
+    background: #141926;
     border-top: 1px solid ${(props) => props.theme.backgroundColors.secondary};
   }
+`
+export const CardInvestorPositionVestsLoaderWrp = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  width: 100%;
 `
 export const CardInvestorPositionCommissionWrp = styled.div`
   padding: var(--app-padding);

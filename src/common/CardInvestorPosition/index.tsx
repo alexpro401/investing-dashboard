@@ -1,7 +1,8 @@
 import * as React from "react"
+import { isEmpty } from "lodash"
 import { format } from "date-fns/esm"
 import { AnimatePresence } from "framer-motion"
-import { PulseSpinner } from "react-spinners-kit"
+import { SpiralSpinner } from "react-spinners-kit"
 import { generatePath, useNavigate } from "react-router-dom"
 
 import {
@@ -9,11 +10,15 @@ import {
   useInvestorPosition,
   useInvestorPositionVests,
 } from "hooks"
-import { DATE_FORMAT, ICON_NAMES, ROUTE_PATHS } from "consts"
+import {
+  DATE_FORMAT,
+  ICON_NAMES,
+  MAX_PAGINATION_COUNT,
+  ROUTE_PATHS,
+} from "consts"
 import { InvestorPosition } from "interfaces/thegraphs/invest-pools"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 
-import { Center } from "theme"
 import { NoDataMessage } from "common"
 import { accordionSummaryVariants } from "motion/variants"
 
@@ -73,11 +78,21 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
   }, [isDesktop, showCommission])
 
   const onNavigateTerminal = React.useCallback(
-    (e?: React.MouseEvent<HTMLElement>): void => {
-      if (e) e.stopPropagation()
+    (
+      e: React.MouseEvent<HTMLElement>,
+      initialDirection: "deposit" | "withdraw"
+    ): void => {
+      e.stopPropagation()
 
       navigate(
-        generatePath(ROUTE_PATHS.poolInvest, { poolAddress: position.pool.id })
+        generatePath(ROUTE_PATHS.poolInvest, {
+          poolAddress: position.pool.id,
+        }),
+        {
+          state: {
+            initialDirection,
+          },
+        }
       )
     },
     [navigate, position]
@@ -95,7 +110,7 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
             },
             {
               label: "Buy more",
-              onClick: onNavigateTerminal,
+              onClick: (e) => onNavigateTerminal(e, "deposit"),
             },
             {
               label: "Commission",
@@ -104,7 +119,7 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
             },
             {
               label: "Close",
-              onClick: onNavigateTerminal,
+              onClick: (e) => onNavigateTerminal(e, "withdraw"),
             },
           ],
     [
@@ -248,7 +263,8 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
             {normalizeBigNumber(pnlBase, 18, 6)}
           </S.CardInvestorPositionBodyItemAmount>
           <S.CardInvestorPositionBodyItemPrice>
-            ${normalizeBigNumber(pnlUSD, 18, 2)}
+            {pnlUSD.isNegative() && "-"}$
+            {normalizeBigNumber(pnlUSD.abs(), 18, 2)}
           </S.CardInvestorPositionBodyItemPrice>
         </S.CardInvestorPositionBodyItemGrid>
 
@@ -261,13 +277,13 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
                     text={"Buy More"}
                     color={"default"}
                     size={"no-paddings"}
-                    onClick={onNavigateTerminal}
+                    onClick={(e) => onNavigateTerminal(e, "deposit")}
                   />
                   <S.ActionNegative
                     text={"Close position"}
                     color={"default"}
                     size={"no-paddings"}
-                    onClick={onNavigateTerminal}
+                    onClick={(e) => onNavigateTerminal(e, "withdraw")}
                   />
                 </>
               )}
@@ -291,13 +307,13 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
         variants={accordionSummaryVariants}
       >
         <S.CardInvestorPositionVestsWrp>
-          {loadingVests && !vests && (
-            <Center>
-              <PulseSpinner />
-            </Center>
+          {isEmpty(vests) && loadingVests && (
+            <S.CardInvestorPositionVestsLoaderWrp>
+              <SpiralSpinner size={30} loading />
+            </S.CardInvestorPositionVestsLoaderWrp>
           )}
-          {vests && vests.length === 0 && !loadingVests && <NoDataMessage />}
-          {vests && vests.length > 0 ? (
+          {isEmpty(vests) && !loadingVests && <NoDataMessage />}
+          {!isEmpty(vests) ? (
             <>
               {vests.map((v) => (
                 <PositionTrade
@@ -311,10 +327,12 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
                   data={v}
                 />
               ))}
-              <LoadMore
-                isLoading={loadingVests && !!vests.length}
-                handleMore={fetchMoreVests}
-              />
+              {vests.length >= MAX_PAGINATION_COUNT && (
+                <LoadMore
+                  isLoading={loadingVests && !!vests.length}
+                  handleMore={fetchMoreVests}
+                />
+              )}
             </>
           ) : null}
         </S.CardInvestorPositionVestsWrp>

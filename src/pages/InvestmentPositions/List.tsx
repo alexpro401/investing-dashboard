@@ -44,7 +44,7 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
   }
 
   return (
-    <>
+    <div>
       <S.InvestorPositionsListWrp>
         <S.InvestorPositionsListHead>
           <S.InvestorPositionsListHeadItem>
@@ -71,7 +71,7 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
         ))}
       </S.InvestorPositionsListWrp>
       <LoadMore isLoading={loading && !!data.length} handleMore={fetchMore} />
-    </>
+    </div>
   )
 }
 
