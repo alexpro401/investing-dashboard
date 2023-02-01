@@ -18,6 +18,7 @@ import { graphClientBasicPools } from "utils/graphClient"
 import { NoDataMessage } from "common"
 import { Center } from "theme"
 import {
+  NEVER_RELOAD,
   useMultipleContractMultipleData,
   useMultipleContractSingleData,
 } from "state/multicall/hooks"
@@ -118,7 +119,9 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
   const proposalPoolAddressListResults = useMultipleContractSingleData(
     pools,
     TraderPool_Interface,
-    "proposalPoolAddress"
+    "proposalPoolAddress",
+    undefined,
+    NEVER_RELOAD
   )
 
   const proposalPoolAddressListAnyLoading = useMemo(
@@ -149,7 +152,8 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
     proposalPoolAddressList,
     TraderPoolRiskyProposal_Interface,
     "getProposalInfos",
-    callInputs
+    callInputs,
+    NEVER_RELOAD
   )
 
   const anyLoading = useMemo(
