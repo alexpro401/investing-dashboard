@@ -219,7 +219,7 @@ const CreateDaoProposalChangeVotingSettings: React.FC = () => {
                 })}
                 {customExecutorsLoading && (
                   <Flex gap={"24"} full dir="column" ai={"center"}>
-                    <Skeleton variant={"rect"} w={"100%"} h={"60px"} />
+                    <S.SkeletonCard variant={"rect"} w={"100%"} h={"80px"} />
                   </Flex>
                 )}
                 {!customExecutorsLoading &&

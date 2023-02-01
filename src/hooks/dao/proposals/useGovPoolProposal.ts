@@ -190,8 +190,8 @@ export const useGovPoolProposal = (
 
   const isSecondStepProgressStarted = useMemo(
     () =>
-      !!wrappedProposalView?.validatorProposal?.core?.voteEnd?.gt(0) ||
-      isProposalStateValidatorVoting ||
+      !!wrappedProposalView?.validatorProposal?.core?.voteEnd?.gt(0) &&
+      isProposalStateValidatorVoting &&
       wrappedProposalView?.proposal?.core?.votesFor.gt(
         wrappedProposalView?.requiredQuorum
       ),

@@ -6,6 +6,7 @@ export enum ICON_NAMES {
   arrowDownFilled = "angle-down-filled",
   arrowUpFilled = "angle-up-filled",
   close = "close",
+  calendar = "calendar",
   dollarOutline = "dollar-outline",
   globe = "globe",
   shieldCheck = "shield-check",
@@ -59,4 +60,5 @@ export enum ICON_NAMES {
   bsc = "bsc",
   filter = "filter",
   dotsHorizontal = "dots-horizontal",
+  plusOutline = "plus-outline",
 }

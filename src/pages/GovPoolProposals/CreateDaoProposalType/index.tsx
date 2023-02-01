@@ -10,12 +10,11 @@ import CreateNewProposalTypeForm from "forms/CreateNewProposalTypeForm"
 import { useGovPoolSetting, useGovPoolValidatorsCount } from "hooks/dao"
 import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { INITIAL_DAO_PROPOSAL } from "consts/dao"
-import Skeleton from "components/Skeleton"
-import { Flex } from "theme"
+import { SkeletonGlobalLoader } from "./components"
 import { ZERO_ADDR } from "consts"
+import { GovPoolFormOptions } from "types"
 
 import * as S from "../styled"
-import { GovPoolFormOptions } from "types"
 
 const CreateDaoProposalType: React.FC = () => {
   const { daoAddress } = useParams<"daoAddress">()
@@ -32,17 +31,7 @@ const CreateDaoProposalType: React.FC = () => {
     }
   }, [location])
 
-  const loader = useMemo(
-    () => (
-      <S.SkeletonLoader>
-        <Skeleton variant={"rect"} w={"calc(100%)"} h={"40px"} />
-        <Skeleton variant={"rect"} w={"calc(100%)"} h={"40px"} />
-        <Skeleton variant={"rect"} w={"calc(100%)"} h={"80px"} />
-        <Skeleton variant={"rect"} w={"calc(100%)"} h={"80px"} />
-      </S.SkeletonLoader>
-    ),
-    []
-  )
+  const loader = useMemo(() => <SkeletonGlobalLoader />, [])
 
   if (loading || !daoSettings || validatorsCount === null)
     return (

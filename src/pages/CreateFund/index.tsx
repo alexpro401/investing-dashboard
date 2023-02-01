@@ -202,6 +202,7 @@ const CreateFund: FC = () => {
                 </SForms.StepsContainer>
                 {!isMobile && (
                   <SForms.SideStepsNavigationBarWrp
+                    title="Create fund"
                     steps={Object.values(STEPS).map((step) => ({
                       number: Object.values(STEPS).indexOf(step),
                       title: STEPS_TITLES[step],

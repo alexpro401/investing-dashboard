@@ -27,6 +27,7 @@ import {
   TraderPoolInvestProposal as TraderPoolInvestProposal_ABI,
   TraderPoolRiskyProposal as TraderPoolRiskyProposal_ABI,
   UserRegistry as UserRegistry_ABI,
+  TokenSaleProposal as TokenSaletProposal_ABI,
   Multicall as Multicall_ABI,
 } from "abi"
 
@@ -59,6 +60,7 @@ import {
   GovSettings,
   GovUserKeeper,
   GovValidators,
+  TokenSaleProposal,
   Multicall,
 } from "interfaces/typechain"
 
@@ -194,6 +196,10 @@ export function useGovValidatorsContract(poolAddress: Address) {
     GovValidators_ABI,
     true
   )
+}
+
+export function useTokenSaleProposalContract(govPoolAddress: Address) {
+  return useContract<TokenSaleProposal>(govPoolAddress, TokenSaletProposal_ABI)
 }
 
 export function useMulticallContract() {

@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
 } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
@@ -42,6 +43,7 @@ const CreateDaoProposalGlobalVotingSettings: React.FC = () => {
     GovProposalCreatingContext
   )
   const { isMobile } = useBreakpoints()
+  const stepsWrapperRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     dispatch(hideTapBar())
@@ -60,6 +62,14 @@ const CreateDaoProposalGlobalVotingSettings: React.FC = () => {
     () => Object.values(STEPS).indexOf(currentStep) + 2,
     [currentStep]
   )
+
+  useEffect(() => {
+    if (stepsWrapperRef.current) {
+      stepsWrapperRef.current.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+  }, [currentStep, stepsWrapperRef])
 
   const handleCreateProposal = useCallback(() => {
     const {
@@ -149,7 +159,7 @@ const CreateDaoProposalGlobalVotingSettings: React.FC = () => {
       nextCb={handleNextStep}
     >
       <AnimatePresence>
-        <S.StepsWrapper>
+        <S.StepsWrapper ref={stepsWrapperRef}>
           {currentStep === STEPS.globalVotingSettings && (
             <S.StepsContainer>
               <DefaultProposalStep isCreatingProposal />
