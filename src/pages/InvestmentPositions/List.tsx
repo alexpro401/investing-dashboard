@@ -1,5 +1,6 @@
 import { FC, useMemo } from "react"
 import { v4 as uuidv4 } from "uuid"
+import { isEmpty } from "lodash"
 import { PulseSpinner } from "react-spinners-kit"
 
 import { InvestorPositionsQuery } from "queries"
@@ -30,7 +31,7 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
     formatter: (d) => d.investorPoolPositions,
   })
 
-  if (!account || !data || loading) {
+  if (!account || (isEmpty(data) && loading)) {
     return (
       <Center>
         <PulseSpinner />
@@ -38,7 +39,7 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
     )
   }
 
-  if (data && data.length === 0 && !loading) {
+  if (isEmpty(data) && !loading) {
     return <NoDataMessage />
   }
 
