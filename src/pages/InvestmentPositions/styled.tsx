@@ -32,10 +32,11 @@ export const ListTopInfo = styled.div`
 `
 
 export const InvestorPositionsListWrp = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
   ${respondTo("lg")} {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
     background: rgba(20, 25, 38, 0.5);
     border-radius: 20px;
     padding: 0 8px 8px;
@@ -46,22 +47,17 @@ export const InvestorPositionsListHead = styled.div<{ childMaxWidth?: string }>`
   display: none;
 
   ${respondTo("lg")} {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    grid-column-gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 145px)) 1fr;
+    justify-items: flex-start;
+    gap: 0 var(--app-gap);
     padding: 8px 16px 0;
-
-    & > * {
-      flex: 1 0 155px;
-      max-width: ${({ childMaxWidth }) => childMaxWidth ?? "167px"};
-    }
   }
 `
 
 export const InvestorPositionsListHeadItem = styled.div`
   ${respondTo("lg")} {
-    width: fit-content;
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: flex-start;

@@ -78,3 +78,4 @@ export * from "./useRouteState"
 
 export * from "./dao"
 export * from "./pool"
+export * from "./investor"

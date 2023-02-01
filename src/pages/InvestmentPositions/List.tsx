@@ -1,17 +1,17 @@
 import { FC, useMemo } from "react"
 import { v4 as uuidv4 } from "uuid"
+import { isEmpty } from "lodash"
 import { PulseSpinner } from "react-spinners-kit"
 
 import { InvestorPositionsQuery } from "queries"
 import { graphClientInvestors } from "utils/graphClient"
 import useQueryPagination from "hooks/useQueryPagination"
-import { IInvestorProposal } from "interfaces/thegraphs/invest-pools"
+import { InvestorPosition } from "interfaces/thegraphs/invest-pools"
 
 import { Center } from "theme"
-import { NoDataMessage } from "common"
+import { NoDataMessage, CardInvestorPosition } from "common"
 import Tooltip from "components/Tooltip"
 import LoadMore from "components/LoadMore"
-import InvestPositionCard from "components/cards/position/Invest"
 import * as S from "./styled"
 
 interface IProps {
@@ -20,7 +20,7 @@ interface IProps {
 }
 
 const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
-  const [{ data, loading }, fetchMore] = useQueryPagination<IInvestorProposal>({
+  const [{ data, loading }, fetchMore] = useQueryPagination<InvestorPosition>({
     query: InvestorPositionsQuery,
     variables: useMemo(
       () => ({ address: String(account).toLowerCase(), closed }),
@@ -31,7 +31,7 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
     formatter: (d) => d.investorPoolPositions,
   })
 
-  if (!account || !data || loading) {
+  if (!account || (isEmpty(data) && loading)) {
     return (
       <Center>
         <PulseSpinner />
@@ -39,14 +39,14 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
     )
   }
 
-  if (data && data.length === 0 && !loading) {
+  if (isEmpty(data) && !loading) {
     return <NoDataMessage />
   }
 
   return (
-    <>
+    <div>
       <S.InvestorPositionsListWrp>
-        <S.InvestorPositionsListHead childMaxWidth={closed ? "182px" : "167px"}>
+        <S.InvestorPositionsListHead>
           <S.InvestorPositionsListHeadItem>
             Fund
           </S.InvestorPositionsListHeadItem>
@@ -67,11 +67,11 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
           <S.InvestorPositionsListHeadItem />
         </S.InvestorPositionsListHead>
         {data.map((p) => (
-          <InvestPositionCard key={p.id} position={p} />
+          <CardInvestorPosition key={p.id} position={p} />
         ))}
       </S.InvestorPositionsListWrp>
       <LoadMore isLoading={loading && !!data.length} handleMore={fetchMore} />
-    </>
+    </div>
   )
 }
 

@@ -1,5 +1,5 @@
-import { IInvestorProposal } from "interfaces/thegraphs/invest-pools"
-import { useActiveWeb3React, usePoolContract } from "hooks"
+import { InvestorPosition } from "interfaces/thegraphs/invest-pools"
+import { usePoolContract } from "hooks"
 import { usePriceFeedContract, useTraderPoolContract } from "contracts"
 import usePoolPrice from "hooks/usePoolPrice"
 import { useERC20Data } from "state/erc20/hooks"
@@ -14,10 +14,10 @@ import {
   percentageOfBignumbers,
   subtractBignumbers,
 } from "utils/formulas"
-import { normalizeBigNumber } from "utils"
+import { useWeb3React } from "@web3-react/core"
 
-const useInvestorPositionCard = (position: IInvestorProposal) => {
-  const { account } = useActiveWeb3React()
+const useInvestorPosition = (position: InvestorPosition) => {
+  const { account } = useWeb3React()
   const traderPool = useTraderPoolContract(position.pool.id)
   const [, poolInfo] = usePoolContract(position.pool.id)
   const [{ priceUSD }] = usePoolPrice(position.pool.id)
@@ -105,7 +105,7 @@ const useInvestorPositionCard = (position: IInvestorProposal) => {
   }, [position])
 
   const markPriceBase = useMemo(() => {
-    if (!position) ZERO
+    if (!position) return ZERO
 
     const { isClosed, totalBaseDivestVolume, totalLPDivestVolume } = position
 
@@ -139,18 +139,14 @@ const useInvestorPositionCard = (position: IInvestorProposal) => {
   }, [tokenCurrentPriceUSD, position])
 
   const pnlPercentage = useMemo(() => {
-    if (!markPriceBase || !entryPriceBase)
-      return { value: ZERO, normalized: "0" }
+    if (!markPriceBase || !entryPriceBase) return ZERO
 
     const percentage = percentageOfBignumbers(markPriceBase, entryPriceBase)
     const resultFixed = FixedNumber.fromValue(percentage, 18).subUnsafe(
       FixedNumber.from("100", 18)
     )
 
-    return {
-      value: parseEther(resultFixed._value),
-      normalized: normalizeBigNumber(parseEther(resultFixed._value), 18, 2),
-    }
+    return parseEther(resultFixed._value)
   }, [markPriceBase, entryPriceBase])
 
   const pnlBase = useMemo(() => {
@@ -390,4 +386,4 @@ const useInvestorPositionCard = (position: IInvestorProposal) => {
   }
 }
 
-export default useInvestorPositionCard
+export default useInvestorPosition
