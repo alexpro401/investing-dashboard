@@ -18,6 +18,7 @@ import { ModalIcons, SuccessModal as SuccessModalComponent } from "common/Pool"
 import defaultAvatar from "assets/icons/default-avatar.svg"
 import { IStep, mapCommissionPeriodToNumber, mapPoolCreateSteps } from "consts"
 import { isString } from "lodash"
+import { IPoolMetadata } from "state/ipfsMetadata/types"
 
 const deployMethodByType = {
   basic: "deployBasicPool",
@@ -32,6 +33,7 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
   const { account } = useActiveWeb3React()
 
   const {
+    socialLinks,
     fundName,
     tickerSymbol,
     avatarUrl,
@@ -127,9 +129,10 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
         assets: [avatarUrl.get],
         description: description.get,
         strategy: strategy.get,
+        socialLinks: socialLinks.get,
         account,
         timestamp: new Date().getTime() / 1000,
-      }),
+      } as IPoolMetadata),
     })
 
     await poolIpfsMetadataEntity.uploadSelf()
@@ -139,7 +142,14 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
     }
 
     descriptionURL.set(poolIpfsMetadataEntity._path)
-  }, [account, avatarUrl.get, description.get, strategy.get, descriptionURL])
+  }, [
+    account,
+    avatarUrl.get,
+    description.get,
+    strategy.get,
+    socialLinks.get,
+    descriptionURL,
+  ])
 
   const handleManagersAdd = useCallback(async () => {
     const receipt = await traderPool?.modifyAdmins(

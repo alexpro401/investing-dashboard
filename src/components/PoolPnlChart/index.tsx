@@ -26,8 +26,6 @@ const PoolPnlChart: React.FC<Props> = ({
 
   const [data, fetching] = usePoolPriceHistory(address, tf)
 
-  console.log(data)
-
   return (
     <S.Container>
       <S.Body>

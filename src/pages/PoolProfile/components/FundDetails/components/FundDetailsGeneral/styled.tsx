@@ -2,7 +2,7 @@ import { ReactNode, FC } from "react"
 import styled from "styled-components/macro"
 
 import { Flex, GradientBorder, respondTo } from "theme"
-import { AppButton } from "common"
+import { AppButton, Icon } from "common"
 
 export const Container = styled.div<{ loading?: boolean }>`
   position: relative;
@@ -37,6 +37,14 @@ export const FundAvatarChangeBtn = styled.button`
   line-height: 1.2;
   font-weight: 600;
   color: ${(props) => props.theme.brandColors.secondary};
+`
+
+export const CardAddBtn = styled(AppButton)`
+  margin: 0 auto;
+`
+
+export const FieldValidIcon = styled(Icon)`
+  color: ${(props) => props.theme.statusColors.success};
 `
 
 export const AvatarWrapper = styled.div`

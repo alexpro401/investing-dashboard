@@ -1,8 +1,12 @@
+import { SUPPORTED_SOCIALS } from "consts"
+
 export interface IPoolMetadata {
   assets: string[]
   description: string
   strategy: string
   account: string
+  timestamp: number
+  socialLinks: [SUPPORTED_SOCIALS, string][]
 }
 
 export interface IUserMetadata {

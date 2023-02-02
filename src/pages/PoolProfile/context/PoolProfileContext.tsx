@@ -25,7 +25,13 @@ import {
   usePoolAlternativePnlTokens,
 } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
-import { PoolType, TIMEFRAME, UpdateListType, ZERO } from "consts"
+import {
+  PoolType,
+  SUPPORTED_SOCIALS,
+  TIMEFRAME,
+  UpdateListType,
+  ZERO,
+} from "consts"
 import { getPNL, getPriceLP, multiplyBignumbers } from "utils/formulas"
 import { bigify, expandTimestamp, normalizeBigNumber } from "utils"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
@@ -60,6 +66,7 @@ interface IPoolProfileContext {
   fundName?: string
   fundType?: PoolType
   fundImageUrl?: string
+  fundSocialLinks?: [SUPPORTED_SOCIALS, string][]
 
   minInvestAmount?: BigNumber
   emission?: BigNumber
@@ -395,6 +402,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
       totalLPEmission?: string
       minimalInvestment?: string
       isFundPrivate?: boolean
+      socialLinks?: [SUPPORTED_SOCIALS, string][]
     }) => {
       let descriptionURL = poolInfo!.parameters.descriptionURL
 
@@ -411,6 +419,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
             assets: opts?.avatarUrl
               ? [...(poolMetadata?.assets || []), opts.avatarUrl]
               : poolMetadata?.assets,
+            socialLinks: opts?.socialLinks || poolMetadata?.socialLinks,
             account: opts?.account || poolMetadata?.account,
             timestamp: new Date().getTime() / 1000,
           } as IPoolMetadata & { timestamp: number }),
@@ -569,6 +578,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
           fundName: poolInfo?.name,
           fundType: poolData?.type,
           fundImageUrl: poolMetadata?.assets[poolMetadata?.assets.length - 1],
+          fundSocialLinks: poolMetadata?.socialLinks,
 
           minInvestAmount: poolInfo?.parameters.minimalInvestment,
           emission: poolInfo?.parameters.totalLPEmission,

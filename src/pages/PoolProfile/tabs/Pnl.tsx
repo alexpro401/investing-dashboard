@@ -9,8 +9,7 @@ import * as S from "./styled"
 import { PoolProfileContext } from "pages/PoolProfile/context"
 import { useWindowSize } from "react-use"
 import { normalizeBigNumber } from "utils"
-import { PnlSubChartCardItem } from "./styled"
-import { useBreakpoints } from "../../../hooks"
+import { useBreakpoints } from "hooks"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
