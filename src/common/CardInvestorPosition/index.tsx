@@ -24,6 +24,7 @@ import AmountRow from "components/Amount/Row"
 import CardActions from "components/CardActions"
 import PositionTrade from "components/PositionTrade"
 
+import InvestorPositionCommission from "./InvestorPositionCommission"
 import * as S from "./styled"
 import { InvestorPositionInPoolContext } from "context/investor/positions/InvestorPositionInPoolContext"
 
@@ -341,37 +342,7 @@ const CardInvestorPosition: React.FC = () => {
         variants={accordionSummaryVariants}
       >
         <S.CardInvestorPositionCommissionWrp>
-          <AmountRow
-            title={`${commission.period} month Performance Fee`}
-            value={`${normalizeBigNumber(commission.percentage, 25, 0)}%`}
-          />
-          <AmountRow
-            m="14px 0 0"
-            title="Paid Performance Fee  "
-            value={`$${formatBigNumber(commission.amountUSD, 18, 2)}`}
-          />
-          <AmountRow
-            full
-            m="14px 0 0"
-            title="Date of withdrawal"
-            value={format(
-              expandTimestamp(+commission.unlockTimestamp.toString()),
-              DATE_FORMAT
-            )}
-          />
-          <AmountRow
-            m="14px 0 0"
-            title={`Investor funds locked (${formatBigNumber(
-              fundsLockedInvestorPercentage,
-              18,
-              2
-            )}%)`}
-            value={`$${formatBigNumber(
-              fundsLockedInvestorUSD,
-              18,
-              2
-            )}/$${formatBigNumber(totalPoolInvestmentsUSD, 18, 2)}`}
-          />
+          <InvestorPositionCommission />
         </S.CardInvestorPositionCommissionWrp>
       </S.CardInvestorPositionExtra>
     </S.Root>
