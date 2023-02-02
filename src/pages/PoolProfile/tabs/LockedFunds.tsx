@@ -3,7 +3,7 @@ import { FC, HTMLAttributes, useCallback, useContext } from "react"
 import { generatePath, useNavigate } from "react-router-dom"
 import { Tooltip } from "recharts"
 
-import { Flex } from "theme"
+import theme, { Flex } from "theme"
 import { Card } from "common"
 import * as S from "./styled"
 import { CHART_TYPE } from "consts/chart"
@@ -65,13 +65,13 @@ const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
               isAnimationActive: true,
               type: "linear",
               dataKey: "traderUSDValue",
-              stroke: "#ffffff",
+              stroke: theme.brandColors.secondary,
             },
             {
               isAnimationActive: true,
               type: "linear",
               dataKey: "investorsUSD",
-              stroke: "#9AE2CB",
+              stroke: "#ffffff",
             },
           ]}
           timeframe={{ get: lockedFunds?.tf, set: lockedFunds?.setTf }}
