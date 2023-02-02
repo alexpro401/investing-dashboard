@@ -38,7 +38,7 @@ type UsePoolMetadataResponse = [
 ]
 
 export function usePoolMetadata(
-  poolId: string,
+  poolId?: string,
   hash?: string
 ): UsePoolMetadataResponse {
   const dispatch = useDispatch()
