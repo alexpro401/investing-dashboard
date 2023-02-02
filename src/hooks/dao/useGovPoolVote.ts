@@ -1,5 +1,5 @@
 import { SubmitState } from "consts/types"
-import { BigNumberish } from "@ethersproject/bignumber"
+import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
 import { useCallback } from "react"
 import { useGovPoolContract } from "contracts"
 import { useTransactionAdder } from "state/transactions/hooks"
@@ -30,19 +30,24 @@ const useGovPoolVote = (daoPoolAddress?: string) => {
 
       try {
         setPayload(SubmitState.WAIT_CONFIRM)
-        const deposit = encodeAbiMethod(GovPool, "deposit", [
-          account,
-          depositAmount,
-          depositNfts,
-        ])
 
-        const vote = encodeAbiMethod(GovPool, "vote", [
-          proposalId,
-          voteAmount,
-          voteNftIds,
-        ])
+        const params: string[] = []
 
-        const transactionResponse = await govPool.multicall([deposit, vote])
+        if (!BigNumber.from(depositAmount).isZero() || !!depositNfts.length) {
+          params.push(
+            encodeAbiMethod(GovPool, "deposit", [
+              account,
+              depositAmount,
+              depositNfts,
+            ])
+          )
+        }
+
+        params.push(
+          encodeAbiMethod(GovPool, "vote", [proposalId, voteAmount, voteNftIds])
+        )
+
+        const transactionResponse = await govPool.multicall(params)
 
         const receipt = await addTransaction(transactionResponse, {
           type: TransactionType.GOV_POOL_VOTE,
