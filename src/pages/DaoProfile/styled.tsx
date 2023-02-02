@@ -228,6 +228,11 @@ export const SliderItem = styled(TreasuryRow).attrs(() => ({
 }))`
   min-height: 71px;
   border-top: 1px solid #20293a;
+
+  ${respondTo("md")} {
+    min-height: 50px;
+    border-top: 1px solid transparent;
+  }
 `
 
 export const FlexLink = styled(Flex).attrs(() => ({
@@ -259,6 +264,7 @@ export const AppButtonFull = styled(AppButton)`
     font-size: 14px;
     line-height: 17px;
     font-weight: 700;
+    margin-top: auto;
 
     &:hover {
       background: #13223e !important;
