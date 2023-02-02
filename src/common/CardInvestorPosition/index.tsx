@@ -47,9 +47,6 @@ const CardInvestorPosition: React.FC = () => {
     pnlBase,
     pnlUSD,
     commission,
-    fundsLockedInvestorPercentage,
-    fundsLockedInvestorUSD,
-    totalPoolInvestmentsUSD,
   } = React.useContext(InvestorPositionInPoolContext)
 
   const [showActions, setShowActions] = React.useState(false)
