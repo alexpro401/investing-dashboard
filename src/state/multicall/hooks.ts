@@ -56,6 +56,23 @@ const INVALID_RESULT: CallResult = {
   data: undefined,
 }
 
+const BLOCK_MINING_TIME_BY_CHAINID = {
+  0: 10, // fallback
+  1: 12,
+  56: 6,
+  97: 6,
+}
+
+export function getRefreshIntervalByChain(
+  chainId: number,
+  minutes: number
+): number {
+  if (!chainId || !minutes) return BLOCK_MINING_TIME_BY_CHAINID[0]
+
+  const intervalSeconds = minutes * 60
+  return Math.round(intervalSeconds / BLOCK_MINING_TIME_BY_CHAINID[chainId])
+}
+
 // use this options object
 export const NEVER_RELOAD: ListenerOptions = {
   blocksPerFetch: Infinity,
