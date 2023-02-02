@@ -12,6 +12,7 @@ import {
   DesktopStatistic,
   DaoProfileChart,
   DaoProfileTokensInTreasuryCard,
+  AllProposalsList,
 } from "../../../components"
 import { PageChart } from "../../../types"
 
@@ -27,7 +28,7 @@ const AboutTab: React.FC = () => {
   if (descriptionObject === undefined || aboutDaoLoading) return <TabFallback />
 
   return (
-    <Flex full gap="48" dir="column">
+    <S.Root>
       <HighlightHeaderDesktop />
       <DesktopStatistic />
       <S.ChartTreasuryWrp>
@@ -51,17 +52,30 @@ const AboutTab: React.FC = () => {
           )}
         </S.DescriptionCard>
         {descriptionObject &&
-        (descriptionObject.documents.length > 0 ||
+        (descriptionObject.documents.filter(
+          (el) => el.name !== "" && el.url !== ""
+        ).length > 0 ||
           descriptionObject.socialLinks.filter((el) => !!el[1]).length > 6) ? (
           <S.DescriptionLinksCard>
-            {map(descriptionObject.documents, (document) => (
-              <Flex key={uuidv4()} full ai="center" jc="space-between" gap="16">
-                <S.LinkLabel>{document.name}</S.LinkLabel>
-                <S.LinkExternaLink href={document.url}>
-                  {extractRootDomain(document.url)}
-                </S.LinkExternaLink>
-              </Flex>
-            ))}
+            {map(
+              descriptionObject.documents.filter(
+                (el) => el.name !== "" && el.url !== ""
+              ),
+              (document) => (
+                <Flex
+                  key={uuidv4()}
+                  full
+                  ai="center"
+                  jc="space-between"
+                  gap="16"
+                >
+                  <S.LinkLabel>{document.name}</S.LinkLabel>
+                  <S.LinkExternaLink href={document.url}>
+                    {extractRootDomain(document.url)}
+                  </S.LinkExternaLink>
+                </Flex>
+              )
+            )}
             {descriptionObject.socialLinks.filter((el) => !!el[1]).length >
               6 && (
               <>
@@ -90,7 +104,8 @@ const AboutTab: React.FC = () => {
           <div />
         )}
       </S.DecriptionDetailsWrp>
-    </Flex>
+      <AllProposalsList />
+    </S.Root>
   )
 }
 

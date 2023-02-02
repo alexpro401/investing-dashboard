@@ -1,8 +1,16 @@
 import styled from "styled-components/macro"
 
 import { Card } from "common"
-import theme from "theme"
+import theme, { Flex } from "theme"
 import ExternalLink from "components/ExternalLink"
+
+export const Root = styled(Flex).attrs(() => ({
+  full: true,
+  gap: "48",
+  dir: "column",
+}))`
+  padding-bottom: 24px;
+`
 
 export const ChartTreasuryWrp = styled.div`
   display: grid;
@@ -79,5 +87,10 @@ export const LinkExternaLink = styled(ExternalLink).attrs(() => ({
     line-height: 16px;
     letter-spacing: 0.01em;
     color: ${theme.brandColors.secondary};
+    margin-top: 0px;
+  }
+
+  div {
+    transform: none;
   }
 `

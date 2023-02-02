@@ -109,7 +109,7 @@ const DaoProfileTokenInTreasuryCard: React.FC<Props> = ({
             <Flex ai="center" jc="center">
               <TreasuryAmountLabel>{amountUsd}</TreasuryAmountLabel>
             </Flex>
-            <Flex ai="center" jc="flex-end">
+            <Flex ai="center" jc="flex-end" style={{ paddingRight: "8px" }}>
               <TreasuryAmountLabel>{treasuryPercent}%</TreasuryAmountLabel>
             </Flex>
           </>

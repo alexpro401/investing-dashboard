@@ -9,3 +9,4 @@ export { default as DaoProfileValueWithActionCard } from "./DaoProfileValueWithA
 export { default as DesktopRouteTabs } from "./DesktopRouteTabs"
 export { default as HighlightHeaderDesktop } from "./HighlightHeaderDesktop/HighlightHeaderDesktop"
 export { default as DesktopStatistic } from "./DesktopStatistic"
+export { default as AllProposalsList } from "./AllProposalsList"

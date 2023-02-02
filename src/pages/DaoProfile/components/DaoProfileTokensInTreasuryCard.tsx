@@ -18,6 +18,7 @@ import {
   TextLabel,
   TreasuryEmptyText,
   DaoTreasuryCardWrap,
+  TreasuryDesktopTokensHolder,
 } from "../styled"
 
 interface ITokenView {
@@ -60,9 +61,7 @@ const DaoProfileTokensInTreasuryCard: React.FC = () => {
     } else return [FAKE_LOADING_RECORD(uuidv4()), FAKE_LOADING_RECORD(uuidv4())]
   }, [isBigTablet])
 
-  const SECTION_SIZE = useMemo(() => {
-    return isBigTablet ? 3 : 2
-  }, [isBigTablet])
+  const SECTION_SIZE = useMemo(() => 2, [])
 
   const payload = useMemo(() => {
     if (isEmpty(treasuryNftCollections) && isEmpty(treasuryTokens)) return []
@@ -119,26 +118,17 @@ const DaoProfileTokensInTreasuryCard: React.FC = () => {
         // If tokens length is odd then add one empty item for correct swiping from last screen
         if (
           commonArray.length === index + 1 &&
-          acc[acc.length - 1].length === 1
+          acc[acc.length - 1].length === 1 &&
+          !isBigTablet
         ) {
-          acc[acc.length - 1].push({
-            amount: "0",
-            amountUsd: "0",
-            logo: "",
-            symbol: "LOAD",
-            treasuryPercent: "0",
-            type: "token",
-            address: "",
-            isFallback: true,
-            id: uuidv4(),
-          })
+          acc[acc.length - 1].push(FAKE_LOADING_RECORD(uuidv4()))
         }
 
         return acc
       },
       [] as Array<Array<ITokenView>>
     )
-  }, [treasuryNftCollections, treasuryTokens, SECTION_SIZE])
+  }, [treasuryNftCollections, treasuryTokens, SECTION_SIZE, isBigTablet])
 
   const treasuryIsEmpty = useMemo(
     () => !treasuryLoading && payload.flat().length === 0,
@@ -162,35 +152,16 @@ const DaoProfileTokensInTreasuryCard: React.FC = () => {
       </SliderHeader>
 
       <SliderContainer>
-        <Swiper
-          spaceBetween={16}
-          pagination={{ clickable: true }}
-          modules={[Pagination]}
-          style={treasuryIsEmpty ? { padding: "20px 0" } : undefined}
-        >
-          {treasuryLoading && (
-            <SwiperSlide>
-              {map(FAKE_LOADING_TREASURY, (token) => (
-                <DaoProfileTokenInTreasuryCard
-                  key={token.id}
-                  address={token.address}
-                  amount={token.amount}
-                  amountUsd={token.amountUsd}
-                  type={token.type}
-                  logo={token.logo}
-                  chainId={chainId}
-                  isFallback={token.isFallback ?? false}
-                  symbol={token.symbol}
-                  treasuryPercent={token.treasuryPercent}
-                />
-              ))}
-            </SwiperSlide>
-          )}
-          {!treasuryLoading &&
-            payload.flat().length !== 0 &&
-            map(payload, (tokens, index) => (
-              <SwiperSlide key={index}>
-                {map(tokens, (token) => (
+        {!isBigTablet && (
+          <Swiper
+            spaceBetween={16}
+            pagination={{ clickable: true }}
+            modules={[Pagination]}
+            style={treasuryIsEmpty ? { padding: "20px 0" } : undefined}
+          >
+            {treasuryLoading && (
+              <SwiperSlide>
+                {map(FAKE_LOADING_TREASURY, (token) => (
                   <DaoProfileTokenInTreasuryCard
                     key={token.id}
                     address={token.address}
@@ -205,13 +176,77 @@ const DaoProfileTokensInTreasuryCard: React.FC = () => {
                   />
                 ))}
               </SwiperSlide>
-            ))}
-          {treasuryIsEmpty && (
-            <TreasuryEmptyText>
-              Текст: зараз ДАО тережері нульовий
-            </TreasuryEmptyText>
-          )}
-        </Swiper>
+            )}
+            {!treasuryLoading &&
+              payload.flat().length !== 0 &&
+              map(payload, (tokens, index) => (
+                <SwiperSlide key={index}>
+                  {map(tokens, (token) => (
+                    <DaoProfileTokenInTreasuryCard
+                      key={token.id}
+                      address={token.address}
+                      amount={token.amount}
+                      amountUsd={token.amountUsd}
+                      type={token.type}
+                      logo={token.logo}
+                      chainId={chainId}
+                      isFallback={token.isFallback ?? false}
+                      symbol={token.symbol}
+                      treasuryPercent={token.treasuryPercent}
+                    />
+                  ))}
+                </SwiperSlide>
+              ))}
+            {treasuryIsEmpty && (
+              <TreasuryEmptyText>
+                Текст: зараз ДАО тережері нульовий
+              </TreasuryEmptyText>
+            )}
+          </Swiper>
+        )}
+        {isBigTablet && (
+          <TreasuryDesktopTokensHolder>
+            {treasuryLoading && (
+              <>
+                {map(FAKE_LOADING_TREASURY, (token) => (
+                  <DaoProfileTokenInTreasuryCard
+                    key={token.id}
+                    address={token.address}
+                    amount={token.amount}
+                    amountUsd={token.amountUsd}
+                    type={token.type}
+                    logo={token.logo}
+                    chainId={chainId}
+                    isFallback={token.isFallback ?? false}
+                    symbol={token.symbol}
+                    treasuryPercent={token.treasuryPercent}
+                  />
+                ))}
+              </>
+            )}
+            {!treasuryLoading &&
+              payload.flat().length !== 0 &&
+              map(payload.flat(), (token) => (
+                <DaoProfileTokenInTreasuryCard
+                  key={token.id}
+                  address={token.address}
+                  amount={token.amount}
+                  amountUsd={token.amountUsd}
+                  type={token.type}
+                  logo={token.logo}
+                  chainId={chainId}
+                  isFallback={token.isFallback ?? false}
+                  symbol={token.symbol}
+                  treasuryPercent={token.treasuryPercent}
+                />
+              ))}
+            {treasuryIsEmpty && (
+              <TreasuryEmptyText>
+                Текст: зараз ДАО тережері нульовий
+              </TreasuryEmptyText>
+            )}
+          </TreasuryDesktopTokensHolder>
+        )}
       </SliderContainer>
       {!treasuryLoading && (
         <AppButtonFull

@@ -372,6 +372,14 @@ export const DaoTreasuryCardWrap = styled(Card)`
   }
 `
 
+export const TreasuryDesktopTokensHolder = styled.div`
+  width: 100%;
+  display: flex;
+  height: 150px;
+  flex-direction: column;
+  overflow-y: auto;
+`
+
 export const DaoChartCardWrap = styled(Card)`
   width: 100%;
 

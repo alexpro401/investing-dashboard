@@ -180,8 +180,9 @@ export interface IPoolTransaction {
 
 export interface ITab {
   title: string
-  source: string
+  source?: string
   activeSource?: string[]
+  isActive?: boolean
   amount?: number
   onClick?: () => void
 }
