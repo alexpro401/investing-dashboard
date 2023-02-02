@@ -1,49 +1,12 @@
-import styled, { css } from "styled-components/macro"
-import { Flex } from "theme"
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence } from "framer-motion"
 import { FC, useMemo } from "react"
-
-const LineBase = css`
-  height: 2px;
-  border-radius: 7px;
-`
-
-const LPSizeStyled = {
-  Container: styled(Flex)`
-    width: 100%;
-    height: 2px;
-    position: relative;
-    background: #293c54;
-    border-radius: 7px;
-  `,
-  LineWrapper: styled.div`
-    width: 33.33%;
-    &:nth-child(2) {
-      margin: 0 1px;
-    }
-  `,
-  First: styled(motion.div)`
-    background: linear-gradient(90deg, #77ffd4 0%, #ffa51f 100%);
-
-    ${LineBase}
-  `,
-  Second: styled(motion.div)`
-    background: linear-gradient(90deg, #fda723 0%, #f14b4b 100%, #ff9052 100%);
-
-    ${LineBase}
-  `,
-  Third: styled(motion.div)`
-    background: linear-gradient(90deg, #ff514f 0%, #fe0404 100%);
-
-    ${LineBase}
-  `,
-}
+import * as S from "./styled"
 
 function calcPercentage(f, v) {
   return (v * 100) / f
 }
 
-const TraderLPSize: FC<{ size: number }> = ({ size }) => {
+const ProgressColorized: FC<{ size: number }> = ({ size }) => {
   const MAX = {
     first: 33,
     second: 66,
@@ -80,11 +43,11 @@ const TraderLPSize: FC<{ size: number }> = ({ size }) => {
   }, [MAX.second, MAX.third, size])
 
   return (
-    <LPSizeStyled.Container>
-      <LPSizeStyled.LineWrapper>
+    <S.Container>
+      <S.LineWrapper>
         <AnimatePresence>
           {size > 0 && (
-            <LPSizeStyled.First
+            <S.First
               initial={{ width: 0 }}
               animate={
                 size > 0 ? { width: firstSize.toString() + "%" } : { width: 0 }
@@ -93,11 +56,11 @@ const TraderLPSize: FC<{ size: number }> = ({ size }) => {
             />
           )}
         </AnimatePresence>
-      </LPSizeStyled.LineWrapper>
-      <LPSizeStyled.LineWrapper>
+      </S.LineWrapper>
+      <S.LineWrapper>
         <AnimatePresence>
           {size > 33 && (
-            <LPSizeStyled.Second
+            <S.Second
               initial={{ width: 0 }}
               animate={
                 size > 33
@@ -108,11 +71,11 @@ const TraderLPSize: FC<{ size: number }> = ({ size }) => {
             />
           )}
         </AnimatePresence>
-      </LPSizeStyled.LineWrapper>
-      <LPSizeStyled.LineWrapper>
+      </S.LineWrapper>
+      <S.LineWrapper>
         <AnimatePresence>
           {size > 66 && (
-            <LPSizeStyled.Third
+            <S.Third
               initial={{ width: 0 }}
               animate={
                 size > 66 ? { width: thirdSize.toString() + "%" } : { width: 0 }
@@ -121,9 +84,9 @@ const TraderLPSize: FC<{ size: number }> = ({ size }) => {
             />
           )}
         </AnimatePresence>
-      </LPSizeStyled.LineWrapper>
-    </LPSizeStyled.Container>
+      </S.LineWrapper>
+    </S.Container>
   )
 }
 
-export default TraderLPSize
+export default ProgressColorized

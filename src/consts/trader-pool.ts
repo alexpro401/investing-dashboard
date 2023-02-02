@@ -1,5 +1,7 @@
 import { ISortItem } from "interfaces"
 
+export const MAX_INVESTORS_COUNT = 1000
+
 export const performanceFees = [
   {
     id: 0,

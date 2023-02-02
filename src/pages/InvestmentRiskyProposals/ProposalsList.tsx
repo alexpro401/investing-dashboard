@@ -9,14 +9,12 @@ import useQueryPagination from "hooks/useQueryPagination"
 import { useTraderPoolRiskyProposalContract } from "contracts"
 
 import LoadMore from "components/LoadMore"
-import RiskyProposalCard from "components/cards/proposal/Risky"
 
 import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
 import { isNil, map } from "lodash"
 import { graphClientBasicPools } from "utils/graphClient"
-import { NoDataMessage } from "common"
+import { NoDataMessage, CardRiskyProposal } from "common"
 import { Center } from "theme"
-import CardRiskyProposal from "../../common/CardRiskyProposal"
 
 interface IRiskyCardInitializer {
   account: string
@@ -25,12 +23,12 @@ interface IRiskyCardInitializer {
   index: number
 }
 
-function RiskyProposalCardInitializer({
+const RiskyProposalCardInitializer: FC<IRiskyCardInitializer> = ({
   account,
   poolAddress,
   proposalId,
   index,
-}: IRiskyCardInitializer) {
+}) => {
   const proposalPool = useTraderPoolRiskyProposalContract(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
   const [proposal, setProposal] = useState<IRiskyProposalInfo[0] | null>(null)
@@ -61,17 +59,8 @@ function RiskyProposalCardInitializer({
     return null
   }
 
-  return index === 0 ? (
+  return (
     <CardRiskyProposal
-      proposalId={proposalId}
-      poolInfo={poolInfo}
-      isTrader={isTrader}
-      proposal={proposal}
-      poolAddress={poolAddress}
-      proposalPool={proposalPool}
-    />
-  ) : (
-    <RiskyProposalCard
       proposalId={proposalId}
       poolInfo={poolInfo}
       isTrader={isTrader}
@@ -109,7 +98,7 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
       })),
   })
 
-  if (!account || !activePools || !data || (data.length === 0 && loading)) {
+  if (!account || !activePools || (data.length === 0 && loading)) {
     return (
       <Center>
         <PulseSpinner />
@@ -117,7 +106,7 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
     )
   }
 
-  if (data && data.length === 0 && !loading) {
+  if (data.length === 0 && !loading) {
     return <NoDataMessage />
   }
 

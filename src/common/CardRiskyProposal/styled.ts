@@ -1,16 +1,17 @@
 import styled, { css } from "styled-components/macro"
 import { respondTo } from "theme"
 import { isNil } from "lodash"
-import { AppButton } from "common"
+import { AppButton, Icon } from "common"
 import Tooltip from "components/Tooltip"
+import TokenRating from "components/TokenRating"
+import { rgba } from "polished"
 
 export const Root = styled.div`
   position: relative;
 `
 export const CardRiskyProposalBody = styled.div`
-  background: #141926;
+  background: ${({ theme }) => theme.backgroundColors.secondary};
   border-radius: 16px;
-  color: #f7ff79;
 `
 
 // Divider shared styles
@@ -70,15 +71,23 @@ const areasTrader = css`
 export const CardRiskyProposalGrid = styled.div<{ isTrader: boolean }>`
   display: grid;
   ${({ isTrader }) => (isTrader ? areasTrader : areasInvestor)};
+  justify-items: stretch;
   gap: 8px 5px;
 
   padding: 8px 16px 16px;
 
-  & > * {
-    display: flex;
-    align-items: stretch;
-    justify-items: stretch;
+  ${respondTo("lg")} {
+    gap: 12px var(--app-gap);
+    padding: 16px;
   }
+`
+
+const CardRiskyProposalGridCell = styled.div<{ alignment?: string }>`
+  width: fill-available;
+  display: flex;
+  align-items: stretch;
+  justify-items: stretch;
+  justify-self: ${({ alignment }) => alignment || "flex-start"};
 `
 
 /**
@@ -86,57 +95,89 @@ export const CardRiskyProposalGrid = styled.div<{ isTrader: boolean }>`
  *
  * Using grid-area to position the cells.
  */
-export const CardRiskyProposalGridItemDividerTop = styled.div`
+export const CardRiskyProposalGridItemDividerTop = styled(
+  CardRiskyProposalGridCell
+)`
   grid-area: divider-top;
   ${dividerCss};
 `
-export const CardRiskyProposalGridItemDividerBottom = styled.div`
+export const CardRiskyProposalGridItemDividerBottom = styled(
+  CardRiskyProposalGridCell
+)`
   grid-area: divider-bottom;
   ${dividerCss};
 `
-export const CardRiskyProposalGridItemToken = styled.div`
+export const CardRiskyProposalGridItemToken = styled(CardRiskyProposalGridCell)`
   grid-area: token;
 `
-export const CardRiskyProposalGridItemBaseToken = styled.div`
+export const CardRiskyProposalGridItemBaseToken = styled(
+  CardRiskyProposalGridCell
+)`
   grid-area: base-token;
 `
-export const CardRiskyProposalGridItemSettingsAction = styled.div`
+export const CardRiskyProposalGridItemSettingsAction = styled(
+  CardRiskyProposalGridCell
+)`
   grid-area: settings-action;
 `
-export const CardRiskyProposalGridItemMaxSize = styled.div`
+export const CardRiskyProposalGridItemMaxSize = styled(
+  CardRiskyProposalGridCell
+)`
   grid-area: max-size;
 `
-export const CardRiskyProposalGridItemCurrentUserSize = styled.div`
+export const CardRiskyProposalGridItemCurrentUserSize = styled(
+  CardRiskyProposalGridCell
+)`
   grid-area: current-user-size;
 `
-export const CardRiskyProposalGridItemFullness = styled.div`
+export const CardRiskyProposalGridItemFullness = styled(
+  CardRiskyProposalGridCell
+)`
   grid-area: fullness;
 `
-export const CardRiskyProposalGridItemMaxInvestPrice = styled.div`
+export const CardRiskyProposalGridItemMaxInvestPrice = styled(
+  CardRiskyProposalGridCell
+)`
   grid-area: max-invest-price;
 `
-export const CardRiskyProposalGridItemCurrentPrice = styled.div`
+export const CardRiskyProposalGridItemCurrentPrice = styled(
+  CardRiskyProposalGridCell
+)`
   grid-area: current-price;
 `
-export const CardRiskyProposalGridItemExpirationDate = styled.div`
+export const CardRiskyProposalGridItemExpirationDate = styled(
+  CardRiskyProposalGridCell
+)`
   grid-area: expiration-date;
 `
-export const CardRiskyProposalGridItemInvestors = styled.div`
+export const CardRiskyProposalGridItemInvestors = styled(
+  CardRiskyProposalGridCell
+)`
   grid-area: investors;
 `
-export const CardRiskyProposalGridItemPositionSize = styled.div`
+export const CardRiskyProposalGridItemPositionSize = styled(
+  CardRiskyProposalGridCell
+)`
   grid-area: position-size;
 `
-export const CardRiskyProposalGridItemInvestAction = styled.div`
+export const CardRiskyProposalGridItemInvestAction = styled(
+  CardRiskyProposalGridCell
+)`
   grid-area: invest-action;
 `
-export const CardRiskyProposalGridItemDescription = styled.div`
+export const CardRiskyProposalGridItemDescription = styled(
+  CardRiskyProposalGridCell
+)`
   grid-area: description;
 `
-export const CardRiskyProposalGridItemTraderSize = styled.div`
+export const CardRiskyProposalGridItemTraderSize = styled(
+  CardRiskyProposalGridCell
+)`
   grid-area: trader-size;
 `
-export const CardRiskyProposalGridItemCheckToken = styled.div`
+export const CardRiskyProposalGridItemCheckToken = styled(
+  CardRiskyProposalGridCell
+)`
   grid-area: check-token;
 `
 
@@ -145,9 +186,10 @@ export const CardRiskyProposalGridItemCheckToken = styled.div`
    ========================================================================== */
 
 export const CardRiskyProposalValueWrp = styled.div<{ alignment?: string }>`
+  width: fill-available;
   display: flex;
   flex-direction: column;
-  //justify-items: stretch;
+  justify-items: stretch;
   justify-content: space-between;
   align-items: ${({ alignment }) => alignment || "flex-start"};
   gap: 4px;
@@ -165,16 +207,15 @@ export const CardRiskyProposalLabelContent = styled.div`
 `
 
 export const CardRiskyProposalLabel = styled.div`
-  //white-space: nowrap;
   font-weight: 500;
   font-size: 11px;
   line-height: 13px;
-  color: #788ab4;
+  color: #616d8b;
 
   ${respondTo("lg")} {
     font-size: 12px;
     line-height: 14px;
-    color: #6781bd;
+    color: #788ab4;
   }
 `
 
@@ -204,6 +245,7 @@ export const CardRiskyProposalValue = styled.div<{
   font-size: ${({ small }) => (!!small ? "11px" : "13px")};
   line-height: 16px;
   color: ${({ theme, completed }) => getValueColor(theme, completed)};
+  transform: translateY(1.5px);
 
   ${respondTo("lg")} {
     font-weight: 700;
@@ -211,26 +253,140 @@ export const CardRiskyProposalValue = styled.div<{
     line-height: 19px;
     letter-spacing: 0.01em;
   }
+
+  span {
+    color: #788ab4;
+  }
 `
 
 /* ==========================================================================
-   Card items unique styles
+   Card unique items styles
+   ========================================================================== */
+
+/* 
+   Proposal Token
    ========================================================================== */
 
 export const CardRiskyProposalTokenWrp = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+
+  text-decoration: none;
 `
 
 export const CardRiskyProposalTokenInfoWrp = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-areas: "token-info-value token-info-rating token-info-tooltip";
+  justify-items: start;
   gap: 4px;
 
   ${respondTo("lg")} {
-    flex-direction: column;
+    grid-template-areas:
+      "token-info-label token-info-label token-info-tooltip"
+      "token-info-value token-info-rating token-info-rating";
   }
 `
+export const CardRiskyProposalTokenInfoLabel = styled(CardRiskyProposalLabel)`
+  grid-area: token-info-label;
+  display: none;
+
+  ${respondTo("lg")} {
+    display: block;
+  }
+`
+export const CardRiskyProposalTokenInfoValue = styled(CardRiskyProposalValue)`
+  grid-area: token-info-value;
+  text-decoration: none;
+
+  ${respondTo("lg")} {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+`
+export const CardRiskyProposalTokenInfoRating = styled(TokenRating)`
+  grid-area: token-info-rating;
+  ${respondTo("lg")} {
+  }
+`
+export const CardRiskyProposalTokenInfoTooltip = styled(Tooltip)`
+  grid-area: token-info-tooltip;
+  ${respondTo("lg")} {
+  }
+`
+export const CardRiskyProposalTokenInfoIcon = styled(Icon)`
+  display: none;
+
+  ${respondTo("lg")} {
+    display: block;
+    width: 1.2em;
+    height: 1.2em;
+    color: ${({ theme }) => theme.textColors.primary};
+  }
+`
+
+/* 
+   Pool base token
+   ========================================================================== */
+
+export const CardRiskyProposalBaseTokenWrp = styled.div`
+  width: fill-available;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+
+  ${respondTo("lg")} {
+    justify-content: flex-start;
+    flex-direction: row-reverse;
+  }
+`
+export const CardRiskyProposalBaseTokenValue = styled(CardRiskyProposalValue)`
+  color: #788ab4;
+`
+
+/* 
+   Trader size
+   ========================================================================== */
+
+export const CardRiskyProposalTraderSizeWrp = styled.div`
+  width: fill-available;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`
+export const CardRiskyProposalTraderSizeIconWrp = styled.div`
+  position: relative;
+`
+export const CardRiskyProposalTraderSizeQualityIcon = styled.img`
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+`
+export const CardRiskyProposalTraderSizeInfoWrp = styled.div`
+  width: fill-available;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+`
+export const CardRiskyProposalTraderSizeProgressWrp = styled.div`
+  width: 137px;
+`
+export const CardRiskyProposalTraderSizeText = styled.div`
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 100%;
+  color: ${({ theme }) => theme.textColors.primary};
+  margin-bottom: 4px;
+`
+
+/* 
+   Other helpers
+   ========================================================================== */
 
 export const CardRiskyProposalInvestMoreButton = styled(AppButton)`
   margin-left: 0.5px;
@@ -264,5 +420,42 @@ export const CardRiskyProposalDescriptionWrp = styled.div`
     font-weight: 500;
     font-size: 14px;
     line-height: 170%;
+  }
+`
+
+export const CardRiskyProposalSettingsButton = styled(AppButton)`
+  background: ${({ theme }) => rgba(theme.brandColors.secondary, 0.15)};
+`
+export const CardRiskyProposalStatus = styled.div<{ active: boolean }>`
+  padding: 5px 6px;
+  border-radius: 36px;
+  white-space: nowrap;
+  border: 1px solid ${(props) => (props.active ? "#9ae2cb" : "#788AB4")};
+  color: ${(props) => (props.active ? "#9ae2cb" : "#788AB4")};
+  font-family: ${(props) => props.theme.appFontFamily};
+  font-style: normal;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 13px;
+`
+
+export const CardRiskyProposalCheckTokenWrp = styled.div`
+  width: fill-available;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+`
+
+export const CardRiskyProposalUpdateFormWrp = styled.div`
+  width: 100%;
+  max-width: 420px;
+  position: absolute;
+  top: 38px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 101;
+
+  ${respondTo("lg")} {
+    top: 14px;
   }
 `

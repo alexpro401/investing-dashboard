@@ -9,11 +9,37 @@ import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { TraderPoolRiskyProposal } from "interfaces/typechain"
 import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
 import { normalizeBigNumber } from "utils"
+import { ICON_NAMES, MAX_INVESTORS_COUNT } from "consts"
 
+import { Flex } from "theme"
+import { AppButton, Icon as IconCommon } from "common"
+
+import Icon from "components/Icon"
+import ReadMore from "components/ReadMore"
 import TokenIcon from "components/TokenIcon"
-import { AppButton, Icon as IconCommon } from "../index"
-import { ICON_NAMES } from "../../consts"
-import ReadMore from "../../components/ReadMore"
+import IconButton from "components/IconButton"
+import ExternalLink from "components/ExternalLink"
+import ProgressColorized from "components/ProgressColorized"
+import UpdateRiskyProposalForm from "forms/UpdateRiskyProposalForm"
+
+import checkGreenIcon from "assets/icons/green-check.svg"
+import settingsIcon from "assets/icons/settings.svg"
+import settingsGreenIcon from "assets/icons/settings-green.svg"
+import traderBadgeDangerIcon from "assets/icons/trader-badge-danger.svg"
+import traderBadgeWarningIcon from "assets/icons/trader-badge-warning.svg"
+import traderBadgeSuccessIcon from "assets/icons/trader-badge-success.svg"
+
+function getTraderQualityIcon(quality) {
+  switch (quality) {
+    case "danger":
+      return traderBadgeDangerIcon
+    case "warning":
+      return traderBadgeWarningIcon
+    case "success":
+    default:
+      return traderBadgeSuccessIcon
+  }
+}
 
 interface Props {
   proposal: IRiskyProposalInfo[0]
@@ -23,6 +49,7 @@ interface Props {
   isTrader: boolean
   poolInfo: IPoolInfo
 }
+
 const CardRiskyProposal: React.FC<Props> = (props) => {
   const {
     proposal,
@@ -63,6 +90,8 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
 
   const { isDesktop } = useBreakpoints()
 
+  const [isSettingsOpen, setIsSettingsOpen] = React.useState<boolean>(false)
+
   return (
     <S.Root>
       <S.CardRiskyProposalBody>
@@ -75,25 +104,78 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
                 address={proposal.proposalInfo.token}
               />
               <S.CardRiskyProposalTokenInfoWrp>
-                {isDesktop && (
-                  <S.CardRiskyProposalLabel>
-                    {"Proposal token"}
-                  </S.CardRiskyProposalLabel>
-                )}
-                <S.CardRiskyProposalValue>
+                <S.CardRiskyProposalTokenInfoLabel>
+                  {"Proposal token"}
+                </S.CardRiskyProposalTokenInfoLabel>
+
+                <S.CardRiskyProposalTokenInfoValue
+                  as="a"
+                  target="_blank"
+                  href={proposalTokenLink}
+                  rel="noopener noreferrer"
+                >
                   {proposalSymbol}
-                </S.CardRiskyProposalValue>
+                  <S.CardRiskyProposalTokenInfoIcon
+                    name={ICON_NAMES.externalLink}
+                  />
+                </S.CardRiskyProposalTokenInfoValue>
+                <S.CardRiskyProposalTokenInfoRating rating={tokenRating} />
+                <S.CardRiskyProposalTokenInfoTooltip
+                  id={uuidv4()}
+                  size={isDesktop ? "normal" : "small"}
+                >
+                  Risky proposal rating info
+                </S.CardRiskyProposalTokenInfoTooltip>
               </S.CardRiskyProposalTokenInfoWrp>
             </S.CardRiskyProposalTokenWrp>
           </S.CardRiskyProposalGridItemToken>
 
           {isTrader ? (
             <S.CardRiskyProposalGridItemSettingsAction>
-              Settings
+              {isDesktop ? (
+                <S.CardRiskyProposalSettingsButton
+                  full
+                  text={"Settings"}
+                  onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                  size="small"
+                  color={"default"}
+                />
+              ) : (
+                <Flex>
+                  <S.CardRiskyProposalStatus active={canInvest ?? false}>
+                    {canInvest ? "Open investing" : "Closed investing"}
+                  </S.CardRiskyProposalStatus>
+                  <IconButton
+                    size={12}
+                    media={isSettingsOpen ? settingsGreenIcon : settingsIcon}
+                    onClick={() => {
+                      setIsSettingsOpen(!isSettingsOpen)
+                    }}
+                  />
+                </Flex>
+              )}
             </S.CardRiskyProposalGridItemSettingsAction>
           ) : (
-            <S.CardRiskyProposalGridItemBaseToken>
-              base token
+            <S.CardRiskyProposalGridItemBaseToken onClick={navigateToPool}>
+              <S.CardRiskyProposalBaseTokenWrp>
+                <S.CardRiskyProposalValueWrp
+                  alignment={!isDesktop ? "flex-end" : undefined}
+                >
+                  {isDesktop && (
+                    <S.CardRiskyProposalLabel>
+                      {"Fund ticker"}
+                    </S.CardRiskyProposalLabel>
+                  )}
+                  <S.CardRiskyProposalValue completed={!isDesktop}>
+                    {poolInfo?.ticker ?? ""}
+                  </S.CardRiskyProposalValue>
+                </S.CardRiskyProposalValueWrp>
+                <TokenIcon
+                  m="0"
+                  size={isDesktop ? 36 : 24}
+                  address={poolInfo?.parameters.baseToken}
+                />
+              </S.CardRiskyProposalBaseTokenWrp>
             </S.CardRiskyProposalGridItemBaseToken>
           )}
 
@@ -124,13 +206,17 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
               <S.CardRiskyProposalLabel>
                 <S.CardRiskyProposalLabelContent>
                   <span>{"Your size (LP)"}</span>
-                  {isTrader && (
+                  {isTrader ? (
                     <S.CardRiskyProposalInvestMoreButton
                       text={"+ Add"}
                       onClick={onAddMore}
                       size={"x-small"}
                       color={isDesktop ? "secondary" : "default"}
                     />
+                  ) : (
+                    <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
+                      {"Your size LP info"}
+                    </S.CardRiskyProposalLabelTooltip>
                   )}
                 </S.CardRiskyProposalLabelContent>
               </S.CardRiskyProposalLabel>
@@ -141,7 +227,9 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
           </S.CardRiskyProposalGridItemCurrentUserSize>
 
           <S.CardRiskyProposalGridItemFullness>
-            <S.CardRiskyProposalValueWrp alignment={"flex-end"}>
+            <S.CardRiskyProposalValueWrp
+              alignment={!isDesktop ? "flex-end" : undefined}
+            >
               <S.CardRiskyProposalLabel>
                 <S.CardRiskyProposalLabelContent>
                   <span>{"Fullness (LP)"}</span>
@@ -149,6 +237,9 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
                     <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
                       {"Fullness(LP) info"}
                     </S.CardRiskyProposalLabelTooltip>
+                  )}
+                  {!isDesktop && fullness.completed && (
+                    <img src={checkGreenIcon} />
                   )}
                 </S.CardRiskyProposalLabelContent>
               </S.CardRiskyProposalLabel>
@@ -169,6 +260,9 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
                     <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
                       {"Max.Invest Price info"}
                     </S.CardRiskyProposalLabelTooltip>
+                  )}
+                  {!isDesktop && maxInvestPrice.completed && (
+                    <img src={checkGreenIcon} />
                   )}
                 </S.CardRiskyProposalLabelContent>
               </S.CardRiskyProposalLabel>
@@ -199,7 +293,9 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
           </S.CardRiskyProposalGridItemCurrentPrice>
 
           <S.CardRiskyProposalGridItemExpirationDate>
-            <S.CardRiskyProposalValueWrp alignment={"flex-end"}>
+            <S.CardRiskyProposalValueWrp
+              alignment={!isDesktop ? "flex-end" : undefined}
+            >
               <S.CardRiskyProposalLabel>
                 <S.CardRiskyProposalLabelContent>
                   <span>{"Expiration date"}</span>
@@ -207,6 +303,9 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
                     <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
                       {"Expiration date info"}
                     </S.CardRiskyProposalLabelTooltip>
+                  )}
+                  {!isDesktop && expirationDate.completed && (
+                    <img src={checkGreenIcon} />
                   )}
                 </S.CardRiskyProposalLabelContent>
               </S.CardRiskyProposalLabel>
@@ -229,10 +328,13 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
                       {"Investors info"}
                     </S.CardRiskyProposalLabelTooltip>
                   )}
+                  {!isDesktop && investors.completed && (
+                    <img src={checkGreenIcon} />
+                  )}
                 </S.CardRiskyProposalLabelContent>
               </S.CardRiskyProposalLabel>
               <S.CardRiskyProposalValue completed={investors.completed}>
-                {investors.value} / 1000
+                {investors.value} <span>/ {MAX_INVESTORS_COUNT}</span>
               </S.CardRiskyProposalValue>
             </S.CardRiskyProposalValueWrp>
           </S.CardRiskyProposalGridItemInvestors>
@@ -264,7 +366,7 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
               onClick={onInvest}
               size="x-small"
               disabled={!canInvest}
-              color={canInvest ? "primary" : "secondary"}
+              color={canInvest ? "tertiary" : "secondary"}
             />
           </S.CardRiskyProposalGridItemInvestAction>
 
@@ -286,17 +388,86 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
             <>
               {!isDesktop && <S.CardRiskyProposalGridItemDividerBottom />}
               <S.CardRiskyProposalGridItemTraderSize>
-                TraderSize
+                {isDesktop ? (
+                  <S.CardRiskyProposalValueWrp>
+                    <S.CardRiskyProposalLabel>
+                      <S.CardRiskyProposalLabelContent>
+                        <span>{"Trader size"}</span>
+                        <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
+                          {"Trader size info"}
+                        </S.CardRiskyProposalLabelTooltip>
+                      </S.CardRiskyProposalLabelContent>
+                    </S.CardRiskyProposalLabel>
+                    <S.CardRiskyProposalValue>
+                      <Flex gap={"4"} ai={"center"}>
+                        <IconCommon name={ICON_NAMES.warnCircledFilled} />
+                        {normalizeBigNumber(traderSizeLP, 18, 2)} (
+                        {normalizeBigNumber(traderSizePercentage, 18, 2)}%)
+                      </Flex>
+                    </S.CardRiskyProposalValue>
+                  </S.CardRiskyProposalValueWrp>
+                ) : (
+                  <S.CardRiskyProposalTraderSizeWrp>
+                    <S.CardRiskyProposalTraderSizeIconWrp>
+                      <Icon
+                        size={24}
+                        m="0"
+                        source={
+                          poolMetadata?.assets[poolMetadata?.assets.length - 1]
+                        }
+                        address={poolAddress}
+                      />
+                      <S.CardRiskyProposalTraderSizeQualityIcon
+                        src={getTraderQualityIcon(undefined)}
+                      />
+                    </S.CardRiskyProposalTraderSizeIconWrp>
+                    <S.CardRiskyProposalTraderSizeInfoWrp>
+                      <S.CardRiskyProposalTraderSizeText>
+                        Trader size: {normalizeBigNumber(traderSizeLP, 18, 2)}{" "}
+                        LP ({normalizeBigNumber(traderSizePercentage, 18, 2)}%)
+                      </S.CardRiskyProposalTraderSizeText>
+                      <S.CardRiskyProposalTraderSizeProgressWrp>
+                        <ProgressColorized
+                          size={Number(
+                            normalizeBigNumber(traderSizePercentage, 18, 2)
+                          )}
+                        />
+                      </S.CardRiskyProposalTraderSizeProgressWrp>
+                    </S.CardRiskyProposalTraderSizeInfoWrp>
+                  </S.CardRiskyProposalTraderSizeWrp>
+                )}
               </S.CardRiskyProposalGridItemTraderSize>
               {!isDesktop && (
                 <S.CardRiskyProposalGridItemCheckToken>
-                  CheckToken
+                  <S.CardRiskyProposalCheckTokenWrp>
+                    <ExternalLink color="#2680EB" href={proposalTokenLink}>
+                      {"Сheck token"}
+                    </ExternalLink>
+                  </S.CardRiskyProposalCheckTokenWrp>
                 </S.CardRiskyProposalGridItemCheckToken>
               )}
             </>
           )}
         </S.CardRiskyProposalGrid>
       </S.CardRiskyProposalBody>
+      {isSettingsOpen && (
+        <S.CardRiskyProposalUpdateFormWrp>
+          <UpdateRiskyProposalForm
+            visible={isSettingsOpen}
+            setVisible={setIsSettingsOpen}
+            timestamp={expirationDate.initial}
+            maxSizeLP={maxSizeLP}
+            maxInvestPrice={maxInvestPrice.value}
+            proposalPool={proposalPool}
+            fullness={fullness.value}
+            currentPrice={currentPrice}
+            proposalId={proposalId + 1}
+            successCallback={onUpdateRestrictions}
+            proposalSymbol={proposalToken?.symbol}
+            poolAddress={poolAddress}
+          />
+        </S.CardRiskyProposalUpdateFormWrp>
+      )}
     </S.Root>
   )
 }
