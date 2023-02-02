@@ -175,6 +175,7 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
       <S.CardInvestorPositionBody
         onClick={onToggleActions}
         sharpBottomCorners={showPositions}
+        bigGap={position.isClosed}
       >
         <S.CardInvestorPositionBodyItem gridEnd={2}>
           <S.CardInvestorPositionBodyItemPoolInfoWrp>
@@ -269,30 +270,37 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
         </S.CardInvestorPositionBodyItemGrid>
 
         {isDesktop && (
-          <S.CardInvestorPositionBodyItem>
-            <S.CardInvestorPositionBodyItemActionsWrp>
-              {!position.isClosed && (
-                <>
-                  <S.ActionPositive
-                    text={"Buy More"}
-                    color={"default"}
-                    size={"no-paddings"}
-                    onClick={(e) => onNavigateTerminal(e, "deposit")}
-                  />
-                  <S.ActionNegative
-                    text={"Close position"}
-                    color={"default"}
-                    size={"no-paddings"}
-                    onClick={(e) => onNavigateTerminal(e, "withdraw")}
-                  />
-                </>
-              )}
-              <S.CardInvestorPositionToggleIconIndicator
-                name={ICON_NAMES.angleDown}
-                isActive={showPositions}
-              />
-            </S.CardInvestorPositionBodyItemActionsWrp>
-          </S.CardInvestorPositionBodyItem>
+          <>
+            <S.CardInvestorPositionBodyItem>
+              <S.CardInvestorPositionBodyItemAmount>
+                {normalizeBigNumber(commissionPercentage, 25, 0)}%
+              </S.CardInvestorPositionBodyItemAmount>
+            </S.CardInvestorPositionBodyItem>
+            <S.CardInvestorPositionBodyItem>
+              <S.CardInvestorPositionBodyItemActionsWrp>
+                {!position.isClosed && (
+                  <>
+                    <S.ActionPositive
+                      text={"Buy More"}
+                      color={"default"}
+                      size={"no-paddings"}
+                      onClick={(e) => onNavigateTerminal(e, "deposit")}
+                    />
+                    <S.ActionNegative
+                      text={"Close position"}
+                      color={"default"}
+                      size={"no-paddings"}
+                      onClick={(e) => onNavigateTerminal(e, "withdraw")}
+                    />
+                  </>
+                )}
+                <S.CardInvestorPositionToggleIconIndicator
+                  name={ICON_NAMES.angleDown}
+                  isActive={showPositions}
+                />
+              </S.CardInvestorPositionBodyItemActionsWrp>
+            </S.CardInvestorPositionBodyItem>
+          </>
         )}
       </S.CardInvestorPositionBody>
 

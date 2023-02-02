@@ -43,12 +43,15 @@ export const InvestorPositionsListWrp = styled.div`
   }
 `
 
-export const InvestorPositionsListHead = styled.div<{ childMaxWidth?: string }>`
+export const InvestorPositionsListHead = styled.div<{
+  bigGap: boolean
+}>`
   display: none;
 
   ${respondTo("lg")} {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 145px)) 1fr;
+    grid-template-columns: ${({ bigGap }) =>
+      `repeat(6, ${bigGap ? "1fr" : "minmax(0, 115.5px)"}) 1fr`};
     justify-items: flex-start;
     gap: 0 var(--app-gap);
     padding: 8px 16px 0;

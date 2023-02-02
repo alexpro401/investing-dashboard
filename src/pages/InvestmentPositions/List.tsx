@@ -46,7 +46,7 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
   return (
     <div>
       <S.InvestorPositionsListWrp>
-        <S.InvestorPositionsListHead>
+        <S.InvestorPositionsListHead bigGap={closed}>
           <S.InvestorPositionsListHeadItem>
             Fund
           </S.InvestorPositionsListHeadItem>
@@ -63,6 +63,10 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
           </S.InvestorPositionsListHeadItem>
           <S.InvestorPositionsListHeadItem>
             P&L in %
+          </S.InvestorPositionsListHeadItem>
+          <S.InvestorPositionsListHeadItem>
+            <span>Commission</span>
+            <Tooltip id={uuidv4()}>Explain Commission</Tooltip>
           </S.InvestorPositionsListHeadItem>
           <S.InvestorPositionsListHeadItem />
         </S.InvestorPositionsListHead>

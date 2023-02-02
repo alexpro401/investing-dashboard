@@ -24,6 +24,7 @@ export const Root = styled.div`
 `
 export const CardInvestorPositionBody = styled.div<{
   sharpBottomCorners: boolean
+  bigGap: boolean
 }>`
   width: 100%;
   display: grid;
@@ -40,7 +41,8 @@ export const CardInvestorPositionBody = styled.div<{
     min-height: 69px;
     gap: 0 var(--app-gap);
     padding: 12px 16px;
-    grid-template-columns: repeat(5, minmax(0, 145px)) 1fr;
+    grid-template-columns: ${({ bigGap }) =>
+      `repeat(6, ${bigGap ? "1fr" : "minmax(0, 115.5px)"}) 1fr`};
     justify-items: flex-start;
 
     background: #141926;
