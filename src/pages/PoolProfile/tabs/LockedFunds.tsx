@@ -84,50 +84,31 @@ const TabPoolLockedFunds: FC<Props> = ({ ...rest }) => {
             }}
           />
         </Chart>
-      </Card>
-      <Card>
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardLabel>Investor funds</S.TabCardLabel>
-          <Flex ai="center" jc="flex-end">
-            <S.TabCardValue>${lockedFunds?.investorsFundsUSD}</S.TabCardValue>
-            &nbsp;
-            <S.TabCardLabel>
+        <S.PnlSubChartCard>
+          <S.PnlSubChartCardItem>
+            <S.TabCardLabel>Investor funds</S.TabCardLabel>
+            <S.TabCardValue>
+              ${lockedFunds?.investorsFundsUSD}{" "}
               {lockedFunds?.investorsFundsBase} {lockedFunds?.baseSymbol}
-            </S.TabCardLabel>
-          </Flex>
-        </Flex>
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardLabel>Personal funds</S.TabCardLabel>
-          <Flex ai="center" jc="flex-end">
-            <S.TabCardValue>${lockedFunds?.traderFundsUSD}</S.TabCardValue>
-            &nbsp;
+            </S.TabCardValue>
+          </S.PnlSubChartCardItem>
+          <S.PnlSubChartCardItem>
+            <S.TabCardLabel>Personal funds</S.TabCardLabel>
+            <S.TabCardValue>
+              ${lockedFunds?.traderFundsUSD} {lockedFunds?.traderFundsBase}{" "}
+              {lockedFunds?.baseSymbol}
+            </S.TabCardValue>
+          </S.PnlSubChartCardItem>
+          <S.PnlSubChartCardItem>
             <S.TabCardLabel>
-              {lockedFunds?.traderFundsBase} {lockedFunds?.baseSymbol}
+              Fund used ({lockedFunds?.poolUsedToTotalPercentage}%)
             </S.TabCardLabel>
-          </Flex>
-        </Flex>
-        <Flex full ai="center" jc="space-between">
-          <S.TabCardLabel>
-            Fund used ({lockedFunds?.poolUsedToTotalPercentage}%)
-          </S.TabCardLabel>
-          <Flex ai="center" jc="flex-end">
             <S.TabCardValue>
               ${lockedFunds?.poolUsedInPositionsUSD.format}&nbsp;/&nbsp;
+              {lockedFunds?.totalPoolUSD.format}
             </S.TabCardValue>
-            &nbsp;
-            <S.TabCardValue>{lockedFunds?.totalPoolUSD.format}</S.TabCardValue>
-          </Flex>
-        </Flex>
-        <S.ProgressBar w={Number(lockedFunds?.poolUsedToTotalPercentage)} />
-        {isTrader && !isSmallTablet && (
-          <Flex full>
-            <S.AppButtonFull
-              onClick={onTerminalNavigate}
-              color="tertiary"
-              text="Invest more in my fund"
-            />
-          </Flex>
-        )}
+          </S.PnlSubChartCardItem>
+        </S.PnlSubChartCard>
       </Card>
     </>
   )

@@ -389,16 +389,20 @@ const PoolProfileContent = () => {
                 ]}
               />
 
-              <S.TraderInvestSelfLink
-                to={generatePath(ROUTE_PATHS.poolInvest, {
-                  poolAddress: fundAddress || "",
-                })}
-              >
-                <S.TraderInvestSelfLinkIcon
-                  name={ICON_NAMES.gradientArrowDiagonalUp}
-                />
-                {t("pool-profile.invest-self-link")}
-              </S.TraderInvestSelfLink>
+              {isTrader && isSmallTablet ? (
+                <S.TraderInvestSelfLink
+                  to={generatePath(ROUTE_PATHS.poolInvest, {
+                    poolAddress: fundAddress || "",
+                  })}
+                >
+                  <S.TraderInvestSelfLinkIcon
+                    name={ICON_NAMES.gradientArrowDiagonalUp}
+                  />
+                  {t("pool-profile.invest-self-link")}
+                </S.TraderInvestSelfLink>
+              ) : (
+                <></>
+              )}
             </S.TabsChartsWrp>
 
             {isMediumTablet ? (

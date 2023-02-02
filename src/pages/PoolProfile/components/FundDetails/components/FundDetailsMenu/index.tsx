@@ -22,6 +22,7 @@ const FundDetailsMenu: FC<Props> = ({ ...rest }) => {
     useContext(PoolProfileContext)
 
   const [avatarUrl, setAvatarUrl] = useState(fundImageUrl || "")
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const navigate = useNavigate()
 
@@ -98,34 +99,45 @@ const FundDetailsMenu: FC<Props> = ({ ...rest }) => {
 
   const updatePoolProfileAvatar = useCallback(
     async (url: string) => {
-      if (!updatePoolParameters) return
+      if (!updatePoolParameters || isSubmitting) return
 
-      console.log(url)
+      setIsSubmitting(true)
 
       try {
         setAvatarUrl(url)
         await updatePoolParameters({ avatarUrl: url })
-        Bus.emit("manage-modal/menu")
+
+        if (isSmallTablet) {
+          window.location.reload()
+        } else {
+          Bus.emit("manage-modal/menu")
+        }
       } catch (error) {
         console.error(error)
       }
+
+      setIsSubmitting(false)
     },
-    [updatePoolParameters]
+    [isSmallTablet, isSubmitting, updatePoolParameters]
   )
 
   return (
     <S.Container>
-      <S.FundAvatarWrp>
-        <Avatar
-          m="0 auto"
-          onCrop={(key, url) => updatePoolProfileAvatar(url)}
-          showUploader
-          size={100}
-          url={avatarUrl}
-        >
-          <S.FundAvatarChangeBtn>Change fund photo</S.FundAvatarChangeBtn>
-        </Avatar>
-      </S.FundAvatarWrp>
+      {!isSmallTablet ? (
+        <S.FundAvatarWrp>
+          <Avatar
+            m="0 auto"
+            onCrop={(key, url) => updatePoolProfileAvatar(url)}
+            showUploader
+            size={100}
+            url={avatarUrl}
+          >
+            <S.FundAvatarChangeBtn>Change fund photo</S.FundAvatarChangeBtn>
+          </Avatar>
+        </S.FundAvatarWrp>
+      ) : (
+        <></>
+      )}
 
       <S.MenuWrp>
         {menuItems.map((el, idx) => (

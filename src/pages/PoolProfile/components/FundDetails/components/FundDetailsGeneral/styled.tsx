@@ -22,6 +22,23 @@ export const Container = styled.div<{ loading?: boolean }>`
   }
 `
 
+export const FundAvatarWrp = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--app-gap);
+`
+
+export const FundAvatarChangeBtn = styled.button`
+  background: transparent;
+  border: none;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: ${(props) => props.theme.brandColors.secondary};
+`
+
 export const AvatarWrapper = styled.div`
   position: absolute;
   top: -50px;

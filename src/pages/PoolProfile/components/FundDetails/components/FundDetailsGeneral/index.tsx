@@ -9,19 +9,24 @@ import { useEffectOnce } from "react-use"
 import Skeleton from "components/Skeleton"
 import { TextareaField } from "fields"
 import { isEqual } from "lodash"
-import { useForm, useFormValidation } from "hooks"
+import { useBreakpoints, useForm, useFormValidation } from "hooks"
 import { required } from "utils/validators"
+import Avatar from "components/Avatar"
 
 const FundDetailsGeneral: FC = () => {
   const {
     fundDescription: _fundDescription,
     fundStrategy: _fundStrategy,
+    fundImageUrl,
     updatePoolParameters,
   } = useContext(PoolProfileContext)
+
+  const { isSmallTablet } = useBreakpoints()
 
   const [isLoaded, setIsLoaded] = useState(false)
   const [isLoadFailed, setIsLoadFailed] = useState(false)
 
+  const [avatarUrl, setAvatarUrl] = useState(fundImageUrl || "")
   const [fundDescription, setFundDescription] = useState(_fundDescription || "")
   const [fundStrategy, setFundStrategy] = useState(_fundStrategy || "")
 
@@ -31,8 +36,10 @@ const FundDetailsGeneral: FC = () => {
       {
         fundDescription,
         fundStrategy,
+        avatarUrl,
       },
       {
+        ...(isSmallTablet ? { avatarUrl: { required } } : {}),
         fundDescription: {
           required,
         },
@@ -50,12 +57,13 @@ const FundDetailsGeneral: FC = () => {
       await sleep(500)
       setFundDescription(_fundDescription || "")
       setFundStrategy(_fundStrategy || "")
+      setAvatarUrl(fundImageUrl || "")
     } catch (error) {
       console.log(error)
       setIsLoadFailed(true)
     }
     setIsLoaded(true)
-  }, [_fundDescription, _fundStrategy])
+  }, [_fundDescription, _fundStrategy, fundImageUrl])
 
   useEffectOnce(() => {
     init()
@@ -79,6 +87,7 @@ const FundDetailsGeneral: FC = () => {
 
     try {
       await updatePoolParameters({
+        ...(avatarUrl ? { avatarUrl } : {}),
         fundDescription,
         fundStrategy,
       })
@@ -89,6 +98,7 @@ const FundDetailsGeneral: FC = () => {
   }, [
     _fundDescription,
     _fundStrategy,
+    avatarUrl,
     disableForm,
     enableForm,
     fundDescription,
@@ -103,6 +113,26 @@ const FundDetailsGeneral: FC = () => {
       <>Oops... Something went wrong</>
     ) : (
       <>
+        {isSmallTablet ? (
+          <S.FundAvatarWrp>
+            <Avatar
+              m="0 auto"
+              onCrop={(key, url) => setAvatarUrl(url)}
+              showUploader
+              size={100}
+              url={avatarUrl}
+            >
+              <S.FundAvatarChangeBtn>
+                {isSmallTablet && getFieldErrorMessage("avatarUrl")
+                  ? getFieldErrorMessage("avatarUrl")
+                  : "Change fund photo"}
+              </S.FundAvatarChangeBtn>
+            </Avatar>
+          </S.FundAvatarWrp>
+        ) : (
+          <></>
+        )}
+
         <Card>
           <CardHead
             nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
