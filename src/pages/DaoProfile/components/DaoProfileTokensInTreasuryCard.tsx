@@ -6,8 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { Pagination } from "swiper"
-
-import { Card } from "common"
+import { useBreakpoints } from "hooks"
 import DaoProfileTokenInTreasuryCard from "./DaoProfileTokenInTreasuryCard"
 import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommonContext/GovPoolProfileCommonContext"
 import { formatTokenNumber, formatFiatNumber } from "utils"
@@ -33,35 +32,37 @@ interface ITokenView {
   id: string
 }
 
-const FAKE_LOADING_TREASURY: Array<ITokenView> = [
-  {
-    type: "nft",
-    logo: "",
-    symbol: "",
-    amount: "",
-    amountUsd: "",
-    treasuryPercent: "",
-    address: "",
-    isFallback: true,
-    id: uuidv4(),
-  },
-  {
-    type: "nft",
-    logo: "",
-    symbol: "",
-    amount: "",
-    amountUsd: "",
-    treasuryPercent: "",
-    address: "",
-    isFallback: true,
-    id: uuidv4(),
-  },
-]
+const FAKE_LOADING_RECORD = (id: string): ITokenView => ({
+  type: "nft",
+  logo: "",
+  symbol: "",
+  amount: "",
+  amountUsd: "",
+  treasuryPercent: "",
+  address: "",
+  isFallback: true,
+  id: id,
+})
 
 const DaoProfileTokensInTreasuryCard: React.FC = () => {
   const { chainId } = useWeb3React()
+  const { isBigTablet } = useBreakpoints()
   const { treasuryLoading, treasuryNftCollections, treasuryTokens } =
     useContext(GovPoolProfileCommonContext)
+
+  const FAKE_LOADING_TREASURY = useMemo(() => {
+    if (isBigTablet) {
+      return [
+        FAKE_LOADING_RECORD(uuidv4()),
+        FAKE_LOADING_RECORD(uuidv4()),
+        FAKE_LOADING_RECORD(uuidv4()),
+      ]
+    } else return [FAKE_LOADING_RECORD(uuidv4()), FAKE_LOADING_RECORD(uuidv4())]
+  }, [isBigTablet])
+
+  const SECTION_SIZE = useMemo(() => {
+    return isBigTablet ? 3 : 2
+  }, [isBigTablet])
 
   const payload = useMemo(() => {
     if (isEmpty(treasuryNftCollections) && isEmpty(treasuryTokens)) return []
@@ -78,7 +79,8 @@ const DaoProfileTokensInTreasuryCard: React.FC = () => {
         symbol: el.contract_ticker_symbol,
         amount: formatTokenNumber(
           BigNumber.from(el.balance),
-          el.contract_decimals
+          el.contract_decimals,
+          6
         ),
         amountUsd: formatFiatNumber(el.quote),
         treasuryPercent:
@@ -107,7 +109,7 @@ const DaoProfileTokensInTreasuryCard: React.FC = () => {
           return acc
         }
 
-        if (acc[acc.length - 1].length < 2) {
+        if (acc[acc.length - 1].length < SECTION_SIZE) {
           acc[acc.length - 1].push(token)
           return acc
         }
@@ -136,7 +138,7 @@ const DaoProfileTokensInTreasuryCard: React.FC = () => {
       },
       [] as Array<Array<ITokenView>>
     )
-  }, [treasuryNftCollections, treasuryTokens])
+  }, [treasuryNftCollections, treasuryTokens, SECTION_SIZE])
 
   const treasuryIsEmpty = useMemo(
     () => !treasuryLoading && payload.flat().length === 0,
@@ -146,8 +148,14 @@ const DaoProfileTokensInTreasuryCard: React.FC = () => {
   return (
     <DaoTreasuryCardWrap>
       <SliderHeader>
-        <TextLabel fw={500}>Token in treasury</TextLabel>
+        <TextLabel fw={500}>
+          Token in treasury{" "}
+          {isBigTablet
+            ? `- ${treasuryTokens.length + treasuryNftCollections.length}`
+            : ""}
+        </TextLabel>
         <TextLabel fw={500}>Amount</TextLabel>
+        {isBigTablet && <TextLabel fw={500}>Amount in $</TextLabel>}
         <TextLabel fw={500} align="right">
           In treasury
         </TextLabel>
@@ -209,7 +217,7 @@ const DaoProfileTokensInTreasuryCard: React.FC = () => {
         <AppButtonFull
           color="secondary"
           onClick={() => alert("Deposit dao treasury 💸")}
-          text="Пополнить трежери DAO"
+          text="Поповнити трежері DAO"
         />
       )}
     </DaoTreasuryCardWrap>

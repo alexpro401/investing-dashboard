@@ -26,15 +26,15 @@ export const Fallback = styled(Flex)<IconProps>`
   margin: ${(props) => props.m};
   background: ${({ theme }) => theme.textColors.secondaryNegative};
   justify-content: center;
+  align-items: center;
 `
 
 export const SymbolLetter = styled.div`
-  transform: translate(0px, 1px);
   font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
-  line-height: 19px;
+  line-height: 16px;
   font-feature-settings: "tnum" on, "lnum" on;
   color: ${({ theme }) => theme.textColors.secondary};
   opacity: 0.5;
