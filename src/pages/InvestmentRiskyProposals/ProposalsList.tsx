@@ -16,17 +16,20 @@ import { isNil, map } from "lodash"
 import { graphClientBasicPools } from "utils/graphClient"
 import { NoDataMessage } from "common"
 import { Center } from "theme"
+import CardRiskyProposal from "../../common/CardRiskyProposal"
 
 interface IRiskyCardInitializer {
   account: string
   poolAddress: string
   proposalId: number
+  index: number
 }
 
 function RiskyProposalCardInitializer({
   account,
   poolAddress,
   proposalId,
+  index,
 }: IRiskyCardInitializer) {
   const proposalPool = useTraderPoolRiskyProposalContract(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
@@ -58,7 +61,16 @@ function RiskyProposalCardInitializer({
     return null
   }
 
-  return (
+  return index === 0 ? (
+    <CardRiskyProposal
+      proposalId={proposalId}
+      poolInfo={poolInfo}
+      isTrader={isTrader}
+      proposal={proposal}
+      poolAddress={poolAddress}
+      proposalPool={proposalPool}
+    />
+  ) : (
     <RiskyProposalCard
       proposalId={proposalId}
       poolInfo={poolInfo}
@@ -111,12 +123,13 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
 
   return (
     <>
-      {data.map((p) => (
+      {data.map((p, i) => (
         <RiskyProposalCardInitializer
           key={uuidv4()}
           account={account}
           proposalId={Number(p.id) - 1}
           poolAddress={p.basicPool.id}
+          index={i}
         />
       ))}
       <LoadMore isLoading={loading && !!data.length} handleMore={fetchMore} />
