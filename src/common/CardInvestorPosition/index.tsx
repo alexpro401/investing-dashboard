@@ -1,18 +1,12 @@
 import * as React from "react"
 import { isEmpty } from "lodash"
-import { format } from "date-fns/esm"
 import { AnimatePresence } from "framer-motion"
 import { SpiralSpinner } from "react-spinners-kit"
 import { generatePath, useNavigate } from "react-router-dom"
 
 import { useBreakpoints, useInvestorPositionVests } from "hooks"
-import {
-  DATE_FORMAT,
-  ICON_NAMES,
-  MAX_PAGINATION_COUNT,
-  ROUTE_PATHS,
-} from "consts"
-import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
+import { ICON_NAMES, MAX_PAGINATION_COUNT, ROUTE_PATHS } from "consts"
+import { normalizeBigNumber } from "utils"
 
 import { NoDataMessage } from "common"
 import { accordionSummaryVariants } from "motion/variants"
@@ -20,7 +14,6 @@ import { accordionSummaryVariants } from "motion/variants"
 import Icon from "components/Icon"
 import LoadMore from "components/LoadMore"
 import TokenIcon from "components/TokenIcon"
-import AmountRow from "components/Amount/Row"
 import CardActions from "components/CardActions"
 import PositionTrade from "components/PositionTrade"
 
