@@ -13,6 +13,7 @@ import { NoDataMessage, CardInvestorPosition } from "common"
 import Tooltip from "components/Tooltip"
 import LoadMore from "components/LoadMore"
 import * as S from "./styled"
+import InvestorPositionInPoolContextProvider from "context/investor/positions/InvestorPositionInPoolContext"
 
 interface IProps {
   account?: string | null
@@ -71,7 +72,9 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
           <S.InvestorPositionsListHeadItem />
         </S.InvestorPositionsListHead>
         {data.map((p) => (
-          <CardInvestorPosition key={p.id} position={p} />
+          <InvestorPositionInPoolContextProvider key={p.id} position={p}>
+            <CardInvestorPosition />
+          </InvestorPositionInPoolContextProvider>
         ))}
       </S.InvestorPositionsListWrp>
       <LoadMore isLoading={loading && !!data.length} handleMore={fetchMore} />

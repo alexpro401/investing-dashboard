@@ -5,18 +5,13 @@ import { AnimatePresence } from "framer-motion"
 import { SpiralSpinner } from "react-spinners-kit"
 import { generatePath, useNavigate } from "react-router-dom"
 
-import {
-  useBreakpoints,
-  useInvestorPosition,
-  useInvestorPositionVests,
-} from "hooks"
+import { useBreakpoints, useInvestorPositionVests } from "hooks"
 import {
   DATE_FORMAT,
   ICON_NAMES,
   MAX_PAGINATION_COUNT,
   ROUTE_PATHS,
 } from "consts"
-import { InvestorPosition } from "interfaces/thegraphs/invest-pools"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 
 import { NoDataMessage } from "common"
@@ -30,14 +25,31 @@ import CardActions from "components/CardActions"
 import PositionTrade from "components/PositionTrade"
 
 import * as S from "./styled"
+import { InvestorPositionInPoolContext } from "context/investor/positions/InvestorPositionInPoolContext"
 
-interface Props {
-  position: InvestorPosition
-}
-
-const CardInvestorPosition: React.FC<Props> = ({ position }) => {
+const CardInvestorPosition: React.FC = () => {
   const navigate = useNavigate()
   const { isDesktop } = useBreakpoints()
+
+  const {
+    position,
+    poolInfo,
+    baseToken,
+    poolMetadata,
+    pnlPercentage,
+    positionOpenLPAmount,
+    positionOpenLPAmountUSD,
+    entryPriceBase,
+    entryPriceUSD,
+    markPriceBase,
+    markPriceUSD,
+    pnlBase,
+    pnlUSD,
+    commission,
+    fundsLockedInvestorPercentage,
+    fundsLockedInvestorUSD,
+    totalPoolInvestmentsUSD,
+  } = React.useContext(InvestorPositionInPoolContext)
 
   const [showActions, setShowActions] = React.useState(false)
   const [showPositions, setShowPositions] = React.useState(false)
@@ -132,28 +144,6 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
       onNavigateTerminal,
     ]
   )
-
-  const {
-    poolInfo,
-    baseToken,
-    poolMetadata,
-    pnlPercentage,
-    positionOpenLPAmount,
-    positionOpenLPAmountUSD,
-    entryPriceBase,
-    entryPriceUSD,
-    markPriceBase,
-    markPriceUSD,
-    pnlBase,
-    pnlUSD,
-    commissionPeriod,
-    commissionPercentage,
-    commissionAmountUSD,
-    commissionUnlockTimestamp,
-    fundsLockedInvestorPercentage,
-    fundsLockedInvestorUSD,
-    totalPoolInvestmentsUSD,
-  } = useInvestorPosition(position)
 
   const baseTokenSymbol = baseToken?.symbol ?? ""
   const pnlPercentageValue = React.useMemo(
@@ -273,7 +263,7 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
           <>
             <S.CardInvestorPositionBodyItem>
               <S.CardInvestorPositionBodyItemAmount>
-                {normalizeBigNumber(commissionPercentage, 25, 0)}%
+                {normalizeBigNumber(commission.percentage, 25, 0)}%
               </S.CardInvestorPositionBodyItemAmount>
             </S.CardInvestorPositionBodyItem>
             <S.CardInvestorPositionBodyItem>
@@ -352,20 +342,20 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
       >
         <S.CardInvestorPositionCommissionWrp>
           <AmountRow
-            title={`${commissionPeriod} month Performance Fee`}
-            value={`${normalizeBigNumber(commissionPercentage, 25, 0)}%`}
+            title={`${commission.period} month Performance Fee`}
+            value={`${normalizeBigNumber(commission.percentage, 25, 0)}%`}
           />
           <AmountRow
             m="14px 0 0"
             title="Paid Performance Fee  "
-            value={`$${formatBigNumber(commissionAmountUSD, 18, 2)}`}
+            value={`$${formatBigNumber(commission.amountUSD, 18, 2)}`}
           />
           <AmountRow
             full
             m="14px 0 0"
             title="Date of withdrawal"
             value={format(
-              expandTimestamp(+commissionUnlockTimestamp.toString()),
+              expandTimestamp(+commission.unlockTimestamp.toString()),
               DATE_FORMAT
             )}
           />
