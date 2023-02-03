@@ -72,5 +72,20 @@
     "default-settings-step-title": "General voting settings",
     "internal-settings-step-title": "Changing voting settings",
     "distribution-settings-step-title": "Distribution proposal settings"
+  },
+  "token-creation-step": {
+    "card-welcome-title" : "Token creation",
+    "card-welcome-desc" : "Create and set up the token to govern your DAO.",
+    "card-base-title" : "Base info",
+    "card-base-desc" : "Enter token name and ticker.",
+    "name-lbl" : "Token name",
+    "symbol-lbl" : "Token symbol",
+    "card-distribution-title" : "Distribution ",
+    "card-distribution-desc" : "Enter total supply and distribution (how many to DAO Treasury vs. to members). You can also set up selling tokens directly from the DAO with the proceeds goign ino the Treasury.",
+    "total-supply-lbl": "Total supply",
+    "treasury-lbl": "Treasury",
+    "initial-distribution-lbl": "Initial Distribution",
+    "card-distribution-recipients-title" : "Distribution recipients",
+    "card-distribution-recipients-desc" : "By default, the entire indicated amount will be sent to the DAO creator’s wallet. To send some tokens to other members, list the wallets and % of the initial distribution to go to each wallet."
   }
 }

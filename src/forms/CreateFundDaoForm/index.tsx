@@ -9,7 +9,9 @@ import {
   IsDaoValidatorStep,
   IsDistributionProposalStep,
   SuccessStep,
+  SummaryStep,
   TitlesStep,
+  TokenCreationStep,
 } from "./steps"
 import Modal from "components/Modal"
 
@@ -29,6 +31,10 @@ const CreateFundDaoForm: FC = () => {
       title: t("create-fund-dao-form.titles-step-title"),
       number: 1,
     },
+    tokenCreation: {
+      title: t("create-fund-dao-form.token-creation-step-title"),
+      number: 1.5,
+    },
     isDaoValidator: {
       title: t("create-fund-dao-form.dao-validator-step-title"),
       number: 2,
@@ -45,9 +51,13 @@ const CreateFundDaoForm: FC = () => {
       title: t("create-fund-dao-form.distribution-settings-step-title"),
       number: 5,
     },
-    success: {
-      title: "Summary",
+    summary: {
+      title: t("create-fund-dao-form.summary-step-title"),
       number: 6,
+    },
+    success: {
+      title: t("create-fund-dao-form.success-step-title"),
+      number: 7,
     },
   }
 
@@ -97,7 +107,7 @@ const CreateFundDaoForm: FC = () => {
       console.error(error)
     }
     formController.enableForm()
-  }, [createDaoCb, formController, isMobile])
+  }, [STEPS, createDaoCb, formController, isMobile])
 
   const handleNextStep = () => {
     switch (currentStep) {
@@ -114,7 +124,13 @@ const CreateFundDaoForm: FC = () => {
         setCurrentStep(STEPS.isTokenDistributionSettings.number)
         break
       case STEPS.isTokenDistributionSettings.number:
+        setCurrentStep(STEPS.summary.number)
+        break
+      case STEPS.summary.number:
         submit()
+        break
+      case STEPS.tokenCreation.number:
+        setCurrentStep(STEPS.isDaoValidator.number)
         break
     }
   }
@@ -136,6 +152,9 @@ const CreateFundDaoForm: FC = () => {
       case STEPS.isTokenDistributionSettings.number:
         setCurrentStep(STEPS.isCustomVoteSelecting.number)
         break
+      case STEPS.tokenCreation.number:
+        setCurrentStep(STEPS.titles.number)
+        break
     }
   }
 
@@ -146,12 +165,17 @@ const CreateFundDaoForm: FC = () => {
       currentStepNumber={currentStep}
       prevCb={handlePrevStep}
       nextCb={handleNextStep}
+      setStep={setCurrentStep}
     >
       <AnimatePresence>
         <SForms.StepsWrapper ref={stepsWrapperRef}>
           {currentStep === STEPS.titles.number ? (
             <SForms.StepsContainer isWithPaddings={true}>
               <TitlesStep />
+            </SForms.StepsContainer>
+          ) : currentStep === STEPS.tokenCreation.number ? (
+            <SForms.StepsContainer isWithPaddings={true}>
+              <TokenCreationStep />
             </SForms.StepsContainer>
           ) : currentStep === STEPS.isDaoValidator.number ? (
             <SForms.StepsContainer isWithPaddings={true}>
@@ -172,6 +196,10 @@ const CreateFundDaoForm: FC = () => {
           ) : currentStep === STEPS.success.number ? (
             <SForms.StepsContainer>
               <SuccessStep />
+            </SForms.StepsContainer>
+          ) : currentStep === STEPS.summary.number ? (
+            <SForms.StepsContainer isWithPaddings={true}>
+              <SummaryStep />
             </SForms.StepsContainer>
           ) : (
             <></>

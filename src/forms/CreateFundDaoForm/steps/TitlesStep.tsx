@@ -6,7 +6,6 @@ import {
   useContext,
   useMemo,
   useState,
-  useEffect,
 } from "react"
 
 import {
@@ -59,11 +58,9 @@ import { SUPPORTED_SOCIALS } from "consts/socials"
 import theme from "theme"
 import cosmoImg from "assets/others/cosmo.png"
 
-interface ITitlesStepProps {
-  isCreatingProposal?: boolean
-}
+interface ITitlesStepProps {}
 
-const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
+const TitlesStep: FC<ITitlesStepProps> = () => {
   const daoPoolFormContext = useContext(GovPoolFormContext)
 
   const { isErc20, isErc721, erc20, erc721, socialLinks } = daoPoolFormContext
@@ -79,7 +76,7 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
   const { chainId } = useActiveWeb3React()
   const { isTablet } = useBreakpoints()
 
-  const { nextCb } = useContext(stepsControllerContext)
+  const { nextCb, setStep } = useContext(stepsControllerContext)
 
   const [, erc20TokenData] = erc20
   const {
@@ -93,12 +90,6 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
       ? getExplorerLink(chainId, tokenAddress.get, ExplorerDataType.ADDRESS)
       : ""
   }, [chainId, tokenAddress.get])
-
-  useEffect(() => {
-    if (socialLinks.get.length !== 0 && isCreatingProposal) {
-      setIsShowSocials(true)
-    }
-  }, [socialLinks, isCreatingProposal])
 
   const {
     getFieldErrorMessage,
@@ -190,10 +181,10 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
           }
         : {}),
 
-      ...(isErc20.get && !isCreatingProposal
+      ...(isErc20.get
         ? { tokenAddress: { required, isAddressValidator } }
         : {}),
-      ...(isErc721.get && !isCreatingProposal
+      ...(isErc721.get
         ? {
             nftAddress: { required, isAddressValidator },
             totalPowerInTokens: { required },
@@ -368,6 +359,11 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
             }
             disabled={!!tokenAddress.get && !!erc20TokenData?.name}
           />
+          <S.CardAddBtn
+            text={"Create own token"}
+            color="default"
+            onClick={() => (!!setStep ? setStep(1.5) : "")}
+          />
         </CardFormControl>
       </Collapse>
     ),
@@ -482,9 +478,8 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
               desktopWeight={500}
               desktopSize={"14px"}
             >
-              {!isCreatingProposal
-                ? "Once created, the DAO settings can be changed only by voting via the appropriate proposal."
-                : "Make your changes below."}
+              Once created, the DAO settings can be changed only by voting via
+              the appropriate proposal.
             </RegularText>
           </S.DesktopHeaderWrp>
         ) : (
@@ -494,17 +489,12 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
               title="DAO Profile"
             />
             <CardDescription>
-              {isCreatingProposal && <p>Make your changes below.</p>}
-              {!isCreatingProposal && (
-                <>
-                  <p>Enter basic info about your DAO</p>
-                  <br />
-                  <p>
-                    *Once created, the DAO settings can be changed only by
-                    voting via the appropriate proposal.
-                  </p>
-                </>
-              )}
+              <p>Enter basic info about your DAO</p>
+              <br />
+              <p>
+                *Once created, the DAO settings can be changed only by voting
+                via the appropriate proposal.
+              </p>
             </CardDescription>
           </Card>
         )}
@@ -517,255 +507,198 @@ const TitlesStep: FC<ITitlesStepProps> = ({ isCreatingProposal = false }) => {
           url={avatarUrl.get}
         >
           <S.CreateFundDaoAvatarActions>
-            <S.CreateFundDaoAvatarBtn>
-              {isCreatingProposal ? "Change fund photo" : "Add fund photo"}
-            </S.CreateFundDaoAvatarBtn>
+            <S.CreateFundDaoAvatarBtn>Add fund photo</S.CreateFundDaoAvatarBtn>
             <S.CreateFundDaoAvatarBtnErrorMessage>
               {getFieldErrorMessage("avatarUrl")}
             </S.CreateFundDaoAvatarBtnErrorMessage>
           </S.CreateFundDaoAvatarActions>
         </Avatar>
 
-        {isCreatingProposal ? (
+        <Card>
+          <CardHead
+            nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
+            title="About DAO "
+          />
+          <CardDescription>
+            <p>Add your DAO’s website, description, and social links.</p>
+          </CardDescription>
+          <CardFormControl>
+            <InputField
+              value={daoName.get}
+              setValue={daoName.set}
+              label="DAO name"
+              labelNodeRight={
+                isFieldValid("daoName") ? (
+                  <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                ) : (
+                  <></>
+                )
+              }
+              errorMessage={getFieldErrorMessage("daoName")}
+              onBlur={() => touchField("daoName")}
+            />
+            <TextareaField
+              value={description.get}
+              setValue={description.set}
+              label="Description"
+              errorMessage={getFieldErrorMessage("description")}
+              onBlur={() => touchField("description")}
+            />
+            <InputField
+              value={websiteUrl.get}
+              setValue={websiteUrl.set}
+              label="DAO site"
+              errorMessage={getFieldErrorMessage("websiteUrl")}
+              onBlur={() => touchField("websiteUrl")}
+              nodeRight={
+                <AppButton
+                  color="default"
+                  size="no-paddings"
+                  text="Paste"
+                  onClick={() => pasteFromClipboard(websiteUrl.set)}
+                />
+              }
+            />
+          </CardFormControl>
+          {SocialLinks}
+        </Card>
+
+        {isTablet ? (
           <Card>
             <CardHead
-              nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
-              title="About DAO"
+              nodeLeft={<Icon name={ICON_NAMES.shieldCheck} />}
+              title="Governance token information"
             />
             <CardDescription>
-              <p>Add your DAO’s website, description, and social links.</p>
+              <p>
+                For governance, you can choose any ERC-20 token, any (ERC-721)
+                NFT, or a hybrid of both.
+              </p>
+              <p>
+                *Token/NFT selected for governance cannot be changed once
+                initially set.
+              </p>
             </CardDescription>
-            <CardFormControl>
-              <InputField
-                value={daoName.get}
-                setValue={daoName.set}
-                label="DAO name"
-                labelNodeRight={
-                  isFieldValid("daoName") ? (
-                    <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
-                  ) : (
-                    <></>
-                  )
-                }
-                errorMessage={getFieldErrorMessage("daoName")}
-                onBlur={() => touchField("daoName")}
-              />
-              <TextareaField
-                value={description.get}
-                setValue={description.set}
-                label="Description"
-                errorMessage={getFieldErrorMessage("description")}
-                onBlur={() => touchField("description")}
-              />
-              <InputField
-                value={websiteUrl.get}
-                setValue={websiteUrl.set}
-                label="DAO site"
-                errorMessage={getFieldErrorMessage("websiteUrl")}
-                onBlur={() => touchField("websiteUrl")}
-                nodeRight={
-                  <AppButton
-                    color="default"
-                    size="no-paddings"
-                    text="Paste"
-                    onClick={() => pasteFromClipboard(websiteUrl.set)}
+            <>
+              <S.ERCArea>
+                <S.ERCAreaHead>
+                  <S.ERCImgWrp src={cosmoImg} alt="" />
+                  <S.ERCAreaDescription>
+                    <MediumText desktopSize="16px" desktopWeight={700}>
+                      ERC-20
+                    </MediumText>
+                    <RegularText
+                      desktopSize="14px"
+                      desktopWeight={400}
+                      color={theme.textColors.secondary}
+                    >
+                      Enter ERC-20 token address or create a new one. 1 token =
+                      1 Voting power
+                    </RegularText>
+                  </S.ERCAreaDescription>
+                  <Switch
+                    isOn={isErc20.get}
+                    onChange={(n, v) => {
+                      isErc20.set(v)
+                      if (!v && !isErc721.get) {
+                        isErc721.set(true)
+                      }
+                    }}
+                    name={"create-fund-title-step-is-erc20"}
                   />
-                }
-              />
-              {SocialLinks}
-            </CardFormControl>
+                </S.ERCAreaHead>
+                {IsERC20Collapse}
+              </S.ERCArea>
+              <S.ERCArea>
+                <S.ERCAreaHead>
+                  <S.ERCImgWrp src={cosmoImg} alt="" />
+                  <S.ERCAreaDescription>
+                    <MediumText desktopSize="16px" desktopWeight={700}>
+                      ERC-721 (NFT)
+                    </MediumText>
+                    <RegularText
+                      desktopSize="14px"
+                      desktopWeight={400}
+                      color={theme.textColors.secondary}
+                    >
+                      Enter ERC-721 address, number of NFTs in the series, and
+                      how many votes will each NFT represent.
+                    </RegularText>
+                  </S.ERCAreaDescription>
+                  <Switch
+                    isOn={isErc721.get}
+                    onChange={(n, v) => {
+                      isErc721.set(v)
+                      if (!v && !isErc20.get) {
+                        isErc20.set(true)
+                      }
+                    }}
+                    name={"create-fund-title-step-is-erc721"}
+                  />
+                </S.ERCAreaHead>
+                {IsERC721Collapse}
+              </S.ERCArea>
+            </>
           </Card>
         ) : (
           <>
             <Card>
               <CardHead
-                nodeLeft={<Icon name={ICON_NAMES.fileDock} />}
-                title="About DAO "
+                nodeLeft={<Icon name={ICON_NAMES.dollarOutline} />}
+                title="ERC-20"
+                nodeRight={
+                  <Switch
+                    isOn={isErc20.get}
+                    onChange={(n, v) => {
+                      isErc20.set(v)
+                      if (!v && !isErc721.get) {
+                        isErc721.set(true)
+                      }
+                    }}
+                    name={"create-fund-title-step-is-erc20"}
+                  />
+                }
               />
               <CardDescription>
-                <p>Add your DAO’s website, description, and social links.</p>
+                <p>
+                  Enter ERC-20 token address or create a new one. 1 token = 1
+                  Voting power
+                </p>
               </CardDescription>
-              <CardFormControl>
-                <InputField
-                  value={daoName.get}
-                  setValue={daoName.set}
-                  label="DAO name"
-                  labelNodeRight={
-                    isFieldValid("daoName") ? (
-                      <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
-                    ) : (
-                      <></>
-                    )
-                  }
-                  errorMessage={getFieldErrorMessage("daoName")}
-                  onBlur={() => touchField("daoName")}
-                />
-                <TextareaField
-                  value={description.get}
-                  setValue={description.set}
-                  label="Description"
-                  errorMessage={getFieldErrorMessage("description")}
-                  onBlur={() => touchField("description")}
-                />
-                <InputField
-                  value={websiteUrl.get}
-                  setValue={websiteUrl.set}
-                  label="DAO site"
-                  errorMessage={getFieldErrorMessage("websiteUrl")}
-                  onBlur={() => touchField("websiteUrl")}
-                  nodeRight={
-                    <AppButton
-                      color="default"
-                      size="no-paddings"
-                      text="Paste"
-                      onClick={() => pasteFromClipboard(websiteUrl.set)}
-                    />
-                  }
-                />
-              </CardFormControl>
-              {SocialLinks}
+              {IsERC20Collapse}
             </Card>
-            {isTablet ? (
-              <>
-                <Card>
-                  <CardHead
-                    nodeLeft={<Icon name={ICON_NAMES.shieldCheck} />}
-                    title="Governance token information"
+            <Card>
+              <CardHead
+                nodeLeft={<Icon name={ICON_NAMES.star} />}
+                title="ERC-721 (NFT)"
+                nodeRight={
+                  <Switch
+                    isOn={isErc721.get}
+                    onChange={(n, v) => {
+                      isErc721.set(v)
+                      if (!v && !isErc20.get) {
+                        isErc20.set(true)
+                      }
+                    }}
+                    name={"create-fund-title-step-is-erc721"}
                   />
-                  <CardDescription>
-                    <p>
-                      For governance, you can choose any ERC-20 token, any
-                      (ERC-721) NFT, or a hybrid of both.
-                    </p>
-                    <p>
-                      *Token/NFT selected for governance cannot be changed once
-                      initially set.
-                    </p>
-                  </CardDescription>
-                  <>
-                    <S.ERCArea>
-                      <S.ERCAreaHead>
-                        <S.ERCImgWrp src={cosmoImg} alt="" />
-                        <S.ERCAreaDescription>
-                          <MediumText desktopSize="16px" desktopWeight={700}>
-                            ERC-20
-                          </MediumText>
-                          <RegularText
-                            desktopSize="14px"
-                            desktopWeight={400}
-                            color={theme.textColors.secondary}
-                          >
-                            Enter ERC-20 token address or create a new one. 1
-                            token = 1 Voting power
-                          </RegularText>
-                        </S.ERCAreaDescription>
-                        <Switch
-                          isOn={isErc20.get}
-                          onChange={(n, v) => {
-                            isErc20.set(v)
-                            if (!v && !isErc721.get) {
-                              isErc721.set(true)
-                            }
-                          }}
-                          name={"create-fund-title-step-is-erc20"}
-                        />
-                      </S.ERCAreaHead>
-                      {IsERC20Collapse}
-                    </S.ERCArea>
-                    <S.ERCArea>
-                      <S.ERCAreaHead>
-                        <S.ERCImgWrp src={cosmoImg} alt="" />
-                        <S.ERCAreaDescription>
-                          <MediumText desktopSize="16px" desktopWeight={700}>
-                            ERC-721 (NFT)
-                          </MediumText>
-                          <RegularText
-                            desktopSize="14px"
-                            desktopWeight={400}
-                            color={theme.textColors.secondary}
-                          >
-                            Enter ERC-721 address, number of NFTs in the series,
-                            and how many votes will each NFT represent.
-                          </RegularText>
-                        </S.ERCAreaDescription>
-                        <Switch
-                          isOn={isErc721.get}
-                          onChange={(n, v) => {
-                            isErc721.set(v)
-                            if (!v && !isErc20.get) {
-                              isErc20.set(true)
-                            }
-                          }}
-                          name={"create-fund-title-step-is-erc721"}
-                        />
-                      </S.ERCAreaHead>
-                      {IsERC721Collapse}
-                    </S.ERCArea>
-                  </>
-                </Card>
-              </>
-            ) : (
-              <>
-                <Card>
-                  <CardHead
-                    nodeLeft={<Icon name={ICON_NAMES.dollarOutline} />}
-                    title="ERC-20"
-                    nodeRight={
-                      <Switch
-                        isOn={isErc20.get}
-                        onChange={(n, v) => {
-                          isErc20.set(v)
-                          if (!v && !isErc721.get) {
-                            isErc721.set(true)
-                          }
-                        }}
-                        name={"create-fund-title-step-is-erc20"}
-                      />
-                    }
-                  />
-                  <CardDescription>
-                    <p>
-                      Enter ERC-20 token address or create a new one. 1 token =
-                      1 Voting power
-                    </p>
-                  </CardDescription>
-                  {IsERC20Collapse}
-                </Card>
-                <Card>
-                  <CardHead
-                    nodeLeft={<Icon name={ICON_NAMES.star} />}
-                    title="ERC-721 (NFT)"
-                    nodeRight={
-                      <Switch
-                        isOn={isErc721.get}
-                        onChange={(n, v) => {
-                          isErc721.set(v)
-                          if (!v && !isErc20.get) {
-                            isErc20.set(true)
-                          }
-                        }}
-                        name={"create-fund-title-step-is-erc721"}
-                      />
-                    }
-                  />
-                  <CardDescription>
-                    <p>
-                      Enter the governing NFT (ERC-721) address, number of NFTs
-                      in the series, and the voting power. For governance, you
-                      can choose any ERC-20 token, any (ERC-721) NFT, or a
-                      hybrid of both.
-                    </p>
-                    <br />
-                    <p>
-                      With hybrid governance (ERC-20 + NFT), your NFT can have
-                      more weight than a token, and thus should have more voting
-                      power.
-                    </p>
-                  </CardDescription>
-                  {IsERC721Collapse}
-                </Card>
-              </>
-            )}
+                }
+              />
+              <CardDescription>
+                <p>
+                  Enter the governing NFT (ERC-721) address, number of NFTs in
+                  the series, and the voting power. For governance, you can
+                  choose any ERC-20 token, any (ERC-721) NFT, or a hybrid of
+                  both.
+                </p>
+                <br />
+                <p>
+                  With hybrid governance (ERC-20 + NFT), your NFT can have more
+                  weight than a token, and thus should have more voting power.
+                </p>
+              </CardDescription>
+              {IsERC721Collapse}
+            </Card>
           </>
         )}
 
