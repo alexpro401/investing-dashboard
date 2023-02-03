@@ -65,5 +65,12 @@
   },
   "trader-pools-list": {
     "tooltip-msg": "Tooltip message"
+  },
+  "create-fund-dao-form": {
+    "titles-step-title": "Basic DAO Settings",
+    "dao-validator-step-title": "Validator settings",
+    "default-settings-step-title": "General voting settings",
+    "internal-settings-step-title": "Changing voting settings",
+    "distribution-settings-step-title": "Distribution proposal settings"
   }
 }

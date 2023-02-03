@@ -10,7 +10,7 @@ import {
   IsDistributionProposalStep,
   SuccessStep,
   TitlesStep,
-} from "common"
+} from "./steps"
 import Modal from "components/Modal"
 
 import { useForm, useBreakpoints } from "hooks"
@@ -19,35 +19,38 @@ import { useCreateDAO } from "hooks/dao"
 import { hideTapBar, showTabBar } from "state/application/actions"
 
 import * as SForms from "common/FormSteps/styled"
-
-const STEPS = {
-  titles: {
-    title: "Basic DAO Settings",
-    number: 1,
-  },
-  isDaoValidator: {
-    title: "Validator settings",
-    number: 2,
-  },
-  defaultProposalSetting: {
-    title: "General voting settings",
-    number: 3,
-  },
-  isCustomVoteSelecting: {
-    title: "Changing voting settings",
-    number: 4,
-  },
-  isTokenDistributionSettings: {
-    title: "Distribution proposal settings",
-    number: 5,
-  },
-  success: {
-    title: "Summary",
-    number: 6,
-  },
-}
+import { useTranslation } from "react-i18next"
 
 const CreateFundDaoForm: FC = () => {
+  const { t } = useTranslation()
+
+  const STEPS = {
+    titles: {
+      title: t("create-fund-dao-form.titles-step-title"),
+      number: 1,
+    },
+    isDaoValidator: {
+      title: t("create-fund-dao-form.dao-validator-step-title"),
+      number: 2,
+    },
+    defaultProposalSetting: {
+      title: t("create-fund-dao-form.default-settings-step-title"),
+      number: 3,
+    },
+    isCustomVoteSelecting: {
+      title: t("create-fund-dao-form.internal-settings-step-title"),
+      number: 4,
+    },
+    isTokenDistributionSettings: {
+      title: t("create-fund-dao-form.distribution-settings-step-title"),
+      number: 5,
+    },
+    success: {
+      title: "Summary",
+      number: 6,
+    },
+  }
+
   const [currentStep, setCurrentStep] = useState(STEPS.titles.number)
   const [isSuccessModalShown, setIsSuccessModalShown] = useState(false)
   const stepsWrapperRef = useRef<HTMLDivElement>(null)
