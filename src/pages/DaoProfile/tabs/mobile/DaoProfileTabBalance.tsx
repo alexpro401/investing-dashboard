@@ -6,9 +6,9 @@ import {
   DaoProfileEmptyBalanceCard,
   DaoProfileUserBalancesCard,
   DaoProfileValueWithActionCard,
-} from "../components"
-import { Indents, TextLabel } from "../styled"
-import TabFallback from "./TabFallback"
+} from "../../components"
+import { Indents, TextLabel } from "../../styled"
+import TabFallback from "../TabFallback"
 
 import { Flex } from "theme"
 import Tooltip from "components/Tooltip"

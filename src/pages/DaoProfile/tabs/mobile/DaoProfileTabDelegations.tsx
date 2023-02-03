@@ -20,11 +20,11 @@ import {
   TextValue,
   DelegationTabs,
   DelegationTab,
-} from "../styled"
-import { DaoProfileValueWithActionCard } from "../components"
+} from "../../styled"
+import { DaoProfileValueWithActionCard } from "../../components"
 
 import { AppButton } from "common"
-import TabFallback from "./TabFallback"
+import TabFallback from "../TabFallback"
 import PaginationTable from "components/PaginationTable"
 import usersImageUrl from "assets/images/users.svg"
 

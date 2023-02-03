@@ -43,25 +43,31 @@ export const IconContainer = styled.div<{
 export const BaseIcon = ({ color, iconPosition, iconSize }) => {
   return (
     <IconContainer iconPosition={iconPosition} iconSize={iconSize}>
-      <svg viewBox="0 0 20 20" fill="none">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <path
-          d="M8.57143 3.83594H5.71429C5.3198 3.83594 5 4.15573 5 4.55022V13.1217C5 13.5161 5.3198 13.8359 5.71429 13.8359H14.2857C14.6802 13.8359 15 13.5161 15 13.1217V10.2645"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M15.8327 7.16667L15.8327 3H11.666"
+          d="M6.85714 4H4.57143C4.25584 4 4 4.25584 4 4.57143V11.4286C4 11.7442 4.25584 12 4.57143 12H11.4286C11.7442 12 12 11.7442 12 11.4286V9.14286"
           stroke={color}
           strokeWidth="1.2"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
-          d="M10.834 8.0026L15.0007 3.83594"
+          d="M12.6663 6.66536L12.6663 3.33203H9.33301"
           stroke={color}
-          strokeWidth="1.5"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M8.66699 7.33333L12.0003 4"
+          stroke={color}
+          strokeWidth="1.2"
           strokeLinecap="round"
           strokeLinejoin="round"
         />

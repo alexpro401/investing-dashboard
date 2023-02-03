@@ -281,7 +281,7 @@ export const router = createBrowserRouter([
             element: <DaoPools />,
           },
           {
-            path: ROUTE_PATHS.daoItem,
+            path: ROUTE_PATHS.daoProfile,
             element: <DaoProfile />,
             handle: (params) => [
               {
@@ -290,8 +290,9 @@ export const router = createBrowserRouter([
               },
               {
                 label: `DAO ${params.daoAddress}`,
-                path: generatePath(ROUTE_PATHS.daoItem, {
+                path: generatePath(ROUTE_PATHS.daoProfile, {
                   daoAddress: params.daoAddress,
+                  "*": "",
                 }),
               },
             ],
