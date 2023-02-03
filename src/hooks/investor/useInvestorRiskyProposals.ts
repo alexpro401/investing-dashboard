@@ -1,5 +1,5 @@
 import * as React from "react"
-import { isNil } from "lodash"
+import { isEmpty, isNil } from "lodash"
 import { Interface } from "@ethersproject/abi"
 import { useWeb3React } from "@web3-react/core"
 
@@ -65,18 +65,32 @@ function useInvestorRiskyProposals(
     () =>
       proposalPoolAddressListAnyLoading
         ? []
-        : proposalPoolAddressListResults?.map((r) => r.result?.[0]),
+        : proposalPoolAddressListResults?.map((r) =>
+            String(r.result?.[0]).toLocaleLowerCase()
+          ),
     [proposalPoolAddressListResults, proposalPoolAddressListAnyLoading]
   )
 
-  const callInputs = React.useMemo(
-    () =>
-      riskyProposalsByPools?.map((p) => [
-        Number(String(p.id).charAt(String(p.id).length - 1)) - 1,
-        1,
-      ]),
-    [riskyProposalsByPools]
-  )
+  const callInputs = React.useMemo(() => {
+    if (isEmpty(proposalPoolAddressList)) {
+      return []
+    }
+
+    return riskyProposalsByPools?.map((p) => {
+      const proposalEntityId = String(p.id).toLocaleLowerCase()
+
+      const proposalPoolAddress = proposalPoolAddressList.find(
+        (_proposalPoolAddress) =>
+          proposalEntityId.includes(_proposalPoolAddress)
+      )
+      if (!proposalPoolAddress) {
+        return [0, 0]
+      }
+      const proposalId = proposalEntityId.replace(proposalPoolAddress, "")
+
+      return [Number(proposalId) - 1, 1]
+    })
+  }, [riskyProposalsByPools, proposalPoolAddressList])
 
   const callResults = useMultipleContractMultipleData(
     proposalPoolAddressList,
@@ -92,7 +106,9 @@ function useInvestorRiskyProposals(
 
   const proposals = React.useMemo(
     () =>
-      callResultsAnyLoading ? [] : callResults.map((r) => r.result?.[0][0]),
+      callResultsAnyLoading
+        ? []
+        : callResults.map((r) => r.result?.[0][0]).filter((p) => !isNil(p)),
     [callResultsAnyLoading, callResults]
   )
 
