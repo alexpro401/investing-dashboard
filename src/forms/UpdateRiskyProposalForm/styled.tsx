@@ -4,31 +4,16 @@ import { GradientBorder, respondTo } from "theme"
 import { AppButton } from "common"
 
 export const Container = styled(GradientBorder)`
-  width: 97%;
-  max-width: 420px;
-  position: absolute;
-  top: 38px;
-  right: 0;
+  width: 100%;
   box-shadow: 7px 4px 21px #0a1420;
   border-radius: 20px;
-  z-index: 101;
 
   &:after {
     background: ${({ theme }) => theme.backgroundColors.secondary};
   }
 
   ${respondTo("lg")} {
-    top: 14px;
-    left: 50%;
-    transform: translateX(-50%);
     box-shadow: none;
-
-    &:after {
-      background: ${({ theme }) => theme.textColors.secondaryNegative};
-    }
-    &:before {
-      background: initial;
-    }
   }
 `
 

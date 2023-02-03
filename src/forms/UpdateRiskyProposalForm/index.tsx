@@ -22,7 +22,7 @@ import { AppButton } from "common"
 import { Flex } from "theme"
 import { accordionSummaryVariants } from "motion/variants"
 import { DATE_TIME_FORMAT } from "consts/time"
-import * as S from "./styled-settings"
+import * as S from "./styled"
 import { useUserAgreement } from "state/user/hooks"
 import { TraderPoolRiskyProposal } from "interfaces/typechain"
 
@@ -92,7 +92,7 @@ const errorsDefaultState: IErrorsState = {
   maxTokenPriceLimit: null,
 }
 
-const RiskyCardSettings: FC<Props> = ({
+const UpdateRiskyProposalForm: FC<Props> = ({
   visible,
   setVisible,
   timestamp,
@@ -315,4 +315,4 @@ const RiskyCardSettings: FC<Props> = ({
   )
 }
 
-export default RiskyCardSettings
+export default UpdateRiskyProposalForm

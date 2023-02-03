@@ -91,7 +91,12 @@ interface Props {
   size?: "normal" | "small"
 }
 
-const Tooltip: React.FC<Props> = ({ id, children, size = "normal" }) => {
+const Tooltip: React.FC<Props> = ({
+  id,
+  children,
+  size = "normal",
+  ...rest
+}) => {
   const [tooltip, showTooltip] = useState(true)
   return (
     <>
@@ -104,6 +109,7 @@ const Tooltip: React.FC<Props> = ({ id, children, size = "normal" }) => {
           showTooltip(false)
           setTimeout(() => showTooltip(true), 50)
         }}
+        {...rest}
       >
         {size === "normal" ? <TooltipIcon /> : <TooltipSmall />}
       </TooltipArea>
