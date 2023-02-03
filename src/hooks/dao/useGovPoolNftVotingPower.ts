@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { useGovUserKeeperContract } from "contracts"
+import { ZERO } from "consts"
 
 type IUseGovPoolNftVotingPowerResult = [
   BigNumber | undefined,
@@ -25,7 +26,7 @@ const useGovPoolNftVotingPower = (
 
     if (nftIds.length === 0) {
       setLoading(false)
-      setNftPower(BigNumber.from("0"))
+      setNftPower(ZERO)
       setPerNftPower([])
       return
     }
