@@ -47,111 +47,11 @@ export const FieldValidIcon = styled(Icon)`
   color: ${(props) => props.theme.statusColors.success};
 `
 
-export const AvatarWrapper = styled.div`
-  position: absolute;
-  top: -50px;
-  width: 100%;
-  justify-content: space-between;
+export const SkeletonsWrp = styled.div`
+  display: flex;
   flex-direction: column;
   align-items: center;
-  height: 117px;
-
-  img {
-    margin: 0 auto;
-  }
-`
-export const LinkButton = styled.div`
-  background: none;
-  appereance: none;
-  border: none;
-  outline: none;
-  color: #2680eb;
-  padding: 0;
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 12px;
-
-  text-align: center;
-  margin: 8px auto;
-  display: block;
-  letter-spacing: 0.03em;
-`
-
-export const Steps = styled.div`
-  width: 100%;
-  padding: 0 16px;
-`
-export const Step = styled.div`
-  margin-bottom: 48px;
-`
-export const StepTitle = styled.h2`
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 16px;
-  color: #e4f2ff;
-  margin-bottom: 24px;
-`
-export const StepBody = styled.div``
-export const BasicContainer = styled(GradientBorder)`
-  width: 100%;
-  padding: 12px 16px;
-  border-radius: 16px;
-  flex-direction: column;
-
-  &:after {
-    background: #08121a;
-  }
-`
-export const BasicItem = styled(Flex)`
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-
-  &:not(:last-child) {
-    margin-bottom: 12px;
-  }
-`
-export const BasicTitle = styled.div`
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 12px;
-  color: #616d8b;
-`
-export const BasicValue = styled(Flex)`
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 12px;
-  letter-spacing: 0.03em;
-  color: #e4f2ff;
-`
-
-export const BasicValueText = styled.span`
-  margin-right: 7px;
-`
-
-export const ValidationError = styled.div`
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 12px;
-  color: #fc6d6d;
-  margin: 12px 0 0 3px;
-`
-
-export const InputRow = styled(Flex)`
-  width: 100%;
-  padding: 12px 0;
-  flex-direction: column;
-  align-items: flex-start;
+  gap: var(--app-gap);
 `
 
 // Stepper modal

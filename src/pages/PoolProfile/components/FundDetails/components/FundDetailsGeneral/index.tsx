@@ -29,6 +29,7 @@ import {
   validateIfExist,
 } from "utils/validators"
 import Avatar from "components/Avatar"
+import { Flex } from "../../../../../../theme"
 
 const FundDetailsGeneral: FC = () => {
   const {
@@ -132,7 +133,26 @@ const FundDetailsGeneral: FC = () => {
       setFundDescription(_fundDescription || "")
       setFundStrategy(_fundStrategy || "")
       setAvatarUrl(fundImageUrl || "")
-      setSocialLinks(fundSocialLinks || [])
+      setSocialLinks(() => {
+        if (!fundSocialLinks?.length) return []
+
+        const defaultSocials = [
+          ["facebook", ""],
+          ["linkedin", ""],
+          ["medium", ""],
+          ["telegram", ""],
+          ["twitter", ""],
+          ["github", ""],
+          ["other", ""],
+        ].map(
+          ([socialType, link]) =>
+            fundSocialLinks?.find(
+              ([_socialType, _link]) => _socialType === socialType
+            ) || ([socialType, link] as [SUPPORTED_SOCIALS, string])
+        )
+
+        return defaultSocials
+      })
     } catch (error) {
       console.log(error)
       setIsLoadFailed(true)
@@ -145,26 +165,22 @@ const FundDetailsGeneral: FC = () => {
   })
 
   const submit = useCallback(async () => {
-    disableForm()
-
     touchForm()
     await sleep(500)
     if (!isFieldsValid) return
 
-    if (
-      !fundDescription ||
-      !fundStrategy ||
-      isEqual(fundDescription, _fundDescription) ||
-      isEqual(fundStrategy, _fundStrategy) ||
-      !updatePoolParameters
-    )
-      return
+    if (!fundDescription || !fundStrategy || !updatePoolParameters) return
+
+    disableForm()
 
     try {
       await updatePoolParameters({
         ...(avatarUrl ? { avatarUrl } : {}),
         fundDescription,
         fundStrategy,
+        ...(socialLinks
+          ? { socialLinks: socialLinks.filter((el) => el[1]) }
+          : {}),
       })
       Bus.emit("manage-modal/menu")
     } catch (error) {}
@@ -179,11 +195,12 @@ const FundDetailsGeneral: FC = () => {
     fundDescription,
     fundStrategy,
     isFieldsValid,
+    socialLinks,
     touchForm,
     updatePoolParameters,
   ])
 
-  const [isShowSocials, setIsShowSocials] = useState(false)
+  const [isShowSocials, setIsShowSocials] = useState(!!socialLinks?.length)
 
   const handleAddSocials = useCallback(() => {
     setSocialLinks([
@@ -196,9 +213,9 @@ const FundDetailsGeneral: FC = () => {
       ["other", ""],
     ])
     setIsShowSocials(true)
-  }, [socialLinks])
+  }, [])
 
-  const SocialLinks = useMemo(
+  const SocialLinksCollapse = useMemo(
     () => (
       <>
         {!socialLinks?.length && (
@@ -332,7 +349,7 @@ const FundDetailsGeneral: FC = () => {
             onBlur={() => touchField("fundStrategy")}
             disabled={isFormDisabled}
           />
-          {SocialLinks}
+          {SocialLinksCollapse}
         </Card>
         <S.FormSubmitBtn
           text="Confirm changes"
@@ -342,9 +359,14 @@ const FundDetailsGeneral: FC = () => {
       </>
     )
   ) : (
-    <span>
+    <S.SkeletonsWrp>
+      <Skeleton w={"150px"} h={"150px"} radius={"50%"} />
+      <Skeleton w={"50%"} h={"18px"} radius={"20px"} />
+      <Skeleton w={"100%"} h={"14px"} radius={"20px"} />
+      <Skeleton w={"100%"} h={"14px"} radius={"20px"} />
       <Skeleton h={"150px"} radius={"20px"} />
-    </span>
+      <Skeleton h={"150px"} radius={"20px"} />
+    </S.SkeletonsWrp>
   )
 }
 

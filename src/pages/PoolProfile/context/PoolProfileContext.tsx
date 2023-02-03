@@ -238,7 +238,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
 
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
-    poolInfo?.parameters.descriptionURL
+    poolData?.descriptionURL
   )
 
   const [{ priceUSD }] = usePoolPrice(poolAddress)
@@ -418,9 +418,9 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
             strategy: opts?.fundStrategy || poolMetadata?.strategy,
             assets: opts?.avatarUrl
               ? [...(poolMetadata?.assets || []), opts.avatarUrl]
-              : poolMetadata?.assets,
+              : poolMetadata?.assets || [],
             socialLinks: opts?.socialLinks || poolMetadata?.socialLinks,
-            account: opts?.account || poolMetadata?.account,
+            account: opts?.account || poolMetadata?.account || account,
             timestamp: new Date().getTime() / 1000,
           } as IPoolMetadata & { timestamp: number }),
         })
@@ -453,7 +453,14 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
       // TODO: update pools item || list
       // FIXME: poolData is undefined sometimes
     },
-    [addTransaction, baseToken, poolInfo, poolMetadata, traderPoolContract]
+    [
+      account,
+      addTransaction,
+      baseToken,
+      poolInfo,
+      poolMetadata,
+      traderPoolContract,
+    ]
   )
 
   const updatePoolManagers = useCallback(
@@ -498,7 +505,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
         })
       }
     },
-    [addTransaction, poolData, traderPoolContract]
+    [addTransaction, poolAddress, poolData.admins, traderPoolContract]
   )
 
   const updatePoolInvestors = useCallback(
@@ -555,7 +562,14 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
         })
       }
     },
-    [addTransaction, poolData, traderPoolContract]
+    [
+      addTransaction,
+      poolAddress,
+      poolData.privateInvestors,
+      poolInfo,
+      traderPoolContract,
+      updatePoolParameters,
+    ]
   )
 
   return (

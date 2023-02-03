@@ -181,6 +181,7 @@ export const PoolDetailsBadgeText = styled.span`
 `
 
 export const PoolDetailsBadgeManage = styled.button`
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -317,7 +318,9 @@ export const ModalHeadIcon = styled(Icon)`
 `
 
 export const ModalBodyWrp = styled.div`
+  overflow: hidden auto;
   padding: 16px;
+  max-height: 75vh;
 `
 
 export const TraderInvestSelfLink = styled(NavLink)`

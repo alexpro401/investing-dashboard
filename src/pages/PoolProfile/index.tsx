@@ -22,7 +22,7 @@ import { Dropdown } from "common"
 
 import * as S from "./styled"
 
-import { DATE_FORMAT, ICON_NAMES, ROUTE_PATHS } from "consts"
+import { DATE_FORMAT, ICON_NAMES, ROUTE_PATHS, SOCIAL_ICONS } from "consts"
 import { DateUtil, formatNumber, normalizeBigNumber } from "utils"
 import { useBreakpoints } from "hooks"
 import { AccountInvestmentPools, Breadcrumbs } from "common"
@@ -62,6 +62,7 @@ const PoolProfileContent = () => {
     fundTicker,
     fundName,
     fundImageUrl,
+    fundSocialLinks,
 
     creationDate,
     isTrader,
@@ -259,11 +260,11 @@ const PoolProfileContent = () => {
                       )}
                       {!isMediumTablet ? (
                         [
-                          { link: "", icon: ICON_NAMES.github, name: "Github" },
-                          { link: "", icon: ICON_NAMES.github, name: "Github" },
-                          { link: "", icon: ICON_NAMES.github, name: "Github" },
-                          { link: "", icon: ICON_NAMES.github, name: "Github" },
-                          { link: "", icon: ICON_NAMES.github, name: "Github" },
+                          ...(fundSocialLinks?.map(([socialType, link]) => ({
+                            link,
+                            icon: SOCIAL_ICONS[socialType],
+                            name: socialType,
+                          })) || []),
                         ].map((el, idx) => (
                           <S.PoolProfileGeneralActionsDropdownItem
                             key={idx}
