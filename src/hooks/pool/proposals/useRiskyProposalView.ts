@@ -10,7 +10,7 @@ import { TraderPoolRiskyProposal } from "interfaces/typechain"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { useActiveWeb3React } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
-import { usePriceFeedContract } from "contracts"
+import { useCorePropertiesContract, usePriceFeedContract } from "contracts"
 import useTokenRating from "hooks/useTokenRating"
 import { DATE_TIME_FORMAT, ROUTE_PATHS, ZERO } from "consts"
 import { expandTimestamp, normalizeBigNumber } from "utils"
@@ -49,12 +49,13 @@ type UseRiskyProposalViewResponseValues = {
     completed: boolean
     initial: BigNumber
   }
-  investors: { value: string; completed: boolean }
+  investors: { value: BigNumber; completed: boolean }
   positionSize: string
   traderSizeLP: BigNumber
   traderSizePercentage: BigNumber
   proposalToken: Token | null
   description: string
+  maximumPoolInvestors: BigNumber
 }
 type UseRiskyProposalViewResponseMethods = {
   navigateToPool
@@ -84,12 +85,15 @@ export const useRiskyProposalView = (
   const [proposalToken] = useERC20Data(proposal.proposalInfo.token)
   const priceFeed = usePriceFeedContract()
   const getTokenRating = useTokenRating()
+  const corePropertiesContract = useCorePropertiesContract()
 
   const [markPriceOpen, setMarkPriceOpen] = useState(ZERO)
   const [yourSizeLP, setYourSizeLP] = useState<BigNumber>(ZERO)
   const [traderSizeLP, setTraderSizeLP] = useState<BigNumber>(ZERO)
   const [tokenRating, setTokenRating] = useState<number>(0)
   const [description, setDescription] = useState<string>("")
+  const [maximumPoolInvestors, setMaximumPoolInvestors] =
+    useState<BigNumber>(ZERO)
 
   // Fetch description from IPFS
   useEffect(() => {
@@ -108,6 +112,20 @@ export const useRiskyProposalView = (
       }
     })()
   }, [proposal])
+
+  // get max pool investors
+  useEffect(() => {
+    if (!corePropertiesContract) return
+    ;(async () => {
+      try {
+        const maxPoolInvestors =
+          await corePropertiesContract.getMaximumPoolInvestors()
+        if (maxPoolInvestors) {
+          setMaximumPoolInvestors(maxPoolInvestors)
+        }
+      } catch (e) {}
+    })()
+  }, [corePropertiesContract])
 
   /**
    * Date of proposal expiration
@@ -190,15 +208,22 @@ export const useRiskyProposalView = (
    * @returns value - count of investors
    * @returns completed - true if investors count equal MAX_INVESTORS_COUNT
    */
-  const investors = useMemo<{ value: string; completed: boolean }>(() => {
-    if (!proposal || !proposal?.totalInvestors) {
-      return { value: "0", completed: false }
+  const investors = useMemo<{ value: BigNumber; completed: boolean }>(() => {
+    if (
+      !proposal ||
+      !proposal?.totalInvestors ||
+      maximumPoolInvestors.isZero()
+    ) {
+      return { value: ZERO, completed: false }
     }
 
-    const result = proposal.totalInvestors.toString()
-
-    return { value: result, completed: Number(result) === 1000 }
-  }, [proposal])
+    return {
+      value: proposal.totalInvestors,
+      completed: BigNumber.from(proposal.totalInvestors).eq(
+        maximumPoolInvestors
+      ),
+    }
+  }, [proposal, maximumPoolInvestors])
 
   /**
    * Position current balance
@@ -460,6 +485,7 @@ export const useRiskyProposalView = (
       traderSizePercentage,
       proposalToken,
       description,
+      maximumPoolInvestors,
     },
     { navigateToPool, onAddMore, onInvest, onUpdateRestrictions },
   ]

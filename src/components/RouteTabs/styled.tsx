@@ -1,18 +1,37 @@
 import { Link } from "react-router-dom"
-import styled from "styled-components/macro"
+import styled, { css } from "styled-components/macro"
 
-import { Flex } from "theme"
+import theme, { Flex } from "theme"
+
+type ThemeType = "gray" | "blue"
+
+const activeColor = (themeType: ThemeType) =>
+  themeType === "gray" ? "#E4F2FF" : theme.statusColors.info
+
+const defaultColor = (themeType: ThemeType) =>
+  themeType === "gray" ? "#788ab4" : "#6781BD"
+
+const activeBG = (themeType: ThemeType) =>
+  themeType === "gray" ? "#20283a" : "#20283A"
+
+const activeFontWeight = (themeType: ThemeType) =>
+  themeType === "gray" ? 500 : 700
 
 const Styled = {
-  Tabs: styled(Flex)`
-    justify-content: space-between;
-    width: fill-available;
+  Tabs: styled(Flex)<{ full?: boolean }>`
+    ${(props) =>
+      props.full
+        ? css`
+            justify-content: space-between;
+            width: fill-available;
+          `
+        : css``}
     padding: 0;
     background: #141926;
     border-radius: 24px;
     border: 2px solid #141926;
   `,
-  Tab: styled(Link)<{ active?: boolean }>`
+  Tab: styled(Link)<{ active?: boolean; themeType: ThemeType }>`
     display: flex;
     align-items: center;
     justify-content: center;
@@ -20,17 +39,21 @@ const Styled = {
     padding: 6.5px 18px;
     font-family: ${(props) => props.theme.appFontFamily};
     font-style: normal;
-    font-weight: 500;
+    font-weight: ${(props) =>
+      props.active ? activeFontWeight(props.themeType) : 500};
     font-size: 13px;
     line-height: 15px;
     text-decoration: none;
-    color: ${(props) => (props.active ? "#E4F2FF" : "#788ab4")};
-    background: ${(props) => (props.active ? " #181e2c" : "transparent")};
+    color: ${(props) =>
+      props.active
+        ? activeColor(props.themeType)
+        : defaultColor(props.themeType)};
     transition: all ease-in-out 0.15s;
     cursor: pointer;
     position: relative;
 
-    background: ${(props) => (props.active ? " #20283a" : "transparent")};
+    background: ${(props) =>
+      props.active ? activeBG(props.themeType) : "transparent"};
     box-shadow: ${(props) =>
       props.active
         ? " 0px 3px 8px rgba(0, 0, 0, 0.12), 0px 3px 1px rgba(0, 0, 0, 0.04)"

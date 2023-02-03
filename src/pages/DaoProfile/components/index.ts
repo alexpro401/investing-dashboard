@@ -6,3 +6,7 @@ export { default as DaoProfileTokensInTreasuryCard } from "./DaoProfileTokensInT
 export { default as DaoProfileEmptyBalanceCard } from "./DaoProfileEmptyBalanceCard"
 export { default as DaoProfileUserBalancesCard } from "./DaoProfileUserBalancesCard"
 export { default as DaoProfileValueWithActionCard } from "./DaoProfileValueWithActionCard"
+export { default as DesktopRouteTabs } from "./DesktopRouteTabs"
+export { default as HighlightHeaderDesktop } from "./HighlightHeaderDesktop/HighlightHeaderDesktop"
+export { default as DesktopStatistic } from "./DesktopStatistic"
+export { default as AllProposalsList } from "./AllProposalsList"

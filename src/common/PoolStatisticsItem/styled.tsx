@@ -24,7 +24,6 @@ export const PoolStatisticsItemDetails = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4px;
 `
 
 export const PoolStatisticsItemDetailsLabel = styled.span`
@@ -47,6 +46,7 @@ export const PoolStatisticsItemDetailsValue = styled.span`
   font-weight: 700;
   letter-spacing: 0.01em;
   color: #e4f2ff;
+  gap: 4px;
 
   ${respondTo("xs")} {
     font-weight: 900;
@@ -82,4 +82,10 @@ export const PoolStatisticsItemDetailsPercentage = styled.span<{
 
   background: ${(props) => (props.isRaise ? "#337833" : "#68282C")};
   border-radius: 5px;
+`
+
+export const PoolStatisticsItemDetailsPercentageLabel = styled(
+  PoolStatisticsItemDetailsPercentage
+)`
+  background: #2669eb;
 `

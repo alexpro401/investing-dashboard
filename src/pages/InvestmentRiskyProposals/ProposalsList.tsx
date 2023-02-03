@@ -11,9 +11,11 @@ import {
 import { useTraderPoolRiskyProposalContract } from "contracts"
 
 import LoadMore from "components/LoadMore"
-import RiskyProposalCard from "components/cards/proposal/Risky"
 
 import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
+import { isNil, map } from "lodash"
+import { graphClientBasicPools } from "utils/graphClient"
+import { NoDataMessage, CardRiskyProposal } from "common"
 import { NoDataMessage } from "common"
 import { Center } from "theme"
 
@@ -47,7 +49,7 @@ function RiskyProposalCardInitializer({
   }
 
   return (
-    <RiskyProposalCard
+    <CardRiskyProposal
       proposalId={proposalId}
       poolInfo={poolInfo}
       isTrader={isTrader}

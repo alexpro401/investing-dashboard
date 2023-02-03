@@ -208,10 +208,3 @@ export type WrappedProposalView = IGovPool.ProposalViewStructOutput & {
   proposalId: number
   currentAccountRewards?: BigNumber
 }
-
-export enum EDaoProfileTab {
-  about = "About DAO",
-  my_balance = "My Balance",
-  validators = "Validators",
-  delegations = "Delegation",
-}
