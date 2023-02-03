@@ -505,7 +505,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
         })
       }
     },
-    [addTransaction, poolAddress, poolData.admins, traderPoolContract]
+    [addTransaction, poolAddress, poolData, traderPoolContract]
   )
 
   const updatePoolInvestors = useCallback(
@@ -565,7 +565,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
     [
       addTransaction,
       poolAddress,
-      poolData.privateInvestors,
+      poolData,
       poolInfo,
       traderPoolContract,
       updatePoolParameters,
