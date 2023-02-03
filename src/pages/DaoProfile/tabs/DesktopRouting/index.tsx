@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from "react"
+import React, { useMemo } from "react"
 import {
   useParams,
   Routes,
@@ -9,7 +9,6 @@ import {
 import { useWeb3React } from "@web3-react/core"
 
 import { ROUTE_PATHS } from "consts"
-import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommonContext/GovPoolProfileCommonContext"
 import {
   EDaoProfileTab,
   mapProfileTabToRoute,
@@ -20,8 +19,8 @@ import TabFallback from "../TabFallback"
 const DaoProfileTabAboutDesktop = React.lazy(
   () => import("../desktop/AboutTab")
 )
-const DaoProfileTabBalanceMobile = React.lazy(
-  () => import("../mobile/DaoProfileTabBalance")
+const DaoProfileTabMyBalanceDesktop = React.lazy(
+  () => import("../desktop/MyBalance")
 )
 const DaoProfileTabValidatorsMobile = React.lazy(
   () => import("../mobile/DaoProfileTabValidators")
@@ -31,17 +30,8 @@ const DaoProfileTabDelegationsMobile = React.lazy(
 )
 
 const DesktopRouting: React.FC = () => {
-  const { govPoolQuery } = useContext(GovPoolProfileCommonContext)
   const { daoAddress } = useParams()
   const { chainId } = useWeb3React()
-
-  const creationTime = useMemo(
-    () =>
-      govPoolQuery?.data?.daoPool?.creationTime
-        ? Number(govPoolQuery.data.daoPool.creationTime)
-        : undefined,
-    [govPoolQuery]
-  )
 
   const TABS_DESKTOP_CONTENT = {
     [EDaoProfileTab.about]: (
@@ -51,7 +41,7 @@ const DesktopRouting: React.FC = () => {
     ),
     [EDaoProfileTab.my_balance]: (
       <React.Suspense fallback={<TabFallback />}>
-        <DaoProfileTabBalanceMobile daoAddress={daoAddress} />
+        <DaoProfileTabMyBalanceDesktop />
       </React.Suspense>
     ),
     [EDaoProfileTab.validators]: (
