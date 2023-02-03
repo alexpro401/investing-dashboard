@@ -28,6 +28,7 @@ import settingsGreenIcon from "assets/icons/settings-green.svg"
 import traderBadgeDangerIcon from "assets/icons/trader-badge-danger.svg"
 import traderBadgeWarningIcon from "assets/icons/trader-badge-warning.svg"
 import traderBadgeSuccessIcon from "assets/icons/trader-badge-success.svg"
+import { formatUnits } from "@ethersproject/units"
 
 function getTraderQualityIcon(quality) {
   switch (quality) {
@@ -84,6 +85,7 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
       proposalToken,
       traderSizePercentage,
       description,
+      maximumPoolInvestors,
     },
     { navigateToPool, onAddMore, onInvest, onUpdateRestrictions },
   ] = useRiskyProposalView(props)
@@ -334,7 +336,8 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
                 </S.CardRiskyProposalLabelContent>
               </S.CardRiskyProposalLabel>
               <S.CardRiskyProposalValue completed={investors.completed}>
-                {investors.value} <span>/ {MAX_INVESTORS_COUNT}</span>
+                {investors.value.toString()}{" "}
+                <span>/ {formatUnits(maximumPoolInvestors, "wei")}</span>
               </S.CardRiskyProposalValue>
             </S.CardRiskyProposalValueWrp>
           </S.CardRiskyProposalGridItemInvestors>
