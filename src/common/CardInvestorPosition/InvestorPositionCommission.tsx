@@ -1,8 +1,8 @@
 import * as React from "react"
+import * as S from "./styled"
 import { format } from "date-fns/esm"
 
 import { DATE_FORMAT } from "consts"
-import AmountRow from "components/Amount/Row"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import { InvestorPositionInPoolContext } from "context/investor/positions/InvestorPositionInPoolContext"
 
@@ -15,39 +15,48 @@ const InvestorPositionCommission: React.FC = () => {
   } = React.useContext(InvestorPositionInPoolContext)
 
   return (
-    <>
-      <AmountRow
-        title={`${period} month Performance Fee`}
-        value={`${normalizeBigNumber(percentage, 25, 0)}%`}
-      />
-      <AmountRow
-        m="14px 0 0"
-        title="Paid Performance Fee  "
-        value={`$${formatBigNumber(amountUSD, 18, 2)}`}
-      />
-      <AmountRow
-        full
-        m="14px 0 0"
-        title="Date of withdrawal"
-        value={format(
-          expandTimestamp(+unlockTimestamp.toString()),
-          DATE_FORMAT
-        )}
-      />
-      <AmountRow
-        m="14px 0 0"
-        title={`Investor funds locked (${formatBigNumber(
-          fundsLockedInvestorPercentage,
-          18,
-          2
-        )}%)`}
-        value={`$${formatBigNumber(
-          fundsLockedInvestorUSD,
-          18,
-          2
-        )}/$${formatBigNumber(totalPoolInvestmentsUSD, 18, 2)}`}
-      />
-    </>
+    <S.CardInvestorPositionCommissionContentWrp>
+      <S.CardInvestorPositionCommissionRow>
+        <S.CardInvestorPositionCommissionLabel>
+          {period} month Performance Fee
+        </S.CardInvestorPositionCommissionLabel>
+        <S.CardInvestorPositionCommissionValue>
+          {normalizeBigNumber(percentage, 25, 0)}%
+        </S.CardInvestorPositionCommissionValue>
+      </S.CardInvestorPositionCommissionRow>
+
+      <S.CardInvestorPositionCommissionRow>
+        <S.CardInvestorPositionCommissionLabel>
+          Paid Performance Fee
+        </S.CardInvestorPositionCommissionLabel>
+        <S.CardInvestorPositionCommissionValue
+          value={formatBigNumber(amountUSD, 18, 2)}
+        >
+          {amountUSD.isNegative() && "-"}$
+          {formatBigNumber(amountUSD.abs(), 18, 2)}
+        </S.CardInvestorPositionCommissionValue>
+      </S.CardInvestorPositionCommissionRow>
+
+      <S.CardInvestorPositionCommissionRow>
+        <S.CardInvestorPositionCommissionLabel>
+          Date of withdrawal
+        </S.CardInvestorPositionCommissionLabel>
+        <S.CardInvestorPositionCommissionValue>
+          {format(expandTimestamp(+unlockTimestamp.toString()), DATE_FORMAT)}
+        </S.CardInvestorPositionCommissionValue>
+      </S.CardInvestorPositionCommissionRow>
+
+      <S.CardInvestorPositionCommissionRow>
+        <S.CardInvestorPositionCommissionLabel>
+          Investor funds locked (
+          {formatBigNumber(fundsLockedInvestorPercentage, 18, 2)}%)
+        </S.CardInvestorPositionCommissionLabel>
+        <S.CardInvestorPositionCommissionValue>
+          ${formatBigNumber(fundsLockedInvestorUSD, 18, 2)}/$
+          {formatBigNumber(totalPoolInvestmentsUSD, 18, 2)}
+        </S.CardInvestorPositionCommissionValue>
+      </S.CardInvestorPositionCommissionRow>
+    </S.CardInvestorPositionCommissionContentWrp>
   )
 }
 

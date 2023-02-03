@@ -1,6 +1,12 @@
 import styled, { css } from "styled-components/macro"
-import { ColorizedNumber, GradientBorder, respondTo } from "theme"
+import {
+  ColorizedNumber,
+  getAmountColor,
+  GradientBorder,
+  respondTo,
+} from "theme"
 import { AppButton, Icon } from "common"
+import { motion } from "framer-motion"
 
 const bodyItemSmallTextBase = css`
   font-size: 12px;
@@ -137,7 +143,6 @@ export const CardInvestorPositionBodyItemLabel = styled.div`
     display: none;
   }
 `
-
 export const CardInvestorPositionBodyItemAmount = styled.div`
   color: #e4f2ff;
   ${bodyItemLargeTextBase};
@@ -175,7 +180,8 @@ export const PNL = styled(ColorizedNumber)`
     line-height: 14px;
 
     color: #e4f2ff;
-    background: ${(props) => (props.value > 0 ? "#337833" : "#68282C")};
+    background: ${({ theme, value }) =>
+      value > 0 ? "#337833" : theme.statusColors.error};
     border-radius: 5px;
   }
 `
@@ -188,12 +194,12 @@ export const CardInvestorPositionBodyItemPrice = styled.div`
 export const ActionPositive = styled(AppButton)`
   font-size: 14px;
   line-height: 17px;
-  color: #5baa99;
+  color: ${(props) => props.theme.statusColors.success};
 `
 export const ActionNegative = styled(AppButton)`
   font-size: 14px;
   line-height: 17px;
-  color: #a75b5b;
+  color: ${(props) => props.theme.statusColors.error};
 `
 
 export const CardInvestorPositionExtra = styled(GradientBorder)`
@@ -245,8 +251,20 @@ export const CardInvestorPositionVestsLoaderWrp = styled.div`
   height: 60px;
   width: 100%;
 `
-export const CardInvestorPositionCommissionWrp = styled.div`
+export const CardInvestorPositionCommissionWrp = styled(motion.div)`
   padding: var(--app-padding);
+
+  ${respondTo("lg")} {
+    position: absolute;
+    top: 35px;
+    right: 0;
+    z-index: 101;
+    min-width: 346px;
+    padding: 16px;
+
+    background: #20283a;
+    border-radius: 20px;
+  }
 `
 export const CardInvestorPositionToggleIconIndicator = styled(Icon)<{
   isActive: boolean
@@ -263,4 +281,53 @@ export const CardInvestorPositionToggleIconIndicator = styled(Icon)<{
           transform: rotate(180deg);
         `
       : ""}
+`
+
+export const CardInvestorPositionBodyItemCommissionWrp = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+`
+
+export const CardInvestorPositionBodyItemCommissionIconWrp = styled.div`
+  position: relative;
+`
+
+export const CardInvestorPositionCommissionContentWrp = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
+`
+
+export const CardInvestorPositionCommissionRow = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`
+export const CardInvestorPositionCommissionLabel = styled.div`
+  ${bodyItemSmallTextBase};
+
+  ${respondTo("lg")} {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: 0.01em;
+    color: #e4f2ff;
+  }
+`
+export const CardInvestorPositionCommissionValue = styled.div<{
+  value?: string
+}>`
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 600;
+  color: ${({ value }) => getAmountColor(value, "#e4f2ff")};
+
+  ${respondTo("lg")} {
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 17px;
+    letter-spacing: 0.01em;
+  }
 `

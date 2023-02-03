@@ -1,12 +1,14 @@
 import * as React from "react"
 import { isEmpty } from "lodash"
+import { createPortal } from "react-dom"
 import { AnimatePresence } from "framer-motion"
 import { SpiralSpinner } from "react-spinners-kit"
 import { generatePath, useNavigate } from "react-router-dom"
 
+import { normalizeBigNumber } from "utils"
 import { useBreakpoints, useInvestorPositionVests } from "hooks"
 import { ICON_NAMES, MAX_PAGINATION_COUNT, ROUTE_PATHS } from "consts"
-import { normalizeBigNumber } from "utils"
+import { InvestorPositionInPoolContext } from "context/investor/positions/InvestorPositionInPoolContext"
 
 import { NoDataMessage } from "common"
 import { accordionSummaryVariants } from "motion/variants"
@@ -19,7 +21,6 @@ import PositionTrade from "components/PositionTrade"
 
 import InvestorPositionCommission from "./InvestorPositionCommission"
 import * as S from "./styled"
-import { InvestorPositionInPoolContext } from "context/investor/positions/InvestorPositionInPoolContext"
 
 const CardInvestorPosition: React.FC = () => {
   const navigate = useNavigate()
@@ -42,43 +43,72 @@ const CardInvestorPosition: React.FC = () => {
     commission,
   } = React.useContext(InvestorPositionInPoolContext)
 
+  const desktopCommissionWrpElId = React.useMemo<string>(
+    () => (!!position ? String("#commission-").concat(position.id) : ""),
+    [position]
+  )
+  const [desktopCommissionWrpEl, setDesktopCommissionWrpEl] =
+    React.useState<Element | null>(null)
+
+  React.useEffect(() => {
+    if (!isEmpty(desktopCommissionWrpElId) && isDesktop) {
+      setDesktopCommissionWrpEl(
+        document.querySelector(desktopCommissionWrpElId)
+      )
+    } else {
+      setDesktopCommissionWrpEl(null)
+    }
+  }, [desktopCommissionWrpElId, isDesktop])
+
   const [showActions, setShowActions] = React.useState(false)
   const [showPositions, setShowPositions] = React.useState(false)
   const [showCommission, setShowCommission] = React.useState(false)
 
   const togglePositions = React.useCallback(() => {
-    if (!showPositions && showCommission) {
+    setShowPositions((prev) => !prev)
+
+    if (!isDesktop && !showPositions && showCommission) {
       setShowCommission(false)
     }
-    setShowPositions((prev) => !prev)
-  }, [showCommission, showPositions])
+  }, [isDesktop, showCommission, showPositions])
 
-  const toggleCommission = React.useCallback(() => {
-    if (!showCommission && showPositions) {
-      setShowPositions(false)
-    }
-    setShowCommission((prev) => !prev)
-  }, [showCommission, showPositions])
+  const toggleCommission = React.useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      e.stopPropagation()
+      setShowCommission((prev) => !prev)
 
-  const onToggleActions = React.useCallback((): void => {
-    setShowActions((prev) => !prev)
+      if (!isDesktop && !showCommission && showPositions) {
+        setShowPositions(false)
+      }
+    },
+    [isDesktop, showCommission, showPositions]
+  )
 
-    if (position.isClosed || isDesktop) {
-      setShowPositions((prev) => !prev)
-    } else {
-      if (showPositions) setShowPositions(false)
-      if (showCommission) setShowCommission(false)
-    }
-  }, [position, isDesktop, showPositions, showCommission])
+  const onCardClick = React.useCallback(
+    (e: React.MouseEvent<HTMLElement>): void => {
+      e.stopPropagation()
+      if (isDesktop) {
+        setShowPositions((prev) => !prev)
+      } else {
+        setShowActions((prev) => !prev)
+        if (showPositions) setShowPositions(false)
+        if (showCommission) setShowCommission(false)
+      }
+    },
+    [isDesktop, showPositions, showCommission]
+  )
 
   React.useEffect(() => {
-    if (isDesktop) {
-      if (showCommission) {
+    if (!isDesktop) {
+      if (showCommission || showPositions) {
+        setShowActions(true)
+      }
+      if (showCommission && showPositions) {
         setShowCommission(false)
         setShowPositions(true)
       }
     }
-  }, [isDesktop, showCommission])
+  }, [isDesktop, showCommission, showPositions])
 
   const onNavigateTerminal = React.useCallback(
     (
@@ -103,7 +133,7 @@ const CardInvestorPosition: React.FC = () => {
 
   const actions = React.useMemo(
     () =>
-      isDesktop || position.isClosed
+      isDesktop
         ? []
         : [
             {
@@ -111,19 +141,27 @@ const CardInvestorPosition: React.FC = () => {
               active: showPositions,
               onClick: togglePositions,
             },
-            {
-              label: "Buy more",
-              onClick: (e) => onNavigateTerminal(e, "deposit"),
-            },
+            ...(!position.isClosed
+              ? [
+                  {
+                    label: "Buy more",
+                    onClick: (e) => onNavigateTerminal(e, "deposit"),
+                  },
+                ]
+              : []),
             {
               label: "Commission",
               active: showCommission,
               onClick: toggleCommission,
             },
-            {
-              label: "Close",
-              onClick: (e) => onNavigateTerminal(e, "withdraw"),
-            },
+            ...(!position.isClosed
+              ? [
+                  {
+                    label: "Close",
+                    onClick: (e) => onNavigateTerminal(e, "withdraw"),
+                  },
+                ]
+              : []),
           ],
     [
       position,
@@ -154,7 +192,7 @@ const CardInvestorPosition: React.FC = () => {
   return (
     <S.Root>
       <S.CardInvestorPositionBody
-        onClick={onToggleActions}
+        onClick={onCardClick}
         sharpBottomCorners={showPositions}
         bigGap={position.isClosed}
       >
@@ -252,10 +290,20 @@ const CardInvestorPosition: React.FC = () => {
 
         {isDesktop && (
           <>
-            <S.CardInvestorPositionBodyItem>
-              <S.CardInvestorPositionBodyItemAmount>
-                {normalizeBigNumber(commission.percentage, 25, 0)}%
-              </S.CardInvestorPositionBodyItemAmount>
+            <S.CardInvestorPositionBodyItem onClick={toggleCommission}>
+              <S.CardInvestorPositionBodyItemCommissionWrp>
+                <S.CardInvestorPositionBodyItemAmount>
+                  {normalizeBigNumber(commission.percentage, 25, 0)}%
+                </S.CardInvestorPositionBodyItemAmount>
+                <S.CardInvestorPositionBodyItemCommissionIconWrp
+                  id={String("commission-").concat(position.id)}
+                >
+                  <S.CardInvestorPositionToggleIconIndicator
+                    name={ICON_NAMES.angleDown}
+                    isActive={showCommission}
+                  />
+                </S.CardInvestorPositionBodyItemCommissionIconWrp>
+              </S.CardInvestorPositionBodyItemCommissionWrp>
             </S.CardInvestorPositionBodyItem>
             <S.CardInvestorPositionBodyItem>
               <S.CardInvestorPositionBodyItemActionsWrp>
@@ -290,9 +338,7 @@ const CardInvestorPosition: React.FC = () => {
       </AnimatePresence>
       <S.CardInvestorPositionExtra
         initial="hidden"
-        animate={
-          (isDesktop && showActions) || showPositions ? "visible" : "hidden"
-        }
+        animate={showPositions ? "visible" : "hidden"}
         variants={accordionSummaryVariants}
       >
         <S.CardInvestorPositionVestsWrp>
@@ -326,15 +372,28 @@ const CardInvestorPosition: React.FC = () => {
           ) : null}
         </S.CardInvestorPositionVestsWrp>
       </S.CardInvestorPositionExtra>
-      <S.CardInvestorPositionExtra
-        initial="hidden"
-        animate={showCommission && !isDesktop ? "visible" : "hidden"}
-        variants={accordionSummaryVariants}
-      >
-        <S.CardInvestorPositionCommissionWrp>
-          <InvestorPositionCommission />
-        </S.CardInvestorPositionCommissionWrp>
-      </S.CardInvestorPositionExtra>
+      {isDesktop && desktopCommissionWrpEl ? (
+        createPortal(
+          <S.CardInvestorPositionCommissionWrp
+            initial="hidden"
+            animate={showCommission ? "visible" : "hidden"}
+            variants={accordionSummaryVariants}
+          >
+            <InvestorPositionCommission />
+          </S.CardInvestorPositionCommissionWrp>,
+          desktopCommissionWrpEl
+        )
+      ) : (
+        <S.CardInvestorPositionExtra
+          initial="hidden"
+          animate={showCommission ? "visible" : "hidden"}
+          variants={accordionSummaryVariants}
+        >
+          <S.CardInvestorPositionCommissionWrp>
+            <InvestorPositionCommission />
+          </S.CardInvestorPositionCommissionWrp>
+        </S.CardInvestorPositionExtra>
+      )}
     </S.Root>
   )
 }
