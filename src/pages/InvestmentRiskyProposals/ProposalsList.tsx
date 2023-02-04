@@ -1,37 +1,37 @@
-import { FC, useMemo, useState, useEffect } from "react"
+import { FC, useMemo } from "react"
 import { PulseSpinner } from "react-spinners-kit"
 import { v4 as uuidv4 } from "uuid"
+import { isEmpty, map } from "lodash"
 
-import { useActiveWeb3React } from "hooks"
-import { usePoolContract } from "hooks/usePool"
-import { InvestorRiskyProposalsQuery } from "queries"
-import useQueryPagination from "hooks/useQueryPagination"
+import {
+  usePoolContract,
+  useActiveWeb3React,
+  useInvestorRiskyProposals,
+} from "hooks"
 import { useTraderPoolRiskyProposalContract } from "contracts"
 
 import LoadMore from "components/LoadMore"
 
 import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
-import { isNil, map } from "lodash"
-import { graphClientBasicPools } from "utils/graphClient"
 import { NoDataMessage, CardRiskyProposal } from "common"
 import { Center } from "theme"
 
 interface IRiskyCardInitializer {
-  account: string
+  account?: string | null
   poolAddress: string
   proposalId: number
-  index: number
+
+  proposal: IRiskyProposalInfo[0]
 }
 
-const RiskyProposalCardInitializer: FC<IRiskyCardInitializer> = ({
+function RiskyProposalCardInitializer({
   account,
   poolAddress,
   proposalId,
-  index,
-}) => {
+  proposal,
+}: IRiskyCardInitializer) {
   const proposalPool = useTraderPoolRiskyProposalContract(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
-  const [proposal, setProposal] = useState<IRiskyProposalInfo[0] | null>(null)
 
   const isTrader = useMemo<boolean>(() => {
     if (!account || !poolInfo) {
@@ -40,20 +40,6 @@ const RiskyProposalCardInitializer: FC<IRiskyCardInitializer> = ({
 
     return account === poolInfo.parameters.trader
   }, [account, poolInfo])
-
-  useEffect(() => {
-    if (!proposalPool || !poolAddress || isNil(proposalId)) return
-    ;(async () => {
-      try {
-        const data = await proposalPool.getProposalInfos(proposalId, 1)
-        if (data && data[0]) {
-          setProposal(data[0])
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    })()
-  }, [poolAddress, proposalId, proposalPool])
 
   if (proposal === null || !poolInfo || !proposalPool) {
     return null
@@ -78,27 +64,15 @@ interface IProps {
 const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
   const { account } = useActiveWeb3React()
 
-  const [{ data, loading }, fetchMore] = useQueryPagination<{
-    id: string
-    basicPool: {
-      id: string
-    }
-  }>({
-    query: InvestorRiskyProposalsQuery,
-    variables: useMemo(
-      () => ({ activePools: activePools ?? [] }),
-      [activePools]
-    ),
-    pause: isNil(activePools),
-    context: graphClientBasicPools,
-    formatter: (d) =>
-      map(d.proposals, (p) => ({
-        ...p,
-        id: String(p.id).charAt(String(p.id).length - 1),
-      })),
-  })
+  const [data, proposals, loading, fetchMore] =
+    useInvestorRiskyProposals(activePools)
 
-  if (!account || !activePools || (data.length === 0 && loading)) {
+  const isPayloadEmpty = useMemo(
+    () => isEmpty(data) || isEmpty(proposals),
+    [data, proposals]
+  )
+
+  if (!account || (isPayloadEmpty && loading)) {
     return (
       <Center>
         <PulseSpinner />
@@ -106,22 +80,22 @@ const InvestmentRiskyProposalsList: FC<IProps> = ({ activePools }) => {
     )
   }
 
-  if (data.length === 0 && !loading) {
+  if (isPayloadEmpty && !loading) {
     return <NoDataMessage />
   }
 
   return (
     <>
-      {data.map((p, i) => (
+      {map(data, (p, index) => (
         <RiskyProposalCardInitializer
           key={uuidv4()}
           account={account}
-          proposalId={Number(p.id) - 1}
+          proposalId={Number(String(p.id).charAt(String(p.id).length - 1)) - 1}
           poolAddress={p.basicPool.id}
-          index={i}
+          proposal={proposals[index]}
         />
       ))}
-      <LoadMore isLoading={loading && !!data.length} handleMore={fetchMore} />
+      <LoadMore isLoading={loading} handleMore={fetchMore} />
     </>
   )
 }
