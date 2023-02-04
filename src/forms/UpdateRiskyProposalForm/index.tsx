@@ -72,7 +72,7 @@ interface Props {
   maxInvestPrice: BigNumber
   fullness: BigNumber
   currentPrice: BigNumber
-  proposalPool: TraderPoolRiskyProposal
+  proposalContract: TraderPoolRiskyProposal | null
   proposalId: number
   proposalSymbol?: string
   poolAddress: string
@@ -100,7 +100,7 @@ const UpdateRiskyProposalForm: FC<Props> = ({
   maxInvestPrice,
   fullness,
   currentPrice,
-  proposalPool,
+  proposalContract,
   proposalId,
   poolAddress,
   successCallback,
@@ -166,7 +166,7 @@ const UpdateRiskyProposalForm: FC<Props> = ({
 
   const handleSubmit = async (e?: MouseEvent<HTMLButtonElement>) => {
     if (e) e.preventDefault()
-    if (!proposalPool) return
+    if (!proposalContract) return
     if (!agreed) {
       setShowAgreement(true)
       return
@@ -202,7 +202,7 @@ const UpdateRiskyProposalForm: FC<Props> = ({
           maxTokenPriceLimit: parseUnits(maxTokenPriceLimit, 18).toHexString(),
         }
 
-        const receipt = await proposalPool.changeProposalRestrictions(
+        const receipt = await proposalContract.changeProposalRestrictions(
           proposalId,
           proposalLimits
         )

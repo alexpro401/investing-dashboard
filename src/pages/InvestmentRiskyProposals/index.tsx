@@ -38,10 +38,7 @@ const InvestmentRiskyProposals = () => {
     <>
       <S.PageSubTabs tabs={tabs} />
       <Routes>
-        <Route
-          path="open"
-          element={<RiskyProposalsList activePools={activePools} />}
-        />
+        <Route path="open" element={<RiskyProposalsList />} />
         <Route
           path="positions"
           element={

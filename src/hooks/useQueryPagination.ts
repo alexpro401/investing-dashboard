@@ -46,6 +46,7 @@ export const useQueryPagination = <T>(
   const [offset, setOffset] = useState(pagination.initialOffset)
   const [result, setResult] = useState<T[]>([])
   const [lastFetchLen, setLastFetchLen] = useState(0)
+  const [_loading, setLoading] = useState(true)
 
   const _variables = useMemo(
     () => ({
@@ -67,6 +68,7 @@ export const useQueryPagination = <T>(
   // Change offset trigger useQuery hook to fetch new piece of data using actual variables
   const fetchMore = useCallback(() => {
     setOffset(result.length)
+    setLoading(true)
   }, [result])
 
   // Clear state helper
@@ -74,6 +76,7 @@ export const useQueryPagination = <T>(
     setOffset(0)
     setResult([])
     setLastFetchLen(0)
+    setLoading(true)
   }, [])
 
   useEffect(() => {
@@ -88,6 +91,8 @@ export const useQueryPagination = <T>(
         setResult((d) => [...d, ...newPieceOfData])
       }
     }
+
+    setLoading(false)
   }, [fetching, data, error, formatter, offset, prevFetching])
 
   // Clear state when query or variables changed
@@ -108,7 +113,7 @@ export const useQueryPagination = <T>(
   }, [fetching, variables, error, setError])
 
   return [
-    { data: result, error, loading: fetching, lastFetchLen },
+    { data: result, error, loading: fetching || _loading, lastFetchLen },
     debounce(fetchMore, 100),
     reset,
   ]

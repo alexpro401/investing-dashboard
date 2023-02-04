@@ -4,12 +4,9 @@ import * as S from "./styled"
 import { v4 as uuidv4 } from "uuid"
 
 import { useBreakpoints, useRiskyProposalView } from "hooks"
-import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import { TraderPoolRiskyProposal } from "interfaces/typechain"
 import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
 import { normalizeBigNumber } from "utils"
-import { ICON_NAMES, MAX_INVESTORS_COUNT } from "consts"
+import { ICON_NAMES } from "consts"
 
 import { Flex } from "theme"
 import { AppButton, Icon as IconCommon } from "common"
@@ -46,26 +43,10 @@ interface Props {
   proposal: IRiskyProposalInfo[0]
   proposalId: number
   poolAddress: string
-  proposalPool: TraderPoolRiskyProposal
-  isTrader: boolean
-  poolInfo: IPoolInfo
 }
 
 const CardRiskyProposal: React.FC<Props> = (props) => {
-  const {
-    proposal,
-    proposalId,
-    poolAddress,
-    proposalPool,
-    isTrader,
-    poolInfo,
-  } = props
-
-  const ipfsUrl = React.useMemo(
-    () => poolInfo?.parameters.descriptionURL ?? "",
-    [poolInfo]
-  )
-  const [{ poolMetadata }] = usePoolMetadata(poolAddress, ipfsUrl)
+  const { proposal, proposalId, poolAddress } = props
 
   const [
     {
@@ -86,6 +67,10 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
       traderSizePercentage,
       description,
       maximumPoolInvestors,
+      isTrader,
+      proposalContract,
+      poolInfo,
+      poolMetadata,
     },
     { navigateToPool, onAddMore, onInvest, onUpdateRestrictions },
   ] = useRiskyProposalView(props)
@@ -461,10 +446,10 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
             timestamp={expirationDate.initial}
             maxSizeLP={maxSizeLP}
             maxInvestPrice={maxInvestPrice.value}
-            proposalPool={proposalPool}
+            proposalContract={proposalContract}
             fullness={fullness.value}
             currentPrice={currentPrice}
-            proposalId={proposalId + 1}
+            proposalId={proposalId - 1}
             successCallback={onUpdateRestrictions}
             proposalSymbol={proposalToken?.symbol}
             poolAddress={poolAddress}

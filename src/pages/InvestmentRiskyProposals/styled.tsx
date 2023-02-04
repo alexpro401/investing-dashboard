@@ -53,3 +53,13 @@ export const InvestorRiskyPositionsListHeadItem = styled.div`
     color: #6781bd;
   }
 `
+
+export const InvestorRiskyProposalsListWrp = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  ${respondTo("lg")} {
+    gap: 16px;
+  }
+`

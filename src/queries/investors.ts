@@ -41,9 +41,20 @@ query ($positionId: String!, $offset: Int!, $limit: Int!) {
 
 // Investor proposals
 export const InvestorPoolsInvestedForQuery = `
-  query ($address: String!, $poolType: String!) {
+  query ($address: String!, $poolType: String!, $offset: Int, $limit: Int) {
     investors(where: { id: $address }) {
       activePools(where: { type: $poolType }) { id }
+    }
+  }
+`
+
+// Investor proposals
+export const PoolsInvestorInvestedInQuery = `
+  query ($address: String!, $poolType: String, $offset: Int!, $limit: Int!) {
+    investor(id: $address) {
+      activePools(where: { type: $poolType }, skip: $offset, first: $limit) {
+        id
+      }
     }
   }
 `

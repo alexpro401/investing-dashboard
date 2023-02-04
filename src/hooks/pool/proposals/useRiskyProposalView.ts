@@ -8,9 +8,13 @@ import { isEmpty } from "lodash"
 import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
 import { TraderPoolRiskyProposal } from "interfaces/typechain"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import { useActiveWeb3React } from "hooks"
+import { useActiveWeb3React, usePoolContract } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
-import { useCorePropertiesContract, usePriceFeedContract } from "contracts"
+import {
+  useCorePropertiesContract,
+  usePriceFeedContract,
+  useTraderPoolRiskyProposalContract,
+} from "contracts"
 import useTokenRating from "hooks/useTokenRating"
 import { DATE_TIME_FORMAT, ROUTE_PATHS, ZERO } from "consts"
 import { expandTimestamp, normalizeBigNumber } from "utils"
@@ -18,14 +22,13 @@ import { percentageOfBignumbers } from "utils/formulas"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { Token } from "interfaces"
 import { IpfsEntity } from "utils/ipfsEntity"
+import * as React from "react"
+import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 
 interface Props {
   proposal: IRiskyProposalInfo[0]
   proposalId: number
   poolAddress: string
-  proposalPool: TraderPoolRiskyProposal
-  isTrader: boolean
-  poolInfo: IPoolInfo
 }
 
 type UseRiskyProposalViewResponseValues = {
@@ -56,6 +59,10 @@ type UseRiskyProposalViewResponseValues = {
   proposalToken: Token | null
   description: string
   maximumPoolInvestors: BigNumber
+  isTrader: boolean
+  proposalContract: TraderPoolRiskyProposal | null
+  poolInfo: IPoolInfo | null
+  poolMetadata: any
 }
 type UseRiskyProposalViewResponseMethods = {
   navigateToPool
@@ -71,21 +78,27 @@ type UseRiskyProposalViewResponse = [
 export const useRiskyProposalView = (
   funcArgs: Props
 ): UseRiskyProposalViewResponse => {
-  const {
-    proposal,
-    proposalId,
-    poolAddress,
-    proposalPool,
-    poolInfo,
-    isTrader,
-  } = funcArgs
+  const { proposal, proposalId, poolAddress } = funcArgs
 
   const navigate = useNavigate()
   const { account, chainId } = useActiveWeb3React()
   const [proposalToken] = useERC20Data(proposal.proposalInfo.token)
+  const [, poolInfo] = usePoolContract(poolAddress)
   const priceFeed = usePriceFeedContract()
   const getTokenRating = useTokenRating()
   const corePropertiesContract = useCorePropertiesContract()
+  const proposalContract = useTraderPoolRiskyProposalContract(poolAddress)
+
+  const ipfsUrl = React.useMemo(
+    () => poolInfo?.parameters.descriptionURL ?? "",
+    [poolInfo]
+  )
+  const [{ poolMetadata }] = usePoolMetadata(poolAddress, ipfsUrl)
+
+  const isTrader = useMemo<boolean>(() => {
+    if (!account || !poolInfo) return false
+    return account === poolInfo.parameters.trader
+  }, [account, poolInfo])
 
   const [markPriceOpen, setMarkPriceOpen] = useState(ZERO)
   const [yourSizeLP, setYourSizeLP] = useState<BigNumber>(ZERO)
@@ -317,10 +330,10 @@ export const useRiskyProposalView = (
 
   // Fetch current user locked funds in proposal
   useEffect(() => {
-    if (!proposalPool || proposalId === undefined || !account) return
+    if (!proposalContract || proposalId === undefined || !account) return
     ;(async () => {
       try {
-        const balance = await proposalPool.getActiveInvestmentsInfo(
+        const balance = await proposalContract.getActiveInvestmentsInfo(
           account,
           proposalId,
           1
@@ -332,17 +345,17 @@ export const useRiskyProposalView = (
         console.error(error)
       }
     })()
-  }, [account, proposalId, proposalPool])
+  }, [account, proposalId, proposalContract])
 
   // Fetch trader locked funds in proposal
   useEffect(() => {
-    if (!proposalPool || !poolInfo || proposalId === undefined) {
+    if (!proposalContract || !poolInfo || proposalId === undefined) {
       return
     }
 
     ;(async () => {
       try {
-        const balance = await proposalPool.getActiveInvestmentsInfo(
+        const balance = await proposalContract.getActiveInvestmentsInfo(
           poolInfo.parameters.trader,
           proposalId,
           1
@@ -355,7 +368,7 @@ export const useRiskyProposalView = (
         console.error(error)
       }
     })()
-  }, [poolInfo, proposalId, proposalPool])
+  }, [poolInfo, proposalId, proposalContract])
 
   // Fetch mark price from priceFeed when proposal is open
   useEffect(() => {
@@ -486,6 +499,10 @@ export const useRiskyProposalView = (
       proposalToken,
       description,
       maximumPoolInvestors,
+      isTrader,
+      proposalContract,
+      poolInfo,
+      poolMetadata,
     },
     { navigateToPool, onAddMore, onInvest, onUpdateRestrictions },
   ]
