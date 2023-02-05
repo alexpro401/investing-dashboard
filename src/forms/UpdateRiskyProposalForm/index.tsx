@@ -2,7 +2,6 @@ import {
   Dispatch,
   FC,
   MouseEvent,
-  ReactNode,
   SetStateAction,
   useCallback,
   useState,
@@ -28,6 +27,7 @@ import { TraderPoolRiskyProposal } from "interfaces/typechain"
 
 import { InputField } from "fields"
 import { ICON_NAMES } from "consts"
+import { useTranslation } from "react-i18next"
 
 interface Values {
   timestampLimit: number
@@ -84,12 +84,12 @@ interface Props {
 }
 
 interface IErrorsState {
-  investLPLimit: ReactNode
-  maxTokenPriceLimit: ReactNode
+  investLPLimit: string
+  maxTokenPriceLimit: string
 }
 const errorsDefaultState: IErrorsState = {
-  investLPLimit: null,
-  maxTokenPriceLimit: null,
+  investLPLimit: "",
+  maxTokenPriceLimit: "",
 }
 
 const UpdateRiskyProposalForm: FC<Props> = ({
@@ -107,6 +107,7 @@ const UpdateRiskyProposalForm: FC<Props> = ({
 }) => {
   const addTransaction = useTransactionAdder()
   const addToast = useAddToast()
+  const { t } = useTranslation()
 
   const [isDateOpen, setDateOpen] = useState<boolean>(false)
   const [errors, setErrors] = useState<IErrorsState>(errorsDefaultState)
@@ -133,11 +134,14 @@ const UpdateRiskyProposalForm: FC<Props> = ({
     const errors = {} as IErrorsState
 
     if (parseEther(investLPLimit).lt(fullness)) {
-      errors.investLPLimit = "Max size can't be less than fullness"
+      errors.investLPLimit = t(
+        "risky-proposal-edit-form.validations.max-size-less-than-fullness"
+      )
     }
     if (parseEther(maxTokenPriceLimit).lt(currentPrice)) {
-      errors.maxTokenPriceLimit =
-        "Max token price can't be less than current price"
+      errors.maxTokenPriceLimit = t(
+        "risky-proposal-edit-form.validations.max-size-less-than-current-price"
+      )
     }
 
     if (errors.investLPLimit || errors.maxTokenPriceLimit) {
@@ -182,7 +186,7 @@ const UpdateRiskyProposalForm: FC<Props> = ({
       addToast(
         {
           type: "warning",
-          content: `Nothing has been changed. Please change something before submitting.`,
+          content: t("risky-proposal-edit-form.notifications.without-changes"),
         },
         "revert-change-risky-proposal",
         2000
@@ -214,7 +218,6 @@ const UpdateRiskyProposalForm: FC<Props> = ({
         })
 
         if (isTxMined(tx)) {
-          // Update data in card
           successCallback(
             timestampLimit,
             parseUnits(investLPLimit, 18),
@@ -245,7 +248,7 @@ const UpdateRiskyProposalForm: FC<Props> = ({
       >
         <S.Header>
           <Flex full ai={"center"} jc={"space-between"}>
-            <S.HeaderTitle>Investment proposal settings:</S.HeaderTitle>
+            <S.HeaderTitle>{t("risky-proposal-edit-form.title")}</S.HeaderTitle>
             <S.HeaderCloseButton
               color={"secondary"}
               size={"x-small"}
@@ -259,29 +262,21 @@ const UpdateRiskyProposalForm: FC<Props> = ({
             value={format(expandTimestamp(timestampLimit), DATE_TIME_FORMAT)}
             onChange={() => {}}
             onClick={() => setDateOpen(!isDateOpen)}
-            label="Expiration date"
+            label={t("risky-proposal-edit-form.field-label-expiration-date")}
           />
           <InputField
             placeholder="---"
             value={investLPLimit}
-            label="LPs available for staking"
+            label={t("risky-proposal-edit-form.field-label-invest-limit")}
             setValue={(v) => setInvestLPLimit(v)}
-            errorMessage={
-              errors.investLPLimit !== null
-                ? String(errors.investLPLimit)
-                : undefined
-            }
+            errorMessage={errors.investLPLimit}
           />
           <InputField
             placeholder="---"
             value={maxTokenPriceLimit}
-            label="Maximum invest price"
+            label={t("risky-proposal-edit-form.field-label-max-invest-price")}
             setValue={(v) => setMaxTokenPriceLimit(v)}
-            errorMessage={
-              errors.maxTokenPriceLimit !== null
-                ? String(errors.maxTokenPriceLimit)
-                : undefined
-            }
+            errorMessage={errors.maxTokenPriceLimit}
           />
           <S.ButtonGroup>
             <AppButton
@@ -289,7 +284,7 @@ const UpdateRiskyProposalForm: FC<Props> = ({
               color="secondary"
               type="button"
               size="small"
-              text="Cancel"
+              text={t("risky-proposal-edit-form.action-decline")}
               onClick={() => handleCancel()}
             />
             <AppButton
@@ -297,7 +292,7 @@ const UpdateRiskyProposalForm: FC<Props> = ({
               color="tertiary"
               type="button"
               size="small"
-              text="Done"
+              text={t("risky-proposal-edit-form.action-submit")}
               onClick={() => handleSubmit()}
               disabled={isSubmiting}
             />

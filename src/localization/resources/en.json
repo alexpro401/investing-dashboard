@@ -64,7 +64,7 @@
   "trader-pools-list": {
     "tooltip-msg": "Tooltip message"
   },
-  "card-risky-proposal": {
+  "risky-proposal-card": {
     "status-open": "Open investing",
     "status-closed": "Closed investing",
     "label-proposal-token": "Proposal token",
@@ -95,5 +95,20 @@
     "tooltip-msg-investors": "Investors info",
     "tooltip-msg-position-size": "Position size info",
     "tooltip-msg-position-trader": "Trader size info"
+  },
+  "risky-proposal-edit-form": {
+    "title": "Investment proposal settings:",
+    "field-label-expiration-date": "Expiration date",
+    "field-label-invest-limit": "LPs available for staking",
+    "field-label-max-invest-price": "Maximum invest price",
+    "action-submit": "Done",
+    "action-decline": "Cancel",
+    "validations": {
+      "max-size-less-than-fullness": "Max size can't be less than fullness",
+      "max-size-less-than-current-price": "Max token price can't be less than current price"
+    },
+    "notifications": {
+      "without-changes": "Nothing has been changed. Please change something before submitting."
+    }
   }
 }
