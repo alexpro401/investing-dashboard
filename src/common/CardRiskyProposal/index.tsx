@@ -190,7 +190,7 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
                   color={"default"}
                 />
               ) : (
-                <Flex>
+                <Flex full jc={"flex-end"}>
                   <S.CardRiskyProposalStatus active={canInvest ?? false}>
                     {t(
                       canInvest
