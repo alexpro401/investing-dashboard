@@ -1,6 +1,5 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { format } from "date-fns"
-import { generatePath, useNavigate } from "react-router-dom"
 import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 import { isEmpty } from "lodash"
@@ -16,8 +15,8 @@ import {
   useTraderPoolRiskyProposalContract,
 } from "contracts"
 import useTokenRating from "hooks/useTokenRating"
-import { DATE_TIME_FORMAT, ROUTE_PATHS, ZERO } from "consts"
-import { expandTimestamp, normalizeBigNumber } from "utils"
+import { DATE_TIME_FORMAT, ZERO } from "consts"
+import { expandTimestamp } from "utils"
 import { percentageOfBignumbers } from "utils/formulas"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { Token } from "interfaces"
@@ -32,7 +31,6 @@ interface Props {
 }
 
 type UseRiskyProposalViewResponseValues = {
-  proposalSymbol: string
   tokenRating: number
   canInvest: boolean
   proposalTokenLink: string
@@ -53,7 +51,7 @@ type UseRiskyProposalViewResponseValues = {
     initial: BigNumber
   }
   investors: { value: BigNumber; completed: boolean }
-  positionSize: string
+  positionSize: BigNumber
   traderSizeLP: BigNumber
   traderSizePercentage: BigNumber
   proposalToken: Token | null
@@ -65,9 +63,6 @@ type UseRiskyProposalViewResponseValues = {
   poolMetadata: any
 }
 type UseRiskyProposalViewResponseMethods = {
-  navigateToPool
-  onAddMore
-  onInvest
   onUpdateRestrictions
 }
 
@@ -80,7 +75,6 @@ export const useRiskyProposalView = (
 ): UseRiskyProposalViewResponse => {
   const { proposal, proposalId, poolAddress } = funcArgs
 
-  const navigate = useNavigate()
   const { account, chainId } = useActiveWeb3React()
   const [proposalToken] = useERC20Data(proposal.proposalInfo.token)
   const [, poolInfo] = usePoolContract(poolAddress)
@@ -107,38 +101,6 @@ export const useRiskyProposalView = (
   const [description, setDescription] = useState<string>("")
   const [maximumPoolInvestors, setMaximumPoolInvestors] =
     useState<BigNumber>(ZERO)
-
-  // Fetch description from IPFS
-  useEffect(() => {
-    if (!proposal || isEmpty(proposal.proposalInfo.descriptionURL)) return
-    ;(async () => {
-      try {
-        const riskyProposalIpfsEntity = new IpfsEntity<string>({
-          path: proposal.proposalInfo.descriptionURL,
-        })
-
-        const _description = await riskyProposalIpfsEntity.load()
-
-        setDescription(_description)
-      } catch (e) {
-        setDescription("Failed to load description")
-      }
-    })()
-  }, [proposal])
-
-  // get max pool investors
-  useEffect(() => {
-    if (!corePropertiesContract) return
-    ;(async () => {
-      try {
-        const maxPoolInvestors =
-          await corePropertiesContract.getMaximumPoolInvestors()
-        if (maxPoolInvestors) {
-          setMaximumPoolInvestors(maxPoolInvestors)
-        }
-      } catch (e) {}
-    })()
-  }, [corePropertiesContract])
 
   /**
    * Date of proposal expiration
@@ -171,14 +133,6 @@ export const useRiskyProposalView = (
     value: BigNumber
     completed: boolean
   }>({ value: ZERO, completed: false })
-
-  /**
-   * Symbol of proposal
-   */
-  const proposalSymbol = useMemo<string>(() => {
-    if (!proposalToken || !proposalToken.symbol) return ""
-    return proposalToken.symbol
-  }, [proposalToken])
 
   /**
    * Proposal fullness in LP's
@@ -241,13 +195,10 @@ export const useRiskyProposalView = (
   /**
    * Position current balance
    */
-  const positionSize = useMemo<string>(() => {
-    if (!proposal || !proposal?.proposalInfo.balancePosition) {
-      return "0"
-    }
-
-    return normalizeBigNumber(proposal.proposalInfo.balancePosition, 18, 6)
-  }, [proposal])
+  const positionSize = useMemo<BigNumber>(
+    () => proposal?.proposalInfo.balancePosition,
+    [proposal]
+  )
 
   /**
    * Trader LP's size in %
@@ -328,127 +279,112 @@ export const useRiskyProposalView = (
     })
   }, [proposal])
 
-  // Fetch current user locked funds in proposal
-  useEffect(() => {
-    if (!proposalContract || proposalId === undefined || !account) return
-    ;(async () => {
-      try {
-        const balance = await proposalContract.getActiveInvestmentsInfo(
-          account,
-          proposalId,
-          1
-        )
-        if (balance && balance[0]) {
-          setYourSizeLP(balance[0].lpInvested)
-        }
-      } catch (error) {
-        console.error(error)
+  const loadDetailsFromIpfs = useCallback(async () => {
+    if (!proposal || isEmpty(proposal.proposalInfo.descriptionURL)) return
+    try {
+      const riskyProposalIpfsEntity = new IpfsEntity<string>({
+        path: proposal.proposalInfo.descriptionURL,
+      })
+
+      const _description = await riskyProposalIpfsEntity.load()
+
+      setDescription(_description)
+    } catch (e) {
+      console.error("Failed to load description")
+    }
+  }, [proposal])
+
+  const loadMaxPoolInvestors = useCallback(async () => {
+    if (!corePropertiesContract) return
+    try {
+      const _maximumPoolInvestors =
+        await corePropertiesContract.getMaximumPoolInvestors()
+
+      setMaximumPoolInvestors(_maximumPoolInvestors)
+    } catch (e) {
+      console.error("Failed to load maximum pool investors")
+    }
+  }, [corePropertiesContract])
+
+  const loadUserActiveInvestmentsInfo = useCallback(async () => {
+    if (!account || !proposalContract) return
+    try {
+      const _userActiveInvestmentsInfo =
+        await proposalContract.getActiveInvestmentsInfo(account, proposalId, 1)
+
+      if (_userActiveInvestmentsInfo && _userActiveInvestmentsInfo[0]) {
+        setYourSizeLP(_userActiveInvestmentsInfo[0].lpInvested)
       }
-    })()
+    } catch (e) {
+      console.error("Failed to load user active investments info")
+    }
   }, [account, proposalId, proposalContract])
 
-  // Fetch trader locked funds in proposal
-  useEffect(() => {
-    if (!proposalContract || !poolInfo || proposalId === undefined) {
-      return
-    }
-
-    ;(async () => {
-      try {
-        const balance = await proposalContract.getActiveInvestmentsInfo(
+  const loadTraderActiveInvestmentsInfo = useCallback(async () => {
+    if (!poolInfo || !proposalContract) return
+    try {
+      const _userActiveInvestmentsInfo =
+        await proposalContract.getActiveInvestmentsInfo(
           poolInfo.parameters.trader,
           proposalId,
           1
         )
 
-        if (balance && balance[0]) {
-          setTraderSizeLP(balance[0].lpInvested)
-        }
-      } catch (error) {
-        console.error(error)
+      if (_userActiveInvestmentsInfo && _userActiveInvestmentsInfo[0]) {
+        setTraderSizeLP(_userActiveInvestmentsInfo[0].lpInvested)
       }
-    })()
+    } catch (e) {
+      console.error("Failed to load trader active investments info")
+    }
   }, [poolInfo, proposalId, proposalContract])
 
-  // Fetch mark price from priceFeed when proposal is open
-  useEffect(() => {
+  const loadMarkPriceOpen = useCallback(async () => {
     if (!priceFeed || !proposalToken) return
-    ;(async () => {
-      try {
-        const amount = parseUnits("1", 18)
-        const price = await priceFeed.getNormalizedPriceOutUSD(
-          proposalToken.address,
-          amount.toHexString()
-        )
-        if (price && price.amountOut) {
-          setMarkPriceOpen(price.amountOut)
-        }
-      } catch (error) {
-        console.error(error)
+    try {
+      const amount = parseUnits("1", 18)
+      const price = await priceFeed.getNormalizedPriceOutUSD(
+        proposalToken.address,
+        amount.toHexString()
+      )
+      if (price && price.amountOut) {
+        setMarkPriceOpen(price.amountOut)
       }
-    })()
+    } catch (error) {
+      console.error(error)
+    }
   }, [priceFeed, proposalToken])
 
-  // Fetch token rating
-  useEffect(() => {
+  const loadTokenRating = useCallback(async () => {
     if (!chainId || !proposal) return
-    ;(async () => {
-      try {
-        const rating = await getTokenRating(
-          chainId,
-          proposal.proposalInfo.token
-        )
-        setTokenRating(rating)
-      } catch (error) {
-        console.error(error)
-      }
-    })()
+    try {
+      const rating = await getTokenRating(chainId, proposal.proposalInfo.token)
+      setTokenRating(rating)
+    } catch (error) {
+      console.error(error)
+    }
   }, [chainId, proposal, getTokenRating])
 
-  /**
-   * Navigate to pool page
-   * @param e - click event
-   */
-  const navigateToPool = useCallback(
-    (e: MouseEvent<HTMLElement>): void => {
-      e.stopPropagation()
-      navigate(
-        generatePath(ROUTE_PATHS.poolProfile, {
-          poolAddress: poolAddress,
-          "*": "",
-        })
-      )
-    },
-    [navigate, poolAddress]
-  )
+  const init = useCallback(async () => {
+    try {
+      await loadDetailsFromIpfs()
+      await loadMaxPoolInvestors()
+      await loadUserActiveInvestmentsInfo()
+      await loadTraderActiveInvestmentsInfo()
+      await loadMarkPriceOpen()
+      await loadTokenRating()
+    } catch (error) {}
+  }, [
+    loadDetailsFromIpfs,
+    loadMaxPoolInvestors,
+    loadUserActiveInvestmentsInfo,
+    loadTraderActiveInvestmentsInfo,
+    loadMarkPriceOpen,
+    loadTokenRating,
+  ])
 
-  /**
-   * Navigate to risky invest terminal
-   * @param e - click event
-   */
-  const onAddMore = useCallback(
-    (e: MouseEvent<HTMLElement>): void => {
-      e.stopPropagation()
-      navigate(`/invest-risky-proposal/${poolAddress}/${proposalId}`)
-    },
-    [navigate, poolAddress, proposalId]
-  )
-
-  /**
-   * Navigate to risky invest terminal
-   * @param e - click event
-   */
-  const onInvest = useCallback(
-    (e?: MouseEvent<HTMLButtonElement | MouseEvent>): void => {
-      if (e) e.stopPropagation()
-      if (isTrader) {
-        navigate(`/swap-risky-proposal/${poolAddress}/${proposalId}/deposit`)
-      } else {
-        navigate(`/invest-risky-proposal/${poolAddress}/${proposalId}`)
-      }
-    },
-    [navigate, poolAddress, proposalId, isTrader]
-  )
+  useEffect(() => {
+    init()
+  }, [proposal, init])
 
   const onUpdateRestrictions = (
     timestamp: number,
@@ -480,9 +416,33 @@ export const useRiskyProposalView = (
     }
   }
 
-  return [
-    {
-      proposalSymbol,
+  return useMemo(
+    () => [
+      {
+        tokenRating,
+        canInvest,
+        proposalTokenLink,
+        maxSizeLP,
+        yourSizeLP,
+        fullness,
+        maxInvestPrice,
+        currentPrice,
+        expirationDate,
+        investors,
+        positionSize,
+        traderSizeLP,
+        traderSizePercentage,
+        proposalToken,
+        description,
+        maximumPoolInvestors,
+        isTrader,
+        proposalContract,
+        poolInfo,
+        poolMetadata,
+      },
+      { onUpdateRestrictions },
+    ],
+    [
       tokenRating,
       canInvest,
       proposalTokenLink,
@@ -503,7 +463,8 @@ export const useRiskyProposalView = (
       proposalContract,
       poolInfo,
       poolMetadata,
-    },
-    { navigateToPool, onAddMore, onInvest, onUpdateRestrictions },
-  ]
+
+      onUpdateRestrictions,
+    ]
+  )
 }

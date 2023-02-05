@@ -24,9 +24,9 @@ const InvestmentRiskyProposalsList: React.FC = () => {
         )
       ) : (
         <>
-          {[...proposals].map(([proposalEntityId, proposal]) => (
+          {Array.from(proposals.values()).map((proposal) => (
             <CardRiskyProposal
-              key={proposalEntityId}
+              key={proposal.utilityIds.proposalEntityId}
               proposal={proposal.proposal}
               proposalId={proposal.utilityIds.proposalId}
               poolAddress={proposal.utilityIds.basicPoolAddress}

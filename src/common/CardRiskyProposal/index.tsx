@@ -2,11 +2,13 @@ import * as React from "react"
 import * as S from "./styled"
 
 import { v4 as uuidv4 } from "uuid"
+import { formatUnits } from "@ethersproject/units"
+import { generatePath, useNavigate } from "react-router-dom"
 
 import { useBreakpoints, useRiskyProposalView } from "hooks"
 import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
 import { normalizeBigNumber } from "utils"
-import { ICON_NAMES } from "consts"
+import { ICON_NAMES, ROUTE_PATHS } from "consts"
 
 import { Flex } from "theme"
 import { AppButton, Icon as IconCommon } from "common"
@@ -25,7 +27,6 @@ import settingsGreenIcon from "assets/icons/settings-green.svg"
 import traderBadgeDangerIcon from "assets/icons/trader-badge-danger.svg"
 import traderBadgeWarningIcon from "assets/icons/trader-badge-warning.svg"
 import traderBadgeSuccessIcon from "assets/icons/trader-badge-success.svg"
-import { formatUnits } from "@ethersproject/units"
 
 function getTraderQualityIcon(quality) {
   switch (quality) {
@@ -50,7 +51,6 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
 
   const [
     {
-      proposalSymbol,
       tokenRating,
       canInvest,
       proposalTokenLink,
@@ -72,12 +72,72 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
       poolInfo,
       poolMetadata,
     },
-    { navigateToPool, onAddMore, onInvest, onUpdateRestrictions },
+    { onUpdateRestrictions },
   ] = useRiskyProposalView(props)
 
   const { isDesktop } = useBreakpoints()
+  const navigate = useNavigate()
 
   const [isSettingsOpen, setIsSettingsOpen] = React.useState<boolean>(false)
+
+  const proposalTokenSymbol = React.useMemo<string>(() => {
+    if (!proposalToken || !proposalToken.symbol) return ""
+    return proposalToken.symbol
+  }, [proposalToken])
+
+  const proposalInvestPath = React.useMemo(
+    () =>
+      generatePath(ROUTE_PATHS.riskyProposalInvest, {
+        poolAddress: poolAddress,
+        proposalId: String(proposalId),
+      }),
+    [poolAddress, proposalId]
+  )
+
+  const navigateToPool = React.useCallback(
+    (e: React.MouseEvent<HTMLElement>): void => {
+      e.stopPropagation()
+      navigate(
+        generatePath(ROUTE_PATHS.poolProfile, {
+          poolAddress: poolAddress,
+          "*": "",
+        })
+      )
+    },
+    [navigate, poolAddress]
+  )
+
+  /**
+   * Navigate to risky invest terminal
+   * @param e - click event
+   */
+  const onRiskyProposalInvest = React.useCallback(
+    (e: React.MouseEvent<HTMLElement>): void => {
+      e.stopPropagation()
+      navigate(proposalInvestPath)
+    },
+    [navigate, proposalInvestPath]
+  )
+
+  /**
+   * Navigate to risky invest terminal
+   * @param e - click event
+   */
+  const onInvest = React.useCallback(
+    (e: React.MouseEvent<HTMLElement>): void => {
+      e.stopPropagation()
+      const path = isTrader
+        ? proposalInvestPath
+        : generatePath(ROUTE_PATHS.riskyProposalSwap, {
+            poolAddress,
+            proposalId: String(proposalId),
+            direction: "deposit",
+          })
+
+      navigate(path)
+    },
+    [navigate, poolAddress, proposalId, isTrader]
+  )
 
   return (
     <S.Root>
@@ -101,7 +161,7 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
                   href={proposalTokenLink}
                   rel="noopener noreferrer"
                 >
-                  {proposalSymbol}
+                  {proposalTokenSymbol}
                   <S.CardRiskyProposalTokenInfoIcon
                     name={ICON_NAMES.externalLink}
                   />
@@ -196,7 +256,7 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
                   {isTrader ? (
                     <S.CardRiskyProposalInvestMoreButton
                       text={"+ Add"}
-                      onClick={onAddMore}
+                      onClick={onRiskyProposalInvest}
                       size={"x-small"}
                       color={isDesktop ? "secondary" : "default"}
                     />
@@ -241,7 +301,9 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
               <S.CardRiskyProposalLabel>
                 <S.CardRiskyProposalLabelContent>
                   <span>
-                    {String("Max. Invest Price").concat(` (${proposalSymbol})`)}
+                    {String("Max. Invest Price").concat(
+                      ` (${proposalTokenSymbol})`
+                    )}
                   </span>
                   {isDesktop && (
                     <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
@@ -264,7 +326,9 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
               <S.CardRiskyProposalLabel>
                 <S.CardRiskyProposalLabelContent>
                   <span>
-                    {String("Current price").concat(` (${proposalSymbol})`)}
+                    {String("Current price").concat(
+                      ` (${proposalTokenSymbol})`
+                    )}
                   </span>
                   {isDesktop && (
                     <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
@@ -332,7 +396,9 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
               <S.CardRiskyProposalLabel>
                 <S.CardRiskyProposalLabelContent>
                   <span>
-                    {String("Position size").concat(` (${proposalSymbol})`)}
+                    {String("Position size").concat(
+                      ` (${proposalTokenSymbol})`
+                    )}
                   </span>
                   {isDesktop && (
                     <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
@@ -342,7 +408,7 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
                 </S.CardRiskyProposalLabelContent>
               </S.CardRiskyProposalLabel>
               <S.CardRiskyProposalValue>
-                {positionSize}
+                {normalizeBigNumber(positionSize, 18, 6)}
               </S.CardRiskyProposalValue>
             </S.CardRiskyProposalValueWrp>
           </S.CardRiskyProposalGridItemPositionSize>
@@ -451,7 +517,7 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
             currentPrice={currentPrice}
             proposalId={proposalId - 1}
             successCallback={onUpdateRestrictions}
-            proposalSymbol={proposalToken?.symbol}
+            proposalSymbol={proposalTokenSymbol}
             poolAddress={poolAddress}
           />
         </S.CardRiskyProposalUpdateFormWrp>
