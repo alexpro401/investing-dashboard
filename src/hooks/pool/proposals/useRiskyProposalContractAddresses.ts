@@ -8,7 +8,7 @@ import {
 } from "state/multicall/hooks"
 
 const TraderPool_Interface = new Interface(TraderPool_ABI)
-function useInvestorRiskyProposalContractAddresses(
+function useRiskyProposalContractAddresses(
   poolsWithRiskyProposals: string[]
 ): [string[], boolean] {
   const proposalPoolAddressListResults = useMultipleContractSingleData(
@@ -35,4 +35,4 @@ function useInvestorRiskyProposalContractAddresses(
   return [proposalPoolAddressList, proposalPoolAddressListAnyLoading]
 }
 
-export default useInvestorRiskyProposalContractAddresses
+export default useRiskyProposalContractAddresses

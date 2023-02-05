@@ -56,7 +56,7 @@ export const RiskyProposalPositionQuery = `
   }
 `
 
-export const InvestorRiskyProposalsQuery = `
+export const RiskyProposalsQuery = `
   query ($offset: Int!, $limit: Int!, $activePools: [String]!) {
     proposals(skip: $offset, first: $limit, where: { basicPool_in: $activePools }){
       id

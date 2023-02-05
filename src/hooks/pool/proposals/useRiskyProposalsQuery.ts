@@ -1,12 +1,12 @@
 import * as React from "react"
 import { isEmpty } from "lodash"
 import { graphClientBasicPools } from "utils/graphClient"
-import { InvestorRiskyProposalsQuery } from "queries"
+import { RiskyProposalsQuery } from "queries"
 import { useQueryPagination } from "hooks/index"
 import { InvestorRiskyProposal } from "interfaces/thegraphs/investors"
 import { DEFAULT_PAGINATION_COUNT } from "consts"
 
-function useInvestorRiskyProposalsQuery(
+function useRiskyProposalsQuery(
   poolsUserInvestedIn: string[],
   _pause: boolean,
   _offset?: number,
@@ -34,7 +34,7 @@ function useInvestorRiskyProposalsQuery(
         pause,
         variables,
         context: graphClientBasicPools,
-        query: InvestorRiskyProposalsQuery,
+        query: RiskyProposalsQuery,
         formatter: (d) => d?.proposals ?? [],
       },
       {
@@ -46,4 +46,4 @@ function useInvestorRiskyProposalsQuery(
   return [data, loading, fetchMore]
 }
 
-export default useInvestorRiskyProposalsQuery
+export default useRiskyProposalsQuery

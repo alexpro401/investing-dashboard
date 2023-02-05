@@ -10,7 +10,7 @@ import { TraderPoolRiskyProposal as TraderPoolRiskyProposal_ABI } from "abi"
 type UtilityMap = Map<string, RiskyProposalUtilityIds>
 type ProposalsMap = Map<string, WrappedRiskyProposalView>
 
-function useInvestorRiskyProposalsData(
+function useRiskyProposalsData(
   _riskyProposalUtilityIdsMap: UtilityMap
 ): [ProposalsMap, boolean] {
   const { library, account, chainId } = useActiveWeb3React()
@@ -96,4 +96,4 @@ function useInvestorRiskyProposalsData(
   return [data, loading]
 }
 
-export default useInvestorRiskyProposalsData
+export default useRiskyProposalsData

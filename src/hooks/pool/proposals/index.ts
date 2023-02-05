@@ -1,1 +1,5 @@
 export * from "./useRiskyProposalView"
+export { default as useRiskyProposalsQuery } from "./useRiskyProposalsQuery"
+export { default as useRiskyProposalContractAddresses } from "./useRiskyProposalContractAddresses"
+export { default as useRiskyProposalsData } from "./useRiskyProposalsData"
+export { default as useRiskyProposalsByPools } from "./useRiskyProposalsByPools"

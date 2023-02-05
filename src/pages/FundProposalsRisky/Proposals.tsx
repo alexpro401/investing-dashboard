@@ -1,43 +1,53 @@
-import { FC } from "react"
-import { PulseSpinner } from "react-spinners-kit"
+import * as React from "react"
+import * as S from "./styled"
+import { SpiralSpinner } from "react-spinners-kit"
 
-import useRiskyProposals from "hooks/useRiskyProposals"
+import { useRiskyProposalsByPools } from "hooks"
 
-import { Flex } from "theme"
+import { Center } from "theme"
 import { NoDataMessage, CardRiskyProposal } from "common"
 import LoadMore from "components/LoadMore"
+import { isEmpty, isNil } from "lodash"
 
 interface IProps {
   poolAddress?: string
 }
 
-const FundProposalsRisky: FC<IProps> = ({ poolAddress }) => {
-  const [{ data, loading }, fetchMore] = useRiskyProposals(poolAddress)
+const FundProposalsRisky: React.FC<IProps> = ({ poolAddress }) => {
+  const pools = React.useMemo(
+    () => (isNil(poolAddress) ? [] : [poolAddress]),
+    [poolAddress]
+  )
 
-  if (!poolAddress || (data.length === 0 && loading)) {
-    return (
-      <Flex full ai="center" jc="center">
-        <PulseSpinner />
-      </Flex>
-    )
-  }
-
-  if (data && data.length === 0 && !loading) {
-    return <NoDataMessage />
-  }
+  const [proposals, loading, fetchMore] = useRiskyProposalsByPools(
+    pools,
+    isEmpty(pools)
+  )
 
   return (
-    <>
-      {data.map((proposal, index) => (
-        <CardRiskyProposal
-          key={index}
-          proposalId={index}
-          proposal={proposal}
-          poolAddress={poolAddress}
-        />
-      ))}
-      <LoadMore isLoading={loading} handleMore={fetchMore} />
-    </>
+    <S.FundRiskyProposalsListWrp>
+      {isEmpty(proposals) ? (
+        loading ? (
+          <Center>
+            <SpiralSpinner size={30} loading />
+          </Center>
+        ) : (
+          <NoDataMessage />
+        )
+      ) : (
+        <>
+          {Array.from(proposals.values()).map((proposal) => (
+            <CardRiskyProposal
+              key={proposal.utilityIds.proposalEntityId}
+              proposal={proposal.proposal}
+              proposalId={proposal.utilityIds.proposalId}
+              poolAddress={proposal.utilityIds.basicPoolAddress}
+            />
+          ))}
+          <LoadMore isLoading={loading} handleMore={fetchMore} />
+        </>
+      )}
+    </S.FundRiskyProposalsListWrp>
   )
 }
 
