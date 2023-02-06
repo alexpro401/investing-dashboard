@@ -41,6 +41,8 @@ export enum ROUTE_PATHS {
   daoDelegatee = "/dao/:daoPoolAddress/delegate/:delegatee",
   daoUnDelegatee = "/dao/:daoPoolAddress/undelegate/:delegatee",
 
+  daoProfile = "/dao/:daoAddress/*",
+
   daoProposalCreateSelectType = "/dao/:daoAddress/create-proposal",
   daoProposalCreateCustom = "/dao/:daoAddress/create-proposal/custom",
   daoProposalCreateProfile = "/dao/:daoAddress/create-proposal/change-dao-settings",

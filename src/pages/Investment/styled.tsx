@@ -7,7 +7,6 @@ export const Root = styled.div`
   flex-direction: column;
   gap: var(--app-gap);
   padding: var(--app-padding);
-  overflow: hidden auto;
   flex: 1;
 `
 

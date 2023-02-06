@@ -56,7 +56,6 @@ const useInvestInvestmentProposal = (
   {
     info: Info
     formData: RiskyForm
-    isSlippageOpen: boolean
     inPrice: BigNumber
     outPrice: BigNumber
     fromAmount: BigNumber
@@ -68,7 +67,6 @@ const useInvestInvestmentProposal = (
     fromSelectorOpened: boolean
   },
   {
-    setSlippageOpen: (state: boolean) => void
     setToAddress: (address: string) => void
     setFromAddress: (address: string) => void
     setToSelector: (state: boolean) => void
@@ -88,7 +86,6 @@ const useInvestInvestmentProposal = (
   const [fromAmount, setFromAmount] = useState(ZERO)
   const [toAmount, setToAmount] = useState(ZERO)
   const [slippage, setSlippage] = useState("0.10")
-  const [isSlippageOpen, setSlippageOpen] = useState(false)
   const [toSelectorOpened, setToSelector] = useState(false)
   const [fromSelectorOpened, setFromSelector] = useState(false)
   const [, setWalletPrompting] = usePayload()
@@ -353,7 +350,6 @@ const useInvestInvestmentProposal = (
     {
       info,
       formData,
-      isSlippageOpen,
       inPrice,
       outPrice,
       fromAmount,
@@ -365,7 +361,6 @@ const useInvestInvestmentProposal = (
       slippage,
     },
     {
-      setSlippageOpen,
       setToAddress,
       setFromAddress,
       setToSelector,

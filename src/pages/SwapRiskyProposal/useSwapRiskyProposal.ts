@@ -55,9 +55,7 @@ interface UseSwapRiskyResponse {
   oneTokenCost: BigNumber
   oneUSDCost: BigNumber
   slippage: string
-  isSlippageOpen: boolean
   setSlippage: Dispatch<SetStateAction<string>>
-  setSlippageOpen: Dispatch<SetStateAction<boolean>>
   handleFromChange: (v: string) => void
   handleToChange: (v: string) => void
   handleSubmit: () => void
@@ -74,7 +72,6 @@ const useSwapRiskyProposal = ({
   const [gasPrice, setGasPrice] = useState("0.00")
   const [, setError] = useError()
   const [slippage, setSlippage] = useState("0.10")
-  const [isSlippageOpen, setSlippageOpen] = useState(false)
   const [, setWalletPrompting] = usePayload()
 
   const [positionPnlLP, setPositionPnlLP] = useState(ZERO)
@@ -690,8 +687,6 @@ const useSwapRiskyProposal = ({
       oneUSDCost,
       slippage,
       setSlippage,
-      isSlippageOpen,
-      setSlippageOpen,
       handleFromChange,
       handleToChange,
       handlePercentageChange,

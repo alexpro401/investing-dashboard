@@ -9,31 +9,61 @@ import S from "./styled"
 interface IProps {
   m?: string
   tabs: ITab[]
+  full?: boolean
+  themeType?: "gray" | "blue"
 }
 
-const RouteTabs: FC<IProps> = ({ tabs, m = "0", ...rest }) => {
+const RouteTabs: FC<IProps> = ({
+  tabs,
+  m = "0",
+  full = true,
+  themeType = "gray",
+  ...rest
+}) => {
   const { pathname } = useLocation()
 
   return (
-    <S.Tabs
-      m={m}
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      exit={{ y: -20, opacity: 0 }}
-      transition={{ duration: 0.2 }}
-      {...rest}
-    >
-      {tabs.map((tab, tabIndex) => (
-        <S.Tab
-          key={tabIndex}
-          to={tab.source}
-          active={isActiveRoute(pathname, tab.source)}
-        >
-          {tab.title}
-          {Boolean(tab.amount) && <S.TabAmount>{tab.amount}</S.TabAmount>}
-        </S.Tab>
-      ))}
-    </S.Tabs>
+    <>
+      <S.Tabs
+        m={m}
+        full={full}
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: -20, opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        {...rest}
+      >
+        {tabs.map((tab, tabIndex) => {
+          if (tab.source) {
+            return (
+              <S.Tab
+                key={tabIndex}
+                to={tab.source}
+                themeType={themeType}
+                active={isActiveRoute(pathname, tab.source)}
+                onClick={tab.onClick ?? undefined}
+              >
+                {tab.title}
+                {Boolean(tab.amount) && <S.TabAmount>{tab.amount}</S.TabAmount>}
+              </S.Tab>
+            )
+          }
+
+          return (
+            <S.Tab
+              key={tabIndex}
+              as="div"
+              themeType={themeType}
+              active={tab.isActive}
+              onClick={tab.onClick ?? undefined}
+            >
+              {tab.title}
+              {Boolean(tab.amount) && <S.TabAmount>{tab.amount}</S.TabAmount>}
+            </S.Tab>
+          )
+        })}
+      </S.Tabs>
+    </>
   )
 }
 

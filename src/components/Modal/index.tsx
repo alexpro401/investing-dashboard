@@ -1,6 +1,7 @@
+import { useKey } from "react-use"
+import { FC, ReactNode } from "react"
 import { ICON_NAMES } from "consts/icon-names"
 import { Icon, Overlay } from "common"
-import { FC, ReactNode } from "react"
 import { createPortal } from "react-dom"
 import * as S from "./styled"
 
@@ -8,25 +9,28 @@ const modalRoot = document.getElementById("modal")
 
 interface Props {
   isOpen: boolean
-  toggle: () => void
   title: string | ReactNode
   children?: ReactNode
   maxWidth?: string
   isShowCloseBtn?: boolean
+  onClose: () => void
 }
 
 const Modal: FC<Props> = ({
   children,
   isOpen,
-  toggle,
+  onClose,
   title,
   maxWidth,
   isShowCloseBtn = true,
 }) => {
+  useKey("Escape", () => onClose())
+
   if (!modalRoot) return null
+
   return createPortal(
     <>
-      <Overlay onClick={toggle} animate={isOpen ? "visible" : "hidden"} />
+      <Overlay onClick={onClose} animate={isOpen ? "visible" : "hidden"} />
       <S.Container
         maxWidth={maxWidth}
         animate={isOpen ? "visible" : "hidden"}
@@ -55,7 +59,7 @@ const Modal: FC<Props> = ({
               <> </>
             )}
             {isShowCloseBtn ? (
-              <Icon name={ICON_NAMES.modalClose} onClick={toggle} />
+              <Icon name={ICON_NAMES.modalClose} onClick={onClose} />
             ) : (
               <></>
             )}

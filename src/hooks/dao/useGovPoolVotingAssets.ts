@@ -27,6 +27,7 @@ interface NftData {
   name: string
   symbol: string
   isEnumerable: boolean
+  address: string
 }
 
 interface Info {
@@ -49,8 +50,8 @@ const useGovPoolVotingAssets = (
   const { name, symbol, isEnumerable } = useErc721(nftAddress)
 
   const nft = useMemo(
-    () => ({ name, symbol, isEnumerable }),
-    [name, symbol, isEnumerable]
+    () => ({ name, symbol, isEnumerable, address: nftAddress }),
+    [name, symbol, isEnumerable, nftAddress]
   )
 
   const _throwTxError = useCallback((error) => {

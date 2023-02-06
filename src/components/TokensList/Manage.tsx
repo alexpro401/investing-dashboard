@@ -67,7 +67,11 @@ export const Manage: FC<Props> = (props) => {
 
   // check which tab is active and generate search props data
   const searchProps = useMemo(() => {
-    const isActiveList = isActiveRoute(pathname, manageTabs[0].source)
+    const isActiveList =
+      manageTabs[0].isActive ||
+      (manageTabs[0].source
+        ? isActiveRoute(pathname, manageTabs[0].source)
+        : false)
     const placeholder = isActiveList ? "https:// or ipfs://" : "0x..."
     const value = isActiveList ? localQuery : mainQuery
     const handleChange = isActiveList ? setLocalQuery : setMainQuery

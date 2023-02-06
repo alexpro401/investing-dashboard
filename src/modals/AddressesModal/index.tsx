@@ -106,7 +106,7 @@ const AddressesModal: React.FC<IAddressesModalProps> = ({
     <S.ModalWrp
       isOpen={isOpen}
       title={title}
-      toggle={toggle}
+      onClose={toggle}
       maxWidth={!isMobile ? "500px" : undefined}
     >
       <S.Content>

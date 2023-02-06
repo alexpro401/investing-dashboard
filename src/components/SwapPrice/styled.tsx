@@ -1,19 +1,17 @@
 import styled from "styled-components/macro"
-import { Flex, GradientBorder } from "theme"
+import { Flex } from "theme"
 import { motion } from "framer-motion"
 
-export const Container = styled(GradientBorder)`
+export const Container = styled(Flex)`
   width: 100%;
   flex-direction: column;
   align-items: center;
   height: fit-content;
-  border-radius: 15px;
-  margin-top: 16px;
+  border-radius: 16px;
   position: relative;
 
-  &:after {
-    background: #181e2c;
-  }
+  background: #0e1320;
+  border: 1px solid rgba(40, 51, 74, 0.5);
 `
 
 export const Card = styled(Flex)`
@@ -30,8 +28,8 @@ export const Content = styled(Flex)`
 export const WhiteText = styled.div`
   font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
-  font-weight: 600;
-  font-size: 12px;
+  font-weight: 500;
+  font-size: 13px;
   line-height: 100%;
   letter-spacing: 0.3px;
 
@@ -39,28 +37,36 @@ export const WhiteText = styled.div`
 `
 
 export const TokenPrice = styled(WhiteText)`
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+  color: #e4f2ff;
   padding-right: 4px;
 `
 
 export const UsdPrice = styled(WhiteText)`
-  color: #646f89;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+
+  color: #6781bd;
 `
 
 export const GasPrice = styled.div`
   font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 11px;
-  letter-spacing: 0.3px;
-  transform: translateY(1px);
-
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+  letter-spacing: 0.01em;
   color: #e4f2ff;
+  transform: translateY(1px);
 `
 
 export const GasIcon = styled.img`
-  width: 12.67px;
-  height: 12px;
+  height: 16px;
+  width: 16px;
 `
 
 export const AngleIcon = styled(motion.img)`

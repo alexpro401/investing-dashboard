@@ -1,10 +1,10 @@
 import { motion } from "framer-motion"
-import styled from "styled-components/macro"
+import styled, { css } from "styled-components/macro"
 import { Link } from "react-router-dom"
 
-import theme, { Flex, Text } from "theme"
-import { AppButton } from "common"
-import RouteTabs from "components/RouteTabs"
+import theme, { Flex, respondTo, Text } from "theme"
+import { AppButton, Card } from "common"
+import ExternalLink from "components/ExternalLink"
 
 const variants = {
   hidden: { opacity: 0 },
@@ -78,10 +78,22 @@ export const ChartFilterItem = styled(Text).attrs(() => ({
   variants: ChartFilterItemVariants,
   initial: ChartFilterItemVariants.hidden,
   transition: { duration: 0.2 },
-}))`
+}))<{ isActive: boolean }>`
   padding: 2px 8px;
   border-radius: 20px;
   cursor: pointer;
+
+  ${respondTo("md")} {
+    padding: 4px 16px;
+
+    ${(props) =>
+      props.isActive
+        ? css`
+            font-weight: 700 !important;
+            color: ${theme.brandColors.secondary} !important;
+          `
+        : css``}
+  }
 `
 
 const DaoProfileTextShared = {
@@ -92,7 +104,51 @@ const DaoProfileTextShared = {
 export const TextLabel = styled(Text).attrs((props) => ({
   ...DaoProfileTextShared,
   color: props.color ?? theme.textColors.secondary,
-}))``
+}))`
+  ${respondTo("md")} {
+    color: #6781bd;
+  }
+`
+
+export const TreasuryAmountLabel = styled(Text).attrs(() => ({
+  ...DaoProfileTextShared,
+}))`
+  color: ${theme.textColors.secondary};
+  font-weight: 500;
+  line-height: 19px;
+  font-size: 13px;
+
+  ${respondTo("md")} {
+    color: ${theme.textColors.primary};
+    font-size: 14px;
+    line-height: 16.5px;
+  }
+`
+
+export const TreasuryDesktopTokenName = styled.span`
+  color: #6781bd;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+  letter-spacing: 0.01em;
+`
+
+export const TreasuryDesktopExternalLink = styled(ExternalLink).attrs(() => ({
+  iconColor: theme.brandColors.secondary,
+}))`
+  color: ${theme.brandColors.secondary};
+
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  span {
+    margin-top: 4px;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+  }
+`
 
 export const TextValue = styled(Text).attrs((props) => ({
   ...DaoProfileTextShared,
@@ -101,20 +157,32 @@ export const TextValue = styled(Text).attrs((props) => ({
 
 export const TreasuryRow = styled(Flex).attrs(() => ({
   full: true,
-  ai: "center",
+  ai: "stretch",
   jc: "flex-start",
 }))`
   & > *:nth-child(1) {
     flex: 0 1 43%;
-    align-self: flex-start;
   }
   & > *:nth-child(2) {
     flex: 0 1 40%;
-    align-self: flex-start;
   }
   & > *:nth-child(3) {
     flex: 0 1 17%;
-    align-self: flex-end;
+  }
+
+  ${respondTo("md")} {
+    & > *:nth-child(1) {
+      flex: 0 1 40% !important;
+    }
+    & > *:nth-child(2) {
+      flex: 0 1 20% !important;
+    }
+    & > *:nth-child(3) {
+      flex: 0 1 22% !important;
+    }
+    & > *:nth-child(4) {
+      flex: 0 1 18% !important;
+    }
   }
 `
 
@@ -130,11 +198,29 @@ export const SliderContainer = styled.div`
 `
 
 export const SliderHeader = styled(TreasuryRow)`
+  & > *:nth-child(1) {
+    flex: 0 1 43%;
+  }
   & > *:nth-child(2) {
     flex: 0 1 20%;
   }
   & > *:nth-child(3) {
     flex: 0 1 37%;
+  }
+
+  ${respondTo("md")} {
+    & > *:nth-child(1) {
+      flex: 0 1 40% !important;
+    }
+    & > *:nth-child(2) {
+      flex: 0 1 20% !important;
+    }
+    & > *:nth-child(3) {
+      flex: 0 1 22% !important;
+    }
+    & > *:nth-child(4) {
+      flex: 0 1 18% !important;
+    }
   }
 `
 export const SliderItem = styled(TreasuryRow).attrs(() => ({
@@ -142,6 +228,11 @@ export const SliderItem = styled(TreasuryRow).attrs(() => ({
 }))`
   min-height: 71px;
   border-top: 1px solid #20293a;
+
+  ${respondTo("md")} {
+    min-height: 50px;
+    border-top: 1px solid transparent;
+  }
 `
 
 export const FlexLink = styled(Flex).attrs(() => ({
@@ -166,6 +257,20 @@ export const AppButtonFull = styled(AppButton)`
   width: 100%;
   font-size: 13px;
   font-weight: 600;
+
+  ${respondTo("md")} {
+    background: #13223e !important;
+    color: ${theme.brandColors.secondary} !important;
+    font-size: 14px;
+    line-height: 17px;
+    font-weight: 700;
+    margin-top: auto;
+
+    &:hover {
+      background: #13223e !important;
+      color: ${theme.brandColors.secondary} !important;
+    }
+  }
 `
 
 export const Counter = styled.div`
@@ -211,6 +316,11 @@ export const AllProposals = styled(AppButton).attrs(() => ({
 export const NftIcon = styled.img`
   width: 35px;
   height: 35px;
+
+  ${respondTo("md")} {
+    width: 24px;
+    height: 24px;
+  }
 `
 
 export const TreasuryEmptyText = styled.span`
@@ -250,4 +360,32 @@ export const DelegationTab = styled(Text).attrs(() => ({
   justify-content: center;
   border-radius: 20px;
   cursor: pointer;
+`
+
+export const DaoTreasuryCardWrap = styled(Card)`
+  width: 100%;
+
+  ${respondTo("md")} {
+    height: 100%;
+    padding: 16px;
+    min-height: 280px;
+  }
+`
+
+export const TreasuryDesktopTokensHolder = styled.div`
+  width: 100%;
+  display: flex;
+  height: 150px;
+  flex-direction: column;
+  overflow-y: auto;
+`
+
+export const DaoChartCardWrap = styled(Card)`
+  width: 100%;
+
+  ${respondTo("md")} {
+    height: 100%;
+    width: auto;
+    padding: 16px;
+  }
 `

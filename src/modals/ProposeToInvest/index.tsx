@@ -29,7 +29,7 @@ const ProposeToInvest: FC<IProps> = ({
 
   return (
     <>
-      <Modal title="Become investor" isOpen toggle={onToggle}>
+      <Modal title="Become investor" isOpen onClose={onToggle}>
         <S.ModalText>
           The trader has {positionCount} open positions, but you need to be a
           fund investor to see them
