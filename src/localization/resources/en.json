@@ -53,7 +53,7 @@
     "order-size-lbl": "Order size",
     "daily-profit-lbl": "Daily profit",
     "time-positions-lbl": "Time positions",
-    "sortino-lbl": "Sortino ({currency})",
+    "sortino-lbl": "Sortino ({{currency}})",
     "total-pnl-heading": "Total P&L",
     "details-heading": "Details",
     "emission-lbl": "Emission",

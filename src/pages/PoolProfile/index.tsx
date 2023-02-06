@@ -489,7 +489,9 @@ const PoolProfileContent = () => {
                   },
                 ].map((el, idx) => (
                   <S.SpecificStatisticsRow key={idx}>
-                    <S.SpecificStatisticsLabel>DEXE</S.SpecificStatisticsLabel>
+                    <S.SpecificStatisticsLabel>
+                      {el.label}
+                    </S.SpecificStatisticsLabel>
                     <S.SpecificStatisticsValue>
                       {`${normalizeBigNumber(el.amount, 18)} (${el.percent}%)`}
                     </S.SpecificStatisticsValue>
