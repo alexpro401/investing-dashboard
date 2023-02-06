@@ -9,7 +9,7 @@ import {
   useRiskyProposalContractAddresses,
 } from "hooks"
 
-type Response = [Map<string, WrappedRiskyProposalView>, boolean, () => void]
+type Response = [Record<string, WrappedRiskyProposalView>, boolean, () => void]
 
 function useRiskyProposalsByPools(pools: string[], pause): Response {
   /**
@@ -44,9 +44,9 @@ function useRiskyProposalsByPools(pools: string[], pause): Response {
    * to easy access proposal data
    */
   const _proposalEntityIdMapping = React.useMemo<
-    Map<string, RiskyProposalUtilityIds>
+    Record<string, RiskyProposalUtilityIds>
   >(() => {
-    const result = new Map()
+    const result = {}
     if (
       isEmpty(riskyProposalsByPools) ||
       isEmpty(proposalContractAddressList)
@@ -67,12 +67,12 @@ function useRiskyProposalsByPools(pools: string[], pause): Response {
           ""
         )
 
-        acc.set(proposalEntityId, {
+        acc[proposalEntityId] = {
           proposalId: Number(_proposalId) - 1,
           proposalEntityId: proposalEntityId,
           basicPoolAddress: p.basicPool.id,
           proposalContractAddress: _proposalContractAddress,
-        })
+        }
       }
 
       return acc

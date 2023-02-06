@@ -7,8 +7,8 @@ import { getContract } from "utils/getContract"
 import { RiskyProposalUtilityIds, WrappedRiskyProposalView } from "types"
 import { TraderPoolRiskyProposal as TraderPoolRiskyProposal_ABI } from "abi"
 
-type UtilityMap = Map<string, RiskyProposalUtilityIds>
-type ProposalsMap = Map<string, WrappedRiskyProposalView>
+type UtilityMap = Record<string, RiskyProposalUtilityIds>
+type ProposalsMap = Record<string, WrappedRiskyProposalView>
 
 function useRiskyProposalsData(
   _riskyProposalUtilityIdsMap: UtilityMap
@@ -19,7 +19,7 @@ function useRiskyProposalsData(
   const [riskyProposalUtilityIdsMap, setRiskyProposalUtilityIdsMap] =
     React.useState<UtilityMap>(_riskyProposalUtilityIdsMap)
   const [loading, setLoading] = React.useState(true)
-  const [data, setData] = React.useState<ProposalsMap>(new Map())
+  const [data, setData] = React.useState<ProposalsMap>({})
 
   React.useEffect(() => {
     setRiskyProposalUtilityIdsMap(_riskyProposalUtilityIdsMap)
@@ -27,34 +27,41 @@ function useRiskyProposalsData(
 
   React.useEffect(() => {
     setLoading(true)
-    setRiskyProposalUtilityIdsMap(new Map())
-    setData(new Map())
+    setRiskyProposalUtilityIdsMap({})
+    setData({})
   }, [account])
 
   const proposalsDiff = React.useMemo<UtilityMap>(
     () =>
-      new Map(
-        [...riskyProposalUtilityIdsMap].filter(([key]) => !data.has(key))
-      ),
+      Object.entries(riskyProposalUtilityIdsMap).reduce((acc, [key, value]) => {
+        if (!data.hasOwnProperty(key)) {
+          acc[key] = value
+        }
+
+        return acc
+      }, {}),
+    // new Map(
+    //   [...riskyProposalUtilityIdsMap].filter(([key]) => !data.has(key))
+    // ),
     [riskyProposalUtilityIdsMap, data]
   )
 
   const fetchProposals = React.useCallback(
-    async (entries: UtilityMap) => {
+    async (entryList: UtilityMap) => {
       if (
         isNil(library) ||
         isNil(account) ||
         isNil(provider) ||
-        isEmpty(entries)
+        isEmpty(entryList)
       ) {
         return
       }
 
       setLoading(true)
 
-      const _proposals: ProposalsMap = new Map()
+      const _proposals: ProposalsMap = {}
 
-      for (const [proposalEntityId, values] of entries) {
+      for (const [proposalEntityId, values] of Object.entries(entryList)) {
         const { proposalId, proposalContractAddress } = values
         const proposalContract = await getContract(
           proposalContractAddress,
@@ -70,16 +77,16 @@ function useRiskyProposalsData(
           )
 
           if (proposals && proposals[0]) {
-            _proposals.set(proposalEntityId, {
+            _proposals[proposalEntityId] = {
               id: proposalEntityId,
               proposal: proposals[0],
               utilityIds: values,
-            })
+            }
           }
         }
       }
 
-      setData((prev) => new Map([...prev, ..._proposals]))
+      setData((prev) => ({ ...prev, ..._proposals }))
       setLoading(false)
     },
     [library, account, provider]

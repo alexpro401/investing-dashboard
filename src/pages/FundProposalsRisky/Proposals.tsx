@@ -36,7 +36,7 @@ const FundProposalsRisky: React.FC<IProps> = ({ poolAddress }) => {
         )
       ) : (
         <>
-          {Array.from(proposals.values()).map((proposal) => (
+          {Object.values(proposals).map((proposal) => (
             <CardRiskyProposal
               key={proposal.utilityIds.proposalEntityId}
               proposal={proposal.proposal}

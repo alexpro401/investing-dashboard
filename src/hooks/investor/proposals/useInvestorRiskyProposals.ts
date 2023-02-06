@@ -4,7 +4,7 @@ import { WrappedRiskyProposalView } from "types"
 
 import { useGetPoolsUserInvestedIn, useRiskyProposalsByPools } from "hooks"
 
-type Response = [Map<string, WrappedRiskyProposalView>, boolean, () => void]
+type Response = [Record<string, WrappedRiskyProposalView>, boolean, () => void]
 
 function useInvestorRiskyProposals(): Response {
   const { account } = useWeb3React()
