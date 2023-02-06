@@ -64,6 +64,7 @@ export const RiskyProposalsQuery = `
       where: { basicPool_in: $poolsUserInvestedIn }
     ) {
       id
+      token
       basicPool {
         id 
       }

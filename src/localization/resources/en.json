@@ -97,7 +97,7 @@
     "tooltip-msg-expiration-date": "Expiration date info",
     "tooltip-msg-investors": "Investors info",
     "tooltip-msg-position-size": "Position size info",
-    "tooltip-msg-position-trader": "Trader size info"
+    "tooltip-msg-trader-size": "Trader size info"
   },
   "risky-proposal-edit-form": {
     "title": "Investment proposal settings:",

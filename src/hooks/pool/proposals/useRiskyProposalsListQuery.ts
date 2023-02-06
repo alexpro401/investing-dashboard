@@ -6,7 +6,7 @@ import { useQueryPagination } from "hooks/index"
 import { InvestorRiskyProposal } from "interfaces/thegraphs/investors"
 import { DEFAULT_PAGINATION_COUNT } from "consts"
 
-function useRiskyProposalsQuery(
+function useRiskyProposalsListQuery(
   poolsUserInvestedIn: string[],
   _pause: boolean,
   _offset?: number,
@@ -46,4 +46,4 @@ function useRiskyProposalsQuery(
   return [data, loading, fetchMore]
 }
 
-export default useRiskyProposalsQuery
+export default useRiskyProposalsListQuery

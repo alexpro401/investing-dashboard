@@ -96,6 +96,7 @@ export interface InvestorVest {
 
 export interface InvestorRiskyProposal {
   id: string
+  token: string
   basicPool: {
     id: string
   }

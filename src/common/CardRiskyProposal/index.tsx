@@ -42,11 +42,17 @@ function getTraderQualityIcon(quality) {
 }
 
 interface Props {
-  data: WrappedRiskyProposalView
+  payload: WrappedRiskyProposalView
 }
 
-const CardRiskyProposal: React.FC<Props> = (props) => {
-  const { proposal, utilityIds } = props.data
+const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
+  const {
+    proposal,
+    utilityIds,
+    userActiveInvestmentsInfo,
+    proposalTokenMarkPrice,
+    poolInfo,
+  } = payload
   const { proposalId, basicPoolAddress: poolAddress } = utilityIds
 
   const [
@@ -55,11 +61,9 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
       canInvest,
       proposalTokenLink,
       maxSizeLP,
-      yourSizeLP,
       traderSizeLP,
       fullness,
       maxInvestPrice,
-      currentPrice,
       expirationDate,
       investors,
       positionSize,
@@ -69,11 +73,10 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
       maximumPoolInvestors,
       isTrader,
       proposalContract,
-      poolInfo,
       poolMetadata,
     },
     { onUpdateRestrictions },
-  ] = useRiskyProposalView(props.data)
+  ] = useRiskyProposalView(payload)
 
   const { isDesktop } = useBreakpoints()
   const navigate = useNavigate()
@@ -137,7 +140,7 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
 
       navigate(path)
     },
-    [navigate, poolAddress, proposalId, isTrader]
+    [navigate, poolAddress, proposalId, isTrader, proposalInvestPath]
   )
 
   return (
@@ -277,7 +280,11 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
                 </S.CardRiskyProposalLabelContent>
               </S.CardRiskyProposalLabel>
               <S.CardRiskyProposalValue>
-                {normalizeBigNumber(yourSizeLP, 18, 6)}
+                {normalizeBigNumber(
+                  userActiveInvestmentsInfo.lpInvested,
+                  18,
+                  6
+                )}
               </S.CardRiskyProposalValue>
             </S.CardRiskyProposalValueWrp>
           </S.CardRiskyProposalGridItemCurrentUserSize>
@@ -299,7 +306,7 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
                     </S.CardRiskyProposalLabelTooltip>
                   )}
                   {!isDesktop && fullness.completed && (
-                    <img src={checkGreenIcon} />
+                    <S.CardRiskyProposalLabelIcon src={checkGreenIcon} />
                   )}
                 </S.CardRiskyProposalLabelContent>
               </S.CardRiskyProposalLabel>
@@ -324,7 +331,7 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
                     </S.CardRiskyProposalLabelTooltip>
                   )}
                   {!isDesktop && maxInvestPrice.completed && (
-                    <img src={checkGreenIcon} />
+                    <S.CardRiskyProposalLabelIcon src={checkGreenIcon} />
                   )}
                 </S.CardRiskyProposalLabelContent>
               </S.CardRiskyProposalLabel>
@@ -351,7 +358,7 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
                 </S.CardRiskyProposalLabelContent>
               </S.CardRiskyProposalLabel>
               <S.CardRiskyProposalValue>
-                {normalizeBigNumber(currentPrice, 18, 2)}
+                {normalizeBigNumber(proposalTokenMarkPrice, 18, 2)}
               </S.CardRiskyProposalValue>
             </S.CardRiskyProposalValueWrp>
           </S.CardRiskyProposalGridItemCurrentPrice>
@@ -369,7 +376,7 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
                     </S.CardRiskyProposalLabelTooltip>
                   )}
                   {!isDesktop && expirationDate.completed && (
-                    <img src={checkGreenIcon} />
+                    <S.CardRiskyProposalLabelIcon src={checkGreenIcon} />
                   )}
                 </S.CardRiskyProposalLabelContent>
               </S.CardRiskyProposalLabel>
@@ -393,7 +400,7 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
                     </S.CardRiskyProposalLabelTooltip>
                   )}
                   {!isDesktop && investors.completed && (
-                    <img src={checkGreenIcon} />
+                    <S.CardRiskyProposalLabelIcon src={checkGreenIcon} />
                   )}
                 </S.CardRiskyProposalLabelContent>
               </S.CardRiskyProposalLabel>
@@ -532,26 +539,27 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
           )}
         </S.CardRiskyProposalGrid>
       </S.CardRiskyProposalBody>
-      {isSettingsOpen && (
-        <S.CardRiskyProposalUpdateFormWrp>
-          <UpdateRiskyProposalForm
-            visible={isSettingsOpen}
-            setVisible={setIsSettingsOpen}
-            timestamp={expirationDate.initial}
-            maxSizeLP={maxSizeLP}
-            maxInvestPrice={maxInvestPrice.value}
-            proposalContract={proposalContract}
-            fullness={fullness.value}
-            currentPrice={currentPrice}
-            proposalId={proposalId}
-            successCallback={onUpdateRestrictions}
-            proposalSymbol={proposalTokenSymbol}
-            poolAddress={poolAddress}
-          />
-        </S.CardRiskyProposalUpdateFormWrp>
-      )}
+
+      <S.CardRiskyProposalUpdateFormWrp>
+        <UpdateRiskyProposalForm
+          visible={isSettingsOpen}
+          setVisible={setIsSettingsOpen}
+          defaultState={{
+            timestamp: expirationDate.initial,
+            maxSizeLP: maxSizeLP,
+            maxInvestPrice: maxInvestPrice.value,
+          }}
+          proposalContract={proposalContract}
+          fullness={fullness.value}
+          currentPrice={proposalTokenMarkPrice}
+          proposalId={proposalId}
+          successCallback={onUpdateRestrictions}
+          proposalSymbol={proposalTokenSymbol}
+          poolAddress={poolAddress}
+        />
+      </S.CardRiskyProposalUpdateFormWrp>
     </S.Root>
   )
 }
 
-export default CardRiskyProposal
+export default React.memo(CardRiskyProposal)

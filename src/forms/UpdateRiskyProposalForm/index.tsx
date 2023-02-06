@@ -4,6 +4,8 @@ import {
   MouseEvent,
   SetStateAction,
   useCallback,
+  useEffect,
+  useMemo,
   useState,
 } from "react"
 import { format } from "date-fns"
@@ -28,54 +30,23 @@ import { TraderPoolRiskyProposal } from "interfaces/typechain"
 import { InputField } from "fields"
 import { ICON_NAMES } from "consts"
 import { useTranslation } from "react-i18next"
-
-interface Values {
-  timestampLimit: number
-  investLPLimit: string
-  maxTokenPriceLimit: string
-}
-
-interface Handlers {
-  setTimestampLimit: Dispatch<SetStateAction<number>>
-  setInvestLPLimit: Dispatch<SetStateAction<string>>
-  setMaxTokenPriceLimit: Dispatch<SetStateAction<string>>
-}
-
-const useUpdateRiskyProposal = ({
-  timestamp,
-  maxSizeLP,
-  maxInvestPrice,
-}): [Values, Handlers] => {
-  const [timestampLimit, setTimestampLimit] = useState<number>(
-    timestamp.toString()
-  )
-
-  const [investLPLimit, setInvestLPLimit] = useState<string>(
-    normalizeBigNumber(maxSizeLP, 18, 6)
-  )
-  const [maxTokenPriceLimit, setMaxTokenPriceLimit] = useState<string>(
-    normalizeBigNumber(maxInvestPrice, 18, 2)
-  )
-
-  return [
-    { timestampLimit, investLPLimit, maxTokenPriceLimit },
-    { setTimestampLimit, setInvestLPLimit, setMaxTokenPriceLimit },
-  ]
-}
+import { usePrevious } from "react-use"
+import { isEqual } from "lodash"
 
 interface Props {
   visible: boolean
   setVisible: Dispatch<SetStateAction<boolean>>
-
-  timestamp: BigNumber
-  maxSizeLP: BigNumber
-  maxInvestPrice: BigNumber
   fullness: BigNumber
   currentPrice: BigNumber
   proposalContract: TraderPoolRiskyProposal | null
   proposalId: number
   proposalSymbol?: string
   poolAddress: string
+  defaultState: {
+    timestamp: BigNumber
+    maxSizeLP: BigNumber
+    maxInvestPrice: BigNumber
+  }
   successCallback: (
     timestamp: number,
     maxSize: BigNumber,
@@ -92,19 +63,22 @@ const errorsDefaultState: IErrorsState = {
   maxTokenPriceLimit: "",
 }
 
-const UpdateRiskyProposalForm: FC<Props> = ({
-  visible,
-  setVisible,
-  timestamp,
-  maxSizeLP,
-  maxInvestPrice,
-  fullness,
-  currentPrice,
-  proposalContract,
-  proposalId,
-  poolAddress,
-  successCallback,
-}) => {
+const UpdateRiskyProposalForm: FC<Props> = (props) => {
+  const {
+    visible,
+    setVisible,
+    defaultState,
+    fullness,
+    currentPrice,
+    proposalContract,
+    proposalId,
+    poolAddress,
+    successCallback,
+  } = props
+
+  const _prevDefaultState = usePrevious(defaultState)
+  const _defaultState = useMemo(() => defaultState, [defaultState])
+
   const addTransaction = useTransactionAdder()
   const addToast = useAddToast()
   const { t } = useTranslation()
@@ -113,18 +87,29 @@ const UpdateRiskyProposalForm: FC<Props> = ({
   const [errors, setErrors] = useState<IErrorsState>(errorsDefaultState)
   const [isSubmiting, setSubmiting] = useState<boolean>(false)
 
-  const [
-    { timestampLimit, investLPLimit, maxTokenPriceLimit },
-    { setTimestampLimit, setInvestLPLimit, setMaxTokenPriceLimit },
-  ] = useUpdateRiskyProposal({
-    timestamp,
-    maxSizeLP,
-    maxInvestPrice,
-  })
+  const [timestampLimit, setTimestampLimit] = useState(
+    Number(_defaultState.timestamp.toString())
+  )
+  const [investLPLimit, setInvestLPLimit] = useState(
+    normalizeBigNumber(_defaultState.maxSizeLP, 18, 6)
+  )
+  const [maxTokenPriceLimit, setMaxTokenPriceLimit] = useState(
+    normalizeBigNumber(_defaultState.maxInvestPrice, 18, 2)
+  )
+  useEffect(() => {
+    if (isEqual(_defaultState, _prevDefaultState)) {
+      return
+    } else {
+      const { timestamp, maxSizeLP, maxInvestPrice } = _defaultState
+      setTimestampLimit(Number(timestamp.toString()))
+      setInvestLPLimit(normalizeBigNumber(maxSizeLP, 18, 6))
+      setMaxTokenPriceLimit(normalizeBigNumber(maxInvestPrice, 18, 2))
+    }
+  }, [_defaultState, _prevDefaultState])
 
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
-  const onCancel = (): void => {
+  const onCancel = () => {
     setVisible(false)
     setSubmiting(false)
     setErrors(errorsDefaultState)
@@ -151,22 +136,7 @@ const UpdateRiskyProposalForm: FC<Props> = ({
     }
 
     return false
-  }, [currentPrice, fullness, investLPLimit, maxTokenPriceLimit])
-
-  const isValuesChanged = (
-    _timestamp,
-    _investLPLimit,
-    _maxTokenPriceLimit
-  ): boolean => {
-    if (
-      _timestamp === timestamp &&
-      _investLPLimit.eq(maxSizeLP) &&
-      _maxTokenPriceLimit.eq(maxInvestPrice)
-    ) {
-      return false
-    }
-    return true
-  }
+  }, [t, currentPrice, fullness, investLPLimit, maxTokenPriceLimit])
 
   const handleSubmit = async (e?: MouseEvent<HTMLButtonElement>) => {
     if (e) e.preventDefault()
@@ -177,11 +147,11 @@ const UpdateRiskyProposalForm: FC<Props> = ({
     }
 
     if (
-      !isValuesChanged(
-        timestampLimit,
-        parseUnits(investLPLimit, 18),
-        parseUnits(maxTokenPriceLimit, 18)
-      )
+      isEqual(_defaultState, {
+        timestamp: timestampLimit,
+        maxSizeLP: parseUnits(investLPLimit, 18),
+        maxInvestPrice: parseUnits(maxTokenPriceLimit, 18),
+      })
     ) {
       addToast(
         {
@@ -233,11 +203,6 @@ const UpdateRiskyProposalForm: FC<Props> = ({
     setSubmiting(false)
   }
 
-  const handleCancel = (e?: MouseEvent<HTMLButtonElement>): void => {
-    if (e) e.preventDefault()
-    onCancel()
-  }
-
   return (
     <>
       <S.Container
@@ -253,7 +218,7 @@ const UpdateRiskyProposalForm: FC<Props> = ({
               color={"secondary"}
               size={"x-small"}
               iconRight={ICON_NAMES.close}
-              onClick={() => handleCancel()}
+              onClick={onCancel}
             />
           </Flex>
         </S.Header>
@@ -285,7 +250,7 @@ const UpdateRiskyProposalForm: FC<Props> = ({
               type="button"
               size="small"
               text={t("risky-proposal-edit-form.action-decline")}
-              onClick={() => handleCancel()}
+              onClick={onCancel}
             />
             <AppButton
               full
@@ -302,7 +267,7 @@ const UpdateRiskyProposalForm: FC<Props> = ({
           isOpen={isDateOpen}
           timestamp={expandTimestamp(timestampLimit)}
           toggle={() => setDateOpen(false)}
-          onChange={setTimestampLimit}
+          onChange={(t) => setTimestampLimit(t)}
           minDate={new Date()}
         />
       </S.Container>

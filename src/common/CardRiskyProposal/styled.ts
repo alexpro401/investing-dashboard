@@ -5,6 +5,7 @@ import { AppButton, Icon } from "common"
 import Tooltip from "components/Tooltip"
 import TokenRating from "components/TokenRating"
 import { rgba } from "polished"
+import { motion } from "framer-motion"
 
 export const Root = styled.div`
   position: relative;
@@ -205,6 +206,10 @@ export const CardRiskyProposalLabelContent = styled.div`
     transform: translateY(1.5px);
   }
 `
+export const CardRiskyProposalLabelIcon = styled.img`
+  width: 16px;
+  height: 16px;
+`
 
 export const CardRiskyProposalLabel = styled.div`
   font-weight: 500;
@@ -263,7 +268,7 @@ export const CardRiskyProposalValue = styled.div<{
    Card unique items styles
    ========================================================================== */
 
-/* 
+/*
    Proposal Token
    ========================================================================== */
 
@@ -326,7 +331,7 @@ export const CardRiskyProposalTokenInfoIcon = styled(Icon)`
   }
 `
 
-/* 
+/*
    Pool base token
    ========================================================================== */
 
@@ -346,7 +351,7 @@ export const CardRiskyProposalBaseTokenValue = styled(CardRiskyProposalValue)`
   color: #788ab4;
 `
 
-/* 
+/*
    Trader size
    ========================================================================== */
 
@@ -384,7 +389,7 @@ export const CardRiskyProposalTraderSizeText = styled.div`
   margin-bottom: 4px;
 `
 
-/* 
+/*
    Other helpers
    ========================================================================== */
 
@@ -457,5 +462,6 @@ export const CardRiskyProposalUpdateFormWrp = styled.div`
 
   ${respondTo("lg")} {
     top: 14px;
+    background: #141926;
   }
 `

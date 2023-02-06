@@ -4,86 +4,72 @@ import { isEmpty } from "lodash"
 import { RiskyProposalUtilityIds, WrappedRiskyProposalView } from "types"
 
 import {
-  useRiskyProposalsQuery,
+  useRiskyProposalsListQuery,
+  useRiskyProposalsListContractAddresses,
   useRiskyProposalsListData,
-  useRiskyProposalContractAddresses,
+  useRiskyProposalsListActiveInvestmentInfo,
+  useRiskyProposalsListTokenMarkPrice,
+  useTraderPoolInfoMulticall,
 } from "hooks"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 
-type Response = [Record<string, WrappedRiskyProposalView>, boolean, () => void]
+type Response = [Array<WrappedRiskyProposalView>, boolean, () => void]
 
 function useRiskyProposalsList(pools: string[], pause: boolean): Response {
-  /**
-   * 2) Get risky proposal id's and matched basic pool id's
-   *
-   * used for UI pagination through risky proposals from all basic pools user invested in
-   */
   const [riskyProposalsByPools, riskyProposalsByPoolsLoading, fetchMore] =
-    useRiskyProposalsQuery(pools, pause)
+    useRiskyProposalsListQuery(pools, pause)
 
-  /**
-   * 3) Get pools where risky proposals exist
-   *
-   * map risky proposals from step 2 to basic pool id's and remove duplicates
-   */
   const _poolsWithRiskyProposals = React.useMemo(
     () => [...new Set(riskyProposalsByPools?.map((p) => p.basicPool.id))],
     [riskyProposalsByPools]
   )
 
-  /**
-   * 4) Get proposal contract addresses for pools
-   *
-   * every basic pool has a proposal contract which can return proposals data
-   * we need to get contract addresses for basic pools using data from step 3
-   */
   const [proposalContractAddressList, proposalContractAddressListAnyLoading] =
-    useRiskyProposalContractAddresses(_poolsWithRiskyProposals)
+    useRiskyProposalsListContractAddresses(_poolsWithRiskyProposals)
 
-  /**
-   * 5) Create utility Map _proposalEntityId -> {proposalId, proposalEntityId, basicPoolAddress, proposalContractAddress}
-   * to easy access proposal data
-   */
-  const _proposalEntityIdMapping = React.useMemo<
-    Record<string, RiskyProposalUtilityIds>
-  >(() => {
-    const result = {}
+  const proposalUtilityIdList = React.useMemo<RiskyProposalUtilityIds[]>(() => {
     if (
       isEmpty(riskyProposalsByPools) ||
       isEmpty(proposalContractAddressList)
     ) {
-      return result
+      return []
     }
 
-    return riskyProposalsByPools?.reduce((acc, p) => {
+    return riskyProposalsByPools.map((p) => {
       const proposalEntityId = String(p.id).toLowerCase()
 
       const _proposalContractAddress = proposalContractAddressList.find((id) =>
         proposalEntityId.includes(id)
       )
 
-      if (_proposalContractAddress) {
-        const _proposalId = proposalEntityId.replace(
-          _proposalContractAddress,
-          ""
-        )
+      const _proposalId = proposalEntityId.replace(
+        _proposalContractAddress ?? "",
+        ""
+      )
 
-        acc[proposalEntityId] = {
-          proposalId: Number(_proposalId) - 1,
-          proposalEntityId: proposalEntityId,
-          basicPoolAddress: p.basicPool.id,
-          proposalContractAddress: _proposalContractAddress,
-        }
-      }
-
-      return acc
-    }, result)
+      return {
+        proposalId: Number(_proposalId) - 1,
+        proposalEntityId: proposalEntityId,
+        basicPoolAddress: p.basicPool.id,
+        proposalContractAddress: _proposalContractAddress,
+        proposalTokenAddress: p.token,
+      } as RiskyProposalUtilityIds
+    })
   }, [riskyProposalsByPools, proposalContractAddressList])
 
-  /**
-   * 6) Fetch proposals data
-   */
   const [proposalsData, proposalsDataLoading] = useRiskyProposalsListData(
-    _proposalEntityIdMapping
+    proposalUtilityIdList
+  )
+
+  const [activeInvestmentsInfo, activeInvestmentsInfoLoading] =
+    useRiskyProposalsListActiveInvestmentInfo(proposalUtilityIdList)
+
+  const [tokenMarkPrices, tokenMarkPricesLoading] =
+    useRiskyProposalsListTokenMarkPrice(proposalUtilityIdList)
+
+  const [poolInfos, poolInfoLoading] = useTraderPoolInfoMulticall<IPoolInfo>(
+    _poolsWithRiskyProposals,
+    "getPoolInfo"
   )
 
   const anyLoading = React.useMemo(
@@ -91,16 +77,53 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
       pause ||
       riskyProposalsByPoolsLoading ||
       proposalContractAddressListAnyLoading ||
-      proposalsDataLoading,
+      proposalsDataLoading ||
+      activeInvestmentsInfoLoading ||
+      tokenMarkPricesLoading ||
+      poolInfoLoading,
     [
       pause,
       riskyProposalsByPoolsLoading,
       proposalContractAddressListAnyLoading,
       proposalsDataLoading,
+      activeInvestmentsInfoLoading,
+      tokenMarkPricesLoading,
+      poolInfoLoading,
     ]
   )
 
-  return [proposalsData, anyLoading, fetchMore]
+  const [proposals, setProposals] = React.useState<WrappedRiskyProposalView[]>(
+    []
+  )
+
+  React.useEffect(() => {
+    if (anyLoading || isEmpty(proposalsData)) {
+      return
+    }
+
+    const _proposals = proposalUtilityIdList.map<WrappedRiskyProposalView>(
+      (utilityIds, index) => ({
+        id: utilityIds.proposalEntityId,
+        proposal: proposalsData[index],
+        userActiveInvestmentsInfo: activeInvestmentsInfo[index],
+        proposalTokenMarkPrice:
+          tokenMarkPrices[utilityIds.proposalTokenAddress],
+        utilityIds: utilityIds,
+        poolInfo: poolInfos[utilityIds.basicPoolAddress],
+      })
+    )
+
+    setProposals(_proposals)
+  }, [
+    anyLoading,
+    proposalUtilityIdList,
+    proposalsData,
+    activeInvestmentsInfo,
+    tokenMarkPrices,
+    poolInfos,
+  ])
+
+  return [proposals, anyLoading, fetchMore]
 }
 
 export default useRiskyProposalsList

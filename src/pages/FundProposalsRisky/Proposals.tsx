@@ -36,11 +36,8 @@ const FundProposalsRisky: React.FC<IProps> = ({ poolAddress }) => {
         )
       ) : (
         <>
-          {Object.values(proposals).map((proposal) => (
-            <CardRiskyProposal
-              key={proposal.utilityIds.proposalEntityId}
-              data={proposal}
-            />
+          {proposals.map((proposal) => (
+            <CardRiskyProposal key={proposal.id} payload={proposal} />
           ))}
           <LoadMore isLoading={loading} handleMore={fetchMore} />
         </>
