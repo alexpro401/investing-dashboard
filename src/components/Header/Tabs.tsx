@@ -31,11 +31,27 @@ const HeaderTabs = ({ tabs, ...rest }: IHeaderTabsProps) => {
   return tabs.length > 0 ? (
     <S.Tabs {...rest}>
       {tabs.map((tab: ITab) => {
+        if (tab.source) {
+          return (
+            <To
+              key={tab.title}
+              to={tab.source}
+              onClick={tab.onClick ?? undefined}
+            >
+              <S.Tab active={isActive(tab.source, tab.activeSource)}>
+                {tab.title}
+              </S.Tab>
+
+              {(tab?.amount || 0) > 0 && (
+                <S.TabAmount>{tab.amount}</S.TabAmount>
+              )}
+            </To>
+          )
+        }
+
         return (
-          <To key={tab.title} to={tab.source}>
-            <S.Tab active={isActive(tab.source, tab.activeSource)}>
-              {tab.title}
-            </S.Tab>
+          <To key={tab.title} as="div" onClick={tab.onClick ?? undefined}>
+            <S.Tab active={tab.isActive}>{tab.title}</S.Tab>
 
             {(tab?.amount || 0) > 0 && <S.TabAmount>{tab.amount}</S.TabAmount>}
           </To>

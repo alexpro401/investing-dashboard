@@ -7,7 +7,7 @@ import { parseIpfsString } from "utils/ipfs"
 
 interface UseGovPoolDescriptionUrlResponse {
   descriptionUrl: string | null
-  descriptionObject: IGovPoolDescription | null
+  descriptionObject: IGovPoolDescription | null | undefined
   loading: boolean
 }
 const useGovPoolDescriptionUrl = (
@@ -16,8 +16,9 @@ const useGovPoolDescriptionUrl = (
   const govPoolContract = useGovPoolContract(govPoolAddress)
 
   const [descriptionUrl, setDescriptionUrl] = useState<string | null>(null)
-  const [descriptionObject, setDescriptionObject] =
-    useState<IGovPoolDescription | null>(null)
+  const [descriptionObject, setDescriptionObject] = useState<
+    IGovPoolDescription | null | undefined
+  >(undefined)
   const [loading, setLoading] = useState<boolean>(true)
 
   const setupDescriptionUrl = useCallback(async () => {
@@ -40,7 +41,10 @@ const useGovPoolDescriptionUrl = (
   }, [setupDescriptionUrl])
 
   const getIpfsDataFromDescriptionUrl = useCallback(async () => {
-    if (!descriptionUrl || descriptionUrl === "") return
+    if (!descriptionUrl || descriptionUrl === "") {
+      setDescriptionObject(null)
+      return
+    }
 
     setLoading(true)
 
@@ -50,7 +54,7 @@ const useGovPoolDescriptionUrl = (
       })
 
       const _govPoolDescription = await ipfsEntity.load()
-      setDescriptionObject(_govPoolDescription)
+      setDescriptionObject(_govPoolDescription || null)
     } catch (error) {
       console.log(error)
     } finally {

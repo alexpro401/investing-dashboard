@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useQuery } from "urql"
 import { BigNumber } from "@ethersproject/bignumber"
+import { isNumber } from "lodash"
 
 import { useActiveWeb3React } from "hooks"
 import {
@@ -28,6 +29,8 @@ interface ITotalDelegationsQuery {
 const useDelegations = ({ startLoading }: IUseDelegationsProps) => {
   const { daoAddress } = useParams<"daoAddress">()
   const { account } = useActiveWeb3React()
+
+  const [loaded, setLoaded] = useState<boolean>(false)
   const [totalDelegatedTokensVotingPower, setTotalDelegatedTokensVotingPower] =
     useState<BigNumber | undefined>(undefined)
   const [totalNftsListDelegated, setTotalNftsListDelegated] = useState<
@@ -36,7 +39,7 @@ const useDelegations = ({ startLoading }: IUseDelegationsProps) => {
   const { govUserKeeperAddress } = useGovPoolHelperContracts(daoAddress)
   const [totalDelegatedNftVotingPower, , totalDelegatedNftVotingPowerLoading] =
     useGovPoolNftVotingPower(
-      startLoading ? daoAddress : undefined,
+      startLoading && !loaded ? daoAddress : undefined,
       totalNftsListDelegated
     )
   const myDelegations = useGovPoolDelegations({
@@ -69,8 +72,12 @@ const useDelegations = ({ startLoading }: IUseDelegationsProps) => {
       variables: useMemo(() => ({ address: daoAddress }), [daoAddress]),
       context: graphClientDaoPools,
       pause: useMemo(
-        () => !startLoading || !isAddress(daoAddress) || !isAddress(account),
-        [daoAddress, account, startLoading]
+        () =>
+          !startLoading ||
+          loaded ||
+          !isAddress(daoAddress) ||
+          !isAddress(account),
+        [daoAddress, account, startLoading, loaded]
       ),
     })
 
@@ -78,7 +85,8 @@ const useDelegations = ({ startLoading }: IUseDelegationsProps) => {
     if (
       !totalDelegationsFetching &&
       totalDelegationsData?.daoPool &&
-      startLoading
+      startLoading &&
+      !loaded
     ) {
       setTotalDelegatedTokensVotingPower(
         BigNumber.from(totalDelegationsData.daoPool.totalCurrentTokenDelegated)
@@ -87,14 +95,41 @@ const useDelegations = ({ startLoading }: IUseDelegationsProps) => {
         totalDelegationsData.daoPool.totalCurrentNFTDelegated
       )
     }
-  }, [totalDelegationsData, totalDelegationsFetching, startLoading])
+  }, [totalDelegationsData, totalDelegationsFetching, startLoading, loaded])
+
+  useEffect(() => {
+    if (
+      !totalDelegationsFetching &&
+      !totalDelegatedNftVotingPowerLoading &&
+      !votingPowerDataLoading &&
+      totalDelegatedTokensVotingPower &&
+      totalDelegatedNftVotingPower &&
+      isNumber(totalTokensDelegatee) &&
+      isNumber(totalNftDelegatee) &&
+      myDelegations &&
+      votingPowerData
+    ) {
+      setLoaded(true)
+    }
+  }, [
+    totalDelegationsFetching,
+    totalDelegatedNftVotingPowerLoading,
+    votingPowerDataLoading,
+    totalDelegatedTokensVotingPower,
+    totalDelegatedNftVotingPower,
+    totalTokensDelegatee,
+    totalNftDelegatee,
+    myDelegations,
+    votingPowerData,
+  ])
 
   return {
-    loading:
-      totalDelegationsFetching ||
-      totalDelegatedNftVotingPowerLoading ||
-      votingPowerDataLoading ||
-      false,
+    loading: loaded
+      ? false
+      : totalDelegationsFetching ||
+        totalDelegatedNftVotingPowerLoading ||
+        votingPowerDataLoading ||
+        false,
     totalDelegatedTokensVotingPower,
     totalDelegatedNftVotingPower,
     totalTokensDelegatee,

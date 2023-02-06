@@ -7,9 +7,8 @@ import useRiskyProposals from "hooks/useRiskyProposals"
 import { useTraderPoolRiskyProposalContract } from "contracts"
 
 import { Flex } from "theme"
-import { NoDataMessage } from "common"
+import { NoDataMessage, CardRiskyProposal } from "common"
 import LoadMore from "components/LoadMore"
-import RiskyProposalCard from "components/cards/proposal/Risky"
 
 interface IProps {
   poolAddress?: string
@@ -48,7 +47,7 @@ const FundProposalsRisky: FC<IProps> = ({ poolAddress }) => {
   return (
     <>
       {data.map((proposal, index) => (
-        <RiskyProposalCard
+        <CardRiskyProposal
           key={index}
           proposalId={index}
           proposal={proposal}

@@ -5,16 +5,17 @@ import { v4 as uuidv4 } from "uuid"
 
 import { Flex } from "theme"
 import { Card, Icon } from "common"
-import TabFallback from "./TabFallback"
+import TabFallback from "../TabFallback"
 
 import ExternalLink from "components/ExternalLink"
 
 import extractRootDomain from "utils/extractRootDomain"
 import { DATE_FORMAT } from "consts/time"
 import { ICON_NAMES } from "consts/icon-names"
+import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommonContext/GovPoolProfileCommonContext"
 import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsContext/GovPoolProfileTabsContext"
 
-import { Divider, TextLabel, TextValue } from "../styled"
+import { Divider, TextLabel, TextValue } from "../../styled"
 
 interface IDaoProfileTabAboutProps {
   creationTime: number | undefined
@@ -23,15 +24,12 @@ interface IDaoProfileTabAboutProps {
 const DaoProfileTabAbout: React.FC<IDaoProfileTabAboutProps> = ({
   creationTime,
 }) => {
-  const { daoDescription, aboutDaoLoading } = useContext(
-    GovPoolProfileTabsContext
-  )
+  const { descriptionObject } = useContext(GovPoolProfileCommonContext)
+  const { aboutDaoLoading } = useContext(GovPoolProfileTabsContext)
 
-  if (aboutDaoLoading) {
-    return <TabFallback />
-  }
+  if (descriptionObject === undefined || aboutDaoLoading) return <TabFallback />
 
-  if (!daoDescription) {
+  if (descriptionObject === null) {
     return (
       <Card>
         <TextValue lh="19.5px">
@@ -46,7 +44,7 @@ const DaoProfileTabAbout: React.FC<IDaoProfileTabAboutProps> = ({
     )
   }
 
-  const { description, documents, socialLinks, websiteUrl } = daoDescription
+  const { description, documents, socialLinks, websiteUrl } = descriptionObject
 
   return (
     <Card>

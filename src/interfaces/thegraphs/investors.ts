@@ -93,3 +93,10 @@ export interface InvestorVest {
   volumeBTC: BigNumberish
   volumeNative: BigNumberish
 }
+
+export interface InvestorRiskyProposal {
+  id: string
+  basicPool: {
+    id: string
+  }
+}
