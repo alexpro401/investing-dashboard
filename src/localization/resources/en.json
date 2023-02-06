@@ -2,7 +2,9 @@
   "validations": {
     "field-error_required": "Please fill out this field",
     "field-error_minLength": "This field must contain minimum {{minLength}} symbols",
-    "field-error_maxLength": "This field must contain maximum {{maxLength}} symbols"
+    "field-error_maxLength": "This field must contain maximum {{maxLength}} symbols",
+    "field-error_maxSizeLessThanFullness": "Max size can't be less than fullness",
+    "field-error_tokenPriceThanCurrentPrice": "Max token price can't be less than current price"
   },
   "errors": {
     "default": "Oops... Something went wrong",
@@ -35,7 +37,8 @@
     "default-message-error": "Something went wrong",
     "default-message-warning": "Something you are doing is not recommended",
     "default-message-info": "Something is happening. Just want you to know that",
-    "default-message-default": "Just a message"
+    "default-message-default": "Just a message",
+    "without-changes": "Nothing has been changed. Please change something before submitting."
   },
   "filters": {
     "pool-type": {
@@ -102,13 +105,6 @@
     "field-label-invest-limit": "LPs available for staking",
     "field-label-max-invest-price": "Maximum invest price",
     "action-submit": "Done",
-    "action-decline": "Cancel",
-    "validations": {
-      "max-size-less-than-fullness": "Max size can't be less than fullness",
-      "max-size-less-than-current-price": "Max token price can't be less than current price"
-    },
-    "notifications": {
-      "without-changes": "Nothing has been changed. Please change something before submitting."
-    }
+    "action-decline": "Cancel"
   }
 }

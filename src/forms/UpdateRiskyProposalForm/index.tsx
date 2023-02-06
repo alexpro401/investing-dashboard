@@ -135,12 +135,12 @@ const UpdateRiskyProposalForm: FC<Props> = ({
 
     if (parseEther(investLPLimit).lt(fullness)) {
       errors.investLPLimit = t(
-        "risky-proposal-edit-form.validations.max-size-less-than-fullness"
+        "validations.field-error_maxSizeLessThanFullness"
       )
     }
     if (parseEther(maxTokenPriceLimit).lt(currentPrice)) {
       errors.maxTokenPriceLimit = t(
-        "risky-proposal-edit-form.validations.max-size-less-than-current-price"
+        "validations.field-error_tokenPriceThanCurrentPrice"
       )
     }
 
@@ -186,7 +186,7 @@ const UpdateRiskyProposalForm: FC<Props> = ({
       addToast(
         {
           type: "warning",
-          content: t("risky-proposal-edit-form.notifications.without-changes"),
+          content: t("notifications.without-changes"),
         },
         "revert-change-risky-proposal",
         2000
