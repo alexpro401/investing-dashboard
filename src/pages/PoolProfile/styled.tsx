@@ -230,10 +230,13 @@ export const SpecificStatistics = styled.div`
 `
 
 export const SpecificStatisticsTitle = styled.div`
+  display: flex;
+  align-items: center;
   font-weight: 700;
   font-size: 16px;
   line-height: 19px;
   letter-spacing: 0.01em;
+  min-height: 40px;
 
   /* Main/blue */
 
