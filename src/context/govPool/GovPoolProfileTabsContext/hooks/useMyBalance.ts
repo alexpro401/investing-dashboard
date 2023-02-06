@@ -3,15 +3,14 @@ import { useParams } from "react-router-dom"
 import { useQuery } from "urql"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { useActiveWeb3React } from "hooks"
 import {
+  useActiveWeb3React,
   useGovPoolPendingRewards,
   useGovPoolWithdrawableAssets,
-} from "hooks/dao"
-import {
   useERC20GovBalance,
   useERC721GovBalance,
-} from "hooks/dao/useGovPoolMemberBalance"
+} from "hooks"
+
 import {
   GovMemberProposalsHistoryCountQuery,
   GovVoterInPoolQuery,
@@ -27,6 +26,7 @@ const useMyBalance = ({ startLoading }: IUseMyBalanceProps) => {
   const { daoAddress } = useParams<"daoAddress">()
   const { account } = useActiveWeb3React()
   const { pendingRewards } = useGovPoolPendingRewards(daoAddress)
+  const [loaded, setLoaded] = useState<boolean>(false)
   const [proposalsCount, setProposalsCount] = useState<number | null>(null)
   const [receivedRewardsUSD, setRecievedRewardsUSD] = useState<string | null>(
     null
@@ -37,12 +37,16 @@ const useMyBalance = ({ startLoading }: IUseMyBalanceProps) => {
   const [internalLoading, setInternalLoading] = useState<boolean>(true)
 
   const withdrawableAssets = useGovPoolWithdrawableAssets({
-    daoPoolAddress: startLoading ? daoAddress : "",
+    daoPoolAddress: startLoading && !loaded ? daoAddress : "",
     delegator: account,
   })
 
-  const erc20Balances = useERC20GovBalance(startLoading ? daoAddress : "")
-  const erc721Balances = useERC721GovBalance(startLoading ? daoAddress : "")
+  const erc20Balances = useERC20GovBalance(
+    startLoading && !loaded ? daoAddress : ""
+  )
+  const erc721Balances = useERC721GovBalance(
+    startLoading && !loaded ? daoAddress : ""
+  )
 
   const handleSetProposals = useCallback(
     async (proposalsData: { proposalId: string }[]) => {
@@ -78,8 +82,12 @@ const useMyBalance = ({ startLoading }: IUseMyBalanceProps) => {
     ),
     context: graphClientDaoPools,
     pause: useMemo(
-      () => !startLoading || !isAddress(daoAddress) || !isAddress(account),
-      [daoAddress, account, startLoading]
+      () =>
+        !startLoading ||
+        loaded ||
+        !isAddress(daoAddress) ||
+        !isAddress(account),
+      [daoAddress, account, startLoading, loaded]
     ),
   })
 
@@ -91,8 +99,12 @@ const useMyBalance = ({ startLoading }: IUseMyBalanceProps) => {
     ),
     context: graphClientDaoPools,
     pause: useMemo(
-      () => !startLoading || !isAddress(daoAddress) || !isAddress(account),
-      [daoAddress, account, startLoading]
+      () =>
+        !startLoading ||
+        loaded ||
+        !isAddress(daoAddress) ||
+        !isAddress(account),
+      [daoAddress, account, startLoading, loaded]
     ),
   })
 
@@ -109,6 +121,28 @@ const useMyBalance = ({ startLoading }: IUseMyBalanceProps) => {
     }
   }, [voterData])
 
+  useEffect(() => {
+    if (
+      !proposalsFetching &&
+      !voterFetching &&
+      !internalLoading &&
+      proposalsCount !== null &&
+      receivedRewardsUSD !== null &&
+      unclaimedProposalsCount !== null &&
+      withdrawableAssets !== undefined
+    ) {
+      setLoaded(true)
+    }
+  }, [
+    proposalsFetching,
+    voterFetching,
+    internalLoading,
+    proposalsCount,
+    receivedRewardsUSD,
+    unclaimedProposalsCount,
+    withdrawableAssets,
+  ])
+
   return {
     proposalsCount,
     receivedRewardsUSD,
@@ -116,7 +150,9 @@ const useMyBalance = ({ startLoading }: IUseMyBalanceProps) => {
     withdrawableAssets,
     erc20Balances,
     erc721Balances,
-    loading: proposalsFetching || voterFetching || internalLoading || false,
+    loading: loaded
+      ? false
+      : proposalsFetching || voterFetching || internalLoading || false,
   }
 }
 

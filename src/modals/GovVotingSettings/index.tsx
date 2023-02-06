@@ -18,7 +18,7 @@ const GovVotingSettings: React.FC<IGovVotingSettings> = ({
   ...rest
 }) => {
   return (
-    <Modal isOpen={isOpen} title="Current voting settings" toggle={toggle}>
+    <Modal isOpen={isOpen} title="Current voting settings" onClose={toggle}>
       <S.VotingSettings {...rest} />
     </Modal>
   )

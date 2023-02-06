@@ -13,9 +13,9 @@ interface Props {}
 const TermsAgreement: React.FC<Props> = () => {
   const [{ showAgreement }, { setShowAgreement, onAgree }] = useUserAgreement()
 
-  const toggleView = useCallback(() => {
-    setShowAgreement(!showAgreement)
-  }, [setShowAgreement, showAgreement])
+  const handleClose = useCallback(() => {
+    setShowAgreement(false)
+  }, [setShowAgreement])
 
   const [agree, setAgree] = useState(false)
 
@@ -40,7 +40,7 @@ const TermsAgreement: React.FC<Props> = () => {
     <Modal
       title="Terms & Conditions agreement"
       isOpen={showAgreement}
-      toggle={toggleView}
+      onClose={handleClose}
     >
       <S.Text>
         <ul>

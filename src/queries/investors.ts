@@ -27,12 +27,17 @@ export const InvestorPositionsQuery = `
         type
         token
       }
-      vest(first: 100) {
-        ${INVESTOR_POSITION_VEST}
-      }
     }
   }
 `
+
+// Investor vests by position id
+export const InvestorPositionVestsQuery = `
+query ($positionId: String!, $offset: Int!, $limit: Int!) {
+  vests(skip: $offset, first: $limit, where: { investorPoolPosition: $positionId }) {
+    ${INVESTOR_POSITION_VEST}
+  }
+}`
 
 // Investor proposals
 export const InvestorPoolsInvestedForQuery = `

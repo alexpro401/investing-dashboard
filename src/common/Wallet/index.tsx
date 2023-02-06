@@ -58,7 +58,7 @@ export default function Wallet() {
         <S.TogglerBtnIcon name={ICON_NAMES.dexeTokenIcon} />
         <MediumText weight={600} size="14px">
           {!insuranceAmount.isZero()
-            ? formatFiatNumber(formatEther(insuranceAmount), 0)
+            ? formatFiatNumber(formatEther(insuranceAmount), 2)
             : "Insurance"}
         </MediumText>
         <S.TogglerBtnIconIndicator

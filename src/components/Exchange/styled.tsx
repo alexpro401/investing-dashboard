@@ -10,7 +10,7 @@ import TokenIcon from "components/TokenIcon"
 import { DividendToken } from "interfaces"
 import { AppButton } from "common"
 
-export const InputContainer = styled(GradientBorder)<{ height?: string }>`
+export const InputContainer = styled(Flex)<{ height?: string }>`
   flex-direction: column;
   justify-content: space-between;
   padding: 16px 16px 16px 16px;
@@ -18,22 +18,12 @@ export const InputContainer = styled(GradientBorder)<{ height?: string }>`
   width: 100%;
   height: ${(props) => (props.height ? props.height : "100px")};
 
-  &:after {
-    background: #141926;
-  }
+  background: #0e1320;
+  border: 1px solid rgba(40, 51, 74, 0.5);
 `
 
-export const RiskyContainer = styled(GradientBorder)`
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 16px 16px 16px 16px;
-  border-radius: 20px;
-  width: 100%;
+export const RiskyContainer = styled(InputContainer)`
   height: fit-content;
-
-  &:after {
-    background: #141926;
-  }
 `
 
 export const InputTop = styled(Flex)`
@@ -47,12 +37,11 @@ export const InputBottom = styled(Flex)`
 
 export const Price = styled(Text)`
   font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 13px;
-  letter-spacing: 0.3px;
-  color: #788ab4;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14px;
+  text-align: right;
+  color: #6781bd;
   user-select: none;
 `
 export const Balance = styled(Flex)`
@@ -64,14 +53,15 @@ export const Balance = styled(Flex)`
 
 export const Tokens = styled.span`
   font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 13px;
   text-align: right;
-  letter-spacing: 0.3px;
-  color: #788ab4;
   margin-right: 3px;
+
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14px;
+  text-align: right;
+
+  color: #6781bd;
 `
 
 export const Symbol = styled.span`
@@ -88,20 +78,19 @@ export const Symbol = styled.span`
 
 export const Max = styled(Text)`
   font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 500;
-  font-size: 13px;
-  line-height: 10px;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 110%;
   text-align: right;
-  letter-spacing: 0.3px;
-  color: #2680eb;
+  color: #2669eb;
 `
 
 export const Input = styled.input`
   font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
   font-weight: 600;
-  font-size: 22px;
+  font-size: 20px;
+  line-height: 24px;
+  letter-spacing: 0.01em;
   color: #e4f2ff;
   outline: none;
   background: transparent;
@@ -116,10 +105,10 @@ export const Input = styled.input`
   }
 
   &:disabled {
-    color: #788ab4 !important;
+    color: #b1c7fc !important;
 
     &::placeholder {
-      color: #788ab4 !important;
+      color: #b1c7fc !important;
     }
   }
 `
@@ -143,27 +132,24 @@ export const InputS = styled.input`
   }
 
   &:disabled {
-    color: #788ab4 !important;
+    color: #b1c7fc !important;
 
     &::placeholder {
-      color: #788ab4 !important;
+      color: #b1c7fc !important;
     }
   }
 `
 
-export const ActiveSymbol = styled(GradientBorder)`
+export const ActiveSymbol = styled(Flex)<{ background?: string }>`
   cursor: pointer;
   user-select: none;
   display: flex;
   align-items: center;
   padding: 5px 9px 5px 5px;
   min-height: 37px;
-  box-shadow: inset -44px 7px 11px rgba(0, 0, 0, 0.03);
   border-radius: 19px;
 
-  &:after {
-    background: #121928;
-  }
+  background: ${(props) => props.background || "rgba(40, 51, 74, 0.5)"};
 `
 
 export const SymbolLabel = styled.span`
@@ -244,10 +230,8 @@ export const PriceText = styled(Text)`
 // DIVIDER
 
 export const DividerContainer = styled(Flex)`
-  margin-top: 2px;
-  margin-bottom: 2px;
   user-select: none;
-  height: 24px;
+  height: 18px;
   position: relative;
 `
 
@@ -258,15 +242,13 @@ export const PercentButton = styled.div<{ active?: boolean }>`
   cursor: pointer;
 
   font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 14px;
-  letter-spacing: 0.5px;
-
-  color: ${(props) => (props.active ? "#E4F2FF" : "#788ab4")};
 
   border-radius: 3px;
+
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14px;
+  color: #6781bd;
 
   &:first-child {
     border-top-left-radius: 0;
@@ -307,14 +289,19 @@ export const Card = styled(BasicCard)`
   padding: 20px 16px;
   position: relative;
   border-radius: 20px;
-  background: #181e2c;
-  max-width: 450px;
+  background: #141926;
+  max-width: 420px;
   margin: auto;
+  gap: 16px;
 `
 
 export const CardHeader = styled(Flex)`
   width: 100%;
-  padding: 4px 0 24px;
+`
+
+export const CardForm = styled(Flex)`
+  flex-direction: column;
+  width: 100%;
 `
 
 export const Title = styled.div<{ active?: boolean }>`
@@ -323,7 +310,7 @@ export const Title = styled.div<{ active?: boolean }>`
   font-weight: 600;
   font-size: 16px;
   line-height: 16px;
-  color: ${(props) => (props.active ? "#e4f2ff" : "#788AB4")};
+  color: ${(props) => (props.active ? "#e4f2ff" : "#B1C7FC")};
 
   &:nth-child(2) {
     margin-left: 24px;
@@ -361,16 +348,16 @@ export const InfoGrey = styled.div`
   font-weight: 400;
   font-size: 13px;
   line-height: 15px;
-  color: #788ab4;
+  color: #b1c7fc;
 `
 
 export const InfoWhite = styled.div`
   font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 500;
-  font-size: 13px;
-  line-height: 15px;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
   text-align: right;
+  letter-spacing: 0.01em;
   color: #e4f2ff;
 `
 
@@ -465,7 +452,7 @@ export const TokenText = styled.div`
   font-weight: 400;
   font-size: 13px;
   line-height: 100%;
-  color: #788ab4;
+  color: #b1c7fc;
 `
 
 // DIVIDENDS INPUT
@@ -481,13 +468,12 @@ export const AddButton = styled.button`
   line-height: 19px;
   text-align: center;
   color: #2669eb;
+  cursor: pointer;
 `
 
 export const ButtonDivider = styled.div`
   width: fill-available;
   height: 1px;
-  margin-top: 16px;
-  margin-bottom: 16px;
 
   background: #1c2437;
   border-radius: 16px;

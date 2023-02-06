@@ -56,6 +56,23 @@ const INVALID_RESULT: CallResult = {
   data: undefined,
 }
 
+const BLOCK_MINING_TIME_BY_CHAINID = {
+  0: 10, // fallback
+  1: 12,
+  56: 6,
+  97: 6,
+}
+
+export function getRefreshIntervalByChain(
+  chainId: number,
+  minutes: number
+): number {
+  if (!chainId || !minutes) return BLOCK_MINING_TIME_BY_CHAINID[0]
+
+  const intervalSeconds = minutes * 60
+  return Math.round(intervalSeconds / BLOCK_MINING_TIME_BY_CHAINID[chainId])
+}
+
 // use this options object
 export const NEVER_RELOAD: ListenerOptions = {
   blocksPerFetch: Infinity,
@@ -264,6 +281,62 @@ export function useMultipleContractSingleData(
         : [],
     [addresses, callData, fragment]
   )
+
+  const results = useCallsData(calls, options)
+
+  const { chainId } = useWeb3React()
+
+  const { cache } = useSWRConfig()
+
+  return useMemo(() => {
+    const currentBlockNumber = cache.get(
+      unstable_serialize(["blockNumber", chainId])
+    )
+    return results.map((result) =>
+      toCallState(result, contractInterface, fragment, currentBlockNumber)
+    )
+  }, [cache, chainId, results, contractInterface, fragment])
+}
+
+export function useMultipleContractMultipleData(
+  addresses: (string | undefined)[],
+  contractInterface: Interface,
+  methodName: string,
+  callInputs: OptionalMethodInputs[],
+  options?: ListenerOptions
+): CallState[] {
+  const fragment = useMemo(
+    () => contractInterface.getFunction(methodName),
+    [contractInterface, methodName]
+  )
+
+  const callData = useMemo(() => {
+    if (!fragment && !isValidMethodArgs(callInputs) && !addresses) {
+      return undefined
+    }
+    return addresses.reduce((acc, address, index) => {
+      if (!address) return acc
+      return {
+        ...acc,
+        [address]: contractInterface.encodeFunctionData(
+          fragment,
+          callInputs?.[index] || []
+        ),
+      }
+    }, {})
+  }, [addresses, callInputs, contractInterface, fragment])
+
+  const calls = useMemo<(Call | undefined)[]>(() => {
+    if (!fragment || !addresses || !callData) return []
+    return addresses.map((address) => {
+      return address && callData[address]
+        ? {
+            address,
+            callData: callData[address],
+          }
+        : undefined
+    })
+  }, [addresses, callData, fragment])
 
   const results = useCallsData(calls, options)
 

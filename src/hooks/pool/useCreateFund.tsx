@@ -326,7 +326,7 @@ const useCreateFund = ({ presettedFundType }: IUseCreateFund) => {
       <Modal
         isOpen={successModalOpened}
         isShowCloseBtn={false}
-        toggle={() => setSuccessModalOpened(!successModalOpened)}
+        onClose={() => setSuccessModalOpened(!successModalOpened)}
         title=""
         maxWidth="450px"
       >

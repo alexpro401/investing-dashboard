@@ -99,7 +99,7 @@ const RequestDividend: FC<Props> = ({ isOpen, onClose, params }) => {
   }, [claims])
 
   return (
-    <Modal isOpen={isOpen} toggle={onClose} title="Request a dividend">
+    <Modal isOpen={isOpen} onClose={onClose} title="Request a dividend">
       <Tile
         poolAddress={params.poolAddress}
         proposalId={params.proposalId}

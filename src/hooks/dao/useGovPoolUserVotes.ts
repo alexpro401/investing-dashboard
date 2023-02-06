@@ -1,4 +1,3 @@
-import { BigNumber } from "@ethersproject/bignumber"
 import { useGovPoolContract } from "contracts"
 import { useMemo } from "react"
 import {
@@ -9,7 +8,7 @@ import {
 interface Params {
   proposalId: string
   voter: string
-  isMicroPoool?: boolean
+  isMicroPool?: boolean
 }
 
 interface Props {
@@ -23,7 +22,7 @@ const useGovPoolUserVotes = ({ daoPoolAddress, params }: Props) => {
   const validatedParams = useMemo(
     () =>
       params.map((p) => {
-        return [p.proposalId, p.voter, p.isMicroPoool || false]
+        return [p.proposalId, p.voter, p.isMicroPool || false]
       }),
     [params]
   ) as unknown as OptionalMethodInputs[]

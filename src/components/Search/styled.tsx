@@ -1,13 +1,16 @@
 import styled from "styled-components/macro"
-import { Flex, GradientBorderSearch } from "theme"
+import { Flex } from "theme"
 
-export const Container = styled(GradientBorderSearch)<{ height: string }>`
+export const Container = styled(Flex)<{ height: string; focused?: boolean }>`
   border-radius: 32px;
   box-sizing: border-box;
   padding: 0 10px 0 14px;
   width: fill-available;
-  height: ${(props) => props.height || "30px"};
+  height: ${(props) => props.height || "36px"};
   align-items: center;
+
+  background: #192031;
+  border-radius: 16px;
 `
 
 export const Input = styled.input`

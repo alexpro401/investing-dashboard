@@ -4,28 +4,16 @@ import { useParams, useNavigate, useLocation } from "react-router-dom"
 import { Center, Flex } from "theme"
 import SwapPrice from "components/SwapPrice"
 import Header from "components/Header/Layout"
-import IconButton from "components/IconButton"
 import ExchangeDivider from "components/Exchange/Divider"
-import CircularProgress from "components/CircularProgress"
 import { AppButton } from "common"
 import ExchangeInput from "components/Exchange/ExchangeInput"
-import TransactionSlippage from "components/TransactionSlippage"
-
-import close from "assets/icons/close-big.svg"
-import settings from "assets/icons/settings.svg"
 
 import { normalizeBigNumber } from "utils"
 
 import {
   Container,
-  Card,
-  CardHeader,
-  Title,
-  IconsGroup,
-  InfoCard,
   InfoRow,
   InfoGrey,
-  InfoDropdown,
   InfoWhite,
 } from "components/Exchange/styled"
 
@@ -37,6 +25,8 @@ import useSwapRiskyProposal, {
 import { useUserAgreement } from "state/user/hooks"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { GuardSpinner } from "react-spinners-kit"
+import { Exchange } from "components/Exchange"
+import { Info } from "components/InfoAccordion"
 
 const SwapRiskyProposal = () => {
   const params: UseSwapRiskyParams = useParams()
@@ -53,8 +43,6 @@ const SwapRiskyProposal = () => {
       oneUSDCost,
       slippage,
       setSlippage,
-      isSlippageOpen,
-      setSlippageOpen,
       handleFromChange,
       handleToChange,
       handlePercentageChange,
@@ -130,160 +118,65 @@ const SwapRiskyProposal = () => {
   ])
 
   const yourShare = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoGrey>Your share:</InfoGrey>
-        <Flex onClick={handleInvestRedirect} gap="4">
-          <AddButton>+ Add</AddButton>
-          <InfoWhite>{normalizeBigNumber(lpBalance)}</InfoWhite>
-          <InfoGrey>{info.pool.symbol}</InfoGrey>
-        </Flex>
-      </InfoRow>
-    )
-  }, [handleInvestRedirect, info, lpBalance])
+    return `${normalizeBigNumber(lpBalance)} ${info.pool.symbol}`
+  }, [info, lpBalance])
 
   const baseInPosition = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoGrey>{info.baseToken.symbol} in position</InfoGrey>
-        <Flex gap="4">
-          <InfoWhite>{info.lpInPosition}</InfoWhite>
-          <InfoGrey>{info.pool.symbol}</InfoGrey>
-        </Flex>
-      </InfoRow>
-    )
+    return `${info.lpInPosition} ${info.pool.symbol}`
   }, [info])
 
   const lpComplete = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoGrey>LP complete</InfoGrey>
-        <Flex gap="4">
-          <InfoWhite>{info.lpComplete}</InfoWhite>
-          <InfoGrey>{info.pool.symbol}</InfoGrey>
-        </Flex>
-      </InfoRow>
-    )
+    return `${info.lpComplete} ${info.pool.symbol}`
   }, [info])
 
   const lpLimit = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoGrey>LP max size</InfoGrey>
-        <Flex gap="4">
-          <InfoWhite>{info.maxLPLimit}</InfoWhite>
-          <InfoGrey>{info.pool.symbol}</InfoGrey>
-        </Flex>
-      </InfoRow>
-    )
+    return `${info.maxLPLimit} ${info.pool.symbol}`
   }, [info])
 
   const expirationDate = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoGrey>Expiration date:</InfoGrey>
-        <Flex gap="4">
-          <InfoWhite>{info.expirationDate.amount}</InfoWhite>
-          <InfoGrey>{info.expirationDate.label}</InfoGrey>
-        </Flex>
-      </InfoRow>
-    )
+    return `${info.expirationDate.amount} ${info.expirationDate.label}`
   }, [info])
 
   const maxBuyingPrice = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoGrey>Maximum buying price</InfoGrey>
-        <Flex gap="4">
-          <InfoWhite>{info.maxPrice}</InfoWhite>
-          <InfoGrey>
-            {info.positionToken.symbol}/{info.baseToken.symbol}
-          </InfoGrey>
-        </Flex>
-      </InfoRow>
-    )
+    return `${info.maxPrice} ${info.positionToken.symbol}/${info.baseToken.symbol}`
   }, [info])
 
   const positionPNLContent = useMemo(() => {
-    return (
-      <>
-        <InfoRow>
-          <InfoGrey>in USD</InfoGrey>
-          <InfoGrey>
-            {normalizeBigNumber(info.positionPnlUSD)} USD (
-            {normalizeBigNumber(info.positionPnl)}%){" "}
-          </InfoGrey>
-        </InfoRow>
-        <InfoRow>
-          <InfoGrey>Trader P&L</InfoGrey>
-          <Flex gap="4">
-            <InfoWhite>
-              {normalizeBigNumber(info.traderPnlLP)} {info.pool.symbol}{" "}
-            </InfoWhite>
-            <InfoGrey>({normalizeBigNumber(info.positionPnl)}%)</InfoGrey>
-          </Flex>
-        </InfoRow>
-        <InfoRow>
-          <InfoGrey>in USD</InfoGrey>
-          <InfoGrey>
-            {normalizeBigNumber(info.traderPnlUSD)} USD (
-            {normalizeBigNumber(info.positionPnl)}%){" "}
-          </InfoGrey>
-        </InfoRow>
-      </>
-    )
+    return [
+      <InfoRow key="PNL in USD">
+        <InfoGrey>in USD</InfoGrey>
+        <InfoGrey>
+          {normalizeBigNumber(info.positionPnlUSD)} USD (
+          {normalizeBigNumber(info.positionPnl)}%){" "}
+        </InfoGrey>
+      </InfoRow>,
+      <InfoRow key="Trader PNL">
+        <InfoGrey>Trader P&L</InfoGrey>
+        <Flex gap="4">
+          <InfoWhite>
+            {normalizeBigNumber(info.traderPnlLP)} {info.pool.symbol}{" "}
+          </InfoWhite>
+          <InfoGrey>({normalizeBigNumber(info.positionPnl)}%)</InfoGrey>
+        </Flex>
+      </InfoRow>,
+      <InfoRow key="Trader PNL in USD">
+        <InfoGrey>in USD</InfoGrey>
+        <InfoGrey>
+          {normalizeBigNumber(info.traderPnlUSD)} USD (
+          {normalizeBigNumber(info.positionPnl)}%){" "}
+        </InfoGrey>
+      </InfoRow>,
+    ]
   }, [info])
 
-  const positionPNL = useMemo(() => {
-    return (
-      <InfoDropdown
-        left={<InfoGrey>Position P&L</InfoGrey>}
-        right={
-          <Flex gap="4">
-            <InfoWhite>
-              {normalizeBigNumber(info.positionPnlLP)} {info.pool.symbol}
-            </InfoWhite>
-            <InfoGrey>({normalizeBigNumber(info.positionPnl)}%)</InfoGrey>
-          </Flex>
-        }
-      >
-        {positionPNLContent}
-      </InfoDropdown>
-    )
-  }, [positionPNLContent, info])
-
   const averagePositionPrice = useMemo(() => {
-    return (
-      <InfoRow>
-        <InfoGrey>Average position price</InfoGrey>
-        <Flex gap="4">
-          <InfoWhite>{normalizeBigNumber(info.avgBuyingPrice)}</InfoWhite>
-          <InfoGrey>
-            {info.positionToken.symbol}/{info.baseToken.symbol}
-          </InfoGrey>
-        </Flex>
-      </InfoRow>
-    )
+    return `${normalizeBigNumber(info.avgBuyingPrice)} ${
+      info.positionToken.symbol
+    }/${info.baseToken.symbol}`
   }, [info])
 
   const form = (
-    <Card>
-      <CardHeader>
-        <Flex>
-          <Title active>Swap</Title>
-        </Flex>
-        <IconsGroup>
-          <CircularProgress />
-          <IconButton
-            size={12}
-            filled
-            media={settings}
-            onClick={() => setSlippageOpen(!isSlippageOpen)}
-          />
-          <IconButton size={10} filled media={close} onClick={() => {}} />
-        </IconsGroup>
-      </CardHeader>
-
+    <>
       <ExchangeInput
         price={from.price}
         amount={from.amount}
@@ -308,38 +201,71 @@ const SwapRiskyProposal = () => {
         decimal={to.decimals}
         onChange={handleToChange}
       />
-
-      <SwapPrice
-        fromSymbol={from.symbol}
-        toSymbol={to.symbol}
-        tokensCost={oneTokenCost}
-        usdCost={oneUSDCost}
-        gasPrice={gasPrice}
-      />
-
-      <Flex full p="16px 0 0">
-        {button}
-      </Flex>
-
-      <InfoCard gap="12">
-        {yourShare}
-        {baseInPosition}
-        {lpComplete}
-        {lpLimit}
-        {averagePositionPrice}
-        {positionPNL}
-        {expirationDate}
-        {maxBuyingPrice}
-      </InfoCard>
-
-      <TransactionSlippage
-        slippage={slippage}
-        onChange={setSlippage}
-        isOpen={isSlippageOpen}
-        toggle={(v) => setSlippageOpen(v)}
-      />
-    </Card>
+    </>
   )
+
+  const exchangeInfo: Info[] = useMemo(() => {
+    return [
+      {
+        title: "Your share",
+        value: yourShare,
+        tooltip: "Your share of the pool",
+        rightNode: <AddButton onClick={handleInvestRedirect}>+ Add</AddButton>,
+      },
+      {
+        title: `${info.baseToken.symbol} in position`,
+        value: baseInPosition,
+        tooltip: "Base token in position of the pool",
+      },
+      {
+        title: "LP complete",
+        value: lpComplete,
+        tooltip: "LP complete",
+      },
+      {
+        title: "LP max size",
+        value: lpLimit,
+        tooltip: "LP max size",
+      },
+      {
+        title: "Average position price",
+        value: averagePositionPrice,
+        tooltip: "Average position price",
+      },
+      {
+        title: "Position P&L",
+        value: `${normalizeBigNumber(info.positionPnlLP)} ${
+          info.pool.symbol
+        } (${normalizeBigNumber(info.positionPnl)}%)`,
+        childrens: positionPNLContent,
+        tooltip: "Position P&L",
+      },
+      {
+        title: "Expiration date",
+        value: expirationDate,
+        tooltip: "Expiration date",
+      },
+      {
+        title: "Maximum buying price",
+        value: maxBuyingPrice,
+        tooltip: "Maximum buying price",
+      },
+    ]
+  }, [
+    averagePositionPrice,
+    baseInPosition,
+    expirationDate,
+    handleInvestRedirect,
+    info.baseToken.symbol,
+    info.pool.symbol,
+    info.positionPnl,
+    info.positionPnlLP,
+    lpComplete,
+    lpLimit,
+    maxBuyingPrice,
+    positionPNLContent,
+    yourShare,
+  ])
 
   return (
     <>
@@ -350,7 +276,22 @@ const SwapRiskyProposal = () => {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        {form}
+        <Exchange
+          title="Swap"
+          form={form}
+          buttons={[button]}
+          setSlippage={setSlippage}
+          slippage={slippage}
+          info={exchangeInfo}
+        >
+          <SwapPrice
+            fromSymbol={from.symbol}
+            toSymbol={to.symbol}
+            tokensCost={oneTokenCost}
+            usdCost={oneUSDCost}
+            gasPrice={gasPrice}
+          />
+        </Exchange>
       </Container>
     </>
   )

@@ -22,7 +22,7 @@ interface Payload<T> {
   lastFetchLen: number
 }
 
-type Result<T> = [Payload<T>, () => void, () => void]
+export type QueryPaginationResult<T> = [Payload<T>, () => void, () => void]
 
 interface QueryArgs<T> extends UseQueryArgs {
   formatter: (newDataSlice: any, loadedData?: any) => T[]
@@ -41,7 +41,7 @@ const paginationDefault: PaginationArgs = {
 export const useQueryPagination = <T>(
   { formatter, variables, ...queryArgs }: QueryArgs<T>,
   pagination = paginationDefault
-): Result<T> => {
+): QueryPaginationResult<T> => {
   const [, setError] = useError()
   const [offset, setOffset] = useState(pagination.initialOffset)
   const [result, setResult] = useState<T[]>([])
