@@ -19,7 +19,7 @@ function useRiskyProposalsQuery(
   )
 
   const variables = React.useMemo(
-    () => ({ activePools: poolsUserInvestedIn }),
+    () => ({ poolsUserInvestedIn }),
     [poolsUserInvestedIn]
   )
 

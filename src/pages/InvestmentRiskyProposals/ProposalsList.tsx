@@ -27,9 +27,7 @@ const InvestmentRiskyProposalsList: React.FC = () => {
           {Object.values(proposals).map((proposal) => (
             <CardRiskyProposal
               key={proposal.utilityIds.proposalEntityId}
-              proposal={proposal.proposal}
-              proposalId={proposal.utilityIds.proposalId}
-              poolAddress={proposal.utilityIds.basicPoolAddress}
+              data={proposal}
             />
           ))}
           <LoadMore isLoading={loading} handleMore={fetchMore} />

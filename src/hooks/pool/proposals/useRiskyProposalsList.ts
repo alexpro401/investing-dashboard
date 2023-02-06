@@ -4,14 +4,14 @@ import { isEmpty } from "lodash"
 import { RiskyProposalUtilityIds, WrappedRiskyProposalView } from "types"
 
 import {
-  useRiskyProposalsData,
   useRiskyProposalsQuery,
+  useRiskyProposalsListData,
   useRiskyProposalContractAddresses,
 } from "hooks"
 
 type Response = [Record<string, WrappedRiskyProposalView>, boolean, () => void]
 
-function useRiskyProposalsByPools(pools: string[], pause): Response {
+function useRiskyProposalsList(pools: string[], pause: boolean): Response {
   /**
    * 2) Get risky proposal id's and matched basic pool id's
    *
@@ -82,7 +82,7 @@ function useRiskyProposalsByPools(pools: string[], pause): Response {
   /**
    * 6) Fetch proposals data
    */
-  const [proposalsData, proposalsDataLoading] = useRiskyProposalsData(
+  const [proposalsData, proposalsDataLoading] = useRiskyProposalsListData(
     _proposalEntityIdMapping
   )
 
@@ -103,4 +103,4 @@ function useRiskyProposalsByPools(pools: string[], pause): Response {
   return [proposalsData, anyLoading, fetchMore]
 }
 
-export default useRiskyProposalsByPools
+export default useRiskyProposalsList

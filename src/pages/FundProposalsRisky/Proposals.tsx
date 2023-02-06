@@ -2,7 +2,7 @@ import * as React from "react"
 import * as S from "./styled"
 import { SpiralSpinner } from "react-spinners-kit"
 
-import { useRiskyProposalsByPools } from "hooks"
+import { useRiskyProposalsList } from "hooks"
 
 import { Center } from "theme"
 import { NoDataMessage, CardRiskyProposal } from "common"
@@ -19,7 +19,7 @@ const FundProposalsRisky: React.FC<IProps> = ({ poolAddress }) => {
     [poolAddress]
   )
 
-  const [proposals, loading, fetchMore] = useRiskyProposalsByPools(
+  const [proposals, loading, fetchMore] = useRiskyProposalsList(
     pools,
     isEmpty(pools)
   )
@@ -39,9 +39,7 @@ const FundProposalsRisky: React.FC<IProps> = ({ poolAddress }) => {
           {Object.values(proposals).map((proposal) => (
             <CardRiskyProposal
               key={proposal.utilityIds.proposalEntityId}
-              proposal={proposal.proposal}
-              proposalId={proposal.utilityIds.proposalId}
-              poolAddress={proposal.utilityIds.basicPoolAddress}
+              data={proposal}
             />
           ))}
           <LoadMore isLoading={loading} handleMore={fetchMore} />

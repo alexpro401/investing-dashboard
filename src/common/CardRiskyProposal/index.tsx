@@ -7,9 +7,9 @@ import { formatUnits } from "@ethersproject/units"
 import { generatePath, useNavigate } from "react-router-dom"
 
 import { useBreakpoints, useRiskyProposalView } from "hooks"
-import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
 import { normalizeBigNumber } from "utils"
 import { ICON_NAMES, ROUTE_PATHS } from "consts"
+import { WrappedRiskyProposalView } from "types"
 
 import { Flex } from "theme"
 import { AppButton, Icon as IconCommon } from "common"
@@ -42,13 +42,12 @@ function getTraderQualityIcon(quality) {
 }
 
 interface Props {
-  proposal: IRiskyProposalInfo[0]
-  proposalId: number
-  poolAddress: string
+  data: WrappedRiskyProposalView
 }
 
 const CardRiskyProposal: React.FC<Props> = (props) => {
-  const { proposal, proposalId, poolAddress } = props
+  const { proposal, utilityIds } = props.data
+  const { proposalId, basicPoolAddress: poolAddress } = utilityIds
 
   const [
     {
@@ -74,7 +73,7 @@ const CardRiskyProposal: React.FC<Props> = (props) => {
       poolMetadata,
     },
     { onUpdateRestrictions },
-  ] = useRiskyProposalView(props)
+  ] = useRiskyProposalView(props.data)
 
   const { isDesktop } = useBreakpoints()
   const navigate = useNavigate()

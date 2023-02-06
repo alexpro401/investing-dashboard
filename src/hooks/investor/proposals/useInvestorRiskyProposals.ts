@@ -2,7 +2,7 @@ import { useWeb3React } from "@web3-react/core"
 
 import { WrappedRiskyProposalView } from "types"
 
-import { useGetPoolsUserInvestedIn, useRiskyProposalsByPools } from "hooks"
+import { useGetPoolsUserInvestedIn, useRiskyProposalsList } from "hooks"
 
 type Response = [Record<string, WrappedRiskyProposalView>, boolean, () => void]
 
@@ -19,10 +19,7 @@ function useInvestorRiskyProposals(): Response {
   const [poolsUserInvestedIn, poolsUserInvestedInLoading] =
     useGetPoolsUserInvestedIn(account, "BASIC_POOL")
 
-  return useRiskyProposalsByPools(
-    poolsUserInvestedIn,
-    poolsUserInvestedInLoading
-  )
+  return useRiskyProposalsList(poolsUserInvestedIn, poolsUserInvestedInLoading)
 }
 
 export default useInvestorRiskyProposals

@@ -4,16 +4,11 @@ import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 import { isEmpty } from "lodash"
 
-import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
 import { TraderPoolRiskyProposal } from "interfaces/typechain"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import { useActiveWeb3React, usePoolContract } from "hooks"
+import { useActiveWeb3React, useContract, usePoolContract } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
-import {
-  useCorePropertiesContract,
-  usePriceFeedContract,
-  useTraderPoolRiskyProposalContract,
-} from "contracts"
+import { useCorePropertiesContract, usePriceFeedContract } from "contracts"
 import useTokenRating from "hooks/useTokenRating"
 import { DATE_TIME_FORMAT, ZERO } from "consts"
 import { expandTimestamp } from "utils"
@@ -23,12 +18,8 @@ import { Token } from "interfaces"
 import { IpfsEntity } from "utils/ipfsEntity"
 import * as React from "react"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-
-interface Props {
-  proposal: IRiskyProposalInfo[0]
-  proposalId: number
-  poolAddress: string
-}
+import { WrappedRiskyProposalView } from "types"
+import { TraderPoolRiskyProposal as TraderPoolRiskyProposal_ABI } from "abi"
 
 type UseRiskyProposalViewResponseValues = {
   tokenRating: number
@@ -71,9 +62,14 @@ type UseRiskyProposalViewResponse = [
   UseRiskyProposalViewResponseMethods
 ]
 export const useRiskyProposalView = (
-  funcArgs: Props
+  funcArgs: WrappedRiskyProposalView
 ): UseRiskyProposalViewResponse => {
-  const { proposal, proposalId, poolAddress } = funcArgs
+  const { proposal, utilityIds } = funcArgs
+  const {
+    proposalId,
+    basicPoolAddress: poolAddress,
+    proposalContractAddress,
+  } = utilityIds
 
   const { account, chainId } = useActiveWeb3React()
   const [proposalToken] = useERC20Data(proposal.proposalInfo.token)
@@ -81,7 +77,10 @@ export const useRiskyProposalView = (
   const priceFeed = usePriceFeedContract()
   const getTokenRating = useTokenRating()
   const corePropertiesContract = useCorePropertiesContract()
-  const proposalContract = useTraderPoolRiskyProposalContract(poolAddress)
+  const proposalContract = useContract<TraderPoolRiskyProposal>(
+    proposalContractAddress,
+    TraderPoolRiskyProposal_ABI
+  )
 
   const ipfsUrl = React.useMemo(
     () => poolInfo?.parameters.descriptionURL ?? "",
