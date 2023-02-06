@@ -45,7 +45,6 @@ type UseRiskyProposalViewResponseValues = {
   proposalToken: Token | null
   description: string
   maximumPoolInvestors: BigNumber
-  isTrader: boolean
   proposalContract: TraderPoolRiskyProposal | null
   poolMetadata: any
 }
@@ -60,7 +59,7 @@ type UseRiskyProposalViewResponse = [
 export const useRiskyProposalView = (
   funcArgs: WrappedRiskyProposalView
 ): UseRiskyProposalViewResponse => {
-  const { proposal, utilityIds, poolInfo } = funcArgs
+  const { proposal, utilityIds, poolInfo, isTrader } = funcArgs
   const {
     proposalId,
     basicPoolAddress: poolAddress,
@@ -68,7 +67,7 @@ export const useRiskyProposalView = (
     proposalTokenAddress,
   } = utilityIds
 
-  const { account, chainId } = useWeb3React()
+  const { chainId } = useWeb3React()
   const [proposalToken] = useERC20Data(proposalTokenAddress)
   const getTokenRating = useTokenRating()
   const corePropertiesContract = useCorePropertiesContract()
@@ -82,11 +81,6 @@ export const useRiskyProposalView = (
     [poolInfo]
   )
   const [{ poolMetadata }] = usePoolMetadata(poolAddress, ipfsUrl)
-
-  const isTrader = useMemo<boolean>(() => {
-    if (!account || !poolInfo) return false
-    return account === poolInfo.parameters.trader
-  }, [account, poolInfo])
 
   const [traderSizeLP, setTraderSizeLP] = useState<BigNumber>(ZERO)
   const [tokenRating, setTokenRating] = useState<number>(0)
@@ -377,7 +371,6 @@ export const useRiskyProposalView = (
         proposalToken,
         description,
         maximumPoolInvestors,
-        isTrader,
         proposalContract,
         poolMetadata,
       },
@@ -398,7 +391,6 @@ export const useRiskyProposalView = (
       proposalToken,
       description,
       maximumPoolInvestors,
-      isTrader,
       proposalContract,
       poolMetadata,
 

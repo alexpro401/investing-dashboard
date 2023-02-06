@@ -29,7 +29,6 @@ export { default as Tabs } from "./Tabs"
 export { default as CardInvestorPosition } from "./CardInvestorPosition"
 export { default as AccountInvestmentPools } from "./AccountInvestmentPools"
 export { default as PoolStatisticsItem } from "./PoolStatisticsItem"
-export { default as CardRiskyProposal } from "./CardRiskyProposal"
-
+export * from "./CardRiskyProposal"
 export * from "./Typography"
 export * from "./dao"

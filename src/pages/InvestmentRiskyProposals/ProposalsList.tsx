@@ -6,7 +6,11 @@ import { useInvestorRiskyProposals } from "hooks"
 
 import * as S from "./styled"
 import { Center } from "theme"
-import { CardRiskyProposal, NoDataMessage } from "common"
+import {
+  NoDataMessage,
+  CardRiskyProposalInvestorView,
+  CardRiskyProposalTraderView,
+} from "common"
 import LoadMore from "components/LoadMore"
 
 const InvestmentRiskyProposalsList: React.FC = () => {
@@ -24,9 +28,19 @@ const InvestmentRiskyProposalsList: React.FC = () => {
         )
       ) : (
         <>
-          {proposals.map((proposal) => (
-            <CardRiskyProposal key={proposal.id} payload={proposal} />
-          ))}
+          {proposals.map((proposal) =>
+            proposal.isTrader ? (
+              <CardRiskyProposalTraderView
+                key={proposal.id}
+                payload={proposal}
+              />
+            ) : (
+              <CardRiskyProposalInvestorView
+                key={proposal.id}
+                payload={proposal}
+              />
+            )
+          )}
           <LoadMore isLoading={loading} handleMore={fetchMore} />
         </>
       )}

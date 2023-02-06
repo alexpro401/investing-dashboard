@@ -1,5 +1,6 @@
 import * as React from "react"
-import { isEmpty } from "lodash"
+import { useWeb3React } from "@web3-react/core"
+import { isEmpty, isEqual, isNil } from "lodash"
 
 import { RiskyProposalUtilityIds, WrappedRiskyProposalView } from "types"
 
@@ -16,6 +17,7 @@ import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 type Response = [Array<WrappedRiskyProposalView>, boolean, () => void]
 
 function useRiskyProposalsList(pools: string[], pause: boolean): Response {
+  const { account } = useWeb3React()
   const [riskyProposalsByPools, riskyProposalsByPoolsLoading, fetchMore] =
     useRiskyProposalsListQuery(pools, pause)
 
@@ -97,7 +99,14 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
   )
 
   React.useEffect(() => {
-    if (anyLoading || isEmpty(proposalsData)) {
+    if (
+      isNil(account) ||
+      anyLoading ||
+      isEmpty(proposalsData) ||
+      isEmpty(activeInvestmentsInfo) ||
+      isEmpty(tokenMarkPrices) ||
+      isEmpty(poolInfos)
+    ) {
       return
     }
 
@@ -109,12 +118,19 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
         proposalTokenMarkPrice:
           tokenMarkPrices[utilityIds.proposalTokenAddress],
         utilityIds: utilityIds,
-        poolInfo: poolInfos[utilityIds.basicPoolAddress],
+        poolInfo: poolInfos[utilityIds.basicPoolAddress]!,
+        isTrader: isEqual(
+          String(account).toLowerCase(),
+          String(
+            poolInfos[utilityIds.basicPoolAddress]?.parameters.trader
+          ).toLowerCase()
+        ),
       })
     )
 
     setProposals(_proposals)
   }, [
+    account,
     anyLoading,
     proposalUtilityIdList,
     proposalsData,

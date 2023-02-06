@@ -107,6 +107,10 @@ export const CardRiskyProposalGridItemDividerBottom = styled(
 )`
   grid-area: divider-bottom;
   ${dividerCss};
+
+  ${respondTo("lg")} {
+    display: none;
+  }
 `
 export const CardRiskyProposalGridItemToken = styled(CardRiskyProposalGridCell)`
   grid-area: token;
@@ -180,6 +184,10 @@ export const CardRiskyProposalGridItemCheckToken = styled(
   CardRiskyProposalGridCell
 )`
   grid-area: check-token;
+
+  ${respondTo("lg")} {
+    display: none;
+  }
 `
 
 /* ==========================================================================
@@ -206,7 +214,7 @@ export const CardRiskyProposalLabelContent = styled.div`
     transform: translateY(1.5px);
   }
 `
-export const CardRiskyProposalLabelIcon = styled.img`
+export const CardRiskyProposalLabelIcon = styled(motion.img)`
   width: 16px;
   height: 16px;
 `
@@ -225,7 +233,12 @@ export const CardRiskyProposalLabel = styled.div`
 `
 
 export const CardRiskyProposalLabelTooltip = styled(Tooltip)`
+  display: none;
   height: 16px;
+
+  ${respondTo("lg")} {
+    display: block;
+  }
 `
 
 function getValueColor(theme, completed?: boolean) {
@@ -355,11 +368,15 @@ export const CardRiskyProposalBaseTokenValue = styled(CardRiskyProposalValue)`
    Trader size
    ========================================================================== */
 
-export const CardRiskyProposalTraderSizeWrp = styled.div`
+export const CardRiskyProposalTraderSizeWrp = styled(motion.div)`
   width: fill-available;
   display: flex;
   align-items: center;
   gap: 4px;
+
+  ${respondTo("lg")} {
+    display: none;
+  }
 `
 export const CardRiskyProposalTraderSizeIconWrp = styled.div`
   position: relative;
@@ -392,6 +409,16 @@ export const CardRiskyProposalTraderSizeText = styled.div`
 /*
    Other helpers
    ========================================================================== */
+
+export const CardRiskyProposalSettingsActionMobWrp = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+
+  ${respondTo("lg")} {
+    display: none;
+  }
+`
 
 export const CardRiskyProposalInvestMoreButton = styled(AppButton)`
   margin-left: 0.5px;
@@ -429,7 +456,12 @@ export const CardRiskyProposalDescriptionWrp = styled.div`
 `
 
 export const CardRiskyProposalSettingsButton = styled(AppButton)`
+  display: none;
   background: ${({ theme }) => rgba(theme.brandColors.secondary, 0.15)};
+
+  ${respondTo("lg")} {
+    display: block;
+  }
 `
 export const CardRiskyProposalStatus = styled.div<{ active: boolean }>`
   padding: 5px 6px;
