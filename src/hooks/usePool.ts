@@ -127,8 +127,8 @@ export const useTraderPoolInfoMulticall = <T>(
   return useMemo(() => {
     return [
       validatedPools.length > 0
-        ? validatedPools.reduce((memo, poolAddress) => {
-            const result = poolInfo?.[0]?.result?.[0]
+        ? validatedPools.reduce((memo, poolAddress, index) => {
+            const result = poolInfo?.[index]?.result?.[0]
 
             if (result) {
               memo[poolAddress!] = result
