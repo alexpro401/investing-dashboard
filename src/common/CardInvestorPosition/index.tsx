@@ -1,6 +1,7 @@
 import * as React from "react"
 import { isEmpty } from "lodash"
 import { createPortal } from "react-dom"
+import { useTranslation } from "react-i18next"
 import { AnimatePresence } from "framer-motion"
 import { SpiralSpinner } from "react-spinners-kit"
 import { generatePath, useNavigate } from "react-router-dom"
@@ -24,6 +25,7 @@ import * as S from "./styled"
 
 const CardInvestorPosition: React.FC = () => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { isDesktop } = useBreakpoints()
 
   const {
@@ -137,27 +139,27 @@ const CardInvestorPosition: React.FC = () => {
         ? []
         : [
             {
-              label: "All trades",
+              label: t("investor-position-card.action-toggle-vests"),
               active: showPositions,
               onClick: togglePositions,
             },
             ...(!position.isClosed
               ? [
                   {
-                    label: "Buy more",
+                    label: t("investor-position-card.action-invest"),
                     onClick: (e) => onNavigateTerminal(e, "deposit"),
                   },
                 ]
               : []),
             {
-              label: "Commission",
+              label: t("investor-position-card.action-toggle-commission"),
               active: showCommission,
               onClick: toggleCommission,
             },
             ...(!position.isClosed
               ? [
                   {
-                    label: "Close",
+                    label: t("investor-position-card.action-divest--short"),
                     onClick: (e) => onNavigateTerminal(e, "withdraw"),
                   },
                 ]
@@ -249,7 +251,9 @@ const CardInvestorPosition: React.FC = () => {
 
         <S.CardInvestorPositionBodyItemGrid>
           <S.CardInvestorPositionBodyItemLabel>
-            {String("Entry Price ").concat(baseTokenSymbol)}
+            {t("investor-position-card.label-entry-price", {
+              currency: baseTokenSymbol,
+            })}
           </S.CardInvestorPositionBodyItemLabel>
           <S.CardInvestorPositionBodyItemAmount>
             {normalizeBigNumber(entryPriceBase, 18, 6)}
@@ -261,9 +265,14 @@ const CardInvestorPosition: React.FC = () => {
 
         <S.CardInvestorPositionBodyItemGrid>
           <S.CardInvestorPositionBodyItemLabel>
-            {String(
-              position.isClosed ? "Closed price " : "Current price "
-            ).concat(baseTokenSymbol)}
+            {t(
+              position.isClosed
+                ? "investor-position-card.label-closed-price"
+                : "investor-position-card.label-current-price",
+              {
+                currency: baseTokenSymbol,
+              }
+            )}
           </S.CardInvestorPositionBodyItemLabel>
           <S.CardInvestorPositionBodyItemAmount>
             {normalizeBigNumber(markPriceBase, 18, 6)}
@@ -277,7 +286,9 @@ const CardInvestorPosition: React.FC = () => {
           textAlign={!isDesktop ? "right" : undefined}
         >
           <S.CardInvestorPositionBodyItemLabel>
-            {String("P&L ").concat(baseTokenSymbol)}
+            {t("investor-position-card.label-pnl", {
+              currency: baseTokenSymbol,
+            })}
           </S.CardInvestorPositionBodyItemLabel>
           <S.CardInvestorPositionBodyItemAmount>
             {normalizeBigNumber(pnlBase, 18, 6)}
@@ -310,13 +321,13 @@ const CardInvestorPosition: React.FC = () => {
                 {!position.isClosed && (
                   <>
                     <S.ActionPositive
-                      text={"Buy More"}
+                      text={t("investor-position-card.action-invest")}
                       color={"default"}
                       size={"no-paddings"}
                       onClick={(e) => onNavigateTerminal(e, "deposit")}
                     />
                     <S.ActionNegative
-                      text={"Close position"}
+                      text={t("investor-position-card.action-divest")}
                       color={"default"}
                       size={"no-paddings"}
                       onClick={(e) => onNavigateTerminal(e, "withdraw")}

@@ -1,6 +1,7 @@
 import { FC, useMemo } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { isEmpty } from "lodash"
+import { useTranslation } from "react-i18next"
 import { PulseSpinner } from "react-spinners-kit"
 
 import { InvestorPositionsQuery } from "queries"
@@ -8,11 +9,11 @@ import { graphClientInvestors } from "utils/graphClient"
 import useQueryPagination from "hooks/useQueryPagination"
 import { InvestorPosition } from "interfaces/thegraphs/invest-pools"
 
+import * as S from "./styled"
 import { Center } from "theme"
-import { NoDataMessage, CardInvestorPosition } from "common"
 import Tooltip from "components/Tooltip"
 import LoadMore from "components/LoadMore"
-import * as S from "./styled"
+import { NoDataMessage, CardInvestorPosition } from "common"
 import InvestorPositionInPoolContextProvider from "context/investor/positions/InvestorPositionInPoolContext"
 
 interface IProps {
@@ -21,6 +22,7 @@ interface IProps {
 }
 
 const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
+  const { t } = useTranslation()
   const [{ data, loading }, fetchMore] = useQueryPagination<InvestorPosition>({
     query: InvestorPositionsQuery,
     variables: useMemo(
@@ -49,25 +51,31 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
       <S.InvestorPositionsListWrp>
         <S.InvestorPositionsListHead bigGap={closed}>
           <S.InvestorPositionsListHeadItem>
-            Fund
+            {t("investor-positions-list.label-pool")}
           </S.InvestorPositionsListHeadItem>
           <S.InvestorPositionsListHeadItem>
-            My Volume
+            {t("investor-positions-list.label-my-volume")}
           </S.InvestorPositionsListHeadItem>
           <S.InvestorPositionsListHeadItem>
-            <span>Entry Price</span>
-            <Tooltip id={uuidv4()}>Explain Entry Price</Tooltip>
+            <span>{t("investor-positions-list.label-entry-price")}</span>
+            <Tooltip id={uuidv4()}>
+              {t("investor-positions-list.tooltip-msg-entry-price")}
+            </Tooltip>
           </S.InvestorPositionsListHeadItem>
           <S.InvestorPositionsListHeadItem>
-            <span>Current price</span>
-            <Tooltip id={uuidv4()}>Explain Current price</Tooltip>
+            <span>{t("investor-positions-list.label-current-price")}</span>
+            <Tooltip id={uuidv4()}>
+              {t("investor-positions-list.tooltip-msg-current-price")}
+            </Tooltip>
           </S.InvestorPositionsListHeadItem>
           <S.InvestorPositionsListHeadItem>
-            P&L in %
+            <span>{t("investor-positions-list.label-pnl")}</span>
           </S.InvestorPositionsListHeadItem>
           <S.InvestorPositionsListHeadItem>
-            <span>Commission</span>
-            <Tooltip id={uuidv4()}>Explain Commission</Tooltip>
+            <span>{t("investor-positions-list.label-commission")}</span>
+            <Tooltip id={uuidv4()}>
+              {t("investor-positions-list.tooltip-msg-commission")}
+            </Tooltip>
           </S.InvestorPositionsListHeadItem>
           <S.InvestorPositionsListHeadItem />
         </S.InvestorPositionsListHead>
