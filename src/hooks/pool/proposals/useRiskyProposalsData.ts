@@ -40,9 +40,6 @@ function useRiskyProposalsData(
 
         return acc
       }, {}),
-    // new Map(
-    //   [...riskyProposalUtilityIdsMap].filter(([key]) => !data.has(key))
-    // ),
     [riskyProposalUtilityIdsMap, data]
   )
 
