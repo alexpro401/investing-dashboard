@@ -343,3 +343,23 @@ export const ERCAreaHead = styled.div`
 export const ERCImgWrp = styled.img`
   width: 100px;
 `
+
+export const TokenCreationInputNodeRight = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`
+
+export const TokenCreationInputNodeRightInput = styled.input`
+  background: transparent;
+  font-size: 16px;
+  line-height: 1.3;
+  color: ${(props) => props.theme.textColors.primary};
+`
+
+export const TokenCreationInputNodeRightSymbol = styled.span`
+  text-transform: uppercase;
+  font-size: 16px;
+  line-height: 1.3;
+  color: ${(props) => props.theme.textColors.primary};
+`

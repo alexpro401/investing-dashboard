@@ -71,6 +71,8 @@
     "dao-validator-step-title": "Validator settings",
     "default-settings-step-title": "General voting settings",
     "internal-settings-step-title": "Changing voting settings",
+    "token-creation-step-title": "Token creation",
+    "summary-step-title": "Summary",
     "distribution-settings-step-title": "Distribution proposal settings"
   },
   "token-creation-step": {

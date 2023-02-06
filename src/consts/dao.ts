@@ -19,6 +19,13 @@ export const INITIAL_DAO_PROPOSAL: GovPoolFormOptions = {
     totalPowerInTokens: 0,
     nftsTotalSupply: 0,
   },
+  tokenCreation: {
+    name: "",
+    symbol: "",
+    totalSupply: BigNumber.from(0),
+    treasury: BigNumber.from(0),
+    initialDistribution: BigNumber.from(0),
+  },
   _validatorsParams: {
     name: "",
     symbol: "",

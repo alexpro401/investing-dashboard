@@ -155,6 +155,9 @@ const CreateFundDaoForm: FC = () => {
       case STEPS.tokenCreation.number:
         setCurrentStep(STEPS.titles.number)
         break
+      case STEPS.summary.number:
+        setCurrentStep(STEPS.isTokenDistributionSettings.number)
+        break
     }
   }
 

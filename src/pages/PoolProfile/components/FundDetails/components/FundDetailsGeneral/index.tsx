@@ -29,7 +29,6 @@ import {
   validateIfExist,
 } from "utils/validators"
 import Avatar from "components/Avatar"
-import { Flex } from "../../../../../../theme"
 
 const FundDetailsGeneral: FC = () => {
   const {

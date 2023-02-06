@@ -33,6 +33,14 @@ interface IGovPoolFormContext {
   erc20: ReturnType<typeof useERC20>
   erc721: ReturnType<typeof useErc721>
 
+  tokenCreation: {
+    name: { get: string; set: Dispatch<SetStateAction<string>> }
+    symbol: { get: string; set: Dispatch<SetStateAction<string>> }
+    totalSupply: { get: string; set: Dispatch<SetStateAction<string>> }
+    treasury: { get: string; set: Dispatch<SetStateAction<string>> }
+    initialDistribution: { get: string; set: Dispatch<SetStateAction<string>> }
+  }
+
   isCustomVoting: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
   isDistributionProposal: {
     get: boolean
@@ -77,6 +85,14 @@ export const GovPoolFormContext = createContext<IGovPoolFormContext>({
   isValidator: { get: false, set: () => {} },
   erc20: {} as ReturnType<typeof useERC20>,
   erc721: {} as ReturnType<typeof useErc721>,
+
+  tokenCreation: {
+    name: { get: "", set: () => {} },
+    symbol: { get: "", set: () => {} },
+    totalSupply: { get: "", set: () => {} },
+    treasury: { get: "", set: () => {} },
+    initialDistribution: { get: "", set: () => {} },
+  },
 
   avatarUrl: { get: "", set: () => {} },
   daoName: { get: "", set: () => {} },
@@ -164,6 +180,26 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
   >(storedForm._socialLinks)
   const [_documents, _setDocuments] = useState<ExternalFileDocument[]>(
     storedForm._documents
+  )
+
+  // Token creation
+  const [_tokenCreationName, _setTokenCreationName] = useState(
+    storedForm.tokenCreation.name
+  )
+  const [_tokenCreationSymbol, _setTokenCreationSymbol] = useState(
+    storedForm.tokenCreation.symbol
+  )
+  const [_tokenCreationTotalSupply, _setTokenCreationTotalSupply] = useState(
+    String(formatUnits(storedForm.tokenCreation.totalSupply, 18))
+  )
+  const [_tokenCreationTreasury, _setTokenCreationTreasury] = useState(
+    String(formatUnits(storedForm.tokenCreation.treasury, 18))
+  )
+  const [
+    _tokenCreationInitialDistribution,
+    _setTokenCreationInitialDistribution,
+  ] = useState(
+    String(formatUnits(storedForm.tokenCreation.initialDistribution, 18))
   )
 
   const _userKeeperParams = {
@@ -528,6 +564,16 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       const [, _setTotalPowerInTokens] = _userKeeperParams.totalPowerInTokens
       const [, _setNftsTotalSupply] = _userKeeperParams.nftsTotalSupply
 
+      _setTokenCreationName(govPool.tokenCreation.name)
+      _setTokenCreationSymbol(govPool.tokenCreation.symbol)
+      _setTokenCreationTotalSupply(
+        formatUnits(govPool.tokenCreation.totalSupply, 18)
+      )
+      _setTokenCreationTreasury(formatUnits(govPool.tokenCreation.treasury, 18))
+      _setTokenCreationInitialDistribution(
+        formatUnits(govPool.tokenCreation.initialDistribution, 18)
+      )
+
       _setTokenAddress(govPool._userKeeperParams.tokenAddress)
       _setNftAddress(govPool._userKeeperParams.nftAddress)
       _setTotalPowerInTokens(govPool._userKeeperParams.totalPowerInTokens)
@@ -572,7 +618,7 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
     ]
   )
 
-  const convertForm = useCallback(
+  const convertFormToDecimals = useCallback(
     (): GovPoolFormOptions => ({
       _isErc20,
       _isErc721,
@@ -585,6 +631,13 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       _description,
       _socialLinks,
       _documents,
+      tokenCreation: {
+        name: _tokenCreationName,
+        symbol: _tokenCreationSymbol,
+        totalSupply: parseUnits(_tokenCreationTotalSupply, 18),
+        treasury: parseUnits(_tokenCreationTreasury, 18),
+        initialDistribution: parseUnits(_tokenCreationInitialDistribution, 18),
+      },
       _userKeeperParams: {
         tokenAddress: _userKeeperParams.tokenAddress[0],
         nftAddress: _userKeeperParams.nftAddress[0],
@@ -791,6 +844,11 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       _isErc721,
       _isValidator,
       _socialLinks,
+      _tokenCreationInitialDistribution,
+      _tokenCreationName,
+      _tokenCreationSymbol,
+      _tokenCreationTotalSupply,
+      _tokenCreationTreasury,
       _userKeeperParams,
       _validatorsBalancesSettingsForm,
       _validatorsParams,
@@ -806,7 +864,7 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
 
   useEffect(() => {
     setLocalStorageValue((prevState) => {
-      const nextState = JSON.stringify(convertForm())
+      const nextState = JSON.stringify(convertFormToDecimals())
 
       return isEqual(prevState, nextState) ? prevState : nextState
     })
@@ -829,7 +887,7 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
     _validatorsBalancesSettingsForm,
     _internalProposalForm,
     setLocalStorageValue,
-    convertForm,
+    convertFormToDecimals,
   ])
 
   return (
@@ -846,6 +904,23 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
           isValidator: { get: _isValidator, set: _setIsValidator },
           erc20,
           erc721,
+
+          tokenCreation: {
+            name: { get: _tokenCreationName, set: _setTokenCreationName },
+            symbol: { get: _tokenCreationSymbol, set: _setTokenCreationSymbol },
+            totalSupply: {
+              get: _tokenCreationTotalSupply,
+              set: _setTokenCreationTotalSupply,
+            },
+            treasury: {
+              get: _tokenCreationTreasury,
+              set: _setTokenCreationTreasury,
+            },
+            initialDistribution: {
+              get: _tokenCreationInitialDistribution,
+              set: _setTokenCreationInitialDistribution,
+            },
+          },
 
           avatarUrl: { get: _avatarUrl, set: _setAvatarUrl },
           daoName: { get: _daoName, set: _setDaoName },

@@ -25,13 +25,11 @@ import CreateFundDocsImage from "assets/others/create-fund-docs.png"
 
 import * as S from "./styled"
 
-interface IIsDistributionProposalStepProps {
-  isCreatingProposal?: boolean
-}
+interface IIsDistributionProposalStepProps {}
 
 const IsDistributionProposalStep: React.FC<
   IIsDistributionProposalStepProps
-> = ({ isCreatingProposal = false }) => {
+> = ({ ...rest }) => {
   const { isDistributionProposal, distributionProposalSettingsForm } =
     useContext(GovPoolFormContext)
 
@@ -206,30 +204,28 @@ const IsDistributionProposalStep: React.FC<
           </S.DesktopHeaderWrp>
         )}
 
-        {!isCreatingProposal && (
-          <Card>
-            <CardHead
-              nodeLeft={<Icon name={ICON_NAMES.cog} />}
-              title="Set custom voting settings"
-              nodeRight={
-                <Switch
-                  isOn={isDistributionProposal.get}
-                  onChange={(n, v) => isDistributionProposal.set(v)}
-                  name={
-                    "Turn on to set custom voting settings for changing general voting settings."
-                  }
-                />
-              }
-            />
-            <CardDescription>
-              <p>
-                Adding validators activates two-stage voting for enhanced DAO
-                security. You can also add this function after the DAO is
-                created, by voting.
-              </p>
-            </CardDescription>
-          </Card>
-        )}
+        <Card>
+          <CardHead
+            nodeLeft={<Icon name={ICON_NAMES.cog} />}
+            title="Set custom voting settings"
+            nodeRight={
+              <Switch
+                isOn={isDistributionProposal.get}
+                onChange={(n, v) => isDistributionProposal.set(v)}
+                name={
+                  "Turn on to set custom voting settings for changing general voting settings."
+                }
+              />
+            }
+          />
+          <CardDescription>
+            <p>
+              Adding validators activates two-stage voting for enhanced DAO
+              security. You can also add this function after the DAO is created,
+              by voting.
+            </p>
+          </CardDescription>
+        </Card>
 
         <Collapse isOpen={isDistributionProposal.get}>
           {distributionProposalSettingsForm && (
@@ -239,7 +235,7 @@ const IsDistributionProposalStep: React.FC<
                 <DaoSettingsParameters
                   poolParameters={distributionProposalSettingsForm}
                   formValidation={formValidation}
-                  isCreatingProposal={isCreatingProposal}
+                  isCreatingProposal={false}
                 />
               </S.ConditionalParameters>
             </>
@@ -248,7 +244,7 @@ const IsDistributionProposalStep: React.FC<
       </S.StepsRoot>
       <S.FormStepsNavigationWrp
         customNextCb={handleNextStep}
-        nextLabel={!isCreatingProposal ? "Create DAO" : "Continue"}
+        nextLabel="Continue"
       />
     </>
   )
