@@ -202,9 +202,6 @@ const INVESTOR_PROPOSAL_POSITION = `
     }
   }
   investor { id }
-  vests {
-    ${INVESTOR_PROPOSAL_POSITION_VEST}
-  }
 `
 
 export const InvestorProposalsPositionsQuery = `
@@ -218,6 +215,16 @@ export const InvestorProposalsPositionsQuery = `
       }
     ) {
       ${INVESTOR_PROPOSAL_POSITION}
+    }
+  }
+`
+
+export const InvestorProposalPositionVestsQuery = `
+  query ($proposalPositionId: String!, $account: String!, $offset: Int!, $limit: Int!) {
+    proposalPositions( skip: 0, first: 1, where: { id: $proposalPositionId, investor: $account }) {
+      vests(skip: $offset, first: $limit) {
+        ${INVESTOR_PROPOSAL_POSITION_VEST}
+      }
     }
   }
 `

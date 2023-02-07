@@ -7,7 +7,7 @@ import { SupportedChainId } from "consts/chains"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { DATE_TIME_FORMAT } from "consts/time"
-import { InvestorRiskyVest } from "interfaces/thegraphs/investors"
+import { InvestorRiskyPositionVest } from "interfaces/thegraphs/investors"
 import { divideBignumbers } from "utils/formulas"
 
 import * as S from "./styled"
@@ -17,7 +17,7 @@ import { Flex } from "theme"
 import { ICON_NAMES } from "consts"
 
 interface Props {
-  data: InvestorRiskyVest
+  data: InvestorRiskyPositionVest
   baseTokenSymbol: string
 }
 

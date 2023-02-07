@@ -3,11 +3,11 @@ import { isNil } from "lodash"
 import { isAddress } from "@ethersproject/address"
 
 import { useQueryPagination } from "hooks"
-import { InvestorRiskyPositionWithVests } from "interfaces/thegraphs/investors"
+import { InvestorRiskyPosition } from "interfaces/thegraphs/investors"
 import { InvestorProposalsPositionsQuery } from "queries"
 import { graphClientInvestors } from "utils/graphClient"
 
-type Response = [InvestorRiskyPositionWithVests[], boolean, () => void]
+type Response = [InvestorRiskyPosition[], boolean, () => void]
 
 type Filters = {
   closed: boolean
@@ -31,7 +31,7 @@ const useInvestorRiskyPositionListData = (filters: Filters): Response => {
   )
 
   const [{ data, loading }, fetchMore] =
-    useQueryPagination<InvestorRiskyPositionWithVests>({
+    useQueryPagination<InvestorRiskyPosition>({
       query: InvestorProposalsPositionsQuery,
       variables,
       pause,

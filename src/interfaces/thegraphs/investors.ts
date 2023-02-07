@@ -39,7 +39,7 @@ export interface InvestorPoolPositionWithHistory extends InvestorPoolPosition {
   lpHistory: InvestorPoolHistory[]
 }
 
-export interface InvestorRiskyVest {
+export interface InvestorRiskyPositionVest {
   id: string
   hash: string
   isInvest: boolean
@@ -69,14 +69,9 @@ export interface InvestorRiskyPosition {
   investor: { id: string }
 }
 
-export interface InvestorRiskyPositionWithVests extends InvestorRiskyPosition {
-  vests: InvestorRiskyVest[]
-}
-
 export interface WrappedInvestorRiskyPositionView {
   id: string
   position: InvestorRiskyPosition
-  vests: InvestorRiskyVest[]
   poolInfo?: IPoolInfo
   utilityIds: {
     proposalId: number

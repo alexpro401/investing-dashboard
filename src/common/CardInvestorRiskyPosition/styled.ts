@@ -314,3 +314,11 @@ export const CardInvestorRiskyPositionVestsWrp = styled.div`
     border-top: 1px solid ${(props) => props.theme.backgroundColors.secondary};
   }
 `
+
+export const CardInvestorRiskyPositionVestsLoaderWrp = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  width: 100%;
+`

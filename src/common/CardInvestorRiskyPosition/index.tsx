@@ -1,12 +1,20 @@
+import { useWeb3React } from "@web3-react/core"
 import { NoDataMessage } from "common"
 import VestCard from "components/cards/Vest"
 import Icon from "components/Icon"
+import LoadMore from "components/LoadMore"
 import TokenIcon from "components/TokenIcon"
-import { ICON_NAMES } from "consts"
-import { useBreakpoints, useInvestorRiskyPositionView } from "hooks"
+import { ICON_NAMES, MAX_PAGINATION_COUNT } from "consts"
+import {
+  useBreakpoints,
+  useInvestorRiskyPositionVests,
+  useInvestorRiskyPositionView,
+} from "hooks"
 import { WrappedInvestorRiskyPositionView } from "interfaces/thegraphs/investors"
+import { isEmpty } from "lodash"
 import { accordionSummaryVariants } from "motion/variants"
 import * as React from "react"
+import { SpiralSpinner } from "react-spinners-kit"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { normalizeBigNumber } from "utils"
 import * as S from "./styled"
@@ -16,8 +24,9 @@ interface Props {
 }
 
 const CardInvestorRiskyPosition: React.FC<Props> = ({ payload }) => {
-  const { position, poolInfo, utilityIds, vests } = payload
+  const { id: positionId, position, poolInfo, utilityIds } = payload
 
+  const { account } = useWeb3React()
   const [{ poolMetadata }] = usePoolMetadata(
     utilityIds.poolAddress,
     poolInfo?.parameters.descriptionURL
@@ -53,6 +62,19 @@ const CardInvestorRiskyPosition: React.FC<Props> = ({ payload }) => {
     () => positionToken?.symbol ?? "",
     [positionToken]
   )
+
+  const riskyPositionVestsVariables = React.useMemo(
+    () => ({ riskyPositionId: positionId, investorAddress: account }),
+    [positionId, account]
+  )
+  const [{ data: vests, loading: loadingVests }, fetchMoreVests, resetVests] =
+    useInvestorRiskyPositionVests(riskyPositionVestsVariables, !showVests)
+
+  React.useEffect(() => {
+    if (!showVests) {
+      resetVests()
+    }
+  }, [showVests, resetVests])
 
   const { isDesktop } = useBreakpoints()
 
@@ -162,17 +184,29 @@ const CardInvestorRiskyPosition: React.FC<Props> = ({ payload }) => {
         variants={accordionSummaryVariants}
       >
         <S.CardInvestorRiskyPositionVestsWrp>
-          {vests && vests.length ? (
-            vests.map((e) => (
-              <VestCard
-                data={e}
-                key={e.hash}
-                baseTokenSymbol={baseTokenSymbol}
-              />
-            ))
-          ) : (
-            <NoDataMessage />
+          {isEmpty(vests) && loadingVests && (
+            <S.CardInvestorRiskyPositionVestsLoaderWrp>
+              <SpiralSpinner size={30} loading />
+            </S.CardInvestorRiskyPositionVestsLoaderWrp>
           )}
+          {isEmpty(vests) && !loadingVests && <NoDataMessage />}
+          {!isEmpty(vests) ? (
+            <>
+              {vests.map((v) => (
+                <VestCard
+                  data={v}
+                  key={v.id}
+                  baseTokenSymbol={baseTokenSymbol}
+                />
+              ))}
+              {vests.length >= MAX_PAGINATION_COUNT && (
+                <LoadMore
+                  isLoading={loadingVests && !!vests.length}
+                  handleMore={fetchMoreVests}
+                />
+              )}
+            </>
+          ) : null}
         </S.CardInvestorRiskyPositionVestsWrp>
       </S.CardInvestorRiskyPositionExtra>
     </S.Root>

@@ -55,18 +55,15 @@ const useInvestorRiskyPositionList = (closed: boolean): Response => {
 
   const payload = React.useMemo<WrappedInvestorRiskyPositionView[]>(() => {
     return riskyPositions.map((position) => {
-      const { vests, ...restPosition } = position
-
       return {
         id: position.id,
-        position: restPosition,
-        poolInfo: poolInfos[restPosition.proposalContract.traderPool.id],
-        vests: vests,
+        position: position,
+        poolInfo: poolInfos[position.proposalContract.traderPool.id],
         utilityIds: {
           proposalId: Number(position.proposalId) - 1,
-          proposalContractAddress: restPosition.proposalContract.id,
-          poolAddress: restPosition.proposalContract.traderPool.id,
-          poolBaseTokenAddress: restPosition.proposalContract.traderPool.token,
+          proposalContractAddress: position.proposalContract.id,
+          poolAddress: position.proposalContract.traderPool.id,
+          poolBaseTokenAddress: position.proposalContract.traderPool.token,
         },
       }
     })
