@@ -26,6 +26,7 @@ import { INITIAL_DAO_PROPOSAL } from "consts/dao"
 import { isEqual } from "lodash"
 import { SUPPORTED_SOCIALS } from "consts/socials"
 import { formatUnits, parseUnits } from "@ethersproject/units"
+import { fromBig } from "../../utils"
 
 interface IGovPoolFormContext {
   isErc20: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
@@ -195,21 +196,21 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
     storedForm.tokenCreation.symbol
   )
   const [_tokenCreationTotalSupply, _setTokenCreationTotalSupply] = useState(
-    String(formatUnits(storedForm.tokenCreation.totalSupply, 18))
+    String(fromBig(storedForm.tokenCreation.totalSupply, 18))
   )
   const [_tokenCreationTreasury, _setTokenCreationTreasury] = useState(
-    String(formatUnits(storedForm.tokenCreation.treasury, 18))
+    String(fromBig(storedForm.tokenCreation.treasury, 18))
   )
   const [
     _tokenCreationInitialDistribution,
     _setTokenCreationInitialDistribution,
   ] = useState(
-    String(formatUnits(storedForm.tokenCreation.initialDistribution, 18))
+    String(fromBig(storedForm.tokenCreation.initialDistribution, 18))
   )
   const [_tokenCreationRecipients, _setTokenCreationRecipients] = useState(
     storedForm.tokenCreation.recipients?.map((el) => ({
       ...el,
-      amount: formatUnits(el.amount, 18),
+      amount: fromBig(el.amount, 18),
     }))
   )
 
@@ -241,34 +242,32 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       storedForm._internalProposalForm.validatorsVote
     ),
     duration: useState<number>(
-      Number(formatUnits(storedForm._internalProposalForm.duration, 0))
+      Number(fromBig(storedForm._internalProposalForm.duration, 0))
     ),
     durationValidators: useState<number>(
-      Number(
-        formatUnits(storedForm._internalProposalForm.durationValidators, 0)
-      )
+      Number(fromBig(storedForm._internalProposalForm.durationValidators, 0))
     ),
     quorum: useState<string>(
-      formatUnits(storedForm._internalProposalForm.quorum, 25)
+      fromBig(storedForm._internalProposalForm.quorum, 25)
     ),
     quorumValidators: useState<string>(
-      formatUnits(storedForm._internalProposalForm.quorumValidators, 25)
+      fromBig(storedForm._internalProposalForm.quorumValidators, 25)
     ),
     minVotesForVoting: useState<string>(
-      formatUnits(storedForm._internalProposalForm.minVotesForVoting, 18)
+      fromBig(storedForm._internalProposalForm.minVotesForVoting, 18)
     ),
     minVotesForCreating: useState<string>(
-      formatUnits(storedForm._internalProposalForm.minVotesForCreating, 18)
+      fromBig(storedForm._internalProposalForm.minVotesForCreating, 18)
     ),
     rewardToken: useState<string>(storedForm._internalProposalForm.rewardToken),
     creationReward: useState<string>(
-      formatUnits(storedForm._internalProposalForm.creationReward, 18)
+      fromBig(storedForm._internalProposalForm.creationReward, 18)
     ),
     executionReward: useState<string>(
-      formatUnits(storedForm._internalProposalForm.executionReward, 18)
+      fromBig(storedForm._internalProposalForm.executionReward, 18)
     ),
     voteRewardsCoefficient: useState<string>(
-      formatUnits(storedForm._internalProposalForm.voteRewardsCoefficient, 18)
+      fromBig(storedForm._internalProposalForm.voteRewardsCoefficient, 18)
     ),
     executorDescription: useState<string>(
       storedForm._internalProposalForm.executorDescription
@@ -285,35 +284,30 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       storedForm._distributionProposalSettingsForm.validatorsVote
     ),
     duration: useState<number>(
-      Number(
-        formatUnits(storedForm._distributionProposalSettingsForm.duration, 0)
-      )
+      Number(fromBig(storedForm._distributionProposalSettingsForm.duration, 0))
     ),
     durationValidators: useState<number>(
       Number(
-        formatUnits(
+        fromBig(
           storedForm._distributionProposalSettingsForm.durationValidators,
           0
         )
       )
     ),
     quorum: useState<string>(
-      formatUnits(storedForm._distributionProposalSettingsForm.quorum, 25)
+      fromBig(storedForm._distributionProposalSettingsForm.quorum, 25)
     ),
     quorumValidators: useState<string>(
-      formatUnits(
-        storedForm._distributionProposalSettingsForm.quorumValidators,
-        25
-      )
+      fromBig(storedForm._distributionProposalSettingsForm.quorumValidators, 25)
     ),
     minVotesForVoting: useState<string>(
-      formatUnits(
+      fromBig(
         storedForm._distributionProposalSettingsForm.minVotesForVoting,
         18
       )
     ),
     minVotesForCreating: useState<string>(
-      formatUnits(
+      fromBig(
         storedForm._distributionProposalSettingsForm.minVotesForCreating,
         18
       )
@@ -322,19 +316,13 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       storedForm._distributionProposalSettingsForm.rewardToken
     ),
     creationReward: useState<string>(
-      formatUnits(
-        storedForm._distributionProposalSettingsForm.creationReward,
-        18
-      )
+      fromBig(storedForm._distributionProposalSettingsForm.creationReward, 18)
     ),
     executionReward: useState<string>(
-      formatUnits(
-        storedForm._distributionProposalSettingsForm.executionReward,
-        18
-      )
+      fromBig(storedForm._distributionProposalSettingsForm.executionReward, 18)
     ),
     voteRewardsCoefficient: useState<string>(
-      formatUnits(
+      fromBig(
         storedForm._distributionProposalSettingsForm.voteRewardsCoefficient,
         18
       )
@@ -354,35 +342,27 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       storedForm._validatorsBalancesSettingsForm.validatorsVote
     ),
     duration: useState<number>(
-      Number(
-        formatUnits(storedForm._validatorsBalancesSettingsForm.duration, 0)
-      )
+      Number(fromBig(storedForm._validatorsBalancesSettingsForm.duration, 0))
     ),
     durationValidators: useState<number>(
       Number(
-        formatUnits(
+        fromBig(
           storedForm._validatorsBalancesSettingsForm.durationValidators,
           0
         )
       )
     ),
     quorum: useState<string>(
-      formatUnits(storedForm._validatorsBalancesSettingsForm.quorum, 25)
+      fromBig(storedForm._validatorsBalancesSettingsForm.quorum, 25)
     ),
     quorumValidators: useState<string>(
-      formatUnits(
-        storedForm._validatorsBalancesSettingsForm.quorumValidators,
-        25
-      )
+      fromBig(storedForm._validatorsBalancesSettingsForm.quorumValidators, 25)
     ),
     minVotesForVoting: useState<string>(
-      formatUnits(
-        storedForm._validatorsBalancesSettingsForm.minVotesForVoting,
-        18
-      )
+      fromBig(storedForm._validatorsBalancesSettingsForm.minVotesForVoting, 18)
     ),
     minVotesForCreating: useState<string>(
-      formatUnits(
+      fromBig(
         storedForm._validatorsBalancesSettingsForm.minVotesForCreating,
         18
       )
@@ -391,16 +371,13 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       storedForm._validatorsBalancesSettingsForm.rewardToken
     ),
     creationReward: useState<string>(
-      formatUnits(storedForm._validatorsBalancesSettingsForm.creationReward, 18)
+      fromBig(storedForm._validatorsBalancesSettingsForm.creationReward, 18)
     ),
     executionReward: useState<string>(
-      formatUnits(
-        storedForm._validatorsBalancesSettingsForm.executionReward,
-        18
-      )
+      fromBig(storedForm._validatorsBalancesSettingsForm.executionReward, 18)
     ),
     voteRewardsCoefficient: useState<string>(
-      formatUnits(
+      fromBig(
         storedForm._validatorsBalancesSettingsForm.voteRewardsCoefficient,
         18
       )
@@ -420,45 +397,36 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       storedForm._defaultProposalSettingForm.validatorsVote
     ),
     duration: useState<number>(
-      Number(formatUnits(storedForm._defaultProposalSettingForm.duration, 0))
+      Number(fromBig(storedForm._defaultProposalSettingForm.duration, 0))
     ),
     durationValidators: useState<number>(
       Number(
-        formatUnits(
-          storedForm._defaultProposalSettingForm.durationValidators,
-          0
-        )
+        fromBig(storedForm._defaultProposalSettingForm.durationValidators, 0)
       )
     ),
     quorum: useState<string>(
-      formatUnits(storedForm._defaultProposalSettingForm.quorum, 25)
+      fromBig(storedForm._defaultProposalSettingForm.quorum, 25)
     ),
     quorumValidators: useState<string>(
-      formatUnits(storedForm._defaultProposalSettingForm.quorumValidators, 25)
+      fromBig(storedForm._defaultProposalSettingForm.quorumValidators, 25)
     ),
     minVotesForVoting: useState<string>(
-      formatUnits(storedForm._defaultProposalSettingForm.minVotesForVoting, 18)
+      fromBig(storedForm._defaultProposalSettingForm.minVotesForVoting, 18)
     ),
     minVotesForCreating: useState<string>(
-      formatUnits(
-        storedForm._defaultProposalSettingForm.minVotesForCreating,
-        18
-      )
+      fromBig(storedForm._defaultProposalSettingForm.minVotesForCreating, 18)
     ),
     rewardToken: useState<string>(
       storedForm._defaultProposalSettingForm.rewardToken
     ),
     creationReward: useState<string>(
-      formatUnits(storedForm._defaultProposalSettingForm.creationReward, 18)
+      fromBig(storedForm._defaultProposalSettingForm.creationReward, 18)
     ),
     executionReward: useState<string>(
-      formatUnits(storedForm._defaultProposalSettingForm.executionReward, 18)
+      fromBig(storedForm._defaultProposalSettingForm.executionReward, 18)
     ),
     voteRewardsCoefficient: useState<string>(
-      formatUnits(
-        storedForm._defaultProposalSettingForm.voteRewardsCoefficient,
-        18
-      )
+      fromBig(storedForm._defaultProposalSettingForm.voteRewardsCoefficient, 18)
     ),
     executorDescription: useState<string>(
       storedForm._defaultProposalSettingForm.executorDescription
@@ -537,18 +505,16 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       setEarlyCompletion(settings.earlyCompletion)
       setDelegatedVotingAllowed(settings.delegatedVotingAllowed)
       setValidatorsVote(settings.validatorsVote)
-      setDuration(Number(formatUnits(settings.duration, 0)))
-      setDurationValidators(Number(formatUnits(settings.durationValidators, 0)))
-      setQuorum(formatUnits(settings.quorum, 25))
-      setQuorumValidators(formatUnits(settings.quorumValidators, 25))
-      setMinVotesForVoting(formatUnits(settings.minVotesForVoting, 18))
-      setMinVotesForCreating(formatUnits(settings.minVotesForCreating, 18))
+      setDuration(Number(fromBig(settings.duration, 0)))
+      setDurationValidators(Number(fromBig(settings.durationValidators, 0)))
+      setQuorum(fromBig(settings.quorum, 25))
+      setQuorumValidators(fromBig(settings.quorumValidators, 25))
+      setMinVotesForVoting(fromBig(settings.minVotesForVoting, 18))
+      setMinVotesForCreating(fromBig(settings.minVotesForCreating, 18))
       setRewardToken(settings.rewardToken)
-      setCreationReward(formatUnits(settings.creationReward, 18))
-      setExecutionReward(formatUnits(settings.executionReward, 18))
-      setVoteRewardsCoefficient(
-        formatUnits(settings.voteRewardsCoefficient, 18)
-      )
+      setCreationReward(fromBig(settings.creationReward, 18))
+      setExecutionReward(fromBig(settings.executionReward, 18))
+      setVoteRewardsCoefficient(fromBig(settings.voteRewardsCoefficient, 18))
       setExecutorDescription(settings.executorDescription)
     },
     []
@@ -578,11 +544,11 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       _setTokenCreationName(govPool.tokenCreation.name)
       _setTokenCreationSymbol(govPool.tokenCreation.symbol)
       _setTokenCreationTotalSupply(
-        formatUnits(govPool.tokenCreation.totalSupply, 18)
+        fromBig(govPool.tokenCreation.totalSupply, 18)
       )
-      _setTokenCreationTreasury(formatUnits(govPool.tokenCreation.treasury, 18))
+      _setTokenCreationTreasury(fromBig(govPool.tokenCreation.treasury, 18))
       _setTokenCreationInitialDistribution(
-        formatUnits(govPool.tokenCreation.initialDistribution, 18)
+        fromBig(govPool.tokenCreation.initialDistribution, 18)
       )
 
       _setTokenAddress(govPool._userKeeperParams.tokenAddress)

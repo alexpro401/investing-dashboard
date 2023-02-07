@@ -20,6 +20,8 @@ import { isAddress, shortenAddress } from "utils"
 import { useActiveWeb3React } from "hooks"
 import { isEqual } from "lodash"
 import { readFromClipboard } from "../../../utils/clipboard"
+import { BigNumber } from "ethers"
+import { useEffectOnce } from "react-use"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -36,6 +38,29 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
     address: account,
     amount: "0",
   })
+  const [treasuryPercent, setTreasuryPercent] = useState(0)
+  const [initialDistributionPercent, setInitialDistributionPercent] =
+    useState(0)
+
+  useEffectOnce(() => {
+    if (tokenCreation.treasury.get) {
+      setTreasuryPercent(
+        BigNumber.from(tokenCreation.treasury.get)
+          .mul(100)
+          .div(BigNumber.from(tokenCreation.totalSupply.get))
+          .toNumber()
+      )
+    }
+
+    if (tokenCreation.initialDistribution.get) {
+      setInitialDistributionPercent(
+        BigNumber.from(tokenCreation.initialDistribution.get)
+          .mul(100)
+          .div(BigNumber.from(tokenCreation.totalSupply.get))
+          .toNumber()
+      )
+    }
+  })
 
   const handleNextStep = useCallback(() => {
     nextCb()
@@ -47,13 +72,78 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
     tokenCreation.initialDistribution.set("0")
   }
 
+  const handleTreasuryPercentChange = useCallback(
+    (value: string | number) => {
+      try {
+        const totalSupply = BigNumber.from(tokenCreation.totalSupply.get)
+
+        const treasuryPercent = BigNumber.from(value)
+        const treasury = totalSupply.mul(treasuryPercent).div(100)
+
+        const initialDistributionPercent =
+          BigNumber.from(100).sub(treasuryPercent)
+        const initialDistribution = totalSupply
+          .mul(initialDistributionPercent)
+          .div(100)
+
+        setTreasuryPercent(treasuryPercent.toNumber())
+        tokenCreation.treasury.set(treasury.toString())
+
+        setInitialDistributionPercent(initialDistributionPercent.toNumber())
+        tokenCreation.initialDistribution.set(initialDistribution.toString())
+      } catch (error) {}
+    },
+    [
+      tokenCreation.initialDistribution,
+      tokenCreation.totalSupply.get,
+      tokenCreation.treasury,
+    ]
+  )
+  const handleInitialDistributionPercentChange = useCallback(
+    (value: string | number) => {
+      console.log("handleInitialDistributionPercentChange", value)
+      try {
+        const totalSupply = BigNumber.from(tokenCreation.totalSupply.get)
+
+        const initialDistributionPercent = BigNumber.from(value)
+        const initialDistribution = totalSupply
+          .mul(initialDistributionPercent)
+          .div(100)
+
+        const treasuryPercent = BigNumber.from(100).sub(
+          initialDistributionPercent
+        )
+        const treasury = totalSupply.mul(treasuryPercent).div(100)
+
+        setTreasuryPercent(treasuryPercent.toNumber())
+        tokenCreation.treasury.set(treasury.toString())
+
+        setInitialDistributionPercent(initialDistributionPercent.toNumber())
+        tokenCreation.initialDistribution.set(initialDistribution.toString())
+      } catch (error) {}
+    },
+    [
+      tokenCreation.initialDistribution,
+      tokenCreation.totalSupply.get,
+      tokenCreation.treasury,
+    ]
+  )
+
   const handleTreasuryChange = useCallback(
     (v: string | number) => {
-      const totalSupply = Number(tokenCreation.totalSupply.get)
-      const treasury = Number(v)
+      try {
+        const totalSupply = BigNumber.from(tokenCreation.totalSupply.get)
+        const treasury = BigNumber.from(v)
+        const initialDistribution = totalSupply.sub(treasury)
 
-      tokenCreation.treasury.set(String(v))
-      tokenCreation.initialDistribution.set(String(totalSupply - treasury))
+        tokenCreation.treasury.set(String(v))
+        setTreasuryPercent(treasury.mul(100).div(totalSupply).toNumber())
+
+        tokenCreation.initialDistribution.set(initialDistribution.toString())
+        setInitialDistributionPercent(
+          initialDistribution.mul(100).div(totalSupply).toNumber()
+        )
+      } catch (error) {}
     },
     [
       tokenCreation.initialDistribution,
@@ -64,11 +154,19 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
 
   const handleInitialDistributionChange = useCallback(
     (v: string | number) => {
-      const totalSupply = Number(tokenCreation.totalSupply.get)
-      const initialDistribution = Number(v)
+      try {
+        const totalSupply = BigNumber.from(tokenCreation.totalSupply.get)
+        const initialDistribution = BigNumber.from(v)
+        const treasury = totalSupply.sub(initialDistribution)
 
-      tokenCreation.initialDistribution.set(String(v))
-      tokenCreation.treasury.set(String(totalSupply - initialDistribution))
+        tokenCreation.initialDistribution.set(String(v))
+        setInitialDistributionPercent(
+          initialDistribution.mul(100).div(totalSupply).toNumber()
+        )
+
+        tokenCreation.treasury.set(treasury.toString())
+        setTreasuryPercent(treasury.mul(100).div(totalSupply).toNumber())
+      } catch (error) {}
     },
     [
       tokenCreation.initialDistribution,
@@ -76,6 +174,8 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
       tokenCreation.treasury,
     ]
   )
+
+  // Recipients
 
   const handleRecipientAmountChange = useCallback(
     (value: number | string, idx: number) => {
@@ -204,19 +304,61 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
             />
             <InputField
               type="number"
-              value={tokenCreation.treasury.get}
-              setValue={handleTreasuryChange}
+              value={treasuryPercent}
+              setValue={handleTreasuryPercentChange}
               min={0}
-              max={Number(tokenCreation.totalSupply.get)}
+              max={100}
               label={t("token-creation-step.treasury-lbl")}
+              nodeLeft={
+                <S.TokenCreationInputNodeRightSymbol>
+                  %
+                </S.TokenCreationInputNodeRightSymbol>
+              }
+              nodeRight={
+                <S.TokenCreationInputNodeRight>
+                  <S.TokenCreationInputNodeRightInput
+                    type="number"
+                    value={tokenCreation.treasury.get}
+                    onInput={(e) => handleTreasuryChange(e.currentTarget.value)}
+                    min={0}
+                    max={Number(tokenCreation.totalSupply.get)}
+                    placeholder="0"
+                  />
+                  <S.TokenCreationInputNodeRightSymbol>
+                    {tokenCreation.symbol.get}
+                  </S.TokenCreationInputNodeRightSymbol>
+                </S.TokenCreationInputNodeRight>
+              }
             />
             <InputField
               type="number"
-              value={tokenCreation.initialDistribution.get}
-              setValue={handleInitialDistributionChange}
+              value={initialDistributionPercent}
+              setValue={handleInitialDistributionPercentChange}
               min={0}
-              max={Number(tokenCreation.totalSupply.get)}
+              max={100}
               label={t("token-creation-step.initial-distribution-lbl")}
+              nodeLeft={
+                <S.TokenCreationInputNodeRightSymbol>
+                  %
+                </S.TokenCreationInputNodeRightSymbol>
+              }
+              nodeRight={
+                <S.TokenCreationInputNodeRight>
+                  <S.TokenCreationInputNodeRightInput
+                    type="number"
+                    value={tokenCreation.initialDistribution.get}
+                    onInput={(e) =>
+                      handleInitialDistributionChange(e.currentTarget.value)
+                    }
+                    min={0}
+                    max={Number(tokenCreation.totalSupply.get)}
+                    placeholder="0"
+                  />
+                  <S.TokenCreationInputNodeRightSymbol>
+                    {tokenCreation.symbol.get}
+                  </S.TokenCreationInputNodeRightSymbol>
+                </S.TokenCreationInputNodeRight>
+              }
             />
           </CardFormControl>
         </Card>

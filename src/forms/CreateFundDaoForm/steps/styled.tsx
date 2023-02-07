@@ -349,7 +349,7 @@ export const TokenCreationInputNodeRight = styled.div`
   align-items: center;
   justify-content: flex-end;
   gap: 4px;
-  max-width: 50%;
+  max-width: 75%;
   margin-left: auto;
 `
 
