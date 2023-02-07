@@ -60,11 +60,39 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
           .toNumber()
       )
     }
+
+    if (tokenCreation.recipients.get?.length) {
+      const daoCreationRecipientsSum = tokenCreation.recipients.get?.reduce(
+        (acc, curr) => {
+          return acc.add(BigNumber.from(curr.amount))
+        },
+        BigNumber.from(0)
+      )
+
+      setDaoCreatorRecipient({
+        ...daoCreatorRecipient,
+        amount: BigNumber.from(tokenCreation.totalSupply.get)
+          .sub(BigNumber.from(daoCreationRecipientsSum))
+          .toString(),
+      })
+    }
   })
 
   const handleNextStep = useCallback(() => {
+    const totalRecipientsAmount =
+      tokenCreation.recipients.get?.reduce((acc, curr) => {
+        return acc + +curr.amount
+      }, 0) + +daoCreatorRecipient?.amount
+
+    if (totalRecipientsAmount > +tokenCreation.initialDistribution.get) return
+
     nextCb()
-  }, [nextCb])
+  }, [
+    daoCreatorRecipient.amount,
+    nextCb,
+    tokenCreation.initialDistribution.get,
+    tokenCreation.recipients.get,
+  ])
 
   const handleTotalSupplyChange = (v: string | number) => {
     tokenCreation.totalSupply.set(String(v))

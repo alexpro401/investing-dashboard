@@ -25,8 +25,8 @@ import {
 import { INITIAL_DAO_PROPOSAL } from "consts/dao"
 import { isEqual } from "lodash"
 import { SUPPORTED_SOCIALS } from "consts/socials"
-import { formatUnits, parseUnits } from "@ethersproject/units"
-import { fromBig } from "../../utils"
+import { parseUnits } from "@ethersproject/units"
+import { fromBig } from "utils"
 
 interface IGovPoolFormContext {
   isErc20: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
