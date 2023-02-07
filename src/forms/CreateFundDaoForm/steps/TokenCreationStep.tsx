@@ -129,7 +129,6 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
   )
   const handleInitialDistributionPercentChange = useCallback(
     (value: string | number) => {
-      console.log("handleInitialDistributionPercentChange", value)
       try {
         const totalSupply = BigNumber.from(tokenCreation.totalSupply.get)
 
@@ -194,6 +193,11 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
 
         tokenCreation.treasury.set(treasury.toString())
         setTreasuryPercent(treasury.mul(100).div(totalSupply).toNumber())
+
+        tokenCreation.recipients.set([
+          ...tokenCreation.recipients.get.map((el) => ({ ...el, amount: "0" })),
+        ])
+        setDaoCreatorRecipient({ ...daoCreatorRecipient, amount: String(v) })
       } catch (error) {}
     },
     [
@@ -460,7 +464,7 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
                               idx
                             )
                           }
-                          max={Number(tokenCreation.totalSupply.get)}
+                          max={Number(tokenCreation.initialDistribution.get)}
                         />
                         <S.TokenCreationInputNodeRightSymbol>
                           {tokenCreation.symbol.get}

@@ -63,7 +63,8 @@ interface ITitlesStepProps {}
 const TitlesStep: FC<ITitlesStepProps> = () => {
   const daoPoolFormContext = useContext(GovPoolFormContext)
 
-  const { isErc20, isErc721, erc20, erc721, socialLinks } = daoPoolFormContext
+  const { isErc20, isErc721, erc20, erc721, socialLinks, tokenCreation } =
+    daoPoolFormContext
 
   const { avatarUrl, daoName, websiteUrl, description, documents } =
     daoPoolFormContext
@@ -182,7 +183,9 @@ const TitlesStep: FC<ITitlesStepProps> = () => {
         : {}),
 
       ...(isErc20.get
-        ? { tokenAddress: { required, isAddressValidator } }
+        ? +tokenCreation.totalSupply.get
+          ? {}
+          : { tokenAddress: { required, isAddressValidator } }
         : {}),
       ...(isErc721.get
         ? {
@@ -309,56 +312,63 @@ const TitlesStep: FC<ITitlesStepProps> = () => {
     () => (
       <Collapse isOpen={isErc20.get}>
         <CardFormControl>
-          <OverlapInputField
-            value={tokenAddress.get}
-            setValue={tokenAddress.set}
-            label="ERC-20 token"
-            labelNodeRight={
-              isFieldValid("tokenAddress") ? (
-                <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
-              ) : (
-                <></>
-              )
-            }
-            errorMessage={getFieldErrorMessage("tokenAddress")}
-            onBlur={() => touchField("tokenAddress")}
-            nodeRight={
-              <AppButton
-                type="button"
-                text={"Paste"}
-                color="default"
-                size="no-paddings"
-                onClick={() => pasteFromClipboard(tokenAddress.set)}
-              />
-            }
-            overlapNodeLeft={
-              tokenAddress.get &&
-              erc20TokenData?.name &&
-              erc20TokenData?.symbol && (
-                <TokenChip
-                  name={erc20TokenData?.name}
-                  symbol={erc20TokenData?.symbol}
-                  link={erc20TokenExplorerLink}
-                />
-              )
-            }
-            overlapNodeRight={
-              tokenAddress.get &&
-              erc20TokenData?.name &&
-              erc20TokenData?.symbol && (
+          {tokenCreation.totalSupply.get ? (
+            <TokenChip
+              name={tokenCreation.name.get}
+              symbol={tokenCreation.symbol.get}
+            />
+          ) : (
+            <OverlapInputField
+              value={tokenAddress.get}
+              setValue={tokenAddress.set}
+              label="ERC-20 token"
+              labelNodeRight={
+                isFieldValid("tokenAddress") ? (
+                  <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                ) : (
+                  <></>
+                )
+              }
+              errorMessage={getFieldErrorMessage("tokenAddress")}
+              onBlur={() => touchField("tokenAddress")}
+              nodeRight={
                 <AppButton
                   type="button"
-                  text="Paste another"
+                  text={"Paste"}
                   color="default"
                   size="no-paddings"
-                  onClick={() => {
-                    tokenAddress.set("")
-                  }}
+                  onClick={() => pasteFromClipboard(tokenAddress.set)}
                 />
-              )
-            }
-            disabled={!!tokenAddress.get && !!erc20TokenData?.name}
-          />
+              }
+              overlapNodeLeft={
+                tokenAddress.get &&
+                erc20TokenData?.name &&
+                erc20TokenData?.symbol && (
+                  <TokenChip
+                    name={erc20TokenData?.name}
+                    symbol={erc20TokenData?.symbol}
+                    link={erc20TokenExplorerLink}
+                  />
+                )
+              }
+              overlapNodeRight={
+                tokenAddress.get &&
+                erc20TokenData?.name &&
+                erc20TokenData?.symbol && (
+                  <AppButton
+                    type="button"
+                    text="Paste another"
+                    color="default"
+                    size="no-paddings"
+                    onClick={() => {
+                      tokenAddress.set("")
+                    }}
+                  />
+                )
+              }
+              disabled={!!tokenAddress.get && !!erc20TokenData?.name}
+            />
+          )}
           <S.CardAddBtn
             text={"Create own token"}
             color="default"
