@@ -347,14 +347,25 @@ export const ERCImgWrp = styled.img`
 export const TokenCreationInputNodeRight = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: flex-end;
+  gap: 4px;
+  max-width: 50%;
+  margin-left: auto;
 `
 
-export const TokenCreationInputNodeRightInput = styled.input`
-  background: transparent;
-  font-size: 16px;
-  line-height: 1.3;
-  color: ${(props) => props.theme.textColors.primary};
+export const TokenCreationInputNodeRightInput = styled(InputField)`
+  input {
+    border: none;
+    background: transparent;
+    outline: none;
+    text-align: right;
+    font-size: 16px;
+    line-height: 1.3;
+    color: ${(props) => props.theme.textColors.primary};
+    width: 100%;
+    padding: 2px;
+    border-radius: 0;
+  }
 `
 
 export const TokenCreationInputNodeRightSymbol = styled.span`
@@ -362,4 +373,27 @@ export const TokenCreationInputNodeRightSymbol = styled.span`
   font-size: 16px;
   line-height: 1.3;
   color: ${(props) => props.theme.textColors.primary};
+`
+
+export const TokenCreationRecipientPasteBtn = styled(AppButton).attrs({
+  color: "default",
+  size: "no-paddings",
+})`
+  color: ${(props) => props.theme.brandColors.secondary};
+`
+
+export const TokenCreationRecipientRemoveBtn = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: ${(props) => props.theme.brandColors.secondary};
+  padding: 4px;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
 `

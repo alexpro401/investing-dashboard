@@ -33,6 +33,7 @@ interface Props {
   limits: { min: number; max: number }
   onChange: (name: string, value: number) => void
   error?: boolean
+  isShowSliderLine?: boolean
 }
 
 const Slider: React.FC<Props> = ({
@@ -43,6 +44,7 @@ const Slider: React.FC<Props> = ({
   debounce = true,
   onChange,
   error = false,
+  isShowSliderLine = true,
   ...rest
 }) => {
   const [v, setV] = useState(initial)
@@ -76,7 +78,7 @@ const Slider: React.FC<Props> = ({
             value={debounce ? v : initial}
             onChange={handleChange}
           />
-          {max !== 100 && <SliderLine />}
+          {isShowSliderLine && max !== 100 && <SliderLine />}
         </Flex>
         {!hideInput && (
           <Flex p="0 0 0 20px">

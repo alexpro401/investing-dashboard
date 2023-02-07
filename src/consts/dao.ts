@@ -25,6 +25,7 @@ export const INITIAL_DAO_PROPOSAL: GovPoolFormOptions = {
     totalSupply: BigNumber.from(0),
     treasury: BigNumber.from(0),
     initialDistribution: BigNumber.from(0),
+    recipients: [],
   },
   _validatorsParams: {
     name: "",

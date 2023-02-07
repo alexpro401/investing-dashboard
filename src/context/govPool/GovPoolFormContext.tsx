@@ -39,6 +39,10 @@ interface IGovPoolFormContext {
     totalSupply: { get: string; set: Dispatch<SetStateAction<string>> }
     treasury: { get: string; set: Dispatch<SetStateAction<string>> }
     initialDistribution: { get: string; set: Dispatch<SetStateAction<string>> }
+    recipients: {
+      get: { address: string; amount: string }[]
+      set: Dispatch<SetStateAction<{ address: string; amount: string }[]>>
+    }
   }
 
   isCustomVoting: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
@@ -92,6 +96,7 @@ export const GovPoolFormContext = createContext<IGovPoolFormContext>({
     totalSupply: { get: "", set: () => {} },
     treasury: { get: "", set: () => {} },
     initialDistribution: { get: "", set: () => {} },
+    recipients: { get: [], set: () => {} },
   },
 
   avatarUrl: { get: "", set: () => {} },
@@ -200,6 +205,12 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
     _setTokenCreationInitialDistribution,
   ] = useState(
     String(formatUnits(storedForm.tokenCreation.initialDistribution, 18))
+  )
+  const [_tokenCreationRecipients, _setTokenCreationRecipients] = useState(
+    storedForm.tokenCreation.recipients?.map((el) => ({
+      ...el,
+      amount: formatUnits(el.amount, 18),
+    }))
   )
 
   const _userKeeperParams = {
@@ -637,6 +648,10 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
         totalSupply: parseUnits(_tokenCreationTotalSupply, 18),
         treasury: parseUnits(_tokenCreationTreasury, 18),
         initialDistribution: parseUnits(_tokenCreationInitialDistribution, 18),
+        recipients: _tokenCreationRecipients.map((el) => ({
+          ...el,
+          amount: parseUnits(el.amount, 18),
+        })),
       },
       _userKeeperParams: {
         tokenAddress: _userKeeperParams.tokenAddress[0],
@@ -849,6 +864,7 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       _tokenCreationSymbol,
       _tokenCreationTotalSupply,
       _tokenCreationTreasury,
+      _tokenCreationRecipients,
       _userKeeperParams,
       _validatorsBalancesSettingsForm,
       _validatorsParams,
@@ -919,6 +935,10 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
             initialDistribution: {
               get: _tokenCreationInitialDistribution,
               set: _setTokenCreationInitialDistribution,
+            },
+            recipients: {
+              get: _tokenCreationRecipients,
+              set: _setTokenCreationRecipients,
             },
           },
 

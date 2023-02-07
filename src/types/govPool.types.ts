@@ -67,6 +67,7 @@ export type GovPoolFormOptions = {
     totalSupply: BigNumber
     treasury: BigNumber
     initialDistribution: BigNumber
+    recipients: { address: string; amount: BigNumber }[]
   }
   _validatorsParams: {
     name: string
