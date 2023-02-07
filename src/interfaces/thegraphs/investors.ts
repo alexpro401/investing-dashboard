@@ -1,4 +1,5 @@
 import { BigNumberish } from "@ethersproject/bignumber"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 
 export interface IInvestorClaims {
   amountDividendsTokens: string[]
@@ -61,12 +62,30 @@ export interface InvestorRiskyPosition {
   totalLP2CloseVolume: string
   totalUSDOpenVolume: string
   totalUSDCloseVolume: string
-  proposalContract: { id: string }
+  proposalContract: {
+    id: string
+    traderPool: { id: string; token: string }
+  }
   investor: { id: string }
 }
 
 export interface InvestorRiskyPositionWithVests extends InvestorRiskyPosition {
   vests: InvestorRiskyVest[]
+}
+
+export interface WrappedInvestorRiskyPositionView {
+  id: string
+  position: InvestorRiskyPosition
+  vests: InvestorRiskyVest[]
+  poolInfo?: IPoolInfo
+  utilityIds: {
+    proposalId: number
+    proposalEntityId?: string
+    proposalTokenAddress?: string
+    proposalContractAddress: string
+    poolAddress: string
+    poolBaseTokenAddress: string
+  }
 }
 
 export interface InvestorPoolQuery {

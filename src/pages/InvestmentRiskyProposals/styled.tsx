@@ -53,3 +53,14 @@ export const InvestorRiskyPositionsListHeadItem = styled.div`
     color: #6781bd;
   }
 `
+
+export const InvestorRiskyPositionsListBody = styled.div`
+  width: fill-available;
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
+
+  ${respondTo("lg")} {
+    gap: calc(var(--app-gap) / 2);
+  }
+`

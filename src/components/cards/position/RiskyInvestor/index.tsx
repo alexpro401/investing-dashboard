@@ -1,6 +1,5 @@
 import { FC, MouseEvent, useCallback, useMemo, useState } from "react"
 import { generatePath, useNavigate } from "react-router-dom"
-import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 
 import theme, { Flex } from "theme"
 import Icon from "components/Icon"
@@ -10,34 +9,26 @@ import { accordionSummaryVariants } from "motion/variants"
 import SharedS, { BodyItem, Share } from "components/cards/position/styled"
 import * as S from "./styled"
 
-import useRiskyPosition from "./useRiskyPosition"
-import { InvestorRiskyPositionWithVests } from "interfaces/thegraphs/investors"
+import useRiskyPositionView from "./useRiskyPositionView"
+import { WrappedInvestorRiskyPositionView } from "interfaces/thegraphs/investors"
 import { ICON_NAMES, ROUTE_PATHS } from "consts"
 import { Icon as IconCommon, NoDataMessage } from "common"
 import { useBreakpoints } from "hooks"
-interface InvestorRiskyPositionProposalData {
-  token: string
-  pool: {
-    id: string
-    baseToken: string
-  }
-}
+import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 
 interface Props {
-  position: InvestorRiskyPositionWithVests & InvestorRiskyPositionProposalData
-  poolInfo: IPoolInfo
-  poolMetadata: any
-  proposalId: string
+  payload: WrappedInvestorRiskyPositionView
 }
 
-const RiskyInvestorPositionCard: FC<Props> = ({
-  position,
-  poolInfo,
-  poolMetadata,
-  proposalId,
-}) => {
+const RiskyInvestorPositionCard: FC<Props> = ({ payload }) => {
+  const { position, poolInfo, utilityIds, vests } = payload
   const { isDesktop } = useBreakpoints()
   const navigate = useNavigate()
+
+  const [{ poolMetadata }] = usePoolMetadata(
+    utilityIds.poolAddress,
+    poolInfo?.parameters.descriptionURL
+  )
 
   const [
     {
@@ -52,9 +43,7 @@ const RiskyInvestorPositionCard: FC<Props> = ({
       positionToken,
       baseToken,
     },
-  ] = useRiskyPosition(position, proposalId)
-
-  const vests = position.vests ?? []
+  ] = useRiskyPositionView(position, utilityIds)
 
   const [showVests, setShowVests] = useState<boolean>(false)
   const toggleVests = useCallback(() => {
@@ -82,12 +71,12 @@ const RiskyInvestorPositionCard: FC<Props> = ({
       e.stopPropagation()
       navigate(
         generatePath(ROUTE_PATHS.poolProfile, {
-          poolAddress: position.pool.id,
+          poolAddress: utilityIds.poolAddress,
           "*": "",
         })
       )
     },
-    [navigate, position]
+    [navigate, utilityIds]
   )
 
   /**
@@ -138,7 +127,7 @@ const RiskyInvestorPositionCard: FC<Props> = ({
                   m="0"
                   size={26}
                   source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
-                  address={position.pool.id}
+                  address={utilityIds.poolAddress}
                 />
               </Flex>
             </Flex>
@@ -154,7 +143,7 @@ const RiskyInvestorPositionCard: FC<Props> = ({
                       source={
                         poolMetadata?.assets[poolMetadata?.assets.length - 1]
                       }
-                      address={position.pool.id}
+                      address={utilityIds.poolAddress}
                     />
                     <S.FundSymbol>{poolInfo?.ticker}</S.FundSymbol>
                   </Flex>

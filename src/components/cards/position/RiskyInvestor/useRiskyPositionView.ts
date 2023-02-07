@@ -14,6 +14,7 @@ import {
 import { ITokenBase } from "interfaces"
 import usePoolPrice from "hooks/usePoolPrice"
 import useRiskyPrice from "hooks/useRiskyPrice"
+import { useRiskyPosition } from "hooks"
 
 interface IAmount {
   big: BigNumber
@@ -38,17 +39,23 @@ interface IPayload {
   baseToken: ITokenBase | null
 }
 
-function useRiskyPosition(position: any, proposalId): [IPayload] {
-  const [positionToken] = useERC20Data(position?.token)
-  const [baseToken] = useERC20Data(position.pool.baseToken)
+function useRiskyPositionView(position: any, utilityIds): [IPayload] {
+  const data = useRiskyPosition({
+    proposalAddress: utilityIds.proposalContractAddress,
+    proposalId: String(utilityIds.proposalId),
+    closed: position.isClosed,
+  })
+
+  const [positionToken] = useERC20Data(data?.proposal?.token)
+  const [baseToken] = useERC20Data(utilityIds.poolBaseTokenAddress)
 
   const [{ priceBase: PoolPriceBase, priceUSD: PoolPriceUSD }] = usePoolPrice(
-    position.pool.id
+    utilityIds.poolAddress
   )
 
   const { priceBase: RiskyPriceBase, priceUSD: RiskyPriceUSD } = useRiskyPrice(
-    position.pool.id,
-    proposalId
+    utilityIds.poolAddress,
+    utilityIds.proposalId
   )
 
   /**
@@ -209,4 +216,4 @@ function useRiskyPosition(position: any, proposalId): [IPayload] {
   ]
 }
 
-export default useRiskyPosition
+export default useRiskyPositionView
