@@ -23,7 +23,9 @@ const useGovPoolVote = (daoPoolAddress?: string) => {
       depositAmount: BigNumberish,
       depositNfts: BigNumberish[],
       voteAmount: BigNumberish,
-      voteNftIds: BigNumberish[]
+      voteNftIds: BigNumberish[],
+      delegateAmount: BigNumberish,
+      delegateNftIds: BigNumberish[]
     ) => {
       if (!govPool) return
       setPayload(SubmitState.SIGN)
@@ -43,9 +45,28 @@ const useGovPoolVote = (daoPoolAddress?: string) => {
           )
         }
 
-        params.push(
-          encodeAbiMethod(GovPool, "vote", [proposalId, voteAmount, voteNftIds])
-        )
+        if (!BigNumber.from(voteAmount).isZero() || !!voteNftIds.length) {
+          params.push(
+            encodeAbiMethod(GovPool, "vote", [
+              proposalId,
+              voteAmount,
+              voteNftIds,
+            ])
+          )
+        }
+
+        if (
+          !BigNumber.from(delegateAmount).isZero() ||
+          !!delegateNftIds.length
+        ) {
+          params.push(
+            encodeAbiMethod(GovPool, "voteDelegated", [
+              proposalId,
+              delegateAmount,
+              delegateNftIds,
+            ])
+          )
+        }
 
         const transactionResponse = await govPool.multicall(params)
 
@@ -71,6 +92,7 @@ const useGovPoolVote = (daoPoolAddress?: string) => {
     [addTransaction, govPool, setError, setPayload]
   )
 
+  // not used for now. but keep it for future use when only delegated vote is needed
   const voteDelegated = useCallback(
     async (
       proposalId: BigNumberish,
