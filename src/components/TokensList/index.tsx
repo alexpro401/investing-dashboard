@@ -13,6 +13,10 @@ import useAlert, { AlertType } from "hooks/useAlert"
 import theme, { Text } from "theme"
 import TokenRow from "./TokenRow"
 import { CurrencyAmount } from "lib/entities/fractions/currencyAmount"
+import * as S from "./styled"
+import { generatePath, useParams } from "react-router-dom"
+import { ROUTE_PATHS } from "consts"
+import { isAddress } from "utils"
 
 function currencyKey(currency: Currency): string {
   return currency.isToken ? currency.address : "ETHER"
@@ -41,6 +45,7 @@ const TokensList: React.FC<Props> = ({
 }) => {
   const [showAlert] = useAlert()
   const userAddedTokens = useUserTokens()
+  const { poolToken } = useParams()
 
   const itemData: Currency[] = useMemo(() => {
     return currencies
@@ -146,21 +151,50 @@ const TokensList: React.FC<Props> = ({
     ]
   )
 
+  /* 
+      visible when only one Risky token is in the list
+      strongly hardcoded for ux purposes
+      maybe should be used in parent components,
+      but it's depends on hooks used here (to check if token is risky)
+  */
+  const RiskProposalFaqLink = useMemo(() => {
+    if (isAddress(poolToken) && isAddress(itemData[0].wrapped.address))
+      return (
+        itemData.length === 1 &&
+        !(itemData[0].wrapped.address in whitelist) && (
+          <S.FloatingTextLink
+            to={generatePath(ROUTE_PATHS.riskyProposalCreate, {
+              tokenAddress: itemData[0].wrapped.address,
+              poolAddress: poolToken || "",
+              "*": "faq",
+            })}
+          >
+            Read more about how a risky proposal works
+          </S.FloatingTextLink>
+        )
+      )
+
+    return null
+  }, [itemData, whitelist, poolToken])
+
   return (
-    <AutoSizer>
-      {({ height, width }) => (
-        <FixedSizeList
-          itemData={itemData}
-          itemCount={itemData.length}
-          itemSize={60}
-          itemKey={itemKey}
-          height={height}
-          width={width}
-        >
-          {Row}
-        </FixedSizeList>
-      )}
-    </AutoSizer>
+    <>
+      <AutoSizer>
+        {({ height, width }) => (
+          <FixedSizeList
+            itemData={itemData}
+            itemCount={itemData.length}
+            itemSize={60}
+            itemKey={itemKey}
+            height={height}
+            width={width}
+          >
+            {Row}
+          </FixedSizeList>
+        )}
+      </AutoSizer>
+      {RiskProposalFaqLink}
+    </>
   )
 }
 

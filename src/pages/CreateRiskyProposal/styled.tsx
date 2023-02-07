@@ -1,13 +1,18 @@
 import { FC, ReactNode } from "react"
 import styled from "styled-components/macro"
-import { Flex } from "theme"
+import { Flex, respondTo } from "theme"
 
 export const Container = styled(Flex)`
   width: 100%;
   padding: 16px;
   align-items: center;
+  justify-content: flex-start;
   flex-direction: column;
   overflow-y: scroll;
+
+  ${respondTo("sm")} {
+    padding: 24px;
+  }
 `
 
 export const Content = styled(Flex)`
@@ -105,18 +110,6 @@ export const FaqText = styled.div`
   letter-spacing: 0.03em;
   color: #e4f2ff;
   opacity: 0.8;
-`
-
-export const CheckboxLabel = styled.div`
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 100%;
-  letter-spacing: 0.03em;
-  color: #e4f2ff;
-  margin-left: 8px;
-  transform: translateY(3px);
 `
 
 export const CalendarIcon = styled.img`

@@ -1,7 +1,8 @@
 import { AppButton } from "common"
 import styled from "styled-components/macro"
-import theme, { Flex } from "theme"
+import theme, { Flex, respondTo } from "theme"
 import polygon from "assets/icons/popover-polygon.svg"
+import { Link } from "react-router-dom"
 
 // TOKEN ITEM
 
@@ -365,4 +366,30 @@ export const PopoverOverlay = styled.div`
   z-index: 80;
   height: 100%;
   width: 100%;
+`
+
+export const FloatingTextLink = styled(Link)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  margin: auto;
+  cursor: pointer;
+
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 16px;
+  text-align: center;
+  color: #2669eb;
+
+  ${respondTo("md")} {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+  }
 `
