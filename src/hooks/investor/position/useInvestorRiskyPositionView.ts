@@ -27,7 +27,7 @@ const INITIAL_AMOUNT: IAmount = {
 }
 
 interface IPayload {
-  positionVolume: IAmount
+  positionVolume: BigNumber
   entryPriceBase: BigNumber
   entryPriceUSD: BigNumber
   markPriceBase: BigNumber
@@ -39,7 +39,7 @@ interface IPayload {
   baseToken: ITokenBase | null
 }
 
-function useRiskyPositionView(position: any, utilityIds): [IPayload] {
+function useInvestorRiskyPositionView(position: any, utilityIds): [IPayload] {
   const data = useRiskyPosition({
     proposalAddress: utilityIds.proposalContractAddress,
     proposalId: String(utilityIds.proposalId),
@@ -63,23 +63,19 @@ function useRiskyPositionView(position: any, utilityIds): [IPayload] {
    * if position.closed return totalLP2CloseVolume
    * otherwise return current position volume
    */
-  const positionVolume = useMemo<IAmount>(() => {
+  const positionVolume = useMemo<BigNumber>(() => {
     if (!position) return INITIAL_AMOUNT
 
     const { totalLP2OpenVolume, totalLP2CloseVolume } = position
 
     if (position.isClosed) {
-      return {
-        big: BigNumber.from(totalLP2CloseVolume),
-        format: normalizeBigNumber(BigNumber.from(totalLP2CloseVolume)),
-      }
+      return BigNumber.from(totalLP2CloseVolume)
     }
 
-    const big = subtractBignumbers(
+    return subtractBignumbers(
       [BigNumber.from(totalLP2OpenVolume), 18],
       [BigNumber.from(totalLP2CloseVolume), 18]
     )
-    return { big, format: normalizeBigNumber(big) }
   }, [position])
 
   /**
@@ -181,7 +177,7 @@ function useRiskyPositionView(position: any, utilityIds): [IPayload] {
       [entryPriceBase, 18]
     )
 
-    return multiplyBignumbers([priceDiff, 18], [positionVolume.big, 18])
+    return multiplyBignumbers([priceDiff, 18], [positionVolume, 18])
   }, [markPriceBase, entryPriceBase, positionVolume])
 
   /**
@@ -197,7 +193,7 @@ function useRiskyPositionView(position: any, utilityIds): [IPayload] {
       [entryPriceUSD, 18]
     )
 
-    return multiplyBignumbers([priceDiff, 18], [positionVolume.big, 18])
+    return multiplyBignumbers([priceDiff, 18], [positionVolume, 18])
   }, [markPriceUSD, entryPriceUSD, positionVolume])
 
   return [
@@ -216,4 +212,4 @@ function useRiskyPositionView(position: any, utilityIds): [IPayload] {
   ]
 }
 
-export default useRiskyPositionView
+export default useInvestorRiskyPositionView

@@ -26,16 +26,11 @@ export const InvestorRiskyPositionsListHead = styled.div<{
   display: none;
 
   ${respondTo("lg")} {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    grid-column-gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 155px)) 1fr;
+    justify-items: flex-start;
+    gap: 0 var(--app-gap);
     padding: 8px 16px 0;
-
-    & > * {
-      flex: 1 0 155px;
-      max-width: ${({ childMaxWidth }) => childMaxWidth ?? "167px"};
-    }
   }
 `
 

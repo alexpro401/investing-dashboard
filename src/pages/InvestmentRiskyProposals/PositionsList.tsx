@@ -6,10 +6,9 @@ import { SpiralSpinner } from "react-spinners-kit"
 import { useInvestorRiskyPositionList } from "hooks"
 
 import { Center } from "theme"
-import { NoDataMessage } from "common"
+import { NoDataMessage, CardInvestorRiskyPosition } from "common"
 import Tooltip from "components/Tooltip"
 import LoadMore from "components/LoadMore"
-import RiskyInvestorPositionCard from "components/cards/position/RiskyInvestor"
 
 import * as S from "./styled"
 
@@ -54,10 +53,11 @@ const InvestmentRiskyPositionsList: React.FC<IProps> = ({ closed }) => {
             <S.InvestorRiskyPositionsListHeadItem>
               P&L in %
             </S.InvestorRiskyPositionsListHeadItem>
+            <S.InvestorRiskyPositionsListHeadItem />
           </S.InvestorRiskyPositionsListHead>
           <S.InvestorRiskyPositionsListBody>
             {data.map((p) => (
-              <RiskyInvestorPositionCard key={p.position.id} payload={p} />
+              <CardInvestorRiskyPosition key={p.id} payload={p} />
             ))}
             <LoadMore isLoading={loading} handleMore={fetchMore} />
           </S.InvestorRiskyPositionsListBody>
