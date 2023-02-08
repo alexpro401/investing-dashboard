@@ -20,7 +20,7 @@ import {
   addProposal,
   addUser,
 } from "./actions"
-import { IInvestProposalMetadata, IUserMetadata } from "./types"
+import { IInvestProposalMetadata, IPoolMetadata, IUserMetadata } from "./types"
 import { InsuranceAccident } from "interfaces/insurance"
 import {
   useGovPoolContract,
@@ -32,7 +32,15 @@ import { shortenAddress } from "utils"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { IGovPoolDescription } from "types"
 
-export function usePoolMetadata(poolId, hash) {
+type UsePoolMetadataResponse = [
+  { poolMetadata: IPoolMetadata | null; loading: boolean },
+  { fetchPoolMetadata: () => void }
+]
+
+export function usePoolMetadata(
+  poolId?: string,
+  hash?: string
+): UsePoolMetadataResponse {
   const dispatch = useDispatch()
   const poolMetadata = useSelector(selectPoolMetadata(poolId, hash))
   const [loading, setLoading] = useState(false)
@@ -44,9 +52,9 @@ export function usePoolMetadata(poolId, hash) {
       if (data) {
         dispatch(addPool({ params: { poolId, hash, ...data } }))
       }
-      setLoading(false)
     } catch (error) {
       console.error(error)
+    } finally {
       setLoading(false)
     }
   }, [dispatch, hash, poolId])
