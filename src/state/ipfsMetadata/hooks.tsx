@@ -47,7 +47,8 @@ export function usePoolMetadata(
   const [loading, setLoading] = useState(false)
 
   const fetchPoolMetadata = useCallback(async () => {
-    console.log(poolId, hash)
+    if (isNil(poolId) || isNil(hash)) return
+
     try {
       setLoading(true)
       const ipfsData = new IpfsEntity<IPoolMetadata>({
