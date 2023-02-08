@@ -25,21 +25,24 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
 
   const [maximumPoolInvestors, setMaximumPoolInvestors] =
     React.useState<BigNumber>(ZERO)
+  const [maximumPoolInvestorsLoading, setMaximumPoolInvestorsLoading] =
+    React.useState<boolean>(true)
 
   const loadMaxPoolInvestors = React.useCallback(async () => {
-    if (!corePropertiesContract) return
+    if (!corePropertiesContract || pause) return ZERO
     try {
-      const _maximumPoolInvestors =
-        await corePropertiesContract.getMaximumPoolInvestors()
-
-      setMaximumPoolInvestors(_maximumPoolInvestors)
+      setMaximumPoolInvestorsLoading(true)
+      return corePropertiesContract.getMaximumPoolInvestors()
     } catch (e) {
       console.error("Failed to load maximum pool investors")
+      return ZERO
     }
-  }, [corePropertiesContract])
+  }, [corePropertiesContract, pause])
 
   React.useEffect(() => {
     loadMaxPoolInvestors()
+      .then((res) => setMaximumPoolInvestors(res))
+      .then(() => setMaximumPoolInvestorsLoading(false))
   }, [loadMaxPoolInvestors])
 
   const [riskyProposalsByPools, riskyProposalsByPoolsLoading, fetchMore] =
@@ -101,6 +104,7 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
   const anyLoading = React.useMemo(
     () =>
       pause ||
+      maximumPoolInvestorsLoading ||
       riskyProposalsByPoolsLoading ||
       proposalContractAddressListAnyLoading ||
       proposalsDataLoading ||
@@ -109,6 +113,7 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
       poolInfoLoading,
     [
       pause,
+      maximumPoolInvestorsLoading,
       riskyProposalsByPoolsLoading,
       proposalContractAddressListAnyLoading,
       proposalsDataLoading,
@@ -118,11 +123,7 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
     ]
   )
 
-  const [proposals, setProposals] = React.useState<WrappedRiskyProposalView[]>(
-    []
-  )
-
-  React.useEffect(() => {
+  const proposals = React.useMemo(() => {
     if (
       anyLoading ||
       isNil(account) ||
@@ -131,10 +132,10 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
       isEmpty(tokenMarkPrices) ||
       isEmpty(poolInfos)
     ) {
-      return
+      return []
     }
 
-    const _proposals = proposalUtilityIdList.map<WrappedRiskyProposalView>(
+    return proposalUtilityIdList.map<WrappedRiskyProposalView>(
       (utilityIds, index) => {
         const poolInfo = poolInfos[utilityIds.basicPoolAddress]!
 
@@ -142,7 +143,7 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
           String(account).toLowerCase(),
           String(poolInfo.parameters.trader).toLowerCase()
         )
-        const wrappedProposalView = {
+        return {
           id: utilityIds.proposalEntityId,
           proposal: proposalsData[index],
           userActiveInvestmentsInfo: activeInvestmentsInfo[index],
@@ -153,11 +154,8 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
           isTrader: isTrader,
           maximumPoolInvestors: maximumPoolInvestors,
         }
-        return wrappedProposalView
       }
     )
-
-    setProposals(_proposals)
   }, [
     account,
     anyLoading,
