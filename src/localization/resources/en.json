@@ -65,5 +65,49 @@
   },
   "trader-pools-list": {
     "tooltip-msg": "Tooltip message"
+  },
+
+  "investor-positions-list": {
+    "label-pool": "Fund",
+    "label-my-volume": "My Volume",
+    "label-entry-price": "Entry Price",
+    "label-current-price": "Entry Price",
+    "label-pnl": "P&L in %",
+    "label-commission": "P&L in %",
+    "tooltip-msg-entry-price": "Explain Entry Price",
+    "tooltip-msg-current-price": "Explain Current Price",
+    "tooltip-msg-commission-price": "Explain commission"
+  },
+  "investor-position-card": {
+    "label-entry-price": "Entry Price {{currency}}",
+    "label-closed-price": "Closed Price {{currency}}",
+    "label-current-price": "Current Price {{currency}}",
+    "label-pnl": "P&L {{currency}}",
+    "action-invest": "Buy more",
+    "action-divest": "Close position",
+    "action-divest--short": "Close",
+    "action-toggle-vests": "All trades",
+    "action-toggle-commission": "Commission"
+  },
+
+  "investor-position-commission-card": {
+    "label-period": "{{month}} month Performance Fee",
+    "label-amount": "Paid Performance Fee",
+    "label-withdraw-date": "Date of withdrawal",
+    "label-investor-locked": "Investor funds locked ({{percent}}%)"
+  },
+
+  "pool-position-vest-card": {
+    "vest-direction-buy": "Buy",
+    "vest-direction-sell": "Sell",
+    "label-amount": "Amount {{currency}}",
+    "label-price": "Price {{currency}}"
+  },
+  "card-investor-risky-position": {
+    "amount-lp2": "{{amount}} LP2",
+    "label-entry-price": "Entry Price {{currency}}",
+    "label-current-price": "Current Price {{currency}}",
+    "label-closed-price": "Closed price {{currency}}",
+    "label-pnl": "P&L {{currency}}"
   }
 }

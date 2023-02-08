@@ -13,6 +13,7 @@ import * as S from "./styled"
 
 import { Flex } from "theme"
 import { ICON_NAMES } from "consts"
+import { useTranslation } from "react-i18next"
 
 interface Props {
   data: any
@@ -36,6 +37,7 @@ const PositionTrade: React.FC<Props> = ({
 }) => {
   const { chainId } = useActiveWeb3React()
   const { isDesktop } = useBreakpoints()
+  const { t } = useTranslation()
 
   const href = useMemo(() => {
     if (data && chainId) {
@@ -104,7 +106,13 @@ const PositionTrade: React.FC<Props> = ({
   }, [data, isBuy, priceUsd])
 
   const PositionDirection = (
-    <S.Direction isBuy={isBuy}>{isBuy ? "Buy" : "Sell"}</S.Direction>
+    <S.Direction isBuy={isBuy}>
+      {t(
+        isBuy
+          ? "pool-position-vest-card.vest-direction-buy"
+          : "pool-position-vest-card.vest-direction-sell"
+      )}
+    </S.Direction>
   )
 
   return (
@@ -140,16 +148,26 @@ const PositionTrade: React.FC<Props> = ({
         )}
         {isDesktop && (
           <S.Item>
-            <S.Label>Amount LP</S.Label>
+            <S.Label>
+              {t("pool-position-vest-card.label-amount", { currency: "LP" })}
+            </S.Label>
             <S.Value>{volume}</S.Value>
           </S.Item>
         )}
         <S.Item>
-          <S.Label>Price ({baseTokenSymbol ?? ""})</S.Label>
+          <S.Label>
+            {t("pool-position-vest-card.label-price", {
+              currency: baseTokenSymbol ?? "",
+            })}
+          </S.Label>
           <S.Value>{priceBaseToken}</S.Value>
         </S.Item>
         <S.Item>
-          <S.Label>Price USD</S.Label>
+          <S.Label>
+            {t("pool-position-vest-card.label-price", {
+              currency: "USD",
+            })}
+          </S.Label>
           <S.Value>${_priceUsd}</S.Value>
         </S.Item>
         {isDesktop && (

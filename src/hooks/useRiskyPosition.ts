@@ -40,8 +40,9 @@ export function useRiskyPosition({
       !response.data ||
       !response.data.proposal ||
       !response.data.proposal.positions
-    )
+    ) {
       return
+    }
 
     setPosition(response.data.proposal.positions[0])
   }, [response])

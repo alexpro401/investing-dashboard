@@ -1,3 +1,4 @@
+import React, { createContext, useState, useEffect, useMemo } from "react"
 import { InvestorPosition } from "interfaces/thegraphs/invest-pools"
 import { usePoolContract } from "hooks"
 import { usePriceFeedContract, useTraderPoolContract } from "contracts"
@@ -5,7 +6,6 @@ import usePoolPrice from "hooks/usePoolPrice"
 import { useERC20Data } from "state/erc20/hooks"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
-import { useEffect, useMemo, useState } from "react"
 import { ZERO } from "consts"
 import { BigNumber, FixedNumber } from "@ethersproject/bignumber"
 import { parseEther, parseUnits } from "@ethersproject/units"
@@ -15,8 +15,69 @@ import {
   subtractBignumbers,
 } from "utils/formulas"
 import { useWeb3React } from "@web3-react/core"
+import { IPoolInfo } from "interfaces/contracts/ITraderPool"
+import { Token } from "interfaces"
+import { IPoolMetadata } from "state/ipfsMetadata/types"
 
-const useInvestorPosition = (position: InvestorPosition) => {
+interface IInvestorPositionInPoolContext {
+  position: InvestorPosition
+  poolInfo: IPoolInfo | null
+  baseToken: Token | null
+  poolMetadata: IPoolMetadata | null
+  pnlPercentage: BigNumber
+  positionOpenLPAmount: BigNumber
+  positionOpenLPAmountUSD: BigNumber
+  entryPriceBase: BigNumber
+  entryPriceUSD: BigNumber
+  markPriceBase: BigNumber
+  markPriceUSD: BigNumber
+  pnlBase: BigNumber
+  pnlUSD: BigNumber
+  commission: {
+    period: string
+    percentage: BigNumber
+    amountUSD: BigNumber
+    unlockTimestamp: BigNumber
+  }
+  fundsLockedInvestorPercentage: BigNumber
+  fundsLockedInvestorUSD: BigNumber
+  totalPoolInvestmentsUSD: BigNumber
+}
+
+export const InvestorPositionInPoolContext =
+  createContext<IInvestorPositionInPoolContext>({
+    position: {} as InvestorPosition,
+    poolInfo: null,
+    baseToken: null,
+    poolMetadata: null,
+    pnlPercentage: ZERO,
+    positionOpenLPAmount: ZERO,
+    positionOpenLPAmountUSD: ZERO,
+    entryPriceBase: ZERO,
+    entryPriceUSD: ZERO,
+    markPriceBase: ZERO,
+    markPriceUSD: ZERO,
+    pnlBase: ZERO,
+    pnlUSD: ZERO,
+    commission: {
+      period: "",
+      percentage: ZERO,
+      amountUSD: ZERO,
+      unlockTimestamp: ZERO,
+    },
+    fundsLockedInvestorPercentage: ZERO,
+    fundsLockedInvestorUSD: ZERO,
+    totalPoolInvestmentsUSD: ZERO,
+  })
+
+interface IInvestorPositionInPoolContextProviderProps {
+  children: React.ReactNode
+  position: InvestorPosition
+}
+
+const InvestorPositionInPoolContextProvider: React.FC<
+  IInvestorPositionInPoolContextProviderProps
+> = ({ children, position }) => {
   const { account } = useWeb3React()
   const traderPool = useTraderPoolContract(position.pool.id)
   const [, poolInfo] = usePoolContract(position.pool.id)
@@ -363,27 +424,60 @@ const useInvestorPosition = (position: InvestorPosition) => {
     })()
   }, [baseToken, owedBaseCommission, priceFeed])
 
-  return {
-    poolInfo,
-    baseToken,
-    poolMetadata,
-    pnlPercentage,
-    positionOpenLPAmount,
-    positionOpenLPAmountUSD,
-    entryPriceBase,
-    entryPriceUSD,
-    markPriceBase,
-    markPriceUSD,
-    pnlBase,
-    pnlUSD,
-    commissionPeriod,
-    commissionPercentage,
-    commissionAmountUSD,
-    commissionUnlockTimestamp,
-    fundsLockedInvestorPercentage,
-    fundsLockedInvestorUSD,
-    totalPoolInvestmentsUSD,
-  }
+  const providerValue = useMemo(
+    () => ({
+      position,
+      poolInfo,
+      baseToken,
+      poolMetadata,
+      pnlPercentage,
+      positionOpenLPAmount,
+      positionOpenLPAmountUSD,
+      entryPriceBase,
+      entryPriceUSD,
+      markPriceBase,
+      markPriceUSD,
+      pnlBase,
+      pnlUSD,
+      commission: {
+        period: commissionPeriod,
+        percentage: commissionPercentage,
+        amountUSD: commissionAmountUSD,
+        unlockTimestamp: commissionUnlockTimestamp,
+      },
+      fundsLockedInvestorPercentage,
+      fundsLockedInvestorUSD,
+      totalPoolInvestmentsUSD,
+    }),
+    [
+      position,
+      poolInfo,
+      baseToken,
+      poolMetadata,
+      pnlPercentage,
+      positionOpenLPAmount,
+      positionOpenLPAmountUSD,
+      entryPriceBase,
+      entryPriceUSD,
+      markPriceBase,
+      markPriceUSD,
+      pnlBase,
+      pnlUSD,
+      commissionPeriod,
+      commissionPercentage,
+      commissionAmountUSD,
+      commissionUnlockTimestamp,
+      fundsLockedInvestorPercentage,
+      fundsLockedInvestorUSD,
+      totalPoolInvestmentsUSD,
+    ]
+  )
+
+  return (
+    <InvestorPositionInPoolContext.Provider value={providerValue}>
+      {children}
+    </InvestorPositionInPoolContext.Provider>
+  )
 }
 
-export default useInvestorPosition
+export default InvestorPositionInPoolContextProvider

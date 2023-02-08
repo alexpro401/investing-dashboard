@@ -18,14 +18,14 @@ const useGovPoolDeposit = (daoPoolAddress: string) => {
   const [, setError] = useError()
 
   const daoDeposit = useCallback(
-    async (account: string, amount: BigNumber, nftIds: number[]) => {
+    async (receiver: string, amount: BigNumber, nftIds: number[]) => {
       try {
-        if (!account || !govPoolContract || !userKeeperContract) return
+        if (!receiver || !govPoolContract || !userKeeperContract) return
 
         setPayload(SubmitState.SIGN)
 
         const transactionResponse = await govPoolContract.deposit(
-          account,
+          receiver,
           amount,
           nftIds
         )

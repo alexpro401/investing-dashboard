@@ -44,16 +44,9 @@ const InvestmentRiskyProposals = () => {
         />
         <Route
           path="positions"
-          element={
-            <RiskyPositionsList activePools={activePools} closed={false} />
-          }
+          element={<RiskyPositionsList closed={false} />}
         />
-        <Route
-          path="closed"
-          element={
-            <RiskyPositionsList activePools={activePools} closed={true} />
-          }
-        />
+        <Route path="closed" element={<RiskyPositionsList closed={true} />} />
       </Routes>
     </>
   )
