@@ -2,7 +2,6 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { useMemo } from "react"
 
 import { ZERO } from "consts"
-import { normalizeBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
 
 import {
@@ -16,23 +15,13 @@ import usePoolPrice from "hooks/usePoolPrice"
 import useRiskyPrice from "hooks/useRiskyPrice"
 import { useRiskyPosition } from "hooks"
 
-interface IAmount {
-  big: BigNumber
-  format: string
-}
-
-const INITIAL_AMOUNT: IAmount = {
-  big: ZERO,
-  format: "0",
-}
-
 interface IPayload {
   positionVolume: BigNumber
   entryPriceBase: BigNumber
   entryPriceUSD: BigNumber
   markPriceBase: BigNumber
   markPriceUSD: BigNumber
-  pnlPercentage: IAmount
+  pnlPercentage: BigNumber
   pnlBase: BigNumber
   pnlUSD: BigNumber
   positionToken: ITokenBase | null
@@ -150,17 +139,12 @@ function useInvestorRiskyPositionView(position: any, utilityIds): [IPayload] {
   /**
    * P&L (in %)
    */
-  const pnlPercentage = useMemo<IAmount>(() => {
+  const pnlPercentage = useMemo<BigNumber>(() => {
     if (!markPriceBase || !entryPriceBase) {
-      return INITIAL_AMOUNT
+      return ZERO
     }
 
-    const big = calcPositionPnlPercentage(markPriceBase, entryPriceBase)
-
-    return {
-      big,
-      format: normalizeBigNumber(big, 18, 2),
-    }
+    return calcPositionPnlPercentage(markPriceBase, entryPriceBase)
   }, [markPriceBase, entryPriceBase])
 
   /**

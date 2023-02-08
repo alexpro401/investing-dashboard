@@ -113,8 +113,10 @@ const CardInvestorRiskyPosition: React.FC<Props> = ({ payload }) => {
                   </S.CardInvestorRiskyPositionTokenNamePool>
                 </S.CardInvestorRiskyPositionTokenNamesWrp>
               )}
-              <S.CardInvestorRiskyPositionPnlChip value={pnlPercentage.format}>
-                {pnlPercentage.format}%
+              <S.CardInvestorRiskyPositionPnlChip
+                value={normalizeBigNumber(pnlPercentage, 18, 2)}
+              >
+                {normalizeBigNumber(pnlPercentage, 18, 2)}%
               </S.CardInvestorRiskyPositionPnlChip>
             </S.CardInvestorRiskyPositionSizeWrp>
           </S.CardInvestorRiskyPositionTokensWrp>
