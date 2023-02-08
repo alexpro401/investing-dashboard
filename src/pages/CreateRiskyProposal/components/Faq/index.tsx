@@ -1,12 +1,14 @@
-import { useCallback, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { AppButton, Icon } from "common"
 import Checkbox from "components/Checkbox"
-import { ICON_NAMES } from "consts"
+import { ICON_NAMES, ROUTE_PATHS } from "consts"
 import { Flex } from "theme"
 import FaqText from "./content"
 import * as S from "./styled"
+import { generatePath, useParams } from "react-router-dom"
 
 const Faq = () => {
+  const { poolAddress, tokenAddress } = useParams()
   const [isChecked, setChecked] = useState(false)
 
   const handleCheckboxChange = useCallback(() => {
@@ -18,6 +20,25 @@ const Faq = () => {
       localStorage.setItem("risky-proposal-faq-read", "false")
     }
   }, [isChecked])
+
+  const returnPath = useMemo(() => {
+    return generatePath(ROUTE_PATHS.poolSwap, {
+      poolAddress: poolAddress!,
+      inputToken: "0x",
+      outputToken: "0x",
+      "*": "modal/search",
+    })
+  }, [poolAddress])
+
+  const continuePath = useMemo(() => {
+    if (!poolAddress || !tokenAddress) return ""
+
+    return generatePath(ROUTE_PATHS.riskyProposalCreate, {
+      tokenAddress,
+      poolAddress,
+      "*": "create",
+    })
+  }, [poolAddress, tokenAddress])
 
   return (
     <S.Container>
@@ -40,8 +61,20 @@ const Faq = () => {
           />
         </Flex>
         <S.Buttons>
-          <AppButton text="Return" size="small" color="secondary" full />
-          <AppButton text="Continue" size="small" color="primary" full />
+          <AppButton
+            routePath={returnPath}
+            text="Return"
+            size="small"
+            color="secondary"
+            full
+          />
+          <AppButton
+            routePath={continuePath}
+            text="Continue"
+            size="small"
+            color="primary"
+            full
+          />
         </S.Buttons>
       </S.Footer>
     </S.Container>

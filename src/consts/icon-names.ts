@@ -61,4 +61,5 @@ export enum ICON_NAMES {
   filter = "filter",
   dotsHorizontal = "dots-horizontal",
   plusOutline = "plus-outline",
+  stocks = "stocks",
 }

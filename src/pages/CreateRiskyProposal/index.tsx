@@ -68,6 +68,7 @@ import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { GuardSpinner } from "react-spinners-kit"
 
 import Faq from "pages/CreateRiskyProposal/components/Faq"
+import Form from "./components/Form"
 
 const isFaqRead = localStorage.getItem("risky-proposal-faq-read") === "true"
 
@@ -439,9 +440,11 @@ const CreateRiskyProposalWithProvider = () => {
       }
     >
       <Header>Create risky proposal</Header>
+
       <Container>
         <Routes>
           <Route path="faq" element={<Faq />} />
+          <Route path="create" element={<Form />} />
         </Routes>
       </Container>
     </WithPoolAddressValidation>

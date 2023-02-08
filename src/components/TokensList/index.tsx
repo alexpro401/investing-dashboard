@@ -45,7 +45,7 @@ const TokensList: React.FC<Props> = ({
 }) => {
   const [showAlert] = useAlert()
   const userAddedTokens = useUserTokens()
-  const { poolToken } = useParams()
+  const { poolAddress } = useParams()
 
   const itemData: Currency[] = useMemo(() => {
     return currencies
@@ -158,14 +158,17 @@ const TokensList: React.FC<Props> = ({
       but it's depends on hooks used here (to check if token is risky)
   */
   const RiskProposalFaqLink = useMemo(() => {
-    if (isAddress(poolToken) && isAddress(itemData[0].wrapped.address))
+    if (itemData.length !== 1) return null
+
+    const riskyTokenAddress = itemData[0].wrapped.address
+
+    if (isAddress(poolAddress) && isAddress(riskyTokenAddress))
       return (
-        itemData.length === 1 &&
-        !(itemData[0].wrapped.address in whitelist) && (
+        !(riskyTokenAddress in whitelist) && (
           <S.FloatingTextLink
             to={generatePath(ROUTE_PATHS.riskyProposalCreate, {
-              tokenAddress: itemData[0].wrapped.address,
-              poolAddress: poolToken || "",
+              tokenAddress: riskyTokenAddress,
+              poolAddress: poolAddress!,
               "*": "faq",
             })}
           >
@@ -175,7 +178,7 @@ const TokensList: React.FC<Props> = ({
       )
 
     return null
-  }, [itemData, whitelist, poolToken])
+  }, [itemData, whitelist, poolAddress])
 
   return (
     <>

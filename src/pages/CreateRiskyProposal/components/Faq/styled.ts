@@ -7,6 +7,7 @@ export const Container = styled(Flex)`
   justify-content: flex-start;
   align-items: flex-start;
   max-width: 420px;
+  width: 100%;
   height: fill-available;
 
   background: ${theme.backgroundColors.secondary};
@@ -39,12 +40,14 @@ export const Header = styled(Flex)`
 
 export const Body = styled(Flex)`
   flex-direction: column;
+  justify-content: flex-start;
   height: fill-available;
   width: 100%;
   font-family: "Gilroy";
   font-style: normal;
   overflow-y: auto;
   padding: 16px;
+  gap: 16px;
 
   font-size: 13px;
   font-weight: 400;
@@ -77,9 +80,16 @@ export const CheckboxLabel = styled.div`
 export const Buttons = styled(Flex).attrs({ full: true })`
   padding: 16px;
   gap: 24px;
+
+  & > a {
+    width: 100%;
+  }
 `
 
 export const Title = styled(Headline3)`
+  display: flex;
+  gap: 4px;
+  align-items: center;
   font-weight: 700;
   margin: 0;
 `

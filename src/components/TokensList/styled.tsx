@@ -16,7 +16,7 @@ export const Symbol = styled.div`
   overflow: hidden;
   font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 16px;
   line-height: 19px;
   font-feature-settings: "tnum" on, "lnum" on;
@@ -32,8 +32,8 @@ export const Name = styled.div`
   text-overflow: ellipsis;
   font-family: ${(props) => props.theme.appFontFamily};
   font-style: normal;
-  font-weight: 400;
-  font-size: 13px;
+  font-weight: 500;
+  font-size: 12px;
   line-height: 16px;
   letter-spacing: 0.03em;
   font-feature-settings: "tnum" on, "lnum" on;
@@ -380,6 +380,7 @@ export const FloatingTextLink = styled(Link)`
   height: 60px;
   margin: auto;
   cursor: pointer;
+  text-decoration: none;
 
   font-weight: 600;
   font-size: 13px;
