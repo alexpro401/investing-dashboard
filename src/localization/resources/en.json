@@ -100,5 +100,12 @@
     "vest-direction-sell": "Sell",
     "label-amount": "Amount {{currency}}",
     "label-price": "Price {{currency}}"
+  },
+  "card-investor-risky-position": {
+    "amount-lp2": "{{amount}} LP2",
+    "label-entry-price": "Entry Price {{currency}}",
+    "label-current-price": "Current Price {{currency}}",
+    "label-closed-price": "Closed price {{currency}}",
+    "label-pnl": "P&L {{currency}}"
   }
 }

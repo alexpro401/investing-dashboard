@@ -194,24 +194,37 @@ const INVESTOR_PROPOSAL_POSITION = `
   totalLP2CloseVolume
   totalUSDOpenVolume
   totalUSDCloseVolume
-  proposalContract { id }
-  investor { id }
-  vests {
-    ${INVESTOR_PROPOSAL_POSITION_VEST}
+  proposalContract { 
+    id
+    traderPool {
+      id
+      token
+    }
   }
+  investor { id }
 `
 
 export const InvestorProposalsPositionsQuery = `
-  query ($address: String!, $type: String!, $closed: Boolean!, $offset: Int!, $limit: Int!) {
+  query ($account: String!, $type: String!, $closed: Boolean!, $offset: Int!, $limit: Int!) {
     proposalPositions(
       skip: $offset, first: $limit, 
       where: { 
         isClosed: $closed, 
-        investor: $address,
+        investor: $account,
         proposalContract_: { proposalType: $type }
       }
     ) {
       ${INVESTOR_PROPOSAL_POSITION}
+    }
+  }
+`
+
+export const InvestorProposalPositionVestsQuery = `
+  query ($proposalPositionId: String!, $account: String!, $offset: Int!, $limit: Int!) {
+    proposalPositions( skip: 0, first: 1, where: { id: $proposalPositionId, investor: $account }) {
+      vests(skip: $offset, first: $limit) {
+        ${INVESTOR_PROPOSAL_POSITION_VEST}
+      }
     }
   }
 `
