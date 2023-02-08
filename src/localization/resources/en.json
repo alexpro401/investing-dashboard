@@ -113,9 +113,9 @@
     "label-pool": "Fund",
     "label-my-volume": "My Volume",
     "label-entry-price": "Entry Price",
-    "label-current-price": "Entry Price",
+    "label-current-price": "Current Price",
     "label-pnl": "P&L in %",
-    "label-commission": "P&L in %",
+    "label-commission": "Commission",
     "tooltip-msg-entry-price": "Explain Entry Price",
     "tooltip-msg-current-price": "Explain Current Price",
     "tooltip-msg-commission-price": "Explain commission"
