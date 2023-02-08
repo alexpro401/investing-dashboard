@@ -2,7 +2,6 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { useMemo } from "react"
 
 import { ZERO } from "consts"
-import { normalizeBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
 
 import {
@@ -14,41 +13,38 @@ import {
 import { ITokenBase } from "interfaces"
 import usePoolPrice from "hooks/usePoolPrice"
 import useRiskyPrice from "hooks/useRiskyPrice"
-
-interface IAmount {
-  big: BigNumber
-  format: string
-}
-
-const INITIAL_AMOUNT: IAmount = {
-  big: ZERO,
-  format: "0",
-}
+import { useRiskyPosition } from "hooks"
 
 interface IPayload {
-  positionVolume: IAmount
+  positionVolume: BigNumber
   entryPriceBase: BigNumber
   entryPriceUSD: BigNumber
   markPriceBase: BigNumber
   markPriceUSD: BigNumber
-  pnlPercentage: IAmount
+  pnlPercentage: BigNumber
   pnlBase: BigNumber
   pnlUSD: BigNumber
   positionToken: ITokenBase | null
   baseToken: ITokenBase | null
 }
 
-function useRiskyPosition(position: any, proposalId): [IPayload] {
-  const [positionToken] = useERC20Data(position?.token)
-  const [baseToken] = useERC20Data(position.pool.baseToken)
+function useInvestorRiskyPositionView(position: any, utilityIds): [IPayload] {
+  const data = useRiskyPosition({
+    proposalAddress: utilityIds.proposalContractAddress,
+    proposalId: String(utilityIds.proposalId),
+    closed: position.isClosed,
+  })
+
+  const [positionToken] = useERC20Data(data?.proposal?.token)
+  const [baseToken] = useERC20Data(utilityIds.poolBaseTokenAddress)
 
   const [{ priceBase: PoolPriceBase, priceUSD: PoolPriceUSD }] = usePoolPrice(
-    position.pool.id
+    utilityIds.poolAddress
   )
 
   const { priceBase: RiskyPriceBase, priceUSD: RiskyPriceUSD } = useRiskyPrice(
-    position.pool.id,
-    proposalId
+    utilityIds.poolAddress,
+    utilityIds.proposalId
   )
 
   /**
@@ -56,23 +52,19 @@ function useRiskyPosition(position: any, proposalId): [IPayload] {
    * if position.closed return totalLP2CloseVolume
    * otherwise return current position volume
    */
-  const positionVolume = useMemo<IAmount>(() => {
-    if (!position) return INITIAL_AMOUNT
+  const positionVolume = useMemo<BigNumber>(() => {
+    if (!position) return ZERO
 
     const { totalLP2OpenVolume, totalLP2CloseVolume } = position
 
     if (position.isClosed) {
-      return {
-        big: BigNumber.from(totalLP2CloseVolume),
-        format: normalizeBigNumber(BigNumber.from(totalLP2CloseVolume)),
-      }
+      return BigNumber.from(totalLP2CloseVolume)
     }
 
-    const big = subtractBignumbers(
+    return subtractBignumbers(
       [BigNumber.from(totalLP2OpenVolume), 18],
       [BigNumber.from(totalLP2CloseVolume), 18]
     )
-    return { big, format: normalizeBigNumber(big) }
   }, [position])
 
   /**
@@ -147,17 +139,12 @@ function useRiskyPosition(position: any, proposalId): [IPayload] {
   /**
    * P&L (in %)
    */
-  const pnlPercentage = useMemo<IAmount>(() => {
+  const pnlPercentage = useMemo<BigNumber>(() => {
     if (!markPriceBase || !entryPriceBase) {
-      return INITIAL_AMOUNT
+      return ZERO
     }
 
-    const big = calcPositionPnlPercentage(markPriceBase, entryPriceBase)
-
-    return {
-      big,
-      format: normalizeBigNumber(big, 18, 2),
-    }
+    return calcPositionPnlPercentage(markPriceBase, entryPriceBase)
   }, [markPriceBase, entryPriceBase])
 
   /**
@@ -174,7 +161,7 @@ function useRiskyPosition(position: any, proposalId): [IPayload] {
       [entryPriceBase, 18]
     )
 
-    return multiplyBignumbers([priceDiff, 18], [positionVolume.big, 18])
+    return multiplyBignumbers([priceDiff, 18], [positionVolume, 18])
   }, [markPriceBase, entryPriceBase, positionVolume])
 
   /**
@@ -190,7 +177,7 @@ function useRiskyPosition(position: any, proposalId): [IPayload] {
       [entryPriceUSD, 18]
     )
 
-    return multiplyBignumbers([priceDiff, 18], [positionVolume.big, 18])
+    return multiplyBignumbers([priceDiff, 18], [positionVolume, 18])
   }, [markPriceUSD, entryPriceUSD, positionVolume])
 
   return [
@@ -209,4 +196,4 @@ function useRiskyPosition(position: any, proposalId): [IPayload] {
   ]
 }
 
-export default useRiskyPosition
+export default useInvestorRiskyPositionView

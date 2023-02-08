@@ -32,7 +32,15 @@ import { shortenAddress } from "utils"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { IGovPoolDescription } from "types"
 
-export function usePoolMetadata(poolId, hash) {
+type UsePoolMetadataResponse = [
+  { poolMetadata: IPoolMetadata | null; loading: boolean },
+  { fetchPoolMetadata: () => void }
+]
+
+export function usePoolMetadata(
+  poolId?: string,
+  hash?: string
+): UsePoolMetadataResponse {
   const dispatch = useDispatch()
   const poolMetadata = useSelector(selectPoolMetadata(poolId, hash))
   const [cachedPoolMetadata, setCachedPoolMetadata] = useState<IPoolMetadata>()
@@ -52,9 +60,9 @@ export function usePoolMetadata(poolId, hash) {
         dispatch(addPool({ params: { poolId, hash, ...data } }))
         setCachedPoolMetadata(data)
       }
-      setLoading(false)
     } catch (error) {
       console.error(error)
+    } finally {
       setLoading(false)
     }
   }, [dispatch, hash, poolId])
