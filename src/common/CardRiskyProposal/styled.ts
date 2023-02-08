@@ -83,20 +83,16 @@ export const CardRiskyProposalGrid = styled.div<{ isTrader: boolean }>`
   }
 `
 
-export const CardRiskyProposalGridTrader = styled(CardRiskyProposalGrid)`
-  ${areasTrader}
-`
-
-export const CardRiskyProposalGridInvestor = styled(CardRiskyProposalGrid)`
-  ${areasInvestor}
-`
-
 const CardRiskyProposalGridCell = styled.div<{ alignment?: string }>`
-  width: fill-available;
+  width: 100%;
   display: flex;
   align-items: stretch;
   justify-items: stretch;
   justify-self: ${({ alignment }) => alignment || "flex-start"};
+
+  ${respondTo("lg")} {
+    min-width: 150px;
+  }
 `
 
 /**
@@ -203,7 +199,7 @@ export const CardRiskyProposalGridItemCheckToken = styled(
    ========================================================================== */
 
 export const CardRiskyProposalValueWrp = styled.div<{ alignment?: string }>`
-  width: fill-available;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-items: stretch;
@@ -337,13 +333,9 @@ export const CardRiskyProposalTokenInfoValue = styled(CardRiskyProposalValue)`
 `
 export const CardRiskyProposalTokenInfoRating = styled(TokenRating)`
   grid-area: token-info-rating;
-  ${respondTo("lg")} {
-  }
 `
 export const CardRiskyProposalTokenInfoTooltip = styled(Tooltip)`
   grid-area: token-info-tooltip;
-  ${respondTo("lg")} {
-  }
 `
 export const CardRiskyProposalTokenInfoIcon = styled(Icon)`
   display: none;
@@ -361,7 +353,6 @@ export const CardRiskyProposalTokenInfoIcon = styled(Icon)`
    ========================================================================== */
 
 export const CardRiskyProposalBaseTokenWrp = styled.div`
-  width: fill-available;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -381,7 +372,7 @@ export const CardRiskyProposalBaseTokenValue = styled(CardRiskyProposalValue)`
    ========================================================================== */
 
 export const CardRiskyProposalTraderSizeWrp = styled(motion.div)`
-  width: fill-available;
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -401,7 +392,7 @@ export const CardRiskyProposalTraderSizeQualityIcon = styled.img`
   right: 0;
 `
 export const CardRiskyProposalTraderSizeInfoWrp = styled.div`
-  width: fill-available;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -489,7 +480,7 @@ export const CardRiskyProposalStatus = styled.div<{ active: boolean }>`
 `
 
 export const CardRiskyProposalCheckTokenWrp = styled.div`
-  width: fill-available;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-end;
