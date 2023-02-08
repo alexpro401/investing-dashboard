@@ -100,12 +100,18 @@ function InputField<V extends string | number>({
     (value: string | number): string => {
       let result = value
 
-      if (min && value < min) {
+      if (min !== undefined && value < min) {
         result = min
       }
-      if (max && value > max) {
+      if (max !== undefined && value > max) {
         result = max
       }
+      console.log({
+        value,
+        result,
+        min,
+        max,
+      })
 
       return result as string
     },

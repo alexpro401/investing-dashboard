@@ -140,6 +140,10 @@ const CreateFundDaoForm: FC = () => {
       case STEPS.titles.number:
         navigate("/create-fund")
         break
+      case STEPS.tokenCreation.number:
+        console.log("here")
+        setCurrentStep(STEPS.titles.number)
+        break
       case STEPS.isDaoValidator.number:
         setCurrentStep(STEPS.titles.number)
         break
@@ -151,9 +155,6 @@ const CreateFundDaoForm: FC = () => {
         break
       case STEPS.isTokenDistributionSettings.number:
         setCurrentStep(STEPS.isCustomVoteSelecting.number)
-        break
-      case STEPS.tokenCreation.number:
-        setCurrentStep(STEPS.titles.number)
         break
       case STEPS.summary.number:
         setCurrentStep(STEPS.isTokenDistributionSettings.number)

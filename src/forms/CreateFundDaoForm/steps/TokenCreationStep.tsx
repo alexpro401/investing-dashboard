@@ -1,4 +1,11 @@
-import { FC, HTMLAttributes, useCallback, useContext, useState } from "react"
+import {
+  FC,
+  HTMLAttributes,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { stepsControllerContext } from "context/StepsControllerContext"
 import {
@@ -19,97 +26,115 @@ import Slider from "components/Slider"
 import { isAddress, shortenAddress } from "utils"
 import { useActiveWeb3React } from "hooks"
 import { isEqual } from "lodash"
-import { readFromClipboard } from "../../../utils/clipboard"
+import { readFromClipboard } from "utils/clipboard"
 import { BigNumber } from "ethers"
 import { useEffectOnce } from "react-use"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
+
+const safeBigFrom = (value: string | number) => {
+  try {
+    return BigNumber.from(value)
+  } catch (error) {
+    return BigNumber.from(0)
+  }
+}
 
 const TokenCreationStep: FC<Props> = ({ ...rest }) => {
   const { account } = useActiveWeb3React()
 
   const { t } = useTranslation()
 
-  const { tokenCreation } = useContext(GovPoolFormContext)
+  const { tokenCreation, isTokenCreation } = useContext(GovPoolFormContext)
 
-  const { nextCb } = useContext(stepsControllerContext)
+  const { prevCb, nextCb } = useContext(stepsControllerContext)
 
-  const [daoCreatorRecipient, setDaoCreatorRecipient] = useState({
-    address: account,
-    amount: "0",
-  })
   const [treasuryPercent, setTreasuryPercent] = useState(0)
   const [initialDistributionPercent, setInitialDistributionPercent] =
     useState(0)
 
   useEffectOnce(() => {
-    if (tokenCreation.treasury.get) {
+    if (Number(tokenCreation.treasury.get)) {
       setTreasuryPercent(
-        BigNumber.from(tokenCreation.treasury.get)
+        safeBigFrom(tokenCreation.treasury.get)
           .mul(100)
-          .div(BigNumber.from(tokenCreation.totalSupply.get))
+          .div(safeBigFrom(tokenCreation.totalSupply.get))
           .toNumber()
       )
     }
 
-    if (tokenCreation.initialDistribution.get) {
+    if (Number(tokenCreation.initialDistribution.get)) {
       setInitialDistributionPercent(
-        BigNumber.from(tokenCreation.initialDistribution.get)
+        safeBigFrom(tokenCreation.initialDistribution.get)
           .mul(100)
-          .div(BigNumber.from(tokenCreation.totalSupply.get))
+          .div(safeBigFrom(tokenCreation.totalSupply.get))
           .toNumber()
       )
-    }
-
-    if (tokenCreation.recipients.get?.length) {
-      const daoCreationRecipientsSum = tokenCreation.recipients.get?.reduce(
-        (acc, curr) => {
-          return acc.add(BigNumber.from(curr.amount))
-        },
-        BigNumber.from(0)
-      )
-
-      setDaoCreatorRecipient({
-        ...daoCreatorRecipient,
-        amount: BigNumber.from(tokenCreation.totalSupply.get)
-          .sub(BigNumber.from(daoCreationRecipientsSum))
-          .toString(),
-      })
     }
   })
 
-  const handleNextStep = useCallback(() => {
-    const totalRecipientsAmount =
-      tokenCreation.recipients.get?.reduce((acc, curr) => {
-        return acc + +curr.amount
-      }, 0) + +daoCreatorRecipient?.amount
+  const daoCreatorRecipientAmount = useMemo(() => {
+    const daoCreationRecipientsSum = tokenCreation.recipients.get?.reduce(
+      (acc, curr) => {
+        return acc.add(curr.amount ? safeBigFrom(curr.amount) : safeBigFrom(0))
+      },
+      safeBigFrom(0)
+    )
 
-    if (totalRecipientsAmount > +tokenCreation.initialDistribution.get) return
+    return safeBigFrom(tokenCreation.initialDistribution.get).sub(
+      daoCreationRecipientsSum
+    )
+  }, [tokenCreation.initialDistribution.get, tokenCreation.recipients.get])
+
+  const handleNextStep = useCallback(() => {
+    if (!isTokenCreation) {
+      console.log("isTokenCreation", isTokenCreation)
+      prevCb()
+    }
+
+    const totalRecipientsAmount = tokenCreation.recipients.get
+      ?.reduce((acc, curr) => {
+        return acc.add(safeBigFrom(curr.amount))
+      }, safeBigFrom(0))
+      .add(daoCreatorRecipientAmount)
+
+    if (
+      totalRecipientsAmount?.gt(
+        safeBigFrom(tokenCreation.initialDistribution.get)
+      )
+    )
+      return
 
     nextCb()
   }, [
-    daoCreatorRecipient.amount,
+    daoCreatorRecipientAmount,
     nextCb,
     tokenCreation.initialDistribution.get,
     tokenCreation.recipients.get,
   ])
 
-  const handleTotalSupplyChange = (v: string | number) => {
-    tokenCreation.totalSupply.set(String(v))
-    tokenCreation.treasury.set(String(v))
-    tokenCreation.initialDistribution.set("0")
-  }
+  const handleTotalSupplyChange = useCallback(
+    (v: string | number) => {
+      tokenCreation.totalSupply.set(String(v))
+      tokenCreation.treasury.set(String(v))
+      tokenCreation.initialDistribution.set("0")
+    },
+    [
+      tokenCreation.initialDistribution,
+      tokenCreation.totalSupply,
+      tokenCreation.treasury,
+    ]
+  )
 
   const handleTreasuryPercentChange = useCallback(
     (value: string | number) => {
       try {
-        const totalSupply = BigNumber.from(tokenCreation.totalSupply.get)
+        const totalSupply = safeBigFrom(tokenCreation.totalSupply.get)
 
-        const treasuryPercent = BigNumber.from(value)
+        const treasuryPercent = safeBigFrom(value)
         const treasury = totalSupply.mul(treasuryPercent).div(100)
 
-        const initialDistributionPercent =
-          BigNumber.from(100).sub(treasuryPercent)
+        const initialDistributionPercent = safeBigFrom(100).sub(treasuryPercent)
         const initialDistribution = totalSupply
           .mul(initialDistributionPercent)
           .div(100)
@@ -130,16 +155,14 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
   const handleInitialDistributionPercentChange = useCallback(
     (value: string | number) => {
       try {
-        const totalSupply = BigNumber.from(tokenCreation.totalSupply.get)
+        const totalSupply = safeBigFrom(tokenCreation.totalSupply.get)
 
-        const initialDistributionPercent = BigNumber.from(value)
+        const initialDistributionPercent = safeBigFrom(value)
         const initialDistribution = totalSupply
           .mul(initialDistributionPercent)
           .div(100)
 
-        const treasuryPercent = BigNumber.from(100).sub(
-          initialDistributionPercent
-        )
+        const treasuryPercent = safeBigFrom(100).sub(initialDistributionPercent)
         const treasury = totalSupply.mul(treasuryPercent).div(100)
 
         setTreasuryPercent(treasuryPercent.toNumber())
@@ -159,8 +182,8 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
   const handleTreasuryChange = useCallback(
     (v: string | number) => {
       try {
-        const totalSupply = BigNumber.from(tokenCreation.totalSupply.get)
-        const treasury = BigNumber.from(v)
+        const totalSupply = safeBigFrom(tokenCreation.totalSupply.get)
+        const treasury = safeBigFrom(v)
         const initialDistribution = totalSupply.sub(treasury)
 
         tokenCreation.treasury.set(String(v))
@@ -182,8 +205,8 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
   const handleInitialDistributionChange = useCallback(
     (v: string | number) => {
       try {
-        const totalSupply = BigNumber.from(tokenCreation.totalSupply.get)
-        const initialDistribution = BigNumber.from(v)
+        const totalSupply = safeBigFrom(tokenCreation.totalSupply.get)
+        const initialDistribution = safeBigFrom(v)
         const treasury = totalSupply.sub(initialDistribution)
 
         tokenCreation.initialDistribution.set(String(v))
@@ -197,7 +220,6 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
         tokenCreation.recipients.set([
           ...tokenCreation.recipients.get.map((el) => ({ ...el, amount: "0" })),
         ])
-        setDaoCreatorRecipient({ ...daoCreatorRecipient, amount: String(v) })
       } catch (error) {}
     },
     [
@@ -261,6 +283,9 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
       tokenCreation.recipients.set((prevState) => {
         const newState = [...(prevState ? prevState : [])]
         newState[idx].address = address
+        newState[idx].amount = !daoCreatorRecipientAmount.isZero()
+          ? daoCreatorRecipientAmount.div(2).toString()
+          : "0"
 
         return newState
       })
@@ -410,22 +435,14 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
             </CardDescription>
             <CardFormControl>
               <InputField
-                value={`${shortenAddress(
-                  daoCreatorRecipient.address
-                )} (DAO creator)`}
+                value={`${shortenAddress(account)} (DAO creator)`}
                 readonly
                 nodeRight={
                   <S.TokenCreationInputNodeRight>
                     <S.TokenCreationInputNodeRightInput
                       type="text"
-                      value={daoCreatorRecipient.amount}
-                      onInput={(e) =>
-                        setDaoCreatorRecipient({
-                          ...daoCreatorRecipient,
-                          amount: e.currentTarget.value,
-                        })
-                      }
-                      placeholder="0"
+                      value={daoCreatorRecipientAmount?.toString()}
+                      readonly
                     />
                     <S.TokenCreationInputNodeRightSymbol>
                       {tokenCreation.symbol.get}
@@ -464,7 +481,14 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
                               idx
                             )
                           }
-                          max={Number(tokenCreation.initialDistribution.get)}
+                          min={0}
+                          max={
+                            safeBigFrom(
+                              tokenCreation.recipients.get[idx].amount || 0
+                            )
+                              ?.add(daoCreatorRecipientAmount)
+                              ?.toNumber() || 0
+                          }
                         />
                         <S.TokenCreationInputNodeRightSymbol>
                           {tokenCreation.symbol.get}

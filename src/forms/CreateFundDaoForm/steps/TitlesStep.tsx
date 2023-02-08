@@ -63,8 +63,15 @@ interface ITitlesStepProps {}
 const TitlesStep: FC<ITitlesStepProps> = () => {
   const daoPoolFormContext = useContext(GovPoolFormContext)
 
-  const { isErc20, isErc721, erc20, erc721, socialLinks, tokenCreation } =
-    daoPoolFormContext
+  const {
+    isErc20,
+    isErc721,
+    erc20,
+    erc721,
+    socialLinks,
+    tokenCreation,
+    isTokenCreation,
+  } = daoPoolFormContext
 
   const { avatarUrl, daoName, websiteUrl, description, documents } =
     daoPoolFormContext
@@ -312,7 +319,7 @@ const TitlesStep: FC<ITitlesStepProps> = () => {
     () => (
       <Collapse isOpen={isErc20.get}>
         <CardFormControl>
-          {tokenCreation.totalSupply.get ? (
+          {isTokenCreation ? (
             <TokenChip
               name={tokenCreation.name.get}
               symbol={tokenCreation.symbol.get}

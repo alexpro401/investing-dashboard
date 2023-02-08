@@ -45,6 +45,7 @@ interface IGovPoolFormContext {
       set: Dispatch<SetStateAction<{ address: string; amount: string }[]>>
     }
   }
+  isTokenCreation: boolean
 
   isCustomVoting: { get: boolean; set: Dispatch<SetStateAction<boolean>> }
   isDistributionProposal: {
@@ -99,6 +100,7 @@ export const GovPoolFormContext = createContext<IGovPoolFormContext>({
     initialDistribution: { get: "", set: () => {} },
     recipients: { get: [], set: () => {} },
   },
+  isTokenCreation: false,
 
   avatarUrl: { get: "", set: () => {} },
   daoName: { get: "", set: () => {} },
@@ -212,6 +214,13 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       ...el,
       amount: fromBig(el.amount, 18),
     }))
+  )
+  const isTokenCreation = useMemo(
+    () =>
+      Boolean(
+        _tokenCreationName && _tokenCreationSymbol && _tokenCreationTotalSupply
+      ),
+    [_tokenCreationName, _tokenCreationSymbol, _tokenCreationTotalSupply]
   )
 
   const _userKeeperParams = {
@@ -907,6 +916,7 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
               set: _setTokenCreationRecipients,
             },
           },
+          isTokenCreation: isTokenCreation,
 
           avatarUrl: { get: _avatarUrl, set: _setAvatarUrl },
           daoName: { get: _daoName, set: _setDaoName },
