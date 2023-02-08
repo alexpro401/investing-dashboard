@@ -3,7 +3,6 @@ import { PulseSpinner } from "react-spinners-kit"
 import { v4 as uuidv4 } from "uuid"
 
 import { InvestorInvestProposalsQuery } from "queries"
-import useQueryPagination from "hooks/useQueryPagination"
 import { useTraderPoolInvestProposalContract } from "contracts"
 import { IInvestProposalInfo } from "interfaces/contracts/ITraderPoolInvestProposal"
 
@@ -13,10 +12,12 @@ import InvestProposalCard from "components/cards/proposal/Invest"
 import { RequestDividendsProvider } from "modals/RequestDividend/useRequestDividendsContext"
 
 import { IInvestProposal } from "interfaces/thegraphs/invest-pools"
-import { map } from "lodash"
+import { isEmpty } from "lodash"
 import { graphClientInvestPools } from "utils/graphClient"
 import { Center } from "theme"
 import { NoDataMessage } from "common"
+import { useGetPoolsUserInvestedIn, useQueryPagination } from "hooks"
+import { useWeb3React } from "@web3-react/core"
 
 interface IInvestProposalCardInitializer {
   poolAddress?: string
@@ -52,24 +53,40 @@ function InvestProposalCardInitializer({
 }
 
 interface IProps {
-  activePools?: string[]
   invested: boolean
 }
 
-const InvestmentInvestProposalsList: FC<IProps> = ({
-  activePools,
-  invested,
-}) => {
-  const [{ data, loading }, fetchMore] = useQueryPagination<IInvestProposal>({
-    query: InvestorInvestProposalsQuery(invested),
-    variables: useMemo(() => ({ activePools }), [activePools]),
-    pause: !activePools,
-    context: graphClientInvestPools,
-    formatter: (d) =>
-      map(d.proposals, (p) => ({ id: String(p.id).slice(42), ...p })),
-  })
+const InvestorInvestProposalsList: FC<IProps> = ({ invested }) => {
+  const { account } = useWeb3React()
 
-  if (!activePools || !data || (data.length === 0 && loading)) {
+  const preparedAccount = useMemo(() => {
+    if (!account) return
+    return String(account).toLowerCase()
+  }, [account])
+
+  const [activePools, loadingActivePools] = useGetPoolsUserInvestedIn(
+    preparedAccount,
+    "INVEST_POOL"
+  )
+
+  const [{ data, loading: loadingProposals }, fetchMore] =
+    useQueryPagination<IInvestProposal>({
+      query: InvestorInvestProposalsQuery(invested),
+      variables: useMemo(() => ({ activePools }), [activePools]),
+      pause: useMemo(
+        () => isEmpty(activePools) || loadingActivePools,
+        [activePools, loadingActivePools]
+      ),
+      context: graphClientInvestPools,
+      formatter: (d) => d.proposals,
+    })
+
+  const loading = useMemo(
+    () => loadingProposals || loadingActivePools,
+    [loadingProposals, loadingActivePools]
+  )
+
+  if (isEmpty(data) && loading) {
     return (
       <Center>
         <PulseSpinner />
@@ -77,7 +94,7 @@ const InvestmentInvestProposalsList: FC<IProps> = ({
     )
   }
 
-  if (data && data.length === 0 && !loading) {
+  if (isEmpty(data) && !loading) {
     return <NoDataMessage />
   }
 
@@ -87,7 +104,7 @@ const InvestmentInvestProposalsList: FC<IProps> = ({
         {data.map((p) => (
           <InvestProposalCardInitializer
             key={uuidv4()}
-            proposalId={Number(p.id) - 1}
+            proposalId={Number(p.id.substring(p.id.length - 1)) - 1}
             poolAddress={p.investPool.id}
           />
         ))}
@@ -97,4 +114,4 @@ const InvestmentInvestProposalsList: FC<IProps> = ({
   )
 }
 
-export default InvestmentInvestProposalsList
+export default InvestorInvestProposalsList

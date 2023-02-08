@@ -15,7 +15,7 @@ export enum ROUTE_PATHS {
   riskyProposalInvest = "/invest-risky-proposal/:poolAddress/:proposalId",
   riskyProposalSwap = "/swap-risky-proposal/:poolAddress/:proposalId/:direction",
 
-  investment = "investment/*",
+  investment = "/investment/*",
   investmentProposalCreate = "/create-invest-proposal/:poolAddress",
   investmentProposalInvest = "/invest-investment-proposal/:poolAddress/:proposalId",
   investmentProposalWithdraw = "/withdraw-investment-proposal/:poolAddress/:proposalId",

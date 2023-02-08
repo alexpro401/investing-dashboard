@@ -13,7 +13,7 @@ import {
 } from "common"
 import LoadMore from "components/LoadMore"
 
-const InvestmentRiskyProposalsList: React.FC = () => {
+const InvestorRiskyProposalsList: React.FC = () => {
   const [proposals, loading, fetchMore] = useInvestorRiskyProposals()
 
   return (
@@ -48,4 +48,4 @@ const InvestmentRiskyProposalsList: React.FC = () => {
   )
 }
 
-export default InvestmentRiskyProposalsList
+export default InvestorRiskyProposalsList

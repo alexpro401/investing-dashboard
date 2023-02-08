@@ -1,13 +1,5 @@
 import styled from "styled-components/macro"
-import RouteTabs from "components/RouteTabs"
 import { respondTo } from "theme"
-
-export const PageSubTabs = styled(RouteTabs)`
-  ${respondTo("sm")} {
-    width: max-content;
-    min-width: 350px;
-  }
-`
 
 export const InvestorRiskyPositionsListWrp = styled.div`
   ${respondTo("lg")} {
@@ -46,17 +38,6 @@ export const InvestorRiskyPositionsListHeadItem = styled.div`
     font-size: 12px;
     line-height: 14px;
     color: #6781bd;
-  }
-`
-
-export const InvestorRiskyProposalsListWrp = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1 0 auto;
-
-  ${respondTo("lg")} {
-    gap: 16px;
   }
 `
 

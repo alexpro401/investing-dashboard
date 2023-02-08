@@ -35,3 +35,4 @@ export { default as CardInvestorRiskyPosition } from "./CardInvestorRiskyPositio
 export * from "./CardRiskyProposal"
 export * from "./Typography"
 export * from "./dao"
+export * from "./investor"

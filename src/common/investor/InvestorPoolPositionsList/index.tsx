@@ -1,9 +1,20 @@
+// <S.ListTopWrp>
+// <S.PageSubTabs tabs={tabs} />
+// {!isMobile && (
+//   <S.ListTopInfo>
+//     <span>Whitelist positions</span>
+//     <Tooltip id={uuidv4()}>Info???</Tooltip>
+//   </S.ListTopInfo>
+// )}
+// </S.ListTopWrp>
+
 import { FC, useMemo } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { isEmpty } from "lodash"
 import { useTranslation } from "react-i18next"
 import { PulseSpinner } from "react-spinners-kit"
 
+import { useActiveWeb3React } from "hooks"
 import { InvestorPositionsQuery } from "queries"
 import { graphClientInvestors } from "utils/graphClient"
 import useQueryPagination from "hooks/useQueryPagination"
@@ -17,11 +28,11 @@ import { NoDataMessage, CardInvestorPosition } from "common"
 import InvestorPositionInPoolContextProvider from "context/investor/positions/InvestorPositionInPoolContext"
 
 interface IProps {
-  account?: string | null
   closed: boolean
 }
 
-const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
+const InvestorPoolPositionsList: FC<IProps> = ({ closed }) => {
+  const { account } = useActiveWeb3React()
   const { t } = useTranslation()
   const [{ data, loading }, fetchMore] = useQueryPagination<InvestorPosition>({
     query: InvestorPositionsQuery,
@@ -90,4 +101,4 @@ const InvestmentPositionsList: FC<IProps> = ({ account, closed }) => {
   )
 }
 
-export default InvestmentPositionsList
+export default InvestorPoolPositionsList
