@@ -42,28 +42,7 @@ import calendar from "assets/icons/calendar.svg"
 import faqText from "./components/Faq/content"
 import useCreateRiskyProposal from "./useCreateRiskyProposal"
 
-import {
-  Container,
-  Content,
-  Title,
-  SubTitle,
-  Row,
-  CardHeader,
-  Link,
-  Body,
-  FaqText,
-  CalendarIcon,
-  TokenContainer,
-  TokenInfo,
-  Symbol,
-  Name,
-  Price,
-  HintText,
-  Label,
-  White,
-  Grey,
-  ValidationError,
-} from "./styled"
+import { Container } from "./styled"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { GuardSpinner } from "react-spinners-kit"
 
@@ -429,6 +408,8 @@ const isFaqRead = localStorage.getItem("risky-proposal-faq-read") === "true"
 
 const CreateRiskyProposalWithProvider = () => {
   const { poolAddress } = useParams()
+
+  // TODO: close button - goes to pool page
 
   return (
     <WithPoolAddressValidation
