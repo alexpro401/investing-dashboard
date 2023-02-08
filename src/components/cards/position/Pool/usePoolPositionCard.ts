@@ -64,6 +64,7 @@ function usePoolPositionCard(
 
       if (!poolId || !poolType || !positionToken || !baseToken) return
 
+      // TODO: remove poolType after merge
       let url = `/pool/swap/${poolType}/${poolId}`
 
       if (invest) {

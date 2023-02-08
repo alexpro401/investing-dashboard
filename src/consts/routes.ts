@@ -7,7 +7,7 @@ export enum ROUTE_PATHS {
   notifications = "/notifications",
   topMembers = "/top-members/*",
 
-  poolSwap = "/pool/swap/:poolType/:poolToken/:inputToken/:outputToken/*",
+  poolSwap = "/pool/swap/:poolAddress/:inputToken/:outputToken/*",
   poolInvest = "/pool/invest/:poolAddress",
   poolProfile = "/pool/profile/:poolAddress/*",
 

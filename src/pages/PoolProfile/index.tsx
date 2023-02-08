@@ -92,8 +92,7 @@ const PoolProfileContent = () => {
                 text="+ Open new trade"
                 color="secondary"
                 routePath={generatePath(ROUTE_PATHS.poolSwap, {
-                  poolType: fundType,
-                  poolToken: fundAddress,
+                  poolAddress: fundAddress,
                   inputToken: basicToken.address,
                   outputToken: "0x",
                   "*": "",
