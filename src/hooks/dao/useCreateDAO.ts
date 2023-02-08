@@ -35,6 +35,7 @@ const useCreateDAO = () => {
     distributionProposalSettingsForm,
     createdDaoAddress,
     tokenCreation,
+    isTokenCreation,
   } = useContext(GovPoolFormContext)
 
   const factory = usePoolFactoryContract()
@@ -288,7 +289,7 @@ const useCreateDAO = () => {
           : [],
       },
       userKeeperParams: {
-        tokenAddress: +tokenCreation.totalSupply.get
+        tokenAddress: isTokenCreation
           ? ZERO_ADDR
           : userKeeperParams.tokenAddress.get || ZERO_ADDR,
         nftAddress: userKeeperParams.nftAddress.get || ZERO_ADDR,
@@ -304,27 +305,24 @@ const useCreateDAO = () => {
       descriptionURL: additionalData._path,
     }
 
-    const gasLimit = await tryEstimateGas(POOL_PARAMETERS, {
-      ...{ ...cloneDeep(defaultSettings), executorDescription: "" },
-    })
-
-    try {
-      const transactionResponse = await factory.deployGovPoolWithTokenSale(
-        POOL_PARAMETERS,
-        {
-          tiersParams: [],
-          whitelistParams: [],
-          tokenParams: {
-            name: tokenCreation.name.get,
-            symbol: tokenCreation.symbol.get,
-            users: [
-              account,
-              ...tokenCreation.recipients.get.map((el) => el.address),
-            ],
-            saleAmount: "0",
-            cap: parseUnits(tokenCreation.totalSupply.get, 18),
-            mintedTotal: parseUnits(tokenCreation.initialDistribution.get, 18),
-            amounts: [
+    const TOKEN_SALE_PARAMETERS = {
+      tiersParams: [],
+      whitelistParams: [],
+      tokenParams: {
+        name: tokenCreation.name.get || "",
+        symbol: tokenCreation.symbol.get || "",
+        users: isTokenCreation
+          ? [account, ...tokenCreation.recipients.get.map((el) => el.address)]
+          : [],
+        saleAmount: "0",
+        cap: isTokenCreation
+          ? parseUnits(tokenCreation.totalSupply.get, 18)
+          : "0",
+        mintedTotal: isTokenCreation
+          ? parseUnits(tokenCreation.initialDistribution.get, 18)
+          : "0",
+        amounts: isTokenCreation
+          ? [
               parseUnits(
                 BigNumber.from(tokenCreation.initialDistribution.get)
                   .sub(
@@ -338,9 +336,19 @@ const useCreateDAO = () => {
               ...tokenCreation.recipients.get.map((el) =>
                 parseUnits(el.amount, 18)
               ),
-            ],
-          },
-        },
+            ]
+          : [],
+      },
+    }
+
+    const gasLimit = await tryEstimateGas(POOL_PARAMETERS, {
+      ...{ ...cloneDeep(defaultSettings), executorDescription: "" },
+    })
+
+    try {
+      const transactionResponse = await factory.deployGovPoolWithTokenSale(
+        POOL_PARAMETERS,
+        TOKEN_SALE_PARAMETERS,
         {
           ...transactionOptions,
           from: account,

@@ -88,8 +88,8 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
 
   const handleNextStep = useCallback(() => {
     if (!isTokenCreation) {
-      console.log("isTokenCreation", isTokenCreation)
       prevCb()
+      return
     }
 
     const totalRecipientsAmount = tokenCreation.recipients.get
