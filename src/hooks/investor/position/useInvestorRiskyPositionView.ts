@@ -64,7 +64,7 @@ function useInvestorRiskyPositionView(position: any, utilityIds): [IPayload] {
    * otherwise return current position volume
    */
   const positionVolume = useMemo<BigNumber>(() => {
-    if (!position) return INITIAL_AMOUNT
+    if (!position) return ZERO
 
     const { totalLP2OpenVolume, totalLP2CloseVolume } = position
 
