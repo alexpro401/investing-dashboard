@@ -44,7 +44,7 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
   const { govUserKeeperAddress } = useGovPoolHelperContracts(daoPoolAddress)
   const [{ haveToken, haveNft, tokenAddress, nftAddress }] =
     useGovPoolVotingAssets(daoPoolAddress)
-  const { vote, voteDelegated } = useGovPoolVote(daoPoolAddress)
+  const { vote } = useGovPoolVote(daoPoolAddress)
 
   const erc721Balances = useERC721GovBalance(daoPoolAddress)
 
@@ -228,10 +228,10 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
     (proposalId: number) => {
       if (!account) return
 
-      // calculate erc20 deposit amount without locked and delegated and voted balance
+      // calculate erc20 deposit amount without locked, delegated, voted balances
       const depositAmount = isOwnedERC20Used ? ERC20DepositAmount : ZERO
 
-      const ERC20AmountExceptDelegated = ERC20Amount.gt(
+      const ERC20AmountExceptDelegated = ERC20Amount.gte(
         tokenBalances.erc20DelegatedWithoutVotes
       )
         ? ERC20Amount.sub(tokenBalances.erc20DelegatedWithoutVotes)
@@ -247,7 +247,13 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
         (id) => !erc721Balances.delegatedBalance.includes(id)
       )
 
-      if (voteAmount.isZero() && voteNftIds.length === 0) return
+      const delegateAmount = ERC20Amount.gte(
+        tokenBalances.erc20DelegatedWithoutVotes
+      )
+        ? tokenBalances.erc20DelegatedWithoutVotes
+        : ERC20Amount
+
+      const delegateNftIds = delegatedERC721Selected
 
       return vote(
         account,
@@ -255,39 +261,23 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
         depositAmount,
         depositNfts,
         voteAmount,
-        voteNftIds
+        voteNftIds,
+        withDelegated ? delegateAmount : ZERO,
+        withDelegated ? delegateNftIds : []
       )
     },
     [
       account,
       isOwnedERC20Used,
       ERC20DepositAmount,
-      withDelegated,
       ERC20Amount,
       tokenBalances.erc20DelegatedWithoutVotes,
+      withDelegated,
       ownedERC721Selected,
       ERC721Amount,
+      delegatedERC721Selected,
       vote,
       erc721Balances.delegatedBalance,
-    ]
-  )
-
-  const handleVoteDelegated = useCallback(
-    (proposalId: number) => {
-      // calculate erc20 vote amount without delegated balance
-      const voteAmount = ERC20Amount.gte(tokenBalances.erc20DelegatedBalance)
-        ? tokenBalances.erc20DelegatedBalance
-        : ERC20Amount
-
-      const voteNftIds = delegatedERC721Selected
-
-      return voteDelegated(proposalId, voteAmount, voteNftIds)
-    },
-    [
-      ERC20Amount,
-      delegatedERC721Selected,
-      tokenBalances.erc20DelegatedBalance,
-      voteDelegated,
     ]
   )
 
@@ -299,16 +289,6 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
 
     try {
       await handleVote(id)
-
-      if (!withDelegated) return
-
-      if (
-        delegatedERC721Selected.length > 0 ||
-        (!ERC20Amount.isZero() &&
-          !tokenBalances.erc20DelegatedWithoutVotes.isZero())
-      ) {
-        await handleVoteDelegated(id)
-      }
     } catch (err) {
       console.error(err)
     } finally {
@@ -316,15 +296,7 @@ const useVotingTerminal = (daoPoolAddress?: string, proposalId?: string) => {
       setERC721Amount([])
       setERC20Price(ZERO)
     }
-  }, [
-    proposalId,
-    handleVote,
-    withDelegated,
-    delegatedERC721Selected.length,
-    ERC20Amount,
-    tokenBalances.erc20DelegatedWithoutVotes,
-    handleVoteDelegated,
-  ])
+  }, [proposalId, handleVote])
 
   return {
     formInfo,
