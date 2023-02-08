@@ -7,7 +7,6 @@ import { useWeb3React } from "@web3-react/core"
 import { TraderPoolRiskyProposal } from "interfaces/typechain"
 import { useContract } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
-import useTokenRating from "hooks/useTokenRating"
 import { DATE_TIME_FORMAT, ZERO } from "consts"
 import { expandTimestamp } from "utils"
 import { percentageOfBignumbers } from "utils/formulas"
@@ -15,11 +14,11 @@ import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { Token } from "interfaces"
 import { IpfsEntity } from "utils/ipfsEntity"
 import * as React from "react"
-import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { WrappedRiskyProposalView } from "types"
 import { TraderPoolRiskyProposal as TraderPoolRiskyProposal_ABI } from "abi"
+import { IPoolMetadata } from "state/ipfsMetadata/types"
 
-type UseRiskyProposalViewResponseValues = {
+export type UseRiskyProposalViewResponseValues = {
   tokenRating: number
   canInvest: boolean
   proposalTokenLink: string
@@ -48,7 +47,11 @@ type UseRiskyProposalViewResponseValues = {
   poolMetadata: any
 }
 type UseRiskyProposalViewResponseMethods = {
-  onUpdateRestrictions
+  onUpdateRestrictions: (
+    timestamp: number,
+    maxSize: BigNumber,
+    maxInvest: BigNumber
+  ) => void
 }
 
 type UseRiskyProposalViewResponse = [
@@ -58,31 +61,26 @@ type UseRiskyProposalViewResponse = [
 export const useRiskyProposalView = (
   funcArgs: WrappedRiskyProposalView
 ): UseRiskyProposalViewResponse => {
-  const { proposal, utilityIds, poolInfo, isTrader, maximumPoolInvestors } =
-    funcArgs
   const {
-    proposalId,
-    basicPoolAddress: poolAddress,
-    proposalContractAddress,
-    proposalTokenAddress,
-  } = utilityIds
+    proposal,
+    utilityIds,
+    poolInfo,
+    isTrader,
+    maximumPoolInvestors,
+    proposalTokenRating,
+  } = funcArgs
+  const { proposalId, proposalContractAddress, proposalTokenAddress } =
+    utilityIds
 
   const { chainId } = useWeb3React()
   const [proposalToken] = useERC20Data(proposalTokenAddress)
-  const getTokenRating = useTokenRating()
   const proposalContract = useContract<TraderPoolRiskyProposal>(
     proposalContractAddress,
     TraderPoolRiskyProposal_ABI
   )
 
-  const ipfsUrl = React.useMemo(
-    () => poolInfo?.parameters.descriptionURL ?? "",
-    [poolInfo]
-  )
-  const [{ poolMetadata }] = usePoolMetadata(poolAddress, ipfsUrl)
-
+  const [poolMetadata, setPoolMetadata] = useState<IPoolMetadata | null>(null)
   const [traderSizeLP, setTraderSizeLP] = useState<BigNumber>(ZERO)
-  const [tokenRating, setTokenRating] = useState<number>(0)
   const [description, setDescription] = useState<string>("")
 
   /**
@@ -251,27 +249,46 @@ export const useRiskyProposalView = (
     })
   }, [proposal])
 
+  const loadPoolMetadata = useCallback(async () => {
+    if (isEmpty(poolInfo.parameters.descriptionURL)) {
+      return null
+    }
+    try {
+      const riskyProposalIpfsEntity = new IpfsEntity<IPoolMetadata>({
+        path: poolInfo.parameters.descriptionURL,
+      })
+
+      return riskyProposalIpfsEntity.load()
+    } catch (e) {
+      console.error("Failed to load pool IPFS info")
+      return null
+    }
+  }, [poolInfo])
+
+  React.useEffect(() => {
+    loadPoolMetadata().then((res) => setPoolMetadata(res))
+  }, [loadPoolMetadata])
+
   const loadDetailsFromIpfs = useCallback(async () => {
-    if (!proposal || isEmpty(proposal.proposalInfo.descriptionURL)) return
+    if (isEmpty(proposal.proposalInfo.descriptionURL)) return ""
     try {
       const riskyProposalIpfsEntity = new IpfsEntity<string>({
         path: proposal.proposalInfo.descriptionURL,
       })
 
-      const _description = await riskyProposalIpfsEntity.load()
-
-      setDescription(_description)
+      return riskyProposalIpfsEntity.load()
     } catch (e) {
       console.error("Failed to load description")
+      return ""
     }
   }, [proposal])
 
   React.useEffect(() => {
-    loadDetailsFromIpfs()
+    loadDetailsFromIpfs().then((res) => setDescription(res))
   }, [loadDetailsFromIpfs])
 
   const loadTraderActiveInvestmentsInfo = useCallback(async () => {
-    if (!poolInfo || !proposalContract || isTrader) return
+    if (!poolInfo || !proposalContract || isTrader) return ZERO
     try {
       const _userActiveInvestmentsInfo =
         await proposalContract.getActiveInvestmentsInfo(
@@ -281,30 +298,19 @@ export const useRiskyProposalView = (
         )
 
       if (_userActiveInvestmentsInfo && _userActiveInvestmentsInfo[0]) {
-        setTraderSizeLP(_userActiveInvestmentsInfo[0].lpInvested)
+        return _userActiveInvestmentsInfo[0].lpInvested
+      } else {
+        return ZERO
       }
     } catch (e) {
       console.error("Failed to load trader active investments info")
+      return ZERO
     }
   }, [poolInfo, proposalId, proposalContract, isTrader])
 
   React.useEffect(() => {
-    loadTraderActiveInvestmentsInfo()
+    loadTraderActiveInvestmentsInfo().then((res) => setTraderSizeLP(res))
   }, [loadTraderActiveInvestmentsInfo])
-
-  const loadTokenRating = useCallback(async () => {
-    if (!chainId || !proposalTokenAddress) return
-    try {
-      const rating = await getTokenRating(chainId, proposalTokenAddress)
-      setTokenRating(rating)
-    } catch (error) {
-      console.error(error)
-    }
-  }, [chainId, proposalTokenAddress, getTokenRating])
-
-  React.useEffect(() => {
-    loadTokenRating()
-  }, [loadTokenRating])
 
   const onUpdateRestrictions = useCallback(
     (timestamp: number, maxSize: BigNumber, maxInvest: BigNumber) => {
@@ -338,7 +344,7 @@ export const useRiskyProposalView = (
   return useMemo(
     () => [
       {
-        tokenRating,
+        tokenRating: proposalTokenRating,
         canInvest,
         proposalTokenLink,
         maxSizeLP,
@@ -358,7 +364,7 @@ export const useRiskyProposalView = (
       { onUpdateRestrictions },
     ],
     [
-      tokenRating,
+      proposalTokenRating,
       canInvest,
       proposalTokenLink,
       maxSizeLP,

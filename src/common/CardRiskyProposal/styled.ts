@@ -83,6 +83,14 @@ export const CardRiskyProposalGrid = styled.div<{ isTrader: boolean }>`
   }
 `
 
+export const CardRiskyProposalGridTrader = styled(CardRiskyProposalGrid)`
+  ${areasTrader}
+`
+
+export const CardRiskyProposalGridInvestor = styled(CardRiskyProposalGrid)`
+  ${areasInvestor}
+`
+
 const CardRiskyProposalGridCell = styled.div<{ alignment?: string }>`
   width: fill-available;
   display: flex;
@@ -217,6 +225,10 @@ export const CardRiskyProposalLabelContent = styled.div`
 export const CardRiskyProposalLabelIcon = styled(motion.img)`
   width: 16px;
   height: 16px;
+
+  ${respondTo("lg")} {
+    display: none;
+  }
 `
 
 export const CardRiskyProposalLabel = styled.div`

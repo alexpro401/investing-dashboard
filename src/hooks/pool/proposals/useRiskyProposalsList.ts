@@ -12,6 +12,7 @@ import {
   useRiskyProposalsListActiveInvestmentInfo,
   useRiskyProposalsListTokenMarkPrice,
   useTraderPoolInfoMulticall,
+  useTokenRatingList,
 } from "hooks"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { useCorePropertiesContract } from "contracts"
@@ -101,6 +102,15 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
     "getPoolInfo"
   )
 
+  const riskyProposalTokenAddressList = React.useMemo(() => {
+    if (isEmpty(riskyProposalsByPools)) return []
+
+    return [...new Set(riskyProposalsByPools.map((p) => p.token))]
+  }, [riskyProposalsByPools])
+
+  const [proposalTokenRatingMap, loadingProposalTokenRating] =
+    useTokenRatingList(riskyProposalTokenAddressList)
+
   const anyLoading = React.useMemo(
     () =>
       pause ||
@@ -110,7 +120,8 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
       proposalsDataLoading ||
       activeInvestmentsInfoLoading ||
       tokenMarkPricesLoading ||
-      poolInfoLoading,
+      poolInfoLoading ||
+      loadingProposalTokenRating,
     [
       pause,
       maximumPoolInvestorsLoading,
@@ -120,6 +131,7 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
       activeInvestmentsInfoLoading,
       tokenMarkPricesLoading,
       poolInfoLoading,
+      loadingProposalTokenRating,
     ]
   )
 
@@ -130,7 +142,8 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
       isEmpty(proposalsData) ||
       isEmpty(activeInvestmentsInfo) ||
       isEmpty(tokenMarkPrices) ||
-      isEmpty(poolInfos)
+      isEmpty(poolInfos) ||
+      isEmpty(proposalTokenRatingMap)
     ) {
       return []
     }
@@ -153,6 +166,8 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
           poolInfo: poolInfo,
           isTrader: isTrader,
           maximumPoolInvestors: maximumPoolInvestors,
+          proposalTokenRating:
+            proposalTokenRatingMap[utilityIds.proposalTokenAddress],
         }
       }
     )
@@ -165,6 +180,7 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
     tokenMarkPrices,
     poolInfos,
     maximumPoolInvestors,
+    proposalTokenRatingMap,
   ])
 
   return [proposals, anyLoading, fetchMore]

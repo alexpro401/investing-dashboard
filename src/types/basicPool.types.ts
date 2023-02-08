@@ -21,6 +21,7 @@ export type WrappedRiskyProposalView = {
   userActiveInvestmentsInfo: IRiskyProposalInvestmentsInfo[0]
   proposalTokenMarkPrice: BigNumber
   maximumPoolInvestors: BigNumber
+  proposalTokenRating: number
   poolInfo: IPoolInfo
   isTrader: boolean
 }
