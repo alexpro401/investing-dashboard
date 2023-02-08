@@ -1,23 +1,15 @@
 import * as React from "react"
 import { isEmpty } from "lodash"
-import { format } from "date-fns/esm"
+import { createPortal } from "react-dom"
+import { useTranslation } from "react-i18next"
 import { AnimatePresence } from "framer-motion"
 import { SpiralSpinner } from "react-spinners-kit"
 import { generatePath, useNavigate } from "react-router-dom"
 
-import {
-  useBreakpoints,
-  useInvestorPosition,
-  useInvestorPositionVests,
-} from "hooks"
-import {
-  DATE_FORMAT,
-  ICON_NAMES,
-  MAX_PAGINATION_COUNT,
-  ROUTE_PATHS,
-} from "consts"
-import { InvestorPosition } from "interfaces/thegraphs/invest-pools"
-import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
+import { normalizeBigNumber } from "utils"
+import { useBreakpoints, useInvestorPositionVests } from "hooks"
+import { ICON_NAMES, MAX_PAGINATION_COUNT, ROUTE_PATHS } from "consts"
+import { InvestorPositionInPoolContext } from "context/investor/positions/InvestorPositionInPoolContext"
 
 import { NoDataMessage } from "common"
 import { accordionSummaryVariants } from "motion/variants"
@@ -25,57 +17,100 @@ import { accordionSummaryVariants } from "motion/variants"
 import Icon from "components/Icon"
 import LoadMore from "components/LoadMore"
 import TokenIcon from "components/TokenIcon"
-import AmountRow from "components/Amount/Row"
 import CardActions from "components/CardActions"
 import PositionTrade from "components/PositionTrade"
 
+import InvestorPositionCommission from "./InvestorPositionCommission"
 import * as S from "./styled"
 
-interface Props {
-  position: InvestorPosition
-}
-
-const CardInvestorPosition: React.FC<Props> = ({ position }) => {
+const CardInvestorPosition: React.FC = () => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { isDesktop } = useBreakpoints()
+
+  const {
+    position,
+    poolInfo,
+    baseToken,
+    poolMetadata,
+    pnlPercentage,
+    positionOpenLPAmount,
+    positionOpenLPAmountUSD,
+    entryPriceBase,
+    entryPriceUSD,
+    markPriceBase,
+    markPriceUSD,
+    pnlBase,
+    pnlUSD,
+    commission,
+  } = React.useContext(InvestorPositionInPoolContext)
+
+  const desktopCommissionWrpElId = React.useMemo<string>(
+    () => (!!position ? String("#commission-").concat(position.id) : ""),
+    [position]
+  )
+  const [desktopCommissionWrpEl, setDesktopCommissionWrpEl] =
+    React.useState<Element | null>(null)
+
+  React.useEffect(() => {
+    if (!isEmpty(desktopCommissionWrpElId) && isDesktop) {
+      setDesktopCommissionWrpEl(
+        document.querySelector(desktopCommissionWrpElId)
+      )
+    } else {
+      setDesktopCommissionWrpEl(null)
+    }
+  }, [desktopCommissionWrpElId, isDesktop])
 
   const [showActions, setShowActions] = React.useState(false)
   const [showPositions, setShowPositions] = React.useState(false)
   const [showCommission, setShowCommission] = React.useState(false)
 
   const togglePositions = React.useCallback(() => {
-    if (!showPositions && showCommission) {
+    setShowPositions((prev) => !prev)
+
+    if (!isDesktop && !showPositions && showCommission) {
       setShowCommission(false)
     }
-    setShowPositions((prev) => !prev)
-  }, [showCommission, showPositions])
+  }, [isDesktop, showCommission, showPositions])
 
-  const toggleCommission = React.useCallback(() => {
-    if (!showCommission && showPositions) {
-      setShowPositions(false)
-    }
-    setShowCommission((prev) => !prev)
-  }, [showCommission, showPositions])
+  const toggleCommission = React.useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      e.stopPropagation()
+      setShowCommission((prev) => !prev)
 
-  const onToggleActions = React.useCallback((): void => {
-    setShowActions((prev) => !prev)
+      if (!isDesktop && !showCommission && showPositions) {
+        setShowPositions(false)
+      }
+    },
+    [isDesktop, showCommission, showPositions]
+  )
 
-    if (position.isClosed || isDesktop) {
-      setShowPositions((prev) => !prev)
-    } else {
-      if (showPositions) setShowPositions(false)
-      if (showCommission) setShowCommission(false)
-    }
-  }, [position, isDesktop, showPositions, showCommission])
+  const onCardClick = React.useCallback(
+    (e: React.MouseEvent<HTMLElement>): void => {
+      e.stopPropagation()
+      if (isDesktop) {
+        setShowPositions((prev) => !prev)
+      } else {
+        setShowActions((prev) => !prev)
+        if (showPositions) setShowPositions(false)
+        if (showCommission) setShowCommission(false)
+      }
+    },
+    [isDesktop, showPositions, showCommission]
+  )
 
   React.useEffect(() => {
-    if (isDesktop) {
-      if (showCommission) {
+    if (!isDesktop) {
+      if (showCommission || showPositions) {
+        setShowActions(true)
+      }
+      if (showCommission && showPositions) {
         setShowCommission(false)
         setShowPositions(true)
       }
     }
-  }, [isDesktop, showCommission])
+  }, [isDesktop, showCommission, showPositions])
 
   const onNavigateTerminal = React.useCallback(
     (
@@ -100,27 +135,35 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
 
   const actions = React.useMemo(
     () =>
-      isDesktop || position.isClosed
+      isDesktop
         ? []
         : [
             {
-              label: "All trades",
+              label: t("investor-position-card.action-toggle-vests"),
               active: showPositions,
               onClick: togglePositions,
             },
+            ...(!position.isClosed
+              ? [
+                  {
+                    label: t("investor-position-card.action-invest"),
+                    onClick: (e) => onNavigateTerminal(e, "deposit"),
+                  },
+                ]
+              : []),
             {
-              label: "Buy more",
-              onClick: (e) => onNavigateTerminal(e, "deposit"),
-            },
-            {
-              label: "Commission",
+              label: t("investor-position-card.action-toggle-commission"),
               active: showCommission,
               onClick: toggleCommission,
             },
-            {
-              label: "Close",
-              onClick: (e) => onNavigateTerminal(e, "withdraw"),
-            },
+            ...(!position.isClosed
+              ? [
+                  {
+                    label: t("investor-position-card.action-divest--short"),
+                    onClick: (e) => onNavigateTerminal(e, "withdraw"),
+                  },
+                ]
+              : []),
           ],
     [
       position,
@@ -132,28 +175,6 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
       onNavigateTerminal,
     ]
   )
-
-  const {
-    poolInfo,
-    baseToken,
-    poolMetadata,
-    pnlPercentage,
-    positionOpenLPAmount,
-    positionOpenLPAmountUSD,
-    entryPriceBase,
-    entryPriceUSD,
-    markPriceBase,
-    markPriceUSD,
-    pnlBase,
-    pnlUSD,
-    commissionPeriod,
-    commissionPercentage,
-    commissionAmountUSD,
-    commissionUnlockTimestamp,
-    fundsLockedInvestorPercentage,
-    fundsLockedInvestorUSD,
-    totalPoolInvestmentsUSD,
-  } = useInvestorPosition(position)
 
   const baseTokenSymbol = baseToken?.symbol ?? ""
   const pnlPercentageValue = React.useMemo(
@@ -173,8 +194,9 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
   return (
     <S.Root>
       <S.CardInvestorPositionBody
-        onClick={onToggleActions}
+        onClick={onCardClick}
         sharpBottomCorners={showPositions}
+        bigGap={position.isClosed}
       >
         <S.CardInvestorPositionBodyItem gridEnd={2}>
           <S.CardInvestorPositionBodyItemPoolInfoWrp>
@@ -229,7 +251,9 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
 
         <S.CardInvestorPositionBodyItemGrid>
           <S.CardInvestorPositionBodyItemLabel>
-            {String("Entry Price ").concat(baseTokenSymbol)}
+            {t("investor-position-card.label-entry-price", {
+              currency: baseTokenSymbol,
+            })}
           </S.CardInvestorPositionBodyItemLabel>
           <S.CardInvestorPositionBodyItemAmount>
             {normalizeBigNumber(entryPriceBase, 18, 6)}
@@ -241,9 +265,14 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
 
         <S.CardInvestorPositionBodyItemGrid>
           <S.CardInvestorPositionBodyItemLabel>
-            {String(
-              position.isClosed ? "Closed price " : "Current price "
-            ).concat(baseTokenSymbol)}
+            {t(
+              position.isClosed
+                ? "investor-position-card.label-closed-price"
+                : "investor-position-card.label-current-price",
+              {
+                currency: baseTokenSymbol,
+              }
+            )}
           </S.CardInvestorPositionBodyItemLabel>
           <S.CardInvestorPositionBodyItemAmount>
             {normalizeBigNumber(markPriceBase, 18, 6)}
@@ -257,7 +286,9 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
           textAlign={!isDesktop ? "right" : undefined}
         >
           <S.CardInvestorPositionBodyItemLabel>
-            {String("P&L ").concat(baseTokenSymbol)}
+            {t("investor-position-card.label-pnl", {
+              currency: baseTokenSymbol,
+            })}
           </S.CardInvestorPositionBodyItemLabel>
           <S.CardInvestorPositionBodyItemAmount>
             {normalizeBigNumber(pnlBase, 18, 6)}
@@ -269,30 +300,47 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
         </S.CardInvestorPositionBodyItemGrid>
 
         {isDesktop && (
-          <S.CardInvestorPositionBodyItem>
-            <S.CardInvestorPositionBodyItemActionsWrp>
-              {!position.isClosed && (
-                <>
-                  <S.ActionPositive
-                    text={"Buy More"}
-                    color={"default"}
-                    size={"no-paddings"}
-                    onClick={(e) => onNavigateTerminal(e, "deposit")}
+          <>
+            <S.CardInvestorPositionBodyItem onClick={toggleCommission}>
+              <S.CardInvestorPositionBodyItemCommissionWrp>
+                <S.CardInvestorPositionBodyItemAmount>
+                  {normalizeBigNumber(commission.percentage, 25, 0)}%
+                </S.CardInvestorPositionBodyItemAmount>
+                <S.CardInvestorPositionBodyItemCommissionIconWrp
+                  id={String("commission-").concat(position.id)}
+                >
+                  <S.CardInvestorPositionToggleIconIndicator
+                    name={ICON_NAMES.angleDown}
+                    isActive={showCommission}
                   />
-                  <S.ActionNegative
-                    text={"Close position"}
-                    color={"default"}
-                    size={"no-paddings"}
-                    onClick={(e) => onNavigateTerminal(e, "withdraw")}
-                  />
-                </>
-              )}
-              <S.CardInvestorPositionToggleIconIndicator
-                name={ICON_NAMES.angleDown}
-                isActive={showPositions}
-              />
-            </S.CardInvestorPositionBodyItemActionsWrp>
-          </S.CardInvestorPositionBodyItem>
+                </S.CardInvestorPositionBodyItemCommissionIconWrp>
+              </S.CardInvestorPositionBodyItemCommissionWrp>
+            </S.CardInvestorPositionBodyItem>
+            <S.CardInvestorPositionBodyItem>
+              <S.CardInvestorPositionBodyItemActionsWrp>
+                {!position.isClosed && (
+                  <>
+                    <S.ActionPositive
+                      text={t("investor-position-card.action-invest")}
+                      color={"default"}
+                      size={"no-paddings"}
+                      onClick={(e) => onNavigateTerminal(e, "deposit")}
+                    />
+                    <S.ActionNegative
+                      text={t("investor-position-card.action-divest")}
+                      color={"default"}
+                      size={"no-paddings"}
+                      onClick={(e) => onNavigateTerminal(e, "withdraw")}
+                    />
+                  </>
+                )}
+                <S.CardInvestorPositionToggleIconIndicator
+                  name={ICON_NAMES.angleDown}
+                  isActive={showPositions}
+                />
+              </S.CardInvestorPositionBodyItemActionsWrp>
+            </S.CardInvestorPositionBodyItem>
+          </>
         )}
       </S.CardInvestorPositionBody>
 
@@ -301,9 +349,7 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
       </AnimatePresence>
       <S.CardInvestorPositionExtra
         initial="hidden"
-        animate={
-          (isDesktop && showActions) || showPositions ? "visible" : "hidden"
-        }
+        animate={showPositions ? "visible" : "hidden"}
         variants={accordionSummaryVariants}
       >
         <S.CardInvestorPositionVestsWrp>
@@ -337,45 +383,28 @@ const CardInvestorPosition: React.FC<Props> = ({ position }) => {
           ) : null}
         </S.CardInvestorPositionVestsWrp>
       </S.CardInvestorPositionExtra>
-      <S.CardInvestorPositionExtra
-        initial="hidden"
-        animate={showCommission && !isDesktop ? "visible" : "hidden"}
-        variants={accordionSummaryVariants}
-      >
-        <S.CardInvestorPositionCommissionWrp>
-          <AmountRow
-            title={`${commissionPeriod} month Performance Fee`}
-            value={`${normalizeBigNumber(commissionPercentage, 25, 0)}%`}
-          />
-          <AmountRow
-            m="14px 0 0"
-            title="Paid Performance Fee  "
-            value={`$${formatBigNumber(commissionAmountUSD, 18, 2)}`}
-          />
-          <AmountRow
-            full
-            m="14px 0 0"
-            title="Date of withdrawal"
-            value={format(
-              expandTimestamp(+commissionUnlockTimestamp.toString()),
-              DATE_FORMAT
-            )}
-          />
-          <AmountRow
-            m="14px 0 0"
-            title={`Investor funds locked (${formatBigNumber(
-              fundsLockedInvestorPercentage,
-              18,
-              2
-            )}%)`}
-            value={`$${formatBigNumber(
-              fundsLockedInvestorUSD,
-              18,
-              2
-            )}/$${formatBigNumber(totalPoolInvestmentsUSD, 18, 2)}`}
-          />
-        </S.CardInvestorPositionCommissionWrp>
-      </S.CardInvestorPositionExtra>
+      {isDesktop && desktopCommissionWrpEl ? (
+        createPortal(
+          <S.CardInvestorPositionCommissionWrp
+            initial="hidden"
+            animate={showCommission ? "visible" : "hidden"}
+            variants={accordionSummaryVariants}
+          >
+            <InvestorPositionCommission />
+          </S.CardInvestorPositionCommissionWrp>,
+          desktopCommissionWrpEl
+        )
+      ) : (
+        <S.CardInvestorPositionExtra
+          initial="hidden"
+          animate={showCommission ? "visible" : "hidden"}
+          variants={accordionSummaryVariants}
+        >
+          <S.CardInvestorPositionCommissionWrp>
+            <InvestorPositionCommission />
+          </S.CardInvestorPositionCommissionWrp>
+        </S.CardInvestorPositionExtra>
+      )}
     </S.Root>
   )
 }

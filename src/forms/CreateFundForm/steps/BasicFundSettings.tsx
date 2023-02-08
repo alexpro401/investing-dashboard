@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo } from "react"
+import React, { useCallback, useContext, useMemo, useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 
 import { stepsControllerContext } from "context/StepsControllerContext"
@@ -6,7 +6,19 @@ import { CreateFundContext } from "context/fund/CreateFundContext"
 import { useFormValidation, useBreakpoints, useActiveWeb3React } from "hooks"
 import { useAllTokenBalances } from "hooks/useBalance"
 import { useUserTokens, useWhitelistTokens } from "hooks/useToken"
-import { required, minLength, maxLength } from "utils/validators"
+import {
+  required,
+  minLength,
+  maxLength,
+  isUrl,
+  isUrlFacebook,
+  isUrlLinkedin,
+  isUrlMedium,
+  isUrlTelegram,
+  isUrlTwitter,
+  isUrlGithub,
+  validateIfExist,
+} from "utils/validators"
 import {
   Card,
   CardHead,
@@ -17,8 +29,9 @@ import {
   Headline1,
   RegularText,
   CreateDaoCardStepNumber,
+  Collapse,
 } from "common"
-import { OverlapInputField, TextareaField } from "fields"
+import { OverlapInputField, SocialLinkField, TextareaField } from "fields"
 import Avatar from "components/Avatar"
 import TokenSelect from "modals/TokenSelect"
 import theme from "theme"
@@ -28,12 +41,14 @@ import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 
 import * as S from "./styled"
 import * as SForms from "common/FormSteps/styled"
+import { SUPPORTED_SOCIALS } from "consts"
 
 const BasicFundSettings: React.FC = () => {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { nextCb, currentStepNumber } = useContext(stepsControllerContext)
   const {
+    socialLinks,
     avatarUrl,
     description,
     fundName,
@@ -66,6 +81,16 @@ const BasicFundSettings: React.FC = () => {
       description: description.get,
       strategy: strategy.get,
       baseToken: baseToken.get,
+
+      facebook: socialLinks.get?.[0]?.[1] || "",
+      linkedin: socialLinks.get?.[1]?.[1] || "",
+      medium: socialLinks.get?.[2]?.[1] || "",
+      telegram: socialLinks.get?.[3]?.[1] || "",
+      twitter: socialLinks.get?.[4]?.[1] || "",
+      github: socialLinks.get?.[5]?.[1] || "",
+      others: socialLinks.get
+        ?.slice(6, socialLinks.get.length)
+        ?.map((el) => el[1]),
     },
     {
       fundName: {
@@ -81,6 +106,47 @@ const BasicFundSettings: React.FC = () => {
       baseToken: {
         required,
       },
+
+      ...(socialLinks.get?.[0]?.[1]
+        ? {
+            facebook: { isUrl, isUrlFacebook },
+          }
+        : {}),
+      ...(socialLinks.get?.[1]?.[1]
+        ? {
+            linkedin: { isUrl, isUrlLinkedin },
+          }
+        : {}),
+      ...(socialLinks.get?.[2]?.[1]
+        ? {
+            medium: { isUrl, isUrlMedium },
+          }
+        : {}),
+      ...(socialLinks.get?.[3]?.[1]
+        ? {
+            telegram: { isUrl, isUrlTelegram },
+          }
+        : {}),
+      ...(socialLinks.get?.[4]?.[1]
+        ? {
+            twitter: { isUrl, isUrlTwitter },
+          }
+        : {}),
+      ...(socialLinks.get?.[5]?.[1]
+        ? {
+            github: { isUrl, isUrlGithub },
+          }
+        : {}),
+      ...(socialLinks.get?.slice(6, socialLinks.get.length)?.map((el) => el[1])
+        .length
+        ? {
+            others: {
+              $every: {
+                isUrl: validateIfExist(isUrl),
+              },
+            },
+          }
+        : {}),
     }
   )
 
@@ -107,6 +173,105 @@ const BasicFundSettings: React.FC = () => {
       nextCb()
     }
   }, [nextCb, touchForm, isFieldsValid])
+
+  const [isShowSocials, setIsShowSocials] = useState(false)
+
+  const handleAddSocials = useCallback(() => {
+    socialLinks.set([
+      ["facebook", ""],
+      ["linkedin", ""],
+      ["medium", ""],
+      ["telegram", ""],
+      ["twitter", ""],
+      ["github", ""],
+      ["other", ""],
+    ])
+    setIsShowSocials(true)
+  }, [socialLinks])
+
+  const SocialLinks = useMemo(
+    () => (
+      <>
+        {!socialLinks.get?.length && (
+          <S.CardAddBtn
+            color="default"
+            text="+ Add social links"
+            onClick={handleAddSocials}
+          />
+        )}
+        <Collapse isOpen={!!socialLinks && isShowSocials}>
+          <CardFormControl>
+            {socialLinks.get?.map(([key, value], idx) => (
+              <SocialLinkField
+                key={idx}
+                socialType={key}
+                label={key}
+                labelNodeRight={
+                  isFieldValid(
+                    key === "other" ? `others[${idx - 6}].value` : `${key}`
+                  ) ? (
+                    <S.FieldValidIcon name={ICON_NAMES.greenCheck} />
+                  ) : (
+                    <></>
+                  )
+                }
+                value={value}
+                setValue={(val) => {
+                  socialLinks.set((prevState) => {
+                    const nextState = [...prevState]
+                    nextState[idx][1] = val as string
+                    return nextState
+                  })
+                }}
+                onRemove={() => {
+                  socialLinks.set((prevState) => {
+                    let nextState = [...prevState]
+
+                    if (key === "other") {
+                      nextState = [...prevState.filter((el, i) => i !== idx)]
+                    } else {
+                      nextState[idx][1] = ""
+                    }
+
+                    return nextState
+                  })
+                }}
+                errorMessage={getFieldErrorMessage(
+                  key === "other" ? `others[${idx - 6}].value` : `${key}`
+                )}
+                onPaste={() => {
+                  touchField(
+                    key === "other" ? `others[${idx - 6}].value` : `${key}`
+                  )
+                }}
+              />
+            ))}
+            <S.CardAddBtn
+              text="+ Add other"
+              size="no-paddings"
+              color="default"
+              onClick={() => {
+                socialLinks.set((prevState) => {
+                  return [
+                    ...prevState,
+                    ["other", ""] as [SUPPORTED_SOCIALS, string],
+                  ]
+                })
+              }}
+            />
+          </CardFormControl>
+        </Collapse>
+      </>
+    ),
+    [
+      socialLinks,
+      getFieldErrorMessage,
+      handleAddSocials,
+      isFieldValid,
+      isShowSocials,
+      touchField,
+    ]
+  )
 
   return (
     <SForms.StepsRoot>
@@ -280,6 +445,7 @@ const BasicFundSettings: React.FC = () => {
             errorMessage={getFieldErrorMessage("strategy")}
             onBlur={() => touchField("strategy")}
           />
+          {SocialLinks}
         </CardFormControl>
       </Card>
       <SForms.FormStepsNavigationWrp customNextCb={handleNextStep} />

@@ -41,7 +41,7 @@ const PoolPnlChart: React.FC<Props> = ({
               dataKey: "price",
               legendType: "triangle",
               isAnimationActive: true,
-              stroke: theme.statusColors.success,
+              stroke: theme.brandColors.secondary,
             },
           ]}
           timeframe={{ get: tf, set: setTf }}

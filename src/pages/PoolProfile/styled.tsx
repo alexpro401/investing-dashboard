@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { AppButton, Icon, Tabs } from "common"
 import { respondTo } from "theme"
 import { PoolAppearance, PoolBaseToken } from "./components"
+import { NavLink } from "react-router-dom"
 
 export const Container = styled(motion.div).attrs(() => ({
   initial: { opacity: 0 },
@@ -26,7 +27,6 @@ export const PoolProfileDefaultInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: var(--app-gap);
-  overflow: hidden;
   background: #141926;
   border-radius: 20px;
   padding: var(--app-padding);
@@ -76,19 +76,19 @@ export const PoolProfileGeneralActionsDropdownToggler = styled.button`
 export const PoolProfileGeneralActionsDropdownTogglerIcon = styled(Icon)``
 
 export const PoolProfileGeneralActionsDropdownContent = styled.div`
-  overflow: hidden auto;
   display: flex;
   flex-direction: column;
   width: max-content;
   height: 100%;
   color: ${(props) => props.theme.textColors.primary};
   border-radius: 20px;
-  background-color: #20283a;
+  background-color: ${(props) => props.theme.textColors.secondaryNegative};
 `
 
 export const PoolProfileGeneralActionsDropdownItem = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
   gap: 8px;
   font-size: 14px;
   line-height: 1.5;
@@ -96,6 +96,10 @@ export const PoolProfileGeneralActionsDropdownItem = styled.div`
   letter-spacing: 0.01em;
   color: #6781bd;
   padding: 16px 24px 16px 12px;
+
+  &:hover {
+    opacity: 0.75;
+  }
 `
 
 export const PoolProfileGeneralActionsDropdownItemIcon = styled(Icon)`
@@ -176,6 +180,21 @@ export const PoolDetailsBadgeText = styled.span`
   transform: translateY(4px);
 `
 
+export const PoolDetailsBadgeManage = styled.button`
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: ${(props) => props.theme.brandColors.secondary};
+  background: transparent;
+  border: none;
+
+  font-size: 16px;
+  line-height: 1.3;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+`
+
 export const ButtonContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -211,10 +230,13 @@ export const SpecificStatistics = styled.div`
 `
 
 export const SpecificStatisticsTitle = styled.div`
+  display: flex;
+  align-items: center;
   font-weight: 700;
   font-size: 16px;
   line-height: 19px;
   letter-spacing: 0.01em;
+  min-height: 40px;
 
   /* Main/blue */
 
@@ -257,6 +279,11 @@ export const SpecificStatisticsValue = styled.div`
   color: #e4f2ff;
 `
 
+export const TabsChartsWrp = styled.div`
+  position: relative;
+  flex: 1;
+`
+
 export const TabsWrp = styled(Tabs)`
   flex: 1;
 `
@@ -294,5 +321,28 @@ export const ModalHeadIcon = styled(Icon)`
 `
 
 export const ModalBodyWrp = styled.div`
+  overflow: hidden auto;
   padding: 16px;
+  max-height: 75vh;
 `
+
+export const TraderInvestSelfLink = styled(NavLink)`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: absolute;
+  top: 12px;
+  right: 0;
+  font-size: 16px;
+  line-height: 1.3;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  background: linear-gradient(41.86deg, #2680eb 0%, #7fffd4 117.98%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  text-decoration: none;
+`
+
+export const TraderInvestSelfLinkIcon = styled(Icon)``

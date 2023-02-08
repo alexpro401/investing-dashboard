@@ -124,7 +124,7 @@ export const SpecialModalBackground = styled.div`
   top: 0;
   left: 0;
   width: 100vw;
-  z-index: 10;
+  z-index: 999;
   background: rgba(13, 18, 28, 0.3);
   backdrop-filter: blur(1px);
   -webkit-align-items: center;

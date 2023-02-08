@@ -25,7 +25,13 @@ import {
   usePoolAlternativePnlTokens,
 } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
-import { PoolType, TIMEFRAME, UpdateListType, ZERO } from "consts"
+import {
+  PoolType,
+  SUPPORTED_SOCIALS,
+  TIMEFRAME,
+  UpdateListType,
+  ZERO,
+} from "consts"
 import { getPNL, getPriceLP, multiplyBignumbers } from "utils/formulas"
 import { bigify, expandTimestamp, normalizeBigNumber } from "utils"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
@@ -60,6 +66,7 @@ interface IPoolProfileContext {
   fundName?: string
   fundType?: PoolType
   fundImageUrl?: string
+  fundSocialLinks?: [SUPPORTED_SOCIALS, string][]
 
   minInvestAmount?: BigNumber
   emission?: BigNumber
@@ -231,7 +238,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
 
   const [{ poolMetadata }] = usePoolMetadata(
     poolAddress,
-    poolInfo?.parameters.descriptionURL
+    poolData?.descriptionURL
   )
 
   const [{ priceUSD }] = usePoolPrice(poolAddress)
@@ -395,6 +402,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
       totalLPEmission?: string
       minimalInvestment?: string
       isFundPrivate?: boolean
+      socialLinks?: [SUPPORTED_SOCIALS, string][]
     }) => {
       let descriptionURL = poolInfo!.parameters.descriptionURL
 
@@ -410,8 +418,9 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
             strategy: opts?.fundStrategy || poolMetadata?.strategy,
             assets: opts?.avatarUrl
               ? [...(poolMetadata?.assets || []), opts.avatarUrl]
-              : poolMetadata?.assets,
-            account: opts?.account || poolMetadata?.account,
+              : poolMetadata?.assets || [],
+            socialLinks: opts?.socialLinks || poolMetadata?.socialLinks,
+            account: opts?.account || poolMetadata?.account || account,
             timestamp: new Date().getTime() / 1000,
           } as IPoolMetadata & { timestamp: number }),
         })
@@ -444,7 +453,14 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
       // TODO: update pools item || list
       // FIXME: poolData is undefined sometimes
     },
-    [addTransaction, baseToken, poolInfo, poolMetadata, traderPoolContract]
+    [
+      account,
+      addTransaction,
+      baseToken,
+      poolInfo,
+      poolMetadata,
+      traderPoolContract,
+    ]
   )
 
   const updatePoolManagers = useCallback(
@@ -489,7 +505,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
         })
       }
     },
-    [addTransaction, poolData, traderPoolContract]
+    [addTransaction, poolAddress, poolData, traderPoolContract]
   )
 
   const updatePoolInvestors = useCallback(
@@ -546,7 +562,14 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
         })
       }
     },
-    [addTransaction, poolData, traderPoolContract]
+    [
+      addTransaction,
+      poolAddress,
+      poolData,
+      poolInfo,
+      traderPoolContract,
+      updatePoolParameters,
+    ]
   )
 
   return (
@@ -569,6 +592,7 @@ const PoolProfileContextProvider: FC<Props> = ({ poolAddress, children }) => {
           fundName: poolInfo?.name,
           fundType: poolData?.type,
           fundImageUrl: poolMetadata?.assets[poolMetadata?.assets.length - 1],
+          fundSocialLinks: poolMetadata?.socialLinks,
 
           minInvestAmount: poolInfo?.parameters.minimalInvestment,
           emission: poolInfo?.parameters.totalLPEmission,

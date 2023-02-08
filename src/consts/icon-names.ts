@@ -61,4 +61,6 @@ export enum ICON_NAMES {
   filter = "filter",
   dotsHorizontal = "dots-horizontal",
   plusOutline = "plus-outline",
+  pencil = "pencil",
+  gradientArrowDiagonalUp = "gradient-arrow-diagonal-up",
 }

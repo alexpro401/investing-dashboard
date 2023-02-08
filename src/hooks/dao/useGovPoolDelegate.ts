@@ -1,5 +1,5 @@
 import { SubmitState } from "consts/types"
-import { BigNumberish } from "@ethersproject/bignumber"
+import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
 import { useCallback } from "react"
 import { useGovPoolContract } from "contracts"
 import { useTransactionAdder } from "state/transactions/hooks"
@@ -7,6 +7,8 @@ import usePayload from "hooks/usePayload"
 import useError from "hooks/useError"
 import { TransactionType } from "state/transactions/types"
 import { isTxMined, parseTransactionError } from "utils"
+import { encodeAbiMethod } from "utils/encodeAbi"
+import { GovPool } from "abi"
 
 const useGovPoolDelegate = (daoPoolAddress?: string) => {
   const govPool = useGovPoolContract(daoPoolAddress)
@@ -15,17 +17,41 @@ const useGovPoolDelegate = (daoPoolAddress?: string) => {
   const [, setError] = useError()
 
   const delegate = useCallback(
-    async (delegatee: string, tokens: BigNumberish, nfts: BigNumberish[]) => {
+    async (
+      delegator: string,
+      delegatee: string,
+      depositTokens: BigNumberish,
+      depositNfts: BigNumberish[],
+      voteTokens: BigNumberish,
+      voteNfts: BigNumberish[]
+    ) => {
       if (!govPool) return
       setPayload(SubmitState.SIGN)
 
       try {
         setPayload(SubmitState.WAIT_CONFIRM)
-        const transactionResponse = await govPool.delegate(
-          delegatee,
-          tokens,
-          nfts
+
+        const params: string[] = []
+
+        if (!BigNumber.from(depositTokens).isZero() || !!depositNfts.length) {
+          params.push(
+            encodeAbiMethod(GovPool, "deposit", [
+              delegator,
+              depositTokens,
+              depositNfts,
+            ])
+          )
+        }
+
+        params.push(
+          encodeAbiMethod(GovPool, "delegate", [
+            delegatee,
+            voteTokens,
+            voteNfts,
+          ])
         )
+
+        const transactionResponse = await govPool.multicall(params)
 
         const receipt = await addTransaction(transactionResponse, {
           type: TransactionType.GOV_POOL_DELEGATE,
