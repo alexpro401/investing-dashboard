@@ -14,6 +14,7 @@ import { WrappedInvestorRiskyPositionView } from "interfaces/thegraphs/investors
 import { isEmpty } from "lodash"
 import { accordionSummaryVariants } from "motion/variants"
 import * as React from "react"
+import { useTranslation } from "react-i18next"
 import { SpiralSpinner } from "react-spinners-kit"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { normalizeBigNumber } from "utils"
@@ -26,6 +27,7 @@ interface Props {
 const CardInvestorRiskyPosition: React.FC<Props> = ({ payload }) => {
   const { id: positionId, position, poolInfo, utilityIds } = payload
 
+  const { t } = useTranslation()
   const { account } = useWeb3React()
   const [{ poolMetadata }] = usePoolMetadata(
     utilityIds.poolAddress,
@@ -97,7 +99,9 @@ const CardInvestorRiskyPosition: React.FC<Props> = ({ payload }) => {
             <S.CardInvestorRiskyPositionSizeWrp>
               {position.isClosed ? (
                 <S.CardInvestorRiskyPositionBodyItemAmount>
-                  {normalizeBigNumber(positionVolume, 18, 6)} LP2
+                  {t("card-investor-risky-position.amount-lp2", {
+                    amount: normalizeBigNumber(positionVolume, 18, 6),
+                  })}
                 </S.CardInvestorRiskyPositionBodyItemAmount>
               ) : (
                 <S.CardInvestorRiskyPositionTokenNamesWrp>
@@ -134,7 +138,9 @@ const CardInvestorRiskyPosition: React.FC<Props> = ({ payload }) => {
 
         <S.CardInvestorRiskyPositionBodyItemGrid>
           <S.CardInvestorRiskyPositionBodyItemLabel>
-            Entry Price {baseTokenSymbol}
+            {t("card-investor-risky-position.label-entry-price", {
+              currency: baseTokenSymbol,
+            })}
           </S.CardInvestorRiskyPositionBodyItemLabel>
           <S.CardInvestorRiskyPositionBodyItemAmount>
             {normalizeBigNumber(entryPriceBase, 18, 6)}
@@ -147,8 +153,14 @@ const CardInvestorRiskyPosition: React.FC<Props> = ({ payload }) => {
 
         <S.CardInvestorRiskyPositionBodyItemGrid>
           <S.CardInvestorRiskyPositionBodyItemLabel>
-            {position.isClosed ? "Closed price " : "Current price "}
-            {baseTokenSymbol}
+            {t(
+              position.isClosed
+                ? "card-investor-risky-position.label-closed-price"
+                : "card-investor-risky-position.label-current-price",
+              {
+                currency: baseTokenSymbol,
+              }
+            )}
           </S.CardInvestorRiskyPositionBodyItemLabel>
           <S.CardInvestorRiskyPositionBodyItemAmount>
             {normalizeBigNumber(markPriceBase, 18, 6)}
@@ -161,7 +173,9 @@ const CardInvestorRiskyPosition: React.FC<Props> = ({ payload }) => {
 
         <S.CardInvestorRiskyPositionBodyItemGrid textAlign={"end"}>
           <S.CardInvestorRiskyPositionBodyItemLabel>
-            P&L {baseTokenSymbol}
+            {t("card-investor-risky-position.label-pnl", {
+              currency: baseTokenSymbol,
+            })}
           </S.CardInvestorRiskyPositionBodyItemLabel>
           <S.CardInvestorRiskyPositionBodyItemAmount>
             {normalizeBigNumber(pnlBase, 18, 6)}

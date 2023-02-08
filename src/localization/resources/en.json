@@ -63,5 +63,12 @@
   },
   "trader-pools-list": {
     "tooltip-msg": "Tooltip message"
+  },
+  "card-investor-risky-position": {
+    "amount-lp2": "{{amount}} LP2",
+    "label-entry-price": "Entry Price {{currency}}",
+    "label-current-price": "Current Price {{currency}}",
+    "label-closed-price": "Closed price {{currency}}",
+    "label-pnl": "P&L {{currency}}"
   }
 }
