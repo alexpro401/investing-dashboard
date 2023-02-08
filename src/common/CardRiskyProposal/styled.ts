@@ -5,7 +5,6 @@ import { AppButton, Icon } from "common"
 import Tooltip from "components/Tooltip"
 import TokenRating from "components/TokenRating"
 import { rgba } from "polished"
-import { motion } from "framer-motion"
 
 export const Root = styled.div`
   position: relative;
@@ -218,7 +217,7 @@ export const CardRiskyProposalLabelContent = styled.div`
     transform: translateY(1.5px);
   }
 `
-export const CardRiskyProposalLabelIcon = styled(motion.img)`
+export const CardRiskyProposalLabelIcon = styled.img`
   width: 16px;
   height: 16px;
 
@@ -371,7 +370,7 @@ export const CardRiskyProposalBaseTokenValue = styled(CardRiskyProposalValue)`
    Trader size
    ========================================================================== */
 
-export const CardRiskyProposalTraderSizeWrp = styled(motion.div)`
+export const CardRiskyProposalTraderSizeWrp = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
