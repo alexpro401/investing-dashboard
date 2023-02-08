@@ -7,7 +7,6 @@ import { useWeb3React } from "@web3-react/core"
 import { TraderPoolRiskyProposal } from "interfaces/typechain"
 import { useContract } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
-import { useCorePropertiesContract } from "contracts"
 import useTokenRating from "hooks/useTokenRating"
 import { DATE_TIME_FORMAT, ZERO } from "consts"
 import { expandTimestamp } from "utils"
@@ -59,7 +58,8 @@ type UseRiskyProposalViewResponse = [
 export const useRiskyProposalView = (
   funcArgs: WrappedRiskyProposalView
 ): UseRiskyProposalViewResponse => {
-  const { proposal, utilityIds, poolInfo, isTrader } = funcArgs
+  const { proposal, utilityIds, poolInfo, isTrader, maximumPoolInvestors } =
+    funcArgs
   const {
     proposalId,
     basicPoolAddress: poolAddress,
@@ -70,7 +70,6 @@ export const useRiskyProposalView = (
   const { chainId } = useWeb3React()
   const [proposalToken] = useERC20Data(proposalTokenAddress)
   const getTokenRating = useTokenRating()
-  const corePropertiesContract = useCorePropertiesContract()
   const proposalContract = useContract<TraderPoolRiskyProposal>(
     proposalContractAddress,
     TraderPoolRiskyProposal_ABI
@@ -85,8 +84,6 @@ export const useRiskyProposalView = (
   const [traderSizeLP, setTraderSizeLP] = useState<BigNumber>(ZERO)
   const [tokenRating, setTokenRating] = useState<number>(0)
   const [description, setDescription] = useState<string>("")
-  const [maximumPoolInvestors, setMaximumPoolInvestors] =
-    useState<BigNumber>(ZERO)
 
   /**
    * Date of proposal expiration
@@ -272,22 +269,6 @@ export const useRiskyProposalView = (
   React.useEffect(() => {
     loadDetailsFromIpfs()
   }, [loadDetailsFromIpfs])
-
-  const loadMaxPoolInvestors = useCallback(async () => {
-    if (!corePropertiesContract) return
-    try {
-      const _maximumPoolInvestors =
-        await corePropertiesContract.getMaximumPoolInvestors()
-
-      setMaximumPoolInvestors(_maximumPoolInvestors)
-    } catch (e) {
-      console.error("Failed to load maximum pool investors")
-    }
-  }, [corePropertiesContract])
-
-  React.useEffect(() => {
-    loadMaxPoolInvestors()
-  }, [loadMaxPoolInvestors])
 
   const loadTraderActiveInvestmentsInfo = useCallback(async () => {
     if (!poolInfo || !proposalContract || isTrader) return
