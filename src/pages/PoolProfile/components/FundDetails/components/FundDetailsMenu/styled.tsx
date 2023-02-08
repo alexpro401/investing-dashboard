@@ -1,6 +1,5 @@
 import styled from "styled-components/macro"
 import { Icon } from "common"
-import { NavLink } from "react-router-dom"
 
 export const Container = styled.div`
   display: flex;
@@ -15,16 +14,6 @@ export const FundAvatarWrp = styled.div`
   flex-direction: column;
   align-items: center;
   gap: var(--app-gap);
-`
-
-export const FundAvatarImg = styled.img`
-  object-fit: cover;
-  object-position: center;
-  max-width: 110px;
-  max-height: 110px;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
 `
 
 export const FundAvatarChangeBtn = styled.button`

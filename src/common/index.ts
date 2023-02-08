@@ -30,6 +30,7 @@ export { default as CardInvestorPosition } from "./CardInvestorPosition"
 export { default as AccountInvestmentPools } from "./AccountInvestmentPools"
 export { default as PoolStatisticsItem } from "./PoolStatisticsItem"
 export { default as CardRiskyProposal } from "./CardRiskyProposal"
+export { default as Dropdown } from "./Dropdown"
 export { default as CardInvestorRiskyPosition } from "./CardInvestorRiskyPosition"
 
 export * from "./Typography"

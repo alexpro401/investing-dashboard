@@ -1,9 +1,13 @@
 import React, { createContext, useState, Dispatch, SetStateAction } from "react"
 
 import { Token } from "lib/entities"
-import { ICommissionPeriodType } from "consts"
+import { ICommissionPeriodType, SUPPORTED_SOCIALS } from "consts"
 
 interface ICreateFundContext {
+  socialLinks: {
+    get: [SUPPORTED_SOCIALS, string][]
+    set: Dispatch<SetStateAction<[SUPPORTED_SOCIALS, string][]>>
+  }
   avatarUrl: { get: string; set: Dispatch<SetStateAction<string>> }
   fundName: { get: string; set: Dispatch<SetStateAction<string>> }
   tickerSymbol: { get: string; set: Dispatch<SetStateAction<string>> }
@@ -51,6 +55,7 @@ interface ICreateFundContext {
 }
 
 export const CreateFundContext = createContext<ICreateFundContext>({
+  socialLinks: { get: [], set: () => {} },
   avatarUrl: { get: "", set: () => {} },
   fundName: { get: "", set: () => {} },
   tickerSymbol: { get: "", set: () => {} },
@@ -98,6 +103,9 @@ interface ICreateFundContextProviderProp {
 const CreateFundContextProvider: React.FC<ICreateFundContextProviderProp> = ({
   children,
 }) => {
+  const [_socialLinks, _setSocialLinks] = useState<
+    [SUPPORTED_SOCIALS, string][]
+  >([])
   const [_avatarUrl, _setAvatarUrl] = useState<string>("")
   const [_fundName, _setFundName] = useState<string>("")
   const [_tickerSymbol, _setTickerSymbol] = useState<string>("")
@@ -126,6 +134,7 @@ const CreateFundContextProvider: React.FC<ICreateFundContextProviderProp> = ({
   return (
     <CreateFundContext.Provider
       value={{
+        socialLinks: { get: _socialLinks, set: _setSocialLinks },
         avatarUrl: { get: _avatarUrl, set: _setAvatarUrl },
         fundName: { get: _fundName, set: _setFundName },
         tickerSymbol: { get: _tickerSymbol, set: _setTickerSymbol },

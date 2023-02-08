@@ -4,12 +4,11 @@ import { parseUnits } from "@ethersproject/units"
 import { isEmpty, isNil } from "lodash"
 import { useQuery } from "urql"
 import { useSelector } from "react-redux"
-import { Client } from "@urql/core/dist/types/client"
+import type { Client } from "urql"
 
 import { IPosition } from "interfaces/thegraphs/all-pools"
 import { IPoolQuery } from "interfaces/thegraphs/all-pools"
-import { ILeverageInfo } from "interfaces/contracts/ITraderPool"
-import { IPoolInfo } from "interfaces/contracts/ITraderPool"
+import { ILeverageInfo, IPoolInfo } from "interfaces/contracts/ITraderPool"
 import { isAddress } from "utils"
 import {
   PoolQuery,

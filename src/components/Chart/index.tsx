@@ -160,7 +160,11 @@ const Chart: React.FC<Props> = ({
     () => ({
       ...chart,
       onClick: (point) => {
-        if (!isNil(chart.onClick) && isFunction(chart.onClick)) {
+        if (
+          _enableActivePoint &&
+          !isNil(chart.onClick) &&
+          isFunction(chart.onClick)
+        ) {
           chart.onClick(point)
         }
       },

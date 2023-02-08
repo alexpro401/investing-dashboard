@@ -43,14 +43,22 @@ export function usePoolMetadata(
 ): UsePoolMetadataResponse {
   const dispatch = useDispatch()
   const poolMetadata = useSelector(selectPoolMetadata(poolId, hash))
+  const [cachedPoolMetadata, setCachedPoolMetadata] = useState<IPoolMetadata>()
   const [loading, setLoading] = useState(false)
 
   const fetchPoolMetadata = useCallback(async () => {
+    console.log(poolId, hash)
     try {
       setLoading(true)
-      const data = await getIpfsData(hash)
+      const ipfsData = new IpfsEntity<IPoolMetadata>({
+        path: hash,
+      })
+
+      const data = await ipfsData.load()
+
       if (data) {
         dispatch(addPool({ params: { poolId, hash, ...data } }))
+        setCachedPoolMetadata(data)
       }
     } catch (error) {
       console.error(error)
@@ -60,11 +68,24 @@ export function usePoolMetadata(
   }, [dispatch, hash, poolId])
 
   useEffect(() => {
-    if (!poolId || !hash) return
-    if (poolMetadata === null) {
-      fetchPoolMetadata()
-    }
-  }, [poolId, hash, poolMetadata, dispatch, fetchPoolMetadata])
+    if (
+      !poolId ||
+      !hash ||
+      (!!poolMetadata?.timestamp &&
+        cachedPoolMetadata?.timestamp &&
+        poolMetadata?.timestamp === cachedPoolMetadata?.timestamp)
+    )
+      return
+
+    fetchPoolMetadata()
+  }, [
+    poolId,
+    hash,
+    poolMetadata,
+    dispatch,
+    fetchPoolMetadata,
+    cachedPoolMetadata,
+  ])
 
   return [{ poolMetadata, loading }, { fetchPoolMetadata }]
 }

@@ -1,6 +1,6 @@
 import styled from "styled-components/macro"
 
-import { Icon, SelectableCard } from "common"
+import { AppButton, Icon, SelectableCard } from "common"
 import theme, { respondTo } from "theme"
 import { InputField } from "fields"
 import { ICON_NAMES } from "consts"
@@ -103,4 +103,8 @@ export const FeeCardWrp = styled(SelectableCard)`
 export const FeeSlider = styled(Slider)`
   position: relative;
   z-index: 12;
+`
+
+export const CardAddBtn = styled(AppButton)`
+  margin: 0 auto;
 `
