@@ -462,9 +462,12 @@ export const SummaryCardLabel = styled.span`
 export const SummaryCardValue = styled.span<{
   direction?: "horizontal" | "vertical"
 }>`
+  display: flex;
+  align-items: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  gap: 8px;
   font-size: 14px;
   line-height: 1.6;
   font-weight: 500;
@@ -475,12 +478,10 @@ export const SummaryCardValue = styled.span<{
   ${(props) =>
     props.direction === "vertical"
       ? css`
-          display: flex;
           flex-direction: column;
           align-items: flex-end;
-          gap: 8px;
         `
-      : css``}
+      : ""}
 `
 
 export const ExternalSocialsWrp = styled.div`

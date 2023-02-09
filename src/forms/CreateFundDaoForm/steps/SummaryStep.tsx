@@ -4,13 +4,14 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 
 import * as S from "./styled"
 import { useTranslation } from "react-i18next"
-import { TokenChip } from "common"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useActiveWeb3React } from "hooks"
 import ExternalLink from "components/ExternalLink"
-import { createContentLink } from "utils"
+import { createContentLink, shortenAddress } from "utils"
 import extractRootDomain from "utils/extractRootDomain"
-import { SOCIAL_ICONS } from "../../../consts"
+import { SOCIAL_ICONS } from "consts"
+import Switch from "components/Switch"
+import { parseDuration, parseDurationString, parseSeconds } from "utils/time"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -28,6 +29,13 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
     erc721,
     documents,
     userKeeperParams,
+
+    isValidator,
+    validatorsParams,
+
+    defaultProposalSettingForm,
+    internalProposalForm,
+    distributionProposalSettingsForm,
   } = useContext(GovPoolFormContext)
 
   const { t } = useTranslation()
@@ -41,6 +49,12 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
   const descriptionUrl = useMemo(() => {
     return createContentLink(description.get)
   }, [description.get])
+
+  const parseSecondsToString = useCallback(
+    (seconds: string | number) =>
+      parseDurationString(parseDuration(parseSeconds(seconds))),
+    []
+  )
 
   return (
     <>
@@ -136,6 +150,262 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
             </S.SummaryCardValue>
           </S.SummaryCardRow>
         </S.SummaryCard>
+
+        <S.SummaryCardOverhead>
+          <S.SummaryCardOverheadTitle>
+            <S.SummaryCardOverheadNum number={2} />
+            {t("summary-step.overhead-validators-title")}
+          </S.SummaryCardOverheadTitle>
+          <S.SummaryCardOverheadBtn text={"edit"} />
+        </S.SummaryCardOverhead>
+        <S.SummaryCard>
+          <S.SummaryCardRow>
+            <S.SummaryCardLabel>
+              {t("summary-step.is-validator-lbl")}
+            </S.SummaryCardLabel>
+            <S.SummaryCardValue>
+              <Switch
+                isOn={isValidator.get}
+                onChange={() => {}}
+                name="is-validator"
+                disabled={true}
+              />
+            </S.SummaryCardValue>
+          </S.SummaryCardRow>
+          {isValidator.get ? (
+            <>
+              <S.SummaryCardRow>
+                <S.SummaryCardLabel>
+                  {t("summary-step.validator-token-name-lbl")}
+                </S.SummaryCardLabel>
+                <S.SummaryCardValue>
+                  {validatorsParams.name.get}
+                </S.SummaryCardValue>
+              </S.SummaryCardRow>
+              <S.SummaryCardRow>
+                <S.SummaryCardLabel>
+                  {t("summary-step.validator-token-symbol-lbl")}
+                </S.SummaryCardLabel>
+                <S.SummaryCardValue>
+                  {validatorsParams.symbol.get}
+                </S.SummaryCardValue>
+              </S.SummaryCardRow>
+              <S.SummaryCardRow>
+                <S.SummaryCardLabel>
+                  {t("summary-step.validator-voting-duration-lbl")}
+                </S.SummaryCardLabel>
+                <S.SummaryCardValue
+                  title={parseSecondsToString(validatorsParams.duration.get)}
+                >
+                  {parseSecondsToString(validatorsParams.duration.get)}
+                </S.SummaryCardValue>
+              </S.SummaryCardRow>
+              <S.SummaryCardRow>
+                <S.SummaryCardLabel>
+                  {t("summary-step.validator-voting-quorum-lbl")}
+                </S.SummaryCardLabel>
+                <S.SummaryCardValue>
+                  {validatorsParams.quorum.get}%
+                </S.SummaryCardValue>
+              </S.SummaryCardRow>
+            </>
+          ) : (
+            <></>
+          )}
+        </S.SummaryCard>
+
+        {isValidator.get ? (
+          <>
+            <S.SummaryCardOverhead>
+              <S.SummaryCardOverheadTitle>
+                {t("summary-step.overhead-validators-list-title")}
+              </S.SummaryCardOverheadTitle>
+            </S.SummaryCardOverhead>
+            <S.SummaryCard>
+              {validatorsParams.validators.get?.length ? (
+                validatorsParams.validators.get.map((el, idx) => (
+                  <S.SummaryCardRow key={idx}>
+                    <S.SummaryCardLabel>
+                      <ExternalLink
+                        href={getExplorerLink(
+                          chainId!,
+                          el,
+                          ExplorerDataType.ADDRESS
+                        )}
+                      >
+                        {shortenAddress(el)}
+                      </ExternalLink>
+                    </S.SummaryCardLabel>
+                    <S.SummaryCardValue>
+                      {validatorsParams.balances.get[idx]}
+                      <S.SummaryCardLabel>
+                        {validatorsParams.symbol.get}
+                      </S.SummaryCardLabel>
+                    </S.SummaryCardValue>
+                  </S.SummaryCardRow>
+                ))
+              ) : (
+                <></>
+              )}
+            </S.SummaryCard>
+          </>
+        ) : (
+          <></>
+        )}
+
+        {[
+          defaultProposalSettingForm,
+          internalProposalForm,
+          distributionProposalSettingsForm,
+        ].map((el, idx) => {
+          return (
+            <>
+              <S.SummaryCardOverhead>
+                <S.SummaryCardOverheadTitle>
+                  <S.SummaryCardOverheadNum number={idx + 3} />
+                  {
+                    [
+                      t("summary-step.overhead-default-settings-title"),
+                      t("summary-step.overhead-internal-settings-title"),
+                      t("summary-step.overhead-distribution-settings-title"),
+                    ][idx]
+                  }
+                </S.SummaryCardOverheadTitle>
+                <S.SummaryCardOverheadBtn text={"edit"} />
+              </S.SummaryCardOverhead>
+              <S.SummaryCard>
+                <S.SummaryCardRow>
+                  <S.SummaryCardLabel>
+                    {t("summary-step.settings-duration-lbl")}
+                  </S.SummaryCardLabel>
+                  <S.SummaryCardValue>
+                    {parseSecondsToString(el.duration.get)}
+                  </S.SummaryCardValue>
+                </S.SummaryCardRow>
+                <S.SummaryCardRow>
+                  <S.SummaryCardLabel>
+                    {t("summary-step.settings-is-delegation-lbl")}
+                  </S.SummaryCardLabel>
+                  <S.SummaryCardValue>
+                    <Switch
+                      isOn={el.delegatedVotingAllowed.get}
+                      onChange={() => {}}
+                      name={`delegated-voting-allowed-${idx}`}
+                    />
+                  </S.SummaryCardValue>
+                </S.SummaryCardRow>
+                <S.SummaryCardRow>
+                  <S.SummaryCardLabel>
+                    {t("summary-step.settings-quorum-lbl")}
+                  </S.SummaryCardLabel>
+                  <S.SummaryCardValue>{el.quorum.get}</S.SummaryCardValue>
+                </S.SummaryCardRow>
+                <S.SummaryCardRow>
+                  <S.SummaryCardLabel>
+                    {t("summary-step.settings-voting-min-power-lbl")}
+                  </S.SummaryCardLabel>
+                  <S.SummaryCardValue>
+                    {el.minVotesForVoting.get}
+                  </S.SummaryCardValue>
+                </S.SummaryCardRow>
+                <S.SummaryCardRow>
+                  <S.SummaryCardLabel>
+                    {t("summary-step.settings-create-proposal-min-power-lbl")}
+                  </S.SummaryCardLabel>
+                  <S.SummaryCardValue>
+                    {el.minVotesForCreating.get}
+                  </S.SummaryCardValue>
+                </S.SummaryCardRow>
+                <S.SummaryCardRow>
+                  <S.SummaryCardLabel>
+                    {t("summary-step.settings-early-completion-lbl")}
+                  </S.SummaryCardLabel>
+                  <S.SummaryCardValue>
+                    <Switch
+                      isOn={el.earlyCompletion.get}
+                      onChange={() => {}}
+                      name={`early-completion-${idx}`}
+                    />
+                  </S.SummaryCardValue>
+                </S.SummaryCardRow>
+                <S.SummaryCardRow>
+                  <S.SummaryCardLabel>
+                    {t("summary-step.settings-validator-voting-duration-lbl")}
+                  </S.SummaryCardLabel>
+                  <S.SummaryCardValue>
+                    {parseSecondsToString(el.durationValidators.get) || "-"}
+                  </S.SummaryCardValue>
+                </S.SummaryCardRow>
+                <S.SummaryCardRow>
+                  <S.SummaryCardLabel>
+                    {t("summary-step.settings-validator-quorum-lbl")}
+                  </S.SummaryCardLabel>
+                  <S.SummaryCardValue>
+                    {el.quorumValidators.get}
+                  </S.SummaryCardValue>
+                </S.SummaryCardRow>
+                <S.SummaryCardRow>
+                  <S.SummaryCardLabel>
+                    {t("summary-step.settings-reward-lbl")}
+                  </S.SummaryCardLabel>
+                  <S.SummaryCardValue>
+                    <Switch
+                      isOn={el.delegatedVotingAllowed.get}
+                      onChange={() => {}}
+                      name={`delegated-voting-allowed-${idx}`}
+                    />
+                  </S.SummaryCardValue>
+                </S.SummaryCardRow>
+                {el.delegatedVotingAllowed.get ? (
+                  <>
+                    <S.SummaryCardRow>
+                      <S.SummaryCardLabel>
+                        {t("summary-step.settings-reward-token-lbl")}
+                      </S.SummaryCardLabel>
+                      <S.SummaryCardValue>
+                        <ExternalLink
+                          href={getExplorerLink(
+                            chainId!,
+                            el.rewardToken.get,
+                            ExplorerDataType.ADDRESS
+                          )}
+                        >
+                          {el.rewardToken.get}
+                        </ExternalLink>
+                      </S.SummaryCardValue>
+                    </S.SummaryCardRow>
+                    <S.SummaryCardRow>
+                      <S.SummaryCardLabel>
+                        {t("summary-step.settings-reward-for-creator-lbl")}
+                      </S.SummaryCardLabel>
+                      <S.SummaryCardValue>
+                        {el.creationReward.get}
+                      </S.SummaryCardValue>
+                    </S.SummaryCardRow>
+                    <S.SummaryCardRow>
+                      <S.SummaryCardLabel>
+                        {t("summary-step.settings-reward-for-voter-lbl")}
+                      </S.SummaryCardLabel>
+                      <S.SummaryCardValue>
+                        {el.voteRewardsCoefficient.get}
+                      </S.SummaryCardValue>
+                    </S.SummaryCardRow>
+                    <S.SummaryCardRow>
+                      <S.SummaryCardLabel>
+                        {t("summary-step.settings-reward-for-executor-lbl")}
+                      </S.SummaryCardLabel>
+                      <S.SummaryCardValue>
+                        {el.executionReward.get}
+                      </S.SummaryCardValue>
+                    </S.SummaryCardRow>
+                  </>
+                ) : (
+                  <></>
+                )}
+              </S.SummaryCard>
+            </>
+          )
+        })}
       </S.StepsRoot>
       <S.FormStepsNavigationWrp
         customNextCb={handleNextStep}
