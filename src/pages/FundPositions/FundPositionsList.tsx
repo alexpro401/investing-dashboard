@@ -1,67 +1,57 @@
 import { PulseSpinner } from "react-spinners-kit"
-import { BigNumber } from "@ethersproject/bignumber"
-import { useNavigate, useParams } from "react-router-dom"
-import { FC, useCallback, useEffect, useMemo, useState } from "react"
+import { generatePath, useNavigate, useParams } from "react-router-dom"
+import { FC, useCallback, useMemo } from "react"
 
-import { useActiveWeb3React } from "hooks"
-import { BasicPositionsQuery } from "queries"
-import useQueryPagination from "hooks/useQueryPagination"
+import {
+  useActiveWeb3React,
+  usePoolPositionsList,
+  usePoolUserInfo,
+} from "hooks"
 import { usePoolContract } from "hooks/usePool"
-import { useTraderPoolContract } from "contracts"
 
 import LoadMore from "components/LoadMore"
 import CardPoolPosition from "common/CardPoolPosition"
+import BecomeInvestorModal from "modals/BecomeInvestorModal"
 
 import S, {
-  BecomeInvestor,
   PoolPositionsListRoot,
   PoolPositionsListHead,
   PoolPositionsListHeadItem,
   PoolPositionsListWrp,
 } from "./styled"
-import { ZERO } from "consts"
-import { IPosition } from "interfaces/thegraphs/all-pools"
-
-import { graphClientAllPools } from "utils/graphClient"
+import { ROUTE_PATHS, ZERO } from "consts"
 import { NoDataMessage } from "common"
 import { useTranslation } from "react-i18next"
+import { isEmpty, isEqual, isNil } from "lodash"
+import { isAddress } from "@ethersproject/address"
 
 const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
-  const { poolAddress } = useParams()
-  const navigate = useNavigate()
   const { t } = useTranslation()
+  const navigate = useNavigate()
+  const { poolAddress } = useParams()
   const { account } = useActiveWeb3React()
-
-  const traderPool = useTraderPoolContract(poolAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
+  const userInfoInPool = usePoolUserInfo(poolAddress ?? "", account ?? "")
+  const [{ data, loading }, fetchMore] = usePoolPositionsList(
+    poolAddress ?? "",
+    closed
+  )
 
-  const [totalAccountInvestedLP, setTotalAccountInvestedLP] =
-    useState<BigNumber>(ZERO)
+  const isUserPoolTrader = useMemo<boolean>(() => {
+    if (isNil(poolInfo) || isNil(account)) return false
+    return isEqual(
+      String(poolInfo.parameters.trader).toLowerCase(),
+      String(account).toLowerCase()
+    )
+  }, [poolInfo, account])
 
-  const [{ data, loading }, fetchMore] = useQueryPagination<IPosition>({
-    query: BasicPositionsQuery,
-    variables: useMemo(
-      () => ({ address: poolAddress, closed }),
-      [closed, poolAddress]
-    ),
-    pause: !poolAddress,
-    context: graphClientAllPools,
-    formatter: (d) => d.positions,
-  })
-
-  const showInvestAction = useMemo<boolean>(() => {
-    if (
-      !poolInfo ||
-      !account ||
-      loading ||
-      closed ||
-      poolInfo.parameters.trader === account
-    ) {
-      return false
+  const userHaveInvestmentsInPool = useMemo<boolean>(() => {
+    if (isNil(account) || isNil(poolInfo) || isNil(userInfoInPool)) {
+      return true
     }
 
-    return !totalAccountInvestedLP.gt(ZERO)
-  }, [account, closed, loading, poolInfo, totalAccountInvestedLP])
+    return userInfoInPool.poolLPBalance.lte(ZERO)
+  }, [account, poolInfo, userInfoInPool])
 
   const openPositionsCount = useMemo<number>(() => {
     if (!poolInfo) return 0
@@ -69,46 +59,18 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
   }, [poolInfo])
 
   const onInvest = useCallback(() => {
-    if (!poolAddress) return
-    navigate(`/pool/invest/${poolAddress}`)
+    if (isNil(poolAddress) || !isAddress(poolAddress)) return
+    navigate(generatePath(ROUTE_PATHS.poolInvest, { poolAddress: poolAddress }))
   }, [navigate, poolAddress])
-
-  // Fetch current account investments in pool
-  useEffect(() => {
-    if (!traderPool || !poolInfo || !account) return
-    ;(async () => {
-      try {
-        const usersData = await traderPool.getUsersInfo(account, 0, 0)
-        if (usersData && !!usersData.length) {
-          setTotalAccountInvestedLP(usersData[0].poolLPBalance)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    })()
-  }, [account, poolInfo, traderPool])
-
-  if (!data && loading) {
-    return (
-      <S.Content>
-        <PulseSpinner />
-      </S.Content>
-    )
-  }
-
-  if (data && data.length === 0) {
-    return <NoDataMessage />
-  }
 
   return (
     <>
-      {showInvestAction && (
-        <BecomeInvestor
-          symbol={poolInfo?.ticker ?? ""}
-          action={onInvest}
-          positionCount={openPositionsCount}
-        />
-      )}
+      <BecomeInvestorModal
+        isOpen={!isUserPoolTrader && userHaveInvestmentsInPool}
+        symbol={poolInfo?.ticker ?? ""}
+        action={onInvest}
+        positionCount={openPositionsCount}
+      />
       <PoolPositionsListRoot>
         <PoolPositionsListHead childMaxWidth={closed ? "160.5px" : undefined}>
           <PoolPositionsListHeadItem>
@@ -132,15 +94,25 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
           </PoolPositionsListHeadItem>
           <PoolPositionsListHeadItem />
         </PoolPositionsListHead>
-        <PoolPositionsListWrp>
-          {data.map((position) => (
-            <CardPoolPosition key={position.id} position={position} />
-          ))}
-          <LoadMore
-            isLoading={loading && !!data.length}
-            handleMore={fetchMore}
-          />
-        </PoolPositionsListWrp>
+        {isEmpty(data) ? (
+          loading ? (
+            <S.Content>
+              <PulseSpinner />
+            </S.Content>
+          ) : (
+            <NoDataMessage />
+          )
+        ) : (
+          <PoolPositionsListWrp>
+            {data.map((position) => (
+              <CardPoolPosition key={position.id} position={position} />
+            ))}
+            <LoadMore
+              isLoading={loading && !!data.length}
+              handleMore={fetchMore}
+            />
+          </PoolPositionsListWrp>
+        )}
       </PoolPositionsListRoot>
     </>
   )
