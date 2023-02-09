@@ -120,7 +120,7 @@
     "tooltip-msg-current-price": "Explain Current Price",
     "tooltip-msg-commission-price": "Explain commission"
   },
-  "investor-position-card": {
+  "card-investor-position": {
     "label-entry-price": "Entry Price {{currency}}",
     "label-closed-price": "Closed Price {{currency}}",
     "label-current-price": "Current Price {{currency}}",

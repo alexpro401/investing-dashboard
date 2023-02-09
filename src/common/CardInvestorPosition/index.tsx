@@ -139,27 +139,27 @@ const CardInvestorPosition: React.FC = () => {
         ? []
         : [
             {
-              label: t("investor-position-card.action-toggle-vests"),
+              label: t("card-investor-position.action-toggle-vests"),
               active: showPositions,
               onClick: togglePositions,
             },
             ...(!position.isClosed
               ? [
                   {
-                    label: t("investor-position-card.action-invest"),
+                    label: t("card-investor-position.action-invest"),
                     onClick: (e) => onNavigateTerminal(e, "deposit"),
                   },
                 ]
               : []),
             {
-              label: t("investor-position-card.action-toggle-commission"),
+              label: t("card-investor-position.action-toggle-commission"),
               active: showCommission,
               onClick: toggleCommission,
             },
             ...(!position.isClosed
               ? [
                   {
-                    label: t("investor-position-card.action-divest--short"),
+                    label: t("card-investor-position.action-divest--short"),
                     onClick: (e) => onNavigateTerminal(e, "withdraw"),
                   },
                 ]
@@ -252,7 +252,7 @@ const CardInvestorPosition: React.FC = () => {
 
         <S.CardInvestorPositionBodyItemGrid>
           <S.CardInvestorPositionBodyItemLabel>
-            {t("investor-position-card.label-entry-price", {
+            {t("card-investor-position.label-entry-price", {
               currency: baseTokenSymbol,
             })}
           </S.CardInvestorPositionBodyItemLabel>
@@ -268,8 +268,8 @@ const CardInvestorPosition: React.FC = () => {
           <S.CardInvestorPositionBodyItemLabel>
             {t(
               position.isClosed
-                ? "investor-position-card.label-closed-price"
-                : "investor-position-card.label-current-price",
+                ? "card-investor-position.label-closed-price"
+                : "card-investor-position.label-current-price",
               {
                 currency: baseTokenSymbol,
               }
@@ -287,7 +287,7 @@ const CardInvestorPosition: React.FC = () => {
           textAlign={!isDesktop ? "right" : undefined}
         >
           <S.CardInvestorPositionBodyItemLabel>
-            {t("investor-position-card.label-pnl", {
+            {t("card-investor-position.label-pnl", {
               currency: baseTokenSymbol,
             })}
           </S.CardInvestorPositionBodyItemLabel>
@@ -322,13 +322,13 @@ const CardInvestorPosition: React.FC = () => {
                 {!position.isClosed && (
                   <>
                     <S.ActionPositive
-                      text={t("investor-position-card.action-invest")}
+                      text={t("card-investor-position.action-invest")}
                       color={"default"}
                       size={"no-paddings"}
                       onClick={(e) => onNavigateTerminal(e, "deposit")}
                     />
                     <S.ActionNegative
-                      text={t("investor-position-card.action-divest")}
+                      text={t("card-investor-position.action-divest")}
                       color={"default"}
                       size={"no-paddings"}
                       onClick={(e) => onNavigateTerminal(e, "withdraw")}
