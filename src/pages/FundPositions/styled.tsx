@@ -1,9 +1,10 @@
 import { FC } from "react"
-import styled from "styled-components/macro"
+import styled, { css } from "styled-components/macro"
 
 import { AppButton } from "common"
 import { Flex, GradientBorder, respondTo } from "theme"
 import HeaderTabs from "components/Header/Tabs"
+import { isNil } from "lodash"
 
 export const Root = styled.div`
   display: flex;
@@ -34,7 +35,7 @@ export const PageHeadTabs = styled(HeaderTabs)`
   }
 `
 
-export const PoolPositionsListWrp = styled.div`
+export const PoolPositionsListRoot = styled.div`
   ${respondTo("lg")} {
     display: flex;
     flex-direction: column;
@@ -51,16 +52,19 @@ export const PoolPositionsListHead = styled.div<{
   display: none;
 
   ${respondTo("lg")} {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    grid-column-gap: 12px;
+    display: grid;
+    justify-items: stretch;
+    gap: calc(var(--app-gap) / 2) var(--app-gap);
     padding: 8px 16px 0;
-
-    & > * {
-      flex: 1 0 155px;
-      max-width: ${({ childMaxWidth }) => childMaxWidth ?? "167px"};
-    }
+    grid-template-columns: repeat(5, minmax(0, 142px)) 1fr;
+    ${({ childMaxWidth }) =>
+      !isNil(childMaxWidth)
+        ? css`
+            grid-template-columns: repeat(5, minmax(0, ${childMaxWidth})) 1fr;
+          `
+        : css`
+            grid-template-columns: repeat(5, minmax(0, 142px)) 1fr;
+          `}
   }
 `
 
@@ -76,6 +80,16 @@ export const PoolPositionsListHeadItem = styled.div`
     font-size: 12px;
     line-height: 14px;
     color: #6781bd;
+  }
+`
+
+export const PoolPositionsListWrp = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
+
+  ${respondTo("lg")} {
+    gap: calc(var(--app-gap) / 2);
   }
 `
 

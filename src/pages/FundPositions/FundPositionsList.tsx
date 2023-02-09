@@ -1,8 +1,7 @@
 import { PulseSpinner } from "react-spinners-kit"
 import { BigNumber } from "@ethersproject/bignumber"
 import { useNavigate, useParams } from "react-router-dom"
-import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { FC, useCallback, useEffect, useMemo, useState } from "react"
 
 import { useActiveWeb3React } from "hooks"
 import { BasicPositionsQuery } from "queries"
@@ -11,23 +10,26 @@ import { usePoolContract } from "hooks/usePool"
 import { useTraderPoolContract } from "contracts"
 
 import LoadMore from "components/LoadMore"
-import PoolPositionCard from "components/cards/position/Pool"
+import CardPoolPosition from "common/CardPoolPosition"
 
 import S, {
   BecomeInvestor,
-  PoolPositionsListWrp,
+  PoolPositionsListRoot,
   PoolPositionsListHead,
   PoolPositionsListHeadItem,
+  PoolPositionsListWrp,
 } from "./styled"
 import { ZERO } from "consts"
 import { IPosition } from "interfaces/thegraphs/all-pools"
 
 import { graphClientAllPools } from "utils/graphClient"
 import { NoDataMessage } from "common"
+import { useTranslation } from "react-i18next"
 
 const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
   const { poolAddress } = useParams()
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { account } = useActiveWeb3React()
 
   const traderPool = useTraderPoolContract(poolAddress)
@@ -46,8 +48,6 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
     context: graphClientAllPools,
     formatter: (d) => d.positions,
   })
-
-  const loader = useRef<any>()
 
   const showInvestAction = useMemo<boolean>(() => {
     if (
@@ -72,14 +72,6 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
     if (!poolAddress) return
     navigate(`/pool/invest/${poolAddress}`)
   }, [navigate, poolAddress])
-
-  // manually disable scrolling *refresh this effect when ref container dissapeared from DOM
-  useEffect(() => {
-    if (!loader.current) return
-    disableBodyScroll(loader.current)
-
-    return () => clearAllBodyScrollLocks()
-  }, [loader, loading])
 
   // Fetch current account investments in pool
   useEffect(() => {
@@ -117,26 +109,39 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
           positionCount={openPositionsCount}
         />
       )}
-      <PoolPositionsListWrp>
-        <PoolPositionsListHead>
-          <PoolPositionsListHeadItem>Pool</PoolPositionsListHeadItem>
-          <PoolPositionsListHeadItem>Volume</PoolPositionsListHeadItem>
-          <PoolPositionsListHeadItem>Entry Price</PoolPositionsListHeadItem>
+      <PoolPositionsListRoot>
+        <PoolPositionsListHead childMaxWidth={closed ? "160.5px" : undefined}>
           <PoolPositionsListHeadItem>
-            {closed ? "Closed price " : "Current price "}
+            {t("fund-positions-list.label-pool")}
           </PoolPositionsListHeadItem>
-          <PoolPositionsListHeadItem>P&L</PoolPositionsListHeadItem>
+          <PoolPositionsListHeadItem>
+            {t("fund-positions-list.label-my-volume")}
+          </PoolPositionsListHeadItem>
+          <PoolPositionsListHeadItem>
+            {t("fund-positions-list.label-entry-price")}
+          </PoolPositionsListHeadItem>
+          <PoolPositionsListHeadItem>
+            {t(
+              closed
+                ? "fund-positions-list.label-closed-price"
+                : "fund-positions-list.label-current-price"
+            )}
+          </PoolPositionsListHeadItem>
+          <PoolPositionsListHeadItem>
+            {t("fund-positions-list.label-pnl")}
+          </PoolPositionsListHeadItem>
+          <PoolPositionsListHeadItem />
         </PoolPositionsListHead>
-        {data.map((position) => (
-          <PoolPositionCard key={position.id} position={position} />
-        ))}
-      </PoolPositionsListWrp>
-
-      <LoadMore
-        isLoading={loading && !!data.length}
-        handleMore={fetchMore}
-        r={undefined}
-      />
+        <PoolPositionsListWrp>
+          {data.map((position) => (
+            <CardPoolPosition key={position.id} position={position} />
+          ))}
+          <LoadMore
+            isLoading={loading && !!data.length}
+            handleMore={fetchMore}
+          />
+        </PoolPositionsListWrp>
+      </PoolPositionsListRoot>
     </>
   )
 }

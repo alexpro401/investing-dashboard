@@ -1,13 +1,12 @@
 import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { ZERO } from "consts"
-import { formatBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
 import { IPosition } from "interfaces/thegraphs/all-pools"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import { usePriceFeedContract } from "contracts"
+import { usePoolRegistryContract, usePriceFeedContract } from "contracts"
 
 import {
   divideBignumbers,
@@ -19,32 +18,24 @@ import { ITokenBase } from "interfaces"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 import { usePoolContract } from "hooks"
 
-interface IAmount {
-  big: BigNumber
-  format: string
-}
-
-const INITIAL_AMOUNT: IAmount = {
-  big: ZERO,
-  format: "0",
-}
-
 interface IPayload {
-  currentPositionVolume: IAmount
+  currentPositionVolume: BigNumber
   entryPriceBase: BigNumber
   entryPriceUSD: BigNumber
   markPriceBase: BigNumber
   markPriceUSD: BigNumber
-  pnlPercentage: IAmount
+  pnlPercentage: BigNumber
   pnlBase: BigNumber
   pnlUSD: BigNumber
   positionToken: ITokenBase | null
   baseToken: ITokenBase | null
   poolMetadata: any
+  poolType: string | null
 }
 
 function usePoolPosition(position: IPosition): [IPayload] {
   const priceFeed = usePriceFeedContract()
+  const traderPoolRegistry = usePoolRegistryContract()
   const [positionToken] = useERC20Data(position.positionToken)
   const [baseToken] = useERC20Data(position.traderPool.baseToken)
   const [, poolInfo] = usePoolContract(position.traderPool.id)
@@ -60,6 +51,7 @@ function usePoolPosition(position: IPosition): [IPayload] {
 
   // STATE DATA
   const [markPrice, setMarkPriceBase] = useState<BigNumber>(ZERO)
+  const [poolType, setPoolType] = useState<string | null>(null)
 
   // MEMOIZED DATA
   /**
@@ -67,23 +59,19 @@ function usePoolPosition(position: IPosition): [IPayload] {
    *
    * closed ? totalPositionCloseVolume : totalPositionOpenVolume - totalPositionCloseVolume
    */
-  const currentPositionVolume = useMemo<IAmount>(() => {
-    if (!position) return INITIAL_AMOUNT
+  const currentPositionVolume = useMemo<BigNumber>(() => {
+    if (!position) return ZERO
 
     const { totalPositionOpenVolume, totalPositionCloseVolume } = position
 
     if (position.closed) {
-      return {
-        big: BigNumber.from(totalPositionCloseVolume),
-        format: formatBigNumber(BigNumber.from(totalPositionCloseVolume)),
-      }
+      return BigNumber.from(totalPositionCloseVolume)
     }
 
-    const big = subtractBignumbers(
+    return subtractBignumbers(
       [BigNumber.from(totalPositionOpenVolume), 18],
       [BigNumber.from(totalPositionCloseVolume), 18]
     )
-    return { big, format: formatBigNumber(big) }
   }, [position])
 
   /**
@@ -156,17 +144,12 @@ function usePoolPosition(position: IPosition): [IPayload] {
   /**
    * P&L (in %)
    */
-  const pnlPercentage = useMemo<IAmount>(() => {
+  const pnlPercentage = useMemo<BigNumber>(() => {
     if (!markPriceBase || !entryPriceBase || entryPriceBase.isZero()) {
-      return INITIAL_AMOUNT
+      return ZERO
     }
 
-    const big = calcPositionPnlPercentage(markPriceBase, entryPriceBase)
-
-    return {
-      big,
-      format: formatBigNumber(big, 18, 2),
-    }
+    return calcPositionPnlPercentage(markPriceBase, entryPriceBase)
   }, [markPriceBase, entryPriceBase])
 
   /**
@@ -181,7 +164,7 @@ function usePoolPosition(position: IPosition): [IPayload] {
       [entryPriceBase, 18]
     )
 
-    return multiplyBignumbers([priceDiff, 18], [currentPositionVolume.big, 18])
+    return multiplyBignumbers([priceDiff, 18], [currentPositionVolume, 18])
   }, [markPriceBase, entryPriceBase, currentPositionVolume])
 
   /**
@@ -197,34 +180,50 @@ function usePoolPosition(position: IPosition): [IPayload] {
       [entryPriceUSD, 18]
     )
 
-    return multiplyBignumbers([priceDiff, 18], [currentPositionVolume.big, 18])
+    return multiplyBignumbers([priceDiff, 18], [currentPositionVolume, 18])
   }, [markPriceUSD, entryPriceUSD, currentPositionVolume])
 
-  // SIDE EFFECTS
-  // Fetch price of 1 position token in base token
+  const getPoolType = useCallback(async () => {
+    if (!traderPoolRegistry || !position.traderPool.id) return null
+
+    try {
+      const isBasicPool = await traderPoolRegistry.isBasicPool(
+        position.traderPool.id
+      )
+      return isBasicPool ? "BASIC_POOL" : "INVEST_POOL"
+    } catch (error) {
+      console.error(error)
+      return null
+    }
+  }, [traderPoolRegistry, position])
+
   useEffect(() => {
-    if (!priceFeed || !position || position.closed) return
-    ;(async () => {
-      try {
-        const amount = parseUnits("1", 18)
+    getPoolType().then((res) => setPoolType(res))
+  }, [getPoolType])
 
-        const { positionToken, traderPool } = position
+  const getPositionTokenPrice = useCallback(async () => {
+    if (!priceFeed || !position || position.closed) return ZERO
 
-        const price = await priceFeed.getNormalizedExtendedPriceOut(
-          positionToken,
-          traderPool.baseToken,
-          amount,
-          []
-        )
+    try {
+      const amount = parseUnits("1", 18)
+      const { positionToken, traderPool } = position
 
-        if (price && price.amountOut && !price.amountOut.isZero()) {
-          setMarkPriceBase(price.amountOut)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    })()
+      const price = await priceFeed.getNormalizedExtendedPriceOut(
+        positionToken,
+        traderPool.baseToken,
+        amount,
+        []
+      )
+      return price.amountOut
+    } catch (error) {
+      console.error(error)
+      return ZERO
+    }
   }, [position, priceFeed])
+
+  useEffect(() => {
+    getPositionTokenPrice().then((res) => setMarkPriceBase(res))
+  }, [getPositionTokenPrice])
 
   return [
     {
@@ -239,6 +238,7 @@ function usePoolPosition(position: IPosition): [IPayload] {
       positionToken,
       baseToken,
       poolMetadata,
+      poolType,
     },
   ]
 }
