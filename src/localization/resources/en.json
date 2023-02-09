@@ -131,17 +131,15 @@
     "action-toggle-vests": "All trades",
     "action-toggle-commission": "Commission"
   },
-
   "investor-position-commission-card": {
     "label-period": "{{month}} month Performance Fee",
     "label-amount": "Paid Performance Fee",
     "label-withdraw-date": "Date of withdrawal",
     "label-investor-locked": "Investor funds locked ({{percent}}%)"
   },
-
-  "pool-position-vest-card": {
-    "vest-direction-buy": "Buy",
-    "vest-direction-sell": "Sell",
+  "card-position-trade": {
+    "direction-buy": "Buy",
+    "direction-sell": "Sell",
     "label-amount": "Amount {{currency}}",
     "label-price": "Price {{currency}}"
   },

@@ -18,7 +18,7 @@ import Icon from "components/Icon"
 import LoadMore from "components/LoadMore"
 import TokenIcon from "components/TokenIcon"
 import CardActions from "components/CardActions"
-import PositionTrade from "components/PositionTrade"
+import CardPositionTrade from "components/CardPositionTrade"
 
 import InvestorPositionCommission from "./InvestorPositionCommission"
 import * as S from "./styled"
@@ -363,7 +363,7 @@ const CardInvestorPosition: React.FC = () => {
           {!isEmpty(vests) ? (
             <>
               {vests.map((v) => (
-                <PositionTrade
+                <CardPositionTrade
                   key={v.id}
                   isBuy={v.isInvest}
                   timestamp={v.timestamp}

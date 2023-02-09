@@ -4,7 +4,7 @@ import { IPosition } from "interfaces/thegraphs/all-pools"
 
 import { Flex } from "theme"
 import TokenIcon from "components/TokenIcon"
-import PositionTrade from "components/PositionTrade"
+import CardPositionTrade from "components/CardPositionTrade"
 
 import { accordionSummaryVariants } from "motion/variants"
 import SharedS, { BodyItem, Actions } from "components/cards/position/styled"
@@ -182,7 +182,7 @@ const PoolPositionCard: React.FC<Props> = ({ position }) => {
           {position.exchanges && !!position.exchanges.length ? (
             <SharedS.TradesList>
               {position.exchanges.map((e) => (
-                <PositionTrade
+                <CardPositionTrade
                   key={e.id}
                   data={e}
                   baseTokenSymbol={baseSymbol}
