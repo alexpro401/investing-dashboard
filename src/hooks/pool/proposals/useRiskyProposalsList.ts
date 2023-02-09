@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useWeb3React } from "@web3-react/core"
-import { isEmpty, isEqual, isNil } from "lodash"
+import { isEmpty, isEqual } from "lodash"
 import { BigNumber } from "@ethersproject/bignumber"
 
 import { RiskyProposalUtilityIds, WrappedRiskyProposalView } from "types"
@@ -135,20 +135,14 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
     ]
   )
 
-  const proposals = React.useMemo(() => {
-    if (
-      anyLoading ||
-      isNil(account) ||
-      isEmpty(proposalsData) ||
-      isEmpty(activeInvestmentsInfo) ||
-      isEmpty(tokenMarkPrices) ||
-      isEmpty(poolInfos) ||
-      isEmpty(proposalTokenRatingMap)
-    ) {
-      return []
-    }
+  const [proposals, setProposals] = React.useState<WrappedRiskyProposalView[]>(
+    []
+  )
 
-    return proposalUtilityIdList.map<WrappedRiskyProposalView>(
+  React.useEffect(() => {
+    if (anyLoading) return
+
+    const _proposals = proposalUtilityIdList.map<WrappedRiskyProposalView>(
       (utilityIds, index) => {
         const poolInfo = poolInfos[utilityIds.basicPoolAddress]!
 
@@ -171,6 +165,8 @@ function useRiskyProposalsList(pools: string[], pause: boolean): Response {
         }
       }
     )
+
+    setProposals(_proposals)
   }, [
     account,
     anyLoading,
