@@ -5,9 +5,9 @@ interface Props {
   number: number
 }
 
-const CreateDaoCardStepNumber: FC<Props> = ({ number }) => {
+const CreateDaoCardStepNumber: FC<Props> = ({ number, ...rest }) => {
   return (
-    <S.CreateDaoCardNumberIcon>
+    <S.CreateDaoCardNumberIcon {...rest}>
       <S.CreateDaoCardNumberIconText>{number}</S.CreateDaoCardNumberIconText>
     </S.CreateDaoCardNumberIcon>
   )

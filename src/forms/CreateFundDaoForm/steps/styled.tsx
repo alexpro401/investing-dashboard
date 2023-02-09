@@ -1,4 +1,4 @@
-import styled from "styled-components/macro"
+import styled, { css } from "styled-components/macro"
 import { motion } from "framer-motion"
 
 import { Icon, Card, AppButton, CardFormControl } from "common"
@@ -10,6 +10,7 @@ import { InputField } from "fields"
 import ExternalLink from "components/ExternalLink"
 import { respondTo } from "theme"
 import FormStepsNavigation from "common/FormStepsNavigation"
+import CreateDaoCardStepNumber from "common/GovPool/components/CreateDaoCardStepNumber"
 
 export const Container = styled(StepsControllerContext)`
   display: flex;
@@ -397,3 +398,107 @@ export const TokenCreationRecipientRemoveBtn = styled.button`
     height: 18px;
   }
 `
+
+export const SummaryTitle = styled.h2`
+  font-size: 16px;
+  line-height: 1.3;
+  font-weight: 700;
+  color: ${(props) => props.theme.textColors.primary};
+`
+
+export const SummaryDesc = styled.p`
+  font-size: 13px;
+  line-height: 1.5;
+  color: ${(props) => props.theme.textColors.secondary};
+`
+
+export const SummaryCardOverhead = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
+
+export const SummaryCardOverheadTitle = styled.h3`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  line-height: 1.3;
+  font-weight: 700;
+  color: ${(props) => props.theme.textColors.primary};
+`
+
+export const SummaryCardOverheadNum = styled(CreateDaoCardStepNumber)`
+  color: ${(props) => props.theme.brandColors.secondary};
+  border-color: ${(props) => props.theme.brandColors.secondary};
+`
+
+export const SummaryCardOverheadBtn = styled(AppButton).attrs({
+  color: "default",
+  size: "no-paddings",
+})``
+
+export const SummaryCard = styled(Card)`
+  padding: 0;
+  gap: 0;
+`
+
+export const SummaryCardRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #0e121b;
+`
+
+export const SummaryCardLabel = styled.span`
+  font-size: 13px;
+  line-height: 1.6;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: ${(props) => props.theme.textColors.secondary};
+`
+
+export const SummaryCardValue = styled.span<{
+  direction?: "horizontal" | "vertical"
+}>`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 1.6;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: ${(props) => props.theme.textColors.primary};
+  max-width: 40%;
+
+  ${(props) =>
+    props.direction === "vertical"
+      ? css`
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 8px;
+        `
+      : css``}
+`
+
+export const ExternalSocialsWrp = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`
+
+export const ExternalSocialsItem = styled.a`
+  text-decoration: none;
+  color: inherit;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  max-width: 24px;
+  max-height: 24px;
+  border-radius: 50%;
+`
+
+export const ExternalSocialsIcon = styled(Icon)``
