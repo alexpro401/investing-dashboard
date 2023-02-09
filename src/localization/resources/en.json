@@ -101,7 +101,7 @@
     "tooltip-msg-position-size": "Position size info",
     "tooltip-msg-trader-size": "Trader size info"
   },
-  "risky-proposal-edit-form": {
+  "update-risky-proposal-form": {
     "title": "Investment proposal settings:",
     "field-label-expiration-date": "Expiration date",
     "field-label-invest-limit": "LPs available for staking",

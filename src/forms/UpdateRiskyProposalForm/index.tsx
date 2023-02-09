@@ -213,7 +213,9 @@ const UpdateRiskyProposalForm: FC<Props> = (props) => {
       >
         <S.Header>
           <Flex full ai={"center"} jc={"space-between"}>
-            <S.HeaderTitle>{t("risky-proposal-edit-form.title")}</S.HeaderTitle>
+            <S.HeaderTitle>
+              {t("update-risky-proposal-form.title")}
+            </S.HeaderTitle>
             <S.HeaderCloseButton
               color={"secondary"}
               size={"x-small"}
@@ -227,19 +229,19 @@ const UpdateRiskyProposalForm: FC<Props> = (props) => {
             value={format(expandTimestamp(timestampLimit), DATE_TIME_FORMAT)}
             onChange={() => {}}
             onClick={() => setDateOpen(!isDateOpen)}
-            label={t("risky-proposal-edit-form.field-label-expiration-date")}
+            label={t("update-risky-proposal-form.field-label-expiration-date")}
           />
           <InputField
             placeholder="---"
             value={investLPLimit}
-            label={t("risky-proposal-edit-form.field-label-invest-limit")}
+            label={t("update-risky-proposal-form.field-label-invest-limit")}
             setValue={(v) => setInvestLPLimit(v)}
             errorMessage={errors.investLPLimit}
           />
           <InputField
             placeholder="---"
             value={maxTokenPriceLimit}
-            label={t("risky-proposal-edit-form.field-label-max-invest-price")}
+            label={t("update-risky-proposal-form.field-label-max-invest-price")}
             setValue={(v) => setMaxTokenPriceLimit(v)}
             errorMessage={errors.maxTokenPriceLimit}
           />
@@ -249,7 +251,7 @@ const UpdateRiskyProposalForm: FC<Props> = (props) => {
               color="secondary"
               type="button"
               size="small"
-              text={t("risky-proposal-edit-form.action-decline")}
+              text={t("update-risky-proposal-form.action-decline")}
               onClick={onCancel}
             />
             <AppButton
@@ -257,7 +259,7 @@ const UpdateRiskyProposalForm: FC<Props> = (props) => {
               color="tertiary"
               type="button"
               size="small"
-              text={t("risky-proposal-edit-form.action-submit")}
+              text={t("update-risky-proposal-form.action-submit")}
               onClick={() => handleSubmit()}
               disabled={isSubmiting}
             />
