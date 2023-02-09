@@ -23,9 +23,10 @@ interface Props {
   amount?: BigNumber
   priceBase?: BigNumber
   priceUsd?: BigNumber
+  itemMaxWidthLg?: string
 }
 
-const PositionTrade: React.FC<Props> = ({
+const CardPositionTrade: React.FC<Props> = ({
   data,
   baseTokenSymbol,
   timestamp,
@@ -33,6 +34,7 @@ const PositionTrade: React.FC<Props> = ({
   amount,
   priceBase,
   priceUsd,
+  itemMaxWidthLg,
   ...rest
 }) => {
   const { chainId } = useActiveWeb3React()
@@ -109,8 +111,8 @@ const PositionTrade: React.FC<Props> = ({
     <S.Direction isBuy={isBuy}>
       {t(
         isBuy
-          ? "pool-position-vest-card.vest-direction-buy"
-          : "pool-position-vest-card.vest-direction-sell"
+          ? "card-position-trade.direction-buy"
+          : "card-position-trade.direction-sell"
       )}
     </S.Direction>
   )
@@ -122,7 +124,7 @@ const PositionTrade: React.FC<Props> = ({
       target="_blank"
       rel="noopener noreferrer"
     >
-      <S.Content>
+      <S.Content itemMaxWidthLg={itemMaxWidthLg}>
         {isDesktop ? (
           <S.Item>
             <Flex full jc={"flex-start"} gap={"8"}>
@@ -149,14 +151,14 @@ const PositionTrade: React.FC<Props> = ({
         {isDesktop && (
           <S.Item>
             <S.Label>
-              {t("pool-position-vest-card.label-amount", { currency: "LP" })}
+              {t("card-position-trade.label-amount", { currency: "LP" })}
             </S.Label>
             <S.Value>{volume}</S.Value>
           </S.Item>
         )}
         <S.Item>
           <S.Label>
-            {t("pool-position-vest-card.label-price", {
+            {t("card-position-trade.label-price", {
               currency: baseTokenSymbol ?? "",
             })}
           </S.Label>
@@ -164,7 +166,7 @@ const PositionTrade: React.FC<Props> = ({
         </S.Item>
         <S.Item>
           <S.Label>
-            {t("pool-position-vest-card.label-price", {
+            {t("card-position-trade.label-price", {
               currency: "USD",
             })}
           </S.Label>
@@ -183,4 +185,4 @@ const PositionTrade: React.FC<Props> = ({
   )
 }
 
-export default PositionTrade
+export default CardPositionTrade

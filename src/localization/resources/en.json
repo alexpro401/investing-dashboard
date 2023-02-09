@@ -2,7 +2,9 @@
   "validations": {
     "field-error_required": "Please fill out this field",
     "field-error_minLength": "This field must contain minimum {{minLength}} symbols",
-    "field-error_maxLength": "This field must contain maximum {{maxLength}} symbols"
+    "field-error_maxLength": "This field must contain maximum {{maxLength}} symbols",
+    "field-error_maxSizeLessThanFullness": "Max size can't be less than fullness",
+    "field-error_tokenPriceThanCurrentPrice": "Max token price can't be less than current price"
   },
   "errors": {
     "default": "Oops... Something went wrong",
@@ -35,7 +37,8 @@
     "default-message-error": "Something went wrong",
     "default-message-warning": "Something you are doing is not recommended",
     "default-message-info": "Something is happening. Just want you to know that",
-    "default-message-default": "Just a message"
+    "default-message-default": "Just a message",
+    "without-changes": "Nothing has been changed. Please change something before submitting."
   },
   "filters": {
     "pool-type": {
@@ -66,19 +69,58 @@
   "trader-pools-list": {
     "tooltip-msg": "Tooltip message"
   },
-
-  "investor-positions-list": {
+  "card-risky-proposal": {
+    "status-open": "Open investing",
+    "status-closed": "Closed investing",
+    "label-proposal-token": "Proposal token",
+    "label-fund-ticker": "Fund ticker",
+    "label-max-size": "Max size ({{currency}})",
+    "label-your-size": "Your size ({{currency}})",
+    "label-fullness": "Fullness ({{currency}})",
+    "label-max-invest-price": "Max. Invest Price ({{currency}})",
+    "label-current-price": "Current price ({{currency}})",
+    "label-position-size": "Position size ({{currency}})",
+    "label-trader-size": "Trader size ({{currency}})",
+    "label-expiration-date": "Expiration date",
+    "label-investors": "Investors",
+    "action-settings": "Settings",
+    "action-terminal": "Terminal",
+    "action-stake": "Stake LP",
+    "action-invest": "+ Add",
+    "action-check-token": "Check token",
+    "values-trader-size": "Trader size: {{value}} {{currency}} ({{percent}}%)",
+    "empty-description-msg": "No description provided to proposal",
+    "tooltip-msg-rating": "Risky proposal rating info",
+    "tooltip-msg-max-size": "Proposal size LP info",
+    "tooltip-msg-your-size": "Your size LP info",
+    "tooltip-msg-fullness": "Fullness(LP) info",
+    "tooltip-msg-max-invest-price": "Max.Invest Price info",
+    "tooltip-msg-current-price": "Current price info",
+    "tooltip-msg-expiration-date": "Expiration date info",
+    "tooltip-msg-investors": "Investors info",
+    "tooltip-msg-position-size": "Position size info",
+    "tooltip-msg-trader-size": "Trader size info"
+  },
+  "update-risky-proposal-form": {
+    "title": "Investment proposal settings:",
+    "field-label-expiration-date": "Expiration date",
+    "field-label-invest-limit": "LPs available for staking",
+    "field-label-max-invest-price": "Maximum invest price",
+    "action-submit": "Done",
+    "action-decline": "Cancel"
+  },
+  "investor-pool-positions-list": {
     "label-pool": "Fund",
     "label-my-volume": "My Volume",
     "label-entry-price": "Entry Price",
-    "label-current-price": "Entry Price",
+    "label-current-price": "Current Price",
     "label-pnl": "P&L in %",
-    "label-commission": "P&L in %",
+    "label-commission": "Commission",
     "tooltip-msg-entry-price": "Explain Entry Price",
     "tooltip-msg-current-price": "Explain Current Price",
     "tooltip-msg-commission-price": "Explain commission"
   },
-  "investor-position-card": {
+  "card-investor-position": {
     "label-entry-price": "Entry Price {{currency}}",
     "label-closed-price": "Closed Price {{currency}}",
     "label-current-price": "Current Price {{currency}}",
@@ -89,17 +131,15 @@
     "action-toggle-vests": "All trades",
     "action-toggle-commission": "Commission"
   },
-
-  "investor-position-commission-card": {
+  "investor-position-commission": {
     "label-period": "{{month}} month Performance Fee",
     "label-amount": "Paid Performance Fee",
     "label-withdraw-date": "Date of withdrawal",
     "label-investor-locked": "Investor funds locked ({{percent}}%)"
   },
-
-  "pool-position-vest-card": {
-    "vest-direction-buy": "Buy",
-    "vest-direction-sell": "Sell",
+  "card-position-trade": {
+    "direction-buy": "Buy",
+    "direction-sell": "Sell",
     "label-amount": "Amount {{currency}}",
     "label-price": "Price {{currency}}"
   },

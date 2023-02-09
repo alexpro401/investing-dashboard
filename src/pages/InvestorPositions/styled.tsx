@@ -1,6 +1,7 @@
 import styled from "styled-components/macro"
 import { respondTo } from "theme"
 import HeaderTabs from "components/Header/Tabs"
+import RouteTabs from "../../components/RouteTabs"
 
 export const Root = styled.div`
   display: flex;
@@ -27,5 +28,12 @@ export const PageTitle = styled.h2`
 export const PageHeadTabs = styled(HeaderTabs)`
   ${respondTo("sm")} {
     justify-content: flex-start;
+  }
+`
+
+export const PageSubTabs = styled(RouteTabs)`
+  ${respondTo("sm")} {
+    width: max-content;
+    min-width: 350px;
   }
 `

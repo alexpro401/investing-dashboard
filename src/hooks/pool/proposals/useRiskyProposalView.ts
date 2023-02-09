@@ -1,40 +1,28 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { format } from "date-fns"
-import { generatePath, useNavigate } from "react-router-dom"
-import { parseUnits } from "@ethersproject/units"
 import { BigNumber } from "@ethersproject/bignumber"
 import { isEmpty } from "lodash"
+import { useWeb3React } from "@web3-react/core"
 
-import { IRiskyProposalInfo } from "interfaces/contracts/ITraderPoolRiskyProposal"
 import { TraderPoolRiskyProposal } from "interfaces/typechain"
-import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import { useActiveWeb3React } from "hooks"
+import { useContract } from "hooks"
 import { useERC20Data } from "state/erc20/hooks"
-import { useCorePropertiesContract, usePriceFeedContract } from "contracts"
-import useTokenRating from "hooks/useTokenRating"
-import { DATE_TIME_FORMAT, ROUTE_PATHS, ZERO } from "consts"
-import { expandTimestamp, normalizeBigNumber } from "utils"
+import { DATE_TIME_FORMAT, ZERO } from "consts"
+import { expandTimestamp } from "utils"
 import { percentageOfBignumbers } from "utils/formulas"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { Token } from "interfaces"
 import { IpfsEntity } from "utils/ipfsEntity"
+import * as React from "react"
+import { WrappedRiskyProposalView } from "types"
+import { TraderPoolRiskyProposal as TraderPoolRiskyProposal_ABI } from "abi"
+import { IPoolMetadata } from "state/ipfsMetadata/types"
 
-interface Props {
-  proposal: IRiskyProposalInfo[0]
-  proposalId: number
-  poolAddress: string
-  proposalPool: TraderPoolRiskyProposal
-  isTrader: boolean
-  poolInfo: IPoolInfo
-}
-
-type UseRiskyProposalViewResponseValues = {
-  proposalSymbol: string
+export type UseRiskyProposalViewResponseValues = {
   tokenRating: number
   canInvest: boolean
   proposalTokenLink: string
   maxSizeLP: BigNumber
-  yourSizeLP: BigNumber
   fullness: {
     value: BigNumber
     completed: boolean
@@ -43,25 +31,27 @@ type UseRiskyProposalViewResponseValues = {
     value: BigNumber
     completed: boolean
   }
-  currentPrice: BigNumber
   expirationDate: {
     value: string
     completed: boolean
     initial: BigNumber
   }
   investors: { value: BigNumber; completed: boolean }
-  positionSize: string
+  positionSize: BigNumber
   traderSizeLP: BigNumber
   traderSizePercentage: BigNumber
   proposalToken: Token | null
   description: string
   maximumPoolInvestors: BigNumber
+  proposalContract: TraderPoolRiskyProposal | null
+  poolMetadata: any
 }
 type UseRiskyProposalViewResponseMethods = {
-  navigateToPool
-  onAddMore
-  onInvest
-  onUpdateRestrictions
+  onUpdateRestrictions: (
+    timestamp: number,
+    maxSize: BigNumber,
+    maxInvest: BigNumber
+  ) => void
 }
 
 type UseRiskyProposalViewResponse = [
@@ -69,63 +59,29 @@ type UseRiskyProposalViewResponse = [
   UseRiskyProposalViewResponseMethods
 ]
 export const useRiskyProposalView = (
-  funcArgs: Props
+  funcArgs: WrappedRiskyProposalView
 ): UseRiskyProposalViewResponse => {
   const {
     proposal,
-    proposalId,
-    poolAddress,
-    proposalPool,
+    utilityIds,
     poolInfo,
     isTrader,
+    maximumPoolInvestors,
+    proposalTokenRating,
   } = funcArgs
+  const { proposalId, proposalContractAddress, proposalTokenAddress } =
+    utilityIds
 
-  const navigate = useNavigate()
-  const { account, chainId } = useActiveWeb3React()
-  const [proposalToken] = useERC20Data(proposal.proposalInfo.token)
-  const priceFeed = usePriceFeedContract()
-  const getTokenRating = useTokenRating()
-  const corePropertiesContract = useCorePropertiesContract()
+  const { chainId } = useWeb3React()
+  const [proposalToken] = useERC20Data(proposalTokenAddress)
+  const proposalContract = useContract<TraderPoolRiskyProposal>(
+    proposalContractAddress,
+    TraderPoolRiskyProposal_ABI
+  )
 
-  const [markPriceOpen, setMarkPriceOpen] = useState(ZERO)
-  const [yourSizeLP, setYourSizeLP] = useState<BigNumber>(ZERO)
+  const [poolMetadata, setPoolMetadata] = useState<IPoolMetadata | null>(null)
   const [traderSizeLP, setTraderSizeLP] = useState<BigNumber>(ZERO)
-  const [tokenRating, setTokenRating] = useState<number>(0)
   const [description, setDescription] = useState<string>("")
-  const [maximumPoolInvestors, setMaximumPoolInvestors] =
-    useState<BigNumber>(ZERO)
-
-  // Fetch description from IPFS
-  useEffect(() => {
-    if (!proposal || isEmpty(proposal.proposalInfo.descriptionURL)) return
-    ;(async () => {
-      try {
-        const riskyProposalIpfsEntity = new IpfsEntity<string>({
-          path: proposal.proposalInfo.descriptionURL,
-        })
-
-        const _description = await riskyProposalIpfsEntity.load()
-
-        setDescription(_description)
-      } catch (e) {
-        setDescription("Failed to load description")
-      }
-    })()
-  }, [proposal])
-
-  // get max pool investors
-  useEffect(() => {
-    if (!corePropertiesContract) return
-    ;(async () => {
-      try {
-        const maxPoolInvestors =
-          await corePropertiesContract.getMaximumPoolInvestors()
-        if (maxPoolInvestors) {
-          setMaximumPoolInvestors(maxPoolInvestors)
-        }
-      } catch (e) {}
-    })()
-  }, [corePropertiesContract])
 
   /**
    * Date of proposal expiration
@@ -160,14 +116,6 @@ export const useRiskyProposalView = (
   }>({ value: ZERO, completed: false })
 
   /**
-   * Symbol of proposal
-   */
-  const proposalSymbol = useMemo<string>(() => {
-    if (!proposalToken || !proposalToken.symbol) return ""
-    return proposalToken.symbol
-  }, [proposalToken])
-
-  /**
    * Proposal fullness in LP's
    * @returns value - fullness
    * @returns completed - true if lpLocked >= investLPLimit
@@ -191,17 +139,6 @@ export const useRiskyProposalView = (
       completed: lpLocked.gte(proposalLimits.investLPLimit),
     }
   }, [proposal])
-
-  /**
-   * Exact price on 1 position token in base tokens
-   */
-  const currentPrice = useMemo<BigNumber>(() => {
-    if (!markPriceOpen) {
-      return ZERO
-    }
-
-    return markPriceOpen
-  }, [markPriceOpen])
 
   /**
    * Count of investors
@@ -228,13 +165,10 @@ export const useRiskyProposalView = (
   /**
    * Position current balance
    */
-  const positionSize = useMemo<string>(() => {
-    if (!proposal || !proposal?.proposalInfo.balancePosition) {
-      return "0"
-    }
-
-    return normalizeBigNumber(proposal.proposalInfo.balancePosition, 18, 6)
-  }, [proposal])
+  const positionSize = useMemo<BigNumber>(
+    () => proposal?.proposalInfo.balancePosition,
+    [proposal]
+  )
 
   /**
    * Trader LP's size in %
@@ -259,10 +193,10 @@ export const useRiskyProposalView = (
 
     return getExplorerLink(
       chainId,
-      proposal.proposalInfo.token,
+      proposalTokenAddress,
       ExplorerDataType.ADDRESS
     )
-  }, [chainId, proposal])
+  }, [chainId, proposalTokenAddress])
 
   // Set expiration date
   useEffect(() => {
@@ -315,169 +249,127 @@ export const useRiskyProposalView = (
     })
   }, [proposal])
 
-  // Fetch current user locked funds in proposal
-  useEffect(() => {
-    if (!proposalPool || proposalId === undefined || !account) return
-    ;(async () => {
-      try {
-        const balance = await proposalPool.getActiveInvestmentsInfo(
-          account,
-          proposalId,
-          1
-        )
-        if (balance && balance[0]) {
-          setYourSizeLP(balance[0].lpInvested)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    })()
-  }, [account, proposalId, proposalPool])
-
-  // Fetch trader locked funds in proposal
-  useEffect(() => {
-    if (!proposalPool || !poolInfo || proposalId === undefined) {
-      return
+  const loadPoolMetadata = useCallback(async () => {
+    if (isEmpty(poolInfo.parameters.descriptionURL)) {
+      return null
     }
+    try {
+      const riskyProposalIpfsEntity = new IpfsEntity<IPoolMetadata>({
+        path: poolInfo.parameters.descriptionURL,
+      })
 
-    ;(async () => {
-      try {
-        const balance = await proposalPool.getActiveInvestmentsInfo(
+      return riskyProposalIpfsEntity.load()
+    } catch (e) {
+      console.error("Failed to load pool IPFS info")
+      return null
+    }
+  }, [poolInfo])
+
+  React.useEffect(() => {
+    loadPoolMetadata().then((res) => setPoolMetadata(res))
+  }, [loadPoolMetadata])
+
+  const loadDetailsFromIpfs = useCallback(async () => {
+    if (isEmpty(proposal.proposalInfo.descriptionURL)) return ""
+    try {
+      const riskyProposalIpfsEntity = new IpfsEntity<string>({
+        path: proposal.proposalInfo.descriptionURL,
+      })
+
+      return riskyProposalIpfsEntity.load()
+    } catch (e) {
+      console.error("Failed to load description")
+      return ""
+    }
+  }, [proposal])
+
+  React.useEffect(() => {
+    loadDetailsFromIpfs().then((res) => setDescription(res))
+  }, [loadDetailsFromIpfs])
+
+  const loadTraderActiveInvestmentsInfo = useCallback(async () => {
+    if (!poolInfo || !proposalContract || isTrader) return ZERO
+    try {
+      const _userActiveInvestmentsInfo =
+        await proposalContract.getActiveInvestmentsInfo(
           poolInfo.parameters.trader,
           proposalId,
           1
         )
 
-        if (balance && balance[0]) {
-          setTraderSizeLP(balance[0].lpInvested)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    })()
-  }, [poolInfo, proposalId, proposalPool])
-
-  // Fetch mark price from priceFeed when proposal is open
-  useEffect(() => {
-    if (!priceFeed || !proposalToken) return
-    ;(async () => {
-      try {
-        const amount = parseUnits("1", 18)
-        const price = await priceFeed.getNormalizedPriceOutUSD(
-          proposalToken.address,
-          amount.toHexString()
-        )
-        if (price && price.amountOut) {
-          setMarkPriceOpen(price.amountOut)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    })()
-  }, [priceFeed, proposalToken])
-
-  // Fetch token rating
-  useEffect(() => {
-    if (!chainId || !proposal) return
-    ;(async () => {
-      try {
-        const rating = await getTokenRating(
-          chainId,
-          proposal.proposalInfo.token
-        )
-        setTokenRating(rating)
-      } catch (error) {
-        console.error(error)
-      }
-    })()
-  }, [chainId, proposal, getTokenRating])
-
-  /**
-   * Navigate to pool page
-   * @param e - click event
-   */
-  const navigateToPool = useCallback(
-    (e: MouseEvent<HTMLElement>): void => {
-      e.stopPropagation()
-      navigate(
-        generatePath(ROUTE_PATHS.poolProfile, {
-          poolAddress: poolAddress,
-          "*": "",
-        })
-      )
-    },
-    [navigate, poolAddress]
-  )
-
-  /**
-   * Navigate to risky invest terminal
-   * @param e - click event
-   */
-  const onAddMore = useCallback(
-    (e: MouseEvent<HTMLElement>): void => {
-      e.stopPropagation()
-      navigate(`/invest-risky-proposal/${poolAddress}/${proposalId}`)
-    },
-    [navigate, poolAddress, proposalId]
-  )
-
-  /**
-   * Navigate to risky invest terminal
-   * @param e - click event
-   */
-  const onInvest = useCallback(
-    (e?: MouseEvent<HTMLButtonElement | MouseEvent>): void => {
-      if (e) e.stopPropagation()
-      if (isTrader) {
-        navigate(`/swap-risky-proposal/${poolAddress}/${proposalId}/deposit`)
+      if (_userActiveInvestmentsInfo && _userActiveInvestmentsInfo[0]) {
+        return _userActiveInvestmentsInfo[0].lpInvested
       } else {
-        navigate(`/invest-risky-proposal/${poolAddress}/${proposalId}`)
+        return ZERO
+      }
+    } catch (e) {
+      console.error("Failed to load trader active investments info")
+      return ZERO
+    }
+  }, [poolInfo, proposalId, proposalContract, isTrader])
+
+  React.useEffect(() => {
+    loadTraderActiveInvestmentsInfo().then((res) => setTraderSizeLP(res))
+  }, [loadTraderActiveInvestmentsInfo])
+
+  const onUpdateRestrictions = useCallback(
+    (timestamp: number, maxSize: BigNumber, maxInvest: BigNumber) => {
+      if (timestamp) {
+        const expanded = expandTimestamp(timestamp)
+        const currentTimestamp = new Date().valueOf()
+
+        setExpirationDate({
+          value: format(expanded, DATE_TIME_FORMAT),
+          completed: currentTimestamp - expanded >= 0,
+          initial: BigNumber.from(String(timestamp)),
+        })
+      }
+
+      if (maxSize) {
+        setMaxSizeLP(maxSize)
+      }
+
+      if (maxInvest) {
+        const { positionTokenPrice } = proposal
+
+        setMaxInvestPrice({
+          value: maxInvest,
+          completed: positionTokenPrice.gte(maxInvest),
+        })
       }
     },
-    [navigate, poolAddress, proposalId, isTrader]
+    [proposal]
   )
 
-  const onUpdateRestrictions = (
-    timestamp: number,
-    maxSize: BigNumber,
-    maxInvest: BigNumber
-  ) => {
-    if (timestamp) {
-      const expanded = expandTimestamp(timestamp)
-      const currentTimestamp = new Date().valueOf()
-
-      setExpirationDate({
-        value: format(expanded, DATE_TIME_FORMAT),
-        completed: currentTimestamp - expanded >= 0,
-        initial: BigNumber.from(String(timestamp)),
-      })
-    }
-
-    if (maxSize) {
-      setMaxSizeLP(maxSize)
-    }
-
-    if (maxInvest) {
-      const { positionTokenPrice } = proposal
-
-      setMaxInvestPrice({
-        value: maxInvest,
-        completed: positionTokenPrice.gte(maxInvest),
-      })
-    }
-  }
-
-  return [
-    {
-      proposalSymbol,
-      tokenRating,
+  return useMemo(
+    () => [
+      {
+        tokenRating: proposalTokenRating,
+        canInvest,
+        proposalTokenLink,
+        maxSizeLP,
+        fullness,
+        maxInvestPrice,
+        expirationDate,
+        investors,
+        positionSize,
+        traderSizeLP,
+        traderSizePercentage,
+        proposalToken,
+        description,
+        maximumPoolInvestors,
+        proposalContract,
+        poolMetadata,
+      },
+      { onUpdateRestrictions },
+    ],
+    [
+      proposalTokenRating,
       canInvest,
       proposalTokenLink,
       maxSizeLP,
-      yourSizeLP,
       fullness,
       maxInvestPrice,
-      currentPrice,
       expirationDate,
       investors,
       positionSize,
@@ -486,7 +378,10 @@ export const useRiskyProposalView = (
       proposalToken,
       description,
       maximumPoolInvestors,
-    },
-    { navigateToPool, onAddMore, onInvest, onUpdateRestrictions },
-  ]
+      proposalContract,
+      poolMetadata,
+
+      onUpdateRestrictions,
+    ]
+  )
 }

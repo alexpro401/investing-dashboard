@@ -2,9 +2,10 @@ import {
   Dispatch,
   FC,
   MouseEvent,
-  ReactNode,
   SetStateAction,
   useCallback,
+  useEffect,
+  useMemo,
   useState,
 } from "react"
 import { format } from "date-fns"
@@ -28,54 +29,24 @@ import { TraderPoolRiskyProposal } from "interfaces/typechain"
 
 import { InputField } from "fields"
 import { ICON_NAMES } from "consts"
-
-interface Values {
-  timestampLimit: number
-  investLPLimit: string
-  maxTokenPriceLimit: string
-}
-
-interface Handlers {
-  setTimestampLimit: Dispatch<SetStateAction<number>>
-  setInvestLPLimit: Dispatch<SetStateAction<string>>
-  setMaxTokenPriceLimit: Dispatch<SetStateAction<string>>
-}
-
-const useUpdateRiskyProposal = ({
-  timestamp,
-  maxSizeLP,
-  maxInvestPrice,
-}): [Values, Handlers] => {
-  const [timestampLimit, setTimestampLimit] = useState<number>(
-    timestamp.toString()
-  )
-
-  const [investLPLimit, setInvestLPLimit] = useState<string>(
-    normalizeBigNumber(maxSizeLP, 18, 6)
-  )
-  const [maxTokenPriceLimit, setMaxTokenPriceLimit] = useState<string>(
-    normalizeBigNumber(maxInvestPrice, 18, 2)
-  )
-
-  return [
-    { timestampLimit, investLPLimit, maxTokenPriceLimit },
-    { setTimestampLimit, setInvestLPLimit, setMaxTokenPriceLimit },
-  ]
-}
+import { useTranslation } from "react-i18next"
+import { usePrevious } from "react-use"
+import { isEqual } from "lodash"
 
 interface Props {
   visible: boolean
   setVisible: Dispatch<SetStateAction<boolean>>
-
-  timestamp: BigNumber
-  maxSizeLP: BigNumber
-  maxInvestPrice: BigNumber
   fullness: BigNumber
   currentPrice: BigNumber
-  proposalPool: TraderPoolRiskyProposal
+  proposalContract: TraderPoolRiskyProposal | null
   proposalId: number
   proposalSymbol?: string
   poolAddress: string
+  defaultState: {
+    timestamp: BigNumber
+    maxSizeLP: BigNumber
+    maxInvestPrice: BigNumber
+  }
   successCallback: (
     timestamp: number,
     maxSize: BigNumber,
@@ -84,46 +55,61 @@ interface Props {
 }
 
 interface IErrorsState {
-  investLPLimit: ReactNode
-  maxTokenPriceLimit: ReactNode
+  investLPLimit: string
+  maxTokenPriceLimit: string
 }
 const errorsDefaultState: IErrorsState = {
-  investLPLimit: null,
-  maxTokenPriceLimit: null,
+  investLPLimit: "",
+  maxTokenPriceLimit: "",
 }
 
-const UpdateRiskyProposalForm: FC<Props> = ({
-  visible,
-  setVisible,
-  timestamp,
-  maxSizeLP,
-  maxInvestPrice,
-  fullness,
-  currentPrice,
-  proposalPool,
-  proposalId,
-  poolAddress,
-  successCallback,
-}) => {
+const UpdateRiskyProposalForm: FC<Props> = (props) => {
+  const {
+    visible,
+    setVisible,
+    defaultState,
+    fullness,
+    currentPrice,
+    proposalContract,
+    proposalId,
+    poolAddress,
+    successCallback,
+  } = props
+
+  const _prevDefaultState = usePrevious(defaultState)
+  const _defaultState = useMemo(() => defaultState, [defaultState])
+
   const addTransaction = useTransactionAdder()
   const addToast = useAddToast()
+  const { t } = useTranslation()
 
   const [isDateOpen, setDateOpen] = useState<boolean>(false)
   const [errors, setErrors] = useState<IErrorsState>(errorsDefaultState)
   const [isSubmiting, setSubmiting] = useState<boolean>(false)
 
-  const [
-    { timestampLimit, investLPLimit, maxTokenPriceLimit },
-    { setTimestampLimit, setInvestLPLimit, setMaxTokenPriceLimit },
-  ] = useUpdateRiskyProposal({
-    timestamp,
-    maxSizeLP,
-    maxInvestPrice,
-  })
+  const [timestampLimit, setTimestampLimit] = useState(
+    Number(_defaultState.timestamp.toString())
+  )
+  const [investLPLimit, setInvestLPLimit] = useState(
+    normalizeBigNumber(_defaultState.maxSizeLP, 18, 6)
+  )
+  const [maxTokenPriceLimit, setMaxTokenPriceLimit] = useState(
+    normalizeBigNumber(_defaultState.maxInvestPrice, 18, 2)
+  )
+  useEffect(() => {
+    if (isEqual(_defaultState, _prevDefaultState)) {
+      return
+    } else {
+      const { timestamp, maxSizeLP, maxInvestPrice } = _defaultState
+      setTimestampLimit(Number(timestamp.toString()))
+      setInvestLPLimit(normalizeBigNumber(maxSizeLP, 18, 6))
+      setMaxTokenPriceLimit(normalizeBigNumber(maxInvestPrice, 18, 2))
+    }
+  }, [_defaultState, _prevDefaultState])
 
   const [{ agreed }, { setShowAgreement }] = useUserAgreement()
 
-  const onCancel = (): void => {
+  const onCancel = () => {
     setVisible(false)
     setSubmiting(false)
     setErrors(errorsDefaultState)
@@ -133,11 +119,14 @@ const UpdateRiskyProposalForm: FC<Props> = ({
     const errors = {} as IErrorsState
 
     if (parseEther(investLPLimit).lt(fullness)) {
-      errors.investLPLimit = "Max size can't be less than fullness"
+      errors.investLPLimit = t(
+        "validations.field-error_maxSizeLessThanFullness"
+      )
     }
     if (parseEther(maxTokenPriceLimit).lt(currentPrice)) {
-      errors.maxTokenPriceLimit =
-        "Max token price can't be less than current price"
+      errors.maxTokenPriceLimit = t(
+        "validations.field-error_tokenPriceThanCurrentPrice"
+      )
     }
 
     if (errors.investLPLimit || errors.maxTokenPriceLimit) {
@@ -147,42 +136,27 @@ const UpdateRiskyProposalForm: FC<Props> = ({
     }
 
     return false
-  }, [currentPrice, fullness, investLPLimit, maxTokenPriceLimit])
-
-  const isValuesChanged = (
-    _timestamp,
-    _investLPLimit,
-    _maxTokenPriceLimit
-  ): boolean => {
-    if (
-      _timestamp === timestamp &&
-      _investLPLimit.eq(maxSizeLP) &&
-      _maxTokenPriceLimit.eq(maxInvestPrice)
-    ) {
-      return false
-    }
-    return true
-  }
+  }, [t, currentPrice, fullness, investLPLimit, maxTokenPriceLimit])
 
   const handleSubmit = async (e?: MouseEvent<HTMLButtonElement>) => {
     if (e) e.preventDefault()
-    if (!proposalPool) return
+    if (!proposalContract) return
     if (!agreed) {
       setShowAgreement(true)
       return
     }
 
     if (
-      !isValuesChanged(
-        timestampLimit,
-        parseUnits(investLPLimit, 18),
-        parseUnits(maxTokenPriceLimit, 18)
-      )
+      isEqual(_defaultState, {
+        timestamp: timestampLimit,
+        maxSizeLP: parseUnits(investLPLimit, 18),
+        maxInvestPrice: parseUnits(maxTokenPriceLimit, 18),
+      })
     ) {
       addToast(
         {
           type: "warning",
-          content: `Nothing has been changed. Please change something before submitting.`,
+          content: t("notifications.without-changes"),
         },
         "revert-change-risky-proposal",
         2000
@@ -202,7 +176,7 @@ const UpdateRiskyProposalForm: FC<Props> = ({
           maxTokenPriceLimit: parseUnits(maxTokenPriceLimit, 18).toHexString(),
         }
 
-        const receipt = await proposalPool.changeProposalRestrictions(
+        const receipt = await proposalContract.changeProposalRestrictions(
           proposalId,
           proposalLimits
         )
@@ -214,7 +188,6 @@ const UpdateRiskyProposalForm: FC<Props> = ({
         })
 
         if (isTxMined(tx)) {
-          // Update data in card
           successCallback(
             timestampLimit,
             parseUnits(investLPLimit, 18),
@@ -230,11 +203,6 @@ const UpdateRiskyProposalForm: FC<Props> = ({
     setSubmiting(false)
   }
 
-  const handleCancel = (e?: MouseEvent<HTMLButtonElement>): void => {
-    if (e) e.preventDefault()
-    onCancel()
-  }
-
   return (
     <>
       <S.Container
@@ -245,12 +213,14 @@ const UpdateRiskyProposalForm: FC<Props> = ({
       >
         <S.Header>
           <Flex full ai={"center"} jc={"space-between"}>
-            <S.HeaderTitle>Investment proposal settings:</S.HeaderTitle>
+            <S.HeaderTitle>
+              {t("update-risky-proposal-form.title")}
+            </S.HeaderTitle>
             <S.HeaderCloseButton
               color={"secondary"}
               size={"x-small"}
               iconRight={ICON_NAMES.close}
-              onClick={() => handleCancel()}
+              onClick={onCancel}
             />
           </Flex>
         </S.Header>
@@ -259,29 +229,21 @@ const UpdateRiskyProposalForm: FC<Props> = ({
             value={format(expandTimestamp(timestampLimit), DATE_TIME_FORMAT)}
             onChange={() => {}}
             onClick={() => setDateOpen(!isDateOpen)}
-            label="Expiration date"
+            label={t("update-risky-proposal-form.field-label-expiration-date")}
           />
           <InputField
             placeholder="---"
             value={investLPLimit}
-            label="LPs available for staking"
+            label={t("update-risky-proposal-form.field-label-invest-limit")}
             setValue={(v) => setInvestLPLimit(v)}
-            errorMessage={
-              errors.investLPLimit !== null
-                ? String(errors.investLPLimit)
-                : undefined
-            }
+            errorMessage={errors.investLPLimit}
           />
           <InputField
             placeholder="---"
             value={maxTokenPriceLimit}
-            label="Maximum invest price"
+            label={t("update-risky-proposal-form.field-label-max-invest-price")}
             setValue={(v) => setMaxTokenPriceLimit(v)}
-            errorMessage={
-              errors.maxTokenPriceLimit !== null
-                ? String(errors.maxTokenPriceLimit)
-                : undefined
-            }
+            errorMessage={errors.maxTokenPriceLimit}
           />
           <S.ButtonGroup>
             <AppButton
@@ -289,15 +251,15 @@ const UpdateRiskyProposalForm: FC<Props> = ({
               color="secondary"
               type="button"
               size="small"
-              text="Cancel"
-              onClick={() => handleCancel()}
+              text={t("update-risky-proposal-form.action-decline")}
+              onClick={onCancel}
             />
             <AppButton
               full
               color="tertiary"
               type="button"
               size="small"
-              text="Done"
+              text={t("update-risky-proposal-form.action-submit")}
               onClick={() => handleSubmit()}
               disabled={isSubmiting}
             />
@@ -307,7 +269,7 @@ const UpdateRiskyProposalForm: FC<Props> = ({
           isOpen={isDateOpen}
           timestamp={expandTimestamp(timestampLimit)}
           toggle={() => setDateOpen(false)}
-          onChange={setTimestampLimit}
+          onChange={(t) => setTimestampLimit(t)}
           minDate={new Date()}
         />
       </S.Container>
