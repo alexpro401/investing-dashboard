@@ -5,15 +5,36 @@ import { stepsControllerContext } from "context/StepsControllerContext"
 import * as S from "./styled"
 import { useTranslation } from "react-i18next"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
-import { useActiveWeb3React } from "hooks"
+import { useActiveWeb3React, useERC20 } from "hooks"
 import ExternalLink from "components/ExternalLink"
 import { createContentLink, shortenAddress } from "utils"
 import extractRootDomain from "utils/extractRootDomain"
 import { SOCIAL_ICONS } from "consts"
 import Switch from "components/Switch"
 import { parseDuration, parseDurationString, parseSeconds } from "utils/time"
+import theme from "theme"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
+
+const Erc20TokenLink = ({ address, ...rest }) => {
+  const { chainId } = useActiveWeb3React()
+
+  const [, tokenDetails] = useERC20(address)
+
+  const href = useMemo(
+    () =>
+      chainId
+        ? getExplorerLink(chainId, address, ExplorerDataType.ADDRESS)
+        : "",
+    [address, chainId]
+  )
+
+  return (
+    <ExternalLink href={href} {...rest} color={theme.brandColors.secondary}>
+      {tokenDetails?.symbol || tokenDetails?.name || ""}
+    </ExternalLink>
+  )
+}
 
 const SummaryStep: FC<Props> = ({ ...rest }) => {
   const { chainId } = useActiveWeb3React()
@@ -72,6 +93,7 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
       <S.StepsRoot {...rest}>
         <S.SummaryTitle>{t("summary-step.title")}</S.SummaryTitle>
         <S.SummaryDesc>{t("summary-step.desc")}</S.SummaryDesc>
+
         <S.SummaryCardOverhead>
           <S.SummaryCardOverheadTitle>
             <S.SummaryCardOverheadNum number={1} />
@@ -94,7 +116,12 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
               {t("summary-step.desc-lbl")}
             </S.SummaryCardLabel>
             <S.SummaryCardValue>
-              <ExternalLink href={descriptionUrl}>Open</ExternalLink>
+              <ExternalLink
+                href={descriptionUrl}
+                color={theme.brandColors.secondary}
+              >
+                Open
+              </ExternalLink>
             </S.SummaryCardValue>
           </S.SummaryCardRow>
           <S.SummaryCardRow>
@@ -142,9 +169,31 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
                   userKeeperParams.tokenAddress.get,
                   ExplorerDataType.ADDRESS
                 )}
+                color={theme.brandColors.secondary}
               >
                 {erc20?.[1]?.symbol}
               </ExternalLink>
+            </S.SummaryCardValue>
+          </S.SummaryCardRow>
+          <S.SummaryCardRow>
+            <S.SummaryCardLabel>
+              {t("summary-step.gov-nft-lbl")}
+            </S.SummaryCardLabel>
+            <S.SummaryCardValue>
+              {userKeeperParams.nftAddress.get ? (
+                <ExternalLink
+                  href={getExplorerLink(
+                    chainId!,
+                    userKeeperParams.nftAddress.get,
+                    ExplorerDataType.ADDRESS
+                  )}
+                  color={theme.brandColors.secondary}
+                >
+                  {erc20?.[1]?.symbol}
+                </ExternalLink>
+              ) : (
+                <>-</>
+              )}
             </S.SummaryCardValue>
           </S.SummaryCardRow>
           <S.SummaryCardRow>
@@ -249,6 +298,7 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
                           el,
                           ExplorerDataType.ADDRESS
                         )}
+                        color={theme.brandColors.secondary}
                       >
                         {shortenAddress(el)}
                       </ExternalLink>
@@ -404,15 +454,7 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
                         {t("summary-step.settings-reward-token-lbl")}
                       </S.SummaryCardLabel>
                       <S.SummaryCardValue>
-                        <ExternalLink
-                          href={getExplorerLink(
-                            chainId!,
-                            el.settings.rewardToken.get,
-                            ExplorerDataType.ADDRESS
-                          )}
-                        >
-                          {el.settings.rewardToken.get}
-                        </ExternalLink>
+                        <Erc20TokenLink address={el.settings.rewardToken.get} />
                       </S.SummaryCardValue>
                     </S.SummaryCardRow>
                     <S.SummaryCardRow>
