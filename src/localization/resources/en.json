@@ -131,7 +131,7 @@
     "action-toggle-vests": "All trades",
     "action-toggle-commission": "Commission"
   },
-  "investor-position-commission-card": {
+  "investor-position-commission": {
     "label-period": "{{month}} month Performance Fee",
     "label-amount": "Paid Performance Fee",
     "label-withdraw-date": "Date of withdrawal",
