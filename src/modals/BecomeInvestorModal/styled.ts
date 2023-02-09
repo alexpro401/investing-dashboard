@@ -1,6 +1,6 @@
 import { motion } from "framer-motion"
 import styled from "styled-components"
-import { Flex, GradientBorder } from "theme"
+import { Flex, GradientBorder, respondTo } from "theme"
 
 export const Overlay = styled(motion.div)`
   background: rgba(27, 27, 27, 0.6);
@@ -25,11 +25,15 @@ export const Root = styled(Flex)`
   z-index: 102;
 `
 export const Container = styled(GradientBorder)`
-  width: calc(100% - 32px);
   max-width: 400px;
-  padding: 24px 42px 22px;
+  min-width: 320px;
+  padding: 16px;
   flex-direction: column;
   border-radius: 16px;
+
+  ${respondTo("lg")} {
+    padding: 24px 42px 22px;
+  }
 
   &::after {
     background: linear-gradient(64.44deg, #191e2b 32.35%, #272e3e 100%);
