@@ -69,7 +69,7 @@
   "trader-pools-list": {
     "tooltip-msg": "Tooltip message"
   },
-  "risky-proposal-card": {
+  "card-risky-proposal": {
     "status-open": "Open investing",
     "status-closed": "Closed investing",
     "label-proposal-token": "Proposal token",

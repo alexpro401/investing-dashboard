@@ -128,7 +128,7 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
               />
               <S.CardRiskyProposalTokenInfoWrp>
                 <S.CardRiskyProposalTokenInfoLabel>
-                  {t("risky-proposal-card.label-proposal-token")}
+                  {t("card-risky-proposal.label-proposal-token")}
                 </S.CardRiskyProposalTokenInfoLabel>
 
                 <S.CardRiskyProposalTokenInfoValue
@@ -147,7 +147,7 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
                   id={uuidv4()}
                   size={isDesktop ? "normal" : "small"}
                 >
-                  {t("risky-proposal-card.tooltip-msg-rating")}
+                  {t("card-risky-proposal.tooltip-msg-rating")}
                 </S.CardRiskyProposalTokenInfoTooltip>
               </S.CardRiskyProposalTokenInfoWrp>
             </S.CardRiskyProposalTokenWrp>
@@ -157,7 +157,7 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
             <S.CardRiskyProposalGridItemSettingsAction>
               <S.CardRiskyProposalSettingsButton
                 full
-                text={t("risky-proposal-card.action-settings")}
+                text={t("card-risky-proposal.action-settings")}
                 onClick={() => setIsSettingsOpen(!isSettingsOpen)}
                 size="small"
                 color={"default"}
@@ -166,8 +166,8 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
                 <S.CardRiskyProposalStatus active={canInvest ?? false}>
                   {t(
                     canInvest
-                      ? "risky-proposal-card.status-open"
-                      : "risky-proposal-card.status-closed"
+                      ? "card-risky-proposal.status-open"
+                      : "card-risky-proposal.status-closed"
                   )}
                 </S.CardRiskyProposalStatus>
                 <IconButton
@@ -187,7 +187,7 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
                 >
                   {isDesktop && (
                     <S.CardRiskyProposalLabel>
-                      {t("risky-proposal-card.label-fund-ticker")}
+                      {t("card-risky-proposal.label-fund-ticker")}
                     </S.CardRiskyProposalLabel>
                   )}
                   <S.CardRiskyProposalValue completed={!isDesktop}>
@@ -210,12 +210,12 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
               <S.CardRiskyProposalLabel>
                 <S.CardRiskyProposalLabelContent>
                   <span>
-                    {t("risky-proposal-card.label-max-size", {
+                    {t("card-risky-proposal.label-max-size", {
                       currency: "LP",
                     })}
                   </span>
                   <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
-                    {t("risky-proposal-card.tooltip-msg-max-size")}
+                    {t("card-risky-proposal.tooltip-msg-max-size")}
                   </S.CardRiskyProposalLabelTooltip>
                 </S.CardRiskyProposalLabelContent>
               </S.CardRiskyProposalLabel>
@@ -229,15 +229,15 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
             <S.CardRiskyProposalValueWrp>
               <S.CardRiskyProposalLabel>
                 <S.CardRiskyProposalLabelContent>
-                  {t("risky-proposal-card.label-your-size", {
+                  {t("card-risky-proposal.label-your-size", {
                     currency: "LP",
                   })}
                   <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
-                    {t("risky-proposal-card.tooltip-msg-your-size")}
+                    {t("card-risky-proposal.tooltip-msg-your-size")}
                   </S.CardRiskyProposalLabelTooltip>
                   {isTrader && (
                     <S.CardRiskyProposalInvestMoreButton
-                      text={t("risky-proposal-card.action-invest")}
+                      text={t("card-risky-proposal.action-invest")}
                       onClick={onInvest}
                       size={"x-small"}
                       color={isDesktop ? "secondary" : "default"}
@@ -262,12 +262,12 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
               <S.CardRiskyProposalLabel>
                 <S.CardRiskyProposalLabelContent>
                   <span>
-                    {t("risky-proposal-card.label-fullness", {
+                    {t("card-risky-proposal.label-fullness", {
                       currency: "LP",
                     })}
                   </span>
                   <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
-                    {t("risky-proposal-card.tooltip-msg-fullness")}
+                    {t("card-risky-proposal.tooltip-msg-fullness")}
                   </S.CardRiskyProposalLabelTooltip>
                   {fullness.completed && (
                     <S.CardRiskyProposalLabelIcon src={checkGreenIcon} />
@@ -285,12 +285,12 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
               <S.CardRiskyProposalLabel>
                 <S.CardRiskyProposalLabelContent>
                   <span>
-                    {t("risky-proposal-card.label-max-invest-price", {
+                    {t("card-risky-proposal.label-max-invest-price", {
                       currency: proposalTokenSymbol,
                     })}
                   </span>
                   <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
-                    {t("risky-proposal-card.tooltip-msg-max-invest-price")}
+                    {t("card-risky-proposal.tooltip-msg-max-invest-price")}
                   </S.CardRiskyProposalLabelTooltip>
                   {maxInvestPrice.completed && (
                     <S.CardRiskyProposalLabelIcon src={checkGreenIcon} />
@@ -308,12 +308,12 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
               <S.CardRiskyProposalLabel>
                 <S.CardRiskyProposalLabelContent>
                   <span>
-                    {t("risky-proposal-card.label-current-price", {
+                    {t("card-risky-proposal.label-current-price", {
                       currency: proposalTokenSymbol,
                     })}
                   </span>
                   <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
-                    {t("risky-proposal-card.tooltip-msg-current-price")}
+                    {t("card-risky-proposal.tooltip-msg-current-price")}
                   </S.CardRiskyProposalLabelTooltip>
                 </S.CardRiskyProposalLabelContent>
               </S.CardRiskyProposalLabel>
@@ -329,9 +329,9 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
             >
               <S.CardRiskyProposalLabel>
                 <S.CardRiskyProposalLabelContent>
-                  <span>{t("risky-proposal-card.label-expiration-date")}</span>
+                  <span>{t("card-risky-proposal.label-expiration-date")}</span>
                   <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
-                    {t("risky-proposal-card.tooltip-msg-expiration-date")}
+                    {t("card-risky-proposal.tooltip-msg-expiration-date")}
                   </S.CardRiskyProposalLabelTooltip>
                   {expirationDate.completed && (
                     <S.CardRiskyProposalLabelIcon src={checkGreenIcon} />
@@ -351,9 +351,9 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
             <S.CardRiskyProposalValueWrp>
               <S.CardRiskyProposalLabel>
                 <S.CardRiskyProposalLabelContent>
-                  <span>{t("risky-proposal-card.label-investors")}</span>
+                  <span>{t("card-risky-proposal.label-investors")}</span>
                   <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
-                    {t("risky-proposal-card.tooltip-msg-investors")}
+                    {t("card-risky-proposal.tooltip-msg-investors")}
                   </S.CardRiskyProposalLabelTooltip>
                   {investors.completed && (
                     <S.CardRiskyProposalLabelIcon src={checkGreenIcon} />
@@ -372,12 +372,12 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
               <S.CardRiskyProposalLabel>
                 <S.CardRiskyProposalLabelContent>
                   <span>
-                    {t("risky-proposal-card.label-position-size", {
+                    {t("card-risky-proposal.label-position-size", {
                       currency: proposalTokenSymbol,
                     })}
                   </span>
                   <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
-                    {t("risky-proposal-card.tooltip-msg-position-size")}
+                    {t("card-risky-proposal.tooltip-msg-position-size")}
                   </S.CardRiskyProposalLabelTooltip>
                 </S.CardRiskyProposalLabelContent>
               </S.CardRiskyProposalLabel>
@@ -390,7 +390,7 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
           <S.CardRiskyProposalGridItemInvestAction>
             <AppButton
               full
-              text={t("risky-proposal-card.action-stake")}
+              text={t("card-risky-proposal.action-stake")}
               onClick={isTrader ? onInvest : onSwap}
               size="x-small"
               disabled={!canInvest}
@@ -405,7 +405,7 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
                 content={
                   description.length > 0
                     ? description
-                    : t("risky-proposal-card.empty-description-msg")
+                    : t("card-risky-proposal.empty-description-msg")
                 }
                 maxLen={isDesktop ? 140 : undefined}
               />
@@ -421,12 +421,12 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
                     <S.CardRiskyProposalLabel>
                       <S.CardRiskyProposalLabelContent>
                         <span>
-                          {t("risky-proposal-card.label-trader-size", {
+                          {t("card-risky-proposal.label-trader-size", {
                             currency: "LP",
                           })}
                         </span>
                         <S.CardRiskyProposalLabelTooltip id={uuidv4()}>
-                          {t("risky-proposal-card.tooltip-msg-trader-size")}
+                          {t("card-risky-proposal.tooltip-msg-trader-size")}
                         </S.CardRiskyProposalLabelTooltip>
                       </S.CardRiskyProposalLabelContent>
                     </S.CardRiskyProposalLabel>
@@ -455,7 +455,7 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
                   </S.CardRiskyProposalTraderSizeIconWrp>
                   <S.CardRiskyProposalTraderSizeInfoWrp>
                     <S.CardRiskyProposalTraderSizeText>
-                      {t("risky-proposal-card.values-trader-size", {
+                      {t("card-risky-proposal.values-trader-size", {
                         value: normalizeBigNumber(traderSizeLP, 18, 2),
                         currency: "LP",
                         percent: normalizeBigNumber(
@@ -479,7 +479,7 @@ const CardRiskyProposal: React.FC<Props> = ({ payload }) => {
               <S.CardRiskyProposalGridItemCheckToken>
                 <S.CardRiskyProposalCheckTokenWrp>
                   <ExternalLink color="#2680EB" href={proposalTokenLink}>
-                    {t("risky-proposal-card.action-check-token")}
+                    {t("card-risky-proposal.action-check-token")}
                   </ExternalLink>
                 </S.CardRiskyProposalCheckTokenWrp>
               </S.CardRiskyProposalGridItemCheckToken>
