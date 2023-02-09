@@ -139,14 +139,14 @@
     "title": "Summary",
     "desc": "Please review the vault configuration carefully before creating. After vault creation, settings can be changed only via a vote.",
 
-    "edit-link": "edit",
+    "edit-btn": "edit",
 
     "overhead-profile-title": "DAO Profile",
     "overhead-validators-title": "DAO validator settings",
     "overhead-validators-list-title": "Validator list",
     "overhead-default-settings-title": "General voting settings",
     "overhead-internal-settings-title": "Changing General voting settings",
-    "overhead-distribution-settings-title": "Changing General voting settings",
+    "overhead-distribution-settings-title": "Distribution settings",
 
     "name-lbl": "DAO name",
     "desc-lbl": "Description",

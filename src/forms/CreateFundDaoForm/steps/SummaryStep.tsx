@@ -16,15 +16,13 @@ import { parseDuration, parseDurationString, parseSeconds } from "utils/time"
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const SummaryStep: FC<Props> = ({ ...rest }) => {
-  const { account, chainId } = useActiveWeb3React()
+  const { chainId } = useActiveWeb3React()
 
   const {
     daoName,
     description,
     websiteUrl,
     socialLinks,
-    isTokenCreation,
-    tokenCreation,
     erc20,
     erc721,
     documents,
@@ -34,13 +32,17 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
     validatorsParams,
 
     defaultProposalSettingForm,
+
+    isCustomVoting,
     internalProposalForm,
+
+    isDistributionProposal,
     distributionProposalSettingsForm,
   } = useContext(GovPoolFormContext)
 
   const { t } = useTranslation()
 
-  const { nextCb } = useContext(stepsControllerContext)
+  const { nextCb, setStep } = useContext(stepsControllerContext)
 
   const handleNextStep = useCallback(() => {
     nextCb()
@@ -56,6 +58,15 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
     []
   )
 
+  const handleEditBtn = useCallback(
+    (step: number) => {
+      if (!setStep) return
+
+      setStep(step)
+    },
+    [setStep]
+  )
+
   return (
     <>
       <S.StepsRoot {...rest}>
@@ -66,7 +77,10 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
             <S.SummaryCardOverheadNum number={1} />
             {t("summary-step.overhead-profile-title")}
           </S.SummaryCardOverheadTitle>
-          <S.SummaryCardOverheadBtn text={"edit"} />
+          <S.SummaryCardOverheadBtn
+            text={t("summary-step.edit-btn")}
+            onClick={() => handleEditBtn(1)}
+          />
         </S.SummaryCardOverhead>
         <S.SummaryCard>
           <S.SummaryCardRow>
@@ -156,7 +170,10 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
             <S.SummaryCardOverheadNum number={2} />
             {t("summary-step.overhead-validators-title")}
           </S.SummaryCardOverheadTitle>
-          <S.SummaryCardOverheadBtn text={"edit"} />
+          <S.SummaryCardOverheadBtn
+            text={t("summary-step.edit-btn")}
+            onClick={() => handleEditBtn(2)}
+          />
         </S.SummaryCardOverhead>
         <S.SummaryCard>
           <S.SummaryCardRow>
@@ -254,24 +271,45 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
         )}
 
         {[
-          defaultProposalSettingForm,
-          internalProposalForm,
-          distributionProposalSettingsForm,
+          {
+            settings: defaultProposalSettingForm,
+            stepNumber: 3,
+            overheadTitle: t("summary-step.overhead-default-settings-title"),
+          },
+          ...(isCustomVoting.get
+            ? [
+                {
+                  settings: internalProposalForm,
+                  stepNumber: 4,
+                  overheadTitle: t(
+                    "summary-step.overhead-internal-settings-title"
+                  ),
+                },
+              ]
+            : []),
+          ...(isDistributionProposal.get
+            ? [
+                {
+                  settings: distributionProposalSettingsForm,
+                  stepNumber: 5,
+                  overheadTitle: t(
+                    "summary-step.overhead-distribution-settings-title"
+                  ),
+                },
+              ]
+            : []),
         ].map((el, idx) => {
           return (
             <>
               <S.SummaryCardOverhead>
                 <S.SummaryCardOverheadTitle>
                   <S.SummaryCardOverheadNum number={idx + 3} />
-                  {
-                    [
-                      t("summary-step.overhead-default-settings-title"),
-                      t("summary-step.overhead-internal-settings-title"),
-                      t("summary-step.overhead-distribution-settings-title"),
-                    ][idx]
-                  }
+                  {el.overheadTitle}
                 </S.SummaryCardOverheadTitle>
-                <S.SummaryCardOverheadBtn text={"edit"} />
+                <S.SummaryCardOverheadBtn
+                  text={t("summary-step.edit-btn")}
+                  onClick={() => handleEditBtn(el.stepNumber)}
+                />
               </S.SummaryCardOverhead>
               <S.SummaryCard>
                 <S.SummaryCardRow>
@@ -279,7 +317,7 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
                     {t("summary-step.settings-duration-lbl")}
                   </S.SummaryCardLabel>
                   <S.SummaryCardValue>
-                    {parseSecondsToString(el.duration.get)}
+                    {parseSecondsToString(el.settings.duration.get)}
                   </S.SummaryCardValue>
                 </S.SummaryCardRow>
                 <S.SummaryCardRow>
@@ -288,7 +326,7 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
                   </S.SummaryCardLabel>
                   <S.SummaryCardValue>
                     <Switch
-                      isOn={el.delegatedVotingAllowed.get}
+                      isOn={el.settings.delegatedVotingAllowed.get}
                       onChange={() => {}}
                       name={`delegated-voting-allowed-${idx}`}
                     />
@@ -298,14 +336,16 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
                   <S.SummaryCardLabel>
                     {t("summary-step.settings-quorum-lbl")}
                   </S.SummaryCardLabel>
-                  <S.SummaryCardValue>{el.quorum.get}</S.SummaryCardValue>
+                  <S.SummaryCardValue>
+                    {el.settings.quorum.get}
+                  </S.SummaryCardValue>
                 </S.SummaryCardRow>
                 <S.SummaryCardRow>
                   <S.SummaryCardLabel>
                     {t("summary-step.settings-voting-min-power-lbl")}
                   </S.SummaryCardLabel>
                   <S.SummaryCardValue>
-                    {el.minVotesForVoting.get}
+                    {el.settings.minVotesForVoting.get}
                   </S.SummaryCardValue>
                 </S.SummaryCardRow>
                 <S.SummaryCardRow>
@@ -313,7 +353,7 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
                     {t("summary-step.settings-create-proposal-min-power-lbl")}
                   </S.SummaryCardLabel>
                   <S.SummaryCardValue>
-                    {el.minVotesForCreating.get}
+                    {el.settings.minVotesForCreating.get}
                   </S.SummaryCardValue>
                 </S.SummaryCardRow>
                 <S.SummaryCardRow>
@@ -322,7 +362,7 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
                   </S.SummaryCardLabel>
                   <S.SummaryCardValue>
                     <Switch
-                      isOn={el.earlyCompletion.get}
+                      isOn={el.settings.earlyCompletion.get}
                       onChange={() => {}}
                       name={`early-completion-${idx}`}
                     />
@@ -333,7 +373,8 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
                     {t("summary-step.settings-validator-voting-duration-lbl")}
                   </S.SummaryCardLabel>
                   <S.SummaryCardValue>
-                    {parseSecondsToString(el.durationValidators.get) || "-"}
+                    {parseSecondsToString(el.settings.durationValidators.get) ||
+                      "-"}
                   </S.SummaryCardValue>
                 </S.SummaryCardRow>
                 <S.SummaryCardRow>
@@ -341,7 +382,7 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
                     {t("summary-step.settings-validator-quorum-lbl")}
                   </S.SummaryCardLabel>
                   <S.SummaryCardValue>
-                    {el.quorumValidators.get}
+                    {el.settings.quorumValidators.get}
                   </S.SummaryCardValue>
                 </S.SummaryCardRow>
                 <S.SummaryCardRow>
@@ -350,13 +391,13 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
                   </S.SummaryCardLabel>
                   <S.SummaryCardValue>
                     <Switch
-                      isOn={el.delegatedVotingAllowed.get}
+                      isOn={el.settings.delegatedVotingAllowed.get}
                       onChange={() => {}}
                       name={`delegated-voting-allowed-${idx}`}
                     />
                   </S.SummaryCardValue>
                 </S.SummaryCardRow>
-                {el.delegatedVotingAllowed.get ? (
+                {el.settings.delegatedVotingAllowed.get ? (
                   <>
                     <S.SummaryCardRow>
                       <S.SummaryCardLabel>
@@ -366,11 +407,11 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
                         <ExternalLink
                           href={getExplorerLink(
                             chainId!,
-                            el.rewardToken.get,
+                            el.settings.rewardToken.get,
                             ExplorerDataType.ADDRESS
                           )}
                         >
-                          {el.rewardToken.get}
+                          {el.settings.rewardToken.get}
                         </ExternalLink>
                       </S.SummaryCardValue>
                     </S.SummaryCardRow>
@@ -379,7 +420,7 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
                         {t("summary-step.settings-reward-for-creator-lbl")}
                       </S.SummaryCardLabel>
                       <S.SummaryCardValue>
-                        {el.creationReward.get}
+                        {el.settings.creationReward.get}
                       </S.SummaryCardValue>
                     </S.SummaryCardRow>
                     <S.SummaryCardRow>
@@ -387,7 +428,7 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
                         {t("summary-step.settings-reward-for-voter-lbl")}
                       </S.SummaryCardLabel>
                       <S.SummaryCardValue>
-                        {el.voteRewardsCoefficient.get}
+                        {el.settings.voteRewardsCoefficient.get}
                       </S.SummaryCardValue>
                     </S.SummaryCardRow>
                     <S.SummaryCardRow>
@@ -395,7 +436,7 @@ const SummaryStep: FC<Props> = ({ ...rest }) => {
                         {t("summary-step.settings-reward-for-executor-lbl")}
                       </S.SummaryCardLabel>
                       <S.SummaryCardValue>
-                        {el.executionReward.get}
+                        {el.settings.executionReward.get}
                       </S.SummaryCardValue>
                     </S.SummaryCardRow>
                   </>
