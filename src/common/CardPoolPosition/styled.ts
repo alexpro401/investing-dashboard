@@ -45,7 +45,7 @@ export const CardPoolPositionBody = styled(GradientBorder)<{
     gap: 0 var(--app-gap);
     padding: 12px 16px;
     grid-template-columns: ${({ bigGap }) =>
-      `repeat(5, ${bigGap ? "1fr" : "minmax(0, 155px)"}) 1fr`};
+      `repeat(5, ${bigGap ? "1fr" : "minmax(0, 142px)"}) 1fr`};
     justify-items: flex-start;
 
     box-shadow: none;
@@ -222,4 +222,32 @@ export const CardPoolPositionExtra = styled(GradientBorder)`
       background: transparent;
     }
   }
+`
+
+export const CardPoolPositionExchangesWrp = styled.div`
+  max-height: 180px;
+  overflow-y: auto;
+  background: #181e2c;
+  border-radius: 20px;
+
+  -webkit-overflow-scrolling: touch;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  ${respondTo("lg")} {
+    max-height: initial;
+    overflow-y: initial;
+
+    background: #141926;
+    border-top: 1px solid ${(props) => props.theme.backgroundColors.secondary};
+  }
+`
+
+export const CardPoolPositionExchangesLoaderWrp = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  width: 100%;
 `

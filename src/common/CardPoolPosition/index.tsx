@@ -11,14 +11,16 @@ import Icon from "components/Icon"
 import TokenIcon from "components/TokenIcon"
 import CardActions from "components/CardActions"
 import PositionTrade from "components/PositionTrade"
-import SharedS from "components/cards/position/styled"
 
-import { ICON_NAMES } from "consts"
-import { useBreakpoints } from "hooks"
+import { ICON_NAMES, MAX_PAGINATION_COUNT } from "consts"
+import { useBreakpoints, usePoolPositionExchangesList } from "hooks"
 import { normalizeBigNumber } from "utils"
 import { IPosition } from "interfaces/thegraphs/all-pools"
 import { useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
+import LoadMore from "components/LoadMore"
+import { isEmpty } from "lodash"
+import { SpiralSpinner } from "react-spinners-kit"
 
 interface Props {
   position: IPosition
@@ -138,6 +140,18 @@ const CardPoolPosition: React.FC<Props> = ({ position }) => {
           ],
     [t, showPositions, onTerminalNavigate, togglePositions, isDesktop]
   )
+
+  const [
+    { data: exchanges, loading: loadingExchanges },
+    fetchMoreExchanges,
+    resetExchanges,
+  ] = usePoolPositionExchangesList(position.id, !showPositions)
+
+  React.useEffect(() => {
+    if (!showPositions) {
+      resetExchanges()
+    }
+  }, [showPositions, resetExchanges])
 
   return (
     <S.Root>
@@ -288,22 +302,34 @@ const CardPoolPosition: React.FC<Props> = ({ position }) => {
         variants={accordionSummaryVariants}
         animate={showPositions ? "visible" : "hidden"}
       >
-        {position.exchanges && !!position.exchanges.length ? (
-          <SharedS.TradesList>
-            {position.exchanges.map((e) => (
-              <PositionTrade
-                key={e.id}
-                data={e}
-                baseTokenSymbol={baseSymbol}
-                timestamp={e.timestamp.toString()}
-                isBuy={e.opening}
-                amount={e.opening ? e.toVolume : e.fromVolume}
-              />
-            ))}
-          </SharedS.TradesList>
-        ) : (
-          <NoDataMessage />
-        )}
+        <S.CardPoolPositionExchangesWrp>
+          {isEmpty(exchanges) && loadingExchanges && (
+            <S.CardPoolPositionExchangesLoaderWrp>
+              <SpiralSpinner size={30} loading />
+            </S.CardPoolPositionExchangesLoaderWrp>
+          )}
+          {isEmpty(exchanges) && !loadingExchanges && <NoDataMessage />}
+          {!isEmpty(exchanges) ? (
+            <>
+              {exchanges.map((e) => (
+                <PositionTrade
+                  key={e.id}
+                  data={e}
+                  baseTokenSymbol={baseSymbol}
+                  timestamp={e.timestamp.toString()}
+                  isBuy={e.opening}
+                  amount={e.opening ? e.toVolume : e.fromVolume}
+                />
+              ))}
+              {exchanges.length >= MAX_PAGINATION_COUNT && (
+                <LoadMore
+                  isLoading={loadingExchanges && !!exchanges.length}
+                  handleMore={fetchMoreExchanges}
+                />
+              )}
+            </>
+          ) : null}
+        </S.CardPoolPositionExchangesWrp>
       </S.CardPoolPositionExtra>
     </S.Root>
   )

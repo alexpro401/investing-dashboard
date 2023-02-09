@@ -70,7 +70,7 @@ export interface IPosition {
   totalBaseCloseVolume: string
   totalPositionOpenVolume: string
   totalPositionCloseVolume: string
-  exchanges: IExchange[]
+  exchanges?: IExchange[]
   traderPool: {
     id: string
     ticker: string
