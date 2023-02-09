@@ -47,7 +47,7 @@ export function usePoolMetadata(
   const [loading, setLoading] = useState(false)
 
   const fetchPoolMetadata = useCallback(async () => {
-    if (!poolId || !hash) return
+    if (isNil(poolId) || isNil(hash)) return
 
     try {
       setLoading(true)
