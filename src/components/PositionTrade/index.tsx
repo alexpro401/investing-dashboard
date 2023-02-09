@@ -23,6 +23,7 @@ interface Props {
   amount?: BigNumber
   priceBase?: BigNumber
   priceUsd?: BigNumber
+  itemMaxWidthLg?: string
 }
 
 const PositionTrade: React.FC<Props> = ({
@@ -33,6 +34,7 @@ const PositionTrade: React.FC<Props> = ({
   amount,
   priceBase,
   priceUsd,
+  itemMaxWidthLg,
   ...rest
 }) => {
   const { chainId } = useActiveWeb3React()
@@ -122,7 +124,7 @@ const PositionTrade: React.FC<Props> = ({
       target="_blank"
       rel="noopener noreferrer"
     >
-      <S.Content>
+      <S.Content itemMaxWidthLg={itemMaxWidthLg}>
         {isDesktop ? (
           <S.Item>
             <Flex full jc={"flex-start"} gap={"8"}>

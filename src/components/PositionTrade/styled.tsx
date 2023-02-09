@@ -1,6 +1,7 @@
-import styled from "styled-components/macro"
+import styled, { css } from "styled-components/macro"
 import { Flex, respondTo } from "theme"
 import { Icon } from "common"
+import { isNil } from "lodash"
 
 export const Container = styled.a`
   display: block;
@@ -12,7 +13,7 @@ export const Container = styled.a`
     border-top: 1px solid #1d2635;
   }
 `
-export const Content = styled.div`
+export const Content = styled.div<{ itemMaxWidthLg?: string }>`
   display: grid;
   grid-template-columns: 0.5fr 0.25fr 0.25fr;
   gap: var(--app-gap);
@@ -20,8 +21,15 @@ export const Content = styled.div`
   padding: 12px 15px;
 
   ${respondTo("lg")} {
-    grid-template-columns: repeat(4, minmax(0, 145px)) 1fr;
     justify-items: flex-start;
+    ${({ itemMaxWidthLg }) =>
+      !isNil(itemMaxWidthLg)
+        ? css`
+            grid-template-columns: repeat(4, minmax(0, ${itemMaxWidthLg})) 1fr;
+          `
+        : css`
+            grid-template-columns: repeat(4, minmax(0, 145px) 1fr);
+          `}
   }
 `
 export const Item = styled(Flex)`

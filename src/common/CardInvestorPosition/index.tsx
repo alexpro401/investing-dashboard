@@ -166,6 +166,7 @@ const CardInvestorPosition: React.FC = () => {
               : []),
           ],
     [
+      t,
       position,
       isDesktop,
       showPositions,
@@ -371,6 +372,7 @@ const CardInvestorPosition: React.FC = () => {
                   priceUsd={v.volumeUSD}
                   baseTokenSymbol={baseTokenSymbol}
                   data={v}
+                  itemMaxWidthLg={position.isClosed ? "134.5px" : "115.5px"}
                 />
               ))}
               {vests.length >= MAX_PAGINATION_COUNT && (
