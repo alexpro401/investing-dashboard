@@ -62,30 +62,30 @@ const InvestorPoolPositionsList: FC<IProps> = ({ closed }) => {
       <S.InvestorPositionsListWrp>
         <S.InvestorPositionsListHead bigGap={closed}>
           <S.InvestorPositionsListHeadItem>
-            {t("investor-positions-list.label-pool")}
+            {t("investor-pool-positions-list.label-pool")}
           </S.InvestorPositionsListHeadItem>
           <S.InvestorPositionsListHeadItem>
-            {t("investor-positions-list.label-my-volume")}
+            {t("investor-pool-positions-list.label-my-volume")}
           </S.InvestorPositionsListHeadItem>
           <S.InvestorPositionsListHeadItem>
-            <span>{t("investor-positions-list.label-entry-price")}</span>
+            <span>{t("investor-pool-positions-list.label-entry-price")}</span>
             <Tooltip id={uuidv4()}>
-              {t("investor-positions-list.tooltip-msg-entry-price")}
+              {t("investor-pool-positions-list.tooltip-msg-entry-price")}
             </Tooltip>
           </S.InvestorPositionsListHeadItem>
           <S.InvestorPositionsListHeadItem>
-            <span>{t("investor-positions-list.label-current-price")}</span>
+            <span>{t("investor-pool-positions-list.label-current-price")}</span>
             <Tooltip id={uuidv4()}>
-              {t("investor-positions-list.tooltip-msg-current-price")}
+              {t("investor-pool-positions-list.tooltip-msg-current-price")}
             </Tooltip>
           </S.InvestorPositionsListHeadItem>
           <S.InvestorPositionsListHeadItem>
-            <span>{t("investor-positions-list.label-pnl")}</span>
+            <span>{t("investor-pool-positions-list.label-pnl")}</span>
           </S.InvestorPositionsListHeadItem>
           <S.InvestorPositionsListHeadItem>
-            <span>{t("investor-positions-list.label-commission")}</span>
+            <span>{t("investor-pool-positions-list.label-commission")}</span>
             <Tooltip id={uuidv4()}>
-              {t("investor-positions-list.tooltip-msg-commission")}
+              {t("investor-pool-positions-list.tooltip-msg-commission")}
             </Tooltip>
           </S.InvestorPositionsListHeadItem>
           <S.InvestorPositionsListHeadItem />

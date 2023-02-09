@@ -109,7 +109,7 @@
     "action-submit": "Done",
     "action-decline": "Cancel"
   },
-  "investor-positions-list": {
+  "investor-pool-positions-list": {
     "label-pool": "Fund",
     "label-my-volume": "My Volume",
     "label-entry-price": "Entry Price",
