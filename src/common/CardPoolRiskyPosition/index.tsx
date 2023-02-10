@@ -5,10 +5,13 @@ import { isEmpty } from "lodash"
 import { useTranslation } from "react-i18next"
 import { SpiralSpinner } from "react-spinners-kit"
 
-import { useBreakpoints } from "hooks"
-import { getProposalId, normalizeBigNumber } from "utils"
+import { useBreakpoints, usePoolRiskyPositionView } from "hooks"
+import { normalizeBigNumber } from "utils"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import { IRiskyPosition } from "interfaces/thegraphs/basic-pools"
+import {
+  IRiskyPositionExchange,
+  WrappedPoolRiskyProposalPositionView,
+} from "interfaces/thegraphs/basic-pools"
 import { ICON_NAMES, MAX_PAGINATION_COUNT, ROUTE_PATHS } from "consts"
 
 import { NoDataMessage } from "common"
@@ -21,21 +24,21 @@ import CardActions from "components/CardActions"
 import CardPositionTrade from "components/CardPositionTrade"
 
 import * as S from "./styled"
-import useRiskyPosition from "./useRiskyPosition"
 
 interface Props {
-  position: IRiskyPosition
+  payload: WrappedPoolRiskyProposalPositionView
   isTrader: boolean
   poolInfo: IPoolInfo
   poolMetadata: any
 }
 
 const CardPoolRiskyPosition: React.FC<Props> = ({
-  position,
+  payload,
   isTrader,
   poolInfo,
   poolMetadata,
 }) => {
+  const { position, utilityIds } = payload
   const { isDesktop } = useBreakpoints()
   const navigate = useNavigate()
   const { t } = useTranslation()
@@ -50,12 +53,12 @@ const CardPoolRiskyPosition: React.FC<Props> = ({
       pnlPercentage,
       pnlBase,
       pnlUSD,
-      positionToken,
-      baseToken,
+      proposalToken,
+      poolBaseToken,
     },
-  ] = useRiskyPosition(position)
+  ] = usePoolRiskyPositionView(position, utilityIds)
 
-  const exchanges = position.proposal.exchanges ?? []
+  const exchanges = [] as IRiskyPositionExchange[]
   const loadingExchanges = true
   const fetchMoreExchanges = () => {}
 
@@ -80,13 +83,13 @@ const CardPoolRiskyPosition: React.FC<Props> = ({
   )
 
   const positionTokenSymbol = React.useMemo(
-    () => positionToken?.symbol ?? "",
-    [positionToken]
+    () => proposalToken?.symbol ?? "",
+    [proposalToken]
   )
 
   const baseTokenSymbol = React.useMemo(
-    () => baseToken?.symbol ?? "",
-    [baseToken]
+    () => poolBaseToken?.symbol ?? "",
+    [poolBaseToken]
   )
 
   /**
@@ -98,12 +101,12 @@ const CardPoolRiskyPosition: React.FC<Props> = ({
       e.stopPropagation()
       navigate(
         generatePath(ROUTE_PATHS.poolProfile, {
-          poolAddress: position.proposal.basicPool.id,
+          poolAddress: utilityIds.poolAddress,
           "*": "",
         })
       )
     },
-    [navigate, position]
+    [navigate, utilityIds]
   )
 
   /**
@@ -121,17 +124,16 @@ const CardPoolRiskyPosition: React.FC<Props> = ({
   const onNavigateTerminal = React.useCallback(
     (e: React.MouseEvent<HTMLElement>, direction: "deposit" | "withdraw") => {
       e.stopPropagation()
-      const proposalId = getProposalId(position.id)
-      if (proposalId < 0) return
+
       navigate(
         generatePath(ROUTE_PATHS.riskyProposalSwap, {
-          poolAddress: position.proposal.basicPool.id,
-          proposalId: String(proposalId),
+          poolAddress: utilityIds.poolAddress,
+          proposalId: String(utilityIds.proposalId ?? 1),
           direction: direction,
         })
       )
     },
-    [navigate, position.id, position.proposal.basicPool.id]
+    [navigate, utilityIds]
   )
 
   const actions = React.useMemo(
@@ -166,17 +168,21 @@ const CardPoolRiskyPosition: React.FC<Props> = ({
           <S.CardPoolRiskyPositionTokensWrp>
             <S.CardPoolRiskyPositionTokensIconsWrp>
               <S.CardPoolRiskyPositionTokensIconPool>
-                <TokenIcon address={positionToken?.address} m="0" size={24} />
+                <TokenIcon address={proposalToken?.address} m="0" size={24} />
               </S.CardPoolRiskyPositionTokensIconPool>
               <S.CardPoolRiskyPositionTokensIconProposal>
-                <TokenIcon address={baseToken?.address} m="0" size={26} />
+                <TokenIcon
+                  m="0"
+                  size={26}
+                  address={utilityIds.poolBaseTokenAddress}
+                />
               </S.CardPoolRiskyPositionTokensIconProposal>
             </S.CardPoolRiskyPositionTokensIconsWrp>
             <S.CardPoolRiskyPositionSizeWrp>
               {position.isClosed ? (
                 <S.CardPoolRiskyPositionBodyItemAmount>
                   {t("card-pool-risky-position.amount-lp2", {
-                    amount: normalizeBigNumber(positionVolume.big, 18, 6),
+                    amount: normalizeBigNumber(positionVolume, 18, 6),
                   })}
                 </S.CardPoolRiskyPositionBodyItemAmount>
               ) : (
@@ -190,9 +196,9 @@ const CardPoolRiskyPosition: React.FC<Props> = ({
                 </S.CardPoolRiskyPositionTokenNamesWrp>
               )}
               <S.CardPoolRiskyPositionPnlChip
-                value={normalizeBigNumber(pnlPercentage.big, 18, 2)}
+                value={normalizeBigNumber(pnlPercentage, 18, 2)}
               >
-                {normalizeBigNumber(pnlPercentage.big, 18, 2)}%
+                {normalizeBigNumber(pnlPercentage, 18, 2)}%
               </S.CardPoolRiskyPositionPnlChip>
             </S.CardPoolRiskyPositionSizeWrp>
           </S.CardPoolRiskyPositionTokensWrp>
@@ -210,7 +216,7 @@ const CardPoolRiskyPosition: React.FC<Props> = ({
               m="0"
               size={isDesktop ? 32 : 26}
               source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
-              address={position.proposal.basicPool.id}
+              address={utilityIds.poolAddress}
             />
           </S.CardPoolRiskyPositionPoolInfoWrp>
         </S.CardPoolRiskyPositionBodyItemPoolInfoWrp>
@@ -318,9 +324,9 @@ const CardPoolRiskyPosition: React.FC<Props> = ({
                   data={e}
                   key={e.id}
                   timestamp={e.timestamp}
-                  isBuy={e.fromToken !== positionToken?.address}
+                  isBuy={e.fromToken !== utilityIds.proposalTokenAddress}
                   amount={
-                    e.fromToken !== positionToken?.address
+                    e.fromToken !== utilityIds.proposalTokenAddress
                       ? e.toVolume
                       : e.fromVolume
                   }

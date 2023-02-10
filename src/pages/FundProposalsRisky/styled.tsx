@@ -86,3 +86,14 @@ export const FundRiskyProposalsListWrp = styled.div`
     gap: 16px;
   }
 `
+
+export const InvestorRiskyPositionsListBody = styled.div`
+  width: fill-available;
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
+
+  ${respondTo("lg")} {
+    gap: calc(var(--app-gap) / 2);
+  }
+`

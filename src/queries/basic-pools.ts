@@ -19,6 +19,7 @@ const RISKY_PROPOSAL_POSITION = `
   totalUSDOpenVolume
   totalUSDCloseVolume
   proposal {
+    id
     token
     basicPool {
       id
