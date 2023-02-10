@@ -57,6 +57,20 @@ export const RiskyProposalPositionQuery = `
   }
 `
 
+export const RiskyProposalPositionExchangesQuery = `
+  query ($positionId: String!, $offset: Int!, $limit: Int!) {
+    proposalPosition(id: $positionId) {
+      proposal {
+        exchanges {
+          exchanges( skip: $offset, first: $limit, orderBy: timestamp, orderDirection: desc) {
+            ${RISKY_PROPOSAL_EXCHANGE}
+          }
+        }
+      }
+    }
+  }
+`
+
 export const RiskyProposalsQuery = `
   query ($offset: Int!, $limit: Int!, $poolsUserInvestedIn: [String]!) {
     proposals(

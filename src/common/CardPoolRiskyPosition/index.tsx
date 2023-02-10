@@ -5,7 +5,11 @@ import { isEmpty } from "lodash"
 import { useTranslation } from "react-i18next"
 import { SpiralSpinner } from "react-spinners-kit"
 
-import { useBreakpoints, usePoolRiskyPositionView } from "hooks"
+import {
+  useBreakpoints,
+  usePoolRiskyPositionsExchangesList,
+  usePoolRiskyPositionView,
+} from "hooks"
 import { normalizeBigNumber } from "utils"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import {
@@ -57,10 +61,6 @@ const CardPoolRiskyPosition: React.FC<Props> = ({
       poolBaseToken,
     },
   ] = usePoolRiskyPositionView(position, utilityIds)
-
-  const exchanges = [] as IRiskyPositionExchange[]
-  const loadingExchanges = true
-  const fetchMoreExchanges = () => {}
 
   const [showActions, setShowActions] = React.useState(false)
   const [showExchanges, setShowExchanges] = React.useState(false)
@@ -157,6 +157,18 @@ const CardPoolRiskyPosition: React.FC<Props> = ({
           ],
     [t, isDesktop, isTrader, showExchanges, togglePositions, onNavigateTerminal]
   )
+
+  const [
+    { data: exchanges, loading: loadingExchanges },
+    fetchMoreExchanges,
+    resetExchanges,
+  ] = usePoolRiskyPositionsExchangesList(position.id, !showExchanges)
+
+  React.useEffect(() => {
+    if (!showExchanges) {
+      resetExchanges()
+    }
+  }, [showExchanges, resetExchanges])
 
   return (
     <S.Root>

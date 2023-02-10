@@ -21,7 +21,10 @@ function generateWrappedPoolRiskyPositionsView(
       id: restPosition.id,
       position: restPosition,
       utilityIds: {
-        proposalId: Number(proposal?.proposalId) - 1,
+        // TODO: fix this after adding proposalId to the graph
+        proposalId: isNil(proposal?.proposalId)
+          ? 1
+          : Number(proposal?.proposalId) - 1,
         proposalEntityId: proposal.id,
         proposalTokenAddress: proposal.token,
         poolAddress: proposal.basicPool.id,
