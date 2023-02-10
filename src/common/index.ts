@@ -32,6 +32,7 @@ export { default as PoolStatisticsItem } from "./PoolStatisticsItem"
 export { default as Dropdown } from "./Dropdown"
 export { default as CardInvestorRiskyPosition } from "./CardInvestorRiskyPosition"
 export { default as CardRiskyProposal } from "./CardRiskyProposal"
+export { default as CardPoolRiskyPosition } from "./CardPoolRiskyPosition"
 
 export * from "./Typography"
 export * from "./dao"

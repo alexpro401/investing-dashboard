@@ -8,23 +8,24 @@ import useQueryPagination from "hooks/useQueryPagination"
 import { usePoolMetadata } from "state/ipfsMetadata/hooks"
 
 import LoadMore from "components/LoadMore"
-import RiskyPositionCard from "components/cards/position/Risky"
 
 import { IRiskyPosition } from "interfaces/thegraphs/basic-pools"
 import { map } from "lodash"
 import { graphClientBasicPools } from "utils/graphClient"
-import { NoDataMessage } from "common"
+import { NoDataMessage, CardPoolRiskyPosition } from "common"
 import { Flex } from "theme"
 import * as S from "./styled"
 import Tooltip from "components/Tooltip"
 import { v4 as uuidv4 } from "uuid"
+import { useTranslation } from "react-i18next"
 
 interface IProps {
   poolAddress?: string
   closed: boolean
 }
 
-const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
+const PoolRiskyPositionsList: FC<IProps> = ({ poolAddress, closed }) => {
+  const { t } = useTranslation()
   const { account } = useActiveWeb3React()
   const [, poolInfo] = usePoolContract(poolAddress)
 
@@ -83,20 +84,40 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
     <>
       <S.RiskyPositionsListWrp>
         <S.RiskyPositionsListHead>
-          <S.RiskyPositionsListHeadItem>Fund</S.RiskyPositionsListHeadItem>
-          <S.RiskyPositionsListHeadItem>My Volume</S.RiskyPositionsListHeadItem>
           <S.RiskyPositionsListHeadItem>
-            <span>Entry Price</span>
-            <Tooltip id={uuidv4()}>Explain Entry Price</Tooltip>
+            {t("pool-risky-positions-list.label-pool")}
           </S.RiskyPositionsListHeadItem>
           <S.RiskyPositionsListHeadItem>
-            <span>Current price</span>
-            <Tooltip id={uuidv4()}>Explain Current price</Tooltip>
+            {t("pool-risky-positions-list.label-my-volume")}
           </S.RiskyPositionsListHeadItem>
-          <S.RiskyPositionsListHeadItem>P&L in %</S.RiskyPositionsListHeadItem>
+          <S.RiskyPositionsListHeadItem>
+            <span>{t("pool-risky-positions-list.label-entry-price")}</span>
+            <Tooltip id={uuidv4()}>
+              {t("pool-risky-positions-list.tooltip-msg-entry-price")}
+            </Tooltip>
+          </S.RiskyPositionsListHeadItem>
+          <S.RiskyPositionsListHeadItem>
+            <span>
+              {t(
+                closed
+                  ? "pool-risky-positions-list.label-closed-price"
+                  : "pool-risky-positions-list.label-current-price"
+              )}
+            </span>
+            <Tooltip id={uuidv4()}>
+              {t(
+                closed
+                  ? "pool-risky-positions-list.tooltip-msg-closed-price"
+                  : "pool-risky-positions-list.tooltip-msg-current-price"
+              )}
+            </Tooltip>
+          </S.RiskyPositionsListHeadItem>
+          <S.RiskyPositionsListHeadItem>
+            {t("pool-risky-positions-list.label-pnl")}
+          </S.RiskyPositionsListHeadItem>
         </S.RiskyPositionsListHead>
         {data.map((p) => (
-          <RiskyPositionCard
+          <CardPoolRiskyPosition
             key={p.id}
             position={p}
             isTrader={isTrader}
@@ -111,4 +132,4 @@ const FundPositionsRisky: FC<IProps> = ({ poolAddress, closed }) => {
   )
 }
 
-export default FundPositionsRisky
+export default PoolRiskyPositionsList
