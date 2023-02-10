@@ -114,9 +114,16 @@ export const Direction = styled.span<{ isBuy?: boolean }>`
     letter-spacing: 0.01em;
   }
 `
-export const ExternalLinkIcon = styled.img`
+export const ExternalLinkIcon = styled(Icon)`
   width: 12px;
   height: 12px;
   margin-left: 3px;
   transform: translateY(2px);
+
+  ${respondTo("lg")} {
+    width: 1em;
+    height: 1em;
+    margin-left: 4px;
+    color: ${(props) => props.theme.textColors.primary};
+  }
 `
