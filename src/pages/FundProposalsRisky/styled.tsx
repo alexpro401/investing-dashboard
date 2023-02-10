@@ -75,3 +75,14 @@ export const RiskyPositionsListHeadItem = styled.div`
     color: #6781bd;
   }
 `
+
+export const FundRiskyProposalsListWrp = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1 0 auto;
+
+  ${respondTo("lg")} {
+    gap: 16px;
+  }
+`

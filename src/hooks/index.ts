@@ -74,6 +74,7 @@ export * from "./useCountdown"
 export * from "./useUserSettings"
 export * from "./useOnce"
 export * from "./useRouteState"
+export * from "./useTokenRatingList"
 
 export * from "./dao"
 export * from "./pool"

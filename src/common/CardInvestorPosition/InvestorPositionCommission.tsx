@@ -21,7 +21,7 @@ const InvestorPositionCommission: React.FC = () => {
     <S.CardInvestorPositionCommissionContentWrp>
       <S.CardInvestorPositionCommissionRow>
         <S.CardInvestorPositionCommissionLabel>
-          {t("investor-position-commission-card.label-period", {
+          {t("investor-position-commission.label-period", {
             month: period,
           })}
         </S.CardInvestorPositionCommissionLabel>
@@ -32,7 +32,7 @@ const InvestorPositionCommission: React.FC = () => {
 
       <S.CardInvestorPositionCommissionRow>
         <S.CardInvestorPositionCommissionLabel>
-          {t("investor-position-commission-card.label-amount")}
+          {t("investor-position-commission.label-amount")}
         </S.CardInvestorPositionCommissionLabel>
         <S.CardInvestorPositionCommissionValue
           value={formatBigNumber(amountUSD, 18, 2)}
@@ -44,7 +44,7 @@ const InvestorPositionCommission: React.FC = () => {
 
       <S.CardInvestorPositionCommissionRow>
         <S.CardInvestorPositionCommissionLabel>
-          {t("investor-position-commission-card.label-withdraw-date")}
+          {t("investor-position-commission.label-withdraw-date")}
         </S.CardInvestorPositionCommissionLabel>
         <S.CardInvestorPositionCommissionValue>
           {format(expandTimestamp(+unlockTimestamp.toString()), DATE_FORMAT)}
@@ -53,7 +53,7 @@ const InvestorPositionCommission: React.FC = () => {
 
       <S.CardInvestorPositionCommissionRow>
         <S.CardInvestorPositionCommissionLabel>
-          {t("investor-position-commission-card.label-investor-locked", {
+          {t("investor-position-commission.label-investor-locked", {
             percent: formatBigNumber(fundsLockedInvestorPercentage, 18, 2),
           })}
         </S.CardInvestorPositionCommissionLabel>

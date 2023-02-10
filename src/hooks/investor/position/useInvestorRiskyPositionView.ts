@@ -140,7 +140,7 @@ function useInvestorRiskyPositionView(position: any, utilityIds): [IPayload] {
    * P&L (in %)
    */
   const pnlPercentage = useMemo<BigNumber>(() => {
-    if (!markPriceBase || !entryPriceBase) {
+    if (markPriceBase.isZero() || entryPriceBase.isZero()) {
       return ZERO
     }
 

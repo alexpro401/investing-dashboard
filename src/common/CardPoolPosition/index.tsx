@@ -10,7 +10,7 @@ import { accordionSummaryVariants } from "motion/variants"
 import Icon from "components/Icon"
 import TokenIcon from "components/TokenIcon"
 import CardActions from "components/CardActions"
-import PositionTrade from "components/PositionTrade"
+import CardPositionTrade from "components/CardPositionTrade"
 
 import { ICON_NAMES, MAX_PAGINATION_COUNT } from "consts"
 import { useBreakpoints, usePoolPositionExchangesList } from "hooks"
@@ -312,7 +312,7 @@ const CardPoolPosition: React.FC<Props> = ({ position }) => {
           {!isEmpty(exchanges) ? (
             <>
               {exchanges.map((e) => (
-                <PositionTrade
+                <CardPositionTrade
                   key={e.id}
                   data={e}
                   baseTokenSymbol={baseSymbol}
