@@ -1,5 +1,7 @@
 import { GovPoolFormOptions } from "types"
 import { BigNumber } from "@ethersproject/bignumber"
+import { Buffer } from "buffer"
+import { utils } from "ethers"
 
 export const INITIAL_DAO_PROPOSAL: GovPoolFormOptions = {
   _isErc20: true,
@@ -100,3 +102,14 @@ export const INITIAL_DAO_PROPOSAL: GovPoolFormOptions = {
     executorDescription: "default",
   },
 }
+
+const bytes = Buffer.from(JSON.stringify(INITIAL_DAO_PROPOSAL))
+const hash = utils.sha512(bytes)
+
+const savedHash = localStorage.getItem("fund-dao-creating-form-hash")
+
+if (savedHash && hash !== savedHash) {
+  localStorage.removeItem("fund-dao-creating-form")
+}
+
+localStorage.setItem("fund-dao-creating-form-hash", hash)
