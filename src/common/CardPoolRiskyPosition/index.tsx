@@ -340,7 +340,7 @@ const CardPoolRiskyPosition: React.FC<Props> = ({
                       : e.fromVolume
                   }
                   baseTokenSymbol={baseTokenSymbol}
-                  itemMaxWidthLg={position.isClosed ? "134.5px" : "115.5px"}
+                  itemMaxWidthLg={"155px"}
                 />
               ))}
               {exchanges.length >= MAX_PAGINATION_COUNT && (

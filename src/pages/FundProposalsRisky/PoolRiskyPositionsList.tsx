@@ -55,7 +55,7 @@ const PoolRiskyPositionsList: FC<IProps> = ({ poolAddress, closed }) => {
         )
       ) : (
         <S.RiskyPositionsListWrp>
-          <S.RiskyPositionsListHead>
+          <S.RiskyPositionsListHead childMaxWidth={"155px"}>
             <S.RiskyPositionsListHeadItem>
               {t("pool-risky-positions-list.label-pool")}
             </S.RiskyPositionsListHeadItem>
@@ -87,6 +87,7 @@ const PoolRiskyPositionsList: FC<IProps> = ({ poolAddress, closed }) => {
             <S.RiskyPositionsListHeadItem>
               {t("pool-risky-positions-list.label-pnl")}
             </S.RiskyPositionsListHeadItem>
+            <S.RiskyPositionsListHeadItem />
           </S.RiskyPositionsListHead>
 
           <S.InvestorRiskyPositionsListBody>

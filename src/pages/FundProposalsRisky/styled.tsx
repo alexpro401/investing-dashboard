@@ -1,6 +1,7 @@
-import styled from "styled-components/macro"
+import styled, { css } from "styled-components/macro"
 import { respondTo } from "theme"
 import RouteTabs from "components/RouteTabs"
+import { isNil } from "lodash"
 
 export const ListTopWrp = styled.div`
   width: 100%;
@@ -48,16 +49,19 @@ export const RiskyPositionsListHead = styled.div<{
   display: none;
 
   ${respondTo("lg")} {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    grid-column-gap: 12px;
+    display: grid;
+    justify-items: stretch;
+    gap: calc(var(--app-gap) / 2) var(--app-gap);
     padding: 8px 16px 0;
-
-    & > * {
-      flex: 1 0 155px;
-      max-width: ${({ childMaxWidth }) => childMaxWidth ?? "162px"};
-    }
+    grid-template-columns: repeat(5, minmax(0, 142px)) 1fr;
+    ${({ childMaxWidth }) =>
+      !isNil(childMaxWidth)
+        ? css`
+            grid-template-columns: repeat(5, minmax(0, ${childMaxWidth})) 1fr;
+          `
+        : css`
+            grid-template-columns: repeat(5, minmax(0, 142px)) 1fr;
+          `}
   }
 `
 
