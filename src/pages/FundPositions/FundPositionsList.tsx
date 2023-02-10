@@ -72,7 +72,7 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
         positionCount={openPositionsCount}
       />
       <PoolPositionsListRoot>
-        <PoolPositionsListHead childMaxWidth={closed ? "172px" : undefined}>
+        <PoolPositionsListHead childMaxWidth={closed ? "160.5px" : undefined}>
           <PoolPositionsListHeadItem>
             {t("fund-positions-list.label-pool")}
           </PoolPositionsListHeadItem>

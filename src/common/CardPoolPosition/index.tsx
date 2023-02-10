@@ -319,6 +319,7 @@ const CardPoolPosition: React.FC<Props> = ({ position }) => {
                   timestamp={e.timestamp.toString()}
                   isBuy={e.opening}
                   amount={e.opening ? e.toVolume : e.fromVolume}
+                  itemMaxWidthLg={position.closed ? "160.5px" : "142px"}
                 />
               ))}
               {exchanges.length >= MAX_PAGINATION_COUNT && (
