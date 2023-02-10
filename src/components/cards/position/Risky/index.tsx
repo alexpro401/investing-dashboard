@@ -9,7 +9,7 @@ import { IPoolInfo } from "interfaces/contracts/ITraderPool"
 import theme, { Flex } from "theme"
 import Icon from "components/Icon"
 import TokenIcon from "components/TokenIcon"
-import PositionTrade from "components/PositionTrade"
+import CardPositionTrade from "components/CardPositionTrade"
 import { accordionSummaryVariants } from "motion/variants"
 import SharedS, {
   BodyItem,
@@ -359,7 +359,7 @@ const RiskyPositionCard: FC<Props> = ({
           {exchanges && exchanges.length ? (
             <SharedS.TradesList>
               {exchanges.map((e) => (
-                <PositionTrade
+                <CardPositionTrade
                   data={e}
                   key={e.id}
                   timestamp={e.timestamp}

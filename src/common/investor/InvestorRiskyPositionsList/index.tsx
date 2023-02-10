@@ -16,7 +16,7 @@ interface IProps {
   closed: boolean
 }
 
-const InvestmentRiskyPositionsList: React.FC<IProps> = ({ closed }) => {
+const InvestorRiskyPositionsList: React.FC<IProps> = ({ closed }) => {
   const [data, loading, fetchMore] = useInvestorRiskyPositionList(closed)
 
   return (
@@ -67,4 +67,4 @@ const InvestmentRiskyPositionsList: React.FC<IProps> = ({ closed }) => {
   )
 }
 
-export default InvestmentRiskyPositionsList
+export default InvestorRiskyPositionsList

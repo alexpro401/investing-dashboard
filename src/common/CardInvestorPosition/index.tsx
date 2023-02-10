@@ -18,7 +18,7 @@ import Icon from "components/Icon"
 import LoadMore from "components/LoadMore"
 import TokenIcon from "components/TokenIcon"
 import CardActions from "components/CardActions"
-import PositionTrade from "components/PositionTrade"
+import CardPositionTrade from "components/CardPositionTrade"
 
 import InvestorPositionCommission from "./InvestorPositionCommission"
 import * as S from "./styled"
@@ -139,33 +139,34 @@ const CardInvestorPosition: React.FC = () => {
         ? []
         : [
             {
-              label: t("investor-position-card.action-toggle-vests"),
+              label: t("card-investor-position.action-toggle-vests"),
               active: showPositions,
               onClick: togglePositions,
             },
             ...(!position.isClosed
               ? [
                   {
-                    label: t("investor-position-card.action-invest"),
+                    label: t("card-investor-position.action-invest"),
                     onClick: (e) => onNavigateTerminal(e, "deposit"),
                   },
                 ]
               : []),
             {
-              label: t("investor-position-card.action-toggle-commission"),
+              label: t("card-investor-position.action-toggle-commission"),
               active: showCommission,
               onClick: toggleCommission,
             },
             ...(!position.isClosed
               ? [
                   {
-                    label: t("investor-position-card.action-divest--short"),
+                    label: t("card-investor-position.action-divest--short"),
                     onClick: (e) => onNavigateTerminal(e, "withdraw"),
                   },
                 ]
               : []),
           ],
     [
+      t,
       position,
       isDesktop,
       showPositions,
@@ -251,7 +252,7 @@ const CardInvestorPosition: React.FC = () => {
 
         <S.CardInvestorPositionBodyItemGrid>
           <S.CardInvestorPositionBodyItemLabel>
-            {t("investor-position-card.label-entry-price", {
+            {t("card-investor-position.label-entry-price", {
               currency: baseTokenSymbol,
             })}
           </S.CardInvestorPositionBodyItemLabel>
@@ -267,8 +268,8 @@ const CardInvestorPosition: React.FC = () => {
           <S.CardInvestorPositionBodyItemLabel>
             {t(
               position.isClosed
-                ? "investor-position-card.label-closed-price"
-                : "investor-position-card.label-current-price",
+                ? "card-investor-position.label-closed-price"
+                : "card-investor-position.label-current-price",
               {
                 currency: baseTokenSymbol,
               }
@@ -286,7 +287,7 @@ const CardInvestorPosition: React.FC = () => {
           textAlign={!isDesktop ? "right" : undefined}
         >
           <S.CardInvestorPositionBodyItemLabel>
-            {t("investor-position-card.label-pnl", {
+            {t("card-investor-position.label-pnl", {
               currency: baseTokenSymbol,
             })}
           </S.CardInvestorPositionBodyItemLabel>
@@ -321,13 +322,13 @@ const CardInvestorPosition: React.FC = () => {
                 {!position.isClosed && (
                   <>
                     <S.ActionPositive
-                      text={t("investor-position-card.action-invest")}
+                      text={t("card-investor-position.action-invest")}
                       color={"default"}
                       size={"no-paddings"}
                       onClick={(e) => onNavigateTerminal(e, "deposit")}
                     />
                     <S.ActionNegative
-                      text={t("investor-position-card.action-divest")}
+                      text={t("card-investor-position.action-divest")}
                       color={"default"}
                       size={"no-paddings"}
                       onClick={(e) => onNavigateTerminal(e, "withdraw")}
@@ -362,7 +363,7 @@ const CardInvestorPosition: React.FC = () => {
           {!isEmpty(vests) ? (
             <>
               {vests.map((v) => (
-                <PositionTrade
+                <CardPositionTrade
                   key={v.id}
                   isBuy={v.isInvest}
                   timestamp={v.timestamp}
@@ -371,6 +372,7 @@ const CardInvestorPosition: React.FC = () => {
                   priceUsd={v.volumeUSD}
                   baseTokenSymbol={baseTokenSymbol}
                   data={v}
+                  itemMaxWidthLg={position.isClosed ? "134.5px" : "115.5px"}
                 />
               ))}
               {vests.length >= MAX_PAGINATION_COUNT && (

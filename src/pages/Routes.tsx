@@ -125,14 +125,13 @@ const DaoProposals = lazy(() => import("pages/GovPoolProposals/DaoProposals"))
 const DaoProposalDetails = lazy(
   () => import("pages/GovPoolProposals/DaoProposalDetails")
 )
-// const Insurance = lazy(() => import("pages/Insurance"))
 
 const PrivacyPolicy = lazy(() => import("pages/PrivacyPolicy"))
 const ServiceTerms = lazy(() => import("pages/ServiceTerms"))
 const Insurance = lazy(() => import("pages/Insurance"))
 const InsuranceCreate = lazy(() => import("pages/InsuranceCreate"))
 const FundPositions = lazy(() => import("pages/FundPositions"))
-const Investment = lazy(() => import("pages/Investment"))
+const InvestorPositions = lazy(() => import("pages/InvestorPositions"))
 const DaoPools = lazy(() => import("pages/DaoPools"))
 const DaoDelegation = lazy(() => import("pages/DaoDelegation"))
 const DaoPoolClaim = lazy(() => import("pages/DaoPoolClaim"))
@@ -221,7 +220,7 @@ export const router = createBrowserRouter([
           },
           {
             path: ROUTE_PATHS.investment,
-            element: <Investment />,
+            element: <InvestorPositions />,
           },
           {
             path: ROUTE_PATHS.investmentProposalCreate,
