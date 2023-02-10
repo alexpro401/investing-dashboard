@@ -12,10 +12,7 @@ import {
 } from "hooks"
 import { normalizeBigNumber } from "utils"
 import { IPoolInfo } from "interfaces/contracts/ITraderPool"
-import {
-  IRiskyPositionExchange,
-  WrappedPoolRiskyProposalPositionView,
-} from "interfaces/thegraphs/basic-pools"
+import { WrappedPoolRiskyProposalPositionView } from "interfaces/thegraphs/basic-pools"
 import { ICON_NAMES, MAX_PAGINATION_COUNT, ROUTE_PATHS } from "consts"
 
 import { NoDataMessage } from "common"
