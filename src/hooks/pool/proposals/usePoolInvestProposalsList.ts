@@ -28,8 +28,8 @@ const usePoolInvestProposalsList = (
   const utilityIdsList = React.useMemo<InvestProposalUtilityIds[]>(() => {
     if (isEmpty(proposalsQuery) || !poolProposalContractAddress) return []
 
-    return proposalsQuery.map((proposal) => ({
-      proposalId: proposal.proposalId ? Number(proposal.proposalId) - 1 : 1,
+    return proposalsQuery.map((proposal, index) => ({
+      proposalId: proposal.proposalId ? Number(proposal.proposalId) - 1 : index,
       proposalEntityId: proposal.id,
       investPoolAddress: proposal.investPool.id,
       proposalContractAddress: poolProposalContractAddress,
