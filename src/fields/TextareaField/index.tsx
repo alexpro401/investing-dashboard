@@ -2,6 +2,7 @@ import {
   Dispatch,
   FormEvent,
   HTMLAttributes,
+  ReactNode,
   SetStateAction,
   useCallback,
   useMemo,
@@ -21,6 +22,7 @@ interface Props<V extends string | number>
   disabled?: string | boolean
   readonly?: string | boolean
   tabindex?: number
+  labelNodeRight?: ReactNode
 }
 
 function TextareaField<V extends string | number>({
@@ -35,6 +37,7 @@ function TextareaField<V extends string | number>({
   onInput,
   onChange,
   onBlur,
+  labelNodeRight,
 }: Props<V>) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const uid = useMemo(() => uuidv4(), [])
@@ -106,6 +109,7 @@ function TextareaField<V extends string | number>({
             textareaId={`text-area-field--${uid}`}
           >
             {label}
+            {!!labelNodeRight ? labelNodeRight : <></>}
           </S.Label>
         ) : (
           <></>

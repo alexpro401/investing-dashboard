@@ -5,11 +5,15 @@ import { ICON_NAMES, ROUTE_PATHS } from "consts"
 import { Flex } from "theme"
 import FaqText from "./content"
 import * as S from "./styled"
-import { generatePath, useParams } from "react-router-dom"
+import { generatePath, useNavigate, useParams } from "react-router-dom"
 
 const Faq = () => {
   const { poolAddress, tokenAddress } = useParams()
-  const [isChecked, setChecked] = useState(false)
+  const navigate = useNavigate()
+  const DO_NOT_SHOW_AGAIN =
+    localStorage.getItem("risky-proposal-faq-read") === "true"
+
+  const [isChecked, setChecked] = useState(DO_NOT_SHOW_AGAIN)
 
   const handleCheckboxChange = useCallback(() => {
     setChecked(!isChecked)
@@ -44,7 +48,18 @@ const Faq = () => {
     <S.Container>
       <S.Header>
         <S.Title>How a risky proposal works ?</S.Title>
-        <Icon name={ICON_NAMES.modalClose} />
+        <Icon
+          style={{ cursor: "pointer" }}
+          name={ICON_NAMES.modalClose}
+          onClick={() =>
+            navigate(
+              generatePath(ROUTE_PATHS.poolProfile, {
+                poolAddress: poolAddress!,
+                "*": "",
+              })
+            )
+          }
+        />
       </S.Header>
       <S.Body>{FaqText}</S.Body>
       <S.Footer>

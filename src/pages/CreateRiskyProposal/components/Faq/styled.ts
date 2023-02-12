@@ -8,12 +8,12 @@ export const Container = styled(Flex)`
   align-items: flex-start;
   max-width: 420px;
   width: 100%;
-  height: fill-available;
+  height: fit-content;
 
   background: ${theme.backgroundColors.secondary};
   border-radius: 20px;
 
-  ${respondTo("sm")} {
+  ${respondTo("xs")} {
     height: 560px;
   }
 `
@@ -45,7 +45,6 @@ export const Body = styled(Flex)`
   width: 100%;
   font-family: "Gilroy";
   font-style: normal;
-  overflow-y: auto;
   padding: 16px;
   gap: 16px;
 
@@ -58,6 +57,10 @@ export const Body = styled(Flex)`
   ${respondTo("xmd")} {
     font-weight: 500;
     font-size: 14px;
+  }
+
+  ${respondTo("xs")} {
+    overflow-y: auto;
   }
 `
 

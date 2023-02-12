@@ -119,13 +119,19 @@ const Swap = () => {
 
       if (!token) return
 
+      const DO_NOT_SHOW_FAQ =
+        localStorage.getItem("risky-proposal-faq-read") === "true"
       const tokenAddress = token.address.toLocaleLowerCase()
 
       const riskyIndex = riskyProposalTokens.indexOf(tokenAddress)
 
       // if risky proposal not created yet redirect to create proposal page
       if (riskyIndex === -1) {
-        navigate(`/create-risky-proposal/${poolAddress}/${tokenAddress}/create`)
+        navigate(
+          `/create-risky-proposal/${poolAddress}/${tokenAddress}/${
+            DO_NOT_SHOW_FAQ ? "create" : "faq"
+          }`
+        )
         return
       }
 
@@ -168,12 +174,12 @@ const Swap = () => {
   useEffect(() => {
     if (!isAddress(info.baseAddress) || !isAddress(poolAddress)) return
 
-    const lastPath = pathname.split("/").reverse()[0]
+    const lastPath = pathname.split("/").reverse()
     console.log(lastPath)
 
     if (isAddress(from) || isAddress(to)) return
 
-    const options = lastPath === "search" ? "modal/search" : ""
+    const options = lastPath[1] === "modal" ? `modal/${lastPath[0]}` : ""
 
     const path = generatePath(ROUTE_PATHS.poolSwap, {
       poolAddress: poolAddress!,

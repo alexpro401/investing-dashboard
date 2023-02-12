@@ -29,9 +29,15 @@ export const Description = styled.div`
 
 export const MobileCard = styled(Card)`
   width: 100%;
-  padding: 16px;
+  padding: 16px 0 0;
+  background: none;
+`
 
-  ${respondTo("sm")} {
-    padding: 16px 0 0 0;
-  }
+export const NodeText = styled.div`
+  font-family: "Gilroy";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  color: #788ab4;
 `
