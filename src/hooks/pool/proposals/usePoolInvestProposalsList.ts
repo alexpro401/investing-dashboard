@@ -26,7 +26,7 @@ const usePoolInvestProposalsList = (
 
   // 3) generate InvestProposalUtilityIds
   const utilityIdsList = React.useMemo<InvestProposalUtilityIds[]>(() => {
-    if (!proposalsQuery) return []
+    if (isEmpty(proposalsQuery) || !poolProposalContractAddress) return []
 
     return proposalsQuery.map((proposal) => ({
       proposalId: proposal.proposalId ? Number(proposal.proposalId) - 1 : 1,
@@ -35,7 +35,7 @@ const usePoolInvestProposalsList = (
       proposalContractAddress: poolProposalContractAddress,
       investPoolBaseTokenAddress: proposal.investPool.baseToken,
     }))
-  }, [proposalsQuery])
+  }, [poolProposalContractAddress, proposalsQuery])
 
   // 4) get proposals using Multicall (poolProposalContract.getProposalInfos)
   const [proposalsData, proposalsDataLoading] = usePoolInvestProposalsListData(
@@ -78,7 +78,7 @@ const usePoolInvestProposalsList = (
     )
     // 	generate investProposalsList
     setInvestProposalsList(_proposalsList)
-  }, [anyLoading])
+  }, [anyLoading, proposalsData, proposalsQuery, utilityIdsList])
 
   console.timeEnd("usePoolInvestProposalsList")
   console.groupEnd()
