@@ -11,12 +11,16 @@ import { InputField, TextareaField } from "fields"
 import DateField from "fields/DateField"
 import { useFormValidation, usePoolContract } from "hooks"
 import TransactionSent from "modals/TransactionSent"
-import * as FaqS from "pages/CreateRiskyProposal/components/Faq/styled"
+import * as Layout from "pages/CreateRiskyProposal/styled"
 import useCreateRiskyProposal from "pages/CreateRiskyProposal/useCreateRiskyProposal"
-import { ProposalTypeGuideItem } from "pages/GovPoolProposals/CreateDaoProposalSelectType/styled"
 import { generatePath, useNavigate, useParams } from "react-router-dom"
 import { useERC20Data } from "state/erc20/hooks"
-import { expandTimestamp, normalizeBigNumber, shortTimestamp } from "utils"
+import {
+  expandTimestamp,
+  formatBigNumber,
+  normalizeBigNumber,
+  shortTimestamp,
+} from "utils"
 import { required, minLength, maxLength } from "utils/validators"
 import TokenTile from "../TokenTile"
 import * as S from "./styled"
@@ -34,7 +38,7 @@ const Form = () => {
     timestampLimit,
   } = useCreateRiskyProposalContext()
   const [
-    { positionPrice, proposalCount },
+    { positionPrice, proposalCount, lpAvailable },
     { handleSubmit, payload, setPayload },
   ] = useCreateRiskyProposal(poolAddress, tokenAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
@@ -72,8 +76,8 @@ const Form = () => {
   )
 
   const CardHeadTemplate = (
-    <FaqS.Header>
-      <FaqS.Title>
+    <Layout.Header>
+      <Layout.Title>
         Create Risky Proposal
         <AppButton
           text="read more"
@@ -85,7 +89,7 @@ const Form = () => {
             "*": "faq",
           })}
         />
-      </FaqS.Title>
+      </Layout.Title>
       <Icon
         style={{ cursor: "pointer" }}
         name={ICON_NAMES.modalClose}
@@ -98,7 +102,7 @@ const Form = () => {
           )
         }
       />
-    </FaqS.Header>
+    </Layout.Header>
   )
 
   return (
@@ -139,9 +143,9 @@ const Form = () => {
 
       {/* FORM */}
 
-      <FaqS.Container>
+      <Layout.Container>
         {CardHeadTemplate}
-        <FaqS.Body>
+        <Layout.Body>
           <S.Description>
             If you want to create investment proposal please fill out the form
             below. You can change parameters after creation
@@ -238,7 +242,17 @@ const Form = () => {
                 value={lpAmount.get}
                 setValue={lpAmount.set}
                 label="My LP allocated in proposal"
-                nodeRight={<S.NodeText>{poolInfo?.ticker || ""}</S.NodeText>}
+                nodeRight={
+                  <S.NodeText>
+                    <AppButton
+                      color="default"
+                      size="no-paddings"
+                      text={formatBigNumber(lpAvailable)}
+                      onClick={() => lpAmount.set(formatBigNumber(lpAvailable))}
+                    />{" "}
+                    {poolInfo?.ticker || ""}
+                  </S.NodeText>
+                }
                 type="number"
                 inputMode="decimal"
                 labelNodeRight={
@@ -297,9 +311,9 @@ const Form = () => {
               />
             </CardFormControl>
           </S.MobileCard>
-        </FaqS.Body>
-        <FaqS.Footer>
-          <FaqS.Buttons>
+        </Layout.Body>
+        <Layout.Footer>
+          <Layout.Buttons>
             <AppButton
               disabled={!isFieldsValid}
               text="Create risky proposal"
@@ -308,9 +322,9 @@ const Form = () => {
               full
               onClick={handleSubmit}
             />
-          </FaqS.Buttons>
-        </FaqS.Footer>
-      </FaqS.Container>
+          </Layout.Buttons>
+        </Layout.Footer>
+      </Layout.Container>
     </>
   )
 }

@@ -1,7 +1,7 @@
 import { Center } from "theme"
 import { Route, Routes, useParams } from "react-router-dom"
 
-import { Container } from "./styled"
+import { Wrapper } from "./styled"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
 import { GuardSpinner } from "react-spinners-kit"
 
@@ -25,12 +25,12 @@ const CreateRiskyProposalWithProvider = () => {
       <Header>Create risky proposal</Header>
 
       <CreateRiskyProposalContextProvider>
-        <Container>
+        <Wrapper>
           <Routes>
             <Route path="faq" element={<Faq />} />
             <Route path="create" element={<Form />} />
           </Routes>
-        </Container>
+        </Wrapper>
       </CreateRiskyProposalContextProvider>
     </WithPoolAddressValidation>
   )

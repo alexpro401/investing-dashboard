@@ -4,7 +4,7 @@ import Checkbox from "components/Checkbox"
 import { ICON_NAMES, ROUTE_PATHS } from "consts"
 import { Flex } from "theme"
 import FaqText from "./content"
-import * as S from "./styled"
+import * as S from "pages/CreateRiskyProposal/styled"
 import { generatePath, useNavigate, useParams } from "react-router-dom"
 
 const Faq = () => {

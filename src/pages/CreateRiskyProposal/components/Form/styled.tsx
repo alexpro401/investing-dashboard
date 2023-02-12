@@ -34,6 +34,8 @@ export const MobileCard = styled(Card)`
 `
 
 export const NodeText = styled.div`
+  display: flex;
+  gap: 4px;
   font-family: "Gilroy";
   font-style: normal;
   font-weight: 400;
