@@ -3,6 +3,7 @@ import { IRiskyPosition } from "interfaces/thegraphs/basic-pools"
 
 export interface IInvestProposal {
   id: string
+  proposalId?: string
   timestampLimit: BigNumber
   investLPLimit: BigNumber
   leftTokens: string[]
@@ -23,6 +24,7 @@ export interface IInvestProposal {
   }
   investPool: {
     id: string
+    baseToken: string
   }
 }
 

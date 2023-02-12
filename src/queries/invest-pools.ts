@@ -9,11 +9,26 @@ const INVEST_PROPOSAL = `
   totalUSDSupply
   firstSupplyTimestamp
   APR
+  investPool {
+    id
+    baseToken
+  }
 `
 
 export const InvestProposalQuery = `
   query ($proposalId: String!) {
     proposal(id: $proposalId) {
+      ${INVEST_PROPOSAL}
+    }
+  }
+`
+export const PoolInvestProposalsQuery = `
+  query ($offset: Int!, $limit: Int!, $poolAddress: String!) {
+    proposals(
+      skip: $offset, first: $limit, 
+      orderBy: id, orderDirection: asc,
+      where: {investPool: $poolAddress}
+    ) {
       ${INVEST_PROPOSAL}
     }
   }

@@ -5,3 +5,6 @@ export { default as useRiskyProposalsListData } from "./useRiskyProposalsListDat
 export { default as useRiskyProposalsListActiveInvestmentInfo } from "./useRiskyProposalsListActiveInvestmentInfo"
 export { default as useRiskyProposalsListTokenMarkPrice } from "./useRiskyProposalsListTokenMarkPrice"
 export { default as useRiskyProposalsList } from "./useRiskyProposalsList"
+export { default as usePoolInvestProposalsListQuery } from "./usePoolInvestProposalsListQuery"
+export { default as usePoolInvestProposalsListData } from "./usePoolInvestProposalsListData"
+export { default as usePoolInvestProposalsList } from "./usePoolInvestProposalsList"
