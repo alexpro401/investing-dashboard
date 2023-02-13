@@ -9,3 +9,4 @@ export { default as usePoolInvestProposalsListQuery } from "./usePoolInvestPropo
 export { default as usePoolInvestProposalsListData } from "./usePoolInvestProposalsListData"
 export { default as usePoolInvestProposalsList } from "./usePoolInvestProposalsList"
 export { default as useInvestProposalView } from "./useInvestProposalView"
+export { default as useInvestProposalsContractAddressesList } from "./useInvestProposalsContractAddressesList"
