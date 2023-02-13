@@ -170,14 +170,18 @@ export const CardInvestProposalValueWithIconWrp = styled.div`
 export const CardInvestProposalFundTickerWrpTraderView = styled.div`
   width: 100%;
   display: flex;
-  flex-direction: row-reverse;
-  justify-content: flex-end;
+  flex-direction: row;
+  justify-content: flex-start;
   align-items: center;
   gap: 8px;
-
-  ${respondTo("lg")} {
-    flex-direction: row;
-  }
+`
+export const CardInvestProposalFundTickerWrpTraderViewInfoWrp = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-items: stretch;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 4px;
 `
 
 export const CardInvestProposalFundTickerWrp = styled(

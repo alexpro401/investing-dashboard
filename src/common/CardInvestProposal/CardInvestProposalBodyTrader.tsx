@@ -94,7 +94,7 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
             source={poolMetadata?.assets[poolMetadata?.assets.length - 1]}
             address={poolAddress}
           />
-          <S.CardInvestProposalValueWrp>
+          <S.CardInvestProposalFundTickerWrpTraderViewInfoWrp>
             {isDesktop && (
               <S.CardInvestProposalLabel>
                 {t("card-invest-proposal.label-proposal-ticker")}
@@ -112,7 +112,7 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
                 />
               )}
             </S.CardInvestProposalValueWithIconWrp>
-          </S.CardInvestProposalValueWrp>
+          </S.CardInvestProposalFundTickerWrpTraderViewInfoWrp>
         </S.CardInvestProposalFundTickerWrpTraderView>
       </S.CardInvestProposalGridItemFlexy>
       {!isDesktop && (
