@@ -33,6 +33,7 @@ export { default as Dropdown } from "./Dropdown"
 export { default as CardInvestorRiskyPosition } from "./CardInvestorRiskyPosition"
 export { default as CardRiskyProposal } from "./CardRiskyProposal"
 export { default as CardPoolRiskyPosition } from "./CardPoolRiskyPosition"
+export { default as CardInvestProposal } from "./CardInvestProposal"
 
 export * from "./Typography"
 export * from "./dao"

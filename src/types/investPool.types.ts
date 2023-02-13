@@ -15,3 +15,8 @@ export type WrappedInvestProposalView = {
   payloadContract: IInvestProposalInfo[0]
   utilityIds: InvestProposalUtilityIds
 }
+
+export type InvestProposalMetadata = {
+  ticker: string
+  description: string
+}
