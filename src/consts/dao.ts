@@ -108,7 +108,7 @@ const hash = utils.sha512(bytes)
 
 const savedHash = localStorage.getItem("fund-dao-creating-form-hash")
 
-if (savedHash && hash !== savedHash) {
+if ((savedHash && hash !== savedHash) || !savedHash) {
   localStorage.removeItem("fund-dao-creating-form")
 }
 

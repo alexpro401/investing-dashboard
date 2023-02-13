@@ -192,7 +192,7 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
 
   // Token creation
   const [_tokenCreationName, _setTokenCreationName] = useState(
-    storedForm.tokenCreation.name
+    storedForm.tokenCreation?.name
   )
   const [_tokenCreationSymbol, _setTokenCreationSymbol] = useState(
     storedForm.tokenCreation.symbol
