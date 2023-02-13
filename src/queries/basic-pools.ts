@@ -19,6 +19,7 @@ const RISKY_PROPOSAL_POSITION = `
   totalUSDOpenVolume
   totalUSDCloseVolume
   proposal {
+    id
     token
     basicPool {
       id
@@ -51,6 +52,20 @@ export const RiskyProposalPositionQuery = `
     proposal(id: $proposalAddress) {
       positions (where: { isClosed: $closed }) {
         ${RISKY_PROPOSAL_POSITION}
+      }
+    }
+  }
+`
+
+export const RiskyProposalPositionExchangesQuery = `
+  query ($positionId: String!, $offset: Int!, $limit: Int!) {
+    proposalPosition(id: $positionId) {
+      proposal {
+        exchanges {
+          exchanges( skip: $offset, first: $limit, orderBy: timestamp, orderDirection: desc) {
+            ${RISKY_PROPOSAL_EXCHANGE}
+          }
+        }
       }
     }
   }

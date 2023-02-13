@@ -495,11 +495,6 @@ export const convertBigToFixed = (
   decimals?: number
 ): FixedNumber => FixedNumber.fromValue(recepient, decimals ?? 18)
 
-export const getProposalId = (id?: string) => {
-  const proposalId = Number(id?.substring(42, 43))
-  return isNaN(proposalId) ? -1 : proposalId
-}
-
 export const getPoolsQueryVariables = (
   filters: ITopMembersFilters,
   poolType: PoolType
