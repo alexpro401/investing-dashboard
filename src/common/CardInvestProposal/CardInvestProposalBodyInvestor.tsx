@@ -243,22 +243,26 @@ const CardInvestProposalBodyInvestor: React.FC<Props> = ({
       {isDesktop && (
         <>
           <S.CardInvestProposalGridItem gridRow={"1/2"} gridColumn={"6/7"}>
-            <AppButton
-              full
-              text={t("card-invest-proposal.action-stake-lp")}
-              color={"tertiary"}
-              size={"small"}
-              onClick={onStake}
-            />
+            <S.CardInvestProposalValueWrp>
+              <AppButton
+                full
+                text={t("card-invest-proposal.action-stake-lp")}
+                color={"tertiary"}
+                size={"small"}
+                onClick={onStake}
+              />
+            </S.CardInvestProposalValueWrp>
           </S.CardInvestProposalGridItem>
           <S.CardInvestProposalGridItem gridRow={"2/3"} gridColumn={"6/7"}>
-            <AppButton
-              full
-              text={t("card-invest-proposal.action-request-dividends")}
-              color={"secondary"}
-              size={"small"}
-              onClick={onRequestDividends}
-            />
+            <S.CardInvestProposalValueWrp>
+              <AppButton
+                full
+                text={t("card-invest-proposal.action-request-dividends")}
+                color={"secondary"}
+                size={"small"}
+                onClick={onRequestDividends}
+              />
+            </S.CardInvestProposalValueWrp>
           </S.CardInvestProposalGridItem>
         </>
       )}
@@ -271,7 +275,7 @@ const CardInvestProposalBodyInvestor: React.FC<Props> = ({
                 ? proposalMetadata.description
                 : t("card-invest-proposal.empty-description-msg")
             }
-            maxLen={isDesktop ? 140 : undefined}
+            maxLen={isDesktop ? 140 : 40}
           />
         </S.CardInvestProposalDescriptionWrp>
       </S.CardInvestProposalGridItem>
@@ -392,13 +396,15 @@ const CardInvestProposalBodyInvestor: React.FC<Props> = ({
       </S.CardInvestProposalGridItem>
 
       <S.CardInvestProposalGridItem gridRow={isDesktop ? "1/2" : "auto"}>
-        <AppButton
-          full
-          text={t("card-invest-proposal.action-stake-lp")}
-          color={"tertiary"}
-          size={"small"}
-          onClick={onStake}
-        />
+        <S.CardInvestProposalValueWrp>
+          <AppButton
+            full
+            text={t("card-invest-proposal.action-stake-lp")}
+            color={"tertiary"}
+            size={"small"}
+            onClick={onStake}
+          />
+        </S.CardInvestProposalValueWrp>
       </S.CardInvestProposalGridItem>
 
       <S.CardInvestProposalGridItem gridColumn={isDesktop ? "1/9" : "1/span 3"}>
@@ -410,7 +416,7 @@ const CardInvestProposalBodyInvestor: React.FC<Props> = ({
                 ? proposalMetadata.description
                 : t("card-invest-proposal.empty-description-msg")
             }
-            maxLen={isDesktop ? 140 : undefined}
+            maxLen={isDesktop ? 140 : 40}
           />
         </S.CardInvestProposalDescriptionWrp>
       </S.CardInvestProposalGridItem>

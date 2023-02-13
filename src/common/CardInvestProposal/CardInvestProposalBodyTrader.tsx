@@ -121,11 +121,11 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
           gridRow={isDesktop ? "1/2" : "auto"}
         >
           <S.CardInvestProposalSettingsActionWrp>
-            <S.CardInvestProposalStatus active={isCompleted}>
+            <S.CardInvestProposalStatus active={!isCompleted}>
               {t(
                 isCompleted
-                  ? "card-invest-proposal.status-open"
-                  : "card-invest-proposal.status-closed"
+                  ? "card-invest-proposal.status-closed"
+                  : "card-invest-proposal.status-open"
               )}
             </S.CardInvestProposalStatus>
             <IconButton
@@ -275,7 +275,7 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
                 ? proposalMetadata.description
                 : t("card-invest-proposal.empty-description-msg")
             }
-            maxLen={isDesktop ? 140 : undefined}
+            maxLen={isDesktop ? 140 : 40}
           />
         </S.CardInvestProposalDescriptionWrp>
       </S.CardInvestProposalGridItem>
@@ -283,22 +283,26 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
       {isDesktop && (
         <>
           <S.CardInvestProposalGridItem gridRow={isDesktop ? "1/2" : "auto"}>
-            <AppButton
-              full
-              text={t("card-invest-proposal.action-pay-dividends")}
-              color={"tertiary"}
-              size={"small"}
-              onClick={onPayDividends}
-            />
+            <S.CardInvestProposalValueWrp>
+              <AppButton
+                full
+                text={t("card-invest-proposal.action-pay-dividend")}
+                color={"tertiary"}
+                size={"small"}
+                onClick={onPayDividends}
+              />
+            </S.CardInvestProposalValueWrp>
           </S.CardInvestProposalGridItem>
           <S.CardInvestProposalGridItem gridRow={isDesktop ? "2/3" : "auto"}>
-            <AppButton
-              full
-              text={t("card-invest-proposal.action-withdraw")}
-              color={"secondary"}
-              size={"small"}
-              onClick={onWithdraw}
-            />
+            <S.CardInvestProposalValueWrp>
+              <AppButton
+                full
+                text={t("card-invest-proposal.action-withdraw")}
+                color={"secondary"}
+                size={"small"}
+                onClick={onWithdraw}
+              />
+            </S.CardInvestProposalValueWrp>
           </S.CardInvestProposalGridItem>
         </>
       )}

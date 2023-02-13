@@ -159,6 +159,10 @@ export const CardInvestProposalValueWithIconWrp = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+
+  ${respondTo("lg")} {
+    align-items: flex-start;
+  }
 `
 
 // custom
@@ -209,5 +213,20 @@ export const CardInvestProposalDescriptionWrp = styled.div`
     font-weight: 500;
     font-size: 14px;
     line-height: 170%;
+  }
+`
+
+export const CardInvestProposalUpdateFormWrp = styled.div`
+  width: 100%;
+  max-width: 420px;
+  position: absolute;
+  top: 38px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 101;
+
+  ${respondTo("lg")} {
+    top: 14px;
+    background: #141926;
   }
 `

@@ -155,17 +155,19 @@ const CardInvestProposal: React.FC<Props> = ({ payload, ...rest }) => {
       <AnimatePresence>
         <CardActions actions={actions} visible={isShowActions} />
       </AnimatePresence>
-      <UpdateInvestProposalForm
-        ticker={proposalMetadata.ticker}
-        visible={isSettingsOpen}
-        setVisible={setIsSettingsOpen}
-        proposalPool={proposalPool}
-        proposalId={utilityIds.proposalId}
-        successCallback={onUpdateRestrictions}
-        timestamp={String(expirationTimestamp)}
-        maxSizeLP={maxSizeLP}
-        fullness={fullness}
-      />
+      <S.CardInvestProposalUpdateFormWrp>
+        <UpdateInvestProposalForm
+          ticker={proposalMetadata.ticker}
+          visible={isSettingsOpen}
+          setVisible={setIsSettingsOpen}
+          proposalPool={proposalPool}
+          proposalId={utilityIds.proposalId}
+          successCallback={onUpdateRestrictions}
+          timestamp={String(expirationTimestamp)}
+          maxSizeLP={maxSizeLP}
+          fullness={fullness}
+        />
+      </S.CardInvestProposalUpdateFormWrp>
     </S.Root>
   )
 }
