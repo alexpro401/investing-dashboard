@@ -25,44 +25,49 @@
                     {
                         "components": [
                             {
-                                "internalType": "uint256",
+                                "internalType": "uint64",
                                 "name": "maxPoolInvestors",
-                                "type": "uint256"
+                                "type": "uint64"
                             },
                             {
-                                "internalType": "uint256",
+                                "internalType": "uint64",
                                 "name": "maxOpenPositions",
-                                "type": "uint256"
+                                "type": "uint64"
                             },
                             {
-                                "internalType": "uint256",
-                                "name": "leverageThreshold",
-                                "type": "uint256"
+                                "internalType": "uint64",
+                                "name": "delayForRiskyPool",
+                                "type": "uint64"
                             },
                             {
-                                "internalType": "uint256",
-                                "name": "leverageSlope",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
+                                "internalType": "uint64",
                                 "name": "commissionInitTimestamp",
-                                "type": "uint256"
+                                "type": "uint64"
                             },
                             {
-                                "internalType": "uint256[]",
+                                "internalType": "uint64[]",
                                 "name": "commissionDurations",
-                                "type": "uint256[]"
+                                "type": "uint64[]"
                             },
                             {
-                                "internalType": "uint256",
+                                "internalType": "uint32",
+                                "name": "leverageThreshold",
+                                "type": "uint32"
+                            },
+                            {
+                                "internalType": "uint32",
+                                "name": "leverageSlope",
+                                "type": "uint32"
+                            },
+                            {
+                                "internalType": "uint128",
                                 "name": "dexeCommissionPercentage",
-                                "type": "uint256"
+                                "type": "uint128"
                             },
                             {
-                                "internalType": "uint256[]",
+                                "internalType": "uint128[]",
                                 "name": "dexeCommissionDistributionPercentages",
-                                "type": "uint256[]"
+                                "type": "uint128[]"
                             },
                             {
                                 "internalType": "uint256",
@@ -73,11 +78,6 @@
                                 "internalType": "uint256[]",
                                 "name": "maxTraderCommissions",
                                 "type": "uint256[]"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "delayForRiskyPool",
-                                "type": "uint256"
                             }
                         ],
                         "internalType": "struct ICoreProperties.TraderParameters",
@@ -87,23 +87,23 @@
                     {
                         "components": [
                             {
-                                "internalType": "uint256",
+                                "internalType": "uint64",
                                 "name": "insuranceFactor",
-                                "type": "uint256"
+                                "type": "uint64"
                             },
                             {
-                                "internalType": "uint256",
+                                "internalType": "uint64",
+                                "name": "insuranceWithdrawalLock",
+                                "type": "uint64"
+                            },
+                            {
+                                "internalType": "uint128",
                                 "name": "maxInsurancePoolShare",
-                                "type": "uint256"
+                                "type": "uint128"
                             },
                             {
                                 "internalType": "uint256",
                                 "name": "minInsuranceDeposit",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "insuranceWithdrawalLock",
                                 "type": "uint256"
                             }
                         ],
@@ -114,14 +114,14 @@
                     {
                         "components": [
                             {
-                                "internalType": "uint256",
+                                "internalType": "uint128",
                                 "name": "govVotesLimit",
-                                "type": "uint256"
+                                "type": "uint128"
                             },
                             {
-                                "internalType": "uint256",
+                                "internalType": "uint128",
                                 "name": "govCommissionPercentage",
-                                "type": "uint256"
+                                "type": "uint128"
                             }
                         ],
                         "internalType": "struct ICoreProperties.GovParameters",
@@ -172,44 +172,49 @@
             {
                 "components": [
                     {
-                        "internalType": "uint256",
+                        "internalType": "uint64",
                         "name": "maxPoolInvestors",
-                        "type": "uint256"
+                        "type": "uint64"
                     },
                     {
-                        "internalType": "uint256",
+                        "internalType": "uint64",
                         "name": "maxOpenPositions",
-                        "type": "uint256"
+                        "type": "uint64"
                     },
                     {
-                        "internalType": "uint256",
-                        "name": "leverageThreshold",
-                        "type": "uint256"
+                        "internalType": "uint64",
+                        "name": "delayForRiskyPool",
+                        "type": "uint64"
                     },
                     {
-                        "internalType": "uint256",
-                        "name": "leverageSlope",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
+                        "internalType": "uint64",
                         "name": "commissionInitTimestamp",
-                        "type": "uint256"
+                        "type": "uint64"
                     },
                     {
-                        "internalType": "uint256[]",
+                        "internalType": "uint64[]",
                         "name": "commissionDurations",
-                        "type": "uint256[]"
+                        "type": "uint64[]"
                     },
                     {
-                        "internalType": "uint256",
+                        "internalType": "uint32",
+                        "name": "leverageThreshold",
+                        "type": "uint32"
+                    },
+                    {
+                        "internalType": "uint32",
+                        "name": "leverageSlope",
+                        "type": "uint32"
+                    },
+                    {
+                        "internalType": "uint128",
                         "name": "dexeCommissionPercentage",
-                        "type": "uint256"
+                        "type": "uint128"
                     },
                     {
-                        "internalType": "uint256[]",
+                        "internalType": "uint128[]",
                         "name": "dexeCommissionDistributionPercentages",
-                        "type": "uint256[]"
+                        "type": "uint128[]"
                     },
                     {
                         "internalType": "uint256",
@@ -220,11 +225,6 @@
                         "internalType": "uint256[]",
                         "name": "maxTraderCommissions",
                         "type": "uint256[]"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "delayForRiskyPool",
-                        "type": "uint256"
                     }
                 ],
                 "internalType": "struct ICoreProperties.TraderParameters",
@@ -234,23 +234,23 @@
             {
                 "components": [
                     {
-                        "internalType": "uint256",
+                        "internalType": "uint64",
                         "name": "insuranceFactor",
-                        "type": "uint256"
+                        "type": "uint64"
                     },
                     {
-                        "internalType": "uint256",
+                        "internalType": "uint64",
+                        "name": "insuranceWithdrawalLock",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "uint128",
                         "name": "maxInsurancePoolShare",
-                        "type": "uint256"
+                        "type": "uint128"
                     },
                     {
                         "internalType": "uint256",
                         "name": "minInsuranceDeposit",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "insuranceWithdrawalLock",
                         "type": "uint256"
                     }
                 ],
@@ -261,14 +261,14 @@
             {
                 "components": [
                     {
-                        "internalType": "uint256",
+                        "internalType": "uint128",
                         "name": "govVotesLimit",
-                        "type": "uint256"
+                        "type": "uint128"
                     },
                     {
-                        "internalType": "uint256",
+                        "internalType": "uint128",
                         "name": "govCommissionPercentage",
-                        "type": "uint256"
+                        "type": "uint128"
                     }
                 ],
                 "internalType": "struct ICoreProperties.GovParameters",
@@ -314,9 +314,9 @@
         "name": "getCommissionDuration",
         "outputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint64",
                 "name": "",
-                "type": "uint256"
+                "type": "uint64"
             }
         ],
         "stateMutability": "view",
@@ -351,9 +351,9 @@
         "name": "getCommissionInitTimestamp",
         "outputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint64",
                 "name": "",
-                "type": "uint256"
+                "type": "uint64"
             }
         ],
         "stateMutability": "view",
@@ -388,19 +388,19 @@
         "name": "getDEXECommissionPercentages",
         "outputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint128",
                 "name": "",
-                "type": "uint256"
+                "type": "uint128"
             },
             {
-                "internalType": "uint256",
+                "internalType": "uint128",
                 "name": "",
-                "type": "uint256"
+                "type": "uint128"
             },
             {
-                "internalType": "uint256[]",
+                "internalType": "uint128[]",
                 "name": "",
-                "type": "uint256[]"
+                "type": "uint128[]"
             },
             {
                 "internalType": "address[3]",
@@ -416,9 +416,9 @@
         "name": "getDelayForRiskyPool",
         "outputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint64",
                 "name": "",
-                "type": "uint256"
+                "type": "uint64"
             }
         ],
         "stateMutability": "view",
@@ -448,9 +448,9 @@
         "name": "getGovVotesLimit",
         "outputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint128",
                 "name": "",
-                "type": "uint256"
+                "type": "uint128"
             }
         ],
         "stateMutability": "view",
@@ -474,9 +474,9 @@
         "name": "getInsuranceFactor",
         "outputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint64",
                 "name": "",
-                "type": "uint256"
+                "type": "uint64"
             }
         ],
         "stateMutability": "view",
@@ -487,9 +487,9 @@
         "name": "getInsuranceWithdrawalLock",
         "outputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint64",
                 "name": "",
-                "type": "uint256"
+                "type": "uint64"
             }
         ],
         "stateMutability": "view",
@@ -500,9 +500,9 @@
         "name": "getMaxInsurancePoolShare",
         "outputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint128",
                 "name": "",
-                "type": "uint256"
+                "type": "uint128"
             }
         ],
         "stateMutability": "view",
@@ -513,9 +513,9 @@
         "name": "getMaximumOpenPositions",
         "outputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint64",
                 "name": "",
-                "type": "uint256"
+                "type": "uint64"
             }
         ],
         "stateMutability": "view",
@@ -526,9 +526,9 @@
         "name": "getMaximumPoolInvestors",
         "outputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint64",
                 "name": "",
-                "type": "uint256"
+                "type": "uint64"
             }
         ],
         "stateMutability": "view",
@@ -570,14 +570,14 @@
         "name": "getTraderLeverageParams",
         "outputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint32",
                 "name": "",
-                "type": "uint256"
+                "type": "uint32"
             },
             {
-                "internalType": "uint256",
+                "internalType": "uint32",
                 "name": "",
-                "type": "uint256"
+                "type": "uint32"
             }
         ],
         "stateMutability": "view",
@@ -694,9 +694,9 @@
     {
         "inputs": [
             {
-                "internalType": "uint256[]",
+                "internalType": "uint64[]",
                 "name": "durations",
-                "type": "uint256[]"
+                "type": "uint64[]"
             }
         ],
         "name": "setCommissionDurations",
@@ -707,9 +707,9 @@
     {
         "inputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint64",
                 "name": "timestamp",
-                "type": "uint256"
+                "type": "uint64"
             }
         ],
         "name": "setCommissionInitTimestamp",
@@ -724,44 +724,49 @@
                     {
                         "components": [
                             {
-                                "internalType": "uint256",
+                                "internalType": "uint64",
                                 "name": "maxPoolInvestors",
-                                "type": "uint256"
+                                "type": "uint64"
                             },
                             {
-                                "internalType": "uint256",
+                                "internalType": "uint64",
                                 "name": "maxOpenPositions",
-                                "type": "uint256"
+                                "type": "uint64"
                             },
                             {
-                                "internalType": "uint256",
-                                "name": "leverageThreshold",
-                                "type": "uint256"
+                                "internalType": "uint64",
+                                "name": "delayForRiskyPool",
+                                "type": "uint64"
                             },
                             {
-                                "internalType": "uint256",
-                                "name": "leverageSlope",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
+                                "internalType": "uint64",
                                 "name": "commissionInitTimestamp",
-                                "type": "uint256"
+                                "type": "uint64"
                             },
                             {
-                                "internalType": "uint256[]",
+                                "internalType": "uint64[]",
                                 "name": "commissionDurations",
-                                "type": "uint256[]"
+                                "type": "uint64[]"
                             },
                             {
-                                "internalType": "uint256",
+                                "internalType": "uint32",
+                                "name": "leverageThreshold",
+                                "type": "uint32"
+                            },
+                            {
+                                "internalType": "uint32",
+                                "name": "leverageSlope",
+                                "type": "uint32"
+                            },
+                            {
+                                "internalType": "uint128",
                                 "name": "dexeCommissionPercentage",
-                                "type": "uint256"
+                                "type": "uint128"
                             },
                             {
-                                "internalType": "uint256[]",
+                                "internalType": "uint128[]",
                                 "name": "dexeCommissionDistributionPercentages",
-                                "type": "uint256[]"
+                                "type": "uint128[]"
                             },
                             {
                                 "internalType": "uint256",
@@ -772,11 +777,6 @@
                                 "internalType": "uint256[]",
                                 "name": "maxTraderCommissions",
                                 "type": "uint256[]"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "delayForRiskyPool",
-                                "type": "uint256"
                             }
                         ],
                         "internalType": "struct ICoreProperties.TraderParameters",
@@ -786,23 +786,23 @@
                     {
                         "components": [
                             {
-                                "internalType": "uint256",
+                                "internalType": "uint64",
                                 "name": "insuranceFactor",
-                                "type": "uint256"
+                                "type": "uint64"
                             },
                             {
-                                "internalType": "uint256",
+                                "internalType": "uint64",
+                                "name": "insuranceWithdrawalLock",
+                                "type": "uint64"
+                            },
+                            {
+                                "internalType": "uint128",
                                 "name": "maxInsurancePoolShare",
-                                "type": "uint256"
+                                "type": "uint128"
                             },
                             {
                                 "internalType": "uint256",
                                 "name": "minInsuranceDeposit",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "insuranceWithdrawalLock",
                                 "type": "uint256"
                             }
                         ],
@@ -813,14 +813,14 @@
                     {
                         "components": [
                             {
-                                "internalType": "uint256",
+                                "internalType": "uint128",
                                 "name": "govVotesLimit",
-                                "type": "uint256"
+                                "type": "uint128"
                             },
                             {
-                                "internalType": "uint256",
+                                "internalType": "uint128",
                                 "name": "govCommissionPercentage",
-                                "type": "uint256"
+                                "type": "uint128"
                             }
                         ],
                         "internalType": "struct ICoreProperties.GovParameters",
@@ -841,19 +841,19 @@
     {
         "inputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint128",
                 "name": "dexeCommission",
-                "type": "uint256"
+                "type": "uint128"
             },
             {
-                "internalType": "uint256",
+                "internalType": "uint128",
                 "name": "govCommission",
-                "type": "uint256"
+                "type": "uint128"
             },
             {
-                "internalType": "uint256[]",
+                "internalType": "uint128[]",
                 "name": "distributionPercentages",
-                "type": "uint256[]"
+                "type": "uint128[]"
             }
         ],
         "name": "setDEXECommissionPercentages",
@@ -864,9 +864,9 @@
     {
         "inputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint64",
                 "name": "delayForRiskyPool",
-                "type": "uint256"
+                "type": "uint64"
             }
         ],
         "name": "setDelayForRiskyPool",
@@ -890,9 +890,9 @@
     {
         "inputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint128",
                 "name": "newVotesLimit",
-                "type": "uint256"
+                "type": "uint128"
             }
         ],
         "name": "setGovVotesLimit",
@@ -918,23 +918,23 @@
             {
                 "components": [
                     {
-                        "internalType": "uint256",
+                        "internalType": "uint64",
                         "name": "insuranceFactor",
-                        "type": "uint256"
+                        "type": "uint64"
                     },
                     {
-                        "internalType": "uint256",
+                        "internalType": "uint64",
+                        "name": "insuranceWithdrawalLock",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "uint128",
                         "name": "maxInsurancePoolShare",
-                        "type": "uint256"
+                        "type": "uint128"
                     },
                     {
                         "internalType": "uint256",
                         "name": "minInsuranceDeposit",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "insuranceWithdrawalLock",
                         "type": "uint256"
                     }
                 ],
@@ -951,9 +951,9 @@
     {
         "inputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint64",
                 "name": "count",
-                "type": "uint256"
+                "type": "uint64"
             }
         ],
         "name": "setMaximumOpenPositions",
@@ -964,9 +964,9 @@
     {
         "inputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint64",
                 "name": "count",
-                "type": "uint256"
+                "type": "uint64"
             }
         ],
         "name": "setMaximumPoolInvestors",
@@ -995,14 +995,14 @@
     {
         "inputs": [
             {
-                "internalType": "uint256",
+                "internalType": "uint32",
                 "name": "threshold",
-                "type": "uint256"
+                "type": "uint32"
             },
             {
-                "internalType": "uint256",
+                "internalType": "uint32",
                 "name": "slope",
-                "type": "uint256"
+                "type": "uint32"
             }
         ],
         "name": "setTraderLeverageParams",
