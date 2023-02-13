@@ -1,8 +1,9 @@
-import styled from "styled-components/macro"
+import styled, { css } from "styled-components/macro"
 
 import theme, { Flex, respondTo } from "theme"
-import { AppButton } from "common"
-import { PoolBaseToken } from "pages/PoolProfile/components" // FIXME
+import { AppButton, Icon } from "common"
+import { PoolBaseToken } from "common"
+import ExternalLink from "components/ExternalLink" // FIXME
 
 export const Root = styled(Flex).attrs(() => ({
   full: true,
@@ -75,7 +76,6 @@ export const OnChainVotingContent = styled.div`
 export const OnChainVotingContentStatistics = styled.div`
   flex: 1;
   display: grid;
-  justify-items: center;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: var(--app-gap);
 `
@@ -126,3 +126,37 @@ export const BalanceSectionItemBtn = styled(AppButton).attrs({
 })``
 
 export const BalanceBaseToken = styled(PoolBaseToken)``
+
+export const PoolStatisticsItemVal = styled.div<{
+  isAccent?: boolean
+}>`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-align: left;
+  width: 100%;
+
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: ${(props) => props.theme.textColors.primary};
+
+  ${(props) =>
+    props.isAccent
+      ? css`
+          color: ${(props) => props.theme.brandColors.secondary};
+        `
+      : ""}
+`
+
+export const StatisticItemValIcon = styled(Icon)`
+  color: ${(props) => props.theme.brandColors.secondary};
+  width: 1.25em;
+  height: 1.25em;
+`
+
+export const StatisticExternalLinkWrp = styled(ExternalLink)`
+  text-align: left;
+  width: 100%;
+`

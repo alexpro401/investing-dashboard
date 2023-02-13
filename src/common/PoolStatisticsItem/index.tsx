@@ -1,4 +1,4 @@
-import { FC, HTMLAttributes } from "react"
+import { FC, HTMLAttributes, ReactNode } from "react"
 import * as S from "./styled"
 import { useBreakpoints } from "hooks"
 import Tooltip from "components/Tooltip"
@@ -8,7 +8,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   tokenAddress?: string
   imgUrl?: string
   label?: string
-  value?: string
+  value?: string | ReactNode
   percentage?: number
   percentageLabel?: string
   tooltipMsg?: string

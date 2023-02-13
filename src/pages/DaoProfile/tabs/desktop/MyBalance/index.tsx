@@ -1,13 +1,14 @@
 import React from "react"
 
 import { PoolStatisticsItem } from "common"
-import { formatNumber, normalizeBigNumber } from "utils"
+import { normalizeBigNumber } from "utils"
 import { useTranslation } from "react-i18next"
 
 import onChainImg from "assets/images/onchain-voting.png"
 
 import * as SCommon from "../styled"
 import * as S from "./styled"
+import { ICON_NAMES } from "consts"
 
 const MyBalance: React.FC = () => {
   const { t } = useTranslation()
@@ -41,33 +42,58 @@ const MyBalance: React.FC = () => {
           <S.OnChainVotingContentStatistics>
             <PoolStatisticsItem
               label={t("dao-profile.my-balance.total-voting-power-lbl")}
-              value={`$${normalizeBigNumber("5000000000000000000", 18, 2)}`}
+              value={
+                <S.PoolStatisticsItemVal>
+                  ${normalizeBigNumber("5000000000000000000", 18, 2)}
+                </S.PoolStatisticsItemVal>
+              }
               tooltipMsg={"Lorem ipsum dolor sit amet!"}
             />
             <PoolStatisticsItem
               label={t("dao-profile.my-balance.received-rewards-lbl")}
-              value={`$${normalizeBigNumber("5000000000000000000", 18, 2)}`}
+              value={
+                <S.PoolStatisticsItemVal>
+                  ${normalizeBigNumber("5000000000000000000", 18, 2)}
+                </S.PoolStatisticsItemVal>
+              }
               tooltipMsg={"Lorem ipsum dolor sit amet!"}
             />
             <PoolStatisticsItem
               label={t("dao-profile.my-balance.claim-available-lbl")}
-              value={`$${normalizeBigNumber("5000000000000000000", 18, 2)}`}
+              value={
+                <S.PoolStatisticsItemVal isAccent>
+                  ${normalizeBigNumber("5000000000000000000", 18, 2)}
+                </S.PoolStatisticsItemVal>
+              }
               tooltipMsg={"Lorem ipsum dolor sit amet!"}
             />
 
             <PoolStatisticsItem
               label={t("dao-profile.my-balance.proposal-voting-history-lbl")}
-              value={`$${normalizeBigNumber("5000000000000000000", 18, 2)}`}
+              value={
+                <S.PoolStatisticsItemVal>
+                  ${normalizeBigNumber("5000000000000000000", 18, 2)}
+                  <S.StatisticItemValIcon name={ICON_NAMES.arrowUpDiagonal} />
+                </S.PoolStatisticsItemVal>
+              }
               tooltipMsg={"Lorem ipsum dolor sit amet!"}
             />
             <PoolStatisticsItem
               label={t("dao-profile.my-balance.delegation-fee-lbl")}
-              value={`$${normalizeBigNumber("5000000000000000000", 18, 2)}`}
+              value={
+                <S.PoolStatisticsItemVal>
+                  ${normalizeBigNumber("5000000000000000000", 18, 2)}
+                </S.PoolStatisticsItemVal>
+              }
               tooltipMsg={"Lorem ipsum dolor sit amet!"}
             />
             <PoolStatisticsItem
               label={t("dao-profile.my-balance.apr-lbl")}
-              value={`$${normalizeBigNumber("5000000000000000000", 18, 2)}`}
+              value={
+                <S.PoolStatisticsItemVal>
+                  ${normalizeBigNumber("5000000000000000000", 18, 2)}
+                </S.PoolStatisticsItemVal>
+              }
               tooltipMsg={"Lorem ipsum dolor sit amet!"}
             />
           </S.OnChainVotingContentStatistics>
@@ -89,23 +115,41 @@ const MyBalance: React.FC = () => {
           <S.BalanceBaseToken
             tokenAddress={""}
             label={t("dao-profile.my-balance.balance-total-lbl")}
-            value={formatNumber("5000", 2)}
+            value={
+              <S.StatisticExternalLinkWrp href={""}>
+                <S.PoolStatisticsItemVal>{"ASD"}</S.PoolStatisticsItemVal>
+              </S.StatisticExternalLinkWrp>
+            }
+            tooltipMsg={t("dao-profile.my-balance.base-token-tooltip")}
           />
           <PoolStatisticsItem
             label={t("dao-profile.my-balance.used-in-pool-lbl", {
               poolSymbol: "PLPLPLPL",
             })}
-            value={`$${normalizeBigNumber("5000000000000000000", 18, 2)}`}
+            value={
+              <S.PoolStatisticsItemVal>
+                ${normalizeBigNumber("5000000000000000000", 18, 2)}
+              </S.PoolStatisticsItemVal>
+            }
             tooltipMsg={"Lorem ipsum dolor sit amet!"}
           />
           <PoolStatisticsItem
             label={t("dao-profile.my-balance.delegated-lbl")}
-            value={`$${normalizeBigNumber("5000000000000000000", 18, 2)}`}
+            value={
+              <S.PoolStatisticsItemVal>
+                ${normalizeBigNumber("5000000000000000000", 18, 2)}
+                <S.StatisticItemValIcon name={ICON_NAMES.arrowUpDiagonal} />
+              </S.PoolStatisticsItemVal>
+            }
             tooltipMsg={"Lorem ipsum dolor sit amet!"}
           />
           <PoolStatisticsItem
             label={t("dao-profile.my-balance.available-to-withdraw-lbl")}
-            value={`$${normalizeBigNumber("5000000000000000000", 18, 2)}`}
+            value={
+              <S.PoolStatisticsItemVal>
+                ${normalizeBigNumber("5000000000000000000", 18, 2)}
+              </S.PoolStatisticsItemVal>
+            }
             tooltipMsg={"Lorem ipsum dolor sit amet!"}
           />
 
