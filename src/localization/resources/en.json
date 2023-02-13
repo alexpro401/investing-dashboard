@@ -260,5 +260,28 @@
     "settings-reward-for-executor-lbl": "Amount of tokens for tx. executor",
 
     "next-btn": "Create DAO"
+  },
+
+  "dao-profile": {
+    "my-balance": {
+      "tutorial-title": "My onchain voting:",
+      "tutorial-btn": "tutorial",
+
+      "section-1-title": "Onchain voting",
+      "total-voting-power-lbl": "Total voting power",
+      "received-rewards-lbl": "Received rewards",
+      "claim-available-lbl": "Available to claim",
+      "proposal-voting-history-lbl": "Voting history in proposal",
+      "delegation-fee-lbl": "Delegation fee",
+      "apr-lbl": "APR",
+      "claim-btn": "Claim all",
+
+      "section-2-title": "My balance",
+      "balance-total-lbl": "Total balance",
+      "used-in-pool-lbl": "Used in {{poolSymbol}}",
+      "delegated-lbl": "Delegated",
+      "available-to-withdraw-lbl": "Available to withdraw",
+      "withdraw-btn": "Withdraw assets"
+    }
   }
 }
