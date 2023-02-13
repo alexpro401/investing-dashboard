@@ -26,6 +26,7 @@ import * as S from "./styled"
 import { TraderPoolInvestProposal } from "interfaces/typechain"
 import { DATE_TIME_FORMAT, ICON_NAMES } from "consts"
 import { InputField } from "fields"
+import { useTranslation } from "react-i18next"
 
 interface Values {
   timestampLimit: number
@@ -92,6 +93,7 @@ const UpdateInvestProposalForm: FC<Props> = ({
 }) => {
   const addTransaction = useTransactionAdder()
   const addToast = useAddToast()
+  const { t } = useTranslation()
 
   const [isDateOpen, setDateOpen] = useState<boolean>(false)
   const [errors, setErrors] = useState<IErrorsState>(errorsDefaultState)
@@ -112,14 +114,16 @@ const UpdateInvestProposalForm: FC<Props> = ({
     const errors = {} as IErrorsState
 
     if (parseUnits(investLPLimit, 18).gt(fullness)) {
-      errors.investLPLimit = "Invest limit can't be less than fullness"
+      errors.investLPLimit = t(
+        "validations.field-error_investLimitLessThanFullness"
+      )
       setErrors(errors)
 
       return true
     }
 
     return false
-  }, [fullness, investLPLimit])
+  }, [t, fullness, investLPLimit])
 
   const isValuesChanged = (_timestamp, _investLPLimit): boolean => {
     if (_timestamp === timestamp && _investLPLimit.eq(maxSizeLP)) {
@@ -141,7 +145,7 @@ const UpdateInvestProposalForm: FC<Props> = ({
       addToast(
         {
           type: "warning",
-          content: `Nothing has been changed. Please change something before submitting.`,
+          content: t("notifications.without-changes"),
         },
         "revert-change-invest-proposal",
         2000
@@ -196,7 +200,9 @@ const UpdateInvestProposalForm: FC<Props> = ({
     >
       <S.Header>
         <Flex full ai={"center"} jc={"space-between"}>
-          <S.HeaderTitle>Investment proposal {ticker} settings:</S.HeaderTitle>
+          <S.HeaderTitle>
+            {t("update-invest-proposal-form.title", { ticker })}
+          </S.HeaderTitle>
           <S.HeaderCloseButton
             color={"secondary"}
             size={"x-small"}
@@ -211,13 +217,13 @@ const UpdateInvestProposalForm: FC<Props> = ({
           value={format(expandTimestamp(timestampLimit), DATE_TIME_FORMAT)}
           onChange={() => {}}
           onClick={() => setDateOpen(!isDateOpen)}
-          label="Expiration date"
+          label={t("update-invest-proposal-form.field-label-expiration-date")}
         />
 
         <InputField
           placeholder="---"
           value={investLPLimit}
-          label="LPs available for staking"
+          label={t("update-invest-proposal-form.field-label-invest-limit")}
           setValue={(v) => setInvestLPLimit(v)}
           errorMessage={
             errors.investLPLimit !== null
@@ -231,7 +237,7 @@ const UpdateInvestProposalForm: FC<Props> = ({
             color="secondary"
             type="button"
             size="small"
-            text="Cancel"
+            text={t("update-invest-proposal-form.action-decline")}
             onClick={() => handleCancel()}
           />
           <AppButton
@@ -239,7 +245,7 @@ const UpdateInvestProposalForm: FC<Props> = ({
             color="tertiary"
             type="button"
             size="small"
-            text="Done"
+            text={t("update-invest-proposal-form.action-submit")}
             onClick={() => handleSubmit()}
             disabled={isSubmiting}
           />

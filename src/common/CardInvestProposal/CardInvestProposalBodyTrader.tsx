@@ -75,6 +75,10 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
   const { isDesktop } = useBreakpoints()
   const { t } = useTranslation()
 
+  const proposalTicker = React.useMemo(
+    () => proposalMetadata?.ticker ?? "",
+    [proposalMetadata]
+  )
   const poolTicker = React.useMemo(() => poolInfo?.ticker ?? "", [poolInfo])
 
   return (
@@ -93,7 +97,7 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
           <S.CardInvestProposalValueWrp>
             {isDesktop && (
               <S.CardInvestProposalLabel>
-                Proposal ticker
+                {t("card-invest-proposal.label-proposal-ticker")}
               </S.CardInvestProposalLabel>
             )}
             <S.CardInvestProposalValueWithIconWrp>
@@ -120,8 +124,8 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
             <S.CardInvestProposalStatus active={isCompleted}>
               {t(
                 isCompleted
-                  ? "card-risky-proposal.status-open"
-                  : "card-risky-proposal.status-closed"
+                  ? "card-invest-proposal.status-open"
+                  : "card-invest-proposal.status-closed"
               )}
             </S.CardInvestProposalStatus>
             <IconButton
@@ -142,7 +146,9 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
       <S.CardInvestProposalGridItem gridRow={isDesktop ? "1/2" : "auto"}>
         <S.CardInvestProposalValueWrp>
           <S.CardInvestProposalLabel>
-            Supply {poolTicker}
+            {t("card-invest-proposal.label-supply", {
+              currency: proposalTicker,
+            })}
           </S.CardInvestProposalLabel>
           <S.CardInvestProposalValue completed={supplyCompleted}>
             {normalizeBigNumber(supply, 18, 6)}
@@ -156,7 +162,9 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
       >
         <S.CardInvestProposalValueWrp>
           <S.CardInvestProposalLabel>
-            Your size {poolTicker}
+            {t("card-invest-proposal.label-your-size", {
+              currency: proposalTicker,
+            })}
           </S.CardInvestProposalLabel>
           <S.CardInvestProposalValue>
             {normalizeBigNumber(youSizeLP, 18, 6)}
@@ -172,7 +180,9 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
           alignment={!isDesktop ? "flex-end" : "initial"}
         >
           <S.CardInvestProposalLabel>
-            Max Size {poolTicker}
+            {t("card-invest-proposal.label-max-size", {
+              currency: poolTicker,
+            })}
           </S.CardInvestProposalLabel>
           <S.CardInvestProposalValue>
             {normalizeBigNumber(maxSizeLP, 18, 6)}
@@ -182,7 +192,9 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
 
       <S.CardInvestProposalGridItem gridRow={isDesktop ? "2/3" : "auto"}>
         <S.CardInvestProposalValueWrp>
-          <S.CardInvestProposalLabel>APR</S.CardInvestProposalLabel>
+          <S.CardInvestProposalLabel>
+            {t("card-invest-proposal.label-apr")}
+          </S.CardInvestProposalLabel>
           <S.CardInvestProposalValue>
             {normalizeBigNumber(apr, 4, 2)}%
           </S.CardInvestProposalValue>
@@ -192,7 +204,9 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
       <S.CardInvestProposalGridItem gridRow={isDesktop ? "1/2" : "auto"}>
         <S.CardInvestProposalValueWrp>
           <S.CardInvestProposalLabel>
-            Dividends avail. ($)
+            {t("card-invest-proposal.label-dividends-avail", {
+              currency: "$",
+            })}
           </S.CardInvestProposalLabel>
           <S.CardInvestProposalValue>
             ~{normalizeBigNumber(dividendsAvailable, 18, 6)}
@@ -205,7 +219,9 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
           alignment={!isDesktop ? "flex-end" : "initial"}
         >
           <S.CardInvestProposalLabel>
-            Total dividends ($)
+            {t("card-invest-proposal.label-dividends-total", {
+              currency: "$",
+            })}
           </S.CardInvestProposalLabel>
           <S.CardInvestProposalValue>
             ~{normalizeBigNumber(dividentsTotalAmount, 18, 6)}
@@ -215,7 +231,9 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
 
       <S.CardInvestProposalGridItem gridRow={isDesktop ? "2/3" : "auto"}>
         <S.CardInvestProposalValueWrp>
-          <S.CardInvestProposalLabel>Investors</S.CardInvestProposalLabel>
+          <S.CardInvestProposalLabel>
+            {t("card-invest-proposal.label-investors")}
+          </S.CardInvestProposalLabel>
           <S.CardInvestProposalValue>
             {totalInvestors.toString()} /{" "}
             <span>{maximumPoolInvestors.toString()}</span>
@@ -226,7 +244,9 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
       {!isDesktop && (
         <S.CardInvestProposalGridItem gridRow={isDesktop ? "1/2" : "auto"}>
           <S.CardInvestProposalValueWrp>
-            <S.CardInvestProposalLabel>Price OTC</S.CardInvestProposalLabel>
+            <S.CardInvestProposalLabel>
+              {t("card-invest-proposal.label-price-otc")}
+            </S.CardInvestProposalLabel>
             <S.CardInvestProposalValue>-</S.CardInvestProposalValue>
           </S.CardInvestProposalValueWrp>
         </S.CardInvestProposalGridItem>
@@ -236,7 +256,9 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
         <S.CardInvestProposalValueWrp
           alignment={!isDesktop ? "flex-end" : "initial"}
         >
-          <S.CardInvestProposalLabel>Expiration date</S.CardInvestProposalLabel>
+          <S.CardInvestProposalLabel>
+            {t("card-invest-proposal.label-expiration-date")}
+          </S.CardInvestProposalLabel>
           <S.CardInvestProposalValue completed={expirationDateCompleted} small>
             {format(expandTimestamp(expirationTimestamp), DATE_TIME_FORMAT)}
           </S.CardInvestProposalValue>
@@ -251,7 +273,7 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
             content={
               proposalMetadata.description.length > 0
                 ? proposalMetadata.description
-                : `t("card-risky-proposal.empty-description-msg")`
+                : t("card-invest-proposal.empty-description-msg")
             }
             maxLen={isDesktop ? 140 : undefined}
           />
@@ -263,7 +285,7 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
           <S.CardInvestProposalGridItem gridRow={isDesktop ? "1/2" : "auto"}>
             <AppButton
               full
-              text="Pay dividends"
+              text={t("card-invest-proposal.action-pay-dividends")}
               color={"tertiary"}
               size={"small"}
               onClick={onPayDividends}
@@ -272,7 +294,7 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
           <S.CardInvestProposalGridItem gridRow={isDesktop ? "2/3" : "auto"}>
             <AppButton
               full
-              text="Withdraw"
+              text={t("card-invest-proposal.action-withdraw")}
               color={"secondary"}
               size={"small"}
               onClick={onWithdraw}

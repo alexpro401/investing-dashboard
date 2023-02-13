@@ -4,6 +4,7 @@
     "field-error_minLength": "This field must contain minimum {{minLength}} symbols",
     "field-error_maxLength": "This field must contain maximum {{maxLength}} symbols",
     "field-error_maxSizeLessThanFullness": "Max size can't be less than fullness",
+    "field-error_investLimitLessThanFullness": "Invest limit can't be less than fullness",
     "field-error_tokenPriceThanCurrentPrice": "Max token price can't be less than current price"
   },
   "errors": {
@@ -192,5 +193,39 @@
     "tooltip-msg-entry-price": "Explain Entry Price",
     "tooltip-msg-current-price": "Explain Current Price",
     "tooltip-msg-closed-price": "Explain Closed Price"
-  }
+  },
+  "card-invest-proposal": {
+    "status-open": "Open investing",
+    "status-closed": "Closed investing",
+    "empty-description-msg": "No description provided to proposal",
+    "action-withdraw": "Withdraw",
+    "action-deposit": "Deposit",
+    "action-claim": "Claim",
+    "action-pay-dividend": "Pay dividend",
+    "action-stake-lp": "Stake LP",
+    "action-request-dividend": "Request a dividend",
+    "label-proposal-ticker": "Proposal ticker",
+    "label-supply": "Supply {{currency}}",
+    "label-your-size": "Your size {{currency}}",
+    "label-max-size": "Max Size {{currency}}",
+    "label-dividends-avail": "Dividends avail. ({{currency}})",
+    "label-dividends-total": "Total dividends ({{currency}})",
+    "label-investors": "Investors",
+    "label-price-otc": "Price OTC",
+    "label-expiration-date": "Expiration date",
+    "label-fund-ticker": "Fund ticker",
+    "label-fulness": "Fulness",
+    "label-your-balance": "Your balance ({{currency}})",
+    "label-apr": "APR",
+    "label-custodian": "Custodian",
+    "label-proposal-size": "Proposal size",
+    "label-lp-price": "LP price ({{currency}})"
+  },
+  "update-invest-proposal-form": {
+    "title": "Investment proposal {{ticker}} settings:",
+    "field-label-expiration-date": "Expiration date",
+    "field-label-invest-limit": "LPs available for staking",
+    "action-submit": "Done",
+    "action-decline": "Cancel"
+  },
 }

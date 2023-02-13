@@ -10,6 +10,7 @@ import { generatePath, useNavigate } from "react-router-dom"
 import { ROUTE_PATHS } from "consts"
 import useRequestDividendsContext from "modals/RequestDividend/useRequestDividendsContext"
 import UpdateInvestProposalForm from "forms/UpdateInvestProposalForm"
+import { useTranslation } from "react-i18next"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   payload: WrappedInvestProposalView
@@ -30,6 +31,7 @@ const CardInvestProposal: React.FC<Props> = ({ payload, ...rest }) => {
   } = proposalView
 
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { isDesktop } = useBreakpoints()
   const { requestDividends } = useRequestDividendsContext()
 
@@ -75,15 +77,15 @@ const CardInvestProposal: React.FC<Props> = ({ payload, ...rest }) => {
         : isTrader
         ? [
             {
-              label: "Withdraw",
+              label: t("card-invest-proposal.action-withdraw"),
               onClick: () => onTerminalNavigate(TerminalRoute.Withdraw),
             },
             {
-              label: "Deposit",
+              label: t("card-invest-proposal.action-deposit"),
               onClick: () => onTerminalNavigate(TerminalRoute.Invest),
             },
             {
-              label: "Claim",
+              label: t("card-invest-proposal.action-claim"),
               onClick: () =>
                 requestDividends(
                   utilityIds.investPoolAddress,
@@ -91,17 +93,17 @@ const CardInvestProposal: React.FC<Props> = ({ payload, ...rest }) => {
                 ),
             },
             {
-              label: "Pay dividend",
+              label: t("card-invest-proposal.action-pay-dividends"),
               onClick: () => onTerminalNavigate(TerminalRoute.PayDividends),
             },
           ]
         : [
             {
-              label: "Stake LP",
+              label: t("card-invest-proposal.action-stake-lp"),
               onClick: () => onTerminalNavigate(TerminalRoute.Invest),
             },
             {
-              label: "Request a dividend",
+              label: t("card-invest-proposal.action-request-dividends"),
               onClick: () =>
                 requestDividends(
                   utilityIds.investPoolAddress,
@@ -110,6 +112,7 @@ const CardInvestProposal: React.FC<Props> = ({ payload, ...rest }) => {
             },
           ],
     [
+      t,
       isTrader,
       isDesktop,
       utilityIds,
