@@ -160,3 +160,46 @@ export const StatisticExternalLinkWrp = styled(ExternalLink)`
   text-align: left;
   width: 100%;
 `
+
+export const ClaimBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
+  padding: 16px;
+`
+
+export const ClaimTitle = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17px;
+  letter-spacing: 0.01em;
+  color: ${(props) => props.theme.textColors.primary};
+`
+
+export const ClaimTitleIcon = styled(Icon)``
+
+export const ClaimTotalRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #161c28;
+  border-radius: 16px;
+  padding: 12px 16px;
+  color: ${(props) => props.theme.textColors.primary};
+`
+
+export const ClaimTotalLabel = styled.div``
+
+export const CLaimTotalLabelIcon = styled.div``
+
+export const ClaimTotalValue = styled.div``
+
+export const ClaimBtn = styled(AppButton).attrs({
+  color: "tertiary",
+})`
+  border: none;
+  width: 100%;
+`

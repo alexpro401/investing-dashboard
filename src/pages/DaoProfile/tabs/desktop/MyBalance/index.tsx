@@ -1,5 +1,6 @@
-import React from "react"
+import React, { useState } from "react"
 
+import Modal from "components/Modal"
 import { PoolStatisticsItem } from "common"
 import { normalizeBigNumber } from "utils"
 import { useTranslation } from "react-i18next"
@@ -12,6 +13,8 @@ import { ICON_NAMES } from "consts"
 
 const MyBalance: React.FC = () => {
   const { t } = useTranslation()
+
+  const [isClaimModalShown, setIsClaimModalShown] = useState(false)
 
   return (
     <S.Root>
@@ -101,7 +104,7 @@ const MyBalance: React.FC = () => {
             <S.OnChainClaimButton
               text={t("dao-profile.my-balance.claim-btn")}
               color="tertiary"
-              onClick={() => {}}
+              onClick={() => setIsClaimModalShown(true)}
               size="small"
             />
           </S.OnChainClaimButtonWrp>
@@ -158,6 +161,53 @@ const MyBalance: React.FC = () => {
           />
         </S.BalanceSectionItem>
       </S.BalanceSection>
+
+      <Modal
+        isOpen={isClaimModalShown}
+        onClose={() => setIsClaimModalShown(false)}
+        title={t("dao-profile.my-balance.claim-modal-title")}
+        maxWidth="450px"
+      >
+        <S.ClaimBody>
+          <S.ClaimTitle>
+            <S.ClaimTitleIcon name={ICON_NAMES.share} />
+            {t("dao-profile.my-balance.claim-title-voting")}
+          </S.ClaimTitle>
+          <S.ClaimTotalRow>
+            <S.ClaimTotalLabel>
+              <S.CLaimTotalLabelIcon />
+              1000 DGB
+            </S.ClaimTotalLabel>
+            <S.ClaimTotalValue>100,000 USD</S.ClaimTotalValue>
+          </S.ClaimTotalRow>
+          <S.ClaimTotalRow>
+            <S.ClaimTotalLabel>
+              <S.CLaimTotalLabelIcon />
+              1000 DGB
+            </S.ClaimTotalLabel>
+            <S.ClaimTotalValue>100,000 USD</S.ClaimTotalValue>
+          </S.ClaimTotalRow>
+          <S.ClaimTitle>
+            <S.ClaimTitleIcon name={ICON_NAMES.share} />
+            {t("dao-profile.my-balance.claim-title-voting-delegated")}
+          </S.ClaimTitle>
+          <S.ClaimTotalRow>
+            <S.ClaimTotalLabel>
+              <S.CLaimTotalLabelIcon />
+              1000 DGB
+            </S.ClaimTotalLabel>
+            <S.ClaimTotalValue>100,000 USD</S.ClaimTotalValue>
+          </S.ClaimTotalRow>
+          <S.ClaimTotalRow>
+            <S.ClaimTotalLabel>
+              <S.CLaimTotalLabelIcon />
+              1000 DGB
+            </S.ClaimTotalLabel>
+            <S.ClaimTotalValue>100,000 USD</S.ClaimTotalValue>
+          </S.ClaimTotalRow>
+          <S.ClaimBtn text={t("dao-profile.my-balance.claim-btn")} />
+        </S.ClaimBody>
+      </Modal>
     </S.Root>
   )
 }

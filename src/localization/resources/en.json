@@ -281,7 +281,11 @@
       "used-in-pool-lbl": "Used in {{poolSymbol}}",
       "delegated-lbl": "Delegated",
       "available-to-withdraw-lbl": "Available to withdraw",
-      "withdraw-btn": "Withdraw assets"
+      "withdraw-btn": "Withdraw assets",
+
+      "claim-modal-title": "Claim my reward",
+      "claim-title-voting": "Voting reward",
+      "claim-title-voting-delegated": "Delegation reward"
     }
   }
 }
