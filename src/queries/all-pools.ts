@@ -189,9 +189,6 @@ const POSITION_DATA = `
 
 const POSITION = `
   ${POSITION_DATA}
-  exchanges(orderBy: timestamp, orderDirection: desc) {
-    ${POSITION_EXCHANGE}
-  }
   traderPool {
     id
     trader
@@ -220,6 +217,18 @@ export const BasicPositionsQuery = `
       orderBy: startTimestamp, orderDirection: desc
     ) {
       ${POSITION}
+    }
+  }
+`
+
+export const BasicPoolPositionExchangesQuery = `
+  query ($offset: Int!, $limit: Int!, $positionId: String!) {
+    exchanges(
+      skip: $offset, first: $limit,
+      where: {position_: { id: $positionId }},
+      orderBy: timestamp, orderDirection: desc,
+    ) {
+      ${POSITION_EXCHANGE}
     }
   }
 `
