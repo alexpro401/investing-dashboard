@@ -117,7 +117,7 @@ const Swap = () => {
     (currency: Currency) => {
       const token = currency.isToken ? currency : undefined
 
-      if (!token) return
+      if (!token || !poolAddress) return
 
       const DO_NOT_SHOW_FAQ =
         localStorage.getItem("risky-proposal-faq-read") === "true"
@@ -128,9 +128,11 @@ const Swap = () => {
       // if risky proposal not created yet redirect to create proposal page
       if (riskyIndex === -1) {
         navigate(
-          `/create-risky-proposal/${poolAddress}/${tokenAddress}/${
-            DO_NOT_SHOW_FAQ ? "create" : "faq"
-          }`
+          generatePath(ROUTE_PATHS.riskyProposalCreate, {
+            poolAddress: poolAddress!,
+            tokenAddress,
+            "*": DO_NOT_SHOW_FAQ ? "create" : "faq",
+          })
         )
         return
       }
@@ -175,7 +177,6 @@ const Swap = () => {
     if (!isAddress(info.baseAddress) || !isAddress(poolAddress)) return
 
     const lastPath = pathname.split("/").reverse()
-    console.log(lastPath)
 
     if (isAddress(from) || isAddress(to)) return
 
@@ -251,7 +252,15 @@ const Swap = () => {
         }
       />
     )
-  }, [from.amount, to.amount, direction, onSubmit, symbol])
+  }, [
+    from.address,
+    from.amount,
+    to.address,
+    to.amount,
+    direction,
+    onSubmit,
+    symbol,
+  ])
 
   const expectedOutput = useMemo(() => {
     return (
@@ -340,7 +349,15 @@ const Swap = () => {
   }, [infoLoading, inputToken, outputToken, info, direction])
 
   const createInvestProposalButton = poolType === POOL_TYPE.INVEST && (
-    <To to={`/create-invest-proposal/${poolAddress}`}>
+    <To
+      to={generatePath(ROUTE_PATHS.investmentProposalCreate, {
+        poolAddress: poolAddress!,
+        "*":
+          localStorage.getItem("invest-proposal-faq-read") === "true"
+            ? "create"
+            : "faq",
+      })}
+    >
       <S.CreateProposal />
     </To>
   )

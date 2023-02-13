@@ -10,13 +10,14 @@ import { useTraderPoolContract } from "contracts"
 import { useBasicPoolContract } from "contracts"
 import { useTraderPoolRiskyProposalContract } from "contracts"
 
-import { IValidationError, SubmitState } from "consts/types"
+import { SubmitState } from "consts/types"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 
 import { parseTransactionError, isTxMined } from "utils"
 import { useCreateRiskyProposalContext } from "context/fund/CreateRiskyProposalContext"
-import { useEffectOnce } from "react-use"
+import { useEffectOnce, useUnmount } from "react-use"
+import { IpfsEntity } from "utils/ipfsEntity"
 
 const useCreateRiskyProposal = (
   poolAddress?: string,
@@ -37,6 +38,8 @@ const useCreateRiskyProposal = (
   const { account } = useWeb3React()
   const riskyProposal = useTraderPoolRiskyProposalContract(poolAddress)
   const {
+    symbol,
+    description,
     lpAmount,
     timestampLimit,
     investLPLimit,
@@ -50,6 +53,7 @@ const useCreateRiskyProposal = (
   const [payload, setPayload] = usePayload()
 
   useEffectOnce(() => setPayload(SubmitState.IDLE))
+  useUnmount(() => setPayload(SubmitState.IDLE))
 
   const [totalProposals, setTotalProposals] = useState<number>(0)
   const [positionPrice, setPositionPrice] = useState<BigNumber | undefined>()
@@ -93,8 +97,19 @@ const useCreateRiskyProposal = (
         []
       )
 
+      const riskyProposalIpfsEntity = new IpfsEntity({
+        data: JSON.stringify({
+          ticker: symbol.get,
+          account,
+          description: description.get,
+          timestamp: new Date().getTime() / 1000,
+        }),
+      })
+
+      await riskyProposalIpfsEntity.uploadSelf()
+
       const createResponse = await basicTraderPool.createProposal(
-        "descriptionURL",
+        riskyProposalIpfsEntity._path as string,
         tokenAddress,
         amount,
         {
@@ -127,6 +142,8 @@ const useCreateRiskyProposal = (
     }
   }, [
     account,
+    symbol,
+    description,
     addTransaction,
     basicTraderPool,
     instantTradePercentage,

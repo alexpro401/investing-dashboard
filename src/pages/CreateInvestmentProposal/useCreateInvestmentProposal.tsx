@@ -9,74 +9,57 @@ import { parseUnits, parseEther } from "@ethersproject/units"
 import { usePoolContract } from "hooks/usePool"
 import { useTraderPoolContract } from "contracts"
 import { useWeb3React } from "@web3-react/core"
-import getTime from "date-fns/getTime"
-import { addDays } from "date-fns/esm"
 import { TransactionType } from "state/transactions/types"
 import { useTransactionAdder } from "state/transactions/hooks"
-import { shortTimestamp } from "utils"
 import {
   useInvestTraderPoolContract,
   useTraderPoolInvestProposalContract,
 } from "contracts"
 import { parseTransactionError, isTxMined } from "utils"
 import { BigNumber } from "@ethersproject/bignumber"
-import { IValidationError, SubmitState } from "consts/types"
-import { ZERO } from "consts"
+import { SubmitState } from "consts/types"
 import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
 import { IpfsEntity } from "utils/ipfsEntity"
+import { useCreateInvestProposalContext } from "context/fund/CreateInvestProposalContext"
+import { useEffectOnce, useUnmount } from "react-use"
 
 const useCreateInvestmentProposal = (
   poolAddress: string | undefined
 ): [
   {
-    lpAmount: string
     lpAvailable: BigNumber | undefined
-    ticker: string
-    description: string
-    timestampLimit: number
-    investLPLimit: string
     isDateOpen: boolean
     error: string
-    isSubmiting: SubmitState
-    validationErrors: IValidationError[]
+    payload: SubmitState
     totalProposals: number
     poolSymbol: string | undefined
   },
   {
-    setLpAmount: (value: string) => void
-    setTicker: (value: string) => void
-    setDescription: (value: string) => void
-    setTimestampLimit: (value: number) => void
-    setInvestLPLimit: (value: string) => void
-    setSubmiting: (params: SubmitState) => void
+    setPayload: (params: SubmitState) => void
     setDateOpen: Dispatch<SetStateAction<boolean>>
     handleSubmit: () => void
   }
 ] => {
   const { account } = useWeb3React()
-  const initialTimeLimit = shortTimestamp(getTime(addDays(new Date(), 30)))
+
+  const { symbol, description, lpAmount, timestampLimit, investLPLimit } =
+    useCreateInvestProposalContext()
 
   const [lpAvailable, setLpAvailable] = useState<BigNumber | undefined>()
   const [isDateOpen, setDateOpen] = useState(false)
   const [error, setError] = useError()
-  const [isSubmiting, setSubmiting] = usePayload()
-  const [lpAmount, setLpAmount] = useState("")
-  const [ticker, setTicker] = useState("")
-  const [description, setDescription] = useState("")
-  const [timestampLimit, setTimestampLimit] = useState(initialTimeLimit)
-  const [investLPLimit, setInvestLPLimit] = useState("")
+  const [payload, setPayload] = usePayload()
   const [totalProposals, setTotalProposals] = useState<number>(0)
-
-  const [validationErrors, setValidationErrors] = useState<IValidationError[]>(
-    []
-  )
 
   const traderPool = useTraderPoolContract(poolAddress)
   const investTraderPool = useInvestTraderPoolContract(poolAddress)
   const addTransaction = useTransactionAdder()
   const [, poolInfo] = usePoolContract(poolAddress)
   const investProposal = useTraderPoolInvestProposalContract(poolAddress)
+
+  useEffectOnce(() => setPayload(SubmitState.IDLE))
+  useUnmount(() => setPayload(SubmitState.IDLE))
 
   const updateTotalProposals = useCallback(async () => {
     if (!investProposal) return
@@ -90,48 +73,13 @@ const useCreateInvestmentProposal = (
     }
   }, [investProposal])
 
-  const handleValidate = useCallback(() => {
-    const errors: IValidationError[] = []
-
-    // LP allocated for RP
-    if (investLPLimit === "" || isNaN(parseFloat(investLPLimit))) {
-      errors.push({
-        message: "LP amount is required",
-        field: "investLPLimit",
-      })
-    } else if (parseEther(investLPLimit).lte(ZERO)) {
-      errors.push({
-        field: "investLPLimit",
-        message: "LP allocated for Invest proposal must be greater than 0",
-      })
-    }
-
-    // deposit LP amount
-    if (lpAmount === "" || isNaN(parseFloat(lpAmount))) {
-      errors.push({
-        message: "LP amount is required",
-        field: "lpAmount",
-      })
-    } else if (parseEther(lpAmount).lte(ZERO)) {
-      errors.push({
-        field: "lpAmount",
-        message: "LP allocation amount must be greater than 0",
-      })
-    }
-
-    setValidationErrors(errors)
-
-    return !errors.length
-  }, [investLPLimit, lpAmount])
-
   const handleSubmit = useCallback(async () => {
     if (!investTraderPool || !traderPool || !account) return
-    if (!handleValidate()) return
 
     try {
-      setSubmiting(SubmitState.SIGN)
+      setPayload(SubmitState.SIGN)
       setError("")
-      const amount = parseEther(lpAmount).toHexString()
+      const amount = parseEther(lpAmount.get).toHexString()
 
       const divests = await traderPool.getDivestAmountsAndCommissions(
         account,
@@ -140,25 +88,25 @@ const useCreateInvestmentProposal = (
 
       const investProposalIpfsEntity = new IpfsEntity({
         data: JSON.stringify({
-          ticker,
+          ticker: symbol.get,
           account,
-          description,
+          description: description.get,
           timestamp: new Date().getTime() / 1000,
         }),
       })
 
       await investProposalIpfsEntity.uploadSelf()
 
-      const investLPLimitHex = parseUnits(investLPLimit, 18).toHexString()
+      const investLPLimitHex = parseUnits(investLPLimit.get, 18).toHexString()
 
       const createReceipt = await investTraderPool.createProposal(
         investProposalIpfsEntity._path as string,
         amount,
-        { timestampLimit, investLPLimit: investLPLimitHex },
+        { timestampLimit: timestampLimit.get, investLPLimit: investLPLimitHex },
         divests.receptions.receivedAmounts
       )
 
-      setSubmiting(SubmitState.WAIT_CONFIRM)
+      setPayload(SubmitState.WAIT_CONFIRM)
 
       const receipt = await addTransaction(createReceipt, {
         type: TransactionType.INVEST_PROPOSAL_CREATE,
@@ -168,10 +116,10 @@ const useCreateInvestmentProposal = (
       })
 
       if (isTxMined(receipt)) {
-        setSubmiting(SubmitState.SUCCESS)
+        setPayload(SubmitState.SUCCESS)
       }
     } catch (error: any) {
-      setSubmiting(SubmitState.IDLE)
+      setPayload(SubmitState.IDLE)
 
       if (!!error && !!error.data && !!error.data.message) {
         setError(error.data.message)
@@ -179,20 +127,17 @@ const useCreateInvestmentProposal = (
         const errorMessage = parseTransactionError(error.toString())
         !!errorMessage && setError(errorMessage)
       }
-    } finally {
-      setSubmiting(SubmitState.IDLE)
     }
   }, [
     account,
     addTransaction,
-    description,
-    handleValidate,
-    investLPLimit,
+    description.get,
+    investLPLimit.get,
     investTraderPool,
-    lpAmount,
+    lpAmount.get,
     setError,
-    setSubmiting,
-    ticker,
+    setPayload,
+    symbol.get,
     timestampLimit,
     traderPool,
   ])
@@ -211,10 +156,10 @@ const useCreateInvestmentProposal = (
 
   // watch for transaction confirm & check proposals count
   useEffect(() => {
-    if (isSubmiting === SubmitState.SUCCESS) {
+    if (payload === SubmitState.SUCCESS) {
       updateTotalProposals()
     }
-  }, [isSubmiting, updateTotalProposals])
+  }, [payload, updateTotalProposals])
 
   // watch for proposals length
   useEffect(() => {
@@ -223,27 +168,16 @@ const useCreateInvestmentProposal = (
 
   return [
     {
-      lpAmount,
       lpAvailable,
-      ticker,
-      description,
-      timestampLimit,
-      investLPLimit,
-      isSubmiting,
+      payload,
       isDateOpen,
       error,
-      validationErrors,
       totalProposals,
       poolSymbol: poolInfo?.ticker,
     },
     {
-      setLpAmount,
-      setTicker,
-      setDescription,
-      setTimestampLimit,
-      setInvestLPLimit,
       setDateOpen,
-      setSubmiting,
+      setPayload,
       handleSubmit,
     },
   ]
