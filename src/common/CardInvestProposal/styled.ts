@@ -167,6 +167,19 @@ export const CardInvestProposalValueWithIconWrp = styled.div`
 
 // custom
 
+export const CardInvestProposalFundTickerWrpTraderView = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+
+  ${respondTo("lg")} {
+    flex-direction: row;
+  }
+`
+
 export const CardInvestProposalFundTickerWrp = styled(
   CardInvestProposalValueWithIconWrp
 )`

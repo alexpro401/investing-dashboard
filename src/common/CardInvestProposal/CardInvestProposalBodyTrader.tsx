@@ -87,7 +87,7 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
         gridColumn={isDesktop ? "1/2" : "1/3"}
         gridRow={isDesktop ? "1/3" : "auto"}
       >
-        <S.CardInvestProposalValueWithIconWrp>
+        <S.CardInvestProposalFundTickerWrpTraderView>
           <Icon
             size={isDesktop ? 36 : 24}
             m="0"
@@ -113,7 +113,7 @@ const CardInvestProposalBodyTrader: React.FC<Props> = ({
               )}
             </S.CardInvestProposalValueWithIconWrp>
           </S.CardInvestProposalValueWrp>
-        </S.CardInvestProposalValueWithIconWrp>
+        </S.CardInvestProposalFundTickerWrpTraderView>
       </S.CardInvestProposalGridItemFlexy>
       {!isDesktop && (
         <S.CardInvestProposalGridItem
