@@ -12,7 +12,6 @@ import { divideBignumbers } from "utils/formulas"
 
 import * as S from "./styled"
 
-import externalLinkIcon from "assets/icons/external-link.svg"
 import { Flex } from "theme"
 import { ICON_NAMES } from "consts"
 
@@ -99,7 +98,7 @@ const VestCard: FC<Props> = ({ data, baseTokenSymbol, ...rest }) => {
           <S.Item>
             <S.Label>
               {date}
-              <S.ExternalLinkIcon src={externalLinkIcon} />
+              <S.ExternalLinkIcon name={ICON_NAMES.externalLink} />
             </S.Label>
             <S.Value>
               {PositionDirection} {volumeLP2} LP2
@@ -118,7 +117,7 @@ const VestCard: FC<Props> = ({ data, baseTokenSymbol, ...rest }) => {
           <S.Item>
             <S.Value>
               {date}
-              <S.ExternalLinkIcon src={externalLinkIcon} />
+              <S.ExternalLinkIcon name={ICON_NAMES.externalLink} />
             </S.Value>
           </S.Item>
         )}

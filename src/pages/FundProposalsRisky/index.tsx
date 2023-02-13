@@ -5,7 +5,7 @@ import { Routes, Route, useParams } from "react-router-dom"
 import { ITab } from "interfaces"
 
 import Proposals from "./Proposals"
-import Positions from "./Positions"
+import PoolRiskyPositionsList from "./PoolRiskyPositionsList"
 
 import * as S from "./styled"
 import { useBreakpoints } from "hooks"
@@ -46,11 +46,15 @@ const FundProposalsRisky: FC = () => {
         <Route path="open" element={<Proposals poolAddress={poolAddress} />} />
         <Route
           path="positions"
-          element={<Positions closed={false} poolAddress={poolAddress} />}
+          element={
+            <PoolRiskyPositionsList closed={false} poolAddress={poolAddress} />
+          }
         />
         <Route
           path="closed"
-          element={<Positions closed={true} poolAddress={poolAddress} />}
+          element={
+            <PoolRiskyPositionsList closed={true} poolAddress={poolAddress} />
+          }
         />
       </Routes>
     </>

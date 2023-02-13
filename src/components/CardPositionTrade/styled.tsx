@@ -28,7 +28,7 @@ export const Content = styled.div<{ itemMaxWidthLg?: string }>`
             grid-template-columns: repeat(4, minmax(0, ${itemMaxWidthLg})) 1fr;
           `
         : css`
-            grid-template-columns: repeat(4, minmax(0, 145px) 1fr);
+            grid-template-columns: repeat(4, minmax(0, 145px)) 1fr;
           `}
   }
 `

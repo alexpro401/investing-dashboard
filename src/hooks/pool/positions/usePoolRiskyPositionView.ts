@@ -3,11 +3,13 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { useEffect, useMemo, useState } from "react"
 
 import { ZERO } from "consts"
-import { normalizeBigNumber } from "utils"
 import { useERC20Data } from "state/erc20/hooks"
 import { usePriceFeedContract } from "contracts"
 import useTokenPriceOutUSD from "hooks/useTokenPriceOutUSD"
-import { IRiskyPosition } from "interfaces/thegraphs/basic-pools"
+import {
+  RiskyPositionPayload,
+  WrappedPoolRiskyProposalPositionViewUtilityIds,
+} from "interfaces/thegraphs/basic-pools"
 
 import {
   divideBignumbers,
@@ -17,38 +19,31 @@ import {
 } from "utils/formulas"
 import { ITokenBase } from "interfaces"
 
-interface IAmount {
-  big: BigNumber
-  format: string
-}
-
-const INITIAL_AMOUNT: IAmount = {
-  big: ZERO,
-  format: "0",
-}
-
 interface IPayload {
-  positionVolume: IAmount
+  positionVolume: BigNumber
   entryPriceBase: BigNumber
   entryPriceUSD: BigNumber
   markPriceBase: BigNumber
   markPriceUSD: BigNumber
-  pnlPercentage: IAmount
+  pnlPercentage: BigNumber
   pnlBase: BigNumber
   pnlUSD: BigNumber
-  positionToken: ITokenBase | null
-  baseToken: ITokenBase | null
+  proposalToken: ITokenBase | null
+  poolBaseToken: ITokenBase | null
 }
 
-function useRiskyPosition(position: IRiskyPosition): [IPayload] {
-  const [positionToken] = useERC20Data(position?.proposal.token)
-  const [baseToken] = useERC20Data(position.proposal.basicPool.baseToken)
+function usePoolRiskyPositionView(
+  position: RiskyPositionPayload,
+  utilityIds: WrappedPoolRiskyProposalPositionViewUtilityIds
+): [IPayload] {
+  const [proposalToken] = useERC20Data(utilityIds.proposalTokenAddress)
+  const [poolBaseToken] = useERC20Data(utilityIds.poolBaseTokenAddress)
 
   const priceFeed = usePriceFeedContract()
 
   const [currentPositionPriceBase, setCurrentPositionPriceBase] = useState(ZERO)
   const currentPositionPriceUSD = useTokenPriceOutUSD({
-    tokenAddress: position.proposal.token,
+    tokenAddress: utilityIds.proposalTokenAddress,
   })
 
   /**
@@ -56,23 +51,19 @@ function useRiskyPosition(position: IRiskyPosition): [IPayload] {
    * if position.closed return totalPositionCloseVolume
    * otherwise return current position volume
    */
-  const positionVolume = useMemo<IAmount>(() => {
-    if (!position) return INITIAL_AMOUNT
+  const positionVolume = useMemo<BigNumber>(() => {
+    if (!position) return ZERO
 
     const { totalPositionOpenVolume, totalPositionCloseVolume } = position
 
     if (position.isClosed) {
-      return {
-        big: BigNumber.from(totalPositionCloseVolume),
-        format: normalizeBigNumber(BigNumber.from(totalPositionCloseVolume)),
-      }
+      return BigNumber.from(totalPositionCloseVolume)
     }
 
-    const big = subtractBignumbers(
+    return subtractBignumbers(
       [BigNumber.from(totalPositionOpenVolume), 18],
       [BigNumber.from(totalPositionCloseVolume), 18]
     )
-    return { big, format: normalizeBigNumber(big) }
   }, [position])
 
   /**
@@ -147,21 +138,14 @@ function useRiskyPosition(position: IRiskyPosition): [IPayload] {
   /**
    * P&L (in %)
    */
-  const pnlPercentage = useMemo<IAmount>(() => {
-    if (!markPriceBase || !entryPriceBase) {
-      return INITIAL_AMOUNT
-    }
+  const pnlPercentage = useMemo<BigNumber>(() => {
+    if (!markPriceBase || !entryPriceBase) return ZERO
 
-    const big = calcPositionPnlPercentage(markPriceBase, entryPriceBase)
-
-    return {
-      big,
-      format: normalizeBigNumber(big, 18, 2),
-    }
+    return calcPositionPnlPercentage(markPriceBase, entryPriceBase)
   }, [markPriceBase, entryPriceBase])
 
   /**
-   * P&L (in baseToken)
+   * P&L (in poolBaseToken)
    * (markPriceBase - entryPriceBase) * positionVolume
    */
   const pnlBase = useMemo<BigNumber>(() => {
@@ -174,7 +158,7 @@ function useRiskyPosition(position: IRiskyPosition): [IPayload] {
       [entryPriceBase, 18]
     )
 
-    return multiplyBignumbers([priceDiff, 18], [positionVolume.big, 18])
+    return multiplyBignumbers([priceDiff, 18], [positionVolume, 18])
   }, [markPriceBase, entryPriceBase, positionVolume])
 
   /**
@@ -190,22 +174,27 @@ function useRiskyPosition(position: IRiskyPosition): [IPayload] {
       [entryPriceUSD, 18]
     )
 
-    return multiplyBignumbers([priceDiff, 18], [positionVolume.big, 18])
+    return multiplyBignumbers([priceDiff, 18], [positionVolume, 18])
   }, [markPriceUSD, entryPriceUSD, positionVolume])
 
   // get mark price
   useEffect(() => {
     if (!priceFeed) return
     ;(async () => {
-      if (!position.proposal.token || !position.proposal.basicPool) return
+      if (
+        !utilityIds.proposalTokenAddress ||
+        !utilityIds.poolBaseTokenAddress
+      ) {
+        return
+      }
 
       try {
         const amount = parseUnits("1", 18)
 
         // without extended
         const price = await priceFeed.getNormalizedExtendedPriceOut(
-          position.proposal.token,
-          position.proposal.basicPool.baseToken,
+          utilityIds.proposalTokenAddress,
+          utilityIds.poolBaseTokenAddress,
           amount,
           []
         )
@@ -216,7 +205,7 @@ function useRiskyPosition(position: IRiskyPosition): [IPayload] {
         console.error(error)
       }
     })()
-  }, [priceFeed, position])
+  }, [priceFeed, utilityIds])
 
   return [
     {
@@ -228,10 +217,10 @@ function useRiskyPosition(position: IRiskyPosition): [IPayload] {
       pnlPercentage,
       pnlBase,
       pnlUSD,
-      positionToken,
-      baseToken,
+      proposalToken,
+      poolBaseToken,
     },
   ]
 }
 
-export default useRiskyPosition
+export default usePoolRiskyPositionView
