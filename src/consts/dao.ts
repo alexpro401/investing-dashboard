@@ -6,6 +6,7 @@ import { utils } from "ethers"
 export const INITIAL_DAO_PROPOSAL: GovPoolFormOptions = {
   _isErc20: true,
   _isErc721: false,
+  _isBinanceKycRestricted: false,
   _isCustomVoting: false,
   _isDistributionProposal: false,
   _isValidator: false,
