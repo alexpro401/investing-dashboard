@@ -98,7 +98,7 @@ const PoolPositions = () => {
         <Routes>
           <>
             <Route
-              path=""
+              path="/"
               element={
                 <Navigate
                   replace
