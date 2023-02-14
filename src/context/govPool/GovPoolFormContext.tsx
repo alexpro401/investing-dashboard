@@ -195,22 +195,22 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
     storedForm.tokenCreation?.name
   )
   const [_tokenCreationSymbol, _setTokenCreationSymbol] = useState(
-    storedForm.tokenCreation.symbol
+    storedForm.tokenCreation?.symbol
   )
   const [_tokenCreationTotalSupply, _setTokenCreationTotalSupply] = useState(
-    String(fromBig(storedForm.tokenCreation.totalSupply, 18))
+    String(fromBig(storedForm.tokenCreation?.totalSupply, 18))
   )
   const [_tokenCreationTreasury, _setTokenCreationTreasury] = useState(
-    String(fromBig(storedForm.tokenCreation.treasury, 18))
+    String(fromBig(storedForm.tokenCreation?.treasury, 18))
   )
   const [
     _tokenCreationInitialDistribution,
     _setTokenCreationInitialDistribution,
   ] = useState(
-    String(fromBig(storedForm.tokenCreation.initialDistribution, 18))
+    String(fromBig(storedForm.tokenCreation?.initialDistribution, 18))
   )
   const [_tokenCreationRecipients, _setTokenCreationRecipients] = useState(
-    storedForm.tokenCreation.recipients?.map((el) => ({
+    storedForm.tokenCreation?.recipients?.map((el) => ({
       ...el,
       amount: fromBig(el.amount, 18),
     }))

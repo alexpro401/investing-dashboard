@@ -106,12 +106,6 @@ function InputField<V extends string | number>({
       if (max !== undefined && value > max) {
         result = max
       }
-      console.log({
-        value,
-        result,
-        min,
-        max,
-      })
 
       return result as string
     },
