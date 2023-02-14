@@ -14,6 +14,7 @@ import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { cloneDeep } from "lodash"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { BigNumber, BytesLike, ethers } from "ethers"
+import { IPoolFactory } from "../../interfaces/typechain/PoolFactory"
 
 const useCreateDAO = () => {
   const {
@@ -36,6 +37,7 @@ const useCreateDAO = () => {
     createdDaoAddress,
     tokenCreation,
     isTokenCreation,
+    isBinanceKycRestricted,
   } = useContext(GovPoolFormContext)
 
   const factory = usePoolFactoryContract()
@@ -259,7 +261,7 @@ const useCreateDAO = () => {
       executorDescription: "tokenSale",
     }
 
-    const POOL_PARAMETERS = {
+    const POOL_PARAMETERS: IPoolFactory.GovPoolDeployParamsStruct = {
       nftMultiplierAddress: ZERO_ADDR,
       name: daoName.get,
       settingsParams: {
@@ -302,6 +304,7 @@ const useCreateDAO = () => {
             : userKeeperParams.nftsTotalSupply.get,
       },
       verifier: ZERO_ADDR,
+      onlyBABHolders: isBinanceKycRestricted.get, // FIXME
       descriptionURL: additionalData._path,
     }
 

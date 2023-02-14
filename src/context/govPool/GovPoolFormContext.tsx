@@ -34,6 +34,11 @@ interface IGovPoolFormContext {
   erc20: ReturnType<typeof useERC20>
   erc721: ReturnType<typeof useErc721>
 
+  isBinanceKycRestricted: {
+    get: boolean
+    set: Dispatch<SetStateAction<boolean>>
+  }
+
   tokenCreation: {
     name: { get: string; set: Dispatch<SetStateAction<string>> }
     symbol: { get: string; set: Dispatch<SetStateAction<string>> }
@@ -91,6 +96,8 @@ export const GovPoolFormContext = createContext<IGovPoolFormContext>({
   isValidator: { get: false, set: () => {} },
   erc20: {} as ReturnType<typeof useERC20>,
   erc721: {} as ReturnType<typeof useErc721>,
+
+  isBinanceKycRestricted: { get: false, set: () => {} },
 
   tokenCreation: {
     name: { get: "", set: () => {} },
@@ -170,6 +177,9 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
 
   const [_isErc20, _setIsErc20] = useState<boolean>(storedForm._isErc20)
   const [_isErc721, _setIsErc721] = useState<boolean>(storedForm._isErc721)
+
+  const [_isBinanceKycRestricted, _setIsBinanceKycRestricted] =
+    useState<boolean>(storedForm._isBinanceKycRestricted)
 
   const [_isCustomVoting, _setIsCustomVoting] = useState<boolean>(
     storedForm._isCustomVoting
@@ -608,6 +618,7 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
     (): GovPoolFormOptions => ({
       _isErc20,
       _isErc721,
+      _isBinanceKycRestricted,
       _isCustomVoting,
       _isDistributionProposal,
       _isValidator,
@@ -832,6 +843,7 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
       _isDistributionProposal,
       _isErc20,
       _isErc721,
+      _isBinanceKycRestricted,
       _isValidator,
       _socialLinks,
       _tokenCreationInitialDistribution,
@@ -893,6 +905,12 @@ const GovPoolFormContextProvider: FC<IGovPoolFormContextProviderProps> = ({
         value={{
           isErc20: { get: _isErc20, set: _setIsErc20 },
           isErc721: { get: _isErc721, set: _setIsErc721 },
+
+          isBinanceKycRestricted: {
+            get: _isBinanceKycRestricted,
+            set: _setIsBinanceKycRestricted,
+          },
+
           isCustomVoting: { get: _isCustomVoting, set: _setIsCustomVoting },
           isDistributionProposal: {
             get: _isDistributionProposal,
