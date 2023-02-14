@@ -81,9 +81,11 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
       safeBigFrom(0)
     )
 
-    return safeBigFrom(tokenCreation.initialDistribution.get).sub(
-      daoCreationRecipientsSum
-    )
+    return daoCreationRecipientsSum && !daoCreationRecipientsSum.isZero()
+      ? safeBigFrom(tokenCreation.initialDistribution.get).sub(
+          daoCreationRecipientsSum
+        )
+      : BigNumber.from(0)
   }, [tokenCreation.initialDistribution.get, tokenCreation.recipients.get])
 
   const handleNextStep = useCallback(() => {
