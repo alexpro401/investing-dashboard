@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom"
 import { PulseSpinner } from "react-spinners-kit"
 
-import { CardInvestProposal, NoDataMessage } from "common"
+import { CardInvestProposal, NoDataMessage } from "common/index"
 import LoadMore from "components/LoadMore"
 import { RequestDividendsProvider } from "modals/RequestDividend/useRequestDividendsContext"
 import { usePoolInvestProposalsList } from "hooks"
@@ -9,7 +9,7 @@ import { isEmpty } from "lodash"
 import { Center } from "theme"
 import * as S from "./styled"
 
-const FundProposalsInvest = () => {
+const PoolInvestProposalsList = () => {
   const { poolAddress } = useParams()
 
   const [data, loading, fetchMore] = usePoolInvestProposalsList(
@@ -38,4 +38,4 @@ const FundProposalsInvest = () => {
   )
 }
 
-export default FundProposalsInvest
+export default PoolInvestProposalsList

@@ -151,7 +151,7 @@
     "label-closed-price": "Closed price {{currency}}",
     "label-pnl": "P&L {{currency}}"
   },
-  "fund-positions-list": {
+  "pool-positions-list": {
     "label-pool": "Fund",
     "label-my-volume": "My Volume",
     "label-entry-price": "Entry Price",

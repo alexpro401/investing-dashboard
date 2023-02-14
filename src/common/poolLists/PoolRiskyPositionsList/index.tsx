@@ -14,15 +14,16 @@ import LoadMore from "components/LoadMore"
 import { NoDataMessage, CardPoolRiskyPosition } from "common"
 
 import * as S from "./styled"
+import { useParams } from "react-router-dom"
 
 interface IProps {
-  poolAddress?: string
   closed: boolean
 }
 
-const PoolRiskyPositionsList: FC<IProps> = ({ poolAddress, closed }) => {
+const PoolRiskyPositionsList: FC<IProps> = ({ closed }) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
+  const { poolAddress } = useParams()
   const [, poolInfo] = usePoolContract(poolAddress)
 
   const [{ poolMetadata }] = usePoolMetadata(
