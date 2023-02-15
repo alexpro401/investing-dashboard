@@ -1,28 +1,30 @@
-import { BigNumber } from "@ethersproject/bignumber"
+import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
 import { IRiskyPosition } from "interfaces/thegraphs/basic-pools"
 
 export interface IInvestProposal {
   id: string
-  timestampLimit: BigNumber
-  investLPLimit: BigNumber
+  proposalId?: string
+  timestampLimit: string
+  investLPLimit: string
   leftTokens: string[]
-  leftAmounts: BigNumber[]
-  totalUSDSupply: BigNumber
-  firstSupplyTimestamp: BigNumber
-  APR: BigNumber
+  leftAmounts: string[]
+  totalUSDSupply: string
+  firstSupplyTimestamp: string
+  APR: string
   lastSupply: {
     id: string
-    timestamp: BigNumber
+    timestamp: string
     dividendsTokens: string[]
-    amountDividendsTokens: BigNumber[]
+    amountDividendsTokens: string[]
   }
   lastWithdraw: {
     id: string
-    timestamp: BigNumber
-    amountBase: BigNumber
+    timestamp: string
+    amountBase: string
   }
   investPool: {
     id: string
+    baseToken: string
   }
 }
 
