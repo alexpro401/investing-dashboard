@@ -1,4 +1,5 @@
 import { Route, Routes, useParams } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 
 import { Center } from "theme"
 import Header from "components/Header/Layout"
@@ -11,6 +12,7 @@ import Form from "./components/Form"
 
 const CreateInvestmentProposalWithProvider = () => {
   const { poolAddress } = useParams()
+  const { t } = useTranslation()
 
   return (
     <WithPoolAddressValidation
@@ -21,7 +23,7 @@ const CreateInvestmentProposalWithProvider = () => {
         </Center>
       }
     >
-      <Header>Create invest proposal</Header>
+      <Header>{t("creeate-invest-proposal-card.head-title")}</Header>
 
       <CreateInvestProposalContextProvider>
         <Routes>

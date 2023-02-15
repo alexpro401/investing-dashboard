@@ -80,9 +80,9 @@ const Form = () => {
   const CardHeadTemplate = (
     <Layout.Header>
       <Layout.Title>
-        {t("creeate-risky-proposal-card.card-title")}
+        {t("create-risky-proposal-card.card-title")}
         <AppButton
-          text={t("creeate-risky-proposal-card.action-more")}
+          text={t("create-risky-proposal-card.action-more")}
           size="no-paddings"
           color="default"
           routePath={generatePath(ROUTE_PATHS.riskyProposalCreate, {
@@ -122,8 +122,8 @@ const Form = () => {
             })
           )
         }}
-        title={t("creeate-risky-proposal-card.modal-title")}
-        description={t("creeate-risky-proposal-card.modal-description")}
+        title={t("create-risky-proposal-card.modal-title")}
+        description={t("create-risky-proposal-card.modal-description")}
       >
         <AppButton
           onClick={() => {
@@ -139,7 +139,7 @@ const Form = () => {
           size="large"
           color="primary"
           full
-          text={t("creeate-risky-proposal-card.modal-action")}
+          text={t("create-risky-proposal-card.modal-action")}
         />
       </TransactionSent>
 
@@ -149,7 +149,7 @@ const Form = () => {
         {CardHeadTemplate}
         <Layout.Body>
           <S.Description>
-            {t("creeate-risky-proposal-card.card-description")}
+            {t("create-risky-proposal-card.card-description")}
           </S.Description>
           <TokenTile tokenAddress={tokenAddress} />
 
@@ -158,18 +158,18 @@ const Form = () => {
               nodeLeft={
                 <Icon style={{ width: 20, height: 20 }} name={ICON_NAMES.cog} />
               }
-              title={t("creeate-risky-proposal-card.section-label-settings")}
+              title={t("create-risky-proposal-card.section-label-settings")}
             />
             <CardDescription>
               <p>
-                {t("creeate-risky-proposal-card.section-description-settings")}
+                {t("create-risky-proposal-card.section-description-settings")}
               </p>
             </CardDescription>
             <CardFormControl>
               <InputField
                 value={symbol.get}
                 setValue={symbol.set}
-                label={t("creeate-risky-proposal-card.section-label-symbol")}
+                label={t("create-risky-proposal-card.section-label-symbol")}
                 labelNodeRight={
                   isFieldValid("symbol") ? (
                     <Icon name={ICON_NAMES.greenCheck} />
@@ -191,7 +191,7 @@ const Form = () => {
                   )
                 }
                 label={t(
-                  "creeate-risky-proposal-card.section-label-description"
+                  "create-risky-proposal-card.section-label-description"
                 )}
                 errorMessage={getFieldErrorMessage("description")}
                 onBlur={() => touchField("description")}
@@ -203,7 +203,7 @@ const Form = () => {
                   touchField("timestampLimit")
                 }}
                 placeholder={t(
-                  "creeate-risky-proposal-card.section-label-timestamp-limit"
+                  "create-risky-proposal-card.section-label-timestamp-limit"
                 )}
                 minDate={new Date()}
                 errorMessage={getFieldErrorMessage("timestampLimit")}
@@ -219,13 +219,11 @@ const Form = () => {
                   name={ICON_NAMES.stocks}
                 />
               }
-              title={t("creeate-risky-proposal-card.section-label-investment")}
+              title={t("create-risky-proposal-card.section-label-investment")}
             />
             <CardDescription>
               <p>
-                {t(
-                  "creeate-risky-proposal-card.section-description-investment"
-                )}
+                {t("create-risky-proposal-card.section-description-investment")}
               </p>
             </CardDescription>
             <CardFormControl>
@@ -233,7 +231,7 @@ const Form = () => {
                 value={investLPLimit.get}
                 setValue={investLPLimit.set}
                 label={t(
-                  "creeate-risky-proposal-card.section-label-max-lp-limit"
+                  "create-risky-proposal-card.section-label-max-lp-limit"
                 )}
                 nodeRight={<S.NodeText>{poolInfo?.ticker || ""}</S.NodeText>}
                 type="number"
@@ -252,7 +250,7 @@ const Form = () => {
                 value={lpAmount.get}
                 setValue={lpAmount.set}
                 label={t(
-                  "creeate-risky-proposal-card.section-label-personal-invest"
+                  "create-risky-proposal-card.section-label-personal-invest"
                 )}
                 nodeRight={
                   <S.NodeText>
@@ -281,7 +279,7 @@ const Form = () => {
                 value={maxTokenPriceLimit.get}
                 setValue={maxTokenPriceLimit.set}
                 label={t(
-                  "creeate-risky-proposal-card.section-label-max-buying-price"
+                  "create-risky-proposal-card.section-label-max-buying-price"
                 )}
                 type="number"
                 inputMode="decimal"
@@ -310,7 +308,7 @@ const Form = () => {
                 value={instantTradePercentage.get}
                 setValue={instantTradePercentage.set}
                 label={t(
-                  "creeate-risky-proposal-card.section-label-position-filled"
+                  "create-risky-proposal-card.section-label-position-filled"
                 )}
                 nodeRight={<S.NodeText>%</S.NodeText>}
                 type="number"
@@ -332,7 +330,7 @@ const Form = () => {
           <Layout.Buttons>
             <AppButton
               disabled={!isFieldsValid}
-              text={t("creeate-risky-proposal-card.action-submit")}
+              text={t("create-risky-proposal-card.action-submit")}
               size="large"
               color="primary"
               full
