@@ -13,7 +13,8 @@ import useError from "hooks/useError"
 import { GovPoolFormContext } from "context/govPool/GovPoolFormContext"
 import { cloneDeep } from "lodash"
 import { IpfsEntity } from "utils/ipfsEntity"
-import { BytesLike, ethers } from "ethers"
+import { BigNumber, BytesLike, ethers } from "ethers"
+import { IPoolFactory } from "../../interfaces/typechain/PoolFactory"
 
 const useCreateDAO = () => {
   const {
@@ -34,6 +35,9 @@ const useCreateDAO = () => {
     defaultProposalSettingForm,
     distributionProposalSettingsForm,
     createdDaoAddress,
+    tokenCreation,
+    isTokenCreation,
+    isBinanceKycRestricted,
   } = useContext(GovPoolFormContext)
 
   const factory = usePoolFactoryContract()
@@ -53,10 +57,11 @@ const useCreateDAO = () => {
   }, [gasTrackerResponse])
 
   const tryEstimateGas = useCallback(
-    async (params) => {
+    async (poolParams, tokenParams) => {
       try {
-        const gas = await factory?.estimateGas.deployGovPool(
-          params,
+        const gas = await factory?.estimateGas.deployGovPoolWithTokenSale(
+          poolParams,
+          tokenParams,
           transactionOptions
         )
 
@@ -251,7 +256,12 @@ const useCreateDAO = () => {
       executorDescription: "validators",
     }
 
-    const POOL_PARAMETERS = {
+    const tokenSaleSettings = {
+      ...cloneDeep(defaultSettings),
+      executorDescription: "tokenSale",
+    }
+
+    const POOL_PARAMETERS: IPoolFactory.GovPoolDeployParamsStruct = {
       nftMultiplierAddress: ZERO_ADDR,
       name: daoName.get,
       settingsParams: {
@@ -260,8 +270,9 @@ const useCreateDAO = () => {
           internalSettings,
           DPSettings,
           validatorsSettings,
+          tokenSaleSettings,
         ],
-        additionalProposalExecutors: [],
+        additionalProposalExecutors: [ZERO_ADDR],
       },
       validatorsParams: {
         name: isValidator.get ? validatorsParams.name.get : "Validator Token",
@@ -280,7 +291,9 @@ const useCreateDAO = () => {
           : [],
       },
       userKeeperParams: {
-        tokenAddress: userKeeperParams.tokenAddress.get || ZERO_ADDR,
+        tokenAddress: isTokenCreation
+          ? ZERO_ADDR
+          : userKeeperParams.tokenAddress.get || ZERO_ADDR,
         nftAddress: userKeeperParams.nftAddress.get || ZERO_ADDR,
         totalPowerInTokens: isErc721.get
           ? parseEther(String(userKeeperParams.totalPowerInTokens.get))
@@ -291,17 +304,60 @@ const useCreateDAO = () => {
             : userKeeperParams.nftsTotalSupply.get,
       },
       verifier: ZERO_ADDR,
+      onlyBABHolders: isBinanceKycRestricted.get, // FIXME
       descriptionURL: additionalData._path,
     }
 
-    const gasLimit = await tryEstimateGas(POOL_PARAMETERS)
+    const TOKEN_SALE_PARAMETERS = {
+      tiersParams: [],
+      whitelistParams: [],
+      tokenParams: {
+        name: tokenCreation.name.get || "",
+        symbol: tokenCreation.symbol.get || "",
+        users: isTokenCreation
+          ? [account, ...tokenCreation.recipients.get.map((el) => el.address)]
+          : [],
+        saleAmount: "0",
+        cap: isTokenCreation
+          ? parseUnits(tokenCreation.totalSupply.get, 18)
+          : "0",
+        mintedTotal: isTokenCreation
+          ? parseUnits(tokenCreation.initialDistribution.get, 18)
+          : "0",
+        amounts: isTokenCreation
+          ? [
+              parseUnits(
+                BigNumber.from(tokenCreation.initialDistribution.get)
+                  .sub(
+                    tokenCreation.recipients.get.reduce((acc, curr) => {
+                      return acc.add(BigNumber.from(curr.amount))
+                    }, BigNumber.from(0))
+                  )
+                  .toString(),
+                18
+              ),
+              ...tokenCreation.recipients.get.map((el) =>
+                parseUnits(el.amount, 18)
+              ),
+            ]
+          : [],
+      },
+    }
+
+    const gasLimit = await tryEstimateGas(POOL_PARAMETERS, {
+      ...{ ...cloneDeep(defaultSettings), executorDescription: "" },
+    })
 
     try {
-      const transactionResponse = await factory.deployGovPool(POOL_PARAMETERS, {
-        ...transactionOptions,
-        from: account,
-        gasLimit,
-      })
+      const transactionResponse = await factory.deployGovPoolWithTokenSale(
+        POOL_PARAMETERS,
+        TOKEN_SALE_PARAMETERS,
+        {
+          ...transactionOptions,
+          from: account,
+          gasLimit,
+        }
+      )
 
       setPayload(SubmitState.WAIT_CONFIRM)
       const receipt = await addTransaction(transactionResponse, {

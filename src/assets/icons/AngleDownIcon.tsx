@@ -5,6 +5,9 @@ interface IProps extends SVGProps<SVGSVGElement> {
 }
 
 const AngleDownIcon: FC<IProps> = ({ color, ...rest }) => {
+  // @ts-ignore
+  delete rest.isActive
+
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" {...rest}>
       <path
