@@ -7,7 +7,7 @@ export interface RiskyPositionProposalData {
     id: string
     baseToken: string
   }
-  proposalId?: string
+  proposalId: string
   exchanges?: IRiskyPositionExchange[]
 }
 
