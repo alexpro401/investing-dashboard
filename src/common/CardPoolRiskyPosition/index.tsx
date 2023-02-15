@@ -125,7 +125,7 @@ const CardPoolRiskyPosition: React.FC<Props> = ({
       navigate(
         generatePath(ROUTE_PATHS.riskyProposalSwap, {
           poolAddress: utilityIds.poolAddress,
-          proposalId: String(utilityIds.proposalId ?? 1),
+          proposalId: String(utilityIds.proposalId),
           direction: direction,
         })
       )
