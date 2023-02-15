@@ -9,7 +9,7 @@ export enum EDaoProfileTab {
 export const mapProfileTabToRoute = {
   [EDaoProfileTab.about]: "about",
   [EDaoProfileTab.my_balance]: "my-balance",
-  [EDaoProfileTab.dao_proposals]: "dao-proposals",
+  [EDaoProfileTab.dao_proposals]: "dao-proposals/*",
   [EDaoProfileTab.validators]: "validators",
   [EDaoProfileTab.delegations]: "delegations",
 }

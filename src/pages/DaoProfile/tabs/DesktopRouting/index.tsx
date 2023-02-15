@@ -15,13 +15,15 @@ import {
   mapProfileTabToTitle,
 } from "types/govPoolProfile.types"
 import TabFallback from "../TabFallback"
-import DaoProposals from "pages/GovPoolProposals/DaoProposals"
 
 const DaoProfileTabAboutDesktop = React.lazy(
   () => import("../desktop/AboutTab")
 )
 const DaoProfileTabMyBalanceDesktop = React.lazy(
   () => import("../desktop/MyBalance")
+)
+const DaoProposalsTabDesktop = React.lazy(
+  () => import("../desktop/DaoProposals")
 )
 const DaoProfileTabValidatorsMobile = React.lazy(
   () => import("../mobile/DaoProfileTabValidators")
@@ -47,7 +49,7 @@ const DesktopRouting: React.FC = () => {
     ),
     [EDaoProfileTab.dao_proposals]: (
       <React.Suspense fallback={<TabFallback />}>
-        <DaoProposals />
+        <DaoProposalsTabDesktop />
       </React.Suspense>
     ),
     [EDaoProfileTab.validators]: (
@@ -76,6 +78,11 @@ const DesktopRouting: React.FC = () => {
         name: mapProfileTabToTitle[EDaoProfileTab.my_balance],
         child: TABS_DESKTOP_CONTENT[EDaoProfileTab.my_balance],
         internalRoute: mapProfileTabToRoute[EDaoProfileTab.my_balance],
+      },
+      {
+        name: mapProfileTabToTitle[EDaoProfileTab.dao_proposals],
+        child: TABS_DESKTOP_CONTENT[EDaoProfileTab.dao_proposals],
+        internalRoute: mapProfileTabToRoute[EDaoProfileTab.dao_proposals],
       },
       {
         name: mapProfileTabToTitle[EDaoProfileTab.validators],
