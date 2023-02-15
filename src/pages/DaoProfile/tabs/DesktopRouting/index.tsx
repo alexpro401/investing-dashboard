@@ -15,6 +15,7 @@ import {
   mapProfileTabToTitle,
 } from "types/govPoolProfile.types"
 import TabFallback from "../TabFallback"
+import DaoProposals from "pages/GovPoolProposals/DaoProposals"
 
 const DaoProfileTabAboutDesktop = React.lazy(
   () => import("../desktop/AboutTab")
@@ -42,6 +43,11 @@ const DesktopRouting: React.FC = () => {
     [EDaoProfileTab.my_balance]: (
       <React.Suspense fallback={<TabFallback />}>
         <DaoProfileTabMyBalanceDesktop />
+      </React.Suspense>
+    ),
+    [EDaoProfileTab.dao_proposals]: (
+      <React.Suspense fallback={<TabFallback />}>
+        <DaoProposals />
       </React.Suspense>
     ),
     [EDaoProfileTab.validators]: (
