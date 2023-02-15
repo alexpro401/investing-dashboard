@@ -1,9 +1,9 @@
-import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
+import { BigNumber } from "@ethersproject/bignumber"
 import { IRiskyPosition } from "interfaces/thegraphs/basic-pools"
 
 export interface IInvestProposal {
   id: string
-  proposalId?: string
+  proposalId: string
   timestampLimit: string
   investLPLimit: string
   leftTokens: string[]
