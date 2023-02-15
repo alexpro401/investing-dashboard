@@ -61,6 +61,14 @@ export type GovPoolFormOptions = {
     totalPowerInTokens: number
     nftsTotalSupply: number
   }
+  tokenCreation: {
+    name: string
+    symbol: string
+    totalSupply: BigNumber
+    treasury: BigNumber
+    initialDistribution: BigNumber
+    recipients: { address: string; amount: BigNumber }[]
+  }
   _validatorsParams: {
     name: string
     symbol: string

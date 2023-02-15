@@ -6,15 +6,15 @@ import { GovPoolProfileCommonContext } from "context/govPool/GovPoolProfileCommo
 import { GovPoolProfileTabsContext } from "context/govPool/GovPoolProfileTabsContext/GovPoolProfileTabsContext"
 import { Flex } from "theme"
 import extractRootDomain from "utils/extractRootDomain"
-import TabFallback from "../../TabFallback"
+import TabFallback from "pages/DaoProfile/tabs/TabFallback"
 import {
   HighlightHeaderDesktop,
   DesktopStatistic,
   DaoProfileChart,
   DaoProfileTokensInTreasuryCard,
   AllProposalsList,
-} from "../../../components"
-import { PageChart } from "../../../types"
+} from "pages/DaoProfile/components"
+import { PageChart } from "pages/DaoProfile/types"
 
 import * as SCommon from "../styled"
 import * as S from "./styled"

@@ -50,6 +50,10 @@ export const SideStepsNavigationBarItemIcon = styled.div<{
   place-items: center;
   width: 24px;
   height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  max-width: 24px;
+  max-height: 24px;
   border-radius: 50%;
   border: 1.5px solid #293c54;
 
