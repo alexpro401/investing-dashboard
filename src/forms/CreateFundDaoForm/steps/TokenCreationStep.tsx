@@ -81,9 +81,6 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
       safeBigFrom(0)
     )
 
-    console.log(daoCreationRecipientsSum)
-    console.log(daoCreationRecipientsSum.isZero())
-
     return daoCreationRecipientsSum && !daoCreationRecipientsSum.isZero()
       ? safeBigFrom(tokenCreation.initialDistribution.get).sub(
           daoCreationRecipientsSum

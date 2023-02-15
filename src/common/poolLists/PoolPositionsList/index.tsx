@@ -25,7 +25,7 @@ import { useTranslation } from "react-i18next"
 import { isEmpty, isEqual, isNil } from "lodash"
 import { isAddress } from "@ethersproject/address"
 
-const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
+const PoolPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { poolAddress } = useParams()
@@ -74,23 +74,23 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
       <PoolPositionsListRoot>
         <PoolPositionsListHead childMaxWidth={closed ? "160.5px" : undefined}>
           <PoolPositionsListHeadItem>
-            {t("fund-positions-list.label-pool")}
+            {t("pool-positions-list.label-pool")}
           </PoolPositionsListHeadItem>
           <PoolPositionsListHeadItem>
-            {t("fund-positions-list.label-my-volume")}
+            {t("pool-positions-list.label-my-volume")}
           </PoolPositionsListHeadItem>
           <PoolPositionsListHeadItem>
-            {t("fund-positions-list.label-entry-price")}
+            {t("pool-positions-list.label-entry-price")}
           </PoolPositionsListHeadItem>
           <PoolPositionsListHeadItem>
             {t(
               closed
-                ? "fund-positions-list.label-closed-price"
-                : "fund-positions-list.label-current-price"
+                ? "pool-positions-list.label-closed-price"
+                : "pool-positions-list.label-current-price"
             )}
           </PoolPositionsListHeadItem>
           <PoolPositionsListHeadItem>
-            {t("fund-positions-list.label-pnl")}
+            {t("pool-positions-list.label-pnl")}
           </PoolPositionsListHeadItem>
           <PoolPositionsListHeadItem />
         </PoolPositionsListHead>
@@ -118,4 +118,4 @@ const FundPositionsList: FC<{ closed: boolean }> = ({ closed }) => {
   )
 }
 
-export default FundPositionsList
+export default PoolPositionsList

@@ -8,12 +8,11 @@ import { Center } from "theme"
 import { NoDataMessage, CardRiskyProposal } from "common"
 import LoadMore from "components/LoadMore"
 import { isEmpty, isNil } from "lodash"
+import { useParams } from "react-router-dom"
 
-interface IProps {
-  poolAddress?: string
-}
+const PoolRiskyProposalsList: React.FC = () => {
+  const { poolAddress } = useParams()
 
-const FundProposalsRisky: React.FC<IProps> = ({ poolAddress }) => {
   const pools = React.useMemo(
     () => (isNil(poolAddress) ? [] : [poolAddress]),
     [poolAddress]
@@ -46,4 +45,4 @@ const FundProposalsRisky: React.FC<IProps> = ({ poolAddress }) => {
   )
 }
 
-export default FundProposalsRisky
+export default PoolRiskyProposalsList

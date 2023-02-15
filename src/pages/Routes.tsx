@@ -130,8 +130,8 @@ const PrivacyPolicy = lazy(() => import("pages/PrivacyPolicy"))
 const ServiceTerms = lazy(() => import("pages/ServiceTerms"))
 const Insurance = lazy(() => import("pages/Insurance"))
 const InsuranceCreate = lazy(() => import("pages/InsuranceCreate"))
-const FundPositions = lazy(() => import("pages/FundPositions"))
 const InvestorPositions = lazy(() => import("pages/InvestorPositions"))
+const PoolPositions = lazy(() => import("pages/PoolPositions"))
 const DaoPools = lazy(() => import("pages/DaoPools"))
 const DaoDelegation = lazy(() => import("pages/DaoDelegation"))
 const DaoPoolClaim = lazy(() => import("pages/DaoPoolClaim"))
@@ -260,7 +260,7 @@ export const router = createBrowserRouter([
           },
           {
             path: ROUTE_PATHS.fundPositions,
-            element: <FundPositions />,
+            element: <PoolPositions />,
           },
           {
             path: ROUTE_PATHS.insurance,

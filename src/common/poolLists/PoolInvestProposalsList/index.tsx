@@ -1,22 +1,20 @@
-import { FC } from "react"
+import { useParams } from "react-router-dom"
 import { PulseSpinner } from "react-spinners-kit"
 
+import { CardInvestProposal, NoDataMessage } from "common/index"
 import LoadMore from "components/LoadMore"
-
 import { RequestDividendsProvider } from "modals/RequestDividend/useRequestDividendsContext"
-
+import { usePoolInvestProposalsList } from "hooks"
 import { isEmpty } from "lodash"
 import { Center } from "theme"
-import { CardInvestProposal, NoDataMessage } from "common"
-import { useInvestorInvestProposalsList } from "hooks"
-import * as S from "./styles"
+import * as S from "./styled"
 
-interface IProps {
-  invested: boolean
-}
+const PoolInvestProposalsList = () => {
+  const { poolAddress } = useParams()
 
-const InvestorInvestProposalsList: FC<IProps> = ({ invested }) => {
-  const [data, loading, fetchMore] = useInvestorInvestProposalsList(invested)
+  const [data, loading, fetchMore] = usePoolInvestProposalsList(
+    poolAddress ?? ""
+  )
 
   return (
     <RequestDividendsProvider>
@@ -40,4 +38,4 @@ const InvestorInvestProposalsList: FC<IProps> = ({ invested }) => {
   )
 }
 
-export default InvestorInvestProposalsList
+export default PoolInvestProposalsList
