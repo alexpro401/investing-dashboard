@@ -1,12 +1,41 @@
 import styled from "styled-components/macro"
-import { Text } from "theme"
 import { AppButton } from "common"
+import { respondTo } from "theme"
 
 export const TabCardTitle = styled.span`
   font-size: 14px;
   line-height: 1.25;
   font-weight: 600;
   color: ${(props) => props.theme.brandColors.secondary};
+`
+
+export const PnlSubChartCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  gap: var(--app-gap);
+
+  ${respondTo("md")} {
+    flex-direction: row;
+    align-items: center;
+  }
+`
+
+export const PnlSubChartCardItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+
+  ${respondTo("md")} {
+    width: auto;
+
+    &:last-child {
+      margin-left: auto;
+    }
+  }
 `
 
 export const TabCardLabel = styled.span`

@@ -18,14 +18,14 @@ import {
 } from "./tabs"
 
 import Header from "components/Header/Layout"
-import Dropdown from "components/Dropdown"
+import { Dropdown } from "common"
 
 import * as S from "./styled"
 
-import { DATE_FORMAT, ICON_NAMES, ROUTE_PATHS } from "consts"
+import { DATE_FORMAT, ICON_NAMES, ROUTE_PATHS, SOCIAL_ICONS } from "consts"
 import { DateUtil, formatNumber, normalizeBigNumber } from "utils"
 import { useBreakpoints } from "hooks"
-import { AccountInvestmentPools } from "common"
+import { AccountInvestmentPools, Breadcrumbs } from "common"
 import {
   PoolProfileContext,
   PoolProfileContextProvider,
@@ -35,15 +35,15 @@ import { copyToClipboard } from "utils/clipboard"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { useWeb3React } from "@web3-react/core"
 import {
-  FundDetailsGeneral,
   FundDetailsFee,
+  FundDetailsGeneral,
   FundDetailsInvestment,
   FundDetailsManager,
   FundDetailsMenu,
   FundDetailsWhitelist,
   FundDetailsWithdrawalHistory,
-  TraderPoolsList,
   PoolStatisticsItem,
+  TraderPoolsList,
 } from "pages/PoolProfile/components"
 import Modal from "components/Modal"
 import { useEffectOnce } from "react-use"
@@ -62,6 +62,7 @@ const PoolProfileContent = () => {
     fundTicker,
     fundName,
     fundImageUrl,
+    fundSocialLinks,
 
     creationDate,
     isTrader,
@@ -138,10 +139,10 @@ const PoolProfileContent = () => {
 
   return (
     <>
-      <Header />
+      <Header>{isTrader ? <AccountInvestmentPools /> : <Breadcrumbs />}</Header>
       <S.Container>
         <S.Content>
-          {isTrader ? <AccountInvestmentPools /> : <TraderPoolsList />}
+          {isTrader ? <></> : <TraderPoolsList />}
           <S.PoolProfileDefaultInfo>
             <S.PoolProfileGeneral>
               <S.PoolProfileAppearance
@@ -175,6 +176,20 @@ const PoolProfileContent = () => {
                         {depositors}
                       </S.PoolDetailsBadgeText>
                     </S.PoolDetailsBadge>
+                    {isTrader && isTablet ? (
+                      <S.PoolDetailsBadge
+                        onClick={() => {
+                          Bus.emit("manage-modal")
+                        }}
+                      >
+                        <S.PoolDetailsBadgeManage>
+                          <S.PoolDetailsBadgeIcon name={ICON_NAMES.pencil} />
+                          {t("pool-profile.manage-fund-btn")}
+                        </S.PoolDetailsBadgeManage>
+                      </S.PoolDetailsBadge>
+                    ) : (
+                      <></>
+                    )}
                   </S.PageHeadDetailsRow>
                 ) : (
                   <></>
@@ -191,8 +206,7 @@ const PoolProfileContent = () => {
                     <></>
                   )}
                   <Dropdown
-                    name="pool-profile-general-actions-dropdown"
-                    label={
+                    headingNode={
                       <S.PoolProfileGeneralActionsDropdownToggler>
                         <S.PoolProfileGeneralActionsDropdownTogglerIcon
                           name={ICON_NAMES.dotsHorizontal}
@@ -229,13 +243,27 @@ const PoolProfileContent = () => {
                         />
                         {t("pool-profile.copy-btn")}
                       </S.PoolProfileGeneralActionsDropdownItem>
+                      {!isTablet && isTrader ? (
+                        <S.PoolProfileGeneralActionsDropdownItem
+                          onClick={() => {
+                            Bus.emit("manage-modal")
+                          }}
+                        >
+                          <S.PoolProfileGeneralActionsDropdownItemIcon
+                            name={ICON_NAMES.pencil}
+                          />
+                          {t("pool-profile.manage-fund-btn")}
+                        </S.PoolProfileGeneralActionsDropdownItem>
+                      ) : (
+                        <></>
+                      )}
                       {!isMediumTablet ? (
                         [
-                          { link: "", icon: ICON_NAMES.github, name: "Github" },
-                          { link: "", icon: ICON_NAMES.github, name: "Github" },
-                          { link: "", icon: ICON_NAMES.github, name: "Github" },
-                          { link: "", icon: ICON_NAMES.github, name: "Github" },
-                          { link: "", icon: ICON_NAMES.github, name: "Github" },
+                          ...(fundSocialLinks?.map(([socialType, link]) => ({
+                            link,
+                            icon: SOCIAL_ICONS[socialType],
+                            name: socialType,
+                          })) || []),
                         ].map((el, idx) => (
                           <S.PoolProfileGeneralActionsDropdownItem
                             key={idx}
@@ -311,54 +339,72 @@ const PoolProfileContent = () => {
           </S.PoolProfileDefaultInfo>
 
           <S.OptionalTabSplitter>
-            <S.TabsWrp
-              tabs={[
-                {
-                  name: "P&L",
-                  child: (
-                    <S.TabContainer>
-                      <TabPoolPnl />
-                    </S.TabContainer>
-                  ),
-                },
-                {
-                  name: "Locked funds",
-                  child: (
-                    <S.TabContainer>
-                      <TabPoolLockedFunds />
-                    </S.TabContainer>
-                  ),
-                },
-                ...(!isSmallTablet
-                  ? [
-                      {
-                        name: "About fund",
-                        child: (
-                          <S.TabContainer>
-                            <TabPoolInfo />
-                          </S.TabContainer>
-                        ),
-                      },
-                      {
-                        name: "Statistic",
-                        child: (
-                          <S.TabContainer>
-                            <TabPoolStatistic />
-                          </S.TabContainer>
-                        ),
-                      },
-                      {
-                        name: "Holders",
-                        child: (
-                          <S.TabContainer>
-                            <TabPoolHolders />
-                          </S.TabContainer>
-                        ),
-                      },
-                    ]
-                  : []),
-              ]}
-            />
+            <S.TabsChartsWrp>
+              <S.TabsWrp
+                tabs={[
+                  {
+                    name: "P&L",
+                    child: (
+                      <S.TabContainer>
+                        <TabPoolPnl />
+                      </S.TabContainer>
+                    ),
+                  },
+                  {
+                    name: "Locked funds",
+                    child: (
+                      <S.TabContainer>
+                        <TabPoolLockedFunds />
+                      </S.TabContainer>
+                    ),
+                  },
+                  ...(!isSmallTablet
+                    ? [
+                        {
+                          name: "About fund",
+                          child: (
+                            <S.TabContainer>
+                              <TabPoolInfo />
+                            </S.TabContainer>
+                          ),
+                        },
+                        {
+                          name: "Statistic",
+                          child: (
+                            <S.TabContainer>
+                              <TabPoolStatistic />
+                            </S.TabContainer>
+                          ),
+                        },
+                        {
+                          name: "Holders",
+                          child: (
+                            <S.TabContainer>
+                              <TabPoolHolders />
+                            </S.TabContainer>
+                          ),
+                        },
+                      ]
+                    : []),
+                ]}
+              />
+
+              {isTrader && isSmallTablet ? (
+                <S.TraderInvestSelfLink
+                  to={generatePath(ROUTE_PATHS.poolInvest, {
+                    poolAddress: fundAddress || "",
+                  })}
+                >
+                  <S.TraderInvestSelfLinkIcon
+                    name={ICON_NAMES.gradientArrowDiagonalUp}
+                  />
+                  {t("pool-profile.invest-self-link")}
+                </S.TraderInvestSelfLink>
+              ) : (
+                <></>
+              )}
+            </S.TabsChartsWrp>
+
             {isMediumTablet ? (
               <S.SpecificStatistics>
                 <S.SpecificStatisticsTitle>
@@ -442,7 +488,9 @@ const PoolProfileContent = () => {
                   },
                 ].map((el, idx) => (
                   <S.SpecificStatisticsRow key={idx}>
-                    <S.SpecificStatisticsLabel>DEXE</S.SpecificStatisticsLabel>
+                    <S.SpecificStatisticsLabel>
+                      {el.label}
+                    </S.SpecificStatisticsLabel>
                     <S.SpecificStatisticsValue>
                       {`${normalizeBigNumber(el.amount, 18)} (${el.percent}%)`}
                     </S.SpecificStatisticsValue>
@@ -488,6 +536,7 @@ const PoolProfileContent = () => {
               <></>
             )}
           </S.OptionalTabSplitter>
+
           {isSmallTablet ? (
             <S.TabsWrp
               tabs={[
@@ -550,7 +599,16 @@ const PoolProfile = () => {
 
   useEffectOnce(() => {
     Bus.on("manage-modal", () => {
-      setIsManageModalShown(true)
+      if (isSmallTablet) {
+        setIsManageModalShown(true)
+      } else {
+        navigate(
+          generatePath(ROUTE_PATHS.poolProfile, {
+            poolAddress: poolAddress || "",
+            "*": "details",
+          })
+        )
+      }
     })
     Bus.on("manage-modal/menu", () => {
       setModalContent("menu")

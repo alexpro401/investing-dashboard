@@ -62,4 +62,6 @@ export enum ICON_NAMES {
   dotsHorizontal = "dots-horizontal",
   plusOutline = "plus-outline",
   stocks = "stocks",
+  pencil = "pencil",
+  gradientArrowDiagonalUp = "gradient-arrow-diagonal-up",
 }

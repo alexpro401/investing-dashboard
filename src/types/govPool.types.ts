@@ -46,6 +46,7 @@ export type GovPoolSettings = {
 export type GovPoolFormOptions = {
   _isErc20: boolean
   _isErc721: boolean
+  _isBinanceKycRestricted: boolean
   _isCustomVoting: boolean
   _isDistributionProposal: boolean
   _isValidator: boolean
@@ -60,6 +61,14 @@ export type GovPoolFormOptions = {
     nftAddress: string
     totalPowerInTokens: number
     nftsTotalSupply: number
+  }
+  tokenCreation: {
+    name: string
+    symbol: string
+    totalSupply: BigNumber
+    treasury: BigNumber
+    initialDistribution: BigNumber
+    recipients: { address: string; amount: BigNumber }[]
   }
   _validatorsParams: {
     name: string

@@ -20,7 +20,7 @@ import {
   addProposal,
   addUser,
 } from "./actions"
-import { IInvestProposalMetadata, IUserMetadata } from "./types"
+import { IInvestProposalMetadata, IPoolMetadata, IUserMetadata } from "./types"
 import { InsuranceAccident } from "interfaces/insurance"
 import {
   useGovPoolContract,
@@ -32,31 +32,61 @@ import { shortenAddress } from "utils"
 import { IpfsEntity } from "utils/ipfsEntity"
 import { IGovPoolDescription } from "types"
 
-export function usePoolMetadata(poolId, hash) {
+type UsePoolMetadataResponse = [
+  { poolMetadata: IPoolMetadata | null; loading: boolean },
+  { fetchPoolMetadata: () => void }
+]
+
+export function usePoolMetadata(
+  poolId?: string,
+  hash?: string
+): UsePoolMetadataResponse {
   const dispatch = useDispatch()
   const poolMetadata = useSelector(selectPoolMetadata(poolId, hash))
+  const [cachedPoolMetadata, setCachedPoolMetadata] = useState<IPoolMetadata>()
   const [loading, setLoading] = useState(false)
 
   const fetchPoolMetadata = useCallback(async () => {
+    if (isNil(poolId) || isNil(hash)) return
+
     try {
       setLoading(true)
-      const data = await getIpfsData(hash)
+      const ipfsData = new IpfsEntity<IPoolMetadata>({
+        path: hash,
+      })
+
+      const data = await ipfsData.load()
+
       if (data) {
         dispatch(addPool({ params: { poolId, hash, ...data } }))
+        setCachedPoolMetadata(data)
       }
-      setLoading(false)
     } catch (error) {
       console.error(error)
+    } finally {
       setLoading(false)
     }
   }, [dispatch, hash, poolId])
 
   useEffect(() => {
-    if (!poolId || !hash) return
-    if (poolMetadata === null) {
-      fetchPoolMetadata()
-    }
-  }, [poolId, hash, poolMetadata, dispatch, fetchPoolMetadata])
+    if (
+      !poolId ||
+      !hash ||
+      (!!poolMetadata?.timestamp &&
+        cachedPoolMetadata?.timestamp &&
+        poolMetadata?.timestamp === cachedPoolMetadata?.timestamp)
+    )
+      return
+
+    fetchPoolMetadata()
+  }, [
+    poolId,
+    hash,
+    poolMetadata,
+    dispatch,
+    fetchPoolMetadata,
+    cachedPoolMetadata,
+  ])
 
   return [{ poolMetadata, loading }, { fetchPoolMetadata }]
 }

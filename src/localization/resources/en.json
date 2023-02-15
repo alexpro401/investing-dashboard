@@ -2,7 +2,10 @@
   "validations": {
     "field-error_required": "Please fill out this field",
     "field-error_minLength": "This field must contain minimum {{minLength}} symbols",
-    "field-error_maxLength": "This field must contain maximum {{maxLength}} symbols"
+    "field-error_maxLength": "This field must contain maximum {{maxLength}} symbols",
+    "field-error_maxSizeLessThanFullness": "Max size can't be less than fullness",
+    "field-error_investLimitLessThanFullness": "Invest limit can't be less than fullness",
+    "field-error_tokenPriceThanCurrentPrice": "Max token price can't be less than current price"
   },
   "errors": {
     "default": "Oops... Something went wrong",
@@ -35,7 +38,8 @@
     "default-message-error": "Something went wrong",
     "default-message-warning": "Something you are doing is not recommended",
     "default-message-info": "Something is happening. Just want you to know that",
-    "default-message-default": "Just a message"
+    "default-message-default": "Just a message",
+    "without-changes": "Nothing has been changed. Please change something before submitting."
   },
   "filters": {
     "pool-type": {
@@ -45,6 +49,7 @@
     }
   },
   "pool-profile": {
+    "manage-fund-btn": "Manage Fund",
     "explorer-link": "View on bscscan",
     "copy-btn": "Copy address",
     "statistic-heading": "Statistic",
@@ -52,16 +57,242 @@
     "order-size-lbl": "Order size",
     "daily-profit-lbl": "Daily profit",
     "time-positions-lbl": "Time positions",
-    "sortino-lbl": "Sortino ({currency})",
+    "sortino-lbl": "Sortino ({{currency}})",
     "total-pnl-heading": "Total P&L",
     "details-heading": "Details",
     "emission-lbl": "Emission",
     "min-invest-amount-lbl": "Min. invest amount",
     "fund-managers-lbl": "Fund managers",
     "whitelist-lbl": "Whitelist",
-    "manage-fund-modal-title": "Manage Fund"
+    "manage-fund-modal-title": "Manage Fund",
+    "invest-self-link": "Invest more in my fund"
   },
   "trader-pools-list": {
     "tooltip-msg": "Tooltip message"
+  },
+  "card-risky-proposal": {
+    "status-open": "Open investing",
+    "status-closed": "Closed investing",
+    "label-proposal-token": "Proposal token",
+    "label-fund-ticker": "Fund ticker",
+    "label-max-size": "Max size ({{currency}})",
+    "label-your-size": "Your size ({{currency}})",
+    "label-fullness": "Fullness ({{currency}})",
+    "label-max-invest-price": "Max. Invest Price ({{currency}})",
+    "label-current-price": "Current price ({{currency}})",
+    "label-position-size": "Position size ({{currency}})",
+    "label-trader-size": "Trader size ({{currency}})",
+    "label-expiration-date": "Expiration date",
+    "label-investors": "Investors",
+    "action-settings": "Settings",
+    "action-terminal": "Terminal",
+    "action-stake": "Stake LP",
+    "action-invest": "+ Add",
+    "action-check-token": "Check token",
+    "values-trader-size": "Trader size: {{value}} {{currency}} ({{percent}}%)",
+    "empty-description-msg": "No description provided to proposal",
+    "tooltip-msg-rating": "Risky proposal rating info",
+    "tooltip-msg-max-size": "Proposal size LP info",
+    "tooltip-msg-your-size": "Your size LP info",
+    "tooltip-msg-fullness": "Fullness(LP) info",
+    "tooltip-msg-max-invest-price": "Max.Invest Price info",
+    "tooltip-msg-current-price": "Current price info",
+    "tooltip-msg-expiration-date": "Expiration date info",
+    "tooltip-msg-investors": "Investors info",
+    "tooltip-msg-position-size": "Position size info",
+    "tooltip-msg-trader-size": "Trader size info"
+  },
+  "update-risky-proposal-form": {
+    "title": "Investment proposal settings:",
+    "field-label-expiration-date": "Expiration date",
+    "field-label-invest-limit": "LPs available for staking",
+    "field-label-max-invest-price": "Maximum invest price",
+    "action-submit": "Done",
+    "action-decline": "Cancel"
+  },
+  "investor-pool-positions-list": {
+    "label-pool": "Fund",
+    "label-my-volume": "My Volume",
+    "label-entry-price": "Entry Price",
+    "label-current-price": "Current Price",
+    "label-pnl": "P&L in %",
+    "label-commission": "Commission",
+    "tooltip-msg-entry-price": "Explain Entry Price",
+    "tooltip-msg-current-price": "Explain Current Price",
+    "tooltip-msg-commission-price": "Explain commission"
+  },
+  "card-investor-position": {
+    "label-entry-price": "Entry Price {{currency}}",
+    "label-closed-price": "Closed Price {{currency}}",
+    "label-current-price": "Current Price {{currency}}",
+    "label-pnl": "P&L {{currency}}",
+    "action-invest": "Buy more",
+    "action-divest": "Close position",
+    "action-divest--short": "Close",
+    "action-toggle-vests": "All trades",
+    "action-toggle-commission": "Commission"
+  },
+  "investor-position-commission": {
+    "label-period": "{{month}} month Performance Fee",
+    "label-amount": "Paid Performance Fee",
+    "label-withdraw-date": "Date of withdrawal",
+    "label-investor-locked": "Investor funds locked ({{percent}}%)"
+  },
+  "card-position-trade": {
+    "direction-buy": "Buy",
+    "direction-sell": "Sell",
+    "label-amount": "Amount {{currency}}",
+    "label-price": "Price {{currency}}"
+  },
+  "card-investor-risky-position": {
+    "amount-lp2": "{{amount}} LP2",
+    "label-entry-price": "Entry Price {{currency}}",
+    "label-current-price": "Current Price {{currency}}",
+    "label-closed-price": "Closed price {{currency}}",
+    "label-pnl": "P&L {{currency}}"
+  },
+  "pool-positions-list": {
+    "label-pool": "Fund",
+    "label-my-volume": "My Volume",
+    "label-entry-price": "Entry Price",
+    "label-current-price": "Current Price",
+    "label-closed-price": "Closed Price",
+    "label-pnl": "P&L in %"
+  },
+  "card-pool-position": {
+    "action-toggle-positions": "All my trades",
+    "action-invest": "Buy more",
+    "action-divest": "Close Position",
+    "label-entry-price": "Entry Price {{currency}}",
+    "label-current-price": "Current Price {{currency}}",
+    "label-closed-price": "Closed price {{currency}}",
+    "label-pnl": "P&L {{currency}}"
+  },
+  "become-investor-modal": {
+    "title": "Become an investor",
+    "description": "The trader has {{positionCount}} open positions, but you need to be a fund investor to see them",
+    "action-invest": "Buy {{currency}}"
+  },
+  "card-pool-risky-position": {
+    "amount-lp2": "{{amount}} LP2",
+    "label-entry-price": "Entry Price {{currency}}",
+    "label-current-price": "Current Price {{currency}}",
+    "label-closed-price": "Closed price {{currency}}",
+    "label-pnl": "P&L {{currency}}",
+    "action-invest": "Buy more",
+    "action-divest": "Close position",
+    "action-toggle-exchanges": "All trades"
+  },
+  "pool-risky-positions-list": {
+    "label-pool": "Fund",
+    "label-my-volume": "My Volume",
+    "label-entry-price": "Entry Price",
+    "label-current-price": "Current Price",
+    "label-closed-price": "Closed Price",
+    "label-pnl": "P&L in %",
+    "tooltip-msg-entry-price": "Explain Entry Price",
+    "tooltip-msg-current-price": "Explain Current Price",
+    "tooltip-msg-closed-price": "Explain Closed Price"
+  },
+  "card-invest-proposal": {
+    "status-open": "Open investing",
+    "status-closed": "Closed investing",
+    "empty-description-msg": "No description provided to proposal",
+    "action-withdraw": "Withdraw",
+    "action-deposit": "Deposit",
+    "action-claim": "Claim",
+    "action-pay-dividend": "Pay dividend",
+    "action-stake-lp": "Stake LP",
+    "action-request-dividend": "Request a dividend",
+    "label-proposal-ticker": "Proposal ticker",
+    "label-supply": "Supply {{currency}}",
+    "label-your-size": "Your size {{currency}}",
+    "label-max-size": "Max Size {{currency}}",
+    "label-dividends-avail": "Dividends avail. ({{currency}})",
+    "label-dividends-total": "Total dividends ({{currency}})",
+    "label-investors": "Investors",
+    "label-price-otc": "Price OTC",
+    "label-expiration-date": "Expiration date",
+    "label-fund-ticker": "Fund ticker",
+    "label-fulness": "Fulness",
+    "label-your-balance": "Your balance ({{currency}})",
+    "label-apr": "APR",
+    "label-custodian": "Custodian",
+    "label-proposal-size": "Proposal size",
+    "label-lp-price": "LP price ({{currency}})"
+  },
+  "update-invest-proposal-form": {
+    "title": "Investment proposal {{ticker}} settings:",
+    "field-label-expiration-date": "Expiration date",
+    "field-label-invest-limit": "LPs available for staking",
+    "action-submit": "Done",
+    "action-decline": "Cancel"
+  },
+  "create-fund-dao-form": {
+    "titles-step-title": "Basic DAO Settings",
+    "dao-validator-step-title": "Validator settings",
+    "default-settings-step-title": "General voting settings",
+    "internal-settings-step-title": "Changing voting settings",
+    "token-creation-step-title": "Token creation",
+    "summary-step-title": "Summary",
+    "distribution-settings-step-title": "Distribution proposal settings"
+  },
+  "token-creation-step": {
+    "card-welcome-title" : "Token creation",
+    "card-welcome-desc" : "Create and set up the token to govern your DAO.",
+    "card-base-title" : "Base info",
+    "card-base-desc" : "Enter token name and ticker.",
+    "name-lbl" : "Token name",
+    "symbol-lbl" : "Token symbol",
+    "card-distribution-title" : "Distribution ",
+    "card-distribution-desc" : "Enter total supply and distribution (how many to DAO Treasury vs. to members). You can also set up selling tokens directly from the DAO with the proceeds goign ino the Treasury.",
+    "total-supply-lbl": "Total supply",
+    "treasury-lbl": "Treasury",
+    "initial-distribution-lbl": "Initial Distribution",
+    "card-distribution-recipients-title" : "Distribution recipients",
+    "card-distribution-recipients-desc" : "By default, the entire indicated amount will be sent to the DAO creator’s wallet. To send some tokens to other members, list the wallets and % of the initial distribution to go to each wallet."
+  },
+  "summary-step": {
+    "title": "Summary",
+    "desc": "Please review the vault configuration carefully before creating. After vault creation, settings can be changed only via a vote.",
+
+    "edit-btn": "edit",
+
+    "overhead-profile-title": "DAO Profile",
+    "overhead-validators-title": "DAO validator settings",
+    "overhead-validators-list-title": "Validator list",
+    "overhead-default-settings-title": "General voting settings",
+    "overhead-internal-settings-title": "Changing General voting settings",
+    "overhead-distribution-settings-title": "Distribution settings",
+
+    "name-lbl": "DAO name",
+    "desc-lbl": "Description",
+    "website-lbl": "DAO site",
+    "socials-lbl": "Social Links",
+    "gov-token-lbl": "Token for governance",
+    "gov-nft-lbl": "NFT for governance",
+    "docs-lbl": "Documents",
+
+    "is-validator-lbl": "Add validator",
+    "validator-token-name-lbl": "Validator token name",
+    "validator-token-symbol-lbl": "Validator token symbol",
+    "validator-voting-duration-lbl": "Duration of validator voting",
+    "validator-voting-quorum-lbl": "Quorum required for a vote to pass",
+
+    "settings-duration-lbl": "Duration of voting",
+    "settings-is-delegation-lbl": "Vote delegation",
+    "settings-quorum-lbl": "Votes needed for quorum",
+    "settings-voting-min-power-lbl": "Minimum voting power required for voting",
+    "settings-create-proposal-min-power-lbl": "Minimum voting power required for creating a proposal",
+    "settings-early-completion-lbl": "Early vote completion",
+    "settings-validator-voting-duration-lbl": "Duration of validator voting",
+    "settings-validator-quorum-lbl": "Validator votes needed for quorum",
+    "settings-reward-lbl": "Community rewards",
+    "settings-reward-token-lbl": "ERC-20 token for rewards",
+    "settings-reward-for-creator-lbl": "Amount of tokens for creator",
+    "settings-reward-for-voter-lbl": "Amount of tokens for the voter",
+    "settings-reward-for-executor-lbl": "Amount of tokens for tx. executor",
+
+    "next-btn": "Create DAO"
   }
 }

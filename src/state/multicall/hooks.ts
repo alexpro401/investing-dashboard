@@ -64,8 +64,8 @@ const BLOCK_MINING_TIME_BY_CHAINID = {
 }
 
 export function getRefreshIntervalByChain(
-  chainId: number,
-  minutes: number
+  chainId?: number,
+  minutes?: number
 ): number {
   if (!chainId || !minutes) return BLOCK_MINING_TIME_BY_CHAINID[0]
 

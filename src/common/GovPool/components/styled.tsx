@@ -6,6 +6,7 @@ export const CreateDaoCardNumberIcon = styled.div`
   height: 18px;
   border-radius: 50%;
   border: 1.5px solid #7fffd4;
+  color: #7fffd4;
 `
 
 export const CreateDaoCardNumberIconText = styled.span`
@@ -13,10 +14,10 @@ export const CreateDaoCardNumberIconText = styled.span`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #7fffd4;
   font-size: 12px;
   line-height: 1.2;
   font-weight: 700;
   text-align: center;
   text-transform: uppercase;
+  color: inherit;
 `

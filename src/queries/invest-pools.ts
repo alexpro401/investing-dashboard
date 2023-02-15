@@ -2,6 +2,7 @@
 
 const INVEST_PROPOSAL = `
   id
+  proposalId
   timestampLimit
   investLPLimit
   leftTokens
@@ -9,6 +10,10 @@ const INVEST_PROPOSAL = `
   totalUSDSupply
   firstSupplyTimestamp
   APR
+  investPool {
+    id
+    baseToken
+  }
 `
 
 export const InvestProposalQuery = `
@@ -18,28 +23,24 @@ export const InvestProposalQuery = `
     }
   }
 `
-
-const INVESTOR_INVEST_PROPOSAL = `
-  id
-  timestampLimit
-  investLPLimit
-  leftTokens
-  leftAmounts
-  totalUSDSupply
-  firstSupplyTimestamp
-  APR
-  
-  investPool {
-    id
-    baseToken
+export const PoolInvestProposalsQuery = `
+  query ($offset: Int!, $limit: Int!, $poolAddress: String!) {
+    proposals(
+      skip: $offset, first: $limit, 
+      orderBy: id, orderDirection: asc,
+      where: {investPool: $poolAddress}
+    ) {
+      ${INVEST_PROPOSAL}
+    }
   }
 `
+
 export const InvestorInvestProposalsQuery = (invested) => {
   const condition = invested ? "investPool_in" : "investPool_not_in"
   return `
   query ($activePools: [String]!, $offset: Int!, $limit: Int!) {
     proposals(skip: $offset, first: $limit, where: { ${condition}: $activePools }){
-      ${INVESTOR_INVEST_PROPOSAL}
+      ${INVEST_PROPOSAL}
     }
   }
 `

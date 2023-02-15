@@ -7,17 +7,16 @@ import { SupportedChainId } from "consts/chains"
 import { expandTimestamp, formatBigNumber, normalizeBigNumber } from "utils"
 import getExplorerLink, { ExplorerDataType } from "utils/getExplorerLink"
 import { DATE_TIME_FORMAT } from "consts/time"
-import { InvestorRiskyVest } from "interfaces/thegraphs/investors"
+import { InvestorRiskyPositionVest } from "interfaces/thegraphs/investors"
 import { divideBignumbers } from "utils/formulas"
 
 import * as S from "./styled"
 
-import externalLinkIcon from "assets/icons/external-link.svg"
 import { Flex } from "theme"
 import { ICON_NAMES } from "consts"
 
 interface Props {
-  data: InvestorRiskyVest
+  data: InvestorRiskyPositionVest
   baseTokenSymbol: string
 }
 
@@ -99,7 +98,7 @@ const VestCard: FC<Props> = ({ data, baseTokenSymbol, ...rest }) => {
           <S.Item>
             <S.Label>
               {date}
-              <S.ExternalLinkIcon src={externalLinkIcon} />
+              <S.ExternalLinkIcon name={ICON_NAMES.externalLink} />
             </S.Label>
             <S.Value>
               {PositionDirection} {volumeLP2} LP2
@@ -118,7 +117,7 @@ const VestCard: FC<Props> = ({ data, baseTokenSymbol, ...rest }) => {
           <S.Item>
             <S.Value>
               {date}
-              <S.ExternalLinkIcon src={externalLinkIcon} />
+              <S.ExternalLinkIcon name={ICON_NAMES.externalLink} />
             </S.Value>
           </S.Item>
         )}

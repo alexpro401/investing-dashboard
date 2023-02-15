@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components/macro"
 import { NavLink } from "react-router-dom"
+import { respondTo } from "theme"
 
 export const Root = styled.div`
   display: flex;
@@ -10,9 +11,15 @@ export const Root = styled.div`
 export const TraderPoolsListBadge = styled.div`
   display: flex;
   align-items: center;
+  overflow: auto hidden;
   background: #101520;
   border-radius: 13px;
   gap: 4px;
+  max-width: 100%;
+
+  ${respondTo("md")} {
+    max-width: 75%;
+  }
 `
 
 export const TraderPoolsListBadgeAccountWrp = styled.div`

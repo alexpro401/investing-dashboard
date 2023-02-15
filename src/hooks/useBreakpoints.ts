@@ -6,7 +6,7 @@ export const useBreakpoints = () => {
   const { width: windowWidth } = useWindowSize()
 
   const isMobile = useMemo(
-    () => windowWidth < breakpoints.sm - 1,
+    () => windowWidth < breakpoints.xmd - 1,
     [windowWidth]
   )
   const isMediumTablet = useMemo(

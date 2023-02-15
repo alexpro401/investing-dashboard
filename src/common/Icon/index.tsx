@@ -62,6 +62,8 @@ import {
   WarnCircledFilledIcon,
   DotsHorizontalIcon,
   StocksIcon,
+  PencilIcon,
+  GradientArrowDiagonalUpIcon,
 } from "assets/icons"
 
 import { ElementType, FC, HTMLAttributes, useMemo } from "react"
@@ -200,6 +202,10 @@ const Icon: FC<Props> = ({ name, ...rest }) => {
         return PlusOutline as unknown as ElementType
       case ICON_NAMES.stocks:
         return StocksIcon as unknown as ElementType
+      case ICON_NAMES.pencil:
+        return PencilIcon as unknown as ElementType
+      case ICON_NAMES.gradientArrowDiagonalUp:
+        return GradientArrowDiagonalUpIcon as unknown as ElementType
       default:
         return AngleLeftIcon as unknown as ElementType
     }

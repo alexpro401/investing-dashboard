@@ -125,14 +125,13 @@ const DaoProposals = lazy(() => import("pages/GovPoolProposals/DaoProposals"))
 const DaoProposalDetails = lazy(
   () => import("pages/GovPoolProposals/DaoProposalDetails")
 )
-// const Insurance = lazy(() => import("pages/Insurance"))
 
 const PrivacyPolicy = lazy(() => import("pages/PrivacyPolicy"))
 const ServiceTerms = lazy(() => import("pages/ServiceTerms"))
 const Insurance = lazy(() => import("pages/Insurance"))
 const InsuranceCreate = lazy(() => import("pages/InsuranceCreate"))
-const FundPositions = lazy(() => import("pages/FundPositions"))
-const Investment = lazy(() => import("pages/Investment"))
+const InvestorPositions = lazy(() => import("pages/InvestorPositions"))
+const PoolPositions = lazy(() => import("pages/PoolPositions"))
 const DaoPools = lazy(() => import("pages/DaoPools"))
 const DaoDelegation = lazy(() => import("pages/DaoDelegation"))
 const DaoPoolClaim = lazy(() => import("pages/DaoPoolClaim"))
@@ -191,6 +190,21 @@ export const router = createBrowserRouter([
           {
             path: ROUTE_PATHS.poolProfile,
             element: <PoolProfile />,
+            handle: (params) => [
+              {
+                label: "Pools",
+                path: generatePath(ROUTE_PATHS.topMembers, {
+                  "*": "all",
+                }),
+              },
+              {
+                label: shortenAddress(params.poolAddress),
+                path: generatePath(ROUTE_PATHS.poolProfile, {
+                  poolAddress: params.poolAddress,
+                  "*": "",
+                }),
+              },
+            ],
           },
           {
             path: ROUTE_PATHS.riskyProposalCreate,
@@ -206,7 +220,7 @@ export const router = createBrowserRouter([
           },
           {
             path: ROUTE_PATHS.investment,
-            element: <Investment />,
+            element: <InvestorPositions />,
           },
           {
             path: ROUTE_PATHS.investmentProposalCreate,
@@ -246,7 +260,7 @@ export const router = createBrowserRouter([
           },
           {
             path: ROUTE_PATHS.fundPositions,
-            element: <FundPositions />,
+            element: <PoolPositions />,
           },
           {
             path: ROUTE_PATHS.insurance,

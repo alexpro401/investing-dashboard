@@ -31,7 +31,7 @@ const ChartTooltipPnl = (props) => {
   }, [payload])
 
   const date = useMemo<string>(() => {
-    if (!history) return ""
+    if (!history || !history?.timestamp) return ""
 
     return format(expandTimestamp(history.timestamp), DATE_FORMAT)
   }, [history])

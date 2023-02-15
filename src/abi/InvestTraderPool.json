@@ -3,37 +3,6 @@
         "anonymous": false,
         "inputs": [
             {
-                "indexed": false,
-                "internalType": "address",
-                "name": "fromToken",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "toToken",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "fromVolume",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "toVolume",
-                "type": "uint256"
-            }
-        ],
-        "name": "ActivePortfolioExchanged",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
                 "indexed": true,
                 "internalType": "address",
                 "name": "owner",
@@ -53,50 +22,6 @@
             }
         ],
         "name": "Approval",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "sender",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "traderLpClaimed",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "traderBaseClaimed",
-                "type": "uint256"
-            }
-        ],
-        "name": "CommissionClaimed",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "sender",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "descriptionURL",
-                "type": "string"
-            }
-        ],
-        "name": "DescriptionURLChanged",
         "type": "event"
     },
     {
@@ -173,56 +98,6 @@
             }
         ],
         "name": "Left",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "sender",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "address[]",
-                "name": "admins",
-                "type": "address[]"
-            },
-            {
-                "indexed": false,
-                "internalType": "bool",
-                "name": "add",
-                "type": "bool"
-            }
-        ],
-        "name": "ModifiedAdmins",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "sender",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "address[]",
-                "name": "privateInvestors",
-                "type": "address[]"
-            },
-            {
-                "indexed": false,
-                "internalType": "bool",
-                "name": "add",
-                "type": "bool"
-            }
-        ],
-        "name": "ModifiedPrivateInvestors",
         "type": "event"
     },
     {
@@ -317,6 +192,16 @@
                         "type": "bool"
                     },
                     {
+                        "internalType": "uint8",
+                        "name": "baseTokenDecimals",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "onlyBABTHolders",
+                        "type": "bool"
+                    },
+                    {
                         "internalType": "uint256",
                         "name": "totalLPEmission",
                         "type": "uint256"
@@ -325,11 +210,6 @@
                         "internalType": "address",
                         "name": "baseToken",
                         "type": "address"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "baseTokenDecimals",
-                        "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
@@ -344,6 +224,11 @@
                     {
                         "internalType": "uint256",
                         "name": "commissionPercentage",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "traderBABTId",
                         "type": "uint256"
                     }
                 ],
@@ -392,6 +277,16 @@
                         "type": "bool"
                     },
                     {
+                        "internalType": "uint8",
+                        "name": "baseTokenDecimals",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "onlyBABTHolders",
+                        "type": "bool"
+                    },
+                    {
                         "internalType": "uint256",
                         "name": "totalLPEmission",
                         "type": "uint256"
@@ -400,11 +295,6 @@
                         "internalType": "address",
                         "name": "baseToken",
                         "type": "address"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "baseTokenDecimals",
-                        "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
@@ -420,6 +310,11 @@
                         "internalType": "uint256",
                         "name": "commissionPercentage",
                         "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "traderBABTId",
+                        "type": "uint256"
                     }
                 ],
                 "internalType": "struct ITraderPool.PoolParameters",
@@ -428,6 +323,24 @@
             }
         ],
         "name": "__TraderPool_init",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "addBlockInvestment",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -497,6 +410,24 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "burn",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -660,6 +591,19 @@
             }
         ],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "dexeToken",
+        "outputs": [
+            {
+                "internalType": "contract IERC20",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -889,6 +833,30 @@
     {
         "inputs": [
             {
+                "internalType": "address[]",
+                "name": "tokens",
+                "type": "address[]"
+            },
+            {
+                "internalType": "uint256[]",
+                "name": "amounts",
+                "type": "uint256[]"
+            }
+        ],
+        "name": "getInvestInitialTokens",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "lpAmount",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "uint256",
                 "name": "amountInBaseToInvest",
                 "type": "uint256"
@@ -1014,6 +982,16 @@
                                 "type": "bool"
                             },
                             {
+                                "internalType": "uint8",
+                                "name": "baseTokenDecimals",
+                                "type": "uint8"
+                            },
+                            {
+                                "internalType": "bool",
+                                "name": "onlyBABTHolders",
+                                "type": "bool"
+                            },
+                            {
                                 "internalType": "uint256",
                                 "name": "totalLPEmission",
                                 "type": "uint256"
@@ -1022,11 +1000,6 @@
                                 "internalType": "address",
                                 "name": "baseToken",
                                 "type": "address"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "baseTokenDecimals",
-                                "type": "uint256"
                             },
                             {
                                 "internalType": "uint256",
@@ -1041,6 +1014,11 @@
                             {
                                 "internalType": "uint256",
                                 "name": "commissionPercentage",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "traderBABTId",
                                 "type": "uint256"
                             }
                         ],
@@ -1169,6 +1147,19 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "getTraderBABTId",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "address",
@@ -1279,6 +1270,24 @@
     {
         "inputs": [
             {
+                "internalType": "uint256[]",
+                "name": "amounts",
+                "type": "uint256[]"
+            },
+            {
+                "internalType": "address[]",
+                "name": "tokens",
+                "type": "address[]"
+            }
+        ],
+        "name": "investInitial",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "uint256",
                 "name": "proposalId",
                 "type": "uint256"
@@ -1318,6 +1327,49 @@
                 "internalType": "uint256",
                 "name": "commissionUnlockEpoch",
                 "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "investsInBlocks",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "who",
+                "type": "address"
+            }
+        ],
+        "name": "isBABTHolder",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
             }
         ],
         "stateMutability": "view",
@@ -1378,6 +1430,24 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "mint",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -1632,6 +1702,58 @@
                 "type": "bool"
             }
         ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "lpAmount",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "baseAmount",
+                "type": "uint256"
+            }
+        ],
+        "name": "updateFrom",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "baseTransfer",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "lpAmount",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "baseAmount",
+                "type": "uint256"
+            }
+        ],
+        "name": "updateTo",
+        "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
     }

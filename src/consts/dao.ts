@@ -1,9 +1,12 @@
 import { GovPoolFormOptions } from "types"
 import { BigNumber } from "@ethersproject/bignumber"
+import { Buffer } from "buffer"
+import { utils } from "ethers"
 
 export const INITIAL_DAO_PROPOSAL: GovPoolFormOptions = {
   _isErc20: true,
   _isErc721: false,
+  _isBinanceKycRestricted: false,
   _isCustomVoting: false,
   _isDistributionProposal: false,
   _isValidator: false,
@@ -18,6 +21,14 @@ export const INITIAL_DAO_PROPOSAL: GovPoolFormOptions = {
     nftAddress: "",
     totalPowerInTokens: 0,
     nftsTotalSupply: 0,
+  },
+  tokenCreation: {
+    name: "",
+    symbol: "",
+    totalSupply: BigNumber.from(0),
+    treasury: BigNumber.from(0),
+    initialDistribution: BigNumber.from(0),
+    recipients: [],
   },
   _validatorsParams: {
     name: "",
@@ -92,3 +103,14 @@ export const INITIAL_DAO_PROPOSAL: GovPoolFormOptions = {
     executorDescription: "default",
   },
 }
+
+const bytes = Buffer.from(JSON.stringify(INITIAL_DAO_PROPOSAL))
+const hash = utils.sha512(bytes)
+
+const savedHash = localStorage.getItem("fund-dao-creating-form-hash")
+
+if ((savedHash && hash !== savedHash) || !savedHash) {
+  localStorage.removeItem("fund-dao-creating-form")
+}
+
+localStorage.setItem("fund-dao-creating-form-hash", hash)

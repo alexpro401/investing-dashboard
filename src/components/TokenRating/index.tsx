@@ -9,7 +9,7 @@ const TokenRating: React.FC<{ rating?: number }> = ({ rating, ...rest }) => {
   const { isDesktop } = useBreakpoints()
 
   const stars = React.useMemo(() => {
-    const items = Array.from({ length: 5 }, (_, i) => i + 1)
+    const items = Array.from({ length: 5 }, (_, i) => i)
 
     if (!rating) {
       return items.map((number) => <S.Star key={number} src={starDarkIcon} />)

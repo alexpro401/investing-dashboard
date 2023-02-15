@@ -15,7 +15,6 @@ import {
   useGovPoolHelperContracts,
   useGovPoolVotingAssets,
   useGovPoolDelegate,
-  useGovPoolDeposit,
   useERC721Tokens,
   useOwnedERC721Tokens,
 } from "hooks"
@@ -27,7 +26,6 @@ export enum ButtonTypes {
   UNLOCK = "UNLOCK",
   INUFICIENT_TOKEN_BALANCE = "INUFICIENT_TOKEN_BALANCE",
   EMPTY_AMOUNT = "EMPTY_AMOUNT",
-  DEPOSIT = "DEPOSIT",
   SUBMIT = "SUBMIT",
 }
 
@@ -51,7 +49,6 @@ const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
 
   const { delegate } = useGovPoolDelegate(daoPoolAddress)
   const { govUserKeeperAddress } = useGovPoolHelperContracts(daoPoolAddress)
-  const deposit = useGovPoolDeposit(daoPoolAddress ?? "")
 
   const withdrawableAssets = useGovPoolWithdrawableAssetsQuery({
     daoPoolAddress,
@@ -223,19 +220,13 @@ const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
       return ButtonTypes.UNLOCK
     }
 
-    if (!isERC20Deposited || !!undepositedERC721Selected.length) {
-      return ButtonTypes.DEPOSIT
-    }
-
     return ButtonTypes.SUBMIT
   }, [
     ERC20Amount,
     ERC20Balance,
     isERC20Approved,
-    isERC20Deposited,
     ERC721Amount.length,
     unapprowedERC721Selected.length,
-    undepositedERC721Selected.length,
   ])
 
   const handleERC20Change = useCallback(
@@ -278,50 +269,34 @@ const useDelegateTerminal = (daoPoolAddress?: string, delegatee?: string) => {
     updateERC721Allowance,
   ])
 
-  const handleDeposit = useCallback(() => {
-    if (!account) return
+  const handleSubmit = useCallback(async () => {
+    if (!delegatee || !account) return
 
-    const erc20 = !isERC20Deposited
+    const erc20DepositAmount = !isERC20Deposited
       ? ERC20Amount.sub(depositedERC20Balance)
       : ZERO
 
-    const erc721 = undepositedERC721Selected.length
+    const erc721DepositAmount = undepositedERC721Selected.length
       ? undepositedERC721Selected
       : []
 
-    return deposit(account, erc20, erc721)
+    await delegate(
+      account,
+      delegatee,
+      erc20DepositAmount,
+      erc721DepositAmount,
+      ERC20Amount,
+      ERC721Amount
+    )
   }, [
     ERC20Amount,
+    ERC721Amount,
     account,
-    deposit,
+    delegate,
+    delegatee,
     depositedERC20Balance,
     isERC20Deposited,
     undepositedERC721Selected,
-  ])
-
-  const handleSubmit = useCallback(async () => {
-    if (!isERC20Deposited || !!undepositedERC721Selected.length) {
-      await handleDeposit()
-      return
-    }
-
-    if (!delegatee) return
-
-    const erc20Amount = ERC20Amount
-
-    const depositNfts = ERC721Amount
-
-    // TODO: deposit
-
-    await delegate(delegatee, erc20Amount, depositNfts)
-  }, [
-    isERC20Deposited,
-    undepositedERC721Selected.length,
-    delegatee,
-    ERC20Amount,
-    ERC721Amount,
-    delegate,
-    handleDeposit,
   ])
 
   return {
