@@ -1,110 +1,86 @@
-import { FC, ReactNode } from "react"
+import { Headline3 } from "common"
 import styled from "styled-components/macro"
-import { Flex } from "theme"
+import theme, { Flex, respondTo } from "theme"
 
-export const Container = styled(Flex)`
+export const Wrapper = styled(Flex)`
   width: 100%;
   padding: 16px;
   align-items: center;
+  justify-content: flex-start;
   flex-direction: column;
   overflow-y: scroll;
-`
 
-export const Content = styled(Flex)`
-  overflow-y: auto;
-  flex-direction: column;
-  align-items: flex-start;
-  width: fill-available;
-`
-
-export const Title = styled.div`
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 16px;
-  color: #e4f2ff;
-
-  &:nth-child(2) {
-    margin: 0 4px -2px 8px;
+  ${respondTo("sm")} {
+    padding: 24px;
   }
 `
 
-export const SubTitle = styled.div`
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 12px;
-  color: #e4f2ff;
-  text-align: left;
-  margin-bottom: 16px;
-`
-
-export const Link = styled.div`
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 16px;
-  color: #2680eb;
-  transform: translateY(1px);
-  margin-right: auto;
-`
-
-export const CardHeader = styled(Flex)`
-  width: 100%;
-  padding: 24px 16px;
+export const Container = styled(Flex)`
+  flex-direction: column;
   justify-content: flex-start;
-  position: relative;
+  align-items: flex-start;
+  max-width: 420px;
+  width: 100%;
+  height: fit-content;
 
-  &:before {
+  background: ${theme.backgroundColors.secondary};
+  border-radius: 20px;
+
+  ${respondTo("xs")} {
+    height: fill-available;
+    max-height: 80vh;
+    max-width: 490px;
+  }
+`
+
+export const Header = styled(Flex)`
+  position: relative;
+  width: 100%;
+  height: 58px;
+  padding: 16px;
+
+  &:after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: #28334a;
+    opacity: 0.5;
     position: absolute;
     bottom: 0;
-    right: 0;
     left: 0;
-    margin: auto;
-    width: 100%;
-    content: "";
-    height: 1px;
-    background: radial-gradient(
-          54.8% 53% at 50% 50%,
-          #587eb7 0%,
-          rgba(88, 126, 183, 0) 100%
-        )
-        /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
-      radial-gradient(
-          60% 51.57% at 50% 50%,
-          #6d99db 0%,
-          rgba(109, 153, 219, 0) 100%
-        )
-        /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
-      radial-gradient(
-          69.43% 69.43% at 50% 50%,
-          rgba(5, 5, 5, 0.5) 0%,
-          rgba(82, 82, 82, 0) 100%
-        )
-        /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
-    opacity: 0.1;
+    right: 0;
   }
 `
 
-export const Body = styled(Flex)<{ noPaddings?: boolean }>`
-  width: fill-available;
+export const Body = styled(Flex)`
   flex-direction: column;
-  align-items: flex-start;
-  padding: ${(props) => (props.noPaddings ? "16px 0 0" : "16px 16px 24px")};
+  justify-content: flex-start;
+  height: fill-available;
+  width: 100%;
+  font-family: "Gilroy";
+  font-style: normal;
+  padding: 16px;
+  gap: 16px;
+
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 170%;
+  letter-spacing: 0.01em;
+  color: #e4f2ff;
+
+  ${respondTo("xmd")} {
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  ${respondTo("xs")} {
+    overflow-y: auto;
+  }
 `
 
-export const FaqText = styled.div`
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 140%;
-  letter-spacing: 0.03em;
-  color: #e4f2ff;
-  opacity: 0.8;
+export const Footer = styled(Flex).attrs({ full: true })`
+  flex-direction: column;
 `
 
 export const CheckboxLabel = styled.div`
@@ -119,137 +95,19 @@ export const CheckboxLabel = styled.div`
   transform: translateY(3px);
 `
 
-export const CalendarIcon = styled.img`
-  width: 24px;
-  height: 24px;
-  margin-right: 8px;
-  transform: translateY(-1px);
+export const Buttons = styled(Flex).attrs({ full: true })`
+  padding: 16px;
+  gap: 24px;
+
+  & > a {
+    width: 100%;
+  }
 `
 
-export const TokenContainer = styled(Flex)`
-  padding: 0 16px;
-  background: linear-gradient(
-    266.2deg,
-    rgba(169, 221, 251, 0) 2.35%,
-    rgba(193, 218, 255, 0.04) 96.05%
-  );
-  height: 50px;
-  margin-top: 16px;
-  width: 100%;
-`
-
-export const TokenInfo = styled(Flex)`
-  flex-direction: column;
-  align-items: flex-start;
-  margin-right: auto;
-`
-
-export const Symbol = styled.div`
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 150%;
-  text-align: left;
-  letter-spacing: 0.0168em;
-  font-feature-settings: "tnum" on, "lnum" on;
-  color: #e4f2ff;
-`
-
-export const Name = styled.div`
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 142%;
-  text-align: left;
-  letter-spacing: 0.03em;
-  font-feature-settings: "tnum" on, "lnum" on;
-  color: #616d8b;
-`
-
-export const Price = styled.div`
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 130%;
-  text-align: right;
-  letter-spacing: 0.03em;
-  color: #e4f2ff;
-`
-
-export const HintText = styled.div`
-  padding: 16px 0 40px;
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 16px;
-  color: #616d8b;
-`
-
-export const LabelText = styled(Flex)`
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 100%;
-  letter-spacing: 0.5px;
-  color: #e4f2ff;
-  margin: 0 6px;
-  justify-content: flex-start;
-  transform: translateY(-1.5px);
-`
-
-interface Props {
-  icon: ReactNode
-  right?: ReactNode
-  children?: ReactNode
-}
-export const Label: FC<Props> = ({ icon, right, children }) => {
-  return (
-    <Flex p="0 0 10px" full>
-      {icon}
-      <Flex full>
-        <LabelText>{children}</LabelText>
-        <LabelText>{right}</LabelText>
-      </Flex>
-    </Flex>
-  )
-}
-
-export const Row = styled(Flex)`
-  width: 100%;
-  padding: 10px 0;
-  flex-direction: column;
-  align-items: flex-start;
-`
-
-export const TextBase = styled.div`
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 16px;
-  text-align: right;
-`
-
-export const White = styled(TextBase)`
-  color: #e1f2ff;
-  margin: 0 5px;
-`
-
-export const Grey = styled(TextBase)`
-  color: #5e6d8e;
-`
-
-export const ValidationError = styled.div`
-  font-family: ${(props) => props.theme.appFontFamily};
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 12px;
-  color: #fc6d6d;
-  margin: 12px 0 0 3px;
+export const Title = styled(Headline3)`
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  font-weight: 700;
+  margin: 0;
 `

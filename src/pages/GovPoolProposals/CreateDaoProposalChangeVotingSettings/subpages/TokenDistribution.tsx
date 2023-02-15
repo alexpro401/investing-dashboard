@@ -12,7 +12,6 @@ import { EExecutor } from "interfaces/contracts/IGovPoolSettings"
 import { INITIAL_DAO_PROPOSAL } from "consts/dao"
 import Skeleton from "components/Skeleton"
 import FormStepsLoaderWrapper from "common/FormSteps/FormStepsLoaderWrapper"
-import { Flex } from "theme"
 import { GovPoolFormOptions } from "types"
 import { ZERO_ADDR } from "consts"
 

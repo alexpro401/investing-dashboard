@@ -166,7 +166,12 @@ const TokenIcon: React.FC<IProps> = ({ size, address, m = "0 8px 0 0" }) => {
   }
 
   if (address?.toLocaleLowerCase() === dexeAddress.toLocaleLowerCase()) {
-    return <CommonIcon name={ICON_NAMES.dexeTokenIcon} style={{ margin: m }} />
+    return (
+      <CommonIcon
+        name={ICON_NAMES.dexeTokenIcon}
+        style={{ margin: m, width: size, height: size }}
+      />
+    )
   }
 
   if (noImage && tokenData) {
