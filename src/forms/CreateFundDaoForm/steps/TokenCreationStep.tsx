@@ -76,7 +76,7 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
   const daoCreatorRecipientAmount = useMemo(() => {
     const daoCreationRecipientsSum = tokenCreation.recipients.get?.reduce(
       (acc, curr) => {
-        return acc.add(curr.amount ? safeBigFrom(curr.amount) : safeBigFrom(0))
+        return acc.add(safeBigFrom(curr.amount))
       },
       safeBigFrom(0)
     )
@@ -85,7 +85,7 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
       ? safeBigFrom(tokenCreation.initialDistribution.get).sub(
           daoCreationRecipientsSum
         )
-      : BigNumber.from(0)
+      : safeBigFrom(tokenCreation.initialDistribution.get)
   }, [tokenCreation.initialDistribution.get, tokenCreation.recipients.get])
 
   const handleNextStep = useCallback(() => {
@@ -226,6 +226,7 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
     },
     [
       tokenCreation.initialDistribution,
+      tokenCreation.recipients,
       tokenCreation.totalSupply.get,
       tokenCreation.treasury,
     ]
@@ -292,7 +293,7 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
         return newState
       })
     },
-    [tokenCreation.recipients]
+    [daoCreatorRecipientAmount, tokenCreation.recipients]
   )
 
   return (

@@ -71,6 +71,7 @@ const TitlesStep: FC<ITitlesStepProps> = () => {
     socialLinks,
     tokenCreation,
     isTokenCreation,
+    isBinanceKycRestricted,
   } = daoPoolFormContext
 
   const { avatarUrl, daoName, websiteUrl, description, documents } =
@@ -780,6 +781,23 @@ const TitlesStep: FC<ITitlesStepProps> = () => {
             </Card>
           </>
         )}
+
+        <Card>
+          <CardHead
+            nodeLeft={<Icon name={ICON_NAMES.globe} />}
+            title="Strict pool for Binance users only?"
+            nodeRight={
+              <Switch
+                isOn={isBinanceKycRestricted.get}
+                onChange={(n, v) => isBinanceKycRestricted.set(v)}
+                name={"strict-binance-kyc"}
+              />
+            }
+          />
+          <CardDescription>
+            <p>Here you can strict pool for Binance users only</p>
+          </CardDescription>
+        </Card>
       </S.StepsRoot>
       <S.FormStepsNavigationWrp customNextCb={handleNextStep} />
     </>

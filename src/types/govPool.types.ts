@@ -46,6 +46,7 @@ export type GovPoolSettings = {
 export type GovPoolFormOptions = {
   _isErc20: boolean
   _isErc721: boolean
+  _isBinanceKycRestricted: boolean
   _isCustomVoting: boolean
   _isDistributionProposal: boolean
   _isValidator: boolean
