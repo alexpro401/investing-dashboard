@@ -22,6 +22,7 @@ import {
   shortTimestamp,
 } from "utils"
 import { required, minLength, maxLength } from "utils/validators"
+import { useTranslation } from "react-i18next"
 import TokenTile from "../TokenTile"
 import * as S from "./styled"
 
@@ -43,6 +44,7 @@ const Form = () => {
   ] = useCreateRiskyProposal(poolAddress, tokenAddress)
   const [, poolInfo] = usePoolContract(poolAddress)
   const [baseToken] = useERC20Data(poolInfo?.parameters.baseToken)
+  const { t } = useTranslation()
 
   const {
     getFieldErrorMessage,
@@ -78,9 +80,9 @@ const Form = () => {
   const CardHeadTemplate = (
     <Layout.Header>
       <Layout.Title>
-        Create Risky Proposal
+        {t("creeate-risky-proposal-card.card-title")}
         <AppButton
-          text="read more"
+          text={t("creeate-risky-proposal-card.action-more")}
           size="no-paddings"
           color="default"
           routePath={generatePath(ROUTE_PATHS.riskyProposalCreate, {
@@ -120,8 +122,8 @@ const Form = () => {
             })
           )
         }}
-        title="Success"
-        description="You have successfully created a risk proposal. Deposit LP or trade your token"
+        title={t("creeate-risky-proposal-card.modal-title")}
+        description={t("creeate-risky-proposal-card.modal-description")}
       >
         <AppButton
           onClick={() => {
@@ -137,7 +139,7 @@ const Form = () => {
           size="large"
           color="primary"
           full
-          text="Open new trade"
+          text={t("creeate-risky-proposal-card.modal-action")}
         />
       </TransactionSent>
 
@@ -147,8 +149,7 @@ const Form = () => {
         {CardHeadTemplate}
         <Layout.Body>
           <S.Description>
-            If you want to create investment proposal please fill out the form
-            below. You can change parameters after creation
+            {t("creeate-risky-proposal-card.card-description")}
           </S.Description>
           <TokenTile tokenAddress={tokenAddress} />
 
@@ -157,16 +158,18 @@ const Form = () => {
               nodeLeft={
                 <Icon style={{ width: 20, height: 20 }} name={ICON_NAMES.cog} />
               }
-              title="Risk Proposal settings"
+              title={t("creeate-risky-proposal-card.section-label-settings")}
             />
             <CardDescription>
-              <p>Text</p>
+              <p>
+                {t("creeate-risky-proposal-card.section-description-settings")}
+              </p>
             </CardDescription>
             <CardFormControl>
               <InputField
                 value={symbol.get}
                 setValue={symbol.set}
-                label="New ticker LP2"
+                label={t("creeate-risky-proposal-card.section-label-symbol")}
                 labelNodeRight={
                   isFieldValid("symbol") ? (
                     <Icon name={ICON_NAMES.greenCheck} />
@@ -187,7 +190,9 @@ const Form = () => {
                     <></>
                   )
                 }
-                label="Description"
+                label={t(
+                  "creeate-risky-proposal-card.section-label-description"
+                )}
                 errorMessage={getFieldErrorMessage("description")}
                 onBlur={() => touchField("description")}
               />
@@ -197,7 +202,9 @@ const Form = () => {
                   timestampLimit.set(shortTimestamp(value))
                   touchField("timestampLimit")
                 }}
-                placeholder={"Investment closing date"}
+                placeholder={t(
+                  "creeate-risky-proposal-card.section-label-timestamp-limit"
+                )}
                 minDate={new Date()}
                 errorMessage={getFieldErrorMessage("timestampLimit")}
               />
@@ -212,19 +219,22 @@ const Form = () => {
                   name={ICON_NAMES.stocks}
                 />
               }
-              title="Investing in investment proposal"
+              title={t("creeate-risky-proposal-card.section-label-investment")}
             />
             <CardDescription>
               <p>
-                Объяснить зачем создавать внутренний токен для валдиторов как
-                проходят голосования
+                {t(
+                  "creeate-risky-proposal-card.section-description-investment"
+                )}
               </p>
             </CardDescription>
             <CardFormControl>
               <InputField
                 value={investLPLimit.get}
                 setValue={investLPLimit.set}
-                label="Max LP limit for staking"
+                label={t(
+                  "creeate-risky-proposal-card.section-label-max-lp-limit"
+                )}
                 nodeRight={<S.NodeText>{poolInfo?.ticker || ""}</S.NodeText>}
                 type="number"
                 inputMode="decimal"
@@ -241,7 +251,9 @@ const Form = () => {
               <InputField
                 value={lpAmount.get}
                 setValue={lpAmount.set}
-                label="My LP allocated in proposal"
+                label={t(
+                  "creeate-risky-proposal-card.section-label-personal-invest"
+                )}
                 nodeRight={
                   <S.NodeText>
                     <AppButton
@@ -268,7 +280,9 @@ const Form = () => {
               <InputField
                 value={maxTokenPriceLimit.get}
                 setValue={maxTokenPriceLimit.set}
-                label="Maximun buying price"
+                label={t(
+                  "creeate-risky-proposal-card.section-label-max-buying-price"
+                )}
                 type="number"
                 inputMode="decimal"
                 nodeRight={
@@ -295,7 +309,9 @@ const Form = () => {
               <InputField
                 value={instantTradePercentage.get}
                 setValue={instantTradePercentage.set}
-                label="Position filled after creation"
+                label={t(
+                  "creeate-risky-proposal-card.section-label-position-filled"
+                )}
                 nodeRight={<S.NodeText>%</S.NodeText>}
                 type="number"
                 inputMode="decimal"
@@ -316,7 +332,7 @@ const Form = () => {
           <Layout.Buttons>
             <AppButton
               disabled={!isFieldsValid}
-              text="Create risky proposal"
+              text={t("creeate-risky-proposal-card.action-submit")}
               size="large"
               color="primary"
               full

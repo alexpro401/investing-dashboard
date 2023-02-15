@@ -1,5 +1,6 @@
 import { Center } from "theme"
 import { Route, Routes, useParams } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 
 import { Wrapper } from "./styled"
 import WithPoolAddressValidation from "components/WithPoolAddressValidation"
@@ -13,6 +14,8 @@ import Header from "components/Header/Layout"
 const CreateRiskyProposalWithProvider = () => {
   const { poolAddress } = useParams()
 
+  const { t } = useTranslation()
+
   return (
     <WithPoolAddressValidation
       poolAddress={poolAddress ?? ""}
@@ -22,7 +25,7 @@ const CreateRiskyProposalWithProvider = () => {
         </Center>
       }
     >
-      <Header>Create risky proposal</Header>
+      <Header>{t("create-risky-proposal-card.head-title")}</Header>
 
       <CreateRiskyProposalContextProvider>
         <Wrapper>

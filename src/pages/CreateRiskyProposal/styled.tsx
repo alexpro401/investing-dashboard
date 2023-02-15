@@ -27,7 +27,9 @@ export const Container = styled(Flex)`
   border-radius: 20px;
 
   ${respondTo("xs")} {
-    height: 560px;
+    height: fill-available;
+    max-height: 80vh;
+    max-width: 490px;
   }
 `
 
