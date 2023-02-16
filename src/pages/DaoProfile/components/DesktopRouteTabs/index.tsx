@@ -52,6 +52,14 @@ const DesktopRouteTabs: React.FC = () => {
         onClick: () => currentTab.set(EDaoProfileTab.dao_proposals),
       },
       {
+        title: mapProfileTabToTitle[EDaoProfileTab.token_sales],
+        source: generatePath(ROUTE_PATHS.daoProfile, {
+          daoAddress: daoAddress ?? "",
+          "*": mapProfileTabToRoute[EDaoProfileTab.token_sales],
+        }),
+        onClick: () => currentTab.set(EDaoProfileTab.token_sales),
+      },
+      {
         title: mapProfileTabToTitle[EDaoProfileTab.validators],
         source: generatePath(ROUTE_PATHS.daoProfile, {
           daoAddress: daoAddress ?? "",

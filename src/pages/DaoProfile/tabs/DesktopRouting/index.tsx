@@ -25,6 +25,7 @@ const DaoProfileTabMyBalanceDesktop = React.lazy(
 const DaoProposalsTabDesktop = React.lazy(
   () => import("../desktop/DaoProposals")
 )
+const TokenSalesTabDesktop = React.lazy(() => import("../desktop/TokenSales"))
 const DaoProfileTabValidatorsMobile = React.lazy(
   () => import("../mobile/DaoProfileTabValidators")
 )
@@ -50,6 +51,11 @@ const DesktopRouting: React.FC = () => {
     [EDaoProfileTab.dao_proposals]: (
       <React.Suspense fallback={<TabFallback />}>
         <DaoProposalsTabDesktop />
+      </React.Suspense>
+    ),
+    [EDaoProfileTab.token_sales]: (
+      <React.Suspense fallback={<TabFallback />}>
+        <TokenSalesTabDesktop />
       </React.Suspense>
     ),
     [EDaoProfileTab.validators]: (
@@ -83,6 +89,11 @@ const DesktopRouting: React.FC = () => {
         name: mapProfileTabToTitle[EDaoProfileTab.dao_proposals],
         child: TABS_DESKTOP_CONTENT[EDaoProfileTab.dao_proposals],
         internalRoute: mapProfileTabToRoute[EDaoProfileTab.dao_proposals],
+      },
+      {
+        name: mapProfileTabToTitle[EDaoProfileTab.token_sales],
+        child: TABS_DESKTOP_CONTENT[EDaoProfileTab.token_sales],
+        internalRoute: mapProfileTabToRoute[EDaoProfileTab.token_sales],
       },
       {
         name: mapProfileTabToTitle[EDaoProfileTab.validators],

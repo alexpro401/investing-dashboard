@@ -35,6 +35,8 @@ export { default as CardRiskyProposal } from "./CardRiskyProposal"
 export { default as CardPoolRiskyPosition } from "./CardPoolRiskyPosition"
 export { default as CardInvestProposal } from "./CardInvestProposal"
 export { default as PoolBaseToken } from "./PoolBaseToken"
+export { default as DashedBadge } from "./DashedBadge"
+export { default as TokenLink } from "./TokenLink"
 
 export * from "./Typography"
 export * from "./dao"
