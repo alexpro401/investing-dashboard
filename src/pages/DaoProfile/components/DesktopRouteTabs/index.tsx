@@ -38,6 +38,17 @@ const DesktopRouteTabs: React.FC = () => {
           daoAddress: daoAddress ?? "",
           "*": mapProfileTabToRoute[EDaoProfileTab.dao_proposals],
         }),
+        activeSource: [
+          generatePath(ROUTE_PATHS.daoProfile, {
+            daoAddress: daoAddress ?? "",
+            "*": generatePath(
+              mapProfileTabToRoute[EDaoProfileTab.dao_proposals],
+              {
+                "*": "",
+              }
+            ),
+          }),
+        ],
         onClick: () => currentTab.set(EDaoProfileTab.dao_proposals),
       },
       {
