@@ -3,8 +3,6 @@ import { useWeb3React } from "@web3-react/core"
 
 import { BigNumber } from "@ethersproject/bignumber"
 import { parseEther, parseUnits } from "@ethersproject/units"
-import getTime from "date-fns/getTime"
-import { addDays } from "date-fns/esm"
 
 import useError from "hooks/useError"
 import usePayload from "hooks/usePayload"
@@ -12,12 +10,14 @@ import { useTraderPoolContract } from "contracts"
 import { useBasicPoolContract } from "contracts"
 import { useTraderPoolRiskyProposalContract } from "contracts"
 
-import { ZERO } from "consts"
-import { IValidationError, SubmitState } from "consts/types"
+import { SubmitState } from "consts/types"
 import { useTransactionAdder } from "state/transactions/hooks"
 import { TransactionType } from "state/transactions/types"
 
-import { shortTimestamp, parseTransactionError, isTxMined } from "utils"
+import { parseTransactionError, isTxMined } from "utils"
+import { useCreateRiskyProposalContext } from "context/fund/CreateRiskyProposalContext"
+import { useEffectOnce, useUnmount } from "react-use"
+import { IpfsEntity } from "utils/ipfsEntity"
 
 const useCreateRiskyProposal = (
   poolAddress?: string,
@@ -27,44 +27,37 @@ const useCreateRiskyProposal = (
     proposalCount: number
     positionPrice?: BigNumber
     lpAvailable?: BigNumber
-    lpAmount: string
-    timestampLimit: number
-    investLPLimit: string
-    maxTokenPriceLimit: string
-    instantTradePercentage: number
-    validationErrors: IValidationError[]
   },
   {
-    setLpAmount: (value: string) => void
-    setTimestampLimit: (timestamp: number) => void
-    setInvestLPLimit: (value: string) => void
-    setMaxTokenPriceLimit: (value: string) => void
-    setInstantTradePercentage: (percent: number) => void
+    setPayload: (state: SubmitState) => void
+    payload: SubmitState
     handleSubmit: () => void
   }
 ] => {
   const addTransaction = useTransactionAdder()
   const { account } = useWeb3React()
-  const initialTimeLimit = shortTimestamp(getTime(addDays(new Date(), 30)))
   const riskyProposal = useTraderPoolRiskyProposalContract(poolAddress)
+  const {
+    symbol,
+    description,
+    lpAmount,
+    timestampLimit,
+    investLPLimit,
+    maxTokenPriceLimit,
+    instantTradePercentage,
+  } = useCreateRiskyProposalContext()
 
   const basicTraderPool = useBasicPoolContract(poolAddress)
   const traderPool = useTraderPoolContract(poolAddress)
   const [, setError] = useError()
-  const [isSubmiting, setSubmiting] = usePayload()
+  const [payload, setPayload] = usePayload()
+
+  useEffectOnce(() => setPayload(SubmitState.IDLE))
+  useUnmount(() => setPayload(SubmitState.IDLE))
 
   const [totalProposals, setTotalProposals] = useState<number>(0)
-  const [lpAmount, setLpAmount] = useState("")
-  const [timestampLimit, setTimestampLimit] = useState(initialTimeLimit)
-  const [investLPLimit, setInvestLPLimit] = useState("")
-  const [maxTokenPriceLimit, setMaxTokenPriceLimit] = useState("")
-  const [instantTradePercentage, setInstantTradePercentage] = useState(0)
   const [positionPrice, setPositionPrice] = useState<BigNumber | undefined>()
   const [lpAvailable, setLpAvailable] = useState<BigNumber | undefined>()
-
-  const [validationErrors, setValidationErrors] = useState<IValidationError[]>(
-    []
-  )
 
   const updateTotalProposals = useCallback(async () => {
     if (!riskyProposal) return
@@ -72,53 +65,6 @@ const useCreateRiskyProposal = (
     const total = await riskyProposal.proposalsTotalNum()
     setTotalProposals(total.toNumber())
   }, [riskyProposal])
-
-  const handleValidate = useCallback(() => {
-    const errors: IValidationError[] = []
-
-    // LP allocated for RP
-    if (investLPLimit === "" || isNaN(parseFloat(investLPLimit))) {
-      errors.push({
-        message: "LP amount is required",
-        field: "investLPLimit",
-      })
-    } else if (parseEther(investLPLimit).lte(ZERO)) {
-      errors.push({
-        field: "investLPLimit",
-        message: "LP allocated for RP must be greater than 0",
-      })
-    }
-
-    // Max buying price
-    if (maxTokenPriceLimit === "" || isNaN(parseFloat(maxTokenPriceLimit))) {
-      errors.push({
-        message: "Max buying price is required",
-        field: "maxTokenPriceLimit",
-      })
-    } else if (parseEther(maxTokenPriceLimit).lte(positionPrice || ZERO)) {
-      errors.push({
-        field: "maxTokenPriceLimit",
-        message: "Max buying price must be greater than current price",
-      })
-    }
-
-    // deposit LP amount
-    if (lpAmount === "" || isNaN(parseFloat(lpAmount))) {
-      errors.push({
-        message: "LP amount is required",
-        field: "lpAmount",
-      })
-    } else if (parseEther(lpAmount).lte(ZERO)) {
-      errors.push({
-        field: "lpAmount",
-        message: "LP allocation amount must be greater than 0",
-      })
-    }
-
-    setValidationErrors(errors)
-
-    return !errors.length
-  }, [investLPLimit, lpAmount, maxTokenPriceLimit, positionPrice])
 
   const handleSubmit = useCallback(async () => {
     if (
@@ -130,14 +76,12 @@ const useCreateRiskyProposal = (
     )
       return
 
-    if (!handleValidate()) return
-
     try {
-      setSubmiting(SubmitState.SIGN)
+      setPayload(SubmitState.SIGN)
       setError("")
-      const amount = parseEther(lpAmount || "0").toHexString()
+      const amount = parseEther(lpAmount.get || "0").toHexString()
       const percentage = parseUnits(
-        instantTradePercentage.toString(),
+        instantTradePercentage.get.toString(),
         25
       ).toHexString()
 
@@ -153,21 +97,32 @@ const useCreateRiskyProposal = (
         []
       )
 
+      const riskyProposalIpfsEntity = new IpfsEntity({
+        data: JSON.stringify({
+          ticker: symbol.get,
+          account,
+          description: description.get,
+          timestamp: new Date().getTime() / 1000,
+        }),
+      })
+
+      await riskyProposalIpfsEntity.uploadSelf()
+
       const createResponse = await basicTraderPool.createProposal(
-        "descriptionURL",
+        riskyProposalIpfsEntity._path as string,
         tokenAddress,
         amount,
         {
-          timestampLimit,
-          investLPLimit: parseUnits(investLPLimit, 18).toHexString(),
-          maxTokenPriceLimit: parseUnits(maxTokenPriceLimit, 18).toHexString(),
+          timestampLimit: timestampLimit.get,
+          investLPLimit: parseEther(investLPLimit.get).toHexString(),
+          maxTokenPriceLimit: parseEther(maxTokenPriceLimit.get).toHexString(),
         },
         percentage,
         divests.receptions.receivedAmounts,
         tokens[0],
         []
       )
-      setSubmiting(SubmitState.WAIT_CONFIRM)
+      setPayload(SubmitState.WAIT_CONFIRM)
 
       const receipt = await addTransaction(createResponse, {
         type: TransactionType.RISKY_PROPOSAL_CREATE,
@@ -176,19 +131,19 @@ const useCreateRiskyProposal = (
       })
 
       if (isTxMined(receipt)) {
-        setSubmiting(SubmitState.SUCCESS)
+        setPayload(SubmitState.SUCCESS)
       }
     } catch (error: any) {
-      setSubmiting(SubmitState.IDLE)
+      setPayload(SubmitState.IDLE)
       console.log(error)
 
       const errorMessage = parseTransactionError(error)
       !!errorMessage && setError(errorMessage)
-    } finally {
-      setSubmiting(SubmitState.IDLE)
     }
   }, [
     account,
+    symbol,
+    description,
     addTransaction,
     basicTraderPool,
     instantTradePercentage,
@@ -200,9 +155,8 @@ const useCreateRiskyProposal = (
     timestampLimit,
     tokenAddress,
     traderPool,
-    handleValidate,
     setError,
-    setSubmiting,
+    setPayload,
   ])
 
   const getCreatingTokensInfo = useCallback(async () => {
@@ -230,10 +184,10 @@ const useCreateRiskyProposal = (
 
   // watch for transaction confirm & check proposals count
   useEffect(() => {
-    if (isSubmiting === SubmitState.SUCCESS) {
+    if (payload === SubmitState.SUCCESS) {
       updateTotalProposals()
     }
-  }, [isSubmiting, updateTotalProposals])
+  }, [payload, updateTotalProposals])
 
   // watch for proposals length
   useEffect(() => {
@@ -255,21 +209,12 @@ const useCreateRiskyProposal = (
   return [
     {
       proposalCount: totalProposals,
-      validationErrors,
-      lpAmount,
       lpAvailable,
       positionPrice,
-      timestampLimit,
-      investLPLimit,
-      maxTokenPriceLimit,
-      instantTradePercentage,
     },
     {
-      setLpAmount,
-      setTimestampLimit,
-      setInvestLPLimit,
-      setMaxTokenPriceLimit,
-      setInstantTradePercentage,
+      setPayload,
+      payload,
       handleSubmit,
     },
   ]

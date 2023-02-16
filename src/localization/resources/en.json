@@ -102,6 +102,27 @@
     "tooltip-msg-position-size": "Position size info",
     "tooltip-msg-trader-size": "Trader size info"
   },
+  "create-risky-proposal-card": {
+    "head-title": "Create risky proposal",
+    "card-title": "Create risky proposal",
+    "card-description": "If you want to create investment proposal please fill out the form below. You can change parameters after creation",
+    "section-label-settings": "Risky proposal settings",
+    "section-description-settings": "Risky Proposal Settings is where users create high-risk proposals for their web3 applications. Specify the symbol, description, and proposal deadline to get started.",
+    "section-label-symbol": "New ticker LP2",
+    "section-label-description": "description",
+    "section-label-timestamp-limit": "Investment closing date",
+    "section-label-investment": "Investment Settings",
+    "section-description-investment": "Configure investment parameters for your proposal, including maximum LP token limit, personal investment amount, maximum buying price, and initial position allocation percentage.",
+    "section-label-max-lp-limit": "Maximum LP Token Investment Limit",
+    "section-label-personal-invest": "Personal Investment Amount",
+    "section-label-max-buying-price": "Maximum Buying Price",
+    "section-label-position-filled": "Initial Position Allocation Percentage",
+    "action-more": "read more",
+    "action-submit": "Create risky proposal",
+    "modal-title": "Success",
+    "modal-description": "You have successfully created a risk proposal. Deposit LP or trade your token",
+    "modal-action": "Open new trade"
+  },
   "update-risky-proposal-form": {
     "title": "Investment proposal settings:",
     "field-label-expiration-date": "Expiration date",
@@ -227,6 +248,25 @@
     "field-label-invest-limit": "LPs available for staking",
     "action-submit": "Done",
     "action-decline": "Cancel"
+  },
+  "create-invest-proposal-card": {
+    "head-title": "Create invest proposal",
+    "card-title": "Create invest proposal",
+    "card-description": "If you want to create investment proposal please fill out the form below. You can change parameters after creation",
+    "section-label-settings": "Invest proposal settings",
+    "section-description-settings": "Invest Proposal Settings is where users create high-risk proposals for their web3 applications. Specify the symbol, description, and proposal deadline to get started.",
+    "section-label-symbol": "New ticker LP2",
+    "section-label-description": "description",
+    "section-label-timestamp-limit": "Investment closing date",
+    "section-label-investment": "Investment Settings",
+    "section-description-investment": "Configure investment parameters for your proposal, including maximum LP token limit, personal investment amount, maximum buying price, and initial position allocation percentage.",
+    "section-label-max-lp-limit": "Maximum LP Token Investment Limit",
+    "section-label-personal-invest": "Personal Investment Amount",
+    "action-more": "read more",
+    "action-submit": "Create invest proposal",
+    "modal-title": "Success",
+    "modal-description": "You have successfully created a investment proposal.",
+    "modal-action": "Deposit LP"
   },
   "create-fund-dao-form": {
     "titles-step-title": "Basic DAO Settings",

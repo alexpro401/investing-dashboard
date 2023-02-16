@@ -21,6 +21,7 @@ const RISKY_PROPOSAL_POSITION = `
   proposal {
     id
     token
+    proposalId
     basicPool {
       id
       baseToken

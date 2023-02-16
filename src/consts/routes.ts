@@ -7,7 +7,7 @@ export enum ROUTE_PATHS {
   notifications = "/notifications",
   topMembers = "/top-members/*",
 
-  poolSwap = "/pool/swap/:poolType/:poolToken/:inputToken/:outputToken/*",
+  poolSwap = "/pool/swap/:poolAddress/:inputToken/:outputToken/*",
   poolInvest = "/pool/invest/:poolAddress",
   poolProfile = "/pool/profile/:poolAddress/*",
 
@@ -15,8 +15,8 @@ export enum ROUTE_PATHS {
   riskyProposalInvest = "/invest-risky-proposal/:poolAddress/:proposalId",
   riskyProposalSwap = "/swap-risky-proposal/:poolAddress/:proposalId/:direction",
 
-  investment = "/investment/*",
-  investmentProposalCreate = "/create-invest-proposal/:poolAddress",
+  investment = "investment/*",
+  investmentProposalCreate = "/create-invest-proposal/:poolAddress/*",
   investmentProposalInvest = "/invest-investment-proposal/:poolAddress/:proposalId",
   investmentProposalWithdraw = "/withdraw-investment-proposal/:poolAddress/:proposalId",
 

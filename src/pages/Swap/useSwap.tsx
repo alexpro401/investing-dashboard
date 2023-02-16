@@ -66,6 +66,7 @@ interface UseSwapInfo {
   avgBuyingPrice: string
   avgSellingPrice: string
   baseSymbol?: string
+  baseAddress?: string
 }
 
 interface UseSwapResponse {
@@ -190,6 +191,7 @@ const useSwap = ({
       avgBuyingPrice: normalizeBigNumber(avgBuyingPrice, 18, 6),
       avgSellingPrice: normalizeBigNumber(avgSellingPrice, 18, 6),
       baseSymbol,
+      baseAddress: poolInfo?.parameters.baseToken,
     }
   }, [
     pnlLP,

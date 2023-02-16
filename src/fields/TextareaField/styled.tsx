@@ -112,6 +112,7 @@ export const Label = styled(motion.label)<{
   background: ${fieldBg};
   padding: 4px;
   transition-property: all;
+  display: flex;
 
   ${getDefaultFieldLabelStyles()}
 
