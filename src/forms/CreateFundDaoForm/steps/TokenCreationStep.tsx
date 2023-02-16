@@ -27,16 +27,16 @@ import { isAddress, shortenAddress } from "utils"
 import { useActiveWeb3React } from "hooks"
 import { isEqual } from "lodash"
 import { readFromClipboard } from "utils/clipboard"
-import { BigNumber } from "ethers"
 import { useEffectOnce } from "react-use"
+import { FixedNumber } from "@ethersproject/bignumber"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const safeBigFrom = (value: string | number) => {
   try {
-    return BigNumber.from(value)
+    return FixedNumber.from(value)
   } catch (error) {
-    return BigNumber.from(0)
+    return FixedNumber.from(0)
   }
 }
 
@@ -49,26 +49,26 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
 
   const { prevCb, nextCb } = useContext(stepsControllerContext)
 
-  const [treasuryPercent, setTreasuryPercent] = useState(0)
+  const [treasuryPercent, setTreasuryPercent] = useState("")
   const [initialDistributionPercent, setInitialDistributionPercent] =
-    useState(0)
+    useState("")
 
   useEffectOnce(() => {
     if (Number(tokenCreation.treasury.get)) {
       setTreasuryPercent(
         safeBigFrom(tokenCreation.treasury.get)
-          .mul(100)
-          .div(safeBigFrom(tokenCreation.totalSupply.get))
-          .toNumber()
+          .mulUnsafe(safeBigFrom(100))
+          .divUnsafe(safeBigFrom(tokenCreation.totalSupply.get))
+          .toString()
       )
     }
 
     if (Number(tokenCreation.initialDistribution.get)) {
       setInitialDistributionPercent(
         safeBigFrom(tokenCreation.initialDistribution.get)
-          .mul(100)
-          .div(safeBigFrom(tokenCreation.totalSupply.get))
-          .toNumber()
+          .mulUnsafe(safeBigFrom(100))
+          .divUnsafe(safeBigFrom(tokenCreation.totalSupply.get))
+          .toString()
       )
     }
   })
@@ -76,13 +76,13 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
   const daoCreatorRecipientAmount = useMemo(() => {
     const daoCreationRecipientsSum = tokenCreation.recipients.get?.reduce(
       (acc, curr) => {
-        return acc.add(safeBigFrom(curr.amount))
+        return acc.addUnsafe(safeBigFrom(curr.amount))
       },
-      safeBigFrom(0)
+      safeBigFrom("0")
     )
 
     return daoCreationRecipientsSum && !daoCreationRecipientsSum.isZero()
-      ? safeBigFrom(tokenCreation.initialDistribution.get).sub(
+      ? safeBigFrom(tokenCreation.initialDistribution.get).subUnsafe(
           daoCreationRecipientsSum
         )
       : safeBigFrom(tokenCreation.initialDistribution.get)
@@ -96,27 +96,29 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
 
     const totalRecipientsAmount = tokenCreation.recipients.get
       ?.reduce((acc, curr) => {
-        return acc.add(safeBigFrom(curr.amount))
-      }, safeBigFrom(0))
-      .add(daoCreatorRecipientAmount)
+        return acc.addUnsafe(safeBigFrom(curr.amount))
+      }, safeBigFrom("0"))
+      .addUnsafe(daoCreatorRecipientAmount)
 
     if (
-      totalRecipientsAmount?.gt(
-        safeBigFrom(tokenCreation.initialDistribution.get)
-      )
+      !totalRecipientsAmount
+        ?.subUnsafe(safeBigFrom(tokenCreation.initialDistribution.get))
+        .isNegative()
     )
       return
 
     nextCb()
   }, [
     daoCreatorRecipientAmount,
+    isTokenCreation,
     nextCb,
+    prevCb,
     tokenCreation.initialDistribution.get,
     tokenCreation.recipients.get,
   ])
 
   const handleTotalSupplyChange = useCallback(
-    (v: string | number) => {
+    (v: string) => {
       tokenCreation.totalSupply.set(String(v))
       tokenCreation.treasury.set(String(v))
       tokenCreation.initialDistribution.set("0")
@@ -129,22 +131,25 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
   )
 
   const handleTreasuryPercentChange = useCallback(
-    (value: string | number) => {
+    (value: string) => {
       try {
         const totalSupply = safeBigFrom(tokenCreation.totalSupply.get)
 
         const treasuryPercent = safeBigFrom(value)
-        const treasury = totalSupply.mul(treasuryPercent).div(100)
+        const treasury = totalSupply
+          .mulUnsafe(treasuryPercent)
+          .divUnsafe(safeBigFrom(100))
 
-        const initialDistributionPercent = safeBigFrom(100).sub(treasuryPercent)
+        const initialDistributionPercent =
+          safeBigFrom("100").subUnsafe(treasuryPercent)
         const initialDistribution = totalSupply
-          .mul(initialDistributionPercent)
-          .div(100)
+          .mulUnsafe(initialDistributionPercent)
+          .divUnsafe(safeBigFrom(100))
 
-        setTreasuryPercent(treasuryPercent.toNumber())
+        setTreasuryPercent(treasuryPercent.toString())
         tokenCreation.treasury.set(treasury.toString())
 
-        setInitialDistributionPercent(initialDistributionPercent.toNumber())
+        setInitialDistributionPercent(initialDistributionPercent.toString())
         tokenCreation.initialDistribution.set(initialDistribution.toString())
       } catch (error) {}
     },
@@ -155,22 +160,26 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
     ]
   )
   const handleInitialDistributionPercentChange = useCallback(
-    (value: string | number) => {
+    (value: string) => {
       try {
         const totalSupply = safeBigFrom(tokenCreation.totalSupply.get)
 
         const initialDistributionPercent = safeBigFrom(value)
         const initialDistribution = totalSupply
-          .mul(initialDistributionPercent)
-          .div(100)
+          .mulUnsafe(initialDistributionPercent)
+          .divUnsafe(safeBigFrom(100))
 
-        const treasuryPercent = safeBigFrom(100).sub(initialDistributionPercent)
-        const treasury = totalSupply.mul(treasuryPercent).div(100)
+        const treasuryPercent = safeBigFrom("100").subUnsafe(
+          initialDistributionPercent
+        )
+        const treasury = totalSupply
+          .mulUnsafe(treasuryPercent)
+          .divUnsafe(safeBigFrom(100))
 
-        setTreasuryPercent(treasuryPercent.toNumber())
+        setTreasuryPercent(treasuryPercent.toString())
         tokenCreation.treasury.set(treasury.toString())
 
-        setInitialDistributionPercent(initialDistributionPercent.toNumber())
+        setInitialDistributionPercent(initialDistributionPercent.toString())
         tokenCreation.initialDistribution.set(initialDistribution.toString())
       } catch (error) {}
     },
@@ -182,18 +191,23 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
   )
 
   const handleTreasuryChange = useCallback(
-    (v: string | number) => {
+    (v: string) => {
       try {
         const totalSupply = safeBigFrom(tokenCreation.totalSupply.get)
         const treasury = safeBigFrom(v)
-        const initialDistribution = totalSupply.sub(treasury)
+        const initialDistribution = totalSupply.subUnsafe(treasury)
 
         tokenCreation.treasury.set(String(v))
-        setTreasuryPercent(treasury.mul(100).div(totalSupply).toNumber())
+        setTreasuryPercent(
+          treasury.mulUnsafe(safeBigFrom(100)).divUnsafe(totalSupply).toString()
+        )
 
         tokenCreation.initialDistribution.set(initialDistribution.toString())
         setInitialDistributionPercent(
-          initialDistribution.mul(100).div(totalSupply).toNumber()
+          initialDistribution
+            .mulUnsafe(safeBigFrom(100))
+            .divUnsafe(totalSupply)
+            .toString()
         )
       } catch (error) {}
     },
@@ -205,19 +219,25 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
   )
 
   const handleInitialDistributionChange = useCallback(
-    (v: string | number) => {
+    (v: string) => {
       try {
         const totalSupply = safeBigFrom(tokenCreation.totalSupply.get)
         const initialDistribution = safeBigFrom(v)
-        const treasury = totalSupply.sub(initialDistribution)
+        const treasury = totalSupply.subUnsafe(initialDistribution)
 
-        tokenCreation.initialDistribution.set(String(v))
+        tokenCreation.initialDistribution.set(v)
+
         setInitialDistributionPercent(
-          initialDistribution.mul(100).div(totalSupply).toNumber()
+          initialDistribution
+            .mulUnsafe(safeBigFrom(100))
+            .divUnsafe(totalSupply)
+            .toString()
         )
 
         tokenCreation.treasury.set(treasury.toString())
-        setTreasuryPercent(treasury.mul(100).div(totalSupply).toNumber())
+        setTreasuryPercent(
+          treasury.mulUnsafe(safeBigFrom(100)).divUnsafe(totalSupply).toString()
+        )
 
         tokenCreation.recipients.set([
           ...tokenCreation.recipients.get.map((el) => ({ ...el, amount: "0" })),
@@ -287,7 +307,7 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
         const newState = [...(prevState ? prevState : [])]
         newState[idx].address = address
         newState[idx].amount = !daoCreatorRecipientAmount.isZero()
-          ? daoCreatorRecipientAmount.div(2).toString()
+          ? daoCreatorRecipientAmount.divUnsafe(safeBigFrom(2)).toString()
           : "0"
 
         return newState
@@ -360,7 +380,9 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
               initial={Number(tokenCreation.initialDistribution.get)}
               limits={{ min: 0, max: Number(tokenCreation.totalSupply.get) }}
               debounce={false}
-              onChange={(n, v) => handleInitialDistributionChange(v)}
+              onChange={(n, v) =>
+                handleInitialDistributionChange(safeBigFrom(v).toString())
+              }
             />
             <InputField
               type="number"
@@ -489,8 +511,8 @@ const TokenCreationStep: FC<Props> = ({ ...rest }) => {
                             safeBigFrom(
                               tokenCreation.recipients.get[idx].amount || 0
                             )
-                              ?.add(daoCreatorRecipientAmount)
-                              ?.toNumber() || 0
+                              ?.addUnsafe(daoCreatorRecipientAmount)
+                              ?.toUnsafeFloat() || 0
                           }
                         />
                         <S.TokenCreationInputNodeRightSymbol>
