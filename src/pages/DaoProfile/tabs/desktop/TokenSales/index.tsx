@@ -3,12 +3,19 @@ import React, { FC, HTMLAttributes, useMemo } from "react"
 import * as S from "./styled"
 import { useTranslation } from "react-i18next"
 import TokenSaleCard from "./TokenSaleCard"
+import ActualCard from "./ActualCard"
+import PlannedCard from "./PlannedCard"
+import CompletedCard from "./CompletedCard"
+import { generatePath, useParams } from "react-router-dom"
+import { ROUTE_PATHS } from "consts"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const mockedTokenSaleData = {}
 
 const TokenSales: FC<Props> = ({ ...rest }) => {
+  const { daoAddress } = useParams()
+
   const { t } = useTranslation()
 
   const myTokenSales = useMemo(() => [mockedTokenSaleData], [])
@@ -38,11 +45,21 @@ const TokenSales: FC<Props> = ({ ...rest }) => {
 
       <S.SectionTitle>
         {t("dao-profile.token-sales.sales-title")}
+        <S.TitleLink
+          to={generatePath(ROUTE_PATHS.daoProfile, {
+            daoAddress: daoAddress!,
+            "*": "",
+          })}
+        >
+          111PG
+        </S.TitleLink>
       </S.SectionTitle>
 
-      {tokenSales?.map((el, idx) => (
-        <TokenSaleCard key={idx} tokenSale={el} />
-      )) || <></>}
+      <ActualCard />
+
+      <PlannedCard />
+
+      <CompletedCard />
     </S.Root>
   )
 }

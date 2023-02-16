@@ -360,6 +360,12 @@
       "claim-modal-title": "Claim my reward",
       "claim-title-voting": "Voting reward",
       "claim-title-voting-delegated": "Delegation reward"
+    },
+    "token-sales": {
+      "tutorial-title": "Token Sales",
+      "my-sales-title": "My Token Sales",
+      "sales-title": "Token sales ",
+      "tutorial-btn": "Tutorial"
     }
   }
 }

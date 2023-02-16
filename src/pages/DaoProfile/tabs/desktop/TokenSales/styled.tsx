@@ -1,4 +1,5 @@
 import styled from "styled-components/macro"
+import { NavLink } from "react-router-dom"
 
 export const Root = styled.div`
   display: flex;
@@ -39,4 +40,9 @@ export const SectionTitle = styled.h2`
   font-size: 20px;
   line-height: 1.2;
   font-weight: 700;
+`
+
+export const TitleLink = styled(NavLink)`
+  text-decoration: none;
+  color: #368bc9;
 `
