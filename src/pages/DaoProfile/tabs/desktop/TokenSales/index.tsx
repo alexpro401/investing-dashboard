@@ -5,9 +5,10 @@ import { useTranslation } from "react-i18next"
 import ActualCard from "./ActualCard"
 import PlannedCard from "./PlannedCard"
 import CompletedCard from "./CompletedCard"
-import { generatePath, useParams } from "react-router-dom"
+import { generatePath, Routes, useParams, Route } from "react-router-dom"
 import { ROUTE_PATHS } from "consts"
 import MySaleCard from "./MySaleCard"
+import RouteTabs from "components/RouteTabs"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -53,11 +54,29 @@ const TokenSales: FC<Props> = ({ ...rest }) => {
         </S.TitleLink>
       </S.SectionTitle>
 
-      <ActualCard />
+      <RouteTabs
+        full={false}
+        tabs={[
+          {
+            title: "Actual",
+            source: "actual",
+          },
+          {
+            title: "Planned",
+            source: "planned",
+          },
+          {
+            title: "Completed",
+            source: "completed",
+          },
+        ]}
+      />
 
-      <PlannedCard />
-
-      <CompletedCard />
+      <Routes>
+        <Route path="actual" element={<ActualCard />} />
+        <Route path="planned" element={<PlannedCard />} />
+        <Route path="completed" element={<CompletedCard />} />
+      </Routes>
     </S.Root>
   )
 }
