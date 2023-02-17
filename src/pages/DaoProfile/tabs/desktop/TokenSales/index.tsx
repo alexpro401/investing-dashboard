@@ -2,12 +2,12 @@ import React, { FC, HTMLAttributes, useMemo } from "react"
 
 import * as S from "./styled"
 import { useTranslation } from "react-i18next"
-import TokenSaleCard from "./TokenSaleCard"
 import ActualCard from "./ActualCard"
 import PlannedCard from "./PlannedCard"
 import CompletedCard from "./CompletedCard"
 import { generatePath, useParams } from "react-router-dom"
 import { ROUTE_PATHS } from "consts"
+import MySaleCard from "./MySaleCard"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -39,9 +39,7 @@ const TokenSales: FC<Props> = ({ ...rest }) => {
         {t("dao-profile.token-sales.my-sales-title")}
       </S.SectionTitle>
 
-      {myTokenSales?.map((el, idx) => (
-        <TokenSaleCard key={idx} tokenSale={el} />
-      )) || <></>}
+      <MySaleCard />
 
       <S.SectionTitle>
         {t("dao-profile.token-sales.sales-title")}

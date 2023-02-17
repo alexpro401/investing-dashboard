@@ -20,6 +20,7 @@ const ActualCard: FC<Props> = ({ ...rest }) => {
                     "https://avatars.githubusercontent.com/u/30753617?s=280&v=4"
                   }
                   text={"1000 DGB"}
+                  linkIcon={ICON_NAMES.externalLink}
                   linkUrl={"#"}
                 />
                 for
@@ -65,7 +66,7 @@ const ActualCard: FC<Props> = ({ ...rest }) => {
             </S.InfoTextWrp>
           </S.BodyLeft>
           <S.BodyRight>
-            <S.InfoTextWrp color="success">
+            <S.InfoTextWrp color="secondary">
               <S.InfoIcon name={ICON_NAMES.dollarOutline} />
               {"Sell 100,000 / 1,000,000 token (37%)"}
             </S.InfoTextWrp>

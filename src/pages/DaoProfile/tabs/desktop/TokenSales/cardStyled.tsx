@@ -2,6 +2,7 @@ import styled, { css } from "styled-components/macro"
 
 import ExternalLink from "components/ExternalLink"
 import { Icon, AppButton, Card, CardHead, DashedBadge, TokenLink } from "common"
+import Tooltip from "../../../../../components/Tooltip"
 
 export const ContainerWrp = styled.div`
   display: flex;
@@ -88,9 +89,11 @@ export const HeadProceedToBtn = styled(AppButton).attrs({
 export const ProgressBar = styled.div<{
   progress: number
 }>`
+  overflow: hidden visible;
   position: relative;
   width: 100%;
   height: 3px;
+  background: #1c2333;
 
   &:after {
     content: "";
@@ -118,6 +121,7 @@ export const Body = styled.div<{
         `
       : css`
           display: flex;
+          justify-content: space-between;
           align-items: center;
           gap: var(--app-gap);
         `}
@@ -143,7 +147,7 @@ export const InfoTextWrp = styled.div<{
     props.color
       ? {
           primary: props.theme.textColors.primary,
-          secondary: props.theme.textColors.secondary,
+          secondary: "#6781BD",
           success: "#2DE3E3",
           error: props.theme.statusColors.success,
           warning: props.theme.statusColors.warning,
@@ -157,4 +161,58 @@ export const InfoIcon = styled(Icon)`
   width: 18px;
   height: 18px;
   transform: translateY(-3px); // FIXME: temp
+`
+
+export const StatisticItem = styled.div``
+
+export const StatisticItemLabelWrp = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`
+
+export const StatisticItemLabelText = styled.span<{
+  color?: "accent" | "secondary" | "success" | "error" | "warning" | "info"
+}>`
+  font-size: 12px;
+  line-height: 1.25;
+  color: ${(props) =>
+    props.color
+      ? {
+          accent: "#368BC9",
+          secondary: "#6781BD",
+          success: "#2DE3E3",
+          error: props.theme.statusColors.error,
+          warning: props.theme.statusColors.warning,
+          info: props.theme.statusColors.info,
+        }[props.color]
+      : "#6781bd"};
+`
+
+export const StatisticTooltip = styled(Tooltip)``
+
+export const StatisticItemValueWrp = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`
+
+export const StatisticItemValueText = styled.span<{
+  color?: "accent" | "secondary" | "success" | "error" | "warning" | "info"
+}>`
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  color: ${(props) =>
+    props.color
+      ? {
+          accent: "#368BC9",
+          secondary: "#6781BD",
+          success: "#2DE3E3",
+          error: props.theme.statusColors.success,
+          warning: props.theme.statusColors.warning,
+          info: props.theme.statusColors.info,
+        }[props.color]
+      : props.theme.textColors.primary};
 `
