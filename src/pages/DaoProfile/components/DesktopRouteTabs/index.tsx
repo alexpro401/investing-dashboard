@@ -33,6 +33,33 @@ const DesktopRouteTabs: React.FC = () => {
         onClick: () => currentTab.set(EDaoProfileTab.my_balance),
       },
       {
+        title: mapProfileTabToTitle[EDaoProfileTab.dao_proposals],
+        source: generatePath(ROUTE_PATHS.daoProfile, {
+          daoAddress: daoAddress ?? "",
+          "*": mapProfileTabToRoute[EDaoProfileTab.dao_proposals],
+        }),
+        activeSource: [
+          generatePath(ROUTE_PATHS.daoProfile, {
+            daoAddress: daoAddress ?? "",
+            "*": generatePath(
+              mapProfileTabToRoute[EDaoProfileTab.dao_proposals],
+              {
+                "*": "",
+              }
+            ),
+          }),
+        ],
+        onClick: () => currentTab.set(EDaoProfileTab.dao_proposals),
+      },
+      {
+        title: mapProfileTabToTitle[EDaoProfileTab.token_sales],
+        source: generatePath(ROUTE_PATHS.daoProfile, {
+          daoAddress: daoAddress ?? "",
+          "*": mapProfileTabToRoute[EDaoProfileTab.token_sales],
+        }),
+        onClick: () => currentTab.set(EDaoProfileTab.token_sales),
+      },
+      {
         title: mapProfileTabToTitle[EDaoProfileTab.validators],
         source: generatePath(ROUTE_PATHS.daoProfile, {
           daoAddress: daoAddress ?? "",

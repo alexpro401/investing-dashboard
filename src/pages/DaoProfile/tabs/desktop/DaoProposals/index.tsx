@@ -1,103 +1,102 @@
-import * as S from "./styled"
+import { DaoProposalsList } from "common"
 
-import { FC, HTMLAttributes } from "react"
-import Header from "components/Header/Layout"
 import {
-  useParams,
-  Navigate,
   generatePath,
+  Navigate,
   Route,
   Routes,
+  useParams,
 } from "react-router-dom"
-import { DaoProposalsList } from "common"
 import { ROUTE_PATHS } from "consts"
 
-interface Props extends HTMLAttributes<HTMLDivElement> {}
+import * as S from "pages/GovPoolProposals/DaoProposals/styled"
 
-const DaoProposals: FC<Props> = () => {
+export const DaoProposals = () => {
   const { daoAddress } = useParams()
 
   const TABS = [
     {
       title: "Opened voting",
-      source: generatePath(ROUTE_PATHS.daoProposalList, {
+      source: generatePath(ROUTE_PATHS.daoProfile, {
         daoAddress: daoAddress!,
-        "*": "opened",
-      }),
+        "*": "dao-proposals",
+      }).concat("/opened"),
     },
     {
       title: "Ended voting",
-      source: generatePath(ROUTE_PATHS.daoProposalList, {
+      source: generatePath(ROUTE_PATHS.daoProfile, {
         daoAddress: daoAddress!,
-        "*": "ended",
-      }),
+        "*": "dao-proposals",
+      }).concat("/ended"),
     },
     {
       title: "Completed",
-      source: generatePath(ROUTE_PATHS.daoProposalList, {
+      source: generatePath(ROUTE_PATHS.daoProfile, {
         daoAddress: daoAddress!,
-        "*": "completed",
-      }),
+        "*": "dao-proposals",
+      }).concat("/completed"),
     },
   ]
 
   const ENDED_TABS = [
     {
       title: "Passed",
-      source: generatePath(ROUTE_PATHS.daoProposalList, {
+      source: generatePath(ROUTE_PATHS.daoProfile, {
         daoAddress: daoAddress!,
-        "*": "ended/passed",
-      }),
+        "*": "dao-proposals",
+      }).concat("/ended/passed"),
     },
     {
       title: "Rejected",
-      source: generatePath(ROUTE_PATHS.daoProposalList, {
+      source: generatePath(ROUTE_PATHS.daoProfile, {
         daoAddress: daoAddress!,
-        "*": "ended/rejected",
-      }),
+        "*": "dao-proposals",
+      }).concat("/ended/rejected"),
     },
   ]
 
   const COMPLETED_TABS = [
     {
       title: "All",
-      source: generatePath(ROUTE_PATHS.daoProposalList, {
+      source: generatePath(ROUTE_PATHS.daoProfile, {
         daoAddress: daoAddress!,
-        "*": "completed/all",
-      }),
+        "*": "dao-proposals",
+      }).concat("/completed/all"),
     },
     {
       title: "Rewards",
-      source: generatePath(ROUTE_PATHS.daoProposalList, {
+      source: generatePath(ROUTE_PATHS.daoProfile, {
         daoAddress: daoAddress!,
-        "*": "completed/rewards",
-      }),
+        "*": "dao-proposals",
+      }).concat("/completed/rewards"),
     },
   ]
 
   return (
     <>
-      <Header />
       <S.Root>
         <S.HeadContainer>
           <S.PageHeadTabs tabs={TABS} />
         </S.HeadContainer>
         <Routes>
+          <Route path="*" element={<Navigate replace to={TABS[0].source} />} />
+
           <Route
             path="opened"
             element={
               <DaoProposalsList govPoolAddress={daoAddress} status="opened" />
             }
           />
+
           <Route
             path="ended"
             element={
               <Navigate
                 replace
-                to={generatePath(ROUTE_PATHS.daoProposalList, {
+                to={generatePath(ROUTE_PATHS.daoProfile, {
                   daoAddress: daoAddress!,
-                  "*": "ended/passed",
-                })}
+                  "*": "dao-proposals",
+                }).concat("/ended/passed")}
               />
             }
           />
@@ -125,15 +124,16 @@ const DaoProposals: FC<Props> = () => {
               </>
             }
           />
+
           <Route
             path="completed"
             element={
               <Navigate
                 replace
-                to={generatePath(ROUTE_PATHS.daoProposalList, {
+                to={generatePath(ROUTE_PATHS.daoProfile, {
                   daoAddress: daoAddress!,
-                  "*": "completed/all",
-                })}
+                  "*": "dao-proposals",
+                }).concat("/completed/all")}
               />
             }
           />
@@ -162,7 +162,6 @@ const DaoProposals: FC<Props> = () => {
               </>
             }
           />
-          <Route path="*" element={<Navigate replace to={TABS[0].source} />} />
         </Routes>
       </S.Root>
     </>

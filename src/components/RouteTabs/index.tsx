@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useMemo } from "react"
 import { useLocation } from "react-router-dom"
 
 import { ITab } from "interfaces"
@@ -22,6 +22,17 @@ const RouteTabs: FC<IProps> = ({
 }) => {
   const { pathname } = useLocation()
 
+  const isActive = useMemo(
+    () => (source, activeSource) => {
+      if (activeSource && activeSource.length > 0) {
+        return activeSource.some((s) => isActiveRoute(pathname, s))
+      }
+
+      return isActiveRoute(pathname, source)
+    },
+    [pathname]
+  )
+
   return (
     <>
       <S.Tabs
@@ -40,8 +51,8 @@ const RouteTabs: FC<IProps> = ({
                 key={tabIndex}
                 to={tab.source}
                 themeType={themeType}
-                active={isActiveRoute(pathname, tab.source)}
-                onClick={tab.onClick ?? undefined}
+                active={isActive(tab.source, tab.activeSource)}
+                onClick={tab.onClick}
               >
                 {tab.title}
                 {Boolean(tab.amount) && <S.TabAmount>{tab.amount}</S.TabAmount>}

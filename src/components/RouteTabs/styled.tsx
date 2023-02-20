@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { NavLink } from "react-router-dom"
 import styled, { css } from "styled-components/macro"
 
 import theme, { Flex } from "theme"
@@ -31,7 +31,7 @@ const Styled = {
     border-radius: 24px;
     border: 2px solid #141926;
   `,
-  Tab: styled(Link)<{ active?: boolean; themeType: ThemeType }>`
+  Tab: styled(NavLink)<{ active?: boolean; themeType: ThemeType }>`
     display: flex;
     align-items: center;
     justify-content: center;

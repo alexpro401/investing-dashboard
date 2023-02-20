@@ -14,6 +14,15 @@ const isActiveRoute = (path: string, source: string) => {
   const pathSplited = path.split("/")
   const sourceParsed = parseRouterParams(source)
 
+  return sourceParsed.every((el) => pathSplited.includes(el))
+}
+
+const isExactActiveRoute = (path: string, source: string) => {
+  if (path === source) return true
+
+  const pathSplited = path.split("/")
+  const sourceParsed = parseRouterParams(source)
+
   return sourceParsed.every((p, i) => p === pathSplited[i])
 }
 

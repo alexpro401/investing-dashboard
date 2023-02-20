@@ -37,6 +37,9 @@ export const PoolBaseTokenDetails = styled.div`
 `
 
 export const PoolBaseTokenDetailsLabel = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 13px;
   line-height: 15px;
   color: #b1c7fc;
@@ -63,6 +66,7 @@ export const PoolBaseTokenDetailsValue = styled.span`
   text-align: right;
   letter-spacing: -0.01em;
   color: #e4f2ff;
+  width: 100%;
 
   ${respondTo("xs")} {
     flex-direction: column;

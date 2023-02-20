@@ -1,14 +1,16 @@
-import { FC, HTMLAttributes } from "react"
+import { FC, HTMLAttributes, ReactNode } from "react"
 
 import * as S from "./styled"
-import { useBreakpoints } from "hooks"
+import Tooltip from "components/Tooltip"
+import { v4 as uuidv4 } from "uuid"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   tokenAddress?: string
   imgUrl?: string
   label?: string
-  value?: string | number
+  value?: string | number | ReactNode
   percentage?: number
+  tooltipMsg?: string
 }
 
 const PoolBaseToken: FC<Props> = ({
@@ -17,6 +19,7 @@ const PoolBaseToken: FC<Props> = ({
   label,
   value,
   percentage,
+  tooltipMsg,
   ...rest
 }) => {
   return (
@@ -39,7 +42,10 @@ const PoolBaseToken: FC<Props> = ({
           <></>
         )}
         {label ? (
-          <S.PoolBaseTokenDetailsLabel>{label}</S.PoolBaseTokenDetailsLabel>
+          <S.PoolBaseTokenDetailsLabel>
+            {label}
+            {tooltipMsg ? <Tooltip id={uuidv4()}>{tooltipMsg}</Tooltip> : <></>}
+          </S.PoolBaseTokenDetailsLabel>
         ) : (
           <></>
         )}
